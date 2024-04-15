@@ -15,6 +15,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	node = null;
 	refPhrase = null;
 	refSubmit = null;
+	isSelecting = false;
 
 	state = {
 		error: '',
@@ -76,18 +77,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	componentDidUpdate () {
-		const { accounts } = authStore;
-
 		this.focus();
-
-		if (accounts && accounts.length) {
-			const account = accounts[0];
-
-			authStore.accountSet(account);
-			Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
-
-			this.select();
-		};
+		this.select();
 	};
 
 	focus () {
@@ -103,7 +94,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			return;
 		};
 		
-		const { walletPath } = authStore;
 		const phrase = this.refPhrase.getValue();
 		const length = phrase.split(' ').length;
 
@@ -114,7 +104,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		this.refSubmit?.setLoading(true);
 		
-		C.WalletRecover(walletPath, phrase, (message: any) => {
+		C.WalletRecover(commonStore.dataPath, phrase, (message: any) => {
 			if (this.setError({ ...message.error, description: translate('pageAuthLoginInvalidPhrase')})) {
 				return;
 			};
@@ -127,11 +117,22 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	select () {
-		const { account, walletPath, networkConfig } = authStore;
-		const { mode, path } = networkConfig;
+		const { accounts, networkConfig } = authStore;
+		if (this.isSelecting || !accounts.length) {
+			return;
+		};
 
-		C.AccountSelect(account.id, walletPath, mode, path, (message: any) => {
+		this.isSelecting = true;
+
+		const { mode, path } = networkConfig;
+		const account = accounts[0];
+
+		authStore.accountSet(account);
+		Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
+
+		C.AccountSelect(account.id, commonStore.dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
+				this.isSelecting = false;
 				return;
 			};
 
@@ -139,7 +140,12 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			commonStore.configSet(message.account.config, false);
 
 			UtilData.onInfo(message.account.info);
-			Animation.from(() => UtilData.onAuth());
+			Animation.from(() => {
+				UtilData.onAuth();
+				UtilData.onAuthOnce();
+
+				this.isSelecting = false;
+			});
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
@@ -196,6 +202,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 	onForgot () {
 		popupStore.open('confirm', {
+			className: 'lostPhrase',
             data: {
                 text: translate('authLoginLostPhrasePopupContent'),
 				textConfirm: translate('commonOkay'),

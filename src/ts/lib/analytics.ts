@@ -1,5 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, UtilCommon, Storage } from 'Lib';
+import { I, C, UtilCommon, Storage, UtilSpace } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import { OnboardStage } from 'Component/page/auth/animation/constants';
@@ -18,9 +18,37 @@ class Analytics {
 	
 	instance: any = null;
 
+	public route = {
+		navigation: 'Navigation',
+		onboarding: 'Onboarding',
+		collection: 'Collection',
+		set: 'Set',
+		gallery: 'Gallery',
+		settings: 'Settings',
+		featured: 'FeaturedRelations',
+		notification: 'Notification',
+		deleted: 'Deleted',
+		banner: 'Banner',
+		widget: 'Widget',
+		graph: 'Graph',
+		store: 'Library',
+		type: 'Type',
+		bookmark: 'Bookmark',
+		webclipper: 'Webclipper',
+		clipboard: 'Clipboard',
+		shortcut: 'Shortcut',
+
+		menuOnboarding: 'MenuOnboarding',
+		menuObject: 'MenuObject',
+		menuSystem: 'MenuSystem',
+
+		migrationOffer: 'MigrationImportBackupOffer',
+		migrationImport: 'MigrationImportBackupOffer',
+	};
+
 	debug () {
 		const { config } = commonStore;
-		return config.debug.an;
+		return config.debug.analytics;
 	};
 
 	isAllowed (): boolean {
@@ -126,8 +154,19 @@ class Analytics {
 		};
 
 		const converted: any = {};
+		const space = UtilSpace.getSpaceview();
+		const participant = UtilSpace.getMyParticipant();
 
 		let param: any = {};
+
+		if (space) {
+			param.spaceType = Number(space.spaceAccessType) || 0;
+			param.spaceType = I.SpaceType[param.spaceType];
+		};
+		if (participant) {
+			param.permissions = Number(participant.permissions) || 0;
+			param.permissions = I.ParticipantPermissions[param.permissions];
+		};
 
 		// Code mappers for common events
 		switch (code) {
@@ -332,9 +371,10 @@ class Analytics {
 			case 'ChangeWidgetLimit':
 			case 'ReorderWidget':
 			case 'DeleteWidget': {
-				if (data.target) {
-					data.type = Constant.widgetId[data.target.id] ? data.target.name : this.typeMapper(data.target.type);
-					delete data.target;
+				const target = data.params.target;
+
+				if (target) {
+					data.type = Constant.widgetId[target.id] ? target.name : this.typeMapper(target.type);
 				};
 
 				data.layout = I.WidgetLayout[data.layout];
@@ -382,6 +422,13 @@ class Analytics {
 				break;
 			};
 
+			case 'ApproveInviteRequest':
+			case 'ChangeSpaceMemberPermissions': {
+				data.type = Number(data.type) || 0;
+				data.type = I.ParticipantPermissions[data.type];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -416,7 +463,11 @@ class Analytics {
 		this.instance.logEvent(code, param);
 		this.log(`[Analytics].event: ${code}`, param);
 	};
-	
+
+	createObject (objectType: string, layout: I.ObjectLayout, route: string, time: number) {
+		this.event('CreateObject', { objectType, layout, route, middleTime: time });
+	};
+
 	pageMapper (params: any): string {
 		const { page, action } = params;
 		const key = [ page, action ].join('/');
@@ -470,7 +521,11 @@ class Analytics {
 	};
 
 	typeMapper (id: string): string {
-		const object = dbStore.getTypeById(id);
+		let object = dbStore.getTypeById(id);
+		if (!object) {
+			object = dbStore.getTypeByKey(id);
+		};
+
 		if (!object) {
 			return '';
 		};

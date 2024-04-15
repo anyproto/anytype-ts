@@ -68,7 +68,7 @@ html.platformWindows, html.platformLinux {
 	::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button { display: none; }
 
-	.overPopup { padding-right: 15px; }
+	.overPopup { padding-right: 10px; }
 }
 
 .dn { display: none !important; }
@@ -150,16 +150,16 @@ search.active { background: orange !important; }
 
 .isMultiSelect.archive { color: var(--color-text-secondary); background: var(--color-shape-tertiary); }
 .isMultiSelect.tagColor-default { color: var(--color-text-primary) !important; background: var(--color-bg-primary) !important; box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; }
-.isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: #ebeff1 !important; }
-.isMultiSelect.tagColor-yellow { color: #b2a616 !important; background: #fbf5b8 !important; }
-.isMultiSelect.tagColor-orange { color: #d3720d !important; background: #ffEcc8 !important; }
-.isMultiSelect.tagColor-red { color: #e2400c !important; background: #ffe5de !important; }
-.isMultiSelect.tagColor-pink { color: #ca1b8e !important; background: #fddcf2 !important; }
-.isMultiSelect.tagColor-purple { color: #9e30c4 !important; background: #f1dbf8 !important; }
-.isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #dce1fb !important; }
-.isMultiSelect.tagColor-ice { color: #1c8bca !important; background: #cfedfe !important; }
-.isMultiSelect.tagColor-teal { color: #0caaa3 !important; background: #d4f5f3 !important; }
-.isMultiSelect.tagColor-lime { color: #64b90f !important; background: #e3f7d0 !important; }
+.isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: var(--color-shape-primary) !important; }
+.isMultiSelect.tagColor-yellow { color: #b2a616 !important; background: #f4eb91 !important; }
+.isMultiSelect.tagColor-orange { color: #d3720d !important; background: #fcdc9c !important; }
+.isMultiSelect.tagColor-red { color: #e2400c !important; background: #fcd1c3 !important; }
+.isMultiSelect.tagColor-pink { color: #ca1b8e !important; background: #f8c2e5 !important; }
+.isMultiSelect.tagColor-purple { color: #9e30c4 !important; background: #e8d0f1 !important; }
+.isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #cbd2fa !important; }
+.isMultiSelect.tagColor-ice { color: #1c8bca !important; background: #b2dff9 !important; }
+.isMultiSelect.tagColor-teal { color: #0caaa3 !important; background: #a9ebe6 !important; }
+.isMultiSelect.tagColor-lime { color: #64b90f !important; background: #c5efa3 !important; }
 
 .isSelect.tagColor-default { color: var(--color-text-primary) !important; }
 .isSelect.tagColor-black { color: var(--color-text-primary) !important; }

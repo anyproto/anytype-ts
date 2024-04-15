@@ -204,8 +204,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { data } = param;
 		const { rootId, blockId, onSave, readonly } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-
-		let view = data.view.get();
+		const view = data.view.get();
 
 		if (readonly || !block || !view) {
 			return;
@@ -215,8 +214,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			this.param.name = this.getViewName();
 		};
 
-		view = Object.assign(view, this.param);
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, this.param, onSave);
+		Dataview.viewUpdate(rootId, blockId, view.id, this.param, onSave);
 	};
 
 	getSections () {
@@ -347,7 +345,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 						analytics.event('DuplicateView', {
 							type: view.type,
 							objectType: object.type,
-							embedType: analytics.embedType(isInline)
+							embedType: analytics.embedType(isInline),
 						});
 					});
 					break;

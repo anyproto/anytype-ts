@@ -19,6 +19,7 @@ interface Props {
 	focusOnMount?: boolean;
 	onChange?(e: any, value: string): void;
 	onPaste?(e: any, value: string): void;
+	onCut?(e: any, value: string): void;
 	onKeyUp?(e: any, value: string): void;
 	onKeyDown?(e: any, value: string): void;
 	onMouseEnter?(e: any): void;
@@ -40,6 +41,7 @@ class Input extends React.Component<Props, State> {
 	node: any = null;
 	mask: any = null;
 	isFocused: boolean = false;
+	range: I.TextRange = null;
 
 	public static defaultProps = {
         type: 'text',
@@ -60,12 +62,13 @@ class Input extends React.Component<Props, State> {
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+		this.onCut = this.onCut.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 	};
 
 	render () {
 		const { id, name, placeholder, className, autoComplete, readonly, maxLength, multiple, accept, onClick, onMouseEnter, onMouseLeave } = this.props;
-		const type: string = this.state.type || this.props.type;
+		const type = String(this.state.type || this.props.type || '');
 		const cn = [ 'input', 'input-' + type ];
 
 		if (className) {
@@ -94,6 +97,7 @@ class Input extends React.Component<Props, State> {
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}
 				onPaste={this.onPaste}
+				onCut={this.onCut}
 				onSelect={this.onSelect}
 				onClick={onClick}
 				maxLength={maxLength ? maxLength : undefined}
@@ -147,6 +151,10 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	onKeyUp (e: any) {
+		if ($(this.node).hasClass('disabled')) {
+			return;
+		};
+
 		this.setValue(e.target.value);
 		
 		if (this.props.onKeyUp) {
@@ -155,6 +163,10 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	onKeyDown (e: any) {
+		if ($(this.node).hasClass('disabled')) {
+			return;
+		};
+
 		if (this.props.onKeyDown) {
 			this.props.onKeyDown(e, this.state.value);
 		};
@@ -185,47 +197,51 @@ class Input extends React.Component<Props, State> {
 	};
 	
 	onPaste (e: any) {
-		e.stopPropagation();
+		e.persist();
 
-		if (this.props.onPaste) {
-			e.preventDefault();
-			this.setValue(e.clipboardData.getData('text/plain'));
-			this.props.onPaste(e, this.state.value);
-		};
+		this.callWithTimeout(() => {
+			this.updateRange(e);
+
+			if (this.props.onPaste) {
+				this.props.onPaste(e, this.state.value);
+			};
+		});
+	};
+
+	onCut (e: any) {
+		e.persist();
+
+		this.callWithTimeout(() => {
+			this.updateRange(e);
+
+			if (this.props.onCut) {
+				this.props.onCut(e, this.state.value);
+			};
+		});
 	};
 	
 	onSelect (e: any) {
 		if (this.props.onSelect) {
 			this.props.onSelect(e, this.state.value);
 		};
+
+		this.updateRange(e);
 	};
 
 	getInputElement() {
 		return $(this.node).get(0) as HTMLInputElement;
-	}
+	};
 	
 	focus () {
-		window.setTimeout(() => {
-			if (!this._isMounted) {
-				return;
-			};
-
-			this.getInputElement().focus({ preventScroll: true }); 
-		});
+		this.callWithTimeout(() => this.getInputElement().focus({ preventScroll: true }));
 	};
 	
 	blur () {
-		window.setTimeout(() => {
-			if (this._isMounted) {
-				$(this.node).trigger('blur');
-			};
-		});
+		this.callWithTimeout(() => $(this.node).trigger('blur'));
 	};
 	
 	select () {
-		if (this._isMounted) {
-			window.setTimeout(() => { this.getInputElement().select();	});
-		};
+		this.callWithTimeout(() => this.getInputElement().select());
 	};
 	
 	setValue (v: string) {
@@ -256,17 +272,22 @@ class Input extends React.Component<Props, State> {
 		v ? node.addClass('withError') : node.removeClass('withError');
 	};
 
-	setRange (range: I.TextRange) {
-		window.setTimeout(() => { 
-			if (!this._isMounted) {
-				return;
-			};
+	updateRange (e: any) {
+		const { selectionStart, selectionEnd } = e.target;
+		this.range = { from: selectionStart, to: selectionEnd };
+	};
 
+	setRange (range: I.TextRange) {
+		this.callWithTimeout(() => {
 			const el = this.getInputElement();
 
 			el.focus({ preventScroll: true }); 
 			el.setSelectionRange(range.from, range.to); 
 		});
+	};
+
+	getRange (): I.TextRange {
+		return this.range;
 	};
 	
 	addClass (v: string) {
@@ -283,6 +304,49 @@ class Input extends React.Component<Props, State> {
 
 	setPlaceholder (v: string) {
 		$(this.node).attr({ placeholder: v });
+	};
+
+	callWithTimeout (callBack: () => void) {
+		window.setTimeout(() => {
+			if (this._isMounted) {
+				callBack(); 
+			};
+		});
+	};
+
+	getSelectionRect (): DOMRect {
+		if (!this._isMounted) {
+			return null;
+		};
+
+		const { id } = this.props;
+		const node = $(this.node);
+		const parent = node.parent();
+		const { left, top } = node.position();
+		const value = this.getValue();
+		const range = this.getRange();
+		const elementId = `${id || 'input'}-clone`;
+
+		let clone = parent.find(`#${elementId}`);
+		if (!clone.length) {
+			clone = $('<div></div>').attr({ id: elementId });
+			parent.append(clone);
+		};
+
+		clone.attr({ class: node.attr('class') });
+		clone.css({
+			position: 'absolute',
+			width: 'auto',
+			left,
+			top,
+			zIndex: 100,
+		});
+		clone.text(value.substring(0, range.to));
+
+		const rect = clone.get(0).getBoundingClientRect() as DOMRect;
+
+		clone.remove();
+		return rect;
 	};
 	
 };

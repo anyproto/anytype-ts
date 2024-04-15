@@ -132,8 +132,8 @@ class Api {
 		UpdateManager.cancel();
 	};
 
-	async download (win, url) {
-		await download(win, url, { saveAs: true });
+	async download (win, url, options) {
+		await download(win, url, options);
 	};
 
 	winCommand (win, cmd, param) {
@@ -198,6 +198,12 @@ class Api {
 		if (is.macos) {
 			app.dock.setBadge(t);
 		};
+	};
+
+	setUserDataPath (win, p) {
+		this.setConfig(win, { userDataPath: p });
+		app.setPath('userData', p);
+		WindowManager.sendToAll('data-path', Util.dataPath());
 	};
 
 	showChallenge (win, param) {

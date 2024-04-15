@@ -151,7 +151,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			onOpen: onCoverOpen,
 			onClose: () => {
 				window.clearTimeout(this.timeout);
-				this.timeout = window.setTimeout(() => onCoverClose(), Constant.delay.menu);
+				this.timeout = window.setTimeout(() => onCoverClose(), menuStore.getTimeout());
 			},
 			data: {
 				options: options,
@@ -161,7 +161,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 							window.setTimeout(() => {
 								window.clearTimeout(this.timeout);
 								this.onChange(element);
-							}, Constant.delay.menu);
+							}, menuStore.getTimeout());
 							break;
 						
 						case 'position':

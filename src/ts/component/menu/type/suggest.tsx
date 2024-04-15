@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate, UtilObject } from 'Lib';
+import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate, UtilSpace } from 'Lib';
 import { commonStore, detailStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -283,7 +283,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.spaceId == space));
 		const librarySources = library.map(it => it.sourceObject);
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		let sections: any[] = [
 			{ id: 'library', name: translate('menuTypeSuggestMyTypes'), children: library },

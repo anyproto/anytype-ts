@@ -46,6 +46,11 @@ export const Mapper = {
 		if (v == V.EXPORT)			 t = 'export';
 		if (v == V.GALLERYIMPORT)	 t = 'galleryImport';
 		if (v == V.REQUESTTOJOIN)	 t = 'requestToJoin';
+		if (v == V.REQUESTTOLEAVE)	 t = 'requestToLeave';
+		if (v == V.PARTICIPANTREQUESTAPPROVED)	 t = 'participantRequestApproved';
+		if (v == V.PARTICIPANTREMOVE) t = 'participantRemove';
+		if (v == V.PARTICIPANTREQUESTDECLINE) t = 'participantRequestDecline';
+		if (v == V.PARTICIPANTPERMISSIONSCHANGE) t = 'participantPermissionsChange';
 
 		return t;
 	},
@@ -491,8 +496,8 @@ export const Mapper = {
 			if (field) {
 				switch (type) {
 
-					case 'import':
-					case 'galleryImport': {
+					case I.NotificationType.Import:
+					case I.NotificationType.Gallery: {
 						payload = Object.assign(payload, {
 							processId: field.getProcessid(),
 							errorCode: field.getErrorcode(),
@@ -506,7 +511,7 @@ export const Mapper = {
 						break;
 					};
 
-					case 'export': {
+					case I.NotificationType.Export: {
 						payload = Object.assign(payload, {
 							errorCode: field.getErrorcode(),
 							exportType: field.getExporttype(),
@@ -514,12 +519,33 @@ export const Mapper = {
 						break;
 					};
 
-					case 'requestToJoin': {
+					case I.NotificationType.Join: 
+					case I.NotificationType.Leave: 
+					case I.NotificationType.Remove: {
 						payload = Object.assign(payload, {
 							spaceId: field.getSpaceid(),
+							spaceName: field.getSpacename(),
 							identity: field.getIdentity(),
 							identityName: field.getIdentityname(),
 							identityIcon: field.getIdentityicon(),
+						});
+						break;
+					};
+
+					case I.NotificationType.Permission:
+					case I.NotificationType.Approve: {
+						payload = Object.assign(payload, {
+							spaceId: field.getSpaceid(),
+							spaceName: field.getSpacename(),
+        					permissions: field.getPermissions(),
+						});
+						break;
+					};
+
+					case I.NotificationType.Decline: {
+						payload = Object.assign(payload, {
+							spaceId: field.getSpaceid(),
+							spaceName: field.getSpacename(),
 						});
 						break;
 					};
@@ -550,6 +576,36 @@ export const Mapper = {
 				size: obj.getFilesize(),
 				screenshots: obj.getScreenshotsList() || [],
 				categories: obj.getCategoriesList() || [],
+			};
+		},
+
+		Membership: (obj: Model.Membership): I.Membership => {
+			return {
+				tier: obj.getTier(),
+				status: obj.getStatus() as number,
+				dateStarted: obj.getDatestarted(),
+				dateEnds: obj.getDateends(),
+				isAutoRenew: obj.getIsautorenew(),
+				paymentMethod: obj.getPaymentmethod() as number,
+				requestedAnyName: obj.getRequestedanyname(),
+				userEmail: obj.getUseremail(),
+				subscribeToNewsletter: obj.getSubscribetonewsletter(),	
+			};
+		},
+
+		MembershipTierData: (obj: Model.MembershipTierData): I.MembershipTier => {
+			return {
+				id: obj.getId(),
+				name: obj.getName(),
+				description: obj.getDescription(),
+				nameMinLength: obj.getAnynameminlength(),
+				isTest: obj.getIstest(),
+				periodType: obj.getPeriodtype(),
+				period: obj.getPeriodvalue(),
+				priceCents: obj.getPricestripeusdcents(),
+				colorStr: obj.getColorstr(),
+				features: obj.getFeaturesList(),
+				namesCount: obj.getAnynamescountincluded()
 			};
 		},
 

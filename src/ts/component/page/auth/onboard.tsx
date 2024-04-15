@@ -1,11 +1,15 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Action, Storage } from 'Lib';
-import { authStore, commonStore, popupStore, menuStore, blockStore } from 'Store';
+import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage } from 'Lib';
+import { authStore, commonStore, popupStore, blockStore } from 'Store';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
-import { OnboardStage as Stage } from './animation/constants';
-import Constant from 'json/constant.json';
+
+enum Stage {
+	Vault	 = 0,
+	Phrase	 = 1,
+	Name	 = 2,
+};
 
 type State = {
 	stage: Stage;
@@ -19,29 +23,29 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	refFrame: Frame = null;
 	refPhrase: Phrase = null;
 	refNext: Button = null;
-	isDelayed = false;
-	isCreating = false;
-	phrase = '';
+	refName: Input = null;
 
 	state: State = {
-		stage: Stage.Void,
+		stage: Stage.Vault,
 		phraseVisible: false,
 		error: '',
 	};
 
+	isDelayed = false;
+	isCreating = false;
+
 	constructor (props: I.PageComponent) {
 		super(props);
 
-		this.onNext = this.onNext.bind(this);
+		this.onForward = this.onForward.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onCopy = this.onCopy.bind(this);
-		this.onAccountPath = this.onAccountPath.bind(this);
 		this.onShowPhrase = this.onShowPhrase.bind(this);
+		this.setError = this.setError.bind(this);
 	};
 
 	render () {
 		const { stage, phraseVisible, error } = this.state;
-		const { config } = commonStore;
 		const cnb = [];
 
 		if (!this.canMoveForward()) {
@@ -54,41 +58,27 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		let more = null;
 
 		switch (stage) {
-			case Stage.Void: {
-				content = (
-					<div className="inputWrapper animation">
-						<Input
-							focusOnMount
-							type="text"
-							placeholder={translate('defaultNamePage')}
-							value={authStore.name}
-							onKeyUp={(e, v) => authStore.nameSet(v)}
-							maxLength={255}
-						/>
-					</div>
-				);
-
+			case Stage.Vault: {
 				buttons = (
 					<div className="animation">
-						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('commonNext')} onClick={this.onNext} />
+						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('authOnboardVaultButton')} onClick={this.onForward} />
 					</div>
 				);
 				break;
 			};
 
 			case Stage.Phrase: {
-				const text = phraseVisible ? translate('authOnboardGoApp') : translate('authOnboardPhraseSubmit');
+				const text = phraseVisible ? translate('commonNext') : translate('authOnboardPhraseSubmit');
 
 				content = (
-					<div className="animation" onClick={this.onCopy}>
-						<Phrase
-							ref={ref => this.refPhrase = ref}
-							value={this.phrase}
-							readonly={true}
-							isHidden={!phraseVisible}
-							onCopy={this.onCopy}
-						/>
-					</div>
+					<Phrase
+						ref={ref => this.refPhrase = ref}
+						className="animation"
+						readonly={true}
+						isHidden={!phraseVisible}
+						onCopy={this.onCopy}
+						onClick={this.onCopy}
+					/>
 				);
 
 				buttons = (
@@ -96,9 +86,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						<div className="animation">
 							<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={text} onClick={this.onShowPhrase} />
 						</div>
+
 						{!phraseVisible ? (
 							<div className="animation">
-								<Button color="blank" text={translate('commonSkip')} onClick={this.onNext} />
+								<Button color="blank" text={translate('commonSkip')} onClick={this.onForward} />
 							</div>
 						) : ''}
 					</React.Fragment>
@@ -107,40 +98,52 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				if (!phraseVisible) {
 					more = <div className="moreInfo animation">{translate('authOnboardMoreInfo')}</div>;
 				};
+				break;
+			};
 
-				if (config.experimental) {
-					footer = (
-						<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
-							<Icon className="gear" />
-							{translate('pageAuthOnboardAccountDataLocation')}
-						</div>
-					);
-				};
+			case Stage.Name: {
+				content = (
+					<div className="inputWrapper animation">
+						<Input
+							ref={ref => this.refName = ref}
+							focusOnMount={true}
+							placeholder={translate('defaultNamePage')}
+							maxLength={255}
+						/>
+					</div>
+				);
+
+				buttons = (
+					<div className="animation">
+						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('authOnboardNameButton')} onClick={this.onForward} />
+					</div>
+				);
 				break;
 			};
 		};
 
 		return (
-			<div ref={(ref) => (this.node = ref)}>
+			<div 
+				ref={(ref) => (this.node = ref)} 
+				className={`stage${Stage[stage]}`}
+			>
 				{this.canMoveBack() ? <Icon className="arrow back" onClick={this.onBack} /> : ''}
 
 				<Frame ref={(ref) => (this.refFrame = ref)}>
-					<DotIndicator className="animation" index={stage} count={2} />
+					<DotIndicator className="animation" index={stage} count={3} />
 					<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
 					<Label id="label" className="animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
 
 					{content}
 
 					<Error className="animation" text={error} />
-
 					<div className="buttons">{buttons}</div>
-
 					{more}
 				</Frame>
 
 				{footer}
 
-				<CanvasWorkerBridge state={Stage.Void} />
+				<CanvasWorkerBridge state={0} />
 			</div>
 		);
 	};
@@ -156,10 +159,15 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	componentDidUpdate (_, prevState): void {
 		const { stage } = this.state;
+		const { account } = authStore;
 
 		if (prevState.stage != stage) {
 			Animation.to();
 			analytics.event('ScreenOnboarding', { step: stage });
+		};
+
+		if (account && (stage == Stage.Phrase)) {
+			Renderer.send('keytarGet', account.id).then(value => this.refPhrase.setValue(value));
 		};
 
 		this.refFrame?.resize();
@@ -168,7 +176,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	componentWillUnmount (): void {
 		this.unbind();
-		this.phrase = '';
 	};
 
 	unbind () {
@@ -186,73 +193,73 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	onKeyDown (e) {
-		keyboard.shortcut('enter', e, this.onNext);
+		keyboard.shortcut('enter', e, this.onForward);
 	};
 
 	/** Guard to prevent illegal state change */
 	canMoveForward (): boolean {
-		const { stage } = this.state;
-
-		if (this.isDelayed) {
-			return false;
-		};
-
-		let ret = false;
-		if ([ Stage.Void, Stage.Phrase ].includes(stage)) {
-			ret = true;
-		};
-		return ret;
+		return !this.isDelayed && !!Stage[this.state.stage];
 	};
 
 	/** Guard to prevent illegal state change */
 	canMoveBack (): boolean {
-		return this.state.stage <= Stage.Phrase;
+		return this.state.stage <= Stage.Name;
 	};
 
 	/** Moves the Onboarding Flow one stage forward if possible */
-	onNext () {
+	onForward () {
 		if (!this.canMoveForward()) {
 			return;
 		};
 
 		const { stage } = this.state;
-		const { account, name } = authStore;
-		const next = () => {
-			Animation.from(() => {
-				this.refNext?.setLoading(false);
+		const { account } = authStore;
+
+		if (stage == Stage.Vault) {
+			const cb = () => {
+				Animation.from(() => {
+					this.setState({ stage: stage + 1 });
+					this.refNext?.setLoading(false);
+				});
+			};
+
+			if (account) {
+				cb();
+			} else {
+				this.refNext?.setLoading(true);
+				UtilData.accountCreate(this.setError, cb);
+			};
+		};
+
+		if (!account) {
+			return;
+		};
+
+		if (stage == Stage.Phrase) {
+			Animation.from(() => { 
 				this.setState({ stage: stage + 1 });
 			});
 		};
 
-		if (stage == Stage.Void) {
-			this.refNext?.setLoading(true);
+		if (stage == Stage.Name) {
+			const name = this.refName.getValue();
+			const cb = () => {
+				Animation.from(() => {
+					this.refNext?.setLoading(false);
 
-			if (account) {
-				this.accountUpdate(() => next());
+					UtilData.onAuth({ routeParam: { replace: true, animate: true } }, () => {
+						Storage.initPinnedTypes();
+					});
+				});
+			};
+
+			if (name) {
+				this.refNext?.setLoading(true);
+				this.accountUpdate(name, cb);
 			} else {
-				this.accountCreate(() => next());
-			};
-		} else {
-			Animation.from(() => UtilData.onAuth({ routeParam: { replace: true, animate: true } }, () => {
-				Storage.initPinnedTypes();
-			}));
-
-			if (!name) {
+				cb();
 				analytics.event('ScreenOnboardingSkipName');
-			};
-		};
-	};
-
-	onShowPhrase () {
-		const { stage, phraseVisible } = this.state;
-
-		if (phraseVisible) {
-			this.onNext();
-		} else {
-			this.refPhrase.onToggle();
-			this.setState({ phraseVisible: true });
-
-			analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: stage });
+			};	
 		};
 	};
 
@@ -264,62 +271,27 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		const { stage } = this.state;
 
-		if (stage == Stage.Void) {
+		if (stage == Stage.Vault) {
 			Animation.from(() => UtilRouter.go('/', { replace: true }));
 		} else {
 			this.setState({ stage: stage - 1 });
 		};
 	};
 
-	accountCreate (callBack?: () => void) {
-		this.refNext?.setLoading(true);
+	onShowPhrase () {
+		const { stage, phraseVisible } = this.state;
 
-		const { name, walletPath, networkConfig } = authStore;
-		const { mode, path } = networkConfig;
+		if (phraseVisible) {
+			this.onForward();
+		} else {
+			this.refPhrase.onToggle();
+			this.setState({ phraseVisible: true });
 
-		C.WalletCreate(walletPath, (message) => {
-			if (message.error.code) {
-				this.setError(message.error.description);
-				return;
-			};
-
-			this.phrase = message.mnemonic;
-
-			UtilData.createSession(this.phrase, '', (message) => {
-				if (message.error.code) {
-					this.setError(message.error.description);
-					return;
-				};
-
-				const { accountPath } = authStore;
-
-				C.AccountCreate(name, '', accountPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
-					if (message.error.code) {
-						this.setError(message.error.description);
-						return;
-					};
-
-					authStore.accountSet(message.account);
-					commonStore.configSet(message.account.config, false);
-					commonStore.isSidebarFixedSet(true);
-
-					UtilData.onInfo(message.account.info);
-					Renderer.send('keytarSet', message.account.id, this.phrase);
-
-					analytics.event('CreateAccount', { middleTime: message.middleTime });
-					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
-
-					C.WorkspaceSetInfo(commonStore.space, { name }, () => {
-						Action.importUsecase(commonStore.space, I.Usecase.GetStarted, callBack);
-					});
-				});
-			});
-		});
+			analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: stage });
+		};
 	};
 
-	accountUpdate = (callBack?: () => void): void => {
-		const { name } = authStore;
-
+	accountUpdate = (name: string, callBack?: () => void): void => {
 		UtilObject.setName(blockStore.profile, name, () => {
 			C.WorkspaceSetInfo(commonStore.space, { name }, callBack);
 		});
@@ -327,7 +299,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Copies key phrase to clipboard and shows a toast */
 	onCopy () {
-		UtilCommon.copyToast(translate('commonPhrase'), this.phrase);
+		UtilCommon.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
 		analytics.event('KeychainCopy', { type: 'Onboarding' });
 	};
 
@@ -335,16 +307,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	onPhraseTooltip () {
 		popupStore.open('phrase', {});
 		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: this.state.stage });
-	};
-
-	/** Shows a tooltip that specififies where the Users account data is stored on their machine */
-	onAccountPath () {
-		menuStore.open('accountPath', {
-			element: '#accountPath',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Center,
-			offsetY: -20,
-		});
 	};
 
 	setError (error: string) {

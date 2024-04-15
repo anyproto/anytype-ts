@@ -35,7 +35,12 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 
 		return (
 			<div className="wrapper">
-				<Header component="mainEmpty" text={translate('commonBin')} layout={I.ObjectLayout.Archive} {...this.props} />
+				<Header 
+					{...this.props}
+					text={translate('commonBin')}
+					component="mainEmpty" 
+					layout={I.ObjectLayout.Archive}
+				/>
 
 				<div className="body">
 					<div className="titleWrapper">

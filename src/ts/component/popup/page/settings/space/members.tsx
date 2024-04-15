@@ -1,12 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, IconObject, ObjectName } from 'Component';
-import { I, UtilObject, UtilData, translate } from 'Lib';
+import { I, UtilObject, UtilSpace, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
-import Constant from 'json/constant.json';
 
 const HEIGHT = 62;
 
@@ -24,10 +22,12 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	render () {
-		const members = this.getMembers();
-		const length = members.length;
+		const items = this.getItems();
+		const length = items.length;
+		const participant = UtilSpace.getParticipant();
 
 		const Member = (item: any) => {
+			const isActive = item.id == participant.id;
 			return (
 				<div 
 					id={`item-${item.id}`} 
@@ -37,9 +37,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 					<div className="col">
 						<IconObject size={42} object={item} />
 						<ObjectName object={item} />
-					</div>
-					<div className="col">
-						<Label text={translate(`participantStatus${item.status}`)} />
+						{isActive ? <div className="caption">({translate('commonYou')})</div> : ''}
 					</div>
 					<div className="col">
 						<Label text={translate(`participantPermissions${item.permissions}`)} />
@@ -49,7 +47,8 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 		};
 
 		const rowRenderer = (param: any) => {
-			const item: any = members[param.index];
+			const item: any = items[param.index];
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -66,14 +65,13 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 
 		return (
 			<div ref={node => this.node = node}>
-				<Head {...this.props} returnTo="spaceIndex" name={translate('commonBack')} />
-
-				<Title text={translate('popupSettingsSpaceShareMembersTitle')} />
+				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
+				<Title text={translate('popupSettingsSpaceMembersTitle')} />
 
 				<div className="section sectionMembers">
 					{this.cache ? (
 						<div id="list" className="rows">
-							<WindowScroller scrollElement={$('#popupSettings-innerWrap').get(0)}>
+							<WindowScroller scrollElement={$('#popupSettings-innerWrap .mainSides #sideRight').get(0)}>
 								{({ height, isScrolling, registerChild, scrollTop }) => (
 									<AutoSizer disableHeight={true} className="scrollArea">
 										{({ width }) => (
@@ -102,36 +100,28 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	componentDidMount() {
-		this.updateCache();
+		const items = this.getItems();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: i => (items[i] || {}).id,
+		});
+		this.forceUpdate();
 	};
 
 	componentDidUpdate() {
 		this.resize();
 	};
 
-	updateCache () {
-		const members = this.getMembers();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (members[i] || {}).id,
-		});
-		this.forceUpdate();
+	getItems () {
+		return UtilSpace.getParticipantsList([ I.ParticipantStatus.Active ]);
 	};
 
 	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};
-	};
-
-	getMembers () {
-		const statuses = [ I.ParticipantStatus.Active ];
-		const subId = Constant.subId.participant;
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
-
-		return records.sort(UtilData.sortByOwner);
 	};
 
 	resize () {

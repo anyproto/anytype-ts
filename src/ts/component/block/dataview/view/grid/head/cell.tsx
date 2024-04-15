@@ -108,7 +108,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 					},
 				}
 			});
-		}, Constant.delay.menu);
+		}, menuStore.getTimeout());
 	};
 
 });

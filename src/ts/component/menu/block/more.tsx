@@ -1,12 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate, Storage } from 'Lib';
+import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate, UtilSpace } from 'Lib';
 import { blockStore, detailStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
-
-const ROUTE = 'MenuObject';
 
 class MenuBlockMore extends React.Component<I.Menu> {
 	
@@ -110,7 +108,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
 		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
 		const blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
+		const canDelete = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
 		let archive = null;
 		let remove = null;
@@ -164,17 +163,17 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		// Restrictions
 
-		const allowedArchive = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedSearch = !block.isObjectSet() && !block.isObjectCollection();
-		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !UtilObject.isSetLayout(object.layout) && !object.templateIsBundled;
-		const allowedFav = canWrite && !object.isArchived && !UtilObject.getFileAndSystemLayouts().includes(object.layout) && !object.templateIsBundled;
+		const allowedArchive = canWrite && canDelete;
+		const allowedSearch = !UtilObject.isSetLayout(object.layout);
+		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !UtilObject.isSetLayout(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
+		const allowedFav = canWrite && !object.isArchived && !UtilObject.isFileOrSystemLayout(object.layout) && !object.templateIsBundled;
 		const allowedLock = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite;
 		const allowedPageLink = true;
 		const allowedCopy = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = canWrite && object.source && block.isObjectBookmark();
 		const allowedInstall = canWrite && !object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout);
-		const allowedUninstall = canWrite && object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
+		const allowedUninstall = canWrite && object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout) && canDelete;
 		const allowedTemplate = canWrite && !UtilObject.getLayoutsWithoutTemplates().includes(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedWidget = canWrite;
 		const hasShortMenu = (
@@ -284,7 +283,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const { data } = param;
 		const { rootId, blockId, onMenuSelect } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const object = detailStore.get(rootId, rootId);
+		const route = analytics.route.menuObject;
 
 		if (!block) {
 			return;
@@ -316,9 +315,10 @@ class MenuBlockMore extends React.Component<I.Menu> {
 						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
-						C.BlockListConvertToObjects(rootId, [ blockId ], item.uniqueKey);
-						analytics.event('CreateObject', { route: ROUTE, objectType: object.type });
-
+						C.BlockListConvertToObjects(rootId, [ blockId ], item.uniqueKey, (message: any) => {
+							analytics.createObject(item.id, item.recommendedLayout, route, message.middleTime);
+						});
+						
 						close();
 
 						if (onMenuSelect) {
@@ -397,6 +397,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const { blockId, rootId, onSelect, isPopup } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const object = detailStore.get(rootId, rootId);
+		const route = analytics.route.menuObject;
 		
 		if (!block || item.arrow) {
 			return;
@@ -413,7 +414,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				return;
 			};
 
-			const home = UtilObject.getSpaceDashboard();
+			const home = UtilSpace.getDashboard();
 			if (home && (object.id == home.id)) {
 				UtilObject.openRoute({ layout: I.ObjectLayout.Empty });
 			} else {
@@ -426,7 +427,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		switch (item.id) {
 				
 			case 'print': {
-				keyboard.onPrint(ROUTE);
+				keyboard.onPrint(route);
 				break;
 			};
 
@@ -437,7 +438,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 			
 			case 'search': {
-				keyboard.onSearchMenu('', ROUTE);
+				keyboard.onSearchMenu('', route);
 				break;
 			};
 
@@ -448,14 +449,14 @@ class MenuBlockMore extends React.Component<I.Menu> {
 							onClose: () => $(window).trigger(`updatePreviewObject.${message.ids[0]}`)
 						});
 
-						analytics.event('DuplicateObject', { count: 1, route: ROUTE, objectType: object.type });
+						analytics.event('DuplicateObject', { count: 1, route, objectType: object.type });
 					};
 				});
 				break;
 			};
 
 			case 'pageExport': {
-				popupStore.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route: ROUTE } });
+				popupStore.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route } });
 				break;
 			};
 				
@@ -470,42 +471,34 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageRemove': {
-				Action.delete([ object.id ], ROUTE, () => onBack());
+				Action.delete([ object.id ], route, () => onBack());
 				break;
 			};
 
 			case 'pageLock': {
-				keyboard.onLock(rootId, true, ROUTE);
+				keyboard.onLock(rootId, true, route);
 				break;
 			};
 
 			case 'pageUnlock': {
-				keyboard.onLock(rootId, false, ROUTE);
+				keyboard.onLock(rootId, false, route);
 				break;
 			};
 
 			case 'pageCreate': {
-				UtilObject.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
-					UtilObject.openAuto(message.details);
-
-					analytics.event('CreateObject', {
-						route: ROUTE,
-						objectType: object.targetObjectType,
-						layout: object.layout,
-					});
-				});
+				UtilObject.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, {}, [], route, message => UtilObject.openAuto(message.details));
 				break;
 			};
 
 			case 'pageLink': {
 				UtilCommon.clipboardCopy({ text: Url.protocol + UtilObject.universalRoute(object) });
-				analytics.event('CopyLink', { ROUTE });
+				analytics.event('CopyLink', { route });
 				break;
 			};
 
 			case 'pageReload': {
 				C.ObjectBookmarkFetch(rootId, object.source, () => {
-					analytics.event('ReloadSourceData', { ROUTE });
+					analytics.event('ReloadSourceData', { route });
 				});
 				break;
 			};
@@ -518,17 +511,17 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageUninstall': {
-				Action.uninstall(object, false, () => onBack());
+				Action.uninstall(object, false, '', () => onBack());
 				break;
 			};
 
 			case 'fav': {
-				Action.setIsFavorite([ rootId ], true, ROUTE);
+				Action.setIsFavorite([ rootId ], true, route);
 				break;
 			};
 
 			case 'unfav': {
-				Action.setIsFavorite([ rootId ], false, ROUTE);
+				Action.setIsFavorite([ rootId ], false, route);
 				break;
 			};
 
@@ -545,7 +538,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					Preview.toastShow({ text: translate('toastTemplateCreate') });
 					Preview.toastShow({ action: I.ToastAction.TemplateCreate, objectId: rootId });
 
-					analytics.event('CreateTemplate', { objectType: object.type, route: ROUTE });
+					analytics.event('CreateTemplate', { objectType: object.type, route });
 				});
 				break;
 			};
@@ -553,7 +546,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'setDefault': {
 				UtilObject.setDefaultTemplateId(object.targetObjectType, rootId);
 				Preview.toastShow({ text: translate('toastSetDefaultTemplate') });
-				analytics.event('ChangeDefaultTemplate', { route: ROUTE });
+				analytics.event('ChangeDefaultTemplate', { route });
 				break;
 			};
 

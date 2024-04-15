@@ -37,7 +37,7 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: 18.18.2
+          node-version: 20.9.0
 
       - name: Install Webpack
         run: npm install --save-dev webpack-cli --legacy-peer-deps
@@ -65,10 +65,14 @@ jobs:
       - name: Build Native Messaging Host Windows
         if: matrix.os == 'windows-latest'
         run: npm run build:nmh-win
+        env:
+          CGO_ENABLED: 0
 
       - name: Build Native Messaging Host
         if: matrix.os != 'windows-latest'
         run: npm run build:nmh
+        env:
+          CGO_ENABLED: 0
 
       - name: Build Front Mac OS
         if: matrix.os == 'macos-latest'

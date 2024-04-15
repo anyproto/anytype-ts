@@ -1,6 +1,7 @@
-import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
+import { I, C, focus, analytics, keyboard, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
+import Url from 'json/url.json';
 
 class Action {
 
@@ -86,7 +87,7 @@ class Action {
 		
 		const url = block.isFileImage() ? commonStore.imageUrl(targetObjectId, 1000000) : commonStore.fileUrl(targetObjectId);
 
-		Renderer.send('download', url);
+		Renderer.send('download', url, { saveAs: true });
 		analytics.event('DownloadMedia', { type, route });
 	};
 
@@ -153,6 +154,8 @@ class Action {
 			return;
 		};
 
+		const { layout } = block.content;
+
 		C.BlockListDelete(widgets, [ id ]);
 		Storage.setToggle('widget', id, false);
 		Storage.deleteToggle(`widget${id}`);
@@ -162,7 +165,7 @@ class Action {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
 
-		analytics.event('DeleteWidget', { target });
+		analytics.event('DeleteWidget', { layout, params: { target } });
 	};
 
 	focusToEnd (rootId: string, id: string) {
@@ -259,8 +262,12 @@ class Action {
 		});
 	};
 
-	uninstall (object: any, showToast: boolean, callBack?: (message: any) => void) {
+	uninstall (object: any, showToast: boolean, route?: string, callBack?: (message: any) => void) {
 		const eventParam: any = { layout: object.layout };
+
+		if (route) {
+			eventParam.route = route;
+		};
 
 		let title = '';
 		let text = '';
@@ -347,11 +354,12 @@ class Action {
 	};
 
 	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
-		const { walletPath, networkConfig } = authStore;
+		const { networkConfig } = authStore;
+		const { dataPath } = commonStore;
 		const { mode, path } = networkConfig;
 
 		this.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], walletPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
+			C.AccountRecoverFromLegacyExport(paths[0], dataPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
 				if (onError(message.error)) {
 					return;
 				};
@@ -363,7 +371,7 @@ class Action {
 						return;
 					};
 
-					C.AccountSelect(accountId, walletPath, mode, path, (message: any) => {
+					C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
 						if (onError(message.error) || !message.account) {
 							return;
 						};
@@ -373,7 +381,7 @@ class Action {
 
 						UtilData.onInfo(message.account.info);
 						UtilData.onAuth({ routeParam: { animate: true } }, () => {
-							window.setTimeout(() => { popupStore.open('migration', { data: { type: 'import' } }); }, Constant.delay.popup);
+							window.setTimeout(() => { popupStore.open('migration', { data: { type: 'import' } }); }, popupStore.getTimeout());
 							blockStore.closeRecentWidgets();
 						});
 					});
@@ -434,20 +442,24 @@ class Action {
 			analytics.event('ClickImportFile', { type });
 
 			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
-				if (!message.error.code) {
-					if (message.collectionId) {
-						window.setTimeout(() => {
-							popupStore.open('objectManager', { 
-								data: { 
-									collectionId: message.collectionId, 
-									type: I.ObjectManagerPopup.Favorites,
-								} 
-							});
-						}, Constant.delay.popup + 10);
-					};
-
-					analytics.event('Import', { middleTime: message.middleTime, type });
+				if (message.error.code) {
+					return;
 				};
+
+				const { collectionId, count } = message;
+
+				if (collectionId) {
+					window.setTimeout(() => {
+						popupStore.open('objectManager', { 
+							data: { 
+								collectionId, 
+								type: I.ObjectManagerPopup.Favorites,
+							} 
+						});
+					}, popupStore.getTimeout() + 10);
+				};
+
+				analytics.event('Import', { middleTime: message.middleTime, type, count });
 
 				if (callBack) {	
 					callBack(message);
@@ -538,23 +550,31 @@ class Action {
 	};
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
-		const { accountSpaceId } = authStore;
-		const space = UtilObject.getSpaceview();
-		const deleted = UtilObject.getSpaceviewBySpaceId(id);
+		const deleted = UtilSpace.getSpaceviewBySpaceId(id);
 
 		if (!deleted) {
 			return;
 		};
 
-		analytics.event('ClickDeleteSpace', { route });
+		const { accountSpaceId } = authStore;
+		const { space } = commonStore;
+		const isOwner = UtilSpace.isOwner(id);
+		const name = UtilCommon.shorten(deleted.name, 32);
+		const suffix = isOwner ? 'Delete' : 'Leave';
+		const title = UtilCommon.sprintf(translate(`space${suffix}WarningTitle`), name);
+		const text = UtilCommon.sprintf(translate(`space${suffix}WarningText`), name);
+		const toast = UtilCommon.sprintf(translate(`space${suffix}Toast`), name);
+		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
+
+		analytics.event(`Click${suffix}Space`, { route });
 
 		popupStore.open('confirm', {
 			data: {
-				title: UtilCommon.sprintf(translate('spaceDeleteWarningTitle'), deleted.name),
-				text: translate('spaceDeleteWarningText'),
-				textConfirm: translate('commonDelete'),
+				title,
+				text,
+				textConfirm: confirm,
 				onConfirm: () => {
-					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete' });
+					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
 					const cb = () => {
 						C.SpaceDelete(id, (message: any) => {
@@ -563,22 +583,35 @@ class Action {
 							};
 
 							if (!message.error.code) {
-								Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
-								analytics.event('DeleteSpace', { type: deleted.spaceAccessType });
+								Preview.toastShow({ text: toast });
+								analytics.event(`${suffix}Space`, { type: deleted.spaceAccessType, route });
 							};
 						});
 					};
 
-					if (space.id == deleted.id) {
+					if (space == id) {
 						UtilRouter.switchSpace(accountSpaceId, '', cb);
 					} else {
 						cb();
 					};
 				},
 				onCancel: () => {
-					analytics.event('ClickDeleteSpaceWarning', { type: 'Cancel' });
+					analytics.event(`Click${suffix}SpaceWarning`, { type: 'Cancel', route });
 				}
 			},
+		});
+	};
+
+	leaveApprove (spaceId: string, identities: string[], name: string, route: string, callBack?: (message: any) => void) {
+		C.SpaceLeaveApprove(spaceId, identities, (message: any) => {
+			if (!message.error.code) {
+				Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
+				analytics.event('ApproveLeaveRequest', { route });
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 
@@ -602,9 +635,17 @@ class Action {
 		});
 	};
 
-	setIsFavorite (objectIds: string[], v: boolean, route: string) {
-		C.ObjectListSetIsFavorite(objectIds, v, () => {
+	setIsFavorite (objectIds: string[], v: boolean, route: string, callBack?: (message: any) => void) {
+		C.ObjectListSetIsFavorite(objectIds, v, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			analytics.event(v ? 'AddToFavorites' : 'RemoveFromFavorites', { count: objectIds.length, route });
+
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 
@@ -636,6 +677,28 @@ class Action {
 		C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, layout, limit, () => {
 			analytics.event('AddWidget', { type: layout });
 		});
+	};
+
+	membershipUpgrade () {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupConfirmMembershipUpgradeTitle'),
+				text: translate('popupConfirmMembershipUpgradeText'),
+				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
+				onConfirm: () => {
+					const anyName = authStore.membership?.requestedAnyName;
+					if (!anyName) {
+						return;
+					};
+
+					let url = Url.membershipUpgrade;
+					url = url.replace(/\%25anyName\%25/g, anyName);
+
+					Renderer.send('urlOpen', url);
+				},
+				canCancel: false
+			}
+		})
 	};
 
 };

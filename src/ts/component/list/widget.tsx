@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
-import { C, I, M, keyboard, UtilObject, analytics, translate } from 'Lib';
+import { C, I, M, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -22,8 +22,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		previewId: '',
 	};
 
-	node: any = null;
-	top = 0;
+	node = null;
 	dropTargetId = '';
 	position: I.BlockPosition = null;
 	isDragging = false;
@@ -36,7 +35,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.onScroll = this.onScroll.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onLibrary = this.onLibrary.bind(this);
 		this.onArchive = this.onArchive.bind(this);
@@ -49,7 +47,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		const { isEditing, previewId } = this.state;
 		const { widgets } = blockStore;
 		const cn = [ 'listWidget' ];
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		let content = null;
 
@@ -198,16 +196,11 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				className={cn.join(' ')}
 				onDrop={this.onDrop}
 				onDragOver={e => e.preventDefault()}
-				onScroll={this.onScroll}
 				onContextMenu={this.onContextMenu}
 			>
 				{content}
 			</div>
 		);
-	};
-
-	componentDidUpdate (): void {
-		$(this.node).scrollTop(this.top);
 	};
 
 	onEdit (e: any): void {
@@ -314,10 +307,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.clear();
 	};
 
-	onScroll () {
-		this.top = $(this.node).scrollTop();
-	};
-
 	onLibrary (e: any) {
 		const { isEditing } = this.state;
 
@@ -336,7 +325,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onContextMenu () {
 		const { previewId } = this.state;
-		if (previewId || !UtilObject.canParticipantWrite()) {
+		if (previewId || !UtilSpace.canParticipantWrite()) {
 			return;
 		};
 
@@ -455,7 +444,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			win.on('keydown.sidebar', e => {
 				keyboard.shortcut('escape', e, () => close(e));
 			});
-		}, Constant.delay.menu);
+		}, menuStore.getTimeout());
 	};
 
 });

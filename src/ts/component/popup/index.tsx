@@ -25,6 +25,9 @@ import PopupAbout from './about';
 import PopupRelation from './relation';
 import PopupInviteRequest from './invite/request';
 import PopupInviteConfirm from './invite/confirm';
+import PopupInviteQr from './invite/qr';
+import PopupMembership from './membership';
+import PopupMembershipFinalization from './membership/finalization';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -66,6 +69,9 @@ class Popup extends React.Component<I.Popup> {
 			relation:				 PopupRelation,
 			inviteRequest:			 PopupInviteRequest,
 			inviteConfirm:			 PopupInviteConfirm,
+			inviteQr:				 PopupInviteQr,
+			membership: 		 	 PopupMembership,
+			membershipFinalization:  PopupMembershipFinalization,
 		};
 		
 		const popupId = this.getId();
@@ -161,7 +167,7 @@ class Popup extends React.Component<I.Popup> {
 			window.setTimeout(() => { 
 				wrap.css({ transform: 'none' }); 
 				this.isAnimating = false;
-			}, Constant.delay.popup);
+			}, popupStore.getTimeout());
 		});
 	};
 	

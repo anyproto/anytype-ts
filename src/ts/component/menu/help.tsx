@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
-import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilObject, translate } from 'Lib';
+import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilSpace, translate } from 'Lib';
 import { popupStore, blockStore } from 'Store';
 import Url from 'json/url.json';
 
@@ -96,7 +96,7 @@ class MenuHelp extends React.Component<I.Menu> {
 		const storeTab = Storage.get('tabStore');
 		const isStoreType = isStore && (storeTab == I.StoreTab.Type);
 		const isStoreRelation = isStore && (storeTab == I.StoreTab.Relation);
-		const home = UtilObject.getSpaceDashboard();
+		const home = UtilSpace.getDashboard();
 
 		close();
 		analytics.event(UtilCommon.toUpperCamelCase([ getId(), item.id ].join('-')));

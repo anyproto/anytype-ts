@@ -15,7 +15,7 @@ export interface WidgetComponent {
 	block: I.Block;
 	isEditing?: boolean;
 	isPreview?: boolean;
-	isCollection?: (blockId: string) => boolean;
+	isSystemTarget?: () => boolean;
 	setPreview?: (id: string) => void;
 	setEditing?: (v: boolean) => void;
 	getData?: (subId: string, callBack?: () => void) => void;
@@ -31,6 +31,7 @@ export interface WidgetTreeItem {
 	depth: number; // the depth of the node in the tree
 	numChildren: number; // the number of children of the node
 	isSection?: boolean;
+	branch: string;
 };
 
 export interface WidgetTreeDetails { 

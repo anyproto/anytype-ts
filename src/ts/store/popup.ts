@@ -13,9 +13,13 @@ const SHOW_DIMMER = [
 	'pin',
 	'preview',
 	'about',
+	'usecase',
 	'inviteRequest',
 	'inviteConfirm',
+	'inviteQr',
 	'usecase',
+	'membership',
+	'membershipFinalization',
 ];
 
 class PopupStore {
@@ -32,7 +36,7 @@ class PopupStore {
             update: action,
             updateData: action,
             close: action,
-            closeAll: action
+            closeAll: action,
         });
     };
 
@@ -163,7 +167,7 @@ class PopupStore {
 
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
-		const timeout = this.getTimeout(items);
+		const timeout = items.length ? Constant.delay.popup : 0;
 
 		items.forEach(it => this.close(it.id));
 
@@ -177,8 +181,8 @@ class PopupStore {
 		return ids && ids.length ? this.popupList.filter(it => ids.includes(it.id)) : this.popupList;
 	};
 
-	getTimeout (items: I.Popup[]) {
-		return items.length ? Constant.delay.popup : 0;
+	getTimeout () {
+		return this.getItems().length ? Constant.delay.popup : 0;
 	};
 
 	closeLast () {
@@ -204,6 +208,10 @@ class PopupStore {
 			};
 		};
 		return ret;
+	};
+
+	replace (oldId: string, newId: string, param: I.PopupParam) {
+		this.close(oldId, () => this.open(newId, param));
 	};
 
 };

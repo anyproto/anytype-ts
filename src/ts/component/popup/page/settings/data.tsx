@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Title, Label, IconObject, ObjectName, Button } from 'Component';
-import { analytics, C, UtilRouter, UtilFile, I, translate, UtilCommon, UtilData } from 'Lib';
+import { analytics, C, UtilFile, I, translate, UtilCommon, UtilData, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
-import { authStore, commonStore, popupStore } from 'Store';
+import { commonStore, popupStore } from 'Store';
 
 interface Props extends I.PopupSettings {
     onPage: (id: string) => void;
@@ -15,17 +15,13 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
         super(props);
 
         this.onOffload = this.onOffload.bind(this);
-        this.onLocationMove = this.onLocationMove.bind(this);
     };
 
     render () {
         const { onPage } = this.props;
-        const { localUsage } = commonStore.spaceStorage;
-        const { walletPath, accountPath } = authStore;
-        const { config } = commonStore;
-        const localStorage = { name: translate('popupSettingsDataLocalFiles'), iconEmoji: ':desktop_computer:' };
-        const canMove = config.experimental;
-		const suffix = UtilData.isLocalOnly() ? 'LocalOnly' : '';
+		const { dataPath, spaceStorage } = commonStore
+        const { localUsage } = spaceStorage;
+		const suffix = this.getSuffix();
 
         return (
             <React.Fragment>
@@ -35,46 +31,54 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                 <div className="actionItems">
                     <div className="item storageUsage">
                         <div className="side left">
-                            <IconObject object={localStorage} size={44} />
+							<IconObject object={{ iconEmoji: ':desktop_computer:' }} size={44} />
 
-                            <div className="txt">
-                                <ObjectName object={localStorage} />
-                                <div className="type">{UtilCommon.sprintf(translate(`popupSettingsDataManagementLocalStorageUsage`), UtilFile.size(localUsage))}</div>
-                            </div>
+							<div className="txt">
+								<div className="name">{translate('popupSettingsDataLocalFiles')}</div>
+								<div className="type">{UtilCommon.sprintf(translate(`popupSettingsDataManagementLocalStorageUsage`), UtilFile.size(localUsage))}</div>
+							</div>
                         </div>
 						<div className="side right">
 							<Button color="blank" className="c28" text={translate(`popupSettingsDataManagementOffloadFiles${suffix}`)} onClick={this.onOffload} />
 						</div>
                     </div>
 
-                    {canMove ? (
-                        <div id="row-location" className="item accountLocation" onClick={this.onLocationMove}>
-                            <Label text={translate('popupSettingsAccountMoveTitle')} />
-                            <Label className="locationLabel" text={walletPath == accountPath ? 'Default' : 'Custom'} />
-                        </div>
-                    ) : ''}
+
+					<div className="item">
+						<div className="side left">
+							<IconObject object={{ iconEmoji: ':file_folder:' }} size={44} />
+
+							<div className="txt">
+								<Title text={translate('popupSettingsDataManagementDataLocation')} />
+								<Label text={dataPath} />
+							</div>
+						</div>
+						<div className="side right">
+							<Button color="blank" className="c28" text={translate(`commonOpen`)} onClick={this.onOpenDataLocation} />
+						</div>
+					</div>
                 </div>
 
                 <Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
                 <Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
                 <Button className="c36" onClick={() => onPage('delete')} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
-
             </React.Fragment>
         );
     };
 
     onOffload (e: any) {
         const { setLoading } = this.props;
-		const localOnly =  UtilData.isLocalOnly();
+		const suffix = this.getSuffix();
+		const isLocalOnly = UtilData.isLocalOnly();
 
         analytics.event('ScreenFileOffloadWarning');
 
         popupStore.open('confirm',{
             data: {
-                title: translate('popupSettingsDataOffloadWarningTitle'),
-                text: translate(`popupSettingsDataOffloadWarningText${localOnly ? 'LocalOnly' : ''}`),
-                textConfirm: localOnly ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
-				canCancel: localOnly,
+                title: translate('commonAreYouSure'),
+                text: translate(`popupSettingsDataOffloadWarningText${suffix}`),
+                textConfirm: isLocalOnly ? translate('popupSettingsDataKeepFiles') : translate('commonYes'),
+				canCancel: isLocalOnly,
 				textCancel: translate('popupSettingsDataRemoveFiles'),
                 onConfirm: () => {
                     setLoading(true);
@@ -103,39 +107,13 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
         });
     };
 
-    onLocationMove () {
-        const { setLoading } = this.props;
-		const { account } = authStore;
-		const { info } = account;
-		const localStoragePath = String(info.localStoragePath || '');
+	onOpenDataLocation () {
+		Renderer.send('pathOpen', commonStore.dataPath);
+	};
 
-		if (!localStoragePath) {
-			return;
-		};
-
-        const accountPath = localStoragePath.replace(new RegExp(account.id + '\/?$'), '');
-        const options = {
-            defaultPath: accountPath,
-            properties: [ 'openDirectory' ],
-        };
-
-        UtilCommon.getElectron().showOpenDialog(options).then((result: any) => {
-            const files = result.filePaths;
-            if ((files == undefined) || !files.length) {
-                return;
-            };
-
-            setLoading(true);
-            C.AccountMove(files[0], (message: any) => {
-                if (message.error.code) {
-                    this.setState({ error: message.error.description });
-                } else {
-                    UtilRouter.go('/auth/setup/init', {});
-                };
-                setLoading(false);
-            });
-        });
-    };
+	getSuffix () {
+		return UtilData.isLocalOnly() ? 'LocalOnly' : '';
+	};
 
 });
 

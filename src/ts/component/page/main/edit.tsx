@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, Onboarding, UtilObject, analytics } from 'Lib';
+import { I, Onboarding, UtilObject, analytics, UtilSpace } from 'Lib';
 import { detailStore, blockStore } from 'Store';
 
 class PageMainEdit extends React.Component<I.PageComponent> {
@@ -20,7 +20,12 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 
 		return (
 			<React.Fragment>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} rootId={rootId} {...this.props} />
+				<Header 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					{...this.props} 
+					rootId={rootId} 
+				/>
 
 				<div id="bodyWrapper" className="wrapper">
 					<EditorPage key="editorPage" {...this.props} isPopup={isPopup} rootId={rootId} onOpen={this.onOpen} />
@@ -34,7 +39,7 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 	onOpen () {
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const home = UtilObject.getSpaceDashboard();
+		const home = UtilSpace.getDashboard();
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 
 		if (this.refHeader) {

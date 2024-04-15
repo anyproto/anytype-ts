@@ -31,7 +31,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 		return (
 			<div ref={node => this.node = node}>
 				<Head {...this.props} returnTo="dataManagement" name={translate('commonBack')} />
-				<Title text={translate('popupSettingsAccountDeleteTitle')} />
+				<Title text={translate('popupSettingsVaultDeleteTitle')} />
 
 				<div className="text">
 					<b>{translate('popupSettingsDeleteTitle1')}</b>
@@ -74,10 +74,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 	};
 
 	onCheck () {
-		const value = !this.refCheckbox.getValue();
-
-		this.refCheckbox.setValue(value);
-		this.refButton.setDisabled(!value);
+		this.refCheckbox.toggle();
 	};
 
 });

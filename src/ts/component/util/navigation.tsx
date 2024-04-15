@@ -3,12 +3,13 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
-import { I, UtilObject, keyboard, UtilCommon, Preview, translate } from 'Lib';
+import { I, UtilObject, keyboard, UtilCommon, Preview, translate, UtilSpace, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
 
 	_isMounted = false;
 	node: any = null;
+	timeoutPlus = 0;
 
 	constructor (props: object) {
 		super(props);
@@ -22,22 +23,63 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	render () {
+		const { navigationMenu } = commonStore;
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
-		const participant = UtilObject.getParticipant();
+		const participant = UtilSpace.getParticipant();
 		const isWin = UtilCommon.isPlatformWindows();
 		const isLinux = UtilCommon.isPlatformLinux();
 		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
 		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
+
+		let buttonPlus: any = null;
+		if (canWrite) {
+			buttonPlus = { id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${cmd} + ${alt} + N` };
+
+			switch (navigationMenu) {
+				case I.NavigationMenuMode.Context: {
+					buttonPlus.onClick = this.onAdd;
+					buttonPlus.onContextMenu = () => keyboard.onQuickCapture(false);
+					break;
+				};
+
+				case I.NavigationMenuMode.Click: {
+					buttonPlus.onClick = () => keyboard.onQuickCapture(false);
+					break;
+				};
+
+				case I.NavigationMenuMode.Hover: {
+					buttonPlus.onClick = this.onAdd;
+					buttonPlus.onMouseEnter = e => {
+						window.clearTimeout(this.timeoutPlus);
+						this.timeoutPlus = window.setTimeout(() => {
+							keyboard.onQuickCapture(false, { isSub: true, passThrough: false });
+						}, 1000);
+					};
+					buttonPlus.onMouseLeave = () => {};
+					break;
+				};
+
+			};
+
+		};
 
 		const buttons: any[] = [
 			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
 			{ id: 'forward', tooltip: translate('commonForward'), caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
-			canWrite ? { id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${cmd} + ${alt} + N`, onClick: this.onAdd, onContextMenu: () => keyboard.onQuickCapture() } : null, 
+			buttonPlus,
 			{ id: 'graph', tooltip: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
 			{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: this.onSearch },
-		].filter(it => it);
+		].filter(it => it).map(it => {
+			if (!it.onMouseEnter && !it.disabled) {
+				it.onMouseEnter = e => this.onTooltipShow(e, it.tooltip, it.caption);
+			};
+			if (!it.onMouseLeave) {
+				it.onMouseLeave = () => Preview.tooltipHide(false);
+			};
+			return it;
+		});
 
 		return (
 			<div 
@@ -57,11 +99,11 @@ const Navigation = observer(class Navigation extends React.Component {
 							<div 
 								key={item.id} 
 								id={`button-navigation-${item.id}`}
+								className={cn.join(' ')}
 								onClick={item.onClick}
 								onContextMenu={item.onContextMenu}
-								className={cn.join(' ')}
-								onMouseEnter={e => item.disabled ? null : this.onTooltipShow(e, item.tooltip, item.caption)}
-								onMouseLeave={e => Preview.tooltipHide(false)}
+								onMouseEnter={item.onMouseEnter}
+								onMouseLeave={item.onMouseLeave}
 							>
 								<Icon className={item.id} />
 							</div>
@@ -74,7 +116,7 @@ const Navigation = observer(class Navigation extends React.Component {
 						id="button-navigation-profile"
 						className="iconWrap"
 						onClick={this.onProfile}
-						onMouseEnter={e => this.onTooltipShow(e, translate('navigationAccount'), 'Ctrl + Tab')}
+						onMouseEnter={e => this.onTooltipShow(e, translate('navigationVault'), 'Ctrl + Tab')}
 						onMouseLeave={e => Preview.tooltipHide(false)}
 					>
 						<IconObject object={participant} />
@@ -117,7 +159,7 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	onAdd (e: any) {
-		e.altKey ? keyboard.onQuickCapture() : keyboard.pageCreate({}, 'Navigation');
+		e.altKey ? keyboard.onQuickCapture(false) : keyboard.pageCreate({}, analytics.route.navigation);
 	};
 
 	onGraph () {
@@ -125,7 +167,7 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	onSearch () {
-		keyboard.onSearchPopup('Navigation');
+		keyboard.onSearchPopup(analytics.route.navigation);
 	};
 
 	onProfile () {

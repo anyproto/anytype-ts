@@ -17,7 +17,7 @@ class Dataview {
 		let relations = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter(it => it);
 		let o = 0;
 
-		if (!config.debug.ho) {
+		if (!config.debug.hiddenObject) {
 			relations = relations.filter(it => (it.relationKey == 'name') || !it.isHidden);
 		};
 
@@ -365,6 +365,13 @@ class Dataview {
 			};
 		};
 		return translate('blockDataviewCreateNew');
+	};
+
+	viewUpdate (rootId: string, blockId: string, viewId: string, param: Partial<I.View>, callBack?: (message: any) => void) {
+		const view = UtilCommon.objectCopy(dbStore.getView(rootId, blockId, viewId));
+		if (view) {
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, Object.assign(view, param), callBack);
+		};
 	};
 
 };

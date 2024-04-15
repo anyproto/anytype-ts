@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Frame, Title, Label, Error, Header, Button } from 'Component';
-import { I, UtilCommon, UtilRouter, C, Action, Survey, UtilObject, analytics, translate, UtilDate, Renderer } from 'Lib';
+import { I, UtilCommon, UtilRouter, C, Action, Survey, UtilSpace, analytics, translate, UtilDate } from 'Lib';
 import { authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 import { OnboardStage } from './animation/constants';
-import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
@@ -71,7 +70,6 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 
         return (
 			<div>
-				<Header {...this.props} component="authIndex" />
 				<CanvasWorkerBridge state={OnboardStage.Void} />
 				
 				<Frame>
@@ -107,7 +105,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	};
 
 	componentDidMount() {
-		window.setTimeout(() => Survey.check(I.SurveyType.Delete), Constant.delay.popup);
+		window.setTimeout(() => Survey.check(I.SurveyType.Delete), popupStore.getTimeout());
 	};
 
 	onRemove () {
@@ -131,14 +129,14 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 			files: true, 
 			archived: true, 
 			json: false, 
-			route: 'Deleted',
+			route: analytics.route.deleted,
 		});
 	};
 
 	onCancel () {
 		C.AccountRevertDeletion((message) => {
 			authStore.accountSetStatus(message.status);	
-			UtilObject.openHome('route');
+			UtilSpace.openDashboard('route');
 			analytics.event('CancelDeletion');
 		});
 	};

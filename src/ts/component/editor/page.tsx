@@ -5,7 +5,10 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
-import { I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, Renderer, sidebar } from 'Lib';
+import { 
+	I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, 
+	Renderer, sidebar, UtilSpace 
+} from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
@@ -50,6 +53,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	timeoutMove = 0;
 	timeoutScreen = 0;
+	timeoutLoading = 0;
 
 	frameMove = 0;
 	frameResize = 0;
@@ -71,7 +75,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.focusTitle = this.focusTitle.bind(this);
 		this.blockRemove = this.blockRemove.bind(this);
 		this.setLayoutWidth = this.setLayoutWidth.bind(this);
-		this.setLoading = this.setLoading.bind(this);
 	};
 
 	render () {
@@ -121,7 +124,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							setLayoutWidth={this.setLayoutWidth}
-							setLoading={this.setLoading}
 							readonly={readonly}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
@@ -136,7 +138,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							readonly={readonly}
 							blockRemove={this.blockRemove}
 							getWrapperWidth={this.getWrapperWidth}
-							setLoading={this.setLoading}
 						/>
 					</div>
 					
@@ -189,6 +190,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.clear(false);
 		window.clearInterval(this.timeoutScreen);
+		window.clearTimeout(this.timeoutLoading);
+		window.clearTimeout(this.timeoutMove);
 		Renderer.remove('commandEditor');
 	};
 
@@ -231,32 +234,37 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		this.close();
 		this.id = rootId;
-		this.setState({ isDeleted: false, isLoading: true });
+		this.setState({ isDeleted: false });
+
+		window.clearTimeout(this.timeoutLoading);
+		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
 
 		C.ObjectOpen(this.id, '', UtilRouter.getRouteSpaceId(), (message: any) => {
+			window.clearTimeout(this.timeoutLoading);
+			this.setLoading(false);
+
 			if (!UtilCommon.checkError(message.error.code)) {
 				return;
 			};
 
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true, isLoading: false });
+					this.setState({ isDeleted: true });
 				} else {
-					UtilObject.openHome('route');
+					UtilSpace.openDashboard('route');
 				};
 				return;
 			};
 
 			const object = detailStore.get(rootId, rootId, []);
 			if (object.isDeleted) {
-				this.setState({ isDeleted: true, isLoading: false });
+				this.setState({ isDeleted: true });
 				return;
 			};
 
 			this.containerScrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
 			this.focusTitle();
-			this.setLoading(false);
-			
+
 			UtilCommon.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 
 			if (onOpen) {
@@ -848,7 +856,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (range.from == range.to) {
-			keyboard.shortcut(`${cmd}+k`, e, () => keyboard.onSearchPopup('Shortcut'));
+			keyboard.shortcut(`${cmd}+k`, e, () => keyboard.onSearchPopup(analytics.route.shortcut));
 		};
 
 		if (!isInsideTable && block.isText()) {
@@ -975,11 +983,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const element = blockStore.getMapElement(rootId, first.id);
-		const parent = blockStore.getLeaf(rootId, element.parentId);
-		const parentElement = blockStore.getMapElement(rootId, parent.id);
+		const parent = blockStore.getParentLeaf(rootId, first.id);
+		if (!parent) {
+			return;
+		};
 
-		if (!element || !parentElement) {
+		const parentElement = blockStore.getParentMapElement(rootId, first.id);
+		if (!parentElement) {
 			return;
 		};
 
@@ -1025,10 +1035,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const element = blockStore.getMapElement(rootId, block.id);
-		const parentElement = blockStore.getMapElement(rootId, block.parentId);
+		const parentElement = blockStore.getParentMapElement(rootId, block.id);
 		const nextElement = blockStore.getMapElement(rootId, next.id);
-		const nextParent = blockStore.getLeaf(rootId, next.parentId);
-		const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
+		const nextParent = blockStore.getParentLeaf(rootId, next.id);
+		const nextParentElement = blockStore.getParentMapElement(rootId, next.id);
 
 		if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
 			return;
@@ -1092,10 +1102,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const element = blockStore.getMapElement(rootId, block.id);
-		const parentElement = blockStore.getMapElement(rootId, block.parentId);
+		const parentElement = blockStore.getParentMapElement(rootId, block.id);
 		const nextElement = blockStore.getMapElement(rootId, next.id);
-		const nextParent = blockStore.getLeaf(rootId, next.parentId);
-		const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
+		const nextParent = blockStore.getParentLeaf(rootId, next.id);
+		const nextParentElement = blockStore.getParentMapElement(rootId, next.id);
 
 		if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
 			return;
@@ -1311,11 +1321,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const element = blockStore.getMapElement(rootId, block.id);
-		const parent = blockStore.getLeaf(rootId, element?.parentId);
-		const parentElement = blockStore.getMapElement(rootId, parent?.id);
+		const parent = blockStore.getParentLeaf(rootId, block.id);
+		const parentElement = blockStore.getParentMapElement(rootId, block.id);
 
-		if (!element || !parent || !parentElement) {
+		if (!parent || !parentElement) {
 			return;
 		};
 
@@ -1446,8 +1455,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (isInsideTable) {
-			const element = blockStore.getMapElement(rootId, block.id);
-			const rowElement = blockStore.getMapElement(rootId, element.parentId);
+			const rowElement = blockStore.getParentMapElement(rootId, block.id);
 			const idx = rowElement.childrenIds.indexOf(block.id);
 			const nextRow = this.getNextTableRow(block.id, dir);
 
@@ -1489,7 +1497,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (isInsideTable) {
 			const element = blockStore.getMapElement(rootId, block.id);
-			const rowElement = blockStore.getMapElement(rootId, element?.parentId);
+			const rowElement = blockStore.getParentMapElement(rootId, block.id);
 
 			if (!rowElement) {
 				return;
@@ -1746,6 +1754,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
+		const win = $(window);
 		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
 		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
@@ -1766,10 +1775,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			options.unshift({ id: 'embed', name: translate('editorPagePasteEmbed') });
 		};
 
-		menuStore.open('selectPasteUrl', { 
+		const menuParam = { 
 			component: 'select',
 			element: `#block-${focused}`,
-			offsetX: Constant.size.blockMenu,
+			recalcRect: () => { 
+				const rect = UtilCommon.getSelectionRect();
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+			},
+			offsetX: () => {
+				const rect = UtilCommon.getSelectionRect();
+				return rect ? 0 : Constant.size.blockMenu;
+			},
 			onOpen: () => {
 				if (block) {
 					window.setTimeout(() => {
@@ -1816,18 +1832,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 						case 'object': {
 							C.ObjectToBookmark(rootId, url, (message: any) => {
-								if (message.error.code) {
-									return;
+								if (!message.error.code) {
+									UtilObject.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
+									analytics.createObject(Constant.typeKey.bookmark, I.ObjectLayout.Bookmark, analytics.route.bookmark, message.middleTime);
 								};
-
-								UtilObject.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
-
-								analytics.event('CreateObject', {
-									route: 'Bookmark',
-									objectType: Constant.typeKey.bookmark,
-									layout: I.ObjectLayout.Bookmark,
-									template: '',
-								});
 							});
 							break;
 						};
@@ -1864,6 +1872,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					};
 				},
 			}
+		};
+
+		menuStore.closeAll([ 'blockContext', 'blockAdd', 'blockAction' ], () => {
+			menuStore.open('selectPasteUrl', menuParam);
 		});
 	};
 
@@ -2082,10 +2094,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	onLastClick (e: any) {
 		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
 		const readonly = this.isReadonly();
 
-		if (!root || readonly) {
+		if (readonly) {
 			return;
 		};
 
@@ -2094,8 +2105,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let length = 0;
 
 		if (last) {
-			const element = blockStore.getMapElement(rootId, last.id);
-			const parent = blockStore.getLeaf(rootId, element.parentId);
+			const parent = blockStore.getParentLeaf(rootId, last.id);
 
 			if (parent && !parent.isLayoutDiv() && !parent.isPage()) {
 				last = null;
@@ -2253,10 +2263,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const object = detailStore.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
 		if (object.isArchived || object.isDeleted) {
-			return true;
-		};
-
-		if (!UtilObject.canParticipantWrite()) {
 			return true;
 		};
 

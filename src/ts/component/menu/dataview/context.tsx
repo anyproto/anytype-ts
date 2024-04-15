@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, translate, UtilObject, focus, Action } from 'Lib';
+import { I, C, keyboard, analytics, translate, UtilObject, focus, Action, UtilSpace } from 'Lib';
 import { detailStore, menuStore, blockStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -84,7 +84,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { data } = param;
 		const { subId, objectIds, getObject, isCollection } = data;
 		const length = objectIds.length;
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
@@ -218,7 +218,7 @@ class MenuContext extends React.Component<I.Menu> {
 	onOver (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
 		const { data, className, classNameWrap } = param;
-		const { objectIds, onLinkTo } = data;
+		const { objectIds, onLinkTo, route } = data;
 
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
@@ -254,7 +254,7 @@ class MenuContext extends React.Component<I.Menu> {
 					],
 					onClick: (item: any) => {
 						C.ObjectListSetObjectType(objectIds, item.uniqueKey);
-						analytics.event('ChangeObjectType', { objectType: item.id, count: objectIds.length, route: 'MenuDataviewContext' });
+						analytics.event('ChangeObjectType', { objectType: item.id, count: objectIds.length, route });
 
 						close();
 					}

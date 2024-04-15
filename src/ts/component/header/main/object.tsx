@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, UtilObject, UtilData, keyboard, sidebar, translate } from 'Lib';
+import { I, UtilObject, UtilData, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, popupStore } from 'Store';
 import HeaderBanner from 'Component/page/elements/head/banner';
 import Constant from 'json/constant.json';
@@ -27,13 +27,18 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	render () {
-		const { rootId, onSearch, onTooltipShow, onTooltipHide, isPopup } = this.props;
+		const { rootId, onSearch, onTooltipShow, onTooltipHide, isPopup, renderLeftIcons } = this.props;
 		const { templatesCnt } = this.state;
 		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return null;
+		};
+
 		const object = detailStore.get(rootId, rootId, Constant.templateRelationKeys);
 		const isLocked = root ? root.isLocked() : false;
 		const showMenu = !UtilObject.isTypeOrRelationLayout(object.layout);
-		const canSync = showMenu && !object.templateIsBundled;
+		const canSync = showMenu && !object.templateIsBundled && !root.isObjectParticipant();
 		const cmd = keyboard.cmdSymbol();
 		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 		const bannerProps: any = {};
@@ -75,14 +80,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		return (
 			<React.Fragment>
 				<div className="side left">
-					<Icon
-						className="toggle"
-						tooltip={translate('sidebarToggle')}
-						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
-						tooltipY={I.MenuDirection.Bottom}
-						onClick={() => sidebar.toggleExpandCollapse()}
-					/>
-					<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
+					{renderLeftIcons(this.onOpen)}
 					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
 				</div>
 

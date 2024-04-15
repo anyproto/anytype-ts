@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, UtilData, UtilObject, UtilCommon, analytics, keyboard } from 'Lib';
+import { I, M, C, UtilData, UtilCommon, keyboard } from 'Lib';
 import { Block, Drag } from 'Component';
 import { blockStore, detailStore } from 'Store';
 

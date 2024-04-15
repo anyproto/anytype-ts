@@ -1,5 +1,5 @@
-import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore } from 'Store';
+import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action } from 'Lib';
+import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
 
@@ -33,15 +33,15 @@ const SYSTEM_DATE_RELATION_KEYS = [
 class UtilData {
 
 	blockTextClass (v: I.TextStyle): string {
-		return UtilCommon.toCamelCase('text-' + String(I.TextStyle[v] || 'paragraph'));
+		return `text${String(I.TextStyle[v] || 'Paragraph')}`;
 	};
 	
 	blockDivClass (v: I.DivStyle): string {
-		return UtilCommon.toCamelCase('div-' + String(I.DivStyle[v]));
+		return `div${String(I.DivStyle[v])}`;
 	};
 
 	blockLayoutClass (v: I.LayoutStyle): string {
-		return UtilCommon.toCamelCase('layout-' + String(I.LayoutStyle[v]));
+		return `layout${String(I.LayoutStyle[v])}`;
 	};
 
 	blockEmbedClass (v: I.EmbedProcessor): string {
@@ -58,12 +58,8 @@ class UtilData {
 				};
 				break;
 
-			case I.BlockType.Div:
-				switch (v) {
-					default:
-					case I.DivStyle.Line:		 icon = 'divLine'; break;
-					case I.DivStyle.Dot:		 icon = 'divDot'; break;
-				};
+			case I.BlockType.Div: 
+				icon = this.blockDivClass(v);
 				break;
 		};
 		return icon;
@@ -80,21 +76,13 @@ class UtilData {
 				if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
 					c.push(dc);
 				} else {
-					c.push('blockMedia');
-
-					switch (type) {
-						case I.FileType.Image:	 c.push('isImage'); break;
-						case I.FileType.Video:	 c.push('isVideo'); break;
-						case I.FileType.Audio:	 c.push('isAudio'); break;
-						case I.FileType.Pdf:	 c.push('isPdf'); break;
-					};
+					c.push(`blockMedia is${I.FileType[type]}`);
 				};
 				break;
 			};
 
 			case I.BlockType.Embed: {
-				c.push('blockEmbed');
-				c.push(this.blockEmbedClass(processor));
+				c.push(`blockEmbed ${this.blockEmbedClass(processor)}`);
 				break;
 			};
 
@@ -126,45 +114,6 @@ class UtilData {
 
 	cardSizeClass (v: I.CardSize) {
 		return String(I.CardSize[v] || 'small').toLowerCase();
-	};
-
-	dateFormat (v: I.DateFormat): string {
-		let f = '';
-		switch (v) {
-			default:
-			case I.DateFormat.MonthAbbrBeforeDay:	 f = 'M d, Y'; break;
-			case I.DateFormat.MonthAbbrAfterDay:	 f = 'd M, Y'; break;
-			case I.DateFormat.Short:				 f = 'd.m.Y'; break;
-			case I.DateFormat.ShortUS:				 f = 'm.d.Y'; break;
-			case I.DateFormat.ISO:					 f = 'Y-m-d'; break;
-		};
-		return f;
-	};
-
-	timeFormat (v: I.TimeFormat): string {
-		let f = '';
-		switch (v) {
-			default:
-			case I.TimeFormat.H12:	 f = 'g:i A'; break;
-			case I.TimeFormat.H24:	 f = 'H:i'; break;
-		};
-		return f;
-	};
-
-	coverColors () {
-		return [ 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'green', 'lightgrey', 'darkgrey', 'black' ].map(id => ({
-			id,
-			type: I.CoverType.Color,
-			name: translate(`textColor-${id}`),
-		}));
-	};
-
-	coverGradients () {
-		return [ 'pinkOrange', 'bluePink', 'greenOrange', 'sky', 'yellow', 'red', 'blue', 'teal' ].map(id => ({
-			id,
-			type: I.CoverType.Gradient,
-			name: translate(`gradientColor-${id}`),
-		}));
 	};
 
 	threadColor (s: I.ThreadStatus) {
@@ -245,18 +194,6 @@ class UtilData {
 
 			C.ObjectOpen(widgets, '', space, () => {
 				this.createSubscriptions(() => {
-					C.NotificationList(false, Constant.limit.notification, (message: any) => {
-						if (!message.error.code) {
-							notificationStore.set(message.list);
-						};
-					});
-
-					C.FileNodeUsage((message: any) => {
-						if (!message.error.code) {
-							commonStore.spaceStorageSet(message);
-						};
-					});
-
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
@@ -264,7 +201,7 @@ class UtilData {
 						if (redirect) {
 							UtilRouter.go(redirect, routeParam);
 						} else {
-							UtilObject.openHome('route', routeParam);
+							UtilSpace.openDashboard('route', routeParam);
 						};
 
 						commonStore.redirectSet('');
@@ -283,6 +220,23 @@ class UtilData {
 				});
 			});
 		});
+	};
+
+	onAuthOnce () {
+		C.NotificationList(false, Constant.limit.notification, (message: any) => {
+			if (!message.error.code) {
+				notificationStore.set(message.list);
+			};
+		});
+
+		C.FileNodeUsage((message: any) => {
+			if (!message.error.code) {
+				commonStore.spaceStorageSet(message);
+			};
+		});
+
+		this.getMembershipTiers();
+		this.getMembershipStatus();
 	};
 
 	createSubscriptions (callBack?: () => void): void {
@@ -375,6 +329,7 @@ class UtilData {
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				ignoreDeleted: true,
+				ignoreHidden: false,
 				noDeps: true,
 			},
 		];
@@ -389,6 +344,7 @@ class UtilData {
 				],
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
+				ignoreHidden: false,
 				noDeps: true,
 			});
 		};
@@ -472,14 +428,10 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withBookmark, withCollection, limit } = param || {};
+		const { withSet, withCollection, limit } = param || {};
 		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
 		const skipLayouts = UtilObject.getSetLayouts();
-
-		if (!withBookmark) {
-			skipLayouts.push(I.ObjectLayout.Bookmark);
-		};
 
 		let items: any[] = [];
 
@@ -501,7 +453,7 @@ class UtilData {
 
 		items = items.filter(it => it);
 
-		if (!config.debug.ho) {
+		if (!config.debug.hiddenObject) {
 			items = items.filter(it => !it.isHidden);
 		};
 
@@ -633,16 +585,6 @@ class UtilData {
 		return this.sortByName(c1, c2);
 	};
 
-	sortByOwner (c1: any, c2: any) {
-		const isOwner1 = c1.permissions == I.ParticipantPermissions.Owner;
-		const isOwner2 = c2.permissions == I.ParticipantPermissions.Owner;
-
-		if (isOwner1 && !isOwner2) return -1;
-		if (!isOwner1 && isOwner2) return 1;
-
-		return 0;
-	};
-
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
@@ -672,7 +614,7 @@ class UtilData {
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
-			cardStyle: I.LinkCardStyle.Text,
+			cardStyle: commonStore.linkStyle,
 			description: I.LinkDescription.None,
 			relations: [],
 		};
@@ -762,9 +704,9 @@ class UtilData {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
-		if (ignoreHidden && !config.debug.ho) {
+		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'hiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (ignoreDeleted) {
@@ -849,9 +791,9 @@ class UtilData {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
-		if (ignoreHidden && !config.debug.ho) {
+		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'hiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (ignoreDeleted) {
@@ -887,7 +829,7 @@ class UtilData {
 	};
 
 	setWindowTitleText (name: string) {
-		const space = UtilObject.getSpaceview();
+		const space = UtilSpace.getSpaceview();
 		const title = [];
 
 		if (name) {
@@ -907,7 +849,7 @@ class UtilData {
 		const templateType = dbStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'hiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
+			{ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
@@ -925,17 +867,20 @@ class UtilData {
 		const { dataset } = props;
 		const { selection } = dataset || {};
 		const type = dbStore.getTypeById(typeId);
-		
-		let ids = [];
-		if (selection) {
-			ids = selection.get(I.SelectType.Block);
+
+		if (!type) {
+			return;
 		};
+		
+		const ids = selection ? selection.get(I.SelectType.Block) : [];
 		if (!ids.length) {
-			ids = [ blockId ];
+			ids.push(blockId);
 		};
 
-		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, () => {
-			analytics.event('CreateObject', { route, objectType: typeId });
+		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, (message: any) => {
+			if (!message.error.code) {
+				analytics.createObject(type.id, type.recommendedLayout, route, message.middleTime);
+			};
 		});
 	};
 
@@ -984,10 +929,98 @@ class UtilData {
 				break;
 		};
 		return ret;
+	}
+
+	getMembershipTiers () {
+		const { config, interfaceLang, isOnline } = commonStore;
+		const { testPayment } = config;
+
+		if (!isOnline) {
+			return;
+		};
+
+		C.MembershipGetTiers(true, interfaceLang, (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == testPayment));
+			commonStore.membershipTiersListSet(tiers);
+		});
+	};
+
+	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
+		C.MembershipGetStatus(true, (message: any) => {
+			if (message.membership) {
+				const { status, tier } = message.membership;
+
+				authStore.membershipSet(message.membership);
+				
+				if (status && (status == I.MembershipStatus.Finalization)) {
+					popupStore.open('membershipFinalization', { data: { tier } });
+				};
+			};
+
+			if (callBack) {
+				callBack(message.membership);
+			};
+		});
+	};
+
+	getMembershipTier (id: I.TierType): I.MembershipTier {
+		return commonStore.membershipTiers.find(it => it.id == id) || new M.MembershipTier({ id: I.TierType.None });
+	};
+
+	isAnytypeNetwork (): boolean {
+		return Object.values(Constant.networkId).includes(authStore.account?.info?.networkId);
 	};
 
 	isLocalOnly (): boolean {
 		return authStore.account?.info?.networkId == '';
+	};
+
+	accountCreate (onError?: (text: string) => void, callBack?: () => void) {
+		onError = onError || (() => {});
+
+		const { networkConfig } = authStore;
+		const { mode, path } = networkConfig;
+		const { dataPath } = commonStore;
+
+		let phrase = '';
+
+		C.WalletCreate(dataPath, (message) => {
+			if (message.error.code) {
+				onError(message.error.description);
+				return;
+			};
+
+			phrase = message.mnemonic;
+
+			this.createSession(phrase, '', (message) => {
+				if (message.error.code) {
+					onError(message.error.description);
+					return;
+				};
+
+				C.AccountCreate('', '', dataPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
+					if (message.error.code) {
+						onError(message.error.description);
+						return;
+					};
+
+					authStore.accountSet(message.account);
+					commonStore.configSet(message.account.config, false);
+					commonStore.isSidebarFixedSet(true);
+
+					this.onInfo(message.account.info);
+					Renderer.send('keytarSet', message.account.id, phrase);
+					Action.importUsecase(commonStore.space, I.Usecase.GetStarted, callBack);
+
+					analytics.event('CreateAccount', { middleTime: message.middleTime });
+					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
+				});
+			});
+		});
 	};
 
 };

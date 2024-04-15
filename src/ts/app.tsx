@@ -12,7 +12,7 @@ import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as Prev
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, notificationStore } from 'Store';
 import { 
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
-	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode,
+	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode, UtilSpace,
 } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
@@ -101,6 +101,7 @@ if (!UtilCommon.getElectron().isPackaged) {
 			UtilRouter,
 			UtilSmile,
 			UtilDate,
+			UtilSpace,
 			analytics,
 			dispatcher,
 			keyboard,
@@ -276,6 +277,7 @@ class App extends React.Component<object, State> {
 		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
 		Renderer.on('logout', () => authStore.logout(false, false));
+		Renderer.on('data-path', (e: any, p: string) => commonStore.dataPathSet(p));
 		Renderer.on('shutdownStart', () => {
 			this.setState({ loading: true });
 
@@ -316,9 +318,7 @@ class App extends React.Component<object, State> {
 		commonStore.nativeThemeSet(isDark);
 		commonStore.themeSet(config.theme);
 		commonStore.languagesSet(languages);
-
-		authStore.walletPathSet(dataPath);
-		authStore.accountPathSet(dataPath);
+		commonStore.dataPathSet(dataPath);
 
 		analytics.init();
 		this.initStorage();
@@ -400,7 +400,7 @@ class App extends React.Component<object, State> {
 			popupStore.closeAll();
 		};
 
-		window.setTimeout(() => popupStore.open(id, param), Constant.delay.popup);
+		window.setTimeout(() => popupStore.open(id, param), popupStore.getTimeout());
 	};
 
 	onUpdateCheck (e: any, auto: boolean) {

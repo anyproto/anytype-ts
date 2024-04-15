@@ -7,8 +7,6 @@ import { I, keyboard, UtilCommon, analytics, Storage } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
-import MenuAccountPath from './account/path';
-
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
 
@@ -88,8 +86,6 @@ const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
 
 const Components: any = {
-
-	accountPath:			 MenuAccountPath,
 
 	help:					 MenuHelp,
 	onboarding:				 MenuOnboarding,
@@ -361,8 +357,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	componentWillUnmount () {
 		const { param } = this.props;
-		const { isSub, data } = param;
-		const { rebind } = data;
+		const { isSub } = param;
 		const el = this.getElement();
 
 		this._isMounted = false;
@@ -376,6 +371,14 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			this.poly.hide();
 			window.clearTimeout(this.timeoutPoly);
 		};
+
+		this.rebindPrevious();
+	};
+
+	rebindPrevious () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rebind } = data;
 
 		if (this.ref && this.ref.unbind) {
 			this.ref.unbind();
@@ -439,7 +442,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				window.setTimeout(() => { 
 					menu.css({ transform: 'none' }); 
 					this.isAnimating = false;
-				}, Constant.delay.menu);
+				}, menuStore.getTimeout());
 			});
 		};
 	};
@@ -580,27 +583,47 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			};
 			menu.css(css);
 
-			if (isSub && (type == I.MenuType.Vertical)) {
+			if (isSub) {
 				const coords = UtilCommon.objectCopy(keyboard.mouse.page);
 				const offset = 8;
 
-				let w = Math.abs(x - coords.x) - offset;
-				let t = '';
-				let l = coords.x + offset;
+				let w = 0;
+				let h = 0;
+				let left = 0;
+				let top = 0;
+				let transform = '';
+				let clipPath = '';
 
-				if (flipX) {
-					w -= width;
-					l -= w + offset * 2;
-					t = 'scaleX(-1)';
+				if (type == I.MenuType.Vertical) {
+					h = height;
+					top = y;
+					w = Math.abs(x - coords.x) - offset;
+					left = coords.x + offset;
+
+					if (flipX) {
+						w -= width;
+						left -= w + offset * 2;
+						transform = 'scaleX(-1)';
+					};
+
+					clipPath = `polygon(0px ${oy - y}px, 0px ${oy - y + eh}px, 100% 100%, 100% 0%)`;
+				};
+
+				if (type == I.MenuType.Horizontal) {
+					w = width;
+					left = x;
+					h = Math.abs(y - coords.y) - offset;
+					top = y;
+					clipPath = `polygon(0 ${height}px, 100% ${height}px, ${ox - x + ew}px 100%, ${ox - x}px 100%)`;
 				};
 
 				this.poly.show().css({
 					width: w,
-					height: height,
-					left: l,
-					top: y,
-					clipPath: `polygon(0px ${oy - y}px, 0px ${oy - y + eh}px, 100% 100%, 100% 0%)`,
-					transform: t,
+					height: h,
+					left,
+					top,
+					clipPath,
+					transform,
 					position: (isFixed ? 'fixed' : 'absolute'),
 				});
 
@@ -664,11 +687,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	close (callBack?: () => void) {
-		if (this.ref && this.ref.unbind) {
-			this.ref.unbind();
-		};
+		menuStore.close(this.props.id, () => {
+			window.setTimeout(() => this.rebindPrevious(), Constant.delay.menu);
 
-		menuStore.close(this.props.id, callBack);
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	onDimmerClick () {
@@ -685,7 +710,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { isSub } = param;
 		
 		if (isSub) {
-			//this.poly.hide();
+			this.poly.hide();
 		};
 	};
 
@@ -916,8 +941,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		const next = items[this.ref.n];
+		if (!next) {
+			return;
+		};
 
-		if (next && (next.isDiv || next.isSection)) {
+		if (next.isDiv || next.isSection) {
 			this.ref.n++;
 			if (items[this.ref.n]) {
 				this.setActive(items[this.ref.n], scroll);

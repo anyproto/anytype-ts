@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.39.1-alpha",
+	"version": "0.39.22-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -62,8 +62,8 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^28.2.0",
-		"electron-builder": "^24.6.3",
+		"electron": "^29.1.6",
+		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
 		"husky": "^8.0.3",
@@ -88,7 +88,7 @@
 		"webpack-dev-server": "^4.13.1"
 	},
 	"dependencies": {
-		"@electron/remote": "^2.1.1",
+		"@electron/remote": "^2.1.2",
 		"@emoji-mart/data": "^1.1.2",
 		"@sentry/browser": "^7.39.0",
 		"@sentry/cli": "^2.18.1",
@@ -103,11 +103,10 @@
 		"electron-dl": "^1.14.0",
 		"electron-json-storage": "^4.5.0",
 		"electron-log": "^3.0.9",
-		"electron-updater": "^4.6.5",
+		"electron-updater": "^6.1.8",
 		"electron-util": "^0.12.3",
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^5.5.2",
-		"excalidraw": "^0.6.4",
 		"findandreplacedomtext": "^0.4.6",
 		"google-protobuf": "^3.14.0",
 		"grpc-web": "^1.4.2",
@@ -121,7 +120,7 @@
 		"lazy-val": "^1.0.4",
 		"lodash": "^4.17.20",
 		"lodash.isequal": "^4.5.0",
-		"mermaid": "^10.6.0",
+		"mermaid": "^10.9.0",
 		"mobx": "^6.6.1",
 		"mobx-logger": "^0.7.1",
 		"mobx-react": "^7.5.2",
@@ -604,7 +603,6 @@
 			"icon": "electron/img/icons",
 			"category": "Utility",
 			"target": [
-				"snap",
 				"AppImage",
 				"deb",
 				"rpm",
@@ -624,6 +622,12 @@
 				"--rpm-rpmbuild-define",
 				"_build_id_links none"
 			]
+		},
+		"snap": {
+			"publish": {
+				"provider": "generic",
+				"url": "https://anydummyurl.com"
+			}
 		}
 	},
 	"lint-staged": {

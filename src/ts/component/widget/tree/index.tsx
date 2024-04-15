@@ -40,6 +40,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.onToggle = this.onToggle.bind(this);
 		this.getSubId = this.getSubId.bind(this);
 		this.initCache = this.initCache.bind(this);
+		this.getSubKey = this.getSubKey.bind(this);
 	};
 
 	render () {
@@ -78,11 +79,12 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 							{...this.props}
 							{...node}
 							index={index}
-							treeKey={this.getTreeKey(node)}
+							treeKey={key}
 							style={style}
 							onClick={this.onClick}
 							onToggle={this.onToggle}
 							getSubId={this.getSubId}
+							getSubKey={this.getSubKey}
 						/>
 					</CellMeasurer>
 				);
@@ -121,6 +123,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 				<div className="ReactVirtualized__List">
 					{nodes.map((node, i: number) => {
 						const key = this.getTreeKey(node);
+
 						return (
 							<Item
 								key={key}
@@ -131,6 +134,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 								onClick={this.onClick}
 								onToggle={this.onToggle}
 								getSubId={this.getSubId}
+								getSubKey={this.getSubKey}
 							/>
 						);
 					})}
@@ -152,11 +156,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { block, isCollection, getData } = this.props;
-		const { targetBlockId } = block.content;
+		const { isSystemTarget, getData } = this.props;
 
-		if (isCollection(targetBlockId)) {
-			getData(this.getSubId(targetBlockId), this.initCache);
+		if (isSystemTarget()) {
+			getData(this.getSubId(), this.initCache);
 		} else {
 			this.initCache();
 		};
@@ -180,11 +183,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	updateData () {
-		const { block, isCollection, getData } = this.props;
-		const { targetBlockId } = block.content;
+		const { isSystemTarget, getData } = this.props;
 
-		if (isCollection(targetBlockId)) {
-			getData(this.getSubId(targetBlockId), this.initCache);
+		if (isSystemTarget()) {
+			getData(this.getSubId(), this.initCache);
 		};
 	};
 
@@ -201,7 +203,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	loadTree (): I.WidgetTreeItem[] {
-		const { block, isCollection, isPreview, sortFavorite, addGroupLabels } = this.props;
+		const { block, isSystemTarget, isPreview, sortFavorite, addGroupLabels } = this.props;
 		const { targetBlockId } = block.content;
 		const { widgets } = blockStore;
 		const object = detailStore.get(widgets, targetBlockId, [ 'links' ]);
@@ -210,10 +212,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.branches = [];
 
 		let children = [];
-		if (isCollection(targetBlockId)) {
+		if (isSystemTarget()) {
 			const subId = this.getSubId(targetBlockId);
 			
-			let records = dbStore.getRecords(subId, '');
+			let records = dbStore.getRecordIds(subId, '');
 			if (targetBlockId == Constant.widgetId.favorite) {
 				records = sortFavorite(records);
 			};
@@ -229,22 +231,20 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			children = addGroupLabels(children, targetBlockId);
 		};
 
-		return this.loadTreeRecursive(object.id, object.id, [], children, 1);
+		return this.loadTreeRecursive(object.id, object.id, [], children, 1, '');
 	};
 
 	// Recursive function which returns the tree structure
-	loadTreeRecursive (rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number): I.WidgetTreeItem[] {
+	loadTreeRecursive (rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number, branch: string): I.WidgetTreeItem[] {
 		if (!childNodeList.length || depth >= MAX_DEPTH) {
 			return treeNodeList;
 		};
 
-		const regN = new RegExp(`-${parentId}$`);
-		const regS = new RegExp(`^${parentId}$`);
-		const branch = this.branches.find((branchId) => branchId.match(regN) || branchId.match(regS)) || parentId;
-
 		for (const childNode of childNodeList) {
-			const links = this.filterDeletedLinks(Relation.getArrayValue(childNode.links)).filter((nodeId) => {
-				const branchId = [ branch, nodeId ].join('-');
+			const childBranch = [ branch, childNode.id ].join('-');
+
+			const links = this.filterDeletedLinks(Relation.getArrayValue(childNode.links)).filter(nodeId => {
+				const branchId = [ childBranch, nodeId ].join('-');
 				if (this.branches.includes(branchId)) {
 					return false;
 				} else {
@@ -261,6 +261,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 				parentId,
 				rootId,
 				isSection: childNode.isSection,
+				branch: childBranch,
 			};
 			treeNodeList.push(node);
 
@@ -271,7 +272,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			const isOpen = Storage.checkToggle(this.getSubKey(), this.getTreeKey(node));
 			if (isOpen) {
 				this.subscribeToChildNodes(childNode.id, childNode.links);
-				treeNodeList = this.loadTreeRecursive(rootId, childNode.id, treeNodeList, this.getChildNodesDetails(childNode.id), depth + 1);
+				treeNodeList = this.loadTreeRecursive(rootId, childNode.id, treeNodeList, this.getChildNodesDetails(childNode.id), depth + 1, childBranch);
 			};
 		};
 
@@ -279,16 +280,14 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	filterDeletedLinks (ids: string[]): string[] {
-		const deleted = dbStore.getRecords(Constant.subId.deleted, '');
+		const deleted = dbStore.getRecordIds(Constant.subId.deleted, '');
 
 		return ids.filter(id => !deleted.includes(id));
 	};
 
 	// return the child nodes details for the given subId
 	getChildNodesDetails (nodeId: string): I.WidgetTreeDetails[] {
-		const subId = this.getSubId(nodeId);
-
-		return dbStore.getRecords(subId, '').map(id => this.mapper(detailStore.get(subId, id, [ 'id', 'layout', 'links' ], true)));
+		return dbStore.getRecords(this.getSubId(nodeId), [ 'id', 'layout', 'links' ], true).map(it => this.mapper(it));
 	};
 
 	mapper (item) {
@@ -325,16 +324,19 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		return `widget${this.props.block.id}`;
 	};
 
-	getSubId (nodeId: string): string {
-		return dbStore.getSubId(this.getSubKey(), nodeId);
+	getSubId (nodeId?: string): string {
+		const { block } = this.props;
+		const { targetBlockId } = block.content;
+
+		return dbStore.getSubId(this.getSubKey(), nodeId || targetBlockId);
 	};
 
 	// a composite key for the tree node in the form rootId-parentId-Id-depth
 	getTreeKey (node: I.WidgetTreeItem): string {
 		const { block } = this.props;
-		const { rootId, parentId, id, depth } = node;
+		const { depth, branch } = node;
 
-		return [ block.id, rootId, parentId, id, depth ].join('-');
+		return [ block.id, branch, depth ].join('-');
 	};
 
 	sortByIds (ids: string[], id1: string, id2: string) {

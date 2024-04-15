@@ -3,8 +3,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate } from 'Lib';
-import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
+import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
+import { dbStore, blockStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -37,7 +37,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	frame = 0;
 	limit = 0;
 	midHeight = 0;
-	filter: string = '';
+	filter = '';
 	timeoutFilter = 0;
 
 	constructor (props: I.PageComponent) {
@@ -58,7 +58,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			return null;
 		};
 
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 		const { isPopup } = this.props;
 		const views = this.getViews();
 		const items = this.getItems();
@@ -214,7 +214,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				ref={node => this.node = node}
 				className={[ 'wrapper', this.tab, this.view ].join(' ')}
 			>
-				<Header component="mainStore" {...this.props} tabs={tabs} tab={this.tab} onTab={id => this.onTab(id, true)} />
+				<Header 
+					{...this.props}
+					component="mainStore" 
+					tabs={tabs}
+					tab={this.tab}
+					layout={I.ObjectLayout.Store}
+					onTab={id => this.onTab(id, true)} 
+				/>
 
 				<div className="body">
 					<div className="items">
@@ -520,7 +527,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getItems () {
 		const { loading } = this.state;
-		const records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
+		const records = dbStore.getRecords(Constant.subId.store);
 		const limit = this.getLimit();
 
 		let ret: any[] = [
@@ -555,7 +562,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getViews (): any[] {
 		const views: any[] = [];
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
@@ -602,7 +609,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
 			Action.uninstall(item, true);
-			analytics.event('ObjectUninstall', { route: 'Library' });
+			analytics.event('ObjectUninstall', { route: analytics.route.store });
 		};
 	};
 

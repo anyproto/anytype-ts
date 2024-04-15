@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate } from 'Lib';
+import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate, UtilSpace } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -41,11 +41,23 @@ class Keyboard {
 		const win = $(window);
 		const doc = $(document);
 
+		commonStore.isOnlineSet(navigator.onLine);
+
 		win.on('keydown.common', e => this.onKeyDown(e));
 		win.on('keyup.common', e => this.onKeyUp(e));
 		win.on('mousedown.common', e => this.onMouseDown(e));
 		win.on('scroll.common', () => this.onScroll());
 		win.on('mousemove.common', e => this.onMouseMove(e));
+
+		win.on('online.common offline.common', () => {
+			const { onLine } = navigator;
+
+			commonStore.isOnlineSet(onLine);
+
+			if (!commonStore.membershipTiers.length) {
+				UtilData.getMembershipTiers();
+			};
+		});
 		
 		win.on('blur.common', () => {
 			Preview.tooltipHide(true);
@@ -73,7 +85,7 @@ class Keyboard {
 	};
 	
 	unbind () {
-		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
+		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common online.common offline.common');
 	};
 
 	onScroll () {
@@ -123,7 +135,7 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		this.pressed.push(key);
 
@@ -194,7 +206,7 @@ class Keyboard {
 			// Print
 			this.shortcut(`${cmd}+p`, e, () => {
 				e.preventDefault();
-				this.onPrint('Shortcut');
+				this.onPrint(analytics.route.shortcut);
 			});
 
 			// Navigation search
@@ -203,7 +215,7 @@ class Keyboard {
 					return;
 				};
 
-				this.onSearchPopup('Shortcut');
+				this.onSearchPopup(analytics.route.shortcut);
 			});
 
 			this.shortcut(`${cmd}+l`, e, () => {
@@ -217,7 +229,7 @@ class Keyboard {
 			// Text search
 			this.shortcut(`${cmd}+f`, e, () => {
 				if (!this.isFocused) {
-					this.onSearchMenu('', 'Shortcut');
+					this.onSearchMenu('', analytics.route.shortcut);
 				};
 			});
 
@@ -236,7 +248,7 @@ class Keyboard {
 			// Go to dashboard
 			this.shortcut('alt+h', e, () => {
 				if (authStore.account && !popupStore.isOpen('search')) {
-					UtilObject.openHome('route');
+					UtilSpace.openDashboard('route');
 				};
 			});
 
@@ -276,13 +288,13 @@ class Keyboard {
 				// Create new page
 				this.shortcut(`${cmd}+n`, e, () => {
 					e.preventDefault();
-					this.pageCreate({}, 'Shortcut');
+					this.pageCreate({}, analytics.route.shortcut);
 				});
 
 				// Quick capture menu
 				this.shortcut(`${cmd}+alt+n`, e, () => {
 					e.preventDefault();
-					this.onQuickCapture();
+					this.onQuickCapture(true);
 				});
 
 				// Lock/Unlock
@@ -307,18 +319,10 @@ class Keyboard {
 	};
 
 	pageCreate (details: any, route: string) {
-		const isMain = this.isMain();
-
-		if (!isMain) {
-			return;
+		if (this.isMain()) {
+			const flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
+			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, route, message => UtilObject.openConfig(message.details));
 		};
-
-		const { fullscreenObject } = commonStore;
-
-		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ], (message: any) => {
-			fullscreenObject ? UtilObject.openAuto(message.details) : UtilObject.openPopup(message.details);
-			analytics.event('CreateObject', { route, objectType: commonStore.type });
-		});
 	};
 
 	isPopup () {
@@ -358,7 +362,7 @@ class Keyboard {
 			let prev = history.entries[history.index - 1];
 
 			if (account && !prev) {
-				UtilObject.openHome('route');
+				UtilSpace.openDashboard('route');
 				return;
 			};
 
@@ -456,8 +460,8 @@ class Keyboard {
 		};
 
 		const rootId = this.getRootId();
-		const logPath = UtilCommon.getElectron().logPath;
-		const tmpPath = UtilCommon.getElectron().tmpPath;
+		const logPath = UtilCommon.getElectron().logPath();
+		const tmpPath = UtilCommon.getElectron().tmpPath();
 
 		switch (cmd) {
 			case 'search': {
@@ -509,7 +513,7 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				const items = dbStore.getSpaces();
+				const items = UtilSpace.getList();
 
 				if (items.length >= Constant.limit.space) {
 					break;
@@ -541,7 +545,7 @@ class Keyboard {
 			};
 
 			case 'save': {
-				popupStore.open('export', { data: { objectIds: [ rootId ], route: 'MenuSystem', allowHtml: true } });
+				popupStore.open('export', { data: { objectIds: [ rootId ], route: analytics.route.menuSystem, allowHtml: true } });
 				break;
 			};
 
@@ -834,8 +838,10 @@ class Keyboard {
 		this.menuFromNavigation('space', {}, { shortcut });
 	};
 
-	onQuickCapture () {
-		if (menuStore.isOpen('quickCapture')) {
+	onQuickCapture (shortcut: boolean, param?: Partial<I.MenuParam>) {
+		param = param || {};
+
+		if ((commonStore.navigationMenu != I.NavigationMenuMode.Hover) && menuStore.isOpen('quickCapture')) {
 			menuStore.close('quickCapture');
 			return;
 		};
@@ -843,9 +849,10 @@ class Keyboard {
 		const button = $('#button-navigation-plus');
 
 		this.menuFromNavigation('quickCapture', {
+			...param,
 			onOpen: () => button.addClass('active'),
 			onClose: () => button.removeClass('active'),
-		}, {});
+		}, { isExpanded: shortcut });
 	};
 
 	onLock (rootId: string, v: boolean, route?: string) {
@@ -853,6 +860,8 @@ class Keyboard {
 		if (!block) {
 			return;
 		};
+
+		menuStore.closeAll([ 'blockContext' ]);
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { ...block.fields, isLocked: v } },
@@ -867,7 +876,7 @@ class Keyboard {
 		const root = blockStore.getLeaf(rootId, rootId);
 		
 		if (root) {
-			this.onLock(rootId, !root.isLocked(), 'Shortcut');
+			this.onLock(rootId, !root.isLocked(), analytics.route.shortcut);
 		};
 	};
 
@@ -998,9 +1007,7 @@ class Keyboard {
 
 		switch (type) {
 			case I.Source.Popup:
-				window.setTimeout(() => {
-					popupStore.open(data.id, data.param);
-				}, Constant.delay.popup);
+				window.setTimeout(() => popupStore.open(data.id, data.param), popupStore.getTimeout());
 				break;
 		};
 

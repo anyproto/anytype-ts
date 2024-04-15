@@ -690,6 +690,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `tab`, preventDefault: true },
 			{ key: `shift+tab`, preventDefault: true },
 			{ key: `shift+space` },
+			{ key: `shift+arrowleft` },
+			{ key: `shift+arrowright` },
 			{ key: `ctrl+shift+l` },
 			{ key: `ctrl+shift+/` },
 		];
@@ -1072,14 +1074,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	onMention () {
-		const { rootId, block } = this.props;
-		const win = $(window);
 		const range = this.getRange();
-		const el = $(`#block-${block.id}`);
 
 		if (!range) {
 			return;
 		};
+
+		const { rootId, block } = this.props;
+		const win = $(window);
+		const element = $(`#block-${block.id}`);
 
 		let value = this.getValue();
 		value = UtilCommon.stringCut(value, range.from - 1, range.from);
@@ -1089,7 +1092,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		raf(() => {
 			menuStore.open('blockMention', {
-				element: el,
+				element,
 				recalcRect: () => {
 					const rect = UtilCommon.getSelectionRect();
 					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
@@ -1329,7 +1332,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		focus.set(block.id, range);
 
-		if (readonly) {
+		if (readonly || menuStore.isOpen('selectPasteUrl')) {
 			return;
 		};
 
@@ -1410,7 +1413,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						pageContainer.off('mousedown.context');
 						menuStore.close('blockContext'); 
 					});
-				}, Constant.delay.menu);
+				}, menuStore.getTimeout());
 			});
 		}, 150);
 	};
@@ -1509,7 +1512,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let save = false;
 
 		for (const type of [ I.MarkType.Mention, I.MarkType.Emoji ]) {
-			const mark = Mark.getInRange(this.marks, type, range);
+			const mark = Mark.getInRange(this.marks, type, { to: range.to - 1, from: range.from - 1 });
 			if (!mark) {
 				continue;
 			};

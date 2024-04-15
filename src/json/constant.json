@@ -5,10 +5,12 @@
 	"amplitude": "1ba981d1a9afb8af8c81847ef3383a20",
 	"protocol": "anytype",
 	"appName": "Anytype",
+	"anyNameSpace": ".any",
 	
 	"networkId": {
 		"production": "N83gJpVd9MuNRZAuJLZ7LiMntTThhPc6DtzWWVjb1M3PouVU",
-		"development": "N9DU6hLkTAbvcpji3TCKPPd3UQWKGyzUxGmgJEyvhByqAjfD"
+		"development": "N9DU6hLkTAbvcpji3TCKPPd3UQWKGyzUxGmgJEyvhByqAjfD",
+		"testing": "N4N1wDHFpFpovXBqdbq2TDXE9tXdXbtV1eTJFpKJW4YeaJqR"
 	},
 
 	"platforms": {
@@ -43,7 +45,7 @@
 
 	"delay": {
 		"menu": 160,
-		"popup": 310,
+		"popup": 160,
 		"toast": 2500,
 		"route": 250,
 		"keyboard": 500,
@@ -113,7 +115,7 @@
 		],
 		"layout": [ "blockAlign" ],
 		"latex": [ "previewLatex" ],
-		"viewEdit": [ "select" ],
+		"viewEdit": [ "select", "graphSettings" ],
 		"featuredType": [ "searchObject", "typeSuggest" ],
 		"dataviewHead": [ "dataviewSource", "searchObject" ],
 		"store": [ "typeSuggest", "relationSuggest" ],
@@ -257,6 +259,8 @@
 		"spaceAccountStatus",
 		"spaceLocalStatus",
 		"spaceAccessType",
+		"readersLimit",
+		"writersLimit",
 		"targetSpaceId",
 		"creator",
 		"createdDate"
@@ -264,7 +268,8 @@
 	"participantRelationKeys": [
 		"identity",
 		"participantPermissions",
-		"participantStatus"
+		"participantStatus",
+		"globalName"
 	],
 
 	"pageCoverRelationKey": "pageCover",
@@ -450,6 +455,7 @@
 		"flow": "Flow",
 		"fortran": "Fortran",
 		"fsharp": "F#",
+		"gdscript": "GDScript",
 		"gherkin": "Gherkin",
 		"graphql": "GraphQL",
 		"groovy": "Groovy",

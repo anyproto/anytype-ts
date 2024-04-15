@@ -50,8 +50,8 @@ class MenuStore {
 		param.data = param.data || {};
 
 		if (param.isSub) {
-			param.noAnimation = true;
-			param.passThrough = true;
+			param.noAnimation = 'undefined' == typeof(param.noAnimation) ? true : param.noAnimation;
+			param.passThrough = 'undefined' == typeof(param.passThrough) ? true : param.passThrough;
 		};
 
 		return param;
@@ -169,14 +169,7 @@ class MenuStore {
 
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
-		if (!items.length) {
-			if (callBack) {
-				callBack();
-			};
-			return;
-		};
-
-		const timeout = this.getTimeout(items);
+		const timeout = this.getTimeout();
 
 		items.filter(it => !it.param.noClose).forEach(it => this.close(it.id));
 		this.onCloseAll(timeout, callBack);
@@ -184,7 +177,7 @@ class MenuStore {
 
 	closeAllForced (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
-		const timeout = this.getTimeout(items);
+		const timeout = this.getTimeout();
 
 		items.forEach(it => this.close(it.id));
 		this.onCloseAll(timeout, callBack);
@@ -198,7 +191,9 @@ class MenuStore {
 		};
 	};
 
-	getTimeout (items: I.Menu[]): number {
+	getTimeout (): number {
+		const items = this.getItems();
+
 		let t = 0;
 		for (const item of items) {
 			if (!item.param.noAnimation) {
@@ -229,7 +224,6 @@ class MenuStore {
 
 	resizeAll () {
 		const win = $(window);
-
 		this.list.forEach(it => win.trigger(`resize.${UtilCommon.toCamelCase(`menu-${it.id}`)}`));
 	};
 

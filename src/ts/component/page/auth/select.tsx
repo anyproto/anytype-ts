@@ -1,9 +1,17 @@
 import * as React from 'react';
-import { Frame, Title, Label, Button, Header, Footer, Error } from 'Component';
-import { I, UtilRouter, translate, Animation, analytics } from 'Lib';
-import { observer } from 'mobx-react';
+import { Frame, Label, Button, Header, Footer, Error } from 'Component';
+import { I, UtilRouter, translate, Animation, analytics, UtilCommon, UtilData } from 'Lib';
 
-const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.PageComponent> {
+interface State {
+	error: string;
+};
+
+class PageAuthSelect extends React.Component<I.PageComponent, State> {
+
+	node = null;
+	state = {
+		error: '',
+	};
 
 	constructor (props: I.PageComponent) {
         super(props);
@@ -13,12 +21,15 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 	};
 
 	render () {
+		const { error } = this.state;
+
         return (
-			<div>
+			<div ref={ref => this.node = ref}>
 				<Header {...this.props} component="authIndex" />
 				<Frame>
 					<div className="logo animation" />
 					<Label className="descr animation" text={translate('authSelectLabel')} />
+					<Error text={error} />
 
 					<div className="buttons">
 						<div className="animation">
@@ -34,13 +45,9 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 		);
 	};
 
-	componentDidMount(): void {
-		Animation.to();
-		window.setTimeout(() => analytics.event('ScreenIndex'), 100);
-	};
-
-	componentDidUpdate(): void {
-		Animation.to();
+	componentDidMount (): void {
+		Animation.to(() => UtilCommon.renderLinks($(this.node)));
+		analytics.event('ScreenIndex');
 	};
 
 	onLogin () {
@@ -51,6 +58,6 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 		Animation.from(() => UtilRouter.go('/auth/onboard', {}));
 	};
 
-});
+};
 
 export default PageAuthSelect;

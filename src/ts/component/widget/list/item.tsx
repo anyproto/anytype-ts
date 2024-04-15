@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } from 'Component';
 import { blockStore, menuStore, detailStore } from 'Store';
-import { I, UtilCommon, UtilObject, keyboard, analytics, translate } from 'Lib';
+import { I, UtilCommon, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
 import Constant from 'json/constant.json';
 
@@ -44,7 +44,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const iconKey = `widget-icon-${block.id}-${id}`;
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const canDrag = isPreview && (block.content.targetBlockId == Constant.widgetId.favorite);
-		const hasMore = UtilObject.canParticipantWrite();
+		const hasMore = UtilSpace.canParticipantWrite();
 
 		if (isSection) {
 			return (
@@ -189,7 +189,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
 			data: {
-				route: 'Widget',
+				route: analytics.route.widget,
 				objectIds: [ id ],
 				subId,
 			},

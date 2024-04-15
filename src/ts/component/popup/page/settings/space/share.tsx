@@ -1,21 +1,21 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error } from 'Component';
-import { I, C, translate, UtilCommon, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore, detailStore, popupStore, commonStore } from 'Store';
+import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
+import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics, UtilObject } from 'Lib';
+import { authStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 import Constant from 'json/constant.json';
 
 interface State {
+	isLoading: boolean;
 	error: string;
 	cid: string;
 	key: string;
 };
 
 const HEIGHT = 64;
-const MEMBER_LIMIT = 10;
 
 const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings, State> {
 
@@ -25,7 +25,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	refInput = null;
 	refList: any = null;
 	refCopy: any = null;
+	refButton: any = null;
 	state = {
+		isLoading: false,
 		error: '',
 		cid: '',
 		key: '',
@@ -36,64 +38,100 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		this.onScroll = this.onScroll.bind(this);
 		this.onCopy = this.onCopy.bind(this);
-		this.onGenerate = this.onGenerate.bind(this);
 		this.onInviteRevoke = this.onInviteRevoke.bind(this);
 		this.onInitLink = this.onInitLink.bind(this);
 		this.onStopSharing = this.onStopSharing.bind(this);
 		this.onChangePermissions = this.onChangePermissions.bind(this);
 		this.onInfo = this.onInfo.bind(this);
+		this.onMoreSpace = this.onMoreSpace.bind(this);
+		this.onMoreLink = this.onMoreLink.bind(this);
+		this.onPermissionsSelect = this.onPermissionsSelect.bind(this);
+		this.onUpgrade = this.onUpgrade.bind(this);
 	};
 
 	render () {
-		const { error, cid, key } = this.state;
-		const members = this.getMembers();
-		const memberOptions = this.getMemberOptions();
+		const { isLoading, error, cid, key } = this.state;
+
+		if (isLoading) {
+			return <Loader id="loader" />;
+		};
+
+		const { membership } = authStore;
+		const hasLink = cid && key;
+		const space = UtilSpace.getSpaceview();
+		const participant = UtilSpace.getParticipant();
+		const members = this.getParticipantList();
 		const length = members.length;
+		const isShareActive = UtilSpace.isShareActive();
+
+		let limitLabel = '';
+		let limitButton = '';
+		let showLimit = false;
+
+		if (space.isShared) {
+			if (!UtilSpace.getWriterLimit()) {
+				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
+				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
+				showLimit = true;
+			} else
+			if (!UtilSpace.getReaderLimit() && membership.isExplorer) {
+				limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
+				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
+				showLimit = true;
+			};
+		};
 
 		const Member = (item: any) => {
-			const isOwner = item.permissions == I.ParticipantPermissions.Owner;
-			const isJoining = [ I.ParticipantStatus.Joining ].includes(item.status);
-			const isDeclined = [ I.ParticipantStatus.Declined ].includes(item.status);
-			const isRemoved = [ I.ParticipantStatus.Removed, I.ParticipantStatus.Removing ].includes(item.status);
+			const isCurrent = item.id == participant.id;
 
 			let tag = null;
 			let button = null;
 
-			if (isJoining) {
-				tag = <Tag color="purple" text={translate('popupSettingsSpaceShareMembersRequested')} />;
+			if (item.isJoining) {
+				tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
 				button = (
 					<Button
 						className="c36"
 						color="blank"
-						text={translate('popupSettingsSpaceShareMembersViewRequest')}
-						onClick={() => this.onViewRequest(item)}
+						text={translate('popupSettingsSpaceShareViewRequest')}
+						onClick={() => this.onJoinRequest(item)}
 					/>
 				);
 			} else 
-			if (isDeclined || isRemoved) {
+			if (item.isRemoving) {
+				tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
+				button = (
+					<Button
+						className="c36"
+						color="blank"
+						text={translate('commonApprove')}
+						onClick={() => this.onLeaveRequest(item)}
+					/>
+				);
+			} else 
+			if (item.isDeclined || item.isRemoved) {
 				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
 			} else
-			if (isOwner) {
-				button = <Label text={translate(`participantPermissions${I.ParticipantPermissions.Owner}`)} />;
+			if (item.isOwner) {
+				button = <Label color="grey" text={translate(`participantPermissions${I.ParticipantPermissions.Owner}`)} />;
 			} else {
 				button = (
-					<Select
-						id={`item-${item.id}-select`}
-						value={item.permissions}
-						options={memberOptions}
-						arrowClassName="light"
-						menuParam={{ horizontal: I.MenuDirection.Right }}
-						onChange={v => this.onChangePermissions(item, v)}
-					/>
+					<div id={`item-${item.id}-select`} className="select" onClick={() => this.onPermissionsSelect(item)}>
+						<div className="item">
+							<div className="name">{translate(`participantPermissions${item.permissions}`)}</div>
+						</div>
+						<Icon className="arrow light" />
+					</div>
 				);
 			};
 		
 			return (
 				<div id={`item-${item.id}`} className="row" style={item.style} >
-					<div className="side left">
+					<div className="side left" onClick={() => UtilObject.openPopup(item)}>
 						<IconObject size={48} object={item} />
 						<ObjectName object={item} />
 						{tag}
+						{isCurrent ? <div className="caption">({translate('commonYou')})</div> : ''}
 					</div>
 					<div className="side right">
 						{button}
@@ -120,46 +158,54 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		return (
 			<div ref={node => this.node = node}>
-				<Head {...this.props} returnTo="spaceIndex" name={translate('commonBack')} />
+				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
 
 				<div id="titleWrapper" className="titleWrapper">
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
 
-					<div className="info" onClick={this.onInfo}>
-						<span>{translate('popupSettingsSpaceShareMoreInfo')}</span>
-						<Icon className="question" />
+					<div className="icons">
+						<Icon className="question" onClick={this.onInfo} />
+						{space.isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''}
 					</div>
 				</div>
 
 				<div id="sectionInvite" className="section sectionInvite">
-					{cid && key ? (
-						<React.Fragment>
-							<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
-							<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
+					<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
+					<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
 
-							<div className="inviteLinkWrapper">
-								<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} />
-								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="black" text={translate('commonCopyLink')} />
-								<Icon id="generate" className="refresh" onClick={this.onGenerate} />
+					{hasLink ? (
+						<div className="inviteLinkWrapper">
+							<div className="inputWrapper">
+								<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} onClick={() => this.refInput?.select()} />
+								<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
 							</div>
-
-							<div className="invitesLimit">
-								{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), MEMBER_LIMIT, UtilCommon.plural(MEMBER_LIMIT, translate('pluralMember')))}
-							</div>
-						</React.Fragment>
+							<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
+						</div>
 					) : (
 						<div className="buttons">
-							<Button onClick={this.onInitLink} className="c40" text={translate('popupSettingsSpaceShareGenerateInvite')} />
-						</div>		
+							<Button 
+								ref={ref => this.refButton = ref} 
+								onClick={isShareActive ? () => this.onInitLink() : null} 
+								className={[ 'c40', (isShareActive ? '' : 'disabled') ].join(' ')} 
+								tooltip={isShareActive ? '' : translate('popupSettingsSpaceShareGenerateInviteDisabled')}
+								text={translate('popupSettingsSpaceShareGenerateInvite')} 
+							/>
+						</div>
 					)}
 				</div>
 
 				<div id="sectionMembers" className="section sectionMembers">
-					<Title text={translate('popupSettingsSpaceShareMembersAndRequestsTitle')} />
+					<Title text={translate('popupSettingsSpaceShareMembersTitle')} />
+					{showLimit ? (
+						<div className="row payment">
+							<Label text={limitLabel} />
+							<Button className="payment" text={limitButton} onClick={this.onUpgrade} />
+						</div>
+					) : ''}
 
 					{this.cache ? (
 						<div id="list" className="rows">
-							<WindowScroller scrollElement={$('#popupSettings-innerWrap').get(0)}>
+							<WindowScroller scrollElement={$('#popupSettings-innerWrap .mainSides #sideRight').get(0)}>
 								{({ height, isScrolling, registerChild, scrollTop }) => (
 									<AutoSizer disableHeight={true} className="scrollArea">
 										{({ width }) => (
@@ -184,22 +230,25 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					) : ''}
 				</div>
 
-				{cid && key ? (
-					<div id="buttons" className="buttons">
-						<Button onClick={this.onInviteRevoke} className="c40" color="blank red" text={translate('popupSettingsSpaceShareRevokeInvite')} />
-						<Button onClick={this.onStopSharing} className="c40" color="blank red" text={translate('popupSettingsSpaceShareStopSharing')} />
-					</div>
-				) : ''}
-
 				<Error text={error} />
 			</div>
 		);
 	};
 
 	componentDidMount () {
-		this.updateCache();
+		const items = this.getParticipantList();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: i => (items[i] || {}).id,
+		});
+
+		this.setState({ isLoading: true });
 
 		C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
+			this.setState({ isLoading: false });
+
 			if (!message.error.code) {
 				this.setInvite(message.inviteCid, message.inviteKey);
 			};
@@ -214,86 +263,79 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		this.setState({ cid, key });
 	};
 
-	updateCache () {
-		const members = this.getMembers();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (members[i] || {}).id,
-		});
-		this.forceUpdate();
-	};
-
 	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
 		};
 	};
 
-	getMembers () {
-		const statuses = [ I.ParticipantStatus.Active, I.ParticipantStatus.Joining ];
-		const subId = Constant.subId.participant;
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
+	onUpgrade () {
+		const { membership } = authStore;
+		const { tier } = membership;
 
-		return records.sort(UtilData.sortByOwner);
+		if (tier >= I.TierType.CoCreator) {
+			Action.membershipUpgrade();
+		} else {
+			this.props.onPage('membership');
+		}
+	};
+
+	getParticipantList () {
+		const records = UtilSpace.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing, I.ParticipantStatus.Active ]);
+
+		return records.sort((c1, c2) => {
+			const isRequest1 = c1.isJoining || c1.isRemoving;
+			const isRequest2 = c2.isJoining || c2.isRemoving;
+			const cd1 = c1.createdDate;
+			const cd2 = c2.createdDate;
+
+			if (isRequest1 && !isRequest2) return -1;
+			if (!isRequest1 && isRequest2) return 1;
+			if (isRequest1 && isRequest2) return cd1 < cd2 ? -1 : 1;
+
+			return 0;
+		});
 	};
 
 	getLink () {
 		const { cid, key } = this.state;
-		return `${Constant.protocol}://invite/?cid=${cid}&key=${key}`
+		//return UtilCommon.sprintf(Url.invite, cid, key);
+		return `${Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
 	onCopy () {
 		const { cid, key } = this.state;
 
 		if (cid && key) {
-			UtilCommon.copyToast(translate('commonLink'), this.getLink());
+			UtilCommon.copyToast('', this.getLink(), translate('toastInviteCopy'));
 		};
+
+		analytics.event('ClickShareSpaceCopyLink');
 	};
 
 	onInitLink () {
-		const { space } = commonStore;
+		this.refButton?.setLoading(true);
 
-		C.SpaceInviteGenerate(space, (message: any) => {
-			if (!this.setError(message.error)) {
-				this.setInvite(message.inviteCid, message.inviteKey);
+		C.SpaceMakeShareable(commonStore.space, (message: any) => {
+			if (this.setError(message.error)) {
+				this.refButton?.setLoading(false);
+				return;
 			};
-		});
-	};
 
-	onGenerate () {
-		const { space } = commonStore;
-		const node = $(this.node);
-		const button = node.find('#generate');
+			C.SpaceInviteGenerate(commonStore.space, (message: any) => {
+				this.refButton?.setLoading(false);
 
-		button.addClass('loading');
+				if (!this.setError(message.error)) {
+					this.setInvite(message.inviteCid, message.inviteKey);
 
-		popupStore.open('confirm', {
-			onClose: () => button.removeClass('loading'),
-			data: {
-				title: translate('popupConfirmRevokeLinkTitle'),
-				text: translate('popupConfirmRevokeLinkText'),
-				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
-				colorConfirm: 'red',
-				onConfirm: () => {
-					C.SpaceInviteGenerate(space, (message: any) => {
-						button.removeClass('loading');
-
-						if (!this.setError(message.error)) {
-							this.setInvite(message.inviteCid, message.inviteKey);
-						};
-					});
-				},
-				onCancel: () => button.removeClass('loading'),
-			},
+					Preview.toastShow({ text: translate('toastInviteGenerate') });
+					analytics.event('ShareSpace');
+				};
+			});
 		});
 	};
 
 	onStopSharing () {
-		const { space } = commonStore;
-		const { onPage } = this.props;
-
 		popupStore.open('confirm', {
 			data: {
 				title: translate('popupConfirmStopSharingSpaceTitle'),
@@ -301,11 +343,15 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				textConfirm: translate('popupConfirmStopSharingSpaceConfirm'),
 				colorConfirm: 'red',
 				onConfirm: () => {
-					C.SpaceStopSharing(space);
-					onPage('spaceIndex');
+					C.SpaceStopSharing(commonStore.space);
+					this.setInvite('', '');
+
+					analytics.event('StopSpaceShare');
 				},
 			},
 		});
+
+		analytics.event('ScreenStopShare');
 	};
 
 	onInviteRevoke () {
@@ -313,32 +359,62 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		popupStore.open('confirm', {
 			data: {
-				title: translate('popupConfirmStopInviteRevokeTitle'),
-				text: translate('popupConfirmInviteRevokeText'),
-				textConfirm: translate('popupConfirmInviteRevokeConfirm'),
+				title: translate('popupConfirmRevokeLinkTitle'),
+				text: translate('popupConfirmRevokeLinkText'),
+				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
 				colorConfirm: 'red',
 				onConfirm: () => {
 					C.SpaceInviteRevoke(space, (message: any) => {
 						this.setInvite('', '');
+
+						Preview.toastShow({ text: translate('toastInviteRevoke') });
+						analytics.event('RevokeShareLink');
 					});
 				},
 			},
 		});
+
+		analytics.event('ScreenRevokeShareLink');
 	};
 
-	getMemberOptions () {
-		let items: any[] = ([
-			{ id: I.ParticipantPermissions.Reader },
-			{ id: I.ParticipantPermissions.Writer },
-		] as any[]).map(it => {
+	getParticipantOptions () {
+		const { membership } = authStore;
+
+		let items: any[] = [] as any[];
+
+		if (membership.isExplorer || (UtilSpace.getReaderLimit() - 1 >= 0)) {
+			items.push({ id: I.ParticipantPermissions.Reader });
+		};
+		if (membership.isExplorer || (UtilSpace.getWriterLimit() - 1 >= 0)) {
+			items.push({ id: I.ParticipantPermissions.Writer });
+		};
+
+		items = items.map(it => {
 			it.name = translate(`participantPermissions${it.id}`);
 			return it;
 		});
 
-		return items.concat([
-			{ id: '', name: '', isDiv: true },
-			{ id: 'remove', name: translate('popupSettingsSpaceShareRemoveMember'), color: 'red' }
-		]);
+		if (items.length) {
+			items.push({ isDiv: true });
+		};
+
+		items.push({ id: 'remove', name: translate('popupSettingsSpaceShareRemoveMember'), color: 'red' });
+
+		return items;
+	};
+
+	onPermissionsSelect (item: any) {
+		menuStore.open('select', {
+			element: `#item-${item.id}-select`,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				value: item.permissions,
+				options: this.getParticipantOptions(),
+				onSelect: (e: any, el: any) => {
+					this.onChangePermissions(item, el.id);
+				},
+			},
+		});
 	};
 
 	onChangePermissions (item: any, v: any) {
@@ -357,6 +433,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 				onConfirm = () => {
 					C.SpaceParticipantRemove(space, [ item.identity ]);
+
+					analytics.event('RemoveSpaceMember');
 				};
 				break;
 			};
@@ -364,11 +442,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			default: {
 				v = Number(v) || I.ParticipantPermissions.Reader;
 
-				title = translate('popupConfirmMemberChangeTitle');
+				title = translate('commonAreYouSure');
 				text = UtilCommon.sprintf(translate('popupConfirmMemberChangeText'), item.name, translate(`participantPermissions${v}`));
 
 				onConfirm = () => {
 					C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: Number(v) } ]);
+
+					analytics.event('ChangeSpaceMemberPermissions', { type: v })
 				};
 				break;
 			};
@@ -395,15 +475,78 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				canCancel: false,
 			},
 		});
+
+		analytics.event('ClickSettingsSpaceShare', { type: 'MoreInfo' });
 	};
 
-	onViewRequest (item: any) {
+	onJoinRequest (item: any) {
 		popupStore.open('inviteConfirm', { 
 			data: {
 				name: item.name,
 				icon: item.iconImage,
 				spaceId: commonStore.space,
 				identity: item.identity,
+				route: analytics.route.settings,
+			}
+		});
+	};
+
+	onLeaveRequest (item: any) {
+		Action.leaveApprove(commonStore.space, [ item.identity ], item.name, analytics.route.settings);
+	};
+
+	onMoreSpace () {
+		const { getId } = this.props;
+		const options = [
+			{ id: 'stop-sharing', color: 'red', name: translate('popupSettingsSpaceShareStopSharing') },
+		];
+
+		menuStore.open('select', {
+			element: `#${getId()} #button-more-space`,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'stop-sharing': {
+							this.onStopSharing();
+							break;
+						};
+					};
+				},
+			}
+		});
+	};
+
+	onMoreLink () {
+		const { getId } = this.props;
+		const options = [
+			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
+			{ id: 'delete', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') },
+		];
+
+		menuStore.open('select', {
+			element: `#${getId()} #button-more-link`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'qr': {
+							popupStore.open('inviteQr', { data: { link: this.getLink() } });
+
+							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
+							break;
+						};
+
+						case 'delete': {
+							this.onInviteRevoke();
+
+							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
+							break;
+						};
+					};
+				},
 			}
 		});
 	};

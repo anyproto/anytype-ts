@@ -1,6 +1,6 @@
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
+import { I, M, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -31,6 +31,7 @@ interface SpaceStorage {
 
 class CommonStore {
 
+	public dataPathValue = '';
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl = '';
@@ -41,6 +42,7 @@ class CommonStore {
 	public nativeThemeIsDark = false;
 	public defaultType = '';
 	public pinTimeId = 0;
+	public emailConfirmationTimeId = 0;
 	public isFullScreen = false;
 	public redirect = '';
 	public languages: string[] = [];
@@ -50,6 +52,9 @@ class CommonStore {
 	public isSidebarFixedValue = null;
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
+	public navigationMenuValue = null;
+	public linkStyleValue = null;
+	public isOnlineValue = false;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -80,6 +85,8 @@ class CommonStore {
 		spaces: [],
 	};
 
+	public membershipTiersList: I.MembershipTier[] = [];
+
     constructor() {
         makeObservable(this, {
             progressObj: observable,
@@ -96,6 +103,9 @@ class CommonStore {
 			autoSidebarValue: observable,
 			isSidebarFixedValue: observable,
 			fullscreenObjectValue: observable,
+			navigationMenuValue: observable,
+			linkStyleValue: observable,
+			isOnlineValue: observable,
 			spaceId: observable,
             config: computed,
             progress: computed,
@@ -106,6 +116,7 @@ class CommonStore {
 			theme: computed,
 			nativeTheme: computed,
 			space: computed,
+			isOnline: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -119,6 +130,9 @@ class CommonStore {
 			nativeThemeSet: action,
 			spaceSet: action,
 			spaceStorageSet: action,
+			navigationMenuSet: action,
+			linkStyleSet: action,
+			isOnlineSet: action,
 		});
 
 		intercept(this.configObj as any, change => UtilCommon.intercept(this.configObj, change));
@@ -126,7 +140,11 @@ class CommonStore {
 
     get config(): any {
 		const config = window.AnytypeGlobalConfig || this.configObj || {};
-		return { ...config, debug: config.debug || {} };
+
+		config.debug = config.debug || {};
+		config.flagsMw = config.flagsMw || {};
+
+		return config;
 	};
 
     get progress(): I.Progress {
@@ -168,6 +186,10 @@ class CommonStore {
 		return (Number(this.pinTimeId) || Storage.get('pinTime') || Constant.default.pinTime) * 1000;
 	};
 
+	get emailConfirmationTime(): number {
+		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
+	};
+
 	get autoSidebar(): boolean {
 		return this.boolGet('autoSidebar');
 	};
@@ -207,6 +229,37 @@ class CommonStore {
 
 	get showRelativeDates (): boolean {
 		return this.boolGet('showRelativeDates');
+	};
+
+	get navigationMenu (): I.NavigationMenuMode {
+		let ret = this.navigationMenuValue;
+		if (ret === null) {
+			ret = Storage.get('navigationMenu');
+		};
+		return Number(ret) || I.NavigationMenuMode.Click;
+	};
+
+	get linkStyle (): I.LinkCardStyle {
+		let ret = this.linkStyleValue;
+		if (ret === null) {
+			ret = Storage.get('linkStyle');
+		};
+		if (undefined === ret) {
+			ret = I.LinkCardStyle.Card;
+		};
+		return Number(ret) || I.LinkCardStyle.Text;
+	};
+
+	get dataPath (): string {
+		return String(this.dataPathValue || '');
+	};
+
+	get isOnline (): boolean {
+		return Boolean(this.isOnlineValue);
+	};
+
+	get membershipTiers (): I.MembershipTier[] {
+		return this.membershipTiersList || [];
 	};
 
     gatewaySet (v: string) {
@@ -284,7 +337,6 @@ class CommonStore {
 		this.spaceId = String(id || '');
 	};
 
-
 	previewClear () {
 		this.previewObj = { type: null, target: null, element: null, range: { from: 0, to: 0 }, marks: [] };
 	};
@@ -303,6 +355,12 @@ class CommonStore {
 		this.pinTimeId = Number(v) || Constant.default.pinTime;
 
 		Storage.set('pinTime', this.pinTimeId);
+	};
+
+	emailConfirmationTimeSet (t: number) {
+		this.emailConfirmationTimeId = t;
+
+		Storage.set('emailConfirmationTime', this.emailConfirmationTimeId);
 	};
 
 	autoSidebarSet (v: boolean) {
@@ -398,6 +456,23 @@ class CommonStore {
 		this.languages = v;
 	};
 
+	navigationMenuSet (v: I.NavigationMenuMode) {
+		v = Number(v);
+		this.navigationMenuValue = v;
+		Storage.set('navigationMenu', v);
+	};
+
+	linkStyleSet (v: I.NavigationMenuMode) {
+		v = Number(v);
+		this.linkStyleValue = v;
+		Storage.set('linkStyle', v);
+	};
+
+	isOnlineSet (v: boolean) {
+		this.isOnlineValue = Boolean(v);
+		console.log('[Online status]:', v);
+	};
+
 	configSet (config: any, force: boolean) {
 		const html = $('html');
 		
@@ -420,6 +495,14 @@ class CommonStore {
 
 	spaceStorageSet (value: Partial<SpaceStorage>) {
 		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, value));
+	};
+
+	dataPathSet (v: string) {
+		this.dataPathValue = String(v || '');
+	};
+
+	membershipTiersListSet (list: I.MembershipTier[]) {
+		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
 	};
 
 };

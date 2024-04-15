@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
-import { I, C, translate, UtilCommon, Action, UtilObject, UtilRouter } from 'Lib';
-import { authStore, detailStore, blockStore, menuStore, commonStore } from 'Store';
+import { I, C, translate, UtilCommon, Action, UtilObject, UtilSpace } from 'Lib';
+import { authStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 
@@ -32,13 +32,12 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 		this.onDescription = this.onDescription.bind(this);
-		this.onLocationMove = this.onLocationMove.bind(this);
 	};
 
 	render () {
 		const { error, loading } = this.state;
 		const { account } = authStore;
-		const profile = UtilObject.getProfile();
+		const profile = UtilSpace.getProfile();
 	
 		let name = profile.name;
 		if (name == translate('defaultNamePage')) {
@@ -62,31 +61,31 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				</div>
 
 				<div className="section">
-					<Title text={translate('popupSettingsAccountPersonalInformationTitle')} />
+					<Title text={translate('popupSettingsVaultPersonalInformationTitle')} />
 
 					<Input
 						ref={ref => this.refName = ref}
 						value={name}
 						onKeyUp={this.onName}
-						placeholder={translate('popupSettingsAccountPersonalInformationNamePlaceholder')}
+						placeholder={translate('popupSettingsVaultPersonalInformationNamePlaceholder')}
 					/>
 
 					<Input
 						ref={ref => this.refDescription = ref}
 						value={profile.description}
 						onKeyUp={this.onDescription}
-						placeholder={translate('popupSettingsAccountPersonalInformationDescriptionPlaceholder')}
+						placeholder={translate('popupSettingsVaultPersonalInformationDescriptionPlaceholder')}
 					/>
 				</div>
 
 				<div className="section">
-					<Title text={translate('popupSettingsAccountAnytypeIdentityTitle')} />
+					<Title text={translate('popupSettingsVaultAnytypeIdentityTitle')} />
 
 					<div className="inputWrapper withIcon">
 						<Input
 							value={account.id}
 							readonly={true}
-							onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
+							onClick={() => UtilCommon.copyToast(translate('popupSettingsVaultAnytypeIdentityTitle'), account.id)}
 						/>
 						<Icon className="copy" />
 					</div>
@@ -95,45 +94,11 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		);
 	};
 
-	onLocationMove () {
-		const { setLoading } = this.props;
-		const { account } = authStore;
-		const { info } = account;
-		const localStoragePath = String(info.localStoragePath || '');
-
-		if (!localStoragePath) {
-			return;
-		};
-
-		const accountPath = localStoragePath.replace(new RegExp(account.id + '\/?$'), '');
-		const options = { 
-			defaultPath: accountPath,
-			properties: [ 'openDirectory' ],
-		};
-
-		UtilCommon.getElectron().showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
-			};
-
-			setLoading(true);
-			C.AccountMove(files[0], (message: any) => {
-				if (message.error.code) {
-					this.setState({ error: message.error.description });
-				} else {
-					UtilRouter.go('/auth/setup/init', {}); 
-				};
-				setLoading(false);
-			});
-		});
-	};
-
 	onMenu () {
 		const { getId } = this.props;
-        const object = this.getObject();
+        const profile = UtilSpace.getProfile();
 
-        if (!object.iconImage) {
+        if (!profile.iconImage) {
             this.onUpload();
             return;
         };
@@ -188,10 +153,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 	onDescription (e) {
 		UtilObject.setDescription(blockStore.profile, this.refDescription.getValue());
-	};
-
-	getObject () {
-		return detailStore.get(Constant.subId.profile, blockStore.profile);
 	};
 
 });

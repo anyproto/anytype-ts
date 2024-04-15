@@ -44,7 +44,7 @@ class Storage {
 		};
 		
 		let o = this.get(key);
-		if (typeof o === 'object') {
+		if ((typeof o === 'object') && (o !== null)) {
 			for (const i in obj) {
 				o[i] = obj[i];
 			};
@@ -148,6 +148,7 @@ class Storage {
 		try {
 			obj[key] = obj[key] || {};
 			obj[key][rootId] = Number(scroll) || 0;
+
 			this.set('scroll', obj, true);
 		} catch (e) { /**/ };
 		return obj;

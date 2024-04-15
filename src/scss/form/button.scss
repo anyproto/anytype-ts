@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .button { 
-	display: inline-flex; border: 0px; font-weight: 500; text-decoration: none;
+	display: inline-flex; border: 0px; font-weight: 500; text-decoration: none; text-align: center;
 	height: 40px; padding: 0px 16px; border-radius: 8px; transition: $transitionAllCommon;
 	vertical-align: middle; position: relative; overflow: hidden; align-items: center; justify-content: center; 
 	@include text-paragraph; cursor: default; -webkit-app-region: no-drag;
@@ -22,6 +22,10 @@
 .button.black:not(.disabled):hover, .button.black:not(.disabled).hover { background: #41403d; }
 .button.black {
 	.arrow { background-image: url('~img/arrow/button/white.svg'); }
+
+	.loaderWrapper {
+		.dot { border-color: #fff; animation-name: dots-dark; }
+	}
 }
 
 .button.red { color: var(--color-red); border: solid 1px var(--color-shape-primary); }
@@ -50,3 +54,5 @@ input.button { line-height: 1; }
 
 .button.simple { height: auto; padding: 0px; color: var(--color-control-active); font-weight: bold; line-height: 1.43; letter-spacing: 0.1px; }
 .button.simple:hover, .button.simple.hover { color: var(--color-text-primary); }
+
+.button.payment { height: 22px; border-radius: 11px; @include text-small; }

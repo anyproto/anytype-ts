@@ -11,7 +11,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	
 	_isMounted = false;
 	node: any = null;
-	frame = 0;
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -346,11 +345,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	};
 
 	resize () {
-		if (this.frame) {
-			raf.cancel(this.frame);
-		};
-
-		this.frame = raf(() => {
+		window.setTimeout(() => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -359,11 +354,10 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			const node = $(this.node);
 			const card = node.find('.linkCard');
 			const icon = node.find('.iconObject');
-			const rect = (node.get(0) as Element).getBoundingClientRect();
 			const mw = getWrapperWidth();
 
 			icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
-			rect.width <= mw / 2 ? card.addClass('isVertical') : card.removeClass('isVertical');
+			node.width() <= mw / 2 ? card.addClass('isVertical') : card.removeClass('isVertical');
 		});
 	};
 

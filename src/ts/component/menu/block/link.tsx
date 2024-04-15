@@ -366,21 +366,8 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			onChange(I.MarkType.Link, url);
 		} else
 		if (item.itemId == 'add') {
-			const type = dbStore.getTypeById(commonStore.type);
-
-			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
+			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], 'Link', (message: any) => {
 				onChange(I.MarkType.Object, message.targetId);
-
-				analytics.event('CreateObject', {
-					route: 'Link',
-					objectType: type.id,
-					layout: type.layout,
-					template: '',
-				});
 			});
 		} else {
 			onChange(I.MarkType.Object, item.itemId);

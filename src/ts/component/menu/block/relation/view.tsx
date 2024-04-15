@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard, translate } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -148,6 +147,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { rootId } = data;
 		const { config } = commonStore;
+
 		const object = detailStore.get(rootId, rootId);
 		const isTemplate = UtilObject.isTemplate(object.type);
 		const type = dbStore.getTypeById(isTemplate ? object.targetObjectType : object.type);
@@ -171,7 +171,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				return false;
 			};
 
-			return !config.debug.ho ? !it.isHidden : true;
+			return !config.debug.hiddenObject ? !it.isHidden : true;
 		});
 
 		const sections = [ 
@@ -256,11 +256,11 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		});
 	};
 
-	onEdit (e: any, id: string) {
+	onEdit (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId, readonly } = data;
-		const relation = dbStore.getRelationById(id);
+		const relation = dbStore.getRelationById(item.id);
 
 		if (!relation) {
 			return;
@@ -268,15 +268,19 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const root = blockStore.getLeaf(rootId, rootId);
+		const element = `#${getId()} #item-${item.id} .info`;
 
 		menuStore.open('blockRelationEdit', { 
-			element: `#${getId()} #item-${id} .info`,
+			element,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap,
+			onOpen: () => $(element).addClass('active'),
+			onClose: () => $(element).removeClass('active'),
 			data: {
 				...data,
 				readonly: Boolean(readonly || root?.isLocked() || !allowed),
-				relationId: id,
+				noDelete: (item.scope == I.RelationScope.Type),
+				relationId: item.id,
 				ref: 'menu',
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);

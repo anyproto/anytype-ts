@@ -80,7 +80,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				ref={node => this.node = node} 
 				className="wrapper"
 			>
-				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame ref={ref => this.refFrame = ref}>
@@ -92,7 +91,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	componentDidMount () {
 		const { match } = this.props;
-		const { account, walletPath } = authStore;
+		const { account } = authStore;
 
 		switch (match?.params?.id) {
 			case 'init': {
@@ -101,7 +100,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			};
 
 			case 'select': {
-				this.select(account.id, walletPath, true);
+				this.select(account.id, true);
 				break;
 			};
 
@@ -117,37 +116,42 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 	
 	init () {
-		const { walletPath } = authStore;
+		const { dataPath } = commonStore;  
 		const accountId = Storage.get('accountId');
 
-		if (!accountId || !walletPath) {
-			this.setError({ description: 'Invalid account or wallet path', code: 0 });
+		if (!accountId) {
+			UtilRouter.go('/auth/select', { replace: true });
 			return;
 		};
 
 		Renderer.send('keytarGet', accountId).then((phrase: string) => {
-			C.WalletRecover(walletPath, phrase, (message: any) => {
+			C.WalletRecover(dataPath, phrase, (message: any) => {
 				if (this.setError(message.error)) {
 					return;
 				};
 
-				UtilData.createSession(phrase, '' ,(message: any) => {
-					if (this.setError(message.error)) {
-						return;
-					};
+				if (phrase) {
+					UtilData.createSession(phrase, '' ,(message: any) => {
+						if (this.setError(message.error)) {
+							return;
+						};
 
-					this.select(accountId, walletPath, false);
-				});
+						this.select(accountId, false);
+					});
+				} else {
+					UtilRouter.go('/auth/select', { replace: true });
+				};
 			});
 		});
 	};
 
-	select (accountId: string, walletPath: string, animate: boolean) {
+	select (accountId: string, animate: boolean) {
 		const { networkConfig } = authStore;
+		const { dataPath } = commonStore;
 		const { mode, path } = networkConfig;
 		const spaceId = Storage.get('spaceId');
 
-		C.AccountSelect(accountId, walletPath, mode, path, (message: any) => {
+		C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				return;
 			};
@@ -162,6 +166,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				UtilData.onAuth({ routeParam: { animate } });
 			};
 
+			UtilData.onAuthOnce();
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};

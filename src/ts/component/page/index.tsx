@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilObject, translate, UtilRouter } from 'Lib';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
 import { Sidebar, Label, Frame } from 'Component';
 import { authStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -30,6 +30,7 @@ import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
 import PageMainImport from './main/import';
 import PageMainInvite from './main/invite';
+import PageMainMembership from './main/membership';
 import PageMainObject from './main/object';
 
 const Components = {
@@ -58,7 +59,7 @@ const Components = {
 	'main/block':			 PageMainBlock,
 	'main/import':			 PageMainImport,
 	'main/invite':			 PageMainInvite,
-
+	'main/membership':		 PageMainMembership,
 	'main/object':			 PageMainObject,
 };
 
@@ -144,6 +145,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
 		const { history } = this.props;
+		const data = UtilCommon.searchParam(history?.location?.search);
 		const pathname = String(history?.location?.pathname || '');
 		const ret = (isPopup ? matchPopup : match) || { params: {} };
 
@@ -151,6 +153,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		if (pathname.match('/object')) {
 			ret.params.page = 'main';
 			ret.params.action = 'object';
+			ret.params.id = data.objectId;
+			ret.params.spaceId = data.spaceId;
 		};
 
 		// Invite route
@@ -174,7 +178,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getRootId () {
 		const { id } = this.getMatchParams();
-		const home = UtilObject.getSpaceDashboard();
+		const home = UtilSpace.getDashboard();
 
 		return id || home?.id;
 	};
@@ -240,12 +244,12 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				Survey.check(I.SurveyType.Register);
 				Survey.check(I.SurveyType.Object);
 				//Survey.check(I.SurveyType.Pmf);
-			}, Constant.delay.popup);
+			}, popupStore.getTimeout());
 		};
 	};
 
 	dashboardOnboardingCheck () {
-		const home = UtilObject.getSpaceDashboard();
+		const home = UtilSpace.getDashboard();
 		const { id } = this.getMatchParams();
 		const isPopup = keyboard.isPopup();
 

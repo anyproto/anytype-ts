@@ -1,4 +1,4 @@
-import { I, Storage, UtilCommon, analytics, Renderer, translate, UtilObject, UtilData, UtilDate } from 'Lib';
+import { I, Storage, UtilCommon, analytics, Renderer, translate, UtilObject, UtilSpace, UtilData, UtilDate } from 'Lib';
 import { popupStore, authStore } from 'Store';
 import Surveys from 'json/survey.json';
 
@@ -74,7 +74,7 @@ class Survey {
 	};
 
 	getTimeRegister (): number {
-		const profile = UtilObject.getProfile();
+		const profile = UtilSpace.getProfile();
 		return Number(profile?.createdDate) || 0;
 	};
 

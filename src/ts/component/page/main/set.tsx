@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard, UtilRouter, translate } from 'Lib';
+import { I, M, C, UtilData, UtilCommon, Action, UtilSpace, keyboard, UtilRouter, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
@@ -94,7 +94,12 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				ref={node => this.node = node}
 				className={[ 'setWrapper', check.className ].join(' ')}
 			>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header 
+					{...this.props} 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					rootId={rootId} 
+				/>
 
 				{content}
 
@@ -174,7 +179,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true, isLoading: false });
 				} else {
-					UtilObject.openHome('route');
+					UtilSpace.openDashboard('route');
 				};
 				return;
 			};
@@ -259,7 +264,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			keyboard.shortcut(`${cmd}+a`, e, () => {
 				e.preventDefault();
 
-				const records = dbStore.getRecords(dbStore.getSubId(rootId, Constant.blockId.dataview), '');
+				const records = dbStore.getRecordIds(dbStore.getSubId(rootId, Constant.blockId.dataview), '');
 				selection.set(I.SelectType.Record, records);
 			});
 
@@ -274,7 +279,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	isReadonly () {
-		return !UtilObject.canParticipantWrite();
+		return !UtilSpace.canParticipantWrite();
 	};
 
 	resize () {

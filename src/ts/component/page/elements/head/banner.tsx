@@ -134,7 +134,7 @@ class HeaderBanner extends React.Component<Props> {
 				onSelect: (item: any) => {
 					C.ObjectApplyTemplate(object.id, item.id);
 
-					analytics.event('SelectTemplate', { route: 'Banner' });
+					analytics.event('SelectTemplate', { route: analytics.route.banner });
 					menuContext.close();
 				},
 			},

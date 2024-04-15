@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, Relation, Dataview, Action } from 'Lib';
+import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action } from 'Lib';
 import { blockStore, menuStore, detailStore, commonStore, dbStore, authStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -323,7 +323,7 @@ class UtilMenu {
 							case 'copy': onCopy(view); break;
 							case 'remove': onRemove(view); break;
 						};
-					}, Constant.delay.menu);
+					}, menuStore.getTimeout());
 				}
 			}
 		});
@@ -363,6 +363,22 @@ class UtilMenu {
 			};
 		};
 		return options.map(id => ({ id: String(id), name: id }));
+	};
+
+	getCoverColors () {
+		return [ 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'green', 'lightgrey', 'darkgrey', 'black' ].map(id => ({
+			id,
+			type: I.CoverType.Color,
+			name: translate(`textColor-${id}`),
+		}));
+	};
+
+	getCoverGradients () {
+		return [ 'pinkOrange', 'bluePink', 'greenOrange', 'sky', 'yellow', 'red', 'blue', 'teal' ].map(id => ({
+			id,
+			type: I.CoverType.Gradient,
+			name: translate(`gradientColor-${id}`),
+		}));
 	};
 	
 	sectionsFilter (sections: any[], filter: string) {
@@ -479,7 +495,7 @@ class UtilMenu {
 				};
 
 				if (openRoute) {
-					UtilObject.openHome('route');
+					UtilSpace.openDashboard('route');
 				};
 			});
 		};
@@ -605,21 +621,30 @@ class UtilMenu {
 
 	spaceContext (space: any, param: any) {
 		const { accountSpaceId } = authStore;
+		const { targetSpaceId } = space;
 
-		if ((space.targetSpaceId == accountSpaceId)) {
+		if ((targetSpaceId == accountSpaceId)) {
 			return;
 		};
 
-		const options: any[] = [];
+		const isOwner = UtilSpace.isOwner(targetSpaceId);
 
-		if (UtilObject.isSpaceOwner(space.targetSpaceId) && (space.spaceAccessType == I.SpaceType.Shared)) {
+		let options: any[] = [];
+
+		if (isOwner && space.isShared) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
-		if (space.spaceAccountStatus == I.SpaceStatus.Joining) {
+		if (space.isAccountRemoving) {
+			options = options.concat([
+				{ id: 'export', name: translate('popupSettingsSpaceIndexExport') },
+				{ id: 'remove', color: 'red', name: translate('commonDelete') },
+			]);
+		} else 
+		if (space.isAccountJoining) {
 			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
 		} else {
-			options.push({ id: 'remove', color: 'red', name: translate('commonDelete') });
+			options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });
 		};
 
 		menuStore.open('select', {
@@ -627,28 +652,43 @@ class UtilMenu {
 			data: {
 				options,
 				onSelect: (e: any, element: any) => {
-					switch (element.id) {
-						case 'remove': {
-							Action.removeSpace(space.targetSpaceId, 'Navigation');
-							break;
+					window.setTimeout(() => {
+						switch (element.id) {
+							case 'export': {
+								Action.export(targetSpaceId, [], I.ExportType.Protobuf, { 
+									zip: true, 
+									nested: true, 
+									files: true, 
+									archived: true, 
+									json: false, 
+									route: param.route,
+								});
+								break;
+							};
+
+							case 'remove': {
+								Action.removeSpace(targetSpaceId, param.route);
+								break;
+							};
+
+							case 'cancel': {
+								C.SpaceJoinCancel(targetSpaceId, (message: any) => {
+									if (message.error.code) {
+										window.setTimeout(() => {
+											popupStore.open('confirm', { 
+												data: {
+													title: translate('commonError'),
+													text: message.error.description,
+												}
+											});
+										}, popupStore.getTimeout());
+									};
+								});
+								break;
+							};
 						};
 
-						case 'cancel': {
-							C.SpaceJoinCancel(space.targetSpaceId, (message: any) => {
-								if (message.error.code) {
-									window.setTimeout(() => {
-										popupStore.open('confirm', {
-											data: {
-												title: translate('commonError'),
-												text: message.error.description,
-											}
-										});
-									}, Constant.delay.popup);
-								};
-							});
-							break;
-						};
-					};
+					}, menuStore.getTimeout());
 				},
 			},
 		});

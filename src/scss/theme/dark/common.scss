@@ -44,11 +44,6 @@ html.themeDark {
 
     body { color-scheme: dark; }
 
-    .cover::after {
-        content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.2);
-        border-radius: inherit; pointer-events: none;
-    }
-    .cover.coverAudio::after { display: none; }
     .cover.type2.black { background-color: #000 !important; }
 
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
@@ -56,28 +51,28 @@ html.themeDark {
 
 	.iconObject.withOption.isSpaceView { background: #000 !important; }
 
-    .bgColor-grey { background: rgba(140, 158, 165, 0.25) !important; }
-    .bgColor-yellow { background: rgba(236, 217, 27, 0.25) !important; }
-    .bgColor-orange { background: rgba(255, 181, 34, 0.25) !important; }
-    .bgColor-red { background: rgba(245, 85, 34, 0.25) !important; }
-    .bgColor-pink { background: rgba(229, 28, 160, 0.25) !important; }
-    .bgColor-purple { background: rgba(171, 80, 204, 0.25) !important; }
-    .bgColor-blue { background: rgba(62, 88, 235, 0.25) !important; }
-    .bgColor-ice { background: rgba(42, 167, 238, 0.25) !important; }
-    .bgColor-teal { background: rgba(15, 200, 186, 0.25) !important; }
-    .bgColor-lime { background: rgba(93, 212, 0, 0.25) !important; }
+    .bgColor-grey { background: var(--color-shape-tertiary) !important; }
+	.bgColor-yellow { background: #2a2705 !important; }
+	.bgColor-orange { background: #2b1e05 !important; }
+	.bgColor-red { background: #311107 !important; }
+	.bgColor-pink { background: #310a23 !important; }
+	.bgColor-purple { background: #27122f !important; }
+	.bgColor-blue { background: #131938 !important; }
+	.bgColor-ice { background: #052130 !important; }
+	.bgColor-teal { background: #022724 !important; }
+	.bgColor-lime { background: #162908 !important; }
 
     .isMultiSelect.tagColor-default { background: unset !important; }
-    .isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: rgba(140, 158, 165, 0.25) !important; }
-    .isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: rgba(236, 217, 27, 0.25) !important; }
-    .isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: rgba(255, 181, 34, 0.25) !important; }
-    .isMultiSelect.tagColor-red { color: var(--color-red) !important; background: rgba(245, 85, 34, 0.25) !important; }
-    .isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: rgba(229, 28, 160, 0.25) !important; }
-    .isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: rgba(171, 80, 204, 0.25) !important; }
-    .isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: rgba(62, 88, 235, 0.25) !important; }
-    .isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: rgba(42, 167, 238, 0.25) !important; }
-    .isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: rgba(15, 200, 186, 0.25) !important; }
-    .isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: rgba(93, 212, 0, 0.25) !important; }
+    .isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: var(--color-shape-primary) !important; }
+    .isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: #474108 !important; }
+    .isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: #483308 !important; }
+    .isMultiSelect.tagColor-red { color: var(--color-red) !important; background: #581f0c !important; }
+    .isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: #50113a !important; }
+    .isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: #411e4d !important; }
+    .isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #20295c !important; }
+    .isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: #093B57 !important; }
+    .isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: #044641 !important; }
+    .isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: #294b0e !important; }
 
 	.selectable.isSelectionSelected::after, 
 	.block.isSelectionSelected > .wrapContent > .selectable::after 
@@ -115,12 +110,6 @@ html.themeDark {
     /* Components */
 
     .loaderWrapper {
-		@keyframes dots-dark {
-			0% { background-color: #171717; }
-			32% { background-color: #171717; }
-			100% { background-color: #fff; }
-		}
-
 		.dot { animation-name: dots-dark; }
     }
 
@@ -142,8 +131,8 @@ html.themeDark {
     /* Button */
 
 	.button.black { background: var(--color-control-accent); color: var(--color-text-inversion); }
-	.button.black:hover,
-    .button.black.hover { background: var(--color-control-active); }
+	.button.black:not(.disabled):hover,
+    .button.black:not(.disabled).hover { background: var(--color-control-active); }
 	.button.black {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
@@ -154,10 +143,11 @@ html.themeDark {
 
 	.button.red,
     .button.red.blank { background: none; }
-    .button.red:hover,
-    .button.red.hover,
-    .button.red.blank:hover,
-    .button.red.blank.hover { border-color: #581f0c; background: #311107; }
+
+    .button.red:not(.disabled):hover,
+    .button.red:not(.disabled).hover,
+    .button.red.blank:not(.disabled):hover,
+    .button.red.blank:not(.disabled).hover { border-color: #581f0c; background: #311107; }
 
     .filter {
 		.icon.clear { background-image: url('#{$themePath}/icon/clear0.svg') !important; }

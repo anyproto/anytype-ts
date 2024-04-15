@@ -18,7 +18,8 @@ const THROTTLE = 20;
 const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	
 	private _isMounted = false;
-	node: any = null;
+	node = null;
+	refBody = null;
     ox = 0;
 	oy = 0;
 	sx = 0;
@@ -60,7 +61,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 						/>
 					</div>
 
-					<div className="body">
+					<div 
+						ref={ref => this.refBody = ref}
+						className="body"
+					>
 						<ListWidget ref={ref => this.refList = ref} {...this.props} />
 					</div>
 				</div>

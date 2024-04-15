@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, PreviewObject, IconObject } from 'Component';
 import { C, I, UtilObject, translate, UtilData, UtilCommon, keyboard } from 'Lib';
-import { dbStore, menuStore, detailStore, commonStore } from 'Store';
+import { dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import { observer } from 'mobx-react';
 
@@ -16,7 +16,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 
 	node: any = null;
 	n = 0;
-	typeId: string = '';
+	typeId = '';
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -234,8 +234,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { noAdd, typeId } = data;
-		const subId = this.getSubId();
-		const items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+		const items = dbStore.getRecords(this.getSubId());
 		const isAllowed = UtilObject.isAllowedTemplate(typeId);
 
 		items.unshift({ id: Constant.templateId.blank });

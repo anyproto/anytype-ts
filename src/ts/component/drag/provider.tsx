@@ -375,8 +375,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 							return;
 						};
 					} else {
-						const element = blockStore.getMapElement(targetContextId, targetId);
-						const parent = blockStore.getLeaf(targetContextId, element.parentId);
+						const parent = blockStore.getParentLeaf(targetContextId, targetId);
 
 						if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 							targetId = parent.id;

@@ -1,4 +1,3 @@
-const { exec } = require('child_process');
 const { app, shell, nativeTheme } = require('electron');
 const { is } = require('electron-util');
 const log = require('electron-log');
@@ -79,26 +78,28 @@ class Util {
 	};
 
 	logPath () {
-		return path.join(this.userPath(), 'logs');
+		const dir = path.join(this.userPath(), 'logs');
+		this.createPath(dir);
+		return dir;
+	};
+
+	createPath (dir) {
+		try { fs.mkdirSync(dir); } catch (e) {};
 	};
 
 	dataPath () {
 		const { channel } = ConfigManager.config;
+		const envPath = process.env.DATA_PATH;
 		const dataPath = [];
 
-		if (process.env.DATA_PATH) {
-			this.mkDir(process.env.DATA_PATH);
-			dataPath.push(process.env.DATA_PATH);
+		if (envPath) {
+			this.mkDir(envPath);
+			dataPath.push(envPath);
 		} else {
 			dataPath.push(this.userPath());
-
-			if (is.development) {
-				dataPath.push('dev');
-			} else 
-			if ([ 'alpha', 'beta' ].includes(channel)) {
+			if (!is.development && [ 'alpha', 'beta' ].includes(channel)) {
 				dataPath.push(channel);
 			};
-
 			dataPath.push('data');
 		};
 
@@ -240,6 +241,10 @@ class Util {
 		try { data = require(`../../dist/lib/json/lang/${lang}.json`); } catch(e) {};
 
 		return data[key] || defaultData[key] || `⚠️${key}⚠️`;
+	};
+
+	defaultUserDataPath () {
+		return path.join(app.getPath('appData'), app.getName());
 	};
 
 };

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
-import { I, C, UtilCommon, UtilFile, UtilDate, translate, UtilObject, analytics } from 'Lib';
+import { I, C, UtilCommon, UtilFile, UtilDate, translate, UtilSpace, analytics } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Constant from 'json/constant.json';
@@ -155,6 +155,8 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 						C.WorkspaceCreate({ name: object.title, iconOption: UtilCommon.rand(1, Constant.iconCnt) }, I.Usecase.None, (message: any) => {
 							if (!message.error.code) {
 								cb(message.objectId, true);
+
+								analytics.event('CreateSpace', { middleTime: message.middleTime, route: analytics.route.gallery });
 							} else {
 								this.setState({ isLoading: false, error: message.error.description });
 							};
@@ -178,8 +180,8 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 			list.push({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate') });
 		};
 
-		list = list.concat(dbStore.getSpaces()
-			.filter(it => UtilObject.canParticipantWrite(it.targetSpaceId))
+		list = list.concat(UtilSpace.getList()
+			.filter(it => UtilSpace.canParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, iconSize: 48, object: it })));
 		
 		return list;

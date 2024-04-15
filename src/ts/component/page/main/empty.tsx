@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, IconObject, Header, Footer, Icon } from 'Component';
-import { I, UtilMenu, UtilObject, translate } from 'Lib';
+import { I, UtilMenu, UtilSpace, translate } from 'Lib';
 
 const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.PageComponent> {
 
@@ -14,15 +14,20 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	render () {
-		const space = UtilObject.getSpaceview();
-		const home = UtilObject.getSpaceDashboard();
+		const space = UtilSpace.getSpaceview();
+		const home = UtilSpace.getDashboard();
 
 		return (
 			<div 
 				ref={node => this.node = node}
 				className="wrapper"
 			>
-				<Header component="mainEmpty" text={translate('commonSearch')} layout={I.ObjectLayout.SpaceView} {...this.props} />
+				<Header 
+					{...this.props} 
+					component="mainEmpty" 
+					text={translate('commonSearch')}
+					layout={I.ObjectLayout.SpaceView}
+				/>
 
 				<div className="wrapper">
 					<IconObject object={space} size={96} forceLetter={true} />

@@ -65,7 +65,7 @@
 			}
 
 			.btn.dark {
-				.bg { background: var(--color-bg-primary); }
+				.bg { background: var(--color-bg-primary); box-shadow: 0px 0px 0px 1px var(--color-shape-primary); }
 				.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
 			}
 			.btn.system {
@@ -88,6 +88,22 @@
 		.side.right.tabImportIndex, 
 		.side.right.tabExportIndex {
 			.item:hover { border-color: var(--color-shape-primary); }
+		}
+
+		.side.right.tabMembership {
+			.slide { background: var(--color-shape-tertiary) !important; }
+			.slide {
+				.illustration.slide0 { background-image: url('#{$themePath}/icon/payment/slide0.svg'); }
+				.illustration.slide1 { background-image: url('#{$themePath}/icon/payment/slide1.svg'); }
+				.illustration.slide2 { background-image: url('#{$themePath}/icon/payment/slide2.svg'); }
+				.illustration.slide3 { background-image: url('#{$themePath}/icon/payment/slide3.svg'); }
+			}
+			.tiers {
+				.tier { background: var(--color-shape-tertiary) !important; }
+			}
+			.actionItems {
+				.icon { background-image: url('#{$themePath}/icon/payment/hyperlink.svg'); }
+			}
 		}
     }
     
@@ -157,6 +173,19 @@
 
 	.popup.popupInviteRequest {
 		.iconWrapper { background: none; }
-		.icon { background-image: url('#{$themePath}/icon/popup/space/invite.svg'); }
+		.icon { background-image: url('#{$themePath}/icon/popup/confirm/invite.svg'); }
+	}
+
+	/* PopupMembership */
+
+	.popup.popupMembership {
+		.sides {
+			.side.left { background: var(--color-shape-tertiary) !important; }
+			.side.left {
+				.contentList {
+					li::before { background-image: url('#{$themePath}/icon/payment/tick.svg'); }
+				}
+			}
+		}
 	}
 }

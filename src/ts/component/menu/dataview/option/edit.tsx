@@ -9,8 +9,8 @@ import Constant from 'json/constant.json';
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
 	
-	refName: any = null;
-	color: string = null;
+	refName = null;
+	color = '';
 	timeout = 0;
 	n = -1;
 
@@ -165,7 +165,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 				data: {
 					icon: 'confirm',
 					bgColor: 'red',
-					title: translate('popupRelationValueRemoveTitle'),
+					title: translate('commonAreYouSure'),
 					text: translate('popupRelationValueRemoveText'),
 					textConfirm: translate('commonDelete'),
 					onConfirm: () => {

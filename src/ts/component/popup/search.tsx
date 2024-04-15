@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, Key, focus, translate, analytics, Action } from 'Lib';
-import { commonStore, dbStore, popupStore } from 'Store';
+import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, Key, focus, translate, analytics, Action, UtilSpace } from 'Lib';
+import { commonStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -58,10 +58,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				object = item;
 			} else 
 			if (item.id == 'account') {
-				object = UtilObject.getParticipant();
+				object = UtilSpace.getParticipant();
 			} else 
 			if (item.id == 'spaceIndex') {
-				object = UtilObject.getSpaceview();
+				object = UtilSpace.getSpaceview();
 			};
 
 			if (object) {
@@ -413,7 +413,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
 		const filter = this.getFilter();
 		const lang = Constant.default.interfaceLang;
-		const canWrite = UtilObject.canParticipantWrite();
+		const canWrite = UtilSpace.canParticipantWrite();
 
 		let name = '';
 		if (filter) {
@@ -539,7 +539,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		const { config } = commonStore;
-		if (!config.debug.ho && it.isHidden) {
+		if (!config.debug.hiddenObject && it.isHidden) {
 			return false;
 		};
 		return true;
@@ -576,7 +576,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		if (item.isSettings) {
 			window.setTimeout(() => {
 				popupStore.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
-			}, Constant.delay.popup);
+			}, popupStore.getTimeout());
 		} else 
 
 		// Import action
@@ -593,7 +593,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 				case 'relation': {
 					$('#button-header-relation').trigger('click');
-					window.setTimeout(() => $('#menuBlockRelationView #item-add').trigger('click'), Constant.delay.menu * 2);
+					window.setTimeout(() => $('#menuBlockRelationView #item-add').trigger('click'), menuStore.getTimeout() * 2);
 					break;
 				};
 

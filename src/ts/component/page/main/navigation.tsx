@@ -1,11 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
-import { I, C, UtilObject, UtilCommon, UtilMenu, keyboard, Key, focus, translate } from 'Lib';
-import { blockStore, popupStore, commonStore } from 'Store';
+import { I, C, UtilObject, UtilCommon, UtilMenu, keyboard, focus, translate, UtilSpace } from 'Lib';
+import { popupStore, commonStore } from 'Store';
 
 interface State {
 	loading: boolean;
@@ -135,7 +135,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					rootId={rootId} 
 					tabs={UtilMenu.getGraphTabs()} 
 					tab="navigation" 
-					onTab={this.onTab} 
+					onTab={this.onTab}
+					layout={I.ObjectLayout.Navigation}
 				/>
 
 				{loading ? <Loader id="loader" /> : ''}
@@ -442,7 +443,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		let ret = !it.isDeleted;
-		if (!config.debug.ho) {
+		if (!config.debug.hiddenObject) {
 			ret = ret && !it.isHidden;
 		};
 		return ret;
@@ -474,7 +475,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		let root = rootId ? rootId : match.params.id;
 		if (root == I.HomePredefinedId.Graph) {
-			root = UtilObject.getLastOpened()?.id;
+			root = UtilSpace.getLastOpened()?.id;
 		};
 		return root;
 	};

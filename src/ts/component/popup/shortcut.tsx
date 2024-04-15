@@ -277,9 +277,9 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 							{ com: '[] + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine6') },
 							{ com: '1. + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine7') },
 							{ com: '>  + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine8') },
-							{ com: '```',				 name: translate('popupShortcutMarkdownBeginningOfLine9') },
-							{ com: '---',				 name: translate('popupShortcutMarkdownBeginningOfLine10') },
-							{ com: '***',				 name: translate('popupShortcutMarkdownBeginningOfLine11') },
+							{ com: '``` + Space',				 name: translate('popupShortcutMarkdownBeginningOfLine9') },
+							{ com: '--- + Space',				 name: translate('popupShortcutMarkdownBeginningOfLine10') },
+							{ com: '*** + Space',				 name: translate('popupShortcutMarkdownBeginningOfLine11') },
 						]
 					},
 				],

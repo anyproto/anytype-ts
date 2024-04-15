@@ -462,8 +462,8 @@ export default [
 	video(`33/onboarding.mp4`),
 	text(`We're calling this one feature, but it's really a whole series of features and designs wrapped into one experience that comprises everything from installation to login.`),
 	text(`During the onboarding experience, new users are situated within the "Void" to understand where their space will be created.`),
-	text(`From there, users receive supplemental education on the importance of protecting and backing up their recovery phrases. Finally, users are able to visualize their identity and personal space as two distinct entities.`),
-	text(`Although this flow is primarily designed for new users, existing account holders will also get to join in on some of the fun. You'll notice when logging in or out of your account, that your recovery phrase window got a colorful new design and that the void concept has been introduced uniformly in all accounts.`),
+	text(`From there, users receive supplemental education on the importance of protecting and backing up their keys. Finally, users are able to visualize their identity and personal space as two distinct entities.`),
+	text(`Although this flow is primarily designed for new users, existing account holders will also get to join in on some of the fun. You'll notice when logging in or out of your account, that your key window got a colorful new design and that the void concept has been introduced uniformly in all accounts.`),
 
 	h2(`⚡ Quality-of-Life Improvements:`),
 
@@ -490,6 +490,8 @@ export default [
 
 	div(),
 	// --------------------------------------------//
+
+	/*
 
 	h1(`Release 0.32.0: Welcome to the Space Jam 🌌`),
 	text(`Well folks, this is the release. THE release which integrates our Anysync protocol, introduces spaces to the anyverse, and opens the path towards multiplayer mode and the browser-like experience we wish to introduce. We are incredibly thankful to all @nightlytypes and new beta users who bravely tested multiple migrations and pre-release versions to help us roll out a polished product to the rest of our community.`),
@@ -526,8 +528,6 @@ export default [
 	div(),
 	// --------------------------------------------//
 
-	/*
-
 	h1(`Release 0.31.0: Inline Sets are Here 😍`),
 	text(`Throughout the past months, our team has been researching &amp; designing solutions to our community's needs to manage several objects at once.`),
 	text(`As the first in a series of projects addressing this topic, we're happy to bring you inline sets, which will allow more flexible interaction between sets & objects, allowing you to freely embed the former within the latter. If February is about surprising your loved ones, consider this feature our early Valentine's gift to you 💖`),
@@ -554,7 +554,7 @@ export default [
 	bullet(`<b>Profile added to Settings</b><br/>You can now edit your profile name & picture from your account settings. Any changes made there will be immediately synced with your Profile object.`),
 	img(`31/4-profile.png`, 'half screen'),
 
-	bullet(`<b>Upgrades to recovery phrase panel</b><br/>Buttons in the "Recovery Phrase" panel of your Settings menu now show "Hide" or "Show", depending on whether the phrase is blurred or not. Thanks, ${link('https://community.anytype.io/t/8029', 'sambouwer')}!`),
+	bullet(`<b>Upgrades to key panel</b><br/>Buttons in the "Recovery Phrase" panel of your Settings menu now show "Hide" or "Show", depending on whether the phrase is blurred or not. Thanks, ${link('https://community.anytype.io/t/8029', 'sambouwer')}!`),
 
 	h2(`💻 Tech &amp; Performance`),
 	bullet(`Electron upgraded to 22.0.0`),
@@ -708,7 +708,7 @@ export default [
 	h2(`🚀 Quality-of-life Improvements:`),
 	bullet(`Previously-uploaded images now saved in Image Library: When selecting Object covers you can now choose from a library of any images you have uploaded to your workspace`),
 	bullet(`Delete block shortcut added: Simply press Backspace with your block menu open (orange three-dots menu), and you'll delete the whole block`),
-	bullet(`Copy Recovery Phrase button added to Settings: To reduce the number of lost recovery phrases, we introduced buttons in our Recovery Phrase and Logout screens to show and automatically copy your phrase`),
+	bullet(`Copy Recovery Phrase button added to Settings: To reduce the number of lost keys, we introduced buttons in our Recovery Phrase and Logout screens to show and automatically copy your phrase`),
 	bullet(`'What's New' window optimization: For faster performance, the 'Whats New' window was optimized and now shows the previous three releases. Older releases can be viewed by clicking the ${hl(`Older Releases`)} button at the bottom of the window`),
 	bullet(`Settings keyboard navigation introduced: Navigate back in Settings using keystrokes ${hl(`${cmd} + \[`)} or ${hl(`Alt + arrow left`)}`),
 	bullet(`Emoji group icons introduced: Search for emojis more quickly using the group icons at the bottom of the emoji picker`),
@@ -767,7 +767,7 @@ export default [
 	bullet(`Link styles have been updated and the double squircle icons next to text links have been removed`),
 	bullet(`Code blocks now have a ${hl(`copy`)} button in the interface`),
 	bullet(`Sidebar and editor got a technical update, and now work a bit faster`),
-	bullet(`Recovery phrase and QR code are now not only blurred, but replaced with a substitute for security purposes`),
+	bullet(`Key and QR code are now not only blurred, but replaced with a substitute for security purposes`),
 	bullet(`The preload screen has a new Anytype icon and logo`),
 	bullet(`Mentions and link menus were modified`),
 	bullet(`Dates everywhere in the app were changed to work in local timezones, including filters in Sets`),
@@ -798,7 +798,7 @@ export default [
 	bullet(`A shiny new app icon! 💅🏻`),
 
 	h2(`Features`),
-	bullet(`Permanently erase your Anytype account, recovery phrase, and objects stored on the backup node. This is irreversible, and we cannot help you recover your data. You will have 30 days to change your mind.`),
+	bullet(`Permanently erase your Anytype account, key, and objects stored on the backup node. This is irreversible, and we cannot help you recover your data. You will have 30 days to change your mind.`),
 	bullet(`Highlight block now changes style to paragraph when pressing backspace in empty block, like lists`),
 	bullet(`Objects in ${hl(`move to menu`)} are now being sorted by last edited date`),
 	bullet(`Ability to drag-and-drop blocks directly to the sidebar`),
@@ -1014,7 +1014,7 @@ export default [
 	bullet(`Optimisations to reduce the wait from starting Anytype to reaching the home screen.  ${link('https://community.anytype.io/t/anytype-taking-2-5-minutes-to-get-past-the-logging-in-screen/2859', 'Thanks, lynxlove, Srinath')}`),
 
 	h2(`Enhancements`),
-	bullet(`New users will be shown their recovery phrase during their first session. ⚠️⚠️⚠️ Please write it down. Please keep it safe.`),
+	bullet(`New users will be shown their key during their first session. ⚠️⚠️⚠️ Please write it down. Please keep it safe.`),
 	bullet(`Change the view to non-popup when the window's width is smaller than the width of the pop-up. <a herf="https://community.anytype.io/d/969-default-to-non-popup-view-when-windows-width-is-popuppages-width/1">Thanks, triangles</a>`),
 	bullet(`The ${hl(`Done`)} relation will be added to new Sets views by default. `),
 	bullet(`${hl(`СTRL / CMD + N`)} now creates a new object inside a Set.`),
@@ -1225,7 +1225,7 @@ export default [
 	text(`Enhance your Daily notes with handy date shortcuts! Anytype will create an object with a relative date automatically. Write it the way you like: ${hl(`@now`)}, ${hl(`@today`)}, ${hl(`@yesterday`)}, ${hl(`@three days ago`)}, ${hl(`@last month`)}, ${hl(`@one year from now`)}, ${hl(`@sunday`)}, ${hl(`@next January`)}, ${hl(`@last February`)}, ${hl(`@December 25th`)}, ${hl(`@01.10.21`)}, ${hl(`@2016-05-12`)}. So handy with backlinks! Thanks, ${link('https://community.anytype.io/d/770-timedate-shortcuts-eg-now-today-date-etc', 'levifig')}`),
 
 	h2(`Fixes`),
-	bullet(`The recovery phrase is visible without any password authentication. Thanks, shizoxlife`),
+	bullet(`The key is visible without any password authentication. Thanks, shizoxlife`),
 	bullet(`Navigating back and forth between objects is unreliable. Thanks, ${link('https://community.anytype.io/d/643-forward-and-back-buttons-stop-working', 'irdinamaztura &amp; abheek')}`),
 	bullet(`Carriage returns to the top of the screen whenever I select something in the quick editor. Thanks, ${link('https://community.anytype.io/d/851-selection-jumps-to-top-in-popup-mode/1', 'bluatruli')}`),
 	bullet(`Anytype (Human) version history breaks app login, triggers an infinite loop. Thanks, ${link('https://community.anytype.io/d/805-version-history-of-anytype-page-breaks-the-app/1', 'selimsandal')}`),
@@ -1308,7 +1308,7 @@ export default [
 	bullet(`Hyperlink pop up window persisted across pages. Thanks, ${link('https://community.anytype.io/d/341-hyperlink-pop-up-window-persists-across-pages/1', 'jmsinnz')}.`),
 	bullet(`New Checkbox was created pre-checked if the one above was checked. Thanks, ${link('https://community.anytype.io/d/311-new-checkbox-pre-checked/1', 'bskinner')}.`),
 	bullet(`When you dragged pictures into a toggle, it resized to the width of the toggle. Thanks, ${link('https://community.anytype.io/d/461-when-you-drag-pictures-into-a-toggle-it-resizes-to-the-width-of-the-toggle/1', 'Inkqb')}.`),
-	bullet(`When first setting up Anytype using a recovery phrase to log in, pressing ${hl(`Enter`)} didn't submit the input. Thanks, ${link('https://community.anytype.io/d/498-enter-key-should-submit-seed-phrase/1', 'gil')}.`),
+	bullet(`When first setting up Anytype using a key to log in, pressing ${hl(`Enter`)} didn't submit the input. Thanks, ${link('https://community.anytype.io/d/498-enter-key-should-submit-seed-phrase/1', 'gil')}.`),
 	bullet(`Numeration could start from 1 in different circumstances. Thanks, ${link('https://community.anytype.io/d/450-changing-long-text-into-nummerous-list-bug/1', 'XxxBalCion')}.`),
 	bullet(`"Type text or / for commands" was visible on desktop overlapping the newly added text from Android. Thanks, ${link('https://community.anytype.io/d/420-help-text-overlap-bug/1', 'abiak')}.`),
 	bullet(`Background color wasn't exporting when printing. Thanks, ${link('https://community.anytype.io/d/368-background-colour-not-exported-when-printing/1', 'firmicutes')}.`),
@@ -1408,9 +1408,9 @@ export default [
 	bullet(`Markdown <b>export</b> Located in Settings, you can now export your Anytype pages into markdown.`),
 	bullet(`Greater page customisation options. Users can now change page alignment, and make changes to overall page size. This can be found in the menu while editing a page on the top-right of Anytype.`),
 	bullet(`You can now add/remove pages to/from the dashboard. Simply click the menu from any page.`),
-	bullet(`It can be tough to login to the mobile app with a mnemonic phrase, so you can do that with a QR code. Your unique QR code is found under Settings > Recovery phrase.`),
+	bullet(`It can be tough to login to the mobile app with a mnemonic phrase, so you can do that with a QR code. Your unique QR code is found under Settings > Key.`),
 	text(''),
-	text(`${hl(`Please don't share your recovery phrase or your QR code with anyone.`)}`),
+	text(`${hl(`Please don't share your key or your QR code with anyone.`)}`),
 
 	h2(`Enhancements`),
 	bullet(`Men-oeuvres. Menus will now flip vertically/horizontally when they run out of space.`),

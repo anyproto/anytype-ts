@@ -1,4 +1,4 @@
-import { I, UtilCommon, UtilObject, translate } from 'Lib';
+import { I, UtilCommon, translate } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 import Errors from 'json/error.json';
 
@@ -31,10 +31,12 @@ class Notification implements I.Notification {
 	};
 
 	fillContent () {
-		const { importType, errorCode, name, spaceId, identityName } = this.payload;
-		const space = spaceId ? UtilObject.getSpaceviewBySpaceId(spaceId) : null;
+		const { importType, errorCode, name } = this.payload;
 		const lang = errorCode ? 'error' : 'success';
 		const et = UtilCommon.enumKey(I.NotificationType, this.type);
+		const identityName = UtilCommon.shorten(String(this.payload.identityName || translate('defaultNamePage')), 32);
+		const spaceName = UtilCommon.shorten(String(this.payload.spaceName || translate('defaultNamePage')), 32);
+		const permissions = translate(`participantPermissions${this.payload.permissions}`);
 
 		this.title = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-title`));
 		this.text = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-text`));
@@ -53,14 +55,34 @@ class Notification implements I.Notification {
 					this.text = UtilCommon.sprintf(this.text, name);
 				} else {
 					this.title = UtilCommon.sprintf(this.title, name);
-					this.text = UtilCommon.sprintf(this.text, space?.name);
+					this.text = UtilCommon.sprintf(this.text, spaceName);
 				};
 				break;
 			};
 
-			case I.NotificationType.Join: {
+			case I.NotificationType.Join: 
+			case I.NotificationType.Leave: {
 				this.title = '';
-				this.text = UtilCommon.sprintf(this.text, identityName, space?.name);
+				this.text = UtilCommon.sprintf(this.text, identityName, spaceName);
+				break;
+			};
+
+			case I.NotificationType.Approve: {
+				this.title = '';
+				this.text = UtilCommon.sprintf(this.text, spaceName, permissions);
+				break;
+			};
+
+			case I.NotificationType.Decline:
+			case I.NotificationType.Remove: {
+				this.title = '';
+				this.text = UtilCommon.sprintf(this.text, spaceName);
+				break;
+			};
+
+			case I.NotificationType.Permission: {
+				this.title = '';
+				this.text = UtilCommon.sprintf(this.text, permissions, spaceName);
 				break;
 			};
 

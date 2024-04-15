@@ -314,9 +314,9 @@ class UtilCommon {
 		document.execCommand('copy');
 	};
 
-	copyToast (label: string, text: string) {
+	copyToast (label: string, text: string, toast?: string) {
 		this.clipboardCopy({ text });
-		Preview.toastShow({ text: this.sprintf(translate('toastCopy'), label) });
+		Preview.toastShow({ text: this.sprintf(toast || translate('toastCopy'), label) });
 	};
 	
 	cacheImages (images: string[], callBack?: () => void) {
@@ -454,7 +454,11 @@ class UtilCommon {
 	};
 	
 	emailCheck (v: string) {
-		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
+		v = String(v || '');
+
+		const uc = '\\P{Script_Extensions=Latin}';
+		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,5}$`, 'gu');
+		return reg.test(v);
 	};
 
 	getSelectionRange (): Range {
@@ -552,6 +556,20 @@ class UtilCommon {
 					if (onConfirm) {
 						onConfirm();
 					};
+				},
+			},
+		});
+	};
+
+	onInviteRequest () {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupInviteInviteConfirmTitle'),
+				text: translate('popupInviteInviteConfirmText'),
+				textConfirm: translate('commonDone'),
+				textCancel: translate('popupInviteInviteConfirmCancel'),
+				onCancel: () => {
+					window.setTimeout(() => { popupStore.open('settings', { data: { page: 'spaceList' } }); }, popupStore.getTimeout());
 				},
 			},
 		});

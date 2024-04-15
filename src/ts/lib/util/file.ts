@@ -160,14 +160,16 @@ class UtilFile {
 	};
 
 	name (object: any) {
-		const { name, fileExt } = object;
-		const ret = [ name ];
+		object = object || {};
 
-		if (fileExt) {
-			ret.push(fileExt);
+		const name = String(object.name || '');
+		const fileExt = String(object.fileExt || '');
+
+		if (!fileExt || new RegExp(`\\.${UtilCommon.regexEscape(fileExt)}$`).test(name)) {
+			return name;
 		};
 
-		return ret.join('.');
+		return `${name}.${fileExt}`;
 	};
 
 };

@@ -4,7 +4,7 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, UtilCommon, UtilObject, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
+import { I, UtilCommon, UtilObject, UtilSpace, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Theme from 'json/theme.json';
@@ -396,7 +396,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		menuStore.open('dataviewContext', {
 			...param,
 			data: {
-				route: 'Graph',
+				route: analytics.route.graph,
 				subId: Constant.subId.graph,
 				objectIds: ids,
 				getObject: id => this.getNode(id),
@@ -451,7 +451,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onContextSpaceClick (param: any, data: any) {
-		if (!UtilObject.canParticipantWrite()) {
+		if (!UtilSpace.canParticipantWrite()) {
 			return;
 		};
 
@@ -466,9 +466,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						case 'newObject': {
 							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
+							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, 'Graph', (message: any) => {
 								UtilObject.openPopup(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
-								analytics.event('CreateObject', { objectType: commonStore.type, route: 'Graph' });
 							});
 							break;
 						};

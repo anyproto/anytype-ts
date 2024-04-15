@@ -133,6 +133,7 @@ export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response)
 export const ObjectImport = (response: any) => {
 	return {
 		collectionId: response.getCollectionid(),
+		count: response.getObjectscount(),
 	};
 };
 
@@ -453,6 +454,63 @@ export const GalleryDownloadManifest = (response: Rpc.Gallery.DownloadManifest.R
 export const NotificationList = (response: Rpc.Notification.List.Response) => {
 	return {
 		list: (response.getNotificationsList() || []).map(Mapper.From.Notification),
+	};
+};
+
+export const NameServiceResolveName = (response: Rpc.NameService.ResolveName.Response) => {
+	return {
+		available: response.getAvailable(),
+		ownerScwEthAddress: response.getOwnerscwethaddress(),
+		ownerEtherAddress: response.getOwnerethaddress(),
+		ownerAnyAddress: response.getOwneranyaddress(),
+		spaceId: response.getSpaceid(),
+		nameExpires: response.getNameexpires(),
+	};
+};
+
+export const NameServiceResolveAnyId = (response: Rpc.NameService.ResolveAnyId.Response) => {
+	return {
+		found: response.getFound(),
+		fullName: response.getFullname(),
+	};
+};
+
+export const NameServiceResolveSpaceId = (response: Rpc.NameService.ResolveSpaceId.Response) => {
+	return {
+		found: response.getFound(),
+		fullName: response.getFullname(),
+	};
+};
+
+export const NameServiceUserAccountGet = (response: Rpc.NameService.UserAccount.Get.Response) => {
+	return {
+		anyNameAttached: response.getAnynameattached(),
+		namesCountLeft: response.getNamescountleft(),
+		operationsCountLeft: response.getOperationscountleft(),
+	};
+};
+
+export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response) => {
+	return {
+		membership: Mapper.From.Membership(response.getData()),
+	};
+};
+
+export const MembershipGetTiers = (response: Rpc.Membership.Tiers.Get.Response) => {
+	return {
+		tiers: (response.getTiersList() || []).map(it => Mapper.From.MembershipTierData(it)),
+	};
+};
+
+export const MembershipGetPaymentUrl = (response: Rpc.Membership.GetPaymentUrl.Response) => {
+	return {
+		url: response.getPaymenturl(),
+	};
+};
+
+export const MembershipGetPortalLinkUrl = (response: Rpc.Membership.GetPortalLinkUrl.Response) => {
+	return { 
+		url: response.getPortalurl(),
 	};
 };
 

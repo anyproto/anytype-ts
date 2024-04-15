@@ -470,7 +470,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getRecords (groupId?: string): string[] {
 		const subId = this.getSubId(groupId);
-		const records = dbStore.getRecords(subId, '');
+		const records = dbStore.getRecordIds(subId, '');
 
 		return this.applyObjectOrder('', UtilCommon.objectCopy(records));
 	};
@@ -677,11 +677,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					window.setTimeout(() => ref.onClick(e), 15);
 				};
 
-				analytics.event('CreateObject', { 
-					route: this.analyticsRoute(),
-					objectType: object.type,
-					layout: object.layout,
-				});
+				analytics.createObject(object.type, object.layout, this.analyticsRoute(), message.middleTime);
 			};
 		});
 	};
@@ -696,7 +692,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	onRecordAdd (e: any, dir: number, groupId?: string) {
+	onRecordAdd (e: any, dir: number, groupId?: string, menuParam?: any) {
 		if (e.persist) {
 			e.persist();
 		};
@@ -705,7 +701,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const type = dbStore.getTypeById(typeId);
 
 		if (type && (type.uniqueKey == Constant.typeKey.bookmark)) {
-			this.onBookmarkMenu(e, dir, groupId);
+			this.onBookmarkMenu(e, dir, groupId, menuParam);
 		} else {
 			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId);
 		};
@@ -772,17 +768,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				templateId: this.getDefaultTemplateId(),
 				route,
 				onTypeChange: (id) => {
-					if (!view || (id == this.getTypeId())) {
-						return;
+					if (id != this.getTypeId()) {
+						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
+						analytics.event('DefaultTypeChange', { route });
 					};
-
-					C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
-					analytics.event('DefaultTypeChange', { route });
 				},
 				onSetDefault: (item) => {
-					if (view) {
-						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
-					};
+					Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: item.id });
 				},
 				onSelect: (item: any) => {
 					if (!view) {
@@ -800,8 +792,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						this.onTemplateAdd(item.targetObjectType);
 					} else {
 						this.recordCreate(e, item, dir);
-
-						C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: item.id });
+						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: item.id });
 
 						menuContext.close();
 						analytics.event('ChangeDefaultTemplate', { route });
@@ -1147,7 +1138,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				if (this.isAllowedObject()) {
 					emptyProps.description = translate('blockDataviewEmptyViewDescription');
 					emptyProps.button = translate('blockDataviewEmptyViewButton');
-					emptyProps.onClick = e => this.onRecordAdd(e, 1);
+					emptyProps.onClick = e => this.onRecordAdd(e, 1, '', { horizontal: I.MenuDirection.Center });
 				};
 				break;
 			};
@@ -1362,7 +1353,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	analyticsRoute () {
-		return this.isCollection() ? 'Collection' : 'Set';
+		return this.isCollection() ? analytics.route.collection : analytics.route.set;
 	};
 
 	resize () {
