@@ -15,7 +15,11 @@
 }
 
 .widget.widgetSpace {
-	.cnt { background-color: var(--color-shape-secondary); color: var(--color-text-primary); }
+	.body {
+		.side.right {
+			.cnt { background-color: var(--color-shape-secondary); color: var(--color-text-primary); }
+		}
+	}
 }
 
 .widget.widgetTree {
