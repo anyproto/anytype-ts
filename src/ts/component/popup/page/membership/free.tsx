@@ -109,11 +109,10 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	};
 
 	onCheck () {
-		this.refCheckbox.toggle();
-
-		if (this.refCheckbox.getValue()) {
+		if (!this.refCheckbox.getValue()) {
 			analytics.event('ClickMembership', { type: 'GetUpdates', name: 'Explorer' });
 		};
+		this.refCheckbox.toggle();
 	};
 
 	onResetCode () {
