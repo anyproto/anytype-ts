@@ -27,6 +27,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onPay = this.onPay.bind(this);
+		this.onSubmit = this.onSubmit.bind(this);
 	};
 
 	render() {
@@ -57,7 +58,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		};
 
 		return (
-			<div className="anyNameForm">
+			<form className="anyNameForm" onSubmit={this.onSubmit}>
 				{tierItem.namesCount ? (
 					<React.Fragment>
 						<Title text={translate(`popupMembershipPaidTitle`)} />
@@ -86,7 +87,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 				<Button onClick={() => this.onPay(I.PaymentMethod.Card)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
 				{/*<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />*/}
-			</div>
+			</form>
 		);
 	};
 
@@ -155,6 +156,12 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	disableButtons (v: boolean) {
 		this.refButtonCard?.setDisabled(v);
 		this.refButtonCrypto?.setDisabled(v);
+	};
+
+	onSubmit (e: any) {
+		e.preventDefault();
+
+		this.onPay(I.PaymentMethod.Card);
 	};
 
 	onPay (method: I.PaymentMethod) {
