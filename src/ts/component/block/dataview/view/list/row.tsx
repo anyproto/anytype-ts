@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, keyboard, Relation, UtilCommon, UtilObject } from 'Lib';
-import { Cell, DropTarget, Icon } from 'Component';
+import { I, keyboard, Relation, UtilObject } from 'Lib';
+import { Cell, DropTarget, Icon, SelectionTarget } from 'Component';
 import { dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
@@ -60,13 +60,9 @@ const Row = observer(class Row extends React.Component<Props> {
 
 		if (!isInline) {
 			content = (
-				<div
-					id={'selectable-' + record.id}
-					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
-				>
+				<SelectionTarget id={record.id} type={I.SelectType.Record}>
 					{content}
-				</div>
+				</SelectionTarget>
 			);
 		};
 

@@ -171,7 +171,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				UtilCommon.onUrl(message.url);
 			};
 
-			analytics.event('ClickMembership', { type: I.PaymentMethod[method], name: I.TierType[tier] });
+			analytics.event('ClickMembership', { params: { tier, method }});
 		});
 	};
 

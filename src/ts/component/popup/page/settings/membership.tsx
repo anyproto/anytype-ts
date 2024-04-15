@@ -4,7 +4,7 @@ import { Title, Label, Button, Icon } from 'Component';
 import { I, translate, UtilCommon, UtilDate, analytics } from 'Lib';
 import { popupStore, authStore, commonStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay } from 'swiper/modules';
+import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
 import Url from 'json/url.json';
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
@@ -105,7 +105,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 								delay: 4000,
 								disableOnInteraction: true,
 							}}
-							modules={[ Pagination, Autoplay ]}
+							mousewheel={true}
+							modules={[ Pagination, Autoplay, Mousewheel ]}
 							centeredSlides={true}
 							loop={true}
 							onSwiper={this.onSwiper}
