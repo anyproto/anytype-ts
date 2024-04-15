@@ -7,7 +7,6 @@ class Action {
 
 	pageClose (rootId: string, close: boolean) {
 		const { root, widgets } = blockStore;
-		const { space } = commonStore;
 
 		// Prevent closing of system objects
 		if ([ root, widgets ].includes(rootId)) {
@@ -28,7 +27,7 @@ class Action {
 		};
 
 		if (close) {
-			C.ObjectClose(rootId, space, onClose);
+			C.ObjectClose(rootId, commonStore.space, onClose);
 		} else {
 			onClose();
 		};

@@ -69,7 +69,8 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, onMouseEnter, onMouseLeave } = this.props;
+		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, onMouseEnter, onMouseLeave, dataset } = this.props;
+		const { selection } = dataset || {};
 		const { id, type, fields, content, hAlign, bgColor } = block;
 
 		if (!id) {
@@ -326,7 +327,8 @@ const Block = observer(class Block extends React.Component<Props> {
 			object = (
 				<div 
 					id={`selectable-${id}`} 
-					className={[ 'selectable', `type-${I.SelectType.Block}` ].join(' ')} 
+					ref={ref => selection?.registerRef(id, I.SelectType.Block, ref)}
+					className={`selectable type-${I.SelectType.Block}`}
 					{...UtilCommon.dataProps({ id, type: I.SelectType.Block })}
 				>
 					{object}

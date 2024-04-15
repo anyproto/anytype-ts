@@ -22,7 +22,8 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
+		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection, dataset } = this.props;
+		const { selection } = dataset || {};
 		const record = getRecord(recordId);
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
@@ -75,8 +76,9 @@ const Card = observer(class Card extends React.Component<Props> {
 		if (!isInline) {
 			content = (
 				<div
-					id={'selectable-' + record.id}
-					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
+					id={`selectable-${record.id}`}
+					ref={ref => selection?.registerRef(record.id, I.SelectType.Record, ref)}
+					className={`selectable type-${I.SelectType.Record}`}
 					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
 					{content}

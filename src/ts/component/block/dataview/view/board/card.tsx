@@ -16,7 +16,8 @@ const Card = observer(class Card extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations } = this.props;
+		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, dataset } = this.props;
+		const { selection } = dataset || {};
 		const view = getView();
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -55,8 +56,9 @@ const Card = observer(class Card extends React.Component<Props> {
 		if (!isInline) {
 			content = (
 				<div
-					id={'selectable-' + record.id}
-					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
+					id={`selectable-${record.id}`}
+					ref={ref => selection?.registerRef(record.id, I.SelectType.Record, ref)}
+					className={`selectable type-${I.SelectType.Record}`}
 					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
 					{content}

@@ -15,7 +15,8 @@ const Row = observer(class Row extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onSelectToggle } = this.props;
+		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onSelectToggle, dataset } = this.props;
+		const { selection } = dataset || {};
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -61,8 +62,9 @@ const Row = observer(class Row extends React.Component<Props> {
 		if (!isInline) {
 			content = (
 				<div
-					id={'selectable-' + record.id}
-					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
+					id={`selectable-${record.id}`}
+					ref={ref => selection?.registerRef(record.id, I.SelectType.Record, ref)}
+					className={`selectable type-${I.SelectType.Record}`}
 					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
 					{content}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, UtilData, UtilFile, Relation, UtilObject, translate, keyboard, UtilCommon } from 'Lib';
+import { I, C, UtilData, Relation, UtilObject, translate, keyboard, UtilCommon } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell } from 'Component';
 import { detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -37,7 +37,8 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	render () {
-		const { subId, rootId, columns } = this.props;
+		const { subId, rootId, columns, dataset } = this.props;
+		const { selection } = dataset || {};
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
 		const length = columns.length;
@@ -73,10 +74,11 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 
 			return (
 				<tr 
-					id={`selectable-${item.id}`} 
-					className={cn.join(' ')} 
-					onContextMenu={e => this.onContext(e, item.id)}
+					id={`selectable-${item.id}`}
+					ref={ref => selection?.registerRef(item.id, I.SelectType.Record, ref)}
+					className={cn.join(' ')}
 					{...UtilCommon.dataProps({ id: item.id, type: I.SelectType.Record })}
+					onContextMenu={e => this.onContext(e, item.id)}
 				>
 					<td className="cell isName">
 						<div className="cellContent isName" onClick={() => UtilObject.openPopup(item)}>

@@ -212,6 +212,7 @@ export interface Dataset {
 		clear: () => void;
 		hide: () => void;
 		setIsSelecting: (v: boolean) => void;
+		registerRef: (id: string, type: I.SelectType, ref: any) => void;
 	};
 	dragProvider: {
 		onScroll: () => void;

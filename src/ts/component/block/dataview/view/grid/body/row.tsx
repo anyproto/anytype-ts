@@ -14,7 +14,8 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, block, style, recordId, getRecord, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
+		const { rootId, block, style, recordId, getRecord, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle, dataset } = this.props;
+		const { selection } = dataset || {};
 		const relations = getVisibleRelations();
 		const widths = getColumnWidths('', 0);
 		const record = getRecord(recordId);
@@ -57,7 +58,8 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 			content = (
 				<div
 					id={`selectable-${record.id}`}
-					className={[ 'selectable', `type-${I.SelectType.Record}` ].join(' ')}
+					ref={ref => selection?.registerRef(record.id, I.SelectType.Record, ref)}
+					className={`selectable type-${I.SelectType.Record}`}
 					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
 					style={{ gridTemplateColumns: str }}
 				>

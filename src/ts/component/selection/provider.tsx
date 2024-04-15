@@ -98,6 +98,15 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		UtilCommon.getScrollContainer(isPopup).off('scroll.selection');
 	};
 
+	registerRef (id: string, type: I.SelectType, ref: any) {
+		if (ref) {
+			this.nodes.push({ id, type, obj: $(ref) });
+			this.cacheChildrenIds(id);
+		} else {
+			this.nodes = this.nodes.filter(it => (it.id != id) && (it.type != type));
+		};
+	};
+
 	scrollToElement (id: string, dir: number) {
 		const isPopup = keyboard.isPopup();
 
@@ -181,26 +190,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	initNodes () {
-		const nodes = this.getPageContainer().find('.selectable');
-
-		nodes.each((i: number, item: any) => {
-			item = $(item);
-
-			const id = item.attr('data-id');
-			if (!id) {
-				return;
-			};
-
-			const node = {
-				id,
-				type: item.attr('data-type'),
-				obj: item,
-			};
-
-			this.nodes.push(node);
+		for (const node of this.nodes) {
 			this.cacheNode(node);
-			this.cacheChildrenIds(id);
-		});
+		};
 	};
 	
 	onMouseMove (e: any) {
@@ -363,10 +355,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		const offset = node.obj.offset();
-		const rect = node.obj.get(0).getBoundingClientRect() as DOMRect;
 		const { x, y } = this.recalcCoords(offset.left, offset.top);
 
-		cache = { x, y, width: rect.width, height: rect.height };
+		cache = { x, y, width: node.obj.width(), height: node.obj.height() };
 
 		this.cacheNodeMap.set(node.id, cache);
 		return cache;
@@ -481,7 +472,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.containerOffset = null;
 		this.isPopup = false;
 		this.rootId = '';
-		this.nodes = [];
 	};
 
 	set (type: I.SelectType, ids: string[]) {
