@@ -84,7 +84,7 @@ html.printMedia {
 		.block.blockText {
 			.placeholder { display: none !important; }
 		}
-		.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { white-space: pre-wrap; overflow-x: visible; }
+		.block.blockText.textCode > .wrapContent > .selectionTarget > .dropTarget #value { white-space: pre-wrap; overflow-x: visible; }
 
 		.block.blockDataview.isInline {
 			.content {

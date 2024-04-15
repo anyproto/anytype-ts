@@ -149,7 +149,7 @@
 
 			.block { height: 100%; border: 0px !important; padding: 0px; margin: 0px; color: var(--color-text-primary); }
 			.block {
-				.selectable { flex-grow: 1; }
+				.selectionTarget { flex-grow: 1; }
 				.wrapContent, .wrap, .flex, .dropTarget { height: 100%; }
 
 				.wrapMenu { display: none; }
@@ -178,7 +178,7 @@
 			.block.blockText { @include text-common; }
 			.block.blockText {
 				> .wrapContent {
-					> .selectable {
+					> .selectionTarget {
 						> .dropTarget {
 							> .flex {
 								> .editableWrap { display: table; }

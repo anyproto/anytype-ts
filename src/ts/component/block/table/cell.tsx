@@ -95,7 +95,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			return (
 				<div className={cn.join(' ')}>
 					<div className="wrapContent">
-						<div className="selectable">
+						<div className="selectionTarget">
 							<div className="dropTarget">
 								<div className="flex">
 									<div className="markers" />
