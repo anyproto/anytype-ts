@@ -31,7 +31,6 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		const { param } = this.props;
 		const { data } = param;
 		const { tier, success } = data;
-		const tierContent = this.getTierContent(tier);
 		const tierItem = UtilData.getMembershipTier(tier);
 		const cn = [ 'sides', `tier${tier}`, tierItem.color ];
 
@@ -60,7 +59,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 					<div className="contentList">
 						<Label text={translate('popupMembershipWhatsIncluded')} />
 						<ul>
-							{tierContent.map((text, idx) => (
+							{tierItem.features.map((text, idx) => (
 								<li key={idx}>{text}</li>
 							))}
 						</ul>
@@ -78,20 +77,6 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		const { tier } = data;
 
 		analytics.event('ScreenMembership', { params: { tier } });
-	};
-
-	getTierContent (tier: I.TierType): string[] {
-		const tierItem = UtilData.getMembershipTier(tier);
-		const { features, nameMinLength } = tierItem;
-
-		let list = [];
-
-		if (nameMinLength) {
-			list.push(UtilCommon.sprintf(translate(`popupMembershipTierFeatureAnyNameContent`), nameMinLength));
-		};
-
-		list = list.concat(features);
-		return list;
 	};
 
 	onChangeEmail () {
