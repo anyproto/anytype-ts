@@ -188,10 +188,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.unbind();
 		this.close();
 
+		blockStore.clear(this.props.rootId);
 		focus.clear(false);
+
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
 		window.clearTimeout(this.timeoutMove);
+
 		Renderer.remove('commandEditor');
 	};
 

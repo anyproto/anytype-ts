@@ -5,7 +5,7 @@ import Url from 'json/url.json';
 
 class Action {
 
-	pageClose (rootId: string, close: boolean) {
+	pageClose (rootId: string, withCommand: boolean) {
 		const { root, widgets } = blockStore;
 		const { space } = commonStore;
 
@@ -27,10 +27,10 @@ class Action {
 			authStore.threadRemove(rootId);
 		};
 
-		if (close) {
-			C.ObjectClose(rootId, space, onClose);
-		} else {
-			onClose();
+		onClose();
+
+		if (withCommand) {
+			C.ObjectClose(rootId, space);
 		};
 	};
 
