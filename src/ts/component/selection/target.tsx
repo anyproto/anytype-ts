@@ -6,6 +6,8 @@ interface Props {
 	type: I.SelectType;
 	children?: React.ReactNode;
 	style?: any;
+	className?: string;
+	onContextMenu?(e: any): void;
 };
 
 class SelectionTarget extends React.Component<Props> {
@@ -14,16 +16,18 @@ class SelectionTarget extends React.Component<Props> {
 		id: '',
 		type: I.SelectType.None,
 		style: {},
+		className: '',
 	};
 
 	render () {
-		const { id, type, children, style } = this.props;
+		const { id, type, children, style, className, onContextMenu } = this.props;
 
 		return (
 			<div 
 				id={`selectionTarget-${id}`} 
-				className="selectionTarget"
+				className={`selectionTarget ${className}`}
 				style={style}
+				onContextMenu={onContextMenu}
 				{...UtilCommon.dataProps({ id, type })}
 			>
 				{children}

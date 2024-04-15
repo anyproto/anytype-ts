@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, UtilData, UtilFile, Relation, UtilObject, translate, keyboard, UtilCommon } from 'Lib';
-import { IconObject, Pager, ObjectName, Cell } from 'Component';
+import { I, C, UtilData, Relation, UtilObject, translate, keyboard } from 'Lib';
+import { IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
 import { detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -40,8 +40,6 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		const { subId, rootId, columns } = this.props;
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const length = columns.length;
-		const width = 70 / length;
 
 		let pager = null;
 		if (total && items.length) {
@@ -72,20 +70,20 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			};
 
 			return (
-				<tr 
-					id={`selectionTarget-${item.id}`} 
-					className={cn.join(' ')} 
+				<SelectionTarget 
+					id={item.id} 
+					type={I.SelectType.Record} 
+					className={cn.join(' ')}
 					onContextMenu={e => this.onContext(e, item.id)}
-					{...UtilCommon.dataProps({ id: item.id, type: I.SelectType.Record })}
 				>
-					<td className="cell isName">
+					<div className="cell isName">
 						<div className="cellContent isName" onClick={() => UtilObject.openPopup(item)}>
 							<div className="flex">
 								<IconObject object={item} />
 								<ObjectName object={item} />
 							</div>
 						</div>
-					</td>
+					</div>
 
 					{columns.map(column => {
 						const cnc = [ 'cellContent' ];
@@ -134,44 +132,42 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 						};
 
 						return (
-							<td key={`cell-${column.relationKey}`} className="cell" style={{ width: `${width}%` }}>
+							<div key={`cell-${column.relationKey}`} className="cell">
 								{content ? <div className={cnc.join(' ')} onClick={onClick}>{content}</div> : ''}
-							</td>
+							</div>
 						);
 					})}
-				</tr>
+				</SelectionTarget>
 			);
 		};
 
 		return (
 			<div className="listObject">
-				<table>
-					<thead>
-						<tr className="row">
-							<th className="cellHead">
-								<div className="name">{translate('commonName')}</div>
-							</th>
-							{columns.map(column => (
-								<th key={`head-${column.relationKey}`} className="cellHead">
-									<div className="name">{column.name}</div>
-								</th>
+				<div className="table">
+					<div className="row isHead">
+						<div className="cell">
+							<div className="name">{translate('commonName')}</div>
+						</div>
+
+						{columns.map(column => (
+							<div key={`head-${column.relationKey}`} className="cell isHead">
+								<div className="name">{column.name}</div>
+							</div>
+						))}
+					</div>
+
+					{!items.length ? (
+						<div className="row">
+							<div className="cell empty">{translate('commonNoObjects')}</div>
+						</div>
+					) : (
+						<React.Fragment>
+							{items.map((item: any, i: number) => (
+								<Row key={i} {...item} />
 							))}
-						</tr>
-					</thead>
-					<tbody>
-						{!items.length ? (
-							<tr>
-								<td className="cell empty" colSpan={3}>{translate('commonNoObjects')}</td>
-							</tr>
-						) : (
-							<React.Fragment>
-								{items.map((item: any, i: number) => (
-									<Row key={i} {...item} />
-								))}
-							</React.Fragment>
-						)}
-					</tbody>
-				</table>
+						</React.Fragment>
+					)}
+				</div>
 				
 				{pager}
 			</div>
