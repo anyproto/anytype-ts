@@ -66,7 +66,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 						},
 					});
 
-					analytics.event('ChangePlan', { name: I.TierType[tier] });
+					analytics.event('ChangePlan', { params: { tier }});
 				};
 			});
 		});

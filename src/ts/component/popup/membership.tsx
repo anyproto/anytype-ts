@@ -77,7 +77,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		const { data } = param;
 		const { tier } = data;
 
-		analytics.event('ScreenMembership', { name: I.TierType[tier] });
+		analytics.event('ScreenMembership', { params: { tier } });
 	};
 
 	getTierContent (tier: I.TierType): string[] {
