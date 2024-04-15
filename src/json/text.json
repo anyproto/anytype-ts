@@ -981,9 +981,9 @@
 	"popupInviteInviteConfirmCancel": "Manage spaces",
 
 	"popupInviteConfirmTitle": "%s requested to join %s",
-	"popupInviteConfirmButtonReader": "Grant read access",
+	"popupInviteConfirmButtonReader": "Viewer access",
 	"popupInviteConfirmButtonReaderLimit": "✦ Add more readers",
-	"popupInviteConfirmButtonEditor": "Grant edit access",
+	"popupInviteConfirmButtonEditor": "Editor access",
 	"popupInviteConfirmButtonEditorLimit": "✦ Add more editors",
 	"popupInviteConfirmButtonReject": "Reject",
 
