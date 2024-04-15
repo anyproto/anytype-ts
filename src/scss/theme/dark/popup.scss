@@ -99,6 +99,19 @@
 				.illustration.slide2 { background-image: url('#{$themePath}/icon/payment/slide2.svg'); }
 				.illustration.slide3 { background-image: url('#{$themePath}/icon/payment/slide3.svg'); }
 			}
+
+			.slide.c0 {
+				.illustration { background: url('#{$themePath}/icon/payment/slide0.svg'); }
+			}
+			.slide.c1 {
+				.illustration { background: url('#{$themePath}/icon/payment/slide1.svg'); }
+			}
+			.slide.c2 {
+				.illustration { background: url('#{$themePath}/icon/payment/slide2.svg'); }
+			}
+			.slide.c3 {
+				.illustration { background: url('#{$themePath}/icon/payment/slide3.svg'); }
+			}
 			.tiers {
 				.tier { background: var(--color-shape-tertiary) !important; }
 			}
