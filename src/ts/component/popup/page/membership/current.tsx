@@ -199,7 +199,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			this.setState({ verificationStep: 2 });
 			this.startCountdown(60);
 
-			analytics.event('ClickMembership', { type: 'Submit', name: 'Explorer' });
+			analytics.event('ClickMembership', { type: 'Submit', params: { tier: I.TierType.Explorer } });
 		});
 	};
 

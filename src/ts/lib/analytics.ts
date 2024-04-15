@@ -435,6 +435,18 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangePlan':
+			case 'ScreenMembership': {
+				data.name = I.TierType[data.params.tier];
+				break;
+			};
+
+			case 'ClickMembership': {
+				data.name = data.name || I.TierType[data.params.tier];
+				data.type = data.type || I.PaymentMethod[data.params.method];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
