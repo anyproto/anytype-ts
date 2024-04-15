@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuSmile { width: 384px; user-select: none; }
+	.menu.menuSmile { width: 404px; user-select: none; }
 	.menu.menuSmile {
 		.content { overflow: visible; padding-bottom: 0px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; }
@@ -9,12 +9,12 @@
 
 		.head { 
 			color: var(--color-control-active); font-weight: 500; padding: 3px 14px 10px 14px; border-bottom: 1px solid var(--color-shape-secondary); 
-			display: flex; flex-direction: row; gap: 0px 16px; justify-content: space-evenly; @include text-small;
+			display: flex; flex-direction: row; gap: 0px 16px;
 		}
 		.head {
 			.tab { display: inline-block; vertical-align: top; transition: $transitionAllCommon; @include text-overflow-nw; }
 			.tab:last-child { margin-right: 0px; }
-			.tab:hover, .btn.active { color: var(--color-text-primary); }
+			.tab:hover, .tab.active { color: var(--color-text-primary); }
 		}
 
 		.filter.withHead { padding-top: 12px; }
@@ -22,11 +22,11 @@
 			.inner { height: 35px; }
 		}
 
-		.body.gallery, .body.library {
+		.body.smile, .body.library {
 			.items { height: 238px; }
 		}
 
-		.body.gallery {
+		.body.smile {
 			.section { padding: 11px 14px !important; border: 0px; }
 			.section > .name { padding: 0px; margin: 0px; }
 			
@@ -79,10 +79,10 @@
 		.body.library {
 			.filter { margin: 0px 0px 7px 0px; }
 
-			.row { padding: 7px 14px; }
-			.row { display: grid; grid-template-columns: repeat(4, 1fr); grid-gap: 0px 12px; }
+			.row { padding: 3px 14px; }
+			.row { display: grid; grid-template-columns: repeat(4, 1fr); grid-gap: 0px 8px; }
 
-			.item { padding: 4px; border-radius: 6px; }
+			.item { padding: 0px; border-radius: 2px; }
 			.item {
 				.img { width: 100%; height: 100%; }
 			}

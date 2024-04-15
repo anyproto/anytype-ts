@@ -7,9 +7,10 @@ import { menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 enum Tab {
-	Gallery	 = 0,
-	Upload	 = 1,
-	Library	 = 2,
+	None	 = 0,
+	Library	 = 1,
+	Smile	 = 2,
+	Upload	 = 3,
 };
 
 interface State {
@@ -37,7 +38,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		filter: '',
 		page: 0,
 		isLoading: false,
-		tab: Tab.Gallery,
+		tab: Tab.None,
 	};
 
 	node = null;
@@ -60,7 +61,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onRandom = this.onRandom.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onScroll = this.onScroll.bind(this);
@@ -82,7 +82,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		let content = null;
 
 		switch (tab) {
-			case Tab.Gallery: {
+			case Tab.Smile: {
 				if (!this.cache) {
 					break;
 				};
@@ -313,8 +313,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 						{tabs.map((item, i) => (
 							<div 
 								key={i} 
-								className={[ 'tab', (item.isActive ? 'active' : '') ].join(' ')} 
-								onClick={item.onClick}
+								className={[ 'tab', (tab == item.id ? 'active' : '') ].join(' ')} 
+								onClick={item.onClick || (() => this.onTab(item.id))}
 							>
 								{item.text}
 							</div>
@@ -333,10 +333,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	componentDidMount () {
 		this._isMounted = true;
 
-		const { storageGet, param } = this.props;
-		const { data } = param;
-		const { noGallery } = data;
+		const { storageGet } = this.props;
 		const items = this.getItems();
+		const tabs = this.getTabs();
 
 		this.rebind();
 
@@ -347,11 +346,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			keyMapper: i => (items[i] || {}).id,
 		});
 
-		if (noGallery) {
-			this.onTab(Tab.Upload);
-		} else {
-			this.forceUpdate();
-		};
+		this.onTab(tabs[0].id);
 	};
 	
 	componentDidUpdate () {
@@ -485,7 +480,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		let ret = [];
 
 		switch (tab) {
-			case Tab.Gallery: {
+			case Tab.Smile: {
 				ret = this.getSmileItems();
 				break;
 			};
@@ -593,7 +588,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 
 		switch (this.state.tab) {
-			case Tab.Gallery: return HEIGHT_SMILE_ITEM;
+			case Tab.Smile: return HEIGHT_SMILE_ITEM;
 			case Tab.Library: return HEIGHT_LIBRARY_ITEM;
 		};
 
@@ -644,7 +639,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			e.preventDefault();
 
 			switch (tab) {
-				case Tab.Gallery: {
+				case Tab.Smile: {
 					this.onSmileSelect(this.active.itemId, this.skin);
 					break;
 				};
@@ -665,9 +660,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			e.preventDefault();
 
 			switch (tab) {
-				case Tab.Gallery: {
-					console.log(this.active);
-
+				case Tab.Smile: {
 					const item = UtilSmile.data.emojis[this.active.itemId];
 					if (item.skins && (item.skins.length > 1)) {
 						this.onSkin(e, this.active);
@@ -762,13 +755,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.setActive(current.children[this.coll], this.row);
 	};
 
-	onRandom () {
-		const { id, skin } = UtilSmile.randomParam();
-
-		this.onSmileSelect(id, skin);
-		this.forceUpdate();
-	};
-
 	onUpload () {
 		this.props.close();
 
@@ -821,7 +807,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const win = $(window);
 
 		switch (tab) {
-			case Tab.Gallery: {
+			case Tab.Smile: {
 				const { id, skin } = item;
 
 				this.id = id;
@@ -1028,7 +1014,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { noHead, noGallery, noUpload, noRemove } = data;
-		const { tab } = this.state;
 
 		if (noHead) {
 			return [];
@@ -1036,18 +1021,16 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		let tabs: any[] = [];
 
+		if (!noUpload) {
+			tabs.push({ id: Tab.Library, text: translate('commonLibrary') });
+		};
+
 		if (!noGallery) {
-			tabs = tabs.concat([
-				{ text: translate('menuSmileRandom'), onClick: this.onRandom },
-				{ text: translate('menuSmileGallery'), onClick: () => this.onTab(Tab.Gallery), isActive: (tab == Tab.Gallery) },
-			]);
+			tabs.push({ id: Tab.Smile, text: translate('menuSmileGallery') });
 		};
 
 		if (!noUpload) {
-			tabs = tabs.concat([
-				{ text: translate('menuSmileUpload'), onClick: () => this.onTab(Tab.Upload), isActive: (tab == Tab.Upload) },
-				{ text: translate('commonLibrary'), onClick: () => this.onTab(Tab.Library), isActive: (tab == Tab.Library) },
-			]);
+			tabs.push({ id: Tab.Upload, text: translate('menuSmileUpload') });
 		};
 
 		if (!noRemove) {
@@ -1073,7 +1056,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	getTooltip (item) {
 		switch (this.state.tab) {
-			case Tab.Gallery: {
+			case Tab.Smile: {
 				return UtilSmile.aliases[item.itemId] || item.itemId;
 			};
 
