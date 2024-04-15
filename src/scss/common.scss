@@ -117,8 +117,8 @@ search.active { background: orange !important; }
 
 .isSelectionSelected { position: relative; }
 
-.selectable.isSelectionSelected::after, 
-.block.isSelectionSelected > .wrapContent > .selectable::after 
+.selectionTarget.isSelectionSelected::after, 
+.block.isSelectionSelected > .wrapContent > .selectionTarget::after 
 { 
 	display: block; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; background-color: var(--color-system-selection);
 	pointer-events: none; z-index: 10; content: ""; border-radius: 2px;

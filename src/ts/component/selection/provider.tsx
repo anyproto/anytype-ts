@@ -172,7 +172,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.initNodes();
 
 		if (e.shiftKey) {
-			const target = $(e.target).closest('.selectable');
+			const target = $(e.target).closest('.selectionTarget');
 			const type = target.attr('data-type') as I.SelectType;
 			const id = target.attr('data-id');
 			const ids = this.get(type);
@@ -277,7 +277,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				};
 				
 				const ids = this.get(I.SelectType.Block, true);
-				const target = $(e.target).closest('.selectable');
+				const target = $(e.target).closest('.selectionTarget');
 				const id = target.attr('data-id');
 				const type = target.attr('data-type');
 				
@@ -560,7 +560,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				const ids = this.get(type, true);
 
 				for (const id of ids) {
-					$(`#selectable-${id}`).addClass('isSelectionSelected');
+					$(`#selectionTarget-${id}`).addClass('isSelectionSelected');
 
 					if (type == I.SelectType.Block) {
 						$(`#block-${id}`).addClass('isSelectionSelected');

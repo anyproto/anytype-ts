@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { I, C, UtilCommon, UtilData, keyboard, focus, Storage } from 'Lib';
-import { DropTarget, ListChildren, Icon } from 'Component';
+import { DropTarget, ListChildren, Icon, SelectionTarget } from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore, detailStore } from 'Store';
 
@@ -325,20 +325,15 @@ const Block = observer(class Block extends React.Component<Props> {
 		
 		if (canSelect) {
 			object = (
-				<div 
-					id={`selectable-${id}`} 
-					ref={ref => selection?.registerRef(id, I.SelectType.Block, ref)}
-					className={`selectable type-${I.SelectType.Block}`}
-					{...UtilCommon.dataProps({ id, type: I.SelectType.Block })}
-				>
+				<SelectionTarget {...this.props} id={id} type={I.SelectType.Block}>
 					{object}
-				</div>
+				</SelectionTarget>
 			);
 		} else {
 			object = (
 				<div 
-					id={`selectable-${id}`} 
-					className="selectable"
+					id={`selectionTarget-${id}`} 
+					className="selectionTarget"
 				>
 					{object}
 				</div>

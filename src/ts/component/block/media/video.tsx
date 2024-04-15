@@ -290,7 +290,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		const { block } = this.props;
 		const { id, fields } = block;
 		const width = Number(fields.width) || 1;
-		const el = $(`#selectable-${id}`);
+		const el = $(`#selectionTarget-${id}`);
 
 		if (!el.length) {
 			return width;

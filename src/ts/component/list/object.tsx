@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, UtilData, Relation, UtilObject, translate, keyboard, UtilCommon } from 'Lib';
-import { IconObject, Pager, ObjectName, Cell } from 'Component';
+import { I, C, UtilData, Relation, UtilObject, translate, keyboard } from 'Lib';
+import { IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
 import { detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -37,12 +37,9 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	render () {
-		const { subId, rootId, columns, dataset } = this.props;
-		const { selection } = dataset || {};
+		const { subId, rootId, columns } = this.props;
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const length = columns.length;
-		const width = 70 / length;
 
 		let pager = null;
 		if (total && items.length) {
@@ -57,7 +54,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		};
 
 		const Row = (item: any) => {
-			const cn = [ 'row', 'selectable', `type-${I.SelectType.Record}` ];
+			const cn = [ 'row' ];
 
 			if ((item.layout == I.ObjectLayout.Task) && item.isDone) {
 				cn.push('isDone');
@@ -73,107 +70,104 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			};
 
 			return (
-				<tr 
-					id={`selectable-${item.id}`}
-					ref={ref => selection?.registerRef(item.id, I.SelectType.Record, ref)}
-					className={cn.join(' ')}
-					{...UtilCommon.dataProps({ id: item.id, type: I.SelectType.Record })}
-					onContextMenu={e => this.onContext(e, item.id)}
-				>
-					<td className="cell isName">
-						<div className="cellContent isName" onClick={() => UtilObject.openPopup(item)}>
-							<div className="flex">
-								<IconObject object={item} />
-								<ObjectName object={item} />
+					<div 
+						className={cn.join(' ')}
+						onContextMenu={e => this.onContext(e, item.id)}
+					>
+						<SelectionTarget {...this.props} id={item.id} type={I.SelectType.Record}>
+							<div className="cell isName">
+								<div className="cellContent isName" onClick={() => UtilObject.openPopup(item)}>
+									<div className="flex">
+										<IconObject object={item} />
+										<ObjectName object={item} />
+									</div>
+								</div>
 							</div>
-						</div>
-					</td>
 
-					{columns.map(column => {
-						const cnc = [ 'cellContent' ];
-						const value = item[column.relationKey];
+							{columns.map(column => {
+								const cnc = [ 'cellContent' ];
+								const value = item[column.relationKey];
 
-						if (column.className) {
-							cnc.push(column.className);
-						};
-
-						let content = null;
-						let onClick = null;
-
-						if (value) {
-							if (column.isObject) {
-								const object = detailStore.get(subId, value, []);
-								if (!object._empty_) {
-									onClick = () => UtilObject.openPopup(object);
-									content = (
-										<div className="flex">
-											<IconObject object={object} />
-											<ObjectName object={object} />
-										</div>
-									);
+								if (column.className) {
+									cnc.push(column.className);
 								};
-							} else 
-							if (column.isCell) {
-								content = (
-									<Cell
-										elementId={Relation.cellId(PREFIX, column.relationKey, item.id)}
-										rootId={rootId}
-										subId={subId}
-										block={null}
-										relationKey={column.relationKey}
-										getRecord={() => item}
-										viewType={I.ViewType.Grid}
-										idPrefix={PREFIX}
-										iconSize={20}
-										readonly={true}
-										arrayLimit={2}
-										textLimit={150}
-									/>
-								);
-							} else {
-								content = column.mapper ? column.mapper(value) : value;
-							};
-						};
 
-						return (
-							<td key={`cell-${column.relationKey}`} className="cell" style={{ width: `${width}%` }}>
-								{content ? <div className={cnc.join(' ')} onClick={onClick}>{content}</div> : ''}
-							</td>
-						);
-					})}
-				</tr>
+								let content = null;
+								let onClick = null;
+
+								if (value) {
+									if (column.isObject) {
+										const object = detailStore.get(subId, value, []);
+										if (!object._empty_) {
+											onClick = () => UtilObject.openPopup(object);
+											content = (
+												<div className="flex">
+													<IconObject object={object} />
+													<ObjectName object={object} />
+												</div>
+											);
+										};
+									} else 
+									if (column.isCell) {
+										content = (
+											<Cell
+												elementId={Relation.cellId(PREFIX, column.relationKey, item.id)}
+												rootId={rootId}
+												subId={subId}
+												block={null}
+												relationKey={column.relationKey}
+												getRecord={() => item}
+												viewType={I.ViewType.Grid}
+												idPrefix={PREFIX}
+												iconSize={20}
+												readonly={true}
+												arrayLimit={2}
+												textLimit={150}
+											/>
+										);
+									} else {
+										content = column.mapper ? column.mapper(value) : value;
+									};
+								};
+
+								return (
+									<div key={`cell-${column.relationKey}`} className="cell">
+										{content ? <div className={cnc.join(' ')} onClick={onClick}>{content}</div> : ''}
+									</div>
+								);
+							})}
+						</SelectionTarget>
+					</div>
 			);
 		};
 
 		return (
 			<div className="listObject">
-				<table>
-					<thead>
-						<tr className="row">
-							<th className="cellHead">
-								<div className="name">{translate('commonName')}</div>
-							</th>
-							{columns.map(column => (
-								<th key={`head-${column.relationKey}`} className="cellHead">
-									<div className="name">{column.name}</div>
-								</th>
+				<div className="table">
+					<div className="row isHead">
+						<div className="cellHead">
+							<div className="name">{translate('commonName')}</div>
+						</div>
+
+						{columns.map(column => (
+							<div key={`head-${column.relationKey}`} className="cellHead">
+								<div className="name">{column.name}</div>
+							</div>
+						))}
+					</div>
+
+					{!items.length ? (
+						<div className="row">
+							<div className="cell empty">{translate('commonNoObjects')}</div>
+						</div>
+					) : (
+						<React.Fragment>
+							{items.map((item: any, i: number) => (
+								<Row key={i} {...item} />
 							))}
-						</tr>
-					</thead>
-					<tbody>
-						{!items.length ? (
-							<tr>
-								<td className="cell empty" colSpan={3}>{translate('commonNoObjects')}</td>
-							</tr>
-						) : (
-							<React.Fragment>
-								{items.map((item: any, i: number) => (
-									<Row key={i} {...item} />
-								))}
-							</React.Fragment>
-						)}
-					</tbody>
-				</table>
+						</React.Fragment>
+					)}
+				</div>
 				
 				{pager}
 			</div>

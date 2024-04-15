@@ -336,7 +336,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		const { block } = this.props;
 		const { id, fields } = block;
 		const width = Number(fields.width) || 1;
-		const el = $(`#selectable-${id}`);
+		const el = $(`#selectionTarget-${id}`);
 
 		if (!el.length) {
 			return width;

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
+import { Cell, SelectionTarget } from 'Component';
 import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-import { Cell } from 'Component';
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -55,14 +55,9 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		if (!isInline) {
 			content = (
-				<div
-					id={`selectable-${record.id}`}
-					ref={ref => selection?.registerRef(record.id, I.SelectType.Record, ref)}
-					className={`selectable type-${I.SelectType.Record}`}
-					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
-				>
+				<SelectionTarget {...this.props} id={record.id} type={I.SelectType.Record}>
 					{content}
-				</div>
+				</SelectionTarget>
 			);
 		};
 

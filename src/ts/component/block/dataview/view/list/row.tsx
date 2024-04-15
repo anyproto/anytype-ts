@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, keyboard, Relation, UtilCommon, UtilObject } from 'Lib';
-import { Cell, DropTarget, Icon } from 'Component';
+import { I, keyboard, Relation, UtilObject } from 'Lib';
+import { Cell, DropTarget, Icon, SelectionTarget } from 'Component';
 import { dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
@@ -38,7 +38,7 @@ const Row = observer(class Row extends React.Component<Props> {
 					const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 					return (
 						<Cell
-							key={'list-cell-' + relation.relationKey}
+							key={`list-cell-${relation.relationKey}`}
 							elementId={id}
 							ref={ref => onRef(ref, id)}
 							{...this.props}
@@ -61,14 +61,9 @@ const Row = observer(class Row extends React.Component<Props> {
 
 		if (!isInline) {
 			content = (
-				<div
-					id={`selectable-${record.id}`}
-					ref={ref => selection?.registerRef(record.id, I.SelectType.Record, ref)}
-					className={`selectable type-${I.SelectType.Record}`}
-					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
-				>
+				<SelectionTarget {...this.props} id={record.id} type={I.SelectType.Record}>
 					{content}
-				</div>
+				</SelectionTarget>
 			);
 		};
 

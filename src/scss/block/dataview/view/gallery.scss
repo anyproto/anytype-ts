@@ -24,9 +24,9 @@
 				.dropTarget.isOver.top::before { left: -10px; }
 				.dropTarget.isOver.bottom::before { right: -10px; }
 
-				.selectable.isSelectionSelected::after { border-radius: 8px; }
+				.selectionTarget.isSelectionSelected::after { border-radius: 8px; }
 
-				.selectable { height: 100%; }
+				.selectionTarget { height: 100%; }
 				.itemContent > .inner { padding: 16px; }
 
 				.cover { 
