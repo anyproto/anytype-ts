@@ -100,6 +100,8 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 									},
 								},
 							});
+						} else {
+							popupStore.open('inviteRequest', { data: { invite: message, ...data } });
 						};
 					} else {
 						popupStore.open('inviteRequest', { data: { invite: message, ...data } });
