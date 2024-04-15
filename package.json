@@ -596,9 +596,6 @@
 				}
 			]
 		},
-		"nsis": {
-			"deleteAppDataOnUninstall": true
-		},
 		"linux": {
 			"icon": "electron/img/icons",
 			"category": "Utility",
