@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, Button, Error, IconObject } from 'Component';
 import { I, C, translate, UtilCommon, UtilSpace, UtilData, analytics } from 'Lib';
 import { authStore, popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
@@ -39,9 +40,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 		let buttons = [];
 		if (!this.getReaderLimit() && membership.isExplorer) {
-			buttons.push([
-				{ text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => this.onMembership('members') },
-			]);
+			buttons.push({ text: translate('popupInviteConfirmButtonReaderLimit'), onClick: () => this.onMembership('members') });
 		} else 
 		if (!this.getWriterLimit()) {
 			buttons = buttons.concat([
@@ -86,7 +85,9 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	onMembership (type: string) {
-		popupStore.replace(this.props.id, 'settings', { data: { page: 'membership' } });
+		popupStore.closeAll(null, () => {
+			popupStore.open('settings', { data: { page: 'membership' } })
+		});
 
 		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.inviteConfirm });
 	};
@@ -141,6 +142,8 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	getReaderLimit () {
+		return 0;
+
 		const space = UtilSpace.getSpaceviewBySpaceId(this.getSpaceId());
 		if (!space) {
 			return 0;
