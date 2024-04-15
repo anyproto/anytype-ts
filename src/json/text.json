@@ -871,7 +871,7 @@
 
 	"popupMembershipPaidTitle": "Pick your unique name",
 	"popupMembershipPaidText": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed.",
-	"popupMembershipPaidPlaceholder": "Myself",
+	"popupMembershipPaidPlaceholder": "Enter your name",
 	"popupMembershipPayByCard": "Pay by Card",
 	"popupMembershipPayByCrypto": "Pay by Crypto",
 	"popupMembershipPaidBy": "Paid by %s",
