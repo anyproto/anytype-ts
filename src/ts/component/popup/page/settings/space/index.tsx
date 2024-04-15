@@ -403,7 +403,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			Action.membershipUpgrade();
 		} else {
 			this.props.onPage('membership');
-		}
+		};
+
+		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });
 	};
 
 	checkName (v: string): string {

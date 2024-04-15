@@ -44,6 +44,12 @@ class Analytics {
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
+
+		settingsSpaceIndex: 'ScreenSettingsSpaceIndex',
+		settingsSpaceShare: 'ScreenSettingsSpaceShare',
+		settingsMembership: 'ScreenSettingsMembership',
+
+		inviteConfirm: 'ScreenInviteConfirm',
 	};
 
 	debug () {

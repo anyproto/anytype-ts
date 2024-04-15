@@ -277,7 +277,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			Action.membershipUpgrade();
 		} else {
 			this.props.onPage('membership');
-		}
+		};
+
+		analytics.event('ClickUpgradePlanTooltip', { type: 'members', route: analytics.route.settingsSpaceShare });
 	};
 
 	getParticipantList () {

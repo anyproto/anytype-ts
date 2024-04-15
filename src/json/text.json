@@ -857,7 +857,7 @@
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
 
-	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <a href=\"%s\">Please let us know here</a>︎.",
+	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <a>Please let us know here</a>︎.",
 
 	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
 	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",

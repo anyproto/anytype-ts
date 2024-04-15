@@ -1509,22 +1509,26 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
+		const types = [ I.MarkType.Mention, I.MarkType.Emoji ];
+		const marks = this.marks.filter(it => types.includes(it.type));
+
 		let save = false;
+		let mark = null;
 
-		for (const type of [ I.MarkType.Mention, I.MarkType.Emoji ]) {
-			const mark = Mark.getInRange(this.marks, type, { to: range.to - 1, from: range.from - 1 });
-			if (!mark) {
-				continue;
+		for (const m of marks) {
+			if ((m.range.from < range.from) && (m.range.to == range.to)) {
+				mark = m;
+				break;
 			};
+		};
 
+		if (mark) {
 			value = UtilCommon.stringCut(value, mark.range.from, mark.range.to);
 			this.marks = this.marks.filter(it => {
-				if ((it.type == mark.type) && (it.range.from == mark.range.from) && (it.range.to == mark.range.to)) {
-					return false;
-				};
-				return true;
+				return (it.type != mark.type) || (it.range.from != mark.range.from) || (it.range.to != mark.range.to) || (it.param != mark.param);
 			});
 
+			this.marks = Mark.adjust(this.marks, mark.range.from, mark.range.from - mark.range.to);
 			save = true;
 		};
 
