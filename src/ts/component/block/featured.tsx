@@ -435,20 +435,18 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const typeIsDeleted = type._empty_ || type.isDeleted;
 		const options: any[] = [];
 
-		if (readonly) {
-			return;
-		};
-
 		if (!typeIsDeleted) {
 			options.push({ id: 'open', name: translate('blockFeaturedTypeMenuOpenType') });
 		};
 
-		if (!readonly && allowed) {
-			options.push({ id: 'change', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true });
-		};
+		if (!readonly) {
+			if (allowed) {
+				options.push({ id: 'change', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true });
+			};
 
-		if (!typeIsDeleted && (object.layout == I.ObjectLayout.Set)) {
-			options.push({ id: 'turnCollection', name: translate('blockFeaturedTypeMenuTurnSetIntoCollection') });
+			if (!typeIsDeleted && (object.layout == I.ObjectLayout.Set)) {
+				options.push({ id: 'turnCollection', name: translate('blockFeaturedTypeMenuTurnSetIntoCollection') });
+			};
 		};
 
 		const showMenu = () => {
@@ -673,7 +671,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		let menuId: string = '';
+		let menuId = '';
 		let menuParam: any = {};
 		let menuData: any = {};
 

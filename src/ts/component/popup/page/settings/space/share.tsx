@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics } from 'Lib';
+import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
+import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics, UtilObject } from 'Lib';
 import { authStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
@@ -46,6 +46,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		this.onMoreSpace = this.onMoreSpace.bind(this);
 		this.onMoreLink = this.onMoreLink.bind(this);
 		this.onPermissionsSelect = this.onPermissionsSelect.bind(this);
+		this.onUpgrade = this.onUpgrade.bind(this);
 	};
 
 	render () {
@@ -55,7 +56,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			return <Loader id="loader" />;
 		};
 
-		const { onPage } = this.props;
 		const { membership } = authStore;
 		const hasLink = cid && key;
 		const space = UtilSpace.getSpaceview();
@@ -75,8 +75,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				showLimit = true;
 			} else
 			if (!UtilSpace.getReaderLimit() && membership.isExplorer) {
-				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
-				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
+				limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
+				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
 				showLimit = true;
 			};
 		};
@@ -127,7 +127,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		
 			return (
 				<div id={`item-${item.id}`} className="row" style={item.style} >
-					<div className="side left">
+					<div className="side left" onClick={() => UtilObject.openPopup(item)}>
 						<IconObject size={48} object={item} />
 						<ObjectName object={item} />
 						{tag}
@@ -165,7 +165,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					<div className="icons">
 						<Icon className="question" onClick={this.onInfo} />
-						{/*isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''*/}
+						{space.isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''}
 					</div>
 				</div>
 
@@ -199,7 +199,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					{showLimit ? (
 						<div className="row payment">
 							<Label text={limitLabel} />
-							<Button className="payment" text={limitButton} onClick={() => onPage('membership')} />
+							<Button className="payment" text={limitButton} onClick={this.onUpgrade} />
 						</div>
 					) : ''}
 
@@ -269,6 +269,19 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		};
 	};
 
+	onUpgrade () {
+		const { membership } = authStore;
+		const { tier } = membership;
+
+		if (tier >= I.TierType.CoCreator) {
+			Action.membershipUpgrade();
+		} else {
+			this.props.onPage('membership');
+		};
+
+		analytics.event('ClickUpgradePlanTooltip', { type: 'members', route: analytics.route.settingsSpaceShare });
+	};
+
 	getParticipantList () {
 		const records = UtilSpace.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing, I.ParticipantStatus.Active ]);
 
@@ -305,15 +318,22 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	onInitLink () {
 		this.refButton?.setLoading(true);
 
-		C.SpaceInviteGenerate(commonStore.space, (message: any) => {
-			this.refButton?.setLoading(false);
-
-			if (!this.setError(message.error)) {
-				this.setInvite(message.inviteCid, message.inviteKey);
-
-				Preview.toastShow({ text: translate('toastInviteGenerate') });
-				analytics.event('ShareSpace');
+		C.SpaceMakeShareable(commonStore.space, (message: any) => {
+			if (this.setError(message.error)) {
+				this.refButton?.setLoading(false);
+				return;
 			};
+
+			C.SpaceInviteGenerate(commonStore.space, (message: any) => {
+				this.refButton?.setLoading(false);
+
+				if (!this.setError(message.error)) {
+					this.setInvite(message.inviteCid, message.inviteKey);
+
+					Preview.toastShow({ text: translate('toastInviteGenerate') });
+					analytics.event('ShareSpace');
+				};
+			});
 		});
 	};
 

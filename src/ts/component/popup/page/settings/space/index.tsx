@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
-import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Renderer, Preview, analytics, UtilDate, Action, UtilSpace, UtilData } from 'Lib';
+import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, menuStore, commonStore, authStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
+import { menuStore, commonStore, authStore, dbStore } from 'Store';
 
 interface State {
 	error: string;
@@ -28,6 +26,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 		this.onDelete = this.onDelete.bind(this);
+		this.onUpgrade = this.onUpgrade.bind(this);
 	};
 
 	render () {
@@ -42,7 +41,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const type = dbStore.getTypeById(commonStore.type);
 		const isOwner = UtilSpace.isOwner();
 		const requestCnt = this.getRequestCnt();
-		const sharedCnt = this.getSharedCnt();
+		const sharedCnt = 1; //this.getSharedCnt();
 		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();
@@ -57,6 +56,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
 			const usage = Number(object.bytesUsage) || 0;
+			const isOwner = UtilSpace.isOwner(space.targetSpaceId);
+
+			if (!isOwner) {
+				return null;
+			};
 
 			bytesUsed += usage;
 			return { name: space.name, caption: UtilFile.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
@@ -70,7 +74,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		if (isRed) {
 			usageCn.push('red');
-			buttonUpgrade = <Button className="payment" text={translate('popupSettingsSpaceIndexRemoteStorageUpgradeText')} onClick={() => onPage('membership')} />
+			buttonUpgrade = <Button className="payment" text={translate('popupSettingsSpaceIndexRemoteStorageUpgradeText')} onClick={this.onUpgrade} />
 		};
 
 		if (requestCnt) {
@@ -285,7 +289,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 							<div 
 								className="item" 
-								onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
+								onClick={() => UtilCommon.copyToast(translate('popupSettingsVaultAnytypeIdentityTitle'), account.id)}
 							>
 								<div className="sides">
 									<div className="side left">
@@ -382,11 +386,26 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onDelete () {
-		Action.removeSpace(commonStore.space, 'Settings', (message: any) => {
-			if (message.error.code) {
-				this.setState({ error: message.error.description });
-			};
+		this.props.close(() => {
+			Action.removeSpace(commonStore.space, 'Settings', (message: any) => {
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+				};
+			});
 		});
+	};
+
+	onUpgrade () {
+		const { membership } = authStore;
+		const { tier } = membership;
+
+		if (tier >= I.TierType.CoCreator) {
+			Action.membershipUpgrade();
+		} else {
+			this.props.onPage('membership');
+		};
+
+		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });
 	};
 
 	checkName (v: string): string {

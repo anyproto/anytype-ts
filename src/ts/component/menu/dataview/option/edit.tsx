@@ -9,8 +9,8 @@ import Constant from 'json/constant.json';
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
 	
-	refName: any = null;
-	color: string = null;
+	refName = null;
+	color = '';
 	timeout = 0;
 	n = -1;
 

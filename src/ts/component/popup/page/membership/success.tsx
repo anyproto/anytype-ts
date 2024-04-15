@@ -8,9 +8,19 @@ const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess ext
 	render () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { tier } = data;
-		const text = tier == I.TierType.Explorer ? translate('popupMembershipSuccessTextCuriosity') : translate('popupMembershipSuccessTextSupport');
+		const { tier, emailVerified } = data;
 		const tierItem = UtilData.getMembershipTier(tier);
+
+		let title = '';
+		let text = '';
+
+		if (emailVerified) {
+			title = translate('popupMembershipSuccessVerificationTitle');
+			text = translate('popupMembershipSuccessVerificationText');
+		} else {
+			title = UtilCommon.sprintf(translate(`popupMembershipSuccessTitle`), tierItem.name);
+			text = tier == I.TierType.Explorer ? translate('popupMembershipSuccessTextCuriosity') : translate('popupMembershipSuccessTextSupport');
+		};
 
 		if (!tierItem) {
 			return null;
@@ -18,7 +28,7 @@ const PopupMembershipPageSuccess = observer(class PopupMembershipPageSuccess ext
 
 		return (
 			<React.Fragment>
-				<Title text={UtilCommon.sprintf(translate(`popupMembershipSuccessTitle`), tierItem.name)} />
+				<Title text={title} />
 				<Icon className="tierIcon" />
 				<Label text={text} />
 

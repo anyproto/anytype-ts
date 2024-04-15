@@ -311,8 +311,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		let details: any = {};
 		let flags: I.ObjectFlag[] = [];
-		let typeKey: string = '';
-		let templateId: string = '';
+		let typeKey = '';
+		let templateId = '';
 		let createWithLink: boolean = false;
 		let isCollection = false;
 

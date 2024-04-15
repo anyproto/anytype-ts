@@ -1,4 +1,4 @@
-import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace } from 'Lib';
+import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
@@ -236,7 +236,7 @@ class UtilData {
 		});
 
 		this.getMembershipTiers();
-		this.getMembershipData();
+		this.getMembershipStatus();
 	};
 
 	createSubscriptions (callBack?: () => void): void {
@@ -932,8 +932,12 @@ class UtilData {
 	}
 
 	getMembershipTiers () {
-		const { config, interfaceLang } = commonStore;
+		const { config, interfaceLang, isOnline } = commonStore;
 		const { testPayment } = config;
+
+		if (!isOnline) {
+			return;
+		};
 
 		C.MembershipGetTiers(true, interfaceLang, (message) => {
 			if (message.error.code) {
@@ -945,7 +949,7 @@ class UtilData {
 		});
 	};
 
-	getMembershipData (callBack?: (membership: I.Membership) => void) {
+	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
 		C.MembershipGetStatus(true, (message: any) => {
 			if (message.membership) {
 				const { status, tier } = message.membership;
@@ -973,6 +977,50 @@ class UtilData {
 
 	isLocalOnly (): boolean {
 		return authStore.account?.info?.networkId == '';
+	};
+
+	accountCreate (onError?: (text: string) => void, callBack?: () => void) {
+		onError = onError || (() => {});
+
+		const { networkConfig } = authStore;
+		const { mode, path } = networkConfig;
+		const { dataPath } = commonStore;
+
+		let phrase = '';
+
+		C.WalletCreate(dataPath, (message) => {
+			if (message.error.code) {
+				onError(message.error.description);
+				return;
+			};
+
+			phrase = message.mnemonic;
+
+			this.createSession(phrase, '', (message) => {
+				if (message.error.code) {
+					onError(message.error.description);
+					return;
+				};
+
+				C.AccountCreate('', '', dataPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
+					if (message.error.code) {
+						onError(message.error.description);
+						return;
+					};
+
+					authStore.accountSet(message.account);
+					commonStore.configSet(message.account.config, false);
+					commonStore.isSidebarFixedSet(true);
+
+					this.onInfo(message.account.info);
+					Renderer.send('keytarSet', message.account.id, phrase);
+					Action.importUsecase(commonStore.space, I.Usecase.GetStarted, callBack);
+
+					analytics.event('CreateAccount', { middleTime: message.middleTime });
+					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
+				});
+			});
+		});
 	};
 
 };

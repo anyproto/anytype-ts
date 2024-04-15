@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, translate, UtilCommon, UtilDate, UtilData } from 'Lib';
+import { I, translate, UtilCommon, UtilDate, analytics } from 'Lib';
 import { popupStore, authStore, commonStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay } from 'swiper/modules';
+import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
 import Url from 'json/url.json';
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
@@ -16,16 +16,16 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		super(props);
 
 		this.onSwiper = this.onSwiper.bind(this);
+		this.onContact = this.onContact.bind(this);
 	};
 
 	render () {
-		const { membership, account } = authStore;
+		const { membership } = authStore;
 		const { membershipTiers } = commonStore;
-		const url = Url.membershipSpecial.replace(/\%25accountId\%25/g, account.id);
 		const links = [
-			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails') },
-			{ url: Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy') },
-			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions') },
+			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpPrivacy' },
+			{ url: Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
+			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpPrivacyTerms' },
 		];
 
 		const SlideItem = (slide) => (
@@ -92,7 +92,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			<div ref={node => this.node = node}>
 				<div className="membershipTitle">{!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')}</div>
 
-				{!membership.isNone ? '' : (
+				{(membership.isNone || membership.isExplorer) ? (
 					<React.Fragment>
 						<Label className="description" text={translate('popupSettingsMembershipText')} />
 
@@ -105,7 +105,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 								delay: 4000,
 								disableOnInteraction: true,
 							}}
-							modules={[ Pagination, Autoplay ]}
+							mousewheel={true}
+							modules={[ Pagination, Autoplay, Mousewheel ]}
 							centeredSlides={true}
 							loop={true}
 							onSwiper={this.onSwiper}
@@ -117,7 +118,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 							))}
 						</Swiper>
 					</React.Fragment>
-				)}
+				) : ''}
 
 				<div className="tiers">
 					{membershipTiers.map((tier, i) => (
@@ -127,24 +128,33 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 				<div className="actionItems">
 					{links.map((item, i) => (
-						<div key={i} onClick={() => UtilCommon.onUrl(item.url)} className="item">
+						<div key={i} onClick={() => this.onLink(item)} className="item">
 							<Label text={item.name} />
 							<Icon />
 						</div>
 					))}
 				</div>
 
-				<Label className="special" text={UtilCommon.sprintf(translate('popupSettingsMembershipSpecial'), url)} />
+				<Label className="special" text={translate('popupSettingsMembershipSpecial')} onClick={this.onContact} />
 			</div>
 		);
 	};
 
-	componentDidMount(): void {
-		UtilCommon.renderLinks($(this.node));
-	};
-
 	onSwiper (swiper) {
 		this.swiper = swiper;
+	};
+
+	onLink (item: any) {
+		UtilCommon.onUrl(item.url);
+		analytics.event(item.type, { route: analytics.route.settingsMembership });
+	};
+
+	onContact () {
+		const { account } = authStore;
+		const url = Url.membershipSpecial.replace(/\%25accountId\%25/g, account.id);
+
+		UtilCommon.onUrl(url);
+		analytics.event('MenuHelpContact', { route: analytics.route.settingsMembership });
 	};
 
 });

@@ -1,6 +1,7 @@
-import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
+import { I, C, focus, analytics, keyboard, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
+import Url from 'json/url.json';
 
 class Action {
 
@@ -601,11 +602,16 @@ class Action {
 		});
 	};
 
-	leaveApprove (spaceId: string, identities: string[], name: string, route: string) {
-		C.SpaceLeaveApprove(spaceId, identities, () => {
-			Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
+	leaveApprove (spaceId: string, identities: string[], name: string, route: string, callBack?: (message: any) => void) {
+		C.SpaceLeaveApprove(spaceId, identities, (message: any) => {
+			if (!message.error.code) {
+				Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
+				analytics.event('ApproveLeaveRequest', { route });
+			};
 
-			analytics.event('ApproveLeaveRequest', { route });
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 
@@ -671,6 +677,28 @@ class Action {
 		C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, layout, limit, () => {
 			analytics.event('AddWidget', { type: layout });
 		});
+	};
+
+	membershipUpgrade () {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupConfirmMembershipUpgradeTitle'),
+				text: translate('popupConfirmMembershipUpgradeText'),
+				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
+				onConfirm: () => {
+					const anyName = authStore.membership?.requestedAnyName;
+					if (!anyName) {
+						return;
+					};
+
+					let url = Url.membershipUpgrade;
+					url = url.replace(/\%25anyName\%25/g, anyName);
+
+					Renderer.send('urlOpen', url);
+				},
+				canCancel: false
+			}
+		})
 	};
 
 };

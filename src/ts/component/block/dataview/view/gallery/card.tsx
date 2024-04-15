@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Cell, Cover, MediaAudio, MediaVideo, DropTarget } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
+import { Cell, Cover, MediaAudio, MediaVideo, DropTarget, SelectionTarget } from 'Component';
+import { I, UtilData, UtilObject, Relation, keyboard } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
@@ -74,13 +74,9 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		if (!isInline) {
 			content = (
-				<div
-					id={'selectable-' + record.id}
-					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
-				>
+				<SelectionTarget id={record.id} type={I.SelectType.Record}>
 					{content}
-				</div>
+				</SelectionTarget>
 			);
 
 			if (isCollection) {
@@ -193,7 +189,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	mediaCover (item: any) {
 		const { layout, coverType, coverId, coverX, coverY, coverScale } = item;
 		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
-		
+
 		let mc = null;
 		if (coverId && coverType) {
 			mc = (

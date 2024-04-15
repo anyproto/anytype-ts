@@ -31,7 +31,7 @@ class Button extends React.Component<I.ButtonComponent, State> {
 	};
 
 	render () {
-		const { id, type, subType, icon, arrow, text, className, color, onMouseDown, onClick, dataset } = this.props;
+		const { id, type, subType, icon, arrow, text, className, color, onClick, dataset } = this.props;
 		const cn = [ 'button', color, className ];
 		const { isLoading } = this.state;
 
@@ -134,6 +134,11 @@ class Button extends React.Component<I.ButtonComponent, State> {
 		const node = $(this.node);
 		v ? node.addClass('disabled') : node.removeClass('disabled');
 	};
+
+	isDisabled () {
+		return $(this.node).hasClass('disabled');
+	};
+
 };
 
 export default Button;

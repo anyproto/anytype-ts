@@ -43,7 +43,7 @@
 	"commonLastWeek": "Previous 7 days",
 	"commonLastMonth": "Previous 30 days",
 	"commonOlder": "Older",
-	"commonPhrase": "Recovery Phrase",
+	"commonPhrase": "Key",
 	"commonCopy": "Copy",
 	"commonOpen": "Open",
 	"commonOpenObject": "Open as Object",
@@ -169,7 +169,7 @@
 	"electronMenuUnhide": "Show All",
 	"electronMenuCheckUpdates": "Check for updates",
 	"electronMenuSpaceSettings": "Space",
-	"electronMenuAccountSettings": "Account",
+	"electronMenuVaultSettings": "Vault",
 	"electronMenuShowTray": "Show Anytype in system tray",
 	"electronMenuShowMenu": "Show menu bar",
 	"electronMenuQuit": "Quit",
@@ -282,7 +282,7 @@
 	"progress1": "Import in progress",
 	"progress2": "Export in progress",
 	"progress3": "Download in progress",
-	"progress4": "Recovering account",
+	"progress4": "Recovering vault",
 	"progress5": "Migration in progress",
 	"progressUpdateCheck": "Checking for update...",
 
@@ -306,14 +306,14 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectLabel": "Anytype is your safe space to write, plan, think and organise everything that matters to you.",
-	"authSelectLogin": "Log In",
-	"authSelectSignup": "Join",
+	"authSelectLabel": "Co-create digitally independent spaces. Encrypted with keys you control. Everything works offline. All code is <a href=\"https://github.com/anyproto\">open</a>.",
+	"authSelectLogin": "I have a Key",
+	"authSelectSignup": "New Vault",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
-	"authLoginSubmit": "Log In",
-	"authLoginLostPhrase": "I've lost the Phrase",
-	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover your Recovery Phrase for you<\/h1><p>Currently, there are no methods of accessing your recovery phrase, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
+	"authLoginSubmit": "Enter my Vault",
+	"authLoginLostPhrase": "I've lost the Key",
+	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover your Key for you<\/h1><p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
 
 	"authRegisterTitle": "Add name and profile picture",
 	"authRegisterLabel": "New Profile",
@@ -322,29 +322,32 @@
 	"authRegisterAdvanced": "Advanced",
 
 	"authDeleteTitle": "Delete Profile",
-	"authDeleteTitleDeleted": "Account data removed from the backup node",
-	"authDeleteDescription": "We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
-	"authDeleteDescriptionDeleted": "All logged-in devices may have your data stored locally. However, you are not able to sign into Anytype on new devices using your Recovery Phrase.",
+	"authDeleteTitleDeleted": "Vault data removed from the backup node",
+	"authDeleteDescription": "We're sorry to see you go. Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
+	"authDeleteDescriptionDeleted": "All logged-in devices may have your data stored locally. However, you are not able to sign into Anytype on new devices using your Key.",
 	"authDeleteCancelButton": "Cancel deletion",
 	"authDeleteExportButton": "Export data to markdown",
 	"authDeleteRemoveButton": "Remove local data",
-	"authDeleteRemovePopupTitle": "Are you sure you want to delete your local account data?",
+	"authDeleteRemovePopupTitle": "Are you sure you want to delete your local vault data?",
 	"authDeleteRemovePopupText": "These objects will be deleted irrevocably. You can't undo this action.",
 	"authDeleteRemovePopupConfirm": "Delete",
 
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardGoApp": "Go to the app",
-	"authOnboardAccountDataLocation": "Account data location",
-	"authOnboardMoreInfo": "You can find your Recovery Phrase later in Anytype settings",
+	"authOnboardMoreInfo": "You can find this key later in Anytype settings",
 
-	"authOnboardVoidTitle": "Choose your name",
-	"authOnboardVoidLabel": "This is how you will appear in the app",
+	"authOnboardVaultTitle": "This is your Vault",
+	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It is local first – everything works off-line.<br/>Only you have the key.",
+	"authOnboardVaultButton": "Get my Key",
 
-	"authOnboardPhraseTitle": "Save your Recovery Phrase",
-	"authOnboardPhraseLabel": "It's a novel way of authentication that gives you full ownership over your account and data. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
-	"authOnboardPhraseSubmit": "Show Recovery Phrase",
+	"authOnboardNameTitle": "Set your name",
+	"authOnboardNameLabel": "Only seen by people you share something with.<br/>There is no central registry of users.",
+	"authOnboardNameButton": "Enter my Vault",
+
+	"authOnboardPhraseTitle": "This is your Key",
+	"authOnboardPhraseLabel": "It gives you full ownership over your vault.<br/>It can not be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseSubmit": "Show my Key",
 
 	"usecase2Title": "Personal projects",
 	"usecase2Label": "Manage your personal projects and tasks with complete privacy",
@@ -415,9 +418,9 @@
 	"pageMainMembershipTitle": "Retrieving membership",
 	"pageMainMembershipError": "Something went wrong",
 
-	"pageAuthLoginInvalidPhrase": "Invalid Recovery Phrase",
+	"pageAuthLoginInvalidPhrase": "Invalid Key",
 
-	"pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",
+	"pageAuthDeletedVaultDeletionTitle": "This vault is planned for deletion in %s",
 
 	"pageAuthOnboardPersonalSpace": "Personal Space",
 	"pageAuthOnboardMoreInfo": "More info",
@@ -425,7 +428,7 @@
 	"pageAuthSetupCongratulations": "⚡️ Congratulations!",
 	"pageAuthSetupLongread": "You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported.",
 	"pageAuthSetupImportBackup": "Import backup",
-	"pageAuthSetupEntering": "Entering the Account...",
+	"pageAuthSetupEntering": "Entering the Vault...",
 
 	"pageHeadControlButtonsChangeCover": "Change cover",
 	"pageHeadControlButtonsReposition": "Reposition",
@@ -623,17 +626,16 @@
 	"blockTypeMyTypes": "My Types",
 
 	"popupSettingsTitle": "Settings",
-	"popupSettingsAccountPersonalInformationTitle": "Personal information",
-	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
-	"popupSettingsAccountPersonalInformationDescriptionPlaceholder": "A few words about yourself",
-	"popupSettingsAccountAnytypeIdentityTitle": "Anytype Identity",
-	"popupSettingsAccountTitle": "Profile",
-	"popupSettingsAccountDeleteTitle": "Delete Account",
+	"popupSettingsVaultPersonalInformationTitle": "Personal information",
+	"popupSettingsVaultPersonalInformationNamePlaceholder": "Your name",
+	"popupSettingsVaultPersonalInformationDescriptionPlaceholder": "A few words about yourself",
+	"popupSettingsVaultAnytypeIdentityTitle": "Anytype Identity",
+	"popupSettingsVaultDeleteTitle": "Delete Vault",
 
 	"popupSettingsSpaceTitle": "Space",
 	"popupSettingsProfileTitle": "Profile",
 	"popupSettingsApplicationTitle": "Application",
-	"popupSettingsVoidTitle": "Void & Key",
+	"popupSettingsVaultAndKeyTitle": "Vault & Key",
 
 	"popupSettingsPersonalTitle": "Preferences",
 	"popupSettingsPersonalDefaultObjectType": "Default Object Type",
@@ -665,20 +667,20 @@
 	"popupSettingsGradient": "Gradients",
 	"popupSettingsCodeStub": "Follow the white rabbit",
 
-	"popupSettingsMobileQRSubTitle": "Log in your account on Android and iOS",
-	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your account.",
+	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
+	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
 
-	"popupSettingsPhraseTitle": "Recovery Phrase",
+	"popupSettingsPhraseTitle": "Key",
 	"popupSettingsPhraseStub": "You take the red pill, you stay in Wonderland, and I show you how deep the rabbit hole goes.",
-	"popupSettingsPhraseShowPhrase": "Show and copy Phrase",
-	"popupSettingsPhraseHidePhrase": "Hide Phrase",
+	"popupSettingsPhraseShowPhrase": "Show and copy Key",
+	"popupSettingsPhraseHidePhrase": "Hide Key",
 	"popupSettingsPhraseShowQR": "Show QR-code",
 	"popupSettingsPhraseHideQR": "Hide QR-code",
-	"popupSettingsPhraseText": "Your Recovery phrase protects your account. You'll need it to sign in if you don't have access to your devices. Keep it in a safe place. Click to show:",
-	"popupSettingsPhraseBackup": "Back up Phrase",
+	"popupSettingsPhraseText": "Your key protects your vault. You'll need it to sign in if you don't have access to your devices. Keep it in a safe place. Click to show:",
+	"popupSettingsPhraseBackup": "Back up Key",
 
 	"popupSettingsPinTitle": "Pin Code",
-	"popupSettingsPinText": "The Pin Code will protect your Recovery Phrase. As we do not store your Recovery Phrase or Pin Code and do not ask for your e-mail or phone number, it is impossible to recover your data without this information. So, please, remember or write it down somewhere in a safe place.",
+	"popupSettingsPinText": "The Pin Code will protect your Key. As we do not store your Key or Pin Code and do not ask for your e-mail or phone number, it is impossible to recover your data without this information. So, please, remember or write it down somewhere in a safe place.",
 	"popupSettingsPinOn": "Turn Pin Code on",
 	"popupSettingsPinOff": "Turn Pin Code off",
 	"popupSettingsPinChange": "Update Pin Code",
@@ -705,8 +707,8 @@
 	"popupSettingsDataManagementOffloadFilesLocalOnly": "Remove files from this device",
 	"popupSettingsDataManagementDataLocation": "Data location",
 	"popupSettingsDataManagementDeleteTitle": "Danger zone",
-	"popupSettingsDataManagementDeleteText": "Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
-	"popupSettingsDataManagementDeleteButton": "Delete account",
+	"popupSettingsDataManagementDeleteText": "Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
+	"popupSettingsDataManagementDeleteButton": "Delete vault",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
 	"popupSettingsSpaceIndexSpaceNameLabel": "Space name",
@@ -855,13 +857,17 @@
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
 
-	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <a href=\"%s\">Please let us know here</a>︎.",
+	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <a>Please let us know here</a>︎.",
 
 	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
 	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
 	"popupMembershipFreeText": "We need your email to keep spam at bay and the fun in play!",
 	"popupMembershipFreeCheckboxText": "I'd like to get updates on products and enjoy free perks!",
 	"popupMembershipFreeEnterCode": "Enter code",
+
+	"popupMembershipCurrentEmailTitle": "Get updates and enjoy free perks!",
+	"popupMembershipCurrentEmailText": "It is not linked to your vault in any way.",
+	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
 
 	"popupMembershipPaidTitle": "Pick your unique name",
 	"popupMembershipPaidText": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed.",
@@ -888,6 +894,8 @@
 	"popupMembershipSuccessTitle": "Welcome to the network, %s",
 	"popupMembershipSuccessTextCuriosity": "Big cheers for your curiosity!",
 	"popupMembershipSuccessTextSupport": "Big cheers for your support!",
+	"popupMembershipSuccessVerificationTitle": "Thank you for confirming your email!",
+	"popupMembershipSuccessVerificationText": "You are now set to receive the latest updates and perks. Enjoy exploring!",
 
 	"popupMembershipCode1": "Unknown error occurred",
 	"popupMembershipCode2": "No .any provided",
@@ -898,9 +906,13 @@
 
 	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
 
+	"popupConfirmMembershipUpgradeTitle": "Membership Upgrade",
+	"popupConfirmMembershipUpgradeText": "Reach us for extra storage, space editors, or more shared spaces. Anytype team will provide details and conditions tailored to your needs.",
+	"popupConfirmMembershipUpgradeButton": "Contact Anytype Team",
+
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
-	"popupSettingsOnboardingStoragePath": "Account Data Location",
+	"popupSettingsOnboardingStoragePath": "Vault Data Location",
 	"popupSettingsOnboardingLocalOnlyWarningText": "Anytype can't transfer your data between directories. <br/>Your Spaces data will be downloaded from another device. <br/>Please ensure that you have such a device active on the same network.",
 	"popupSettingsOnboardingLocalOnlyWarningConfirm": "Yes, I understand",
 
@@ -911,11 +923,11 @@
 	"popupSettingsDataKeepFiles": "Keep files",
 	"popupSettingsDataRemoveFiles": "Remove files",
 
-	"popupSettingsDeleteTitle1": "1. You have 30 days to cancel account deletion",
-	"popupSettingsDeleteText1": "We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
+	"popupSettingsDeleteTitle1": "1. You have 30 days to cancel vault deletion",
+	"popupSettingsDeleteText1": "We're sorry to see you go. Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
 	"popupSettingsDeleteTitle2": "2. Delete data from other devices",
 	"popupSettingsDeleteText2": "Since Anytype stores all your data locally on the device, you need to remove it from other devices also. Launch and remove data in Anytype or just delete the app.",
-	"popupSettingsDeleteCheckboxLabel": "I have read it and want to delete my account",
+	"popupSettingsDeleteCheckboxLabel": "I have read it and want to delete my vault",
 
 	"popupSettingsImportCsvTable": "Table",
 	"popupSettingsImportCsvCollection": "Collection",
@@ -969,9 +981,9 @@
 	"popupInviteInviteConfirmCancel": "Manage spaces",
 
 	"popupInviteConfirmTitle": "%s requested to join %s",
-	"popupInviteConfirmButtonReader": "Grant read access",
+	"popupInviteConfirmButtonReader": "Viewer access",
 	"popupInviteConfirmButtonReaderLimit": "✦ Add more readers",
-	"popupInviteConfirmButtonEditor": "Grant edit access",
+	"popupInviteConfirmButtonEditor": "Editor access",
 	"popupInviteConfirmButtonEditorLimit": "✦ Add more editors",
 	"popupInviteConfirmButtonReject": "Reject",
 
@@ -1169,12 +1181,12 @@
 	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
 	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
 
-	"popupPhraseTitle1": "What is a Recovery Phrase?",
-	"popupPhraseTitle2": "How to save my phrase?",
-	"popupPhraseLabel1": "Your Recovery Phrase is 12 random words from which your account is magically generated on this device.",
-	"popupPhraseLabel2": "Whomever knows your Recovery Phrase, owns the account. At this moment, you are the only person in the world who knows it.",
-	"popupPhraseLabel3": "That's why it's essential to keep your Recovery Phrase safe. As the sole owner, nobody can help you if it's lost.",
-	"popupPhraseLabel4": "The easiest way to store your Recovery Phrase is to save it in your password manager.",
+	"popupPhraseTitle1": "What is a Key?",
+	"popupPhraseTitle2": "How to save my key?",
+	"popupPhraseLabel1": "It is represented by a recovery phrase – 12 random words from which your vault is magically generated on this device.",
+	"popupPhraseLabel2": "Who knows combination of these words – owns the vault. Now, you are the only person in the world knows it.",
+	"popupPhraseLabel3": "All computational resources on Earth are not enough to break in. If you lose it, it cannot be recovered. So, store it somewhere safe!",
+	"popupPhraseLabel4": "The easiest way to store your Key is to save it in your password manager.",
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
 
 	"popupUsecaseAuthor": "Made by @%s",
@@ -1189,8 +1201,8 @@
 
 	"popupRelationValueRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
 
-	"menuAccountPeer": "%d\/%d peers",
-	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
+	"menuVaultPeer": "%d\/%d peers",
+	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
 
 	"menuSmileRandom": "Random emoji",
 	"menuSmileGallery": "Gallery",
@@ -1603,7 +1615,7 @@
 	"survey0Confirm": "Let's Go!",
 	"survey0Cancel": "Skip",
 	"survey1Title": "Help us to become better",
-	"survey1Text": "We'd love to learn more about why you've chosen to delete your account. Would you be willing to take 3 minutes to help us improve?",
+	"survey1Text": "We'd love to learn more about why you've chosen to delete your vault. Would you be willing to take 3 minutes to help us improve?",
 	"survey1Confirm": "Sure, let's go",
 	"survey1Cancel": "No thanks",
 	"survey2Title": "We need your opinion",
@@ -1637,10 +1649,10 @@
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
 	"widgetCreate": "Create new object",
 
-	"phrasePlaceholder": "Please enter your Recovery Phrase here",
+	"phrasePlaceholder": "Please enter your Key",
 
 	"navigationCreateNew": "Create new Object",
-	"navigationAccount": "Spaces",
+	"navigationVault": "Spaces",
 
 	"spaceAccessType0": "Private Space",
 	"spaceAccessType1": "Default Space",
@@ -1765,7 +1777,7 @@
 	"libKeyboardAppVersion": "App version",
 	"libKeyboardBuildNumber": "Build number",
 	"libKeyboardLibraryVersion": "Library version",
-	"libKeyboardAccountID": "Anytype Identity",
+	"libKeyboardVaultID": "Anytype Identity",
 	"libKeyboardAnalyticsID": "Analytics ID",
 	"libKeyboardDeviceID": "Device ID",
 	"libKeyboardTechInformation": "Tech information",
@@ -1798,18 +1810,18 @@
 	"delimiterTab": "Tab",
 	"delimiterPipe": "Pipe",
 
-	"errorAccountCreate901": "Network error",
-	"errorAccountCreate902": "Connection refused",
-	"errorAccountCreate903": "Network offline",
-	"errorAccountRecover101": "No accounts have been found",
-	"errorAccountRecover102": "You'll have to convert your wallet first",
-	"errorAccountRecover103": "Failed to create local repo",
-	"errorAccountRecover104": "Local repo exists but is corrupted",
-	"errorAccountRecover105": "Failed to run node",
-	"errorAccountRecover106": "Wallet recover has not been performed",
-	"errorAccountRecover107": "Failed to stop running node",
-	"errorAccountRecover108": "Another process is running",
-	"errorAccountRecover109": "Account has been deleted",
+	"errorVaultCreate901": "Network error",
+	"errorVaultCreate902": "Connection refused",
+	"errorVaultCreate903": "Network offline",
+	"errorVaultRecover101": "No vaults have been found",
+	"errorVaultRecover102": "You'll have to convert your wallet first",
+	"errorVaultRecover103": "Failed to create local repo",
+	"errorVaultRecover104": "Local repo exists but is corrupted",
+	"errorVaultRecover105": "Failed to run node",
+	"errorVaultRecover106": "Wallet recover has not been performed",
+	"errorVaultRecover107": "Failed to stop running node",
+	"errorVaultRecover108": "Another process is running",
+	"errorVaultRecover109": "Vault has been deleted",
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
 
 	"errorMembershipGetStatus6": "Membership not found",
@@ -1929,7 +1941,7 @@
 
 	"notificationLeaveSuccessText": "<b>%s</b> wants to leave <b>'%s'</b> space",
 
-	"notificationApproveSuccessText": "Your request to join <b>'%s'</b> space has been approved with <b>%s</b> access rights. The space will be available in your account soon.",
+	"notificationApproveSuccessText": "Your request to join <b>'%s'</b> space has been approved with <b>%s</b> access rights. The space will be available in your vault soon.",
 
 	"notificationRemoveSuccessText": "You were removed from <b>'%s'</b> space, or the space has been deleted by the owner",
 

@@ -47,18 +47,6 @@ Order[I.MarkType.Color]		 = 8;
 Order[I.MarkType.BgColor]	 = 9;
 Order[I.MarkType.Code]		 = 10;
 
-enum Overlap {
-	Equal		 = 0,		 // a == b
-	Outer		 = 1,		 // b inside a
-	Inner		 = 2,		 // a inside b
-	InnerLeft	 = 3,		 // a inside b, left side eq
-	InnerRight	 = 4,		 // a inside b, right side eq
-	Left		 = 5,		 // a-b
-	Right		 = 6,		 // b-a
-	Before		 = 7,		 // a ... b
-	After		 = 8,		 // b ... a
-};
-
 class Mark {
 
 	regexpMarkdown: any[] = [];
@@ -103,7 +91,7 @@ class Mark {
 			let del = false;
 			
 			switch (overlap) {
-				case Overlap.Equal:
+				case I.MarkOverlap.Equal:
 					if (!mark.param) {
 						del = true;
 					} else {
@@ -112,11 +100,11 @@ class Mark {
 					add = false;
 					break;
 					
-				case Overlap.Outer:
+				case I.MarkOverlap.Outer:
 					del = true;
 					break;
 				
-				case Overlap.InnerLeft:
+				case I.MarkOverlap.InnerLeft:
 					el.range.from = mark.range.to;
 
 					if (!mark.param) {
@@ -124,14 +112,14 @@ class Mark {
 					};
 					break;
 					
-				case Overlap.InnerRight:
+				case I.MarkOverlap.InnerRight:
 					el.range.to = mark.range.from;
 					if (!mark.param) {
 						add = false;
 					};
 					break;
 					
-				case Overlap.Inner:
+				case I.MarkOverlap.Inner:
 					map[type].push({ type: el.type, param: el.param, range: { from: mark.range.to, to: el.range.to } });
 					
 					el.range.to = mark.range.from;
@@ -141,7 +129,7 @@ class Mark {
 					i = map[type].length;
 					break;
 					
-				case Overlap.Left:
+				case I.MarkOverlap.Left:
 					if (el.param == mark.param) {
 						el.range.from = mark.range.from;
 						add = false;
@@ -150,7 +138,7 @@ class Mark {
 					};
 					break;
 					
-				case Overlap.Right:
+				case I.MarkOverlap.Right:
 					if (![ I.MarkType.Emoji ].includes(el.type) && (el.param == mark.param)) {
 						el.range.to = mark.range.to;
 						mark = el;
@@ -161,7 +149,7 @@ class Mark {
 					};
 					break;
 					
-				case Overlap.Before:
+				case I.MarkOverlap.Before:
 					i = map[type].length;
 					break;
 			};
@@ -251,7 +239,7 @@ class Mark {
 		
 		for (const mark of map[type]) {
 			const overlap = this.overlap(range, mark.range);
-			if ([ Overlap.Inner, Overlap.InnerLeft, Overlap.InnerRight, Overlap.Equal ].indexOf(overlap) >= 0) {
+			if ([ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ].indexOf(overlap) >= 0) {
 				return mark;
 			};
 		};
@@ -657,32 +645,32 @@ class Mark {
 		return this.toggle(marks, newMark);
 	};
 	
-	overlap (a: I.TextRange, b: I.TextRange): Overlap {
+	overlap (a: I.TextRange, b: I.TextRange): I.MarkOverlap {
 		if (a.from == b.from && a.to == b.to) {
-			return Overlap.Equal;
+			return I.MarkOverlap.Equal;
 		} else
 		if (a.to < b.from) {
-			return Overlap.Before;
+			return I.MarkOverlap.Before;
 		} else
 		if (a.from > b.to) {
-			return Overlap.After;
+			return I.MarkOverlap.After;
 		} else
 		if ((a.from <= b.from) && (a.to >= b.to)) {
-			return Overlap.Outer;
+			return I.MarkOverlap.Outer;
 		} else
 		if ((a.from > b.from) && (a.to < b.to)) {
-			return Overlap.Inner;
+			return I.MarkOverlap.Inner;
 		} else
 		if ((a.from == b.from) && (a.to < b.to)) {
-			return Overlap.InnerLeft;
+			return I.MarkOverlap.InnerLeft;
 		} else
 		if ((a.from > b.from) && (a.to == b.to)) {
-			return Overlap.InnerRight;
+			return I.MarkOverlap.InnerRight;
 		} else
 		if ((a.from < b.from) && (a.to >= b.from)) {
-			return Overlap.Left;
+			return I.MarkOverlap.Left;
 		} else {
-			return Overlap.Right;
+			return I.MarkOverlap.Right;
 		};
 	};
 

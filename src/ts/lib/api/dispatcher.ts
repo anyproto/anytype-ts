@@ -1069,11 +1069,8 @@ class Dispatcher {
 			blockStore.updateStructureParents(rootId);
 		};
 		
-		window.clearTimeout(this.timeoutEvent[rootId]);
-		this.timeoutEvent[rootId] = window.setTimeout(() => { 
-			blockStore.updateNumbers(rootId); 
-			blockStore.updateMarkup(rootId);
-		}, 10);
+		blockStore.updateNumbers(rootId); 
+		blockStore.updateMarkup(rootId);
 	};
 
 	getUniqueSubIds (subIds: string[]) {

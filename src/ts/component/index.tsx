@@ -9,6 +9,7 @@ import DragBox from './drag/box';
 import DropTarget from './drag/target';
 
 import SelectionProvider from './selection/provider';
+import SelectionTarget from './selection/target';
 
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
@@ -96,6 +97,9 @@ export {
 	DragBox,
 	DropTarget,
 
+	SelectionProvider,
+	SelectionTarget,
+
 	ListPopup,
 	ListMenu,
 	ListChildren,
@@ -131,7 +135,6 @@ export {
 	DotIndicator,
 	Phrase,
 	EmptySearch,
-	SelectionProvider,
 	Popup,
 	Frame,
 	Cover,
