@@ -70,6 +70,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	componentDidUpdate (): void {
 		this.rebind();
+
+		console.log('SELECTION UPDATE', this.nodes);
 	};
 	
 	componentWillUnmount () {
@@ -100,37 +102,52 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	registerRef (id: string, type: I.SelectType, ref: any) {
 		if (ref) {
-			this.nodes.push({ id, type, obj: $(ref) });
-			this.cacheChildrenIds(id);
+			const node = { id, type, obj: $(ref) };
+			const idx = this.nodes.findIndex(it => (it.id == id) && (it.type == type));
+
+			if (idx < 0) {
+				this.nodes.push(node);
+			} else {
+				this.nodes[idx] = node;
+			};
 		} else {
-			this.nodes = this.nodes.filter(it => (it.id != id) && (it.type != type));
+			this.nodes = this.nodes.filter(it => !((it.id == id) && (it.type == type)));
 		};
 	};
 
-	scrollToElement (id: string, dir: number) {
-		const isPopup = keyboard.isPopup();
+	initNodes () {
+		this.nodes.forEach(it => {
+			this.cacheChildrenIds(it.id);
+			this.cacheNode(it);
+		});
+	};
 
-		if (dir > 0) {
-			focus.scroll(isPopup, id);
-		} else {
-			const node = $('.focusable.c' + id);
-			if (!node.length) {
-				return;
-			};
-
-			const container = UtilCommon.getScrollContainer(isPopup);
-			const no = node.offset().top;
-			const nh = node.outerHeight();
-			const st = container.scrollTop();
-			const hh = UtilCommon.sizeHeader();
-			const y = isPopup ? (no - container.offset().top + st) : no;
-
-			if (y <= st + hh) {
-				container.scrollTop(y - nh - hh);
-			};
+	initIds () {
+		for (const i in I.SelectType) {
+			this.ids.set(I.SelectType[i], []);
 		};
 	};
-	
+
+	cacheNode (node: any): { x: number; y: number; width: number; height: number; } {
+		if (!node.id) {
+			return { x: 0, y: 0, width: 0, height: 0 };
+		};
+
+		let cache = this.cacheNodeMap.get(node.id);
+		if (cache) {
+			return cache;
+		};
+
+		const obj = $(node.obj);
+		const { left, top } = obj.offset();
+		const { x, y } = this.recalcCoords(left, top);
+
+		cache = { x, y, width: obj.width(), height: obj.height() };
+
+		this.cacheNodeMap.set(node.id, cache);
+		return cache;
+	};
+
 	onMouseDown (e: any) {
 		const isPopup = keyboard.isPopup();
 
@@ -189,12 +206,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		win.on(`blur.selection mouseup.selection`, e => this.onMouseUp(e));
 	};
 
-	initNodes () {
-		for (const node of this.nodes) {
-			this.cacheNode(node);
-		};
-	};
-	
 	onMouseMove (e: any) {
 		if (!this._isMounted) {
 			return;
@@ -210,7 +221,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
-		
+
 		this.top = UtilCommon.getScrollContainer(this.isPopup).scrollTop();
 		this.checkNodes(e);
 		this.drawRect(e.pageX, e.pageY);
@@ -313,9 +324,27 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.clearState();
 	};
 
-	initIds () {
-		for (const i in I.SelectType) {
-			this.ids.set(I.SelectType[i], []);
+	scrollToElement (id: string, dir: number) {
+		const isPopup = keyboard.isPopup();
+
+		if (dir > 0) {
+			focus.scroll(isPopup, id);
+		} else {
+			const node = $('.focusable.c' + id);
+			if (!node.length) {
+				return;
+			};
+
+			const container = UtilCommon.getScrollContainer(isPopup);
+			const no = node.offset().top;
+			const nh = node.outerHeight();
+			const st = container.scrollTop();
+			const hh = UtilCommon.sizeHeader();
+			const y = isPopup ? (no - container.offset().top + st) : no;
+
+			if (y <= st + hh) {
+				container.scrollTop(y - nh - hh);
+			};
 		};
 	};
 
@@ -342,25 +371,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			width: Math.abs(x2 - x1),
 			height: Math.abs(y2 - y1),
 		};
-	};
-	
-	cacheNode (node: any): { x: number; y: number; width: number; height: number; } {
-		if (!node.id) {
-			return { x: 0, y: 0, width: 0, height: 0 };
-		};
-
-		let cache = this.cacheNodeMap.get(node.id);
-		if (cache) {
-			return cache;
-		};
-
-		const offset = node.obj.offset();
-		const { x, y } = this.recalcCoords(offset.left, offset.top);
-
-		cache = { x, y, width: node.obj.width(), height: node.obj.height() };
-
-		this.cacheNodeMap.set(node.id, cache);
-		return cache;
 	};
 	
 	checkEachNode (e: any, type: I.SelectType, rect: any, node: any, ids: string[]) {
@@ -395,9 +405,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const ids = {};
 		for (const i in I.SelectType) {
 			const type = I.SelectType[i];
+			const nodes = this.nodes.filter(it => it.type == type);
 			
 			ids[type] = this.get(type, false);
-			this.nodes.filter(it => it.type == type).forEach(item => this.checkEachNode(e, type, rect, item, ids[type]));
+			nodes.forEach(item => this.checkEachNode(e, type, rect, item, ids[type]));
 			this.ids.set(type, ids[type]);
 		};
 		

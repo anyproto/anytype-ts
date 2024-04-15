@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, UtilCommon } from 'Lib';
+import { I } from 'Lib';
 
 interface Props {
 	id: string;
@@ -10,12 +10,15 @@ interface Props {
 	type?: I.BlockType;
 	dropType: I.DropType;
 	className?: string;
+	children?: React.ReactNode;
+	dataset?: any;
 	canDropMiddle?: boolean;
+	isPopup?: boolean;
+	isReversed?: boolean;
 	isTargetTop?: boolean;
 	isTargetBottom?: boolean;
 	isTargetColumn?: boolean;
-	isReversed?: boolean;
-	children?: React.ReactNode;
+	isEmptyToggle?: boolean;
 	onClick?(e: any): void;
 	onContextMenu?(e: any): void;
 };
@@ -25,68 +28,92 @@ class DropTarget extends React.Component<Props> {
 	public static defaultProps: Props = {
 		id: '',
 		rootId: '',
+		targetContextId: '',
 		dropType: I.DropType.None,
-	};
-
-	constructor (props: Props) {
-		super(props);
-		
-		this.onClick = this.onClick.bind(this);
+		isReversed: false,
+		isPopup: false,
+		canDropMiddle: false,
+		isTargetTop: false,
+		isTargetBottom: false,
+		isTargetColumn: false,
+		isEmptyToggle: false,
 	};
 	
 	render () {
 		const { 
-			id, rootId, cacheKey, targetContextId, dropType, type, style, children, className, canDropMiddle, isTargetTop, isTargetBottom, isTargetColumn, 
-			isReversed, onContextMenu,
+			id, rootId, targetContextId, dropType, type, style, children, canDropMiddle, isReversed, onClick, onContextMenu, dataset, isPopup, 
+			isTargetTop, isTargetBottom, isTargetColumn, isEmptyToggle,
 		} = this.props;
-		const key = [ dropType, cacheKey || id ];
-		const cn = [ 'dropTarget', 'isDroppable', 'root-' + rootId, 'drop-target-' + id ];
-
-		if (className) {
-			cn.push(className);
-		};
-		if (isTargetTop) {
-			cn.push('targetTop');
-			key.push('top');
-		};
-		if (isTargetBottom) {
-			cn.push('targetBot');
-			key.push('bot');
-		};
-		if (isTargetColumn) {
-			cn.push('targetCol');
-			key.push('col');
+		const { dragProvider } = dataset || {};
+		const cacheKey = this.getKey();
+		const registerProps = {
+			id,
+			rootId,
+			cacheKey,
+			type: String(type || ''),
+			style: Number(style) || 0,
+			targetContextId,
+			dropType,
+			isPopup,
+			canDropMiddle,
+			isReversed,
+			isTargetTop, 
+			isTargetBottom, 
+			isTargetColumn, 
+			isEmptyToggle,
 		};
 
 		return (
 			<div 
-				key={'drop-target-' + id}
-				className={cn.join(' ')} 
-				onClick={this.onClick} 
+				ref={ref => dragProvider?.registerRef(registerProps, ref)}
+				key={`drop-target-${id}`}
+				className={this.getClassName()} 
+				onClick={onClick} 
 				onContextMenu={onContextMenu}
-				{...UtilCommon.dataProps({
-					id,
-					type,
-					style: Number(style) || 0,
-					reversed: isReversed,
-					'root-id': rootId,
-					'cache-key': key.join('-'),
-					'drop-type': dropType,
-					'context-id': targetContextId,
-					'drop-middle': Number(canDropMiddle) || 0,
-				})}
 			>
 				{children}
 			</div>
 		);
 	};
 	
-	onClick (e: any) {
-		const { onClick } = this.props;
-		
-		if (onClick) {
-			onClick(e);
+	getKey (): string {
+		const { id, cacheKey, dropType, isTargetTop, isTargetBottom, isTargetColumn } = this.props;
+		const key = [ dropType, cacheKey || id ];
+
+		if (isTargetTop) {
+			key.push('top');
 		};
+		if (isTargetBottom) {
+			key.push('bot');
+		};
+		if (isTargetColumn) {
+			key.push('col');
+		};
+
+		return key.join('-');
+	};
+
+	getClassName (): string {
+		const { rootId, className, isTargetTop, isTargetBottom, isTargetColumn, isEmptyToggle } = this.props;
+		const cn = [ 'dropTarget', 'isDroppable', `root-${rootId}` ];
+
+		if (className) {
+			cn.push(className);
+		};
+		if (isTargetTop) {
+			cn.push('targetTop');
+		};
+		if (isTargetBottom) {
+			cn.push('targetBot');
+		};
+		if (isTargetColumn) {
+			cn.push('targetCol');
+		};
+		if (isEmptyToggle) {
+			cn.push('isEmptyToggle');
+		};
+
+		return cn.join(' ');
 	};
 	
 };

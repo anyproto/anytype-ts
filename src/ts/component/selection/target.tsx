@@ -16,16 +16,17 @@ class SelectionTarget extends React.Component<Props> {
 		type: I.SelectType.None,
 		style: {},
 	};
+
+	node = null;
 	
 	render () {
-		const { id, type, children, dataset, style } = this.props;
-		const { selection } = dataset || {};
+		const { id, type, children, style } = this.props;
 		const cn = [ 'selectionTarget', `type-${type}` ];
 
 		return (
 			<div 
 				id={`selectionTarget-${id}`}
-				ref={ref => selection?.registerRef(id, type, ref)}
+				ref={ref => this.node = ref}
 				className={cn.join(' ')}
 				style={style}
 				{...UtilCommon.dataProps({ id, type })}
@@ -34,7 +35,24 @@ class SelectionTarget extends React.Component<Props> {
 			</div>
 		);
 	};
-	
+
+	componentDidMount(): void {
+		this.registerRef(true);
+	};
+
+	componentWillUnmount(): void {
+		this.registerRef(false);
+	};
+
+	registerRef (v: boolean) {
+		const { id, type, dataset } = this.props;
+		const { selection } = dataset || {};
+
+		if (selection) {
+			selection.registerRef(id, type, v ? $(this.node) : null);
+		};
+	};
+
 };
 
 export default SelectionTarget;

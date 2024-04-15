@@ -42,11 +42,8 @@
 		
 		.focusable { border-radius: inherit; }
 		
-		.emptyToggle { 
-			display: none; margin-left: 28px; color: var(--color-control-active); position: relative; z-index: 2;
-			@include text-overflow-nw;
-		}
-		.emptyToggle:hover { color: var(--color-text-primary); }
+		.isEmptyToggle { display: none; margin-left: 28px; color: var(--color-control-active); position: relative; z-index: 2; @include text-overflow-nw; }
+		.isEmptyToggle:hover { color: var(--color-text-primary); }
 	}
 
 	.block.isFirst { padding-top: 0px !important; }
@@ -87,7 +84,7 @@
 
 	.block > .wrapContent > .children.canToggle { display: none; }
 	.block.isToggled > .wrapContent > .children { display: block; }
-	.block.isToggled > .wrapContent > .emptyToggle { display: block; }
+	.block.isToggled > .wrapContent > .isEmptyToggle { display: block; }
 	.block.isToggled > .wrapContent > .selectionTarget > .dropTarget > .flex > .markers > .marker.toggle { transform: rotateZ(90deg); }
 	
 	.block.blockIconPage > .wrapMenu { visibility: hidden; }

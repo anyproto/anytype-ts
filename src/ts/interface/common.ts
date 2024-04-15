@@ -217,6 +217,7 @@ export interface Dataset {
 	};
 	dragProvider: {
 		onScroll: () => void;
+		registerRef: (param: any, ref: any) => void;
 	};
 	onDragStart: (e: React.DragEvent, dropType: I.DropType, ids: string[], component: unknown) => void;
 	preventCommonDrop: (value: boolean) => void;

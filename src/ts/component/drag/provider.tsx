@@ -4,8 +4,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject, UtilMenu, analytics } from 'Lib';
-import { blockStore, detailStore } from 'Store';
+import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject } from 'Lib';
+import { blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -26,6 +26,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	init = false;
 	top = 0;
 	frame = 0;
+	items: any[] = [];
 
 	objects: any = null;
 	objectData: Map<string, any> = new Map();
@@ -60,67 +61,72 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		);
 	};
 
+	registerRef (param: any, ref: any) {
+		if (ref) {
+			const item: any = {
+				id: param.id,
+				rootId: param.rootId,
+				cacheKey: param.cacheKey,
+				dropType: param.dropType,
+				type: param.type,
+				style: param.style,
+				targetContextId: param.targetContextId,
+				isPopup: param.isPopup,
+				isTargetTop: param.isTargetTop,
+				isTargetBottom: param.isTargetBottom,
+				isTargetColumn: param.isTargetColumn,
+				isEmptyToggle: param.isEmptyToggle,
+				isReversed: param.isReversed,
+				canDropMiddle: param.canDropMiddle,
+				obj: $(ref),
+			};
+
+			this.items.push(item);
+		} else {
+			this.items = this.items.filter(it => (it.cacheKey != param.cacheKey));
+		};
+	};
+
 	initData () {
 		if (this.init) {
 			return;
 		};
 
 		const isPopup = keyboard.isPopup();
-		const container = $(isPopup ? '#popupPage-innerWrap' : '.pageFlex');
+		const items = this.items.filter(it => it.isPopup == isPopup);
 
-		this.init = true;
-		this.objects = container.find('.dropTarget.isDroppable');
+		items.forEach((item, i) => {
+			const obj = item.obj;
+			const { left, top } = obj.offset();
+			const rect = obj.get(0).getBoundingClientRect() as DOMRect;
 
-		this.objects.each((i: number, el: any) => {
-			const item = $(el);
-			const data = {
-				id: item.attr('data-id'),
-				rootId: item.attr('data-root-id'),
-				cacheKey: item.attr('data-cache-key'),
-				dropType: item.attr('data-drop-type'),
-				type: item.attr('data-type'),
-				style: item.attr('data-style'),
-				targetContextId: item.attr('data-target-context-id'),
-			};
-			const offset = item.offset();
-			const rect = el.getBoundingClientRect() as DOMRect;
+			let y = top;
+			let { width, height } = rect;
 
-			const isTargetTop = item.hasClass('targetTop');
-			const isTargetBot = item.hasClass('targetBot');
-			const isTargetCol = item.hasClass('targetCol');
-			const isEmptyToggle = item.hasClass('emptyToggle');
-			const x = offset.left;
-			const width = rect.width;
+			if ((item.dropType == I.DropType.Block) && (item.type != I.BlockType.Layout)) {
+				const block = $(`#block-${item.id}`);
 
-			let y = offset.top;
-			let height = rect.height;
-
-			// Add block's paddings to height
-			if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
-				const block = $('#block-' + data.id);
 				if (block.length) {
-					const top = parseInt(block.css('paddingTop'));
-					const bot = parseInt(block.css('paddingBottom'));
+					const pt = parseInt(block.css('paddingTop'));
+					const pb = parseInt(block.css('paddingBottom'));
 
-					y -= top + 2;
-					height += top + bot + 2;
+					y -= pt + 2;
+					height += pt + pb + 2;
 				};
 			};
 
-			this.objectData.set(data.cacheKey, {
-				...data,
-				obj: item,
+			this.objectData.set(item.cacheKey, {
+				...item,
+				obj,
 				index: i,
-				x,
+				x: left,
 				y,
 				width,
 				height,
-				isTargetTop,
-				isTargetBot,
-				isTargetCol,
-				isEmptyToggle,
 			});
 		});
+
+		this.init = true;
 	};
 
 	onDropCommon (e: any) {
@@ -578,12 +584,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				isTargetBot = this.hoverData.isTargetBot;
 				isTargetCol = this.hoverData.isTargetCol;
 				isEmptyToggle = this.hoverData.isEmptyToggle;
-
+				type = this.hoverData.type;
+				style = this.hoverData.style;
+				canDropMiddle = this.hoverData.style.canDropMiddle;
+				isReversed = this.hoverData.isReversed;
 				obj = $(this.hoverData.obj);
-				type = obj.attr('data-type');
-				style = Number(obj.attr('data-style')) || 0;
-				canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
-				isReversed = Boolean(obj.attr('data-reversed'));
 
 				col1 = x - Constant.size.blockMenu / 4;
 				col2 = x + width;
