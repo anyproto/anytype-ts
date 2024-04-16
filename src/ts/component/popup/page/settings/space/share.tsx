@@ -196,6 +196,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 				<div id="sectionMembers" className="section sectionMembers">
 					<Title text={translate('popupSettingsSpaceShareMembersTitle')} />
+
 					{showLimit ? (
 						<div className="row payment">
 							<Label text={limitLabel} />
