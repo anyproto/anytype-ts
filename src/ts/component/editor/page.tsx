@@ -1816,7 +1816,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								to = currentTo;
 							};
 
-							marks = Mark.adjust(marks, currentFrom, url.length + 1);
+							marks = Mark.adjust(marks, currentFrom - 1, url.length + 1);
 							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param});
 
 							UtilData.blockSetText(rootId, block.id, value, marks, true, () => {
