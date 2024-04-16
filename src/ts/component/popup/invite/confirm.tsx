@@ -142,8 +142,6 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	getReaderLimit () {
-		return 0;
-
 		const space = UtilSpace.getSpaceviewBySpaceId(this.getSpaceId());
 		if (!space) {
 			return 0;
