@@ -21,7 +21,7 @@ export default [
 
 	title(`Welcome to Local-First Sharing & Collaboration`),
 	text(`Folks, this is the one we’ve been waiting for. This release, in which creating trusted networks with your friends, family and communities in Anytype becomes a reality, is the culmination of nearly five years of R&D.`),
-	text(`What does this mean for you? Now you can share what matters, with those you care about…and never have to worry that your data will be surveilled, blocked, or leaked.`),
+	text(`What does this mean for you? Now you can share what matters, with those you care about and never have to worry that your data will be surveilled, blocked, or leaked.`),
 	text(`From today onward, we warmly welcome you to begin testing out shared spaces, starting with the small things: idea boards, shopping lists, projects, and wikis. If you need inspiration, you can always check the ${link('https://gallery.any.coop', 'Multiplayer Experiences')} newly added to the Experience Gallery (or submit your own!).`),
 	text(`We can’t wait to see what you’ll create, and look forward to this new, networked era of Anytype.`),
 
@@ -53,7 +53,7 @@ export default [
 
 	h3(`Files & Media Relation Formats added to Set Filter Menu`),
 	video(`40/4.mp4`),
-	text(`When filtering Sets that use File and Media relations, the Set filter menu now includes options to filter according to relations with type: File and Media. This means you can, for instance, filter for .png attachments, or videos with a certain name.`),
+	text(`When filtering Sets that use File and Media relations, the Set filter menu now includes options to filter according to relations with type: File and Media.`),
 
 	h3(`Design Improvements in Widgets`),
 	text(`Border radiuses on widget select and hover menus have been adjusted for better visual consistency.`),
@@ -66,7 +66,7 @@ export default [
 	bullet(`Debug logs for Middleware were split into different flags`),
 
 	h2(`🐛 Bug Fixes:`),
-	bullet(`Brave Browser automatic pairing issue resolved. Thanks, ${link('https://community.anytype.io/t/web-clipper-not-pairing-automatically/17214', 'anicholslcsw')}!`),
+	bullet(`Brave Browser automatic pairing issue resolved in Web-clipper. Thanks, ${link('https://community.anytype.io/t/web-clipper-not-pairing-automatically/17214', 'anicholslcsw')}!`),
 	bullet(`Maximum relation menu height corrected so set filters are no longer cut off. Thanks, ${link('https://community.anytype.io/t/filter-in-set-view-dont-show-all-available-relations/18504', 'Henri')}!`),
 	bullet(`Experience Gallery links now open Experience page, rather than list of experiences`),
 	bullet(`Inline Kanban sets no longer overlap with editor content. Thanks, ${link('https://community.anytype.io/t/inline-set-kanban-view-bleeds-over-pre-existing-text/17485', 'zma17')}!`),
