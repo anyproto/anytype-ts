@@ -213,24 +213,25 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	onAdd () {
-		popupStore.open('settings', { 
-			className: 'isSpaceCreate',
-			data: { 
-				page: 'spaceCreate', 
-				isSpace: true,
-				onCreate: (id) => {
-					UtilRouter.switchSpace(id, '', () => Storage.initPinnedTypes());
-					analytics.event('SwitchSpace');
-				},
-			}, 
+		this.props.close(() => {
+			popupStore.open('settings', { 
+				className: 'isSpaceCreate',
+				data: { 
+					page: 'spaceCreate', 
+					isSpace: true,
+					onCreate: (id) => {
+						UtilRouter.switchSpace(id, '', () => Storage.initPinnedTypes());
+						analytics.event('SwitchSpace');
+					},
+				}, 
+			});
 		});
-		
-		this.props.close();
 	};
 
 	onSettings () {
-		popupStore.open('settings', {});
-		this.props.close();
+		this.props.close(() => {
+			popupStore.open('settings', {});
+		});
 	};
 
 	beforePosition () {
