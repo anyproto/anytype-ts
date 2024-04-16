@@ -256,6 +256,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 							popupStore.open('confirm', {
 								className: 'welcome',
+								preventClose: true,
 								data: {
 									icon: 'welcome',
 									title: translate('popupConfirmWelcomeTitle'),
@@ -263,7 +264,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 									textConfirm: translate('popupConfirmWelcomeButton'),
 									canCancel: false,
 									onConfirm: () => {
-										window.setTimeout(() => popupStore.open('usecase', {}), Constant.delay.popup);
+										popupStore.replace('confirm', 'usecase', {});
 									},
 								},
 							});

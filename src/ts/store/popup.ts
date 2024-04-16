@@ -192,7 +192,11 @@ class PopupStore {
 
 	closeLast () {
 		if (this.popupList.length) {
-			this.close(this.popupList[this.popupList.length - 1].id);
+			const last = this.popupList[this.popupList.length - 1];
+
+			if (last && !last.param.preventClose) {
+				this.close(last.id);
+			};
 		};
 	};
 

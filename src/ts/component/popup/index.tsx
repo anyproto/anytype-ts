@@ -42,6 +42,7 @@ class Popup extends React.Component<I.Popup> {
 		this.storageGet = this.storageGet.bind(this);
 		this.storageSet = this.storageSet.bind(this);
 		this.getId = this.getId.bind(this);
+		this.onDimmer = this.onDimmer.bind(this);
 	};
 
 	render () {
@@ -106,7 +107,7 @@ class Popup extends React.Component<I.Popup> {
 						/>
 					</div>
 				</div>
-				<Dimmer onClick={() => this.close()} />
+				<Dimmer onClick={this.onDimmer} />
 			</div>
 		);
 	};
@@ -215,6 +216,12 @@ class Popup extends React.Component<I.Popup> {
 		};
 
 		popupStore.close(id, callBack);
+	};
+
+	onDimmer () {
+		if (!this.props.param.preventClose) {
+			this.close();
+		};
 	};
 
 	storageGet () {

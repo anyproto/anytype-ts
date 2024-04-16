@@ -1818,6 +1818,7 @@
 	"errorAccountCreate901": "Network error",
 	"errorAccountCreate902": "Connection refused",
 	"errorAccountCreate903": "Network offline",
+
 	"errorAccountRecover101": "No vaults have been found",
 	"errorAccountRecover102": "You'll have to convert your wallet first",
 	"errorAccountRecover103": "Failed to create local repo",
