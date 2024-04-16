@@ -6,8 +6,6 @@ import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics, Uti
 import { authStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
 
 interface State {
 	isLoading: boolean;
