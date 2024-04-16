@@ -657,9 +657,9 @@ class Keyboard {
 				[ translate('libKeyboardAppVersion'), UtilCommon.getElectron().version.app ],
 				[ translate('libKeyboardBuildNumber'), message.details ],
 				[ translate('libKeyboardLibraryVersion'), message.version ],
-				[ translate('libKeyboardAccountID'), account.id ],
-				[ translate('libKeyboardAnalyticsID'), account.info.analyticsId ],
-				[ translate('libKeyboardDeviceID'), account.info.deviceId ],
+				[ translate('libKeyboardAccountId'), account.id ],
+				[ translate('libKeyboardAnalyticsId'), account.info.analyticsId ],
+				[ translate('libKeyboardDeviceId'), account.info.deviceId ],
 			];
 
 			popupStore.open('confirm', {
