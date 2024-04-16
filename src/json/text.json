@@ -1990,7 +1990,7 @@
 	"webclipperEmptySelection": "Selection is empty",
 
 	"paymentMethod0": "None",
-	"paymentMethod1": "Card",
+	"paymentMethod1": "Stripe",
 	"paymentMethod2": "Crypto",
 	"paymentMethod3": "ApplePay",
 	"paymentMethod4": "GooglePay"
