@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Title, Label, Button, Phrase } from 'Component';
 import { I, C, translate, analytics, UtilCommon, UtilRouter, Renderer } from 'Lib';
-import { authStore } from 'Store';
+import { authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
