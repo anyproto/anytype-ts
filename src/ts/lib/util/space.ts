@@ -166,6 +166,11 @@ class UtilSpace {
 		return space.writersLimit - participants.length;
 	};
 
+	getInviteLink (cid: string, key: string) {
+		//return UtilCommon.sprintf(Url.invite, cid, key);
+		return `${Constant.protocol}://invite/?cid=${cid}&key=${key}`;
+	};
+
 };
 
 export default new UtilSpace();
