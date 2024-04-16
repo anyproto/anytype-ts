@@ -116,7 +116,7 @@ const Navigation = observer(class Navigation extends React.Component {
 						id="button-navigation-profile"
 						className="iconWrap"
 						onClick={this.onProfile}
-						onMouseEnter={e => this.onTooltipShow(e, translate('navigationVault'), 'Ctrl + Tab')}
+						onMouseEnter={e => this.onTooltipShow(e, translate('navigationAccount'), 'Ctrl + Tab')}
 						onMouseLeave={e => Preview.tooltipHide(false)}
 					>
 						<IconObject object={participant} />

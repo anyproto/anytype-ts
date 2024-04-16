@@ -170,7 +170,7 @@
 	"electronMenuUnhide": "Show All",
 	"electronMenuCheckUpdates": "Check for updates",
 	"electronMenuSpaceSettings": "Space",
-	"electronMenuVaultSettings": "Vault",
+	"electronMenuAccountSettings": "Vault",
 	"electronMenuShowTray": "Show Anytype in system tray",
 	"electronMenuShowMenu": "Show menu bar",
 	"electronMenuQuit": "Quit",
@@ -421,7 +421,7 @@
 
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 
-	"pageAuthDeletedVaultDeletionTitle": "This vault is planned for deletion in %s",
+	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
 
 	"pageAuthOnboardPersonalSpace": "Personal Space",
 	"pageAuthOnboardMoreInfo": "More info",
@@ -627,16 +627,16 @@
 	"blockTypeMyTypes": "My Types",
 
 	"popupSettingsTitle": "Settings",
-	"popupSettingsVaultPersonalInformationTitle": "Personal information",
-	"popupSettingsVaultPersonalInformationNamePlaceholder": "Your name",
-	"popupSettingsVaultPersonalInformationDescriptionPlaceholder": "A few words about yourself",
-	"popupSettingsVaultAnytypeIdentityTitle": "Anytype Identity",
-	"popupSettingsVaultDeleteTitle": "Delete Vault",
+	"popupSettingsAccountPersonalInformationTitle": "Personal information",
+	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
+	"popupSettingsAccountPersonalInformationDescriptionPlaceholder": "A few words about yourself",
+	"popupSettingsAccountAnytypeIdentityTitle": "Anytype Identity",
+	"popupSettingsAccountDeleteTitle": "Delete Vault",
 
 	"popupSettingsSpaceTitle": "Space",
 	"popupSettingsProfileTitle": "Profile",
 	"popupSettingsApplicationTitle": "Application",
-	"popupSettingsVaultAndKeyTitle": "Vault & Key",
+	"popupSettingsAccountAndKeyTitle": "Vault & Key",
 
 	"popupSettingsPersonalTitle": "Preferences",
 	"popupSettingsPersonalDefaultObjectType": "Default Object Type",
@@ -1208,9 +1208,6 @@
 
 	"popupRelationValueRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
 
-	"menuVaultPeer": "%d\/%d peers",
-	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
-
 	"menuSmileRandom": "Random emoji",
 	"menuSmileGallery": "Gallery",
 	"menuSmileUpload": "Upload image",
@@ -1659,7 +1656,7 @@
 	"phrasePlaceholder": "Please enter your Key",
 
 	"navigationCreateNew": "Create new Object",
-	"navigationVault": "Spaces",
+	"navigationAccount": "Spaces",
 
 	"spaceAccessType0": "Private Space",
 	"spaceAccessType1": "Default Space",
