@@ -514,6 +514,7 @@ export default [
 	div(),
 	// --------------------------------------------//
 
+	/*
 	h2(`Release 0.33.0 - Enter the Void 😶‍🌫️`),
 
 	text(`After an enormous pre-beta launch, we're following up this month with an update to inject some magic into our onboarding experience.`),
@@ -556,8 +557,6 @@ export default [
 
 	div(),
 	// --------------------------------------------//
-
-	/*
 
 	h1(`Release 0.32.0: Welcome to the Space Jam 🌌`),
 	text(`Well folks, this is the release. THE release which integrates our Anysync protocol, introduces spaces to the anyverse, and opens the path towards multiplayer mode and the browser-like experience we wish to introduce. We are incredibly thankful to all @nightlytypes and new beta users who bravely tested multiple migrations and pre-release versions to help us roll out a polished product to the rest of our community.`),
