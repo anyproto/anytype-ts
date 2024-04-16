@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
 import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, commonStore, authStore, dbStore } from 'Store';
+import { menuStore, commonStore, authStore, dbStore, detailStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
@@ -37,6 +38,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const spaces = UtilSpace.getList();
 		const { account, accountSpaceId } = authStore;
 		const space = UtilSpace.getSpaceview();
+		const creator = detailStore.get(Constant.subId.space, space.creator);
 		const home = UtilSpace.getDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
 		const isOwner = UtilSpace.isOwner();
@@ -295,7 +297,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexCreatedByTitle`)} />
-										<Label text={account.id} />
+										<Label text={creator.globalName || creator.identity} />
 									</div>
 									<div className="side right">
 										<Icon className="copy" />
