@@ -931,25 +931,11 @@ class UtilData {
 		return ret;
 	}
 
-	getMembershipTiers () {
-		const { config, interfaceLang, isOnline } = commonStore;
-		const { testPayment } = config;
-
-		if (!isOnline) {
+	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
+		if (!this.isAnytypeNetwork()) {
 			return;
 		};
 
-		C.MembershipGetTiers(true, interfaceLang, (message) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == testPayment));
-			commonStore.membershipTiersListSet(tiers);
-		});
-	};
-
-	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
 		C.MembershipGetStatus(true, (message: any) => {
 			if (message.membership) {
 				const { status, tier } = message.membership;
@@ -964,6 +950,24 @@ class UtilData {
 			if (callBack) {
 				callBack(message.membership);
 			};
+		});
+	};
+
+	getMembershipTiers () {
+		const { config, interfaceLang, isOnline } = commonStore;
+		const { testPayment } = config;
+
+		if (!isOnline || !this.isAnytypeNetwork()) {
+			return;
+		};
+
+		C.MembershipGetTiers(true, interfaceLang, (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == testPayment));
+			commonStore.membershipTiersListSet(tiers);
 		});
 	};
 
