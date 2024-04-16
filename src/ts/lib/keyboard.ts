@@ -647,20 +647,22 @@ class Keyboard {
 
 	onTechInfo () {
 		const { account } = authStore;
-		if (!account) {
-			return;
-		};
 
 		C.AppGetVersion((message: any) => {
-			const data = [
+			let data = [
 				[ translate('libKeyboardOSVersion'), UtilCommon.getElectron().version.os ],
 				[ translate('libKeyboardAppVersion'), UtilCommon.getElectron().version.app ],
 				[ translate('libKeyboardBuildNumber'), message.details ],
 				[ translate('libKeyboardLibraryVersion'), message.version ],
-				[ translate('libKeyboardAccountId'), account.id ],
-				[ translate('libKeyboardAnalyticsId'), account.info.analyticsId ],
-				[ translate('libKeyboardDeviceId'), account.info.deviceId ],
 			];
+
+			if (account) {
+				data = data.concat([
+					[ translate('libKeyboardAccountId'), account.id ],
+					[ translate('libKeyboardAnalyticsId'), account.info.analyticsId ],
+					[ translate('libKeyboardDeviceId'), account.info.deviceId ],
+				]);
+			};
 
 			popupStore.open('confirm', {
 				className: 'isWide techInfo',

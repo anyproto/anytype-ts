@@ -83,14 +83,13 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	};
 
 	onLogout () {
-		const { setPinConfirmed } = this.props;
+		this.props.setPinConfirmed(false);
 
 		UtilRouter.go('/', { 
 			replace: true, 
 			animate: true,
-			onFadeIn: () => {
+			onRouteChange: () => {
 				authStore.logout(true, false);
-				setPinConfirmed(false);
 			},
 		});
 	};
