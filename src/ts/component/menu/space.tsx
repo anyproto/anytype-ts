@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
 import { I, UtilCommon, UtilSpace, UtilRouter, keyboard, translate, UtilMenu, analytics, Storage } from 'Lib';
-import { dbStore, popupStore, blockStore } from 'Store';
+import { popupStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ITEM_WIDTH = 112;
@@ -200,31 +200,30 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	onClick (e: any, item: any) {
-		if (item.id == 'add') {
-			this.onAdd();
-		} else
-		if (item.id == 'gallery') {
-			popupStore.open('usecase', {});
-		} else {
-			UtilRouter.switchSpace(item.targetSpaceId);
-			analytics.event('SwitchSpace');
-			this.props.close();
-		};
+		this.props.close(() => {
+			if (item.id == 'add') {
+				this.onAdd();
+			} else
+			if (item.id == 'gallery') {
+				popupStore.open('usecase', {});
+			} else {
+				UtilRouter.switchSpace(item.targetSpaceId);
+				analytics.event('SwitchSpace');
+			};
+		});
 	};
 
 	onAdd () {
-		this.props.close(() => {
-			popupStore.open('settings', { 
-				className: 'isSpaceCreate',
-				data: { 
-					page: 'spaceCreate', 
-					isSpace: true,
-					onCreate: (id) => {
-						UtilRouter.switchSpace(id, '', () => Storage.initPinnedTypes());
-						analytics.event('SwitchSpace');
-					},
-				}, 
-			});
+		popupStore.open('settings', { 
+			className: 'isSpaceCreate',
+			data: { 
+				page: 'spaceCreate', 
+				isSpace: true,
+				onCreate: (id) => {
+					UtilRouter.switchSpace(id, '', () => Storage.initPinnedTypes());
+					analytics.event('SwitchSpace');
+				},
+			}, 
 		});
 	};
 
