@@ -136,7 +136,12 @@
 
 	.popup.popupUsecase {
 		.page.pageList {
+			.banner { color: var(--color-text-inversion); }
+
+			.categories { background: var(--color-shape-tertiary); }
 			.categories {
+				.item { border-color: var(--color-shape-primary); }
+				.item.hl { color: var(--color-text-inversion); }
 				.item:hover, .item.active { background: var(--color-control-accent); color: var(--color-text-inversion); }
 				.item:hover, .item.active {
 					.icon.heart { background-image: url('#{$themePath}/icon/popup/usecase/heart1.svg'); }
