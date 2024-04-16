@@ -252,6 +252,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						replace: true, 
 						animate: true,
 						onFadeIn: () => {
+							Storage.initPinnedTypes();
+
 							popupStore.open('confirm', {
 								className: 'welcome',
 								data: {
@@ -268,9 +270,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						},
 					};
 
-					UtilData.onAuth({ routeParam }, () => {
-						Storage.initPinnedTypes();
-					});
+					UtilData.onAuth({ routeParam });
 				});
 			};
 

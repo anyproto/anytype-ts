@@ -380,10 +380,17 @@ class Action {
 						commonStore.configSet(message.account.config, false);
 
 						UtilData.onInfo(message.account.info);
-						UtilData.onAuth({ routeParam: { animate: true } }, () => {
-							window.setTimeout(() => { popupStore.open('migration', { data: { type: 'import' } }); }, popupStore.getTimeout());
-							blockStore.closeRecentWidgets();
-						});
+
+						const routeParam = {
+							replace: true,
+							animate: true,
+							onFadeIn: () => {
+								popupStore.open('migration', { data: { type: 'import' } });
+								blockStore.closeRecentWidgets();
+							},
+						};
+
+						UtilData.onAuth({ routeParam });
 					});
 				});
 			});
