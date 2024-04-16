@@ -496,7 +496,7 @@ export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response)
 	};
 };
 
-export const MembershipGetTiers = (response: Rpc.Membership.Tiers.Get.Response) => {
+export const MembershipGetTiers = (response: Rpc.Membership.GetTiers.Response) => {
 	return {
 		tiers: (response.getTiersList() || []).map(it => Mapper.From.MembershipTierData(it)),
 	};

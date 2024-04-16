@@ -1908,7 +1908,7 @@ export const MembershipGetStatus = (noCache: boolean, callBack?: (message: any) 
 };
 
 export const MembershipGetTiers = (noCache: boolean, locale: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.Tiers.Get.Request();
+	const request = new Rpc.Membership.GetTiers.Request();
 
 	request.setNocache(noCache);
 	request.setLocale(locale);
