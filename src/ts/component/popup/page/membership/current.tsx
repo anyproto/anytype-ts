@@ -120,7 +120,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 				if (paymentMethod == I.PaymentMethod.Crypto) {
 					buttonText = translate('popupMembershipWriteToAnyteam');
 				} else
-				if (paymentMethod == I.PaymentMethod.Card) {
+				if (paymentMethod == I.PaymentMethod.Stripe) {
 					buttonText = translate('popupMembershipManagePayment');
 				};
 			};

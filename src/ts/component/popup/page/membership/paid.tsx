@@ -85,7 +85,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 					{periodText}
 				</div>
 
-				<Button onClick={() => this.onPay(I.PaymentMethod.Card)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
+				<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
 				{/*<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />*/}
 			</form>
 		);
@@ -161,7 +161,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		this.onPay(I.PaymentMethod.Card);
+		this.onPay(I.PaymentMethod.Stripe);
 	};
 
 	onPay (method: I.PaymentMethod) {
@@ -172,7 +172,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const tierItem = UtilData.getMembershipTier(tier);
 		const { namesCount } = tierItem;
 		const name = globalName || !namesCount ? '' : this.refName.getValue();
-		const refButton = method == I.PaymentMethod.Card ? this.refButtonCard : this.refButtonCrypto;
+		const refButton = method == I.PaymentMethod.Stripe ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);
 

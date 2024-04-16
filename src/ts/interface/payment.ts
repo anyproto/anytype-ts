@@ -20,7 +20,7 @@ export enum MembershipStatus {
 
 export enum PaymentMethod {
 	None					 = 0,
-	Card					 = 1,
+	Stripe					 = 1,
 	Crypto					 = 2,
 	Apple					 = 3,
 	Google					 = 4,
