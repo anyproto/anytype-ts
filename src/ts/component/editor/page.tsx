@@ -1807,6 +1807,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 					switch (item.id) {
 						case 'link': {
+							const param = isLocal ? `file://${url}` : url;
+
 							if (currentFrom == currentTo) {
 								value = UtilCommon.stringInsert(value, url + ' ', currentFrom, currentFrom);
 								to = currentFrom + url.length;
@@ -1814,13 +1816,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								to = currentTo;
 							};
 
-							let param = url;
-							if (isLocal) {
-								param = `file://${url}`;
-							};
-
-							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param});
 							marks = Mark.adjust(marks, currentFrom, url.length + 1);
+							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param});
 
 							UtilData.blockSetText(rootId, block.id, value, marks, true, () => {
 								focus.set(block.id, { from: to + 1, to: to + 1 });
