@@ -5,9 +5,14 @@ $themePath: '~img/theme/dark';
 html.themeDark {
 	/* Text */
 
-	--color-text-primary: #dcdcdc;
-	--color-text-secondary: #8d8d8d;
-	--color-text-tertiary: #505050;
+	--color-text-primary: #ebebeb;
+	--color-text-secondary: #9a9a9a;
+	--color-text-tertiary: #606060;
+
+	--color-text-primary: #ebebeb;
+    --color-text-secondary: #9a9a9a;
+    --color-text-tertiary: #606060;
+
 	--color-text-inversion: #171717;
 
 	/* Shape */
@@ -52,27 +57,27 @@ html.themeDark {
 	.iconObject.withOption.isSpaceView { background: #000 !important; }
 
     .bgColor-grey { background: var(--color-shape-tertiary) !important; }
-	.bgColor-yellow { background: #2a2705 !important; }
-	.bgColor-orange { background: #2b1e05 !important; }
-	.bgColor-red { background: #311107 !important; }
-	.bgColor-pink { background: #310a23 !important; }
-	.bgColor-purple { background: #27122f !important; }
-	.bgColor-blue { background: #131938 !important; }
-	.bgColor-ice { background: #052130 !important; }
-	.bgColor-teal { background: #022724 !important; }
-	.bgColor-lime { background: #162908 !important; }
+	.bgColor-yellow { background: #2b2601 !important; }
+	.bgColor-orange { background: #2b2601 !important; }
+	.bgColor-red { background: #411909 !important; }
+	.bgColor-pink { background: #480d32 !important; }
+	.bgColor-purple { background: #3a1549 !important; }
+	.bgColor-blue { background: #0a2163 !important; }
+	.bgColor-ice { background: #07293f !important; }
+	.bgColor-teal { background: #052b28 !important; }
+	.bgColor-lime { background: #182a08 !important; }
 
     .isMultiSelect.tagColor-default { background: unset !important; }
-    .isMultiSelect.tagColor-grey { color: #8c9ea5 !important; background: var(--color-shape-primary) !important; }
-    .isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: #474108 !important; }
-    .isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: #483308 !important; }
-    .isMultiSelect.tagColor-red { color: var(--color-red) !important; background: #581f0c !important; }
-    .isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: #50113a !important; }
-    .isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: #411e4d !important; }
-    .isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #20295c !important; }
-    .isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: #093B57 !important; }
-    .isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: #044641 !important; }
-    .isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: #294b0e !important; }
+    .isMultiSelect.tagColor-grey { color: var(--color-text-secondary) !important; background: var(--color-shape-secondary) !important; }
+	.isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: #423c00 !important; }
+    .isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: #423c00 !important; }
+    .isMultiSelect.tagColor-red { color: var(--color-red) !important; background: #6b2109 !important; }
+    .isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: #6f124f !important; }
+    .isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: #5b2171 !important; }
+    .isMultiSelect.tagColor-blue { color: var(--color-blue) !important; background: #00349a !important; }
+    .isMultiSelect.tagColor-ice { color: var(--color-ice) !important; background: #044062 !important; }
+    .isMultiSelect.tagColor-teal { color: var(--color-teal) !important; background: #02443e !important; }
+    .isMultiSelect.tagColor-lime { color: var(--color-lime) !important; background: #214307 !important; }
 
 	.selectionTarget.isSelectionSelected::after, 
 	.block.isSelectionSelected > .wrapContent > .selectionTarget::after 
