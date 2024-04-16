@@ -35,6 +35,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			fixedWidth: true,
 		});
 
+		this.onBanner = this.onBanner.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onCategory = this.onCategory.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
@@ -135,7 +136,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 					<Icon id="arrowRight" className="arrow right" onClick={() => this.onArrow(1)} />
 				</div>
 
-				<div className="banner">
+				<div className="banner" onClick={this.onBanner}>
 					<div className="inner">{translate('popupUsecaseBannerText')}</div>
 				</div>
 
@@ -335,6 +336,15 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		this.checkPage();
 
 		inner.css({ transform: `translate3d(${-this.page * 100}%, 0px, 0px)` });
+	};
+
+	onBanner () {
+		const { gallery } = commonStore;
+		const category = gallery.categories.find(it => it.id == 'collaboration');
+
+		if (category) {
+			this.onCategory(category);
+		};
 	};
 
 };
