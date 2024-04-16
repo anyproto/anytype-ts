@@ -158,12 +158,11 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	onButton () {
 		const { membership } = authStore;
 		const { onChangeEmail } = this.props;
-		const { paymentMethod } = membership;
 
 		if (membership.isExplorer) {
 			onChangeEmail();
 		} else {
-			if (paymentMethod == I.PaymentMethod.Crypto) {
+			if (membership.paymentMethod == I.PaymentMethod.Crypto) {
 				Action.membershipUpgrade();
 			} else {
 				C.MembershipGetPortalLinkUrl((message: any) => {

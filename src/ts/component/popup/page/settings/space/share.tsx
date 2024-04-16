@@ -271,12 +271,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	onUpgrade () {
 		const { membership } = authStore;
-		const { tier } = membership;
 
-		if (tier >= I.TierType.CoCreator) {
+		if (membership.tier >= I.TierType.CoCreator) {
 			Action.membershipUpgrade();
 		} else {
-			this.props.onPage('membership');
+			this.props.close(() => {
+				popupStore.open('settings', { data: { page: 'membership' } });
+			});
 		};
 
 		analytics.event('ClickUpgradePlanTooltip', { type: 'members', route: analytics.route.settingsSpaceShare });
@@ -351,8 +352,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onInviteRevoke () {
-		const { space } = commonStore;
-
 		popupStore.open('confirm', {
 			data: {
 				title: translate('popupConfirmRevokeLinkTitle'),
@@ -360,7 +359,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
 				colorConfirm: 'red',
 				onConfirm: () => {
-					C.SpaceInviteRevoke(space, (message: any) => {
+					C.SpaceInviteRevoke(commonStore.space, () => {
 						this.setInvite('', '');
 
 						Preview.toastShow({ text: translate('toastInviteRevoke') });

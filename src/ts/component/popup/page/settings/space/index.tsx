@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
 import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, commonStore, authStore, dbStore, detailStore } from 'Store';
+import { menuStore, commonStore, authStore, dbStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -400,12 +400,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onUpgrade () {
 		const { membership } = authStore;
-		const { tier } = membership;
 
-		if (tier >= I.TierType.CoCreator) {
+		if (membership.tier >= I.TierType.CoCreator) {
 			Action.membershipUpgrade();
 		} else {
-			this.props.onPage('membership');
+			this.props.close(() => {
+				popupStore.open('settings', { data: { page: 'membership' } });
+			});
 		};
 
 		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });
