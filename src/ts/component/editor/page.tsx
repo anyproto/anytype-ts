@@ -1801,8 +1801,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				value: '',
 				options,
 				onSelect: (event: any, item: any) => {
-					const marks = UtilCommon.objectCopy(block.content.marks || []);
-
+					let marks = UtilCommon.objectCopy(block.content.marks || []);
 					let value = block.content.text;
 					let to = 0;
 
@@ -1820,11 +1819,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								param = `file://${url}`;
 							};
 
-							marks.push({
-								type: I.MarkType.Link,
-								range: { from: currentFrom, to },
-								param,
-							});
+							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param});
+							marks = Mark.adjust(marks, currentFrom, url.length + 1);
 
 							UtilData.blockSetText(rootId, block.id, value, marks, true, () => {
 								focus.set(block.id, { from: to + 1, to: to + 1 });
