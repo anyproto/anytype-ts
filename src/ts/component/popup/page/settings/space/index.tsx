@@ -9,7 +9,6 @@ interface State {
 };
 
 const STORAGE_FULL = 0.7;
-const SPACE_LIMIT = 3;
 
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings, State> {
 
@@ -46,6 +45,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();
+		const personalSpace = UtilSpace.getSpaceviewBySpaceId(accountSpaceId);
 		const usageCn = [ 'item' ];
 
 		let bytesUsed = 0;
@@ -68,7 +68,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		}).filter(it => it);
 		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
 
-		if ((sharedCnt >= SPACE_LIMIT) && !space.isShared) {
+		if ((sharedCnt >= personalSpace.sharedSpacesLimit) && !space.isShared) {
 			canShare = false;
 			canMembers = false;
 		};
