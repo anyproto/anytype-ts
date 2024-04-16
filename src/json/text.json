@@ -826,6 +826,10 @@
 	"popupConfirmDuplicateSpace": "You are already a member of this space",
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
 
+	"popupConfirmWelcomeTitle": "Welcome to your Space",
+	"popupConfirmWelcomeText": "<b>Space</b> is an encrypted local first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
+	"popupConfirmWelcomeButton": "Show me what I can build",
+
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
 	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
@@ -1200,6 +1204,7 @@
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
+	"popupUsecaseBannerText": "Introducing the local-first collaboration! Co-create, share and collaborate on Spaces!",
 
 	"popupRelationValueRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
 

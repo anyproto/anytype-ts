@@ -4,6 +4,7 @@ import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error }
 import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage } from 'Lib';
 import { authStore, commonStore, popupStore, blockStore } from 'Store';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
+import Constant from 'json/constant.json';
 
 enum Stage {
 	Vault	 = 0,
@@ -247,7 +248,27 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				Animation.from(() => {
 					this.refNext?.setLoading(false);
 
-					UtilData.onAuth({ routeParam: { replace: true, animate: true } }, () => {
+					const routeParam = {
+						replace: true, 
+						animate: true,
+						onFadeIn: () => {
+							popupStore.open('confirm', {
+								className: 'welcome',
+								data: {
+									icon: 'welcome',
+									title: translate('popupConfirmWelcomeTitle'),
+									text: translate('popupConfirmWelcomeText'),
+									textConfirm: translate('popupConfirmWelcomeButton'),
+									canCancel: false,
+									onConfirm: () => {
+										window.setTimeout(() => popupStore.open('usecase', {}), Constant.delay.popup);
+									},
+								},
+							});
+						},
+					};
+
+					UtilData.onAuth({ routeParam }, () => {
 						Storage.initPinnedTypes();
 					});
 				});
