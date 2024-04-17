@@ -391,6 +391,7 @@ class Action {
 						};
 
 						UtilData.onAuth({ routeParam });
+						UtilData.onAuthOnce();
 					});
 				});
 			});

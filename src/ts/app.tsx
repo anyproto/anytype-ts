@@ -361,6 +361,7 @@ class App extends React.Component<object, State> {
 							commonStore.configSet(account.config, false);
 							UtilData.onInfo(account.info);
 							UtilData.onAuth({}, cb);
+							UtilData.onAuthOnce();
 						};
 					});
 				});

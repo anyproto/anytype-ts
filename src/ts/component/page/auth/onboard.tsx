@@ -272,6 +272,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					};
 
 					UtilData.onAuth({ routeParam });
+					UtilData.onAuthOnce();
 				});
 			};
 
