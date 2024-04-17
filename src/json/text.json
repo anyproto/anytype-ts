@@ -1732,14 +1732,14 @@
 	"onboardingObjectCreationFinish1Button": "Ok! I like it",
 
 	"onboardingDashboard": "Onboarding",
-	"onboardingDashboard11": "<b>Welcome to your Homepage.</b> This is your personalized page, which you can customize to your liking.",
-	"onboardingDashboard12": "Feel free to make adjustments as needed.",
-	"onboardingDashboard13": "Let's take a few minutes to explore the features together.",
-	"onboardingDashboard41": "<b>You'll find the Sidebar on the left.</b> It's a navigation tool that you can customize with multiple widget types.",
-	"onboardingDashboard42": "Change the Widget appearance and see what looks best. Make your Favorites as a Tree Widget.",
-	"onboardingDashboard51": "<b>Great job!</b> You have completed this section. Feel free to explore other menus in the interface, such as Library and Sets.",
-	"onboardingDashboard52": "If you have any questions, don't hesitate to press the <span class=\"highlight\">?</span> button.",
-	"onboardingDashboard53": "To continue working on your project where you left off, you can import your data and make it your own.",
+	"onboardingDashboard1Title": "Let's start by quickly exploring Anytype's key features.",
+	"onboardingDashboard1Text": "Prefer to do it later?<br/>Just hit the \"?\" button and then Show hints when you feel ready.",
+
+	"onboardingDashboard2Title": "Widgets on the left provide quick access to objects in your space.",
+	"onboardingDashboard2Text": "Personalize them by clicking the Edit Widgets button.",
+
+	"onboardingDashboard31": "<b>Well done!</b> Jump to Sets or Library from the sidebar to explore more or continue by importing your data and making it your own.",
+	"onboardingDashboard32": "For help, press the <span class=\"highlight\">?</span> button.",
 
 	"onboardingEditor": "Editor",
 	"onboardingEditor1Title": "Connect your Objects",
@@ -1775,11 +1775,11 @@
 	"onboardingTemplateSelectTitle": "New Template Selector",
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
-	"onboardingSpaceSelectTitle": "Meet Multiple Spaces",
-	"onboardingSpaceSelectDescription": "Click your profile icon to access the space selector. Switch between spaces or create new ones here.",
+	"onboardingSpaceSelectTitle": "Feeling cramped in one space?",
+	"onboardingSpaceSelectDescription": "Click here to create a new space or switch between existing ones.",
 
-	"onboardingQuickCaptureTitle": "Create objects with different types",
-	"onboardingQuickCaptureDescription": "Right-click the <span class=\"highlight\">\"Plus\"</span> button to use recent types. In this menu, you can select existing types, install from Anytype Library, or create new ones.",
+	"onboardingQuickCaptureTitle": "Create Object by Selecting Type",
+	"onboardingQuickCaptureDescription": "<p>Pin favorite types, install from Anytype Library, or create new ones from the menu.</p><p>Customize your experience by adjusting click options at Settings > Preferences > Show quick capture menu on.</p>",
 
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",

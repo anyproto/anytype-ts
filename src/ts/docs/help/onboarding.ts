@@ -177,54 +177,69 @@ export default {
 
     dashboard: () => {
 		const canWrite = UtilSpace.canParticipantWrite();
+		const commonParam = {
+			element: '#page.isFull #footer #button-help',
+			classNameWrap: 'fixed',
+			className: 'wizard',
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Right,
+			noArrow: true,
+			noClose: true,
+			passThrough: true,
+			offsetY: -4,
+		};
 
 		return {
 			category: translate('onboardingDashboard'),
 			showConfetti: true,
-			onComplete: (force: boolean) => {
-				if (!$('#navigationPanel').hasClass('hide')) {
-					Onboarding.start('space', keyboard.isPopup(), force);
-				};
-			},
 			items: [
 				{
-					description: `
-						<p>${translate('onboardingDashboard11')}</p>
-						<p>${translate('onboardingDashboard12')}</p>
-						<p>${translate('onboardingDashboard13')}</p>
-					`,
+					name: translate('onboardingDashboard1Title'),
+					description: translate('onboardingDashboard1Text'),
 					video: './img/help/onboarding/homepage.mp4',
+					param: commonParam,
 				},
 				{
-					description: `
-						<p>${translate('onboardingDashboard41')}</p>
-						<p>${translate('onboardingDashboard42')}</p>
-					`,
+					name: translate('onboardingDashboard2Title'),
+					description: translate('onboardingDashboard2Text'),
 					video: './img/help/onboarding/sidebar.mp4',
+					param: commonParam,
+				},
+				{
+					name: translate('onboardingQuickCaptureTitle'),
+					description: translate('onboardingQuickCaptureDescription'),
+					param: {
+						element: '#navigationPanel #button-navigation-plus',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Center,
+						offsetY: -24,
+						noButton: true,
+					}
+				},
+				{
+					name: translate('onboardingSpaceSelectTitle'),
+					description: translate('onboardingSpaceSelectDescription'),
+					param: {
+						element: '#navigationPanel #button-navigation-profile',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Center,
+						offsetY: -24,
+						noButton: true,
+					}
 				},
 				{
 					description: `
-						<p>${translate('onboardingDashboard51')}</p>
-						<p>${translate('onboardingDashboard52')}</p>
-						<p>${translate('onboardingDashboard53')}</p>
+						<p>${translate('onboardingDashboard31')}</p>
+						<p>${translate('onboardingDashboard32')}</p>
 					`,
 					buttons: [
 						canWrite ? { text: translate('commonImport'), action: 'import' } : null
-					]
+					],
+					param: commonParam,
 				}
 			],
-
-			param: {
-				element: '#page.isFull #footer #button-help',
-				classNameWrap: 'fixed',
-				className: 'wizard',
-				vertical: I.MenuDirection.Top,
-				horizontal: I.MenuDirection.Right,
-				noArrow: true,
-				noClose: true,
-				passThrough: true,
-				offsetY: -4,
-			},
 		};
 	},
 
@@ -387,60 +402,5 @@ export default {
 			},
 		}
 	),
-
-	space: () => (
-		{
-			onComplete: (force: boolean) => {
-				if (!$('#navigationPanel').hasClass('hide')) {
-					Onboarding.start('quickCapture', keyboard.isPopup(), force);
-				};
-			},
-
-			items: [
-				{
-					name: translate('onboardingSpaceSelectTitle'),
-					description: translate('onboardingSpaceSelectDescription'),
-					param: {
-						element: '#navigationPanel #button-navigation-profile',
-					}
-				},
-			],
-
-			param: {
-				classNameWrap: 'fixed',
-				vertical: I.MenuDirection.Top,
-				horizontal: I.MenuDirection.Center,
-				offsetY: -24,
-				noButton: true,
-			},
-		}
-	),
-
-	quickCapture: () => {
-		const canWrite = UtilSpace.canParticipantWrite();
-		if (!canWrite) {
-			return;
-		};
-
-		return {
-			items: [
-				{
-					name: translate('onboardingQuickCaptureTitle'),
-					description: translate('onboardingQuickCaptureDescription'),
-					param: {
-						element: '#navigationPanel #button-navigation-plus',
-					}
-				},
-			],
-
-			param: {
-				classNameWrap: 'fixed',
-				vertical: I.MenuDirection.Top,
-				horizontal: I.MenuDirection.Center,
-				offsetY: -24,
-				noButton: true,
-			},
-		};
-	},
 
 };
