@@ -14,7 +14,7 @@ const util = new Util();
 
 // CONSTANTS
 
-const transformThreshold = 1.5;
+const transformThreshold = 1;
 const transformThresholdHalf = transformThreshold / 2;
 const delayFocus = 1000;
 
@@ -37,10 +37,10 @@ const forceProps = {
 	},
 	charge: {
 		strength: -250,
-		distanceMax: 300,
+		distanceMax: 1000,
 	},
 	link: {
-		distance: 50,
+		distance: 100,
 	},
 	forceX: {
 		strength: 0.1,
@@ -377,7 +377,7 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
-	if (showName && (transform.k >= transformThreshold)) {
+	if (showName) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
