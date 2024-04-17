@@ -68,16 +68,16 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		let memberUpgradeType = '';
 
 		if (space.isShared) {
-			if (!UtilSpace.getWriterLimit()) {
-				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
-				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
-				memberUpgradeType = 'editors';
-				showLimit = true;
-			} else
 			if (!UtilSpace.getReaderLimit() && membership.isExplorer) {
 				limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
 				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
 				memberUpgradeType = 'members';
+				showLimit = true;
+			} else
+			if (!UtilSpace.getWriterLimit()) {
+				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
+				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
+				memberUpgradeType = 'editors';
 				showLimit = true;
 			};
 		};
