@@ -59,7 +59,7 @@ class Analytics {
 
 	isAllowed (): boolean {
 		const { config } = commonStore;
-		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
+		return !(config.sudo || [ 'alpha' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
 	};
 	
 	init (options?: any) {
