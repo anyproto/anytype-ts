@@ -569,7 +569,6 @@ class UtilCommon {
 					title: translate('commonError'),
 					text: translate('popupConfirmObjectOpenErrorText'),
 					textConfirm: translate('popupConfirmObjectOpenErrorButton'),
-					textCancel: translate('commonCancel'),
 					onConfirm: () => {
 						C.DebugTree(rootId, logPath, (message: any) => {
 							if (!message.error.code) {
@@ -578,7 +577,7 @@ class UtilCommon {
 						});
 
 						UtilSpace.openDashboard('route');
-					},
+					}
 				},
 			});
 		};
