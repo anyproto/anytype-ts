@@ -246,16 +246,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			window.clearTimeout(this.timeoutLoading);
 			this.setLoading(false);
 
-			if (!UtilCommon.checkError(message.error.code)) {
-				return;
-			};
-
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true });
-				} else {
-					UtilSpace.openDashboard('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 

@@ -448,7 +448,7 @@ class App extends React.Component<object, State> {
 				bgColor: 'green',
 				title: translate('popupConfirmUpdatePromptTitle'),
 				text: translate('popupConfirmUpdatePromptText'),
-				textConfirm: translate('popupConfirmUpdatePromptOk'),
+				textConfirm: translate('commonUpdate'),
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateDownload');

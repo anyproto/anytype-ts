@@ -193,8 +193,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			const valid = UtilCommon.emailCheck(this.refEmail.getValue());
-			this.refButton.setDisabled(!valid);
+			this.refButton.setDisabled(!UtilCommon.checkEmail(this.refEmail.getValue()));
 		}, Constant.delay.keyboard);
 	};
 
