@@ -271,7 +271,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	onUpgrade () {
 		const { membership } = authStore;
 
-		if (membership.tier >= I.TierType.CoCreator) {
+		if (membership.tier >= I.TierType.Builder) {
 			Action.membershipUpgrade();
 		} else {
 			this.props.close(() => {
