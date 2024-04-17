@@ -292,7 +292,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { block, isPreview } = this.props;
+		const { block } = this.props;
 		const { viewId, layout } = block.content;
 		const object = this.getObject();
 
