@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics, UtilObject } from 'Lib';
+import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics, UtilObject, UtilMenu } from 'Lib';
 import { authStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
@@ -37,7 +37,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		this.onScroll = this.onScroll.bind(this);
 		this.onCopy = this.onCopy.bind(this);
-		this.onInviteRevoke = this.onInviteRevoke.bind(this);
 		this.onInitLink = this.onInitLink.bind(this);
 		this.onStopSharing = this.onStopSharing.bind(this);
 		this.onChangePermissions = this.onChangePermissions.bind(this);
@@ -351,27 +350,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		analytics.event('ScreenStopShare');
 	};
 
-	onInviteRevoke () {
-		popupStore.open('confirm', {
-			data: {
-				title: translate('popupConfirmRevokeLinkTitle'),
-				text: translate('popupConfirmRevokeLinkText'),
-				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
-				colorConfirm: 'red',
-				onConfirm: () => {
-					C.SpaceInviteRevoke(commonStore.space, () => {
-						this.setInvite('', '');
-
-						Preview.toastShow({ text: translate('toastInviteRevoke') });
-						analytics.event('RevokeShareLink');
-					});
-				},
-			},
-		});
-
-		analytics.event('ScreenRevokeShareLink');
-	};
-
 	getParticipantOptions () {
 		const { membership } = authStore;
 
@@ -516,34 +494,12 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	onMoreLink () {
 		const { getId } = this.props;
 		const { cid, key } = this.state;
-		const options = [
-			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
-			{ id: 'delete', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') },
-		];
 
-		menuStore.open('select', {
-			element: `#${getId()} #button-more-link`,
-			horizontal: I.MenuDirection.Center,
-			data: {
-				options,
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'qr': {
-							popupStore.open('inviteQr', { data: { link: UtilSpace.getInviteLink(cid, key) } });
-
-							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
-							break;
-						};
-
-						case 'delete': {
-							this.onInviteRevoke();
-
-							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
-							break;
-						};
-					};
-				},
-			}
+		UtilMenu.inviteContext({
+			containerId: getId(),
+			cid,
+			key,
+			onInviteRevoke: () => this.setInvite('', ''),
 		});
 	};
 

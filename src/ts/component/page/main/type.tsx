@@ -96,7 +96,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		];
 
 		if (!isFileType) {
-			columns.push({ relationKey: 'creator', name: translate('pageMainTypeOwner'), isObject: true });
+			columns.push({ relationKey: 'creator', name: translate('commonOwner'), isObject: true });
 		};
 
 		const ItemRelation = (item: any) => (

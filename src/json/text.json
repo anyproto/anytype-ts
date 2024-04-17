@@ -137,6 +137,7 @@
 	"commonOpenSpace": "Open space",
 	"commonReset": "Reset",
 	"commonUpdate": "Update",
+	"commonOwner": "Owner",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -396,7 +397,6 @@
 	"pageMainStoreMyTypes": "My Types",
 	"pageMainStoreMyRelations": "My Relations",
 
-	"pageMainTypeOwner": "Owner",
 	"pageMainTypeRecommendedLayout": "Recommended layout",
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
 	"pageMainTypeNoTemplates": "This Object Type doesn't have Templates",
@@ -710,19 +710,24 @@
 	"popupSettingsDataManagementDeleteButton": "Delete vault",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
-	"popupSettingsSpaceIndexSpaceNameLabel": "Space name",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": "End-to-end encryption (E2EE)",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction.",
+	"popupSettingsSpaceIndexInfoLabel": "Encrypted & Local First",
 
 	"popupSettingsSpaceIndexShareShareTitle": "Share space",
 	"popupSettingsSpaceIndexShareShareText": "Generate invite link and share the space with other members",
+	"popupSettingsSpaceIndexShareDefaultText": "Default space can’t be shared. Create a new one to share",
+	"popupSettingsSpaceIndexShareInviteText": "Generate invite link and share the space with other members",
+	"popupSettingsSpaceIndexShareLinkTitle": "Invitation link",
+	"popupSettingsSpaceIndexShareLinkText": "Share this invite link so that others can join your Space",
 
 	"popupSettingsSpaceIndexShareManageTitle": "Manage sharing",
 	"popupSettingsSpaceIndexShareManageText": "Copy invite link, approve requests and manage members",
 
-	"popupSettingsSpaceIndexShareMembersTitle": "Space members",
-	"popupSettingsSpaceIndexShareMembersText": "List of members",
+	"popupSettingsSpaceIndexShareMembersTitle": "Members",
+	"popupSettingsSpaceIndexShareMembersManageText": "Manage space members",
+	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
 	"popupSettingsSpaceIndexRemoteStorageTitle": "Remote Storage",

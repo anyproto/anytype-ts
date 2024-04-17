@@ -708,6 +708,29 @@ class Action {
 		})
 	};
 
+	inviteRevoke (spaceId: string, callBack?: () => void) {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupConfirmRevokeLinkTitle'),
+				text: translate('popupConfirmRevokeLinkText'),
+				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					C.SpaceInviteRevoke(spaceId, () => {
+						if (callBack) {
+							callBack();
+						};
+
+						Preview.toastShow({ text: translate('toastInviteRevoke') });
+						analytics.event('RevokeShareLink');
+					});
+				},
+			},
+		});
+
+		analytics.event('ScreenRevokeShareLink');
+	};
+
 };
 
 export default new Action();
