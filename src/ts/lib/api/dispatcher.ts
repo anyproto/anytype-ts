@@ -153,6 +153,7 @@ class Dispatcher {
 		if (v == V.FILESPACEUSAGE)				 t = 'fileSpaceUsage';
 		if (v == V.FILELOCALUSAGE)				 t = 'fileLocalUsage';
 		if (v == V.FILELIMITREACHED)			 t = 'fileLimitReached';
+		if (v == V.FILELIMITUPDATED)			 t = 'fileLimitUpdated';
 
 		if (v == V.NOTIFICATIONSEND)			 t = 'notificationSend';
 		if (v == V.NOTIFICATIONUPDATE)			 t = 'notificationUpdate';
@@ -308,6 +309,11 @@ class Dispatcher {
 					if (localUsage > bytesLimit) {
 						Preview.toastShow({ text: 'Your local storage exceeds syncing limit. Locally stored files won\'t be synced' });
 					};
+					break;
+				};
+
+				case 'fileLimitUpdated': {
+					commonStore.spaceStorageSet({ bytesLimit: data.getByteslimit() });
 					break;
 				};
 
