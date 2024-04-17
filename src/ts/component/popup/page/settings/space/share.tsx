@@ -65,16 +65,19 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		let limitLabel = '';
 		let limitButton = '';
 		let showLimit = false;
+		let memberUpgradeType = '';
 
 		if (space.isShared) {
 			if (!UtilSpace.getWriterLimit()) {
 				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
 				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
+				memberUpgradeType = 'editors';
 				showLimit = true;
 			} else
 			if (!UtilSpace.getReaderLimit() && membership.isExplorer) {
 				limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
 				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
+				memberUpgradeType = 'members';
 				showLimit = true;
 			};
 		};
@@ -198,7 +201,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					{showLimit ? (
 						<div className="row payment">
 							<Label text={limitLabel} />
-							<Button className="payment" text={limitButton} onClick={this.onUpgrade} />
+							<Button className="payment" text={limitButton} onClick={() => this.onUpgrade(memberUpgradeType)} />
 						</div>
 					) : ''}
 
@@ -268,7 +271,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		};
 	};
 
-	onUpgrade () {
+	onUpgrade (type: string) {
 		const { membership } = authStore;
 
 		if (membership.tier >= I.TierType.Builder) {
@@ -279,7 +282,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			});
 		};
 
-		analytics.event('ClickUpgradePlanTooltip', { type: 'members', route: analytics.route.settingsSpaceShare });
+		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.settingsSpaceShare });
 	};
 
 	getParticipantList () {
