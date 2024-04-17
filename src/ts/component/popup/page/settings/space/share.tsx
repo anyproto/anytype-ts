@@ -246,19 +246,28 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			keyMapper: i => (items[i] || {}).id,
 		});
 
-		this.setState({ isLoading: true });
-
-		C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
-			this.setState({ isLoading: false });
-
-			if (!message.error.code) {
-				this.setInvite(message.inviteCid, message.inviteKey);
-			};
-		});
+		this.init();
 	};
 
 	componentDidUpdate() {
+		this.init();
 		this.resize();
+	};
+
+	init () {
+		const { cid, key } = this.state;
+		const space = UtilSpace.getSpaceview();
+
+		if (space.isShared && !cid && !key	) {
+			this.setState({ isLoading: true });
+
+			C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
+				this.setState({ isLoading: false });
+				if (!message.error.code) {
+					this.setInvite(message.inviteCid, message.inviteKey);
+				};
+			});
+		};
 	};
 
 	setInvite (cid: string, key: string) {

@@ -695,12 +695,16 @@ class UtilMenu {
 	};
 
 	inviteContext (param: any) {
+		const { isOnline } = commonStore
 		const { containerId, cid, key, onInviteRevoke } = param || {};
 
-		const options = [
+		const options: any[] = [
 			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
-			{ id: 'delete', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') },
 		];
+
+		if (isOnline) {
+			options.push({ id: 'delete', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
+		};
 
 		menuStore.open('select', {
 			element: `#${containerId} #button-more-link`,

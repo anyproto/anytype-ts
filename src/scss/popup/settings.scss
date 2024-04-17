@@ -213,14 +213,13 @@
 						.input { @include text-header1; height: 32px; }
 					}
 
-					.info { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; }
+					.info { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
 					.bullet { width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-secondary); }
 
-					.spaceAccessType {
-						display: inline-block; width: unset; padding: 3px 8px; border-radius: 6px; background-color: var(--color-shape-highlight-light);
-						@include text-small; color: var(--color-text-secondary); transition: $transitionAllCommon;
-					}
-					.spaceAccessType:hover { background-color: var(--color-shape-highlight-medium); }
+					.infoLabel { @include text-small; color: var(--color-text-secondary); transition: $transitionAllCommon; }
+					.infoLabel.withTooltip:hover { color: var(--color-text-primary); }
+
+					.spaceAccessType { padding: 3px 6px; border-radius: 6px; background-color: var(--color-shape-highlight-light); }
 				}
 			}
 

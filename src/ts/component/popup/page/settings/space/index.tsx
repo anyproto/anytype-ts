@@ -124,19 +124,26 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						</div>
 						<div className="info">
 							<Label
-								className="spaceAccessType"
-								text={translate(`spaceAccessType${space.spaceAccessType}`)}
+								className="infoLabel spaceAccessType"
+								text={translate(`spaceAccessType${I.SpaceType.Private}`)}
+							/>
+							<div className="bullet" />
+							<Label 
+								className="infoLabel withTooltip"
+								text={translate('popupSettingsSpaceIndexInfoLabel')} 
 								onMouseEnter={onSpaceTypeTooltip}
 								onMouseLeave={e => Preview.tooltipHide(false)}
 							/>
-							<div className="bullet" />
-							<Label className="small" text={translate('popupSettingsSpaceIndexInfoLabel')} />
 						</div>
 					</div>
 				</div>
 
 				<div className="sections">
-					<div className="section sectionSpaceShare">
+					<div 
+						className="section sectionSpaceShare"
+						onMouseEnter={isShareActive ? () => {} : e => Preview.tooltipShow({ text: translate('popupSettingsSpaceShareGenerateInviteDisabled'), element: $(e.currentTarget) })}
+						onMouseLeave={e => Preview.tooltipHide(false)}
+					>
 						<Title text={translate(`popupSettingsSpaceShareTitle`)} />
 
 						<div className="sectionContent">
@@ -424,16 +431,29 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		);
 	};
 
-	componentDidMount(): void {
-		C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
-			if (!message.error.code) {
-				this.setInvite(message.inviteCid, message.inviteKey);
-			};
-		});
+	componentDidMount (): void {
+		this.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
 	};
 
 	componentWillUnmount(): void {
 		menuStore.closeAll([ 'select', 'searchObject' ]);
+	};
+
+	init () {
+		const { cid, key } = this.state;
+		const space = UtilSpace.getSpaceview();
+
+		if (space.isShared && !cid && !key	) {
+			C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
+				if (!message.error.code) {
+					this.setInvite(message.inviteCid, message.inviteKey);
+				};
+			});
+		};
 	};
 
 	setInvite (cid: string, key: string) {
