@@ -186,7 +186,7 @@ export default {
 			noArrow: true,
 			noClose: true,
 			passThrough: true,
-			offsetY: -4,
+			offsetY: () => -($('#notifications').height() + 4),
 		};
 
 		return {
@@ -197,13 +197,18 @@ export default {
 					name: translate('onboardingDashboard1Title'),
 					description: translate('onboardingDashboard1Text'),
 					video: './img/help/onboarding/homepage.mp4',
-					param: commonParam,
+					param: commonParam
 				},
 				{
 					name: translate('onboardingDashboard2Title'),
 					description: translate('onboardingDashboard2Text'),
 					video: './img/help/onboarding/sidebar.mp4',
-					param: commonParam,
+					param: {
+						...commonParam,
+						element: '#sidebar',
+						horizontal: I.MenuDirection.Left,
+						offsetX: $('#sidebar').width() + 10,
+					}
 				},
 				{
 					name: translate('onboardingQuickCaptureTitle'),

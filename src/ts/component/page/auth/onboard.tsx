@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage } from 'Lib';
+import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage, Action } from 'Lib';
 import { authStore, commonStore, popupStore, blockStore } from 'Store';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
-import Constant from 'json/constant.json';
 
 enum Stage {
 	Vault	 = 0,
@@ -253,21 +252,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						animate: true,
 						onFadeIn: () => {
 							Storage.initPinnedTypes();
-
-							popupStore.open('confirm', {
-								className: 'welcome',
-								preventClose: true,
-								data: {
-									icon: 'welcome',
-									title: translate('popupConfirmWelcomeTitle'),
-									text: translate('popupConfirmWelcomeText'),
-									textConfirm: translate('popupConfirmWelcomeButton'),
-									canCancel: false,
-									onConfirm: () => {
-										popupStore.replace('confirm', 'usecase', {});
-									},
-								},
-							});
+							Action.welcome();
 						},
 					};
 

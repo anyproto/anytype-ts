@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, keyboard, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
+import { I, C, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -730,6 +730,27 @@ class Action {
 		});
 
 		analytics.event('ScreenRevokeShareLink');
+	};
+
+	welcome () {
+		popupStore.open('confirm', {
+			className: 'welcome',
+			preventClose: true,
+			data: {
+				icon: 'welcome',
+				title: translate('popupConfirmWelcomeTitle'),
+				text: translate('popupConfirmWelcomeText'),
+				textConfirm: translate('popupConfirmWelcomeButton'),
+				canCancel: false,
+				onConfirm: () => {
+					popupStore.replace('confirm', 'usecase', {
+						onClose: () => {
+							Onboarding.start('dashboard', false, false);
+						}
+					});
+				},
+			},
+		});
 	};
 
 };

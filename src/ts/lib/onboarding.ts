@@ -74,14 +74,19 @@ class Onboarding {
 		param.element = String(param.element || '');
 		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
 		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
-		param.offsetY = Number(param.offsetY) || 0;
-		param.offsetX = Number(param.offsetX) || 0;
 		param.withArrow = param.noArrow ? false : param.element ? true : false;
 		param.className = String(param.className || '');
 		param.classNameWrap = String(param.classNameWrap || '');
 		param.rect = null;
 		param.recalcRect = null;
 		param.force = force;
+
+		if ('function' != typeof(param.offsetX)) {
+			param.offsetX = Number(param.offsetX) || 0;
+		};
+		if ('function' != typeof(param.offsetY)) {
+			param.offsetY = Number(param.offsetY) || 0;
+		};
 
 		const cnw = [];
 		if (param.classNameWrap) {

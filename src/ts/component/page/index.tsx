@@ -231,7 +231,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
-		this.dashboardOnboardingCheck();
 		Onboarding.start(UtilCommon.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
@@ -245,24 +244,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				Survey.check(I.SurveyType.Object);
 				//Survey.check(I.SurveyType.Pmf);
 			}, popupStore.getTimeout());
-		};
-	};
-
-	dashboardOnboardingCheck () {
-		const home = UtilSpace.getDashboard();
-		const { id } = this.getMatchParams();
-		const isPopup = keyboard.isPopup();
-
-		if (!this.isMain() || !home || !id || (home.id != id) || isPopup || popupStore.isOpen()) {
-			return;
-		};
-
-		if ([ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(home.id)) {
-			return;
-		};
-
-		if (!Onboarding.isCompleted('dashboard')) {
-			Onboarding.start('dashboard', false, false);
 		};
 	};
 
