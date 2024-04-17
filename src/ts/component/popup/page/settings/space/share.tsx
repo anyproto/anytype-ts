@@ -1,12 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics } from 'Lib';
+import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
+import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics, UtilObject } from 'Lib';
 import { authStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
-import Constant from 'json/constant.json';
 
 interface State {
 	isLoading: boolean;
@@ -56,7 +55,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			return <Loader id="loader" />;
 		};
 
-		const { onPage } = this.props;
 		const { membership } = authStore;
 		const hasLink = cid && key;
 		const space = UtilSpace.getSpaceview();
@@ -128,7 +126,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		
 			return (
 				<div id={`item-${item.id}`} className="row" style={item.style} >
-					<div className="side left">
+					<div className="side left" onClick={() => UtilObject.openPopup(item)}>
 						<IconObject size={48} object={item} />
 						<ObjectName object={item} />
 						{tag}
@@ -166,7 +164,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					<div className="icons">
 						<Icon className="question" onClick={this.onInfo} />
-						{/*isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''*/}
+						{space.isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''}
 					</div>
 				</div>
 
@@ -177,7 +175,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					{hasLink ? (
 						<div className="inviteLinkWrapper">
 							<div className="inputWrapper">
-								<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} onClick={() => this.refInput?.select()} />
+								<Input ref={ref => this.refInput = ref} readonly={true} value={UtilSpace.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
 								<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
 							</div>
 							<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
@@ -197,6 +195,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 				<div id="sectionMembers" className="section sectionMembers">
 					<Title text={translate('popupSettingsSpaceShareMembersTitle')} />
+
 					{showLimit ? (
 						<div className="row payment">
 							<Label text={limitLabel} />
@@ -272,13 +271,16 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	onUpgrade () {
 		const { membership } = authStore;
-		const { tier } = membership;
 
-		if (tier >= I.TierType.CoCreator) {
+		if (membership.tier >= I.TierType.CoCreator) {
 			Action.membershipUpgrade();
 		} else {
-			this.props.onPage('membership');
-		}
+			this.props.close(() => {
+				popupStore.open('settings', { data: { page: 'membership' } });
+			});
+		};
+
+		analytics.event('ClickUpgradePlanTooltip', { type: 'members', route: analytics.route.settingsSpaceShare });
 	};
 
 	getParticipantList () {
@@ -298,34 +300,35 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		});
 	};
 
-	getLink () {
-		const { cid, key } = this.state;
-		//return UtilCommon.sprintf(Url.invite, cid, key);
-		return `${Constant.protocol}://invite/?cid=${cid}&key=${key}`;
-	};
-
 	onCopy () {
 		const { cid, key } = this.state;
-
-		if (cid && key) {
-			UtilCommon.copyToast('', this.getLink(), translate('toastInviteCopy'));
+		if (!cid || !key) {
+			return;
 		};
 
+		UtilCommon.copyToast('', UtilSpace.getInviteLink(cid, key), translate('toastInviteCopy'));
 		analytics.event('ClickShareSpaceCopyLink');
 	};
 
 	onInitLink () {
 		this.refButton?.setLoading(true);
 
-		C.SpaceInviteGenerate(commonStore.space, (message: any) => {
-			this.refButton?.setLoading(false);
-
-			if (!this.setError(message.error)) {
-				this.setInvite(message.inviteCid, message.inviteKey);
-
-				Preview.toastShow({ text: translate('toastInviteGenerate') });
-				analytics.event('ShareSpace');
+		C.SpaceMakeShareable(commonStore.space, (message: any) => {
+			if (this.setError(message.error)) {
+				this.refButton?.setLoading(false);
+				return;
 			};
+
+			C.SpaceInviteGenerate(commonStore.space, (message: any) => {
+				this.refButton?.setLoading(false);
+
+				if (!this.setError(message.error)) {
+					this.setInvite(message.inviteCid, message.inviteKey);
+
+					Preview.toastShow({ text: translate('toastInviteGenerate') });
+					analytics.event('ShareSpace');
+				};
+			});
 		});
 	};
 
@@ -349,8 +352,6 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onInviteRevoke () {
-		const { space } = commonStore;
-
 		popupStore.open('confirm', {
 			data: {
 				title: translate('popupConfirmRevokeLinkTitle'),
@@ -358,7 +359,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
 				colorConfirm: 'red',
 				onConfirm: () => {
-					C.SpaceInviteRevoke(space, (message: any) => {
+					C.SpaceInviteRevoke(commonStore.space, () => {
 						this.setInvite('', '');
 
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
@@ -514,6 +515,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	onMoreLink () {
 		const { getId } = this.props;
+		const { cid, key } = this.state;
 		const options = [
 			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
 			{ id: 'delete', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') },
@@ -527,7 +529,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'qr': {
-							popupStore.open('inviteQr', { data: { link: this.getLink() } });
+							popupStore.open('inviteQr', { data: { link: UtilSpace.getInviteLink(cid, key) } });
 
 							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
 							break;

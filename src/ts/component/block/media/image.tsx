@@ -236,7 +236,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	getWidth (checkMax: boolean, v: number): number {
 		const { block } = this.props;
 		const { id, fields } = block;
-		const el = $('#selectable-' + id);
+		const el = $(`#selectionTarget-${id}`);
 		const width = Number(fields.width) || 1;
 		
 		if (!el.length) {

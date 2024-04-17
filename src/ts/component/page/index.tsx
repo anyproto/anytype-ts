@@ -253,7 +253,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { id } = this.getMatchParams();
 		const isPopup = keyboard.isPopup();
 
-		if (!home || !id || (home.id != id) || isPopup) {
+		if (!this.isMain() || !home || !id || (home.id != id) || isPopup || popupStore.isOpen()) {
 			return;
 		};
 

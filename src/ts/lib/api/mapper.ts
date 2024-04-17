@@ -505,8 +505,12 @@ export const Mapper = {
 							name: field.getName(),
 						});
 
-						if (type == 'import') {
+						if (type == I.NotificationType.Import) {
 							payload.importType = field.getImporttype();
+						};
+
+						if (type == I.NotificationType.Gallery) {
+							payload.spaceName = field.getSpacename();
 						};
 						break;
 					};

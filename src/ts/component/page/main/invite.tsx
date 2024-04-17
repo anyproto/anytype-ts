@@ -72,7 +72,6 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 
 				window.setTimeout(() => {
 					const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
-					const participant = UtilSpace.getMyParticipant(message.spaceId);
 
 					if (message.error.code) {
 						popupStore.open('confirm', {
@@ -86,20 +85,24 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 							},
 						});
 					} else 
-					if (participant && participant.isJoining) {
-						UtilCommon.onInviteRequest();
-					} else
-					if (space && !space.isAccountRemoving && !space.isAccountDeleted) {
-						popupStore.open('confirm', {
-							data: {
-								title: translate('popupConfirmDuplicateSpace'),
-								textConfirm: translate('commonOpenSpace'),
-								textCancel: translate('commonCancel'),
-								onConfirm: () => {
-									UtilRouter.switchSpace(message.spaceId);
+					if (space) {
+						if (space.isAccountJoining) {
+							UtilCommon.onInviteRequest();
+						} else
+						if (!space.isAccountRemoving && !space.isAccountDeleted) {
+							popupStore.open('confirm', {
+								data: {
+									title: translate('popupConfirmDuplicateSpace'),
+									textConfirm: translate('commonOpenSpace'),
+									textCancel: translate('commonCancel'),
+									onConfirm: () => {
+										UtilRouter.switchSpace(message.spaceId);
+									},
 								},
-							},
-						});
+							});
+						} else {
+							popupStore.open('inviteRequest', { data: { invite: message, ...data } });
+						};
 					} else {
 						popupStore.open('inviteRequest', { data: { invite: message, ...data } });
 					};

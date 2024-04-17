@@ -1302,8 +1302,6 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 	request.setSpaceid(spaceId);
 
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
-		message.error.code = 1234;
-
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, traceId, message.objectView);
 		};
@@ -1910,7 +1908,7 @@ export const MembershipGetStatus = (noCache: boolean, callBack?: (message: any) 
 };
 
 export const MembershipGetTiers = (noCache: boolean, locale: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.Tiers.Get.Request();
+	const request = new Rpc.Membership.GetTiers.Request();
 
 	request.setNocache(noCache);
 	request.setLocale(locale);
@@ -1997,20 +1995,28 @@ export const SpaceInviteRevoke = (spaceId: string, callBack?: (message: any) => 
 	dispatcher.request(SpaceInviteRevoke.name, request, callBack);
 };
 
-export const SpaceStopSharing = (spaceId: string, callBack?: (message: any) => void) => {
-	//const request = new Rpc.Space.StopSharing.Request();
-
-	//request.setSpaceid(spaceId);
-
-	//dispatcher.request(SpaceStopSharing.name, request, callBack);
-};
-
 export const SpaceInviteGetCurrent = (spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.InviteGetCurrent.Request();
 
 	request.setSpaceid(spaceId);
 
 	dispatcher.request(SpaceInviteGetCurrent.name, request, callBack);
+};
+
+export const SpaceStopSharing = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.StopSharing.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(SpaceStopSharing.name, request, callBack);
+};
+
+export const SpaceMakeShareable = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.StopSharing.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(SpaceMakeShareable.name, request, callBack);
 };
 
 export const SpaceJoin = (networkId: string, spaceId: string, cid: string, key: string, callBack?: (message: any) => void) => {

@@ -109,11 +109,10 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	};
 
 	onCheck () {
-		this.refCheckbox.toggle();
-
-		if (this.refCheckbox.getValue()) {
-			analytics.event('ClickMembership', { type: 'GetUpdates', name: 'Explorer' });
+		if (!this.refCheckbox.getValue()) {
+			analytics.event('ClickMembership', { type: 'GetUpdates', params: { tier: I.TierType.Explorer } });
 		};
+		this.refCheckbox.toggle();
 	};
 
 	onResetCode () {
@@ -152,7 +151,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 			this.setState({ verificationStep: 2 });
 			this.startCountdown(60);
 
-			analytics.event('ClickMembership', { type: 'Submit', name: 'Explorer' });
+			analytics.event('ClickMembership', { type: 'Submit', params: { tier: I.TierType.Explorer } });
 		});
 	};
 

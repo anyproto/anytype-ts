@@ -627,24 +627,21 @@ class UtilMenu {
 			return;
 		};
 
-		const participant = UtilSpace.getMyParticipant(targetSpaceId);
-
-		if (!participant) {
-			return;
-		};
-
-		const options: any[] = [];
 		const isOwner = UtilSpace.isOwner(targetSpaceId);
+
+		let options: any[] = [];
 
 		if (isOwner && space.isShared) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
-		if (participant.isRemoving) {
-			options.push({ id: 'export', name: translate('popupSettingsSpaceIndexExport') });
-		};
-
-		if (participant.isJoining) {
+		if (space.isAccountRemoving) {
+			options = options.concat([
+				{ id: 'export', name: translate('popupSettingsSpaceIndexExport') },
+				{ id: 'remove', color: 'red', name: translate('commonDelete') },
+			]);
+		} else 
+		if (space.isAccountJoining) {
 			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
 		} else {
 			options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });

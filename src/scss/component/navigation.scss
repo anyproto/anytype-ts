@@ -2,9 +2,9 @@
 
 .navigationPanel {
 	background: rgba(37, 37, 37, 0.4); backdrop-filter: blur(16px); border-radius: 16px; position: fixed; left: 0px; padding: 8px 16px; bottom: 24px;
-	height: 48px; z-index: 105;
+	height: 48px; z-index: 105; transition-property: opacity, visibility; transition-duration: 0.16s; transition-timing-function: $easeInQuint;
 }
-.navigationPanel.hide { visibility: hidden; z-index: 0; }
+.navigationPanel.hide { visibility: hidden; z-index: 0; opacity: 0; }
 .navigationPanel.hide * { pointer-events: none; }
 
 .navigationPanel {

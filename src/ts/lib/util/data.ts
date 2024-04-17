@@ -168,16 +168,11 @@ class UtilData {
 	
 	onAuth (param?: any, callBack?: () => void) {
 		const pin = Storage.get('pin');
-		const { profile, widgets } = blockStore;
+		const { root, widgets } = blockStore;
 		const { redirect, space } = commonStore;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
 		const routeParam = Object.assign({ replace: true }, (param || {}).routeParam || {});
-
-		if (!profile) {
-			console.error('[onAuth] No profile defined');
-			return;
-		};
 
 		if (!widgets) {
 			console.error('[onAuth] No widgets defined');
@@ -187,13 +182,13 @@ class UtilData {
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
 
-		C.ObjectOpen(blockStore.rootId, '', space, (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(message.error.code, null)) {
+		C.ObjectOpen(root, '', space, (message: any) => {
+			if (!UtilCommon.checkErrorOnOpen(root, message.error.code, null)) {
 				return;
 			};
 
 			C.ObjectOpen(widgets, '', space, (message: any) => {
-				if (!UtilCommon.checkErrorOnOpen(message.error.code, null)) {
+				if (!UtilCommon.checkErrorOnOpen(widgets, message.error.code, null)) {
 					return;
 				};
 
@@ -935,25 +930,11 @@ class UtilData {
 		return ret;
 	}
 
-	getMembershipTiers () {
-		const { config, interfaceLang, isOnline } = commonStore;
-		const { testPayment } = config;
-
-		if (!isOnline) {
+	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
+		if (!this.isAnytypeNetwork()) {
 			return;
 		};
 
-		C.MembershipGetTiers(true, interfaceLang, (message) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == testPayment));
-			commonStore.membershipTiersListSet(tiers);
-		});
-	};
-
-	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
 		C.MembershipGetStatus(true, (message: any) => {
 			if (message.membership) {
 				const { status, tier } = message.membership;
@@ -968,6 +949,24 @@ class UtilData {
 			if (callBack) {
 				callBack(message.membership);
 			};
+		});
+	};
+
+	getMembershipTiers () {
+		const { config, interfaceLang, isOnline } = commonStore;
+		const { testPayment } = config;
+
+		if (!isOnline || !this.isAnytypeNetwork()) {
+			return;
+		};
+
+		C.MembershipGetTiers(true, interfaceLang, (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == testPayment));
+			commonStore.membershipTiersListSet(tiers);
 		});
 	};
 

@@ -136,7 +136,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		this.setState({ isLoading: true });
 		
 		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(message.error.code, this)) {
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 

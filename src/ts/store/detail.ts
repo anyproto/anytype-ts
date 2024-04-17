@@ -287,6 +287,7 @@ class DetailStore {
 		object.spaceLocalStatus = Number(object.spaceLocalStatus) || I.SpaceStatus.Unknown;
 		object.readersLimit = Number(object.readersLimit) || 0;
 		object.writersLimit = Number(object.writersLimit) || 0;
+		object.sharedSpacesLimit = Number(object.sharedSpacesLimit) || 0;
 		object.spaceId = Relation.getStringValue(object.spaceId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
@@ -318,7 +319,7 @@ class DetailStore {
 		object.permissions = Number(object.permissions || object.participantPermissions) || I.ParticipantPermissions.Reader;
 		object.status = Number(object.status || object.participantStatus) || I.ParticipantStatus.Joining;
 		object.globalName = Relation.getStringValue(object.globalName);
-		object.name = object.globalName || object.name;
+		//object.name = object.globalName || object.name;
 
 		delete(object.participantPermissions);
 		delete(object.participantStatus);

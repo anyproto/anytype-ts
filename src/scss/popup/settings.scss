@@ -475,7 +475,7 @@
 				.title { margin-bottom: 8px; }
 
 				.row { border-bottom: 0px solid; padding: 0; display: grid; grid-template-columns: 1fr 120px; }
-				.row.payment { grid-template-columns: 1fr auto; }
+				.row.payment { grid-template-columns: 1fr auto; @include text-small; margin: 0px 0px 14px 0px; }
 
 				.row {
 					.side { display: flex; align-items: center; }
@@ -729,6 +729,10 @@
 			}
 			.description { text-align: center; }
 
+			.label {
+				a { font-weight: 600; text-decoration: underline; }
+			}
+
 			.swiper { margin: 0px -32px 8px -32px; }
 			.swiper {
 				.swiper-wrapper { margin-bottom: 10px; }
@@ -739,10 +743,6 @@
 			.slide {
 				.title { @include text-header3; margin-bottom: 4px; }
 				.label { width: 360px; }
-				.label {
-					a { font-weight: 600; }
-				}
-
 				.illustration { width: 320px; height: 104px; }
 			}
 

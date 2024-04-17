@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
 import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, commonStore, authStore, dbStore } from 'Store';
+import { menuStore, commonStore, authStore, dbStore, detailStore, popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
@@ -37,14 +38,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const spaces = UtilSpace.getList();
 		const { account, accountSpaceId } = authStore;
 		const space = UtilSpace.getSpaceview();
+		const creator = detailStore.get(Constant.subId.space, space.creator);
 		const home = UtilSpace.getDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
 		const isOwner = UtilSpace.isOwner();
 		const requestCnt = this.getRequestCnt();
-		const sharedCnt = 1; //this.getSharedCnt();
+		const sharedCnt = this.getSharedCnt();
 		const canWrite = UtilSpace.canParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();
+		const personalSpace = UtilSpace.getSpaceviewBySpaceId(accountSpaceId);
 		const usageCn = [ 'item' ];
 
 		let bytesUsed = 0;
@@ -67,7 +70,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		}).filter(it => it);
 		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
 
-		if ((sharedCnt >= 3) && !space.isShared) {
+		if ((sharedCnt >= personalSpace.sharedSpacesLimit) && !space.isShared) {
 			canShare = false;
 			canMembers = false;
 		};
@@ -294,7 +297,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexCreatedByTitle`)} />
-										<Label text={account.id} />
+										<Label text={creator.globalName || creator.identity} />
 									</div>
 									<div className="side right">
 										<Icon className="copy" />
@@ -397,13 +400,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onUpgrade () {
 		const { membership } = authStore;
-		const { tier } = membership;
 
-		if (tier >= I.TierType.CoCreator) {
+		if (membership.tier >= I.TierType.CoCreator) {
 			Action.membershipUpgrade();
 		} else {
-			this.props.onPage('membership');
-		}
+			this.props.close(() => {
+				popupStore.open('settings', { data: { page: 'membership' } });
+			});
+		};
+
+		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });
 	};
 
 	checkName (v: string): string {

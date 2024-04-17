@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, Preview, Renderer, translate, UtilSpace } from 'Lib';
+import { I, C, Preview, Renderer, translate, UtilSpace } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -542,8 +542,8 @@ class UtilCommon {
 		return true;
 	};
 
-	checkErrorOnOpen (code: number, context: any): boolean {
-		if (!code) {
+	checkErrorOnOpen (rootId: string, code: number, context: any): boolean {
+		if (!rootId || !code) {
 			return true;
 		};
 
@@ -560,6 +560,8 @@ class UtilCommon {
 				context.setState({ isDeleted: true });
 			};
 		} else {
+			const logPath = this.getElectron().logPath();
+
 			popupStore.open('confirm', {
 				data: {
 					icon: 'error',
@@ -569,6 +571,12 @@ class UtilCommon {
 					textConfirm: translate('popupConfirmObjectOpenErrorButton'),
 					textCancel: translate('commonCancel'),
 					onConfirm: () => {
+						C.DebugTree(rootId, logPath, (message: any) => {
+							if (!message.error.code) {
+								Renderer.send('pathOpen', logPath);
+							};
+						});
+
 						UtilSpace.openDashboard('route');
 					},
 				},

@@ -57,7 +57,7 @@ class DragLayer extends React.Component<object, State> {
 		const node = $(this.node);
 		
 		node.find('.block').attr({ id: '' });
-		node.find('.selectable').attr({ id: '' });
+		node.find('.selectionTarget').attr({ id: '' });
 
 		this.renderContent();
 	};

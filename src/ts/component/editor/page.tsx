@@ -188,10 +188,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.unbind();
 		this.close();
 
+		blockStore.clear(this.props.rootId);
 		focus.clear(false);
+
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
 		window.clearTimeout(this.timeoutMove);
+
 		Renderer.remove('commandEditor');
 	};
 
@@ -243,7 +246,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			window.clearTimeout(this.timeoutLoading);
 			this.setLoading(false);
 
-			if (!UtilCommon.checkErrorOnOpen(message.error.code, this)) {
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -1789,13 +1792,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				value: '',
 				options,
 				onSelect: (event: any, item: any) => {
-					const marks = UtilCommon.objectCopy(block.content.marks || []);
-
+					let marks = UtilCommon.objectCopy(block.content.marks || []);
 					let value = block.content.text;
 					let to = 0;
 
 					switch (item.id) {
 						case 'link': {
+							const param = isLocal ? `file://${url}` : url;
+
 							if (currentFrom == currentTo) {
 								value = UtilCommon.stringInsert(value, url + ' ', currentFrom, currentFrom);
 								to = currentFrom + url.length;
@@ -1803,16 +1807,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								to = currentTo;
 							};
 
-							let param = url;
-							if (isLocal) {
-								param = `file://${url}`;
-							};
-
-							marks.push({
-								type: I.MarkType.Link,
-								range: { from: currentFrom, to },
-								param,
-							});
+							marks = Mark.adjust(marks, currentFrom - 1, url.length + 1);
+							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param});
 
 							UtilData.blockSetText(rootId, block.id, value, marks, true, () => {
 								focus.set(block.id, { from: to + 1, to: to + 1 });

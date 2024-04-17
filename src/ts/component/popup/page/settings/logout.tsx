@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Title, Label, Button, Phrase } from 'Component';
 import { I, C, translate, analytics, UtilCommon, UtilRouter, Renderer } from 'Lib';
-import { authStore } from 'Store';
+import { authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -62,7 +62,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 		Renderer.send('keytarGet', account.id).then((value: string) => {
 			C.WalletConvert(value, '', (message: any) => {
 				if (!message.error.code) {
-					this.refPhrase.setValue(value);
+					this.refPhrase?.setValue(value);
 					this.setState({ entropy: message.entropy });
 				};
 			});
@@ -83,14 +83,13 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	};
 
 	onLogout () {
-		const { setPinConfirmed } = this.props;
+		this.props.setPinConfirmed(false);
 
 		UtilRouter.go('/', { 
 			replace: true, 
 			animate: true,
-			onFadeIn: () => {
+			onRouteChange: () => {
 				authStore.logout(true, false);
-				setPinConfirmed(false);
 			},
 		});
 	};

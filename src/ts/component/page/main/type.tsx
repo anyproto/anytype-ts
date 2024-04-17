@@ -258,7 +258,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		this.setState({ isLoading: true });
 
 		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(message.error.code, this)) {
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 

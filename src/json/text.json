@@ -157,6 +157,7 @@
 	"pluralRequest": "request|requests",
 	"pluralReader": "reader|readers",
 	"pluralWriter": "writers|writers",
+	"pluralYear": "year|years",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -170,7 +171,7 @@
 	"electronMenuUnhide": "Show All",
 	"electronMenuCheckUpdates": "Check for updates",
 	"electronMenuSpaceSettings": "Space",
-	"electronMenuVaultSettings": "Vault",
+	"electronMenuAccountSettings": "Vault",
 	"electronMenuShowTray": "Show Anytype in system tray",
 	"electronMenuShowMenu": "Show menu bar",
 	"electronMenuQuit": "Quit",
@@ -332,7 +333,6 @@
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardVaultDataLocation": "Vault data location",
 	"authOnboardMoreInfo": "You can find this key later in Anytype settings",
 
 	"authOnboardVaultTitle": "This is your Vault",
@@ -373,6 +373,7 @@
 	"usecaseCategoryOther": "Other",
 	"usecaseCategoryFeatured": "Featured",
 	"usecaseCategoryMadeByAny": "Made by Any",
+	"usecaseCategoryCollaboration": "Collaboration",
 
 	"pageMainEmptyDescription": "Select an Object to show when you login. You can always change it in Settings.",
 
@@ -418,7 +419,7 @@
 
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 
-	"pageAuthDeletedVaultDeletionTitle": "This vault is planned for deletion in %s",
+	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
 
 	"pageAuthOnboardPersonalSpace": "Personal Space",
 	"pageAuthOnboardMoreInfo": "More info",
@@ -624,17 +625,16 @@
 	"blockTypeMyTypes": "My Types",
 
 	"popupSettingsTitle": "Settings",
-	"popupSettingsVaultPersonalInformationTitle": "Personal information",
-	"popupSettingsVaultPersonalInformationNamePlaceholder": "Your name",
-	"popupSettingsVaultPersonalInformationDescriptionPlaceholder": "A few words about yourself",
-	"popupSettingsVaultAnytypeIdentityTitle": "Anytype Identity",
-	"popupSettingsVaultTitle": "Profile",
-	"popupSettingsVaultDeleteTitle": "Delete Vault",
+	"popupSettingsAccountPersonalInformationTitle": "Personal information",
+	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
+	"popupSettingsAccountPersonalInformationDescriptionPlaceholder": "A few words about yourself",
+	"popupSettingsAccountAnytypeIdentityTitle": "Anytype Identity",
+	"popupSettingsAccountDeleteTitle": "Delete Vault",
 
 	"popupSettingsSpaceTitle": "Space",
 	"popupSettingsProfileTitle": "Profile",
 	"popupSettingsApplicationTitle": "Application",
-	"popupSettingsVaultAndKeyTitle": "Vault & Key",
+	"popupSettingsAccountAndKeyTitle": "Vault & Key",
 
 	"popupSettingsPersonalTitle": "Preferences",
 	"popupSettingsPersonalDefaultObjectType": "Default Object Type",
@@ -829,6 +829,10 @@
 	"popupConfirmDuplicateSpace": "You are already a member of this space",
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
 
+	"popupConfirmWelcomeTitle": "Welcome to your Space",
+	"popupConfirmWelcomeText": "<b>Space</b> is an encrypted local first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
+	"popupConfirmWelcomeButton": "Show me what I can build",
+
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
 	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
@@ -849,7 +853,7 @@
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
 	"popupSettingsMembershipPerYear": "per year",
-	"popupSettingsMembershipPerYears": "per %s years",
+	"popupSettingsMembershipPerYears": "per %s %s",
 	"popupSettingsMembershipLearnMore": "Learn more",
 	"popupSettingsMembershipCurrent": "Current",
 	"popupSettingsMembershipManage": "Manage",
@@ -861,7 +865,7 @@
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
 
-	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <a href=\"%s\">Please let us know here</a>︎.",
+	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <a>Please let us know here</a>︎.",
 
 	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
 	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
@@ -870,12 +874,13 @@
 	"popupMembershipFreeEnterCode": "Enter code",
 
 	"popupMembershipCurrentEmailTitle": "Get updates and enjoy free perks!",
-	"popupMembershipCurrentEmailText": "It is not linked to your account in any way.",
+	"popupMembershipCurrentEmailText": "It is not linked to your vault in any way.",
 	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
 
 	"popupMembershipPaidTitle": "Pick your unique name",
-	"popupMembershipPaidText": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed.",
-	"popupMembershipPaidPlaceholder": "Myself",
+	"popupMembershipPaidTextPerYear": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a year.",
+	"popupMembershipPaidTextPerYears": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
+	"popupMembershipPaidPlaceholder": "Enter your name",
 	"popupMembershipPayByCard": "Pay by Card",
 	"popupMembershipPayByCrypto": "Pay by Crypto",
 	"popupMembershipPaidBy": "Paid by %s",
@@ -985,9 +990,9 @@
 	"popupInviteInviteConfirmCancel": "Manage spaces",
 
 	"popupInviteConfirmTitle": "%s requested to join %s",
-	"popupInviteConfirmButtonReader": "Grant read access",
+	"popupInviteConfirmButtonReader": "Viewer access",
 	"popupInviteConfirmButtonReaderLimit": "✦ Add more readers",
-	"popupInviteConfirmButtonEditor": "Grant edit access",
+	"popupInviteConfirmButtonEditor": "Editor access",
 	"popupInviteConfirmButtonEditorLimit": "✦ Add more editors",
 	"popupInviteConfirmButtonReject": "Reject",
 
@@ -1202,11 +1207,9 @@
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
+	"popupUsecaseBannerText": "Introducing the local-first collaboration! Co-create, share and collaborate on Spaces!",
 
 	"popupRelationValueRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
-
-	"menuVaultPeer": "%d\/%d peers",
-	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
 
 	"menuSmileRandom": "Random emoji",
 	"menuSmileGallery": "Gallery",
@@ -1656,7 +1659,7 @@
 	"phrasePlaceholder": "Please enter your Key",
 
 	"navigationCreateNew": "Create new Object",
-	"navigationVault": "Spaces",
+	"navigationAccount": "Spaces",
 
 	"spaceAccessType0": "Private Space",
 	"spaceAccessType1": "Default Space",
@@ -1781,9 +1784,9 @@
 	"libKeyboardAppVersion": "App version",
 	"libKeyboardBuildNumber": "Build number",
 	"libKeyboardLibraryVersion": "Library version",
-	"libKeyboardVaultID": "Anytype Identity",
-	"libKeyboardAnalyticsID": "Analytics ID",
-	"libKeyboardDeviceID": "Device ID",
+	"libKeyboardAccountId": "Anytype Identity",
+	"libKeyboardAnalyticsId": "Analytics ID",
+	"libKeyboardDeviceId": "Device ID",
 	"libKeyboardTechInformation": "Tech information",
 
 	"libRelationSmall": "Small",
@@ -1814,95 +1817,145 @@
 	"delimiterTab": "Tab",
 	"delimiterPipe": "Pipe",
 
-	"errorVaultCreate901": "Network error",
-	"errorVaultCreate902": "Connection refused",
-	"errorVaultCreate903": "Network offline",
-	"errorVaultRecover101": "No vaults have been found",
-	"errorVaultRecover102": "You'll have to convert your wallet first",
-	"errorVaultRecover103": "Failed to create local repo",
-	"errorVaultRecover104": "Local repo exists but is corrupted",
-	"errorVaultRecover105": "Failed to run node",
-	"errorVaultRecover106": "Wallet recover has not been performed",
-	"errorVaultRecover107": "Failed to stop running node",
-	"errorVaultRecover108": "Another process is running",
-	"errorVaultRecover109": "Vault has been deleted",
+	"errorAccountCreate901": "Network error",
+	"errorAccountCreate902": "Connection refused",
+	"errorAccountCreate903": "Network offline",
+
+	"errorAccountRecover101": "No vaults have been found",
+	"errorAccountRecover102": "You'll have to convert your wallet first",
+	"errorAccountRecover103": "Failed to create local repo",
+	"errorAccountRecover104": "Local repo exists but is corrupted",
+	"errorAccountRecover105": "Failed to run node",
+	"errorAccountRecover106": "Wallet recover has not been performed",
+	"errorAccountRecover107": "Failed to stop running node",
+	"errorAccountRecover108": "Another process is running",
+	"errorAccountRecover109": "Vault has been deletesd",
+
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
 
 	"errorMembershipGetStatus6": "Membership not found",
 	"errorMembershipGetStatus7": "Membership has wrong state",
+
 	"errorMembershipIsNameValid3": "Name is too short",
 	"errorMembershipIsNameValid4": "Name is too long",
 	"errorMembershipIsNameValid5": "Name contains invalid characters",
 	"errorMembershipIsNameValid6": "This tier features no name",
 	"errorMembershipIsNameValid7": "Tier not found",
+
+	"errorMembershipGetPaymentUrl4": "Unable to connect to payment node",
 	"errorMembershipGetPaymentUrl6": "Tier not found",
 	"errorMembershipGetPaymentUrl7": "Tier is invalid",
 	"errorMembershipGetPaymentUrl8": "Payment method is invalid",
 	"errorMembershipGetPaymentUrl9": "Bad Any name",
 	"errorMembershipGetPaymentUrl10": "Membership already exists",
+
 	"errorMembershipFinalize6": "Membership not found",
 	"errorMembershipFinalize7": "Membership has wrong state",
 	"errorMembershipFinalize8": "Bad Any name",
+
 	"errorMembershipGetVerificationEmail6": "Email format is invalid",
 	"errorMembershipGetVerificationEmail7": "This email is already verified",
 	"errorMembershipGetVerificationEmail8": "Email has been already sent",
 	"errorMembershipGetVerificationEmail9": "Failed to send email",
 	"errorMembershipGetVerificationEmail10": "Membership already exists",
+
 	"errorMembershipVerifyEmailCode6": "This email is already verified",
 	"errorMembershipVerifyEmailCode7": "Code has expired",
 	"errorMembershipVerifyEmailCode8": "Wrong code",
 	"errorMembershipVerifyEmailCode9": "Membership not found",
 	"errorMembershipVerifyEmailCode10": "Membership is already active",
 
+	"errorMembershipGetTiers4": "Unable to connect to payment node",
+	"errorMembershipGetPortalLinkUrl4": "Unable to connect to payment node",
+
 	"errorSpaceInviteGenerate101": "No such space",
 	"errorSpaceInviteGenerate102": "Space is deleted",
 	"errorSpaceInviteGenerate103": "Request failed",
-	"errorSpaceInviteView101": "No such space",
-	"errorSpaceInviteView102": "Space is deleted",
-	"errorSpaceInviteView103": "Invite not found",
-	"errorSpaceInviteView104": "Invite has bad signature",
+	"errorSpaceInviteGenerate104": "Limit reached",
+	"errorSpaceInviteGenerate105": "Space is not shareable",
+
+	"errorSpaceInviteView101": "Invite not found",
+	"errorSpaceInviteView102": "Invite has bad signature",
+
 	"errorSpaceInviteRevoke101": "No such space",
 	"errorSpaceInviteRevoke102": "Space is deleted",
-	"errorSpaceInviteRevoke103": "No active invite",
-	"errorSpaceInviteRevoke105": "Request failed",
+	"errorSpaceInviteRevoke103": "Limit reached",
+	"errorSpaceInviteRevoke104": "Request failed",
+	"errorSpaceInviteRevoke105": "Space is not shareable",
+
 	"errorSpaceStopSharing101": "No such space",
 	"errorSpaceStopSharing102": "Space is deleted",
 	"errorSpaceStopSharing103": "Request failed",
-	"errorSpaceInviteGetCurrent101": "No such space",
-	"errorSpaceInviteGetCurrent102": "Space is deleted",
-	"errorSpaceInviteGetCurrent103": "No active invite",
+	"errorSpaceStopSharing104": "Limit reached",
+
+	"errorSpaceInviteGetCurrent101": "No active invite",
+
 	"errorSpaceJoin101": "No such space",
 	"errorSpaceJoin102": "Space is deleted",
 	"errorSpaceJoin103": "Invite not found",
 	"errorSpaceJoin104": "Invite has bad signature",
 	"errorSpaceJoin105": "Request failed",
+	"errorSpaceJoin106": "Limit reached",
+	"errorSpaceJoin107": "Space is not shareable",
+
 	"errorSpaceJoinCancel101": "No such space",
 	"errorSpaceJoinCancel102": "Space is deleted",
 	"errorSpaceJoinCancel103": "Request failed",
+	"errorSpaceJoinCancel104": "Limit reached",
+	"errorSpaceJoinCancel105": "No such request",
+	"errorSpaceJoinCancel106": "Space is not shareable",
+
 	"errorSpaceRequestApprove101": "No such space",
 	"errorSpaceRequestApprove102": "Space is deleted",
-	"errorSpaceRequestApprove103": "No such identity",
+	"errorSpaceRequestApprove103": "No such request",
 	"errorSpaceRequestApprove104": "Incorrect permissions",
 	"errorSpaceRequestApprove105": "Request failed",
+	"errorSpaceRequestApprove106": "Limit reached",
+	"errorSpaceRequestApprove107": "Space is not shareable",
+
 	"errorSpaceRequestDecline101": "No such space",
 	"errorSpaceRequestDecline102": "Space is deleted",
 	"errorSpaceRequestDecline103": "Request failed",
+	"errorSpaceRequestDecline104": "Limit reached",
+	"errorSpaceRequestDecline105": "No such request",
+	"errorSpaceRequestDecline106": "Space is not shareable",
+
 	"errorSpaceParticipantPermissionsChange101": "No such space",
 	"errorSpaceParticipantPermissionsChange102": "Space is deleted",
 	"errorSpaceParticipantPermissionsChange103": "Request failed",
+	"errorSpaceParticipantPermissionsChange104": "Limit reached",
+	"errorSpaceParticipantPermissionsChange105": "Space member was not found",
+	"errorSpaceParticipantPermissionsChange106": "Incorrect permissions",
+	"errorSpaceParticipantPermissionsChange107": "Space is not shareable",
+
 	"errorSpaceParticipantRemove101": "No such space",
 	"errorSpaceParticipantRemove102": "Space is deleted",
 	"errorSpaceParticipantRemove103": "Participant not found",
 	"errorSpaceParticipantRemove104": "Request failed",
+	"errorSpaceParticipantRemove105": "Limit reached",
+	"errorSpaceParticipantRemove106": "Space is not shareable",
+
 	"errorSpaceLeaveApprove101": "No such space",
 	"errorSpaceLeaveApprove102": "Space is deleted",
 	"errorSpaceLeaveApprove103": "Request failed",
-	"errorSpaceLeaveApprove104": "No approve requests",
+	"errorSpaceLeaveApprove104": "Limit reached",
+	"errorSpaceLeaveApprove105": "No approve requests",
+	"errorSpaceLeaveApprove106": "Space is not shareable",
+
 	"errorSpaceExit101": "No such space",
 	"errorSpaceExit102": "Space is deleted",
 	"errorSpaceExit103": "Request failed",
+
 	"errorSpaceDelete101": "No such space",
 	"errorSpaceDelete102": "Space is deleted",
+	"errorSpaceDelete103": "Request failed",
+	"errorSpaceDelete104": "Limit reached",
+	"errorSpaceDelete105": "Space is not shareable",
+
+	"errorSpaceMakeShareable101": "No such space",
+	"errorSpaceMakeShareable102": "Space is deleted",
+	"errorSpaceMakeShareable103": "Request failed",
+	"errorSpaceMakeShareable104": "Limit reached",
 
 	"origin0": "None",
 	"origin1": "Clipboard",
@@ -1985,7 +2038,7 @@
 	"webclipperEmptySelection": "Selection is empty",
 
 	"paymentMethod0": "None",
-	"paymentMethod1": "Card",
+	"paymentMethod1": "Stripe",
 	"paymentMethod2": "Crypto",
 	"paymentMethod3": "ApplePay",
 	"paymentMethod4": "GooglePay"
