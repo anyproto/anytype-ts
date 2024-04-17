@@ -996,9 +996,9 @@
 
 	"popupInviteConfirmTitle": "%s requested to join %s",
 	"popupInviteConfirmButtonReader": "Viewer access",
-	"popupInviteConfirmButtonReaderLimit": "✦ Add more readers",
-	"popupInviteConfirmButtonEditor": "Editor access",
-	"popupInviteConfirmButtonEditorLimit": "✦ Add more editors",
+	"popupInviteConfirmButtonReaderLimit": "✦ Add more space members",
+	"popupInviteConfirmButtonWriter": "Editor access",
+	"popupInviteConfirmButtonWriterLimit": "✦ Add more editors",
 	"popupInviteConfirmButtonReject": "Reject",
 
 	"popupInviteQrTitle": "QR code for joining a Space",

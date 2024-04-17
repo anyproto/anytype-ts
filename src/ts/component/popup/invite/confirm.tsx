@@ -45,12 +45,12 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		if (!this.getWriterLimit()) {
 			buttons = buttons.concat([
 				{ text: translate('popupInviteConfirmButtonReader'), onClick: () => this.onConfirm(I.ParticipantPermissions.Reader) },
-				{ text: translate('popupInviteConfirmButtonEditorLimit'), onClick: () => this.onMembership('editors') },
+				{ text: translate('popupInviteConfirmButtonWriterLimit'), onClick: () => this.onMembership('editors') },
 			]);
 		} else {
 			buttons = buttons.concat([
 				{ text: translate('popupInviteConfirmButtonReader'), onClick: () => this.onConfirm(I.ParticipantPermissions.Reader) },
-				{ text: translate('popupInviteConfirmButtonEditor'), onClick: () => this.onConfirm(I.ParticipantPermissions.Writer) },
+				{ text: translate('popupInviteConfirmButtonWriter'), onClick: () => this.onConfirm(I.ParticipantPermissions.Writer) },
 			]);
 		};
 
