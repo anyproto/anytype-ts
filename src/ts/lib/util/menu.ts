@@ -697,12 +697,13 @@ class UtilMenu {
 	inviteContext (param: any) {
 		const { isOnline } = commonStore
 		const { containerId, cid, key, onInviteRevoke } = param || {};
+		const isOwner = UtilSpace.isMyOwner();
 
 		const options: any[] = [
 			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
 		];
 
-		if (isOnline) {
+		if (isOnline && isOwner) {
 			options.push({ id: 'delete', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
