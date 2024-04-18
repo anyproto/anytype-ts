@@ -1733,7 +1733,7 @@
 
 	"onboardingDashboard": "Onboarding",
 	"onboardingDashboard1Title": "Let's start by quickly exploring Anytype's key features.",
-	"onboardingDashboard1Text": "Prefer to do it later?<br/>Just hit the \"?\" button and then Show hints when you feel ready.",
+	"onboardingDashboard1Text": "Prefer to do it later?<br/>Just hit the <span class=\"highlight\">?</span> button and then Show hints when you feel ready.",
 
 	"onboardingDashboard2Title": "Widgets on the left provide quick access to objects in your space.",
 	"onboardingDashboard2Text": "Personalize them by clicking the Edit Widgets button.",
