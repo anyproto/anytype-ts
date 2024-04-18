@@ -305,7 +305,7 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectLabel": "Co-create digitally independent spaces. Encrypted with keys you control. Everything works offline. All code is <a href=\"https://github.com/anyproto\">open</a>.",
+	"authSelectLabel": "Create & collaborate in spaces you own. Encrypted, offline & <a href=\"https://github.com/anyproto\">open</a>.",
 	"authSelectLogin": "I have a Key",
 	"authSelectSignup": "New Vault",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
@@ -337,7 +337,7 @@
 	"authOnboardMoreInfo": "You can find this key later in Anytype settings",
 
 	"authOnboardVaultTitle": "This is your Vault",
-	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It is local first – everything works offline.<br/>Only you have the key.",
+	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It's local-first – everything works offline.<br/>Only you have the key.",
 	"authOnboardVaultButton": "Get my Key",
 
 	"authOnboardNameTitle": "Set your name",
@@ -345,7 +345,7 @@
 	"authOnboardNameButton": "Enter my Vault",
 
 	"authOnboardPhraseTitle": "This is your Key",
-	"authOnboardPhraseLabel": "It gives you full ownership over your vault.<br/>It can not be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseLabel": "It gives you full ownership over your vault.<br/>It cannot be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
 	"authOnboardPhraseSubmit": "Show my Key",
 
 	"usecase2Title": "Personal projects",
@@ -713,7 +713,7 @@
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": "End-to-end encryption (E2EE)",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction.",
-	"popupSettingsSpaceIndexInfoLabel": "Encrypted & Local First",
+	"popupSettingsSpaceIndexInfoLabel": "Encrypted & local-first",
 
 	"popupSettingsSpaceIndexShareShareTitle": "Share space",
 	"popupSettingsSpaceIndexShareShareText": "Generate invite link and share the space with other members",
@@ -835,7 +835,7 @@
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
 
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
-	"popupConfirmWelcomeText": "<b>Space</b> is an encrypted local first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
+	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
 	"popupConfirmWelcomeButton": "Show me what I can build",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
@@ -866,7 +866,7 @@
 	"popupSettingsMembershipForeverFree": "Forever free",
 	"popupSettingsMembershipPending": "Pending...",
 
-	"popupSettingsMembershipLevelsDetails": "Membership levels details",
+	"popupSettingsMembershipLevelsDetails": "Membership plan details",
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
 
@@ -1198,7 +1198,7 @@
 	"popupPhraseTitle1": "What is a Key?",
 	"popupPhraseTitle2": "How to save my key?",
 	"popupPhraseLabel1": "It is represented by a recovery phrase – 12 random words from which your vault is magically generated on this device.",
-	"popupPhraseLabel2": "Who knows combination of these words – owns the vault. Now, you are the only person in the world who knows it.",
+	"popupPhraseLabel2": "Whomever knows the combination of these words owns your vault. Right now, you are the only person in the world who knows it.",
 	"popupPhraseLabel3": "All computational resources on Earth are not enough to break in. If you lose it, it cannot be recovered. So, store it somewhere safe!",
 	"popupPhraseLabel4": "The easiest way to store your Key is to save it in your password manager.",
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
@@ -1212,7 +1212,7 @@
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
-	"popupUsecaseBannerText": "Introducing the local-first collaboration! Co-create, share and collaborate on Spaces!",
+	"popupUsecaseBannerText": "Introducing local-first collaboration! Co-create, share and collaborate on Spaces!",
 
 	"popupRelationValueRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
 
@@ -1879,7 +1879,7 @@
 
 	"errorSpaceInviteGenerate101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceInviteGenerate102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
-	"errorSpaceInviteGenerate103": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceInviteGenerate103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceInviteGenerate104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 	"errorSpaceInviteGenerate105": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
 
@@ -1889,12 +1889,12 @@
 	"errorSpaceInviteRevoke101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceInviteRevoke102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
 	"errorSpaceInviteRevoke103": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
-	"errorSpaceInviteRevoke104": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceInviteRevoke104": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceInviteRevoke105": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
 
 	"errorSpaceStopSharing101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceStopSharing102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
-	"errorSpaceStopSharing103": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceStopSharing103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceStopSharing104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
 	"errorSpaceInviteGetCurrent101": "The invitation does not exist. Please ensure that your devices are synchronized.",
@@ -1903,13 +1903,13 @@
 	"errorSpaceJoin102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
 	"errorSpaceJoin103": "The invitation does not exist. Please ensure that your devices are synchronized.",
 	"errorSpaceJoin104": "The invitation link could not be parsed. It may contain errors in the format or invalid data.",
-	"errorSpaceJoin105": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceJoin105": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceJoin106": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 	"errorSpaceJoin107": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
 
 	"errorSpaceJoinCancel101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceJoinCancel102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
-	"errorSpaceJoinCancel103": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceJoinCancel103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceJoinCancel104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 	"errorSpaceJoinCancel105": "The request no longer exists. No actions needed, but please ensure that your devices are synchronized.",
 	"errorSpaceJoinCancel106": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
@@ -1918,20 +1918,20 @@
 	"errorSpaceRequestApprove102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
 	"errorSpaceRequestApprove103": "The request no longer exists. No actions needed, but please ensure that your devices are synchronized.",
 	"errorSpaceRequestApprove104": "The request could not be approved with these access rights. Please ensure that the correct access rights are assigned.",
-	"errorSpaceRequestApprove105": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceRequestApprove105": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceRequestApprove106": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 	"errorSpaceRequestApprove107": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
 
 	"errorSpaceRequestDecline101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceRequestDecline102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
-	"errorSpaceRequestDecline103": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceRequestDecline103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceRequestDecline104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 	"errorSpaceRequestDecline105": "The request no longer exists. No actions needed, but please ensure that your devices are synchronized.",
 	"errorSpaceRequestDecline106": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
 
 	"errorSpaceParticipantPermissionsChange101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceParticipantPermissionsChange102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
-	"errorSpaceParticipantPermissionsChange103": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceParticipantPermissionsChange103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceParticipantPermissionsChange104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 	"errorSpaceParticipantPermissionsChange105": "The space member could not be found. Please ensure that your devices are synchronized.",
 	"errorSpaceParticipantPermissionsChange106": "Access rights could not be assigned to the space member. Please ensure that the correct access rights are assigned.",
@@ -1940,30 +1940,30 @@
 	"errorSpaceParticipantRemove101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceParticipantRemove102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
 	"errorSpaceParticipantRemove103": "The space member could not be found. Please ensure that your devices are synchronized.",
-	"errorSpaceParticipantRemove104": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceParticipantRemove104": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceParticipantRemove105": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 	"errorSpaceParticipantRemove106": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
 
 	"errorSpaceLeaveApprove101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceLeaveApprove102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
-	"errorSpaceLeaveApprove103": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceLeaveApprove103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceLeaveApprove104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 	"errorSpaceLeaveApprove105": "The request no longer exists. No actions needed, but please ensure that your devices are synchronized.",
 	"errorSpaceLeaveApprove106": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
 
 	"errorSpaceExit101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceExit102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
-	"errorSpaceExit103": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceExit103": "Oops! The request failed. Please check your Internet connection and try again.",
 
 	"errorSpaceDelete101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceDelete102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
-	"errorSpaceDelete103": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceDelete103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceDelete104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 	"errorSpaceDelete105": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
 
 	"errorSpaceMakeShareable101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceMakeShareable102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
-	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your internet connection and try again.",
+	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
 	"origin0": "None",
@@ -1998,7 +1998,7 @@
 	"notificationGallerySuccessTitle": "<b>'%s'</b> was installed",
 	"notificationGallerySuccessText": "Experience was successfully installed to the <b>'%s'</b> space. You can now open and start using it.",
 	"notificationGalleryErrorTitle": "Something went wrong",
-	"notificationGalleryErrorText": "Oops! <b>'%s'</b> wasn't installed. Please check your internet connection and try again or post a report on forum.",
+	"notificationGalleryErrorText": "Oops! <b>'%s'</b> wasn't installed. Please check your Internet connection and try again or post a report in our community.",
 
 	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
 	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration",
