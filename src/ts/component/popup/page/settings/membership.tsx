@@ -23,9 +23,9 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		const { membership } = authStore;
 		const { membershipTiers } = commonStore;
 		const links = [
-			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpPrivacy' },
+			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpMembershipDetails' },
 			{ url: Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
-			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpPrivacyTerms' },
+			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
 		];
 
 		const SlideItem = (slide) => (
