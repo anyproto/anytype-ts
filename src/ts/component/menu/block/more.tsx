@@ -108,7 +108,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
 		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
 		const blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 		const canDelete = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
 		let archive = null;

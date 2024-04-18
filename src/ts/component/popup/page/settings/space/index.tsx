@@ -59,8 +59,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const sharedCnt = this.getSharedCnt();
 
 		const hasLink = cid && key;
-		const isOwner = UtilSpace.isOwner();
-		const canWrite = UtilSpace.canParticipantWrite();
+		const isOwner = UtilSpace.isMyOwner();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();
 
@@ -73,7 +73,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
 			const usage = Number(object.bytesUsage) || 0;
-			const isOwner = UtilSpace.isOwner(space.targetSpaceId);
+			const isOwner = UtilSpace.isMyOwner(space.targetSpaceId);
 
 			if (!isOwner) {
 				return null;
@@ -563,7 +563,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	getSharedCnt (): number {
-		return UtilSpace.getList().filter(it => it.isShared && UtilSpace.isOwner(it.targetSpaceId)).length;
+		return UtilSpace.getList().filter(it => it.isShared && UtilSpace.isMyOwner(it.targetSpaceId)).length;
 	};
 
 });

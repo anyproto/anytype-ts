@@ -195,7 +195,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 		};
 
 		list = list.concat(UtilSpace.getList()
-			.filter(it => UtilSpace.canParticipantWrite(it.targetSpaceId))
+			.filter(it => UtilSpace.canMyParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, iconSize: 48, object: it })));
 		
 		return list;

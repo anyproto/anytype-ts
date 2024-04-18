@@ -176,7 +176,7 @@ export default {
     }),
 
     dashboard: () => {
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 		const commonParam = {
 			element: '#page.isFull #footer #button-help',
 			classNameWrap: 'fixed',

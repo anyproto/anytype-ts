@@ -566,7 +566,7 @@ class Action {
 
 		const { accountSpaceId } = authStore;
 		const { space } = commonStore;
-		const isOwner = UtilSpace.isOwner(id);
+		const isOwner = UtilSpace.isMyOwner(id);
 		const name = UtilCommon.shorten(deleted.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
 		const title = UtilCommon.sprintf(translate(`space${suffix}WarningTitle`), name);

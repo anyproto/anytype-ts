@@ -133,12 +133,12 @@ class UtilSpace {
 		return object._empty_ ? null : object;
 	};
 
-	canParticipantWrite (spaceId?: string): boolean {
+	canMyParticipantWrite (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId);
 		return participant ? (participant.isWriter || participant.isOwner) : true;
 	};
 
-	isOwner (spaceId?: string): boolean {
+	isMyOwner (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId || commonStore.space);
 		return participant ? participant.isOwner : false;
 	};

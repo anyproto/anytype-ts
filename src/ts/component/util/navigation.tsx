@@ -31,7 +31,7 @@ const Navigation = observer(class Navigation extends React.Component {
 		const isLinux = UtilCommon.isPlatformLinux();
 		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
 		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		let buttonPlus: any = null;
 		if (canWrite) {
