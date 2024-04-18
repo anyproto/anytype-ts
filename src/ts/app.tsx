@@ -261,7 +261,13 @@ class App extends React.Component<object, State> {
 
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
-		Renderer.on('route', (e: any, route: string) => UtilRouter.go(route, {}));
+		Renderer.on('route', (e: any, route: string) => {
+			if (authStore.account) {
+				UtilRouter.go(route, {});
+			} else {
+				commonStore.redirectSet(route);
+			};
+		});
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);

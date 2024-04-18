@@ -933,6 +933,14 @@ class Keyboard {
 	isMainIndex () {
 		return this.isMain() && (this.match?.params?.action == 'index');
 	};
+
+	isAuth () {
+		return this.match?.params?.page == 'auth';
+	};
+
+	isAuthPinCheck () {
+		return this.isAuth() && (this.match?.params?.action == 'pin-check');
+	};
 	
 	setFocus (v: boolean) {
 		this.isFocused = v;
@@ -990,11 +998,16 @@ class Keyboard {
 
 		window.clearTimeout(this.timeoutPin);
 		this.timeoutPin = window.setTimeout(() => {
-			if (!check()) {
+			if (!check() || this.isAuthPinCheck()) {
 				return;
 			};
 
 			this.setPinChecked(false);
+
+			if (this.isMain()) {
+				commonStore.redirectSet(UtilRouter.getRoute());
+			};
+
 			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
 			Renderer.send('pin-check');
 		}, commonStore.pinTime);
