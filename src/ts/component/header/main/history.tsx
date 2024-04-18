@@ -23,7 +23,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 
 	render () {
 		const { version } = this.state;
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		return (
 			<React.Fragment>

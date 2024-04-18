@@ -4,8 +4,8 @@ html.bodyIndex, html.bodyAuth {
 	--color-bg-primary: #000 !important;
 
 	--color-text-primary: #d4d4d4 !important;
-	--color-text-secondary: #8d8d8d !important;
-	--color-text-tertiary: #505050 !important;
+	--color-text-secondary: #9a9a9a !important;
+	--color-text-tertiary: #606060 !important;
 
 	--color-shape-tertiary: #2b2b2b !important;
 
@@ -194,9 +194,9 @@ html.bodyAuthDeleted {
 	.pin {
 		.input { 
 			width: 86px; height: 86px; border-radius: 24px; background: var(--color-input-opaque) !important; padding: 0px; text-align: center; 
-			vertical-align: top; font-size: var(--font-size-header3); border-width: 2px; border-color: rgba(0,0,0,0);
+			vertical-align: top; font-size: var(--font-size-header3); border-width: 2px; border-color: rgba(0,0,0,0) !important; box-shadow: 0px 0px;
 		}
-		.input.active { box-shadow: 0px 0px; border-color: var(--color-system-accent-100) !important; }
+		.input.isFocused { box-shadow: 0px 0px; border-color: var(--color-system-accent-100) !important; }
 	}
 }
 

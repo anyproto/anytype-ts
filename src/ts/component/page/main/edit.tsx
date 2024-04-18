@@ -6,7 +6,6 @@ import { detailStore, blockStore } from 'Store';
 class PageMainEdit extends React.Component<I.PageComponent> {
 	
 	refHeader: any = null;
-	refFooter: any = null;
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -31,7 +30,7 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 					<EditorPage key="editorPage" {...this.props} isPopup={isPopup} rootId={rootId} onOpen={this.onOpen} />
 				</div>
 				
-				<Footer component="mainObject" ref={ref => this.refFooter = ref} {...this.props} />
+				<Footer component="mainObject" {...this.props} />
 			</React.Fragment>
 		);
 	};
@@ -44,9 +43,6 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 
 		if (this.refHeader) {
 			this.refHeader.forceUpdate();
-		};
-		if (this.refFooter) {
-			this.refFooter.forceUpdate();
 		};
 
 		if (home && (rootId != home.id)) {

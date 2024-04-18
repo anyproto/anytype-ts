@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Loader, Title, Error, Frame, Button } from 'Component';
+import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
 import { I, C, UtilCommon, UtilRouter, UtilSpace, translate } from 'Lib';
 import { popupStore } from 'Store';
 
@@ -40,6 +40,8 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 						</div>
 					) : <Loader />}
 				</Frame>
+
+				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
 	};
@@ -100,6 +102,8 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 									},
 								},
 							});
+						} else {
+							popupStore.open('inviteRequest', { data: { invite: message, ...data } });
 						};
 					} else {
 						popupStore.open('inviteRequest', { data: { invite: message, ...data } });

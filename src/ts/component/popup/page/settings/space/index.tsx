@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error } from 'Component';
+import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, ObjectName } from 'Component';
 import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, commonStore, authStore, dbStore } from 'Store';
+import { menuStore, commonStore, authStore, dbStore, detailStore, popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
+	cid: string;
+	key: string;
 };
 
 const STORAGE_FULL = 0.7;
@@ -13,8 +16,13 @@ const STORAGE_FULL = 0.7;
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings, State> {
 
 	refName: any = null;
+	refInput = null;
+	refCopy: any = null;
+
 	state = {
 		error: '',
+		cid: '',
+		key: '',
 	};
 
 	constructor (props: any) {
@@ -27,36 +35,43 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		this.onName = this.onName.bind(this);
 		this.onDelete = this.onDelete.bind(this);
 		this.onUpgrade = this.onUpgrade.bind(this);
+		this.onCopy = this.onCopy.bind(this);
+		this.onMoreLink = this.onMoreLink.bind(this);
 	};
 
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
-		const { error } = this.state;
-		const { config, spaceStorage, isOnline } = commonStore;
+		const { error, cid, key } = this.state;
+		const { spaceStorage, isOnline } = commonStore;
 		const { localUsage, bytesLimit } = spaceStorage;
-		const spaces = UtilSpace.getList();
 		const { account, accountSpaceId } = authStore;
+		const spaces = UtilSpace.getList();
 		const space = UtilSpace.getSpaceview();
+		const creator = detailStore.get(Constant.subId.space, space.creator);
 		const home = UtilSpace.getDashboard();
 		const type = dbStore.getTypeById(commonStore.type);
-		const isOwner = UtilSpace.isOwner();
+		const personalSpace = UtilSpace.getSpaceviewBySpaceId(accountSpaceId);
+		const usageCn = [ 'item' ];
+
 		const requestCnt = this.getRequestCnt();
-		const sharedCnt = 1; //this.getSharedCnt();
-		const canWrite = UtilSpace.canParticipantWrite();
+		const sharedCnt = this.getSharedCnt();
+
+		const hasLink = cid && key;
+		const isOwner = UtilSpace.isMyOwner();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();
-		const usageCn = [ 'item' ];
 
 		let bytesUsed = 0;
 		let buttonUpgrade = null;
 		let requestCaption = null;
-		let canShare = isOwner && (space.spaceAccessType != I.SpaceType.Personal);
+		let canShare = isOwner && !space.isPersonal;
 		let canMembers = !isOwner && space.isShared;
 
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
 			const usage = Number(object.bytesUsage) || 0;
-			const isOwner = UtilSpace.isOwner(space.targetSpaceId);
+			const isOwner = UtilSpace.isMyOwner(space.targetSpaceId);
 
 			if (!isOwner) {
 				return null;
@@ -67,7 +82,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		}).filter(it => it);
 		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
 
-		if ((sharedCnt >= 3) && !space.isShared) {
+		if ((sharedCnt >= personalSpace.sharedSpacesLimit) && !space.isShared) {
 			canShare = false;
 			canMembers = false;
 		};
@@ -99,7 +114,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 					<div className="headerContent">
 						<div className="name">
-							<Label className="small" text={translate('popupSettingsSpaceIndexSpaceNameLabel')} />
 							<Input
 								ref={ref => this.refName = ref}
 								value={this.checkName(space.name)}
@@ -108,59 +122,133 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								readonly={!canWrite}
 							/>
 						</div>
-
-						<Label
-							className="spaceAccessType"
-							text={translate(`spaceAccessType${space.spaceAccessType}`)}
-							onMouseEnter={onSpaceTypeTooltip}
-							onMouseLeave={e => Preview.tooltipHide(false)}
-						/>
+						<div className="info">
+							<Label
+								className="infoLabel spaceAccessType"
+								text={translate(`spaceAccessType${space.spaceAccessType}`)}
+							/>
+							<div className="bullet" />
+							<Label 
+								className="infoLabel withTooltip"
+								text={translate('popupSettingsSpaceIndexInfoLabel')} 
+								onMouseEnter={onSpaceTypeTooltip}
+								onMouseLeave={e => Preview.tooltipHide(false)}
+							/>
+						</div>
 					</div>
 				</div>
 
 				<div className="sections">
-					{canShare || canMembers ? (
-						<div className="section sectionSpaceShare">
-							<Title text={translate(`popupSettingsSpaceShareTitle`)} />
+					<div 
+						className="section sectionSpaceShare"
+						onMouseEnter={isShareActive ? () => {} : e => Preview.tooltipShow({ text: translate('popupSettingsSpaceShareGenerateInviteDisabled'), element: $(e.currentTarget) })}
+						onMouseLeave={e => Preview.tooltipHide(false)}
+					>
+						<Title text={translate(`popupSettingsSpaceShareTitle`)} />
 
-							<div className="sectionContent">
-								{canShare ? (
-									<div 
-										className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')} 
-										onClick={() => isShareActive ? onPage('spaceShare') : null}
-									>
-										<div className="sides">
-											<div className="side left">
-												<Title text={space.isShared ? translate('popupSettingsSpaceIndexShareManageTitle') : translate('popupSettingsSpaceIndexShareShareTitle')} />
-												<Label text={space.isShared ? translate('popupSettingsSpaceIndexShareManageText') : translate('popupSettingsSpaceIndexShareShareText')} />
-											</div>
-											<div className="side right">
-												{requestCaption}
-												<Icon className="arrow" />
-											</div>
+						<div className="sectionContent">
+
+							{space.isPersonal ? (
+								<div className="item isDefault">
+									<div className="sides">
+										<div className="side left">
+											<Title text={translate('popupSettingsSpaceIndexShareShareTitle')} />
+											<Label text={translate('popupSettingsSpaceIndexShareDefaultText')} />
+										</div>
+										<div className="side right">
+											<Icon className="arrow" />
 										</div>
 									</div>
-								) : ''}
+								</div>
+							) : ''}
 
-								{canMembers ? (
-									<div 
-										className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')} 
-										onClick={() => isShareActive ? onPage('spaceMembers') : null}
-									>
-										<div className="sides">
-											<div className="side left">
-												<Title text={translate('popupSettingsSpaceIndexShareMembersTitle')} />
-												<Label text={translate('popupSettingsSpaceIndexShareMembersText')} />
-											</div>
-											<div className="side right">
-												<Icon className="arrow" />
-											</div>
+							{canShare && !space.isShared ? (
+								<div 
+									className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')} 
+									onClick={() => isShareActive ? onPage('spaceShare') : null}
+								>
+									<div className="sides">
+										<div className="side left">
+											<Title text={translate('popupSettingsSpaceIndexShareShareTitle')} />
+											<Label text={translate('popupSettingsSpaceIndexShareInviteText')} />
+										</div>
+										<div className="side right">
+											<Icon className="arrow" />
 										</div>
 									</div>
-								) : ''}
+								</div>
+							) : ''}
+
+							{hasLink ? (
+								<div className="item isInvite">
+									<div className="sides">
+										<div className="side left">
+											<Title text={translate('popupSettingsSpaceIndexShareLinkTitle')} />
+											<Label text={translate('popupSettingsSpaceIndexShareLinkText')} />
+										</div>
+										<div className="side right">
+											<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c28" color="blank" text={translate('commonCopyLink')} />
+										</div>
+									</div>
+
+									<div className="inviteLinkWrapper">
+										<div className="inputWrapper">
+											<Input ref={ref => this.refInput = ref} readonly={true} value={UtilSpace.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
+											<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
+										</div>
+									</div>
+								</div>
+							) : ''}
+
+							{canShare && space.isShared ? (
+								<div 
+									className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')} 
+									onClick={() => isShareActive ? onPage('spaceShare') : null}
+								>
+									<div className="sides">
+										<div className="side left">
+											<Title text={translate('popupSettingsSpaceIndexShareMembersTitle')} />
+											<Label text={translate('popupSettingsSpaceIndexShareMembersManageText')} />
+										</div>
+										<div className="side right">
+											{requestCaption}
+											<Icon className="arrow" />
+										</div>
+									</div>
+								</div>
+							) : ''}
+
+							{canMembers ? (
+								<div 
+									className={[ 'item', (isShareActive ? '' : 'disabled') ].join(' ')} 
+									onClick={() => isShareActive ? onPage('spaceMembers') : null}
+								>
+									<div className="sides">
+										<div className="side left">
+											<Title text={translate('popupSettingsSpaceIndexShareMembersTitle')} />
+											<Label text={translate('popupSettingsSpaceIndexShareMembersViewText')} />
+										</div>
+										<div className="side right">
+											<Icon className="arrow" />
+										</div>
+									</div>
+								</div>
+							) : ''}
+
+							<div className="item isOwner">
+								<div className="sides">
+									<div className="side left">
+										<Title text={translate('commonOwner')} />
+									</div>
+									<div className="side right">
+										<IconObject object={creator} size={24} />
+										<ObjectName object={creator} />
+										{creator.identity == account.id ? <div className="caption">({translate('commonYou')})</div> : ''}
+									</div>
+								</div>
 							</div>
 						</div>
-					) : ''}
+					</div>
 
 					{canWrite ? (
 						<div className="section sectionSpaceManager">
@@ -289,12 +377,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 							<div 
 								className="item" 
-								onClick={() => UtilCommon.copyToast(translate('popupSettingsVaultAnytypeIdentityTitle'), account.id)}
+								onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
 							>
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexCreatedByTitle`)} />
-										<Label text={account.id} />
+										<Label text={creator.globalName || creator.identity} />
 									</div>
 									<div className="side right">
 										<Icon className="copy" />
@@ -343,8 +431,33 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		);
 	};
 
+	componentDidMount (): void {
+		this.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
+	};
+
 	componentWillUnmount(): void {
 		menuStore.closeAll([ 'select', 'searchObject' ]);
+	};
+
+	init () {
+		const { cid, key } = this.state;
+		const space = UtilSpace.getSpaceview();
+
+		if (space.isShared && !cid && !key) {
+			C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
+				if (!message.error.code) {
+					this.setInvite(message.inviteCid, message.inviteKey);
+				};
+			});
+		};
+	};
+
+	setInvite (cid: string, key: string) {
+		this.setState({ cid, key });
 	};
 
 	onDashboard () {
@@ -397,13 +510,38 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onUpgrade () {
 		const { membership } = authStore;
-		const { tier } = membership;
 
-		if (tier >= I.TierType.CoCreator) {
+		if (membership.tier >= I.TierType.CoCreator) {
 			Action.membershipUpgrade();
 		} else {
-			this.props.onPage('membership');
-		}
+			this.props.close(() => {
+				popupStore.open('settings', { data: { page: 'membership' } });
+			});
+		};
+
+		analytics.event('ClickUpgradePlanTooltip', { type: 'storage', route: analytics.route.settingsSpaceIndex });
+	};
+
+	onCopy () {
+		const { cid, key } = this.state;
+		if (!cid || !key) {
+			return;
+		};
+
+		UtilCommon.copyToast('', UtilSpace.getInviteLink(cid, key), translate('toastInviteCopy'));
+		analytics.event('ClickShareSpaceCopyLink');
+	};
+
+	onMoreLink () {
+		const { getId } = this.props;
+		const { cid, key } = this.state;
+
+		UtilMenu.inviteContext({
+			containerId: getId(),
+			cid,
+			key,
+			onInviteRevoke: () => this.setInvite('', ''),
+		});
 	};
 
 	checkName (v: string): string {
@@ -421,14 +559,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	getSharedCnt (): number {
-		const spaces = UtilSpace.getList();
-		const { account } = authStore;
-
-		if (!account) {
-			return 0;
-		};
-
-		return spaces.filter(it => it.isShared && UtilSpace.isOwner(it.targetSpaceId)).length;
+		return UtilSpace.getList().filter(it => it.isShared && UtilSpace.isMyOwner(it.targetSpaceId)).length;
 	};
 
 });

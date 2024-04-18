@@ -132,10 +132,9 @@ class BlockStore {
 	};
 
     updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
-		const map = this.getMap(rootId);
 		const element = this.getMapElement(rootId, blockId);
-
 		if (!element) {
+			const map = this.getMap(rootId);
 			map.set(blockId, new M.BlockStructure({ parentId: '', childrenIds }));
 		} else {
 			set(element, 'childrenIds', childrenIds);
@@ -412,7 +411,7 @@ class BlockStore {
 	};
 
     isAllowed (restrictions: any[], flags: any[]): boolean {
-		if (!UtilSpace.canParticipantWrite()) {
+		if (!UtilSpace.canMyParticipantWrite()) {
 			return false;
 		};
 

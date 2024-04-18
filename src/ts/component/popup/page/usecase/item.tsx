@@ -2,8 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
 import { I, C, UtilCommon, UtilFile, UtilDate, translate, UtilSpace, analytics } from 'Lib';
-import { menuStore, dbStore } from 'Store';
+import { menuStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Mousewheel } from 'swiper/modules';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -64,7 +65,16 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 				<div className="screenWrap">
 					<Swiper 
 						spaceBetween={20} 
-						slidesPerView={1.5}
+						slidesPerView={1.05}
+						mousewheel={true}
+						autoplay={{
+							waitForTransition: true,
+							delay: 4000,
+							disableOnInteraction: true,
+						}}
+						centeredSlides={true}
+						loop={true}
+						modules={[ Autoplay, Mousewheel ]}
 						onSlideChange={() => this.checkArrows()}
 						onSwiper={swiper => this.onSwiper(swiper)}
 					>
@@ -100,12 +110,12 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 	componentDidMount(): void {
 		const object = this.getObject();
 
-		window.setTimeout(() => this.checkArrows(), 10);
 		analytics.event('ScreenGalleryInstall', { name: object.name });
 	};
 
 	onSwiper (swiper) {
 		this.swiper = swiper;
+		this.checkArrows();
 	};
 
 	onArrow (dir: number) {
@@ -113,6 +123,10 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 	};
 
 	checkArrows () {
+		if (!this.swiper) {
+			return;
+		};
+
 		const node = $(this.node);
 		const arrowLeft = node.find('#arrowLeft');
 		const arrowRight = node.find('#arrowRight');
@@ -181,7 +195,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 		};
 
 		list = list.concat(UtilSpace.getList()
-			.filter(it => UtilSpace.canParticipantWrite(it.targetSpaceId))
+			.filter(it => UtilSpace.canMyParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, iconSize: 48, object: it })));
 		
 		return list;

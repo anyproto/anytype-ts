@@ -120,7 +120,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 				if (paymentMethod == I.PaymentMethod.Crypto) {
 					buttonText = translate('popupMembershipWriteToAnyteam');
 				} else
-				if (paymentMethod == I.PaymentMethod.Card) {
+				if (paymentMethod == I.PaymentMethod.Stripe) {
 					buttonText = translate('popupMembershipManagePayment');
 				};
 			};
@@ -158,12 +158,11 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	onButton () {
 		const { membership } = authStore;
 		const { onChangeEmail } = this.props;
-		const { paymentMethod } = membership;
 
 		if (membership.isExplorer) {
 			onChangeEmail();
 		} else {
-			if (paymentMethod == I.PaymentMethod.Crypto) {
+			if (membership.paymentMethod == I.PaymentMethod.Crypto) {
 				Action.membershipUpgrade();
 			} else {
 				C.MembershipGetPortalLinkUrl((message: any) => {
@@ -199,7 +198,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			this.setState({ verificationStep: 2 });
 			this.startCountdown(60);
 
-			analytics.event('ClickMembership', { type: 'Submit', name: 'Explorer' });
+			analytics.event('ClickMembership', { type: 'Submit', params: { tier: I.TierType.Explorer } });
 		});
 	};
 
@@ -241,9 +240,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			const valid = UtilCommon.emailCheck(this.refEmail.getValue());
-
-			this.refButton.setDisabled(!valid);
+			this.refButton.setDisabled(!UtilCommon.checkEmail(this.refEmail.getValue()));
 		}, Constant.delay.keyboard);
 	};
 

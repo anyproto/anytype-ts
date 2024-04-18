@@ -18,6 +18,7 @@ export enum DropType {
 };
 
 export enum SelectType {
+	None	 = '',
 	Block	 = 'block',
 	Record	 = 'record',
 };
@@ -254,7 +255,8 @@ export enum NetworkMode {
 };
 
 export enum NavigationMenuMode {
-	Context		 = 0,
-	Click		 = 1,
-	Hover		 = 2,
+	None		 = 0,
+	Context		 = 1,
+	Click		 = 2,
+	Hover		 = 3,
 };

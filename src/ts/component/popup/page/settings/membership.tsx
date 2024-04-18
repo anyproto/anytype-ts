@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, translate, UtilCommon, UtilDate, UtilData } from 'Lib';
+import { I, translate, UtilCommon, UtilDate, analytics, Action, keyboard } from 'Lib';
 import { popupStore, authStore, commonStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay } from 'swiper/modules';
+import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
 import Url from 'json/url.json';
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
@@ -16,16 +16,16 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		super(props);
 
 		this.onSwiper = this.onSwiper.bind(this);
+		this.onContact = this.onContact.bind(this);
 	};
 
 	render () {
-		const { membership, account } = authStore;
+		const { membership } = authStore;
 		const { membershipTiers } = commonStore;
-		const url = Url.membershipSpecial.replace(/\%25accountId\%25/g, account.id);
 		const links = [
-			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails') },
-			{ url: Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy') },
-			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions') },
+			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpMembershipDetails' },
+			{ url: Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
+			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
 		];
 
 		const SlideItem = (slide) => (
@@ -59,9 +59,13 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				buttonText = translate('popupSettingsMembershipManage');
 			} else 
 			if (item.period) {
-				period = item.period == I.MembershipPeriod.Period1Year ? 
-					translate('popupSettingsMembershipPerYear') : 
-					UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), item.period);
+				if (item.period) {
+					if (item.period == 1) {
+						period = translate('popupSettingsMembershipPerYear');
+					} else {
+						period = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), item.period, UtilCommon.plural(item.period, translate('pluralYear')));
+					};
+				};
 			};
 
 			return (
@@ -105,7 +109,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 								delay: 4000,
 								disableOnInteraction: true,
 							}}
-							modules={[ Pagination, Autoplay ]}
+							mousewheel={true}
+							modules={[ Pagination, Autoplay, Mousewheel ]}
 							centeredSlides={true}
 							loop={true}
 							onSwiper={this.onSwiper}
@@ -127,24 +132,30 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 				<div className="actionItems">
 					{links.map((item, i) => (
-						<div key={i} onClick={() => UtilCommon.onUrl(item.url)} className="item">
+						<div key={i} onClick={() => this.onLink(item)} className="item">
 							<Label text={item.name} />
 							<Icon />
 						</div>
 					))}
 				</div>
 
-				<Label className="special" text={UtilCommon.sprintf(translate('popupSettingsMembershipSpecial'), url)} />
+				<Label className="special" text={translate('popupSettingsMembershipSpecial')} onClick={this.onContact} />
 			</div>
 		);
 	};
 
-	componentDidMount(): void {
-		UtilCommon.renderLinks($(this.node));
-	};
-
 	onSwiper (swiper) {
 		this.swiper = swiper;
+	};
+
+	onLink (item: any) {
+		UtilCommon.onUrl(item.url);
+		analytics.event(item.type, { route: analytics.route.settingsMembership });
+	};
+
+	onContact () {
+		keyboard.onMembershipUpgrade();
+		analytics.event('MenuHelpContact', { route: analytics.route.settingsMembership });
 	};
 
 });

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage } from 'Lib';
+import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage, Action } from 'Lib';
 import { authStore, commonStore, popupStore, blockStore } from 'Store';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
@@ -247,9 +247,17 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				Animation.from(() => {
 					this.refNext?.setLoading(false);
 
-					UtilData.onAuth({ routeParam: { replace: true, animate: true } }, () => {
-						Storage.initPinnedTypes();
-					});
+					const routeParam = {
+						replace: true, 
+						animate: true,
+						onFadeIn: () => {
+							Storage.initPinnedTypes();
+							Action.welcome();
+						},
+					};
+
+					UtilData.onAuth({ routeParam });
+					UtilData.onAuthOnce();
 				});
 			};
 

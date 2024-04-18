@@ -1614,7 +1614,7 @@ export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, call
 	dispatcher.request(ObjectSetIsFavorite.name, request, callBack);
 };
 
-export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], callBack?: (message: any) => void) => {
+export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], collectionId: string, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Graph.Request();
 
 	request.setSpaceid(spaceId);
@@ -1622,6 +1622,8 @@ export const ObjectGraph = (spaceId: string, filters: any[], limit: number, type
     request.setLimit(limit);
 	request.setObjecttypefilterList(types);
 	request.setKeysList(keys);
+	request.setCollectionid(collectionId);
+	request.setSetsourceList(sources);
 
 	dispatcher.request(ObjectGraph.name, request, callBack);
 };
@@ -1908,7 +1910,7 @@ export const MembershipGetStatus = (noCache: boolean, callBack?: (message: any) 
 };
 
 export const MembershipGetTiers = (noCache: boolean, locale: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.Tiers.Get.Request();
+	const request = new Rpc.Membership.GetTiers.Request();
 
 	request.setNocache(noCache);
 	request.setLocale(locale);

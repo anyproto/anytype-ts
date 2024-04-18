@@ -109,11 +109,10 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	};
 
 	onCheck () {
-		this.refCheckbox.toggle();
-
-		if (this.refCheckbox.getValue()) {
-			analytics.event('ClickMembership', { type: 'GetUpdates', name: 'Explorer' });
+		if (!this.refCheckbox.getValue()) {
+			analytics.event('ClickMembership', { type: 'GetUpdates', params: { tier: I.TierType.Explorer } });
 		};
+		this.refCheckbox.toggle();
 	};
 
 	onResetCode () {
@@ -152,7 +151,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 			this.setState({ verificationStep: 2 });
 			this.startCountdown(60);
 
-			analytics.event('ClickMembership', { type: 'Submit', name: 'Explorer' });
+			analytics.event('ClickMembership', { type: 'Submit', params: { tier: I.TierType.Explorer } });
 		});
 	};
 
@@ -194,8 +193,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			const valid = UtilCommon.emailCheck(this.refEmail.getValue());
-			this.refButton.setDisabled(!valid);
+			this.refButton.setDisabled(!UtilCommon.checkEmail(this.refEmail.getValue()));
 		}, Constant.delay.keyboard);
 	};
 

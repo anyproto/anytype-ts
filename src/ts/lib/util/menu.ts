@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action } from 'Lib';
+import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
 import { blockStore, menuStore, detailStore, commonStore, dbStore, authStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -282,16 +282,14 @@ class UtilMenu {
 	};
 
 	getViews () {
-		const { config } = commonStore;
-
 		return [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
 			{ id: I.ViewType.List },
 			{ id: I.ViewType.Board },
 			{ id: I.ViewType.Calendar },
-			config.experimental ? { id: I.ViewType.Graph } : null,
-		].filter(it => it).map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+			{ id: I.ViewType.Graph },
+		].map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
 	};
 
 	viewContextMenu (param: any) {
@@ -627,7 +625,7 @@ class UtilMenu {
 			return;
 		};
 
-		const isOwner = UtilSpace.isOwner(targetSpaceId);
+		const isOwner = UtilSpace.isMyOwner(targetSpaceId);
 
 		let options: any[] = [];
 
@@ -692,8 +690,45 @@ class UtilMenu {
 				},
 			},
 		});
-
 	};
+
+	inviteContext (param: any) {
+		const { isOnline } = commonStore
+		const { containerId, cid, key, onInviteRevoke } = param || {};
+		const isOwner = UtilSpace.isMyOwner();
+
+		const options: any[] = [
+			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
+		];
+
+		if (isOnline && isOwner) {
+			options.push({ id: 'delete', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
+		};
+
+		menuStore.open('select', {
+			element: `#${containerId} #button-more-link`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'qr': {
+							popupStore.open('inviteQr', { data: { link: UtilSpace.getInviteLink(cid, key) } });
+							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
+							break;
+						};
+
+						case 'delete': {
+							Action.inviteRevoke(commonStore.space, onInviteRevoke);
+							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
+							break;
+						};
+					};
+				},
+			}
+		});
+	};
+
 };
 
 export default new UtilMenu();

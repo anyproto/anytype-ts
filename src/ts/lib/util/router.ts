@@ -156,8 +156,12 @@ class UtilRouter {
 		});
 	};
 
+	getRoute () {
+		return String(this.history.location.pathname || '');
+	};
+
 	getRouteSpaceId () {
-		const param = this.getParam(this.history.location.pathname);
+		const param = this.getParam(this.getRoute());
 		return param.spaceId || commonStore.space;
 	};
 

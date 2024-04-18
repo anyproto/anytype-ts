@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockRelation { @include text-common; }
-	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 0px; }
+	.block.blockRelation > .wrapContent > .selectionTarget > .dropTarget { padding: 0px; }
 
 	.block.blockRelation {
 		.icon.edit { display: none; }

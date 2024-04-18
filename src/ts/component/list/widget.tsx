@@ -47,7 +47,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		const { isEditing, previewId } = this.state;
 		const { widgets } = blockStore;
 		const cn = [ 'listWidget' ];
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		let content = null;
 
@@ -325,7 +325,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onContextMenu () {
 		const { previewId } = this.state;
-		if (previewId || !UtilSpace.canParticipantWrite()) {
+		if (previewId || !UtilSpace.canMyParticipantWrite()) {
 			return;
 		};
 

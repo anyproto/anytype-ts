@@ -196,7 +196,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		});
 
 		node.find('.rowHead').css({ gridTemplateColumns: str });
-		node.find('.row .selectable').css({ gridTemplateColumns: str });
+		node.find('.row .selectionTarget').css({ gridTemplateColumns: str });
 	};
 
 	getColumnWidths (relationKey: string, width: number): any {

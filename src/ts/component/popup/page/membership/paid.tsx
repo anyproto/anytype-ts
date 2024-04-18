@@ -27,6 +27,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onPay = this.onPay.bind(this);
+		this.onSubmit = this.onSubmit.bind(this);
 	};
 
 	render() {
@@ -41,17 +42,27 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 			return null;
 		};
 
-		const { namesCount } = tierItem;
-		const period = tierItem.period == I.MembershipPeriod.Period1Year ? 
-			translate('popupSettingsMembershipPerYear') : 
-			UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), tierItem.period);
+		const { period } = tierItem;
+
+		let periodText = '';
+		let labelText = '';
+
+		if (period) {
+			if (period == 1) {
+				periodText = translate('popupSettingsMembershipPerYear');
+				labelText = translate('popupMembershipPaidTextPerYear');
+			} else {
+				periodText = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+				labelText = UtilCommon.sprintf(translate('popupMembershipPaidTextPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+			};
+		};
 
 		return (
-			<div className="anyNameForm">
-				{namesCount ? (
+			<form className="anyNameForm" onSubmit={this.onSubmit}>
+				{tierItem.namesCount ? (
 					<React.Fragment>
 						<Title text={translate(`popupMembershipPaidTitle`)} />
-						<Label text={translate(`popupMembershipPaidText`)} />
+						<Label text={labelText} />
 
 						<div className="inputWrapper">
 							<Input
@@ -71,12 +82,12 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 				<div className="priceWrapper">
 					{tierItem.price ? <span className="price">{`$${tierItem.price}`}</span> : ''}
-					{period}
+					{periodText}
 				</div>
 
-				<Button onClick={() => this.onPay(I.PaymentMethod.Card)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
+				<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
 				{/*<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />*/}
-			</div>
+			</form>
 		);
 	};
 
@@ -147,6 +158,12 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		this.refButtonCrypto?.setDisabled(v);
 	};
 
+	onSubmit (e: any) {
+		e.preventDefault();
+
+		this.onPay(I.PaymentMethod.Stripe);
+	};
+
 	onPay (method: I.PaymentMethod) {
 		const { param } = this.props;
 		const { data } = param;
@@ -155,7 +172,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const tierItem = UtilData.getMembershipTier(tier);
 		const { namesCount } = tierItem;
 		const name = globalName || !namesCount ? '' : this.refName.getValue();
-		const refButton = method == I.PaymentMethod.Card ? this.refButtonCard : this.refButtonCrypto;
+		const refButton = method == I.PaymentMethod.Stripe ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);
 
@@ -171,7 +188,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				UtilCommon.onUrl(message.url);
 			};
 
-			analytics.event('ClickMembership', { type: I.PaymentMethod[method], name: I.TierType[tier] });
+			analytics.event('ClickMembership', { params: { tier, method }});
 		});
 	};
 

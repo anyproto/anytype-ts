@@ -31,7 +31,7 @@ const Navigation = observer(class Navigation extends React.Component {
 		const isLinux = UtilCommon.isPlatformLinux();
 		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
 		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		let buttonPlus: any = null;
 		if (canWrite) {
@@ -116,7 +116,7 @@ const Navigation = observer(class Navigation extends React.Component {
 						id="button-navigation-profile"
 						className="iconWrap"
 						onClick={this.onProfile}
-						onMouseEnter={e => this.onTooltipShow(e, translate('navigationVault'), 'Ctrl + Tab')}
+						onMouseEnter={e => this.onTooltipShow(e, translate('navigationAccount'), 'Ctrl + Tab')}
 						onMouseLeave={e => Preview.tooltipHide(false)}
 					>
 						<IconObject object={participant} />

@@ -144,8 +144,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			let caption = null;
 
 			if (action.id == 'account') {
-				icon = <IconObject object={participant} size={36} iconSize={36} forceLetter={true} />;
-				name = participant?.name;
+				if (participant) {
+					name = participant?.globalName || participant?.name;
+					icon = <IconObject object={{ ...participant, name }} size={36} iconSize={36} forceLetter={true} />;
+				};
 
 				cn.push('itemAccount');
 			} else {
@@ -297,7 +299,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 					]
 				},
-				{ name: translate('popupSettingsVaultAndKeyTitle'), children: settingsVault }
+				{ name: translate('popupSettingsAccountAndKeyTitle'), children: settingsVault }
 			];
 		};
 	};

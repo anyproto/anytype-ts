@@ -41,9 +41,16 @@ class Analytics {
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
 		menuSystem: 'MenuSystem',
+		menuHelp: 'MenuHelp',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
+
+		settingsSpaceIndex: 'ScreenSettingsSpaceIndex',
+		settingsSpaceShare: 'ScreenSettingsSpaceShare',
+		settingsMembership: 'ScreenSettingsMembership',
+
+		inviteConfirm: 'ScreenInviteConfirm',
 	};
 
 	debug () {
@@ -53,7 +60,7 @@ class Analytics {
 
 	isAllowed (): boolean {
 		const { config } = commonStore;
-		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
+		return !(config.sudo || [ 'alpha' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
 	};
 	
 	init (options?: any) {
@@ -426,6 +433,18 @@ class Analytics {
 			case 'ChangeSpaceMemberPermissions': {
 				data.type = Number(data.type) || 0;
 				data.type = I.ParticipantPermissions[data.type];
+				break;
+			};
+
+			case 'ChangePlan':
+			case 'ScreenMembership': {
+				data.name = I.TierType[data.params.tier];
+				break;
+			};
+
+			case 'ClickMembership': {
+				data.name = data.name || I.TierType[data.params.tier];
+				data.type = data.type || I.PaymentMethod[data.params.method];
 				break;
 			};
 

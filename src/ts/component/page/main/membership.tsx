@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Loader, Frame, Title, Error, Button } from 'Component';
-import { I, UtilCommon, UtilSpace, UtilData, translate, keyboard } from 'Lib';
+import { I, UtilCommon, UtilSpace, UtilData, translate, analytics } from 'Lib';
 import { popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
@@ -57,15 +58,15 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 				} else {
 					popupStore.open('membership', {
 						onClose: () => {
-							window.setTimeout(() => {
-								popupStore.open('settings', { data: { page: 'membership' } });
-							}, popupStore.getTimeout());
+							window.setTimeout(() => popupStore.open('settings', { data: { page: 'membership' } }), Constant.delay.popup * 2);
 						},
 						data: {
 							tier: membership.tier,
 							success: true,
 						},
 					});
+
+					analytics.event('ChangePlan', { params: { tier }});
 				};
 			});
 		});
