@@ -261,7 +261,7 @@ class App extends React.Component<object, State> {
 
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
-		Renderer.on('route', (e: any, route: string) => UtilRouter.go(route, {}));
+		Renderer.on('route', (e: any, route: string) => this.onRoute(route));
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
@@ -515,6 +515,14 @@ class App extends React.Component<object, State> {
 			total: progress.total,
 			isUnlocked: true,
 		});
+	};
+
+	onRoute (route: string) {
+		if (keyboard.isMain()) {
+			UtilRouter.go(route, {});
+		} else {
+			commonStore.redirectSet(route);
+		};
 	};
 
 	onSpellcheck (e: any, misspelledWord: string, dictionarySuggestions: string[], x: number, y: number, rect: any) {

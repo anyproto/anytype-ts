@@ -6,7 +6,6 @@ import { menuStore, commonStore, authStore, dbStore, detailStore, popupStore } f
 import Constant from 'json/constant.json';
 
 interface State {
-	inviteLoaded: boolean;
 	error: string;
 	cid: string;
 	key: string;
@@ -21,7 +20,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	refCopy: any = null;
 
 	state = {
-		inviteLoaded: false,
 		error: '',
 		cid: '',
 		key: '',
@@ -59,8 +57,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const sharedCnt = this.getSharedCnt();
 
 		const hasLink = cid && key;
-		const isOwner = UtilSpace.isOwner();
-		const canWrite = UtilSpace.canParticipantWrite();
+		const isOwner = UtilSpace.isMyOwner();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
 		const isShareActive = UtilSpace.isShareActive();
 
@@ -73,7 +71,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
 			const usage = Number(object.bytesUsage) || 0;
-			const isOwner = UtilSpace.isOwner(space.targetSpaceId);
+			const isOwner = UtilSpace.isMyOwner(space.targetSpaceId);
 
 			if (!isOwner) {
 				return null;
@@ -446,13 +444,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	init () {
-		const { inviteLoaded } = this.state;
+		const { cid, key } = this.state;
 		const space = UtilSpace.getSpaceview();
 
-		if (space.isShared && !inviteLoaded) {
+		if (space.isShared && !cid && !key) {
 			C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
-				this.setState({ inviteLoaded: true });
-
 				if (!message.error.code) {
 					this.setInvite(message.inviteCid, message.inviteKey);
 				};
@@ -563,7 +559,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	getSharedCnt (): number {
-		return UtilSpace.getList().filter(it => it.isShared && UtilSpace.isOwner(it.targetSpaceId)).length;
+		return UtilSpace.getList().filter(it => it.isShared && UtilSpace.isMyOwner(it.targetSpaceId)).length;
 	};
 
 });

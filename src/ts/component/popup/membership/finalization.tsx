@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader } from 'Component';
-import { C, I, translate, UtilData } from 'Lib';
-import { authStore, menuStore, popupStore } from 'Store';
+import { C, I, translate, UtilData, UtilCommon } from 'Lib';
+import { authStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -32,12 +32,31 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 
 	render () {
 		const { status, statusText, isLoading } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { tier } = data;
+		const tierItem = UtilData.getMembershipTier(tier);
+
+		if (!tierItem) {
+			return null;
+		};
+
+		const { period } = tierItem;
 		const globalName = this.getName();
+
+		let labelText = '';
+		if (period) {
+			if (period == 1) {
+				labelText = translate('popupMembershipPaidTextPerYear');
+			} else {
+				labelText = UtilCommon.sprintf(translate('popupMembershipPaidTextPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+			};
+		};
 
 		return (
 			<div className="anyNameForm">
 				<Title text={translate(`popupMembershipPaidTitle`)} />
-				<Label text={translate(`popupMembershipPaidText`)} />
+				<Label text={labelText} />
 
 				<div className="inputWrapper">
 					<Input

@@ -90,8 +90,9 @@ class UtilSpace {
 		return dbStore.getRecords(Constant.subId.space).find(it => it.targetSpaceId == id);
 	};
 
-	getParticipantsList (statuses: I.ParticipantStatus[]) {
-		return dbStore.getRecords(Constant.subId.participant).filter(it => statuses.includes(it.status));
+	getParticipantsList (statuses?: I.ParticipantStatus[]) {
+		const ret = dbStore.getRecords(Constant.subId.participant);
+		return statuses ? ret.filter(it => statuses.includes(it.status)) : ret;
 	};
 
 	getParticipantId (spaceId: string, accountId: string) {
@@ -132,12 +133,12 @@ class UtilSpace {
 		return object._empty_ ? null : object;
 	};
 
-	canParticipantWrite (spaceId?: string): boolean {
+	canMyParticipantWrite (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId);
 		return participant ? (participant.isWriter || participant.isOwner) : true;
 	};
 
-	isOwner (spaceId?: string): boolean {
+	isMyOwner (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId || commonStore.space);
 		return participant ? participant.isOwner : false;
 	};

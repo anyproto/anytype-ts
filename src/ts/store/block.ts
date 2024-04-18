@@ -411,7 +411,7 @@ class BlockStore {
 	};
 
     isAllowed (restrictions: any[], flags: any[]): boolean {
-		if (!UtilSpace.canParticipantWrite()) {
+		if (!UtilSpace.canMyParticipantWrite()) {
 			return false;
 		};
 

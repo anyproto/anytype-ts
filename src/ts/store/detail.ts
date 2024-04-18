@@ -319,7 +319,6 @@ class DetailStore {
 		object.permissions = Number(object.permissions || object.participantPermissions) || I.ParticipantPermissions.Reader;
 		object.status = Number(object.status || object.participantStatus) || I.ParticipantStatus.Joining;
 		object.globalName = Relation.getStringValue(object.globalName);
-		//object.name = object.globalName || object.name;
 
 		delete(object.participantPermissions);
 		delete(object.participantStatus);

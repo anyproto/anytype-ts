@@ -257,6 +257,7 @@ class UtilData {
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
 				],
+				ignoreDeleted: false,
 				noDeps: true,
 			},
 			{

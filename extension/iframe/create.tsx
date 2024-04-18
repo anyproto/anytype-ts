@@ -103,7 +103,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	init () {
 		const spaces = UtilSpace.getList()
-			.filter(it => it && UtilSpace.canParticipantWrite(it.targetSpaceId))
+			.filter(it => it && UtilSpace.canMyParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, id: it.targetSpaceId, object: it, iconSize: 16 }));
 
 		if (this.refSpace && spaces.length) {

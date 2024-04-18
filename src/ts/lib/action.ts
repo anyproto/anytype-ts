@@ -1,7 +1,6 @@
-import { I, C, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
+import { I, C, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
-import Url from 'json/url.json';
 
 class Action {
 
@@ -566,7 +565,7 @@ class Action {
 
 		const { accountSpaceId } = authStore;
 		const { space } = commonStore;
-		const isOwner = UtilSpace.isOwner(id);
+		const isOwner = UtilSpace.isMyOwner(id);
 		const name = UtilCommon.shorten(deleted.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
 		const title = UtilCommon.sprintf(translate(`space${suffix}WarningTitle`), name);
@@ -693,17 +692,7 @@ class Action {
 				title: translate('popupConfirmMembershipUpgradeTitle'),
 				text: translate('popupConfirmMembershipUpgradeText'),
 				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
-				onConfirm: () => {
-					const anyName = authStore.membership?.requestedAnyName;
-					if (!anyName) {
-						return;
-					};
-
-					let url = Url.membershipUpgrade;
-					url = url.replace(/\%25anyName\%25/g, anyName);
-
-					Renderer.send('urlOpen', url);
-				},
+				onConfirm: () => keyboard.onMembershipUpgrade(),
 				canCancel: false
 			}
 		})

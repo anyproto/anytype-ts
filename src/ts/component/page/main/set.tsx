@@ -266,7 +266,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	isReadonly () {
-		return !UtilSpace.canParticipantWrite();
+		return !UtilSpace.canMyParticipantWrite();
 	};
 
 	resize () {

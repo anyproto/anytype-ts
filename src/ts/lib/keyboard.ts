@@ -135,7 +135,7 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		this.pressed.push(key);
 
@@ -645,6 +645,19 @@ class Keyboard {
 		});
 	};
 
+	onMembershipUpgrade () {
+		const { account, membership } = authStore;
+		const anyName = membership?.requestedAnyName ? membership?.requestedAnyName : account.id;
+		if (!anyName) {
+			return;
+		};
+
+		let url = Url.membershipUpgrade;
+		url = url.replace(/\%25anyName\%25/g, anyName);
+
+		Renderer.send('urlOpen', url);
+	};
+
 	onTechInfo () {
 		const { account } = authStore;
 
@@ -933,6 +946,14 @@ class Keyboard {
 	isMainIndex () {
 		return this.isMain() && (this.match?.params?.action == 'index');
 	};
+
+	isAuth () {
+		return this.match?.params?.page == 'auth';
+	};
+
+	isAuthPinCheck () {
+		return this.isAuth() && (this.match?.params?.action == 'pin-check');
+	};
 	
 	setFocus (v: boolean) {
 		this.isFocused = v;
@@ -990,11 +1011,16 @@ class Keyboard {
 
 		window.clearTimeout(this.timeoutPin);
 		this.timeoutPin = window.setTimeout(() => {
-			if (!check()) {
+			if (!check() || this.isAuthPinCheck()) {
 				return;
 			};
 
 			this.setPinChecked(false);
+
+			if (this.isMain()) {
+				commonStore.redirectSet(UtilRouter.getRoute());
+			};
+
 			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
 			Renderer.send('pin-check');
 		}, commonStore.pinTime);

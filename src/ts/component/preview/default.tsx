@@ -37,6 +37,10 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		const object = this.props.object || this.state.object || {};
 		const type = dbStore.getTypeById(object.type);
 
+		if (UtilObject.isParticipantLayout(object.layout)) {
+			object.name = object.globalName || object.name;
+		};
+
 		return (
 			<div className={cn.join(' ')}>
 				{loading ? <Loader /> : (

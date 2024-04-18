@@ -625,7 +625,7 @@ class UtilMenu {
 			return;
 		};
 
-		const isOwner = UtilSpace.isOwner(targetSpaceId);
+		const isOwner = UtilSpace.isMyOwner(targetSpaceId);
 
 		let options: any[] = [];
 
