@@ -337,11 +337,11 @@
 	"authOnboardMoreInfo": "You can find this key later in Anytype settings",
 
 	"authOnboardVaultTitle": "This is your Vault",
-	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It is local first – everything works off-line.<br/>Only you have the key.",
+	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It is local first – everything works offline.<br/>Only you have the key.",
 	"authOnboardVaultButton": "Get my Key",
 
 	"authOnboardNameTitle": "Set your name",
-	"authOnboardNameLabel": "Only seen by people you share something with.<br/>There is no central registry of users.",
+	"authOnboardNameLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
 	"authOnboardNameButton": "Enter my Vault",
 
 	"authOnboardPhraseTitle": "This is your Key",
@@ -1198,7 +1198,7 @@
 	"popupPhraseTitle1": "What is a Key?",
 	"popupPhraseTitle2": "How to save my key?",
 	"popupPhraseLabel1": "It is represented by a recovery phrase – 12 random words from which your vault is magically generated on this device.",
-	"popupPhraseLabel2": "Who knows combination of these words – owns the vault. Now, you are the only person in the world knows it.",
+	"popupPhraseLabel2": "Who knows combination of these words – owns the vault. Now, you are the only person in the world who knows it.",
 	"popupPhraseLabel3": "All computational resources on Earth are not enough to break in. If you lose it, it cannot be recovered. So, store it somewhere safe!",
 	"popupPhraseLabel4": "The easiest way to store your Key is to save it in your password manager.",
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
