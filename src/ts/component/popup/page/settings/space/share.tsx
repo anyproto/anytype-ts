@@ -9,7 +9,6 @@ import Head from '../head';
 
 interface State {
 	isLoading: boolean;
-	inviteLoaded: boolean;
 	error: string;
 	cid: string;
 	key: string;
@@ -26,9 +25,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	refList: any = null;
 	refCopy: any = null;
 	refButton: any = null;
+
 	state = {
 		isLoading: false,
-		inviteLoaded: false,
 		error: '',
 		cid: '',
 		key: '',
@@ -257,15 +256,11 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	init () {
-		const { inviteLoaded } = this.state;
+		const { cid, key } = this.state;
 		const space = UtilSpace.getSpaceview();
 
-		if (space.isShared && !inviteLoaded) {
-			this.setState({ isLoading: true });
-
+		if (space.isShared && !cid && !key) {
 			C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
-				this.setState({ isLoading: false, inviteLoaded: true });
-
 				if (!message.error.code) {
 					this.setInvite(message.inviteCid, message.inviteKey);
 				};
