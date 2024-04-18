@@ -6,6 +6,7 @@ import { menuStore, commonStore, authStore, dbStore, detailStore, popupStore } f
 import Constant from 'json/constant.json';
 
 interface State {
+	inviteLoaded: boolean;
 	error: string;
 	cid: string;
 	key: string;
@@ -20,6 +21,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	refCopy: any = null;
 
 	state = {
+		inviteLoaded: false,
 		error: '',
 		cid: '',
 		key: '',
@@ -444,11 +446,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	init () {
-		const { cid, key } = this.state;
+		const { inviteLoaded } = this.state;
 		const space = UtilSpace.getSpaceview();
 
-		if (space.isShared && !cid && !key	) {
+		if (space.isShared && !inviteLoaded) {
 			C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
+				this.setState({ inviteLoaded: true });
+
 				if (!message.error.code) {
 					this.setInvite(message.inviteCid, message.inviteKey);
 				};
