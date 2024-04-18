@@ -26,7 +26,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	
 	version: I.HistoryVersion = null;
 	refHeader: any = null;
-	refFooter: any = null;
 	scrollLeft = 0;
 	scrollRight = 0;
 	lastId = '';
@@ -156,7 +155,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					</div>
 				</div>
 
-				<Footer component="mainObject" ref={ref => this.refFooter = ref} {...this.props} />
+				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
 	};
