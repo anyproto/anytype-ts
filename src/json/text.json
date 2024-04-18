@@ -1846,6 +1846,10 @@
 	"errorMembershipIsNameValid5": "Name contains invalid characters",
 	"errorMembershipIsNameValid6": "This tier features no name",
 	"errorMembershipIsNameValid7": "Tier not found",
+	"errorMembershipIsNameValid8": "Not logged in",
+	"errorMembershipIsNameValid9": "Unable to connect to payment node",
+	"errorMembershipIsNameValid10": "Cache error",
+	"errorMembershipIsNameValid11": "Name is reserved",
 
 	"errorMembershipGetPaymentUrl4": "Unable to connect to payment node",
 	"errorMembershipGetPaymentUrl6": "Tier not found",
