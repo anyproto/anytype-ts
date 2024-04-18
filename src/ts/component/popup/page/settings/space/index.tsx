@@ -125,7 +125,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<div className="info">
 							<Label
 								className="infoLabel spaceAccessType"
-								text={translate(`spaceAccessType${I.SpaceType.Private}`)}
+								text={translate(`spaceAccessType${space.spaceAccessType}`)}
 							/>
 							<div className="bullet" />
 							<Label 
