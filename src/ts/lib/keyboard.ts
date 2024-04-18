@@ -645,6 +645,19 @@ class Keyboard {
 		});
 	};
 
+	onMembershipUpgrade () {
+		const { account, membership } = authStore;
+		const anyName = membership?.requestedAnyName ? membership?.requestedAnyName : account.id;
+		if (!anyName) {
+			return;
+		};
+
+		let url = Url.membershipUpgrade;
+		url = url.replace(/\%25anyName\%25/g, anyName);
+
+		Renderer.send('urlOpen', url);
+	};
+
 	onTechInfo () {
 		const { account } = authStore;
 

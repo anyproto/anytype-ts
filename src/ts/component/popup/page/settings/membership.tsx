@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, translate, UtilCommon, UtilDate, analytics, Action } from 'Lib';
+import { I, translate, UtilCommon, UtilDate, analytics, Action, keyboard } from 'Lib';
 import { popupStore, authStore, commonStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
@@ -154,7 +154,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	onContact () {
-		Action.membershipUpgrade();
+		keyboard.onMembershipUpgrade();
 		analytics.event('MenuHelpContact', { route: analytics.route.settingsMembership });
 	};
 
