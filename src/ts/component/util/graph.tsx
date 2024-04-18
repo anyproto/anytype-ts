@@ -103,7 +103,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const height = node.height();
 		const theme = commonStore.getThemeClass();
 
-		this.zoom = d3.zoom().scaleExtent([ 0.2, 10 ]).on('zoom', e => this.onZoom(e));
+		this.zoom = d3.zoom().scaleExtent([ 0.05, 10 ]).on('zoom', e => this.onZoom(e));
 		this.edges = (data.edges || []).map(this.edgeMapper);
 		this.nodes = (data.nodes || []).map(this.nodeMapper);
 
