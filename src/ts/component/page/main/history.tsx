@@ -378,12 +378,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const rootId = this.getRootId();
 
 		C.HistoryShowVersion(rootId, id, (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true });
-				} else {
-					UtilSpace.openDashboard('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 

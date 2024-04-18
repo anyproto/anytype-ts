@@ -552,10 +552,10 @@ class UtilCommon {
 		};
 
 		if (!this.checkErrorCommon(code)) {
-			return;
+			return false;
 		};
 
-		if (code == Errors.Code.NOT_FOUND) {
+		if ([ Errors.Code.NOT_FOUND, Errors.Code.OBJECT_DELETED ].includes(code)) {
 			if (context) {
 				context.setState({ isDeleted: true });
 			};
@@ -576,7 +576,7 @@ class UtilCommon {
 							};
 						});
 
-						UtilSpace.openDashboard('route');
+						UtilSpace.openDashboard('route', { replace: true });
 					}
 				},
 			});
