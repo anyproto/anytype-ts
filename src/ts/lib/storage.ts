@@ -266,8 +266,6 @@ class Storage {
 		const keys = [ 
 			'accountId',
 			'spaceId',
-			'tabStore', 
-			'graph',
 			'pin',
 		];
 
