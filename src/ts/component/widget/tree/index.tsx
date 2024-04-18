@@ -31,6 +31,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	subscriptionHashes: { [ key: string ]: string } = {};
 	branches: string[] = [];
 	refList = null;
+	deletedIds = new Set();
 
 	constructor (props: I.WidgetComponent) {
 		super(props);
@@ -52,6 +53,8 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		if (!this.cache) {
 			return null;
 		};
+
+		this.getDeleted();
 
 		let content = null;
 
@@ -163,10 +166,13 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		} else {
 			this.initCache();
 		};
+
+		this.getDeleted();
 	};
 
 	componentDidUpdate () {
 		this.resize();
+		this.getDeleted();
 
 		if (this.refList) {
 			this.refList.scrollToPosition(this.top);
@@ -180,6 +186,14 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		if (subIds.length) {
 			C.ObjectSearchUnsubscribe(subIds);
 		};
+	};
+
+	getDeleted () {
+		const deleted = dbStore.getRecordIds(Constant.subId.deleted, '');
+		const length = deleted.length;
+
+		this.deletedIds = new Set(deleted);
+		return this.deletedIds;
 	};
 
 	updateData () {
@@ -280,9 +294,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	filterDeletedLinks (ids: string[]): string[] {
-		const deleted = dbStore.getRecordIds(Constant.subId.deleted, '');
-
-		return ids.filter(id => !deleted.includes(id));
+		return ids.filter(id => !this.deletedIds.has(id));
 	};
 
 	// return the child nodes details for the given subId
@@ -291,7 +303,12 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	mapper (item) {
-		item.links = (item.layout != I.ObjectLayout.Set) ? this.filterDeletedLinks(Relation.getArrayValue(item.links)) : [];
+		let links = [];
+		if (item.layout != I.ObjectLayout.Set) {
+			links = this.filterDeletedLinks(Relation.getArrayValue(item.links));
+		};
+
+		item.links = links;
 		return item;
 	};
 
