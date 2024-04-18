@@ -48,9 +48,9 @@ export default [
 	h3(`Default Link Style changed to Card`),
 	text(`When using the ${hl('/add link')} command in the editor, newly created links will appear as cards rather than bolded text. You can now also choose whether to preview Object data in the link such as Type, Description, or Content Preview. If you’d like your default link appearance to be bolded text, you can customize this in your Preferences menu as described above.`),
 
-	h3(`'Graph' Added as Layout View to Sets & Collections`),
+	h3(`${hl('Graph')} Added as Layout View to Sets & Collections`),
 	video(`40/5.mp4`),
-	text(`For those of you who’ve longed for more precise graph filters, this release brings us one step closer. As a new layout option in Sets & Collections, you’ll now see an option for ‘Graph’. By selecting it, you’ll be able to visualize filtered view of your graph which contains objects that match your Set or Collection criteria. This would allow you to use your graph to view for instance, all objects with Priority: High, or all objects with Type: Book.`),
+	text(`For those of you who’ve longed for more precise graph filters, this release brings us one step closer. As a new layout option in Sets & Collections, you’ll now see an option for ${hl('Graph')}. By selecting it, you’ll be able to visualize filtered view of your graph which contains objects that match your Set or Collection criteria. This would allow you to use your graph to view for instance, all objects with Priority: High, or all objects with Type: Book.`),
 
 	h3(`Read-only spaces removed from Web Clipper Space Selection Menu`),
 	text(`With the introduction of multiplayer, you may be participating in some spaces with Viewing privileges only. These spaces have been removed from the Web Clipper Space Selection Menu.`),
