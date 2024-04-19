@@ -1842,6 +1842,7 @@
 
 	"errorMembershipGetStatus6": "Membership not found",
 	"errorMembershipGetStatus7": "Membership has wrong state",
+	"errorMembershipGetStatus8": "Please connect to the internet",
 
 	"errorMembershipIsNameValid3": "Name is too short",
 	"errorMembershipIsNameValid4": "Name is too long",
@@ -1852,6 +1853,7 @@
 	"errorMembershipIsNameValid9": "Unable to connect to payment node",
 	"errorMembershipIsNameValid10": "Cache error",
 	"errorMembershipIsNameValid11": "Name cannot be taken",
+	"errorMembershipIsNameValid12": "Please connect to the internet",
 
 	"errorMembershipGetPaymentUrl4": "Unable to connect to payment node",
 	"errorMembershipGetPaymentUrl6": "Tier not found",
@@ -1859,10 +1861,12 @@
 	"errorMembershipGetPaymentUrl8": "Payment method is invalid",
 	"errorMembershipGetPaymentUrl9": "Bad Any name",
 	"errorMembershipGetPaymentUrl10": "Membership already exists",
+	"errorMembershipGetPaymentUrl11": "Please connect to the internet",
 
 	"errorMembershipFinalize6": "Membership not found",
 	"errorMembershipFinalize7": "Membership has wrong state",
 	"errorMembershipFinalize8": "Bad Any name",
+	"errorMembershipFinalize9": "Please connect to the internet",
 
 	"errorMembershipGetVerificationEmail6": "Email format is invalid",
 	"errorMembershipGetVerificationEmail7": "This email is already verified",
@@ -1878,6 +1882,7 @@
 
 	"errorMembershipGetTiers4": "Unable to connect to payment node",
 	"errorMembershipGetPortalLinkUrl4": "Unable to connect to payment node",
+	"errorMembershipGetPortalLinkUrl6": "Please connect to the internet",
 
 	"errorSpaceInviteGenerate101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceInviteGenerate102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
