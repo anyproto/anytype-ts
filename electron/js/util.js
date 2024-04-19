@@ -110,7 +110,7 @@ class Util {
 		const args = [ ...arguments ];
 		const win = args[0];
 
-		if (win && win.webContents) {
+		if (win && !win.isDestroyed() && win.webContents) {
 			args.shift();
 			win.webContents.send.apply(win.webContents, args);
 		};
