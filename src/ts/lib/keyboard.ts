@@ -135,7 +135,7 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		this.pressed.push(key);
 
@@ -645,22 +645,31 @@ class Keyboard {
 		});
 	};
 
+	onMembershipUpgrade () {
+		const { account, membership } = authStore;
+		const name = membership.name ? membership.name : account.id;
+
+		Renderer.send('urlOpen', Url.membershipUpgrade.replace(/\%25name\%25/g, name));
+	};
+
 	onTechInfo () {
 		const { account } = authStore;
-		if (!account) {
-			return;
-		};
 
 		C.AppGetVersion((message: any) => {
-			const data = [
+			let data = [
 				[ translate('libKeyboardOSVersion'), UtilCommon.getElectron().version.os ],
 				[ translate('libKeyboardAppVersion'), UtilCommon.getElectron().version.app ],
 				[ translate('libKeyboardBuildNumber'), message.details ],
 				[ translate('libKeyboardLibraryVersion'), message.version ],
-				[ translate('libKeyboardAccountID'), account.id ],
-				[ translate('libKeyboardAnalyticsID'), account.info.analyticsId ],
-				[ translate('libKeyboardDeviceID'), account.info.deviceId ],
 			];
+
+			if (account) {
+				data = data.concat([
+					[ translate('libKeyboardAccountId'), account.id ],
+					[ translate('libKeyboardAnalyticsId'), account.info.analyticsId ],
+					[ translate('libKeyboardDeviceId'), account.info.deviceId ],
+				]);
+			};
 
 			popupStore.open('confirm', {
 				className: 'isWide techInfo',
@@ -783,11 +792,14 @@ class Keyboard {
 			isDisabled = [ 'set', 'store', 'graph' ].includes(popupMatch.params.action);
 		};
 
+		console.log('onSearchMenu', value, isDisabled);
+
 		if (isDisabled) {
 			return;
 		};
 
 		menuStore.closeAll([ 'blockContext' ], () => {
+			console.log(123);
 			menuStore.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
@@ -931,6 +943,14 @@ class Keyboard {
 	isMainIndex () {
 		return this.isMain() && (this.match?.params?.action == 'index');
 	};
+
+	isAuth () {
+		return this.match?.params?.page == 'auth';
+	};
+
+	isAuthPinCheck () {
+		return this.isAuth() && (this.match?.params?.action == 'pin-check');
+	};
 	
 	setFocus (v: boolean) {
 		this.isFocused = v;
@@ -988,11 +1008,16 @@ class Keyboard {
 
 		window.clearTimeout(this.timeoutPin);
 		this.timeoutPin = window.setTimeout(() => {
-			if (!check()) {
+			if (!check() || this.isAuthPinCheck()) {
 				return;
 			};
 
 			this.setPinChecked(false);
+
+			if (this.isMain()) {
+				commonStore.redirectSet(UtilRouter.getRoute());
+			};
+
 			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
 			Renderer.send('pin-check');
 		}, commonStore.pinTime);

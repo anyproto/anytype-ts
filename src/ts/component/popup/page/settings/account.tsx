@@ -61,31 +61,31 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				</div>
 
 				<div className="section">
-					<Title text={translate('popupSettingsVaultPersonalInformationTitle')} />
+					<Title text={translate('popupSettingsAccountPersonalInformationTitle')} />
 
 					<Input
 						ref={ref => this.refName = ref}
 						value={name}
 						onKeyUp={this.onName}
-						placeholder={translate('popupSettingsVaultPersonalInformationNamePlaceholder')}
+						placeholder={translate('popupSettingsAccountPersonalInformationNamePlaceholder')}
 					/>
 
 					<Input
 						ref={ref => this.refDescription = ref}
 						value={profile.description}
 						onKeyUp={this.onDescription}
-						placeholder={translate('popupSettingsVaultPersonalInformationDescriptionPlaceholder')}
+						placeholder={translate('popupSettingsAccountPersonalInformationDescriptionPlaceholder')}
 					/>
 				</div>
 
 				<div className="section">
-					<Title text={translate('popupSettingsVaultAnytypeIdentityTitle')} />
+					<Title text={translate('popupSettingsAccountAnytypeIdentityTitle')} />
 
 					<div className="inputWrapper withIcon">
 						<Input
 							value={account.id}
 							readonly={true}
-							onClick={() => UtilCommon.copyToast(translate('popupSettingsVaultAnytypeIdentityTitle'), account.id)}
+							onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
 						/>
 						<Icon className="copy" />
 					</div>

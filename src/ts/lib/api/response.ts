@@ -468,35 +468,13 @@ export const NameServiceResolveName = (response: Rpc.NameService.ResolveName.Res
 	};
 };
 
-export const NameServiceResolveAnyId = (response: Rpc.NameService.ResolveAnyId.Response) => {
-	return {
-		found: response.getFound(),
-		fullName: response.getFullname(),
-	};
-};
-
-export const NameServiceResolveSpaceId = (response: Rpc.NameService.ResolveSpaceId.Response) => {
-	return {
-		found: response.getFound(),
-		fullName: response.getFullname(),
-	};
-};
-
-export const NameServiceUserAccountGet = (response: Rpc.NameService.UserAccount.Get.Response) => {
-	return {
-		anyNameAttached: response.getAnynameattached(),
-		namesCountLeft: response.getNamescountleft(),
-		operationsCountLeft: response.getOperationscountleft(),
-	};
-};
-
 export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response) => {
 	return {
 		membership: Mapper.From.Membership(response.getData()),
 	};
 };
 
-export const MembershipGetTiers = (response: Rpc.Membership.Tiers.Get.Response) => {
+export const MembershipGetTiers = (response: Rpc.Membership.GetTiers.Response) => {
 	return {
 		tiers: (response.getTiersList() || []).map(it => Mapper.From.MembershipTierData(it)),
 	};

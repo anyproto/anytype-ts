@@ -188,12 +188,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		this.setState({ isLoading: true});
 
 		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true });
-				} else {
-					UtilSpace.openDashboard('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -203,14 +198,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 				return;
 			};
 
-			if (this.refHeader) {
-				this.refHeader.forceUpdate();
-			};
-
-			if (this.refHead) {
-				this.refHead.forceUpdate();
-			};
-
+			this.refHeader?.forceUpdate();
+			this.refHead?.forceUpdate();
 			this.setState({ isLoading: false });
 		});
 	};

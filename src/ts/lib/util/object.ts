@@ -298,6 +298,10 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
+	isParticipantLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Participant;
+	};
+
 	getPageLayouts (): I.ObjectLayout[] {
 		return [ 
 			I.ObjectLayout.Page, 

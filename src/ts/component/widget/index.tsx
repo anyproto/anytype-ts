@@ -292,7 +292,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { block, isPreview } = this.props;
+		const { block } = this.props;
 		const { viewId, layout } = block.content;
 		const object = this.getObject();
 
@@ -410,7 +410,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!UtilSpace.canParticipantWrite()) {
+		if (!UtilSpace.canMyParticipantWrite()) {
 			return;
 		};
 
@@ -651,7 +651,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const object = this.getObject();
 		const { block, isEditing } = this.props;
 
-		if (!object || isEditing || !UtilSpace.canParticipantWrite()) {
+		if (!object || isEditing || !UtilSpace.canMyParticipantWrite()) {
 			return false;
 		};
 

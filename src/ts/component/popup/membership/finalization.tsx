@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader } from 'Component';
-import { C, I, translate, UtilData } from 'Lib';
-import { authStore, menuStore, popupStore } from 'Store';
+import { C, I, translate, UtilData, UtilCommon } from 'Lib';
+import { authStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -32,37 +32,55 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 
 	render () {
 		const { status, statusText, isLoading } = this.state;
-		const globalName = this.getName();
+		const { param } = this.props;
+		const { data } = param;
+		const { tier } = data;
+		const tierItem = UtilData.getMembershipTier(tier);
+
+		if (!tierItem) {
+			return null;
+		};
+
+		const { membership } = authStore;
+		const { period } = tierItem;
+		const { name, nameType } = membership;
+
+		let labelText = '';
+		if (period) {
+			if (period == 1) {
+				labelText = translate('popupMembershipPaidTextPerYear');
+			} else {
+				labelText = UtilCommon.sprintf(translate('popupMembershipPaidTextPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+			};
+		};
 
 		return (
 			<div className="anyNameForm">
 				<Title text={translate(`popupMembershipPaidTitle`)} />
-				<Label text={translate(`popupMembershipPaidText`)} />
+				<Label text={labelText} />
 
 				<div className="inputWrapper">
 					<Input
 						ref={ref => this.refName = ref}
-						value={globalName}
+						value={name}
 						onKeyUp={this.onKeyUp}
-						readonly={!!globalName}
-						className={globalName ? 'disabled' : ''}
+						readonly={!!name}
+						className={name ? 'disabled' : ''}
 						placeholder={translate(`popupMembershipPaidPlaceholder`)}
 					/>
-					{!globalName ? <div className="ns">{Constant.anyNameSpace}</div> : ''}
+					<div className="ns">{Constant.namespace[nameType]}</div>
 				</div>
 
 				<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
-
 				<Button ref={ref => this.refButton = ref} onClick={this.onConfirm} text={translate('commonConfirm')} />
-
 				{isLoading ? <Loader /> : ''}
 			</div>
 		);
 	};
 
 	componentDidMount () {
-		const globalName = this.getName();
-		if (!globalName) {
+		const name = this.getName();
+		if (!name) {
 			this.refButton.setDisabled(true);
 		};
 	};
@@ -135,7 +153,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 	};
 
 	getName () {
-		return String(authStore.membership?.requestedAnyName || '');
+		return String(authStore.membership?.name || '');
 	};
 
 });

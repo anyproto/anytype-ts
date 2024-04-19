@@ -99,7 +99,7 @@ class MenuHelp extends React.Component<I.Menu> {
 		const home = UtilSpace.getDashboard();
 
 		close();
-		analytics.event(UtilCommon.toUpperCamelCase([ getId(), item.id ].join('-')));
+		analytics.event(UtilCommon.toUpperCamelCase([ getId(), item.id ].join('-')), { route: analytics.route.menuHelp });
 
 		Highlight.hide(item.id);
 

@@ -1,11 +1,10 @@
-import { I, C, focus, analytics, keyboard, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
+import { I, C, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
-import Url from 'json/url.json';
 
 class Action {
 
-	pageClose (rootId: string, close: boolean) {
+	pageClose (rootId: string, withCommand: boolean) {
 		const { root, widgets } = blockStore;
 		const { space } = commonStore;
 
@@ -27,10 +26,10 @@ class Action {
 			authStore.threadRemove(rootId);
 		};
 
-		if (close) {
-			C.ObjectClose(rootId, space, onClose);
-		} else {
-			onClose();
+		onClose();
+
+		if (withCommand) {
+			C.ObjectClose(rootId, space);
 		};
 	};
 
@@ -380,10 +379,18 @@ class Action {
 						commonStore.configSet(message.account.config, false);
 
 						UtilData.onInfo(message.account.info);
-						UtilData.onAuth({ routeParam: { animate: true } }, () => {
-							window.setTimeout(() => { popupStore.open('migration', { data: { type: 'import' } }); }, popupStore.getTimeout());
-							blockStore.closeRecentWidgets();
-						});
+
+						const routeParam = {
+							replace: true,
+							animate: true,
+							onFadeIn: () => {
+								popupStore.open('migration', { data: { type: 'import' } });
+								blockStore.closeRecentWidgets();
+							},
+						};
+
+						UtilData.onAuth({ routeParam });
+						UtilData.onAuthOnce();
 					});
 				});
 			});
@@ -558,7 +565,7 @@ class Action {
 
 		const { accountSpaceId } = authStore;
 		const { space } = commonStore;
-		const isOwner = UtilSpace.isOwner(id);
+		const isOwner = UtilSpace.isMyOwner(id);
 		const name = UtilCommon.shorten(deleted.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
 		const title = UtilCommon.sprintf(translate(`space${suffix}WarningTitle`), name);
@@ -685,20 +692,54 @@ class Action {
 				title: translate('popupConfirmMembershipUpgradeTitle'),
 				text: translate('popupConfirmMembershipUpgradeText'),
 				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
-				onConfirm: () => {
-					const anyName = authStore.membership?.requestedAnyName;
-					if (!anyName) {
-						return;
-					};
-
-					let url = Url.membershipUpgrade;
-					url = url.replace(/\%25anyName\%25/g, anyName);
-
-					Renderer.send('urlOpen', url);
-				},
+				onConfirm: () => keyboard.onMembershipUpgrade(),
 				canCancel: false
 			}
 		})
+	};
+
+	inviteRevoke (spaceId: string, callBack?: () => void) {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupConfirmRevokeLinkTitle'),
+				text: translate('popupConfirmRevokeLinkText'),
+				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					C.SpaceInviteRevoke(spaceId, () => {
+						if (callBack) {
+							callBack();
+						};
+
+						Preview.toastShow({ text: translate('toastInviteRevoke') });
+						analytics.event('RevokeShareLink');
+					});
+				},
+			},
+		});
+
+		analytics.event('ScreenRevokeShareLink');
+	};
+
+	welcome () {
+		popupStore.open('confirm', {
+			className: 'welcome',
+			preventClose: true,
+			data: {
+				icon: 'welcome',
+				title: translate('popupConfirmWelcomeTitle'),
+				text: translate('popupConfirmWelcomeText'),
+				textConfirm: translate('popupConfirmWelcomeButton'),
+				canCancel: false,
+				onConfirm: () => {
+					popupStore.replace('confirm', 'usecase', {
+						onClose: () => {
+							Onboarding.start('dashboard', false, false);
+						}
+					});
+				},
+			},
+		});
 	};
 
 };

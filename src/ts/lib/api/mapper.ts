@@ -505,8 +505,12 @@ export const Mapper = {
 							name: field.getName(),
 						});
 
-						if (type == 'import') {
+						if (type == I.NotificationType.Import) {
 							payload.importType = field.getImporttype();
+						};
+
+						if (type == I.NotificationType.Gallery) {
+							payload.spaceName = field.getSpacename();
 						};
 						break;
 					};
@@ -587,7 +591,8 @@ export const Mapper = {
 				dateEnds: obj.getDateends(),
 				isAutoRenew: obj.getIsautorenew(),
 				paymentMethod: obj.getPaymentmethod() as number,
-				requestedAnyName: obj.getRequestedanyname(),
+				name: obj.getNsname(),
+				nameType: obj.getNsnametype() as number,
 				userEmail: obj.getUseremail(),
 				subscribeToNewsletter: obj.getSubscribetonewsletter(),	
 			};

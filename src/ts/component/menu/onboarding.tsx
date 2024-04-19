@@ -338,8 +338,9 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onImport () {
-		popupStore.open('settings', { data: { page: 'importIndex' } });
-		this.props.close();
+		this.props.close(() => {
+			popupStore.open('settings', { data: { page: 'importIndex' } });
+		});
 	};
 
 	setError (error: { description: string, code: number}) {

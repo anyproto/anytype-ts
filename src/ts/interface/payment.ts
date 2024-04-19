@@ -20,15 +20,10 @@ export enum MembershipStatus {
 
 export enum PaymentMethod {
 	None					 = 0,
-	Card					 = 1,
+	Stripe					 = 1,
 	Crypto					 = 2,
 	Apple					 = 3,
 	Google					 = 4,
-};
-
-export enum MembershipPeriod {
-	Period1Year 			 = 1,
-	Period5Years 			 = 5,
 };
 
 export enum MembershipTierDataFeatureId {
@@ -58,7 +53,8 @@ export interface Membership {
 	nextTier?: TierType;
 	nextTierEnds?: number;
 	paymentMethod?: PaymentMethod,
-	requestedAnyName?: string;
+	name?: string;
+	nameType?: NameType;
 	userEmail?: string;
 	subscribeToNewsletter?: boolean;
 	isNone?: boolean;

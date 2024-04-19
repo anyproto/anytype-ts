@@ -19,7 +19,77 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Webclipper, Files as Objects and Experience Gallery Galore!`),
+	title(`Welcome to Local-First Sharing & Collaboration`),
+	text(`Folks, this is the one we’ve been waiting for. This release, in which creating trusted networks with your friends, family and communities in Anytype becomes a reality, is the culmination of nearly five years of R&D.`),
+	text(`What does this mean for you? Now you can share what matters, with those you care about and never have to worry that your data will be surveilled, blocked, or leaked.`),
+	text(`From today onward, we warmly welcome you to begin testing out shared spaces, starting with the small things: idea boards, shopping lists, projects, and wikis. If you need inspiration, you can always check the ${link('https://gallery.any.coop', 'Multiplayer Experiences')} newly added to the Experience Gallery (or submit your own!).`),
+	text(`We can’t wait to see what you’ll create, and look forward to this new, networked era of Anytype.`),
+
+	h2(`💎 Highlights of this Release:`),
+
+	h3(`Multiplayer! Sharing! Collaboration! is LIVE!`),
+	video(`40/1.mp4`),
+	text(`In the Space Settings menu of each space you’ve created (excluding your Default space), you’ll now see the option to ${hl('Share Space')} in your Space settings. By clicking here, you can generate an invite link for the Space, which can be sent to anyone.`),
+	text(`Once they click the link and request to join your Space, you’ll receive a notification prompting you to add this person as an Editor, Viewer, or to reject the request entirely. Editors have edit access to all objects within the Space, while Viewers have read-only access to all objects within the space.`),
+	text(`As a Space owner, it is possible to share up to three Spaces at this time. You can manage the roles of guests you have invited to your Space, or remove them altogether. Guests who have been removed from a space will receive a notification that they have been removed from the Space, and will see an option to export the contents of the Space.`),
+
+	h3(`Memberships`),
+	video(`40/2.mp4`),
+	text(`You can check your Membership status at any time by clicking on the new ${hl('Memberships')} tab in your Profile Settings.`),
+	text(`If you joined Anytype prior to this release, you should see the ‘Explorer’ Plan already activated in your account, including your previous storage limits.`),
+	text(`If you would like to upgrade your membership, select your desired plan and follow the on-screen instructions to submit the Name you would like to purchase on the Anytype network. Then, complete the transaction in Stripe. Once your payment has been confirmed, your membership plan will update in the app.`),
+
+	h2(`⚡ Quality-of-Life Improvements:`),
+
+	h3(`Updated Preferences Options in Profile Menu`),
+	video(`40/3.mp4`),
+	text(`With this release, we also introduce greater customization over UX patterns. When clicking on your Profile > Preferences, you’ll see new options for personalizing your account including Quick Capture Menu display settings, default Link Appearance settings, and whether Objects open in Full-Screen view.`),
+
+	h3(`Default Link Style changed to Card`),
+	text(`When using the ${hl('/add link')} command in the editor, newly created links will appear as cards rather than bolded text. You can now also choose whether to preview Object data in the link such as Type, Description, or Content Preview. If you’d like your default link appearance to be bolded text, you can customize this in your Preferences menu as described above.`),
+
+	h3(`${hl('Graph')} Added as Layout View to Sets & Collections`),
+	video(`40/5.mp4`),
+	text(`For those of you who’ve longed for more precise graph filters, this release brings us one step closer. As a new layout option in Sets & Collections, you’ll now see an option for ${hl('Graph')}. By selecting it, you’ll be able to visualize filtered view of your graph which contains objects that match your Set or Collection criteria. This would allow you to use your graph to view for instance, all objects with Priority: High, or all objects with Type: Book.`),
+
+	h3(`Read-only spaces removed from Web Clipper Space Selection Menu`),
+	text(`With the introduction of multiplayer, you may be participating in some spaces with Viewing privileges only. These spaces have been removed from the Web Clipper Space Selection Menu.`),
+
+	h3(`Files & Media Relation Formats added to Set Filter Menu`),
+	video(`40/4.mp4`),
+	text(`When filtering Sets that use File and Media relations, the Set filter menu now includes options to filter according to relations with type: File and Media.`),
+
+	h3(`Design Improvements in Widgets`),
+	text(`Border radiuses on widget select and hover menus have been adjusted for better visual consistency.`),
+
+	h3(`System Tray & Menu Settings Renamed on Windows & Linux`),
+	text(`For better consistency with OS naming conventions, ${hl('System Menu')} has been renamed to ${hl('Menu Bar')}, and ${hl('Menu Bar')} has been renamed to ${hl('System Tray')} on Windows and Linux versions`),
+
+	h2(`💻 Tech:`),
+	bullet(`Electron updated to 29.1.6`),
+	bullet(`Debug logs for Middleware were split into different flags`),
+
+	h2(`🐛 Bug Fixes:`),
+	bullet(`Brave Browser automatic pairing issue resolved in Web-clipper. Thanks, ${link('https://community.anytype.io/t/web-clipper-not-pairing-automatically/17214', 'anicholslcsw')}!`),
+	bullet(`Maximum relation menu height corrected so set filters are no longer cut off. Thanks, ${link('https://community.anytype.io/t/filter-in-set-view-dont-show-all-available-relations/18504', 'Henri')}!`),
+	bullet(`Experience Gallery links now open Experience page, rather than list of experiences`),
+	bullet(`Inline Kanban sets no longer overlap with editor content. Thanks, ${link('https://community.anytype.io/t/inline-set-kanban-view-bleeds-over-pre-existing-text/17485', 'zma17')}!`),
+	bullet(`Clipboard paste for large amount of content has been greatly optimized`),
+	bullet(`Rendering of ${hl('\\newline')}, ${hl('\\sqrt')}, ${hl('\\vec')} in LaTex now fixed to display correctly. Thanks, ${link('https://community.anytype.io/t/in-latex-or-newline-does-nothing-in-display-mode-newlineindisplaymode/11820', 'BioLinua')}!`),
+	bullet(`When creating link blocks or inline links, first item in Link selection menu no longer being skipped on when using downward arrow key. Thanks, ${link('https://community.anytype.io/t/add-link-menu-first-item-is-always-skipped-keyboard-navigation/18815', 'siousu')}!`),
+	bullet(`Source relation now opens correctly from featured relations`),
+	bullet(`Relation filter in Graph fixed to display Objects connected by Relation only. Thanks, ${link('https://community.anytype.io/t/graph-doesnt-show-all-objects-connected-by-relation/18920', 'Code-Jack')}!`),
+	bullet(`Text select with keyboard command now includes last character in selection. Thanks, ${link('https://community.anytype.io/t/selecting-text-with-the-arrow-keys-last-typed-character-is-missed-in-the-selection/18507', 'Code-Jack')}!`),
+	bullet(`Contents inside closed toggles now being selected when copying or moving. Thanks, ${link('https://community.anytype.io/t/contents-not-selected-inside-collapsed-toggle-blocks-when-copying-or-moving/18857', 'yuriy144')}!`),
+	bullet(`Content can now be dragged and dropped into empty toggles`),
+	bullet(`Link and bookmark cards no longer resizing when leaving and returning to an object. Thanks, ${link('https://community.anytype.io/t/link-preview-as-card-with-page-cover-in-columns-dont-keep-larger-size-after-leaving-the-object/16642', 'nathan.connor')}!`),
+	bullet(`Inline set & collection titles no longer being cut-off. Thanks, ${link('https://community.anytype.io/t/collections-title-gets-cut-out-after-a-few-characters/16190', 'Lixz')}!`),
+	bullet(`Cursor no longer jumping when using backspace in lines that contain inline @mentions. Thanks, ${link('https://community.anytype.io/t/using-backspace-on-a-line-with-multiple-links-is-causing-issues/19135', 'tomshreds')}!`),
+
+	div(),
+	// --------------------------------------------//
+
+	h1(`Release 0.39.0 - Webclipper, Files as Objects and Experience Gallery Galore!`),
 	text(`Midwinter greetings, Anytypers! As we chug along towards multiplayer, we’re excited to bring you another release packed with some long-anticipated features. We hope you’ll enjoy this update and as always, look forward to hearing your feedback!`),
 
 	h2(`💎 Highlights of this Release:`),
@@ -97,9 +167,9 @@ export default [
 	bullet(`Github gist`),
 	bullet(`Graphviz diagrams`),
 	bullet(`CodePen`),
-	bullet(`Sketchfab models (Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!)`),
-	bullet(`Kroki diagrams (Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!)`),
-	bullet(`Bilibili videos (Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!)`),
+	bullet(`Sketchfab models. Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!`),
+	bullet(`Kroki diagrams. Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!`),
+	bullet(`Bilibili videos. Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!`),
 
 	h2(`⚡ Quality-of-Life Improvements:`),
 
@@ -448,6 +518,7 @@ export default [
 	div(),
 	// --------------------------------------------//
 
+	/*
 	h2(`Release 0.33.0 - Enter the Void 😶‍🌫️`),
 
 	text(`After an enormous pre-beta launch, we're following up this month with an update to inject some magic into our onboarding experience.`),
@@ -490,8 +561,6 @@ export default [
 
 	div(),
 	// --------------------------------------------//
-
-	/*
 
 	h1(`Release 0.32.0: Welcome to the Space Jam 🌌`),
 	text(`Well folks, this is the release. THE release which integrates our Anysync protocol, introduces spaces to the anyverse, and opens the path towards multiplayer mode and the browser-like experience we wish to introduce. We are incredibly thankful to all @nightlytypes and new beta users who bravely tested multiple migrations and pre-release versions to help us roll out a polished product to the rest of our community.`),

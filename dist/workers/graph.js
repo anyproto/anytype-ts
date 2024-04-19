@@ -14,7 +14,7 @@ const util = new Util();
 
 // CONSTANTS
 
-const transformThreshold = 1.5;
+const transformThreshold = 1;
 const transformThresholdHalf = transformThreshold / 2;
 const delayFocus = 1000;
 
@@ -37,10 +37,10 @@ const forceProps = {
 	},
 	charge: {
 		strength: -250,
-		distanceMax: 300,
+		distanceMax: 1000,
 	},
 	link: {
-		distance: 50,
+		distance: 100,
 	},
 	forceX: {
 		strength: 0.1,
@@ -99,7 +99,7 @@ init = (param) => {
 	ctx.lineCap = 'round';
 	ctx.fillStyle = data.colors.bg;
 	
-	transform = d3.zoomIdentity.translate(0, 0).scale(1.5);
+	transform = d3.zoomIdentity.translate(0, 0).scale(1);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
 
@@ -108,21 +108,13 @@ init = (param) => {
 	simulation.on('tick', () => redraw());
 	simulation.tick(100);
 
-	setTimeout(() => {
-		root = getNodeById(rootId);
+	root = getNodeById(rootId);
 
-		let x = width / 2;
-		let y = height / 2;
+	const x = root ? root.x : width / 2;
+	const y = root ? root.y : height / 2;
 
-		if (root) {
-			x = root.x;
-			y = root.y;
-		};
-
-		transform = Object.assign(transform, getCenter(x, y));
-		send('onTransform', { ...transform });
-		redraw();
-	}, 100);
+	transform = Object.assign(transform, getCenter(x, y));
+	send('onTransform', { ...transform });
 };
 
 initTheme = (theme) => {
@@ -377,7 +369,7 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
-	if (showName && (transform.k >= transformThreshold)) {
+	if (showName) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 

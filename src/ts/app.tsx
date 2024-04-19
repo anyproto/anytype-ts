@@ -261,7 +261,7 @@ class App extends React.Component<object, State> {
 
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
-		Renderer.on('route', (e: any, route: string) => UtilRouter.go(route, {}));
+		Renderer.on('route', (e: any, route: string) => this.onRoute(route));
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
@@ -359,8 +359,10 @@ class App extends React.Component<object, State> {
 						if (account) {
 							authStore.accountSet(account);
 							commonStore.configSet(account.config, false);
+
 							UtilData.onInfo(account.info);
 							UtilData.onAuth({}, cb);
+							UtilData.onAuthOnce();
 						};
 					});
 				});
@@ -448,7 +450,7 @@ class App extends React.Component<object, State> {
 				bgColor: 'green',
 				title: translate('popupConfirmUpdatePromptTitle'),
 				text: translate('popupConfirmUpdatePromptText'),
-				textConfirm: translate('popupConfirmUpdatePromptOk'),
+				textConfirm: translate('commonUpdate'),
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateDownload');
@@ -513,6 +515,14 @@ class App extends React.Component<object, State> {
 			total: progress.total,
 			isUnlocked: true,
 		});
+	};
+
+	onRoute (route: string) {
+		if (keyboard.isMain()) {
+			UtilRouter.go(route, {});
+		} else {
+			commonStore.redirectSet(route);
+		};
 	};
 
 	onSpellcheck (e: any, misspelledWord: string, dictionarySuggestions: string[], x: number, y: number, rect: any) {

@@ -41,6 +41,7 @@ class Analytics {
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
 		menuSystem: 'MenuSystem',
+		menuHelp: 'MenuHelp',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
@@ -59,7 +60,7 @@ class Analytics {
 
 	isAllowed (): boolean {
 		const { config } = commonStore;
-		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
+		return !(config.sudo || [ 'alpha' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
 	};
 	
 	init (options?: any) {
@@ -150,6 +151,11 @@ class Analytics {
 	removeContext () {
 		Storage.delete(KEY_CONTEXT);
 		Storage.delete(KEY_ORIGINAL_ID);
+	};
+
+	setTier (tier: I.TierType) {
+		this.instance.setUserProperties({ tier: I.TierType[tier] });
+		this.log(`[Analytics].setTier: ${I.TierType[tier]}`);
 	};
 
 	event (code: string, data?: any) {

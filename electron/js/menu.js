@@ -378,7 +378,7 @@ class MenuManager {
 				}
 			},
 			{ 
-				label: Util.translate('electronMenuVaultSettings'), click: () => { 
+				label: Util.translate('electronMenuAccountSettings'), click: () => { 
 					this.winShow(); 
 					this.openSettings(''); 
 				}

@@ -103,7 +103,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const height = node.height();
 		const theme = commonStore.getThemeClass();
 
-		this.zoom = d3.zoom().scaleExtent([ 0.2, 10 ]).on('zoom', e => this.onZoom(e));
+		this.zoom = d3.zoom().scaleExtent([ 0.05, 10 ]).on('zoom', e => this.onZoom(e));
 		this.edges = (data.edges || []).map(this.edgeMapper);
 		this.nodes = (data.nodes || []).map(this.nodeMapper);
 
@@ -139,7 +139,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			on('end', (e: any, d: any) => this.onDragEnd(e))
 		)
 		.call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1.5))
+		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1))
 		.on('click', (e: any) => {
 			const { local } = commonStore.graph;
 			const [ x, y ] = d3.pointer(e);
@@ -451,7 +451,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onContextSpaceClick (param: any, data: any) {
-		if (!UtilSpace.canParticipantWrite()) {
+		if (!UtilSpace.canMyParticipantWrite()) {
 			return;
 		};
 

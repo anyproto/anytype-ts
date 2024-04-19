@@ -69,13 +69,19 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								placeholder={translate('defaultNamePage')}
 							/>
 						</div>
-
-						<Label
-							className="spaceAccessType"
-							text={translate(`spaceAccessType${I.SpaceType.Private}`)}
-							onMouseEnter={onSpaceTypeTooltip}
-							onMouseLeave={e => Preview.tooltipHide(false)}
-						/>
+						<div className="info">
+							<Label
+								className="infoLabel spaceAccessType"
+								text={translate(`spaceAccessType${I.SpaceType.Private}`)}
+							/>
+							<div className="bullet" />
+							<Label 
+								className="infoLabel withTooltip"
+								text={translate('popupSettingsSpaceIndexInfoLabel')} 
+								onMouseEnter={onSpaceTypeTooltip}
+								onMouseLeave={e => Preview.tooltipHide(false)}
+							/>
+						</div>
 					</div>
 				</div>
 

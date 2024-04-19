@@ -8,7 +8,7 @@ import { commonStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
-	loading: boolean;
+	isLoading: boolean;
 };
 
 const HEIGHT_SECTION = 26;
@@ -20,7 +20,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	_isMounted = false;
 	node: any = null;
 	state = {
-		loading: false,
+		isLoading: false,
 	};
 	refFilter: any = null;
 	refList: any = null;
@@ -45,7 +45,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 	
 	render () {
-		const { loading } = this.state;
+		const { isLoading } = this.state;
 		const filter = this.getFilter();
 		const items = this.getItems();
 
@@ -135,7 +135,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				ref={node => this.node = node}
 				className="wrap"
 			>
-				{loading ? <Loader id="loader" /> : ''}
+				{isLoading ? <Loader id="loader" /> : ''}
 				
 				<div className="head">
 					<Filter 
@@ -148,11 +148,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					/>
 				</div>
 
-				{!items.length && !loading ? (
+				{!items.length && !isLoading ? (
 					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 				
-				{this.cache && items.length && !loading ? (
+				{this.cache && items.length && !isLoading ? (
 					<div key="items" className="items left">
 						<InfiniteLoader
 							rowCount={items.length + 1}
@@ -374,7 +374,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		];
 
 		if (clear) {
-			this.setState({ loading: true });
+			this.setState({ isLoading: true });
 		};
 
 		UtilData.search({
@@ -385,7 +385,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			limit: !filter && clear ? 8 : Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 				return;
 			};
 
@@ -400,7 +400,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 			} else {
 				this.forceUpdate();
 			};
@@ -413,7 +413,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
 		const filter = this.getFilter();
 		const lang = Constant.default.interfaceLang;
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		let name = '';
 		if (filter) {

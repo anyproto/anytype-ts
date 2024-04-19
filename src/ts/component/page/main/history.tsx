@@ -26,7 +26,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	
 	version: I.HistoryVersion = null;
 	refHeader: any = null;
-	refFooter: any = null;
 	scrollLeft = 0;
 	scrollRight = 0;
 	lastId = '';
@@ -156,7 +155,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					</div>
 				</div>
 
-				<Footer component="mainObject" ref={ref => this.refFooter = ref} {...this.props} />
+				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
 	};
@@ -379,12 +378,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const rootId = this.getRootId();
 
 		C.HistoryShowVersion(rootId, id, (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true });
-				} else {
-					UtilSpace.openDashboard('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 

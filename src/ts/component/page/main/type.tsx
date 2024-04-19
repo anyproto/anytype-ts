@@ -54,7 +54,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const object = detailStore.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
 		const templates = dbStore.getRecordIds(subIdTemplate, '');
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !UtilObject.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
@@ -96,7 +96,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		];
 
 		if (!isFileType) {
-			columns.push({ relationKey: 'creator', name: translate('pageMainTypeOwner'), isObject: true });
+			columns.push({ relationKey: 'creator', name: translate('commonOwner'), isObject: true });
 		};
 
 		const ItemRelation = (item: any) => (
@@ -258,12 +258,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		this.setState({ isLoading: true });
 
 		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true, isLoading: false });
-				} else {
-					UtilSpace.openDashboard('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -273,20 +268,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				return;
 			};
 
+			this.refHeader?.forceUpdate();
+			this.refHead?.forceUpdate();
+			this.refControls?.forceUpdate();			
 			this.setState({ isLoading: false });
 			this.loadTemplates();
-
-			if (this.refHeader) {
-				this.refHeader.forceUpdate();
-			};
-			if (this.refHead) {
-				this.refHead.forceUpdate();
-			};
-			if (this.refControls) {
-				this.refControls.forceUpdate();
-			};
-
-			
 		});
 	};
 

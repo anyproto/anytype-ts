@@ -5,6 +5,7 @@
 
     .popup {
         .innerWrap { box-shadow: 0px 0px 0px 1px var(--color-bg-secondary); }
+		#loader { background: rgba(23, 23, 23, 0.5); }
     }
 
     /* PopupSettings */
@@ -92,11 +93,17 @@
 
 		.side.right.tabMembership {
 			.slide { background: var(--color-shape-tertiary) !important; }
-			.slide {
-				.illustration.slide0 { background-image: url('#{$themePath}/icon/payment/slide0.svg'); }
-				.illustration.slide1 { background-image: url('#{$themePath}/icon/payment/slide1.svg'); }
-				.illustration.slide2 { background-image: url('#{$themePath}/icon/payment/slide2.svg'); }
-				.illustration.slide3 { background-image: url('#{$themePath}/icon/payment/slide3.svg'); }
+			.slide.c0 {
+				.illustration { background: url('#{$themePath}/icon/payment/slide0.svg'); }
+			}
+			.slide.c1 {
+				.illustration { background: url('#{$themePath}/icon/payment/slide1.svg'); }
+			}
+			.slide.c2 {
+				.illustration { background: url('#{$themePath}/icon/payment/slide2.svg'); }
+			}
+			.slide.c3 {
+				.illustration { background: url('#{$themePath}/icon/payment/slide3.svg'); }
 			}
 			.tiers {
 				.tier { background: var(--color-shape-tertiary) !important; }
@@ -129,7 +136,12 @@
 
 	.popup.popupUsecase {
 		.page.pageList {
+			.banner { color: var(--color-text-inversion); }
+
+			.categories { background: var(--color-shape-tertiary); }
 			.categories {
+				.item { border-color: var(--color-shape-primary); }
+				.item.hl { color: var(--color-text-inversion); }
 				.item:hover, .item.active { background: var(--color-control-accent); color: var(--color-text-inversion); }
 				.item:hover, .item.active {
 					.icon.heart { background-image: url('#{$themePath}/icon/popup/usecase/heart1.svg'); }
@@ -161,6 +173,11 @@
 		.icon.updated { background-image: url('#{$themePath}/icon/popup/confirm/updated.svg'); }
 		.icon.error { background-image: url('#{$themePath}/icon/popup/confirm/error.svg'); }
 		.icon.confirm { background-image: url('#{$themePath}/icon/popup/confirm/confirm.svg'); }
+	}
+
+	.popup.popupConfirm.welcome {
+		.innerWrap { color: var(--color-text-inversion); }
+		.button.black { background: var(--color-bg-primary); color: var(--color-text-primary); }
 	}
 
 	/* PopupAbout */

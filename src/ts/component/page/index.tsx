@@ -231,47 +231,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
-		this.dashboardOnboardingCheck();
 		Onboarding.start(UtilCommon.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
-		
-		if (!isPopup) {
-			window.setTimeout(() => {
-				if (!isMain) {
-					return;
-				};
-
-				Survey.check(I.SurveyType.Register);
-				Survey.check(I.SurveyType.Object);
-				//Survey.check(I.SurveyType.Pmf);
-			}, popupStore.getTimeout());
-		};
-	};
-
-	dashboardOnboardingCheck () {
-		const home = UtilSpace.getDashboard();
-		const { id } = this.getMatchParams();
-		const isPopup = keyboard.isPopup();
-
-		if (!home || !id || (home.id != id) || isPopup) {
-			return;
-		};
-
-		if ([ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(home.id)) {
-			return;
-		};
-
-		if (!Onboarding.isCompleted('dashboard')) {
-			Onboarding.start('dashboard', false, false);
-		} else 
-		if (!$('#navigationPanel').hasClass('hide')) {
-			if (!Onboarding.isCompleted('space')) {
-				Onboarding.start('space', false, false);
-			} else
-			if (!Onboarding.isCompleted('quickCapture')) {
-				Onboarding.start('quickCapture', false, false);
-			};
-		};
 	};
 
 	unbind () {

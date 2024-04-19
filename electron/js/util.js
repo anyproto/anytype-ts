@@ -130,12 +130,16 @@ class Util {
 			try {
 				content = content.replace(/'(file:\/\/[^']+)'/g, function (s, p, o) {
 					const a = p.split('app.asar/dist/');
-					let name = a[1].split('/');
 
+					let name = a[1].split('/');
 					name = name[name.length - 1];
 
 					const src = p.replace('file://', '').replace(/\?.*/, '').replace(/\/app.asar\//g, '/app.asar.unpacked/');
 					const dst = path.join(filesPath, name).replace(/\?.*/, '');
+
+					console.log(src);
+					console.log(dst);
+					console.log(filesPath);
 
 					fs.copyFileSync(src, dst);
 					return `'./${fn}/${name}'`;

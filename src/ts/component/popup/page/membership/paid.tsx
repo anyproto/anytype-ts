@@ -27,13 +27,13 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onPay = this.onPay.bind(this);
+		this.onSubmit = this.onSubmit.bind(this);
 	};
 
 	render() {
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const globalName = this.getName();
 		const { status, statusText } = this.state;
 		const tierItem = UtilData.getMembershipTier(tier);
 
@@ -41,28 +41,40 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 			return null;
 		};
 
-		const { namesCount } = tierItem;
-		const period = tierItem.period == I.MembershipPeriod.Period1Year ? 
-			translate('popupSettingsMembershipPerYear') : 
-			UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), tierItem.period);
+		const { period } = tierItem;
+		const { membership } = authStore;
+		const { name, nameType } = membership;
+
+		let periodText = '';
+		let labelText = '';
+
+		if (period) {
+			if (period == 1) {
+				periodText = translate('popupSettingsMembershipPerYear');
+				labelText = translate('popupMembershipPaidTextPerYear');
+			} else {
+				periodText = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+				labelText = UtilCommon.sprintf(translate('popupMembershipPaidTextPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+			};
+		};
 
 		return (
-			<div className="anyNameForm">
-				{namesCount ? (
+			<form className="anyNameForm" onSubmit={this.onSubmit}>
+				{tierItem.namesCount ? (
 					<React.Fragment>
 						<Title text={translate(`popupMembershipPaidTitle`)} />
-						<Label text={translate(`popupMembershipPaidText`)} />
+						<Label text={labelText} />
 
 						<div className="inputWrapper">
 							<Input
 								ref={ref => this.refName = ref}
-								value={globalName}
+								value={name}
 								onKeyUp={this.onKeyUp}
-								readonly={!!globalName}
-								className={globalName ? 'disabled' : ''}
+								readonly={!!name}
+								className={name ? 'disabled' : ''}
 								placeholder={translate(`popupMembershipPaidPlaceholder`)}
 							/>
-							{!globalName ? <div className="ns">{Constant.anyNameSpace}</div> : ''}
+							<div className="ns">{Constant.namespace[nameType]}</div>
 						</div>
 
 						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
@@ -71,12 +83,12 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 				<div className="priceWrapper">
 					{tierItem.price ? <span className="price">{`$${tierItem.price}`}</span> : ''}
-					{period}
+					{periodText}
 				</div>
 
-				<Button onClick={() => this.onPay(I.PaymentMethod.Card)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
+				<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
 				{/*<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />*/}
-			</div>
+			</form>
 		);
 	};
 
@@ -147,6 +159,12 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		this.refButtonCrypto?.setDisabled(v);
 	};
 
+	onSubmit (e: any) {
+		e.preventDefault();
+
+		this.onPay(I.PaymentMethod.Stripe);
+	};
+
 	onPay (method: I.PaymentMethod) {
 		const { param } = this.props;
 		const { data } = param;
@@ -155,7 +173,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const tierItem = UtilData.getMembershipTier(tier);
 		const { namesCount } = tierItem;
 		const name = globalName || !namesCount ? '' : this.refName.getValue();
-		const refButton = method == I.PaymentMethod.Card ? this.refButtonCard : this.refButtonCrypto;
+		const refButton = method == I.PaymentMethod.Stripe ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);
 
@@ -176,7 +194,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	getName () {
-		return String(authStore.membership?.requestedAnyName || '');
+		return String(authStore.membership?.name || '');
 	};
 
 });

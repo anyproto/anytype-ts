@@ -175,12 +175,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		this.setState({ isDeleted: false, isLoading: true });
 
 		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true, isLoading: false });
-				} else {
-					UtilSpace.openDashboard('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -190,18 +185,10 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				return;
 			};
 
+			this.refHeader?.forceUpdate();
+			this.refHead?.forceUpdate();
+			this.refControls?.forceUpdate();
 			this.setState({ isLoading: false });
-
-			if (this.refHeader) {
-				this.refHeader.forceUpdate();
-			};
-			if (this.refHead) {
-				this.refHead.forceUpdate();
-			};
-			if (this.refControls) {
-				this.refControls.forceUpdate();
-			};
-
 			this.resize();
 		});
 	};
@@ -279,7 +266,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	isReadonly () {
-		return !UtilSpace.canParticipantWrite();
+		return !UtilSpace.canMyParticipantWrite();
 	};
 
 	resize () {

@@ -132,6 +132,7 @@ html.printMedia.withPopup {
 
 @media (max-width: 500px) {
 	html.printMedia.save {
-		#editorWrapper { width: 100% !important; margin: 0px 16px; }
+		#editorWrapper { width: calc(100% - 32px) !important; margin: 0px 16px; padding-left: 0px; }
+		.blocks { width: calc(100% + 48px) !important; }
 	}
 }

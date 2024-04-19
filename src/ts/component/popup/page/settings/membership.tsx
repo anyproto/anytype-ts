@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, translate, UtilCommon, UtilDate, analytics } from 'Lib';
+import { I, translate, UtilCommon, UtilDate, analytics, Action, keyboard } from 'Lib';
 import { popupStore, authStore, commonStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
@@ -23,9 +23,9 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		const { membership } = authStore;
 		const { membershipTiers } = commonStore;
 		const links = [
-			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpPrivacy' },
+			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpMembershipDetails' },
 			{ url: Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
-			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpPrivacyTerms' },
+			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
 		];
 
 		const SlideItem = (slide) => (
@@ -59,9 +59,13 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				buttonText = translate('popupSettingsMembershipManage');
 			} else 
 			if (item.period) {
-				period = item.period == I.MembershipPeriod.Period1Year ? 
-					translate('popupSettingsMembershipPerYear') : 
-					UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), item.period);
+				if (item.period) {
+					if (item.period == 1) {
+						period = translate('popupSettingsMembershipPerYear');
+					} else {
+						period = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), item.period, UtilCommon.plural(item.period, translate('pluralYear')));
+					};
+				};
 			};
 
 			return (
@@ -150,10 +154,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	onContact () {
-		const { account } = authStore;
-		const url = Url.membershipSpecial.replace(/\%25accountId\%25/g, account.id);
-
-		UtilCommon.onUrl(url);
+		keyboard.onMembershipUpgrade();
 		analytics.event('MenuHelpContact', { route: analytics.route.settingsMembership });
 	};
 
