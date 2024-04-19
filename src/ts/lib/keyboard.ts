@@ -792,11 +792,14 @@ class Keyboard {
 			isDisabled = [ 'set', 'store', 'graph' ].includes(popupMatch.params.action);
 		};
 
+		console.log('onSearchMenu', value, isDisabled);
+
 		if (isDisabled) {
 			return;
 		};
 
 		menuStore.closeAll([ 'blockContext' ], () => {
+			console.log(123);
 			menuStore.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,

@@ -940,11 +940,12 @@ class UtilData {
 		};
 
 		C.MembershipGetStatus(true, (message: any) => {
-			if (message.membership) {
-				const { status, tier } = message.membership;
+			const { membership } = message;
 
-				authStore.membershipSet(message.membership);
-				analytics.setTier(tier);
+			if (membership) {
+				const { status, tier } = membership;
+
+				authStore.membershipSet(membership);
 				
 				if (status && (status == I.MembershipStatus.Finalization)) {
 					popupStore.open('membershipFinalization', { data: { tier } });
@@ -952,7 +953,7 @@ class UtilData {
 			};
 
 			if (callBack) {
-				callBack(message.membership);
+				callBack(membership);
 			};
 		});
 	};
