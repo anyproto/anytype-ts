@@ -1849,7 +1849,7 @@
 	"errorMembershipIsNameValid8": "Not logged in",
 	"errorMembershipIsNameValid9": "Unable to connect to payment node",
 	"errorMembershipIsNameValid10": "Cache error",
-	"errorMembershipIsNameValid11": "Name is reserved",
+	"errorMembershipIsNameValid11": "Name cannot be taken",
 
 	"errorMembershipGetPaymentUrl4": "Unable to connect to payment node",
 	"errorMembershipGetPaymentUrl6": "Tier not found",
