@@ -1838,6 +1838,8 @@
 
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
 
+	"errorNameServiceResolveName3": "Please connect to the internet",
+
 	"errorMembershipGetStatus6": "Membership not found",
 	"errorMembershipGetStatus7": "Membership has wrong state",
 
