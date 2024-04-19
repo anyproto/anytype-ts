@@ -49,25 +49,28 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 				return;
 			};
 
-			UtilSpace.openDashboard('route');
+			UtilSpace.openDashboard('route', {
+				onRouteChange: () => {
+					popupStore.closeAll(null, () => {
+						const { status, tier } = membership;
 
-			popupStore.closeAll(null, () => {
-				const { status, tier } = membership;
-				if (status && (status == I.MembershipStatus.Finalization)) {
-					popupStore.open('membershipFinalization', { data: { tier } });
-				} else {
-					popupStore.open('membership', {
-						onClose: () => {
-							window.setTimeout(() => popupStore.open('settings', { data: { page: 'membership' } }), Constant.delay.popup * 2);
-						},
-						data: {
-							tier: membership.tier,
-							success: true,
-						},
+						if (status && (status == I.MembershipStatus.Finalization)) {
+							popupStore.open('membershipFinalization', { data: { tier } });
+						} else {
+							popupStore.open('membership', {
+								onClose: () => {
+									window.setTimeout(() => popupStore.open('settings', { data: { page: 'membership' } }), Constant.delay.popup * 2);
+								},
+								data: {
+									tier: membership.tier,
+									success: true,
+								},
+							});
+
+							analytics.event('ChangePlan', { params: { tier }});
+						};
 					});
-
-					analytics.event('ChangePlan', { params: { tier }});
-				};
+				},
 			});
 		});
 
