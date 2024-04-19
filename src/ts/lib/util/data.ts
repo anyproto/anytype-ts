@@ -1,4 +1,4 @@
-import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action } from 'Lib';
+import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
@@ -212,6 +212,9 @@ class UtilData {
 					if (!bgColor) {
 						Storage.set('bgColor', 'orange');
 					};
+
+					Survey.check(I.SurveyType.Register);
+					Survey.check(I.SurveyType.Object);
 
 					if (callBack) {
 						callBack();
