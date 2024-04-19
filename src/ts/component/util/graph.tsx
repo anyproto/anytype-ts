@@ -139,7 +139,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			on('end', (e: any, d: any) => this.onDragEnd(e))
 		)
 		.call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1.5))
+		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1))
 		.on('click', (e: any) => {
 			const { local } = commonStore.graph;
 			const [ x, y ] = d3.pointer(e);
