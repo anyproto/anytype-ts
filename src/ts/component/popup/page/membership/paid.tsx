@@ -34,7 +34,6 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const globalName = this.getName();
 		const { status, statusText } = this.state;
 		const tierItem = UtilData.getMembershipTier(tier);
 
@@ -43,6 +42,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		};
 
 		const { period } = tierItem;
+		const { membership } = authStore;
+		const { name, nameType } = membership;
 
 		let periodText = '';
 		let labelText = '';
@@ -67,13 +68,13 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 						<div className="inputWrapper">
 							<Input
 								ref={ref => this.refName = ref}
-								value={globalName}
+								value={name}
 								onKeyUp={this.onKeyUp}
-								readonly={!!globalName}
-								className={globalName ? 'disabled' : ''}
+								readonly={!!name}
+								className={name ? 'disabled' : ''}
 								placeholder={translate(`popupMembershipPaidPlaceholder`)}
 							/>
-							{!globalName ? <div className="ns">{Constant.anyNameSpace}</div> : ''}
+							<div className="ns">{Constant.namespace[nameType]}</div>
 						</div>
 
 						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
@@ -193,7 +194,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	getName () {
-		return String(authStore.membership?.requestedAnyName || '');
+		return String(authStore.membership?.name || '');
 	};
 
 });

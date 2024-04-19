@@ -41,8 +41,9 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 			return null;
 		};
 
+		const { membership } = authStore;
 		const { period } = tierItem;
-		const globalName = this.getName();
+		const { name, nameType } = membership;
 
 		let labelText = '';
 		if (period) {
@@ -61,27 +62,25 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 				<div className="inputWrapper">
 					<Input
 						ref={ref => this.refName = ref}
-						value={globalName}
+						value={name}
 						onKeyUp={this.onKeyUp}
-						readonly={!!globalName}
-						className={globalName ? 'disabled' : ''}
+						readonly={!!name}
+						className={name ? 'disabled' : ''}
 						placeholder={translate(`popupMembershipPaidPlaceholder`)}
 					/>
-					{!globalName ? <div className="ns">{Constant.anyNameSpace}</div> : ''}
+					<div className="ns">{Constant.namespace[nameType]}</div>
 				</div>
 
 				<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
-
 				<Button ref={ref => this.refButton = ref} onClick={this.onConfirm} text={translate('commonConfirm')} />
-
 				{isLoading ? <Loader /> : ''}
 			</div>
 		);
 	};
 
 	componentDidMount () {
-		const globalName = this.getName();
-		if (!globalName) {
+		const name = this.getName();
+		if (!name) {
 			this.refButton.setDisabled(true);
 		};
 	};
@@ -154,7 +153,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 	};
 
 	getName () {
-		return String(authStore.membership?.requestedAnyName || '');
+		return String(authStore.membership?.name || '');
 	};
 
 });

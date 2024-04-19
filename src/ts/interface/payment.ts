@@ -53,7 +53,8 @@ export interface Membership {
 	nextTier?: TierType;
 	nextTierEnds?: number;
 	paymentMethod?: PaymentMethod,
-	requestedAnyName?: string;
+	name?: string;
+	nameType?: NameType;
 	userEmail?: string;
 	subscribeToNewsletter?: boolean;
 	isNone?: boolean;

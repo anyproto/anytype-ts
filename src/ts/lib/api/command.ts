@@ -1878,27 +1878,6 @@ export const NameServiceResolveName = (name: string, callBack?: (message: any) =
 	dispatcher.request(NameServiceResolveName.name, request, callBack);
 };
 
-export const NameServiceResolveAnyId = (id: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.NameService.ResolveAnyId.Request();
-
-	request.setAnyid(id);
-
-	dispatcher.request(NameServiceResolveAnyId.name, request, callBack);
-};
-
-export const NameServiceResolveSpaceId = (id: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.NameService.ResolveSpaceId.Request();
-
-	request.setSpaceid(id);
-
-	dispatcher.request(NameServiceResolveSpaceId.name, request, callBack);
-};
-
-export const NameServiceUserAccountGet = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
-	dispatcher.request(NameServiceUserAccountGet.name, request, callBack);
-};
-
 // ---------------------- PAYMENTS ---------------------- //
 
 export const MembershipGetStatus = (noCache: boolean, callBack?: (message: any) => void) => {

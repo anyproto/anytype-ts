@@ -647,15 +647,9 @@ class Keyboard {
 
 	onMembershipUpgrade () {
 		const { account, membership } = authStore;
-		const anyName = membership?.requestedAnyName ? membership?.requestedAnyName : account.id;
-		if (!anyName) {
-			return;
-		};
+		const name = membership.name ? membership.name : account.id;
 
-		let url = Url.membershipUpgrade;
-		url = url.replace(/\%25anyName\%25/g, anyName);
-
-		Renderer.send('urlOpen', url);
+		Renderer.send('urlOpen', Url.membershipUpgrade.replace(/\%25name\%25/g, name));
 	};
 
 	onTechInfo () {
