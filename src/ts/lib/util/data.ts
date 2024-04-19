@@ -944,6 +944,7 @@ class UtilData {
 				const { status, tier } = message.membership;
 
 				authStore.membershipSet(message.membership);
+				analytics.setTier(tier);
 				
 				if (status && (status == I.MembershipStatus.Finalization)) {
 					popupStore.open('membershipFinalization', { data: { tier } });

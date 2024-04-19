@@ -153,6 +153,11 @@ class Analytics {
 		Storage.delete(KEY_ORIGINAL_ID);
 	};
 
+	setTier (tier: I.TierType) {
+		this.instance.setUserProperties({ tier: I.TierType[tier] });
+		this.log(`[Analytics].setTier: ${I.TierType[tier]}`);
+	};
+
 	event (code: string, data?: any) {
 		data = data || {};
 
