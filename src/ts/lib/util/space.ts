@@ -1,6 +1,7 @@
 import { I, UtilCommon, UtilData, UtilObject, Storage, translate } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
+import Url from 'json/url.json';
 
 class UtilSpace {
 
@@ -168,8 +169,7 @@ class UtilSpace {
 	};
 
 	getInviteLink (cid: string, key: string) {
-		//return UtilCommon.sprintf(Url.invite, cid, key);
-		return `${Constant.protocol}://invite/?cid=${cid}&key=${key}`;
+		return UtilCommon.sprintf(Url.invite, cid, key);
 	};
 
 };
