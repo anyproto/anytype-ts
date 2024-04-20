@@ -57,7 +57,7 @@ class Footer extends React.Component<Props> {
 			element: '#button-help',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
-			offsetY: -4,
+			offsetY: () => -($('#notifications').height() + 4),
 		});
 	};
 
