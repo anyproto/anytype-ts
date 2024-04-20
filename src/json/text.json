@@ -396,6 +396,8 @@
 	"pageMainStoreRelationsEmpty": "<b>Your Relation list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above",
 	"pageMainStoreMyTypes": "My Types",
 	"pageMainStoreMyRelations": "My Relations",
+	"pageMainStoreBannerTitle": "What can I build with Anytype?",
+	"pageMainStoreBannerButton": "Explore",
 
 	"pageMainTypeRecommendedLayout": "Recommended layout",
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
