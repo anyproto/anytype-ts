@@ -213,25 +213,25 @@ export default {
 				{
 					name: translate('onboardingQuickCaptureTitle'),
 					description: translate('onboardingQuickCaptureDescription'),
+					noButton: true,
 					param: {
 						element: '#navigationPanel #button-navigation-plus',
 						classNameWrap: 'fixed',
 						vertical: I.MenuDirection.Top,
 						horizontal: I.MenuDirection.Center,
 						offsetY: -24,
-						noButton: true,
 					}
 				},
 				{
 					name: translate('onboardingSpaceSelectTitle'),
 					description: translate('onboardingSpaceSelectDescription'),
+					noButton: true,
 					param: {
 						element: '#navigationPanel #button-navigation-profile',
 						classNameWrap: 'fixed',
 						vertical: I.MenuDirection.Top,
 						horizontal: I.MenuDirection.Center,
 						offsetY: -24,
-						noButton: true,
 					}
 				},
 				{
@@ -295,11 +295,11 @@ export default {
 			{
 				name: translate('onboardingTypeDeleted1Title'),
 				description: translate('onboardingTypeDeleted1Description'),
+				noButton: true,
 				param: {
 					element: '#block-featuredRelations',
 					offsetY: 10,
 				},
-				noButton: true,
                 buttons: [
                     { text: translate('blockFeaturedTypeMenuChangeType'), action: 'changeType' },
                 ],
@@ -396,6 +396,7 @@ export default {
 				{
 					name: translate('onboardingTemplateSelectTitle'),
 					description: translate('onboardingTemplateSelectDescription'),
+					noButton: true,
 				},
 			],
 
@@ -403,9 +404,30 @@ export default {
 				element: '#headerBanner',
 				horizontal: I.MenuDirection.Center,
 				offsetY: 12,
-				noButton: true,
 			},
 		}
 	),
+
+	space: () => {
+		const width = 505;
+		return {
+			items: [
+				{
+					name: translate('onboardingShareSpaceTitle'),
+					description: translate('onboardingShareSpaceDescription'),
+					video: './img/help/onboarding/share-space.mp4',
+					noButton: true,
+					param: {
+						element: '#widget-space',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Center,
+						horizontal: I.MenuDirection.Right,
+						width,
+						offsetX: -(width + 10),
+					}
+				},
+			],
+		};
+	},
 
 };

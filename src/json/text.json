@@ -1783,6 +1783,9 @@
 	"onboardingQuickCaptureTitle": "Create Object by Selecting Type",
 	"onboardingQuickCaptureDescription": "<p>Pin favorite types, install from Anytype Library, or create new ones from the menu.</p><p>Customize your experience by adjusting click options at Settings > Preferences > Show quick capture menu on.</p>",
 
+	"onboardingShareSpaceTitle": "Introducing shared spaces",
+	"onboardingShareSpaceDescription": "Click on the space widget to open space settings. Here you can share the space and invite members to collaborate!",
+
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
 	"libDataviewView": "View",
