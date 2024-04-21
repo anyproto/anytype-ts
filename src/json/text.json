@@ -1756,7 +1756,7 @@
 	"onboardingTypeDeleted1Description": "If you want to keep using this Object, change this Object Type.",
 
 	"onboardingSourceDeleted1Title": "Please check your Installed Types & Relations",
-	"onboardingSourceDeleted1Description": "Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Marketplace to re-install these entities and continue using your Set.",
+	"onboardingSourceDeleted1Description": "Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Library to re-install these entities and continue using your Set.",
 
 	"onboardingInlineSet1Title": "This is Inline Set",
 	"onboardingInlineSet1Description": "Congratulations! You can embed a Set or Collection and modify it using Filters and Views without altering the original instance.",
