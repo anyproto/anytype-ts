@@ -186,6 +186,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		
 		const { align, content, bgColor, type } = block;
 		const { color, style, targetObjectId } = content;
+		const checkFlag = this.checkFlagByObject(targetObjectId);
 
 		let sections: any[] = [];
 		
@@ -222,8 +223,9 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					continue;
 				};
 
-				hasBookmark = block.isBookmark() ? this.checkFlagByObject(targetObjectId) : false;
-				hasDataview = block.isDataview() ? this.checkFlagByObject(targetObjectId) : false;
+				hasBookmark = block.isBookmark() ? checkFlag : false;
+				hasDataview = block.isDataview() ? checkFlag : false;
+				hasFile = block.isFile() ? checkFlag : false;
 
 				if (!block.canTurnText())		 hasTurnText = false;
 				if (!block.canTurnPage())		 hasTurnObject = false;
@@ -234,7 +236,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
-				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
 				if (!block.isDataview())		 hasDataview = false;
 
@@ -287,8 +288,9 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					continue;
 				};
 
-				hasBookmark = block.isBookmark() ? this.checkFlagByObject(targetObjectId) : false;
-				hasDataview = block.isDataview() ? this.checkFlagByObject(targetObjectId) : false;
+				hasBookmark = block.isBookmark() ? checkFlag : false;
+				hasDataview = block.isDataview() ? checkFlag : false;
+				hasFile = block.isFile() ? checkFlag : false;
 
 				if (!block.canTurnText() || block.isDiv()) {
 					hasTurnText = false;
@@ -298,7 +300,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 				if (!block.canTurnPage())		 hasTurnObject = false;
 				if (!block.isText())			 hasText = false;
-				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
 				if (!block.isDataview())		 hasDataview = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
