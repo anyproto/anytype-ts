@@ -943,8 +943,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
-			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, commonStore.space, message => onSelect(message.details, true));
+			addParam.onClick = (details: any) => {
+				C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, commonStore.space, message => onSelect(message.details, true));
 			};
 		} else {
 			filters = filters.concat([
@@ -953,8 +953,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewSet');
-			addParam.onClick = () => {
-				C.ObjectCreateSet([], {}, '', commonStore.space, message => onSelect(message.details, true));
+			addParam.onClick = (details: any) => {
+				C.ObjectCreateSet([], details, '', commonStore.space, message => onSelect(message.details, true));
 			};
 		};
 
@@ -970,8 +970,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					window.setTimeout(() => this.loadData(message.views[0].id, 0, true), 50);
 				};
 
-				if (isNew) {
-					this.refControls?.refHead?.setEditing(true);
+				if (isNew && this.refControls && this.refControls.refHead) {
+					const ref = this.refControls.refHead;
+					const l = item.name.length;
+
+					ref.setValue(item.name);
+					ref.setRange({ from: l, to: l });
+					ref.setEditing(true);
 				};
 
 				if (isInline) {

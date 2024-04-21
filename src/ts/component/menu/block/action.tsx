@@ -592,16 +592,16 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					name: UtilCommon.sprintf(translate('menuBlockActionsCreateNew'), name),
 				};
 				if (isCollection) {
-					addParam.onClick = () => {
-						C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, () => onCreate());
+					addParam.onClick = (details: any) => {
+						C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, () => onCreate());
 					};
 
 					filters = filters.concat([
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 					]);
 				} else {
-					addParam.onClick = () => {
-						C.ObjectCreateSet([], {}, '', commonStore.space, () => onCreate());
+					addParam.onClick = (details: any) => {
+						C.ObjectCreateSet([], details, '', commonStore.space, () => onCreate());
 					};
 
 					filters = filters.concat([
