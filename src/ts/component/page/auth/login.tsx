@@ -200,10 +200,13 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	onForgot () {
+		const platform = UtilCommon.getPlatform();
+
 		popupStore.open('confirm', {
 			className: 'lostPhrase',
             data: {
-                text: translate('authLoginLostPhrasePopupContent'),
+				title: translate('popupConfirmLostPhraseTitle'),
+                text: translate(`popupConfirmLostPhraseText${platform}`),
 				textConfirm: translate('commonOkay'),
 				canConfirm: true,
 				canCancel: false,

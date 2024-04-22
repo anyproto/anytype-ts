@@ -312,7 +312,6 @@
 
 	"authLoginSubmit": "Enter my Vault",
 	"authLoginLostPhrase": "I've lost the Key",
-	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover your Key for you<\/h1><p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
 
 	"authRegisterTitle": "Add name and profile picture",
 	"authRegisterLabel": "New Profile",
@@ -839,6 +838,11 @@
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
 	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
 	"popupConfirmWelcomeButton": "Show me what I can build",
+
+	"popupConfirmLostPhraseTitle": "Anytype cannot recover your Key for you",
+	"popupConfirmLostPhraseTextWindows": "<p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
+	"popupConfirmLostPhraseTextLinux": "<p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
+	"popupConfirmLostPhraseTextMac": "<p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
@@ -1785,8 +1789,8 @@
 	"onboardingQuickCaptureTitle": "Use Different Object Types",
 	"onboardingQuickCaptureDescription": "Select types for your objects to categorize and connect them.",
 
-	"onboardingShareSpaceTitle": "Introducing shared spaces",
-	"onboardingShareSpaceDescription": "Click on the space widget to open space settings. Here you can share the space and invite members to collaborate!",
+	"onboardingShareSpaceTitle": "Co-create, share and collaborate on Spaces!",
+	"onboardingShareSpaceDescription": "Click the space widget to open space settings. From there, you can share the space and invite members to collaborate.",
 
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",

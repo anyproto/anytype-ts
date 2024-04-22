@@ -14,7 +14,7 @@ export default {
 		param: {
 			element: '#page.isFull #footer #button-help',
 			classNameWrap: 'fixed',
-			className: 'wizard',
+			className: 'isWizard',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			noArrow: true,
@@ -50,7 +50,7 @@ export default {
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
-            className: 'wizard',
+            className: 'isWizard',
             vertical: I.MenuDirection.Top,
             horizontal: I.MenuDirection.Right,
             noArrow: true,
@@ -81,7 +81,7 @@ export default {
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
-            className: 'wizard',
+            className: 'isWizard',
             vertical: I.MenuDirection.Top,
             horizontal: I.MenuDirection.Right,
             noArrow: true,
@@ -111,7 +111,7 @@ export default {
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
-            className: 'wizard',
+            className: 'isWizard',
             vertical: I.MenuDirection.Top,
             horizontal: I.MenuDirection.Right,
             noArrow: true,
@@ -141,7 +141,7 @@ export default {
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
-            className: 'wizard',
+            className: 'isWizard',
             vertical: I.MenuDirection.Top,
             horizontal: I.MenuDirection.Right,
             noArrow: true,
@@ -165,7 +165,7 @@ export default {
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
-            className: 'wizard',
+            className: 'isWizard',
             vertical: I.MenuDirection.Top,
             horizontal: I.MenuDirection.Right,
             noArrow: true,
@@ -420,6 +420,7 @@ export default {
 					noButton: true,
 					param: {
 						element: '#widget-space',
+						className: 'isSpace',
 						classNameWrap: 'fixed',
 						vertical: I.MenuDirection.Center,
 						horizontal: I.MenuDirection.Right,
