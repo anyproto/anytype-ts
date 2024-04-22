@@ -718,7 +718,7 @@
 
 	"popupSettingsSpaceIndexShareShareTitle": "Share space",
 	"popupSettingsSpaceIndexShareShareText": "Generate invite link and share the space with other members",
-	"popupSettingsSpaceIndexShareDefaultText": "Default space can’t be shared. Create a new one to share",
+	"popupSettingsSpaceIndexShareDefaultText": "Entry space can’t be shared. Create a new one to share",
 	"popupSettingsSpaceIndexShareInviteText": "Generate invite link and share the space with other members",
 	"popupSettingsSpaceIndexShareLinkTitle": "Invitation link",
 	"popupSettingsSpaceIndexShareLinkText": "Share this invite link so that others can join your Space",
