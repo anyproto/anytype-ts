@@ -286,7 +286,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 				{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 			];
-			if (UtilData.isAnytypeNetwork() && config.experimental) {
+			if (UtilData.isAnytypeNetwork()) {
 				settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') })
 			};
 

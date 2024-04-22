@@ -1675,7 +1675,7 @@
 	"navigationAccount": "Spaces",
 
 	"spaceAccessType0": "Private Space",
-	"spaceAccessType1": "Default Space",
+	"spaceAccessType1": "Entry Space",
 	"spaceAccessType2": "Shared Space",
 
 	"spaceLast": "Last opened Object",

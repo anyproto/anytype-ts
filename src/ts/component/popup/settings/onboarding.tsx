@@ -24,7 +24,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	render () {
 		const { mode, path, userPath } = this.config;
-		const { interfaceLang, config } = commonStore;
+		const { interfaceLang } = commonStore;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const isDefault = path == UtilCommon.getElectron().defaultPath();
 		const networkModes: any[] = ([
@@ -88,18 +88,16 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 							</div>
 						) : ''}
 
-						{config.experimental ? (
-							<div className="item" onMouseEnter={e => this.onTooltipShow(e, userPath)} onMouseLeave={this.onTooltipHide}>
-								<div onClick={() => this.onPathClick(userPath)}>
-									<Label text={translate('popupSettingsOnboardingStoragePath')} />
-									<Label className="small" text={UtilCommon.shorten(userPath, 32)} />
-								</div>
-								<div className="buttons">
-									<Button className="c28" text={translate('commonChange')} onClick={this.onChangeStorage} />
-									{!isDefault ? <Button className="c28" text={translate('commonReset')} onClick={this.onResetStorage} /> : ''}
-								</div>
+						<div className="item" onMouseEnter={e => this.onTooltipShow(e, userPath)} onMouseLeave={this.onTooltipHide}>
+							<div onClick={() => this.onPathClick(userPath)}>
+								<Label text={translate('popupSettingsOnboardingStoragePath')} />
+								<Label className="small" text={UtilCommon.shorten(userPath, 32)} />
 							</div>
-						) : ''}
+							<div className="buttons">
+								<Button className="c28" text={translate('commonChange')} onClick={this.onChangeStorage} />
+								{!isDefault ? <Button className="c28" text={translate('commonReset')} onClick={this.onResetStorage} /> : ''}
+							</div>
+						</div>
 					</div>
 
 					<div className="buttons">
