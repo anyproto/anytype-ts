@@ -70,8 +70,13 @@
 		}
 	}
 
-	.menu.menuOnboarding.wizard { width: 280px; min-height: 458px; }
-	.menu.menuOnboarding.wizard {
+	.menu.menuOnboarding.isWizard { width: 280px; min-height: 458px; }
+	.menu.menuOnboarding.isWizard {
 		.bottom { position: absolute; bottom: 16px; width: calc(100% - 32px); margin: 0px; }
 	}
+
+	.menu.menuOnboarding.isSpace {
+		video { height: auto; }
+	}
+
 }
