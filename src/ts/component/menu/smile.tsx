@@ -303,8 +303,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			};
 		};
 
-		console.log(tabs, tab);
-
 		return (
 			<div 
 				ref={node => this.node = node}
