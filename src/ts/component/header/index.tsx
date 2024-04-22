@@ -44,12 +44,16 @@ class Header extends React.Component<Props> {
 	};
 	
 	render () {
-		const { component, className, rootId } = this.props;
+		const { component, className, withBanner } = this.props;
 		const Component = Components[component] || null;
 		const cn = [ 'header', component, className ];
 
-		if (![ 'authIndex', 'mainIndex' ].includes(component)) {
+		if (![ 'authIndex' ].includes(component)) {
 			cn.push('isCommon');
+		};
+
+		if (withBanner) {
+			cn.push('withBanner');
 		};
 
 		return (

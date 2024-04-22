@@ -24,10 +24,12 @@
 			width: 16px; height: 16px; position: absolute; right: 16px; top: 17px; background-image: url('~img/icon/menu/onboarding/close.svg');
 		}
 
-		video { margin-top: 12px; border-radius: 4px; border: 1px solid var(--color-shape-secondary); cursor: zoom-in; }
+		video { margin-top: 12px; border-radius: 4px; border: 1px solid var(--color-shape-secondary); cursor: zoom-in; height: 196px; }
 		.confettiCanvas { position: absolute; pointer-events: none; width: 100%;  height: 100%; left: 0; top: 0; }
 		
 		.bottom { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin-top: 20px; }
+		.bottom:empty { display: none; }
+
 		.bottom {
 			.round {
 				display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%;

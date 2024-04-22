@@ -1,34 +1,36 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuSmile { width: 384px; user-select: none; }
+	.menu.menuSmile { width: 404px; user-select: none; }
 	.menu.menuSmile {
 		.content { overflow: visible; padding-bottom: 0px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; }
 		.ReactVirtualized__List { padding: 0px 0px 8px 0px; }
 
 		.head { 
-			color: var(--color-control-active); font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid var(--color-shape-secondary); 
+			color: var(--color-control-active); font-weight: 500; padding: 3px 14px 10px 14px; border-bottom: 1px solid var(--color-shape-secondary); 
 			display: flex; flex-direction: row; gap: 0px 16px;
 		}
 		.head {
-			.btn { display: inline-block; vertical-align: top; transition: $transitionAllCommon; }
-			.btn:last-child { margin-right: 0px; }
-			.btn:hover, .btn.active { color: var(--color-text-primary); }
+			.tab { display: inline-block; vertical-align: top; transition: $transitionAllCommon; @include text-overflow-nw; }
+			.tab:last-child { margin-right: 0px; }
+			.tab:hover, .tab.active { color: var(--color-text-primary); }
 		}
 
-		.body.gallery {
-			.filter.withHead { padding-top: 12px; }
-			.filter {
-				.inner { height: 35px; }
-			}
-		
+		.filter.withHead { padding-top: 12px; }
+		.filter {
+			.inner { height: 35px; }
+		}
+
+		.body.smile, .body.library {
 			.items { height: 238px; }
-			
+		}
+
+		.body.smile {
 			.section { padding: 11px 14px !important; border: 0px; }
 			.section > .name { padding: 0px; margin: 0px; }
 			
-			.row { padding: 0px 12px; display: flex; flex-direction: row; align-items: center; flex-wrap: nowrap; }
+			.row { padding: 0px 12px; display: grid; grid-template-columns: repeat(9, 1fr); }
 			
 			.item { width: 40px; height: 40px; position: relative; border-radius: 6px; padding: 0px; }
 			.item::before { display: none; }
@@ -72,6 +74,19 @@
 				.icon.flags { background-image: url('~img/icon/emoji/flags0.svg'); }
 				.icon.flags.active { background-image: url('~img/icon/emoji/flags1.svg'); }
 			}
+		}
+
+		.body.library {
+			.filter { margin: 0px 0px 7px 0px; }
+
+			.row { padding: 3px 14px; }
+			.row { display: grid; grid-template-columns: repeat(4, 1fr); grid-gap: 0px 8px; }
+
+			.item { padding: 0px; border-radius: 2px; }
+			.item {
+				.img { width: 100%; height: 100%; }
+			}
+			.item.active { background-color: var(--color-shape-highlight-medium); }
 		}
 
 		.body.upload { padding: 16px; }

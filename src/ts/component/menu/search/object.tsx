@@ -451,13 +451,16 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 		};
 
+
+
 		if (item.isAdd) {
+			details = { name: filter, ...details };
+
 			if (addParam.onClick) {
-				addParam.onClick();
+				addParam.onClick(details);
 				close();
 			} else {
 				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
-				details = { name: filter, type: commonStore.type, ...details };
 
 				UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, 'Search', (message: any) => {
 					process(message.details, true);

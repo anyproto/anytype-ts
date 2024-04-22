@@ -94,7 +94,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		if (this.state.isEditing && this.ref) {
 			window.setTimeout(() => { 
 				const l = this.getValue().length;
-				this.ref.setRange(this.range || { from: l, to: l });
+				this.setRange(this.range || { from: l, to: l });
 			}, 15);
 		};
 	};
@@ -186,8 +186,8 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
-			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, (message: any) => { 
+			addParam.onClick = (details: any) => {
+				C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => onCreate(message, true));
 				});
 			};
@@ -198,8 +198,8 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewSet');
-			addParam.onClick = () => {
-				C.ObjectCreateSet([], {}, '', commonStore.space, (message: any) => {
+			addParam.onClick = (details: any) => {
+				C.ObjectCreateSet([], details, '', commonStore.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
 						$(this.node).find('#head-source-select').trigger('click');
 						onCreate(message, true);
@@ -370,6 +370,10 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		UtilObject.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId: block.id } });
 		analytics.event('InlineSetOpenFullscreen');
+	};
+
+	setRange (range: I.TextRange) {
+		this.ref.setRange(range);
 	};
 
 	setEditing (v: boolean) {

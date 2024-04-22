@@ -143,6 +143,7 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	tab?: string;
 	text?: string;
 	layout?: I.ObjectLayout;
+	withBanner?: boolean;
 	renderLeftIcons?: (onOpen?: () => void) => any;
 	renderTabs?: () => any;
 	onTab?: (id: string) => void;
@@ -150,6 +151,8 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	onTooltipShow?: (e: any, text: string, caption?: string) => void;
 	onTooltipHide?: () => void;
 	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;
+	onBanner?: (e: any) => void;
+	onBannerClose?: (e: any) => void;
 };
 
 export interface PageComponent extends RouteComponentProps<any> {

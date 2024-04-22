@@ -1,4 +1,4 @@
-import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey } from 'Lib';
+import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
@@ -215,6 +215,12 @@ class UtilData {
 
 					Survey.check(I.SurveyType.Register);
 					Survey.check(I.SurveyType.Object);
+
+					const space = UtilSpace.getSpaceview();
+
+					if (!space.isPersonal) {
+						Onboarding.start('space', keyboard.isPopup(), false);
+					};
 
 					if (callBack) {
 						callBack();
