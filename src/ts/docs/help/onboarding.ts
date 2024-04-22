@@ -177,17 +177,6 @@ export default {
 
     dashboard: () => {
 		const canWrite = UtilSpace.canMyParticipantWrite();
-		const commonParam = {
-			element: '#page.isFull #footer #button-help',
-			classNameWrap: 'fixed',
-			className: 'wizard',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right,
-			noArrow: true,
-			noClose: true,
-			passThrough: true,
-			offsetY: () => -($('#notifications').height() + 4),
-		};
 
 		return {
 			category: translate('onboardingDashboard'),
@@ -196,24 +185,29 @@ export default {
 				{
 					name: translate('onboardingDashboard1Title'),
 					description: translate('onboardingDashboard1Text'),
-					video: './img/help/onboarding/homepage.mp4',
-					param: commonParam
+					param: {
+						element: '#page.isFull #footer #button-help',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Right,
+						offsetY: () => -($('#notifications').height() + 12),
+					}
 				},
 				{
-					name: translate('onboardingDashboard2Title'),
-					description: translate('onboardingDashboard2Text'),
-					video: './img/help/onboarding/sidebar.mp4',
+					name: translate('onboardingSpaceSelectTitle'),
+					description: translate('onboardingSpaceSelectDescription'),
+					video: './img/help/onboarding/space-s.mp4',
 					param: {
-						...commonParam,
-						element: '#sidebar',
-						horizontal: I.MenuDirection.Left,
-						offsetX: $('#sidebar').width() + 10,
+						element: '#navigationPanel #button-navigation-profile',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Center,
+						offsetY: -24,
 					}
 				},
 				{
 					name: translate('onboardingQuickCaptureTitle'),
 					description: translate('onboardingQuickCaptureDescription'),
-					noButton: true,
 					param: {
 						element: '#navigationPanel #button-navigation-plus',
 						classNameWrap: 'fixed',
@@ -223,15 +217,16 @@ export default {
 					}
 				},
 				{
-					name: translate('onboardingSpaceSelectTitle'),
-					description: translate('onboardingSpaceSelectDescription'),
-					noButton: true,
+					name: translate('onboardingDashboard2Title'),
+					description: translate('onboardingDashboard2Text'),
+					video: './img/help/onboarding/sidebar.mp4',
 					param: {
-						element: '#navigationPanel #button-navigation-profile',
+						element: '#widget-space',
 						classNameWrap: 'fixed',
-						vertical: I.MenuDirection.Top,
-						horizontal: I.MenuDirection.Center,
-						offsetY: -24,
+						vertical: I.MenuDirection.Center,
+						horizontal: I.MenuDirection.Right,
+						width: 288,
+						offsetX: -298,
 					}
 				},
 				{
@@ -242,7 +237,13 @@ export default {
 					buttons: [
 						canWrite ? { text: translate('commonImport'), action: 'import' } : null
 					],
-					param: commonParam,
+					param: {
+						element: '#page.isFull #footer #button-help',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Right,
+						offsetY: () => -($('#notifications').height() + 12),
+					},
 				}
 			],
 		};

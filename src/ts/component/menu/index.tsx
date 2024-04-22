@@ -455,7 +455,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { id } = this.props;
 		
 		let ret = Number(window.AnytypeGlobalConfig?.menuBorderBottom) || 80;
-		if (id == 'help') {
+		if ([ 'help', 'onboarding' ].includes(id)) {
 			ret = 16;
 		};
 
