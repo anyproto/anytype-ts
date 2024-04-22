@@ -60,6 +60,12 @@ export default [
 	h3(`System Tray & Menu Settings Renamed on Windows & Linux`),
 	text(`For better consistency with OS naming conventions, ${hl('System Menu')} has been renamed to ${hl('Menu Bar')}, and ${hl('Menu Bar')} has been renamed to ${hl('System Tray')} on Windows and Linux versions`),
 
+	h3(`Use Uploaded Images as Object Icons`),
+	text(`You can now set an object icon by reusing an image that has already been uploaded to the space.`),
+
+	h3(`Custom storage location`),
+	text(`When creating a vault, users can change the storage location on their hard drive. If the vault has already been created, users can also change the location and retrieve the data from the network. However, be cautious with local-only mode, as the data can only be transferred from the second device via peer-to-peer (P2P) connection.`),
+
 	h2(`💻 Tech:`),
 	bullet(`Electron updated to 29.1.6`),
 	bullet(`Debug logs for Middleware were split into different flags`),
