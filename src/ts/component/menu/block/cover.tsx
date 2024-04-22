@@ -234,8 +234,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					filters,
 					sorts,
 					fullText: filter,
-					limit: 300,
+					limit: 1000,
 				}, (message: any) => {
+					this.setState({ isLoading: false });
+
 					if (message.error.code) {
 						this.setState({ isLoading: false });
 						return;
@@ -250,8 +252,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 							coverY: -0.25,
 						});
 					});
-
-					this.setState({ isLoading: false });
 				});
 				break;
 			};
