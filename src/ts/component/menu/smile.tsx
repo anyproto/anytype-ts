@@ -807,18 +807,20 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const { tab } = this.state;
 		const win = $(window);
 
+		console.log(item);
+
 		switch (tab) {
 			case Tab.Smile: {
-				const { id, skin } = item;
+				const { itemId, skin } = item;
 
-				this.id = id;
+				this.id = itemId;
 				window.clearTimeout(this.timeoutMenu);
 
 				if (e.button) {
 					return;
 				};
 
-				if (item && (item.skins.length > 1)) {
+				if (item && item.skins && (item.skins.length > 1)) {
 					this.timeoutMenu = window.setTimeout(() => {
 						win.off('mouseup.smile');
 						this.onSkin(e, item);
@@ -831,7 +833,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 					};
 
 					if (this.id) {
-						this.onSmileSelect(id, skin);
+						this.onSmileSelect(itemId, skin);
 						close();
 					};
 
