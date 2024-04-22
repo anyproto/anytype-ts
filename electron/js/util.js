@@ -236,7 +236,6 @@ class Util {
 		];
 	};
 
-
 	translate (key) {
 		const lang = this.getLang();
 		const defaultData = require(`../../dist/lib/json/lang/en-US.json`);

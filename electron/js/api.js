@@ -210,6 +210,11 @@ class Api {
 		WindowManager.createChallenge(param);
 	};
 
+	reload (win, route) {
+		win.route = route;
+		win.webContents.reload();
+	};
+
 };
 
 module.exports = new Api();
