@@ -156,7 +156,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 							focusOnMount={true}
 						/>
 						
-						<div className="items">
+						<div id="items" className="items">
 							<InfiniteLoader
 								rowCount={items.length}
 								loadMoreRows={() => {}}
@@ -302,6 +302,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				break;
 			};
 		};
+
+		console.log(tabs, tab);
 
 		return (
 			<div 
@@ -683,13 +685,14 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	setActive (item?: any, row?: number) {
 		const node = $(this.node);
+		const items = node.find('#items');
 
 		if (row && this.refList) {
 			this.refList.scrollToRow(Math.max(0, row));
 		};
 
 		Preview.tooltipHide(false);
-		node.find('.active').removeClass('active');
+		items.find('.active').removeClass('active');
 
 		this.active = item;
 
