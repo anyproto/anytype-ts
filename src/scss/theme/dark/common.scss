@@ -272,6 +272,15 @@ html.themeDark {
 		}
     }
 
+	.header.mainStore.withBanner {
+		.bannerWrapper {
+			.banner { color: var(--color-text-inversion); }
+			.banner {
+				.button { background-color: var(--color-bg-primary); color: var(--color-text-primary); }
+			}
+		}
+	}
+
     /* Sidebar */
 
     .sidebar { background-color: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }

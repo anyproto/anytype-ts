@@ -154,8 +154,10 @@ class Analytics {
 	};
 
 	setTier (tier: I.TierType) {
-		this.instance.setUserProperties({ tier: I.TierType[tier] });
-		this.log(`[Analytics].setTier: ${I.TierType[tier]}`);
+		const t = I.TierType[tier] || 'Custom';
+
+		this.instance.setUserProperties({ tier: t });
+		this.log(`[Analytics].setTier: ${t}`);
 	};
 
 	event (code: string, data?: any) {

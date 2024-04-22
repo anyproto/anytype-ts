@@ -305,7 +305,7 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectLabel": "Create & collaborate in spaces you own. Encrypted, offline & <a href=\"https://github.com/anyproto\">open</a>.",
+	"authSelectLabel": "Create & collaborate in spaces you own.<br/>Encrypted, offline & <a href=\"https://github.com/anyproto\">open</a>.",
 	"authSelectLogin": "I have a Key",
 	"authSelectSignup": "New Vault",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
@@ -396,6 +396,8 @@
 	"pageMainStoreRelationsEmpty": "<b>Your Relation list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above",
 	"pageMainStoreMyTypes": "My Types",
 	"pageMainStoreMyRelations": "My Relations",
+	"pageMainStoreBannerTitle": "What can I build with Anytype?",
+	"pageMainStoreBannerButton": "Explore",
 
 	"pageMainTypeRecommendedLayout": "Recommended layout",
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
@@ -1756,7 +1758,7 @@
 	"onboardingTypeDeleted1Description": "If you want to keep using this Object, change this Object Type.",
 
 	"onboardingSourceDeleted1Title": "Please check your Installed Types & Relations",
-	"onboardingSourceDeleted1Description": "Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Marketplace to re-install these entities and continue using your Set.",
+	"onboardingSourceDeleted1Description": "Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Library to re-install these entities and continue using your Set.",
 
 	"onboardingInlineSet1Title": "This is Inline Set",
 	"onboardingInlineSet1Description": "Congratulations! You can embed a Set or Collection and modify it using Filters and Views without altering the original instance.",
@@ -1782,6 +1784,9 @@
 
 	"onboardingQuickCaptureTitle": "Create Object by Selecting Type",
 	"onboardingQuickCaptureDescription": "<p>Pin favorite types, install from Anytype Library, or create new ones from the menu.</p><p>Customize your experience by adjusting click options at Settings > Preferences > Show quick capture menu on.</p>",
+
+	"onboardingShareSpaceTitle": "Introducing shared spaces",
+	"onboardingShareSpaceDescription": "Click on the space widget to open space settings. Here you can share the space and invite members to collaborate!",
 
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
@@ -1840,8 +1845,11 @@
 
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
 
+	"errorNameServiceResolveName3": "Please connect to the internet",
+
 	"errorMembershipGetStatus6": "Membership not found",
 	"errorMembershipGetStatus7": "Membership has wrong state",
+	"errorMembershipGetStatus8": "Please connect to the internet",
 
 	"errorMembershipIsNameValid3": "Name is too short",
 	"errorMembershipIsNameValid4": "Name is too long",
@@ -1852,6 +1860,7 @@
 	"errorMembershipIsNameValid9": "Unable to connect to payment node",
 	"errorMembershipIsNameValid10": "Cache error",
 	"errorMembershipIsNameValid11": "Name cannot be taken",
+	"errorMembershipIsNameValid12": "Please connect to the internet",
 
 	"errorMembershipGetPaymentUrl4": "Unable to connect to payment node",
 	"errorMembershipGetPaymentUrl6": "Tier not found",
@@ -1859,10 +1868,12 @@
 	"errorMembershipGetPaymentUrl8": "Payment method is invalid",
 	"errorMembershipGetPaymentUrl9": "Bad Any name",
 	"errorMembershipGetPaymentUrl10": "Membership already exists",
+	"errorMembershipGetPaymentUrl11": "Please connect to the internet",
 
 	"errorMembershipFinalize6": "Membership not found",
 	"errorMembershipFinalize7": "Membership has wrong state",
 	"errorMembershipFinalize8": "Bad Any name",
+	"errorMembershipFinalize9": "Please connect to the internet",
 
 	"errorMembershipGetVerificationEmail6": "Email format is invalid",
 	"errorMembershipGetVerificationEmail7": "This email is already verified",
@@ -1878,6 +1889,7 @@
 
 	"errorMembershipGetTiers4": "Unable to connect to payment node",
 	"errorMembershipGetPortalLinkUrl4": "Unable to connect to payment node",
+	"errorMembershipGetPortalLinkUrl6": "Please connect to the internet",
 
 	"errorSpaceInviteGenerate101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceInviteGenerate102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",

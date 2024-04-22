@@ -86,6 +86,10 @@ class UtilRouter {
 
 			if (!animate) {
 				this.history.push(route); 
+
+				if (onRouteChange) {
+					onRouteChange();
+				};
 				return;
 			};
 

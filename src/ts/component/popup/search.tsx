@@ -280,13 +280,20 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 
 		keyboard.shortcut(`enter, shift+enter, ${cmd}+enter`, e, (pressed: string) => {
-			const reg = new RegExp(`^${Constant.protocol}:\/\/`);
+			const regScheme = new RegExp(`^${Constant.protocol}:\/\/`);
+			const regUrl = /invite.any.coop\/([a-zA-Z0-9]+)#([a-zA-Z0-9]+)/;
 
-			if (reg.test(filter)) {
-				const route = filter.replace(reg, '');
+			if (regScheme.test(filter)) {
+				const route = filter.replace(regScheme, '');
 				if (route) {
 					UtilRouter.go(`/${route}`, {});
 				};
+				return;
+			};
+
+			if (filter.match(regUrl)) {
+				const [, cid, key] = filter.match(regUrl);
+				UtilRouter.go(`/invite/?cid=${cid}&key=${key}`, {});
 				return;
 			};
 

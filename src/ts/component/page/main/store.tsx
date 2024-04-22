@@ -4,11 +4,12 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
 import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
-import { dbStore, blockStore, commonStore, menuStore } from 'Store';
+import { dbStore, blockStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
-	loading: boolean;
+	isLoading: boolean;
+	withBanner: boolean;
 };
 
 enum View {
@@ -22,7 +23,8 @@ const alt = keyboard.altSymbol();
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
 
 	state = {
-		loading: false,
+		isLoading: false,
+		withBanner: false,
 	};
 
 	_isMounted = false;
@@ -51,6 +53,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.onFilterBlur = this.onFilterBlur.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onFilterClick = this.onFilterClick.bind(this);
+		this.onBanner = this.onBanner.bind(this);
+		this.onBannerClose = this.onBannerClose.bind(this);
 	};
 	
 	render () {
@@ -58,6 +62,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			return null;
 		};
 
+		const { withBanner } = this.state;
 		const canWrite = UtilSpace.canMyParticipantWrite();
 		const { isPopup } = this.props;
 		const views = this.getViews();
@@ -212,7 +217,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		return (
 			<div 
 				ref={node => this.node = node}
-				className={[ 'wrapper', this.tab, this.view ].join(' ')}
+				className={[ 'wrapper', this.tab, this.view, (withBanner ? 'withBanner' : '') ].join(' ')}
 			>
 				<Header 
 					{...this.props}
@@ -220,7 +225,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					tabs={tabs}
 					tab={this.tab}
 					layout={I.ObjectLayout.Store}
-					onTab={id => this.onTab(id, true)} 
+					onTab={id => this.onTab(id, true)}
+					withBanner={withBanner}
+					onBanner={this.onBanner}
+					onBannerClose={this.onBannerClose}
 				/>
 
 				<div className="body">
@@ -281,6 +289,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.resize();
 		this.rebind();
 		this.onTab(Storage.get('tabStore') || I.StoreTab.Type, false);
+		this.setState({ withBanner: !Storage.get('storeBannerClosed') });
 	};
 
 	componentDidUpdate () {
@@ -493,7 +502,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		if (clear) {
-			this.setState({ loading: true });
+			this.setState({ isLoading: true });
 			dbStore.recordsSet(Constant.subId.store, '', []);
 		};
 
@@ -506,7 +515,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			ignoreDeleted: true,
 			ignoreHidden: true,
 		}, (message: any) => {
-			this.setState({ loading: false });
+			this.setState({ isLoading: false });
 
 			if (callBack) {
 				callBack(message);
@@ -526,7 +535,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getItems () {
-		const { loading } = this.state;
+		const { isLoading } = this.state;
 		const records = dbStore.getRecords(Constant.subId.store);
 		const limit = this.getLimit();
 
@@ -537,7 +546,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		let n = 0;
 		let row = { children: [] };
 
-		if (!loading && !records.length) {
+		if (!isLoading && !records.length) {
 			ret.push({ id: 'empty', className: 'block', children: [ { id: 'empty' } ] },);
 		};
 
@@ -632,6 +641,20 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const limit = Math.floor(maxWidth / (size.width + size.margin));
 
 		return Math.max(1, Math.min(5, limit));
+	};
+
+	onBanner () {
+		popupStore.closeAll(null, () => {
+			popupStore.open('usecase', {});
+		});
+	};
+
+	onBannerClose (e: any) {
+		e.stopPropagation();
+		e.preventDefault();
+
+		this.setState({ withBanner: false });
+		Storage.set('storeBannerClosed', true);
 	};
 
 	resize () {

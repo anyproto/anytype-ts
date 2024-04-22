@@ -376,7 +376,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
-					onSelect: close,
+					onSelect: () => close(),
 					skipIds: [ rootId ],
 					position: I.BlockPosition.Bottom,
 				});
