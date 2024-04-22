@@ -446,7 +446,12 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				...it,
 				children: it.emojis.map(id => {
 					const item = UtilSmile.data.emojis[id] || {};
-					return { id, skin: this.skin, keywords: item.keywords || [] };
+					return { 
+						id, 
+						skin: this.skin, 
+						keywords: item.keywords || [], 
+						skins: item.skins || [],
+					};
 				}),
 			});
 		});
@@ -806,8 +811,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const { close } = this.props;
 		const { tab } = this.state;
 		const win = $(window);
-
-		console.log(item);
 
 		switch (tab) {
 			case Tab.Smile: {
