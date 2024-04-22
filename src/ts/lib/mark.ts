@@ -574,6 +574,7 @@ class Mark {
 		const keys = Object.keys(Patterns).map(it => UtilCommon.regexEscape(it));
 		const reg = new RegExp(`(${keys.join('|')})`, 'g');
 		const test = reg.test(html);
+		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
 
 		if (!test) {
 			return { marks, text: html, adjustMarks: false };
@@ -587,7 +588,8 @@ class Mark {
 		html.replace(reg, (s: string, p: string, o: number) => {
 			let check = true;
 			for (const mark of checked) {
-				if ((mark.range.from <= o) && (mark.range.to >= o)) {
+				const overlap = this.overlap({ from: o, to: o }, mark.range);
+				if (overlaps.includes(overlap)) {
 					check = false;
 					break;
 				};
