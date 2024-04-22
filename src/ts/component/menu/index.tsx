@@ -446,13 +446,28 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			});
 		};
 	};
+
+	getBorderTop () {
+		return Number(window.AnytypeGlobalConfig?.menuBorderTop) || UtilCommon.sizeHeader();
+	};
 	
+	getBorderBottom () {
+		const { id } = this.props;
+		
+		let ret = Number(window.AnytypeGlobalConfig?.menuBorderBottom) || 80;
+		if (id == 'help') {
+			ret = 16;
+		};
+
+		return ret;
+	};
+
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
 		const { border } = Constant.size.menu;
-		const borderTop = Number(window.AnytypeGlobalConfig?.menuBorderTop) || UtilCommon.sizeHeader();
-		const borderBottom = Number(window.AnytypeGlobalConfig?.menuBorderBottom) || 80;
+		const borderTop = this.getBorderTop();
+		const borderBottom = this.getBorderBottom();
 
 		if (this.ref && this.ref.beforePosition) {
 			this.ref.beforePosition();
