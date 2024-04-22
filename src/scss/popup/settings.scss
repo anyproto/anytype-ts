@@ -54,9 +54,9 @@
 					.icon { width: 24px; height: 24px; flex-shrink: 0; }
 					.icon.logout { width: 22px; height: 22px; background-image: url('~img/icon/popup/settings/logout.svg'); }
 
-					.name { @include text-overflow-nw; flex-grow: 1; }
+					.name { @include text-overflow-nw; overflow: visible; flex-grow: 1; }
 
-					.caption { color: var(--color-text-secondary); text-align: right; }
+					.caption { color: var(--color-text-secondary); text-align: right; @include text-overflow-nw; }
 					.caption.join { font-weight: 500; padding: 2px 8px; border-radius: 4px; @include text-small; background: var(--color-control-accent); color: var(--color-bg-primary); }
 				}
 
