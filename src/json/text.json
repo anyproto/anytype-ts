@@ -1984,6 +1984,8 @@
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 
+	"errorIncorrectEmail": "Incorrect E-mail",
+
 	"origin0": "None",
 	"origin1": "Clipboard",
 	"origin2": "Drag'n'Drop",
