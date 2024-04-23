@@ -814,7 +814,7 @@
 	"popupConfirmNeedUpdateText": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features.",
 
 	"popupConfirmObjectOpenErrorText": "There was a problem while opening the object, please send the debug info to the support team.",
-	"popupConfirmObjectOpenErrorButton": "Send debug info",
+	"popupConfirmObjectOpenErrorButton": "Collect debug info",
 
 	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
 	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
