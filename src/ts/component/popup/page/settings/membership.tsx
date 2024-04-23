@@ -43,8 +43,6 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			const isCurrent = item.id == membership.tier;
 			const price = item.price ? `$${item.price}` : translate('popupSettingsMembershipJustEmail');
 
-			console.log(item);
-
 			let period = '';
 			let buttonText = translate('popupSettingsMembershipLearnMore');
 
