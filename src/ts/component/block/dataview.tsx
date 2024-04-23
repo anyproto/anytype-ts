@@ -904,6 +904,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { selection } = dataset || {};
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
+		const view = this.getView();
+
+		if (!view) {
+			return;
+		};
 		
 		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
 		if (!objectIds.length) {
@@ -922,6 +927,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				subId,
 				isCollection,
 				route: this.analyticsRoute(),
+				relationKeys: this.getKeys(view.id),
 				allowedLink: true,
 				allowedOpen: true,
 			}
