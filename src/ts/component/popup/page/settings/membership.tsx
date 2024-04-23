@@ -39,9 +39,11 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		);
 
 		const TierItem = (props: any) => {
-			const item = membershipTiers[props.idx];
+			const { item } = props;
 			const isCurrent = item.id == membership.tier;
 			const price = item.price ? `$${item.price}` : translate('popupSettingsMembershipJustEmail');
+
+			console.log(item);
 
 			let period = '';
 			let buttonText = translate('popupSettingsMembershipLearnMore');
@@ -125,9 +127,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				) : ''}
 
 				<div className="tiers">
-					{membershipTiers.map((tier, i) => (
-						<TierItem key={i} idx={i} />
-					))}
+					{membershipTiers.map(item => <TierItem key={item.id} item={item} />)}
 				</div>
 
 				<div className="actionItems">
