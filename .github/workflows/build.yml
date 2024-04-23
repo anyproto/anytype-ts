@@ -14,7 +14,6 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ '1.22.1' ]
         os: [ macos-latest, ubuntu-latest, windows-latest ]
 
     steps:
@@ -22,6 +21,18 @@ jobs:
         run: | 
           git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
           git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@api.github.com/".insteadOf "https://api.github.com/"
+
+      - name: Install Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.22
+        
+      - name: Setup GO
+        run: |
+          go version
+          echo GOPATH=$(go env GOPATH) >> $GITHUB_ENV
+          echo GOBIN=$(go env GOPATH)/bin >> $GITHUB_ENV
+          echo $(go env GOPATH)/bin >> $GITHUB_PATH
 
       - name: Install AzureSignTool
         if: matrix.os == 'windows-latest'
