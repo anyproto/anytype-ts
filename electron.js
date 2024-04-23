@@ -47,8 +47,7 @@ powerMonitor.on('suspend', () => {
 });
 
 powerMonitor.on('resume', () => {
-	BrowserWindow.getAllWindows().forEach(win => win.webContents.reload());
-
+	WindowManager.reloadAll();
 	Util.log('info', '[PowerMonitor] resume');
 });
 

@@ -233,18 +233,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		Onboarding.start(UtilCommon.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
-		
-		if (!isPopup) {
-			window.setTimeout(() => {
-				if (!isMain) {
-					return;
-				};
-
-				Survey.check(I.SurveyType.Register);
-				Survey.check(I.SurveyType.Object);
-				//Survey.check(I.SurveyType.Pmf);
-			}, popupStore.getTimeout());
-		};
 	};
 
 	unbind () {

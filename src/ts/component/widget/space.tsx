@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, C, UtilSpace, UtilCommon, translate } from 'Lib';
+import { I, C, UtilSpace, UtilCommon, translate, Onboarding, keyboard } from 'Lib';
 import { popupStore, commonStore } from 'Store';
 	
 const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {

@@ -244,6 +244,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			this.onValueAdd(id);
 		};
 
+		this.refFilter?.setValue('');
 		this.onFilterChange('');
 	};
 

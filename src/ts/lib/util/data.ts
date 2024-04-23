@@ -1,4 +1,4 @@
-import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action } from 'Lib';
+import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
@@ -211,6 +211,15 @@ class UtilData {
 					};
 					if (!bgColor) {
 						Storage.set('bgColor', 'orange');
+					};
+
+					Survey.check(I.SurveyType.Register);
+					Survey.check(I.SurveyType.Object);
+
+					const space = UtilSpace.getSpaceview();
+
+					if (!space.isPersonal) {
+						Onboarding.start('space', keyboard.isPopup(), false);
 					};
 
 					if (callBack) {
@@ -614,7 +623,8 @@ class UtilData {
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
-			cardStyle: commonStore.linkStyle,
+			//cardStyle: commonStore.linkStyle,
+			cardStyle: I.LinkCardStyle.Text,
 			description: I.LinkDescription.None,
 			relations: [],
 		};
@@ -937,10 +947,12 @@ class UtilData {
 		};
 
 		C.MembershipGetStatus(true, (message: any) => {
-			if (message.membership) {
-				const { status, tier } = message.membership;
+			const { membership } = message;
 
-				authStore.membershipSet(message.membership);
+			if (membership) {
+				const { status, tier } = membership;
+
+				authStore.membershipSet(membership);
 				
 				if (status && (status == I.MembershipStatus.Finalization)) {
 					popupStore.open('membershipFinalization', { data: { tier } });
@@ -948,7 +960,7 @@ class UtilData {
 			};
 
 			if (callBack) {
-				callBack(message.membership);
+				callBack(membership);
 			};
 		});
 	};

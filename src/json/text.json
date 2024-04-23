@@ -305,14 +305,13 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectLabel": "Create & collaborate in spaces you own. Encrypted, offline & <a href=\"https://github.com/anyproto\">open</a>.",
+	"authSelectLabel": "Create & collaborate in spaces you own.<br/>Encrypted, offline & <a href=\"https://github.com/anyproto\">open</a>.",
 	"authSelectLogin": "I have a Key",
 	"authSelectSignup": "New Vault",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
 	"authLoginSubmit": "Enter my Vault",
 	"authLoginLostPhrase": "I've lost the Key",
-	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover your Key for you<\/h1><p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
 
 	"authRegisterTitle": "Add name and profile picture",
 	"authRegisterLabel": "New Profile",
@@ -396,6 +395,8 @@
 	"pageMainStoreRelationsEmpty": "<b>Your Relation list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above",
 	"pageMainStoreMyTypes": "My Types",
 	"pageMainStoreMyRelations": "My Relations",
+	"pageMainStoreBannerTitle": "What can I build with Anytype?",
+	"pageMainStoreBannerButton": "Explore",
 
 	"pageMainTypeRecommendedLayout": "Recommended layout",
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
@@ -717,7 +718,7 @@
 
 	"popupSettingsSpaceIndexShareShareTitle": "Share space",
 	"popupSettingsSpaceIndexShareShareText": "Generate invite link and share the space with other members",
-	"popupSettingsSpaceIndexShareDefaultText": "Default space can’t be shared. Create a new one to share",
+	"popupSettingsSpaceIndexShareDefaultText": "Entry space can’t be shared. Create a new one to share",
 	"popupSettingsSpaceIndexShareInviteText": "Generate invite link and share the space with other members",
 	"popupSettingsSpaceIndexShareLinkTitle": "Invitation link",
 	"popupSettingsSpaceIndexShareLinkText": "Share this invite link so that others can join your Space",
@@ -837,6 +838,11 @@
 	"popupConfirmWelcomeTitle": "Welcome to your Space",
 	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
 	"popupConfirmWelcomeButton": "Show me what I can build",
+
+	"popupConfirmLostPhraseTitle": "Anytype cannot recover your Key for you",
+	"popupConfirmLostPhraseTextWindows": "<p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
+	"popupConfirmLostPhraseTextLinux": "<p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
+	"popupConfirmLostPhraseTextMac": "<p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
@@ -1216,10 +1222,12 @@
 
 	"popupRelationValueRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
 
-	"menuSmileRandom": "Random emoji",
-	"menuSmileGallery": "Gallery",
-	"menuSmileUpload": "Upload image",
-	"menuSmileEmpty": "<b>There are no emojis named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
+	"menuVaultPeer": "%d\/%d peers",
+	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
+
+	"menuSmileGallery": "Emojis",
+	"menuSmileUpload": "Upload",
+	"menuSmileEmpty": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
 
@@ -1668,7 +1676,7 @@
 	"navigationAccount": "Spaces",
 
 	"spaceAccessType0": "Private Space",
-	"spaceAccessType1": "Default Space",
+	"spaceAccessType1": "Entry Space",
 	"spaceAccessType2": "Shared Space",
 
 	"spaceLast": "Last opened Object",
@@ -1755,7 +1763,7 @@
 	"onboardingTypeDeleted1Description": "If you want to keep using this Object, change this Object Type.",
 
 	"onboardingSourceDeleted1Title": "Please check your Installed Types & Relations",
-	"onboardingSourceDeleted1Description": "Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Marketplace to re-install these entities and continue using your Set.",
+	"onboardingSourceDeleted1Description": "Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Library to re-install these entities and continue using your Set.",
 
 	"onboardingInlineSet1Title": "This is Inline Set",
 	"onboardingInlineSet1Description": "Congratulations! You can embed a Set or Collection and modify it using Filters and Views without altering the original instance.",
@@ -1776,11 +1784,14 @@
 	"onboardingTemplateSelectTitle": "New Template Selector",
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
-	"onboardingSpaceSelectTitle": "Feeling cramped in one space?",
-	"onboardingSpaceSelectDescription": "Click here to create a new space or switch between existing ones.",
+	"onboardingSpaceSelectTitle": "Create and Share Spaces",
+	"onboardingSpaceSelectDescription": "Click here to create a new space and share it with others!",
 
-	"onboardingQuickCaptureTitle": "Create Object by Selecting Type",
-	"onboardingQuickCaptureDescription": "<p>Pin favorite types, install from Anytype Library, or create new ones from the menu.</p><p>Customize your experience by adjusting click options at Settings > Preferences > Show quick capture menu on.</p>",
+	"onboardingQuickCaptureTitle": "Use Different Object Types",
+	"onboardingQuickCaptureDescription": "Select types for your objects to categorize and connect them.",
+
+	"onboardingShareSpaceTitle": "Co-create, share and collaborate on Spaces!",
+	"onboardingShareSpaceDescription": "Click the space widget to open space settings. From there, you can share the space and invite members to collaborate.",
 
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
@@ -1839,8 +1850,11 @@
 
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
 
+	"errorNameServiceResolveName3": "Please connect to the internet",
+
 	"errorMembershipGetStatus6": "Membership not found",
 	"errorMembershipGetStatus7": "Membership has wrong state",
+	"errorMembershipGetStatus8": "Please connect to the internet",
 
 	"errorMembershipIsNameValid3": "Name is too short",
 	"errorMembershipIsNameValid4": "Name is too long",
@@ -1850,7 +1864,8 @@
 	"errorMembershipIsNameValid8": "Not logged in",
 	"errorMembershipIsNameValid9": "Unable to connect to payment node",
 	"errorMembershipIsNameValid10": "Cache error",
-	"errorMembershipIsNameValid11": "Name is reserved",
+	"errorMembershipIsNameValid11": "Name cannot be taken",
+	"errorMembershipIsNameValid12": "Please connect to the internet",
 
 	"errorMembershipGetPaymentUrl4": "Unable to connect to payment node",
 	"errorMembershipGetPaymentUrl6": "Tier not found",
@@ -1858,10 +1873,12 @@
 	"errorMembershipGetPaymentUrl8": "Payment method is invalid",
 	"errorMembershipGetPaymentUrl9": "Bad Any name",
 	"errorMembershipGetPaymentUrl10": "Membership already exists",
+	"errorMembershipGetPaymentUrl11": "Please connect to the internet",
 
 	"errorMembershipFinalize6": "Membership not found",
 	"errorMembershipFinalize7": "Membership has wrong state",
 	"errorMembershipFinalize8": "Bad Any name",
+	"errorMembershipFinalize9": "Please connect to the internet",
 
 	"errorMembershipGetVerificationEmail6": "Email format is invalid",
 	"errorMembershipGetVerificationEmail7": "This email is already verified",
@@ -1877,6 +1894,7 @@
 
 	"errorMembershipGetTiers4": "Unable to connect to payment node",
 	"errorMembershipGetPortalLinkUrl4": "Unable to connect to payment node",
+	"errorMembershipGetPortalLinkUrl6": "Please connect to the internet",
 
 	"errorSpaceInviteGenerate101": "Oops! Something went wrong. Please try again later.",
 	"errorSpaceInviteGenerate102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",

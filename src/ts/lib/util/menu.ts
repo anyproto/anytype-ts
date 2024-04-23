@@ -201,7 +201,6 @@ class UtilMenu {
 		if (hasFile) {
 			items = items.concat([
 				{ id: 'download', icon: 'download', name: translate('commonDownload') },
-				{ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') },
 				//{ id: 'rename', icon: 'rename', name: translate('libMenuRename') ),
 				//{ id: 'replace', icon: 'replace', name: translate('libMenuReplace') },
 			]);

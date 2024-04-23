@@ -97,14 +97,15 @@ const ListNotification = observer(class ListNotification extends React.Component
 		const node = $(this.node);
 		const items = node.find('.notification');
 
-		let nh = 0;
-		let fh = 0;
+		let listHeight = 0;
+		let firstHeight = 0;
 		let height = 0;
 		let bottom = 0;
 
-		raf(() => {
+		window.setTimeout(() => {
 			items.each((i: number, item: any) => {
 				item = $(item);
+
 				item.css({ 
 					width: (this.isExpanded ? '100%' : `calc(100% - ${4 * i * 2}px)`),
 					right: (this.isExpanded ? 0 : 4 * i),
@@ -113,18 +114,18 @@ const ListNotification = observer(class ListNotification extends React.Component
 				const h = item.outerHeight();
 
 				if (i == 0) {
-					fh = h;
+					firstHeight = h;
 				};
 
 				if (!this.isExpanded) {
 					if (i > 0) {
-						bottom = fh + 4 * i - h;
+						bottom = firstHeight + 4 * i - h;
 					};
 				} else {
 					const o = i > 0 ? 8 : 0;
 
 					bottom += height + o;
-					nh += h + o;
+					listHeight += h + o;
 				};
 
 				item.css({ bottom });
@@ -132,14 +133,14 @@ const ListNotification = observer(class ListNotification extends React.Component
 			});
 
 			if (!this.isExpanded) {
-				nh = fh + 4 * (LIMIT - 1);
+				listHeight = firstHeight + 4 * items.length;
 			} else 
 			if (items.length) {
-				nh += 38;
+				listHeight += 38;
 			};
 
-			node.css({ height: nh });
-		});
+			node.css({ height: listHeight });
+		}, 50);
 	};
 	
 });

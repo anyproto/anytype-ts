@@ -222,7 +222,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				const filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
 					{ operator: I.FilterOperator.And, relationKey: 'widthInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 1000 },
-					{ operator: I.FilterOperator.And, relationKey: 'heightInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 500 },
+					{ operator: I.FilterOperator.And, relationKey: 'heightInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 300 },
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -234,8 +234,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					filters,
 					sorts,
 					fullText: filter,
-					limit: 300,
+					limit: 1000,
 				}, (message: any) => {
+					this.setState({ isLoading: false });
+
 					if (message.error.code) {
 						this.setState({ isLoading: false });
 						return;
@@ -251,7 +253,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 						});
 					});
 
-					this.setState({ isLoading: false });
+					this.forceUpdate();
 				});
 				break;
 			};
@@ -344,7 +346,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				break;
 			};
 		};
-
 		return sections;
 	};
 

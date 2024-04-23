@@ -99,7 +99,7 @@ init = (param) => {
 	ctx.lineCap = 'round';
 	ctx.fillStyle = data.colors.bg;
 	
-	transform = d3.zoomIdentity.translate(0, 0).scale(1.5);
+	transform = d3.zoomIdentity.translate(0, 0).scale(1);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
 
@@ -108,21 +108,13 @@ init = (param) => {
 	simulation.on('tick', () => redraw());
 	simulation.tick(100);
 
-	setTimeout(() => {
-		root = getNodeById(rootId);
+	root = getNodeById(rootId);
 
-		let x = width / 2;
-		let y = height / 2;
+	const x = root ? root.x : width / 2;
+	const y = root ? root.y : height / 2;
 
-		if (root) {
-			x = root.x;
-			y = root.y;
-		};
-
-		transform = Object.assign(transform, getCenter(x, y));
-		send('onTransform', { ...transform });
-		redraw();
-	}, 100);
+	transform = Object.assign(transform, getCenter(x, y));
+	send('onTransform', { ...transform });
 };
 
 initTheme = (theme) => {

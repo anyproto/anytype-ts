@@ -591,7 +591,8 @@ export const Mapper = {
 				dateEnds: obj.getDateends(),
 				isAutoRenew: obj.getIsautorenew(),
 				paymentMethod: obj.getPaymentmethod() as number,
-				requestedAnyName: obj.getRequestedanyname(),
+				name: obj.getNsname(),
+				nameType: obj.getNsnametype() as number,
 				userEmail: obj.getUseremail(),
 				subscribeToNewsletter: obj.getSubscribetonewsletter(),	
 			};

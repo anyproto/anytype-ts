@@ -22,20 +22,21 @@ export default [
 	title(`Welcome to Local-First Sharing & Collaboration`),
 	text(`Folks, this is the one we’ve been waiting for. This release, in which creating trusted networks with your friends, family and communities in Anytype becomes a reality, is the culmination of nearly five years of R&D.`),
 	text(`What does this mean for you? Now you can share what matters, with those you care about and never have to worry that your data will be surveilled, blocked, or leaked.`),
-	text(`From today onward, we warmly welcome you to begin testing out shared spaces, starting with the small things: idea boards, shopping lists, projects, and wikis. If you need inspiration, you can always check the ${link('https://gallery.any.coop', 'Multiplayer Experiences')} newly added to the Experience Gallery (or submit your own!).`),
+	text(`From today onward, we warmly welcome you to begin testing out shared spaces, starting with the small things: idea boards, shopping lists, projects, and wikis. As you’re testing, please kindly note that this is v1 of multiplayer, representing the first step towards full-fledged collaborative experiences. We’ll be enriching this experience with more features in the coming months, so your feedback is, as always, warmly welcomed.`), 
+	text(`If you need inspiration, you can always check the ${link('https://gallery.any.coop', 'Multiplayer Experiences')} newly added to the Experience Gallery (or submit your own!).`),
 	text(`We can’t wait to see what you’ll create, and look forward to this new, networked era of Anytype.`),
 
 	h2(`💎 Highlights of this Release:`),
 
 	h3(`Multiplayer! Sharing! Collaboration! is LIVE!`),
 	video(`40/1.mp4`),
-	text(`In the Space Settings menu of each space you’ve created (excluding your Default space), you’ll now see the option to ${hl('Share Space')} in your Space settings. By clicking here, you can generate an invite link for the Space, which can be sent to anyone.`),
+	text(`In the Space Settings menu of each space you’ve created (excluding your Entry space), you’ll now see the option to ${hl('Share Space')} in your Space settings. By clicking here, you can generate an invite link for the Space, which can be sent to anyone.`),
 	text(`Once they click the link and request to join your Space, you’ll receive a notification prompting you to add this person as an Editor, Viewer, or to reject the request entirely. Editors have edit access to all objects within the Space, while Viewers have read-only access to all objects within the space.`),
 	text(`As a Space owner, it is possible to share up to three Spaces at this time. You can manage the roles of guests you have invited to your Space, or remove them altogether. Guests who have been removed from a space will receive a notification that they have been removed from the Space, and will see an option to export the contents of the Space.`),
 
 	h3(`Memberships`),
 	video(`40/2.mp4`),
-	text(`You can check your Membership status at any time by clicking on the new ${hl('Memberships')} tab in your Profile Settings.`),
+	text(`For those of you who’ve inquired how to support Anytype’s development and growth, we’re pleased to share that the time has come! Memberships in the Anytype network are now live. You can check your Membership status at any time by clicking on the new ${hl('Memberships')} tab in your Profile Settings.`),
 	text(`If you joined Anytype prior to this release, you should see the ‘Explorer’ Plan already activated in your account, including your previous storage limits.`),
 	text(`If you would like to upgrade your membership, select your desired plan and follow the on-screen instructions to submit the Name you would like to purchase on the Anytype network. Then, complete the transaction in Stripe. Once your payment has been confirmed, your membership plan will update in the app.`),
 
@@ -45,15 +46,9 @@ export default [
 	video(`40/3.mp4`),
 	text(`With this release, we also introduce greater customization over UX patterns. When clicking on your Profile > Preferences, you’ll see new options for personalizing your account including Quick Capture Menu display settings, default Link Appearance settings, and whether Objects open in Full-Screen view.`),
 
-	h3(`Default Link Style changed to Card`),
-	text(`When using the ${hl('/add link')} command in the editor, newly created links will appear as cards rather than bolded text. You can now also choose whether to preview Object data in the link such as Type, Description, or Content Preview. If you’d like your default link appearance to be bolded text, you can customize this in your Preferences menu as described above.`),
-
 	h3(`${hl('Graph')} Added as Layout View to Sets & Collections`),
 	video(`40/5.mp4`),
 	text(`For those of you who’ve longed for more precise graph filters, this release brings us one step closer. As a new layout option in Sets & Collections, you’ll now see an option for ${hl('Graph')}. By selecting it, you’ll be able to visualize filtered view of your graph which contains objects that match your Set or Collection criteria. This would allow you to use your graph to view for instance, all objects with Priority: High, or all objects with Type: Book.`),
-
-	h3(`Read-only spaces removed from Web Clipper Space Selection Menu`),
-	text(`With the introduction of multiplayer, you may be participating in some spaces with Viewing privileges only. These spaces have been removed from the Web Clipper Space Selection Menu.`),
 
 	h3(`Files & Media Relation Formats added to Set Filter Menu`),
 	video(`40/4.mp4`),
@@ -64,6 +59,12 @@ export default [
 
 	h3(`System Tray & Menu Settings Renamed on Windows & Linux`),
 	text(`For better consistency with OS naming conventions, ${hl('System Menu')} has been renamed to ${hl('Menu Bar')}, and ${hl('Menu Bar')} has been renamed to ${hl('System Tray')} on Windows and Linux versions`),
+
+	h3(`Use Uploaded Images as Object Icons`),
+	text(`You can now set an object icon by reusing an image that has already been uploaded to the space.`),
+
+	h3(`Custom storage location`),
+	text(`When creating a vault, users can change the storage location on their hard drive. If the vault has already been created, users can also change the location and retrieve the data from the network. However, be cautious with local-only mode, as the data can only be transferred from the second device via peer-to-peer (P2P) connection.`),
 
 	h2(`💻 Tech:`),
 	bullet(`Electron updated to 29.1.6`),

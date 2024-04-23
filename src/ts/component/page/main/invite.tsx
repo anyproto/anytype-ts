@@ -72,7 +72,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 			C.SpaceInviteView(data.cid, data.key, (message: any) => {
 				UtilSpace.openDashboard('route');
 
-				window.setTimeout(() => {
+				popupStore.closeAll(null, () => {
 					const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
 
 					if (message.error.code) {
@@ -108,7 +108,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 					} else {
 						popupStore.open('inviteRequest', { data: { invite: message, ...data } });
 					};
-				}, popupStore.getTimeout());
+				});
 			});
 		};
 	};

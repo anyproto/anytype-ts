@@ -11,7 +11,8 @@ class Membership implements I.Membership {
 	nextTier: I.TierType = I.TierType.None;
 	nextTierEnds = 0;
 	paymentMethod: I.PaymentMethod = I.PaymentMethod.None;
-	requestedAnyName = '';
+	name = '';
+	nameType: I.NameType = I.NameType.Any;
 	userEmail = '';
 	subscribeToNewsletter = false;
 
@@ -24,7 +25,8 @@ class Membership implements I.Membership {
 		this.nextTier = Number(props.nextTier) || I.TierType.None;
 		this.nextTierEnds = Number(props.nextTierEnds) || 0;
 		this.paymentMethod = Number(props.paymentMethod) || I.PaymentMethod.None;
-		this.requestedAnyName = String(props.requestedAnyName || '');
+		this.name = String(props.name || '');
+		this.nameType = Number(props.nameType) || I.NameType.Any;
 		this.userEmail = String(props.userEmail || '');
 		this.subscribeToNewsletter = Boolean(props.subscribeToNewsletter);
 
@@ -37,7 +39,8 @@ class Membership implements I.Membership {
 			nextTier: observable,
 			nextTierEnds: observable,
 			paymentMethod: observable,
-			requestedAnyName: observable,
+			name: observable,
+			nameType: observable,
 			userEmail: observable,
 			subscribeToNewsletter: observable,
 		});

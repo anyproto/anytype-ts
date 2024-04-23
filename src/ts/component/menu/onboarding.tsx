@@ -61,37 +61,6 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 		buttons = buttons.filter(it => it);
 
-		const Steps = () => (
-			<div className="steps">
-				{l > 1 ? (
-					<React.Fragment>
-						{[ ...Array(l) ].map((e: number, i: number) => {
-							const cn = [ 'step' ];
-							if (i == current) {
-								cn.push('active');
-							};
-
-							return <div key={i} className={cn.join(' ')} onClick={e => this.onClick(e, i)} />;
-						})}
-					</React.Fragment>
-				) : ''}
-			</div>
-		);
-
-		const Buttons = () => (
-			<div className="buttons">
-				{buttons.map((button, i) => (
-					<Button
-						key={i}
-						text={button.text}
-						color={(i == buttons.length - 1) ? 'black' : 'blank'}
-						className="c28"
-						onClick={e => this.onButton(e, button.action)}
-					/>
-				))}
-			</div>
-		);
-
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -105,8 +74,32 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 				{item.video ? <video ref={node => this.video = node} src={item.video} onClick={(e: any) => this.onVideoClick(e, item.video)} controls={false} autoPlay={true} loop={true} /> : ''}
 
 				<div className="bottom">
-					<Steps />
-					<Buttons />
+					{l > 1 ? (
+						<div className="steps">
+							{[ ...Array(l) ].map((e: number, i: number) => {
+								const cn = [ 'step' ];
+								if (i == current) {
+									cn.push('active');
+								};
+
+								return <div key={i} className={cn.join(' ')} onClick={e => this.onClick(e, i)} />;
+							})}
+						</div>
+					) : ''}
+					
+					{buttons.length ? (
+						<div className="buttons">
+							{buttons.map((button, i) => (
+								<Button
+									key={i}
+									text={button.text}
+									color={(i == buttons.length - 1) ? 'black' : 'blank'}
+									className="c28"
+									onClick={e => this.onButton(e, button.action)}
+								/>
+							))}
+						</div>
+					) : ''}
 				</div>
 
 				{showConfetti ? <ReactCanvasConfetti refConfetti={ins => this.confetti = ins} className="confettiCanvas" /> : ''}

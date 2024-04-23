@@ -2,13 +2,15 @@ import * as React from 'react';
 import $ from 'jquery';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
-import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action } from 'Lib';
+import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action, UtilData } from 'Lib';
 import { menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 enum Tab {
-	Gallery	 = 0,
-	Upload	 = 1,
+	None	 = 0,
+	Library	 = 1,
+	Smile	 = 2,
+	Upload	 = 3,
 };
 
 interface State {
@@ -18,45 +20,47 @@ interface State {
 	isLoading: boolean;
 };
 
+const LIMIT_SMILE_ROW = 9;
+const LIMIT_LIBRARY_ROW = 4;
 const LIMIT_RECENT = 18;
-const LIMIT_ROW = 9;
 const LIMIT_SEARCH = 12;
+
 const HEIGHT_SECTION = 40;
-const HEIGHT_ITEM = 40;
+const HEIGHT_SMILE_ITEM = 40;
+const HEIGHT_LIBRARY_ITEM = 94;
 
 const ID_RECENT = 'recent';
-const ID_BLANK = 'blank';
 
 class MenuSmile extends React.Component<I.Menu, State> {
 
-	node: any = null;
 	_isMounted = false;
 	state = {
 		filter: '',
 		page: 0,
 		isLoading: false,
-		tab: Tab.Gallery,
+		tab: Tab.None,
 	};
 
-	refFilter: any = null;
-	refList: any = null;
+	node = null;
+	refFilter = null;
+	refList = null;
 
 	id = '';
 	skin = 1;
-	timeoutMenu = 0;
-	timeoutFilter = 0;
 	cache: any = null;
 	groupCache: any[] = [];
-	row: number = -1;
-	coll: number = 0;
+	row = -1;
+	coll = 0;
 	active: any = null;
+	items: any[] = [];
+	timeoutMenu = 0;
+	timeoutFilter = 0;
 
 	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onRandom = this.onRandom.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onScroll = this.onScroll.bind(this);
@@ -71,30 +75,31 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const { filter, isLoading, tab } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { noHead, noGallery, noUpload, noRemove } = data;
+		const { noHead } = data;
+		const tabs = this.getTabs();
+		const items = this.getItems();
 
 		let content = null;
 
 		switch (tab) {
-			case Tab.Gallery: {
+			case Tab.Smile: {
 				if (!this.cache) {
 					break;
 				};
 
-				const sections = this.getSections();
-				const items = this.getItems();
+				const sections = this.getSmileSections();
 				const groups = this.getGroups();
 
 				const Item = (item: any) => {
 					const str = `:${item.itemId}::skin-tone-${item.skin}:`;
 					return (
-						item.itemId == ID_BLANK ? <div className="item" /> : <div 
-							id={'item-' + item.id} 
+						<div 
+							id={`item-${item.id}`} 
 							className="item" 
 							onMouseEnter={e => this.onMouseEnter(e, item)}
 							onMouseLeave={() => this.onMouseLeave()} 
-							onMouseDown={e => this.onMouseDown(e, item.id, item.itemId, item.skin)}
-							onContextMenu={e => this.onSkin(e, item.id, item.itemId)}
+							onMouseDown={e => this.onMouseDown(e, item)}
+							onContextMenu={e => this.onSkin(e, item)}
 						>
 							<div 
 								className="iconObject c32" 
@@ -109,6 +114,23 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				const rowRenderer = (param: any) => {
 					const item = items[param.index];
 
+					let content = null;
+					if (item.isSection) {
+						content = (
+							<div className="section">
+								<div className="name">{item.name}</div>
+							</div>
+						);
+					} else {
+						content = (
+							<div className="row">
+								{item.children.map((item: any, i: number) => (
+									<Item key={item.id} {...item} />
+								))}
+							</div>
+						);
+					};
+
 					return (
 						<CellMeasurer
 							key={param.key}
@@ -118,18 +140,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 							rowIndex={param.index}
 						>
 							<div style={param.style}>
-								{item.isSection ? (
-									<div className="section">
-										{item.name ? <div className="name">{item.name}</div> : ''}
-									</div>
-								) : (
-									<div className="row">
-										{item.children.map((smile: any, i: number) => {
-											smile.position = { row: param.index, n: i };
-											return <Item key={i} id={smile.id} {...smile} />;
-										})}
-									</div>
-								)}
+								{content}
 							</div>
 						</CellMeasurer>
 					);
@@ -145,7 +156,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 							focusOnMount={true}
 						/>
 						
-						<div className="items">
+						<div id="items" className="items">
 							<InfiniteLoader
 								rowCount={items.length}
 								loadMoreRows={() => {}}
@@ -171,6 +182,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 									</AutoSizer>
 								)}
 							</InfiniteLoader>
+
 							{!sections.length ? (
 								<EmptySearch text={UtilCommon.sprintf(translate('menuSmileEmpty'), filter)} />
 							): ''}
@@ -195,6 +207,85 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				break;
 			};
 
+			case Tab.Library: {
+				const Item = (item: any) => (
+					<div 
+						id={`item-${item.id}`} 
+						className="item" 
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onMouseLeave={() => this.onMouseLeave()} 
+						onMouseDown={e => this.onMouseDown(e, item)}
+					>
+						<div className="img" style={{ backgroundImage: `url("${commonStore.imageUrl(item.id, 72)}")` }} />
+					</div>
+				);
+				
+				const rowRenderer = (param: any) => {
+					const item = items[param.index];
+
+					return (
+						<CellMeasurer
+							key={param.key}
+							parent={param.parent}
+							cache={this.cache}
+							columnIndex={0}
+							rowIndex={param.index}
+						>
+							<div key={param.index} className="row" style={param.style}>
+								{item.children.map((item: any, i: number) => (
+									<Item key={item.id} {...item} />
+								))}
+							</div>
+						</CellMeasurer>
+					);
+				};
+
+				content = (
+					<React.Fragment>
+						<Filter 
+							ref={ref => this.refFilter = ref}
+							value={filter}
+							className={[ 'outlined', (!noHead ? 'withHead' : '') ].join(' ')}
+							onChange={e => this.onKeyUp(e, false)} 
+							focusOnMount={true}
+						/>
+
+						<div className="items">
+							<InfiniteLoader
+								rowCount={items.length}
+								loadMoreRows={() => {}}
+								isRowLoaded={({ index }) => !!items[index]}
+							>
+								{({ onRowsRendered }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={ref => this.refList = ref}
+												width={width}
+												height={height}
+												deferredMeasurmentCache={this.cache}
+												rowCount={items.length}
+												rowHeight={({ index }) => this.getRowHeight(items[index])}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												scrollToAlignment="center"
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
+
+							{!items.length ? (
+								<EmptySearch text={UtilCommon.sprintf(translate('menuSmileEmpty'), filter)} />
+							): ''}
+						</div>
+
+					</React.Fragment>
+				);
+				break;
+			};
+
 			case Tab.Upload: {
 				content = (
 					<div 
@@ -212,39 +303,18 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			};
 		};
 
-		if (isLoading) {
-			content = <Loader />;
-		};
-
-		let buttons: any[] = [];
-
-		if (!noHead) {
-			if (!noGallery) {
-				buttons = buttons.concat([
-					{ text: translate('menuSmileRandom'), onClick: this.onRandom },
-					{ text: translate('menuSmileGallery'), onClick: () => this.onTab(Tab.Gallery), isActive: (tab == Tab.Gallery) },
-				]);
-			};
-			if (!noUpload) {
-				buttons.push({ text: translate('menuSmileUpload'), onClick: () => this.onTab(Tab.Upload), isActive: (tab == Tab.Upload) });
-			};
-			if (!noRemove) {
-				buttons.push({ text: translate('commonRemove'), onClick: this.onRemove });
-			};
-		};
-
 		return (
 			<div 
 				ref={node => this.node = node}
 				className="wrap"
 			>
-				{buttons.length ? (
+				{tabs.length ? (
 					<div className="head">
-						{buttons.map((item, i) => (
+						{tabs.map((item, i) => (
 							<div 
 								key={i} 
-								className={[ 'btn', (item.isActive ? 'active' : '') ].join(' ')} 
-								onClick={item.onClick}
+								className={[ 'tab', (tab == item.id ? 'active' : '') ].join(' ')} 
+								onClick={item.onClick || (() => this.onTab(item.id))}
 							>
 								{item.text}
 							</div>
@@ -253,6 +323,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				) : ''}
 				
 				<div className={[ 'body', Tab[tab].toLowerCase() ].join(' ')}>
+					{isLoading ? <Loader /> : ''}
 					{content}
 				</div>
 			</div>
@@ -262,10 +333,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	componentDidMount () {
 		this._isMounted = true;
 
-		const { storageGet, param } = this.props;
-		const { data } = param;
-		const { noGallery } = data;
+		const { storageGet } = this.props;
 		const items = this.getItems();
+		const tabs = this.getTabs();
 
 		this.rebind();
 
@@ -276,11 +346,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			keyMapper: i => (items[i] || {}).id,
 		});
 
-		if (noGallery) {
-			this.onTab(Tab.Upload);
-		} else {
-			this.forceUpdate();
-		};
+		this.onTab(tabs[0].id);
 	};
 	
 	componentDidUpdate () {
@@ -315,6 +381,39 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		$(window).off('keydown.menu');
 	};
 
+	load () {
+		const { filter, tab } = this.state;
+
+		this.items = [];
+
+		switch (tab) {
+			case Tab.Library: {
+				const filters: I.Filter[] = [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
+				];
+				const sorts = [ 
+					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+				];
+
+				this.setState({ isLoading: true });
+
+				UtilData.search({
+					filters,
+					sorts,
+					fullText: filter,
+					limit: 1000,
+				}, (message: any) => {
+					if (!message.error.code) {
+						this.items = message.records || [];
+					};
+
+					this.setState({ isLoading: false });
+				});
+				break;
+			};
+		};
+	};
+
 	checkRecent (sections: any[]) {
 		const { storageGet } = this.props;
 		const recent = storageGet().recent || [];
@@ -336,7 +435,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		return this.checkRecent(UtilSmile.getCategories().map(it => ({ id: it.id, name: it.name })));
 	};
 	
-	getSections () {
+	getSmileSections () {
 		const { filter } = this.state;
 		const reg = new RegExp(filter, 'gi');
 
@@ -347,7 +446,12 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				...it,
 				children: it.emojis.map(id => {
 					const item = UtilSmile.data.emojis[id] || {};
-					return { id, skin: this.skin, keywords: item.keywords || [] };
+					return { 
+						id, 
+						skin: this.skin, 
+						keywords: item.keywords || [], 
+						skins: item.skins || [],
+					};
 				}),
 			});
 		});
@@ -376,23 +480,65 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	getItems () {
-		let sections = this.getSections();
+		const { tab } = this.state;
+
+		let ret = [];
+
+		switch (tab) {
+			case Tab.Smile: {
+				ret = this.getSmileItems();
+				break;
+			};
+
+			case Tab.Library: {
+				ret = this.getLibraryItems();
+				break;
+			};
+		};
+
+		return ret.map((it, i) => {
+			it.children = (it.children || []).map((c, n) => {
+				c.position = { row: i, n };
+				return c;	
+			});
+			return it;
+		});
+	};
+
+	getLibraryItems () {
+		const ret: any[] = [];
+
+		let n = 0;
+		let row = { children: [] };
+
+		for (let i = 0; i < this.items.length; ++i) {
+			const item = this.items[i];
+
+			row.children.push(item);
+
+			n++;
+			if (n == LIMIT_LIBRARY_ROW) {
+				ret.push(row);
+				row = { children: [] };
+				n = 0;
+			};
+		};
+
+		if (row.children.length && (row.children.length < LIMIT_LIBRARY_ROW)) {
+			ret.push(row);
+		};
+
+		return ret;
+	};
+
+	getSmileItems () {
+		let sections = this.getSmileSections();
 		let items: any[] = [];
 
 		const ret: any[] = [];
 		const length = sections.reduce((res: number, section: any) => { 
 			return (section.id == ID_RECENT) ? res : res + section.children.length; 
 		}, 0);
-
-		const fillRowWithBlankChildren = row => {
-			const len = row.children.length;
-
-			if ((len > 0) && (len < LIMIT_ROW)) {
-				row.children.push(...new Array(LIMIT_ROW - len).fill({ itemId: ID_BLANK }));
-			};
-
-			return row;
-		};
 
 		if (length && (length <= LIMIT_SEARCH)) {
 			sections = [
@@ -412,6 +558,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		let n = 0;
 		let row = { children: [] };
+
 		for (let i = 0; i < items.length; ++i) {
 			const item = items[i];
 			const next = items[i + 1];
@@ -426,28 +573,37 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			row.children.push(item);
 
 			n++;
-			if ((n == LIMIT_ROW) || (next && next.isSection && (row.children.length > 0) && (row.children.length < LIMIT_ROW))) {
-				ret.push(fillRowWithBlankChildren(row));
+			if ((n == LIMIT_SMILE_ROW) || (next && next.isSection && (row.children.length > 0) && (row.children.length < LIMIT_SMILE_ROW))) {
+				ret.push(row);
 				row = { children: [] };
 				n = 0;
 			};
 		};
 
-		if (row.children.length < LIMIT_ROW) {
-			ret.push(fillRowWithBlankChildren(row));
+		if (row.children.length && (row.children.length < LIMIT_SMILE_ROW)) {
+			ret.push(row);
 		};
 
 		return ret;
 	};
 	
 	getRowHeight (item: any) {
-		return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+		if (item.isSection) {
+			return HEIGHT_SECTION;
+		};
+
+		switch (this.state.tab) {
+			case Tab.Smile: return HEIGHT_SMILE_ITEM;
+			case Tab.Library: return HEIGHT_LIBRARY_ITEM;
+		};
+
+		return 0;
 	};
 
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ page: 0, filter: UtilCommon.regexEscape(this.refFilter.getValue()) });
+			this.setState({ page: 0, filter: UtilCommon.regexEscape(this.refFilter.getValue()) }, () => this.load());
 		}, force ? 0 : 50);
 	};
 
@@ -457,9 +613,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 
 		const { close } = this.props;
-		const checkFilter = () => {
-			return this.refFilter && this.refFilter.isFocused;
-		};
+		const { tab } = this.state;
+		const checkFilter = () => this.refFilter && this.refFilter.isFocused;
 
 		e.stopPropagation();
 		keyboard.disableMouse(true);
@@ -481,29 +636,50 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			this.onArrowHorizontal(pressed == 'arrowleft' ? -1 : 1);
 		});
 
+		if (!this.active) {
+			return;
+		};
+
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
-			if (this.active) {
-				this.onSelect(this.active.itemId, this.skin);
-				close();
+			switch (tab) {
+				case Tab.Smile: {
+					this.onSmileSelect(this.active.itemId, this.skin);
+					break;
+				};
+
+				case Tab.Library: {
+					this.upload(this.active.id);
+					break;
+				};
 			};
+			close();
 		});
 
 		keyboard.shortcut('tab, space', e, () => {
-			if (checkFilter() || !this.active) {
+			if (checkFilter()) {
 				return;
 			};
 
 			e.preventDefault();
 
-			const item = UtilSmile.data.emojis[this.active.itemId];
+			switch (tab) {
+				case Tab.Smile: {
+					const item = UtilSmile.data.emojis[this.active.itemId];
+					if (item.skins && (item.skins.length > 1)) {
+						this.onSkin(e, this.active);
+					} else {
+						this.onSmileSelect(this.active.itemId, this.skin);
+						close();
+					};
+					break;
+				};
 
-			if (item.skins && (item.skins.length > 1)) {
-				this.onSkin(e, this.active.id, this.active.itemId);
-			} else {
-				this.onSelect(this.active.itemId, this.skin);
-				close();
+				case Tab.Library: {
+					this.upload(this.active.id);
+					break;
+				};
 			};
 
 			Preview.tooltipHide(true);
@@ -512,22 +688,25 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	setActive (item?: any, row?: number) {
 		const node = $(this.node);
+		const items = node.find('#items');
 
 		if (row && this.refList) {
 			this.refList.scrollToRow(Math.max(0, row));
 		};
 
 		Preview.tooltipHide(false);
-		node.find('.active').removeClass('active');
+		items.find('.active').removeClass('active');
 
 		this.active = item;
 
-		if (this.active) {
-			const element = node.find(`#item-${$.escapeSelector(this.active.id)}`);
-
-			element.addClass('active');
-			Preview.tooltipShow({ text: (UtilSmile.aliases[this.active.itemId] || this.active.itemId), element });
+		if (!item) {
+			return;
 		};
+
+		const element = node.find(`#item-${$.escapeSelector(item.id)}`);
+
+		element.addClass('active');
+		Preview.tooltipShow({ text: this.getTooltip(item), element });
 	};
 
 	onArrowVertical (dir: number) {
@@ -552,11 +731,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const firstBlank = current.children.findIndex(it => it.itemId == ID_BLANK);
-		if ((firstBlank >= 0) && (firstBlank <= this.coll)) {
-			this.coll = firstBlank - 1;
-		};
-
 		this.setActive(current.children[this.coll], this.row);
 	};
 
@@ -572,13 +746,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		// Arrow left
 		if (this.coll < 0) {
-			this.coll = LIMIT_ROW - 1;
+			this.coll = LIMIT_SMILE_ROW - 1;
 			this.onArrowVertical(dir);
 			return;
 		};
 
 		// Arrow right
-		if ((this.coll > current.children.length - 1) || (current.children[this.coll].itemId == ID_BLANK)) {
+		if (this.coll > current.children.length - 1) {
 			this.coll = 0;
 			this.onArrowVertical(dir);
 			return;
@@ -587,34 +761,19 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.setActive(current.children[this.coll], this.row);
 	};
 
-	onRandom () {
-		const param = UtilSmile.randomParam();
-
-		this.onSelect(param.id, param.skin);
-		this.forceUpdate();
-	};
-
 	onUpload () {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { onUpload } = data;
-
-		close();
+		this.props.close();
 
 		Action.openFile(Constant.fileExtension.cover, paths => {
 			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
-				if (!message.error.code && onUpload) {
-					onUpload(message.objectId);
+				if (!message.error.code) {
+					this.upload(message.objectId);
 				};
 			});
 		});
 	};
 	
-	onSelect (id: string, skin: number) {
-		if (id == ID_BLANK) {
-			return;
-		}
-		
+	onSmileSelect (id: string, skin: number) {
 		const { param, storageSet } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
@@ -648,60 +807,70 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 	};
 	
-	onMouseDown (e: any, n: string, id: string, skin: number) {
-		if (id == ID_BLANK) {
-			return;
-		}
-
+	onMouseDown (e: any, item: any) {
 		const { close } = this.props;
+		const { tab } = this.state;
 		const win = $(window);
-		const item = UtilSmile.data.emojis[id];
 
-		this.id = id;
-		window.clearTimeout(this.timeoutMenu);
+		switch (tab) {
+			case Tab.Smile: {
+				const { itemId, skin } = item;
 
-		if (e.button) {
-			return;
-		};
+				this.id = itemId;
+				window.clearTimeout(this.timeoutMenu);
 
-		if (item && (item.skins.length > 1)) {
-			this.timeoutMenu = window.setTimeout(() => {
-				win.off('mouseup.smile');
-				this.onSkin(e, n, id);
-			}, 200);
-		};
+				if (e.button) {
+					return;
+				};
 
-		win.off('mouseup.smile').on('mouseup.smile', () => {
-			if (menuStore.isOpen('smileSkin')) {
-				return;
+				if (item && item.skins && (item.skins.length > 1)) {
+					this.timeoutMenu = window.setTimeout(() => {
+						win.off('mouseup.smile');
+						this.onSkin(e, item);
+					}, 200);
+				};
+
+				win.off('mouseup.smile').on('mouseup.smile', () => {
+					if (menuStore.isOpen('smileSkin')) {
+						return;
+					};
+
+					if (this.id) {
+						this.onSmileSelect(itemId, skin);
+						close();
+					};
+
+					window.clearTimeout(this.timeoutMenu);
+					win.off('mouseup.smile');
+				});
+				break;
 			};
-			if (this.id) {
-				this.onSelect(id, skin);
-				close();
+
+			case Tab.Library: {
+				this.upload(item.id);
+				break;
 			};
-			window.clearTimeout(this.timeoutMenu);
-			win.off('mouseup.smile');
-		});
+		};
 	};
 
-	onSkin (e: any, n: string, id: string) {
-		const { getId, close, param } = this.props;
-		const item = UtilSmile.data.emojis[id];
-
-		if (item.skins.length <= 1) {
+	onSkin (e: any, item: any) {
+		const el = UtilSmile.data.emojis[item.itemId];
+		if (el.skins.length <= 1) {
 			return;
 		};
+
+		const { getId, close, param } = this.props;
 
 		menuStore.open('smileSkin', {
 			...param,
 			type: I.MenuType.Horizontal,
-			element: `#${getId()} #item-${$.escapeSelector(n)}`,
+			element: `#${getId()} #item-${$.escapeSelector(item.id)}`,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
 			data: {
-				smileId: id,
+				smileId: item.itemId,
 				onSelect: (skin: number) => {
-					this.onSelect(id, skin);
+					this.onSmileSelect(item.itemId, skin);
 					close();
 				},
 				rebind: this.rebind
@@ -726,11 +895,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return it;
 		});
 		
-		ids.unshift({ 
-			id: id,
-			skin: skin, 
-			key: [ id, skin ].join(',') 
-		});
+		ids.unshift({ id, skin, key: [ id, skin ].join(',') });
 		
 		ids = UtilCommon.arrayUniqueObjects(ids, 'key');
 		ids = ids.slice(0, LIMIT_RECENT);
@@ -743,7 +908,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 	
 	onRemove () {
-		this.onSelect('', 1);
+		this.onSmileSelect('', 1);
 		this.props.close();
 	};
 
@@ -827,9 +992,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 		
-		const { dataset, param, close } = this.props;
-		const { data } = param;
-		const { onUpload } = data;
+		const { dataset, close } = this.props;
 		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(this.node);
@@ -846,15 +1009,67 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
-				onUpload(message.objectId);
+				this.upload(message.objectId);
 			};
 		
 			close();
 		});
 	};
 
+	getTabs () {
+		const { param } = this.props;
+		const { data } = param;
+		const { noHead, noGallery, noUpload, noRemove } = data;
+
+		if (noHead) {
+			return [];
+		};
+
+		let tabs: any[] = [];
+
+		if (!noUpload) {
+			tabs.push({ id: Tab.Library, text: translate('commonLibrary') });
+		};
+
+		if (!noGallery) {
+			tabs.push({ id: Tab.Smile, text: translate('menuSmileGallery') });
+		};
+
+		if (!noUpload) {
+			tabs.push({ id: Tab.Upload, text: translate('menuSmileUpload') });
+		};
+
+		if (!noRemove) {
+			tabs.push({ text: translate('commonRemove'), onClick: this.onRemove });
+		};
+
+		return tabs;
+	};
+
 	onTab (tab: Tab) {
-		this.setState({ tab });
+		this.setState({ tab }, () => this.load());
+	};
+
+	upload (id: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onUpload } = data;
+
+		if (onUpload) {
+			onUpload(id);
+		};
+	};
+
+	getTooltip (item) {
+		switch (this.state.tab) {
+			case Tab.Smile: {
+				return UtilSmile.aliases[item.itemId] || item.itemId;
+			};
+
+			case Tab.Library: {
+				return item.name;
+			};
+		};
 	};
 
 };

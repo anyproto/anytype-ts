@@ -54,10 +54,11 @@ class Footer extends React.Component<Props> {
 
 	onHelp () {
 		menuStore.open('help', {
-			element: '#button-help',
+			element: '#footer #button-help',
+			classNameWrap: 'fixed',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
-			offsetY: -4,
+			offsetY: () => -($('#notifications').height() + 4),
 		});
 	};
 
