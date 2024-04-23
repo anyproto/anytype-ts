@@ -46,6 +46,7 @@ import Routes from 'json/route.json';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
+const electron = UtilCommon.getElectron();
 
 interface RouteElement { path: string; };
 
@@ -87,7 +88,7 @@ const rootStore = {
 
 window.$ = $;
 
-if (!UtilCommon.getElectron().isPackaged) {
+if (!electron.isPackaged) {
 	window.Anytype = {
 		Store: rootStore,
 		Lib: {
