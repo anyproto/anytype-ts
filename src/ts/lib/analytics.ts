@@ -424,12 +424,6 @@ class Analytics {
 				break;
 			};
 
-			case 'ClickOnboarding':
-			case 'ScreenOnboarding': {
-				data.step = OnboardStage[data.step];
-				break;
-			};
-
 			case 'DeleteSpace': {
 				data.type = Number(data.type) || 0;
 				data.type = I.SpaceType[data.type];
