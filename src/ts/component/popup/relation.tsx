@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label, Button, Cell } from 'Component';
 import { I, M, translate, UtilCommon, Relation, UtilData } from 'Lib';
-import { dbStore, detailStore, commonStore } from 'Store';
+import { dbStore, detailStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ID_PREFIX = 'popupRelation';
@@ -24,6 +24,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const { param, close } = this.props;
 		const { data } = param;
 		const { subId, readonly } = data;
+		const objects = this.getObjects();
 		const relations = this.getRelations();
 
 		const Item = (item: any) => {
@@ -68,14 +69,15 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		return (
 			<div>
 				<Title text="Relation batch editing" />
+				<Label text={UtilCommon.sprintf(`You are editing %d objects`, objects.length)} />
 
 				<div className="blocks">
 					{relations.map(item => <Item key={item.relationKey} {...item} />)}
 				</div>
 
 				<div className="buttons">
-					<Button text="Save" onClick={this.save} />
-					<Button text="Cancel" color="blank" onClick={() => close()} />
+					<Button text="Save" className="c36" onClick={this.save} />
+					<Button text="Cancel" className="c36" color="blank" onClick={() => close()} />
 				</div>
 			</div>
 		);
@@ -161,7 +163,18 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	save () {
-		console.log(this.details);		
+		console.log(this.details);
+		const objects = this.getObjects();
+
+		popupStore.open('confirm', {
+			data: {
+				title: 'Are you sure?',
+				text: UtilCommon.sprintf('This will update relation values of %d objects', objects.length),
+				onConfirm: () => {
+				},
+			},
+		});
+
 	};
 
 });

@@ -3,12 +3,12 @@
 .popups {
 	.popup.popupRelation {
 		.innerWrap { width: 600px; max-height: calc(100% - 180px); padding: 48px; }
+		.label { margin: 0px 0px 32px 0px; }
+		.buttons { display: flex; gap: 0px 16px; margin: 24px 0px 0px 0px; }
 
 		.cellContent.isName {
 			.iconObject { display: none; }
 		}
 
-		.title { margin: 0px 0px 32px 0px; }
-		.buttons { display: flex; gap: 0px 16px; margin: 24px 0px 0px 0px; }
 	}
 }
