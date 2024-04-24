@@ -21,16 +21,16 @@ export default [
 
 	title(`Welcome to Local-First Sharing & Collaboration`),
 	text(`Folks, this is the one we’ve been waiting for. This release, in which creating trusted networks with your friends, family and communities in Anytype becomes a reality, is the culmination of nearly five years of R&D.`),
-	text(`What does this mean for you? Now you can share what matters, with those you care about and never have to worry that your data will be surveilled, blocked, or leaked.`),
+	text(`What does this mean for you? Now you can share what matters, with those you care about, knowing that everything you share is encrypted and owned by you. Not anytype, nor anybody else can peek inside or deny your access.`),
 	text(`From today onward, we warmly welcome you to begin testing out shared spaces, starting with the small things: idea boards, shopping lists, projects, and wikis. As you’re testing, please kindly note that this is v1 of multiplayer, representing the first step towards full-fledged collaborative experiences. We’ll be enriching this experience with more features in the coming months, so your feedback is, as always, warmly welcomed.`), 
-	text(`If you need inspiration, you can always check the ${link('https://gallery.any.coop', 'Multiplayer Experiences')} newly added to the Experience Gallery (or submit your own!).`),
+	text(`If you need inspiration, you can always check the ${link('https://gallery.any.coop/Collaboration', 'Multiplayer Experiences')} newly added to the Experience Gallery - for communities, neighbors, families, teams, and digital creators.
 	text(`We can’t wait to see what you’ll create, and look forward to this new, networked era of Anytype.`),
 
 	h2(`💎 Highlights of this Release:`),
 
 	h3(`Multiplayer! Sharing! Collaboration! is LIVE!`),
 	video(`40/1.mp4`),
-	text(`In the Space Settings menu of each space you’ve created (excluding your Entry space), you’ll now see the option to ${hl('Share Space')} in your Space settings. By clicking here, you can generate an invite link for the Space, which can be sent to anyone.`),
+	text(`To experience local-first collaboration for yourself, first ${hl('create a new space')} using the space navigation menu. In the Space Settings menu, you’ll see the option to ${hl('Share Space')}. By clicking here, you can generate an invite link for the Space, which can be sent to anyone.`),
 	text(`Once they click the link and request to join your Space, you’ll receive a notification prompting you to add this person as an Editor, Viewer, or to reject the request entirely. Editors have edit access to all objects within the Space, while Viewers have read-only access to all objects within the space.`),
 	text(`As a Space owner, it is possible to share up to three Spaces at this time. You can manage the roles of guests you have invited to your Space, or remove them altogether. Guests who have been removed from a space will receive a notification that they have been removed from the Space, and will see an option to export the contents of the Space.`),
 
