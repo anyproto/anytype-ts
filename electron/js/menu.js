@@ -64,9 +64,14 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuWorkDirectory'), click: () => shell.openPath(Util.userPath()) },
-					{ label: Util.translate('electronMenuDataDirectory'), click: () => shell.openPath(Util.dataPath()) },
-					{ label: Util.translate('electronMenuLogs'), click: () => shell.openPath(Util.logPath()) },
+					{ 
+						label: Util.translate('electronMenuDirectory'), submenu: [
+							{ label: Util.translate('electronMenuWorkDirectory'), click: () => shell.openPath(Util.userPath()) },
+							{ label: Util.translate('electronMenuDataDirectory'), click: () => shell.openPath(Util.dataPath()) },
+							{ label: Util.translate('electronMenuConfigDirectory'), click: () => shell.openPath(Util.defaultUserDataPath()) },
+							{ label: Util.translate('electronMenuLogsDirectory'), click: () => shell.openPath(Util.logPath()) },
+						] 
+					},
 
 					Separator,
 
