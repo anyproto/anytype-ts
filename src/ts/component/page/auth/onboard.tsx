@@ -243,6 +243,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage == Stage.Soul) {
 			const name = this.refName.getValue();
+			const { redirect } = commonStore;
+
 			const cb = () => {
 				Animation.from(() => {
 					this.refNext?.setLoading(false);
@@ -252,7 +254,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						animate: true,
 						onFadeIn: () => {
 							Storage.initPinnedTypes();
-							Action.welcome();
+
+							if (!redirect) {
+								Action.welcome();
+							};
 						},
 					};
 
