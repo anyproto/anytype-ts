@@ -978,7 +978,7 @@ class UtilData {
 				return;
 			};
 
-			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == testPayment));
+			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
 			commonStore.membershipTiersListSet(tiers);
 		});
 	};
