@@ -115,7 +115,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				buttons = (
 					<div className="animation">
-						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('authOnboardNameButton')} onClick={this.onForward} />
+						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('authOnboardSoulButton')} onClick={this.onForward} />
 					</div>
 				);
 				break;

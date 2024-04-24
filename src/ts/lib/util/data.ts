@@ -973,7 +973,7 @@ class UtilData {
 			return;
 		};
 
-		C.MembershipGetTiers(true, interfaceLang, (message) => {
+		C.MembershipGetTiers(false, interfaceLang, (message) => {
 			if (message.error.code) {
 				return;
 			};
