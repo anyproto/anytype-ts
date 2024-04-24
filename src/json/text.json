@@ -341,9 +341,9 @@
 	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It's local-first – everything works offline.<br/>Only you have the key.",
 	"authOnboardVaultButton": "Get my Key",
 
-	"authOnboardNameTitle": "Set your name",
-	"authOnboardNameLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
-	"authOnboardNameButton": "Enter my Vault",
+	"authOnboardSoulTitle": "Set your name",
+	"authOnboardSoulLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
+	"authOnboardSoulButton": "Enter my Vault",
 
 	"authOnboardPhraseTitle": "This is your Key",
 	"authOnboardPhraseLabel": "It gives you full ownership over your vault.<br/>It cannot be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
