@@ -23,7 +23,7 @@ export default [
 	text(`Folks, this is the one we’ve been waiting for. This release, in which creating trusted networks with your friends, family and communities in Anytype becomes a reality, is the culmination of nearly five years of R&D.`),
 	text(`What does this mean for you? Now you can share what matters, with those you care about, knowing that everything you share is encrypted and owned by you. Not anytype, nor anybody else can peek inside or deny your access.`),
 	text(`From today onward, we warmly welcome you to begin testing out shared spaces, starting with the small things: idea boards, shopping lists, projects, and wikis. As you’re testing, please kindly note that this is v1 of multiplayer, representing the first step towards full-fledged collaborative experiences. We’ll be enriching this experience with more features in the coming months, so your feedback is, as always, warmly welcomed.`), 
-	text(`If you need inspiration, you can always check the ${link('https://gallery.any.coop/Collaboration', 'Multiplayer Experiences')} newly added to the Experience Gallery - for communities, neighbors, families, teams, and digital creators.
+	text(`If you need inspiration, you can always check the ${link('https://gallery.any.coop/Collaboration', 'Multiplayer Experiences')} newly added to the Experience Gallery - for communities, neighbors, families, teams, and digital creators.`),
 	text(`We can’t wait to see what you’ll create, and look forward to this new, networked era of Anytype.`),
 
 	h2(`💎 Highlights of this Release:`),
