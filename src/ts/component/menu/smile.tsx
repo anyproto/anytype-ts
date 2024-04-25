@@ -346,7 +346,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			keyMapper: i => (items[i] || {}).id,
 		});
 
-		this.onTab(tabs[0].id);
+		if (tabs.length) {
+			this.onTab(tabs[0].id);
+		};
 	};
 	
 	componentDidUpdate () {
