@@ -56,16 +56,16 @@ html.themeDark {
 
 	.iconObject.withOption.isSpaceView { background: #000 !important; }
 
-    .bgColor-grey { background: var(--color-shape-tertiary) !important; }
-	.bgColor-yellow { background: #2b2601 !important; }
-	.bgColor-orange { background: #2b2601 !important; }
-	.bgColor-red { background: #411909 !important; }
-	.bgColor-pink { background: #480d32 !important; }
-	.bgColor-purple { background: #3a1549 !important; }
-	.bgColor-blue { background: #0a2163 !important; }
-	.bgColor-ice { background: #07293f !important; }
-	.bgColor-teal { background: #052b28 !important; }
-	.bgColor-lime { background: #182a08 !important; }
+    .bgColor-grey { background: var(--color-shape-secondary) !important; }
+	.bgColor-yellow { background: #423c00 !important; }
+	.bgColor-orange { background: #423c00 !important; }
+	.bgColor-red { background: #6b2109 !important; }
+	.bgColor-pink { background: #6f124f !important; }
+	.bgColor-purple { background: #5b2171 !important; }
+	.bgColor-blue { background: #00349a !important; }
+	.bgColor-ice { background: #044062 !important; }
+	.bgColor-teal { background: #02443e !important; }
+	.bgColor-lime { background: #214307 !important; }
 
     .isMultiSelect.tagColor-default { background: unset !important; }
     .isMultiSelect.tagColor-grey { color: var(--color-text-secondary) !important; background: var(--color-shape-secondary) !important; }
