@@ -648,11 +648,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
+		const key = e.key.toLowerCase();
+		const range = this.getRange();
+
+		if (!range) {
+			return;
+		};
+
 		let value = this.getValue();
 		let ret = false;
 
-		const key = e.key.toLowerCase();
-		const range = this.getRange();
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.cmdKey();
 
@@ -768,10 +773,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		keyboard.shortcut('tab', e, () => {
 			e.preventDefault();
 
-			if (!range) {
-				return;
-			};
-			
 			if (block.isTextCode()) {
 				value = UtilCommon.stringInsert(value, '\t', range.from, range.from);
 
@@ -792,10 +793,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		keyboard.shortcut('backspace', e, () => {
 			if (keyboard.pressed.includes(Key.enter)) {
 				ret = true;
-				return;
-			};
-
-			if (!range) {
 				return;
 			};
 
@@ -834,10 +831,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		keyboard.shortcut('delete', e, () => {
-			if (!range) {
-				return;
-			};
-
 			if ((range.from == range.to) && (range.to == value.length)) {
 				UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range, this.props);
