@@ -79,7 +79,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 						popupStore.open('confirm', {
 							data: {
 								icon: 'sad',
-								bgColor: 'blue',
+								bgColor: 'red',
 								title: translate('popupInviteRequestTitle'),
 								text: translate('popupConfirmInviteError'),
 								textConfirm: translate('commonOkay'),
