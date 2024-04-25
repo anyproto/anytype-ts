@@ -1023,7 +1023,7 @@ class Dispatcher {
 
 				case 'membershipUpdate':
 					authStore.membershipUpdate(Mapper.From.Membership(data.getData()));
-					UtilData.getMembershipTiers();
+					UtilData.getMembershipTiers(true);
 					break;
 
 				case 'processNew':

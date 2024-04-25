@@ -243,7 +243,7 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipTiers();
+		this.getMembershipTiers(false);
 		this.getMembershipStatus();
 	};
 
@@ -965,7 +965,7 @@ class UtilData {
 		});
 	};
 
-	getMembershipTiers () {
+	getMembershipTiers (noCache: boolean) {
 		const { config, interfaceLang, isOnline } = commonStore;
 		const { testPayment } = config;
 
@@ -973,7 +973,7 @@ class UtilData {
 			return;
 		};
 
-		C.MembershipGetTiers(false, interfaceLang, (message) => {
+		C.MembershipGetTiers(noCache, interfaceLang, (message) => {
 			if (message.error.code) {
 				return;
 			};

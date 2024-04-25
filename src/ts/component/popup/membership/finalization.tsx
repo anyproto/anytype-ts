@@ -141,7 +141,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 				return;
 			};
 
-			UtilData.getMembershipTiers();
+			UtilData.getMembershipTiers(true);
 			UtilData.getMembershipStatus((membership) => {
 				if (!membership || membership.isNone) {
 					this.setState({ status: 'error', statusText: translate('pageMainMembershipError') });
