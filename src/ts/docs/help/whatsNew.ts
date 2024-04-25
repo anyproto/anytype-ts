@@ -37,8 +37,12 @@ export default [
 	h3(`Memberships`),
 	video(`40/2.mp4`),
 	text(`For those of you who’ve inquired how to support Anytype’s development and growth, we’re pleased to share that the time has come! Memberships in the Anytype network are now live. You can check your Membership status at any time by clicking on the new ${hl('Memberships')} tab in your Profile Settings.`),
-	text(`If you joined Anytype prior to this release, you should see the ‘Explorer’ Plan already activated in your account, including your previous storage limits.`),
+	text(`If you joined Anytype prior to this release, you should be auto-upgdated to the ‘Beta Users’ Plan, which includes your previous storage limits plus all benefits of the Explorer Plan.`),
 	text(`If you would like to upgrade your membership, select your desired plan and follow the on-screen instructions to submit the Name you would like to purchase on the Anytype network. Then, complete the transaction in Stripe. Once your payment has been confirmed, your membership plan will update in the app.`),
+
+	h3(`Custom Storage Location`),
+	text(`When creating a vault, it’s now possible to select the storage location on your hard drive. If your vault has already been created, you can also change the location and retrieve the data from the network. To do so, first logout, then tap the settings wheel on the black login screen.`),
+	text(`Please be cautious when using local-only mode, as your data can only be transferred to a second device via peer-to-peer (P2P) connection.`),
 
 	h2(`⚡ Quality-of-Life Improvements:`),
 
@@ -62,9 +66,6 @@ export default [
 
 	h3(`Use Uploaded Images as Object Icons`),
 	text(`You can now set an object icon by reusing an image that has already been uploaded to the space.`),
-
-	h3(`Custom storage location`),
-	text(`When creating a vault, users can change the storage location on their hard drive. If the vault has already been created, users can also change the location and retrieve the data from the network. However, be cautious with local-only mode, as the data can only be transferred from the second device via peer-to-peer (P2P) connection.`),
 
 	h2(`💻 Tech:`),
 	bullet(`Electron updated to 29.1.6`),
