@@ -41,13 +41,9 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
-      - name: Setup distutils Linux
-        if: matrix.os == 'ubuntu-latest'
+      - name: Setup distutils
+        if: matrix.os != 'windows-latest'
         run: sudo -H pip install setuptools
-
-      - name: Setup distutils MacOS
-        if: matrix.os == 'macos-12'
-        run: brew install python-setuptools
 
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
