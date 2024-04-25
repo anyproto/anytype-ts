@@ -46,7 +46,7 @@ jobs:
         run: sudo -H pip install setuptools
 
       - name: Setup distutils MacOS
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-12'
         run: brew install python-setuptools
 
       - name: Install Node.js, NPM and Yarn
@@ -90,7 +90,7 @@ jobs:
           CGO_ENABLED: 0
 
       - name: Build Front Mac OS
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-12'
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}
@@ -109,7 +109,7 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
 
       - name: Build Front Other
-        if: matrix.os != 'macos-latest'
+        if: matrix.os != 'macos-12'
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}
