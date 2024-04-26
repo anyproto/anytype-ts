@@ -972,7 +972,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				if (isNew && this.refControls && this.refControls.refHead) {
 					const ref = this.refControls.refHead;
-					const l = item.name.length;
+					const l = String(item.name || '').length;
 
 					ref.setValue(item.name);
 					ref.setRange({ from: l, to: l });
