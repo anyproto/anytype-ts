@@ -47,6 +47,7 @@ import Routes from 'json/route.json';
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 const electron = UtilCommon.getElectron();
+const isPackaged = electron.isPackaged;
 
 interface RouteElement { path: string; };
 
@@ -88,7 +89,7 @@ const rootStore = {
 
 window.$ = $;
 
-if (!electron.isPackaged) {
+if (!isPackaged) {
 	window.Anytype = {
 		Store: rootStore,
 		Lib: {
@@ -136,8 +137,8 @@ enableLogging({
 */
 
 Sentry.init({
-	release: UtilCommon.getElectron().version.app,
-	environment: UtilCommon.getElectron().isPackaged ? 'production' : 'development',
+	release: electron.version.app,
+	environment: isPackaged ? 'production' : 'development',
 	dsn: Constant.sentry,
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
@@ -150,6 +151,11 @@ Sentry.init({
 			onunhandledrejection: true,
 		}),
 	],
+});
+
+Sentry.setContext('info', {
+	network: I.NetworkMode[authStore.networkConfig?.mode],
+	isPackaged: isPackaged,
 });
 
 class RoutePage extends React.Component<RouteComponentProps> {
@@ -207,7 +213,7 @@ class App extends React.Component<object, State> {
 							<div id="root-loader" className="loaderWrapper">
 								<div className="inner">
 									<div className="logo anim from" />
-									<div className="version anim from">{UtilCommon.getElectron().version.app}</div>
+									<div className="version anim from">{electron.version.app}</div>
 								</div>
 							</div>
 						) : ''}
@@ -237,9 +243,11 @@ class App extends React.Component<object, State> {
 	};
 
 	init () {
+		const { version, arch, getGlobal } = electron;
+
 		UtilRouter.init(history);
 
-		dispatcher.init(UtilCommon.getElectron().getGlobal('serverAddress'));
+		dispatcher.init(getGlobal('serverAddress'));
 		dispatcher.listenEvents();
 
 		keyboard.init();
@@ -247,8 +255,8 @@ class App extends React.Component<object, State> {
 		this.registerIpcEvents();
 		Renderer.send('appOnLoad');
 
-		console.log('[Process] os version:', UtilCommon.getElectron().version.system, 'arch:', UtilCommon.getElectron().arch);
-		console.log('[App] version:', UtilCommon.getElectron().version.app, 'isPackaged', UtilCommon.getElectron().isPackaged);
+		console.log('[Process] os version:', version.system, 'arch:', arch);
+		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
 	};
 
 	initStorage () {
@@ -480,7 +488,7 @@ class App extends React.Component<object, State> {
 				icon: 'updated',
 				bgColor: 'green',
 				title: translate('popupConfirmUpdateDoneTitle'),
-				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), UtilCommon.getElectron().version.app),
+				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
 				colorConfirm: 'blank',
 				canCancel: false,
