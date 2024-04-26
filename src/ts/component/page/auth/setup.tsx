@@ -166,7 +166,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				UtilData.onAuth({ routeParam: { animate } });
 			};
 
-			UtilData.onAuthOnce();
+			UtilData.onAuthOnce(false);
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};

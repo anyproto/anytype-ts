@@ -367,7 +367,7 @@ class App extends React.Component<object, State> {
 
 							UtilData.onInfo(account.info);
 							UtilData.onAuth({}, cb);
-							UtilData.onAuthOnce();
+							UtilData.onAuthOnce(false);
 						};
 					});
 				});

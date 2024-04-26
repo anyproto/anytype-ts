@@ -230,7 +230,7 @@ class UtilData {
 		});
 	};
 
-	onAuthOnce () {
+	onAuthOnce (noTierCache: boolean) {
 		C.NotificationList(false, Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
 				notificationStore.set(message.list);
@@ -243,7 +243,7 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipTiers(false);
+		this.getMembershipTiers(noTierCache);
 		this.getMembershipStatus();
 	};
 
