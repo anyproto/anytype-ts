@@ -151,9 +151,11 @@ class Sidebar {
 		};
 
 		const { autoSidebar } = commonStore;
-		const { x, y, width, height, snap } = this.data;
+		const { x, y, width, snap } = this.data;
 		const css: any = { top: 0, height: '100%' };
 		const mouse = keyboard.mouse.page;
+
+		const height = 0;
 		
 		let tx = 0;
 		if (snap == I.MenuDirection.Left) {
@@ -179,7 +181,7 @@ class Sidebar {
 				(autoSidebar && (mouse.x >= x) && (mouse.x <= x + width))
 			) {
 				css.top = y;
-				css.height = this.limitHeight(height);
+				css.height = this.getMaxHeight();
 				css.transform = `translate3d(0px,0px,0px)`;
 			} else {
 				css.top = 0;
@@ -405,13 +407,12 @@ class Sidebar {
 	set (v: Partial<SidebarData>, force?: boolean): void {
 		v = Object.assign(this.data, v);
 
-		let { width, height, x, y } = v;
+		let { width, x, y } = v;
 
 		if (!force) {
 			width = this.limitWidth(width);
-			height = this.limitHeight(height);
 
-			const coords = this.limitCoords(v.x, v.y, width, height);
+			const coords = this.limitCoords(v.x, v.y, width, this.getMaxHeight());
 			x = coords.x;
 			y = coords.y;
 		};
@@ -420,7 +421,6 @@ class Sidebar {
 			x,
 			y,
 			width,
-			height,
 			snap: this.getSnap(x, width),
 		});
 
@@ -489,16 +489,9 @@ class Sidebar {
 	 * Get the side to snap the sidebar to
 	 */
 	private getSnap (x: number, width: number): I.MenuDirection.Left | I.MenuDirection.Right | null {
-		const { ww } = UtilCommon.getWindowDimensions();
-
 		if (x <= SNAP_THRESHOLD) {
 			return I.MenuDirection.Left;
 		} else 
-		/*
-		if (x + width >= ww - SNAP_THRESHOLD) {
-			return I.MenuDirection.Right;
-		} else 
-		*/
 		if (commonStore.isSidebarFixed) {
 			return I.MenuDirection.Left;
 		} else {
@@ -510,8 +503,7 @@ class Sidebar {
 	 * Get max height allowed
 	 */
 	private getMaxHeight (): number {
-		const { wh } = UtilCommon.getWindowDimensions();
-		return wh - UtilCommon.sizeHeader() * 2;
+		return UtilCommon.getWindowDimensions().wh - UtilCommon.sizeHeader() * 2;
 	};
 
 	/**
@@ -538,14 +530,6 @@ class Sidebar {
 	private limitWidth (width: number): number {
 		const { min, max } = Constant.size.sidebar.width;
 		return Math.max(min, Math.min(max, Number(width) || 0));
-	};
-
-	/**
-	 * Limit the sidebar height to the max and min bounds
-	 */
-	private limitHeight (height: number): number {
-		const { min } = Constant.size.sidebar.height;
-		return Math.max(min, Math.min(this.getMaxHeight(), Number(height) || 0));
 	};
 
 };
