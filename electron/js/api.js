@@ -115,7 +115,7 @@ class Api {
 	};
 
 	updateCheck (win) {
-		if (this.isPinChecked) {
+		if (this.isPinChecked || !this.account) {
 			UpdateManager.checkUpdate(false);
 		};
 	};
