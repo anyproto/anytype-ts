@@ -110,7 +110,8 @@ class UtilMenu {
 	getBlockObject () {
 		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
-			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
 		];
 
 		items.sort((c1, c2) => UtilData.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));

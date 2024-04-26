@@ -51,7 +51,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 				
 			case I.FileState.Done:
 				element = (
-					<div className="flex" onMouseDown={this.onOpen}>
+					<div className="inner" onMouseDown={this.onOpen}>
 						<IconObject object={object} size={24} />
 						<ObjectName object={object} />
 						<span className="size">{UtilFile.size(object.sizeInBytes)}</span>

@@ -348,6 +348,16 @@ class UtilObject {
 		];
 	};
 
+	getFileTypeByLayout (layout: I.ObjectLayout): I.FileType {
+		switch (layout) {
+			default: return I.FileType.File;
+			case I.ObjectLayout.Image: return I.FileType.Image;
+			case I.ObjectLayout.Audio: return I.FileType.Audio;
+			case I.ObjectLayout.Video: return I.FileType.Video;
+			case I.ObjectLayout.Pdf: return I.FileType.Pdf;
+		};
+	};
+
 	excludeFromSet (): I.ObjectLayout[] {
 		return [ 
 			I.ObjectLayout.Option, 

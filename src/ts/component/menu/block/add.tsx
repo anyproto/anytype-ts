@@ -412,11 +412,22 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				});
 				break;
 
-			case 'existing':
+			case 'existingPage':
 				menuId = 'searchObject';
 				menuParam.data.canAdd = true;
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Link,
+				});
+				break;
+
+			case 'existingFile':
+				menuId = 'searchObject';
+				menuParam.data.canAdd = true;
+				menuParam.data = Object.assign(menuParam.data, {
+					type: I.NavigationType.Link,
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() },
+					],
 				});
 				break;
 
