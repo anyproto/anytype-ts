@@ -18,7 +18,11 @@
 					}
 				}
 
-				.body { overflow: overlay; }
+				.body { overflow: scroll; }
+
+				.body::-webkit-scrollbar { width: 6px; height: 6px; }
+				.body::-webkit-scrollbar-track { background: transparent; }
+				.body::-webkit-scrollbar-thumb { background: var(--color-shape-secondary); border-radius: 3px; }
 			}
 
 			.day { 
