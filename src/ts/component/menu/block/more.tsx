@@ -486,7 +486,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageCreate': {
-				UtilObject.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, {}, [], route, message => UtilObject.openAuto(message.details));
+				UtilObject.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, [], route, message => UtilObject.openAuto(message.details));
 				break;
 			};
 

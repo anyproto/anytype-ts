@@ -605,7 +605,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						details.layout = type.recommendedLayout;
 					};
 
-					UtilObject.create(rootId, blockId, details, position, type.defaultTemplateId, UtilData.defaultLinkSettings(), [ I.ObjectFlag.SelectTemplate ], 'Powertool', (message: any) => {
+					UtilObject.create(rootId, blockId, details, position, type.defaultTemplateId, [ I.ObjectFlag.SelectTemplate ], 'Powertool', (message: any) => {
 						UtilObject.openConfig(message.details);
 						analytics.event('CreateLink');
 					});

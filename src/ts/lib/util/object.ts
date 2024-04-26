@@ -1,4 +1,4 @@
-import { I, C, keyboard, history as historyPopup, Renderer, UtilFile, translate, UtilRouter, analytics } from 'Lib';
+import { I, C, keyboard, history as historyPopup, Renderer, UtilData, translate, UtilRouter, analytics } from 'Lib';
 import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -145,7 +145,7 @@ class UtilObject {
 		commonStore.fullscreenObject ? this.openAuto(object) : this.openPopup(object);
 	};
 
-	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {
+	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {
 		let typeKey = '';
 
 		details = details || {};
@@ -164,8 +164,13 @@ class UtilObject {
 				};
 			};
 		};
+
+		const block = {
+			type: I.BlockType.Link,
+			content: UtilData.defaultLinkSettings(),
+		};
 		
-		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, typeKey, commonStore.space, (message: any) => {
+		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, block, flags, typeKey, commonStore.space, (message: any) => {
 			if (!message.error.code) {
 				if (callBack) {
 					callBack(message);

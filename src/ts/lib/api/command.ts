@@ -607,7 +607,7 @@ export const BlockLatexSetText = (contextId: string, blockId: string, text: stri
 
 // ---------------------- BLOCK LINK ---------------------- //
 
-export const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
+export const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, block: I.Block, flags: I.ObjectFlag[], typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.BlockLink.CreateWithObject.Request();
@@ -617,10 +617,10 @@ export const BlockLinkCreateWithObject = (contextId: string, targetId: string, d
 	request.setPosition(position as number);
 	request.setDetails(Encode.struct(details));
 	request.setTemplateid(templateId);
-	request.setFields(Encode.struct(fields || {}));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 	request.setObjecttypeuniquekey(typeKey);
 	request.setSpaceid(spaceId);
+	request.setBlock(Mapper.To.Block(block));
 
 	dispatcher.request(BlockLinkCreateWithObject.name, request, callBack);
 };

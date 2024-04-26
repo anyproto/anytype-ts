@@ -400,7 +400,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (item.id == 'add') {
 			const { details, flags } = Relation.getParamForNewObject(filter, relation);
 
-			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, 'Relation', (message: any) => {
+			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', (message: any) => {
 				cb(message.targetId);
 				close();
 			});
