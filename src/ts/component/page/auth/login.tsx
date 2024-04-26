@@ -35,7 +35,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	
 	render () {
 		const { error } = this.state;
-		const { config } = commonStore;
 		const { accounts } = authStore;
 		const length = accounts.length;
 		
@@ -54,6 +53,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 								onChange={this.onChange} 
 								onKeyDown={this.onKeyDownPhrase}
 								isHidden={true} 
+								placeholder={translate('phrasePlaceholder')}
 							/>
 						</div>
 						<div className="buttons">
