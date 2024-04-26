@@ -8,7 +8,6 @@ interface SidebarData {
 	x: number;
 	y: number;
 	width: number;
-	height: number;
 	snap: I.MenuDirection.Left | I.MenuDirection.Right | null;
 	isClosed: boolean;
 };
@@ -23,7 +22,6 @@ class Sidebar {
 		x: 0,
 		y: 0,
 		width: 0,
-		height: 0,
 		snap: I.MenuDirection.Left,
 		isClosed: false,
 	};
@@ -54,11 +52,9 @@ class Sidebar {
 			commonStore.isSidebarFixedSet(true);
 
 			const { wh } = UtilCommon.getWindowDimensions();
-			const height = this.getMaxHeight();
-			const y = wh / 2 - height / 2;
+			const y = wh / 2 - this.getMaxHeight() / 2;
 
 			this.set({
-				height,
 				width: Constant.size.sidebar.width.default,
 				y,
 				x: 0,
@@ -155,8 +151,6 @@ class Sidebar {
 		const css: any = { top: 0, height: '100%' };
 		const mouse = keyboard.mouse.page;
 
-		const height = 0;
-		
 		let tx = 0;
 		if (snap == I.MenuDirection.Left) {
 			css.left = 0;
@@ -208,11 +202,12 @@ class Sidebar {
 
 		const { autoSidebar } = commonStore;
 		const { snap } = this.data;
+		const mh = this.getMaxHeight();
 		const css: any = { top: 0, transform: 'translate3d(0px,0px,0px)' };
 
 		if (autoSidebar) {
 			css.top = 50;
-			css.height = this.data.height;
+			css.height = mh;
 		};
 
 		if (snap == I.MenuDirection.Left) {
@@ -233,7 +228,7 @@ class Sidebar {
 		this.removeAnimation(() => {
 			this.obj.css({
 				transform: '',
-				height: this.data.height,
+				height: mh,
 				top: this.data.y,
 				left: '',
 				right: '',
@@ -246,7 +241,7 @@ class Sidebar {
 			return;
 		};
 
-		this.obj.css({ top: this.data.y, height: this.data.height });
+		this.obj.css({ top: this.data.y, height: this.getMaxHeight() });
 		this.obj.addClass('anim active');
 		this.removeAnimation();
 	};
@@ -318,14 +313,10 @@ class Sidebar {
 	};
 
 	resize (): void {
-		const { isSidebarFixed } = commonStore;
 		const { snap, width } = this.data;
 		const { ww } = UtilCommon.getWindowDimensions();
 		const set: Partial<SidebarData> = {};
 
-		if (!isSidebarFixed) {
-			set.height = this.getMaxHeight();
-		};
 		if (snap == I.MenuDirection.Left) {
 			set.x = 0;
 		};
@@ -333,7 +324,9 @@ class Sidebar {
 			set.x = ww - width;
 		};
 
-		this.set(set);
+		if (UtilCommon.objectLength(set)) {
+			this.set(set);
+		};
 	};
 
 	resizePage () {
@@ -442,7 +435,7 @@ class Sidebar {
 			return;
 		};
 
-		const { x, y, width, height, snap, isClosed } = v;
+		const { x, y, width, snap, isClosed } = v;
 		const css: any = { left: '', right: '', width };
 		const cn = [];
 
@@ -450,7 +443,7 @@ class Sidebar {
 			cn.push('fixed active');
 		} else {
 			css.top = y;
-			css.height = height;
+			css.height = this.getMaxHeight();
 		};
 
 		if (snap === null) {
