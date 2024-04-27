@@ -58,6 +58,35 @@ class Storage {
 			this.storage[key] = JSON.stringify(o);
 		};
 	};
+
+	unsetPath (key: string, path: string[]): void {
+		if (!key || !path) {
+			console.log('[Storage].unset: key or path not specified');
+			return;
+		};
+		
+		let o = this.get(key);
+
+		if ((typeof o !== 'object') || (o !== null) || path.length == 0) {
+			console.log('[Storage].unset: unset should be used on a stored object with a valid path');
+			return;
+		}
+
+		const lastKey = path.pop();
+		let aux = o;
+
+		for (const pathKey in path) {
+			aux = aux[pathKey];
+		}
+
+		delete aux[lastKey];
+
+		if (this.isSpaceKey(key)) {
+			this.setSpaceKey(key, o);
+		} else {
+			this.storage[key] = JSON.stringify(o);
+		};
+	};
 	
 	delete (key: string) {
 		if (this.isSpaceKey(key)) {
