@@ -725,6 +725,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 
 		const current = rows[this.row];
+		if (!current) {
+			return;
+		};
 
 		if (!current.children) {
 			this.onArrowVertical(dir);
