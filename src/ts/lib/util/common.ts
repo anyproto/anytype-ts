@@ -14,6 +14,16 @@ class UtilCommon {
 		return window.Electron || {};
 	};
 
+	getCurrentElectronWindowId () {
+		const electron = this.getElectron();
+
+		if (!electron) {
+			return 0;
+		}
+
+		return electron.currentWindow().windowId;
+	}
+
 	getGlobalConfig () {
 		return window.AnytypeGlobalConfig || {};
 	};

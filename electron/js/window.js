@@ -226,6 +226,11 @@ class WindowManager {
 		return { x, y };
 	};
 
+	getWindowId () {
+		const currentWindow = BrowserWindow.getFocusedWindow();
+		return currentWindow.id;
+	}
+
 	sendToAll () {
 		const args = [ ...arguments ];
 		this.list.forEach(it => Util.send.apply(this, [ it ].concat(args)));
