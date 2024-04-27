@@ -335,10 +335,12 @@ class Action {
 						callBack();
 					};
 
+					const windowId = UtilCommon.getCurrentElectronWindowId();
+
 					// Remove last opened object in case it is deleted
-					const home = Storage.get('lastOpened');
+					const home = Storage.get('lastOpened')[windowId];
 					if (home && ids.includes(home.id)) {
-						Storage.delete('lastOpened');
+						Storage.unsetPath('lastOpened', [`${windowId}`]);
 					};
 
 					analytics.event('RemoveCompletely', { count, route });
