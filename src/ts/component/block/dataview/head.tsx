@@ -373,7 +373,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	};
 
 	setRange (range: I.TextRange) {
-		this.ref.setRange(range);
+		this.ref?.setRange(range);
 	};
 
 	setEditing (v: boolean) {
