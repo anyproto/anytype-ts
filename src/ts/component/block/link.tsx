@@ -258,16 +258,13 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { selection } = dataset || {};
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
-		const { _empty_ } = object;
 		const ids = selection ? selection.get(I.SelectType.Block) : [];
 
-		if (_empty_ || (targetBlockId == rootId)) {
+		if (object._empty_ || (targetBlockId == rootId) || (keyboard.withCommand(e) && ids.length)) {
 			return;
 		};
-		
-		if (!(keyboard.withCommand(e) && ids.length)) {
-			UtilObject.openEvent(e, object);
-		};
+
+		UtilObject.openEvent(e, object);
 	};
 	
 	onSelect (icon: string) {

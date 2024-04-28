@@ -133,8 +133,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 								<List
 									autoHeight={true}
 									ref={ref => this.refList = ref}
-									width={width}
-									height={height}
+									width={Number(width) || 0}
+									height={Number(height) || 0}
 									deferredMeasurmentCache={this.cache}
 									rowCount={length}
 									rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}

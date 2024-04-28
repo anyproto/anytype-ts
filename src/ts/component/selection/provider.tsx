@@ -162,7 +162,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		this.initNodes();
 
-		if (e.shiftKey) {
+		if (e.shiftKey && focused) {
 			const target = $(e.target).closest('.selectionTarget');
 			const type = target.attr('data-type') as I.SelectType;
 			const id = target.attr('data-id');
@@ -288,7 +288,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				const target = $(e.target).closest('.selectionTarget');
 				const id = target.attr('data-id');
 				const type = target.attr('data-type');
-				
+
 				if (target.length && e.shiftKey && ids.length && (type == I.SelectType.Block)) {
 					const first = ids.length ? ids[0] : this.focused;
 					const tree = blockStore.getTree(this.rootId, blockStore.getBlocks(this.rootId));
@@ -397,7 +397,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const { x, y } = this.recalcCoords(e.pageX, e.pageY);
 		const rect = UtilCommon.objectCopy(this.getRect(this.x, this.y, x, y));
 
-		if (!e.shiftKey && !e.altKey && !e.ctrlKey || e.metaKey) {
+		if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 			this.initIds();
 		};
 
