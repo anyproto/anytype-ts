@@ -626,10 +626,11 @@ class UtilMenu {
 
 		const isOwner = UtilSpace.isMyOwner(targetSpaceId);
 		const isAnytypeNetwork = UtilData.isAnytypeNetwork();
+		const { isOnline } = commonStore;
 
 		let options: any[] = [];
 
-		if (isOwner && space.isShared && isAnytypeNetwork) {
+		if (isOwner && space.isShared && isAnytypeNetwork && isOnline) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 

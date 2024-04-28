@@ -260,7 +260,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { param } = this.props;
 		const { data } = param;
 		const { isSpace } = data;
-		const { config } = commonStore;
 
 		if (isSpace) {
 			return [
