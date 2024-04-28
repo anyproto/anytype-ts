@@ -49,8 +49,6 @@
 		.emptyToggle:hover { color: var(--color-text-primary); }
 	}
 
-	.block.isFirst { padding-top: 0px !important; }
-
 	.block {
 		> .wrapContent {
 			> .selectionTarget { position: relative; }

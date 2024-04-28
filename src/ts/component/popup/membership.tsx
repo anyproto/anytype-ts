@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label } from 'Component';
-import { analytics, I, translate, UtilCommon, UtilData } from 'Lib';
+import { analytics, I, translate, UtilData } from 'Lib';
 import { authStore } from 'Store';
 
 import PageFree from './page/membership/free';

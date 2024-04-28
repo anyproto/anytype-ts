@@ -14,14 +14,25 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.21 ]
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
+        os: [ macos-12, ubuntu-latest, windows-latest ]
 
     steps:
       - name: Setup
         run: | 
           git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
           git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@api.github.com/".insteadOf "https://api.github.com/"
+
+      - name: Install Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.22
+        
+      - name: Setup GO
+        run: |
+          go version
+          echo GOPATH=$(go env GOPATH) >> $GITHUB_ENV
+          echo GOBIN=$(go env GOPATH)/bin >> $GITHUB_ENV
+          echo $(go env GOPATH)/bin >> $GITHUB_PATH
 
       - name: Install AzureSignTool
         if: matrix.os == 'windows-latest'
@@ -75,7 +86,7 @@ jobs:
           CGO_ENABLED: 0
 
       - name: Build Front Mac OS
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-12'
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}
@@ -94,7 +105,7 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
 
       - name: Build Front Other
-        if: matrix.os != 'macos-latest'
+        if: matrix.os != 'macos-12'
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}

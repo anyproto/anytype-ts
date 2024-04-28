@@ -248,6 +248,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		});
 
 		this.init();
+		this.forceUpdate();
 	};
 
 	componentDidUpdate() {

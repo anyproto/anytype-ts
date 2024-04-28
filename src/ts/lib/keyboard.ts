@@ -55,7 +55,7 @@ class Keyboard {
 			commonStore.isOnlineSet(onLine);
 
 			if (!commonStore.membershipTiers.length) {
-				UtilData.getMembershipTiers();
+				UtilData.getMembershipTiers(false);
 			};
 		});
 		

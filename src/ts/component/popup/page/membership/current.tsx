@@ -139,7 +139,6 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 				</div>
 
 				{buttonText ? <Button onClick={this.onButton} text={buttonText} className="c36" color="blank" /> : ''}
-
 				{verificationForm}
 			</div>
 		);
@@ -234,13 +233,18 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	};
 
 	validateEmail () {
-		if (!this.refButton || !this.refEmail) {
-			return;
-		};
+		this.clearStatus();
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			this.refButton.setDisabled(!UtilCommon.checkEmail(this.refEmail.getValue()));
+			const value = this.refEmail?.getValue();
+			const isValid = UtilCommon.checkEmail(value);
+
+			if (value && !isValid) {
+				this.setStatus('error', translate('errorIncorrectEmail'));
+			};
+
+			this.refButton?.setDisabled(!isValid);
 		}, Constant.delay.keyboard);
 	};
 

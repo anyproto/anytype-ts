@@ -9,6 +9,10 @@ export enum TierType {
 	CoCreatorTest			 = 3,
 	Builder					 = 4,
 	CoCreator				 = 5,
+	BuilderPlus				 = 6,
+	AnytypeTeam				 = 7,
+	AnytypeBetaUsers		 = 8,
+	Builder2for1			 = 9,
 };
 
 export enum MembershipStatus {

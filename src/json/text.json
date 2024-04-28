@@ -177,9 +177,11 @@
 	"electronMenuShowMenu": "Show menu bar",
 	"electronMenuQuit": "Quit",
 	"electronMenuFile": "File",
-	"electronMenuWorkDirectory": "Show Work Directory",
-	"electronMenuDataDirectory": "Show Data Directory",
-	"electronMenuLogs": "Show Logs",
+	"electronMenuDirectory": "Show Directory",
+	"electronMenuWorkDirectory": "Work",
+	"electronMenuDataDirectory": "Data",
+	"electronMenuConfigDirectory": "Config",
+	"electronMenuLogsDirectory": "Logs",
 	"electronMenuImport": "Import to Space",
 	"electronMenuExport": "Export Space",
 	"electronMenuSaveAs": "Export Object",
@@ -339,9 +341,9 @@
 	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It's local-first – everything works offline.<br/>Only you have the key.",
 	"authOnboardVaultButton": "Get my Key",
 
-	"authOnboardNameTitle": "Set your name",
-	"authOnboardNameLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
-	"authOnboardNameButton": "Enter my Vault",
+	"authOnboardSoulTitle": "Set your name",
+	"authOnboardSoulLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
+	"authOnboardSoulButton": "Enter my Vault",
 
 	"authOnboardPhraseTitle": "This is your Key",
 	"authOnboardPhraseLabel": "It gives you full ownership over your vault.<br/>It cannot be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
@@ -814,7 +816,7 @@
 	"popupConfirmNeedUpdateText": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features.",
 
 	"popupConfirmObjectOpenErrorText": "There was a problem while opening the object, please send the debug info to the support team.",
-	"popupConfirmObjectOpenErrorButton": "Send debug info",
+	"popupConfirmObjectOpenErrorButton": "Collect debug info",
 
 	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
 	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
@@ -1984,6 +1986,8 @@
 	"errorSpaceMakeShareable102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+
+	"errorIncorrectEmail": "Incorrect E-mail",
 
 	"origin0": "None",
 	"origin1": "Clipboard",

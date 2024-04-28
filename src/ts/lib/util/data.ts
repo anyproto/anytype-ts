@@ -230,7 +230,7 @@ class UtilData {
 		});
 	};
 
-	onAuthOnce () {
+	onAuthOnce (noTierCache: boolean) {
 		C.NotificationList(false, Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
 				notificationStore.set(message.list);
@@ -243,7 +243,7 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipTiers();
+		this.getMembershipTiers(noTierCache);
 		this.getMembershipStatus();
 	};
 
@@ -965,7 +965,7 @@ class UtilData {
 		});
 	};
 
-	getMembershipTiers () {
+	getMembershipTiers (noCache: boolean) {
 		const { config, interfaceLang, isOnline } = commonStore;
 		const { testPayment } = config;
 
@@ -973,12 +973,12 @@ class UtilData {
 			return;
 		};
 
-		C.MembershipGetTiers(true, interfaceLang, (message) => {
+		C.MembershipGetTiers(noCache, interfaceLang, (message) => {
 			if (message.error.code) {
 				return;
 			};
 
-			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == testPayment));
+			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
 			commonStore.membershipTiersListSet(tiers);
 		});
 	};
