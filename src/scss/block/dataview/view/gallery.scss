@@ -109,4 +109,12 @@
 			.loadMore { padding: 0px 2px 10px;}
 		}
 	}
+
+	.block.blockDataview.isInline.isVertical {
+		.viewContent.viewGallery {
+			.galleryWrap.small { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+			.galleryWrap.medium { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+			.galleryWrap.large { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+		}
+	}
 }
