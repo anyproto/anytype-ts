@@ -625,10 +625,11 @@ class UtilMenu {
 		};
 
 		const isOwner = UtilSpace.isMyOwner(targetSpaceId);
+		const isAnytypeNetwork = UtilData.isAnytypeNetwork();
 
 		let options: any[] = [];
 
-		if (isOwner && space.isShared) {
+		if (isOwner && space.isShared && isAnytypeNetwork) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
@@ -683,6 +684,11 @@ class UtilMenu {
 								});
 								break;
 							};
+
+							case 'revoke': {
+								Action.inviteRevoke(targetSpaceId);
+								break;
+							};
 						};
 
 					}, menuStore.getTimeout());
@@ -695,13 +701,14 @@ class UtilMenu {
 		const { isOnline } = commonStore
 		const { containerId, cid, key, onInviteRevoke } = param || {};
 		const isOwner = UtilSpace.isMyOwner();
+		const isAnytypeNetwork = UtilData.isAnytypeNetwork();
 
 		const options: any[] = [
 			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
 		];
 
-		if (isOnline && isOwner) {
-			options.push({ id: 'delete', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
+		if (isOnline && isOwner && isAnytypeNetwork) {
+			options.push({ id: 'revoke', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
 		menuStore.open('select', {
@@ -717,7 +724,7 @@ class UtilMenu {
 							break;
 						};
 
-						case 'delete': {
+						case 'revoke': {
 							Action.inviteRevoke(commonStore.space, onInviteRevoke);
 							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
 							break;
