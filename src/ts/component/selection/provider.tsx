@@ -264,7 +264,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		if (!this.hasMoved) {
-			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
+			if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
 				if (!keyboard.isSelectionClearDisabled) {
 					this.initIds();
 					this.renderSelection();
@@ -372,10 +372,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		return cache;
 	};
 	
-	checkEachNode (e: any, type: I.SelectType, rect: any, node: any, ids: string[]) {
+	checkEachNode (e: any, type: I.SelectType, rect: any, node: any, ids: string[]): string[] {
 		const cache = this.cacheNode(node);
 		if (!cache || !UtilCommon.rectsCollide(rect, cache)) {
-			return;
+			return ids;
 		};
 
 		if (e.ctrlKey || e.metaKey) {
@@ -386,6 +386,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		} else {
 			ids.push(node.id);
 		};
+		return ids;
 	};
 	
 	checkNodes (e: any) {
@@ -397,7 +398,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const { x, y } = this.recalcCoords(e.pageX, e.pageY);
 		const rect = UtilCommon.objectCopy(this.getRect(this.x, this.y, x, y));
 
-		if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
+		if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
 			this.initIds();
 		};
 
@@ -406,11 +407,15 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			const type = I.SelectType[i];
 			
 			ids[type] = this.get(type, false);
-			this.nodes.filter(it => it.type == type).forEach(item => this.checkEachNode(e, type, rect, item, ids[type]));
+
+			this.nodes.filter(it => it.type == type).forEach(item => {
+				ids[type] = this.checkEachNode(e, type, rect, item, ids[type]);
+			});
+
 			this.ids.set(type, ids[type]);
 		};
 		
-		const length = ids[I.SelectType.Block].length;
+		const length = (ids[I.SelectType.Block] || []).length;
 
 		if (length > 0) {
 			if ((length == 1) && !(e.ctrlKey || e.metaKey)) {
