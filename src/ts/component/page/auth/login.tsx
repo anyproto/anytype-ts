@@ -142,7 +142,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			UtilData.onInfo(message.account.info);
 			Animation.from(() => {
 				UtilData.onAuth();
-				UtilData.onAuthOnce();
+				UtilData.onAuthOnce(true);
 
 				this.isSelecting = false;
 			});

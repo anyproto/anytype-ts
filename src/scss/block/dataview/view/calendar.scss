@@ -18,9 +18,8 @@
 					}
 				}
 
-				.body { overflow: auto; }
-
-				.body::-webkit-scrollbar { width: 6px; height: 6px; }
+				.body { overflow: scroll; }
+				.body::-webkit-scrollbar { width: 6px; height: 0px; }
 				.body::-webkit-scrollbar-track { background: transparent; }
 				.body::-webkit-scrollbar-thumb { background: var(--color-shape-secondary); border-radius: 3px; }
 			}

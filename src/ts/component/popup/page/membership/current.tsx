@@ -233,22 +233,18 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	};
 
 	validateEmail () {
-		if (!this.refButton || !this.refEmail) {
-			return;
-		};
-
 		this.clearStatus();
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			const value = this.refEmail.getValue();
+			const value = this.refEmail?.getValue();
 			const isValid = UtilCommon.checkEmail(value);
 
 			if (value && !isValid) {
 				this.setStatus('error', translate('errorIncorrectEmail'));
 			};
 
-			this.refButton.setDisabled(!isValid);
+			this.refButton?.setDisabled(!isValid);
 		}, Constant.delay.keyboard);
 	};
 

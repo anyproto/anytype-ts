@@ -481,7 +481,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const onCommand = (blockId: string) => {
 			const block = blockStore.getLeaf(rootId, blockId);
 
-			if (block.isText()) {
+			if (block && block.isText()) {
 				focus.set(blockId, { from: length, to: length });
 				focus.apply();
 			};
@@ -656,7 +656,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 		// Hack to prevent onBlur save
 		$(`#block-${blockId} #value`).first().text(text);
-		UtilData.blockSetText(rootId, block.id, text, marks, true, cb);
+		UtilData.blockSetText(rootId, blockId, text, marks, true, cb);
 	};
 
 	moveToPage (typeId: string) {
