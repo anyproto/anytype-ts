@@ -58,7 +58,7 @@ html.themeDark {
 
     .bgColor-grey { background: var(--color-shape-secondary) !important; }
 	.bgColor-yellow { background: #423c00 !important; }
-	.bgColor-orange { background: #423c00 !important; }
+	.bgColor-orange { background: #483308 !important; }
 	.bgColor-red { background: #6b2109 !important; }
 	.bgColor-pink { background: #6f124f !important; }
 	.bgColor-purple { background: #5b2171 !important; }
@@ -70,7 +70,7 @@ html.themeDark {
     .isMultiSelect.tagColor-default { background: unset !important; }
     .isMultiSelect.tagColor-grey { color: var(--color-text-secondary) !important; background: var(--color-shape-secondary) !important; }
 	.isMultiSelect.tagColor-yellow { color: var(--color-yellow) !important; background: #423c00 !important; }
-    .isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: #423c00 !important; }
+    .isMultiSelect.tagColor-orange { color: var(--color-orange) !important; background: #483308 !important; }
     .isMultiSelect.tagColor-red { color: var(--color-red) !important; background: #6b2109 !important; }
     .isMultiSelect.tagColor-pink { color: var(--color-pink) !important; background: #6f124f !important; }
     .isMultiSelect.tagColor-purple { color: var(--color-purple) !important; background: #5b2171 !important; }
@@ -288,7 +288,6 @@ html.themeDark {
 
 	/* Navigation */
 
-	.navigationPanel { background: rgba(141, 141, 141, 0.2); }
 	.navigationPanel {
 		.iconWrap:not(.disabled):hover, .iconWrap.active { background-color: rgba(255, 255, 255, 0.1); }
 	}

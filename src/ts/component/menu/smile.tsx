@@ -346,9 +346,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			keyMapper: i => (items[i] || {}).id,
 		});
 
-		if (tabs.length) {
-			this.onTab(tabs[0].id);
-		};
+		this.onTab(tabs.length ? tabs[0].id : Tab.Smile);
 	};
 	
 	componentDidUpdate () {
@@ -727,6 +725,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 
 		const current = rows[this.row];
+		if (!current) {
+			return;
+		};
 
 		if (!current.children) {
 			this.onArrowVertical(dir);
@@ -741,10 +742,14 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		this.coll += dir;
-
 		const rows = this.getItems();
 		const current = rows[this.row];
+
+		if (!current) {
+			return;
+		};
+
+		this.coll += dir;
 
 		// Arrow left
 		if (this.coll < 0) {

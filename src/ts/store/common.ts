@@ -1,6 +1,6 @@
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { I, M, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
+import { I, M, Storage, UtilCommon, UtilObject, Renderer, UtilRouter } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -394,6 +394,12 @@ class CommonStore {
 	};
 
 	redirectSet (v: string) {
+		const param = UtilRouter.getParam(v);
+
+		if ((param.page == 'auth') && (param.action == 'pin-check')) {
+			return;
+		};
+
 		this.redirect = v;
 	};
 

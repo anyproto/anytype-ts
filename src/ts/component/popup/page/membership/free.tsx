@@ -187,13 +187,18 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	};
 
 	validateEmail () {
-		if (!this.refButton || !this.refEmail) {
-			return;
-		};
+		this.clearStatus();
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			this.refButton.setDisabled(!UtilCommon.checkEmail(this.refEmail.getValue()));
+			const value = this.refEmail?.getValue();
+			const isValid = UtilCommon.checkEmail(value);
+
+			if (value && !isValid) {
+				this.setStatus('error', translate('errorIncorrectEmail'));
+			};
+
+			this.refButton?.setDisabled(!isValid);
 		}, Constant.delay.keyboard);
 	};
 

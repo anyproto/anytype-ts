@@ -345,11 +345,11 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 					};
 				},
 				onOver: (e: any, item: any) => {
-					if (menuStore.isAnimating(menuContext.props.id)) {
+					if (!menuContext) {
 						return;
 					};
 
-					if (!menuContext) {
+					if (menuStore.isAnimating(menuContext.props.id)) {
 						return;
 					};
 

@@ -390,7 +390,7 @@ class Action {
 						};
 
 						UtilData.onAuth({ routeParam });
-						UtilData.onAuthOnce();
+						UtilData.onAuthOnce(true);
 					});
 				});
 			});
