@@ -65,7 +65,7 @@ class Storage {
 			return;
 		};
 		
-		let o = this.get(key);
+		const o = this.get(key);
 
 		if ((typeof o !== 'object') || (o !== null) || path.length == 0) {
 			console.log('[Storage].unset: unset should be used on a stored object with a valid path');
