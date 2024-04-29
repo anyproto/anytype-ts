@@ -1,16 +1,23 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Icon, Label, Button, Cell } from 'Component';
-import { I, M, translate, UtilCommon, Relation, UtilData } from 'Lib';
-import { dbStore, detailStore, commonStore, popupStore } from 'Store';
+import { Title, Label, Button, Cell, Error } from 'Component';
+import { I, M, C, UtilCommon, Relation, UtilData } from 'Lib';
+import { dbStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ID_PREFIX = 'popupRelation';
 
-const PopupRelation = observer(class PopupRelation extends React.Component<I.Popup> {
+interface State {
+	error: string;
+};
+
+const PopupRelation = observer(class PopupRelation extends React.Component<I.Popup, State> {
 
 	cellRefs: Map<string, any> = new Map();
 	details: any = {};
+	state = {
+		error: '',
+	};
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -24,6 +31,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const { param, close } = this.props;
 		const { data } = param;
 		const { subId, readonly } = data;
+		const { error } = this.state;
 		const objects = this.getObjects();
 		const relations = this.getRelations();
 
@@ -79,6 +87,8 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 					<Button text="Save" className="c36" onClick={this.save} />
 					<Button text="Cancel" className="c36" color="blank" onClick={() => close()} />
 				</div>
+
+				<Error text={error} />
 			</div>
 		);
 	};
@@ -163,14 +173,27 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	save () {
-		console.log(this.details);
-		const objects = this.getObjects();
+		const { param, close } = this.props;
+		const { data } = param;
+		const { objectIds } = data;
+		const details: any[] = []; 
+
+		for (const k in this.details) {
+			details.push({ key: k, value: this.details[k] });
+		};
 
 		popupStore.open('confirm', {
 			data: {
 				title: 'Are you sure?',
-				text: UtilCommon.sprintf('This will update relation values of %d objects', objects.length),
+				text: UtilCommon.sprintf('This will update relation values of %d objects', objectIds.length),
 				onConfirm: () => {
+					C.ObjectListSetDetails(objectIds, details, (message: any) => {
+						if (message.error.code) {
+							this.setState({ error: message.error.description });
+						} else {
+							close();
+						};
+					});
 				},
 			},
 		});

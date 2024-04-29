@@ -482,7 +482,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			details.push({ key: k, value: item[k] });
 		};
 
-		C.ObjectSetDetails(relationId, details);
+		C.ObjectListSetDetails([ relationId ], details);
 	};
 
 	getRelation () {

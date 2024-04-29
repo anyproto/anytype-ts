@@ -93,7 +93,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
 		let exportObject = { id: 'export', icon: 'export', name: translate('menuBlockMoreExport') };
 		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
-		let relation = { id: 'relation', icon: 'relation', name: translate('menuDataviewContextEditRelations') };
+		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuDataviewContextEditRelations') };
 		let archive = null;
 		let archiveCnt = 0;
 		let fav = null;
