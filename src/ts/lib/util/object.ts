@@ -178,18 +178,18 @@ class UtilObject {
 	};
 	
 	setIcon (rootId: string, emoji: string, image: string, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ 
+		C.ObjectListSetDetails([ rootId ], [ 
 			{ key: 'iconEmoji', value: String(emoji || '') },
 			{ key: 'iconImage', value: String(image || '') },
 		], callBack);
 	};
 	
 	setName (rootId: string, name: string, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ { key: 'name', value: String(name || '') } ], callBack);
+		C.ObjectListSetDetails([ rootId ], [ { key: 'name', value: String(name || '') } ], callBack);
 	};
 
 	setDescription (rootId: string, description: string, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ { key: 'description', value: String(description || '') } ], callBack);
+		C.ObjectListSetDetails([ rootId ], [ { key: 'description', value: String(description || '') } ], callBack);
 	};
 	
 	setCover (rootId: string, type: I.CoverType, id: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
@@ -204,11 +204,11 @@ class UtilObject {
 			{ key: 'coverY', value: y },
 			{ key: 'coverScale', value: scale },
 		];
-		C.ObjectSetDetails(rootId, details, callBack);
+		C.ObjectListSetDetails([ rootId ], details, callBack);
 	};
 
 	setDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ { key: 'done', value: Boolean(done) } ], callBack);
+		C.ObjectListSetDetails([ rootId ], [ { key: 'done', value: Boolean(done) } ], callBack);
 	};
 
 	setLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
@@ -221,7 +221,7 @@ class UtilObject {
 	};
 
 	setDefaultTemplateId (rootId: string, id: string, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: id } ], callBack);
+		C.ObjectListSetDetails([ rootId ], [ { key: 'defaultTemplateId', value: id } ], callBack);
 	};
 
 	name (object: any) {

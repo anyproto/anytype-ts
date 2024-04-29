@@ -210,7 +210,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			return;
 		};
 
-		C.ObjectSetDetails(option.id, [ 
+		C.ObjectListSetDetails([ option.id ], [ 
 			{ key: 'name', value },
 			{ key: 'relationOptionColor', value: this.color },
 		]);

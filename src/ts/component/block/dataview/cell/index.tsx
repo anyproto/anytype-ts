@@ -206,14 +206,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const setOff = () => {
 			keyboard.disableBlur(false);
 
-			if (this.ref) {
-				if (this.ref.onBlur) {
-					this.ref.onBlur();
-				};
-				if (this.ref.setEditing) {
-					this.ref.setEditing(false);
-				};
-			};
+			this.ref?.onBlur();
+			this.ref?.setEditing(false);
 
 			$(`#${cellId}`).removeClass('isEditing');
 			commonStore.cellId = '';
@@ -228,8 +222,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			passThrough: true,
 			className: menuClassName,
 			classNameWrap: menuClassNameWrap,
-			onOpen: setOn,
-			onClose: setOff,
+			onOpen: () => setOn(),
+			onClose: () => setOff(),
 			data: { 
 				cellId,
 				cellRef: this.ref,

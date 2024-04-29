@@ -636,23 +636,6 @@ class UtilCommon {
 		return $(isPopup ? '#popupPage-innerWrap' : '#page.isFull');
 	};
 
-	getBodyContainer (type: string) {
-		switch (type) {
-			default:
-			case 'page':
-				return 'body';
-
-			case 'popup':
-				return '#popupPage-innerWrap';
-			
-			case 'menuBlockAdd':
-				return `#${type} .content`;
-
-			case 'menuBlockRelationView':
-				return `#${type} .scrollWrap`;
-		};
-	};
-
 	getCellContainer (type: string) {
 		switch (type) {
 			default:
@@ -664,7 +647,10 @@ class UtilCommon {
 
 			case 'menuBlockAdd':
 			case 'menuBlockRelationView':
-				return '#' + type;
+				return `#${type}`;
+
+			case 'popupRelation':
+				return `#${type}-innerWrap`;
 		};
 	};
 
