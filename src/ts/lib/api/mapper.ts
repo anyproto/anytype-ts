@@ -790,6 +790,8 @@ export const Mapper = {
 		},
 
 		Block: (obj: any) => {
+			obj = obj || {};
+			obj.type = String(obj.type || I.BlockType.Empty);
 			obj.content = UtilCommon.objectCopy(obj.content || {});
 	
 			const block = new Model.Block();

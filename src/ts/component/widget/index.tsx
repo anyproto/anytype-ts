@@ -400,7 +400,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (createWithLink) {
-			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, analytics.route.widget, callBack);
+			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, flags, analytics.route.widget, callBack);
 		} else {
 			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, callBack);
 		};

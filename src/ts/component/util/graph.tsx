@@ -466,7 +466,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						case 'newObject': {
 							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, 'Graph', (message: any) => {
+							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', flags, 'Graph', (message: any) => {
 								UtilObject.openPopup(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
 							});
 							break;

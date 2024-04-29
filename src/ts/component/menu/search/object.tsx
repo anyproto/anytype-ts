@@ -462,7 +462,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			} else {
 				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-				UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, 'Search', (message: any) => {
+				UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Search', (message: any) => {
 					process(message.details, true);
 					close();
 				});

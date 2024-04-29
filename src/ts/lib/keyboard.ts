@@ -321,7 +321,7 @@ class Keyboard {
 	pageCreate (details: any, route: string) {
 		if (this.isMain()) {
 			const flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
-			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, route, message => UtilObject.openConfig(message.details));
+			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => UtilObject.openConfig(message.details));
 		};
 	};
 
