@@ -11,7 +11,7 @@ class UtilSpace {
 		let home = this.getDashboard();
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			const windowId = UtilCommon.getCurrentElectronWindowId();
-			home = Storage.get('lastOpened')[windowId];
+			home = Storage.getLastOpened(windowId);
 			if (home && !home.spaceId) {
 				home.spaceId = commonStore.space;
 			};

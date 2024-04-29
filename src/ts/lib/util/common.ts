@@ -14,14 +14,14 @@ class UtilCommon {
 		return window.Electron || {};
 	};
 
-	getCurrentElectronWindowId () {
+	getCurrentElectronWindowId (): string {
 		const electron = this.getElectron();
 
 		if (!electron) {
-			return 0;
+			return '0';
 		}
 
-		return electron.currentWindow().windowId;
+		return electron.currentWindow().windowId.toString();
 	}
 
 	getGlobalConfig () {

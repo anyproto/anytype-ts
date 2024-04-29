@@ -58,35 +58,6 @@ class Storage {
 			this.storage[key] = JSON.stringify(o);
 		};
 	};
-
-	unsetPath (key: string, path: string[]): void {
-		if (!key || !path) {
-			console.log('[Storage].unset: key or path not specified');
-			return;
-		};
-		
-		const o = this.get(key);
-
-		if ((typeof o !== 'object') || (o !== null) || path.length == 0) {
-			console.log('[Storage].unset: unset should be used on a stored object with a valid path');
-			return;
-		}
-
-		const lastKey = path.pop();
-		let aux = o;
-
-		for (const pathKey in path) {
-			aux = aux[pathKey];
-		}
-
-		delete aux[lastKey];
-
-		if (this.isSpaceKey(key)) {
-			this.setSpaceKey(key, o);
-		} else {
-			this.storage[key] = JSON.stringify(o);
-		};
-	};
 	
 	delete (key: string) {
 		if (this.isSpaceKey(key)) {
@@ -135,6 +106,32 @@ class Storage {
 		delete(obj[id]);
 
 		this.setSpace(obj);
+	};
+
+	setLastOpened (windowId: string, param: any) {
+		const obj = this.get('lastOpened') || {};
+		obj[windowId] = Object.assign(obj[windowId] || {}, param);
+		this.set('lastOpened', obj, true);
+	};
+
+	unsetLastOpened (objectIds: string[]) {
+		const obj = this.get('lastOpened') || {};
+
+		let windowIdsToDelete = Object.keys(obj).reduce(
+			(windowIds, windowId) => objectIds.includes(obj[windowId].id) ? windowIds.concat(windowId) : windowIds, []
+		);
+
+		if (windowIdsToDelete.length == 0) {
+			return;
+		}
+
+		windowIdsToDelete.forEach ((windowId) => delete(obj[windowId]));
+		this.set('lastOpened', obj, true);
+	}
+	
+	getLastOpened (windowId: string) {
+		const obj = this.get('lastOpened') || {};
+		return obj[windowId];
 	};
 
 	setToggle (rootId: string, id: string, value: boolean) {

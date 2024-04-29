@@ -1309,9 +1309,8 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 		// Save last opened object
 		const object = detailStore.get(objectId, objectId, []);
 		const windowId = UtilCommon.getCurrentElectronWindowId();
-
 		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
-			Storage.set('lastOpened', { [windowId]: { id: object.id, layout: object.layout, spaceId: object.spaceId }});
+			Storage.setLastOpened(windowId, { id: object.id, layout: object.layout, spaceId: object.spaceId });
 		};
 
 		if (callBack) {
