@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, translate, UtilObject, focus, Action, UtilSpace } from 'Lib';
-import { detailStore, menuStore, blockStore, popupStore } from 'Store';
+import { detailStore, menuStore, blockStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuContext extends React.Component<I.Menu> {
@@ -80,6 +80,7 @@ class MenuContext extends React.Component<I.Menu> {
 	};
 	
 	getSections () {
+		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { subId, objectIds, getObject, isCollection } = data;
@@ -108,7 +109,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedUnlink = isCollection;
 		let allowedExport = true;
 		let allowedWidget = true;
-		let allowedRelation = true;
+		let allowedRelation = config.experimental;
 
 		objectIds.forEach((it: string) => {
 			let object = null; 
