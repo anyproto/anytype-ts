@@ -118,12 +118,12 @@ class Storage {
 		const obj = this.get('lastOpened') || {};
 
 		let windowIdsToDelete = Object.keys(obj).reduce(
-			(windowIds, windowId) => objectIds.includes(obj[windowId].id) ? windowIds.concat(windowId) : windowIds, []
+			(windowIds, windowId) => !obj[windowId] || objectIds.includes(obj[windowId].id) ? windowIds.concat(windowId) : windowIds, []
 		);
 
 		if (windowIdsToDelete.length == 0) {
 			return;
-		}
+		};
 
 		windowIdsToDelete.forEach ((windowId) => delete(obj[windowId]));
 		this.set('lastOpened', obj, true);

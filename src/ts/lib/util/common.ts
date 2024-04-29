@@ -19,7 +19,7 @@ class UtilCommon {
 
 		if (!electron) {
 			return '0';
-		}
+		};
 
 		return electron.currentWindow().windowId.toString();
 	}
