@@ -1087,6 +1087,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				!it.isTextDescription() && 
 				!it.isFeatured() && 
 				!it.isSystem() && 
+				!it.isTableRow() &&
 				!blockStore.checkIsChild(rootId, block.id, it.id)
 			);
 		});

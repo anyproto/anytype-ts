@@ -362,28 +362,30 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					noFilter: true,
 					options,
 					onSelect: (event: any, item: any) => {
-						let value = '';
-						if (this.ref && this.ref.ref) {
-							value = this.ref.ref.getValue();
+						const value = this.ref?.ref?.getValue();
+						if (!value) {
+							return;
 						};
 
 						const scheme = Relation.getUrlScheme(relation.format, value);
-						
-						if (item.id == 'go') {
-							Renderer.send('urlOpen', scheme + value);
-							analytics.event('RelationUrlOpen');
-						};
 
-						if (item.id == 'copy') {
-							UtilCommon.clipboardCopy({ text: value, html: value });
-							analytics.event('RelationUrlCopy');
-						};
+						switch (item.id) {
+							case 'go': {
+								Renderer.send('urlOpen', scheme + value);
+								analytics.event('RelationUrlOpen');
+								break;
+							};
 
-						if (item.id == 'reload') {
-							UtilCommon.clipboardCopy({ text: value, html: value });
-							C.ObjectBookmarkFetch(rootId, value, () => {
-								analytics.event('ReloadSourceData');
-							});
+							case 'copy': {
+								UtilCommon.clipboardCopy({ text: value, html: value });
+								analytics.event('RelationUrlCopy');
+								break;
+							};
+
+							case 'reload': {
+								C.ObjectBookmarkFetch(rootId, value, () => analytics.event('ReloadSourceData'));
+								break;
+							};
 						};
 					},
 				});

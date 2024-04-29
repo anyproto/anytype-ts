@@ -619,6 +619,10 @@ class Relation {
 		return this.systemKeys().includes(relationKey);
 	};
 
+	isSystemWithoutUser (relationKey: string): boolean {
+		return this.systemKeysWithoutUser().includes(relationKey);
+	};
+
 	isDictionary (relationKey: string): boolean {
 		return DICTIONARY.includes(relationKey);
 	};
