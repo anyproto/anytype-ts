@@ -97,9 +97,14 @@
 	/* Readonly */
 
 	.block.blockText.isReadonly > .wrapContent > .selectionTarget > .dropTarget .marker.check { cursor: default; }
-	.block.blockText.isReadonly > .wrapContent > .selectionTarget > .dropTarget #value { min-height: 1em; cursor: text !important; user-select: text !important; }
+	.block.blockText.isReadonly > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-paragraph); cursor: text !important; user-select: text !important; }
 	.block.blockText.isReadonly > .wrapContent > .selectionTarget > .dropTarget #placeholder { display: none; }
-	.block.blockText.isReadonly.textDescription > .wrapContent > .selectionTarget > .dropTarget #value { min-height: 26px; }
+
+	.block.blockText.isReadonly.textTitle > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-title); }
+	.block.blockText.isReadonly.textDescription > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-description); }
+	.block.blockText.isReadonly.textHeader1 > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-header1); }
+	.block.blockText.isReadonly.textHeader2 > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-header2); }
+	.block.blockText.isReadonly.textHeader3 > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-header3); }
 
 	/* IsChecked */
 
@@ -131,7 +136,7 @@
 	/* Header1 */
 
 	.block.blockText.textHeader1 { padding: 22px 0px 0px 0px; }
-	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget { @include text-header1; line-height: 35px; padding: 3px 0px 1px 0px; }
+	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget { @include text-header1; padding: 3px 0px 1px 0px; }
 	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget mention {
 		name { font-weight: inherit; }
 	}

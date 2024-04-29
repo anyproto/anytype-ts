@@ -277,6 +277,11 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { data } = param;
         const { rootId, blockId, blockIds } = data;
         const block = blockStore.getLeaf(rootId, blockId);
+		
+		if (!block) {
+			return;
+		};
+
         const content = UtilCommon.objectCopy(block.content || {});
 
         content[id] = v;

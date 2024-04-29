@@ -32,20 +32,21 @@ html.platformWindows {
 	}
 }
 
+@import "./about.scss";
 @import "./confirm.scss";
 @import "./export.scss";
 @import "./help.scss";
+@import "./invite.scss";
+@import "./membership.scss";
+@import "./migration.scss";
+@import "./objectManager.scss";
 @import "./page.scss";
+@import "./phrase.scss";
+@import "./pin.scss";
 @import "./preview.scss";
 @import "./prompt.scss";
+@import "./relation.scss";
 @import "./search.scss";
 @import "./settings.scss";
 @import "./shortcut.scss";
-@import "./migration.scss";
-@import "./pin.scss";
-@import "./phrase.scss";
-@import "./objectManager.scss";
 @import "./usecase.scss";
-@import "./about.scss";
-@import "./membership.scss";
-@import "./invite.scss";

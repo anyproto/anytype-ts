@@ -489,10 +489,11 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		UtilObject.setIcon(record.id, '', objectId);
 	};
 
-	onCheckbox () {
+	onCheckbox (e: any) {
 		const { recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
 
+		this.onBlur(e);
 		UtilObject.setDone(record.id, !record.done, () => {
 			if (this._isMounted) {
 				this.forceUpdate();

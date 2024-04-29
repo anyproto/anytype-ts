@@ -54,7 +54,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				canDuplicate = canDelete = false;
 			};
 		};
-		if (relation && Relation.isSystem(relation.relationKey)) {
+		if (relation && Relation.isSystemWithoutUser(relation.relationKey)) {
 			canDelete = false;
 		};
 
@@ -482,7 +482,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			details.push({ key: k, value: item[k] });
 		};
 
-		C.ObjectSetDetails(relationId, details);
+		C.ObjectListSetDetails([ relationId ], details);
 	};
 
 	getRelation () {
