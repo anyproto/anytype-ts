@@ -691,6 +691,7 @@ export const Mapper = {
 			content.setType(obj.type);
 			content.setAddedat(obj.addedAt);
 			content.setState(obj.state);
+			content.setStyle(obj.style);
 			content.setTargetobjectid(obj.targetObjectId);
 
 			return content;
