@@ -640,7 +640,7 @@ export const Mapper = {
 		},
 
 		Details: (obj: any) => {
-			const item = new Rpc.Object.SetDetails.Detail();
+			const item = new Model.Detail();
 
 			item.setKey(obj.key);
 			item.setValue(Encode.value(obj.value));

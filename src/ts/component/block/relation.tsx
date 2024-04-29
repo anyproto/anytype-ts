@@ -158,7 +158,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 		const { rootId } = this.props;
 		const relation = dbStore.getRelationByKey(relationKey);
 		
-		C.ObjectSetDetails(rootId, [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
+		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
 		analytics.event(key, { type: 'block' });

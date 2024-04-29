@@ -1001,17 +1001,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				};
 
 				// If emoji markup is first do not count one space character in mark adjustment
-				const isFirstEmoji = Mark.getInRange(this.marks, I.MarkType.Emoji, { from: 1, to: 2 });
-				const offset = isFirstEmoji ? 0 : 1;
+				const isFirstEmoji = Mark.getInRange(this.marks, I.MarkType.Emoji, { from: Length[newStyle], to: Length[newStyle] + 1 });
+				if (isFirstEmoji) {
+					continue;
+				};
 
-				value = value.replace(reg, (s: string, p: string) => {
-					if (isFirstEmoji) {
-						p = p.trim();
-					};
-					return s.replace(p, '');
-				});
+				value = value.replace(reg, (s: string, p: string) => s.replace(p, ''));
 
-				this.marks = (newStyle == I.TextStyle.Code) ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + offset));
+				this.marks = (newStyle == I.TextStyle.Code) ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + 1));
 				this.setValue(value);
 
 				UtilData.blockSetText(rootId, id, value, this.marks, true, () => {
@@ -1145,16 +1142,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				rootId: rootId,
 				blockId: block.id,
 				onSelect: (icon: string) => {
+					const to = range.from + 1;
+
 					this.marks = Mark.adjust(this.marks, range.from, 1);
 					this.marks = Mark.toggle(this.marks, { 
 						type: I.MarkType.Emoji, 
 						param: icon, 
-						range: { from: range.from, to: range.from + 1 },
+						range: { from: range.from, to },
 					});
+
 					value = UtilCommon.stringInsert(value, ' ', range.from, range.from);
 
 					UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
-						focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
+						focus.set(block.id, { from: to, to });
 						focus.apply();
 					});
 				},

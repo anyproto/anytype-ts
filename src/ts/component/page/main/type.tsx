@@ -488,7 +488,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onLayout (layout: string) {
 		const rootId = this.getRootId();
 
-		C.ObjectSetDetails(rootId, [ 
+		C.ObjectListSetDetails([ rootId ], [ 
 			{ key: 'recommendedLayout', value: Number(layout) || I.ObjectLayout.Page } 
 		]);
 		analytics.event('ChangeRecommendedLayout', { objectType: rootId, layout: layout });

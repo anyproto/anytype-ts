@@ -22,6 +22,7 @@ import PopupPhrase from './phrase';
 import PopupObjectManager from './objectManager';
 import PopupUsecase from './usecase';
 import PopupAbout from './about';
+import PopupRelation from './relation';
 import PopupInviteRequest from './invite/request';
 import PopupInviteConfirm from './invite/confirm';
 import PopupInviteQr from './invite/qr';
@@ -66,6 +67,7 @@ class Popup extends React.Component<I.Popup> {
 			objectManager:			 PopupObjectManager,
 			usecase:				 PopupUsecase,
 			about:					 PopupAbout,
+			relation:				 PopupRelation,
 			inviteRequest:			 PopupInviteRequest,
 			inviteConfirm:			 PopupInviteConfirm,
 			inviteQr:				 PopupInviteQr,

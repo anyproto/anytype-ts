@@ -159,7 +159,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 			const value = Relation.getArrayValue(group.value);
 
 			if (value.length) {
-				C.ObjectSetDetails(value[0], [ 
+				C.ObjectListSetDetails([ value[0] ], [ 
 					{ key: 'relationOptionColor', value: this.color },
 				]);
 			};

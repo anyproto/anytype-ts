@@ -1484,15 +1484,15 @@ export const ObjectSetSource = (contextId: string, sources: string[], callBack?:
 	dispatcher.request(ObjectSetSource.name, request, callBack);
 };
 
-export const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
+export const ObjectListSetDetails = (objectIds: string[], details: any[], callBack?: (message: any) => void) => {
 	details = details.map(Mapper.To.Details);
 
-	const request = new Rpc.Object.SetDetails.Request();
+	const request = new Rpc.Object.ListSetDetails.Request();
 
-	request.setContextid(contextId);
+	request.setObjectidsList(objectIds);
 	request.setDetailsList(details);
 
-	dispatcher.request(ObjectSetDetails.name, request, callBack);
+	dispatcher.request(ObjectListSetDetails.name, request, callBack);
 };
 
 export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {

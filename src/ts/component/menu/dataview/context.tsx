@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, translate, UtilObject, focus, Action, UtilSpace } from 'Lib';
-import { detailStore, menuStore, blockStore, popupStore } from 'Store';
+import { detailStore, menuStore, blockStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuContext extends React.Component<I.Menu> {
@@ -80,6 +80,7 @@ class MenuContext extends React.Component<I.Menu> {
 	};
 	
 	getSections () {
+		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { subId, objectIds, getObject, isCollection } = data;
@@ -93,6 +94,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
 		let exportObject = { id: 'export', icon: 'export', name: translate('menuBlockMoreExport') };
 		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
+		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuDataviewContextEditRelations') };
 		let archive = null;
 		let archiveCnt = 0;
 		let fav = null;
@@ -107,6 +109,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedUnlink = isCollection;
 		let allowedExport = true;
 		let allowedWidget = true;
+		let allowedRelation = config.experimental;
 
 		objectIds.forEach((it: string) => {
 			let object = null; 
@@ -135,6 +138,9 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Type ])) {
 				allowedType = false;
+			};
+			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ])) {
+				allowedRelation = false;
 			};
 		});
 
@@ -180,9 +186,10 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedUnlink)		 unlink = null;
 		if (!allowedExport)		 exportObject = null;
 		if (!allowedWidget)		 createWidget = null;
+		if (!allowedRelation)	 relation = null;
 
 		let sections = [
-			{ children: [ createWidget, open, fav, linkTo, exportObject ] },
+			{ children: [ createWidget, open, fav, linkTo, exportObject, relation ] },
 			{ children: [ changeType, pageCopy, unlink, archive ] },
 		];
 
@@ -296,7 +303,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { subId, objectIds, onSelect, targetId, isCollection, route } = data;
+		const { subId, objectIds, onSelect, targetId, isCollection, route, relationKeys } = data;
 		const win = $(window);
 		const count = objectIds.length;
 		const first = count == 1 ? detailStore.get(subId, objectIds[0], []) : null;
@@ -380,6 +387,12 @@ class MenuContext extends React.Component<I.Menu> {
 				popupStore.open('export', { data: { objectIds, route } });
 				break;
 			};
+
+			case 'relation': {
+				popupStore.open('relation', { data: { objectIds, relationKeys, route } });
+				break;
+			};
+
 		};
 		
 		close();

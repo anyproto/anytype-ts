@@ -2,7 +2,7 @@
 
 .popups {
 	.popupSettings, .popupSettingsOnboarding {
-		.innerWrap { width: 958px; height: 650px; overflow: hidden; }
+		.innerWrap { width: 958px; height: 650px; max-height: calc(100% - 48px); overflow: hidden; }
 
 		@media (max-width: 990px) {
 			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
