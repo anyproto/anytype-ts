@@ -264,7 +264,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 				sections.push({ 
 					...align, 
-					children: UtilMenu.getAlign(restricted),
+					children: UtilMenu.getHAlign(restricted),
 				});
 			};
 
@@ -355,7 +355,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasAlign) {
-				section2.children.push({ id: 'align', icon: [ 'align', UtilData.alignIcon(align) ].join(' '), name: translate('commonAlign'), arrow: true });
+				section2.children.push({ id: 'align', icon: [ 'align', UtilData.alignHIcon(align) ].join(' '), name: translate('commonAlign'), arrow: true });
 			};
 
 			if (hasColor) {

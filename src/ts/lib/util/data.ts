@@ -109,11 +109,13 @@ class UtilData {
 	};
 
 	linkCardClass (v: I.LinkCardStyle): string {
-		return String(I.LinkCardStyle[v] || 'text').toLowerCase();
+		v = v || I.LinkCardStyle.Text;
+		return String(I.LinkCardStyle[v]).toLowerCase();
 	};
 
 	cardSizeClass (v: I.CardSize) {
-		return String(I.CardSize[v] || 'small').toLowerCase();
+		v = v || I.CardSize.Small;
+		return String(I.CardSize[v]).toLowerCase();
 	};
 
 	threadColor (s: I.ThreadStatus) {
@@ -128,8 +130,14 @@ class UtilData {
 		return c;
 	};
 	
-	alignIcon (v: I.BlockHAlign): string {
-		return String(I.BlockHAlign[v] || 'left').toLowerCase();
+	alignHIcon (v: I.BlockHAlign): string {
+		v = v || I.BlockHAlign.Left;
+		return `align ${String(I.BlockHAlign[v]).toLowerCase()}`;
+	};
+
+	alignVIcon (v: I.BlockVAlign): string {
+		v = v || I.BlockVAlign.Top;
+		return `align ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 	
 	selectionGet (id: string, withChildren: boolean, save: boolean, props: any): string[] {

@@ -70,7 +70,7 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 			};
 		};
 
-		return UtilMenu.getAlign(restricted);
+		return UtilMenu.getHAlign(restricted);
 	};
 	
 	onOver (e: any, item: any) {

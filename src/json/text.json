@@ -64,10 +64,13 @@
 	"commonDeletedRelation": "Deleted Relation",
 	"commonSort": "Sort",
 	"commonAlign": "Align",
-	"commonAlignLeft": "Align left",
-	"commonAlignCenter": "Align center",
-	"commonAlignRight": "Align right",
-	"commonAlignJustify": "Align justify",
+	"commonHAlignLeft": "Left",
+	"commonHAlignCenter": "Center",
+	"commonHAlignRight": "Right",
+	"commonHAlignJustify": "Justify",
+	"commonVAlignTop": "Top",
+	"commonVAlignMiddle": "Middle",
+	"commonVAlignBottom": "Bottom",
 	"commonAppearance": "Appearance",
 	"commonPreview": "Preview",
 	"commonColor": "Color",
@@ -619,15 +622,7 @@
 	"blockTableOptionsColorClearStyle": "Clear style",
 
 	"blockTableOptionsAlignText": "Text align",
-	"blockTableOptionsAlignTextLeft": "Left",
-	"blockTableOptionsAlignTextCenter": "Center",
-	"blockTableOptionsAlignTextRight": "Right",
-	"blockTableOptionsAlignTextJustify": "Justify",
-
 	"blockTableOptionsAlignVertical": "Vertical align",
-	"blockTableOptionsAlignVerticalTop": "Top",
-	"blockTableOptionsAlignVerticalMiddle": "Middle",
-	"blockTableOptionsAlignVerticalBottom": "Bottom",
 
 	"blockTypeMyTypes": "My Types",
 

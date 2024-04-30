@@ -240,7 +240,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		} else {
-			const align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignIcon(block.hAlign) ].join(' '), arrow: true };
+			const align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(block.hAlign) ].join(' '), arrow: true };
 
 			sections = [
 				{ children: [ turn, move, align, blockRemove ]},
