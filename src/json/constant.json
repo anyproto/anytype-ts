@@ -154,7 +154,11 @@
 		"restrictions",
 		"defaultTemplateId",
 		"identityProfileLink",
-		"createdDate"
+		"createdDate",
+		"backlinks",
+		"_block",
+		"_relation",
+		"_highlight"
 	],
 
 	"sidebarRelationKeys": [

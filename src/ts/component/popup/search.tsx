@@ -400,6 +400,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				callBack(null);
 			};
 
+			console.log('RECORDS: ', message.records)
+
 			if (clear) {
 				this.items = [];
 			};
