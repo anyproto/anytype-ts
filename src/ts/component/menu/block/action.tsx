@@ -254,9 +254,17 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			if (hasBg)			 sections.push(bgColor);
 
 			if (hasAlign) {
+				const restricted = [];
+				if (!hasText) {
+					restricted.push(I.BlockHAlign.Justify);
+				};
+				if (hasQuote) {
+					restricted.push(I.BlockHAlign.Center);
+				};
+
 				sections.push({ 
 					...align, 
-					children: UtilMenu.getAlign(hasQuote),
+					children: UtilMenu.getAlign(restricted),
 				});
 			};
 

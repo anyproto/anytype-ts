@@ -53,6 +53,7 @@ export enum BlockHAlign {
 	Left		 = 0,
 	Center		 = 1,
 	Right		 = 2,
+	Justify		 = 3,
 };
 
 export enum BlockVAlign {

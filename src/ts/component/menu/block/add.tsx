@@ -321,7 +321,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			]);
 
 			if (block.canHaveAlign()) {
-				sections.push({ id: 'align', icon: 'align', name: translate('commonAlign'), color: '', children: UtilMenu.getAlign(block.isTextQuote()) });
+				const restricted = [];
+				if (!block.isText()) {
+					restricted.push(I.BlockHAlign.Justify);
+				};
+				if (block.isTextQuote()) {
+					restricted.push(I.BlockHAlign.Center);
+				};
+
+				sections.push({ id: 'align', icon: 'align', name: translate('commonAlign'), color: '', children: UtilMenu.getAlign(restricted) });
 			};
 			if (block.canHaveColor()) {
 				sections.push({ id: 'color', icon: 'color', name: translate('menuBlockAddSectionsTextColor'), color: '', children: UtilMenu.getTextColors() });

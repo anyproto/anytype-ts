@@ -67,6 +67,7 @@
 	"commonAlignLeft": "Align left",
 	"commonAlignCenter": "Align center",
 	"commonAlignRight": "Align right",
+	"commonAlignJustify": "Align justify",
 	"commonAppearance": "Appearance",
 	"commonPreview": "Preview",
 	"commonColor": "Color",
@@ -621,6 +622,7 @@
 	"blockTableOptionsAlignTextLeft": "Left",
 	"blockTableOptionsAlignTextCenter": "Center",
 	"blockTableOptionsAlignTextRight": "Right",
+	"blockTableOptionsAlignTextJustify": "Justify",
 
 	"blockTableOptionsAlignVertical": "Vertical align",
 	"blockTableOptionsAlignVerticalTop": "Top",
