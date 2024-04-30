@@ -234,14 +234,16 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 		};
 
+		const actionParam = { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject };
+
 		if (filter) {
 			const turnText = { id: 'turnText', icon: '', name: translate('menuBlockActionsSectionsTextStyle'), children: UtilMenu.getBlockText() };
 			const turnList = { id: 'turnList', icon: '', name: translate('menuBlockActionsSectionsListStyle'), children: UtilMenu.getBlockList() };
 			const turnPage = { id: 'turnPage', icon: '', name: translate('commonTurnIntoObject'), children: UtilMenu.getTurnPage() };
 			const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockActionsSectionsDividerStyle'), children: UtilMenu.getTurnDiv() };
 			const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockActionsSectionsFileStyle'), children: UtilMenu.getTurnFile() };
-			const action = { id: 'action', icon: '', name: translate('menuBlockActionsSectionsActions'), children: [] };
-			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: [] };
+			const action = { id: 'action', icon: '', name: translate('menuBlockActionsSectionsActions'), children: UtilMenu.getActions(actionParam) };
+			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: UtilMenu.getAlign(hasQuote) };
 			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: UtilMenu.getBgColors() };
 			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: UtilMenu.getTextColors() };
 
@@ -252,29 +254,13 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			if (hasTurnObject)	 sections.push(turnPage);
 			if (hasColor)		 sections.push(color);
 			if (hasBg)			 sections.push(bgColor);
-
-			if (hasAlign) {
-				sections.push({ ...align, children: UtilMenu.getAlign(hasQuote)	});
-			};
-
-			if (hasAction) {
-				sections.push({ 
-					...action, 
-					children: UtilMenu.getActions({ rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview }),
-				});
-			};
+			if (hasAlign)		 sections.push(align);
+			if (hasAction)		 sections.push(action);
 
 			sections = UtilMenu.sectionsFilter(sections, filter);
 		} else {
-			const section1: any = { 
-				children: UtilMenu.getActions({ rootId, blockId, hasText, hasFile, hasLink, hasDataview, hasBookmark, hasTurnObject })
-			};
-
-			const section2: any = { 
-				children: [
-					// { id: 'comment', icon: 'comment', name: translate('commonComment') },
-				]
-			};
+			const section1 = { children: UtilMenu.getActions(actionParam) };
+			const section2 = { children: [] };
 
 			if (hasLink) {
 				section2.children.push({ id: 'linkSettings', icon: `linkStyle${content.cardStyle}`, name: translate('commonPreview'), arrow: true });
