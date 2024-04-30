@@ -190,14 +190,11 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				keyboard.disableBlur(true);
 			};
 
-			if (this.ref) {
-				if (this.ref.setEditing) {
-					this.ref.setEditing(true);
-				};
-
-				if (this.ref.onClick) {
-					this.ref.onClick();
-				};
+			if (this.ref && this.ref.setEditing) {
+				this.ref.setEditing(true);
+			};
+			if (this.ref && this.ref.onClick) {
+				this.ref.onClick();
 			};
 
 			win.trigger('resize');
@@ -206,8 +203,12 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const setOff = () => {
 			keyboard.disableBlur(false);
 
-			this.ref?.onBlur();
-			this.ref?.setEditing(false);
+			if (this.ref && this.ref.onBlur) {
+				this.ref.onBlur();
+			};
+			if (this.ref && this.ref.setEditing) {
+				this.ref.setEditing(false);
+			};
 
 			$(`#${cellId}`).removeClass('isEditing');
 			commonStore.cellId = '';
