@@ -282,9 +282,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			case I.BlockType.TableRow: {
 				optionsStyle = this.optionsStyle('');
 
+				element = node.find(`#row-${rowId} .handleRow`);
 				menuParam = Object.assign(menuParam, {
-					element: node.find(`#row-${rowId}`).first(),
-					offsetY: 2,
+					offsetX: 16,
+					offsetY: -28,
 				});
 
 				fill = (callBack: () => void) => {
@@ -299,7 +300,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 				element = node.find(`#cell-${cellId}`).first();
 				menuParam = Object.assign(menuParam, {
-					element,
 					offsetX: element.outerWidth() + 2,
 					offsetY: -element.outerHeight(),
 				});
@@ -316,7 +316,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 				element = node.find(`#cell-${cellId} .icon.menu .inner`);
 				menuParam = Object.assign(menuParam, {
-					element,
 					vertical: I.MenuDirection.Center,
 					offsetX: 12,
 				});
@@ -330,6 +329,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		};
 
 		menuParam = Object.assign(menuParam, {
+			element,
 			data: {
 				noScroll: true,
 				noVirtualisation: true,
