@@ -188,8 +188,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.unbind();
 		this.close();
 
-		blockStore.clear(this.props.rootId);
 		focus.clear(false);
+		blockStore.clear(this.props.rootId);
 
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
@@ -241,6 +241,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		window.clearTimeout(this.timeoutLoading);
 		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
+
+		blockStore.clear(this.props.rootId);
 
 		C.ObjectOpen(this.id, '', UtilRouter.getRouteSpaceId(), (message: any) => {
 			window.clearTimeout(this.timeoutLoading);
