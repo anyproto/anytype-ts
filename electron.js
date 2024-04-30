@@ -210,3 +210,9 @@ app.on('open-url', (e, url) => {
 		mainWindow.show();
 	};
 });
+
+if (is.windows) {
+	app.on('window-all-closed', () => {
+  		Api.exit(mainWindow, '', false);
+	});
+};
