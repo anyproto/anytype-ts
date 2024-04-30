@@ -1334,6 +1334,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			{ id: I.BlockHAlign.Left, name: translate('blockTableOptionsAlignTextLeft') },
 			{ id: I.BlockHAlign.Center, name: translate('blockTableOptionsAlignTextCenter') },
 			{ id: I.BlockHAlign.Right, name: translate('blockTableOptionsAlignTextRight') },
+			{ id: I.BlockHAlign.Justify, name: translate('blockTableOptionsAlignTextJustify') },
 		].map((it: any) => {
 			it.icon = this.alignHIcon(it.id);
 			return it;

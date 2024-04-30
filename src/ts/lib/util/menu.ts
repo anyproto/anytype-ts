@@ -245,15 +245,16 @@ class UtilMenu {
 		return items;
 	};
 	
-	getAlign (hasQuote: boolean) {
+	getAlign (restricted: I.BlockHAlign[]) {
 		let ret = [
 			{ id: I.BlockHAlign.Left, icon: 'align left', name: translate('commonAlignLeft'), isAlign: true },
 			{ id: I.BlockHAlign.Center, icon: 'align center', name: translate('commonAlignCenter'), isAlign: true },
 			{ id: I.BlockHAlign.Right, icon: 'align right', name: translate('commonAlignRight'), isAlign: true },
+			{ id: I.BlockHAlign.Justify, icon: 'align justify', name: translate('commonAlignJustify'), isAlign: true },
 		];
 
-		if (hasQuote) {
-			ret = ret.filter(it => it.id != I.BlockHAlign.Center);
+		if (restricted.length) {
+			ret = ret.filter(it => !restricted.includes(it.id));
 		};
 
 		return ret;
