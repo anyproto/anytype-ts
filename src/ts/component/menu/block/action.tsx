@@ -189,7 +189,51 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const checkFlag = this.checkFlagByObject(targetObjectId);
 
 		let sections: any[] = [];
+		let hasText = true;
+		let hasLink = true;
+		let hasBookmark = true;
+		let hasDataview = true;
+		let hasFile = true;
+		let hasAction = true;
+		let hasAlign = true;
+		let hasTurnText = true;
+		let hasTurnDiv = true;
+		let hasTurnObject = true;
+		let hasTurnList = true;
+		let hasTurnFile = true;
+		let hasColor = true;
+		let hasBg = true;
+
+		let hasTitle = false;
+		let hasQuote = false;
 		
+		for (const id of blockIds) {
+			const block = blockStore.getLeaf(rootId, id);
+			if (!block) {
+				continue;
+			};
+
+			hasBookmark = block.isBookmark() ? checkFlag : false;
+			hasDataview = block.isDataview() ? checkFlag : false;
+			hasFile = block.isFile() ? checkFlag : false;
+			hasAlign = block.canHaveAlign();
+			hasColor = block.canHaveColor();
+			hasBg = block.canHaveBackground();
+			hasTurnDiv = !block.canTurnText() && block.isDiv();
+			hasTurnText = block.canTurnText() && !block.isDiv();
+			hasTurnObject = block.canTurnPage();
+			hasTurnList = block.canTurnList();
+			hasTurnFile = block.isFile();
+			hasText = block.isText();
+			hasLink = block.isLink();
+			hasQuote = block.isTextQuote();
+
+			if (block.isTextTitle() || block.isTextDescription() || block.isFeatured())	{
+				hasAction = false;
+				hasTitle = true;
+			};
+		};
+
 		if (filter) {
 			const turnText = { id: 'turnText', icon: '', name: translate('menuBlockActionsSectionsTextStyle'), children: UtilMenu.getBlockText() };
 			const turnList = { id: 'turnList', icon: '', name: translate('menuBlockActionsSectionsListStyle'), children: UtilMenu.getBlockList() };
@@ -201,50 +245,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: UtilMenu.getBgColors() };
 			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: UtilMenu.getTextColors() };
 
-			let hasTurnText = true;
-			let hasTurnObject = true;
-			let hasTurnList = true;
-			let hasTurnDiv = true;
-			let hasTurnFile = true;
-			let hasText = true;
-			let hasFile = true;
-			let hasLink = true;
-			let hasQuote = false;
-			let hasAction = true;
-			let hasAlign = true;
-			let hasColor = true;
-			let hasBg = true;
-			let hasBookmark = true;
-			let hasDataview = true;
-
-			for (const id of blockIds) {
-				const block = blockStore.getLeaf(rootId, id);
-				if (!block) {
-					continue;
-				};
-
-				hasBookmark = block.isBookmark() ? checkFlag : false;
-				hasDataview = block.isDataview() ? checkFlag : false;
-				hasFile = block.isFile() ? checkFlag : false;
-
-				if (!block.canTurnText())		 hasTurnText = false;
-				if (!block.canTurnPage())		 hasTurnObject = false;
-				if (!block.canTurnList())		 hasTurnList = false;
-				if (!block.isDiv())				 hasTurnDiv = false;
-				if (!block.isFile())			 hasTurnFile = false;
-				if (!block.isText())			 hasText = false;
-				if (!block.canHaveAlign())		 hasAlign = false;
-				if (!block.canHaveColor())		 hasColor = false;
-				if (!block.canHaveBackground())	 hasBg = false;
-				if (!block.isLink())			 hasLink = false;
-				if (!block.isDataview())		 hasDataview = false;
-
-				if (block.isTextTitle())		 hasAction = false;
-				if (block.isTextDescription())	 hasAction = false;
-				if (block.isFeatured())			 hasAction = false;
-				if (block.isTextQuote())		 hasQuote = true;
-			};
-
 			if (hasTurnText)	 sections.push(turnText);
 			if (hasTurnList)	 sections.push(turnList);
 			if (hasTurnDiv)		 sections.push(turnDiv);
@@ -254,10 +254,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			if (hasBg)			 sections.push(bgColor);
 
 			if (hasAlign) {
-				sections.push({ 
-					...align, 
-					children: UtilMenu.getAlign(hasQuote),
-				});
+				sections.push({ ...align, children: UtilMenu.getAlign(hasQuote)	});
 			};
 
 			if (hasAction) {
@@ -269,48 +266,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 			sections = UtilMenu.sectionsFilter(sections, filter);
 		} else {
-			let hasTurnText = true;
-			let hasTurnObject = true;
-			let hasTurnDiv = true;
-			let hasText = true;
-			let hasBookmark = true;
-			let hasDataview = true;
-			let hasFile = true;
-			let hasLink = true;
-			let hasTitle = false;
-			let hasAlign = true;
-			let hasColor = true;
-			let hasBg = true;
-
-			for (const id of blockIds) {
-				const block = blockStore.getLeaf(rootId, id);
-				if (!block) {
-					continue;
-				};
-
-				hasBookmark = block.isBookmark() ? checkFlag : false;
-				hasDataview = block.isDataview() ? checkFlag : false;
-				hasFile = block.isFile() ? checkFlag : false;
-
-				if (!block.canTurnText() || block.isDiv()) {
-					hasTurnText = false;
-				};
-				if (block.canTurnText() || !block.isDiv()) {
-					hasTurnDiv = false;
-				};
-				if (!block.canTurnPage())		 hasTurnObject = false;
-				if (!block.isText())			 hasText = false;
-				if (!block.isLink())			 hasLink = false;
-				if (!block.isDataview())		 hasDataview = false;
-				if (!block.canHaveAlign())		 hasAlign = false;
-				if (!block.canHaveColor())		 hasColor = false;
-				if (!block.canHaveBackground())	 hasBg = false;
-
-				if (block.isTextTitle())		 hasTitle = true;
-				if (block.isTextDescription())	 hasTitle = true;
-				if (block.isFeatured())			 hasTitle = true;
-			};
-
 			const section1: any = { 
 				children: UtilMenu.getActions({ rootId, blockId, hasText, hasFile, hasLink, hasDataview, hasBookmark, hasTurnObject })
 			};
@@ -322,11 +277,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasLink) {
-				section2.children.push({ id: 'linkSettings', icon: 'linkStyle' + content.cardStyle, name: translate('commonPreview'), arrow: true });
+				section2.children.push({ id: 'linkSettings', icon: `linkStyle${content.cardStyle}`, name: translate('commonPreview'), arrow: true });
 			};
 
 			if (hasFile) {
-				section2.children.push({ id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true },);
+				section2.children.push({ id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true });
 			};
 
 			if (hasTitle) {
@@ -334,11 +289,9 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasTurnText) {
-				const caption = I.TextStyle[style] ? translate(UtilCommon.toCamelCase('blockName-' + I.TextStyle[style])) : '';
-
 				section2.children.push({ 
 					id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
-					caption,
+					caption: (I.TextStyle[style] ? translate(UtilCommon.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
 				});
 			};
 
@@ -347,7 +300,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasAlign) {
-				section2.children.push({ id: 'align', icon: [ 'align', UtilData.alignIcon(align) ].join(' '), name: translate('commonAlign'), arrow: true });
+				section2.children.push({ id: 'align', icon: `align ${UtilData.alignIcon(align)}`, name: translate('commonAlign'), arrow: true });
 			};
 
 			if (hasColor) {
