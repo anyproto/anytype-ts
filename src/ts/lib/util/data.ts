@@ -137,7 +137,7 @@ class UtilData {
 
 	alignVIcon (v: I.BlockVAlign): string {
 		v = v || I.BlockVAlign.Top;
-		return `align ${String(I.BlockVAlign[v]).toLowerCase()}`;
+		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 	
 	selectionGet (id: string, withChildren: boolean, save: boolean, props: any): string[] {
