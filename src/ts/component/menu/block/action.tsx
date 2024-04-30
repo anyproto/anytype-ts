@@ -259,45 +259,23 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 			sections = UtilMenu.sectionsFilter(sections, filter);
 		} else {
-			const section1 = { children: UtilMenu.getActions(actionParam) };
-			const section2 = { children: [] };
+			const turnText = { 
+				id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
+				caption: (I.TextStyle[style] ? translate(UtilCommon.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
+			}
 
-			if (hasLink) {
-				section2.children.push({ id: 'linkSettings', icon: `linkStyle${content.cardStyle}`, name: translate('commonPreview'), arrow: true });
-			};
+			const c1 = hasTitle ? [] : UtilMenu.getActions(actionParam);
+			const c2: any[] = [
+				hasLink ? { id: 'linkSettings', icon: `linkStyle${content.cardStyle}`, name: translate('commonPreview'), arrow: true } : null,
+				hasFile ? { id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true } : null,
+				hasTurnText ? turnText : null,
+				hasTurnDiv ? { id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
+				hasAlign ? { id: 'align', icon: `align ${UtilData.alignIcon(align)}`, name: translate('commonAlign'), arrow: true } : null,
+				hasColor ? { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, isTextColor: true, value: (color || 'default') } : null,
+				hasBg ? { id: 'background', icon: 'color', name: translate('commonBackground'), arrow: true, isBgColor: true, value: (bgColor || 'default') } : null,
+			].filter(it => it);
 
-			if (hasFile) {
-				section2.children.push({ id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true });
-			};
-
-			if (hasTitle) {
-				section1.children = [];
-			};
-
-			if (hasTurnText) {
-				section2.children.push({ 
-					id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
-					caption: (I.TextStyle[style] ? translate(UtilCommon.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
-				});
-			};
-
-			if (hasTurnDiv) {
-				section2.children.push({ id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true });
-			};
-
-			if (hasAlign) {
-				section2.children.push({ id: 'align', icon: `align ${UtilData.alignIcon(align)}`, name: translate('commonAlign'), arrow: true });
-			};
-
-			if (hasColor) {
-				section2.children.push({ id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, isTextColor: true, value: (color || 'default') });
-			};
-
-			if (hasBg) {
-				section2.children.push({ id: 'background', icon: 'color', name: translate('commonBackground'), arrow: true, isBgColor: true, value: (bgColor || 'default') });
-			};
-
-			sections = [ section1, section2 ];
+			sections = [ { children: c1 }, { children: c2 } ];
 		};
 
 		return UtilMenu.sectionsMap(sections);
