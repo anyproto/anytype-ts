@@ -763,6 +763,9 @@
 			.label {
 				a { font-weight: 600; text-decoration: underline; }
 			}
+			.label.special {
+				span { font-weight: 600; text-decoration: underline; }
+			}
 
 			.swiper { margin: 0px -31px 8px -31px; }
 			.swiper {
