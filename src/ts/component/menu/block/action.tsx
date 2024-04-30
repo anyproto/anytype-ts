@@ -174,7 +174,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	};
 	
 	getSections () {
-		const { filter } = this.state;
+		
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
@@ -184,6 +184,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return [];
 		};
 		
+		const { config } = commonStore;
+		const { filter } = this.state;
 		const { align, content, bgColor } = block;
 		const { color, style } = content;
 		const checkFlag = this.checkFlagByObject(block.getTargetObjectId());
@@ -267,7 +269,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			const c1 = hasTitle ? [] : UtilMenu.getActions(actionParam);
 			const c2: any[] = [
 				hasLink ? { id: 'linkSettings', icon: `linkStyle${content.cardStyle}`, name: translate('commonPreview'), arrow: true } : null,
-				hasFile ? { id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true } : null,
+				hasTurnFile ? { id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true } : null,
+				hasTurnFile && config.experimental ? { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true } : null,
 				hasTurnText ? turnText : null,
 				hasTurnDiv ? { id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
 				hasAlign ? { id: 'align', icon: `align ${UtilData.alignIcon(align)}`, name: translate('commonAlign'), arrow: true } : null,
@@ -412,14 +415,28 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				break;
 			};
 
+			case 'changeFile': {
+				menuId = 'searchObject';
+				menuParam.data = Object.assign(menuParam.data, {
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() },
+					],
+					onSelect: (item: any) => {
+						C.BlockFileSetTargetObjectId(rootId, blockId, item.id);
+						close();
+					}
+				});
+				break;
+			};
+
 			case 'move': {
 				menuId = 'searchObject';
 
 				const skipIds = [ rootId ];
 				blockIds.forEach((id: string) => {
 					const block = blockStore.getLeaf(rootId, id);
-					if (block && block.isLink() && block.content.targetBlockId) {
-						skipIds.push(block.content.targetBlockId);
+					if (block && block.isLink()) {
+						skipIds.push(block.getTargetObjectId());
 					};
 				});
 
