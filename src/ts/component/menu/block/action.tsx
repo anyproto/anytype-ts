@@ -184,9 +184,9 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return [];
 		};
 		
-		const { align, content, bgColor, type } = block;
-		const { color, style, targetObjectId } = content;
-		const checkFlag = this.checkFlagByObject(targetObjectId);
+		const { align, content, bgColor } = block;
+		const { color, style } = content;
+		const checkFlag = this.checkFlagByObject(block.getTargetObjectId());
 
 		let sections: any[] = [];
 		let hasText = true;
@@ -213,20 +213,20 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				continue;
 			};
 
-			hasBookmark = block.isBookmark() ? checkFlag : false;
-			hasDataview = block.isDataview() ? checkFlag : false;
-			hasFile = block.isFile() ? checkFlag : false;
-			hasAlign = block.canHaveAlign();
-			hasColor = block.canHaveColor();
-			hasBg = block.canHaveBackground();
-			hasTurnDiv = !block.canTurnText() && block.isDiv();
-			hasTurnText = block.canTurnText() && !block.isDiv();
-			hasTurnObject = block.canTurnPage();
-			hasTurnList = block.canTurnList();
-			hasTurnFile = block.isFile();
-			hasText = block.isText();
-			hasLink = block.isLink();
-			hasQuote = block.isTextQuote();
+			hasBookmark = hasBookmark && (block.isBookmark() ? checkFlag : false);
+			hasDataview = hasBookmark && (block.isDataview() ? checkFlag : false);
+			hasFile = hasFile && (block.isFile() ? checkFlag : false);
+			hasAlign = hasAlign && block.canHaveAlign();
+			hasColor = hasColor && block.canHaveColor();
+			hasBg = hasBg && block.canHaveBackground();
+			hasTurnDiv = hasTurnDiv && !block.canTurnText() && block.isDiv();
+			hasTurnText = hasTurnText && block.canTurnText() && !block.isDiv();
+			hasTurnObject = hasTurnObject && block.canTurnPage();
+			hasTurnList = hasTurnList && block.canTurnList();
+			hasTurnFile = hasTurnFile && block.isFile();
+			hasText = hasText && block.isText();
+			hasLink = hasLink && block.isLink();
+			hasQuote = hasQuote && block.isTextQuote();
 
 			if (block.isTextTitle() || block.isTextDescription() || block.isFeatured())	{
 				hasAction = false;
