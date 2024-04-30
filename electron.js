@@ -212,7 +212,5 @@ app.on('open-url', (e, url) => {
 });
 
 if (!is.macos) {
-	app.on('window-all-closed', () => {
-  		Api.exit(mainWindow, '', false);
-	});
+	app.on('window-all-closed', () => Api.exit(mainWindow, '', false));
 };
