@@ -168,7 +168,7 @@ app.on('second-instance', (event, argv) => {
 	Util.log('info', 'second-instance');
 
 	if (!is.macos) {
-		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
+		deeplinkingUrl = argv.find(arg => arg.startsWith(`${protocol}://`));
 	};
 
 	if (!mainWindow || !deeplinkingUrl) {
