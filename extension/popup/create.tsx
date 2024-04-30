@@ -35,7 +35,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	state = {
 		error: '',
 		isLoading: false,
-		withContent: false,
+		withContent: true,
 	};
 
 	constructor (props: I.PageComponent) {

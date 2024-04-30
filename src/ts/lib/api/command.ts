@@ -1241,7 +1241,7 @@ export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: stri
 	request.setSpaceid(spaceId);
 	request.setObjecttypeuniquekey(typeKey);
 	request.setUrl(url);
-	//request.setAddpagecontent(withContent);
+	request.setAddpagecontent(withContent);
 
 	dispatcher.request(ObjectCreateFromUrl.name, request, callBack);
 };
