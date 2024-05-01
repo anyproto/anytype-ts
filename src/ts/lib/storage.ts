@@ -114,20 +114,36 @@ class Storage {
 		this.set('lastOpened', obj, true);
 	};
 
-	unsetLastOpened (objectIds: string[]) {
+	deleteLastOpenedByObjectId (objectIds: string[]) {
 		const obj = this.get('lastOpened') || {};
 
 		let windowIdsToDelete = Object.keys(obj).reduce(
 			(windowIds, windowId) => !obj[windowId] || objectIds.includes(obj[windowId].id) ? windowIds.concat(windowId) : windowIds, []
 		);
 
+		this.deleteLastOpenedByWindowId(windowIdsToDelete, true);
+	};
+
+	deleteLastOpenedByWindowId (windowIdsToDelete: string[], homeIncluded?: boolean) {
 		if (windowIdsToDelete.length == 0) {
 			return;
 		};
 
+		const obj = this.get('lastOpened') || {};
+
+		if (!homeIncluded) {
+			windowIdsToDelete = windowIdsToDelete.filter((id) => id !== '1');
+		}
+
 		windowIdsToDelete.forEach ((windowId) => delete(obj[windowId]));
 		this.set('lastOpened', obj, true);
-	}
+	};
+
+	deleteAllLastOpened () {
+		const obj = this.get('lastOpened') || {};
+		let windowIdsToDelete = Object.keys(obj);
+		this.deleteLastOpenedByWindowId(windowIdsToDelete);
+	};
 	
 	getLastOpened (windowId: string) {
 		const obj = this.get('lastOpened') || {};

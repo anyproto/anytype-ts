@@ -336,7 +336,7 @@ class Action {
 					};
 
 					// Remove last opened objects in case any is deleted
-					Storage.unsetLastOpened(ids);
+					Storage.deleteLastOpenedByObjectId(ids);
 
 					analytics.event('RemoveCompletely', { count, route });
 				},
