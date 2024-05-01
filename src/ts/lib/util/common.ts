@@ -22,7 +22,7 @@ class UtilCommon {
 		};
 
 		return electron.currentWindow().windowId.toString();
-	}
+	};
 
 	getGlobalConfig () {
 		return window.AnytypeGlobalConfig || {};
