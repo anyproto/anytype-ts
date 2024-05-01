@@ -279,10 +279,12 @@ class App extends React.Component<object, State> {
 		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
 		Renderer.on('logout', () => authStore.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => commonStore.dataPathSet(p));
+		Renderer.on('will-close-window', this.onWillCloseWindow);
 
 		Renderer.on('shutdownStart', () => {
 			this.setState({ loading: true });
 			Storage.delete('menuSearchText');
+			Storage.deleteAllLastOpened();
 		});
 
 		Renderer.on('zoom', () => {
@@ -392,6 +394,10 @@ class App extends React.Component<object, State> {
 		} else {
 			cb();
 		};
+	};
+
+	onWillCloseWindow (e: any, windowId: string) {
+		Storage.deleteLastOpenedByWindowId([windowId]);
 	};
 
 	onPopup (e: any, id: string, param: any, close?: boolean) {

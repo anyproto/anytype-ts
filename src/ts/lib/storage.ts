@@ -133,7 +133,7 @@ class Storage {
 
 		if (!homeIncluded) {
 			windowIdsToDelete = windowIdsToDelete.filter((id) => id !== '1');
-		}
+		};
 
 		windowIdsToDelete.forEach ((windowId) => delete(obj[windowId]));
 		this.set('lastOpened', obj, true);
