@@ -14,6 +14,7 @@ interface Props {
 	isPopup?: boolean;
 	rootId: string;
 	data: any;
+	storageKey: string;
 };
 
 const Graph = observer(class Graph extends React.Component<Props> {
@@ -95,13 +96,14 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	init () {
-		const { data, rootId } = this.props;
+		const { data, rootId, storageKey } = this.props;
 		const node = $(this.node);
 		const density = window.devicePixelRatio;
 		const elementId = `#${this.getId()}`;
 		const width = node.width();
 		const height = node.height();
 		const theme = commonStore.getThemeClass();
+		const settings = commonStore.getGraph(storageKey);
 
 		this.zoom = d3.zoom().scaleExtent([ 0.05, 10 ]).on('zoom', e => this.onZoom(e));
 		this.edges = (data.edges || []).map(this.edgeMapper);
@@ -127,7 +129,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			edges: this.edges,
 			theme: theme,
 			colors: Theme[theme].graph || {},
-			settings: commonStore.graph,
+			settings,
 			rootId,
 		}, [ transfer ]);
 
@@ -141,7 +143,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		.call(this.zoom)
 		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1))
 		.on('click', (e: any) => {
-			const { local } = commonStore.graph;
+			const { local } = commonStore.getGraph(storageKey);
 			const [ x, y ] = d3.pointer(e);
 
 			if (local) {
@@ -219,7 +221,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	updateSettings () {
-		this.send('updateSettings', commonStore.graph);
+		this.send('updateSettings', commonStore.getGraph(this.props.storageKey));
 
 		analytics.event('GraphSettings');
 	};
