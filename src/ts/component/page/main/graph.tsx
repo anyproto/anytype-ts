@@ -55,6 +55,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 						id="global"
 						rootId={rootId} 
 						data={this.data}
+						storageKey="graphGlobal"
 					/>
 				</div>
 
