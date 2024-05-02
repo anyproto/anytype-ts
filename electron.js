@@ -115,12 +115,18 @@ function createWindow () {
 		e.preventDefault();
 
 		let onClose = () => {
-			is.macos ? mainWindow.hide() : Api.exit(mainWindow, '', false);
+			const { config } = ConfigManager;
+
+			if (!is.macos && config.hideTray) {
+				Api.exit(mainWindow, '', false);
+			} else {
+				mainWindow.hide();
+			};
 		};
 
 		if (mainWindow.isFullScreen()) {
 			mainWindow.setFullScreen(false);
-			mainWindow.once('leave-full-screen', onClose);
+			mainWindow.once('leave-full-screen', () => onClose());
 		} else {
 			onClose();
 		};
