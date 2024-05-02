@@ -114,11 +114,15 @@ function createWindow () {
 		
 		e.preventDefault();
 
+		let onClose = () => {
+			is.macos ? mainWindow.hide() : Api.exit(mainWindow, '', false);
+		};
+
 		if (mainWindow.isFullScreen()) {
 			mainWindow.setFullScreen(false);
-			mainWindow.once('leave-full-screen', () => mainWindow.hide());
+			mainWindow.once('leave-full-screen', onClose);
 		} else {
-			mainWindow.hide();
+			onClose();
 		};
 		return false;
 	});
@@ -210,7 +214,3 @@ app.on('open-url', (e, url) => {
 		mainWindow.show();
 	};
 });
-
-if (!is.macos) {
-	app.on('window-all-closed', () => Api.exit(mainWindow, '', false));
-};
