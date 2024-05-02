@@ -1,10 +1,10 @@
-import { I, UtilCommon } from 'Lib';
+import { I, UtilCommon, UtilSpace } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const SPACE_KEYS = [
 	'toggle',
-	'lastOpened',
+	'lastOpenedObject',
 	'scroll',
 	'defaultType',
 	'pinnedTypes',
@@ -108,18 +108,30 @@ class Storage {
 		this.setSpace(obj);
 	};
 
+	clearDeletedSpaces () {
+		const keys = Object.keys(this.getSpace());
+
+		keys.forEach(key => {
+			const spaceview = UtilSpace.getSpaceviewBySpaceId(key);
+			if (!spaceview) {
+				this.deleteSpace(key);
+			};
+		});
+	};
+
 	setLastOpened (windowId: string, param: any) {
-		const obj = this.get('lastOpened') || {};
+		const obj = this.getLastOpened();
+
 		obj[windowId] = Object.assign(obj[windowId] || {}, param);
-		this.set('lastOpened', obj, true);
+
+		this.set('lastOpenedObject', obj, true);
 	};
 
 	deleteLastOpenedByObjectId (objectIds: string[]) {
-		const obj = this.get('lastOpened') || {};
-
-		let windowIdsToDelete = Object.keys(obj).reduce(
-			(windowIds, windowId) => !obj[windowId] || objectIds.includes(obj[windowId].id) ? windowIds.concat(windowId) : windowIds, []
-		);
+		const obj = this.getLastOpened();;
+		const windowIdsToDelete = Object.keys(obj).reduce((windowIds, windowId) => {
+			return !obj[windowId] || objectIds.includes(obj[windowId].id) ? windowIds.concat(windowId) : windowIds;
+		}, []);
 
 		this.deleteLastOpenedByWindowId(windowIdsToDelete, true);
 	};
@@ -129,25 +141,23 @@ class Storage {
 			return;
 		};
 
-		const obj = this.get('lastOpened') || {};
+		const obj = this.getLastOpened();
 
 		if (!homeIncluded) {
-			windowIdsToDelete = windowIdsToDelete.filter((id) => id !== '1');
+			windowIdsToDelete = windowIdsToDelete.filter(id => id != '1');
 		};
 
-		windowIdsToDelete.forEach ((windowId) => delete(obj[windowId]));
-		this.set('lastOpened', obj, true);
+		windowIdsToDelete.forEach(windowId => delete(obj[windowId]));
+		this.set('lastOpenedObject', obj, true);
 	};
 
 	deleteAllLastOpened () {
-		const obj = this.get('lastOpened') || {};
-		let windowIdsToDelete = Object.keys(obj);
-		this.deleteLastOpenedByWindowId(windowIdsToDelete);
+		this.deleteLastOpenedByWindowId(Object.keys(this.getLastOpened()));
 	};
 	
-	getLastOpened (windowId: string) {
-		const obj = this.get('lastOpened') || {};
-		return obj[windowId];
+	getLastOpened (windowId?: string) {
+		const obj = this.get('lastOpenedObject') || {};
+		return (windowId ? obj[windowId] : obj) || {};
 	};
 
 	setToggle (rootId: string, id: string, value: boolean) {

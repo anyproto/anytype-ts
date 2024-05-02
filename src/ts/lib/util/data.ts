@@ -230,6 +230,8 @@ class UtilData {
 						Onboarding.start('space', keyboard.isPopup(), false);
 					};
 
+					Storage.clearDeletedSpaces();
+
 					if (callBack) {
 						callBack();
 					};
