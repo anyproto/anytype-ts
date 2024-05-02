@@ -254,7 +254,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				this.items = [];
 			};
 
-			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
+			this.items = this.items.concat(message.records || []);
 			this.forceUpdate();
 		});
 	};

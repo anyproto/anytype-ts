@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
-import { I, C, keyboard, focus, UtilCommon, Mark, Action, translate } from 'Lib';
+import { I, C, keyboard, focus, UtilCommon, Mark, Action, translate, UtilMenu, UtilData } from 'Lib';
 import { menuStore, blockStore } from 'Store';
 import Row from './table/row';
 import Constant from 'json/constant.json';
@@ -282,9 +282,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			case I.BlockType.TableRow: {
 				optionsStyle = this.optionsStyle('');
 
+				element = node.find(`#row-${rowId} .handleRow`);
 				menuParam = Object.assign(menuParam, {
-					element: node.find(`#row-${rowId}`).first(),
-					offsetY: 2,
+					offsetX: 16,
+					offsetY: -28,
 				});
 
 				fill = (callBack: () => void) => {
@@ -299,7 +300,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 				element = node.find(`#cell-${cellId}`).first();
 				menuParam = Object.assign(menuParam, {
-					element,
 					offsetX: element.outerWidth() + 2,
 					offsetY: -element.outerHeight(),
 				});
@@ -316,7 +316,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 				element = node.find(`#cell-${cellId} .icon.menu .inner`);
 				menuParam = Object.assign(menuParam, {
-					element,
 					vertical: I.MenuDirection.Center,
 					offsetX: 12,
 				});
@@ -330,6 +329,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		};
 
 		menuParam = Object.assign(menuParam, {
+			element,
 			data: {
 				noScroll: true,
 				noVirtualisation: true,
@@ -430,7 +430,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: this.optionsHAlign(),
+								options: UtilMenu.getHAlign([]),
 								value: current.hAlign,
 								onSelect: (e: any, el: any) => {
 									fill(() => C.BlockListSetAlign(rootId, blockIds, el.id));
@@ -444,7 +444,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: this.optionsVAlign(),
+								options: UtilMenu.getVAlign(),
 								value: current.vAlign,
 								onSelect: (e: any, el: any) => {
 									fill(() => C.BlockListSetVerticalAlign(rootId, blockIds, el.id));
@@ -1159,16 +1159,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		};
 	};
 
-	alignHIcon (v: I.BlockHAlign): string {
-		v = v || I.BlockHAlign.Left;
-		return [ 'align', String(I.BlockHAlign[v]).toLowerCase() ].join(' ');
-	};
-
-	alignVIcon (v: I.BlockVAlign): string {
-		v = v || I.BlockVAlign.Top;
-		return [ 'valign', String(I.BlockVAlign[v]).toLowerCase() ].join(' ');
-	};
-
 	onSortStart () {
 		$('body').addClass('grab');
 		keyboard.disableSelection(true);
@@ -1324,31 +1314,9 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const current = blockStore.getLeaf(rootId, cellId);
 
 		return [
-			{ id: 'horizontal', icon: this.alignHIcon(current?.hAlign), name: translate('blockTableOptionsAlignText'), arrow: true },
-			{ id: 'vertical', icon: this.alignVIcon(current?.vAlign), name: translate('blockTableOptionsAlignVertical'), arrow: true },
+			{ id: 'horizontal', icon: UtilData.alignHIcon(current?.hAlign), name: translate('blockTableOptionsAlignText'), arrow: true },
+			{ id: 'vertical', icon: UtilData.alignVIcon(current?.vAlign), name: translate('blockTableOptionsAlignVertical'), arrow: true },
 		];
-	};
-
-	optionsHAlign () {
-		return [
-			{ id: I.BlockHAlign.Left, name: translate('blockTableOptionsAlignTextLeft') },
-			{ id: I.BlockHAlign.Center, name: translate('blockTableOptionsAlignTextCenter') },
-			{ id: I.BlockHAlign.Right, name: translate('blockTableOptionsAlignTextRight') },
-		].map((it: any) => {
-			it.icon = this.alignHIcon(it.id);
-			return it;
-		});
-	};
-
-	optionsVAlign () {
-		return [
-			{ id: I.BlockVAlign.Top, name: translate('blockTableOptionsAlignVerticalTop') },
-			{ id: I.BlockVAlign.Middle, name: translate('blockTableOptionsAlignVerticalMiddle') },
-			{ id: I.BlockVAlign.Bottom, name: translate('blockTableOptionsAlignVerticalBottom') },
-		].map((it: any) => {
-			it.icon = this.alignVIcon(it.id);
-			return it;
-		});
 	};
 
 	optionsStyle (cellId: string) {

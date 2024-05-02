@@ -282,10 +282,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				this.items = [];
 			};
 
-			this.items = this.items.concat((message.records || []).map((it: any) => {
-				it.name = String(it.name || translate('defaultNamePage'));
-				return it;
-			}));
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ isLoading: false });

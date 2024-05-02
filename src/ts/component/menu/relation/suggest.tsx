@@ -254,7 +254,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				this.items = [];
 			};
 
-			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ loading: false });

@@ -39,6 +39,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 						id={block.id}
 						rootId="" 
 						data={this.data}
+						storageKey={Constant.graphId.dataview}
 					/>
 				</div>
 			</div>

@@ -214,10 +214,6 @@ class CommonStore {
 		return String(this.spaceId || '');
 	};
 
-	get graph(): Graph {
-		return Object.assign(this.graphObj, Storage.get('graph') || {});
-	};
-
 	get spaceStorage (): SpaceStorage {
 		const spaces = this.spaceStorageObj.spaces || [];
 		return { ...this.spaceStorageObj, spaces };
@@ -299,10 +295,10 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
-	graphSet (graph: Partial<Graph>) {
+	graphSet (key: string, graph: Partial<Graph>) {
 		this.graphObj = Object.assign(this.graphObj, graph);
 
-		Storage.set('graph', this.graphObj);
+		Storage.set(key, this.graphObj);
 		$(window).trigger('updateGraphSettings');
 	};
 
@@ -509,6 +505,10 @@ class CommonStore {
 
 	membershipTiersListSet (list: I.MembershipTier[]) {
 		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
+	};
+
+	getGraph (key: string): Graph {
+		return Object.assign(this.graphObj, Storage.get(key) || {});
 	};
 
 };

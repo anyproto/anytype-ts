@@ -69,6 +69,11 @@
 		}
 	},
 
+	"graphId": {
+		"global": "graphGlobal",
+		"dataview": "graphDataview"
+	},
+
 	"menuIds": {
 		"cell": [
 			"select",

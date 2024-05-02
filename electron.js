@@ -168,7 +168,7 @@ app.on('second-instance', (event, argv) => {
 	Util.log('info', 'second-instance');
 
 	if (!is.macos) {
-		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
+		deeplinkingUrl = argv.find(arg => arg.startsWith(`${protocol}://`));
 	};
 
 	if (!mainWindow || !deeplinkingUrl) {
@@ -211,8 +211,6 @@ app.on('open-url', (e, url) => {
 	};
 });
 
-if (is.windows) {
-	app.on('window-all-closed', () => {
-  		Api.exit(mainWindow, '', false);
-	});
+if (!is.macos) {
+	app.on('window-all-closed', () => Api.exit(mainWindow, '', false));
 };

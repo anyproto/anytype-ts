@@ -1303,18 +1303,18 @@ class Dispatcher {
 
 	checkLog (type: string) {
 		const { config } = commonStore;
-		const debugCommon = config.debug.mw;
-		const debugThread = config.flagsMw.thread;
-		const debugFile = config.flagsMw.file;
+		const event = config.flagsMw.event;
+		const thread = config.flagsMw.thread;
+		const file = config.flagsMw.file;
 
 		let check = false;
-		if (debugCommon && ![ 'threadStatus', 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {
+		if (event && ![ 'threadStatus', 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {
 			check = true;
 		};
-		if (debugThread && [ 'threadStatus' ].includes(type)) {
+		if (thread && [ 'threadStatus' ].includes(type)) {
 			check = true;
 		};
-		if (debugFile && [ 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {
+		if (file && [ 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {
 			check = true;
 		};
 		return check;

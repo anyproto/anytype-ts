@@ -245,18 +245,36 @@ class UtilMenu {
 		return items;
 	};
 	
-	getAlign (hasQuote: boolean) {
-		let ret = [
-			{ id: I.BlockHAlign.Left, icon: 'align left', name: translate('commonAlignLeft'), isAlign: true },
-			{ id: I.BlockHAlign.Center, icon: 'align center', name: translate('commonAlignCenter'), isAlign: true },
-			{ id: I.BlockHAlign.Right, icon: 'align right', name: translate('commonAlignRight'), isAlign: true },
+	getHAlign (restricted: I.BlockHAlign[]) {
+		let ret: any[] = [
+			{ id: I.BlockHAlign.Left },
+			{ id: I.BlockHAlign.Center },
+			{ id: I.BlockHAlign.Right },
+			{ id: I.BlockHAlign.Justify },
 		];
 
-		if (hasQuote) {
-			ret = ret.filter(it => it.id != I.BlockHAlign.Center);
+		if (restricted.length) {
+			ret = ret.filter(it => !restricted.includes(it.id));
 		};
 
-		return ret;
+		return ret.map((it: any) => {
+			it.icon = UtilData.alignHIcon(it.id);
+			it.name = translate(`commonHAlign${I.BlockHAlign[it.id]}`);
+			it.isAlign = true;
+			return it;
+		});
+	};
+
+	getVAlign () {
+		return [
+			{ id: I.BlockVAlign.Top },
+			{ id: I.BlockVAlign.Middle },
+			{ id: I.BlockVAlign.Bottom },
+		].map((it: any) => {
+			it.icon = UtilData.alignVIcon(it.id);
+			it.name = translate(`commonVAlign${I.BlockVAlign[it.id]}`);
+			return it;
+		});
 	};
 
 	getLayouts () {
