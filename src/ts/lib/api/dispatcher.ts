@@ -164,6 +164,13 @@ class Dispatcher {
 		return t;
 	};
 
+	eventData (e: any) {
+		const type = this.eventType(e.getValueCase());
+		const fn = `get${UtilCommon.ucFirst(type)}`;
+
+		return e[fn] ? e[fn]() : {};
+	};
+
 	event (event: Events.Event, skipDebug?: boolean) {
 		const { config } = commonStore;
 		const traceId = event.getTraceid();
@@ -174,6 +181,7 @@ class Dispatcher {
 		const isMainWindow = windowId === 1;
 		const debugEvent = config.flagsMw.event;
 		const debugJson = config.flagsMw.json;
+		const win = $(window);
 		
 		if (traceId) {
 			ctx.push(traceId);
@@ -212,10 +220,8 @@ class Dispatcher {
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
 		for (const message of messages) {
-			const win = $(window);
 			const type = this.eventType(message.getValueCase());
-			const fn = `get${UtilCommon.ucFirst(type)}`;
-			const data = message[fn] ? message[fn]() : {};
+			const data = this.eventData(message);
 			const needLog = this.checkLog(type) && !skipDebug;
 
 			switch (type) {
@@ -357,7 +363,6 @@ class Dispatcher {
 
 				case 'blockSetChildrenIds': {
 					id = data.getId();
-
 					blockStore.updateStructure(rootId, id, data.getChildrenidsList());
 
 					if (id == rootId) {

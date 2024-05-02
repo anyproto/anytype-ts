@@ -1180,6 +1180,17 @@ export const HistoryGetVersions = (objectId: string, lastVersionId: string, limi
 	dispatcher.request(HistoryGetVersions.name, request, callBack);
 };
 
+export const HistoryDiffVersions = (objectId: string, spaceId: string, current: string, previous: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.DiffVersions.Request();
+
+	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
+	request.setCurrentversion(current);
+	request.setPreviousversion(previous);
+
+	dispatcher.request(HistoryDiffVersions.name, request, callBack);
+};
+
 // ---------------------- OBJECT TYPE ---------------------- //
 
 export const ObjectTypeRelationAdd = (objectTypeId: string, relationKeys: string[], callBack?: (message: any) => void) => {

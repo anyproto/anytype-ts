@@ -1,5 +1,5 @@
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
-import { Decode, Mapper } from 'Lib';
+import { Decode, Mapper, dispatcher } from 'Lib';
 
 export const AppGetVersion = (response: Rpc.App.GetVersion.Response) => {
 	return {
@@ -371,6 +371,96 @@ export const HistoryGetVersions = (response: Rpc.History.GetVersions.Response) =
 	};
 };
 
+export const HistoryShowVersion = (response: Rpc.History.ShowVersion.Response) => {
+	const version = response.getVersion();
+	return {
+		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
+		objectView: Mapper.From.ObjectView(response.getObjectview()),
+	};
+};
+
+export const HistoryDiffVersions = (response: Rpc.History.DiffVersions.Response) => {
+	const list = response.getHistoryeventsList() || [];
+	const events: any[] = [];
+
+	list.forEach((it: any) => {
+		const type = dispatcher.eventType(it.getValueCase());
+		const data = dispatcher.eventData(it);
+		const event: any = { type };
+
+		switch (type) {
+			default: {
+				return;
+			};
+
+			case 'blockAdd': {
+				event.blockIds = (data.getBlocksList() || []).map(Mapper.From.Block).map(it => it.id);
+				break;
+			};
+
+			case 'blockDelete': {
+				event.blockIds = data.getBlockidsList() || [];
+				break;
+			};
+
+			case 'blockDataviewObjectOrderUpdate':
+			case 'blockDataviewGroupOrderUpdate':
+			case 'blockDataviewRelationSet':
+			case 'blockDataviewRelationDelete':
+			case 'blockDataviewIsCollectionSet':
+			case 'blockDataviewTargetObjectIdSet':
+			case 'blockDataviewViewOrder':
+			case 'blockSetTableRow':
+			case 'blockSetRelation':
+			case 'blockSetVerticalAlign':
+			case 'blockSetAlign':
+			case 'blockSetBackgroundColor':
+			case 'blockSetLatex':
+			case 'blockSetFile':
+			case 'blockSetBookmark':
+			case 'blockSetDiv':
+			case 'blockSetText':
+			case 'blockSetLink':
+			case 'blockSetFields': {
+				event.blockIds = [ data.getId() ];
+				break;
+			};
+
+			case 'blockDataviewViewSet': {
+				event.blockIds = [ data.getId() ];
+				event.viewId = Mapper.From.View(data.getView()).id;
+				break;
+			};
+
+			case 'blockDataviewViewUpdate': {
+				break;
+			};
+
+			case 'blockDataviewViewDelete': {
+				break;
+			};
+
+			case 'objectDetailsSet': {
+				break;
+			};
+
+			case 'objectDetailsAmend': {
+				break;
+			};
+
+			case 'objectDetailsUnset': {
+				break;
+			};
+		};
+
+		events.push(event);
+	});
+
+	return {
+		events,
+	};
+};
+
 export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObjectInfoWithLinks.Response) => {
 	const object = response.getObject();
 	const links = object.getLinks();
@@ -384,14 +474,6 @@ export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObj
 				outbound: (links.getOutboundList() || []).map(Mapper.From.ObjectInfo),
 			},
 		},
-	};
-};
-
-export const HistoryShowVersion = (response: Rpc.History.ShowVersion.Response) => {
-	const version = response.getVersion();
-	return {
-		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
-		objectView: Mapper.From.ObjectView(response.getObjectview()),
 	};
 };
 

@@ -165,7 +165,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		const allowedArchive = canWrite && canDelete;
 		const allowedSearch = !UtilObject.isSetLayout(object.layout);
-		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !UtilObject.isSetLayout(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
+		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
 		const allowedFav = canWrite && !object.isArchived && !UtilObject.isFileOrSystemLayout(object.layout) && !object.templateIsBundled;
 		const allowedLock = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite;
@@ -210,7 +210,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			sections = [
-				{ children: [ createWidget, fav, pageLock ] },
+				{ children: [ createWidget, fav, pageLock, history ] },
 				{ children: [ linkTo ] },
 				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },

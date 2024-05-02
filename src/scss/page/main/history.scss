@@ -47,6 +47,9 @@
 	.editorWrapper:not(.withIconAndCover):not(.withCover) { padding-top: 72px; }
 	.editorWrapper.withIcon { padding-top: 122px !important; }
 
+	.block.diffAdd::after { content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: #e5f8d6; }
+	.block.diffChange::after { content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(255,0,0,0.1); }
+
 	.blockLast { height: 100px; }
 }
 

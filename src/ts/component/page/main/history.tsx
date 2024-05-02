@@ -1,14 +1,16 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Header, Footer, Block, Loader, Icon, IconObject, Deleted, ObjectName } from 'Component';
-import { blockStore, detailStore } from 'Store';
-import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
-import Errors from 'json/error.json';
+import { Header, Footer, Block, Loader, Icon, IconObject, Deleted, ObjectName } from 'Component';
+import { blockStore, detailStore, commonStore } from 'Store';
+import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate, UtilSpace, translate } from 'Lib';
+import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
 	versions: I.HistoryVersion[];
-	loading: boolean;
+	version: I.HistoryVersion;
+	diff: any[];
+	isLoading: boolean;
 	isDeleted: boolean;
 };
 
@@ -20,17 +22,19 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	node: any = null;
 	state = {
 		versions: [] as I.HistoryVersion[],
-		loading: false,
+		version: null,
+		diff: [],
+		isLoading: false,
 		isDeleted: false,
 	};
 	
-	version: I.HistoryVersion = null;
 	refHeader: any = null;
 	scrollLeft = 0;
 	scrollRight = 0;
 	lastId = '';
 	refSideLeft = null;
 	refSideRight = null;
+	refHead = null;
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -40,7 +44,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	render () {
-		const { versions, isDeleted } = this.state;
+		const { versions, version, isDeleted } = this.state;
 		const rootId = this.getRootId();
 		const groups = this.groupData(versions);
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -49,7 +53,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			return <Deleted {...this.props} />;
 		};
 
-		if (!this.version || !root) {
+		if (!version || !root) {
 			return <Loader />;
 		};
 
@@ -57,9 +61,29 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const children = blockStore.getChildren(rootId, rootId);
 		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const isCollection = object.layout == I.ObjectLayout.Collection;
+		const cover = new M.Block({ id: `${rootId}-cover`, type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cn = [ 'editorWrapper', check.className ];
-		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const icon: any = new M.Block({ id: `${rootId}-icon`, type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+
+		let head = null;
+		if (root) {
+			if (root.isObjectSet()) {
+				const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
+
+				head = (
+					<HeadSimple 
+						{...this.props} 
+						ref={ref => this.refHead = ref} 
+						placeholder={placeholder} rootId={rootId} 
+					/>
+				);
+			};
+
+			if (root.isObjectHuman() || root.isObjectParticipant()) {
+				icon.type = I.BlockType.IconUser;
+			};
+		};
 
 		if (root && (root.isObjectHuman() || root.isObjectParticipant())) {
 			icon.type = I.BlockType.IconUser;
@@ -86,7 +110,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			return (
 				<React.Fragment>
 					<div 
-						id={'item-' + item.id} 
+						id={`item-${item.id}`} 
 						className={[ 'item', (withChildren ? 'withChildren' : '') ].join(' ')} 
 						onClick={e => this.loadVersion(item.id)}
 					>
@@ -126,6 +150,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						<div id="editorWrapper" className={cn.join(' ')}>
 							<div className="editor">
 								<div className="blocks">
+									{head}
 									{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readonly={true} /> : ''}
 									{check.withIcon ? <Block {...this.props} rootId={rootId} key={icon.id} block={icon} readonly={true} /> : ''}
 									
@@ -167,6 +192,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	componentDidUpdate () {
+		const { version } = this.state;
 		const rootId = this.getRootId();
 		const sideLeft = $(this.refSideLeft);
 		const sideRight = $(this.refSideRight);
@@ -174,8 +200,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		this.resize();
 		this.rebind();
 
-		if (this.version) {
-			this.show(this.version.id);
+		if (version) {
+			this.show(version.id);
 		};
 
 		sideLeft.scrollTop(this.scrollLeft);
@@ -187,8 +213,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		blockStore.updateNumbers(rootId);
 
 		if (this.refHeader) {
-			this.refHeader.refChild.setVersion(this.version);
+			this.refHeader.refChild.setVersion(version);
 		};
+
+		this.renderDiff();
 	};
 
 	componentWillUnmount(): void {
@@ -287,15 +315,15 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			return;
 		};
 
+		const { versions } = this.state;
 		const groups = this.groupData(this.state.versions);
-		const versions = this.ungroupData(groups);
 		const version = versions.find(it => it.id == id);
 
 		if (!version) {
 			return;
 		};
 
-		const month = groups.find(it => it.groupId == this.monthId(version.time));
+		const month = groups.find(it => it.groupId == this.getMonthId(version.time));
 		if (!month) {
 			return;
 		};
@@ -346,19 +374,19 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 	
 	loadList (lastId: string) { 
-		const { versions, loading } = this.state;
+		const { versions, version, isLoading } = this.state;
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 		
-		if (loading || (this.lastId && (lastId == this.lastId))) {
+		if (isLoading || (this.lastId && (lastId == this.lastId))) {
 			return;
 		};
 
-		this.setState({ loading: true });
+		this.setState({ isLoading: true });
 		this.lastId = lastId;
 
 		C.HistoryGetVersions(rootId, lastId, LIMIT, (message: any) => {
-			this.setState({ loading: false });
+			this.setState({ isLoading: false });
 
 			if (message.error.code) {
 				UtilObject.openRoute({ id: rootId, layout: object.layout });
@@ -368,7 +396,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			const list = message.versions || [];
 			this.setState({ versions: versions.concat(list) });
 
-			if (!this.version && list.length) {
+			if (!version && list.length) {
 				this.loadVersion(list[0].id);
 			};
 		});
@@ -382,8 +410,27 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				return;
 			};
 
-			this.version = message.version;
-			this.forceUpdate();
+			this.setState({ version: message.version });
+			this.loadDiff(id);
+		});
+	};
+
+	loadDiff (id: string) {
+		const { versions } = this.state;
+
+		if (!versions.length) {
+			return;
+		};
+
+		const idx = versions.findIndex(it => it.id == id);
+		if (idx <= 0) {
+			return;
+		};
+
+		const prev = versions[idx - 1];
+
+		C.HistoryDiffVersions(this.getRootId(), commonStore.space, prev.id, id, (message: any) => {
+			this.setState({ diff: message.events });
 		});
 	};
 	
@@ -415,7 +462,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				group.list = [];
 			};
 
-			const groupId = this.monthId(group.time);
+			const groupId = this.getMonthId(group.time);
 
 			let month = months.find(it => it.groupId == groupId);
 			if (!month) {
@@ -440,13 +487,86 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		return ret;
 	};
 
-	monthId (time: number) {
-		return UtilDate.date('F Y', time);
+	renderDiff () {
+		const node = $(this.node);
+
+		node.find('.diffAdd').removeClass('diffAdd');
+		node.find('.diffChange').removeClass('diffChange');
+
+		this.state.diff.forEach(it => this.renderEvent(it));
+	};
+
+	renderEvent (e: any) {
+		const node = $(this.node);
+
+		let cn = '';
+		switch (e.type) {
+			case 'blockAdd': {
+				cn = 'diffAdd';
+				break;
+			};
+
+			case 'blockDelete': {
+				break;
+			};
+
+			case 'blockDataviewObjectOrderUpdate':
+			case 'blockDataviewGroupOrderUpdate':
+			case 'blockDataviewRelationSet':
+			case 'blockDataviewRelationDelete':
+			case 'blockDataviewIsCollectionSet':
+			case 'blockDataviewTargetObjectIdSet':
+			case 'blockDataviewViewOrder':
+			case 'blockSetTableRow':
+			case 'blockSetRelation':
+			case 'blockSetVerticalAlign':
+			case 'blockSetAlign':
+			case 'blockSetBackgroundColor':
+			case 'blockSetLatex':
+			case 'blockSetFile':
+			case 'blockSetBookmark':
+			case 'blockSetDiv':
+			case 'blockSetText':
+			case 'blockSetLink':
+			case 'blockSetFields': {
+				cn = 'diffChange';
+				break;
+			};
+
+			case 'blockDataviewViewSet': {
+				break;
+			};
+
+			case 'blockDataviewViewUpdate': {
+				break;
+			};
+
+			case 'blockDataviewViewDelete': {
+				break;
+			};
+
+			case 'objectDetailsSet': {
+				break;
+			};
+
+			case 'objectDetailsAmend': {
+				break;
+			};
+
+			case 'objectDetailsUnset': {
+				break;
+			};
+		};
+
+		if (e.blockIds && e.blockIds.length && cn) {
+			(e.blockIds || []).forEach(it => {
+				node.find(`#block-${it}`).addClass(cn);
+			});
+		};
 	};
 
 	resize () {
 		const { isPopup } = this.props;
-
 		const node = $(this.node);
 		const sideLeft = $(this.refSideLeft);
 		const sideRight = $(this.refSideRight);
@@ -477,7 +597,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	getWrapperWidth (): number {
-		const { rootId } = this.props;
+		const rootId = this.getRootId();
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		return this.getWidth(root?.fields?.width);
@@ -486,7 +606,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	getWidth (w: number) {
 		w = Number(w) || 0;
 
-		const { isPopup, rootId } = this.props;
+		const { isPopup } = this.props;
+		const rootId = this.getRootId();
 		const container = UtilCommon.getPageContainer(isPopup);
 		const sideLeft = container.find('#body > #sideLeft');
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -505,6 +626,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		};
 
 		return Math.max(300, width);
+	};
+
+	getMonthId (time: number) {
+		return UtilDate.date('F Y', time);
 	};
 
 	getRootId () {
