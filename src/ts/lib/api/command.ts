@@ -797,6 +797,16 @@ export const BlockFileListSetStyle = (contextId: string, blockIds: string[], sty
 	dispatcher.request(BlockFileListSetStyle.name, request, callBack);
 };
 
+export const BlockFileSetTargetObjectId = (contextId: string, blockId: string, objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockFile.SetTargetObjectId.Request();
+
+	request.setContextid(contextId);
+    request.setBlockid(blockId);
+    request.setObjectid(objectId);
+
+	dispatcher.request(BlockFileSetTargetObjectId.name, request, callBack);
+};
+
 // ---------------------- BLOCK TEXT ---------------------- //
 
 export const BlockTextListSetColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
