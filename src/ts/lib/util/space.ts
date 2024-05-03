@@ -176,7 +176,7 @@ class UtilSpace {
 	};
 
 	getInviteLink (cid: string, key: string) {
-		return UtilCommon.sprintf(Url.invite, cid, key);
+		return UtilData.isAnytypeNetwork() ? UtilCommon.sprintf(Url.invite, cid, key) : `${Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
 };
