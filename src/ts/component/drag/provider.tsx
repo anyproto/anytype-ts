@@ -322,7 +322,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 					selection.renderSelection();
 				};
 
-				window.setTimeout(() => $('.resizable').trigger('resizeInit'), 50);
+				raf(() => $('.resizable').trigger('resizeInit'));
 			};
 
 			if (withAlt) {
