@@ -120,7 +120,7 @@ class Storage {
 	};
 
 	setLastOpened (windowId: string, param: any) {
-		const obj = this.getLastOpened();
+		const obj = this.get('lastOpenedObject') || {};
 
 		obj[windowId] = Object.assign(obj[windowId] || {}, param);
 
@@ -128,7 +128,9 @@ class Storage {
 	};
 
 	deleteLastOpenedByObjectId (objectIds: string[]) {
-		const obj = this.getLastOpened();;
+		objectIds = objectIds || [];
+
+		const obj = this.get('lastOpenedObject') || {};
 		const windowIdsToDelete = Object.keys(obj).reduce((windowIds, windowId) => {
 			return !obj[windowId] || objectIds.includes(obj[windowId].id) ? windowIds.concat(windowId) : windowIds;
 		}, []);
@@ -141,7 +143,7 @@ class Storage {
 			return;
 		};
 
-		const obj = this.getLastOpened();
+		const obj = this.get('lastOpenedObject') || {};
 
 		if (!homeIncluded) {
 			windowIdsToDelete = windowIdsToDelete.filter(id => id != '1');
@@ -151,13 +153,9 @@ class Storage {
 		this.set('lastOpenedObject', obj, true);
 	};
 
-	deleteAllLastOpened () {
-		this.deleteLastOpenedByWindowId(Object.keys(this.getLastOpened()));
-	};
-	
-	getLastOpened (windowId?: string) {
+	getLastOpened (windowId: string) {
 		const obj = this.get('lastOpenedObject') || {};
-		return (windowId ? obj[windowId] : obj) || {};
+		return obj[windowId] || null;
 	};
 
 	setToggle (rootId: string, id: string, value: boolean) {

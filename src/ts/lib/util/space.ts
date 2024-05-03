@@ -9,6 +9,7 @@ class UtilSpace {
 		const fn = UtilCommon.toCamelCase(`open-${type}`);
 		
 		let home = this.getDashboard();
+
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = Storage.getLastOpened(UtilCommon.getCurrentElectronWindowId());
 			if (home && !home.spaceId) {

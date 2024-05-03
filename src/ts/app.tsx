@@ -52,7 +52,7 @@ const isPackaged = electron.isPackaged;
 interface RouteElement { path: string; };
 
 interface State {
-	loading: boolean;
+	isLoading: boolean;
 };
 
 declare global {
@@ -177,7 +177,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 class App extends React.Component<object, State> {
 
 	state = {
-		loading: true
+		isLoading: true
 	};
 	node: any = null;
 	timeoutMaximize = 0;
@@ -197,7 +197,7 @@ class App extends React.Component<object, State> {
 	};
 
 	render () {
-		const { loading } = this.state;
+		const { isLoading } = this.state;
 		const platform = UtilCommon.getPlatform();
 
 		let drag = null;
@@ -209,7 +209,7 @@ class App extends React.Component<object, State> {
 			<Router history={history}>
 				<Provider {...rootStore}>
 					<div ref={node => this.node = node}>
-						{loading ? (
+						{isLoading ? (
 							<div id="root-loader" className="loaderWrapper">
 								<div className="inner">
 									<div className="logo anim from" />
@@ -291,9 +291,10 @@ class App extends React.Component<object, State> {
 		Renderer.on('will-close-window', this.onWillCloseWindow);
 
 		Renderer.on('shutdownStart', () => {
-			this.setState({ loading: true });
+			this.setState({ isLoading: true });
+
 			Storage.delete('menuSearchText');
-			Storage.deleteAllLastOpened();
+			Storage.delete('lastOpenedObject');
 		});
 
 		Renderer.on('zoom', () => {
@@ -530,7 +531,7 @@ class App extends React.Component<object, State> {
 
 	onUpdateProgress (e: any, progress: any) {
 		commonStore.progressSet({ 
-			status: UtilCommon.sprintf('Downloading update... %s/%s', UtilFile.size(progress.transferred), UtilFile.size(progress.total)), 
+			status: UtilCommon.sprintf(translate('commonUpdateProgress'), UtilFile.size(progress.transferred), UtilFile.size(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
 			isUnlocked: true,
