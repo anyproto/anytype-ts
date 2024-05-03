@@ -361,9 +361,9 @@ class App extends React.Component<object, State> {
 					window.setTimeout(() => { 
 						loader.remove(); 
 						body.removeClass('over');
-					}, 500);
-				}, 750);
-			}, 2000);
+					}, 300);
+				}, 450);
+			}, 1000);
 		};
 
 		if (accountId) {
