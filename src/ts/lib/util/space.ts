@@ -12,6 +12,12 @@ class UtilSpace {
 
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = Storage.getLastOpened(UtilCommon.getCurrentElectronWindowId());
+
+			// Invalid data protection
+			if (!home || !home.id) {
+				home = null;
+			};
+
 			if (home && !home.spaceId) {
 				home.spaceId = commonStore.space;
 			};
