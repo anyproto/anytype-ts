@@ -18,11 +18,16 @@ const transformThreshold = 1;
 const transformThresholdHalf = transformThreshold / 2;
 const delayFocus = 1000;
 
-const ObjectLayout = {
+const Layout = {
 	Human:		 1,
 	Task:		 2,
+	File:		 6,
+	Image:		 8,
+	Audio:		 15,
+	Video:		 16,
 	Bookmark:	 11,
 	Participant: 19,
+	Pdf:		 20,
 };
 
 const EdgeType = {
@@ -187,6 +192,12 @@ updateForces = () => {
 
 	updateOrphans();
 
+	// Filter files
+	if (!settings.files) {
+		const layouts = [ Layout.File, Layout.Image, Layout.Audio, Layout.Video, Layout.Pdf ];
+		nodes = nodes.filter(d => !layouts.includes(d.layout) || d.forceShow);
+	};
+
 	// Filter links
 	if (!settings.link) {
 		edges = edges.filter(d => d.type != EdgeType.Link);
@@ -251,7 +262,7 @@ updateForces = () => {
 };
 
 updateSettings = (param) => {
-	const updateKeys = [ 'link', 'relation', 'orphan', 'local' ];
+	const updateKeys = [ 'link', 'relation', 'orphan', 'local', 'files' ];
 	
 	let needUpdate = false;
 	let needFocus = false;
@@ -749,15 +760,15 @@ const checkNodeInViewport = (d) => {
 };
 
 const isLayoutHuman = (d) => {
-	return d.layout == ObjectLayout.Human;
+	return d.layout == Layout.Human;
 };
 
 const isLayoutParticipant = (d) => {
-	return d.layout == ObjectLayout.Participant;
+	return d.layout == Layout.Participant;
 };
 
 const isLayoutBookmark = (d) => {
-	return d.layout == ObjectLayout.Bookmark;
+	return d.layout == Layout.Bookmark;
 };
 
 const getNodeById = (id) => {
