@@ -45,6 +45,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			</div>
 		);
 
+		console.log(restrictions);
+
 		let sectionPage = null;
 		if (block && block.isPage() && config.sudo && restrictions.length) {
 			sectionPage = (
