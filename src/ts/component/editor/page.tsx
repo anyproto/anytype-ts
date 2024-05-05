@@ -793,7 +793,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 
 			if (block.isTextToggle()) {
-				keyboard.shortcut(`${cmd}+enter`, e, () => {
+				keyboard.shortcut(`${cmd}+shift+t`, e, () => {
 					blockStore.toggle(rootId, block.id, !Storage.checkToggle(rootId, block.id));
 				});
 			};

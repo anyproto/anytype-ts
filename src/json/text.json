@@ -1129,7 +1129,7 @@
 	"popupShortcutNavigationMenu4": "Go to the right side of navigation. Link to page",
 	"popupShortcutNavigationMenu5": "Select option",
 	"popupShortcutNavigationPage": "Editor navigation",
-	"popupShortcutNavigationPage1": "Expand / Collapse Toggle; Check / Uncheck Checkbox",
+	"popupShortcutNavigationPage1": "Expand / Collapse Toggle",
 	"popupShortcutNavigationPage2": "Go down one line",
 	"popupShortcutNavigationPage3": "Go up one line",
 	"popupShortcutNavigationPage4": "Go to the start of the line",
@@ -1138,6 +1138,7 @@
 	"popupShortcutNavigationPage7": "Go to the end of the Object",
 	"popupShortcutNavigationPage8": "Move selected block(s) around",
 	"popupShortcutNavigationPage9": "Open relations view",
+	"popupShortcutNavigationPage10": "Check / Uncheck Checkbox",
 	
 	"popupShortcutMarkdownWhileTyping": "While typing",
 	"popupShortcutMarkdownWhileTyping1": "Inline code",
