@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';
 import { Tag, Icon, DragBox } from 'Component';
-import { I, Relation, translate, keyboard, UtilCommon } from 'Lib';
+import { I, Relation, translate, keyboard, UtilCommon, UtilObject } from 'Lib';
 import { menuStore } from 'Store';
 
 interface State { 
@@ -75,7 +75,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 					<div id="placeholder" className="placeholder">{placeholder}</div>
 
 					<span id="list">
-						<DragBox onDragEnd={this.onDragEnd}>
+						<DragBox onDragEnd={this.onDragEnd} onClick={this.onClick}>
 							{value.map((item: any, i: number) => (
 								<span 
 									key={i}
@@ -91,6 +91,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 										color={item.color}
 										canEdit={!isSelect} 
 										className={Relation.selectClassName(relation.format)}
+										onClick={e => this.onClick(e, item.id)}
 										onRemove={() => this.onValueRemove(item.id)}
 									/>
 								</span>
@@ -129,6 +130,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 								text={item.name} 
 								color={item.color}
 								className={Relation.selectClassName(relation.format)}
+								onClick={e => this.onClick(e, item.id)}
 								onContextMenu={e => this.onContextMenu(e, item)}
 							/>
 						))}
@@ -237,6 +239,20 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		this.placeholderCheck();
 	};
 
+	onClick (e: any, id: string) {
+		if (!this.props.canOpen) {
+			return;
+		};
+
+		const item = this.getItems().find(item => item.id == id);
+		if (!item) {
+			return;
+		};
+
+		e.stopPropagation();
+		UtilObject.openPopup(item);
+	};
+
 	placeholderCheck () {
 		if (!this._isMounted) {
 			return;
@@ -247,17 +263,8 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
 
-		if (value.existing.length) {
-			list.show();
-		} else {
-			list.hide();
-		};
-
-		if (value.new || value.existing.length) {
-			placeholder.hide();
-		} else {
-			placeholder.show();
-		};
+		value.existing.length ? list.show() : list.hide();
+		value.new || value.existing.length ? placeholder.hide() : placeholder.show();
 	};
 
 	clear () {

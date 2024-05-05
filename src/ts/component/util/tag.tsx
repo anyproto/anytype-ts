@@ -7,6 +7,7 @@ interface Props {
 	className?: string;
 	color?: string;
 	canEdit?: boolean;
+	onClick?: (e: any) => void;
 	onRemove?: (e: any) => void;
 	onContextMenu?(e: any): void;
 };
@@ -22,7 +23,7 @@ class Tag extends React.Component<Props> {
 	};
 
 	render () {
-		const { id, text, color, className, canEdit, onContextMenu } = this.props;
+		const { id, text, color, className, canEdit, onClick, onContextMenu } = this.props;
 		const cn = [ 'tagItem', 'tagColor', 'tagColor-' + (color || 'default') ];
 		
 		if (className) {
@@ -48,6 +49,7 @@ class Tag extends React.Component<Props> {
 				contentEditable={false} 
 				className={cn.join(' ')}
 				onContextMenu={onContextMenu}
+				onClick={onClick}
 			>
 				<span className="inner">{text}</span>
 				{icon}
