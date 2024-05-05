@@ -137,8 +137,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				</div>
 			);
 
-			console.log(object, canDrop);
-
 			if (canDrop) {
 				head = (
 					<DropTarget
