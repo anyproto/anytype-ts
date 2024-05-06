@@ -143,6 +143,7 @@
 	"commonUpdate": "Update",
 	"commonOwner": "Owner",
 	"commonUpdateProgress": "Downloading update... %s/%s",
+	"commonActions": "Actions",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -1036,6 +1037,8 @@
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchCreateObject": "Create Object",
 	"popupSearchAddRelation": "Add Relation",
+	"popupSearchTooltipSearchByBacklinks": "Search by backlinks ->",
+	"popupSearchBacklinksFrom": "Backlinks from: %s",
 
 	"popupAboutTitle": "Anytype",
 	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -1095,7 +1098,6 @@
 	"popupShortcutMainSelection4": "Expand your selection up or down",
 	"popupShortcutMainSelection5": "On block will select or de-select an entire block",
 	"popupShortcutMainSelection6": "Select block and all blocks in between",
-	"popupShortcutMainActions": "Actions",
 	"popupShortcutMainActions1": "Activate command menu",
 	"popupShortcutMainActions2": "Open action menu",
 	"popupShortcutMainActions3": "Deletes the words left to the cursor",
@@ -1245,7 +1247,6 @@
 	"menuBlockActionsSectionsListStyle": "List style",
 	"menuBlockActionsSectionsDividerStyle": "Divider style",
 	"menuBlockActionsSectionsFileStyle": "File style",
-	"menuBlockActionsSectionsActions": "Actions",
 	"menuBlockActionsSectionsBackground": "Background",
 	"menuBlockActionsSectionsColor": "Color",
 	"menuBlockActionsSectionsDataview": "Dataview",

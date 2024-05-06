@@ -24,6 +24,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 	refFilter: any = null;
 	refList: any = null;
+	refRows: any[] = [];
 	timeout = 0;
 	cache: any = {};
 	items: any[] = [];
@@ -31,6 +32,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	top = 0;
 	offset = 0;
 	filter = '';
+	searchByBacklinks: any = null;
 	
 	constructor (props: I.Popup) {
 		super (props);
@@ -42,6 +44,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.filterMapper = this.filterMapper.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
+		this.onSearchByBacklinks = this.onSearchByBacklinks.bind(this);
+		this.onClearSearch = this.onClearSearch.bind(this);
 	};
 	
 	render () {
@@ -53,6 +57,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			let content = null;
 			let icon = null;
 			let object = null;
+			let context = null;
 
 			if (item.isObject) {
 				object = item;
@@ -65,33 +70,56 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 
 			if (object) {
-				icon = <IconObject object={object} size={18} />;
+				icon = <IconObject object={object} size={40} />;
 			} else {
 				icon = <Icon className={item.icon} />;
 			};
 
 			if (item.isObject) {
+				let right = null;
+				if (item.backlinks && item.backlinks.length) {
+					right = (
+						<div className="side right">
+							<Icon
+								className="advanced"
+								tooltip={translate('popupSearchTooltipSearchByBacklinks')}
+								tooltipY={I.MenuDirection.Top}
+								onClick={(e) => this.onSearchByBacklinks(e, item)}
+							/>
+						</div>
+					);
+				};
+
 				content = (
-					<React.Fragment>
-						<ObjectName object={item} />
-						<div className="caption">{item.caption}</div>
-					</React.Fragment>
+					<div className="sides">
+						<div className="side left">
+							<ObjectName object={item} />
+							<div className="caption">{item.caption}</div>
+						</div>
+
+						{right}
+					</div>
 				);
 			} else {
 				content = (
-					<React.Fragment>
-						<div className="name">{item.name}</div>
-						<div className="caption">
-							{item.shortcut.map((item, i) => (
-								<Label key={i} text={item} />
-							))}
+					<div className="sides">
+						<div className="side left">
+							<div className="name">{item.name}</div>
 						</div>
-					</React.Fragment>
+						<div className="side right">
+							<div className="caption">
+								{item.shortcut.map((item, i) => (
+									<Label key={i} text={item} />
+								))}
+							</div>
+						</div>
+					</div>
 				);
 			};
 
 			return (
-				<div 
+				<div
+					ref={node => this.refRows[item.index] = node}
 					id={'item-' + item.id} 
 					className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
 					onMouseOver={e => this.onOver(e, item)} 
@@ -108,7 +136,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			let content = null;
 			if (item.isSection) {
-				content = <div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>{item.name}</div>;
+				content = (
+					<div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>
+						{item.name}
+						{item.withClear ? <div onClick={this.onClearSearch} className="clear">{translate('commonClear')}</div> : ''}
+					</div>
+				);
 			} else {
 				content = (
 					<div className="row" style={style}>
@@ -169,7 +202,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
+											rowHeight={param => Math.max(this.cache.rowHeight(param), this.getRowHeight(items[param.index]))}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											onScroll={this.onScroll}
@@ -192,13 +225,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { route } = data;
 
 		this._isMounted = true;
-		this.n = -1;
-
-		this.load(true);
-		this.rebind();
-		this.resize();
-
-		focus.clear(true);
+		this.resetSearch();
 
 		analytics.event('ScreenSearch', { route });
 	};
@@ -255,6 +282,17 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	unbind () {
 		$(window).off('keydown.search resize.search');
+	};
+
+	resetSearch () {
+		this.n = -1;
+		this.refFilter?.setValue('');
+
+		this.load(true);
+		this.rebind();
+		this.resize();
+
+		focus.clear(true);
 	};
 	
 	onScroll ({ scrollTop }) {
@@ -362,6 +400,21 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.forceUpdate();
 	};
 
+	onSearchByBacklinks (e: React.MouseEvent, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.searchByBacklinks = item;
+		this.forceUpdate();
+		this.resetSearch();
+	};
+
+	onClearSearch () {
+		this.searchByBacklinks = null;
+		this.forceUpdate();
+		this.resetSearch();
+	};
+
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
 			this.offset += Constant.limit.menuRecords;
@@ -379,6 +432,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
+
+		if (this.searchByBacklinks) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: this.searchByBacklinks.backlinks })
+		};
 
 		if (clear) {
 			this.setState({ isLoading: true });
@@ -433,7 +490,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		let items = this.items.filter(this.filterMapper);
 		if (items.length) {
-			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
+			const sectionName = this.searchByBacklinks ? UtilCommon.sprintf(translate('popupSearchBacklinksFrom'), this.searchByBacklinks.name) : translate('popupSearchRecentObjects');
+
+			items.unshift({ name: sectionName, isSection: true, withClear: !!this.searchByBacklinks });
 		};
 
 		items = items.map(it => {
@@ -529,6 +588,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		if (canWrite) {
+			items.push({ name: translate('commonActions'), isSection: true });
 			items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ] });
 
 			if (hasRelations) {
