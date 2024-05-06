@@ -58,34 +58,34 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		};
 
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const children = blockStore.getChildren(rootId, rootId);
 		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
-		const isCollection = object.layout == I.ObjectLayout.Collection;
+		const icon = new M.Block({ id: `${rootId}-icon`, type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cover = new M.Block({ id: `${rootId}-cover`, type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cn = [ 'editorWrapper', check.className ];
-		const icon: any = new M.Block({ id: `${rootId}-icon`, type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const isSet = root?.isObjectSet();
+		const isCollection = root?.isObjectCollection();
+		const isHuman = root?.isObjectHuman();
+		const isParticipant = root?.isObjectParticipant();
 
 		let head = null;
-		if (root) {
-			if (root.isObjectSet()) {
-				const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
+		let children = blockStore.getChildren(rootId, rootId);
 
-				head = (
-					<HeadSimple 
-						{...this.props} 
-						ref={ref => this.refHead = ref} 
-						placeholder={placeholder} rootId={rootId} 
-					/>
-				);
-			};
+		if (isSet || isCollection) {
+			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
 
-			if (root.isObjectHuman() || root.isObjectParticipant()) {
-				icon.type = I.BlockType.IconUser;
-			};
-		};
+			head = (
+				<HeadSimple 
+					{...this.props} 
+					ref={ref => this.refHead = ref} 
+					placeholder={placeholder} rootId={rootId} 
+				/>
+			);
 
-		if (root && (root.isObjectHuman() || root.isObjectParticipant())) {
+			children = children.filter(it => it.isDataview());
+			check.withIcon = false;
+		} else
+		if (isHuman || isParticipant) {
 			icon.type = I.BlockType.IconUser;
 		};
 
@@ -611,11 +611,13 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const container = UtilCommon.getPageContainer(isPopup);
 		const sideLeft = container.find('#body > #sideLeft');
 		const root = blockStore.getLeaf(rootId, rootId);
+		const isSet = root?.isObjectSet();
+		const isCollection = root?.isObjectCollection();
 
 		let mw = sideLeft.width();
 		let width = 0;
 
-		if (root && root.isObjectSet()) {
+		if (isSet || isCollection) {
 			width = mw - 192;
 		} else {
 			const size = mw * 0.6;

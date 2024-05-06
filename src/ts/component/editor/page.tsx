@@ -2225,11 +2225,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isPopup, rootId } = this.props;
 		const container = UtilCommon.getPageContainer(isPopup);
 		const root = blockStore.getLeaf(rootId, rootId);
+		const isSet = root?.isObjectSet();
+		const isCollection = root?.isObjectCollection();
 
 		let mw = container.width();
 		let width = 0;
 
-		if (root && root.isObjectSet()) {
+		if (isSet || isCollection) {
 			width = mw - 192;
 		} else {
 			const size = mw * 0.6;
