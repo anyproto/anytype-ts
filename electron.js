@@ -114,14 +114,8 @@ function createWindow () {
 		
 		e.preventDefault();
 
-		let onClose = () => {
-			const { config } = ConfigManager;
-
-			if (!is.macos && config.hideTray) {
-				Api.exit(mainWindow, '', false);
-			} else {
-				mainWindow.hide();
-			};
+		const onClose = () => {
+			is.macos ? mainWindow.hide() : Api.exit(mainWindow, '', false);
 		};
 
 		if (mainWindow.isFullScreen()) {
