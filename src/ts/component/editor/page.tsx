@@ -797,6 +797,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					blockStore.toggle(rootId, block.id, !Storage.checkToggle(rootId, block.id));
 				});
 			};
+
+			if (block.isTextCheckbox()) {
+				keyboard.shortcut(`${cmd}+enter`, e, () => {
+					UtilData.blockSetText(rootId, block.id, text, marks, true, () => {
+						C.BlockTextSetChecked(rootId, block.id, !block.content.checked);
+					});
+				});
+			};
 		};
 
 		// History
