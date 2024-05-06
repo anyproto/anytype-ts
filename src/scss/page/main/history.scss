@@ -7,45 +7,49 @@
 
 	#footer.snapLeft { right: 254px; }
 
-	#sideLeft { padding: 52px 0px 0px 0px; width: calc(100% - 254px); overflow-x: hidden; overflow-y: auto; position: relative; }
-	#sideRight { 
-		width: 254px; border-left: 1px solid var(--color-shape-secondary); z-index: 20; position: relative; background: var(--color-bg-primary); 
-		overflow-x: hidden; overflow-y: auto;
-	}
-	#sideRight {
-		.section { padding: 11px 16px; }
-		.section {
-			.date { text-transform: uppercase; @include text-very-small; }
+	#body {
+		> #sideLeft { padding: 52px 0px 0px 0px; width: calc(100% - 254px); overflow-x: hidden; overflow-y: auto; position: relative; }
+
+		> #sideRight { 
+			width: 254px; border-left: 1px solid var(--color-shape-secondary); z-index: 20; position: relative; background: var(--color-bg-primary); 
+			overflow-x: hidden; overflow-y: auto;
 		}
-		.section.fix { position: sticky; right: 0px; top: 0px; background: var(--color-bg-primary); width: 253px; }
-
-		.wrap { position: relative; }
-
-		.items { padding: 0px 0px 16px 0px; }
-		.item { padding: 5px 16px 5px 30px; transition: $transitionAllCommon; position: relative; }
-		.item {
-			.author { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
-			.author { 
-				.name { @include text-small; color: var(--color-text-secondary); @include text-overflow-nw; max-width: 100%; }
+		> #sideRight {
+			.section { padding: 11px 16px; }
+			.section {
+				.date { text-transform: uppercase; @include text-very-small; }
 			}
-			.date { @include text-overflow-nw; }
-			.icon.arrow { 
-				width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); position: absolute; left: 9px; top: 6px;
-				transition: none;
+			.section.fix { position: sticky; right: 0px; top: 0px; background: var(--color-bg-primary); width: 253px; }
+
+			.wrap { position: relative; }
+
+			.items { padding: 0px 0px 16px 0px; }
+			.item { padding: 5px 16px 5px 30px; transition: $transitionAllCommon; position: relative; }
+			.item {
+				.author { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
+				.author { 
+					.name { @include text-small; color: var(--color-text-secondary); @include text-overflow-nw; max-width: 100%; }
+				}
+				.date { @include text-overflow-nw; }
+				.icon.arrow { 
+					width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); position: absolute; left: 9px; top: 6px;
+					transition: none;
+				}
 			}
-		}
-		.item.expanded {
-			.icon.arrow { transform: rotateZ(90deg); }
-		}
+			.item.expanded {
+				.icon.arrow { transform: rotateZ(90deg); }
+			}
 
-		.children { display: none; transition: $transitionAllCommon; }
-		.children {
-			.item { padding-left: 48px; }
-		}
+			.children { display: none; transition: $transitionAllCommon; }
+			.children {
+				.item { padding-left: 48px; }
+			}
 
-		.item:hover, .item.active { background: var(--color-shape-tertiary); }
+			.item:hover, .item.active { background: var(--color-shape-tertiary); }
+		}
 	}
 
+	
 	.block.diffAdd::after { content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: #e5f8d6; }
 	.block.diffChange::after { content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(255,0,0,0.1); }
 
@@ -54,6 +58,8 @@
 
 html.platformWindows {
 	.pageMainHistory {
-		#sideLeft, #sideRight { overflow-y: overlay; }
+		#body {
+			> #sideLeft, > #sideRight { overflow-y: overlay; }
+		}
 	}
 }
