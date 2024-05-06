@@ -164,7 +164,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
-		this.details[relationKey] = Relation.formatValue(dbStore.getRelationByKey(relationKey), value, true);
+		this.details[relationKey] = value;
 		this.forceUpdate();
 	};
 
@@ -179,7 +179,10 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const details: any[] = []; 
 
 		for (const k in this.details) {
-			details.push({ key: k, value: this.details[k] });
+			const relation = dbStore.getRelationByKey(k);
+			if (relation) {
+				details.push({ key: k, value: Relation.formatValue(relation, this.details[k], true) });
+			};
 		};
 
 		popupStore.open('confirm', {
