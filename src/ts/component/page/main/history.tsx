@@ -150,6 +150,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						<div id="editorWrapper" className={cn.join(' ')}>
 							<div className="editor">
 								<div className="blocks">
+									<div className="editorControls" />
+
 									{head}
 									{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readonly={true} /> : ''}
 									{check.withIcon ? <Block {...this.props} rootId={rootId} key={icon.id} block={icon} readonly={true} /> : ''}
@@ -593,7 +595,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		};
 
 		sideLeft.css(cssl);
-		editorWrapper.css({ width: this.getWrapperWidth() });
+		
+		if (!this.isSetOrCollection()) {
+			editorWrapper.css({ width: this.getWrapperWidth() });
+		};
 	};
 
 	getWrapperWidth (): number {
@@ -607,17 +612,13 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		w = Number(w) || 0;
 
 		const { isPopup } = this.props;
-		const rootId = this.getRootId();
 		const container = UtilCommon.getPageContainer(isPopup);
 		const sideLeft = container.find('#body > #sideLeft');
-		const root = blockStore.getLeaf(rootId, rootId);
-		const isSet = root?.isObjectSet();
-		const isCollection = root?.isObjectCollection();
 
 		let mw = sideLeft.width();
 		let width = 0;
 
-		if (isSet || isCollection) {
+		if (this.isSetOrCollection()) {
 			width = mw - 192;
 		} else {
 			const size = mw * 0.6;
@@ -637,6 +638,13 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	isSetOrCollection (): boolean {
+		const rootId = this.getRootId();
+		const root = blockStore.getLeaf(rootId, rootId);
+
+		return root?.isObjectSet() || root?.isObjectCollection();
 	};
 
 });

@@ -196,6 +196,19 @@
 }
 
 .editorWrapper.isSet.withIcon, 
+.editorWrapper.isCollection.withIcon {
+	.controlButtons { left: 14px; }
+}
+
+
+.editorWrapper.isSet.withIconAndCover, 
+.editorWrapper.isCollection.withIconAndCover { padding-top: 356px; }
+.editorWrapper.isSet.withIconAndCover, 
+.editorWrapper.isCollection.withIconAndCover {
+	.controlButtons { left: 0px !important; }
+}
+
+.editorWrapper.isSet.withIcon, 
 .editorWrapper.isSet.withIconAndCover, 
 .editorWrapper.isCollection.withIcon,
 .editorWrapper.isCollection.withIconAndCover {
@@ -210,6 +223,5 @@
 .editorWrapper.isSet.withIconAndCover, 
 .editorWrapper.isCollection.withCover,
 .editorWrapper.isCollection.withIconAndCover {
-	.blocks { padding-top: 356px; }
 	.editorControls { display: none; }
 }
