@@ -3,17 +3,16 @@
 .pageMainHistory * { user-select: none; }
 .pageMainHistory {
 	#body { overflow: hidden; }
-	.wrapper { padding: 52px 0px 0px 0px; width: calc(100% - 254px); overflow: auto; position: relative; }
-	.loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }
+	#loader { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }
 
 	#footer.snapLeft { right: 254px; }
-	#footer.snapRight { left: 0px; }
 
-	.list { 
+	#sideLeft { padding: 52px 0px 0px 0px; width: calc(100% - 254px); overflow-x: hidden; overflow-y: auto; position: relative; }
+	#sideRight { 
 		width: 254px; border-left: 1px solid var(--color-shape-secondary); z-index: 20; position: relative; background: var(--color-bg-primary); 
-		overflow: auto; 
+		overflow-x: hidden; overflow-y: auto;
 	}
-	.list {
+	#sideRight {
 		.section { padding: 11px 16px; }
 		.section {
 			.date { text-transform: uppercase; @include text-very-small; }
@@ -55,6 +54,6 @@
 
 html.platformWindows {
 	.pageMainHistory {
-		.wrapper, .list { overflow: overlay; }
+		#sideLeft, #sideRight { overflow-y: overlay; }
 	}
 }
