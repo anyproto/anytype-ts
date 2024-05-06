@@ -9,8 +9,15 @@ class UtilSpace {
 		const fn = UtilCommon.toCamelCase(`open-${type}`);
 		
 		let home = this.getDashboard();
+
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = Storage.getLastOpened(UtilCommon.getCurrentElectronWindowId());
+
+			// Invalid data protection
+			if (!home || !home.id) {
+				home = null;
+			};
+
 			if (home && !home.spaceId) {
 				home.spaceId = commonStore.space;
 			};
@@ -169,7 +176,7 @@ class UtilSpace {
 	};
 
 	getInviteLink (cid: string, key: string) {
-		return UtilCommon.sprintf(Url.invite, cid, key);
+		return UtilData.isAnytypeNetwork() ? UtilCommon.sprintf(Url.invite, cid, key) : `${Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
 };

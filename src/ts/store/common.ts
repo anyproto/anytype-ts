@@ -16,6 +16,7 @@ interface Graph {
 	label: boolean;
 	relation: boolean;
 	link: boolean;
+	files: boolean;
 	local: boolean;
 	filter: string;
 };
@@ -74,6 +75,7 @@ class CommonStore {
 		marker: true,
 		label: true,
 		relation: true,
+		files: false,
 		link: true,
 		local: false,
 		filter: '',

@@ -1524,7 +1524,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		const { isPopup, rootId, block, getWrapperWidth } = this.props;
 		const parent = blockStore.getParentLeaf(rootId, block.id);
-		
+
 		if (!parent) {
 			return;
 		};
@@ -1532,6 +1532,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const node = $(this.node);
 		const wrap = node.find('#scrollWrap');
 		const row = node.find('.row').first();
+		const obj = $(`#block-${block.id}`);
 
 		let width = Constant.size.blockMenu + 10;
 		let maxWidth = 0;
@@ -1539,8 +1540,9 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		String(row.css('grid-template-columns') || '').split(' ').forEach(it => width += parseInt(it));
 
+		obj.css({ width: 'auto' });
+
 		if (parent.isPage() || parent.isLayoutDiv()) {
-			const obj = $(`#block-${block.id}`);
 			const container = UtilCommon.getPageContainer(isPopup);
 
 			maxWidth = container.width() - PADDING;
