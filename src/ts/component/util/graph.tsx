@@ -222,7 +222,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	updateSettings () {
 		this.send('updateSettings', commonStore.getGraph(this.props.storageKey));
-
 		analytics.event('GraphSettings');
 	};
 

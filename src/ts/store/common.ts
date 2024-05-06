@@ -69,7 +69,7 @@ class CommonStore {
 		marks: [],
 	};
 
-	public graphObj: Graph = { 
+	private graphObj: Graph = { 
 		icon: true,
 		orphan: true,
 		marker: true,
@@ -297,10 +297,8 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
-	graphSet (key: string, graph: Partial<Graph>) {
-		this.graphObj = Object.assign(this.graphObj, graph);
-
-		Storage.set(key, this.graphObj);
+	graphSet (key: string, param: Partial<Graph>) {
+		Storage.set(key, Object.assign(this.getGraph(key), param));
 		$(window).trigger('updateGraphSettings');
 	};
 
@@ -510,7 +508,7 @@ class CommonStore {
 	};
 
 	getGraph (key: string): Graph {
-		return Object.assign(this.graphObj, Storage.get(key) || {});
+		return Storage.get(key) || UtilCommon.objectCopy(this.graphObj);
 	};
 
 };
