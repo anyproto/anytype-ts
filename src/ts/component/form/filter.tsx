@@ -44,6 +44,7 @@ class Filter extends React.Component<Props, State> {
 	
 	node: any = null;
 	isFocused = false;
+	composition = false;
 	placeholder: any = null;
 	ref = null;
 
@@ -54,6 +55,8 @@ class Filter extends React.Component<Props, State> {
 		this.onBlur = this.onBlur.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onClear = this.onClear.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 	};
 	
 	render () {
@@ -103,8 +106,8 @@ class Filter extends React.Component<Props, State> {
 							onFocus={this.onFocus} 
 							onBlur={this.onBlur} 
 							onChange={this.onChange} 
-							onKeyDown={onKeyDown}
-							onKeyUp={onKeyUp}
+							onKeyDown={this.onKeyDown}
+							onKeyUp={this.onKeyUp}
 						/>
 						<div id="placeholder" className="placeholder">{placeholder}</div>
 					</div>
@@ -212,11 +215,50 @@ class Filter extends React.Component<Props, State> {
 	onChange (e: any, v: string) {	
 		const { onChange } = this.props;
 
+		// Chinese IME is open
+		if (this.composition) {
+			return;
+		};
+
 		this.checkButton();
 
 		if (onChange) {
 			onChange(v);
 		};
+	};
+
+	onKeyDown (e: any, v: string): void {
+		const { onKeyDown } = this.props;
+
+		// Chinese IME is open
+		if (this.composition) {
+			return;
+		};
+
+		if (onKeyDown) {
+			onKeyDown(e, v);
+		};
+	};
+
+	onKeyUp (e: any, v: string): void {
+		const { onKeyUp } = this.props;
+
+		// Chinese IME is open
+		if (this.composition) {
+			return;
+		};
+
+		if (onKeyUp) {
+			onKeyUp(e, v);
+		};
+	};
+
+	onCompositionStart (e: any) {
+		this.composition = true;
+	};
+
+	onCompositionEnd (e: any) {
+		this.composition = false;
 	};
 
 	checkButton () {
