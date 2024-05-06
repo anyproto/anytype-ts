@@ -14,7 +14,7 @@ class PageMainCreate extends React.Component<I.PageComponent> {
 	
 	componentDidMount () {
 		const flags = [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ];
-		UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, '', message => UtilObject.openRoute(message.details));
+		UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', flags, '', message => UtilObject.openRoute(message.details));
 	};
 
 };

@@ -890,7 +890,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		details[relationKey] = value;
 		detailStore.update(subId, { id, details }, false);
 
-		C.ObjectSetDetails(id, [ { key: relationKey, value } ], callBack);
+		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], callBack);
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
 		analytics.event(key, { type: 'dataview' });
@@ -904,6 +904,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { selection } = dataset || {};
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
+		const view = this.getView();
+
+		if (!view) {
+			return;
+		};
 		
 		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
 		if (!objectIds.length) {
@@ -922,6 +927,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				subId,
 				isCollection,
 				route: this.analyticsRoute(),
+				relationKeys: this.getKeys(view.id),
 				allowedLink: true,
 				allowedOpen: true,
 			}
@@ -972,7 +978,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				if (isNew && this.refControls && this.refControls.refHead) {
 					const ref = this.refControls.refHead;
-					const l = item.name.length;
+					const l = String(item.name || '').length;
 
 					ref.setValue(item.name);
 					ref.setRange({ from: l, to: l });

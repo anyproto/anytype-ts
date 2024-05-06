@@ -640,7 +640,7 @@ export const Mapper = {
 		},
 
 		Details: (obj: any) => {
-			const item = new Rpc.Object.SetDetails.Detail();
+			const item = new Model.Detail();
 
 			item.setKey(obj.key);
 			item.setValue(Encode.value(obj.value));
@@ -691,6 +691,7 @@ export const Mapper = {
 			content.setType(obj.type);
 			content.setAddedat(obj.addedAt);
 			content.setState(obj.state);
+			content.setStyle(obj.style);
 			content.setTargetobjectid(obj.targetObjectId);
 
 			return content;
@@ -790,6 +791,8 @@ export const Mapper = {
 		},
 
 		Block: (obj: any) => {
+			obj = obj || {};
+			obj.type = String(obj.type || I.BlockType.Empty);
 			obj.content = UtilCommon.objectCopy(obj.content || {});
 	
 			const block = new Model.Block();

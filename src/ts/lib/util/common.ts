@@ -14,6 +14,16 @@ class UtilCommon {
 		return window.Electron || {};
 	};
 
+	getCurrentElectronWindowId (): string {
+		const electron = this.getElectron();
+
+		if (!electron) {
+			return '0';
+		};
+
+		return electron.currentWindow().windowId.toString();
+	};
+
 	getGlobalConfig () {
 		return window.AnytypeGlobalConfig || {};
 	};
@@ -457,7 +467,7 @@ class UtilCommon {
 		v = String(v || '');
 
 		const uc = '\\P{Script_Extensions=Latin}';
-		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,5}$`, 'gu');
+		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,6}$`, 'gu');
 		return reg.test(v);
 	};
 
@@ -636,23 +646,6 @@ class UtilCommon {
 		return $(isPopup ? '#popupPage-innerWrap' : '#page.isFull');
 	};
 
-	getBodyContainer (type: string) {
-		switch (type) {
-			default:
-			case 'page':
-				return 'body';
-
-			case 'popup':
-				return '#popupPage-innerWrap';
-			
-			case 'menuBlockAdd':
-				return `#${type} .content`;
-
-			case 'menuBlockRelationView':
-				return `#${type} .scrollWrap`;
-		};
-	};
-
 	getCellContainer (type: string) {
 		switch (type) {
 			default:
@@ -664,7 +657,10 @@ class UtilCommon {
 
 			case 'menuBlockAdd':
 			case 'menuBlockRelationView':
-				return '#' + type;
+				return `#${type}`;
+
+			case 'popupRelation':
+				return `#${type}-innerWrap`;
 		};
 	};
 
@@ -886,7 +882,7 @@ class UtilCommon {
 			ADD_ATTR: [
 				'contenteditable'
 			],
-			ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|file|anytype):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 		});
 	};
 

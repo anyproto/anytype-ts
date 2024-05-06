@@ -387,10 +387,12 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			ret = true;
 		});
 
+		/*
 		if (!ret) {
 			window.clearTimeout(this.timeout);
 			this.timeout = window.setTimeout(() => this.save(value), Constant.delay.keyboard);
 		};
+		*/
 	};
 
 	onKeyUpDate (e: any, value: any) {
@@ -415,7 +417,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		if (!ret) {
 			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => this.save(value), Constant.delay.keyboard);
+			this.timeout = window.setTimeout(() => this.save(this.value), Constant.delay.keyboard);
 		};
 	};
 
@@ -424,7 +426,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onBlur (e: any) {
-		const { relation, recordId, getRecord, onChange } = this.props;
+		const { relation, recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
 
 		if (!this.ref || keyboard.isBlurDisabled || !record) {
@@ -487,10 +489,11 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		UtilObject.setIcon(record.id, '', objectId);
 	};
 
-	onCheckbox () {
+	onCheckbox (e: any) {
 		const { recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
 
+		this.onBlur(e);
 		UtilObject.setDone(record.id, !record.done, () => {
 			if (this._isMounted) {
 				this.forceUpdate();

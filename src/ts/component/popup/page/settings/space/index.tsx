@@ -82,7 +82,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		}).filter(it => it);
 		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
 
-		if ((sharedCnt >= personalSpace.sharedSpacesLimit) && !space.isShared) {
+		if (personalSpace && (sharedCnt >= personalSpace.sharedSpacesLimit) && !space.isShared) {
 			canShare = false;
 			canMembers = false;
 		};

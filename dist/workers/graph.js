@@ -18,11 +18,16 @@ const transformThreshold = 1;
 const transformThresholdHalf = transformThreshold / 2;
 const delayFocus = 1000;
 
-const ObjectLayout = {
+const Layout = {
 	Human:		 1,
 	Task:		 2,
+	File:		 6,
+	Image:		 8,
+	Audio:		 15,
+	Video:		 16,
 	Bookmark:	 11,
 	Participant: 19,
+	Pdf:		 20,
 };
 
 const EdgeType = {
@@ -749,15 +754,15 @@ const checkNodeInViewport = (d) => {
 };
 
 const isLayoutHuman = (d) => {
-	return d.layout == ObjectLayout.Human;
+	return d.layout == Layout.Human;
 };
 
 const isLayoutParticipant = (d) => {
-	return d.layout == ObjectLayout.Participant;
+	return d.layout == Layout.Participant;
 };
 
 const isLayoutBookmark = (d) => {
-	return d.layout == ObjectLayout.Bookmark;
+	return d.layout == Layout.Bookmark;
 };
 
 const getNodeById = (id) => {

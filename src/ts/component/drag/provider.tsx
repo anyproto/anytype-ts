@@ -321,6 +321,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				if (selection) {
 					selection.renderSelection();
 				};
+
+				raf(() => $('.resizable').trigger('resizeInit'));
 			};
 
 			if (withAlt) {

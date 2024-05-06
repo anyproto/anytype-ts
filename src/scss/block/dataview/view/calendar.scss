@@ -10,7 +10,7 @@
 
 			.table {
 				.head, .body { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-				.head { flex-shrink: 0; }
+				.head { flex-shrink: 0; padding-right: 6px; }
 				.head {
 					.item { 
 						@include text-small; padding: 2px 10px; border-color: var(--color-shape-secondary); border-style: solid;
@@ -18,7 +18,10 @@
 					}
 				}
 
-				.body { overflow: overlay; }
+				.body { overflow: scroll; }
+				.body::-webkit-scrollbar { width: 6px; height: 0px; }
+				.body::-webkit-scrollbar-track { background: transparent; }
+				.body::-webkit-scrollbar-thumb { background: var(--color-shape-secondary); border-radius: 3px; }
 			}
 
 			.day { 

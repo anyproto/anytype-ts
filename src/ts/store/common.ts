@@ -1,6 +1,6 @@
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { I, M, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
+import { I, M, Storage, UtilCommon, UtilObject, Renderer, UtilRouter } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -16,6 +16,7 @@ interface Graph {
 	label: boolean;
 	relation: boolean;
 	link: boolean;
+	files: boolean;
 	local: boolean;
 	filter: string;
 };
@@ -68,12 +69,13 @@ class CommonStore {
 		marks: [],
 	};
 
-	public graphObj: Graph = { 
+	private graphObj: Graph = { 
 		icon: true,
 		orphan: true,
 		marker: true,
 		label: true,
 		relation: true,
+		files: false,
 		link: true,
 		local: false,
 		filter: '',
@@ -214,10 +216,6 @@ class CommonStore {
 		return String(this.spaceId || '');
 	};
 
-	get graph(): Graph {
-		return Object.assign(this.graphObj, Storage.get('graph') || {});
-	};
-
 	get spaceStorage (): SpaceStorage {
 		const spaces = this.spaceStorageObj.spaces || [];
 		return { ...this.spaceStorageObj, spaces };
@@ -299,10 +297,8 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
-	graphSet (graph: Partial<Graph>) {
-		this.graphObj = Object.assign(this.graphObj, graph);
-
-		Storage.set('graph', this.graphObj);
+	graphSet (key: string, param: Partial<Graph>) {
+		Storage.set(key, Object.assign(this.getGraph(key), param));
 		$(window).trigger('updateGraphSettings');
 	};
 
@@ -394,6 +390,12 @@ class CommonStore {
 	};
 
 	redirectSet (v: string) {
+		const param = UtilRouter.getParam(v);
+
+		if ((param.page == 'auth') && (param.action == 'pin-check')) {
+			return;
+		};
+
 		this.redirect = v;
 	};
 
@@ -503,6 +505,10 @@ class CommonStore {
 
 	membershipTiersListSet (list: I.MembershipTier[]) {
 		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
+	};
+
+	getGraph (key: string): Graph {
+		return Storage.get(key) || UtilCommon.objectCopy(this.graphObj);
 	};
 
 };

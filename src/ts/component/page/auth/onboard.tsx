@@ -8,7 +8,7 @@ import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 enum Stage {
 	Vault	 = 0,
 	Phrase	 = 1,
-	Name	 = 2,
+	Soul	 = 2,
 };
 
 type State = {
@@ -101,7 +101,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				break;
 			};
 
-			case Stage.Name: {
+			case Stage.Soul: {
 				content = (
 					<div className="inputWrapper animation">
 						<Input
@@ -115,7 +115,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				buttons = (
 					<div className="animation">
-						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('authOnboardNameButton')} onClick={this.onForward} />
+						<Button ref={ref => this.refNext = ref} className={cnb.join(' ')} text={translate('authOnboardSoulButton')} onClick={this.onForward} />
 					</div>
 				);
 				break;
@@ -154,7 +154,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		Animation.to();
 		this.rebind();
 
-		analytics.event('ScreenOnboarding', { step: stage });
+		analytics.event('ScreenOnboarding', { step: Stage[stage] });
 	};
 
 	componentDidUpdate (_, prevState): void {
@@ -163,7 +163,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (prevState.stage != stage) {
 			Animation.to();
-			analytics.event('ScreenOnboarding', { step: stage });
+			analytics.event('ScreenOnboarding', { step: Stage[stage] });
 		};
 
 		if (account && (stage == Stage.Phrase)) {
@@ -203,7 +203,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Guard to prevent illegal state change */
 	canMoveBack (): boolean {
-		return this.state.stage <= Stage.Name;
+		return this.state.stage <= Stage.Soul;
 	};
 
 	/** Moves the Onboarding Flow one stage forward if possible */
@@ -241,8 +241,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			});
 		};
 
-		if (stage == Stage.Name) {
+		if (stage == Stage.Soul) {
 			const name = this.refName.getValue();
+			const { redirect } = commonStore;
+
 			const cb = () => {
 				Animation.from(() => {
 					this.refNext?.setLoading(false);
@@ -252,12 +254,15 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						animate: true,
 						onFadeIn: () => {
 							Storage.initPinnedTypes();
-							Action.welcome();
+
+							if (!redirect) {
+								Action.welcome();
+							};
 						},
 					};
 
 					UtilData.onAuth({ routeParam });
-					UtilData.onAuthOnce();
+					UtilData.onAuthOnce(true);
 				});
 			};
 
@@ -295,7 +300,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			this.refPhrase.onToggle();
 			this.setState({ phraseVisible: true });
 
-			analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: stage });
+			analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: Stage[stage] });
 		};
 	};
 
@@ -314,7 +319,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	onPhraseTooltip () {
 		popupStore.open('phrase', {});
-		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: this.state.stage });
+		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: Stage[this.state.stage] });
 	};
 
 	setError (error: string) {

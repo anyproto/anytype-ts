@@ -18,7 +18,7 @@
 			.selectionFrame.bottom { border-width: 0px; border-bottom-width: 2px; border-radius: 0px; }
 		}
 
-		.handle { z-index: 11;  position: absolute; display: none; transition: none; padding: 6px; transform: translateX(-50%) translateY(-50%); }
+		.handle { z-index: 11;  position: absolute; opacity: 0; pointer-events: none; transition: none; padding: 6px; transform: translateX(-50%) translateY(-50%); }
 		.handle.canDrag { cursor: grab; }
 
 		.handle {
@@ -92,7 +92,7 @@
 		}
 
 		.row.isHighlightedRow {
-			.handleRow { display: block; }
+			.handleRow { opacity: 1; pointer-events: all; }
 		}
 
 		.row.isHeader {
@@ -108,11 +108,11 @@
 		.cell.isHighlightedColumn.isFirst { border-radius: 4px 4px 0px 0px; }
 		.cell.isHighlightedColumn.isLast { border-radius: 0px 0px 4px 4px; }
 		.cell.isHighlightedColumn {
-			.handleColumn { display: block; }
+			.handleColumn { opacity: 1; pointer-events: all; }
 		}
 
 		.cell.isEditing {
-			.handleRow, .handleColumn { display: block; }
+			.handleRow, .handleColumn { opacity: 1; pointer-events: all; }
 		}
 
 		.cell.isHighlightedCell, .cell:hover {
@@ -126,7 +126,7 @@
 		}
 
 		.cell:hover {
-			.handleRow, .handleColumn { display: block; }
+			.handleRow, .handleColumn { opacity: 1; pointer-events: all; }
 		}
 
 		.cell.align-h0 .value { text-align: left; }

@@ -72,7 +72,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						/>
 					</div>
 
-					{/*
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalLinkStyle')} />
 
@@ -85,7 +84,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							menuParam={{ horizontal: I.MenuDirection.Right }}
 						/>
 					</div>
-					*/}
 
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalFullscreen')} />

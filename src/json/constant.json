@@ -69,6 +69,11 @@
 		}
 	},
 
+	"graphId": {
+		"global": "graphGlobal",
+		"dataview": "graphDataview"
+	},
+
 	"menuIds": {
 		"cell": [
 			"select",
@@ -448,6 +453,7 @@
 		"arduino": "Arduino",
 		"bash": "Bash",
 		"basic": "BASIC",
+		"bsl": "BSL",
 		"c": "C",
 		"csharp": "C#",
 		"cpp": "C++",
@@ -506,6 +512,7 @@
 		"shell": "Shell",
 		"sql": "SQL",
 		"swift": "Swift",
+		"toml": "TOML",
 		"typescript": "TypeScript",
 		"vbnet": "Vb.Net",
 		"verilog": "Verilog",

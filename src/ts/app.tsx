@@ -12,7 +12,7 @@ import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as Prev
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, notificationStore } from 'Store';
 import { 
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
-	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode, UtilSpace,
+	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode, UtilSpace, sidebar
 } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
@@ -46,11 +46,13 @@ import Routes from 'json/route.json';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
+const electron = UtilCommon.getElectron();
+const isPackaged = electron.isPackaged;
 
 interface RouteElement { path: string; };
 
 interface State {
-	loading: boolean;
+	isLoading: boolean;
 };
 
 declare global {
@@ -87,7 +89,7 @@ const rootStore = {
 
 window.$ = $;
 
-if (!UtilCommon.getElectron().isPackaged) {
+if (!isPackaged) {
 	window.Anytype = {
 		Store: rootStore,
 		Lib: {
@@ -114,6 +116,7 @@ if (!UtilCommon.getElectron().isPackaged) {
 			Encode, 
 			Decode,
 			translate,
+			sidebar,
 		},
 	};
 };
@@ -134,8 +137,8 @@ enableLogging({
 */
 
 Sentry.init({
-	release: UtilCommon.getElectron().version.app,
-	environment: UtilCommon.getElectron().isPackaged ? 'production' : 'development',
+	release: electron.version.app,
+	environment: isPackaged ? 'production' : 'development',
 	dsn: Constant.sentry,
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
@@ -148,6 +151,11 @@ Sentry.init({
 			onunhandledrejection: true,
 		}),
 	],
+});
+
+Sentry.setContext('info', {
+	network: I.NetworkMode[authStore.networkConfig?.mode],
+	isPackaged: isPackaged,
 });
 
 class RoutePage extends React.Component<RouteComponentProps> {
@@ -169,7 +177,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 class App extends React.Component<object, State> {
 
 	state = {
-		loading: true
+		isLoading: true
 	};
 	node: any = null;
 	timeoutMaximize = 0;
@@ -189,7 +197,7 @@ class App extends React.Component<object, State> {
 	};
 
 	render () {
-		const { loading } = this.state;
+		const { isLoading } = this.state;
 		const platform = UtilCommon.getPlatform();
 
 		let drag = null;
@@ -201,11 +209,11 @@ class App extends React.Component<object, State> {
 			<Router history={history}>
 				<Provider {...rootStore}>
 					<div ref={node => this.node = node}>
-						{loading ? (
+						{isLoading ? (
 							<div id="root-loader" className="loaderWrapper">
 								<div className="inner">
 									<div className="logo anim from" />
-									<div className="version anim from">{UtilCommon.getElectron().version.app}</div>
+									<div className="version anim from">{electron.version.app}</div>
 								</div>
 							</div>
 						) : ''}
@@ -239,9 +247,11 @@ class App extends React.Component<object, State> {
 	};
 
 	init () {
+		const { version, arch, getGlobal } = electron;
+
 		UtilRouter.init(history);
 
-		dispatcher.init(UtilCommon.getElectron().getGlobal('serverAddress'));
+		dispatcher.init(getGlobal('serverAddress'));
 		dispatcher.listenEvents();
 
 		keyboard.init();
@@ -249,8 +259,8 @@ class App extends React.Component<object, State> {
 		this.registerIpcEvents();
 		Renderer.send('appOnLoad');
 
-		console.log('[Process] os version:', UtilCommon.getElectron().version.system, 'arch:', UtilCommon.getElectron().arch);
-		console.log('[App] version:', UtilCommon.getElectron().version.app, 'isPackaged', UtilCommon.getElectron().isPackaged);
+		console.log('[Process] os version:', version.system, 'arch:', arch);
+		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
 	};
 
 	initStorage () {
@@ -282,10 +292,13 @@ class App extends React.Component<object, State> {
 		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
 		Renderer.on('logout', () => authStore.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => commonStore.dataPathSet(p));
+		Renderer.on('will-close-window', this.onWillCloseWindow);
 
 		Renderer.on('shutdownStart', () => {
-			this.setState({ loading: true });
+			this.setState({ isLoading: true });
+
 			Storage.delete('menuSearchText');
+			Storage.delete('lastOpenedObject');
 		});
 
 		Renderer.on('zoom', () => {
@@ -352,9 +365,9 @@ class App extends React.Component<object, State> {
 					window.setTimeout(() => { 
 						loader.remove(); 
 						body.removeClass('over');
-					}, 500);
-				}, 750);
-			}, 2000);
+					}, 300);
+				}, 450);
+			}, 1000);
 		};
 
 		if (accountId) {
@@ -370,7 +383,7 @@ class App extends React.Component<object, State> {
 
 							UtilData.onInfo(account.info);
 							UtilData.onAuth({}, cb);
-							UtilData.onAuthOnce();
+							UtilData.onAuthOnce(false);
 						};
 					});
 				});
@@ -395,6 +408,10 @@ class App extends React.Component<object, State> {
 		} else {
 			cb();
 		};
+	};
+
+	onWillCloseWindow (e: any, windowId: string) {
+		Storage.deleteLastOpenedByWindowId([windowId]);
 	};
 
 	onPopup (e: any, id: string, param: any, close?: boolean) {
@@ -482,7 +499,7 @@ class App extends React.Component<object, State> {
 				icon: 'updated',
 				bgColor: 'green',
 				title: translate('popupConfirmUpdateDoneTitle'),
-				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), UtilCommon.getElectron().version.app),
+				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
 				colorConfirm: 'blank',
 				canCancel: false,
@@ -518,7 +535,7 @@ class App extends React.Component<object, State> {
 
 	onUpdateProgress (e: any, progress: any) {
 		commonStore.progressSet({ 
-			status: UtilCommon.sprintf('Downloading update... %s/%s', UtilFile.size(progress.transferred), UtilFile.size(progress.total)), 
+			status: UtilCommon.sprintf(translate('commonUpdateProgress'), UtilFile.size(progress.transferred), UtilFile.size(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
 			isUnlocked: true,

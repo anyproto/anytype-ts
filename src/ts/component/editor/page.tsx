@@ -188,8 +188,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.unbind();
 		this.close();
 
-		blockStore.clear(this.props.rootId);
 		focus.clear(false);
+		blockStore.clear(this.props.rootId);
 
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
@@ -241,6 +241,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		window.clearTimeout(this.timeoutLoading);
 		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
+
+		blockStore.clear(this.props.rootId);
 
 		C.ObjectOpen(this.id, '', UtilRouter.getRouteSpaceId(), (message: any) => {
 			window.clearTimeout(this.timeoutLoading);
@@ -795,6 +797,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					blockStore.toggle(rootId, block.id, !Storage.checkToggle(rootId, block.id));
 				});
 			};
+
+			if (block.isTextCheckbox()) {
+				keyboard.shortcut(`${cmd}+enter`, e, () => {
+					UtilData.blockSetText(rootId, block.id, text, marks, true, () => {
+						C.BlockTextSetChecked(rootId, block.id, !block.content.checked);
+					});
+				});
+			};
 		};
 
 		// History
@@ -1087,6 +1097,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				!it.isTextDescription() && 
 				!it.isFeatured() && 
 				!it.isSystem() && 
+				!it.isTableRow() &&
 				!blockStore.checkIsChild(rootId, block.id, it.id)
 			);
 		});

@@ -155,7 +155,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				{this.cache && items.length && !isLoading ? (
 					<div key="items" className="items left">
 						<InfiniteLoader
-							rowCount={items.length + 1}
+							rowCount={items.length}
 							loadMoreRows={this.loadMoreRows}
 							isRowLoaded={({ index }) => !!items[index]}
 							threshold={LIMIT_HEIGHT}
@@ -174,7 +174,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 											onRowsRendered={onRowsRendered}
 											onScroll={this.onScroll}
 											scrollToAlignment="center"
-											overscanRowCount={10}
+											overscanRowCount={20}
 										/>
 									)}
 								</AutoSizer>

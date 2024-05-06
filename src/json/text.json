@@ -64,9 +64,13 @@
 	"commonDeletedRelation": "Deleted Relation",
 	"commonSort": "Sort",
 	"commonAlign": "Align",
-	"commonAlignLeft": "Align left",
-	"commonAlignCenter": "Align center",
-	"commonAlignRight": "Align right",
+	"commonHAlignLeft": "Left",
+	"commonHAlignCenter": "Center",
+	"commonHAlignRight": "Right",
+	"commonHAlignJustify": "Justify",
+	"commonVAlignTop": "Top",
+	"commonVAlignMiddle": "Middle",
+	"commonVAlignBottom": "Bottom",
 	"commonAppearance": "Appearance",
 	"commonPreview": "Preview",
 	"commonColor": "Color",
@@ -138,6 +142,7 @@
 	"commonReset": "Reset",
 	"commonUpdate": "Update",
 	"commonOwner": "Owner",
+	"commonUpdateProgress": "Downloading update... %s/%s",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -177,9 +182,11 @@
 	"electronMenuShowMenu": "Show menu bar",
 	"electronMenuQuit": "Quit",
 	"electronMenuFile": "File",
-	"electronMenuWorkDirectory": "Show Work Directory",
-	"electronMenuDataDirectory": "Show Data Directory",
-	"electronMenuLogs": "Show Logs",
+	"electronMenuDirectory": "Show Directory",
+	"electronMenuWorkDirectory": "Work",
+	"electronMenuDataDirectory": "Data",
+	"electronMenuConfigDirectory": "Config",
+	"electronMenuLogsDirectory": "Logs",
 	"electronMenuImport": "Import to Space",
 	"electronMenuExport": "Export Space",
 	"electronMenuSaveAs": "Export Object",
@@ -339,9 +346,9 @@
 	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It's local-first – everything works offline.<br/>Only you have the key.",
 	"authOnboardVaultButton": "Get my Key",
 
-	"authOnboardNameTitle": "Set your name",
-	"authOnboardNameLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
-	"authOnboardNameButton": "Enter my Vault",
+	"authOnboardSoulTitle": "Set your name",
+	"authOnboardSoulLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
+	"authOnboardSoulButton": "Enter my Vault",
 
 	"authOnboardPhraseTitle": "This is your Key",
 	"authOnboardPhraseLabel": "It gives you full ownership over your vault.<br/>It cannot be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
@@ -425,8 +432,8 @@
 	"pageAuthOnboardPersonalSpace": "Personal Space",
 	"pageAuthOnboardMoreInfo": "More info",
 
-	"pageAuthSetupCongratulations": "⚡️ Congratulations!",
-	"pageAuthSetupLongread": "You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported.",
+	"pageAuthSetupImportTitle": "⚡️ Congratulations!",
+	"pageAuthSetupImportText": "You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported.",
 	"pageAuthSetupImportBackup": "Import backup",
 	"pageAuthSetupEntering": "Entering the Vault...",
 
@@ -460,7 +467,8 @@
 	"blockNameBulleted": "Bulleted list",
 	"blockNameNumbered": "Numbered list",
 	"blockNameToggle": "Toggle",
-	"blockNameExisting": "Add link",
+	"blockNameExistingPage": "Add link",
+	"blockNameExistingFile": "Add file",
 	"blockNameFile": "File",
 	"blockNameImage": "Picture",
 	"blockNameVideo": "Video",
@@ -489,7 +497,8 @@
 	"blockTextBulleted": "Simple list",
 	"blockTextNumbered": "Numbered list",
 	"blockTextToggle": "Hide and show content inside",
-	"blockTextExisting": "Create link to another object",
+	"blockTextExistingPage": "Create link to another object",
+	"blockTextExistingFile": "Create link to another file",
 	"blockTextFile": "Store file in original state",
 	"blockTextImage": "Upload and enrich the page with image",
 	"blockTextVideo": "Upload playable video",
@@ -614,14 +623,7 @@
 	"blockTableOptionsColorClearStyle": "Clear style",
 
 	"blockTableOptionsAlignText": "Text align",
-	"blockTableOptionsAlignTextLeft": "Left",
-	"blockTableOptionsAlignTextCenter": "Center",
-	"blockTableOptionsAlignTextRight": "Right",
-
 	"blockTableOptionsAlignVertical": "Vertical align",
-	"blockTableOptionsAlignVerticalTop": "Top",
-	"blockTableOptionsAlignVerticalMiddle": "Middle",
-	"blockTableOptionsAlignVerticalBottom": "Bottom",
 
 	"blockTypeMyTypes": "My Types",
 
@@ -839,10 +841,10 @@
 	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
 	"popupConfirmWelcomeButton": "Show me what I can build",
 
-	"popupConfirmLostPhraseTitle": "Anytype cannot recover your Key for you",
-	"popupConfirmLostPhraseTextWindows": "<p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
-	"popupConfirmLostPhraseTextLinux": "<p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
-	"popupConfirmLostPhraseTextMac": "<p>Currently, there are no methods of accessing your key, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
+	"popupConfirmLostPhraseTitle": "Recovering Your Lost Key",
+	"popupConfirmLostPhraseTextWindows": "<p><p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your Windows Credential Manager. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the Control Panel and change the \"View by\" option to \"Large icons\".<\/li><li>Locate and open the \"Credential Manager\" application.<\/li><li>Click on the \"Windows Credentials\" tab to view your saved credentials.<\/li><li>Search for the entry related to Anytype and click \"Edit\" to see details.<\/li><\/ul>",
+	"popupConfirmLostPhraseTextLinux": "<p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your Linux Keyring. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the \"Passwords and Keys\" application, which you can find in the Utilities folder.<\/li><li>In the \"Passwords and Keys\" window, select the \"Default\" keyring on the left.<\/li><li>Search for the entry related to Anytype and double-click on it.<\/li><li>Click on the key icon to reveal the key, or select the \"Copy\" option to copy the key.<\/li><\/ul><p>Copy the key and secure it safely.<\/p>",
+	"popupConfirmLostPhraseTextMac": "<p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your macOS Keychain Access. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the Keychain Access application, which you can find in the Utilities folder.<\/li><li>In the Keychain Access window, select \"Login\" from the list of Keychains on the left.<\/li><li>Click on the \"Passwords\" tab to view your saved passwords.<\/li><li>Search for the entry related to Anytype and double-click on it.<\/li><li>Check the \"Show password\" box, and your key will be displayed.<\/li><\/ul><p>Copy the key and secure it safely.<\/p>",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
@@ -876,7 +878,7 @@
 	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
 
-	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <a>Please let us know here</a>︎.",
+	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <span>Please let us know here</span>︎.",
 
 	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
 	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
@@ -1137,6 +1139,7 @@
 	"popupShortcutNavigationPage7": "Go to the end of the Object",
 	"popupShortcutNavigationPage8": "Move selected block(s) around",
 	"popupShortcutNavigationPage9": "Open relations view",
+	"popupShortcutNavigationPage10": "Check / Uncheck Checkbox",
 	
 	"popupShortcutMarkdownWhileTyping": "While typing",
 	"popupShortcutMarkdownWhileTyping1": "Inline code",
@@ -1247,6 +1250,7 @@
 	"menuBlockActionsSectionsColor": "Color",
 	"menuBlockActionsSectionsDataview": "Dataview",
 	"menuBlockActionsCreateNew": "Create new %s",
+	"menuBlockActionsExistingFile": "Use existing file",
 
 	"menuBlockAddNewRelation": "New relation",
 	"menuBlockAddSectionsText": "Text",
@@ -1344,9 +1348,10 @@
 
 	"menuDataviewContextNoAvailableActions": "No available actions",
 	"menuDataviewContextUnlinkFromCollection": "Unlink from collection",
+	"menuDataviewContextTryAgain": "Please try again",
+	"menuDataviewContextEditRelations": "Edit relations",
 
 	"menuDataviewCreateSomethingWentWrong": "Oops - something went wrong!",
-	"menuDataviewContextTryAgain": "Please try again",
 
 	"menuDataviewDateDateFormat": "Date format",
 	"menuDataviewDateTimeFormat": "Time format",
@@ -1427,6 +1432,7 @@
 	"menuGraphSettingsLinks": "Links",
 	"menuGraphSettingsRelations": "Relations",
 	"menuGraphSettingsUnlinkedObjects": "Unlinked Objects",
+	"menuGraphSettingsFiles": "Files",
 	"menuGraphSettingsLocal": "Local graph",
 
 	"menuHelpWhatsNew": "What's New",
@@ -1983,6 +1989,8 @@
 	"errorSpaceMakeShareable102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
 	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+
+	"errorIncorrectEmail": "Incorrect E-mail",
 
 	"origin0": "None",
 	"origin1": "Clipboard",

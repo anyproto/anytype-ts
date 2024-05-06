@@ -26,6 +26,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		this.onCancel = this.onCancel.bind(this);
 		this.onBackup = this.onBackup.bind(this);
 		this.setError = this.setError.bind(this);
+		this.onBack = this.onBack.bind(this);
 	};
 
 	render () {
@@ -33,46 +34,29 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		const back = <Icon className="arrow back" onClick={this.onCancel} />;
 
 		let content = null;
+		let loader = null;
+		let title = '';
+		let label = '';
+		let cn = [ 'animation' ];
+		let buttonText = translate('commonBack');
+		let buttonClick = this.onCancel;
 
 		if (error.code) {
 			if (error.code == Errors.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
-				content = (
-					<div className="importBackupWrap">
-						{back}
-
-						<Title className="animation" text={translate('pageAuthSetupCongratulations')} />
-						<Label className="animation" text={translate('pageAuthSetupLongread')} />
-
-						<div className="buttons">
-							<div className="animation">
-								<Button text={translate('pageAuthSetupImportBackup')} onClick={this.onBackup} />
-							</div>
-						</div>
-					</div>
-				);
+				title = translate('pageAuthSetupImportTitle');
+				label = translate('pageAuthSetupImportText');
+				buttonText = translate('pageAuthSetupImportBackup');
+				buttonClick = this.onBackup;
+				cn.push('fromBackup');
 			} else {
-				content = (
-					<React.Fragment>
-						{back}
-
-						<Title className="animation" text={translate('commonError')} />
-						<Error className="animation" text={error.description} />
-
-						<div className="buttons">
-							<div className="animation">
-								<Button text={translate('commonBack')} onClick={() => UtilRouter.go('/', {})} />
-							</div>
-						</div>
-					</React.Fragment>
-				);
+				title = translate('commonError');
+				label = error.description;
+				buttonText = translate('commonBack');
+				buttonClick = this.onCancel;
 			};
 		} else {
-			content = (
-				<React.Fragment>
-					<Title className="animation" text={translate('pageAuthSetupEntering')} />
-					<Loader className="animation" />
-				</React.Fragment>
-			);
+			title = translate('pageAuthSetupEntering');
+			loader = <Loader className="animation" />;
 		};
 		
 		return (
@@ -83,7 +67,17 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame ref={ref => this.refFrame = ref}>
-					{content}
+					{back}
+
+					{title ? <Title className={cn.join(' ')} text={title} /> : ''}
+					{label ? <Label className={cn.join(' ')} text={label} /> : ''}
+					{loader}
+
+					<div className="buttons">
+						<div className="animation">
+							<Button text={buttonText} className="c28" onClick={buttonClick} />
+						</div>
+					</div>
 				</Frame>
 			</div>
 		);
@@ -166,7 +160,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				UtilData.onAuth({ routeParam: { animate } });
 			};
 
-			UtilData.onAuthOnce();
+			UtilData.onAuthOnce(false);
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
@@ -185,7 +179,12 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	onCancel () {
-		UtilRouter.go('/auth/select', {});
+		UtilRouter.go('/', {});
+	};
+
+	onBack () {
+		authStore.logout(true, false);
+		Animation.from(() => UtilRouter.go('/', { replace: true }));
 	};
 	
 });

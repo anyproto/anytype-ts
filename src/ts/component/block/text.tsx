@@ -20,7 +20,7 @@ const langs = [
 	'livescript', 'lua', 'markdown', 'makefile', 'matlab', 'nginx', 'nix', 'objectivec', 'ocaml', 'pascal', 'perl', 'php', 'powershell', 'prolog',
 	'python', 'r', 'reason', 'ruby', 'rust', 'sass', 'java', 'scala', 'scheme', 'scss', 'sql', 'swift', 'typescript', 'vbnet', 'verilog',
 	'vhdl', 'visual-basic', 'wasm', 'yaml', 'javascript', 'css', 'markup', 'markup-templating', 'csharp', 'php', 'go', 'swift', 'kotlin',
-	'wolfram', 'dot',
+	'wolfram', 'dot', 'toml', 'bsl'
 ];
 for (const lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
@@ -648,11 +648,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
+		const key = e.key.toLowerCase();
+		const range = this.getRange();
+
+		if (!range) {
+			return;
+		};
+
 		let value = this.getValue();
 		let ret = false;
 
-		const key = e.key.toLowerCase();
-		const range = this.getRange();
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.cmdKey();
 
@@ -768,10 +773,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		keyboard.shortcut('tab', e, () => {
 			e.preventDefault();
 
-			if (!range) {
-				return;
-			};
-			
 			if (block.isTextCode()) {
 				value = UtilCommon.stringInsert(value, '\t', range.from, range.from);
 
@@ -792,10 +793,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		keyboard.shortcut('backspace', e, () => {
 			if (keyboard.pressed.includes(Key.enter)) {
 				ret = true;
-				return;
-			};
-
-			if (!range) {
 				return;
 			};
 
@@ -834,10 +831,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		keyboard.shortcut('delete', e, () => {
-			if (!range) {
-				return;
-			};
-
 			if ((range.from == range.to) && (range.to == value.length)) {
 				UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range, this.props);
@@ -923,14 +916,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		let value = this.getValue();
 		let cmdParsed = false;
+		let isAllowedMenu = !this.preventMenu && !keyboard.isSpecial(e) && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
-		const isAllowedMention = range ? (!range.from || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore)) : false;
-		const canOpenMenuAdd = (oneSymbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const canOpenMentionMenu = (oneSymbolBefore == '@') && !this.preventMenu && (isAllowedMention || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+
+		if (range) {
+			isAllowedMenu = isAllowedMenu && (!range.from || (range.from == 1) || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore));
+		};
+
+		const canOpenMenuAdd = !menuOpenAdd && (oneSymbolBefore == '/') && isAllowedMenu;
+		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && isAllowedMenu;
 		const newBlock: any = { 
 			bgColor: block.bgColor,
 			content: {},
@@ -973,7 +971,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		// Open mention menu
-		if (canOpenMentionMenu) {
+		if (canOpenMenuMention) {
 			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => this.onMention());
 			return;
 		};
@@ -1008,17 +1006,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				};
 
 				// If emoji markup is first do not count one space character in mark adjustment
-				const isFirstEmoji = Mark.getInRange(this.marks, I.MarkType.Emoji, { from: 1, to: 2 });
-				const offset = isFirstEmoji ? 0 : 1;
+				const isFirstEmoji = Mark.getInRange(this.marks, I.MarkType.Emoji, { from: Length[newStyle], to: Length[newStyle] + 1 });
+				if (isFirstEmoji) {
+					continue;
+				};
 
-				value = value.replace(reg, (s: string, p: string) => {
-					if (isFirstEmoji) {
-						p = p.trim();
-					};
-					return s.replace(p, '');
-				});
+				value = value.replace(reg, (s: string, p: string) => s.replace(p, ''));
 
-				this.marks = (newStyle == I.TextStyle.Code) ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + offset));
+				this.marks = (newStyle == I.TextStyle.Code) ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + 1));
 				this.setValue(value);
 
 				UtilData.blockSetText(rootId, id, value, this.marks, true, () => {
@@ -1152,16 +1147,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				rootId: rootId,
 				blockId: block.id,
 				onSelect: (icon: string) => {
+					const to = range.from + 1;
+
 					this.marks = Mark.adjust(this.marks, range.from, 1);
 					this.marks = Mark.toggle(this.marks, { 
 						type: I.MarkType.Emoji, 
 						param: icon, 
-						range: { from: range.from, to: range.from + 1 },
+						range: { from: range.from, to },
 					});
+
 					value = UtilCommon.stringInsert(value, ' ', range.from, range.from);
 
 					UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
-						focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
+						focus.set(block.id, { from: to, to });
 						focus.apply();
 					});
 				},

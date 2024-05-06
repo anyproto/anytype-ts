@@ -139,9 +139,12 @@ const Column = observer(class Column extends React.Component<Props> {
 		const { id, block, isCollection, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget, getSearchIds } = this.props;
 		const object = getTarget();
 		const view = getView();
+		if (!view) {
+			return;
+		};
+
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
-		
-		if (!relation || !view) {
+		if (!relation) {
 			return;
 		};
 

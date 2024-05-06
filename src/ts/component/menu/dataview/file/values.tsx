@@ -212,17 +212,22 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { getId, param, id, position } = this.props;
 		const { data, classNameWrap } = param;
 		const { onChange } = data;
-		const element = $(`#${getId()} #item-${item.id}`);
+		const itemEl = $(`#${getId()} #item-${item.id}`);
+		const element = `#${getId()} #item-${item.id} .icon.more`;
 
 		let value = Relation.getArrayValue(data.value);
 
-		element.addClass('active');
 		menuStore.open('select', { 
 			element,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap: classNameWrap,
+			onOpen: () => {
+				itemEl.addClass('active');
+				$(element).addClass('active');
+			},
 			onClose: () => {
-				element.removeClass('active');
+				itemEl.removeClass('active');
+				$(element).removeClass('active')
 			},
 			data: {
 				value: '',

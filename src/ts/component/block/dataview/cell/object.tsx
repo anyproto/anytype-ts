@@ -374,7 +374,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const { relation } = this.props;
 		const { details, flags } = Relation.getParamForNewObject(text, relation);
 
-		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, 'Relation', message => this.onValueAdd(message.targetId));
+		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', message => this.onValueAdd(message.targetId));
 	};
 
 	onFocus () {

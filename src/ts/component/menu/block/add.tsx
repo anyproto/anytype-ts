@@ -321,7 +321,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			]);
 
 			if (block.canHaveAlign()) {
-				sections.push({ id: 'align', icon: 'align', name: translate('commonAlign'), color: '', children: UtilMenu.getAlign(block.isTextQuote()) });
+				const restricted = [];
+				if (!block.isText()) {
+					restricted.push(I.BlockHAlign.Justify);
+				};
+				if (block.isTextQuote()) {
+					restricted.push(I.BlockHAlign.Center);
+				};
+
+				sections.push({ id: 'align', icon: 'align', name: translate('commonAlign'), color: '', children: UtilMenu.getHAlign(restricted) });
 			};
 			if (block.canHaveColor()) {
 				sections.push({ id: 'color', icon: 'color', name: translate('menuBlockAddSectionsTextColor'), color: '', children: UtilMenu.getTextColors() });
@@ -412,11 +420,22 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				});
 				break;
 
-			case 'existing':
+			case 'existingPage':
 				menuId = 'searchObject';
 				menuParam.data.canAdd = true;
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Link,
+				});
+				break;
+
+			case 'existingFile':
+				menuId = 'searchObject';
+				menuParam.data.canAdd = true;
+				menuParam.data = Object.assign(menuParam.data, {
+					type: I.NavigationType.Link,
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() },
+					],
 				});
 				break;
 
@@ -470,7 +489,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const onCommand = (blockId: string) => {
 			const block = blockStore.getLeaf(rootId, blockId);
 
-			if (block.isText()) {
+			if (block && block.isText()) {
 				focus.set(blockId, { from: length, to: length });
 				focus.apply();
 			};
@@ -605,7 +624,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						details.layout = type.recommendedLayout;
 					};
 
-					UtilObject.create(rootId, blockId, details, position, type.defaultTemplateId, UtilData.defaultLinkSettings(), [ I.ObjectFlag.SelectTemplate ], 'Powertool', (message: any) => {
+					UtilObject.create(rootId, blockId, details, position, type.defaultTemplateId, [ I.ObjectFlag.SelectTemplate ], 'Powertool', (message: any) => {
 						UtilObject.openConfig(message.details);
 						analytics.event('CreateLink');
 					});
@@ -645,7 +664,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 		// Hack to prevent onBlur save
 		$(`#block-${blockId} #value`).first().text(text);
-		UtilData.blockSetText(rootId, block.id, text, marks, true, cb);
+		UtilData.blockSetText(rootId, blockId, text, marks, true, cb);
 	};
 
 	moveToPage (typeId: string) {

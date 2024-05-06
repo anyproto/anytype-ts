@@ -39,7 +39,7 @@
 		}
 		.item.isImage {
 			.icon.more { top: 12px; right: 12px; margin: 0px; }
-			.icon.more:hover { background-color: var(--color-bg-primary); }
+			.icon.more:hover, .icon.more.active { background-color: var(--color-shape-highlight-medium); }
 		}
 
 		.item.isFile:hover, .item.isFile.active {

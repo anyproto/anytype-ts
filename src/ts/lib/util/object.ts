@@ -1,4 +1,4 @@
-import { I, C, keyboard, history as historyPopup, Renderer, UtilFile, translate, UtilRouter, analytics } from 'Lib';
+import { I, C, keyboard, history as historyPopup, Renderer, UtilData, translate, UtilRouter, analytics } from 'Lib';
 import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -145,7 +145,7 @@ class UtilObject {
 		commonStore.fullscreenObject ? this.openAuto(object) : this.openPopup(object);
 	};
 
-	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {
+	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {
 		let typeKey = '';
 
 		details = details || {};
@@ -164,8 +164,13 @@ class UtilObject {
 				};
 			};
 		};
+
+		const block = {
+			type: I.BlockType.Link,
+			content: UtilData.defaultLinkSettings(),
+		};
 		
-		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, typeKey, commonStore.space, (message: any) => {
+		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, block, flags, typeKey, commonStore.space, (message: any) => {
 			if (!message.error.code) {
 				if (callBack) {
 					callBack(message);
@@ -178,18 +183,18 @@ class UtilObject {
 	};
 	
 	setIcon (rootId: string, emoji: string, image: string, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ 
+		C.ObjectListSetDetails([ rootId ], [ 
 			{ key: 'iconEmoji', value: String(emoji || '') },
 			{ key: 'iconImage', value: String(image || '') },
 		], callBack);
 	};
 	
 	setName (rootId: string, name: string, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ { key: 'name', value: String(name || '') } ], callBack);
+		C.ObjectListSetDetails([ rootId ], [ { key: 'name', value: String(name || '') } ], callBack);
 	};
 
 	setDescription (rootId: string, description: string, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ { key: 'description', value: String(description || '') } ], callBack);
+		C.ObjectListSetDetails([ rootId ], [ { key: 'description', value: String(description || '') } ], callBack);
 	};
 	
 	setCover (rootId: string, type: I.CoverType, id: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
@@ -204,11 +209,11 @@ class UtilObject {
 			{ key: 'coverY', value: y },
 			{ key: 'coverScale', value: scale },
 		];
-		C.ObjectSetDetails(rootId, details, callBack);
+		C.ObjectListSetDetails([ rootId ], details, callBack);
 	};
 
 	setDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ { key: 'done', value: Boolean(done) } ], callBack);
+		C.ObjectListSetDetails([ rootId ], [ { key: 'done', value: Boolean(done) } ], callBack);
 	};
 
 	setLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
@@ -221,7 +226,7 @@ class UtilObject {
 	};
 
 	setDefaultTemplateId (rootId: string, id: string, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: id } ], callBack);
+		C.ObjectListSetDetails([ rootId ], [ { key: 'defaultTemplateId', value: id } ], callBack);
 	};
 
 	name (object: any) {
@@ -346,6 +351,16 @@ class UtilObject {
 			I.ObjectLayout.Video,
 			I.ObjectLayout.Pdf,
 		];
+	};
+
+	getFileTypeByLayout (layout: I.ObjectLayout): I.FileType {
+		switch (layout) {
+			default: return I.FileType.File;
+			case I.ObjectLayout.Image: return I.FileType.Image;
+			case I.ObjectLayout.Audio: return I.FileType.Audio;
+			case I.ObjectLayout.Video: return I.FileType.Video;
+			case I.ObjectLayout.Pdf: return I.FileType.Pdf;
+		};
 	};
 
 	excludeFromSet (): I.ObjectLayout[] {

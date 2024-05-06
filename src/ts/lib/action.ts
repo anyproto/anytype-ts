@@ -335,11 +335,8 @@ class Action {
 						callBack();
 					};
 
-					// Remove last opened object in case it is deleted
-					const home = Storage.get('lastOpened');
-					if (home && ids.includes(home.id)) {
-						Storage.delete('lastOpened');
-					};
+					// Remove last opened objects in case any is deleted
+					Storage.deleteLastOpenedByObjectId(ids);
 
 					analytics.event('RemoveCompletely', { count, route });
 				},
@@ -390,7 +387,7 @@ class Action {
 						};
 
 						UtilData.onAuth({ routeParam });
-						UtilData.onAuthOnce();
+						UtilData.onAuthOnce(true);
 					});
 				});
 			});

@@ -108,10 +108,15 @@ class UtilMenu {
 	};
 
 	getBlockObject () {
+		const { config } = commonStore;
 		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
-			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
 		];
+
+		if (config.experimental) {
+			ret.push({ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] });
+		};
 
 		items.sort((c1, c2) => UtilData.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
 
@@ -240,18 +245,36 @@ class UtilMenu {
 		return items;
 	};
 	
-	getAlign (hasQuote: boolean) {
-		let ret = [
-			{ id: I.BlockHAlign.Left, icon: 'align left', name: translate('commonAlignLeft'), isAlign: true },
-			{ id: I.BlockHAlign.Center, icon: 'align center', name: translate('commonAlignCenter'), isAlign: true },
-			{ id: I.BlockHAlign.Right, icon: 'align right', name: translate('commonAlignRight'), isAlign: true },
+	getHAlign (restricted: I.BlockHAlign[]) {
+		let ret: any[] = [
+			{ id: I.BlockHAlign.Left },
+			{ id: I.BlockHAlign.Center },
+			{ id: I.BlockHAlign.Right },
+			{ id: I.BlockHAlign.Justify },
 		];
 
-		if (hasQuote) {
-			ret = ret.filter(it => it.id != I.BlockHAlign.Center);
+		if (restricted.length) {
+			ret = ret.filter(it => !restricted.includes(it.id));
 		};
 
-		return ret;
+		return ret.map((it: any) => {
+			it.icon = UtilData.alignHIcon(it.id);
+			it.name = translate(`commonHAlign${I.BlockHAlign[it.id]}`);
+			it.isAlign = true;
+			return it;
+		});
+	};
+
+	getVAlign () {
+		return [
+			{ id: I.BlockVAlign.Top },
+			{ id: I.BlockVAlign.Middle },
+			{ id: I.BlockVAlign.Bottom },
+		].map((it: any) => {
+			it.icon = UtilData.alignVIcon(it.id);
+			it.name = translate(`commonVAlign${I.BlockVAlign[it.id]}`);
+			return it;
+		});
 	};
 
 	getLayouts () {
@@ -625,10 +648,12 @@ class UtilMenu {
 		};
 
 		const isOwner = UtilSpace.isMyOwner(targetSpaceId);
+		const isAnytypeNetwork = UtilData.isAnytypeNetwork();
+		const { isOnline } = commonStore;
 
 		let options: any[] = [];
 
-		if (isOwner && space.isShared) {
+		if (isOwner && space.isShared && isAnytypeNetwork && isOnline) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
@@ -683,6 +708,11 @@ class UtilMenu {
 								});
 								break;
 							};
+
+							case 'revoke': {
+								Action.inviteRevoke(targetSpaceId);
+								break;
+							};
 						};
 
 					}, menuStore.getTimeout());
@@ -695,13 +725,14 @@ class UtilMenu {
 		const { isOnline } = commonStore
 		const { containerId, cid, key, onInviteRevoke } = param || {};
 		const isOwner = UtilSpace.isMyOwner();
+		const isAnytypeNetwork = UtilData.isAnytypeNetwork();
 
 		const options: any[] = [
 			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
 		];
 
-		if (isOnline && isOwner) {
-			options.push({ id: 'delete', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
+		if (isOnline && isOwner && isAnytypeNetwork) {
+			options.push({ id: 'revoke', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
 		menuStore.open('select', {
@@ -717,7 +748,7 @@ class UtilMenu {
 							break;
 						};
 
-						case 'delete': {
+						case 'revoke': {
 							Action.inviteRevoke(commonStore.space, onInviteRevoke);
 							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
 							break;

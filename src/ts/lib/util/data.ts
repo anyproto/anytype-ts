@@ -109,11 +109,13 @@ class UtilData {
 	};
 
 	linkCardClass (v: I.LinkCardStyle): string {
-		return String(I.LinkCardStyle[v] || 'text').toLowerCase();
+		v = v || I.LinkCardStyle.Text;
+		return String(I.LinkCardStyle[v]).toLowerCase();
 	};
 
 	cardSizeClass (v: I.CardSize) {
-		return String(I.CardSize[v] || 'small').toLowerCase();
+		v = v || I.CardSize.Small;
+		return String(I.CardSize[v]).toLowerCase();
 	};
 
 	threadColor (s: I.ThreadStatus) {
@@ -128,8 +130,14 @@ class UtilData {
 		return c;
 	};
 	
-	alignIcon (v: I.BlockHAlign): string {
-		return String(I.BlockHAlign[v] || 'left').toLowerCase();
+	alignHIcon (v: I.BlockHAlign): string {
+		v = v || I.BlockHAlign.Left;
+		return `align ${String(I.BlockHAlign[v]).toLowerCase()}`;
+	};
+
+	alignVIcon (v: I.BlockVAlign): string {
+		v = v || I.BlockVAlign.Top;
+		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 	
 	selectionGet (id: string, withChildren: boolean, save: boolean, props: any): string[] {
@@ -222,6 +230,8 @@ class UtilData {
 						Onboarding.start('space', keyboard.isPopup(), false);
 					};
 
+					Storage.clearDeletedSpaces();
+
 					if (callBack) {
 						callBack();
 					};
@@ -230,7 +240,7 @@ class UtilData {
 		});
 	};
 
-	onAuthOnce () {
+	onAuthOnce (noTierCache: boolean) {
 		C.NotificationList(false, Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
 				notificationStore.set(message.list);
@@ -243,7 +253,7 @@ class UtilData {
 			};
 		});
 
-		this.getMembershipTiers();
+		this.getMembershipTiers(noTierCache);
 		this.getMembershipStatus();
 	};
 
@@ -623,8 +633,7 @@ class UtilData {
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
-			//cardStyle: commonStore.linkStyle,
-			cardStyle: I.LinkCardStyle.Text,
+			cardStyle: commonStore.linkStyle,
 			description: I.LinkDescription.None,
 			relations: [],
 		};
@@ -965,7 +974,7 @@ class UtilData {
 		});
 	};
 
-	getMembershipTiers () {
+	getMembershipTiers (noCache: boolean) {
 		const { config, interfaceLang, isOnline } = commonStore;
 		const { testPayment } = config;
 
@@ -973,12 +982,12 @@ class UtilData {
 			return;
 		};
 
-		C.MembershipGetTiers(true, interfaceLang, (message) => {
+		C.MembershipGetTiers(noCache, interfaceLang, (message) => {
 			if (message.error.code) {
 				return;
 			};
 
-			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == testPayment));
+			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
 			commonStore.membershipTiersListSet(tiers);
 		});
 	};

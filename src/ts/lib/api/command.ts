@@ -607,7 +607,7 @@ export const BlockLatexSetText = (contextId: string, blockId: string, text: stri
 
 // ---------------------- BLOCK LINK ---------------------- //
 
-export const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
+export const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, block: I.Block, flags: I.ObjectFlag[], typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.BlockLink.CreateWithObject.Request();
@@ -617,10 +617,10 @@ export const BlockLinkCreateWithObject = (contextId: string, targetId: string, d
 	request.setPosition(position as number);
 	request.setDetails(Encode.struct(details));
 	request.setTemplateid(templateId);
-	request.setFields(Encode.struct(fields || {}));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 	request.setObjecttypeuniquekey(typeKey);
 	request.setSpaceid(spaceId);
+	request.setBlock(Mapper.To.Block(block));
 
 	dispatcher.request(BlockLinkCreateWithObject.name, request, callBack);
 };
@@ -795,6 +795,16 @@ export const BlockFileListSetStyle = (contextId: string, blockIds: string[], sty
     request.setStyle(style as number);
 
 	dispatcher.request(BlockFileListSetStyle.name, request, callBack);
+};
+
+export const BlockFileSetTargetObjectId = (contextId: string, blockId: string, objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockFile.SetTargetObjectId.Request();
+
+	request.setContextid(contextId);
+    request.setBlockid(blockId);
+    request.setObjectid(objectId);
+
+	dispatcher.request(BlockFileSetTargetObjectId.name, request, callBack);
 };
 
 // ---------------------- BLOCK TEXT ---------------------- //
@@ -1241,7 +1251,7 @@ export const ObjectCreateFromUrl = (details: any, spaceId: string, typeKey: stri
 	request.setSpaceid(spaceId);
 	request.setObjecttypeuniquekey(typeKey);
 	request.setUrl(url);
-	//request.setAddpagecontent(withContent);
+	request.setAddpagecontent(withContent);
 
 	dispatcher.request(ObjectCreateFromUrl.name, request, callBack);
 };
@@ -1308,8 +1318,10 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 
 		// Save last opened object
 		const object = detailStore.get(objectId, objectId, []);
+		const windowId = UtilCommon.getCurrentElectronWindowId();
+
 		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
-			Storage.set('lastOpened', { id: object.id, layout: object.layout, spaceId: object.spaceId });
+			Storage.setLastOpened(windowId, { id: object.id, layout: object.layout, spaceId: object.spaceId });
 		};
 
 		if (callBack) {
@@ -1484,15 +1496,15 @@ export const ObjectSetSource = (contextId: string, sources: string[], callBack?:
 	dispatcher.request(ObjectSetSource.name, request, callBack);
 };
 
-export const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
+export const ObjectListSetDetails = (objectIds: string[], details: any[], callBack?: (message: any) => void) => {
 	details = details.map(Mapper.To.Details);
 
-	const request = new Rpc.Object.SetDetails.Request();
+	const request = new Rpc.Object.ListSetDetails.Request();
 
-	request.setContextid(contextId);
+	request.setObjectidsList(objectIds);
 	request.setDetailsList(details);
 
-	dispatcher.request(ObjectSetDetails.name, request, callBack);
+	dispatcher.request(ObjectListSetDetails.name, request, callBack);
 };
 
 export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {

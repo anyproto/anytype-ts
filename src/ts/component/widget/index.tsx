@@ -58,9 +58,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { targetBlockId } = child?.content || {};
 		const cn = [ 'widget', UtilCommon.toCamelCase(`widget-${I.WidgetLayout[layout]}`) ];
 		const object = this.getObject();
+
 		const withSelect = !this.isSystemTarget() && (!isPreview || !UtilCommon.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
 		const withPlus = this.isPlusAllowed();
+		const canDrop = object && !this.isSystemTarget() && !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 
 		const props = {
 			...this.props,
@@ -134,6 +136,22 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					{buttons}
 				</div>
 			);
+
+			if (canDrop) {
+				head = (
+					<DropTarget
+						cacheKey={[ block.id, object.id ].join('-')}
+						id={object.id}
+						rootId={targetBlockId}
+						targetContextId={object.id}
+						dropType={I.DropType.Menu}
+						canDropMiddle={true}
+						className="targetHead"
+					>
+						{head}
+					</DropTarget>
+				);
+			};
 
 			targetTop = (
 				<DropTarget 
@@ -400,7 +418,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (createWithLink) {
-			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, analytics.route.widget, callBack);
+			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, flags, analytics.route.widget, callBack);
 		} else {
 			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, callBack);
 		};

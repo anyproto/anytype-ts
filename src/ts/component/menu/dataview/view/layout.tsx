@@ -359,6 +359,9 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 			case 'graphSettings': {
 				menuId = 'graphSettings';
+				menuParam.data = Object.assign(menuParam.data, {
+					storageKey: Constant.graphId.dataview,
+				});
 				break;
 			};
 		};

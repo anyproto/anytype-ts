@@ -227,7 +227,17 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { data } = param;
 		const { getView, templateId } = data;
 
-		return (getView ? getView().defaultTemplateId || templateId : templateId) || Constant.templateId.blank;
+		let ret = '';
+		let view = null;
+
+		if (getView) {
+			view = getView();
+			if (view) {
+				ret = view.defaultTemplateId;
+			};
+		};
+
+		return ret || templateId || Constant.templateId.blank;
 	};
 
 	getItems () {

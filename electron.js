@@ -114,11 +114,21 @@ function createWindow () {
 		
 		e.preventDefault();
 
+		let onClose = () => {
+			const { config } = ConfigManager;
+
+			if (!is.macos && config.hideTray) {
+				Api.exit(mainWindow, '', false);
+			} else {
+				mainWindow.hide();
+			};
+		};
+
 		if (mainWindow.isFullScreen()) {
 			mainWindow.setFullScreen(false);
-			mainWindow.once('leave-full-screen', () => mainWindow.hide());
+			mainWindow.once('leave-full-screen', () => onClose());
 		} else {
-			mainWindow.hide();
+			onClose();
 		};
 		return false;
 	});
@@ -168,7 +178,7 @@ app.on('second-instance', (event, argv) => {
 	Util.log('info', 'second-instance');
 
 	if (!is.macos) {
-		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
+		deeplinkingUrl = argv.find(arg => arg.startsWith(`${protocol}://`));
 	};
 
 	if (!mainWindow || !deeplinkingUrl) {
