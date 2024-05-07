@@ -683,7 +683,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList', 'select' ], () => {
 			menuStore.open('dataviewObjectList', { 
-				element: `#${getId()} #value`,
+				element: `#${getId()}`,
 				className: 'fromFilter',
 				width: getSize().width,
 				horizontal: I.MenuDirection.Center,

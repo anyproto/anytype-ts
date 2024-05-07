@@ -246,14 +246,6 @@ class Filter extends React.Component<Props, State> {
 		};
 	};
 
-	onCompositionStart (e: any) {
-		keyboard.setComposition(true);
-	};
-
-	onCompositionEnd (e: any) {
-		keyboard.setComposition(false);
-	};
-
 	checkButton () {
 		const node = $(this.node);
 
