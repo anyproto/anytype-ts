@@ -57,7 +57,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			let content = null;
 			let icon = null;
 			let object = null;
-			let context = null;
 
 			if (item.isObject) {
 				object = item;
@@ -76,7 +75,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 
 			if (item.isObject) {
+				const { metaList } = item;
+				const meta = metaList[0] || {};
+
 				let right = null;
+				let context = null;
+
 				if (item.backlinks && item.backlinks.length) {
 					right = (
 						<div className="side right">
@@ -90,10 +94,15 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					);
 				};
 
+				if (meta.highlight) {
+					context = <div className="context" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(meta.highlight) }} />;
+				};
+
 				content = (
 					<div className="sides">
 						<div className="side left">
 							<ObjectName object={item} />
+							{context}
 							<div className="caption">{item.caption}</div>
 						</div>
 

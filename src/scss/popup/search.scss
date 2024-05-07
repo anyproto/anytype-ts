@@ -69,7 +69,7 @@
 					}
 				}
 				.name { @include text-overflow-nw; }
-				.context { @include text-small; padding: 2px 0px; }
+				.context { @include text-small; padding: 2px 0px; white-space: normal; }
 				.caption { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
 			}
 
