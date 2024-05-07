@@ -1,9 +1,11 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockChat {}
+	.block.blockChat {  }
 	.block.blockChat { 
-		.list { max-height: 600px; overflow: auto; }
+		.wrapContent { border: 1px solid var(--color-shape-secondary); border-radius: 8px; }
+
+		.list { max-height: 600px; overflow: auto; padding: 16px; }
 		.list {
 			.message { margin: 0px 0px 16px 0px; }
 			.message {
@@ -13,7 +15,10 @@
 
 				.text { @include text-paragraph; }
 			}
+			.message:last-child { margin: 0px; }
 		}
+
+		.bottom { padding: 0px 16px 16px 16px; }
 
 		.editableWrap { border: 1px solid var(--color-shape-secondary); padding: 8px; border-radius: 4px; }
 		.editableWrap {

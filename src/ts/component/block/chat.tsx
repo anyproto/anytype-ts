@@ -45,20 +45,22 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					))}
 				</div>
 
-				<Editable 
-					ref={ref => this.refEditable = ref}
-					id="input"
-					readonly={readonly}
-					placeholder={'Enter your message'}
-					onSelect={this.onSelect}
-					onFocus={this.onFocusInput}
-					onBlur={this.onBlurInput}
-					onKeyUp={this.onKeyUpInput} 
-					onKeyDown={this.onKeyDownInput}
-					onInput={this.onChange}
-					onPaste={this.onPaste}
-					onMouseDown={this.onSelect}
-				/>
+				<div className="bottom">
+					<Editable 
+						ref={ref => this.refEditable = ref}
+						id="input"
+						readonly={readonly}
+						placeholder={'Enter your message'}
+						onSelect={this.onSelect}
+						onFocus={this.onFocusInput}
+						onBlur={this.onBlurInput}
+						onKeyUp={this.onKeyUpInput} 
+						onKeyDown={this.onKeyDownInput}
+						onInput={this.onChange}
+						onPaste={this.onPaste}
+						onMouseDown={this.onSelect}
+					/>
+				</div>
 			</div>
 		);
 	};
@@ -76,9 +78,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onFocusInput = (e: any) => {
+		this.refEditable?.placeholderCheck();
 	};
 
 	onBlurInput = (e: any) => {
+		this.refEditable?.placeholderCheck();
 	};
 
 	onKeyUpInput = (e: any) => {
@@ -124,6 +128,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		this.refEditable.setValue('');
+		this.refEditable.placeholderCheck();
 	};
 
 	scrollToBottom () {
