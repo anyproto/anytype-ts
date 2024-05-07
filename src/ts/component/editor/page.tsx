@@ -189,7 +189,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.close();
 
 		focus.clear(false);
-		blockStore.clear(this.props.rootId);
 
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
