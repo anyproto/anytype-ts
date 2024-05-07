@@ -444,6 +444,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		UtilData.search({
 			filters,
 			sorts,
+			withMeta: true,
 			fullText: filter,
 			offset: this.offset,
 			limit: !filter && clear ? 8 : Constant.limit.menuRecords,

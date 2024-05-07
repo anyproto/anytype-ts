@@ -786,8 +786,11 @@ class UtilData {
 		});
 	};
 
-	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
+	search (param: SearchSubscribeParams & { fullText?: string; withMeta?: boolean }, callBack?: (message: any) => void) {
 		const { config, space } = commonStore;
+
+		const withMeta = param.withMeta;
+		delete param.withMeta;
 
 		param = Object.assign({
 			idField: 'id',
@@ -827,7 +830,7 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSearch(filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, (message: any) => {
+		const cb = (message: any) => {
 			if (message.records) {
 				message.records = message.records.map(it => detailStore.mapper(it));
 			};
@@ -835,7 +838,13 @@ class UtilData {
 			if (callBack) {
 				callBack(message);
 			};
-		});
+		};
+
+		if (withMeta) {
+			C.ObjectSearchWithMeta(filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, cb);
+		} else {
+			C.ObjectSearch(filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, cb);
+		};
 	};
 
 	sortMapper (it: any) {
