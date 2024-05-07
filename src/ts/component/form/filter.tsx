@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Input, Icon } from 'Component';
-import { I, translate } from 'Lib';
+import { I, keyboard, translate } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -44,7 +44,6 @@ class Filter extends React.Component<Props, State> {
 	
 	node: any = null;
 	isFocused = false;
-	composition = false;
 	placeholder: any = null;
 	ref = null;
 
@@ -213,52 +212,46 @@ class Filter extends React.Component<Props, State> {
 	};
 
 	onChange (e: any, v: string) {	
-		const { onChange } = this.props;
-
 		// Chinese IME is open
-		if (this.composition) {
+		if (keyboard.isComposition) {
 			return;
 		};
 
 		this.checkButton();
 
-		if (onChange) {
-			onChange(v);
+		if (this.props.onChange) {
+			this.props.onChange(v);
 		};
 	};
 
 	onKeyDown (e: any, v: string): void {
-		const { onKeyDown } = this.props;
-
 		// Chinese IME is open
-		if (this.composition) {
+		if (keyboard.isComposition) {
 			return;
 		};
 
-		if (onKeyDown) {
-			onKeyDown(e, v);
+		if (this.props.onKeyDown) {
+			this.props.onKeyDown(e, v);
 		};
 	};
 
 	onKeyUp (e: any, v: string): void {
-		const { onKeyUp } = this.props;
-
 		// Chinese IME is open
-		if (this.composition) {
+		if (keyboard.isComposition) {
 			return;
 		};
 
-		if (onKeyUp) {
-			onKeyUp(e, v);
+		if (this.props.onKeyUp) {
+			this.props.onKeyUp(e, v);
 		};
 	};
 
 	onCompositionStart (e: any) {
-		this.composition = true;
+		keyboard.setComposition(true);
 	};
 
 	onCompositionEnd (e: any) {
-		this.composition = false;
+		keyboard.setComposition(false);
 	};
 
 	checkButton () {

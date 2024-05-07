@@ -20,7 +20,6 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	state = {
 		isEditing: false,
 	};
-	composition = false;
 
 	constructor (props: I.Cell) {
 		super(props);
@@ -109,8 +108,8 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
-						onCompositionStart={() => this.composition = true}
-						onCompositionEnd={() => this.composition = false}
+						onCompositionStart={() => keyboard.setComposition(true)}
+						onCompositionEnd={() => keyboard.setComposition(false)}
 						onClick={e => e.stopPropagation()}
 					>
 						{'\n'}
@@ -188,7 +187,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	}; 
 
 	onKeyPress (e: any) {
-		if (!this._isMounted || this.composition) {
+		if (!this._isMounted || keyboard.isComposition) {
 			return;
 		};
 
@@ -201,7 +200,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	onKeyDown (e: any) {
-		if (!this._isMounted || this.composition) {
+		if (!this._isMounted || keyboard.isComposition) {
 			return;
 		};
 
@@ -229,7 +228,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	onKeyUp (e: any) {
-		if (!this._isMounted || this.composition) {
+		if (!this._isMounted || keyboard.isComposition) {
 			return;
 		};
 
