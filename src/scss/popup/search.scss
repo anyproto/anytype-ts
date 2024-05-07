@@ -54,7 +54,7 @@
 
 				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
 				.iconObject:not(.isHuman),
-				.iconObject:not(.isParticipant) { background: var(--color-shape-highlight-medium); border-radius: 8px; }
+				.iconObject:not(.isParticipant) { background: var(--color-shape-tertiary); border-radius: 8px; }
 
 				.sides { width: 100%; display: flex; }
 				.sides {
@@ -75,7 +75,6 @@
 
 			.item.active { background-color: var(--color-shape-highlight-medium); }
 			.item.active {
-				.iconObject { background: none; }
 				.icon.advanced { display: block; }
 			}
 		}

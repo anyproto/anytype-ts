@@ -160,10 +160,7 @@
 		"defaultTemplateId",
 		"identityProfileLink",
 		"createdDate",
-		"backlinks",
-		"_block",
-		"_relation",
-		"_highlight"
+		"backlinks"
 	],
 
 	"sidebarRelationKeys": [
