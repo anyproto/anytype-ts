@@ -18,6 +18,7 @@ import BlockFeatured from './featured';
 import BlockType from './type';
 import BlockTable from './table';
 import BlockTableOfContents from './tableOfContents';
+import BlockChat from './chat';
 
 import BlockFile from './media/file';
 import BlockImage from './media/image';
@@ -191,6 +192,12 @@ const Block = observer(class Block extends React.Component<Props> {
 					cn.push('isInline');
 				};
 				blockComponent = <BlockDataview key={key} ref={setRef} isInline={canSelect} {...this.props} />;
+				break;
+			};
+
+			case I.BlockType.Chat: {
+				canDrop = canSelect = !root.isObjectChat();
+				blockComponent = <BlockChat key={key} ref={setRef} {...this.props} />;
 				break;
 			};
 				

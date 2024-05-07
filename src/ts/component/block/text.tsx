@@ -1209,7 +1209,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		e.persist();
 
 		this.placeholderCheck();
-		keyboard.setFocus(true);
 
 		if (onFocus) {
 			onFocus(e);
@@ -1226,7 +1225,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		focus.clear(true);
-		keyboard.setFocus(false);
 
 		if (!this.preventSaveOnBlur) {
 			this.setText(this.marks, true);

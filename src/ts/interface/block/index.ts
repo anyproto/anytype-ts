@@ -30,6 +30,7 @@ export enum BlockType {
 	TableRow			 = 'tableRow',
 	TableOfContents		 = 'tableOfContents',
 	Widget		 		 = 'widget',
+	Chat				 = 'chat',
 };
 
 export enum BlockPosition {
@@ -146,11 +147,13 @@ export interface Block {
 	isObjectRelation?(): boolean;
 	isObjectBookmark?(): boolean;
 	isObjectDate?(): boolean;
+	isObjectChat?(): boolean;
 
 	isFeatured?(): boolean;
 	isDataview?(): boolean;
 	isRelation?(): boolean;
 	isType?(): boolean;
+	isChat?(): boolean;
 
 	isWidget?(): boolean;
 	isWidgetLink?(): boolean;

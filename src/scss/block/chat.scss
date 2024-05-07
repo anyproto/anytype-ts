@@ -1,0 +1,23 @@
+@import "~scss/_vars";
+
+.blocks {
+	.block.blockChat {}
+	.block.blockChat { 
+		.list { max-height: 600px; overflow: auto; }
+		.list {
+			.message { margin: 0px 0px 16px 0px; }
+			.message {
+				.info { display: flex; align-items: center; margin: 0px 0px 8px 0px; gap: 0px 16px; justify-content: space-between; }
+				.author { display: flex; align-items: center; gap: 0px 6px; }
+				.time { @include text-small; color: var(--color-text-secondary); }
+
+				.text { @include text-paragraph; }
+			}
+		}
+
+		.editableWrap { border: 1px solid var(--color-shape-secondary); padding: 8px; border-radius: 4px; }
+		.editableWrap {
+			.placeholder { padding: inherit; }
+		}
+	}
+}
