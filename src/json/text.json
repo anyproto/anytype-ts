@@ -486,6 +486,7 @@
 	"blockNameTableOfContents": "Table of Contents",
 	"blockNameSet": "Inline set",
 	"blockNameCollection": "Inline Collection",
+	"blockNameChat": "Chat",
 
 	"blockTextParagraph": "Write a plain text",
 	"blockTextHeader1": "Big headline of a chapter, paragraph or section",
@@ -516,6 +517,7 @@
 	"blockTextTableOfContents": "Create a Table of Contents",
 	"blockTextSet": "Add existing or create new Inline Set to this Object",
 	"blockTextCollection": "Add inline Collection of Objects with different properties",
+	"blockTextChat": "...",
 	"blockTextToggleEmpty": "Empty toggle. Click or drop Block inside",
 	"blockTextWrap": "Wrap",
 	"blockTextUnwrap": "Unwrap",

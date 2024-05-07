@@ -8,7 +8,7 @@
 			.message { margin: 0px 0px 16px 0px; }
 			.message {
 				.info { display: flex; align-items: center; margin: 0px 0px 8px 0px; gap: 0px 16px; justify-content: space-between; }
-				.author { display: flex; align-items: center; gap: 0px 6px; }
+				.author { @include text-common; display: flex; align-items: center; gap: 0px 6px; }
 				.time { @include text-small; color: var(--color-text-secondary); }
 
 				.text { @include text-paragraph; }

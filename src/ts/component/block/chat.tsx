@@ -6,7 +6,7 @@ import { blockStore } from 'Store';
 
 import ChatMessage from './chat/message';
 
-const LIMIT = 10;
+const LIMIT = 50;
 
 const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent> {
 
@@ -29,9 +29,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-		const children = blockStore.getChildren(rootId, block.id);
-		const length = childrenIds.length;
-		const slice = children.slice(length - 10, length);
+		const children = blockStore.unwrapTree([ blockStore.wrapTree(rootId, block.id) ]).filter(it => it.isText());
+
+
+		console.log(children);
+
+		const length = children.length;
+		const slice = length > LIMIT ? children.slice(length - LIMIT, length) : children;
 
 		return (
 			<div>
@@ -95,8 +99,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onAddMessage = () => {
+		const value = this.refEditable.getTextValue().trim();
+
+		if (!value) {
+			return;
+		};
+
 		const { rootId, block } = this.props;
-		const value = this.refEditable.getTextValue();
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;
 		const target = length ? childrenIds[length - 1] : block.id;
