@@ -23,6 +23,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		isEditing: false,
 	};
 	timeoutFilter = 0;
+	composition = false;
 
 	constructor (props: I.Cell) {
 		super(props);
@@ -100,6 +101,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
+						onCompositionStart={() => this.composition = true}
+						onCompositionEnd={() => this.composition = false}
 						onClick={e => e.stopPropagation()}
 					>
 						{'\n'}
@@ -294,7 +297,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	onKeyPress (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || this.composition) {
 			return;
 		};
 
@@ -307,7 +310,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || this.composition) {
 			return;
 		};
 
@@ -340,6 +343,10 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	onKeyUp (e: any) {
+		if (!this._isMounted || this.composition) {
+			return;
+		};
+
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			menuStore.updateData('dataviewObjectList', { filter: this.getValue().new });

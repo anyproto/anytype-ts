@@ -16,10 +16,11 @@ const MAX_LENGTH = 320;
 const CellSelect = observer(class CellSelect extends React.Component<I.Cell, State> {
 
 	_isMounted = false;
-	node: any = null;
+	node = null;
 	state = {
 		isEditing: false,
 	};
+	composition = false;
 
 	constructor (props: I.Cell) {
 		super(props);
@@ -108,6 +109,8 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
+						onCompositionStart={() => this.composition = true}
+						onCompositionEnd={() => this.composition = false}
 						onClick={e => e.stopPropagation()}
 					>
 						{'\n'}
@@ -185,7 +188,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	}; 
 
 	onKeyPress (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || this.composition) {
 			return;
 		};
 
@@ -198,7 +201,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || this.composition) {
 			return;
 		};
 
@@ -226,6 +229,10 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	onKeyUp (e: any) {
+		if (!this._isMounted || this.composition) {
+			return;
+		};
+
 		menuStore.updateData('dataviewOptionList', { filter: this.getValue().new });
 
 		this.placeholderCheck();
