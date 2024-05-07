@@ -207,7 +207,7 @@ export const ObjectSearch = (response: Rpc.Object.Search.Response) => {
 
 export const ObjectSearchWithMeta = (response: Rpc.Object.SearchWithMeta.Response) => {
 	return {
-		records: (response.getResultsList() || []).map(Decode.struct),
+		records: (response.getResultsList() || []).map(Mapper.From.ObjectSearchWithMeta),
 	};
 };
 

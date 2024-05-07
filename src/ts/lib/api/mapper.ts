@@ -486,6 +486,15 @@ export const Mapper = {
 			};
 		},
 
+		ObjectSearchWithMeta: (obj: any) => {
+			const details = Decode.struct(obj.getDetails());
+
+			return {
+				...details,
+				metaList: obj.getMetaList().map(Mapper.From.MetaList)
+			};
+		},
+
 		Notification: (obj: Model.Notification): I.Notification => {
 			const type = Mapper.NotificationPayload(obj.getPayloadCase());
 			const fn = `get${UtilCommon.ucFirst(type)}`;
@@ -611,6 +620,14 @@ export const Mapper = {
 				colorStr: obj.getColorstr(),
 				features: obj.getFeaturesList(),
 				namesCount: obj.getAnynamescountincluded()
+			};
+		},
+
+		MetaList: (obj: any): any => {
+			return {
+				highlight: obj.getHighlight(),
+				blockId: obj.getBlockid(),
+				relationKey: obj.getRelationkey()
 			};
 		},
 
