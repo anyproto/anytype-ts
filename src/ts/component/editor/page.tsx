@@ -1090,17 +1090,23 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const dir = pressed.match(Key.up) ? -1 : 1;
-		const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
-			return (
-				!it.isIcon() && 
-				!it.isTextTitle() && 
-				!it.isTextDescription() && 
-				!it.isFeatured() && 
-				!it.isSystem() && 
-				!it.isTableRow() &&
+
+		let next = blockStore.getNextBlock(rootId, block.id, dir, it => (
+			!it.isIcon() && 
+			!it.isTextTitle() && 
+			!it.isTextDescription() && 
+			!it.isFeatured() && 
+			!it.isSystem() && 
+			!it.isTableRow() &&
+			!blockStore.checkIsChild(rootId, block.id, it.id)
+		));
+
+		if (next && blockStore.checkIsInsideTable(rootId, next.id)) {
+			next = blockStore.getNextBlock(rootId, block.id, dir, it => (
+				it.isTable() && 
 				!blockStore.checkIsChild(rootId, block.id, it.id)
-			);
-		});
+			));
+		};
 
 		if (!next) {
 			return;

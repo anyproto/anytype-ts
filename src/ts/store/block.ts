@@ -287,6 +287,12 @@ class BlockStore {
 		return ret;
 	};
 
+	// Check if blockId is inside table
+	checkIsInsideTable (rootId: string, blockId: string): boolean {
+		const parent = this.getParentLeaf(rootId, blockId);
+		return parent && parent.isTableRow();
+	};
+
     updateNumbers (rootId: string) {
 		const root = this.wrapTree(rootId, rootId);
 		if (!root) {
