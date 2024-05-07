@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, Key, focus, translate, analytics, Action, UtilSpace } from 'Lib';
+import { C, I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, Key, focus, translate, analytics, Action, UtilSpace } from 'Lib';
 import { commonStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -441,14 +441,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.setState({ isLoading: true });
 		};
 
-		UtilData.search({
-			filters,
-			sorts,
-			withMeta: true,
-			fullText: filter,
-			offset: this.offset,
-			limit: !filter && clear ? 8 : Constant.limit.menuRecords,
-		}, (message: any) => {
+		C.ObjectSearchWithMeta(filters, sorts, [], filter, this.offset, !filter && clear ? 8 : Constant.limit.menuRecords, (message) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
 				return;
