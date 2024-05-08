@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Editable } from 'Component';
-import { I, C, keyboard } from 'Lib';
-import { blockStore } from 'Store';
+import { I, C, keyboard, UtilDate, Mark } from 'Lib';
+import { authStore, blockStore } from 'Store';
 
 import ChatMessage from './chat/message';
 
@@ -28,19 +28,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	render () {
 		const { rootId, block, readonly } = this.props;
-		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-		const children = blockStore.unwrapTree([ blockStore.wrapTree(rootId, block.id) ]).filter(it => it.isText());
-
-
-		console.log(children);
-
-		const length = children.length;
-		const slice = length > LIMIT ? children.slice(length - LIMIT, length) : children;
+		const messages = this.getMessages();
 
 		return (
 			<div>
 				<div ref={ref => this.refList = ref} className="list">
-					{slice.map((item: any, index: number) => (
+					{messages.map((item: any, index: number) => (
 						<ChatMessage key={item.id} {...item} />
 					))}
 				</div>
@@ -102,6 +95,19 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onPaste = (e: any) => {
 	};
 
+	getMessages () {
+		const { rootId, block } = this.props;
+		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
+		const children = blockStore.unwrapTree([ blockStore.wrapTree(rootId, block.id) ]).filter(it => it.isText());
+		const length = children.length;
+		const slice = length > LIMIT ? children.slice(length - LIMIT, length) : children;
+
+		return slice.map(it => {
+			it.data = JSON.parse(it.content.text);
+			return it;
+		});
+	};
+
 	onAddMessage = () => {
 		const value = this.refEditable.getTextValue().trim();
 
@@ -110,16 +116,26 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		const { rootId, block } = this.props;
+		const { account } = authStore;
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;
 		const target = length ? childrenIds[length - 1] : block.id;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.InnerFirst;
+		const parsed = this.getMarksFromHtml();
+
+		console.log(parsed);
+
+		const data = {
+			text: value,
+			identity: account.id,
+			time: UtilDate.now(),
+		};
 		
 		const param = {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 			content: {
-				text: value,
+				text: JSON.stringify(data),
 			}
 		};
 		
@@ -135,6 +151,18 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		$(this.refList).scrollTop(this.refList.scrollHeight);
 	};
 	
+	getMarksFromHtml (): { marks: I.Mark[], text: string } {
+		const { block } = this.props;
+		const value = this.refEditable ? this.refEditable.getHtmlValue() : '';
+		const restricted: I.MarkType[] = [];
+
+		if (block.isTextHeader()) {
+			restricted.push(I.MarkType.Bold);
+		};
+		
+		return Mark.fromHtml(value, restricted);
+	};
+
 });
 
 export default BlockChat;
