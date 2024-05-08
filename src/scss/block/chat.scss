@@ -4,7 +4,7 @@
 	.block.blockChat { 
 		.wrapContent { border: 1px solid var(--color-shape-secondary); border-radius: 8px; }
 
-		.list { height: 600px; overflow: auto; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; }
+		.list { max-height: 600px; overflow: auto; padding: 16px; }
 		.list {
 			.message { margin: 0px 0px 16px 0px; }
 			.message {
