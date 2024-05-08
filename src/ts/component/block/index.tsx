@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, C, UtilCommon, UtilData, keyboard, focus, Storage } from 'Lib';
-import { DropTarget, ListChildren, Icon, SelectionTarget } from 'Component';
 import { observer } from 'mobx-react';
+import { I, C, UtilCommon, UtilData, keyboard, focus, Storage, Preview, UtilRouter, Renderer, Mark } from 'Lib';
+import { DropTarget, ListChildren, Icon, SelectionTarget } from 'Component';
 import { menuStore, blockStore, detailStore } from 'Store';
 
 import BlockDataview from './dataview';
@@ -67,6 +67,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
+		this.renderLinks = this.renderLinks.bind(this);
 	};
 
 	render () {
@@ -123,7 +124,7 @@ const Block = observer(class Block extends React.Component<Props> {
 					canDrop = false;
 				};
 
-				blockComponent = <BlockText key={key} ref={setRef} {...this.props} onToggle={this.onToggle} />;
+				blockComponent = <BlockText key={key} ref={setRef} {...this.props} onToggle={this.onToggle} renderLinks={this.renderLinks} />;
 				break;
 			};
 
@@ -197,7 +198,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			case I.BlockType.Chat: {
 				canDrop = canSelect = !root.isObjectChat();
-				blockComponent = <BlockChat key={key} ref={setRef} {...this.props} />;
+				blockComponent = <BlockChat key={key} ref={setRef} {...this.props} renderLinks={this.renderLinks} />;
 				break;
 			};
 				
@@ -745,7 +746,72 @@ const Block = observer(class Block extends React.Component<Props> {
 			focus.apply();
 		});
 	};
-	
+
+	renderLinks (node: any, marks: I.Mark[], canEdit: boolean, onChange: (marks: I.Mark[]) => void) {
+		node = $(node);
+
+		const { rootId } = this.props;
+		const items = node.find(Mark.getTag(I.MarkType.Link));
+
+		if (!items.length) {
+			return;
+		};
+
+		items.off('mouseenter.link');
+		items.on('mouseenter.link', e => {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
+				return;
+			};
+
+			const element = $(e.currentTarget);
+			const range = String(element.attr('data-range') || '').split('-');
+			const url = String(element.attr('href') || '');
+
+			if (!url) {
+				return;
+			};
+
+			const scheme = UtilCommon.getScheme(url);
+			const isInside = scheme == Constant.protocol;
+
+			let route = '';
+			let target;
+			let type;
+
+			if (isInside) {
+				route = '/' + url.split('://')[1];
+
+				const routeParam = UtilRouter.getParam(route);
+				const object = detailStore.get(rootId, routeParam.id, []);
+
+				target = object.id;
+			} else {
+				target = UtilCommon.urlFix(url);
+				type = I.PreviewType.Link;
+			};
+
+			Preview.previewShow({
+				target,
+				type,
+				element,
+				range: { 
+					from: Number(range[0]) || 0,
+					to: Number(range[1]) || 0, 
+				},
+				marks,
+				onChange,
+				noUnlink: !canEdit,
+				noEdit: !canEdit,
+			});
+
+			element.off('click.link').on('click.link', e => {
+				e.preventDefault();
+				isInside ? UtilRouter.go(route, {}) : Renderer.send('urlOpen', target);
+			});
+		});
+	};
+
 });
 
 export default Block;

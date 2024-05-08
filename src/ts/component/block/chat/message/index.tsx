@@ -2,8 +2,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilSpace, UtilDate, Mark, UtilCommon } from 'Lib';
-import { commonStore, blockStore } from 'Store';
+import { I, UtilSpace, UtilDate, Mark, UtilCommon, Preview, UtilRouter, Renderer } from 'Lib';
+import { commonStore, blockStore, detailStore } from 'Store';
+import Constant from 'json/constant.json';
 
 interface Props extends I.Block, I.BlockComponent {
 	data: any;
@@ -13,6 +14,8 @@ interface Props extends I.Block, I.BlockComponent {
 
 const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
+	node = null;
+
 	render () {
 		const { id, data, isThread, onThread } = this.props;
 		const { space } = commonStore;
@@ -21,7 +24,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const text = Mark.toHtml(data.text, data.marks);
 
 		return (
-			<div id={`item-${id}`} className="message">
+			<div 
+				ref={ref => this.node = ref} 
+				id={`item-${id}`} 
+				className="message"
+			>
 				<div className="info">
 					<div className="author">
 						<IconObject object={author} />
@@ -37,6 +44,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount(): void {
+		const { data, renderLinks } = this.props;
+
+		renderLinks(this.node, data.marks, false, () => {});
 	};
 
 	getChildren () {

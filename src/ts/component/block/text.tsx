@@ -251,7 +251,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	setValue (v: string) {
-		const { block } = this.props;
+		const { block, readonly, renderLinks } = this.props;
 		const fields = block.fields || {};
 		
 		let text = String(v || '');
@@ -299,7 +299,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			this.frame = raf(() => {
-				this.renderLinks();
+				renderLinks(this.node, this.marks, !readonly, this.setMarks);
+
 				this.renderObjects();
 				this.renderMentions();
 				this.renderEmoji();
@@ -311,78 +312,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 	};
 	
-	renderLinks () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const { rootId, readonly } = this.props;
-		const node = $(this.node);
-		const items = node.find(Mark.getTag(I.MarkType.Link));
-
-		if (!items.length) {
-			return;
-		};
-
-		items.off('mouseenter.link');
-		items.on('mouseenter.link', e => {
-			const sr = UtilCommon.getSelectionRange();
-			if (sr && !sr.collapsed) {
-				return;
-			};
-
-			const element = $(e.currentTarget);
-			const range = String(element.attr('data-range') || '').split('-');
-			const url = String(element.attr('href') || '');
-
-			if (!url) {
-				return;
-			};
-
-			const scheme = UtilCommon.getScheme(url);
-			const isInside = scheme == Constant.protocol;
-
-			let route = '';
-			let target;
-			let type;
-
-			if (isInside) {
-				route = '/' + url.split('://')[1];
-
-				const routeParam = UtilRouter.getParam(route);
-				const object = detailStore.get(rootId, routeParam.id, []);
-
-				target = object.id;
-			} else {
-				target = UtilCommon.urlFix(url);
-				type = I.PreviewType.Link;
-			};
-
-			Preview.previewShow({
-				target,
-				type,
-				element,
-				range: { 
-					from: Number(range[0]) || 0,
-					to: Number(range[1]) || 0, 
-				},
-				marks: this.marks,
-				onChange: this.setMarks,
-				noUnlink: readonly,
-				noEdit: readonly,
-			});
-
-			element.off('click.link').on('click.link', e => {
-				e.preventDefault();
-				if (isInside) {
-					UtilRouter.go(route, {});
-				} else {
-					Renderer.send('urlOpen', target);
-				};
-			});
-		});
-	};
-
 	renderObjects () {
 		if (!this._isMounted) {
 			return;
