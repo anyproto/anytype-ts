@@ -54,14 +54,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const items = this.getItems();
 
 		const Item = (item: any) => {
-			const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
-
 			let content = null;
 			let icon = null;
 			let object = null;
 
 			if (item.isObject) {
-				cn.push('isObject');
 				object = item;
 			} else 
 			if (item.id == 'account') {
@@ -133,7 +130,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				<div
 					ref={node => this.refRows[item.index] = node}
 					id={'item-' + item.id} 
-					className={cn.join(' ')}
+					className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')}
 					onMouseOver={e => this.onOver(e, item)} 
 					onClick={e => this.onClick(e, item)}
 				>
