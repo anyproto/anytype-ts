@@ -346,7 +346,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onThread (id: string) {
-		this.setState({ threadId: id });
+		this.setState({ threadId: id }, () => {
+			this.scrollToBottom();
+		});
 	};
 
 });
