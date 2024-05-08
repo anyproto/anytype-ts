@@ -460,8 +460,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				callBack(null);
 			};
 
-			console.log('RECORDS: ', message.records)
-
 			if (clear) {
 				this.items = [];
 			};
@@ -638,10 +636,23 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		const filter = this.getFilter();
 		const rootId = keyboard.getRootId();
+		const { metaList } = item;
+		const meta = metaList[0] || {};
 
 		// Object
 		if (item.isObject) {
-			UtilObject.openEvent(e, { ...item, id: item.id });
+			UtilObject.openEvent(e, { ...item, id: item.id }, {
+				onRouteChange: () => {
+					if (meta.blockId) {
+						window.setTimeout(() => {
+							const container = UtilCommon.getScrollContainer(false);
+							const top = $('#editorWrapper').find(`#block-${meta.blockId}`).position().top;
+
+							container.scrollTop(top);
+						}, Constant.delay.route);
+					};
+				}
+			});
 		} else 
 
 		// Settings item
