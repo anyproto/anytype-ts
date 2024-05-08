@@ -76,7 +76,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = true;
 		this.scrollToBottom();
 	};
-	
+
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
@@ -87,10 +87,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onFocusInput = (e: any) => {
+		keyboard.disableSelection(true);
 		this.refEditable?.placeholderCheck();
 	};
 
 	onBlurInput = (e: any) => {
+		keyboard.disableSelection(false);
 		this.refEditable?.placeholderCheck();
 	};
 
