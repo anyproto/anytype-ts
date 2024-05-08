@@ -22,9 +22,7 @@
 
 		.buttons { margin: 0px 0px 8px 0px; }
 		.buttons {
-			.icon { 
-				width: 32px; height: 32px; background-size: 20px 20px; vertical-align: top; margin: 0px; border-radius: 4px; 
-			}
+			.icon { width: 32px; height: 32px; background-size: 20px 20px; vertical-align: top; margin: 0px; border-radius: 4px; transition: none; }
 			.icon:hover { background-color: var(--color-shape-highlight-medium); }
 			
 			.icon.bold { background-image: url('~img/icon/menu/action/mark/bold0.svg'); }

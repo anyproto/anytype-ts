@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, Editable } from 'Component';
+import { Editable } from 'Component';
 import { I, C, keyboard, UtilDate, UtilCommon, Mark, translate } from 'Lib';
 import { authStore, blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -23,6 +23,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
+		this.onMouseDown = this.onMouseDown.bind(this);
+		this.onMouseUp = this.onMouseUp.bind(this);
 		this.onFocusInput = this.onFocusInput.bind(this);
 		this.onBlurInput = this.onBlurInput.bind(this);
 		this.onKeyUpInput = this.onKeyUpInput.bind(this);
@@ -34,7 +36,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	render () {
 		const { rootId, block, readonly } = this.props;
-		const buttons = this.getButtons();
 		const messages = this.getMessages();
 
 		return (
@@ -49,7 +50,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					<ChatButtons 
 						ref={ref => this.refButtons = ref}
 						block={block} 
-						buttons={buttons}
+						buttons={this.getButtons()}
 						onButton={this.onButton}
 					/>
 
@@ -65,7 +66,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						onKeyDown={this.onKeyDownInput}
 						onInput={this.onChange}
 						onPaste={this.onPaste}
-						onMouseDown={this.onSelect}
+						onMouseDown={this.onMouseDown}
+						onMouseUp={this.onMouseUp}
 					/>
 				</div>
 			</div>
@@ -81,35 +83,47 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = false;
 	};
 
-	onSelect = (e: any) => {
+	onSelect () {
 		this.range = this.refEditable.getRange();
-		this.refButtons.setButtons(this.getButtons());
 	};
 
-	onFocusInput = (e: any) => {
+	onMouseDown () {
+		this.onSelect();
+		this.updateButtons();
+	};
+
+	onMouseUp () {
+		this.onSelect();
+		this.updateButtons();
+	};
+
+	onFocusInput () {
 		keyboard.disableSelection(true);
 		this.refEditable?.placeholderCheck();
 	};
 
-	onBlurInput = (e: any) => {
+	onBlurInput () {
 		keyboard.disableSelection(false);
 		this.refEditable?.placeholderCheck();
 	};
 
-	onKeyUpInput = (e: any) => {
+	onKeyUpInput () {
 		this.range = this.refEditable.getRange();
 
 		const value = this.getTextValue();
 		const parsed = this.getMarksFromHtml();
 
+		this.marks = parsed.marks;
+
 		if (value !== parsed.text) {
-			this.marks = parsed.marks;
 			this.refEditable.setValue(Mark.toHtml(parsed.text, this.marks));
 			this.refEditable.setRange(this.range);
 		};
+
+		this.updateButtons();
 	};
 
-	onKeyDownInput = (e: any) => {
+	onKeyDownInput (e: any) {
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
@@ -117,10 +131,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
-	onChange = (e: any) => {
+	onChange () {
 	};
 
-	onPaste = (e: any) => {
+	onPaste () {
 	};
 
 	getMessages () {
@@ -131,7 +145,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const slice = length > LIMIT ? children.slice(length - LIMIT, length) : children;
 
 		return slice.map(it => {
-			it.data = JSON.parse(it.content.text);
+			it.data = {};
+			try { it.data = JSON.parse(it.content.text); } catch (e) { /**/ };
 			return it;
 		});
 	};
@@ -188,15 +203,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
-		const { block } = this.props;
-		const value = this.getHtmlValue();
-		const restricted: I.MarkType[] = [];
+		return Mark.fromHtml(this.getHtmlValue(), []);
+	};
 
-		if (block.isTextHeader()) {
-			restricted.push(I.MarkType.Bold);
-		};
-		
-		return Mark.fromHtml(value, restricted);
+	updateButtons () {
+		this.refButtons.setButtons(this.getButtons());
 	};
 
 	getButtons () {
@@ -224,15 +235,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			it.isActive = false;
 			if (it.type == I.MarkType.Link) {
 				const inRange = Mark.getInRange(this.marks, I.MarkType.Link, this.range) || Mark.getInRange(this.marks, I.MarkType.Object, this.range);
-				it.isActive = inRange && inRange.param;
+				it.isActive = !!(inRange && inRange.param);
 			} else {
-				it.isActive = Mark.getInRange(this.marks, it.type, this.range);
+				it.isActive = !!Mark.getInRange(this.marks, it.type, this.range);
 			};
 			return it;
 		});
 	};
 
-	onButton (e: any, type: any) {
+	onButton (e: any, type: I.MarkType) {
 		const { rootId, block } = this.props;
 		const value = this.getTextValue();
 		const { from, to } = this.range;
@@ -251,11 +262,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			data: {} as any,
 		};
 
+		const toggle = (type: I.MarkType, param: string) => {
+			this.marks = Mark.toggle(this.marks, { type, param, range: { from, to } });
+			this.refEditable.setValue(Mark.toHtml(value, this.marks));
+			this.updateButtons();
+		};
+
 		switch (type) {
 			
 			default: {
-				this.marks = Mark.toggle(this.marks, { type, param: '', range: { from, to } });
-				this.refEditable.setValue(Mark.toHtml(value, this.marks));
+				toggle(type, '');
 				break;
 			};
 
@@ -264,10 +280,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					filter: mark?.param,
 					type: mark?.type,
 					skipIds: [ rootId ],
-					onChange: (newType: I.MarkType, param: string) => {
-						this.marks = Mark.toggleLink({ type: newType, param, range: { from, to } }, this.marks);
-						this.refEditable.setValue(Mark.toHtml(value, this.marks));
-					}
+					onChange: toggle,
 				});
 
 				menuId = 'blockLink';
@@ -290,10 +303,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: mark?.param,
-					onChange: (param: string) => {
-						this.marks = Mark.toggleLink({ type, param, range: { from, to } }, this.marks);
-						this.refEditable.setValue(Mark.toHtml(value, this.marks));
-					},
+					onChange: (param: string) => toggle(type, param),
 				});
 				break;
 			};

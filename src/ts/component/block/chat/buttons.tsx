@@ -6,17 +6,22 @@ import { I } from 'Lib';
 interface Props {
 	block: I.Block;
 	buttons: any[];
-	onButton: (e: React.MouseEvent, type: any) => void;
+	onButton: (e: React.MouseEvent, type: I.MarkType) => void;
 };
 
 interface State {
 	buttons: any[];
 };
 
-const ChatButtons = observer(class ChatButtons extends React.Component<Props> {
+const ChatButtons = observer(class ChatButtons extends React.Component<Props, State> {
+
+	state = {
+		buttons: [],
+	};
 
 	render () {
-		const { block, buttons, onButton } = this.props;
+		const { block, onButton } = this.props;
+		const { buttons } = this.state;
 
 		return (
 			<div className="buttons">
