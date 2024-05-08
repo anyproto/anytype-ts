@@ -4,8 +4,10 @@
 	.block.blockChat { 
 		.wrapContent { border: 1px solid var(--color-shape-secondary); border-radius: 8px; }
 
-		.list { max-height: 600px; overflow: auto; padding: 16px; }
-		.list {
+		.scrollWrap { height: 600px; overflow: auto; padding: 16px; }
+		.scrollWrap {
+			.scroll { display: flex; flex-direction: column; justify-content: flex-end; min-height: 100%; }
+
 			.message { margin: 0px 0px 16px 0px; }
 			.message {
 				.info { display: flex; align-items: center; margin: 0px 0px 8px 0px; gap: 0px 16px; justify-content: space-between; }

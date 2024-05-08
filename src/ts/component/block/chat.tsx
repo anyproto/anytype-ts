@@ -50,21 +50,23 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const messages = this.getMessages();
 
 		return (
-			<div>
+			<div className="wrap">
 				<div className="top">
 					{threadId ? <div className="item" onClick={() => this.onThread('')}>Back</div> : ''}
 				</div>
 
-				<div ref={ref => this.refList = ref} className="list">
-					{messages.map((item: any) => (
-						<ChatMessage 
-							key={item.id} 
-							{...this.props} 
-							{...item} 
-							isThread={!!threadId}
-							onThread={this.onThread}
-						/>
-					))}
+				<div ref={ref => this.refList = ref} className="scrollWrap">
+					<div className="scroll">
+						{messages.map((item: any) => (
+							<ChatMessage 
+								key={item.id} 
+								{...this.props} 
+								{...item} 
+								isThread={!!threadId}
+								onThread={this.onThread}
+							/>
+						))}
+					</div>
 				</div>
 
 				<div className="bottom">
