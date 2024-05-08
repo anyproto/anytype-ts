@@ -231,6 +231,10 @@ class Mark {
 	};
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
+		if (!range) {
+			return null;
+		};
+
 		const map = UtilCommon.mapToArray(marks, 'type');
 
 		if (!map[type] || !map[type].length) {
