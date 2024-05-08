@@ -14,10 +14,19 @@
 				.time { @include text-small; color: var(--color-text-secondary); }
 
 				.text { @include text-paragraph; }
+
+				.sub { @include text-small; color: var(--color-text-secondary); margin: 8px 0px 0px 0px; }
+				.sub {
+					.item:hover { color: var(--color-text-primary); }
+				}
 			}
 			.message:last-child { margin: 0px; }
 		}
 
+		.top { 
+			padding: 16px; background-color: var(--color-shape-highlight-light); border-bottom: 1px solid var(--color-shape-secondary); 
+			@include text-small;
+		}
 		.bottom { padding: 8px 16px 16px 16px; background-color: var(--color-shape-highlight-light); border-top: 1px solid var(--color-shape-secondary); }
 
 		.buttons { margin: 0px 0px 8px 0px; }

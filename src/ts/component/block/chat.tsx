@@ -10,14 +10,22 @@ import ChatMessage from './chat/message';
 
 const LIMIT = 50;
 
-const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent> {
+interface State {
+	threadId: string;
+};
+
+const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent, State> {
 
 	_isMounted = false;
 	refList = null;
 	refEditable = null;
 	refButtons = null;
 	marks: I.Mark[] = [];
+	attachments: any[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
+	state = {
+		threadId: '',
+	};
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -32,24 +40,37 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onButton = this.onButton.bind(this);
+		this.onThread = this.onThread.bind(this);
 	};
 
 	render () {
-		const { rootId, block, readonly } = this.props;
+		const { readonly } = this.props;
+		const { threadId } = this.state;
+		const blockId = this.getBlockId();
 		const messages = this.getMessages();
 
 		return (
 			<div>
+				<div className="top">
+					{threadId ? <div className="item" onClick={() => this.onThread('')}>Back</div> : ''}
+				</div>
+
 				<div ref={ref => this.refList = ref} className="list">
-					{messages.map((item: any, index: number) => (
-						<ChatMessage key={item.id} {...item} />
+					{messages.map((item: any) => (
+						<ChatMessage 
+							key={item.id} 
+							{...this.props} 
+							{...item} 
+							isThread={!!threadId}
+							onThread={this.onThread}
+						/>
 					))}
 				</div>
 
 				<div className="bottom">
 					<ChatButtons 
 						ref={ref => this.refButtons = ref}
-						block={block} 
+						blockId={blockId} 
 						buttons={this.getButtons()}
 						onButton={this.onButton}
 					/>
@@ -137,10 +158,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onPaste () {
 	};
 
+	getBlockId () {
+		return this.state.threadId || this.props.block.id;
+	};
+
 	getMessages () {
-		const { rootId, block } = this.props;
-		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-		const children = blockStore.unwrapTree([ blockStore.wrapTree(rootId, block.id) ]).filter(it => it.isText());
+		const { rootId } = this.props;
+		const blockId = this.getBlockId();
+		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
+		const children = blockStore.unwrapTree([ blockStore.wrapTree(rootId, blockId) ]).filter(it => it.isText());
 		const length = children.length;
 		const slice = length > LIMIT ? children.slice(length - LIMIT, length) : children;
 
@@ -158,11 +184,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const { rootId, block } = this.props;
+		const { rootId } = this.props;
 		const { account } = authStore;
-		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
+		const blockId = this.getBlockId();
+		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
 		const length = childrenIds.length;
-		const target = length ? childrenIds[length - 1] : block.id;
+		const target = length ? childrenIds[length - 1] : blockId;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.InnerFirst;
 
 		const data = {
@@ -184,7 +211,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		this.marks = [];
-		this.range = null;
+		this.attachments = [];
+		this.range = { from: 0, to: 0 };
 
 		this.refEditable.setValue('');
 		this.refEditable.placeholderCheck();
@@ -244,14 +272,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onButton (e: any, type: I.MarkType) {
-		const { rootId, block } = this.props;
+		const { rootId } = this.props;
+		const blockId = this.getBlockId();
 		const value = this.getTextValue();
 		const { from, to } = this.range;
 		const mark = Mark.getInRange(this.marks, type, { from, to });
 
 		let menuId = '';
 		let menuParam: any = {
-			element: `#button-${block.id}-${type}`,
+			element: `#button-${blockId}-${type}`,
 			recalcRect: () => { 
 				const rect = UtilCommon.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + $(window).scrollTop() } : null; 
@@ -314,6 +343,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				menuStore.open(menuId, menuParam);
 			});
 		};
+	};
+
+	onThread (id: string) {
+		this.setState({ threadId: id });
 	};
 
 });

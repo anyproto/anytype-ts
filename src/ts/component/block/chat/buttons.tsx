@@ -4,7 +4,7 @@ import { Icon } from 'Component';
 import { I } from 'Lib';
 
 interface Props {
-	block: I.Block;
+	blockId: string;
 	buttons: any[];
 	onButton: (e: React.MouseEvent, type: I.MarkType) => void;
 };
@@ -20,7 +20,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	};
 
 	render () {
-		const { block, onButton } = this.props;
+		const { blockId, onButton } = this.props;
 		const { buttons } = this.state;
 
 		return (
@@ -33,7 +33,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 					return (
 						<Icon 
-							id={`button-${block.id}-${item.type}`} 
+							id={`button-${blockId}-${item.type}`} 
 							key={i} 
 							className={cn.join(' ')} 
 							tooltip={item.name}
