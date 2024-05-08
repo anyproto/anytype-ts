@@ -33,7 +33,7 @@
 					> .flex {
 						> .editableWrap { flex: auto; padding: 0px; width: 100%; }
 						> .editableWrap {
-							#value { -webkit-user-modify: read-write-plaintext-only; width: 100%; position: relative; z-index: 2; user-select: text; padding: 1px 0px; }
+							#value { width: 100%; position: relative; z-index: 2; user-select: text; padding: 1px 0px; }
 							#value * { user-select: text !important; }
 							#value.isFocused { background: none; }
 						}

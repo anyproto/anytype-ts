@@ -79,7 +79,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 					<Editable 
 						ref={ref => this.refEditable = ref}
-						id="input"
 						readonly={readonly}
 						placeholder={'Enter your message'}
 						onSelect={this.onSelect}

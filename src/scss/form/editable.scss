@@ -1,0 +1,5 @@
+@import "~scss/_vars";
+
+.editableWrap {
+	.editable { -webkit-user-modify: read-write-plaintext-only; }
+}
