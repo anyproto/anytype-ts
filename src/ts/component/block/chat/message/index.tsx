@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilSpace, UtilDate } from 'Lib';
+import { I, UtilSpace, UtilDate, Mark, UtilCommon } from 'Lib';
 import { commonStore } from 'Store';
 
 interface Props extends I.Block {
@@ -15,6 +15,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const { id, content, data } = this.props;
 		const { space } = commonStore;
 		const author = UtilSpace.getParticipant(UtilSpace.getParticipantId(space, data.identity));
+		const text = Mark.toHtml(data.text, data.marks);
 
 		return (
 			<div id={`item-${id}`} className="message">
@@ -26,9 +27,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					<div className="time">{UtilDate.date('H:i', data.time)}</div>
 				</div>
 
-				<div className="text">
-					{data.text}
-				</div>
+				<div className="text" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }}></div>
 			</div>
 		);
 	};

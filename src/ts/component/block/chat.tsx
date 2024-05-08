@@ -13,6 +13,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	_isMounted = false;
 	refList = null;
 	refEditable = null;
+	marks: I.Mark[] = [];
+	range: I.TextRange = null;
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -79,6 +81,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onKeyUpInput = (e: any) => {
+		this.range = this.refEditable.getRange();
+
+		const value = this.getTextValue();
+		const parsed = this.getMarksFromHtml();
+
+		if (value !== parsed.text) {
+			this.marks = parsed.marks;
+			this.refEditable.setValue(Mark.toHtml(parsed.text, this.marks));
+			this.refEditable.setRange(this.range);
+		};
 	};
 
 	onKeyDownInput = (e: any) => {
@@ -109,7 +121,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onAddMessage = () => {
-		const value = this.refEditable.getTextValue().trim();
+		const value = this.getTextValue().trim();
 
 		if (!value) {
 			return;
@@ -121,12 +133,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const length = childrenIds.length;
 		const target = length ? childrenIds[length - 1] : block.id;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.InnerFirst;
-		const parsed = this.getMarksFromHtml();
-
-		console.log(parsed);
 
 		const data = {
-			text: value,
+			...this.getMarksFromHtml(),
 			identity: account.id,
 			time: UtilDate.now(),
 		};
@@ -143,6 +152,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.scrollToBottom();
 		});
 
+		this.marks = [];
+		this.range = null;
+
 		this.refEditable.setValue('');
 		this.refEditable.placeholderCheck();
 	};
@@ -150,10 +162,18 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	scrollToBottom () {
 		$(this.refList).scrollTop(this.refList.scrollHeight);
 	};
+
+	getTextValue (): string {
+		return String(this.refEditable?.getTextValue() || '');
+	};
+
+	getHtmlValue (): string {
+		return String(this.refEditable?.getHtmlValue() || '');
+	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
 		const { block } = this.props;
-		const value = this.refEditable ? this.refEditable.getHtmlValue() : '';
+		const value = this.getHtmlValue();
 		const restricted: I.MarkType[] = [];
 
 		if (block.isTextHeader()) {
