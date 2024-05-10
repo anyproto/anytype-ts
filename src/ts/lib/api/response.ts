@@ -384,8 +384,8 @@ export const HistoryDiffVersions = (response: Rpc.History.DiffVersions.Response)
 	const events: any[] = [];
 
 	list.forEach((it: any) => {
-		const type = dispatcher.eventType(it.getValueCase());
-		const data = dispatcher.eventData(it);
+		const type = Mapper.Event.Type(it.getValueCase());
+		const data = Mapper.Event.Data(it);
 		const event: any = { type };
 
 		switch (type) {
