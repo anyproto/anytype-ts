@@ -115,6 +115,8 @@ function createWindow () {
 		e.preventDefault();
 
 		const onClose = () => {
+			const { config } = ConfigManager;
+
 			if (config.hideTray) {
 				Api.exit(mainWindow, '', false);
 			} else {
