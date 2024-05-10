@@ -86,7 +86,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					</div>
 					{!isReadonly ? (
 						<div className="buttons">
-							<Icon className="more" onClick={e => this.onClick(e, item)} />
+							<Icon className="more" onClick={e => this.onMore(e, item)} />
 							<Icon className="delete" onClick={e => this.onRemove(e, item)} />
 						</div>
 					) : ''}
@@ -266,6 +266,32 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		});
 	};
 
+	onMore (e: any, item: any) {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const options = [
+			{ name: translate('menuDataviewSortShowEmpty'), isSection: true },
+			{ id: I.EmptyType.Start, name: translate('menuDataviewSortShowEmptyTop') },
+			{ id: I.EmptyType.End, name: translate('menuDataviewSortShowEmptyBottom') },
+		];
+
+		menuStore.open('select', {
+			element: `#${getId()} #item-${item.id} .more`,
+			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
+			data: {
+				...data,
+				options,
+				value: String(item.empty),
+				itemId: item.id,
+				onSelect: (e: any, el: any) => {
+					this.onChange(item.id, 'empty', el.id);
+				}
+			}
+		});
+	};
+
+
 	onAdd () {
 		const { param, getId } = this.props;
 		const { data } = param;
@@ -310,7 +336,8 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		analytics.event('ChangeSortValue', {
 			type: item.type,
 			objectType: object.type,
-			embedType: analytics.embedType(isInline)
+			embedType: analytics.embedType(isInline),
+			emptyType: item.empty,
 		});
 		this.forceUpdate();
 	};
