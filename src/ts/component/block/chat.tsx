@@ -240,7 +240,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getButtons () {
-		const cmd = keyboard.cmdKey();
+		const cmd = keyboard.cmdSymbol();
 		const colorMark = Mark.getInRange(this.marks, I.MarkType.Color, this.range) || {};
 		const bgMark = Mark.getInRange(this.marks, I.MarkType.BgColor, this.range) || {};
 
