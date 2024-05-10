@@ -115,7 +115,7 @@ function createWindow () {
 		e.preventDefault();
 
 		const onClose = () => {
-			is.macos ? mainWindow.hide() : Api.exit(mainWindow, '', false);
+			 mainWindow.hide();
 		};
 
 		if (mainWindow.isFullScreen()) {
