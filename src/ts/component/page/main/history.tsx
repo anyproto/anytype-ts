@@ -5,6 +5,7 @@ import { Header, Footer, Block, Loader, Icon, IconObject, Deleted, ObjectName } 
 import { blockStore, detailStore, commonStore } from 'Store';
 import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate, UtilSpace, translate } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
+import Constant from 'json/constant.json';
 
 interface State {
 	versions: I.HistoryVersion[];
@@ -599,12 +600,43 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'ObjectDetailsUnset': {
 				const rootId = this.getRootId();
 
-				if (data.id == rootId) {
+				if (data.id != rootId) {
+					break;
+				};
+
+				elements.push({ 
+					operation: Operation.Change, 
+					element: '#button-header-relation',
+				});
+
+				if (undefined !== data.details.name) {
 					elements.push({ 
 						operation: Operation.Change, 
-						element: '#button-header-relation',
+						element: `#block-${Constant.blockId.title}`,
 					});
 				};
+
+				if (undefined !== data.details.description) {
+					elements.push({ 
+						operation: Operation.Change, 
+						element: `#block-${Constant.blockId.description}`,
+					});
+				};
+
+				if ((undefined !== data.details.iconEmoji) || (undefined !== data.details.iconImage)) {
+					elements.push({ 
+						operation: Operation.Change, 
+						element: `#block-icon-${data.id}`,
+					});
+				};
+
+				if (undefined !== data.details.featuredRelations) {
+					elements.push({ 
+						operation: Operation.Change, 
+						element: `#block-${Constant.blockId.featured}`,
+					});
+				};
+
 				break;
 			};
 		};
