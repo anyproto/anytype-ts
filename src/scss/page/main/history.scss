@@ -7,6 +7,7 @@
 
 	#footer.snapLeft { right: 254px; }
 
+	.diffAdd, .diffChange { position: relative; }
 	.diffAdd::after { content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: #e5f8d6; }
 	.diffChange::after { content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(255,0,0,0.1); }
 

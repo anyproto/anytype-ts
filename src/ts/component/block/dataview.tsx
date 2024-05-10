@@ -109,10 +109,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const sources = this.getSources();
 		const targetId = this.getObjectId();
 		const isCollection = this.isCollection();
-		const cn = [ 'focusable', 'c' + block.id ];
+		const cn = [ 'focusable', `c${block.id}` ];
 
 		const { groupRelationKey, pageLimit, defaultTemplateId } = view;
-		const className = [ UtilCommon.toCamelCase('view-' + I.ViewType[view.type]) ];
+		const className = [ UtilCommon.toCamelCase(`view-${I.ViewType[view.type]}`) ];
 
 		let ViewComponent: any = null;
 		let body = null;

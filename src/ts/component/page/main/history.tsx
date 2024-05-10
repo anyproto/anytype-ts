@@ -14,6 +14,11 @@ interface State {
 	isDeleted: boolean;
 };
 
+enum Operation {
+	Add		 = 0,
+	Change	 = 1,
+};
+
 const LIMIT = 100;
 const GROUP_OFFSET = 3600;
 
@@ -495,29 +500,34 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		node.find('.diffAdd').removeClass('diffAdd');
 		node.find('.diffChange').removeClass('diffChange');
 
-		this.state.diff.forEach(it => this.renderEvent(it));
+		let elements = [];
+
+		this.state.diff.forEach(it => {
+			elements = elements.concat(this.getElements(it));
+		});
+
+		elements.forEach(it => {
+			it.element.addClass(it.operation == Operation.Add ? 'diffAdd' : 'diffChange');
+		});
 	};
 
-	renderEvent (event: any) {
+	getElements (event: any) {
 		const { type, data } = event;
-		const node = $(this.node);
 
-		console.log(type, data);
-
-		let cn = '';
-		let blockIds = [];
-
+		let elements = [];
 		switch (type) {
 			case 'BlockAdd': {
-				cn = 'diffAdd';
-				blockIds = data.blocks.map(it => it.id);
+				data.blocks.forEach(id => {
+					elements.push({ 
+						operation: Operation.Add, 
+						element: $(`#block-${id}`),
+					});
+				});
 				break;
 			};
 
 			case 'BlockDataviewObjectOrderUpdate':
 			case 'BlockDataviewGroupOrderUpdate':
-			case 'BlockDataviewRelationSet':
-			case 'BlockDataviewRelationDelete':
 			case 'BlockDataviewIsCollectionSet':
 			case 'BlockDataviewTargetObjectIdSet':
 			case 'BlockDataviewViewOrder':
@@ -533,12 +543,57 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockSetText':
 			case 'BlockSetLink':
 			case 'BlockSetFields': {
-				cn = 'diffChange';
-				blockIds = [ data.id ];
+				elements.push({ 
+					operation: Operation.Change, 
+					element: $(`#block-${data.id}`),
+				});
 				break;
 			};
 
 			case 'BlockDataviewViewUpdate': {
+				if (data.fields !== null) {
+					elements = elements.concat([
+						{ 
+							operation: Operation.Change, 
+							element: $(`#block-${data.id} #view-selector`),
+						},
+						{ 
+							operation: Operation.Change, 
+							element: $(`#view-item-${data.id}-${data.viewId}`),
+						},
+					]);
+				};
+
+				if (data.relations.length) {
+					elements.push({ 
+						operation: Operation.Change, 
+						element: $(`#block-${data.id} #button-dataview-settings`),
+					});
+				};
+
+				if (data.filters.length) {
+					elements.push({ 
+						operation: Operation.Change, 
+						element: $(`#block-${data.id} #button-dataview-filter`),
+					});
+				};
+
+				if (data.sorts.length) {
+					elements.push({ 
+						operation: Operation.Change, 
+						element: $(`#block-${data.id} #button-dataview-sort`),
+					});
+				};
+
+				break;
+			};
+
+			case 'BlockDataviewRelationDelete':
+			case 'BlockDataviewRelationSet': {
+				elements.push({ 
+					operation: Operation.Change, 
+					element: $(`#block-${data.id} #button-dataview-settings`),
+				});
 				break;
 			};
 
@@ -548,15 +603,18 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				const rootId = this.getRootId();
 
 				if (data.id == rootId) {
-					$('#button-header-relation').addClass('diffChange');
+					elements.push({ 
+						operation: Operation.Change, 
+						element: $('#button-header-relation'),
+					});
 				};
 				break;
 			};
 		};
 
-		if (blockIds.length && cn) {
-			blockIds.forEach(id => node.find(`#block-${id}`).addClass(cn));
-		};
+		console.log(type, data, elements);
+
+		return elements;
 	};
 
 	resize () {
