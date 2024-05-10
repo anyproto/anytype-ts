@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
-import { I, C, translate, UtilCommon, UtilData, analytics } from 'Lib';
+import { I, C, translate, UtilCommon, UtilData, analytics, keyboard } from 'Lib';
 import { authStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -110,28 +110,18 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		};
 	};
 
-	onKeyUp () {
-		const { param } = this.props;
-		const { data } = param;
-		const { tier } = data;
-		const name = this.refName.getValue();
-
+	onKeyUp (e: any) {
 		this.disableButtons(true);
 		this.setState({ statusText: '', status: '' });
 
 		window.clearTimeout(this.timeout);
-
-		if (!name.length) {
-			return;
-		};
-
 		this.timeout = window.setTimeout(() => {
-			C.MembershipIsNameValid(tier, name, (message: any) => {
-				if (message.error.code) {
-					this.setState({ status: 'error', statusText: message.error.description });
-					return;
-				};
+			const name = this.refName.getValue().trim();
+			if (!name.length) {
+				return;
+			};
 
+			this.checkName(name, () => {
 				this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
 
 				C.NameServiceResolveName(name, (message: any) => {
@@ -162,6 +152,12 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	onSubmit (e: any) {
 		e.preventDefault();
 
+		const { status } = this.state;
+
+		if (status == 'error') {
+			return;
+		};
+
 		this.onPay(I.PaymentMethod.Stripe);
 	};
 
@@ -177,19 +173,36 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		refButton.setLoading(true);
 
-		C.MembershipGetPaymentUrl(tier, method, name, (message) => {
-			refButton.setLoading(false);
+		this.checkName(name, () => {
+			C.MembershipGetPaymentUrl(tier, method, name, (message) => {
+				refButton.setLoading(false);
 
+				if (message.error.code) {
+					this.setState({ status: 'error', statusText: message.error.description });
+					return;
+				};
+
+				if (message.url) {
+					UtilCommon.onUrl(message.url);
+				};
+
+				analytics.event('ClickMembership', { params: { tier, method }});
+			});
+		});
+	};
+
+	checkName (name: string, callBack: () => void) {
+		const { param } = this.props;
+		const { data } = param;
+		const { tier } = data;
+
+		C.MembershipIsNameValid(tier, name, (message: any) => {
 			if (message.error.code) {
 				this.setState({ status: 'error', statusText: message.error.description });
 				return;
 			};
 
-			if (message.url) {
-				UtilCommon.onUrl(message.url);
-			};
-
-			analytics.event('ClickMembership', { params: { tier, method }});
+			callBack();
 		});
 	};
 
