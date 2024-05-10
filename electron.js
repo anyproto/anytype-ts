@@ -115,7 +115,11 @@ function createWindow () {
 		e.preventDefault();
 
 		const onClose = () => {
-			 mainWindow.hide();
+			if (config.hideTray) {
+				Api.exit(mainWindow, '', false);
+			} else {
+				mainWindow.hide();
+			};
 		};
 
 		if (mainWindow.isFullScreen()) {
