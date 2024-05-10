@@ -616,7 +616,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	getRowHeight (item: any) {
-		return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+		return item && item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
 	};
 
 	getFilter () {

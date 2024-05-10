@@ -196,6 +196,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	};
 
 	onKeyDown (e: any) {
+		// Chinese IME is open
+		if (keyboard.isComposition) {
+			return;
+		};
+
 		const items = this.getItems();
 		
 		let ret = false;
@@ -205,11 +210,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			ret = true;
 		});
 
-		if (ret) {
-			return;
+		if (!ret) {
+			this.props.onKeyDown(e);
 		};
-
-		this.props.onKeyDown(e);
 	};
 
 	onFilterChange (v: string) {

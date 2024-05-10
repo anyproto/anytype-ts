@@ -203,7 +203,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const platform = UtilCommon.getPlatform();
 
 		popupStore.open('confirm', {
-			className: 'lostPhrase',
+			className: 'lostPhrase isLeft',
             data: {
 				title: translate('popupConfirmLostPhraseTitle'),
                 text: translate(`popupConfirmLostPhraseText${platform}`),

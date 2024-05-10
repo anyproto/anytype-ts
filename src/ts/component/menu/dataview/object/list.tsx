@@ -216,7 +216,12 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	};
 
 	onKeyDown (e: any) {
-		const { param } = this.props;
+		// Chinese IME is open
+		if (keyboard.isComposition) {
+			return;
+		};
+
+		const { param, onKeyDown } = this.props;
 		const { data } = param;
 		const { cellRef } = data;
 
@@ -226,7 +231,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			};
 		});
 
-		this.props.onKeyDown(e);
+		onKeyDown(e);
 	};
 
 	onScroll ({ scrollTop }) {

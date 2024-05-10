@@ -730,7 +730,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	onKeyDown (e: any) {
-		if (!this.ref || !this.ref.getItems) {
+		if (!this.ref || !this.ref.getItems || keyboard.isComposition) {
 			return;
 		};
 

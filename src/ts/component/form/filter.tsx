@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Input, Icon } from 'Component';
-import { I, translate } from 'Lib';
+import { I, keyboard, translate } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -54,6 +54,8 @@ class Filter extends React.Component<Props, State> {
 		this.onBlur = this.onBlur.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onClear = this.onClear.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 	};
 	
 	render () {
@@ -103,8 +105,8 @@ class Filter extends React.Component<Props, State> {
 							onFocus={this.onFocus} 
 							onBlur={this.onBlur} 
 							onChange={this.onChange} 
-							onKeyDown={onKeyDown}
-							onKeyUp={onKeyUp}
+							onKeyDown={this.onKeyDown}
+							onKeyUp={this.onKeyUp}
 						/>
 						<div id="placeholder" className="placeholder">{placeholder}</div>
 					</div>
@@ -210,12 +212,37 @@ class Filter extends React.Component<Props, State> {
 	};
 
 	onChange (e: any, v: string) {	
-		const { onChange } = this.props;
+		// Chinese IME is open
+		if (keyboard.isComposition) {
+			return;
+		};
 
 		this.checkButton();
 
-		if (onChange) {
-			onChange(v);
+		if (this.props.onChange) {
+			this.props.onChange(v);
+		};
+	};
+
+	onKeyDown (e: any, v: string): void {
+		// Chinese IME is open
+		if (keyboard.isComposition) {
+			return;
+		};
+
+		if (this.props.onKeyDown) {
+			this.props.onKeyDown(e, v);
+		};
+	};
+
+	onKeyUp (e: any, v: string): void {
+		// Chinese IME is open
+		if (keyboard.isComposition) {
+			return;
+		};
+
+		if (this.props.onKeyUp) {
+			this.props.onKeyUp(e, v);
 		};
 	};
 
