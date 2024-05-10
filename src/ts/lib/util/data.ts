@@ -1000,6 +1000,10 @@ class UtilData {
 		return Object.values(Constant.networkId).includes(authStore.account?.info?.networkId);
 	};
 
+	isLocalNetwork (): boolean {
+		return !authStore.account?.info?.networkId;
+	};
+
 	isLocalOnly (): boolean {
 		return authStore.account?.info?.networkId == '';
 	};

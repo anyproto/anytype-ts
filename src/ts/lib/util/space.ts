@@ -152,7 +152,7 @@ class UtilSpace {
 	};
 
 	isShareActive () {
-		return commonStore.isOnline && UtilData.isAnytypeNetwork();
+		return commonStore.isOnline && !UtilData.isLocalNetwork();
 	};
 
 	getReaderLimit () {
