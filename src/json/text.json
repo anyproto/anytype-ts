@@ -1398,6 +1398,9 @@
 
 	"menuDataviewSortNoSortsApplied": "No sorts applied to this View",
 	"menuDataviewSortNewSort": "New sort",
+	"menuDataviewSortShowEmpty": "Show empty values",
+	"menuDataviewSortShowEmptyTop": "On top",
+	"menuDataviewSortShowEmptyBottom": "On bottom",
 
 	"menuDataviewSourceSelectOneOrMoreSources": "Select one or more sources",
 	"menuDataviewSourceAddRelation": "Add a Relation",

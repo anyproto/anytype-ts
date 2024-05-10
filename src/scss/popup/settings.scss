@@ -814,7 +814,7 @@
 							}
 						}
 
-						.title { @include text-paragraph; margin: 0px 0px 4px 0px; }
+						.title { @include text-paragraph; margin: 0px 0px 4px 0px; text-align: left; }
 						.label { @include text-small; margin: 0px 0px 47px 0px; }
 						.button { width: 100%; }
 						.bottom { display: flex; flex-direction: column; gap: 11px 0px; }

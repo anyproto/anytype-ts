@@ -2120,7 +2120,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!last) {
 			create = true;
 		} else {
-			if (!last.isText() || last.isTextCode()) {
+			if (!last.isText() || last.isTextCode() || last.isTextCallout()) {
 				create = true;
 			} else {
 				length = last.getLength();
