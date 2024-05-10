@@ -171,15 +171,17 @@ app.on('ready', () => {
 app.on('second-instance', (event, argv) => {
 	Util.log('info', 'second-instance');
 
+	if (!mainWindow) {
+		return;
+	};
+
 	if (!is.macos) {
 		deeplinkingUrl = argv.find(arg => arg.startsWith(`${protocol}://`));
 	};
 
-	if (!mainWindow || !deeplinkingUrl) {
-		return;
+	if (deeplinkingUrl) {
+		Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
 	};
-
-	Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
 
 	if (mainWindow.isMinimized()) {
 		mainWindow.restore();
