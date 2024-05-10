@@ -9,7 +9,6 @@ import HeadSimple from 'Component/page/elements/head/simple';
 interface State {
 	versions: I.HistoryVersion[];
 	version: I.HistoryVersion;
-	diff: any[];
 	isLoading: boolean;
 	isDeleted: boolean;
 };
@@ -28,7 +27,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	state = {
 		versions: [] as I.HistoryVersion[],
 		version: null,
-		diff: [],
 		isLoading: false,
 		isDeleted: false,
 	};
@@ -222,8 +220,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		if (this.refHeader) {
 			this.refHeader.refChild.setVersion(version);
 		};
-
-		this.renderDiff();
 	};
 
 	componentWillUnmount(): void {
@@ -417,8 +413,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				return;
 			};
 
-			this.setState({ version: message.version });
-			this.loadDiff(id);
+			this.setState({ version: message.version }, () => {
+				this.loadDiff(id);
+			});
 		});
 	};
 
@@ -430,14 +427,15 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		};
 
 		const idx = versions.findIndex(it => it.id == id);
-		if (idx <= 0) {
+
+		if (idx >= (versions.length - 1)) {
 			return;
 		};
 
-		const prev = versions[idx - 1];
+		const prev = versions[idx + 1];
 
-		C.HistoryDiffVersions(this.getRootId(), commonStore.space, prev.id, id, (message: any) => {
-			this.setState({ diff: message.events });
+		C.HistoryDiffVersions(this.getRootId(), commonStore.space, id, prev.id, (message: any) => {
+			this.renderDiff(message.events);
 		});
 	};
 	
@@ -494,7 +492,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		return ret;
 	};
 
-	renderDiff () {
+	renderDiff (diff: any[]) {
 		const node = $(this.node);
 
 		node.find('.diffAdd').removeClass('diffAdd');
@@ -502,12 +500,12 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		let elements = [];
 
-		this.state.diff.forEach(it => {
+		diff.forEach(it => {
 			elements = elements.concat(this.getElements(it));
 		});
 
 		elements.forEach(it => {
-			it.element.addClass(it.operation == Operation.Add ? 'diffAdd' : 'diffChange');
+			$(it.element).addClass(it.operation == Operation.Add ? 'diffAdd' : 'diffChange');
 		});
 	};
 
@@ -517,10 +515,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		let elements = [];
 		switch (type) {
 			case 'BlockAdd': {
-				data.blocks.forEach(id => {
+				data.blocks.forEach(it => {
 					elements.push({ 
 						operation: Operation.Add, 
-						element: $(`#block-${id}`),
+						element: `#block-${it.id}`,
 					});
 				});
 				break;
@@ -545,7 +543,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockSetFields': {
 				elements.push({ 
 					operation: Operation.Change, 
-					element: $(`#block-${data.id}`),
+					element: `#block-${data.id}`,
 				});
 				break;
 			};
@@ -555,11 +553,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					elements = elements.concat([
 						{ 
 							operation: Operation.Change, 
-							element: $(`#block-${data.id} #view-selector`),
+							element: `#block-${data.id} #view-selector`,
 						},
 						{ 
 							operation: Operation.Change, 
-							element: $(`#view-item-${data.id}-${data.viewId}`),
+							element: `#view-item-${data.id}-${data.viewId}`,
 						},
 					]);
 				};
@@ -567,24 +565,23 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				if (data.relations.length) {
 					elements.push({ 
 						operation: Operation.Change, 
-						element: $(`#block-${data.id} #button-dataview-settings`),
+						element: `#block-${data.id} #button-dataview-settings`,
 					});
 				};
 
 				if (data.filters.length) {
 					elements.push({ 
 						operation: Operation.Change, 
-						element: $(`#block-${data.id} #button-dataview-filter`),
+						element: `#block-${data.id} #button-dataview-filter`,
 					});
 				};
 
 				if (data.sorts.length) {
 					elements.push({ 
 						operation: Operation.Change, 
-						element: $(`#block-${data.id} #button-dataview-sort`),
+						element: `#block-${data.id} #button-dataview-sort`,
 					});
 				};
-
 				break;
 			};
 
@@ -592,7 +589,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockDataviewRelationSet': {
 				elements.push({ 
 					operation: Operation.Change, 
-					element: $(`#block-${data.id} #button-dataview-settings`),
+					element: `#block-${data.id} #button-dataview-settings`,
 				});
 				break;
 			};
@@ -605,14 +602,12 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				if (data.id == rootId) {
 					elements.push({ 
 						operation: Operation.Change, 
-						element: $('#button-header-relation'),
+						element: '#button-header-relation',
 					});
 				};
 				break;
 			};
 		};
-
-		console.log(type, data, elements);
 
 		return elements;
 	};
