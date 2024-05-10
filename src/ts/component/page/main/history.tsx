@@ -498,72 +498,64 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		this.state.diff.forEach(it => this.renderEvent(it));
 	};
 
-	renderEvent (e: any) {
+	renderEvent (event: any) {
+		const { type, data } = event;
 		const node = $(this.node);
 
+		console.log(type, data);
+
 		let cn = '';
-		switch (e.type) {
-			case 'blockAdd': {
+		let blockIds = [];
+
+		switch (type) {
+			case 'BlockAdd': {
 				cn = 'diffAdd';
+				blockIds = data.blocks.map(it => it.id);
 				break;
 			};
 
-			case 'blockDelete': {
-				break;
-			};
-
-			case 'blockDataviewObjectOrderUpdate':
-			case 'blockDataviewGroupOrderUpdate':
-			case 'blockDataviewRelationSet':
-			case 'blockDataviewRelationDelete':
-			case 'blockDataviewIsCollectionSet':
-			case 'blockDataviewTargetObjectIdSet':
-			case 'blockDataviewViewOrder':
-			case 'blockSetTableRow':
-			case 'blockSetRelation':
-			case 'blockSetVerticalAlign':
-			case 'blockSetAlign':
-			case 'blockSetBackgroundColor':
-			case 'blockSetLatex':
-			case 'blockSetFile':
-			case 'blockSetBookmark':
-			case 'blockSetDiv':
-			case 'blockSetText':
-			case 'blockSetLink':
-			case 'blockSetFields': {
+			case 'BlockDataviewObjectOrderUpdate':
+			case 'BlockDataviewGroupOrderUpdate':
+			case 'BlockDataviewRelationSet':
+			case 'BlockDataviewRelationDelete':
+			case 'BlockDataviewIsCollectionSet':
+			case 'BlockDataviewTargetObjectIdSet':
+			case 'BlockDataviewViewOrder':
+			case 'BlockSetTableRow':
+			case 'BlockSetRelation':
+			case 'BlockSetVerticalAlign':
+			case 'BlockSetAlign':
+			case 'BlockSetBackgroundColor':
+			case 'BlockSetLatex':
+			case 'BlockSetFile':
+			case 'BlockSetBookmark':
+			case 'BlockSetDiv':
+			case 'BlockSetText':
+			case 'BlockSetLink':
+			case 'BlockSetFields': {
 				cn = 'diffChange';
+				blockIds = [ data.id ];
 				break;
 			};
 
-			case 'blockDataviewViewSet': {
+			case 'BlockDataviewViewUpdate': {
 				break;
 			};
 
-			case 'blockDataviewViewUpdate': {
-				break;
-			};
+			case 'ObjectDetailsSet': 
+			case 'ObjectDetailsAmend':
+			case 'ObjectDetailsUnset': {
+				const rootId = this.getRootId();
 
-			case 'blockDataviewViewDelete': {
-				break;
-			};
-
-			case 'objectDetailsSet': {
-				break;
-			};
-
-			case 'objectDetailsAmend': {
-				break;
-			};
-
-			case 'objectDetailsUnset': {
+				if (data.id == rootId) {
+					$('#button-header-relation').addClass('diffChange');
+				};
 				break;
 			};
 		};
 
-		if (e.blockIds && e.blockIds.length && cn) {
-			(e.blockIds || []).forEach(it => {
-				node.find(`#block-${it}`).addClass(cn);
-			});
+		if (blockIds.length && cn) {
+			blockIds.forEach(id => node.find(`#block-${id}`).addClass(cn));
 		};
 	};
 

@@ -7,6 +7,9 @@
 
 	#footer.snapLeft { right: 254px; }
 
+	.diffAdd::after { content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: #e5f8d6; }
+	.diffChange::after { content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(255,0,0,0.1); }
+
 	#body {
 		> #sideLeft { padding: 52px 0px 0px 0px; width: calc(100% - 254px); overflow-x: hidden; overflow-y: auto; position: relative; }
 
@@ -48,10 +51,6 @@
 			.item:hover, .item.active { background: var(--color-shape-tertiary); }
 		}
 	}
-
-	
-	.block.diffAdd::after { content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: #e5f8d6; }
-	.block.diffChange::after { content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(255,0,0,0.1); }
 
 	.blockLast { height: 100px; }
 }

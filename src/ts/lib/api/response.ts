@@ -380,84 +380,13 @@ export const HistoryShowVersion = (response: Rpc.History.ShowVersion.Response) =
 };
 
 export const HistoryDiffVersions = (response: Rpc.History.DiffVersions.Response) => {
-	const list = response.getHistoryeventsList() || [];
-	const events: any[] = [];
-
-	list.forEach((it: any) => {
-		const type = Mapper.Event.Type(it.getValueCase());
-		const data = Mapper.Event.Data(it);
-		const event: any = { type };
-
-		switch (type) {
-			default: {
-				return;
-			};
-
-			case 'blockAdd': {
-				event.blockIds = (data.getBlocksList() || []).map(Mapper.From.Block).map(it => it.id);
-				break;
-			};
-
-			case 'blockDelete': {
-				event.blockIds = data.getBlockidsList() || [];
-				break;
-			};
-
-			case 'blockDataviewObjectOrderUpdate':
-			case 'blockDataviewGroupOrderUpdate':
-			case 'blockDataviewRelationSet':
-			case 'blockDataviewRelationDelete':
-			case 'blockDataviewIsCollectionSet':
-			case 'blockDataviewTargetObjectIdSet':
-			case 'blockDataviewViewOrder':
-			case 'blockSetTableRow':
-			case 'blockSetRelation':
-			case 'blockSetVerticalAlign':
-			case 'blockSetAlign':
-			case 'blockSetBackgroundColor':
-			case 'blockSetLatex':
-			case 'blockSetFile':
-			case 'blockSetBookmark':
-			case 'blockSetDiv':
-			case 'blockSetText':
-			case 'blockSetLink':
-			case 'blockSetFields': {
-				event.blockIds = [ data.getId() ];
-				break;
-			};
-
-			case 'blockDataviewViewSet': {
-				event.blockIds = [ data.getId() ];
-				event.viewId = Mapper.From.View(data.getView()).id;
-				break;
-			};
-
-			case 'blockDataviewViewUpdate': {
-				break;
-			};
-
-			case 'blockDataviewViewDelete': {
-				break;
-			};
-
-			case 'objectDetailsSet': {
-				break;
-			};
-
-			case 'objectDetailsAmend': {
-				break;
-			};
-
-			case 'objectDetailsUnset': {
-				break;
-			};
-		};
-
-		events.push(event);
-	});
-
 	return {
-		events,
+		events: (response.getHistoryeventsList() || []).map(it => {
+			const type = Mapper.Event.Type(it.getValueCase());
+			const data = Mapper.Event[type](Mapper.Event.Data(it));
+
+			return { type, data };
+		}),
 	};
 };
 
