@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Editable, IconObject } from 'Component';
-import { I, C, keyboard, UtilDate, UtilCommon, Mark, translate } from 'Lib';
+import { I, C, keyboard, UtilDate, UtilCommon, Mark, translate, UtilFile } from 'Lib';
 import { authStore, blockStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -109,7 +109,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 								<div key={i} className="file">
 									<IconObject object={{ name: file.name, layout: I.ObjectLayout.File }} />
 									<div className="name">{file.name}</div>
-									<div className="size"></div>
+									<div className="size">{UtilFile.size(file.size)}</div>
 								</div>
 							))}
 						</div>
