@@ -295,7 +295,8 @@
 		"sidebar": "sidebar",
 		"graph": "graph",
 		"space": "space",
-		"files": "files",
+		"file": "file",
+		"fileManager": "fileManager",
 		"participant": "participant",
 		"myParticipant": "myParticipant"
 	},

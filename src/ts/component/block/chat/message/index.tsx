@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilSpace, UtilDate, Mark, UtilCommon, Preview, UtilRouter, Renderer } from 'Lib';
+import { I, UtilSpace, UtilDate, Mark, UtilCommon, UtilObject } from 'Lib';
 import { commonStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -22,6 +22,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const length = this.getChildren().length;
 		const author = UtilSpace.getParticipant(UtilSpace.getParticipantId(space, data.identity));
 		const text = Mark.toHtml(data.text, data.marks);
+		const files = (data.files || []).map(id => detailStore.get(Constant.subId.file, id));
 
 		return (
 			<div 
@@ -38,6 +39,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 				</div>
 
 				<div className="text" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }}></div>
+
+				{files.length ? (
+					<div className="files">
+						{files.map((item: any, i: number) => (
+							<IconObject key={i} object={item} size={48} onClick={() => UtilObject.openPopup(item)} />
+						))}
+					</div>
+				) : ''}
 
 				<div className="sub" onClick={() => onThread(id)}>
 					{!isThread ? <div className="item">{length} replies</div> : ''}

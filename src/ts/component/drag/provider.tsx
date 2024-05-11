@@ -254,6 +254,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	onDragOver (e: any) {
 		if (this.commonDropPrevented) {
+			this.clearState();
 			return;
 		};
 

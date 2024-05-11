@@ -477,36 +477,31 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		keyboard.disableSelection(false);
 		this.scale = v;
 	};
+
+	canDrop (e: any) {
+		return this._isMounted && e.dataTransfer.files && e.dataTransfer.files.length && !this.props.readonly;
+	};
 	
 	onDragOver (e: any) {
-		const { readonly } = this.props;
+		e.preventDefault();
+		e.stopPropagation();
 
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
-			return;
-		};
-		
-		const node = $(this.node);
-		node.addClass('isDraggingOver');
+		$(this.node).addClass('isDraggingOver');
 	};
 	
 	onDragLeave (e: any) {
-		const { readonly } = this.props;
+		e.preventDefault();
+		e.stopPropagation();
 
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
-			return;
-		};
-		
-		const node = $(this.node);
-		node.removeClass('isDraggingOver');
+		$(this.node).removeClass('isDraggingOver');
 	};
 	
 	onDrop (e: any) {
-		const { rootId, dataset, readonly } = this.props;
-
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
+		if (!this.canDrop(e)) {
 			return;
 		};
-		
+
+		const { rootId, dataset } = this.props;		
 		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(this.node);

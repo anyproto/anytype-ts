@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Editable } from 'Component';
+import { Editable, IconObject } from 'Component';
 import { I, C, keyboard, UtilDate, UtilCommon, Mark, translate } from 'Lib';
-import { authStore, blockStore, menuStore } from 'Store';
+import { authStore, blockStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import ChatButtons from './chat/buttons';
@@ -12,19 +12,21 @@ const LIMIT = 50;
 
 interface State {
 	threadId: string;
+	files: File[];
 };
 
 const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent, State> {
 
 	_isMounted = false;
+	node = null;
 	refList = null;
 	refEditable = null;
 	refButtons = null;
 	marks: I.Mark[] = [];
-	attachments: any[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
 	state = {
 		threadId: '',
+		files: [],
 	};
 
 	constructor (props: I.BlockComponent) {
@@ -41,17 +43,26 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onPaste = this.onPaste.bind(this);
 		this.onButton = this.onButton.bind(this);
 		this.onThread = this.onThread.bind(this);
+		this.onDragOver = this.onDragOver.bind(this);
+		this.onDragLeave = this.onDragLeave.bind(this);
+		this.onDrop = this.onDrop.bind(this);
 	};
 
 	render () {
 		const { readonly } = this.props;
-		const { threadId } = this.state;
+		const { threadId, files } = this.state;
 		const blockId = this.getBlockId();
 		const messages = this.getMessages();
 
 		return (
-			<div className="wrap">
-				<div className="top">
+			<div 
+				ref={ref => this.node = ref}
+				className="wrap"
+				onDragOver={this.onDragOver} 
+				onDragLeave={this.onDragLeave} 
+				onDrop={this.onDrop}
+			>
+				<div className="head">
 					{threadId ? <div className="item" onClick={() => this.onThread('')}>Back</div> : ''}
 				</div>
 
@@ -91,6 +102,18 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						onMouseDown={this.onMouseDown}
 						onMouseUp={this.onMouseUp}
 					/>
+
+					{files.length ? (
+						<div className="files">
+							{files.map((file: any, i: number) => (
+								<div key={i} className="file">
+									<IconObject object={{ name: file.name, layout: I.ObjectLayout.File }} />
+									<div className="name">{file.name}</div>
+									<div className="size"></div>
+								</div>
+							))}
+						</div>
+					) : ''}
 				</div>
 			</div>
 		);
@@ -159,6 +182,44 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onPaste () {
 	};
 
+	canDrop (e: any): boolean {
+		return this._isMounted && e.dataTransfer.files && e.dataTransfer.files.length && !this.props.readonly;
+	};
+
+	onDragOver (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		$(this.node).addClass('isDraggingOver');
+	};
+	
+	onDragLeave (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		$(this.node).removeClass('isDraggingOver');
+	};
+	
+	onDrop (e: any) {
+		if (!this.canDrop(e)) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { files } = this.state;
+		const { dataset } = this.props;		
+		const { preventCommonDrop } = dataset || {};
+		const node = $(this.node);
+		
+		node.removeClass('isDraggingOver');
+		preventCommonDrop(true);
+
+		this.setState({ files: files.concat(Array.from(e.dataTransfer.files)) });
+		preventCommonDrop(false);
+	};
+
 	getBlockId () {
 		return this.state.threadId || this.props.block.id;
 	};
@@ -187,6 +248,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const { rootId } = this.props;
 		const { account } = authStore;
+		const { files } = this.state;
 		const blockId = this.getBlockId();
 		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
 		const length = childrenIds.length;
@@ -197,26 +259,47 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			...this.getMarksFromHtml(),
 			identity: account.id,
 			time: UtilDate.now(),
+			files: [],
 		};
 		
-		const param = {
-			type: I.BlockType.Text,
-			style: I.TextStyle.Paragraph,
-			content: {
-				text: JSON.stringify(data),
-			}
+		const create = () => {
+			const param = {
+				type: I.BlockType.Text,
+				style: I.TextStyle.Paragraph,
+				content: {
+					text: JSON.stringify(data),
+				}
+			};
+
+			C.BlockCreate(rootId, target, position, param, (message: any) => {
+				this.scrollToBottom();
+			});
 		};
-		
-		C.BlockCreate(rootId, target, position, param, (message: any) => {
-			this.scrollToBottom();
-		});
+
+		if (files.length) {
+			let n = 0;
+			for (const file of files) {
+				C.FileUpload(commonStore.space, '', file.path, I.FileType.None, {}, (message: any) => {
+					n++;
+
+					data.files.push(message.objectId);
+
+					if (n == files.length) {
+						create();
+					};
+				});
+			};
+		} else {
+			create();
+		};
 
 		this.marks = [];
-		this.attachments = [];
 		this.range = { from: 0, to: 0 };
 
 		this.refEditable.setValue('');
 		this.refEditable.placeholderCheck();
+
+		this.setState({ files: [] });
 	};
 
 	scrollToBottom () {
