@@ -402,10 +402,11 @@ class Mark {
 		const marks: I.Mark[] = [];
 
 		html = obj.html();
-		html = html.replace(/data-range="[^"]+"/g, '');
-		html = html.replace(/contenteditable="[^"]+"/g, '');
 
 		let text = html;
+
+		text = text.replace(/data-range="[^"]+"/g, '');
+		text = text.replace(/contenteditable="[^"]+"/g, '');
 
 		// TODO: find classes by color or background
 		text = text.replace(/<font([^>]*?)>([^<]*)(?:<\/font>)?/g, (s: string, p1: string, p2: string) => {
@@ -419,22 +420,20 @@ class Mark {
 		});
 
 		// Fix browser markup bug
-		html.replace(/<\/?(i|b|font|search)[^>]*>/g, (s: string, p: string) => {
+		text = text.replace(/<\/?(i|b|font|search)[^>]*>/g, (s: string, p: string) => {
 			let r = '';
 			if (p == 'i') r = this.getTag(I.MarkType.Italic);
 			if (p == 'b') r = this.getTag(I.MarkType.Bold);
 			p = r ? s.replace(p, r) : '';
-			text = text.replace(s, p);
-			return '';
+			return p;
 		});
 
 		// Fix html special symbols
-		html.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
+		text = text.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
 			if (p == '&lt;') p = '<';
 			if (p == '&gt;') p = '>';
 			if (p == '&amp;') p = '&';
-			text = text.replace(s, p);
-			return '';
+			return p;
 		});
 
 		html = text;
