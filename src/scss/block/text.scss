@@ -51,12 +51,7 @@
 		}
 
 		// Align with the input Emoji
-		&.textHeader1 {
-			smile {
-				display: inline-flex;
-				transform: translateY(10%);
-			}
-		}
+		&.textHeader1 smile { display: inline-flex; transform: translateY(10%); }
 
 		markupbold { font-weight: 600; }
 		markupitalic { font-style: italic; }
