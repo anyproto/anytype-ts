@@ -50,6 +50,14 @@
 			name::before { border-color: var(--color-text-primary); }
 		}
 
+		// Align with the input Emoji
+		&.textHeader1 {
+			smile {
+				display: inline-flex;
+				transform: translateY(10%);
+			}
+		}
+
 		markupbold { font-weight: 600; }
 		markupitalic { font-style: italic; }
 		markupstrike { text-decoration: line-through; }
