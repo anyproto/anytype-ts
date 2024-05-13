@@ -35,7 +35,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 
 				<div className="side center">
 					<div className="txt">
-						{version ? UtilDate.date('d F Y H:i:s', version.time) : ''}
+						{version ? UtilDate.date('M d, Y g:i:s A', version.time) : ''}
 					</div>
 				</div>
 

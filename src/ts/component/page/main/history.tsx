@@ -59,7 +59,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		};
 
 		if (!version || !root) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
