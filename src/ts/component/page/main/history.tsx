@@ -16,7 +16,7 @@ interface State {
 };
 
 const LIMIT_RECORDS = 300;
-const LIMIT_AUTHORS = 3;
+const LIMIT_AUTHORS = 5;
 
 const PageMainHistory = observer(class PageMainHistory extends React.Component<I.PageComponent, State> {
 
