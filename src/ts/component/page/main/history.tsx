@@ -71,6 +71,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const isCollection = root?.isObjectCollection();
 		const isHuman = root?.isObjectHuman();
 		const isParticipant = root?.isObjectParticipant();
+		const year = UtilDate.date('Y', UtilDate.now());
 
 		let head = null;
 		let children = blockStore.getChildren(rootId, rootId);
@@ -93,19 +94,26 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			icon.type = I.BlockType.IconUser;
 		};
 
-		const Section = (item: any) => (
-			<div id={`section-${item.hash}`} className="section">
-				<div className="head" onClick={e => this.toggleChildren(e, item.hash)}>
-					<div className="name">{item.id}</div>
-					<Icon className="arrow" />
+		const Section = (item: any) => {
+			const y = UtilDate.date('Y', item.time);
+			const format = y == year ? 'M d' : 'M d, Y';
+			const day = UtilDate.dayString(item.time);
+			const date = day ? day : UtilDate.date(format, item.time);
+
+			return (
+				<div id={`section-${item.hash}`} className="section">
+					<div className="head" onClick={e => this.toggleChildren(e, item.hash)}>
+						<div className="name">{date}</div>
+						<Icon className="arrow" />
+					</div>
+					<div className="items">
+						{item.list.map((item: any, i: number) => (
+							<Item key={item.id} {...item} />
+						))}
+					</div>
 				</div>
-				<div className="items">
-					{item.list.map((item: any, i: number) => (
-						<Item key={item.id} {...item} />
-					))}
-				</div>
-			</div>
-		);
+			);
+		};
 
 		const Child = (item: any) => (
 			<div 
