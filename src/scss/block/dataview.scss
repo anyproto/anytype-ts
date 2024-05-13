@@ -269,7 +269,7 @@
 
 	.block.blockDataview.isInline.isVertical {
 		.dataviewControls {
-			> .sides { flex-direction: column; align-items: flex-start; justify-content: flex-start; }
+			.btn-filter, .btn-sort { display: none; }
 		}
 	}
 
