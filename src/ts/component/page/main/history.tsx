@@ -112,28 +112,26 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			const author = UtilSpace.getParticipant(item.authorId);
 
 			return (
-				<React.Fragment>
-					<div 
-						id={`item-${item.id}`} 
-						className={[ 'item', (withChildren ? 'withChildren' : '') ].join(' ')} 
-						onClick={e => this.loadVersion(item.id)}
-					>
-						{withChildren ? <Icon className="arrow" onClick={e => this.toggleChildren(e, item.id)} /> : ''}
-						<div className="date">{UtilDate.date('d F, H:i', item.time)}</div>
-						{author ? (
-							<div className="author">
-								<IconObject object={author} size={16} />
-								<ObjectName object={author} />
-							</div>
-						) : ''}
-					</div>
+				<div 
+					id={`item-${item.id}`} 
+					className={[ 'item', (withChildren ? 'withChildren' : '') ].join(' ')} 
+					onClick={e => this.loadVersion(item.id)}
+				>
+					{withChildren ? <Icon className="arrow" onClick={e => this.toggleChildren(e, item.id)} /> : ''}
+					<div className="date">{UtilDate.date('d F, H:i', item.time)}</div>
+					{author ? (
+						<div className="author">
+							<IconObject object={author} size={16} />
+							<ObjectName object={author} />
+						</div>
+					) : ''}
 
 					{withChildren ? (
 						<div id={`children-${item.id}`} className="children">
 							{item.list.map((child: any, i: number) => <Version key={i} {...child} />)}
 						</div>
 					) : ''}
-				</React.Fragment>
+				</div>
 			);
 		};
 		
@@ -455,7 +453,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 			let group = groups.find(it => it.groupId == groupId);
 			if (!group) {
-				group = { ...version, groupId: groupId, list: [] };
+				group = { ...version, groupId, list: [] };
 				groups.push(group);
 			} else {
 				version.groupId = groupId;
@@ -512,6 +510,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	getElements (event: any) {
 		const { type, data } = event;
+
+		console.log(type, data);
 
 		let elements = [];
 		switch (type) {
