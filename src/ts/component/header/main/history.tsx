@@ -20,7 +20,6 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 
 		this.onBack = this.onBack.bind(this);
 		this.onRestore = this.onRestore.bind(this);
-		this.onOpen = this.onOpen.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 	};
 
@@ -35,7 +34,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		return (
 			<React.Fragment>
 				<div className="side left">
-					{renderLeftIcons(this.onOpen)}
+					{renderLeftIcons()}
 				</div>
 
 				<div className="side center">
@@ -50,14 +49,6 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 				</div>
 			</React.Fragment>
 		);
-	};
-
-	onOpen () {
-		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
-
-		keyboard.disableClose(true);
-		popupStore.closeAll(null, () => UtilObject.openRoute({ ...object, layout: I.ObjectLayout.History }));
 	};
 
 	onBack (e: any) {
@@ -86,25 +77,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 	};
 
 	onRelation () {
-		const { isPopup, rootId, menuOpen } = this.props;
-		const cnw = [ 'fixed' ];
-
-		if (!isPopup) {
-			cnw.push('fromHeader');
-		};
-
-		menuOpen('blockRelationView', '#button-header-relation', {
-			noFlipX: true,
-			noFlipY: true,
-			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.cell,
-			classNameWrap: cnw.join(' '),
-			data: {
-				isPopup,
-				rootId,
-				readonly: true
-			},
-		});
+		this.props.onRelation({}, { readonly: true });
 	};
 
 	setVersion (version: I.HistoryVersion) {

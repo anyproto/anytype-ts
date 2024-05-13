@@ -80,15 +80,6 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	.side.center {
 		.txt { @include text-overflow-nw; }
 	}
-
-	.item { 
-		color: var(--color-text-secondary); transition: $transitionAllCommon; height: 20px; line-height: 20px; 
-		display: inline-block; vertical-align: middle; white-space: nowrap; -webkit-app-region: no-drag;
-	}
-	.item.orange { color: var(--color-system-accent-100) !important; font-weight: 500; }
-	
-	.item.grey:hover { color: var(--color-text-primary); }
-	.item.orange:hover { color: #f09c0e !important; }
 }
 .header.mainHistory.snapLeft { right: 336px; }
 
