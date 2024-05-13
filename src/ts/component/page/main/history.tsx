@@ -218,6 +218,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		sideLeft.scrollTop(this.scrollLeft);
 		sideRight.scrollTop(this.scrollRight);
 		sideLeft.off('scroll').on('scroll', () => this.onScrollLeft());
+		sideRight.off('scroll').on('scroll', () => this.onScrollRight());
 
 		blockStore.updateNumbers(rootId);
 
@@ -270,12 +271,12 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	onScrollLeft () {
-		const { isPopup } = this.props;
-		const sideLeft = $(this.refSideLeft);
-		const container = UtilCommon.getScrollContainer(isPopup);
-		
-		this.scrollLeft = sideLeft.scrollTop();
-		container.trigger('scroll');
+		this.scrollLeft = $(this.refSideLeft).scrollTop();
+		UtilCommon.getScrollContainer(this.props.isPopup).trigger('scroll');
+	};
+
+	onScrollRight () {
+		this.scrollRight = $(this.refSideRight).scrollTop();
 	};
 
 	show () {
