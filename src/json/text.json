@@ -1579,6 +1579,8 @@
 	"toastRelationRemoved": "Relation <b>%s</b> has been removed from your Library",
 	"toastSetDefaultTemplate": "This Template was Set as default",
 
+	"toastFileLimitReached": "Your local storage exceeds syncing limit. Locally stored files won't be synced",
+
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
 	"textColor-orange": "Amber",

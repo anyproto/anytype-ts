@@ -211,7 +211,7 @@ class Dispatcher {
 						Preview.toastShow({ action: I.ToastAction.StorageFull });
 					} else
 					if (localUsage > bytesLimit) {
-						Preview.toastShow({ text: 'Your local storage exceeds syncing limit. Locally stored files won\'t be synced' });
+						Preview.toastShow({ text: translate('toastFileLimitReached') });
 					};
 					break;
 				};
