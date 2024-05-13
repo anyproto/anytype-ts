@@ -21,9 +21,10 @@
 		> #sideRight {
 			.section { background: var(--color-bg-primary); border-radius: 10px; -webkit-app-region: no-drag; padding: 0px 0px 8px 0px; }
 			.section {
-				.head { display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 16px 4px 16px; color: var(--color-text-secondary); }
+				.head { display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 16px 4px 16px; }
 				.head {
-					.name { @include text-overflow-nw; flex-grow: 1; }
+					.name, .date { @include text-overflow-nw; flex-grow: 1; }
+					.date { color: var(--color-text-secondary); }
 					.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); transition: none; transform: rotateZ(180deg); }
 				}
 

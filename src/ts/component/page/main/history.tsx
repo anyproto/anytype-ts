@@ -45,6 +45,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.onCopy = this.onCopy.bind(this);
+		this.onCurrent = this.onCurrent.bind(this);
 	};
 
 	render () {
@@ -103,7 +104,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			return (
 				<div id={`section-${item.hash}`} className="section">
 					<div className="head" onClick={e => this.toggleChildren(e, item.hash)}>
-						<div className="name">{date}</div>
+						<div className="date">{date}</div>
 						<Icon className="arrow" />
 					</div>
 					<div className="items">
@@ -196,6 +197,12 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					</div>
 
 					<div ref={ref => this.refSideRight = ref} id="sideRight" className="list">
+						<div className="section" onClick={this.onCurrent}>
+							<div className="head">
+								<div className="name">{translate('headerHistoryCurrent')}</div>
+							</div>
+						</div>
+
 						{groups.map((item: any, i: number) => (
 							<Section key={i} {...item} />
 						))}
@@ -285,6 +292,14 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	onScrollRight () {
 		this.scrollRight = $(this.refSideRight).scrollTop();
+	};
+
+	onCurrent () {
+		const { versions } = this.state;
+
+		if (versions.length) {
+			this.loadVersion(versions[0].id);
+		};
 	};
 
 	show () {
