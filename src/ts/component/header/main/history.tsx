@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { C, UtilDate, UtilObject, I, translate, analytics, UtilSpace } from 'Lib';
-import { detailStore } from 'Store';
+import { C, UtilDate, UtilObject, I, translate, analytics, UtilSpace, keyboard } from 'Lib';
+import { detailStore, popupStore } from 'Store';
 
 interface State {
 	version: I.HistoryVersion;
@@ -19,18 +19,18 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 
 		this.onBack = this.onBack.bind(this);
 		this.onRestore = this.onRestore.bind(this);
+		this.onOpen = this.onOpen.bind(this);
 	};
 
 	render () {
+		const { renderLeftIcons } = this.props;
 		const { version } = this.state;
 		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		return (
 			<React.Fragment>
 				<div className="side left">
-					<div className="item grey" onClick={this.onBack}>
-						<Icon className="arrow" />{translate('headerHistoryCurrent')}
-					</div>
+					{renderLeftIcons(this.onOpen)}
 				</div>
 
 				<div className="side center">
@@ -44,6 +44,14 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 				</div>
 			</React.Fragment>
 		);
+	};
+
+	onOpen () {
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, []);
+
+		keyboard.disableClose(true);
+		popupStore.closeAll(null, () => UtilObject.openRoute({ ...object, layout: I.ObjectLayout.History }));
 	};
 
 	onBack (e: any) {
