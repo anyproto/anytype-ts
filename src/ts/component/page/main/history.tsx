@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Loader, Icon, IconObject, Deleted, ObjectName } from 'Component';
 import { blockStore, detailStore, commonStore } from 'Store';
-import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate, UtilSpace, translate } from 'Lib';
+import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate, UtilSpace, translate, analytics } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 import Constant from 'json/constant.json';
 
@@ -46,6 +46,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onCurrent = this.onCurrent.bind(this);
+		this.onRestore = this.onRestore.bind(this);
+		this.onClose = this.onClose.bind(this);
 	};
 
 	render () {
@@ -197,6 +199,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					</div>
 
 					<div ref={ref => this.refSideRight = ref} id="sideRight" className="list">
+						<div className="head">
+							<div className="name">{translate('commonVersionHistory')}</div>
+							<Icon className="close" onClick={this.onClose} />
+						</div>
+
 						<div className="section" onClick={this.onCurrent}>
 							<div className="head">
 								<div className="name">{translate('headerHistoryCurrent')}</div>
@@ -270,6 +277,12 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, () => this.onCopy());
 	};
 
+	onClose () {
+		const rootId = this.getRootId();
+
+		UtilObject.openAuto(detailStore.get(rootId, rootId, []));
+	};
+
 	onCopy () {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
@@ -300,6 +313,23 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		if (versions.length) {
 			this.loadVersion(versions[0].id);
 		};
+	};
+
+	onRestore (e: any) {
+		e.persist();
+
+		const { version } = this.state;
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId, []);
+
+		if (!version) {
+			return;
+		};
+
+		C.HistorySetVersion(rootId, version.id, () => {
+			UtilObject.openEvent(e, object);
+			analytics.event('RestoreFromHistory');
+		});
 	};
 
 	show () {

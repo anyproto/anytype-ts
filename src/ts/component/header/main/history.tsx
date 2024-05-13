@@ -19,7 +19,6 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		super(props);
 
 		this.onBack = this.onBack.bind(this);
-		this.onRestore = this.onRestore.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 	};
 
@@ -29,13 +28,10 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		const cmd = keyboard.cmdSymbol();
 		const object = detailStore.get(rootId, rootId, []);
 		const showMenu = !UtilObject.isTypeOrRelationLayout(object.layout);
-		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		return (
 			<React.Fragment>
-				<div className="side left">
-					{renderLeftIcons()}
-				</div>
+				<div className="side left">{renderLeftIcons()}</div>
 
 				<div className="side center">
 					<div className="txt">
@@ -44,7 +40,6 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 				</div>
 
 				<div className="side right">
-					{canWrite ? <div className="item orange" onClick={this.onRestore}>{translate('headerHistoryRestore')}</div> : ''}
 					{showMenu ? <Icon id="button-header-relation" tooltip="Relations" tooltipCaption={`${cmd} + Shift + R`} className="relation" onClick={this.onRelation} /> : ''}
 				</div>
 			</React.Fragment>
@@ -56,24 +51,6 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		const object = detailStore.get(rootId, rootId, []);
 
 		UtilObject.openEvent(e, object);
-	};
-
-	onRestore (e: any) {
-		e.persist();
-
-		const { rootId } = this.props;
-		const { version } = this.state;
-		const object = detailStore.get(rootId, rootId, []);
-
-		if (!version) {
-			return;
-		};
-
-		C.HistorySetVersion(rootId, version.id, (message: any) => {
-			UtilObject.openEvent(e, object);
-
-			analytics.event('RestoreFromHistory');
-		});
 	};
 
 	onRelation () {

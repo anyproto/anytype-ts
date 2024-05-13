@@ -143,6 +143,7 @@
 	"commonUpdate": "Update",
 	"commonOwner": "Owner",
 	"commonUpdateProgress": "Downloading update... %s/%s",
+	"commonVersionHistory": "Version history",
 
 	"commonLCCollection": "Collection",
 	"commonLCSet": "Set",
@@ -1296,7 +1297,6 @@
 	"menuBlockMorePrint": "Print",
 	"menuBlockMoreSearchOnPage": "Search on page",
 	"menuBlockMoreMoveTo": "Move to",
-	"menuBlockMoreVersionHistory": "Version History",
 	"menuBlockMoreExport": "Export",
 	"menuBlockMoreReloadFromSource": "Reload from Source",
 	"menuBlockMoreCreateObject": "Create Object",

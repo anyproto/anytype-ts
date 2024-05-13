@@ -52,7 +52,7 @@
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
-	.icon:hover, .icon.hover { background-color: var(--color-shape-tertiary); }
+	.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
 
 	.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
 	.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
