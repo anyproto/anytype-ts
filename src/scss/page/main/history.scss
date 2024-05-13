@@ -27,10 +27,16 @@
 
 			.section { background: var(--color-bg-primary); border-radius: 10px; -webkit-app-region: no-drag; padding: 0px 0px 8px 0px; }
 			.section {
-				.head { display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 16px 4px 16px; }
+				.head { display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 16px 4px 16px; gap: 0px 6px; }
 				.head {
 					.name, .date { @include text-overflow-nw; flex-grow: 1; }
 					.date { color: var(--color-text-secondary); }
+
+					.authors { display: flex; flex-direction: row; align-items: center; }
+					.authors {
+						.iconObject { margin-left: -6px; border: 2px solid var(--color-bg-primary); background-color: var(--color-bg-primary) !important; }
+					}
+
 					.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); transition: none; transform: rotateZ(180deg); }
 				}
 

@@ -15,7 +15,8 @@ interface State {
 	isDeleted: boolean;
 };
 
-const LIMIT = 300;
+const LIMIT_RECORDS = 300;
+const LIMIT_AUTHORS = 3;
 
 const PageMainHistory = observer(class PageMainHistory extends React.Component<I.PageComponent, State> {
 
@@ -97,11 +98,22 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			const format = y == year ? 'M d' : 'M d, Y';
 			const day = UtilDate.dayString(item.time);
 			const date = day ? day : UtilDate.date(format, item.time);
+			const authors = UtilCommon.arrayUnique(item.list.map(it => it.authorId)).slice(0, LIMIT_AUTHORS);
 
 			return (
 				<div id={`section-${item.hash}`} className="section">
 					<div className="head" onClick={e => this.toggleChildren(e, item.hash)}>
 						<div className="date">{date}</div>
+						<div className="authors">
+							{authors.map((id: string, i: number) => (
+								<IconObject 
+									key={id} 
+									object={UtilSpace.getParticipant(id)} 
+									size={18} 
+									style={{ zIndex: (LIMIT_AUTHORS - i) }} 
+								/>
+							))}
+						</div>
 						<Icon className="arrow" />
 					</div>
 					<div className="items">
@@ -390,7 +402,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		this.setState({ isLoading: true });
 		this.lastId = lastId;
 
-		C.HistoryGetVersions(rootId, lastId, LIMIT, (message: any) => {
+		C.HistoryGetVersions(rootId, lastId, LIMIT_RECORDS, (message: any) => {
 			this.setState({ isLoading: false });
 
 			if (message.error.code) {
