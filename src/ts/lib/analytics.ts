@@ -314,8 +314,8 @@ class Analytics {
 			};
 
 			case 'ChangeSortValue': {
-				data.type = Number(data.type) || 0;
-				data.type = I.SortType[data.type];
+				data.type = I.SortType[(Number(data.type) || 0)];
+				data.emptyType = I.EmptyType[(Number(data.emptyType) || 0)];
 				break;
 			};
 

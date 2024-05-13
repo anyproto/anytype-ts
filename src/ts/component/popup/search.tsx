@@ -569,48 +569,48 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		e.stopPropagation();
-		this.props.close();
 
+		const { close } = this.props;
 		const filter = this.getFilter();
 		const rootId = keyboard.getRootId();
 
-		// Object
-		if (item.isObject) {
-			UtilObject.openEvent(e, { ...item, id: item.id });
-		} else 
+		close(() => {
+			// Object
+			if (item.isObject) {
+				UtilObject.openEvent(e, { ...item, id: item.id });
+			} else 
 
-		// Settings item
-		if (item.isSettings) {
-			window.setTimeout(() => {
+			// Settings item
+			if (item.isSettings) {
 				popupStore.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
-			}, popupStore.getTimeout());
-		} else 
+			} else 
 
-		// Import action
-		if (item.isImport) {
-			Action.import(item.format, Constant.fileExtension.import[item.format]);
+			// Import action
+			if (item.isImport) {
+				Action.import(item.format, Constant.fileExtension.import[item.format]);
 
-		// Buttons
-		} else {
-			switch (item.id) {
-				case 'add': {
-					keyboard.pageCreate({ name: filter }, 'Search');
-					break;
-				};
+			// Buttons
+			} else {
+				switch (item.id) {
+					case 'add': {
+						keyboard.pageCreate({ name: filter }, 'Search');
+						break;
+					};
 
-				case 'relation': {
-					$('#button-header-relation').trigger('click');
-					window.setTimeout(() => $('#menuBlockRelationView #item-add').trigger('click'), menuStore.getTimeout() * 2);
-					break;
-				};
+					case 'relation': {
+						$('#button-header-relation').trigger('click');
+						window.setTimeout(() => $('#menuBlockRelationView #item-add').trigger('click'), menuStore.getTimeout() * 2);
+						break;
+					};
 
-				case 'graph':
-				case 'navigation': {
-					UtilObject.openEvent(e, { id: rootId, layout: item.layout });
-					break;
+					case 'graph':
+					case 'navigation': {
+						UtilObject.openEvent(e, { id: rootId, layout: item.layout });
+						break;
+					};
 				};
 			};
-		};
+		});
 
 		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
 	};

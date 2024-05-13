@@ -648,12 +648,12 @@ class UtilMenu {
 		};
 
 		const isOwner = UtilSpace.isMyOwner(targetSpaceId);
-		const isAnytypeNetwork = UtilData.isAnytypeNetwork();
+		const isLocalNetwork = UtilData.isLocalNetwork();
 		const { isOnline } = commonStore;
 
 		let options: any[] = [];
 
-		if (isOwner && space.isShared && isAnytypeNetwork && isOnline) {
+		if (isOwner && space.isShared && !isLocalNetwork && isOnline) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
@@ -725,13 +725,13 @@ class UtilMenu {
 		const { isOnline } = commonStore
 		const { containerId, cid, key, onInviteRevoke } = param || {};
 		const isOwner = UtilSpace.isMyOwner();
-		const isAnytypeNetwork = UtilData.isAnytypeNetwork();
+		const isLocalNetwork = UtilData.isLocalNetwork();
 
 		const options: any[] = [
 			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
 		];
 
-		if (isOnline && isOwner && isAnytypeNetwork) {
+		if (isOnline && isOwner && !isLocalNetwork) {
 			options.push({ id: 'revoke', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
