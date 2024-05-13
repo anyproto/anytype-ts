@@ -89,10 +89,6 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	
 	.item.grey:hover { color: var(--color-text-primary); }
 	.item.orange:hover { color: #f09c0e !important; }
-
-	.item:hover {
-		.icon.arrow { background-image: url('~img/arrow/history1.svg'); }
-	}
 }
 .header.mainHistory.snapLeft { right: 336px; }
 
