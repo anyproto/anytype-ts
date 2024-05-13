@@ -15,11 +15,6 @@ interface State {
 	isDeleted: boolean;
 };
 
-enum Operation {
-	Add		 = 0,
-	Change	 = 1,
-};
-
 const LIMIT = 300;
 
 const PageMainHistory = observer(class PageMainHistory extends React.Component<I.PageComponent, State> {
@@ -252,6 +247,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	componentWillUnmount(): void {
 		this.unbind();
 		blockStore.clear(this.getRootId());
+		commonStore.diffSet([]);
 	};
 
 	unbind () {
@@ -442,6 +438,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		C.HistoryDiffVersions(this.getRootId(), commonStore.space, id, prev.id, (message: any) => {
 			this.renderDiff(message.events);
+			commonStore.diffSet(message.events);
 		});
 	};
 	
@@ -503,7 +500,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		});
 
 		elements.forEach(it => {
-			$(it.element).addClass(it.operation == Operation.Add ? 'diffAdd' : 'diffChange');
+			$(it.element).addClass(UtilData.diffClass(it.operation));
 		});
 	};
 
@@ -515,7 +512,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockAdd': {
 				data.blocks.forEach(it => {
 					elements.push({ 
-						operation: Operation.Add, 
+						operation: I.DiffType.Add, 
 						element: `#block-${it.id}`,
 					});
 				});
@@ -540,7 +537,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockSetLink':
 			case 'BlockSetFields': {
 				elements.push({ 
-					operation: Operation.Change, 
+					operation: I.DiffType.Change, 
 					element: `#block-${data.id}`,
 				});
 				break;
@@ -550,11 +547,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				if (data.fields !== null) {
 					elements = elements.concat([
 						{ 
-							operation: Operation.Change, 
+							operation: I.DiffType.Change, 
 							element: `#block-${data.id} #view-selector`,
 						},
 						{ 
-							operation: Operation.Change, 
+							operation: I.DiffType.Change, 
 							element: `#view-item-${data.id}-${data.viewId}`,
 						},
 					]);
@@ -562,21 +559,21 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 				if (data.relations.length) {
 					elements.push({ 
-						operation: Operation.Change, 
+						operation: I.DiffType.Change, 
 						element: `#block-${data.id} #button-dataview-settings`,
 					});
 				};
 
 				if (data.filters.length) {
 					elements.push({ 
-						operation: Operation.Change, 
+						operation: I.DiffType.Change, 
 						element: `#block-${data.id} #button-dataview-filter`,
 					});
 				};
 
 				if (data.sorts.length) {
 					elements.push({ 
-						operation: Operation.Change, 
+						operation: I.DiffType.Change, 
 						element: `#block-${data.id} #button-dataview-sort`,
 					});
 				};
@@ -586,7 +583,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockDataviewRelationDelete':
 			case 'BlockDataviewRelationSet': {
 				elements.push({ 
-					operation: Operation.Change, 
+					operation: I.DiffType.Change, 
 					element: `#block-${data.id} #button-dataview-settings`,
 				});
 				break;
@@ -602,34 +599,34 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				};
 
 				elements.push({ 
-					operation: Operation.Change, 
+					operation: I.DiffType.Change, 
 					element: '#button-header-relation',
 				});
 
 				if (undefined !== data.details.name) {
 					elements.push({ 
-						operation: Operation.Change, 
+						operation: I.DiffType.Change, 
 						element: `#block-${Constant.blockId.title}`,
 					});
 				};
 
 				if (undefined !== data.details.description) {
 					elements.push({ 
-						operation: Operation.Change, 
+						operation: I.DiffType.Change, 
 						element: `#block-${Constant.blockId.description}`,
 					});
 				};
 
 				if ((undefined !== data.details.iconEmoji) || (undefined !== data.details.iconImage)) {
 					elements.push({ 
-						operation: Operation.Change, 
+						operation: I.DiffType.Change, 
 						element: `#block-icon-${data.id}`,
 					});
 				};
 
 				if (undefined !== data.details.featuredRelations) {
 					elements.push({ 
-						operation: Operation.Change, 
+						operation: I.DiffType.Change, 
 						element: `#block-${Constant.blockId.featured}`,
 					});
 				};

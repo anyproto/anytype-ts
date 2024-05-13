@@ -37,6 +37,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const sections = this.getSections();
 		const isLocked = root.isLocked();
 		const readonly = data.readonly || isLocked;
+		const diffKeys = this.getDiffKeys();
+
 
 		let allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		let allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
@@ -70,6 +72,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								canEdit={allowedRelation && !item.isReadonlyRelation}
 								canDrag={allowedBlock}
 								canFav={allowedValue}
+								diffType={diffKeys.includes(item.relationKey) ? I.DiffType.Change : I.DiffType.None}
 								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
@@ -367,6 +370,20 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		});
 
 		position();
+	};
+
+	getDiffKeys (): string[] {
+		const { diff } = commonStore;
+		const types = [ 'ObjectDetailsSet', 'ObjectDetailsAmend' ];
+		const events = diff.filter(it => types.includes(it.type));
+
+		let keys = [];
+
+		events.forEach(it => {
+			keys = keys.concat(Object.keys(it.data.details));
+		});
+
+		return keys;
 	};
 
 });

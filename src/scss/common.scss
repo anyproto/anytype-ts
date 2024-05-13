@@ -115,6 +115,12 @@ search.active { background: orange !important; }
 .dropTarget.targetTop.isOver.top { box-shadow: 0px -2px 0px var(--color-system-accent-100) inset; }
 .dropTarget.targetBot.isOver.bottom { box-shadow: 0px 2px 0px var(--color-system-accent-100) inset; }
 
+/* Diff elements for history */
+.diffAdd, .diffChange { position: relative; }
+.diffAdd::after, .diffChange::after	{ content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border-radius: inherit; opacity: 0.5; }
+.diffAdd::after { background-color: #e5f8d6; }
+.diffChange::after { background-color: #ddf1fc; }
+
 .isSelectionSelected { position: relative; }
 
 .selectionTarget.isSelectionSelected::after, 

@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { C, UtilDate, UtilObject, I, translate, analytics, UtilSpace, keyboard } from 'Lib';
-import { detailStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+import { UtilDate, UtilObject, I, keyboard } from 'Lib';
+import { detailStore } from 'Store';
 
 interface State {
 	version: I.HistoryVersion;

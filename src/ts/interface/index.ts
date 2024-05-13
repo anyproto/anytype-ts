@@ -77,6 +77,7 @@ import { EmbedProcessor, ContentEmbed } from './block/embed';
 import { BlockComponentTable, ContentTableRow } from './block/table';
 import { WidgetLayout, WidgetTreeItem, WidgetTreeDetails, ContentWidget, WidgetComponent } from './block/widget';
 import { NameType, TierType, Membership, MembershipTier, MembershipStatus, PaymentMethod } from './payment';
+import { DiffType, Diff } from './history';
 
 export {
 	Account,
@@ -250,4 +251,7 @@ export {
 	MembershipTier,
 	MembershipStatus,
 	PaymentMethod,
+
+	DiffType,
+	Diff,
 };

@@ -7,12 +7,6 @@
 
 	#footer.snapLeft { right: 336px; }
 
-	.diffAdd, .diffChange { position: relative; }
-	.diffAdd::after, .diffChange::after	{ content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border-radius: inherit; }
-
-	.diffAdd::after { background-color: #e5f8d6; }
-	.diffChange::after { background-color: #ddf1fc; }
-
 	#body {
 		> #sideLeft { padding: 52px 0px 80px 0px; width: calc(100% - 336px); overflow-x: hidden; overflow-y: auto; position: relative; }
 
