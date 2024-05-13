@@ -14,40 +14,42 @@
 	#body {
 		> #sideLeft { padding: 52px 0px 80px 0px; width: calc(100% - 336px); overflow-x: hidden; overflow-y: auto; position: relative; }
 
-		> #sideRight { width: 336px; z-index: 20; position: relative; background: var(--color-shape-tertiary); overflow-x: hidden; overflow-y: auto; }
+		> #sideRight { 
+			width: 336px; z-index: 20; position: relative; background: var(--color-shape-tertiary); overflow-x: hidden; overflow-y: auto; padding: 12px; 
+			display: flex; flex-direction: column; gap: 12px 0px;
+		}
 		> #sideRight {
-			.section { padding: 11px 16px; }
+			.section { background: var(--color-bg-primary); border-radius: 10px; -webkit-app-region: no-drag; padding: 0px 0px 8px 0px; }
 			.section {
-				.date { text-transform: uppercase; @include text-very-small; }
+				.head { display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 16px 4px 16px; color: var(--color-text-secondary); }
+				.head {
+					.name { @include text-overflow-nw; flex-grow: 1; }
+					.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); transition: none; transform: rotateZ(180deg); }
+				}
+
+				.items { display: none; transition: $transitionAllCommon; padding: 0px 4px; }
 			}
-			.section.fix { position: sticky; right: 0px; top: 0px; width: 100%; background: var(--color-shape-tertiary); }
 
-			.wrap { position: relative; }
-
-			.items { padding: 12px; display: flex; flex-direction: column; gap: 12px 0px; }
-			.items {
-				> .item { padding: 12px 16px; transition: $transitionAllCommon; position: relative; background: var(--color-bg-primary); border-radius: 10px; }
+			.section.isExpanded {
+				.head {
+					.icon.arrow { transform: none; }
+				}
 			}
 
 			.item {
-				.author { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
-				.author { 
-					.name { @include text-small; color: var(--color-text-secondary); @include text-overflow-nw; max-width: 100%; }
-				}
-				.date { @include text-overflow-nw; }
+				.info { padding: 8px 12px; display: flex; flex-direction: column; transition: $transitionAllCommon; border-radius: 6px; }
+				.info:hover { background-color: var(--color-shape-highlight-medium); }
 
-				.icon.arrow { 
-					width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); position: absolute; right: 12px; top: 12px;
-					transition: none; transform: rotateZ(180deg);
-				}
-			}
-			.item.expanded {
-				.icon.arrow { transform: none; }
-			}
+				.author { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; @include text-small; color: var(--color-text-secondary); }
 
-			.children { display: none; transition: $transitionAllCommon; }
-			.children {
-				> .item { padding: 8px 0px; }
+				.child { padding: 3px 16px; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
+				.child {
+					.bullet { width: 5px; height: 5px; background: var(--color-control-accent); border-radius: 50%; }
+				}
+				.child:hover, .child.active { background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
+			}
+			.item.active { 
+				.info { background-color: var(--color-shape-highlight-medium);  }
 			}
 		}
 	}

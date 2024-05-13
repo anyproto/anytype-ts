@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Loader, Icon, IconObject, Deleted, ObjectName } from 'Component';
 import { blockStore, detailStore, commonStore } from 'Store';
@@ -19,8 +20,7 @@ enum Operation {
 	Change	 = 1,
 };
 
-const LIMIT = 100;
-const GROUP_OFFSET = 3600;
+const LIMIT = 300;
 
 const PageMainHistory = observer(class PageMainHistory extends React.Component<I.PageComponent, State> {
 
@@ -48,9 +48,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	render () {
-		const { versions, version, isDeleted } = this.state;
+		const { version, isDeleted } = this.state;
 		const rootId = this.getRootId();
-		const groups = this.groupData(versions);
+		const groups = this.groupData();
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (isDeleted) {
@@ -94,41 +94,53 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		};
 
 		const Section = (item: any) => (
-			<React.Fragment>
-				<div className="section">
-					<div className="date">{item.groupId}</div>
+			<div id={`section-${item.hash}`} className="section">
+				<div className="head" onClick={e => this.toggleChildren(e, item.hash)}>
+					<div className="name">{item.id}</div>
+					<Icon className="arrow" />
 				</div>
-				
 				<div className="items">
 					{item.list.map((item: any, i: number) => (
-						<Version key={i} {...item} />
+						<Item key={item.id} {...item} />
 					))}
 				</div>
-			</React.Fragment>
+			</div>
 		);
 
-		const Version = (item: any) => {
+		const Child = (item: any) => (
+			<div 
+				id={`item-${item.id}`} 
+				className="child" 
+				onClick={e => this.loadVersion(item.id)}
+			>
+				<div className="bullet" />
+				<div className="date">{UtilDate.date('g:i A', item.time)}</div>
+			</div>
+		);
+
+		const Item = (item: any) => {
 			const withChildren = item.list && item.list.length;
 			const author = UtilSpace.getParticipant(item.authorId);
 
 			return (
 				<div 
 					id={`item-${item.id}`} 
-					className={[ 'item', (withChildren ? 'withChildren' : '') ].join(' ')} 
-					onClick={e => this.loadVersion(item.id)}
+					className="item" 
 				>
-					{withChildren ? <Icon className="arrow" onClick={e => this.toggleChildren(e, item.id)} /> : ''}
-					<div className="date">{UtilDate.date('d F, H:i', item.time)}</div>
-					{author ? (
-						<div className="author">
-							<IconObject object={author} size={16} />
-							<ObjectName object={author} />
-						</div>
-					) : ''}
+					<div className="info" onClick={e => this.loadVersion(item.id)}>
+						<div className="date">{UtilDate.date('g:i A', item.time)}</div>
+
+						{author ? (
+							<div className="author">
+								<IconObject object={author} size={16} />
+								<ObjectName object={author} />
+							</div>
+						) : ''}
+					</div>
 
 					{withChildren ? (
 						<div id={`children-${item.id}`} className="children">
-							{item.list.map((child: any, i: number) => <Version key={i} {...child} />)}
+							{item.list.map((child: any, i: number) => <Child key={child.id} {...child} />)}
 						</div>
 					) : ''}
 				</div>
@@ -176,11 +188,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					</div>
 
 					<div ref={ref => this.refSideRight = ref} id="sideRight" className="list">
-						<div className="wrap">
-							{groups.map((item: any, i: number) => (
-								<Section key={i} {...item} />
-							))}
-						</div>
+						{groups.map((item: any, i: number) => (
+							<Section key={i} {...item} />
+						))}
 					</div>
 				</div>
 
@@ -203,20 +213,15 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		this.resize();
 		this.rebind();
-
-		if (version) {
-			this.show(version.id);
-		};
+		this.show();
 
 		sideLeft.scrollTop(this.scrollLeft);
 		sideRight.scrollTop(this.scrollRight);
-
 		sideLeft.off('scroll').on('scroll', () => this.onScrollLeft());
-		sideRight.off('scroll').on('scroll', () => this.onScrollRight());
 
 		blockStore.updateNumbers(rootId);
 
-		if (this.refHeader) {
+		if (this.refHeader && version) {
 			this.refHeader.refChild.setVersion(version);
 		};
 	};
@@ -273,105 +278,53 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		container.trigger('scroll');
 	};
 
-	onScrollRight () {
-		const { isPopup } = this.props;
-		const { versions } = this.state;
-		const container = UtilCommon.getPageContainer(isPopup);
-		const sideRight = $(this.refSideRight);
-		const wrap = sideRight.find('.wrap');
-		const sections = wrap.find('.section');
-		const { wh } = UtilCommon.getWindowDimensions();
-
-		let offset = { top: 0, left: 0 };
-
-		if (isPopup && container.length) {
-			offset = container.offset();
-		};
-
-		this.scrollRight = sideRight.scrollTop();
-
-		if (this.scrollRight >= wrap.height() - wh) {
-			this.loadList(versions[versions.length - 1].id);
-		};
-
-		sections.each((i: number, item: any) => {
-			item = $(item);
-
-			const top = item.offset().top - offset.top;
-			
-			let clone = sideRight.find('.section.fix.c' + i);
-			if (top < 0) {
-				if (!clone.length) {
-					clone = item.clone();
-					sideRight.prepend(clone);
-					clone.addClass('fix c' + i).css({ zIndex: i + 1 });
-				};
-			} else {
-				clone.remove();
-			};
-		});
-	};
-
-	show (id: string) {
-		if (!id) {
-			return;
-		};
-
-		const { versions } = this.state;
-		const groups = this.groupData(this.state.versions);
-		const version = versions.find(it => it.id == id);
-
+	show () {
+		const { version } = this.state;
 		if (!version) {
 			return;
 		};
 
-		const month = groups.find(it => it.groupId == this.getMonthId(version.time));
-		if (!month) {
-			return;
-		};
-
-		const group = month.list.find(it => it.groupId == version.groupId);
 		const sideRight = $(this.refSideRight);
+		const groupId = this.getGroupId(version.time);
+		const hash = sha1(groupId);
 		const item = sideRight.find(`#item-${version.id}`);
+		const section = sideRight.find(`#section-${hash}`);
+
+		section.addClass('isExpanded');
+		section.find('.items').show();
 
 		sideRight.find('.active').removeClass('active');
 		item.addClass('active');
-
-		if (group) {
-			const groupItem = sideRight.find('#item-' + group.id);
-			const children = sideRight.find('#children-' + group.id);
-
-			groupItem.addClass('expanded');
-			children.show();
-		};
 	};
 
 	toggleChildren (e: any, id: string) {
 		e.stopPropagation();
 
 		const sideRight = $(this.refSideRight);
-		const item = sideRight.find(`#item-${id}`);
-		const children = sideRight.find(`#children-${id}`);
-		const isActive = item.hasClass('expanded');
+		const section = sideRight.find(`#section-${id}`);
+		const items = section.find('.items');
+		const isActive = section.hasClass('isExpanded');
 
 		let height = 0;
 		if (isActive) {
-			item.removeClass('expanded');
-			children.css({ overflow: 'visible', height: 'auto' });
-			height = children.height();
-			children.css({ overflow: 'hidden', height: height });
+			section.removeClass('isExpanded');
 
-			window.setTimeout(() => { children.css({ height: 0 }); }, 15);
-			window.setTimeout(() => children.hide(), 215);
+			items.css({ overflow: 'visible', height: 'auto' });
+			height = items.height();
+			items.css({ overflow: 'hidden', height: height });
+
+			window.setTimeout(() => items.css({ height: 0 }), 15);
+			window.setTimeout(() => items.hide(), 215);
 		} else {
-			item.addClass('expanded');
-			children.show();
-			children.css({ overflow: 'visible', height: 'auto' });
-			height = children.height();
+			section.addClass('isExpanded');
 
-			children.css({ overflow: 'hidden', height: 0 });
-			window.setTimeout(() => { children.css({ height: height }); }, 15);
-			window.setTimeout(() => { children.css({ overflow: 'visible', height: 'auto' }); }, 215);
+			items.show();
+			items.css({ overflow: 'visible', height: 'auto' });
+			height = items.height();
+
+			items.css({ overflow: 'hidden', height: 0 });
+			window.setTimeout(() => items.css({ height: height }), 15);
+			window.setTimeout(() => items.css({ overflow: 'visible', height: 'auto' }), 215);
 		};
 	};
 	
@@ -438,57 +391,49 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		});
 	};
 	
-	groupData (versions: I.HistoryVersion[]) {
-		const months: any[] = [];
+	groupData () {
+		const { versions } = this.state;
 		const groups: any[] = [];
+		const groupByAuthor = [];
 
-		let groupId = 0;
-		for (let i = 0; i < versions.length; ++i) {
-			const version = versions[i];
+		let id = '';
+
+		for (let i = 0; i < versions.length; i++) {
+			const version = versions[i] as any;
 			const prev = versions[i - 1];
+			const cid = this.getGroupId(version.time);
 
-			if (prev && ((prev.authorId != version.authorId) || (prev.time - version.time > GROUP_OFFSET) || (prev.time - version.time < 0))) {
-				groupId++;
+			let add = true;
+
+			if (prev) {
+				const pid = this.getGroupId(prev.time);
+
+				if ((cid == pid) && (version.authorId == prev.authorId)) {
+					const item = groupByAuthor.find(it => it.id == id);
+					if (item) {
+						item.list = (item.list || []).concat(version);
+						add = false;
+					};
+				};
 			};
 
-			let group = groups.find(it => it.groupId == groupId);
-			if (!group) {
-				group = { ...version, groupId, list: [] };
-				groups.push(group);
-			} else {
-				version.groupId = groupId;
+			if (add) {
+				groupByAuthor.push({ ...version, list: [] });
+				id = version.id;
+			};
+		};
+
+		for (const version of groupByAuthor) {
+			const id = this.getGroupId(version.time);
+			const group = groups.find(it => it.id == id);
+
+			if (group) {
 				group.list.push(version);
+			} else {
+				groups.push({ id, list: [ version ], time: version.time, hash: sha1(id) });
 			};
 		};
-
-		for (const group of groups) {
-			if ((group.list.length == 1) && (group.time == group.list[0].time)) {
-				group.list = [];
-			};
-
-			const groupId = this.getMonthId(group.time);
-
-			let month = months.find(it => it.groupId == groupId);
-			if (!month) {
-				month = { groupId: groupId, list: [] };
-				months.push(month);
-			};
-
-			month.list.push(group);
-		};
-
-		return months;
-	};
-
-	ungroupData (groups: any[]): I.HistoryVersion[] {
-		let ret: I.HistoryVersion[] = [] as I.HistoryVersion[];
-		for (const month of groups) {
-			for (const group of month.list) {
-				ret.push(group);
-				ret = ret.concat(group.list);
-			};
-		};
-		return ret;
+		return groups;
 	};
 
 	renderDiff (diff: any[]) {
@@ -510,8 +455,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	getElements (event: any) {
 		const { type, data } = event;
-
-		console.log(type, data);
 
 		let elements = [];
 		switch (type) {
@@ -665,9 +608,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		};
 
 		if (isPopup) {
-			const page = $('.pageMainHistory.isPopup');
-
-			page.css({ height });
+			$('.pageMainHistory.isPopup').css({ height });
 			cssl.paddingTop = hh;
 		};
 
@@ -708,8 +649,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		return Math.max(300, width);
 	};
 
-	getMonthId (time: number) {
-		return UtilDate.date('F Y', time);
+	getGroupId (time: number) {
+		return UtilDate.date('M d, Y', time);
 	};
 
 	getRootId () {
