@@ -446,9 +446,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 	
 	groupData () {
-		const { versions } = this.state;
 		const groups: any[] = [];
 		const groupByAuthor = [];
+		const versions = this.state.versions || [];
 
 		let id = '';
 
