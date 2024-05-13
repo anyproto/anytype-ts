@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
-import { Header, Footer, Block, Loader, Icon, IconObject, Deleted, ObjectName } from 'Component';
+import { Header, Footer, Block, Loader, Icon, IconObject, Deleted, ObjectName, Button } from 'Component';
 import { blockStore, detailStore, commonStore } from 'Store';
 import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate, UtilSpace, translate, analytics } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
@@ -71,6 +71,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const isHuman = root?.isObjectHuman();
 		const isParticipant = root?.isObjectParticipant();
 		const year = UtilDate.date('Y', UtilDate.now());
+		const canWrite = UtilSpace.canMyParticipantWrite();
+		const showButtons = this.showButtons();
 
 		let head = null;
 		let children = blockStore.getChildren(rootId, rootId);
@@ -211,15 +213,24 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 							<Icon className="close" onClick={this.onClose} />
 						</div>
 
-						<div className="section" onClick={this.onCurrent}>
-							<div className="head">
-								<div className="name">{translate('headerHistoryCurrent')}</div>
+						<div className="scroll">
+							<div className="section" onClick={this.onCurrent}>
+								<div className="head">
+									<div className="name">{translate('pageMainHistoryCurrent')}</div>
+								</div>
 							</div>
+
+							{groups.map((item: any, i: number) => (
+								<Section key={i} {...item} />
+							))}
 						</div>
 
-						{groups.map((item: any, i: number) => (
-							<Section key={i} {...item} />
-						))}
+						{showButtons ? (
+							<div className="bottom">
+								<Button text={translate('commonCancel')} onClick={this.onClose} />
+								<Button text={translate('pageMainHistoryRestore')} className={!canWrite ? 'disabled' : ''} onClick={this.onRestore} />
+							</div>
+						) : ''}
 					</div>
 				</div>
 
@@ -325,6 +336,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	onRestore (e: any) {
 		e.persist();
+
+		const canWrite = UtilSpace.canMyParticipantWrite();
+		if (!canWrite) {
+			return;
+		};
 
 		const { version } = this.state;
 		const rootId = this.getRootId();
@@ -726,6 +742,16 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		return root?.isObjectSet() || root?.isObjectCollection();
+	};
+
+	showButtons (): boolean {
+		const { version, versions } = this.state;
+
+		if (!version || !versions.length) {
+			return false;
+		};
+
+		return version.id != versions[0].id;
 	};
 
 });

@@ -299,8 +299,6 @@
 
 	"spellcheckAdd": "Add to dictionary",
 
-	"headerHistoryCurrent": "Current version",
-	"headerHistoryRestore": "Restore version",
 	"headerTooltipPath": "Click to search",
 
 	"headerGraphTooltipSearch": "Search",
@@ -425,6 +423,9 @@
 
 	"pageMainMembershipTitle": "Retrieving membership",
 	"pageMainMembershipError": "Something went wrong",
+
+	"pageMainHistoryCurrent": "Current version",
+	"pageMainHistoryRestore": "Restore",
 
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 
