@@ -627,7 +627,8 @@ export const Mapper = {
 			return {
 				highlight: obj.getHighlight(),
 				blockId: obj.getBlockid(),
-				relationKey: obj.getRelationkey()
+				relationKey: obj.getRelationkey(),
+				relationDetails: Decode.struct(obj.getRelationdetails())
 			};
 		},
 

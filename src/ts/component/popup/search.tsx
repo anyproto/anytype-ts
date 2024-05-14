@@ -77,20 +77,20 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			if (item.isObject) {
 				const { metaList } = item;
 				const meta = metaList[0] || {};
+				const { relationDetails } = meta;
 
-				let right = null;
 				let context = null;
+				let relation = null;
+				let advanced = null;
 
 				if (item.backlinks && item.backlinks.length) {
-					right = (
-						<div className="side right">
-							<Icon
-								className="advanced"
-								tooltip={translate('popupSearchTooltipSearchByBacklinks')}
-								tooltipY={I.MenuDirection.Top}
-								onClick={(e) => this.onSearchByBacklinks(e, item)}
-							/>
-						</div>
+					advanced = (
+						<Icon
+							className="advanced"
+							tooltip={translate('popupSearchTooltipSearchByBacklinks')}
+							tooltipY={I.MenuDirection.Top}
+							onClick={(e) => this.onSearchByBacklinks(e, item)}
+						/>
 					);
 				};
 
@@ -98,15 +98,35 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					context = <div className="context" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(meta.highlight) }} />;
 				};
 
+				if (meta.relationKey && relationDetails.name) {
+					const { relationOptionColor } = relationDetails;
+					const color = relationOptionColor ? `textColor-${relationOptionColor}` : ''
+					const cn = [ 'value' ];
+
+					if (color) {
+						cn.push(`textColor-${relationOptionColor}`);
+						cn.push(`bgColor-${relationOptionColor}`);
+					};
+
+					relation = (
+						<div className="relation">
+							<div className="key">{meta.relationKey}:</div>
+							<div className={cn.join(' ')}>{relationDetails.name}</div>
+						</div>
+					);
+				};
+
 				content = (
 					<div className="sides">
 						<div className="side left">
 							<ObjectName object={item} />
 							{context}
+							{relation}
 							<div className="caption">{item.caption}</div>
 						</div>
-
-						{right}
+						<div className="side right">
+							{advanced}
+						</div>
 					</div>
 				);
 			} else {
@@ -432,11 +452,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	load (clear: boolean, callBack?: (value: any) => void) {
+		const { space } = commonStore;
 		const filter = this.getFilter();
 		const templateType = dbStore.getTemplateType();
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space }
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },

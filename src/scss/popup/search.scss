@@ -37,10 +37,7 @@
 
 			.sectionName { @include text-small; display: flex; justify-content: space-between; height: 26px; line-height: 18px; padding: 5px 20px; font-weight: 500; color: var(--color-text-secondary); }
 
-			.item { 
-				position: relative; line-height: 22px; padding: 8px 8px 8px 12px; white-space: nowrap; display: flex; gap: 0px 12px;
-				align-items: center; border-radius: 8px;
-			}
+			.item { position: relative; line-height: 22px; padding: 8px 8px 8px 12px; white-space: nowrap; display: flex; gap: 0px 12px; border-radius: 8px; }
 			.item#item-add,
 			.item#item-relation { height: 48px; }
 
@@ -50,7 +47,7 @@
 				.icon.relation { background-image: url('~img/icon/menu/action/relation0.svg'); }
 				.icon.graph { background-image: url('~img/icon/menu/action/graph0.svg'); }
 				.icon.navigation { background-image: url('~img/icon/menu/action/navigation0.svg'); }
-				.icon.advanced { width: 28px; height: 28px; background: url('~img/arrow/forward.svg'); display: none; }
+				.icon.advanced { width: 28px; height: 28px; background: url('~img/arrow/forward.svg'); opacity: 0; }
 
 				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
 				.iconObject:not(.isHuman),
@@ -58,8 +55,8 @@
 
 				.sides { width: 100%; display: flex; justify-content: space-between; gap: 0px 12px; }
 				.sides {
-					.side.left { display: inline-block; vertical-align: top; width: 100%; }
-					.side.right { display: flex; justify-content: right; align-items: center; }
+					.side.left { width: calc(100% - 40px); overflow: hidden; }
+					.side.right { min-width: 40px; flex-shrink: 0; display: flex; justify-content: right; }
 					.side.right {
 						.label {
 							padding: 0px 2px; border-radius: 4px; background: var(--color-shape-highlight-medium); display: inline-block; vertical-align: middle; min-width: 18px;
@@ -69,13 +66,21 @@
 					}
 				}
 				.name { @include text-overflow-nw; }
-				.context { @include text-small; padding: 2px 0px; white-space: normal; }
+				.context,
+				.relation { @include text-small; padding: 2px 0px; white-space: normal; }
+
+				.relation { display: flex; gap: 0 4px; }
+				.relation {
+					.key { text-transform: capitalize; }
+					.value { padding: 0 3px; border-radius: 2px; }
+				}
+
 				.caption { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
 			}
 
 			.item.active { background-color: var(--color-shape-highlight-medium); }
 			.item.active {
-				.icon.advanced { display: block; }
+				.icon.advanced { opacity: 1; }
 			}
 		}
 	}
