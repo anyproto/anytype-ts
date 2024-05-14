@@ -103,7 +103,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 		this.timeout = window.setTimeout(() => {
 			C.MembershipIsNameValid(tier, name, (message: any) => {
 				if (message.error.code) {
-					this.setState({ status: 'error', statusText: message.error.description });
+					this.setState({ status: I.InterfaceStatus.Error, statusText: message.error.description });
 					return;
 				};
 
@@ -119,10 +119,10 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 					};
 
 					if (error) {
-						this.setState({ status: 'error', statusText: error });
+						this.setState({ status: I.InterfaceStatus.Error, statusText: error });
 					} else {
 						this.refButton.setDisabled(false);
-						this.setState({ status: 'ok', statusText: translate('popupMembershipStatusNameAvailable') });
+						this.setState({ status: I.InterfaceStatus.Ok, statusText: translate('popupMembershipStatusNameAvailable') });
 					};
 				});
 			});
@@ -137,14 +137,14 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 
 		C.MembershipFinalize(name, (message) => {
 			if (message.error.code) {
-				this.setState({ status: 'error', statusText: message.error.description });
+				this.setState({ status: I.InterfaceStatus.Error, statusText: message.error.description });
 				return;
 			};
 
 			UtilData.getMembershipTiers(true);
 			UtilData.getMembershipStatus((membership) => {
 				if (!membership || membership.isNone) {
-					this.setState({ status: 'error', statusText: translate('pageMainMembershipError') });
+					this.setState({ status: I.InterfaceStatus.Error, statusText: translate('pageMainMembershipError') });
 					return;
 				};
 				popupStore.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
