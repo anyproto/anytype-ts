@@ -174,7 +174,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		refButton.setLoading(true);
 
 		this.checkName(name, () => {
-			C.MembershipGetPaymentUrl(tier, method, name, (message) => {
+			C.MembershipRegisterPaymentRequest(tier, method, name, (message) => {
 				refButton.setLoading(false);
 
 				if (message.error.code) {

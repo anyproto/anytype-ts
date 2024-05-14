@@ -1919,15 +1919,15 @@ export const MembershipIsNameValid = (tier: I.TierType, name: string, callBack?:
 	dispatcher.request(MembershipIsNameValid.name, request, callBack);
 };
 
-export const MembershipGetPaymentUrl = (tier: I.TierType, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.GetPaymentUrl.Request();
+export const MembershipRegisterPaymentRequest = (tier: I.TierType, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.RegisterPaymentRequest.Request();
 
 	request.setRequestedtier(tier as number);
 	request.setPaymentmethod(method as number);
 	request.setNsname(name);
 	request.setNsnametype(I.NameType.Any as number);
 
-	dispatcher.request(MembershipGetPaymentUrl.name, request, callBack);
+	dispatcher.request(MembershipRegisterPaymentRequest.name, request, callBack);
 };
 
 export const MembershipGetPortalLinkUrl = (callBack?: (message: any) => void) => {

@@ -480,7 +480,7 @@ export const MembershipGetTiers = (response: Rpc.Membership.GetTiers.Response) =
 	};
 };
 
-export const MembershipGetPaymentUrl = (response: Rpc.Membership.GetPaymentUrl.Response) => {
+export const MembershipRegisterPaymentRequest = (response: Rpc.Membership.RegisterPaymentRequest.Response) => {
 	return {
 		url: response.getPaymenturl(),
 	};
