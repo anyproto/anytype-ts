@@ -178,10 +178,10 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				} else {
 					this.disableButtons(false);
 					this.setOk(translate('popupMembershipStatusNameAvailable'));
-				};
 
-				if (callBack) {
-					callBack();
+					if (callBack) {
+						callBack();
+					};
 				};
 			});
 		});
@@ -198,7 +198,9 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				return;
 			};
 
-			callBack();
+			if (callBack) {
+				callBack();
+			};
 		});
 	};
 

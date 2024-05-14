@@ -103,7 +103,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 		this.timeout = window.setTimeout(() => {
 			C.MembershipIsNameValid(tier, name, (message: any) => {
 				if (message.error.code) {
-					this.setState({ status: I.InterfaceStatus.Error, statusText: message.error.description });
+					this.setError(message.error.description);
 					return;
 				};
 
@@ -119,10 +119,10 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 					};
 
 					if (error) {
-						this.setState({ status: I.InterfaceStatus.Error, statusText: error });
+						this.setError(error);
 					} else {
 						this.refButton.setDisabled(false);
-						this.setState({ status: I.InterfaceStatus.Ok, statusText: translate('popupMembershipStatusNameAvailable') });
+						this.setOk(translate('popupMembershipStatusNameAvailable'));
 					};
 				});
 			});
@@ -137,16 +137,17 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 
 		C.MembershipFinalize(name, (message) => {
 			if (message.error.code) {
-				this.setState({ status: I.InterfaceStatus.Error, statusText: message.error.description });
+				this.setError(message.error.description);
 				return;
 			};
 
 			UtilData.getMembershipTiers(true);
 			UtilData.getMembershipStatus((membership) => {
 				if (!membership || membership.isNone) {
-					this.setState({ status: I.InterfaceStatus.Error, statusText: translate('pageMainMembershipError') });
+					this.setError(translate('pageMainMembershipError'));
 					return;
 				};
+
 				popupStore.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
 			});
 		});
@@ -154,6 +155,14 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 
 	getName () {
 		return String(authStore.membership?.name || '');
+	};
+
+	setOk (t: string) {
+		this.setState({ status: I.InterfaceStatus.Ok, statusText: t });
+	};
+
+	setError (t: string) {
+		this.setState({ status: I.InterfaceStatus.Error, statusText: t });
 	};
 
 });
