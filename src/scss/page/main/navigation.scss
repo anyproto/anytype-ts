@@ -18,7 +18,7 @@
 		.item {
 			.inner { padding: 16px; display: flex; align-items: center; gap: 0px 16px; height: 100%; }
 
-			.iconObject { flex-shrink: 0; background: var(--color-shape-tertiary); border-radius: 10px; }
+			.iconObject { flex-shrink: 0; background: var(--color-shape-primary); border-radius: 10px; }
 			.iconObject.isTask { background: none; }
 
 			.info { border: 0px; flex-grow: 1; width: calc(100% - 64px); }
