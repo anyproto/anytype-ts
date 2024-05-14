@@ -243,13 +243,20 @@ const Column = observer(class Column extends React.Component<Props> {
 
 		const { rootId, block, id, getView } = this.props;
 		const node = $(this.node);
-
-		node.addClass('active');
+		const element = `#button-${id}-more`;
 
 		menuStore.open('dataviewGroupEdit', {
-			element: `#column-${id}-head`,
+			element,
 			horizontal: I.MenuDirection.Center,
-			onClose: () => node.removeClass('active'),
+			offsetY: 4,
+			onOpen: () => {
+				$(element).addClass('active');
+				node.addClass('active');
+			},
+			onClose: () => {
+				$(element).removeClass('active');
+				node.removeClass('active');
+			},
 			data: {
 				rootId,
 				blockId: block.id,
