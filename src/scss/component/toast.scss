@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .toast {
     position: fixed; left: 0px; top: 0px; border-radius: 8px; background: var(--color-control-accent); padding: 11px 16px; text-transform: none;

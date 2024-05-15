@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .cell.c-shortText, .cell.c-url, .cell.c-email, .cell.c-phone {
 	.name { @include text-overflow-nw; display: inline-block; vertical-align: top; width: 100%; }

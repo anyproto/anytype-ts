@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Button, Cell, Error } from 'Component';
-import { I, M, C, UtilCommon, Relation, UtilData } from 'Lib';
-import { dbStore, commonStore, popupStore } from 'Store';
+import { Label, Button, Cell, Error, Icon } from 'Component';
+import { I, M, C, UtilCommon, Relation, UtilData, translate } from 'Lib';
+import { dbStore, commonStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ID_PREFIX = 'popupRelation';
@@ -25,6 +25,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		this.save = this.save.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 	};
 
 	render () {
@@ -34,6 +35,11 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const { error } = this.state;
 		const objects = this.getObjects();
 		const relations = this.getRelations();
+		const length = objects.length;
+
+		if (this.details.name == translate('defaultNamePage')) {
+			delete this.details.name;
+		};
 
 		const Item = (item: any) => {
 			const id = Relation.cellId(ID_PREFIX, item.relationKey, subId);
@@ -76,16 +82,22 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 		return (
 			<div>
-				<Title text="Relation batch editing" />
-				<Label text={UtilCommon.sprintf(`You are editing %d objects`, objects.length)} />
+				<Label text={UtilCommon.sprintf(translate(`popupRelationTitle`), length, UtilCommon.plural(length, translate('pluralLCObject')))} />
 
 				<div className="blocks">
 					{relations.map(item => <Item key={item.relationKey} {...item} />)}
 				</div>
 
+				<div className="line" />
+
+				<div id="item-add" className="item add" onClick={this.onAdd}>
+					<Icon className="plus" />
+					{translate('commonAddRelation')}
+				</div>
+
 				<div className="buttons">
-					<Button text="Save" className="c36" onClick={this.save} />
-					<Button text="Cancel" className="c36" color="blank" onClick={() => close()} />
+					<Button text="Save" className="c28" onClick={this.save} />
+					<Button text="Cancel" className="c28" color="blank" onClick={() => close()} />
 				</div>
 
 				<Error text={error} />
@@ -105,6 +117,8 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const { data } = param;
 		const { objectIds } = data;
 		const relationKeys = this.getRelationKeys();
+
+		console.log(objectIds, relationKeys);
 
 		UtilData.subscribeIds ({
 			subId: ID_PREFIX,
@@ -170,6 +184,27 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 	onCellClick (e: any, id: string) {
 		this.cellRefs.get(id).onClick(e);
+	};
+
+	onAdd () {
+		const { getId } = this.props;
+		const element = `#${getId()} #item-add`;
+
+		menuStore.open('relationSuggest', { 
+			element,
+			offsetX: Constant.size.blockMenu,
+			horizontal: I.MenuDirection.Right,
+			vertical: I.MenuDirection.Center,
+			onOpen: () => $(element).addClass('active'),
+			onClose: () => $(element).removeClass('active'),
+			data: {
+				skipKeys: this.getRelationKeys(),
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					this.details[relation.relationKey] = Relation.formatValue(relation, null, true);
+					this.props.param.data.relationKeys = this.getRelationKeys().concat([ relation.relationKey ]);
+				},
+			}
+		});
 	};
 
 	save () {

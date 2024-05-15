@@ -529,7 +529,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.className = 'single';
 
 				const isCollection = Dataview.isCollection(rootId, blockId);
-				const name = translate(isCollection ? 'commonLCCollection' : 'commonLCSet');
+				const name = translate(isCollection ? 'commonCollection' : 'commonSet');
 
 				const addParam: any = {
 					name: UtilCommon.sprintf(translate('menuBlockActionsCreateNew'), name),
