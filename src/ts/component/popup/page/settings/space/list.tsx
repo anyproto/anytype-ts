@@ -100,7 +100,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	};
 
 	onClick (space: any) {
-		if (!space.isAccountJoining && !space.isAccountRemoving) {
+		if (space.isAccountActive) {
 			UtilRouter.switchSpace(space.targetSpaceId);
 		};
 	};
