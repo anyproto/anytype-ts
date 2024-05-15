@@ -25,8 +25,6 @@ import (
 	"strings"
 	"time"
 	"unsafe"
-
-	"github.com/hashicorp/go-multierror"
 )
 
 // UTILITY FUNCTIONS
@@ -253,7 +251,7 @@ func getOpenPorts() (map[string][]string, error) {
 	totalPids := len(ports)
 	for pid, pidports := range ports {
 		var gatewayPort, grpcWebPort string
-		var merr multierror.Error
+		var errs []error
 		for _, port := range pidports {
 			var (
 				errDetectGateway, errDetectGrpcWeb error
@@ -264,14 +262,14 @@ func getOpenPorts() (map[string][]string, error) {
 			} else if v, errDetectGrpcWeb = isGrpcWebServer(port); v {
 				grpcWebPort = port
 			} else {
-				merr.Errors = append(merr.Errors, fmt.Errorf("pid %s; port: %s: gateway: %v; grpcweb: %v", pid, port, errDetectGateway, errDetectGrpcWeb))
+				errs = append(errs, fmt.Errorf("port: %s; gateway: %v; grpcweb: %v", port, errDetectGateway, errDetectGrpcWeb))
 			}
 
 		}
 		if gatewayPort != "" && grpcWebPort != "" {
 			ports[pid] = []string{grpcWebPort, gatewayPort}
 		} else {
-			Trace.Printf("can't detect ports. grpc: '%s'; gateway: '%s'; error: %v;", grpcWebPort, gatewayPort, merr.ErrorOrNil())
+			Trace.Printf("can't detect ports. pid: %s; grpc: '%s'; gateway: '%s'; error: %v;", pid, grpcWebPort, gatewayPort, errs)
 			delete(ports, pid)
 		}
 	}
