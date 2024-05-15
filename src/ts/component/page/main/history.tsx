@@ -681,8 +681,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			};
 
 			case 'ObjectDetailsSet': 
-			case 'ObjectDetailsAmend':
-			case 'ObjectDetailsUnset': {
+			case 'ObjectDetailsAmend': {
 				const rootId = this.getRootId();
 
 				if (data.id != rootId) {
