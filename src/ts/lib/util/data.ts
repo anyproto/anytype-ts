@@ -135,6 +135,7 @@ class UtilData {
 		switch (t) {
 			case I.DiffType.Add: c = 'diffAdd'; break;
 			case I.DiffType.Change: c = 'diffChange'; break;
+			case I.DiffType.Remove: c = 'diffRemove'; break;
 		};
 		return c;
 	};

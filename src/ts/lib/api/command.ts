@@ -1161,10 +1161,6 @@ export const HistoryShowVersion = (objectId: string, versionId: string, callBack
 	request.setVersionid(versionId);
 
 	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
-		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, '', message.objectView);
-		};
-
 		if (callBack) {
 			callBack(message);
 		};

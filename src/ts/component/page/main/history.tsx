@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Header, Footer, Block, Loader, Icon, IconObject, Deleted, ObjectName, Button } from 'Component';
 import { blockStore, detailStore, commonStore } from 'Store';
-import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate, UtilSpace, translate, analytics } from 'Lib';
+import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate, UtilSpace, translate, analytics, dispatcher } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 import Constant from 'json/constant.json';
 
@@ -443,6 +443,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				return;
 			};
 
+			if (!message.error.code) {
+				dispatcher.onObjectView(rootId, '', message.objectView);
+			};
+
 			this.setState({ version: message.version }, () => {
 				this.loadDiff(id);
 			});
@@ -450,24 +454,38 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	loadDiff (id: string) {
+		const rootId = this.getRootId();
+		const previousId = this.getPreviousVersionId(id);
+
+		C.HistoryDiffVersions(rootId, commonStore.space, id, previousId, (message: any) => {
+			const { events } = message;
+
+			C.HistoryShowVersion(rootId, previousId, (message: any) => {
+				if (!message.error.code) {
+					dispatcher.onObjectView(rootId, previousId, message.objectView);
+				};
+
+				this.renderDiff(previousId, events);
+				commonStore.diffSet(events);
+			});
+		});
+	};
+
+	getPreviousVersionId (id: string): string {
 		const { versions } = this.state;
 
 		if (!versions.length) {
-			return;
+			return '';
 		};
 
 		const idx = versions.findIndex(it => it.id == id);
 
 		if (idx >= (versions.length - 1)) {
-			return;
+			return '';
 		};
 
 		const prev = versions[idx + 1];
-
-		C.HistoryDiffVersions(this.getRootId(), commonStore.space, id, prev.id, (message: any) => {
-			this.renderDiff(message.events);
-			commonStore.diffSet(message.events);
-		});
+		return prev ? prev.id : '';
 	};
 	
 	groupData () {
@@ -515,7 +533,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		return groups;
 	};
 
-	renderDiff (diff: any[]) {
+	renderDiff (previousId: string, diff: any[]) {
 		const node = $(this.node);
 
 		node.find('.diffAdd').removeClass('diffAdd');
@@ -524,7 +542,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		let elements = [];
 
 		diff.forEach(it => {
-			elements = elements.concat(this.getElements(it));
+			elements = elements.concat(this.getElements(previousId, it));
 		});
 
 		elements.forEach(it => {
@@ -532,8 +550,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		});
 	};
 
-	getElements (event: any) {
+	getElements (previousId: string, event: any) {
 		const { type, data } = event;
+		const rootId = this.getRootId();
 
 		let elements = [];
 		switch (type) {
@@ -544,6 +563,34 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						element: `#block-${it.id}`,
 					});
 				});
+				break;
+			};
+
+			case 'BlockSetChildrenIds': {
+				const oldContextId = [ rootId, previousId ].join('-');
+				const newChildrenIds = data.childrenIds;
+				const nl = newChildrenIds.length;
+				const oldChildrenIds = blockStore.getChildrenIds(oldContextId, data.id);
+				const ol = oldChildrenIds.length;
+
+				// Remove
+				if (nl < ol) {
+					const removed = oldChildrenIds.filter(item => !newChildrenIds.includes(item));
+					if (removed.length) {
+						removed.forEach(it => {
+							const idx = oldChildrenIds.indexOf(it);
+							const afterId = newChildrenIds[idx - 1];
+
+							if (afterId) {
+								elements.push({ 
+									operation: I.DiffType.Remove, 
+									element: `#block-${afterId} .wrapContent`,
+								});
+							};
+						});
+					};
+				};
+
 				break;
 			};
 
