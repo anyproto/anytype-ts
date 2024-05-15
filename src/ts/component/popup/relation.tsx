@@ -37,10 +37,6 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const relations = this.getRelations();
 		const length = objects.length;
 
-		if (this.details.name == translate('defaultNamePage')) {
-			delete this.details.name;
-		};
-
 		const Item = (item: any) => {
 			const id = Relation.cellId(ID_PREFIX, item.relationKey, subId);
 			const cn = [ 'block', 'blockRelation' ];
@@ -112,13 +108,15 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		});
 	};
 
+	componentWillUnmount(): void {
+		menuStore.closeAll(Constant.menuIds.cell);	
+	};
+
 	load (callBack: () => void) {
 		const { param } = this.props;
 		const { data } = param;
 		const { objectIds } = data;
 		const relationKeys = this.getRelationKeys();
-
-		console.log(objectIds, relationKeys);
 
 		UtilData.subscribeIds ({
 			subId: ID_PREFIX,
@@ -167,7 +165,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		let ret = this.getRelationKeys().map(relationKey => dbStore.getRelationByKey(relationKey));
 
 		ret = ret.filter(it => {
-			return (config.debug.hiddenObject ? true : !it.isHidden) && !it.isReadonlyValue || (it.relationKey == 'name');
+			return (config.debug.hiddenObject ? true : !it.isHidden) && !it.isReadonlyValue;
 		});
 		ret = ret.sort(UtilData.sortByName);
 		return ret;
