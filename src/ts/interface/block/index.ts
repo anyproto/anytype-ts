@@ -106,6 +106,7 @@ export interface Block {
 	content: any;
 	childrenIds?: string[];
 	
+	getText?(): string;
 	getLength?(): number;
 	getTargetObjectId?(): string;
 	isSystem?(): boolean;

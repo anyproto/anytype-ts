@@ -536,8 +536,15 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	renderDiff (previousId: string, diff: any[]) {
 		const node = $(this.node);
 
-		node.find('.diffAdd').removeClass('diffAdd');
-		node.find('.diffChange').removeClass('diffChange');
+		// Remove all diff classes
+		for (const i in I.DiffType) {
+			if (isNaN(Number(i))) {
+				continue;
+			};
+
+			const c = `diff${I.DiffType[i]}`;
+			node.find(`.${c}`).removeClass(c);
+		};
 
 		let elements = [];
 
@@ -553,6 +560,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	getElements (previousId: string, event: any) {
 		const { type, data } = event;
 		const rootId = this.getRootId();
+		const oldContextId = [ rootId, previousId ].join('-');
 
 		let elements = [];
 		switch (type) {
@@ -567,29 +575,38 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			};
 
 			case 'BlockSetChildrenIds': {
-				const oldContextId = [ rootId, previousId ].join('-');
 				const newChildrenIds = data.childrenIds;
 				const nl = newChildrenIds.length;
 				const oldChildrenIds = blockStore.getChildrenIds(oldContextId, data.id);
 				const ol = oldChildrenIds.length;
 
-				// Remove
-				if (nl < ol) {
-					const removed = oldChildrenIds.filter(item => !newChildrenIds.includes(item));
-					if (removed.length) {
-						removed.forEach(it => {
-							const idx = oldChildrenIds.indexOf(it);
-							const afterId = newChildrenIds[idx - 1];
-
-							if (afterId) {
-								elements.push({ 
-									operation: I.DiffType.Remove, 
-									element: `#block-${afterId} .wrapContent`,
-								});
-							};
-						});
-					};
+				if (nl >= ol) {
+					break;
 				};
+
+				const removed = oldChildrenIds.filter(item => !newChildrenIds.includes(item));
+				if (removed.length) {
+					removed.forEach(it => {
+						const idx = oldChildrenIds.indexOf(it);
+						const afterId = newChildrenIds[idx - 1];
+
+						if (afterId) {
+							elements.push({ 
+								operation: I.DiffType.Remove, 
+								element: `#block-${afterId} .wrapContent`,
+							});
+						};
+					});
+				};
+				break;
+			};
+
+			case 'BlockSetText': {
+				const newText = data.text;
+				const oldText = blockStore.getLeaf(oldContextId, data.id)?.getText();
+
+				console.log('New text:', newText, 'Old text:', oldText);
+				console.log(UtilCommon.stringDiffRanges(oldText, newText));
 
 				break;
 			};
@@ -608,7 +625,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockSetFile':
 			case 'BlockSetBookmark':
 			case 'BlockSetDiv':
-			case 'BlockSetText':
 			case 'BlockSetLink':
 			case 'BlockSetFields': {
 				elements.push({ 
