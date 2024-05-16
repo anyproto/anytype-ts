@@ -6,6 +6,8 @@ import { dbStore, commonStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ID_PREFIX = 'popupRelation';
+const SUB_ID_OBJECT = 'popupRelation-objects';
+const SUB_ID_DEPS = 'popupRelation-deps';
 
 interface State {
 	error: string;
@@ -31,14 +33,14 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	render () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { subId, readonly } = data;
+		const { readonly } = data;
 		const { error } = this.state;
 		const objects = this.getObjects();
 		const relations = this.getRelations();
 		const length = objects.length;
 
 		const Item = (item: any) => {
-			const id = Relation.cellId(ID_PREFIX, item.relationKey, subId);
+			const id = Relation.cellId(ID_PREFIX, item.relationKey, '');
 			const cn = [ 'block', 'blockRelation' ];
 
 			if (item.isHidden) {
@@ -58,8 +60,8 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 						>
 							<Cell 
 								ref={ref => this.cellRefs.set(id, ref)}
-								rootId={subId}
-								subId={subId}
+								rootId={SUB_ID_DEPS}
+								subId={SUB_ID_DEPS}
 								block={new M.Block({ id: '', type: I.BlockType.Relation, content: {} })}
 								relationKey={item.relationKey}
 								getRecord={() => this.details}
@@ -102,28 +104,47 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	componentDidMount(): void {
-		this.load(() => {
-			this.initValues();
-			this.forceUpdate();
-		});
+		this.loadObjects(() => this.initValues());
 	};
 
 	componentWillUnmount(): void {
 		menuStore.closeAll(Constant.menuIds.cell);	
 	};
 
-	load (callBack: () => void) {
-		const { param } = this.props;
-		const { data } = param;
-		const { objectIds } = data;
+	loadObjects (callBack?: () => void) {
+		const objectIds = this.getObjectIds();
 		const relationKeys = this.getRelationKeys();
 
-		UtilData.subscribeIds ({
-			subId: ID_PREFIX,
-			ids: objectIds,
-			keys: relationKeys,
-			noDeps: false,
+		UtilData.searchSubscribe({
+			subId: SUB_ID_OBJECT,
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
+			],
+			keys: Constant.defaultRelationKeys.concat(relationKeys),
+			noDeps: true,
 		}, callBack);
+	};
+
+	loadDeps (callBack?: () => void) {
+		let depIds = [];
+
+		for (const k in this.details) {
+			const relation = dbStore.getRelationByKey(k);
+
+			if (relation && [ I.RelationType.File, I.RelationType.Object ].includes(relation.format)) {
+				depIds = depIds.concat(Relation.getArrayValue(this.details[k]));
+			};
+		};
+
+		if (depIds.length) {
+			UtilData.searchSubscribe({
+				subId: SUB_ID_DEPS,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: depIds },
+				],
+				noDeps: true,
+			}, callBack);
+		};
 	};
 
 	initValues () {
@@ -153,6 +174,8 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 			reference = object;
 		});
+
+		this.forceUpdate();
 	};
 
 	getRelationKeys (): string[] {
@@ -171,13 +194,21 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		return ret;
 	};
 
+	getObjectIds () {
+		return this.props.param.data.objectIds || [];
+	};
+
 	getObjects () {
-		return dbStore.getRecords(ID_PREFIX, this.getRelationKeys());
+		return dbStore.getRecords(SUB_ID_OBJECT, this.getRelationKeys());
 	};
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		this.details[relationKey] = value;
-		this.forceUpdate();
+		this.loadDeps(() => this.forceUpdate());
+
+		if (callBack) {
+			callBack({ error: { code: 0 } });
+		};
 	};
 
 	onCellClick (e: any, id: string) {
@@ -200,15 +231,15 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					this.details[relation.relationKey] = Relation.formatValue(relation, null, true);
 					this.props.param.data.relationKeys = this.getRelationKeys().concat([ relation.relationKey ]);
+					this.loadObjects();
 				},
 			}
 		});
 	};
 
 	save () {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { objectIds } = data;
+		const { close } = this.props;
+		const objectIds = this.getObjectIds();
 		const details: any[] = []; 
 
 		for (const k in this.details) {
