@@ -554,9 +554,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			elements = elements.concat(this.getElements(previousId, it));
 		});
 
-		if (elements.length) {
-			elements = elements.map(it => ({ ...it, element: $(it.element) })).filter(it => it.element.length);
+		elements = elements.map(it => ({ ...it, element: $(it.element) })).filter(it => it.element.length);
 
+		if (elements.length) {
 			elements.forEach(it => {
 				it.element.addClass(UtilData.diffClass(it.type));
 			});
@@ -588,7 +588,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		switch (type) {
 			case 'BlockAdd': {
 				data.blocks.forEach(it => {
-					elements.push({ type: I.DiffType.Add, element: `#block-${it.id}` });
+					elements.push({ type: I.DiffType.Add, element: `#block-${it.id} > .wrapContent` });
 				});
 				break;
 			};
@@ -610,7 +610,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						const afterId = newChildrenIds[idx - 1];
 
 						if (afterId) {
-							elements.push({ type: I.DiffType.Remove, element: `#block-${afterId} .wrapContent` });
+							elements.push({ type: I.DiffType.Remove, element: `#block-${afterId} > .wrapContent` });
 						};
 					});
 				};
@@ -651,7 +651,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockSetDiv':
 			case 'BlockSetLink':
 			case 'BlockSetFields': {
-				elements.push({ type: I.DiffType.Change, element: `#block-${data.id}` });
+				elements.push({ type: I.DiffType.Change, element: `#block-${data.id} > .wrapContent` });
 				break;
 			};
 
