@@ -13,7 +13,7 @@ interface State {
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 48;
-const LIMIT_HEIGHT = 12;
+const LIMIT_HEIGHT = 15;
 
 const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, State> {
 	
@@ -163,7 +163,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			return (
 				<div
 					ref={node => this.refRows[item.index] = node}
-					id={'item-' + item.id} 
+					id={`item-${item.id}`} 
 					className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')}
 					onMouseOver={e => this.onOver(e, item)} 
 					onClick={e => this.onClick(e, item)}
