@@ -11,8 +11,9 @@ interface State {
 	isLoading: boolean;
 };
 
-const HEIGHT_SECTION = 26;
-const HEIGHT_ITEM = 48;
+const HEIGHT_SECTION = 28;
+const HEIGHT_SMALL = 38;
+const HEIGHT_ITEM = 60;
 const LIMIT_HEIGHT = 15;
 
 const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, State> {
@@ -94,6 +95,15 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		const Item = (item: any) => {
+			const cn = [ 'item' ];
+
+			if (item.isHidden) {
+				cn.push('isHidden');
+			};
+			if (item.isSmall) {
+				cn.push('isSmall');
+			};
+
 			let content = null;
 			let icon = null;
 			let object = null;
@@ -164,7 +174,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				<div
 					ref={node => this.refRows[item.index] = node}
 					id={`item-${item.id}`} 
-					className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')}
+					className={cn.join(' ')}
 					onMouseOver={e => this.onOver(e, item)} 
 					onClick={e => this.onClick(e, item)}
 				>
@@ -245,7 +255,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={param => Math.max(this.cache.rowHeight(param), this.getRowHeight(items[param.index]))}
+											rowHeight={param => this.getRowHeight(items[param.index], param.index)}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											onScroll={this.onScroll}
@@ -292,7 +302,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
+			defaultHeight: HEIGHT_SECTION,
 			keyMapper: i => (items[i] || {}).id,
 		});
 
@@ -568,7 +578,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					{ id: 'importText', icon: 'import-text', name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
 					{ id: 'importProtobuf', icon: 'import-protobuf', name: translate('popupSettingsImportProtobufTitle'), format: I.ImportType.Protobuf },
 					{ id: 'importMarkdown', icon: 'import-markdown', name: translate('popupSettingsImportMarkdownTitle'), format: I.ImportType.Markdown },
-				] as any[]).map(it => ({ ...it, isImport: true }));
+				] as any[]).map(it => ({ ...it, isImport: true, isSmall: true }));
 			};
 
 			let settingsSpace: any[] = [
@@ -612,7 +622,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				{ id: 'navigation', icon: 'navigation', name: translate('commonFlow'), shortcut: [ cmd, 'O' ], layout: I.ObjectLayout.Navigation },
 			];
 
-			const settingsItems = settingsAccount.concat(settingsSpace).map(it => ({ ...it, isSettings: true }));
+			const settingsItems = settingsAccount.concat(settingsSpace).map(it => ({ ...it, isSettings: true, isSmall: true }));
 			const filtered = itemsImport.concat(settingsItems).concat(pageItems).filter(it => {
 				if (it.name.match(reg)) {
 					return true;
@@ -639,10 +649,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		if (canWrite) {
 			items.push({ name: translate('commonActions'), isSection: true });
-			items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ] });
+			items.push({ id: 'add', name, icon: 'plus', shortcut: [ cmd, 'N' ], isSmall: true });
 
 			if (hasRelations) {
-				items.push({ id: 'relation', name: translate('popupSearchAddRelation'), icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ] });
+				items.push({ id: 'relation', name: translate('popupSearchAddRelation'), icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ], isSmall: true });
 			};
 		};
 
@@ -740,8 +750,18 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
 	};
 
-	getRowHeight (item: any) {
-		return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+	getRowHeight (item: any, index: number) {
+		let h = HEIGHT_ITEM;
+		if (item.isSection) {
+			h = HEIGHT_SECTION;
+		} else 
+		if (item.isSmall) {
+			h = HEIGHT_SMALL;
+		};
+		if (this.cache && this.cache.rowHeight) {
+			h = Math.max(this.cache.rowHeight({ index }), h);
+		};
+		return h;
 	};
 
 	getFilter () {
@@ -755,11 +775,21 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
-		const content = obj.find('.content');
+		const container = obj.find('.items');
 		const { wh } = UtilCommon.getWindowDimensions();
-		const height = Math.min(wh - 64, HEIGHT_ITEM * LIMIT_HEIGHT);
+		const items = this.getItems();
+		const offset = 16;
 
-		content.css({ height });
+		let height = 0;
+
+		items.forEach((item, i) => {
+			height += this.getRowHeight(item, i);
+		});
+
+		height = Math.max(612, height);
+		height = Math.min(wh - 228, height + offset);
+
+		container.css({ height });
 		position();
 	};
 
