@@ -243,7 +243,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				) : ''}
 				
 				{this.cache && items.length && !isLoading ? (
-					<div key="items" className="items left">
+					<div key="items" className="items">
 						<InfiniteLoader
 							rowCount={items.length}
 							loadMoreRows={this.loadMoreRows}
@@ -300,7 +300,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			return;
 		};
 
-		this.resize();
 		this.setActive(items[this.n]);
 		this.refFilter.setValue(this.filter);
 
@@ -334,11 +333,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		
 		const win = $(window);
 		win.on('keydown.search', e => this.onKeyDown(e));
-		win.on('resize.search', e => this.resize());
 	};
 
 	unbind () {
-		$(window).off('keydown.search resize.search');
+		$(window).off('keydown.search');
 	};
 
 	resetSearch () {
@@ -347,7 +345,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		this.load(true);
 		this.rebind();
-		this.resize();
 
 		focus.clear(true);
 	};
@@ -770,31 +767,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	getFilter () {
 		return this.refFilter ? this.refFilter.getValue() : '';
-	};
-
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const { getId, position } = this.props;
-		const obj = $(`#${getId()}-innerWrap`);
-		const container = obj.find('.items');
-		const { wh } = UtilCommon.getWindowDimensions();
-		const items = this.getItems();
-		const offset = 16;
-
-		let height = 0;
-
-		items.forEach((item, i) => {
-			height += this.getRowHeight(item, i);
-		});
-
-		height = Math.max(612, height);
-		height = Math.min(wh - 228, height + offset);
-
-		container.css({ height });
-		position();
 	};
 
 });
