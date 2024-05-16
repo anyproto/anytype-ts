@@ -207,7 +207,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						</div>
 					</div>
 
-					<div ref={ref => this.refSideRight = ref} id="sideRight" className="list">
+					<div ref={ref => this.refSideRight = ref} id="sideRight" className={showButtons ? 'withButtons' : ''}>
 						<div className="head">
 							<div className="name">{translate('commonVersionHistory')}</div>
 							<Icon className="close" onClick={this.onClose} />
@@ -226,7 +226,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						</div>
 
 						{showButtons ? (
-							<div className="bottom">
+							<div className="buttons">
 								<Button text={translate('commonCancel')} onClick={this.onClose} />
 								<Button text={translate('pageMainHistoryRestore')} className={!canWrite ? 'disabled' : ''} onClick={this.onRestore} />
 							</div>
