@@ -86,6 +86,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				value = <div className={cn.join(' ')}>{relationDetails.name}</div>;
 			};
 
+			if (!value) {
+				return '';
+			};
+
 			return (
 				<div className="context">
 					{key}
