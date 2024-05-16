@@ -348,19 +348,20 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const k = keyboard.eventKey(e);
 		const filter = this.getFilter();
 
-		keyboard.shortcut('arrowleft', e, () => {
-			this.onClearSearch();
-		});
-
-		if ((this.n == -1) && ![ Key.down, Key.enter ].includes(k)) {
+		if ((this.n == -1) && ![ Key.down, Key.left, Key.enter ].includes(k)) {
 			return;
 		};
 
 		keyboard.disableMouse(true);
 
-		keyboard.shortcut('arrowup, arrowdown, arrowright', e, (pressed: string) => {
-			if (pressed == 'arrowright') {
+		keyboard.shortcut('arrowup, arrowdown, arrowright, arrowleft', e, (pressed: string) => {
+			if ([ 'arrowleft', 'arrowright' ].includes(pressed)) {
 				const item = items[this.n];
+
+				if (pressed == 'arrowleft') {
+					this.onClearSearch();
+					return;
+				};
 
 				if (item && item.backlinks && item.backlinks.length) {
 					this.onSearchByBacklinks(e, item);
