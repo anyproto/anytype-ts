@@ -177,10 +177,10 @@ func isGrpcWebServer(port string) (bool, error) {
 
 	// should has Content-Type: application/grpc-web-text
 	if resp.Header.Get("Content-Type") == "application/grpc-web-text" {
-		return true, err
+		return true, nil
 	}
 
-	return false, err
+	return false, fmt.Errorf("unexpected content type: %s", resp.Header.Get("Content-Type"))
 }
 
 // MacOS and Linux: returns a list of all open ports for all instances of anytype found using cli utilities lsof and grep
@@ -255,16 +255,23 @@ func getOpenPorts() (map[string][]string, error) {
 		for _, port := range pidports {
 			var (
 				errDetectGateway, errDetectGrpcWeb error
-				v                                  bool
+				serviceDetected                    bool
 			)
-			if v, errDetectGateway = isFileGateway(port); v {
-				gatewayPort = port
-			} else if v, errDetectGrpcWeb = isGrpcWebServer(port); v {
-				grpcWebPort = port
-			} else {
+			if grpcWebPort == "" {
+				if serviceDetected, errDetectGateway = isFileGateway(port); serviceDetected {
+					gatewayPort = port
+				}
+			}
+			// in case we already detected grpcweb port skip this
+			if !serviceDetected && grpcWebPort == "" {
+				if serviceDetected, errDetectGrpcWeb = isGrpcWebServer(port); serviceDetected {
+					grpcWebPort = port
+				}
+			}
+			if !serviceDetected {
+				// means port failed to detect either gateway or grpcweb
 				errs = append(errs, fmt.Errorf("port: %s; gateway: %v; grpcweb: %v", port, errDetectGateway, errDetectGrpcWeb))
 			}
-
 		}
 		if gatewayPort != "" && grpcWebPort != "" {
 			ports[pid] = []string{grpcWebPort, gatewayPort}
