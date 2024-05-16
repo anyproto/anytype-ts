@@ -552,9 +552,30 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			elements = elements.concat(this.getElements(previousId, it));
 		});
 
-		elements.forEach(it => {
-			$(it.element).addClass(UtilData.diffClass(it.operation));
-		});
+		if (elements.length) {
+			elements.forEach(it => {
+				$(it.element).addClass(UtilData.diffClass(it.operation));
+			});
+
+			this.scrollToElement(elements[0].element);
+		};
+	};
+
+	scrollToElement (element: string) {
+		const el = $(element);
+		if (!el.length) {
+			return;
+		};
+
+		const { isPopup } = this.props;
+		const node = $(this.node);
+		const container = node.find('#sideLeft');
+		const ch = container.height();
+		const no = el.offset().top;
+		const st = container.scrollTop();
+		const y = isPopup ? (no - container.offset().top + st) : no;
+
+		container.scrollTop(Math.max(y, ch) - ch);
 	};
 
 	getElements (previousId: string, event: any) {
