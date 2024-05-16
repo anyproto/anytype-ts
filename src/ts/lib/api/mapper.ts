@@ -487,11 +487,9 @@ export const Mapper = {
 		},
 
 		ObjectSearchWithMeta: (obj: any) => {
-			const details = Decode.struct(obj.getDetails());
-
 			return {
-				...details,
-				metaList: obj.getMetaList().map(Mapper.From.MetaList)
+				...Decode.struct(obj.getDetails()),
+				metaList: (obj.getMetaList() || []).map(Mapper.From.MetaList),
 			};
 		},
 
@@ -628,7 +626,7 @@ export const Mapper = {
 				highlight: obj.getHighlight(),
 				blockId: obj.getBlockid(),
 				relationKey: obj.getRelationkey(),
-				relationDetails: Decode.struct(obj.getRelationdetails())
+				relationDetails: Decode.struct(obj.getRelationdetails()),
 			};
 		},
 

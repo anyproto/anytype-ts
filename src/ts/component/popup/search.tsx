@@ -54,22 +54,25 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const items = this.getItems();
 
 		const Context = (meta: any): any => {
-			const { highlight, relationKey, relationDetails } = meta;
+			const { highlight, relationKey } = meta;
+			const relationDetails = meta.relationDetails || {};
 
 			let key: any = '';
 			let value: any = '';
 
-			if (relationKey == 'name') {
-				return '';
-			} else {
-				key = relationKey ? <div className="key">{relationKey}:</div> : '';
+			if (relationKey) {
+				if (relationKey == 'name') {
+					return '';
+				} else {
+					const relation = dbStore.getRelationByKey(relationKey);
+					key = relation ? <div className="key">{relation.name}:</div> : '';
+				};
 			};
 
 			if (highlight) {
 				value = <div className="value" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(meta.highlight) }} />;
-			};
-
-			if (relationKey && relationDetails.name) {
+			} else 
+			if (relationDetails.name) {
 				const { relationOptionColor } = relationDetails;
 				const color = relationOptionColor ? `textColor-${relationOptionColor}` : '';
 				const cn = [ 'value' ];
@@ -114,7 +117,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			if (item.isObject) {
 				const { metaList } = item;
 				const meta = metaList[0] || {};
-				const { relationDetails } = meta;
 
 				let advanced = null;
 
