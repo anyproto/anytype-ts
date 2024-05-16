@@ -555,25 +555,22 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		});
 
 		if (elements.length) {
+			elements = elements.map(it => ({ ...it, element: $(it.element) })).filter(it => it.element.length);
+
 			elements.forEach(it => {
-				$(it.element).addClass(UtilData.diffClass(it.operation));
+				it.element.addClass(UtilData.diffClass(it.type));
 			});
 
 			this.scrollToElement(elements[0].element);
 		};
 	};
 
-	scrollToElement (element: string) {
-		const el = $(element);
-		if (!el.length) {
-			return;
-		};
-
+	scrollToElement (element: any) {
 		const { isPopup } = this.props;
 		const node = $(this.node);
 		const container = node.find('#sideLeft');
 		const ch = container.height();
-		const no = el.offset().top;
+		const no = element.offset().top;
 		const st = container.scrollTop();
 		const y = (isPopup ? (no - container.offset().top + st) : no) + ch / 2;
 
@@ -585,14 +582,13 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const rootId = this.getRootId();
 		const oldContextId = [ rootId, previousId ].join('-');
 
+		console.log('TYPE', type, data);
+
 		let elements = [];
 		switch (type) {
 			case 'BlockAdd': {
 				data.blocks.forEach(it => {
-					elements.push({ 
-						operation: I.DiffType.Add, 
-						element: `#block-${it.id}`,
-					});
+					elements.push({ type: I.DiffType.Add, element: `#block-${it.id}` });
 				});
 				break;
 			};
@@ -614,10 +610,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						const afterId = newChildrenIds[idx - 1];
 
 						if (afterId) {
-							elements.push({ 
-								operation: I.DiffType.Remove, 
-								element: `#block-${afterId} .wrapContent`,
-							});
+							elements.push({ type: I.DiffType.Remove, element: `#block-${afterId} .wrapContent` });
 						};
 					});
 				};
@@ -643,18 +636,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 				blockStore.updateContent(rootId, data.id, { marks });
 
-				elements.push({ 
-					operation: I.DiffType.None, 
-					element: `#block-${data.id}`,
-				});
+				elements.push({ type: I.DiffType.None, element: `#block-${data.id}` });
 				break;
 			};
 
-			case 'BlockDataviewObjectOrderUpdate':
-			case 'BlockDataviewGroupOrderUpdate':
-			case 'BlockDataviewIsCollectionSet':
-			case 'BlockDataviewTargetObjectIdSet':
-			case 'BlockDataviewViewOrder':
 			case 'BlockSetTableRow':
 			case 'BlockSetRelation':
 			case 'BlockSetVerticalAlign':
@@ -666,56 +651,50 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockSetDiv':
 			case 'BlockSetLink':
 			case 'BlockSetFields': {
-				elements.push({ 
-					operation: I.DiffType.Change, 
-					element: `#block-${data.id}`,
-				});
+				elements.push({ type: I.DiffType.Change, element: `#block-${data.id}` });
+				break;
+			};
+
+			case 'BlockDataviewIsCollectionSet':
+			case 'BlockDataviewTargetObjectIdSet':
+			case 'BlockDataviewGroupOrderUpdate':
+			case 'BlockDataviewObjectOrderUpdate': {
+				break;
+			};
+
+			case 'BlockDataviewViewOrder': {
+				elements = elements.concat([
+					{ type: I.DiffType.Change, element: `#block-${data.id} #view-selector` },
+					{ type: I.DiffType.Change, element: `#block-${data.id} #views` },
+				]);
 				break;
 			};
 
 			case 'BlockDataviewViewUpdate': {
 				if (data.fields !== null) {
 					elements = elements.concat([
-						{ 
-							operation: I.DiffType.Change, 
-							element: `#block-${data.id} #view-selector`,
-						},
-						{ 
-							operation: I.DiffType.Change, 
-							element: `#view-item-${data.id}-${data.viewId}`,
-						},
+						{ type: I.DiffType.Change, element: `#block-${data.id} #view-selector` },
+						{ type: I.DiffType.Change, element: `#view-item-${data.id}-${data.viewId}` },
 					]);
 				};
 
 				if (data.relations.length) {
-					elements.push({ 
-						operation: I.DiffType.Change, 
-						element: `#block-${data.id} #button-dataview-settings`,
-					});
+					elements.push({ type: I.DiffType.Change, element: `#block-${data.id} #button-dataview-settings` });
 				};
 
 				if (data.filters.length) {
-					elements.push({ 
-						operation: I.DiffType.Change, 
-						element: `#block-${data.id} #button-dataview-filter`,
-					});
+					elements.push({ type: I.DiffType.Change, element: `#block-${data.id} #button-dataview-filter` });
 				};
 
 				if (data.sorts.length) {
-					elements.push({ 
-						operation: I.DiffType.Change, 
-						element: `#block-${data.id} #button-dataview-sort`,
-					});
+					elements.push({ type: I.DiffType.Change, element: `#block-${data.id} #button-dataview-sort` });
 				};
 				break;
 			};
 
 			case 'BlockDataviewRelationDelete':
 			case 'BlockDataviewRelationSet': {
-				elements.push({ 
-					operation: I.DiffType.Change, 
-					element: `#block-${data.id} #button-dataview-settings`,
-				});
+				elements.push({ type: I.DiffType.Change, element: `#block-${data.id} #button-dataview-settings` });
 				break;
 			};
 
@@ -727,37 +706,25 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					break;
 				};
 
-				elements.push({ 
-					operation: I.DiffType.Change, 
-					element: '#button-header-relation',
-				});
+				elements.push({ type: I.DiffType.Change, element: '#button-header-relation' });
 
 				if (undefined !== data.details.name) {
-					elements.push({ 
-						operation: I.DiffType.Change, 
-						element: `#block-${Constant.blockId.title}`,
-					});
+					elements = elements.concat([
+						{ type: I.DiffType.Change, element: `#block-${Constant.blockId.title}` },
+						{ type: I.DiffType.Change, element: `.headSimple #editor-${Constant.blockId.title}` }
+					]);
 				};
 
 				if (undefined !== data.details.description) {
-					elements.push({ 
-						operation: I.DiffType.Change, 
-						element: `#block-${Constant.blockId.description}`,
-					});
+					elements.push({ type: I.DiffType.Change, element: `#block-${Constant.blockId.description}` });
 				};
 
 				if ((undefined !== data.details.iconEmoji) || (undefined !== data.details.iconImage)) {
-					elements.push({ 
-						operation: I.DiffType.Change, 
-						element: `#block-icon-${data.id}`,
-					});
+					elements.push({ type: I.DiffType.Change, element: `#block-icon-${data.id}` });
 				};
 
 				if (undefined !== data.details.featuredRelations) {
-					elements.push({ 
-						operation: I.DiffType.Change, 
-						element: `#block-${Constant.blockId.featured}`,
-					});
+					elements.push({ type: I.DiffType.Change, element: `#block-${Constant.blockId.featured}` });
 				};
 
 				break;
