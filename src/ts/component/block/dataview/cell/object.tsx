@@ -83,7 +83,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 										relation={relation} 
 										elementMapper={elementMapper}
 										canEdit={true}
-										onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
+										onRemove={(e: any, id: string) => this.onValueRemove(id)}
 									/>
 								</span>
 							))}
@@ -257,23 +257,27 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	setValue (value: string[]) {
-		const { onChange, relation } = this.props;
-		const { maxCount } = relation;
-		
 		value = UtilCommon.arrayUnique(value);
 
+		const { onChange, relation } = this.props;
+		const { maxCount } = relation;
 		const length = value.length;
+
 		if (maxCount && (length > maxCount)) {
 			value = value.slice(length - maxCount, length);
 		};
 
-		if (onChange) {
-			onChange(value, () => {
-				this.clear();
+		const cb = () => {
+			this.clear();
 
-				menuStore.updateData('dataviewObjectValues', { value });
-				menuStore.updateData('dataviewObjectList', { value });
-			});
+			menuStore.updateData('dataviewObjectValues', { value });
+			menuStore.updateData('dataviewObjectList', { value });
+		};
+
+		if (onChange) {
+			onChange(value, cb);
+		} else {
+			cb();
 		};
 	};
 
