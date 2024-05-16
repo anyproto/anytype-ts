@@ -6,8 +6,8 @@ import { authStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
-	status: string,
-	statusText: string
+	status: string;
+	statusText: string;
 };
 
 const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends React.Component<I.Popup, State> {
@@ -115,50 +115,15 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		this.setState({ statusText: '', status: '' });
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			const name = this.refName.getValue().trim();
-			if (!name.length) {
-				return;
-			};
-
-			this.checkName(name, () => {
-				this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
-
-				C.NameServiceResolveName(name, (message: any) => {
-					let error = '';
-					if (message.error.code) {
-						error = message.error.description;
-					} else
-					if (!message.available) {
-						error = translate('popupMembershipStatusNameNotAvailable');
-					};
-
-					if (error) {
-						this.setState({ status: 'error', statusText: error });
-					} else {
-						this.disableButtons(false);
-						this.setState({ status: 'ok', statusText: translate('popupMembershipStatusNameAvailable') });
-					};
-				});
-			});
-		}, Constant.delay.keyboard);
-	};
-
-	disableButtons (v: boolean) {
-		this.refButtonCard?.setDisabled(v);
-		this.refButtonCrypto?.setDisabled(v);
+		this.timeout = window.setTimeout(() => this.validateName(), Constant.delay.keyboard);
 	};
 
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		const { status } = this.state;
-
-		if (status == 'error') {
-			return;
+		if (this.state.status != I.InterfaceStatus.Error) {
+			this.validateName(() => this.onPay(I.PaymentMethod.Stripe));
 		};
-
-		this.onPay(I.PaymentMethod.Stripe);
 	};
 
 	onPay (method: I.PaymentMethod) {
@@ -167,18 +132,17 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { tier } = data;
 		const globalName = this.getName();
 		const tierItem = UtilData.getMembershipTier(tier);
-		const { namesCount } = tierItem;
-		const name = globalName || !namesCount ? '' : this.refName.getValue();
+		const name = globalName || !tierItem.namesCount ? '' : this.refName.getValue();
 		const refButton = method == I.PaymentMethod.Stripe ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);
 
 		this.checkName(name, () => {
-			C.MembershipGetPaymentUrl(tier, method, name, (message) => {
+			C.MembershipRegisterPaymentRequest(tier, method, name, (message) => {
 				refButton.setLoading(false);
 
 				if (message.error.code) {
-					this.setState({ status: 'error', statusText: message.error.description });
+					this.setError(message.error.description);
 					return;
 				};
 
@@ -191,6 +155,38 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		});
 	};
 
+	validateName (callBack?: () => void) {
+		const name = this.refName.getValue().trim();
+		if (!name.length) {
+			return;
+		};
+
+		this.checkName(name, () => {
+			this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
+
+			C.NameServiceResolveName(name, (message: any) => {
+				let error = '';
+				if (message.error.code) {
+					error = message.error.description;
+				} else
+				if (!message.available) {
+					error = translate('popupMembershipStatusNameNotAvailable');
+				};
+
+				if (error) {
+					this.setError(error);
+				} else {
+					this.disableButtons(false);
+					this.setOk(translate('popupMembershipStatusNameAvailable'));
+
+					if (callBack) {
+						callBack();
+					};
+				};
+			});
+		});
+	};
+
 	checkName (name: string, callBack: () => void) {
 		const { param } = this.props;
 		const { data } = param;
@@ -198,16 +194,31 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		C.MembershipIsNameValid(tier, name, (message: any) => {
 			if (message.error.code) {
-				this.setState({ status: 'error', statusText: message.error.description });
+				this.setError(message.error.description);
 				return;
 			};
 
-			callBack();
+			if (callBack) {
+				callBack();
+			};
 		});
 	};
 
 	getName () {
 		return String(authStore.membership?.name || '');
+	};
+
+	disableButtons (v: boolean) {
+		this.refButtonCard?.setDisabled(v);
+		this.refButtonCrypto?.setDisabled(v);
+	};
+
+	setOk (t: string) {
+		this.setState({ status: I.InterfaceStatus.Ok, statusText: t });
+	};
+
+	setError (t: string) {
+		this.setState({ status: I.InterfaceStatus.Error, statusText: t });
 	};
 
 });

@@ -6,7 +6,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'Component';
 import { I, C, Relation, UtilCommon, keyboard, analytics, translate } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
+import { commonStore, menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HEIGHT = 48;
@@ -31,6 +31,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	};
 	
 	render () {
+		const { config } = commonStore;
 		const { param, getId, setHover } = this.props;
 		const { data } = param;
 		const { getView } = data;
@@ -86,7 +87,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					</div>
 					{!isReadonly ? (
 						<div className="buttons">
-							<Icon className="more" onClick={e => this.onMore(e, item)} />
+							{config.experimental ? <Icon className="more" onClick={e => this.onMore(e, item)} /> : ''}
 							<Icon className="delete" onClick={e => this.onRemove(e, item)} />
 						</div>
 					) : ''}

@@ -213,7 +213,7 @@ class UtilMenu {
 
 		if (hasDataview) {
 			const isCollection = Dataview.isCollection(rootId, blockId);
-			const sourceName = isCollection ? translate('commonLCCollection') : translate('commonLCSet');
+			const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
 
 			items.push({ id: 'dataviewSource', icon: 'source', name: UtilCommon.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
 		};

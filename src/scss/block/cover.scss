@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .block.blockCover { position: absolute; left: 16px; height: 312px; width: calc(100% - 32px); border-radius: 4px; overflow: hidden; }
 .block.blockCover {

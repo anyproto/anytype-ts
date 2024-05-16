@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .listObject {
 	.table { display: grid; border-color: var(--color-shape-secondary); border-style: solid; border-top-width: 1px; margin: 0px 0px 10px 0px; }

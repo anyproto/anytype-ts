@@ -765,9 +765,10 @@ class UtilData {
 			ids: [],
 			keys: Constant.defaultRelationKeys,
 			noDeps: false,
+			idField: 'id',
 		}, param);
 
-		const { subId, keys, noDeps } = param;
+		const { subId, keys, noDeps, idField } = param;
 		const ids = UtilCommon.arrayUnique(param.ids.filter(it => it));
 
 		if (!subId) {
@@ -777,6 +778,10 @@ class UtilData {
 		if (!ids.length) {
 			console.error('[UtilData].subscribeIds: ids list is empty');
 			return;
+		};
+
+		if (!keys.includes(idField)) {
+			keys.push(idField);
 		};
 
 		C.ObjectSubscribeIds(subId, ids, keys, true, noDeps, (message: any) => {
