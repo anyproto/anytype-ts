@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, Preview, Renderer, translate, UtilSpace } from 'Lib';
+import { I, C, Preview, Renderer, translate, UtilSpace, Mark } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -874,14 +874,18 @@ class UtilCommon {
 			return s;
 		};
 
+		const tags = [ 'b', 'br', 'a', 'ul', 'li', 'h1', 'span', 'p', 'name', 'smile', 'img', 'search' ];
+
+		for (const i in I.MarkType) {
+			if (isNaN(I.MarkType[i] as any)) {
+				continue;
+			};
+			tags.push(Mark.getTag(I.MarkType[i] as any));
+		};
+
 		return DOMPurify.sanitize(s, { 
-			ADD_TAGS: [ 
-				'b', 'br', 'a', 'ul', 'li', 'h1', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 'markupUnderline', 'markupLink', 'markupColor',
-				'markupBgcolor', 'markupMention', 'markupEmoji', 'markupObject', 'span', 'p', 'name', 'smile', 'img', 'search'
-			],
-			ADD_ATTR: [
-				'contenteditable'
-			],
+			ADD_TAGS: tags,
+			ADD_ATTR: [ 'contenteditable' ],
 			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 		});
 	};
@@ -939,9 +943,14 @@ class UtilCommon {
 		return String(s || '').replace(/<[^>]+>/g, '');
 	};
 
-	stringDiffRanges (oldStr: string, newStr: string) {
+	stringDiffRanges (oldStr: string, newStr: string): I.TextRange[] {
+		oldStr = String(oldStr || '');
+		newStr = String(newStr || '');
+
 		const diff = [];
-		const minLength = Math.min(oldStr.length, newStr.length);
+		const ol = oldStr.length;
+		const nl = newStr.length;
+		const minLength = Math.min(ol, nl);
 
 		let start = null;
 
@@ -953,18 +962,18 @@ class UtilCommon {
 				};
 			} else 
 			if (start !== null) {
-				diff.push([start, i]);
+				diff.push({ from: start, to: i });
 				start = null;
 			};
 		};
 
 		// Check for a difference at the end of the longer string
 		if (start !== null) {
-			diff.push([start, Math.max(oldStr.length, newStr.length)]);
+			diff.push({ from: start, to: Math.max(ol, nl) });
 		} else 
 		if (oldStr.length !== newStr.length) {
 			// Handle case where one string is longer than the other
-			diff.push([minLength, Math.max(oldStr.length, newStr.length)]);
+			diff.push({ from: minLength, to: Math.max(ol, nl) });
 		};
 		return diff;
 	};

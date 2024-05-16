@@ -29,6 +29,8 @@ export enum MarkType {
 	Mention		 = 8,
 	Emoji		 = 9,
 	Object		 = 10,
+
+	Change		 = 100,
 };
 
 export enum MarkOverlap {

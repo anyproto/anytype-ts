@@ -121,9 +121,9 @@ search.active { background: orange !important; }
 .diffAdd::after, .diffChange::after, .diffRemove::after { content: ""; border-radius: inherit; opacity: 0.5; }
 .diffAdd::after, .diffChange::after	{ position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 .diffRemove::after { position: relative; height: 30px; display: block; width: 100%; }
-.diffAdd::after { background-color: rgba(0,255,0,0.1); }
-.diffChange::after { background-color: rgba(0,0,255,0.1); }
-.diffRemove::after { background-color: rgba(255,0,0,0.1); }
+.diffAdd::after { background-color: var(--color-shape-highlight-add); }
+.diffChange::after { background-color: var(--color-shape-highlight-change); }
+.diffRemove::after { background-color: var(--color-shape-highlight-remove); }
 
 .isSelectionSelected { position: relative; }
 

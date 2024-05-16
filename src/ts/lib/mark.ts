@@ -46,6 +46,7 @@ Order[I.MarkType.Bold]		 = 7;
 Order[I.MarkType.Color]		 = 8;
 Order[I.MarkType.BgColor]	 = 9;
 Order[I.MarkType.Code]		 = 10;
+Order[I.MarkType.Change]	 = 11;
 
 class Mark {
 
@@ -268,7 +269,6 @@ class Mark {
 
 		const r = text.split('');
 		const parts: I.Mark[] = [];
-		let borders: any[] = [];
 		const ranges: any[] = [];
 		const hasParam = [ 
 			I.MarkType.Link, 
@@ -278,6 +278,8 @@ class Mark {
 			I.MarkType.Mention, 
 			I.MarkType.Emoji,
 		];
+
+		let borders: any[] = [];
 		
 		for (const mark of marks) {
 			borders.push(Number(mark.range.from));
@@ -361,6 +363,7 @@ class Mark {
 			r[i] = r[i].replace(/<$/, '&lt;');
 			r[i] = r[i].replace(/^>/, '&gt;');
 		};
+
 		return r.join('');
 	};
 

@@ -625,12 +625,23 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			};
 
 			case 'BlockSetText': {
+				const oldBlock = blockStore.getLeaf(oldContextId, data.id);
+				if (!oldBlock) {
+					break;
+				};
+
+				const marks = oldBlock.content.marks || [];
 				const newText = data.text;
-				const oldText = blockStore.getLeaf(oldContextId, data.id)?.getText();
+				const oldText = oldBlock.getText();
+				const diff = UtilCommon.stringDiffRanges(oldText, newText);
 
-				console.log('New text:', newText, 'Old text:', oldText);
-				console.log(UtilCommon.stringDiffRanges(oldText, newText));
+				if (diff.length) {
+					diff.forEach(it => {
+						marks.push({ type: I.MarkType.Change, param: '', range: it });
+					});
+				};
 
+				blockStore.updateContent(rootId, data.id, { marks });
 				break;
 			};
 
