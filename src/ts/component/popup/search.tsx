@@ -348,14 +348,26 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const k = keyboard.eventKey(e);
 		const filter = this.getFilter();
 
+		keyboard.shortcut('arrowleft', e, () => {
+			this.onClearSearch();
+		});
+
 		if ((this.n == -1) && ![ Key.down, Key.enter ].includes(k)) {
 			return;
 		};
 
 		keyboard.disableMouse(true);
 
-		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrow(pressed == 'arrowup' ? -1 : 1);
+		keyboard.shortcut('arrowup, arrowdown, arrowright', e, (pressed: string) => {
+			if (pressed == 'arrowright') {
+				const item = items[this.n];
+
+				if (item && item.backlinks && item.backlinks.length) {
+					this.onSearchByBacklinks(e, item);
+				};
+			} else {
+				this.onArrow(pressed == 'arrowup' ? -1 : 1);
+			};
 		});
 
 		keyboard.shortcut(`enter, shift+enter, ${cmd}+enter`, e, (pressed: string) => {
@@ -489,8 +501,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				this.setState({ isLoading: false });
 				return;
 			};
-
-			console.log('RECORDS: ', message.records)
 
 			if (callBack) {
 				callBack(null);
