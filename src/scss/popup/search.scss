@@ -38,8 +38,9 @@
 			.sectionName { @include text-small; display: flex; justify-content: space-between; height: 26px; line-height: 18px; padding: 5px 16px; font-weight: 500; color: var(--color-text-secondary); }
 
 			.item { position: relative; line-height: 22px; padding: 8px 8px 8px 12px; white-space: nowrap; display: flex; gap: 0px 12px; border-radius: 8px; }
+
 			.item#item-add,
-			.item#item-relation { height: 48px; align-items: center; }
+			.item#item-relation { height: 38px; align-items: center; }
 			.item#item-add,
 			.item#item-relation {
 				.sides { align-items: center; }
@@ -76,7 +77,7 @@
 				.context {
 					.key { text-transform: capitalize; }
 					.value { border-radius: 2px; }
-					.key + .value { padding: 0 3px; }
+					.key + .value { padding: 0px 3px; }
 				}
 
 				.caption { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
