@@ -575,7 +575,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const ch = container.height();
 		const no = el.offset().top;
 		const st = container.scrollTop();
-		const y = isPopup ? (no - container.offset().top + st) : no;
+		const y = (isPopup ? (no - container.offset().top + st) : no) + ch / 2;
 
 		container.scrollTop(Math.max(y, ch) - ch);
 	};
@@ -642,6 +642,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				};
 
 				blockStore.updateContent(rootId, data.id, { marks });
+
+				elements.push({ 
+					operation: I.DiffType.None, 
+					element: `#block-${data.id}`,
+				});
 				break;
 			};
 
