@@ -53,6 +53,43 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const filter = this.getFilter();
 		const items = this.getItems();
 
+		const Context = (meta: any): any => {
+			const { highlight, relationKey, relationDetails } = meta;
+
+			let key: any = '';
+			let value: any = '';
+
+			if (relationKey == 'name') {
+				return '';
+			} else {
+				key = relationKey ? <div className="key">{relationKey}:</div> : '';
+			};
+
+			if (highlight) {
+				value = <div className="value" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(meta.highlight) }} />;
+			};
+
+			if (relationKey && relationDetails.name) {
+				const { relationOptionColor } = relationDetails;
+				const color = relationOptionColor ? `textColor-${relationOptionColor}` : '';
+				const cn = [ 'value' ];
+
+				if (color) {
+					cn.push(`textColor-${relationOptionColor}`);
+					cn.push(`bgColor-${relationOptionColor}`);
+				};
+
+				value = <div className={cn.join(' ')}>{relationDetails.name}</div>;
+			};
+
+			return (
+				<div className="context">
+					{key}
+					{value}
+				</div>
+			);
+		};
+
 		const Item = (item: any) => {
 			let content = null;
 			let icon = null;
@@ -79,8 +116,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				const meta = metaList[0] || {};
 				const { relationDetails } = meta;
 
-				let context = null;
-				let relation = null;
 				let advanced = null;
 
 				if (item.backlinks && item.backlinks.length) {
@@ -94,34 +129,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					);
 				};
 
-				if (meta.highlight) {
-					context = <div className="context" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(meta.highlight) }} />;
-				};
-
-				if (meta.relationKey && relationDetails.name) {
-					const { relationOptionColor } = relationDetails;
-					const color = relationOptionColor ? `textColor-${relationOptionColor}` : ''
-					const cn = [ 'value' ];
-
-					if (color) {
-						cn.push(`textColor-${relationOptionColor}`);
-						cn.push(`bgColor-${relationOptionColor}`);
-					};
-
-					relation = (
-						<div className="relation">
-							<div className="key">{meta.relationKey}:</div>
-							<div className={cn.join(' ')}>{relationDetails.name}</div>
-						</div>
-					);
-				};
-
 				content = (
 					<div className="sides">
 						<div className="side left">
 							<ObjectName object={item} />
-							{context}
-							{relation}
+							<Context {...meta} />
 							<div className="caption">{item.caption}</div>
 						</div>
 						<div className="side right">
@@ -477,6 +489,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				this.setState({ isLoading: false });
 				return;
 			};
+
+			console.log('RECORDS: ', message.records)
 
 			if (callBack) {
 				callBack(null);
