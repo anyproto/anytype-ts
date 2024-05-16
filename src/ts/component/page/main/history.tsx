@@ -84,7 +84,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				<HeadSimple 
 					{...this.props} 
 					ref={ref => this.refHead = ref} 
-					placeholder={placeholder} rootId={rootId} 
+					placeholder={placeholder} 
+					rootId={rootId} 
+					readonly={true}
 				/>
 			);
 
