@@ -200,6 +200,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 										onClick={() => this.onGroup(group.id)} 
 									/>
 								))}
+								<Icon 
+									className="random" 
+									tooltip={translate('menuSmileRandom')} 
+									onClick={() => this.onRandom()}
+								/>
 							</div>
 						) : ''}
 					</React.Fragment>
@@ -1055,6 +1060,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	onTab (tab: Tab) {
 		this.setState({ tab }, () => this.load());
+	};
+
+	onRandom () {
+		const param = UtilSmile.randomParam();
+
+		this.onSmileSelect(param.id, param.skin);
+		this.forceUpdate();
 	};
 
 	upload (id: string) {
