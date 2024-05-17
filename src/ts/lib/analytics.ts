@@ -2,13 +2,12 @@ import * as amplitude from 'amplitude-js';
 import { I, C, UtilCommon, Storage, UtilSpace } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
-import { OnboardStage } from 'Component/page/auth/animation/constants';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
-	'processor',
+	'processor', 'emptyType',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
