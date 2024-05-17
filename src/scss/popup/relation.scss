@@ -7,6 +7,8 @@
 		.line { width: 100%; height: 1px; background: var(--color-shape-secondary); margin: 8px 0px; }
 		.buttons { display: flex; gap: 0px 16px; margin: 8px 0px 0px 0px; }
 
+		.emptySearch { height: 156px; }
+
 		.blocks {
 			.block.blockRelation {
 				.info { padding-left: 0px; }
@@ -17,7 +19,7 @@
 		.item.add {
 			.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 		}
-		.item:hover, .item.active { background-color: var(--color-shape-highlight-medium); }
+		.item:hover, .item.active { background-color: var(--color-shape-highlight-light); }
 
 		.cellContent.isName {
 			.iconObject { display: none; }

@@ -165,10 +165,6 @@
 			.line { margin: 0px; position: absolute; top: 0px; left: 32px; width: calc(100% - 64px); }
 			.info { width: 100%; transition: $transitionAllCommon; }
 		}
-		.item.add:hover { 
-            .info { color: var(--color-text-primary); } 
-			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
-        }
 	}
 
 }

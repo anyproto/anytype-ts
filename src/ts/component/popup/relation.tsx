@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button, Cell, Error, Icon } from 'Component';
+import { Label, Button, Cell, Error, Icon, EmptySearch } from 'Component';
 import { I, M, C, UtilCommon, Relation, UtilData, translate } from 'Lib';
 import { dbStore, commonStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -82,9 +82,11 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			<div>
 				<Label text={UtilCommon.sprintf(translate(`popupRelationTitle`), length, UtilCommon.plural(length, translate('pluralLCObject')))} />
 
-				<div className="blocks">
-					{relations.map(item => <Item key={item.relationKey} {...item} />)}
-				</div>
+				{!relations.length ? <EmptySearch text={translate('popupRelationEmpty')} /> : (
+					<div className="blocks">
+						{relations.map(item => <Item key={item.relationKey} {...item} />)}
+					</div>
+				)}
 
 				<div className="line" />
 
