@@ -110,7 +110,8 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	componentWillUnmount(): void {
-		menuStore.closeAll(Constant.menuIds.cell);	
+		menuStore.closeAll(Constant.menuIds.cell);
+		C.ObjectSearchUnsubscribe([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
 	};
 
 	loadObjects (callBack?: () => void) {

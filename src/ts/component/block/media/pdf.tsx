@@ -47,7 +47,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		const { state, targetObjectId } = content;		
 		const { page, pages } = this.state;
 		const object = detailStore.get(rootId, targetObjectId, []);
-		const width = Number(fields) || 0;
+		const width = Number(fields.width) || 0;
 		const css: any = {};
 
 		let element = null;
