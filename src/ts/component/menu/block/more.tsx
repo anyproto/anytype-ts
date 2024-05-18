@@ -92,7 +92,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { config } = commonStore;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -535,7 +534,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'templateCreate': {
 				C.TemplateCreateFromObject(rootId, (message: any) => {
 					UtilObject.openPopup({ id: message.id, layout: object.layout });
-					Preview.toastShow({ text: translate('toastTemplateCreate') });
 					Preview.toastShow({ action: I.ToastAction.TemplateCreate, objectId: rootId });
 
 					analytics.event('CreateTemplate', { objectType: object.type, route });

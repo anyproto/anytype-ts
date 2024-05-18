@@ -68,7 +68,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 				
 			case I.FileState.Done:
 				element = (
-					<div className="wrap resizable blockVideo" style={css}>
+					<div className="wrap resizable" style={css}>
 						<MediaVideo
 							src={commonStore.fileUrl(targetObjectId)}
 							onPlay={this.onPlay}
