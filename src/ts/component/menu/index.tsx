@@ -32,7 +32,6 @@ import MenuBlockColor from './block/color';
 import MenuBlockBackground from './block/background';
 import MenuBlockCover from './block/cover';
 import MenuBlockAction from './block/action';
-import MenuBlockMore from './block/more';
 import MenuBlockHAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
@@ -49,6 +48,7 @@ import MenuTypeSuggest from './type/suggest';
 import MenuGraphSettings from './graph/settings';
 import MenuWidget from './widget';
 import MenuSpace from './space';
+import MenuObject from './object';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
@@ -111,7 +111,6 @@ const Components: any = {
 	blockAdd:				 MenuBlockAdd,
 	blockColor:				 MenuBlockColor,
 	blockBackground:		 MenuBlockBackground,
-	blockMore:				 MenuBlockMore,
 	blockAlign:				 MenuBlockHAlign,
 	blockLink:				 MenuBlockLink,
 	blockCover:				 MenuBlockCover,
@@ -129,6 +128,7 @@ const Components: any = {
 	graphSettings:			 MenuGraphSettings,
 	widget:					 MenuWidget,
 	space:					 MenuSpace,
+	object:					 MenuObject,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,

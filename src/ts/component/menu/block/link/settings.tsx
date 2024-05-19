@@ -130,7 +130,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		menuParam.data = Object.assign(menuParam.data, { options });
 
 		if (!menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.more, () => {
+			menuStore.closeAll(Constant.menuIds.object, () => {
 				menuStore.open(menuId, menuParam);
 			});
 		};

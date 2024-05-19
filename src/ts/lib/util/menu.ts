@@ -564,7 +564,7 @@ class UtilMenu {
 						};
 					};
 				},
-				onSelect: (e, item: any) => {
+				onSelect: (e: any, item: any) => {
 					if (item.arrow) {
 						return;
 					};
