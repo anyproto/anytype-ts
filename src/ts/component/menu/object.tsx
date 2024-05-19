@@ -6,7 +6,7 @@ import { blockStore, detailStore, commonStore, menuStore, popupStore } from 'Sto
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
-class MenuBlockMore extends React.Component<I.Menu> {
+class MenuObject extends React.Component<I.Menu> {
 	
 	n = -1;
 	
@@ -103,10 +103,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const cmd = keyboard.cmdSymbol();
 		const isTemplate = UtilObject.isTemplate(object.type);
 		const print = { id: 'print', name: translate('menuBlockMorePrint'), caption: `${cmd} + P` };
-		const move = { id: 'move', name: translate('menuBlockMoreMoveTo'), arrow: true };
-		const turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
 		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
-		const blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
 		const canWrite = UtilSpace.canMyParticipantWrite();
 		const canDelete = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
@@ -238,12 +235,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
-		} else {
-			const align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(block.hAlign) ].join(' '), arrow: true };
-
-			sections = [
-				{ children: [ turn, move, align, blockRemove ]},
-			];
 		};
 
 		sections = sections.filter((section: any) => {
@@ -563,4 +554,4 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 };
 
-export default MenuBlockMore;
+export default MenuObject;

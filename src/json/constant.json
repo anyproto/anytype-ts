@@ -97,10 +97,10 @@
 		"context": [
 			"select",
 			"blockStyle",
-			"blockMore",
 			"blockLink",
 			"blockColor",
-			"blockBackground"
+			"blockBackground",
+			"searchObject"
 		],
 		"add": [ "searchObject", "blockRelationEdit", "typeSuggest" ],
 		"action": [

@@ -228,10 +228,66 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			};
 				
 			case 'more': {
-				menuId = 'blockMore';
+				menuId = 'select';
 				menuParam.subIds = Constant.menuIds.more;
 
+				let menuContext = null;
+
+				const move = { id: 'move', name: translate('menuBlockMoreMoveTo'), arrow: true };
+				const turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
+				const align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(block.hAlign) ].join(' '), arrow: true };
+				const blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
+
+				const options = [
+					turn, move, align, blockRemove,
+				];
+
+				menuParam = Object.assign(menuParam, {
+					onOpen: context => menuContext = context,
+				});
+
 				menuParam.data = Object.assign(menuParam.data, {
+					options,
+					onOver: (e: any, item: any) => {
+						console.log(item);
+
+						if (!menuContext) {
+							return;
+						};
+
+						if (menuStore.isAnimating(menuContext.props.id)) {
+							return;
+						};
+
+						if (!item.arrow) {
+							//menuStore.closeAll(Constant.menuIds.context);
+							return;
+						};
+
+					},
+	
+						/*
+						case 'move': {
+							menuId = 'searchObject';
+							menuParam.data = Object.assign(menuParam.data, {
+								filters: [
+									{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+								],
+								type: I.NavigationType.Move, 
+								skipIds: [ rootId ],
+								position: I.BlockPosition.Bottom,
+								onSelect: (item: any) => {
+									close();
+
+									if (onMenuSelect) {
+										onMenuSelect(item);
+									};
+								}
+							});
+							break;
+						};
+						*/
+
 					onSelect: () => {
 						focus.clear(true);
 						close();
