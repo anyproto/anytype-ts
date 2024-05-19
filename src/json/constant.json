@@ -104,6 +104,11 @@
 			"typeSuggest",
 			"blockAlign"
 		],
+		"selectContext": [
+			"searchObject",
+			"typeSuggest",
+			"blockAlign"
+		],
 		"add": [ "searchObject", "blockRelationEdit", "typeSuggest" ],
 		"action": [
 			"blockStyle",

@@ -251,6 +251,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 				menuParam = Object.assign(menuParam, {
 					component: 'select',
+					subIds: Constant.menuIds.selectContext,
 					onOpen: context => this.menuContext = context,
 				});
 
@@ -267,7 +268,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						};
 
 						if (!item.arrow) {
-							//menuStore.closeAll(Constant.menuIds.context);
+							menuStore.closeAll(Constant.menuIds.selectContext);
 							return;
 						};
 
@@ -453,7 +454,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		};
 
 		if (menuId && !menuStore.isOpen(menuId)) {
-			menuStore.closeAll(Constant.menuIds.context, () => {
+			menuStore.closeAll(Constant.menuIds.selectContext, () => {
 				menuStore.open(menuId, menuParam);
 			});
 		};
