@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuBlockAdd, .menu.menuBlockStyle, .menu.menuBlockAction, .menu.menuBlockMore {
+	.menu.menuBlockAdd, .menu.menuBlockStyle, .menu.menuBlockAction, .menu.menuObject {
 		.item.empty { @include text-small; padding-top: 8px; }
 	}
 
@@ -10,8 +10,8 @@
 		.content { padding-top: 12px; }
 	}
 
-	.menu.menuBlockMore { width: 256px; }
-	.menu.menuBlockMore {
+	.menu.menuObject { width: 256px; }
+	.menu.menuObject {
 		.content { overflow: visible !important; max-height: unset; }
 		.item { display: flex; }
 		.item {

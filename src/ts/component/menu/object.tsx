@@ -102,8 +102,8 @@ class MenuObject extends React.Component<I.Menu> {
 		const object = detailStore.get(rootId, blockId);
 		const cmd = keyboard.cmdSymbol();
 		const isTemplate = UtilObject.isTemplate(object.type);
-		const print = { id: 'print', name: translate('menuBlockMorePrint'), caption: `${cmd} + P` };
-		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
+		const print = { id: 'print', name: translate('menuObjectPrint'), caption: `${cmd} + P` };
+		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		const canWrite = UtilSpace.canMyParticipantWrite();
 		const canDelete = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
@@ -116,19 +116,19 @@ class MenuObject extends React.Component<I.Menu> {
 		let setDefaultTemplate = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
-		let search = { id: 'search', name: translate('menuBlockMoreSearchOnPage'), caption: `${cmd} + F` };
-		let history = { id: 'history', name: translate('menuBlockMoreVersionHistory'), caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
+		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
+		let history = { id: 'history', name: translate('menuObjectVersionHistory'), caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
-		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuBlockMoreReloadFromSource') };
-		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
+		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
+		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 
 		if (isTemplate) {	
-			template = { id: 'pageCreate', icon: 'template', name: translate('menuBlockMoreCreateObject') };
-			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('menuBlockMoreSetDefaultTemplate') };
+			template = { id: 'pageCreate', icon: 'template', name: translate('menuObjectCreateObject') };
+			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('menuObjectSetDefaultTemplate') };
 			pageCopy.name = translate('commonDuplicate');
 		} else {
-			template = { id: 'templateCreate', icon: 'template', name: translate('menuBlockMoreUseAsTemplate') };
+			template = { id: 'templateCreate', icon: 'template', name: translate('menuObjectUseAsTemplate') };
 		};
 
 		if (object.isFavorite) {
@@ -146,15 +146,15 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		if (block.isLocked()) {
-			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuBlockMoreUnlockPage'), caption: `Ctrl + Shift + L` };
+			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuObjectUnlockPage'), caption: `Ctrl + Shift + L` };
 		} else {
-			pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuBlockMoreLockPage'), caption: `Ctrl + Shift + L` };
+			pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuObjectLockPage'), caption: `Ctrl + Shift + L` };
 		};
 
 		if (object.isInstalled) {
 			pageInstall = { id: 'pageUninstall', icon: 'remove', name: translate('commonDelete') };
 		} else {
-			pageInstall = { id: 'pageInstall', icon: 'install', name: translate('menuBlockMoreInstall') };
+			pageInstall = { id: 'pageInstall', icon: 'install', name: translate('menuObjectInstall') };
 		};
 
 		// Restrictions
