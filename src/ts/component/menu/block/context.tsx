@@ -216,6 +216,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			};
 				
 			case 'style': {
+				menuId = 'blockStyle';
 
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (item: any) => {
@@ -241,7 +242,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					},
 				});
 
-				menuId = 'blockStyle';
 				focusApply = false;
 				break;
 			};
@@ -257,7 +257,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuParam.data = Object.assign(menuParam.data, {
 					options: [
 						{ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true },
-						{ id: 'move', icon: 'move', name: translate('menuBlockMoreMoveTo'), arrow: true },
+						{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
 						{ id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(block.hAlign) ].join(' '), arrow: true },
 						{ id: 'blockRemove', icon: 'remove', name: translate('commonDelete') }
 					],
@@ -292,6 +292,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			};
 				
 			case I.MarkType.Link: {
+				menuId = 'blockLink';
+
 				mark = Mark.getInRange(marks, type, { from, to });
 
 				menuParam = Object.assign(menuParam, {
@@ -314,7 +316,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					}
 				});
 
-				menuId = 'blockLink';
 				closeContext = true;
 				focusApply = false;
 				break;
