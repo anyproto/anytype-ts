@@ -376,6 +376,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const context = this.menuContext;
+		const route = analytics.route.menuContext;
 
 		if (!block) {
 			return;
@@ -426,7 +427,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					],
 					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, blockIds, item.uniqueKey, (message: any) => {
-							analytics.createObject(item.id, item.recommendedLayout, analytics.route.menuContext, message.middleTime);
+							analytics.createObject(item.id, item.recommendedLayout, route, message.middleTime);
 						});
 
 						cb();
@@ -441,7 +442,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					value: block.hAlign,
 					onSelect: (align: I.BlockHAlign) => {
 						C.BlockListSetAlign(rootId, blockIds, align, () => {
-							analytics.event('ChangeBlockAlign', { align, count: 1 });
+							analytics.event('ChangeBlockAlign', { align, count: 1, route });
 						});
 						cb();
 					}
