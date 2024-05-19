@@ -66,7 +66,7 @@ class MenuContext extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		menuStore.closeAll(Constant.menuIds.more);
+		menuStore.closeAll(Constant.menuIds.object);
 	};
 
 	rebind () {
@@ -226,7 +226,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (!item.arrow || !objectIds.length) {
-			menuStore.closeAll(Constant.menuIds.more);
+			menuStore.closeAll(Constant.menuIds.object);
 			return;
 		};
 
@@ -290,7 +290,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.more, () => {
+			menuStore.closeAll(Constant.menuIds.object, () => {
 				menuStore.open(menuId, menuParam);
 			});
 		};

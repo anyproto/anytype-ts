@@ -100,7 +100,9 @@
 			"blockLink",
 			"blockColor",
 			"blockBackground",
-			"searchObject"
+			"searchObject",
+			"typeSuggest",
+			"blockAlign"
 		],
 		"add": [ "searchObject", "blockRelationEdit", "typeSuggest" ],
 		"action": [
@@ -112,7 +114,7 @@
 			"searchObject",
 			"typeSuggest"
 		],
-		"more": [ "select", "searchObject", "blockAlign", "typeSuggest" ],
+		"object": [ "select", "searchObject" ],
 		"index": [ "searchObject" ],
 		"relationEdit": [
 			"select",

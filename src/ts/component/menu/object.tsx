@@ -76,7 +76,7 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		menuStore.closeAll(Constant.menuIds.more);
+		menuStore.closeAll(Constant.menuIds.object);
 	};
 
 	rebind () {
@@ -211,8 +211,7 @@ class MenuObject extends React.Component<I.Menu> {
 				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },
 			];
-		} else
-		if (block.isPage()) {
+		} else {
 			if (isTemplate) {
 				sections = [
 					{ children: [ search, template, pageCopy, setDefaultTemplate, pageExport, archive, history ] },
@@ -265,15 +264,14 @@ class MenuObject extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			menuStore.closeAll(Constant.menuIds.more);
+			menuStore.closeAll(Constant.menuIds.object);
 			return;
 		};
 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onMenuSelect } = data;
+		const { rootId, blockId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const route = analytics.route.menuObject;
 
 		if (!block) {
 			return;
@@ -297,67 +295,6 @@ class MenuObject extends React.Component<I.Menu> {
 
 		let menuId = '';
 		switch (item.id) {
-			case 'turnObject': {
-				menuId = 'typeSuggest';
-				menuParam.data = Object.assign(menuParam.data, {
-					filter: '',
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
-					],
-					onClick: (item: any) => {
-						C.BlockListConvertToObjects(rootId, [ blockId ], item.uniqueKey, (message: any) => {
-							analytics.createObject(item.id, item.recommendedLayout, route, message.middleTime);
-						});
-						
-						close();
-
-						if (onMenuSelect) {
-							onMenuSelect(item);
-						};
-					},
-				});
-				break;
-			};
-
-			case 'move': {
-				menuId = 'searchObject';
-				menuParam.data = Object.assign(menuParam.data, {
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
-					],
-					type: I.NavigationType.Move, 
-					skipIds: [ rootId ],
-					position: I.BlockPosition.Bottom,
-					onSelect: (item: any) => {
-						close();
-
-						if (onMenuSelect) {
-							onMenuSelect(item);
-						};
-					}
-				});
-				break;
-			};
-
-			case 'align': {
-				menuId = 'blockAlign';
-				menuParam.data = Object.assign(menuParam.data, {
-					value: block.hAlign,
-					onSelect: (align: I.BlockHAlign) => {
-						C.BlockListSetAlign(rootId, [ blockId ], align, () => {
-							analytics.event('ChangeBlockAlign', { align, count: 1 });
-						});
-						
-						close();
-
-						if (onMenuSelect) {
-							onMenuSelect(item);
-						};
-					}
-				});
-				break;
-			};
-
 			case 'linkTo': {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
@@ -375,7 +312,7 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.more, () => {
+			menuStore.closeAll(Constant.menuIds.object, () => {
 				menuStore.open(menuId, menuParam);
 			});
 		};
@@ -384,7 +321,7 @@ class MenuObject extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, rootId, onSelect, isPopup } = data;
+		const { blockId, rootId, onSelect } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const object = detailStore.get(rootId, rootId);
 		const route = analytics.route.menuObject;
@@ -512,13 +449,6 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'unfav': {
 				Action.setIsFavorite([ rootId ], false, route);
-				break;
-			};
-
-			case 'blockRemove': {
-				C.BlockListDelete(rootId, [ blockId ], () => {
-					isPopup ? popupStore.close('page') : onBack();
-				});
 				break;
 			};
 

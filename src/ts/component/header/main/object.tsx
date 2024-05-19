@@ -122,7 +122,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 		menuOpen('object', '#button-header-more', {
 			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.more,
+			subIds: Constant.menuIds.object,
 			data: {
 				rootId,
 				blockId: rootId,

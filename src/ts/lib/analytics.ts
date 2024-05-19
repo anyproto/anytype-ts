@@ -41,6 +41,7 @@ class Analytics {
 		menuObject: 'MenuObject',
 		menuSystem: 'MenuSystem',
 		menuHelp: 'MenuHelp',
+		menuContext: 'MenuContext',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
