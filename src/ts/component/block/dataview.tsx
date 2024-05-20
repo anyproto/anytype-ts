@@ -174,6 +174,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
 			onViewSettings: () => {
+				console.log(this.refControls, this.refControls.onViewSettings);
+
 				if (this.refControls && this.refControls.onViewSettings) {
 					this.refControls.onViewSettings();
 				};

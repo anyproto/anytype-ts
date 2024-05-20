@@ -47,8 +47,6 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 			};
 		};
 
-		console.log(iconSize);
-
 		const Item = (item: any) => (
 			<div className="element" onClick={e => this.onClick(e, item)}>
 				<div className="flex">
