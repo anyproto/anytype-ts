@@ -134,7 +134,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 				let advanced = null;
 
-				if (item.backlinks && item.backlinks.length) {
+				if (item.links || item.backlinks.length) {
 					advanced = (
 						<Icon
 							className="advanced"
@@ -366,7 +366,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					return;
 				};
 
-				if (item && item.backlinks && item.backlinks.length) {
+				if (item && (item.links.length || item.backlinks.length)) {
 					this.onSearchByBacklinks(e, item);
 				};
 			} else {
@@ -468,13 +468,15 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		e.preventDefault();
 		e.stopPropagation();
 
-		this.setState({ backlink: item });
-		this.resetSearch();
+		this.setState({ backlink: item }, () => {
+			this.resetSearch();
+		});
 	};
 
 	onClearSearch () {
-		this.setState({ backlink: null });
-		this.resetSearch();
+		this.setState({ backlink: null }, () => {
+			this.resetSearch();
+		});
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -517,10 +519,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		if (backlink) {
-			const links = Relation.getArrayValue(backlink.links);
-			const backlinks = Relation.getArrayValue(backlink.backlinks);
-
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(links, backlinks) });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(backlink.links, backlink.backlinks) });
 		};
 
 		if (clear) {
@@ -541,7 +540,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records || []);
+			const records = (message.records || []).map(it => {
+				it.links = Relation.getArrayValue(it.links);
+				it.backlinks = Relation.getArrayValue(it.backlinks);
+				return it;
+			});
+
+			this.items = this.items.concat(records);
 
 			if (clear) {
 				this.setState({ isLoading: false });
