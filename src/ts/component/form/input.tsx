@@ -40,7 +40,7 @@ class Input extends React.Component<Props, State> {
 	_isMounted = false;
 	node: any = null;
 	mask: any = null;
-	isFocused: boolean = false;
+	isFocused = false;
 	range: I.TextRange = null;
 
 	public static defaultProps = {
