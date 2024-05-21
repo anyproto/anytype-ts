@@ -102,7 +102,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const tierItem = UtilData.getMembershipTier(tier);
-		const globalName = this.getName();
+		const globalName = this.getGlobalName();
 
 		if (!globalName && tierItem.namesCount) {
 			this.disableButtons(true);
@@ -135,9 +135,9 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const globalName = this.getName();
+		const globalName = this.getGlobalName();
 		const tierItem = UtilData.getMembershipTier(tier);
-		const name = globalName || !tierItem.namesCount ? '' : this.refName.getValue();
+		const name = globalName || !tierItem.namesCount ? '' : this.getName();
 		const refButton = method == I.PaymentMethod.Stripe ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);
@@ -161,10 +161,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	validateName (callBack?: () => void) {
-		const name = this.refName.getValue().trim();
-		if (!name.length) {
-			return;
-		};
+		const name = this.getName();
 
 		this.checkName(name, () => {
 			this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
@@ -193,6 +190,11 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	checkName (name: string, callBack: () => void) {
+		name = String(name || '').trim();
+		if (!name.length) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
@@ -210,6 +212,10 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	getName () {
+		return this.refName.getValue().trim();
+	};
+
+	getGlobalName () {
 		return String(authStore.membership?.name || '');
 	};
 
