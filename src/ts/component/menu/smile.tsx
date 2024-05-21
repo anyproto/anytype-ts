@@ -968,7 +968,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	onScroll ({ scrollTop }) {
 		const cache = this.getGroupCache();
-		const top = scrollTop + this.refList.props.height / 2;
+		const top = scrollTop + this.refList?.props.height / 2;
 
 		for (const item of cache) {
 			if ((top >= item.start) && (top < item.end)) {
