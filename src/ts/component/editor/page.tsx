@@ -1730,11 +1730,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
+			let count = 0;
+
 			if (message.isSameBlockCaret) {
 				id = focused;
 			} else 
 			if (message.blockIds && message.blockIds.length) {
-				const lastId = message.blockIds[message.blockIds.length - 1];
+				count = message.blockIds.length;
+
+				const lastId = message.blockIds[count - 1];
 				const block = blockStore.getLeaf(rootId, lastId);
 				
 				if (!block) {
@@ -1750,7 +1754,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.focus(id, from, to, true);
-			analytics.event('PasteBlock');
+			analytics.event('PasteBlock', { count });
 		});
 	};
 

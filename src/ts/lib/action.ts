@@ -550,7 +550,7 @@ class Action {
 			};
 		});
 
-		analytics.event(isCut ? 'CutBlock' : 'CopyBlock');
+		analytics.event(isCut ? 'CutBlock' : 'CopyBlock', { count: blocks.length });
 	};
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {

@@ -192,9 +192,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { route } = data;
 
 		this._isMounted = true;
-		this.n = -1;
 
-		this.load(true);
+		this.reload();
 		this.rebind();
 		this.resize();
 
@@ -208,11 +207,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const filter = this.getFilter();
 
 		if (filter != this.filter) {
-			this.n = -1;
-			this.offset = 0;
-			this.top = 0;
 			this.filter = filter;
-			this.load(true);
+			this.reload();
 			return;
 		};
 
@@ -353,13 +349,20 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		node.find('.item.active').removeClass('active');
 	};
 
-	onFilterChange () {
+	onFilterChange (e: any, v: string) {
+		if (this.filter == v) {
+			return;
+		};
+
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.forceUpdate(), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => {
+			this.reload();
+			analytics.event('SearchInput');
+		}, Constant.delay.keyboard);
 	};
 
 	onFilterClear () {
-		this.forceUpdate();
+		this.reload();
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -367,6 +370,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.offset += Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
+	};
+
+	reload () {
+		this.n = -1;
+		this.offset = 0;
+		this.top = 0;
+		this.load(true);
 	};
 
 	load (clear: boolean, callBack?: (value: any) => void) {
