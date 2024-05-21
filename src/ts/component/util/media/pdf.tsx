@@ -38,6 +38,7 @@ class MediaPdf extends React.Component<Props, State> {
 					renderMode="canvas"
 					loading={<Loader />}
 					onClick={onClick}
+					options={{ isEvalSupported: false }}
 				>
 					<Page 
 						pageNumber={page} 
