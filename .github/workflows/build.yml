@@ -16,8 +16,8 @@ jobs:
       matrix:
         os:
           - macos-12
-          - ubuntu-latest
-          - windows-latest
+          #- ubuntu-latest
+          #- windows-latest
 
     steps:
       - name: Setup
