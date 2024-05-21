@@ -34,6 +34,7 @@ class Keyboard {
 	isPasteDisabled = false;
 	isSelectionDisabled = false;
 	isSelectionClearDisabled = false;
+	isComposition = false;
 	
 	init () {
 		this.unbind();
@@ -792,14 +793,11 @@ class Keyboard {
 			isDisabled = [ 'set', 'store', 'graph' ].includes(popupMatch.params.action);
 		};
 
-		console.log('onSearchMenu', value, isDisabled);
-
 		if (isDisabled) {
 			return;
 		};
 
 		menuStore.closeAll([ 'blockContext' ], () => {
-			console.log(123);
 			menuStore.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
@@ -989,6 +987,10 @@ class Keyboard {
 
 	setSelectionClearDisabled (v: boolean) {
 		this.isSelectionClearDisabled = v;
+	};
+
+	setComposition (v: boolean) {
+		this.isComposition = v;
 	};
 
 	initPinCheck () {

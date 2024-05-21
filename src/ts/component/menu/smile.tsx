@@ -44,6 +44,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	node = null;
 	refFilter = null;
 	refList = null;
+	refItems = null;
 
 	id = '';
 	skin = 1;
@@ -156,7 +157,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 							focusOnMount={true}
 						/>
 						
-						<div id="items" className="items">
+						<div ref={ref => this.refItems = ref} className="items">
 							<InfiniteLoader
 								rowCount={items.length}
 								loadMoreRows={() => {}}
@@ -200,6 +201,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 										onClick={() => this.onGroup(group.id)} 
 									/>
 								))}
+								<Icon 
+									className="random" 
+									tooltip={translate('menuSmileRandom')} 
+									onClick={() => this.onRandom()}
+								/>
 							</div>
 						) : ''}
 					</React.Fragment>
@@ -269,7 +275,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 												rowRenderer={rowRenderer}
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
-												scrollToAlignment="center"
+												scrollToAlignment="start"
 											/>
 										)}
 									</AutoSizer>
@@ -688,7 +694,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	setActive (item?: any, row?: number) {
 		const node = $(this.node);
-		const items = node.find('#items');
+		const items = $(this.refItems);
 
 		if (row && this.refList) {
 			this.refList.scrollToRow(Math.max(0, row));
@@ -962,8 +968,10 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	onScroll ({ scrollTop }) {
 		const cache = this.getGroupCache();
+		const top = scrollTop + this.refList?.props.height / 2;
+
 		for (const item of cache) {
-			if ((scrollTop >= item.start) && (scrollTop < item.end)) {
+			if ((top >= item.start) && (top < item.end)) {
 				this.setActiveGroup(item.id);
 				break;
 			};
@@ -1055,6 +1063,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	onTab (tab: Tab) {
 		this.setState({ tab }, () => this.load());
+	};
+
+	onRandom () {
+		const param = UtilSmile.randomParam();
+
+		this.onSmileSelect(param.id, param.skin);
+		this.forceUpdate();
 	};
 
 	upload (id: string) {

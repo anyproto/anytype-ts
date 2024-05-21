@@ -33,6 +33,7 @@ import {
 	ObjectManagerPopup,
 	NetworkMode,
 	NavigationMenuMode,
+	InterfaceStatus,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -54,6 +55,7 @@ import {
 	ViewType,
 	View,
 	SortType,
+	EmptyType,
 	Sort,
 	FilterOperator,
 	FilterCondition,
@@ -114,6 +116,7 @@ export {
 	Usecase,
 	NetworkMode,
 	NavigationMenuMode,
+	InterfaceStatus,
 
 	ImportType,
 	ImportMode,
@@ -191,6 +194,7 @@ export {
 	ViewType,
 	View,  
 	SortType,
+	EmptyType,
 	Sort,
 	FilterOperator,
 	FilterCondition,

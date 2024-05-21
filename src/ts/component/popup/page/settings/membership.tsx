@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, translate, UtilCommon, UtilDate, analytics, Action, keyboard } from 'Lib';
+import { I, translate, UtilCommon, UtilDate, analytics, keyboard } from 'Lib';
 import { popupStore, authStore, commonStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
+import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
 
-	node: any = null;
-	swiper: any = null;
+	swiper = null;
 
 	constructor (props: I.PopupSettings) {
 		super(props);
@@ -21,7 +21,13 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 	render () {
 		const { membership } = authStore;
-		const { membershipTiers } = commonStore;
+		const { membershipTiers, interfaceLang } = commonStore;
+		const cnt = [];
+
+		if (interfaceLang == Constant.default.interfaceLang) {
+			cnt.push('riccione');
+		};
+
 		const links = [
 			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpMembershipDetails' },
 			{ url: Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
@@ -93,8 +99,11 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		};
 
 		return (
-			<div ref={node => this.node = node}>
-				<div className="membershipTitle">{!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')}</div>
+			<React.Fragment>
+				<Title 
+					className={cnt.join(' ')} 
+					text={!membership.isNone ? translate('popupSettingsMembershipTitle1') : translate('popupSettingsMembershipTitle2')} 
+				/>
 
 				{(membership.isNone || membership.isExplorer) ? (
 					<React.Fragment>
@@ -138,7 +147,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 				</div>
 
 				<Label className="special" text={translate('popupSettingsMembershipSpecial')} onClick={this.onContact} />
-			</div>
+			</React.Fragment>
 		);
 	};
 

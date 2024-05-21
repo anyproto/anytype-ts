@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .menus {
 	.menu.menuSmile { width: 404px; user-select: none; }
@@ -73,6 +73,8 @@
 
 				.icon.flags { background-image: url('~img/icon/emoji/flags0.svg'); }
 				.icon.flags.active { background-image: url('~img/icon/emoji/flags1.svg'); }
+
+				.icon.random { background-image: url('~img/icon/emoji/random0.svg'); }
 			}
 		}
 

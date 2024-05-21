@@ -12,6 +12,7 @@
         "allowSyntheticDefaultImports": true,
         "allowJs": true,
         "baseUrl": "./src",
+		"lib": [ "es5", "dom" ],
 
         "paths": {
             "json": [

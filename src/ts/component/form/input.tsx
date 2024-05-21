@@ -100,6 +100,8 @@ class Input extends React.Component<Props, State> {
 				onCut={this.onCut}
 				onSelect={this.onSelect}
 				onClick={onClick}
+				onCompositionStart={() => keyboard.setComposition(true)}
+				onCompositionEnd={() => keyboard.setComposition(false)}
 				maxLength={maxLength ? maxLength : undefined}
 				accept={accept ? accept : undefined}
 				multiple={multiple}

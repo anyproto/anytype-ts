@@ -8,10 +8,6 @@ import Constant from 'json/constant.json';
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<I.PopupSettings> {
 
-	constructor (props) {
-		super(props);
-	};
-
 	render () {
 		const { accountSpaceId } = authStore;
 		const spaces = this.getItems();
@@ -34,7 +30,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 			return (
 				<div className="row">
-					<div className="col colSpace" onClick={() => UtilRouter.switchSpace(space.targetSpaceId)}>
+					<div className="col colSpace" onClick={() => this.onClick(space)}>
 						<IconObject object={space} size={40} />
 						<div className="info">
 							<ObjectName object={space} />
@@ -100,7 +96,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	};
 
 	onClick (space: any) {
-		if (!space.isAccountJoining) {
+		if (space.isAccountActive) {
 			UtilRouter.switchSpace(space.targetSpaceId);
 		};
 	};

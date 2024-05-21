@@ -174,6 +174,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
 			onViewSettings: () => {
+				console.log(this.refControls, this.refControls.onViewSettings);
+
 				if (this.refControls && this.refControls.onViewSettings) {
 					this.refControls.onViewSettings();
 				};
@@ -927,7 +929,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				subId,
 				isCollection,
 				route: this.analyticsRoute(),
-				relationKeys: this.getKeys(view.id),
+				relationKeys: this.getVisibleRelations().map(it => it.relationKey),
 				allowedLink: true,
 				allowedOpen: true,
 			}
@@ -1109,7 +1111,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const keys = dbStore.getObjectRelationKeys(rootId, block.id);
-
 		return view.getVisibleRelations().filter(it => keys.includes(it.relationKey));
 	};
 

@@ -144,20 +144,17 @@
 	"commonOwner": "Owner",
 	"commonUpdateProgress": "Downloading update... %s/%s",
 	"commonActions": "Actions",
-
-	"commonLCCollection": "Collection",
-	"commonLCSet": "Set",
-
-	"commonDeletionWarningTitle": "Are you sure you want to delete %s %s?",
-	"commonDeletionWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
+	"commonAddRelation": "Add Relation",
+	"commonCollection": "Collection",
+	"commonSet": "Set",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
+	"pluralLCObject": "object|objects",
 	"pluralTemplate": "template|templates",
 	"pluralRelation": "Relation|Relations",
 	"pluralBlock": "Block|Blocks",
 	"pluralObjectType": "Object Type|Object Types",
-	"pluralUCRelation": "Relation|Relations",
 	"pluralLinks": "link|links",
 	"pluralBacklinks": "backlink|backlinks",
 	"pluralMember": "member|members",
@@ -550,8 +547,6 @@
 	"blockDataviewControlsSettings": "Settings",
 	"blockDataviewControlsViewAdd": "Create new View",
 
-	"blockDataviewSelectionMoveToBin": "Move to Bin",
-	"blockDataviewSelectionDeselect": "Deselect all",
 	"blockDataviewSelectionSelected": "%s selected",
 
 	"blockDataviewHeadMenuEdit": "Edit title",
@@ -803,50 +798,6 @@
 
 	"popupSettingsSpaceMembersTitle": "Members",
 
-	"popupConfirmUpdatePromptTitle": "Update available",
-	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
-	"popupConfirmUpdatePromptRestartOk": "Restart and update",
-	"popupConfirmUpdatePromptCancel": "Later",
-	"popupConfirmUpdateDoneTitle": "You are up-to-date",
-	"popupConfirmUpdateDoneText": "You are on the latest version: %s",
-	"popupConfirmUpdateDoneOk": "Great!",
-	"popupConfirmUpdateErrorTitle": "Oops!",
-	"popupConfirmUpdateErrorText": "Can't check available updates, please try again later.<br\/><span class=\"error\">%s<\/span>",
-
-	"popupConfirmNeedUpdateTitle": "It's time to update",
-	"popupConfirmNeedUpdateText": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features.",
-
-	"popupConfirmObjectOpenErrorText": "There was a problem while opening the object, please send the debug info to the support team.",
-	"popupConfirmObjectOpenErrorButton": "Collect debug info",
-
-	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
-	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
-	"popupConfirmStopSharingSpaceConfirm": "Stop sharing",
-
-	"popupConfirmMemberRemoveTitle": "Remove member",
-	"popupConfirmMemberRemoveText": "<b>%s</b> will be removed from the space",
-
-	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
-
-	"popupConfirmRevokeLinkTitle": "Delete sharing link",
-	"popupConfirmRevokeLinkText": "New members won’t be able to join the space. You can generate a new link anytime.",
-	"popupConfirmRevokeLinkConfirm": "Delete link",
-
-	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
-	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
-
-	"popupConfirmDuplicateSpace": "You are already a member of this space",
-	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
-
-	"popupConfirmWelcomeTitle": "Welcome to your Space",
-	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
-	"popupConfirmWelcomeButton": "Show me what I can build",
-
-	"popupConfirmLostPhraseTitle": "Recovering Your Lost Key",
-	"popupConfirmLostPhraseTextWindows": "<p><p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your Windows Credential Manager. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the Control Panel and change the \"View by\" option to \"Large icons\".<\/li><li>Locate and open the \"Credential Manager\" application.<\/li><li>Click on the \"Windows Credentials\" tab to view your saved credentials.<\/li><li>Search for the entry related to Anytype and click \"Edit\" to see details.<\/li><\/ul>",
-	"popupConfirmLostPhraseTextLinux": "<p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your Linux Keyring. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the \"Passwords and Keys\" application, which you can find in the Utilities folder.<\/li><li>In the \"Passwords and Keys\" window, select the \"Default\" keyring on the left.<\/li><li>Search for the entry related to Anytype and double-click on it.<\/li><li>Click on the key icon to reveal the key, or select the \"Copy\" option to copy the key.<\/li><\/ul><p>Copy the key and secure it safely.<\/p>",
-	"popupConfirmLostPhraseTextMac": "<p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your macOS Keychain Access. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the Keychain Access application, which you can find in the Utilities folder.<\/li><li>In the Keychain Access window, select \"Login\" from the list of Keychains on the left.<\/li><li>Click on the \"Passwords\" tab to view your saved passwords.<\/li><li>Search for the entry related to Anytype and double-click on it.<\/li><li>Check the \"Show password\" box, and your key will be displayed.<\/li><\/ul><p>Copy the key and secure it safely.<\/p>",
-
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
 	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
@@ -880,58 +831,6 @@
 	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
 
 	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <span>Please let us know here</span>︎.",
-
-	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
-	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
-	"popupMembershipFreeText": "We need your email to keep spam at bay and the fun in play!",
-	"popupMembershipFreeCheckboxText": "I'd like to get updates on products and enjoy free perks!",
-	"popupMembershipFreeEnterCode": "Enter code",
-
-	"popupMembershipCurrentEmailTitle": "Get updates and enjoy free perks!",
-	"popupMembershipCurrentEmailText": "It is not linked to your vault in any way.",
-	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
-
-	"popupMembershipPaidTitle": "Pick your unique name",
-	"popupMembershipPaidTextPerYear": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a year.",
-	"popupMembershipPaidTextPerYears": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
-	"popupMembershipPaidPlaceholder": "Enter your name",
-	"popupMembershipPayByCard": "Pay by Card",
-	"popupMembershipPayByCrypto": "Pay by Crypto",
-	"popupMembershipPaidBy": "Paid by %s",
-
-	"popupMembershipResend": "Resend",
-	"popupMembershipCountdown": " in %s sec",
-
-	"popupMembershipStatusWaitASecond": "Wait a second...",
-	"popupMembershipStatusNameAvailable": "This name is available!",
-	"popupMembershipStatusNameNotAvailable": "Oops! This name is already taken!",
-	"popupMembershipCurrentStatus": "Current status",
-	"popupMembershipValidUntil": "Valid until",
-	"popupMembershipForever": "Forever",
-	"popupMembershipChangeEmail": "Change e-mail",
-	"popupMembershipManagePayment": "Manage payment",
-	"popupMembershipWriteToAnyteam": "Write to Anyteam",
-
-	"popupMembershipWhatsIncluded": "What’s included",
-
-	"popupMembershipSuccessTitle": "Welcome to the network, %s",
-	"popupMembershipSuccessTextCuriosity": "Big cheers for your curiosity!",
-	"popupMembershipSuccessTextSupport": "Big cheers for your support!",
-	"popupMembershipSuccessVerificationTitle": "Thank you for confirming your email!",
-	"popupMembershipSuccessVerificationText": "You are now set to receive the latest updates and perks. Enjoy exploring!",
-
-	"popupMembershipCode1": "Unknown error occurred",
-	"popupMembershipCode2": "No .any provided",
-	"popupMembershipCode3": "Name is too short",
-	"popupMembershipCode4": "Name is too long",
-	"popupMembershipCode5": "Name has invalid characters",
-	"popupMembershipCode6": "This tier does not support name",
-
-	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
-
-	"popupConfirmMembershipUpgradeTitle": "Membership Upgrade",
-	"popupConfirmMembershipUpgradeText": "Reach us for extra storage, space editors, or more shared spaces. Anytype team will provide details and conditions tailored to your needs.",
-	"popupConfirmMembershipUpgradeButton": "Contact Anytype Team",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
@@ -993,6 +892,107 @@
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
 
+	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
+	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
+	"popupMembershipFreeText": "We need your email to keep spam at bay and the fun in play!",
+	"popupMembershipFreeCheckboxText": "I'd like to get updates on products and enjoy free perks!",
+	"popupMembershipFreeEnterCode": "Enter code",
+
+	"popupMembershipCurrentEmailTitle": "Get updates and enjoy free perks!",
+	"popupMembershipCurrentEmailText": "It is not linked to your vault in any way.",
+	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
+
+	"popupMembershipPaidTitle": "Pick your unique name",
+	"popupMembershipPaidTextPerYear": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a year.",
+	"popupMembershipPaidTextPerYears": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
+	"popupMembershipPaidPlaceholder": "Enter your name",
+	"popupMembershipPayByCard": "Pay by Card",
+	"popupMembershipPayByCrypto": "Pay by Crypto",
+	"popupMembershipPaidBy": "Paid by %s",
+
+	"popupMembershipResend": "Resend",
+	"popupMembershipCountdown": " in %s sec",
+
+	"popupMembershipStatusWaitASecond": "Wait a second...",
+	"popupMembershipStatusNameAvailable": "This name is available!",
+	"popupMembershipStatusNameNotAvailable": "Oops! This name is already taken!",
+	"popupMembershipCurrentStatus": "Current status",
+	"popupMembershipValidUntil": "Valid until",
+	"popupMembershipForever": "Forever",
+	"popupMembershipChangeEmail": "Change e-mail",
+	"popupMembershipManagePayment": "Manage payment",
+	"popupMembershipWriteToAnyteam": "Write to Anyteam",
+
+	"popupMembershipWhatsIncluded": "What’s included",
+
+	"popupMembershipSuccessTitle": "Welcome to the network, %s",
+	"popupMembershipSuccessTextCuriosity": "Big cheers for your curiosity!",
+	"popupMembershipSuccessTextSupport": "Big cheers for your support!",
+	"popupMembershipSuccessVerificationTitle": "Thank you for confirming your email!",
+	"popupMembershipSuccessVerificationText": "You are now set to receive the latest updates and perks. Enjoy exploring!",
+
+	"popupMembershipCode1": "Unknown error occurred",
+	"popupMembershipCode2": "No .any provided",
+	"popupMembershipCode3": "Name is too short",
+	"popupMembershipCode4": "Name is too long",
+	"popupMembershipCode5": "Name has invalid characters",
+	"popupMembershipCode6": "This tier does not support name",
+
+	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
+
+	"popupConfirmUpdatePromptTitle": "Update available",
+	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
+	"popupConfirmUpdatePromptRestartOk": "Restart and update",
+	"popupConfirmUpdatePromptCancel": "Later",
+	"popupConfirmUpdateDoneTitle": "You are up-to-date",
+	"popupConfirmUpdateDoneText": "You are on the latest version: %s",
+	"popupConfirmUpdateDoneOk": "Great!",
+	"popupConfirmUpdateErrorTitle": "Oops!",
+	"popupConfirmUpdateErrorText": "Can't check available updates, please try again later.<br\/><span class=\"error\">%s<\/span>",
+
+	"popupConfirmNeedUpdateTitle": "It's time to update",
+	"popupConfirmNeedUpdateText": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features.",
+
+	"popupConfirmObjectOpenErrorText": "There was a problem while opening the object, please send the debug info to the support team.",
+	"popupConfirmObjectOpenErrorButton": "Collect debug info",
+
+	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
+	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
+	"popupConfirmStopSharingSpaceConfirm": "Stop sharing",
+
+	"popupConfirmMemberRemoveTitle": "Remove member",
+	"popupConfirmMemberRemoveText": "<b>%s</b> will be removed from the space",
+
+	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
+
+	"popupConfirmRevokeLinkTitle": "Delete sharing link",
+	"popupConfirmRevokeLinkText": "New members won’t be able to join the space. You can generate a new link anytime.",
+	"popupConfirmRevokeLinkConfirm": "Delete link",
+
+	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
+	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
+
+	"popupConfirmDuplicateSpace": "You are already a member of this space",
+	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
+
+	"popupConfirmWelcomeTitle": "Welcome to your Space",
+	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
+	"popupConfirmWelcomeButton": "Show me what I can build",
+
+	"popupConfirmLostPhraseTitle": "Recovering Your Lost Key",
+	"popupConfirmLostPhraseTextWindows": "<p><p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your Windows Credential Manager. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the Control Panel and change the \"View by\" option to \"Large icons\".<\/li><li>Locate and open the \"Credential Manager\" application.<\/li><li>Click on the \"Windows Credentials\" tab to view your saved credentials.<\/li><li>Search for the entry related to Anytype and click \"Edit\" to see details.<\/li><\/ul>",
+	"popupConfirmLostPhraseTextLinux": "<p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your Linux Keyring. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the \"Passwords and Keys\" application, which you can find in the Utilities folder.<\/li><li>In the \"Passwords and Keys\" window, select the \"Default\" keyring on the left.<\/li><li>Search for the entry related to Anytype and double-click on it.<\/li><li>Click on the key icon to reveal the key, or select the \"Copy\" option to copy the key.<\/li><\/ul><p>Copy the key and secure it safely.<\/p>",
+	"popupConfirmLostPhraseTextMac": "<p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your macOS Keychain Access. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the Keychain Access application, which you can find in the Utilities folder.<\/li><li>In the Keychain Access window, select \"Login\" from the list of Keychains on the left.<\/li><li>Click on the \"Passwords\" tab to view your saved passwords.<\/li><li>Search for the entry related to Anytype and double-click on it.<\/li><li>Check the \"Show password\" box, and your key will be displayed.<\/li><\/ul><p>Copy the key and secure it safely.<\/p>",
+
+	"popupConfirmMembershipUpgradeTitle": "Membership Upgrade",
+	"popupConfirmMembershipUpgradeText": "Reach us for extra storage, space editors, or more shared spaces. Anytype team will provide details and conditions tailored to your needs.",
+	"popupConfirmMembershipUpgradeButton": "Contact Anytype Team",
+
+	"popupConfirmRelationOptionRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
+
+	"popupConfirmDeleteWarningTitle": "Are you sure you want to delete %s %s?",
+	"popupConfirmDeleteWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1011,13 +1011,6 @@
 	"popupInviteConfirmButtonReject": "Reject",
 
 	"popupInviteQrTitle": "QR code for joining a Space",
-
-	"networkMode0Title": "Anytype",
-	"networkMode0Text": "Back up to the network managed by Anytype",
-	"networkMode1Title": "Local-only",
-	"networkMode1Text": "Don't back up; sync within local network",
-	"networkMode2Title": "Self-hosted",
-	"networkMode2Text": "Back up to your self-hosted network",
 
 	"popupHelpLabel": "Stay tuned for Anytype's news",
 
@@ -1116,10 +1109,10 @@
 	"popupShortcutMainTextStyle7": "Apply previously selected font color",
 	"popupShortcutMainTextStyle8": "Apply previously selected highlight",
 
-	"popupShortcutNavigationBasics1": "Open settings",
-	"popupShortcutNavigationBasics2": "Open the navigation pane",
-	"popupShortcutNavigationBasics3": "Open the graph pane",
-	"popupShortcutNavigationBasics4": "Open the search pane",
+	"popupShortcutNavigationBasics1": "Open Settings",
+	"popupShortcutNavigationBasics2": "Open the Flow pane",
+	"popupShortcutNavigationBasics3": "Open the Graph pane",
+	"popupShortcutNavigationBasics4": "Open the Search pane",
 	"popupShortcutNavigationBasics5": "Open the Library pane",
 	"popupShortcutNavigationBasics6": "Return to the home screen",
 	"popupShortcutNavigationBasics7": "Show previous object from History",
@@ -1225,7 +1218,8 @@
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
 	"popupUsecaseBannerText": "Introducing local-first collaboration! Co-create, share and collaborate on Spaces!",
 
-	"popupRelationValueRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
+	"popupRelationTitle": "Edit %d %s",
+	"popupRelationEmpty": "There are no relations shown yet",
 
 	"menuVaultPeer": "%d\/%d peers",
 	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
@@ -1235,6 +1229,7 @@
 	"menuSmileEmpty": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
+	"menuSmileRandom": "Random emoji",
 
 	"menuBlockCoverEdit": "Reposition",
 	"menuBlockCoverEmpty": "There are no covers found",
@@ -1293,20 +1288,6 @@
 
 	"menuBlockLinkFilterPlaceholder": "Paste link or search Objects",
 	"menuBlockLinkSectionsLinkToWebsite": "Link to website",
-
-	"menuBlockMorePrint": "Print",
-	"menuBlockMoreSearchOnPage": "Search on page",
-	"menuBlockMoreMoveTo": "Move to",
-	"menuBlockMoreVersionHistory": "Version History",
-	"menuBlockMoreExport": "Export",
-	"menuBlockMoreReloadFromSource": "Reload from Source",
-	"menuBlockMoreCreateObject": "Create Object",
-	"menuBlockMoreUseAsTemplate": "Use as a Template",
-	"menuBlockMoreUnlockPage": "Unlock page",
-	"menuBlockMoreLockPage": "Lock page",
-	"menuBlockMoreInstall": "Install",
-	"menuBlockMoreSetDefaultTemplate": "Set as default Template",
-	"menuBlockMoreCreateWidget": "Create Widget",
 
 	"menuBlockRelationEditUnlinkFromType": "Unlink from Type",
 	"menuBlockRelationEditUnlinkFromObject": "Unlink from Object",
@@ -1393,10 +1374,11 @@
 	"menuDataviewRelationEditFilterObjectTypes": "Filter Object types...",
 	"menuDataviewRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your Library",
 
-	"menuDataviewRelationListAddRelation": "Add Relation",
-
 	"menuDataviewSortNoSortsApplied": "No sorts applied to this View",
 	"menuDataviewSortNewSort": "New sort",
+	"menuDataviewSortShowEmpty": "Show empty values",
+	"menuDataviewSortShowEmptyTop": "On top",
+	"menuDataviewSortShowEmptyBottom": "On bottom",
 
 	"menuDataviewSourceSelectOneOrMoreSources": "Select one or more sources",
 	"menuDataviewSourceAddRelation": "Add a Relation",
@@ -1446,6 +1428,19 @@
 	"menuHelpTerms": "Terms of Use",
 	"menuHelpPrivacy": "Privacy Policy",
 	"menuHelpGallery": "ANY Experience Gallery",
+
+	"menuObjectPrint": "Print",
+	"menuObjectSearchOnPage": "Search on page",
+	"menuObjectVersionHistory": "Version History",
+	"menuObjectExport": "Export",
+	"menuObjectReloadFromSource": "Reload from Source",
+	"menuObjectCreateObject": "Create Object",
+	"menuObjectUseAsTemplate": "Use as a Template",
+	"menuObjectUnlockPage": "Unlock page",
+	"menuObjectLockPage": "Lock page",
+	"menuObjectInstall": "Install",
+	"menuObjectSetDefaultTemplate": "Set as default Template",
+	"menuObjectCreateWidget": "Create Widget",
 
 	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
 	"menuItemRelationViewFeaturedRemove": "Remove from featured Relations",
@@ -1873,13 +1868,13 @@
 	"errorMembershipIsNameValid11": "Name cannot be taken",
 	"errorMembershipIsNameValid12": "Please connect to the internet",
 
-	"errorMembershipGetPaymentUrl4": "Unable to connect to payment node",
-	"errorMembershipGetPaymentUrl6": "Tier not found",
-	"errorMembershipGetPaymentUrl7": "Tier is invalid",
-	"errorMembershipGetPaymentUrl8": "Payment method is invalid",
-	"errorMembershipGetPaymentUrl9": "Bad Any name",
-	"errorMembershipGetPaymentUrl10": "Membership already exists",
-	"errorMembershipGetPaymentUrl11": "Please connect to the internet",
+	"errorMembershipRegisterPaymentRequest4": "Unable to connect to payment node",
+	"errorMembershipRegisterPaymentRequest6": "Tier not found",
+	"errorMembershipRegisterPaymentRequest7": "Tier is invalid",
+	"errorMembershipRegisterPaymentRequest8": "Payment method is invalid",
+	"errorMembershipRegisterPaymentRequest9": "Bad Any name",
+	"errorMembershipRegisterPaymentRequest10": "Membership already exists",
+	"errorMembershipRegisterPaymentRequest11": "Please connect to the internet",
 
 	"errorMembershipFinalize6": "Membership not found",
 	"errorMembershipFinalize7": "Membership has wrong state",
@@ -2077,6 +2072,13 @@
 	"paymentMethod1": "Stripe",
 	"paymentMethod2": "Crypto",
 	"paymentMethod3": "ApplePay",
-	"paymentMethod4": "GooglePay"
+	"paymentMethod4": "GooglePay",
+
+	"networkMode0Title": "Anytype",
+	"networkMode0Text": "Back up to the network managed by Anytype",
+	"networkMode1Title": "Local-only",
+	"networkMode1Text": "Don't back up; sync within local network",
+	"networkMode2Title": "Self-hosted",
+	"networkMode2Text": "Back up to your self-hosted network"
 
 }

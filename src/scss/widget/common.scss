@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .widget { background: var(--color-bg-primary); border-radius: 12px; transform: translate(0px, 0px); position: relative; }
 .widget:last-child { margin: 0px; }

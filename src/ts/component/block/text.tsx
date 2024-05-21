@@ -643,7 +643,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { onKeyDown, rootId, block, isInsideTable } = this.props;
 		const { id } = block;
 
-		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
+		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'object' ])) {
 			e.preventDefault();
 			return;
 		};

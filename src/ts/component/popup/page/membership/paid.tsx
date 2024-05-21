@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
-import { I, C, translate, UtilCommon, UtilData, analytics } from 'Lib';
+import { I, C, translate, UtilCommon, UtilData, analytics, keyboard } from 'Lib';
 import { authStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
-	status: string,
-	statusText: string
+	status: string;
+	statusText: string;
 };
 
 const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends React.Component<I.Popup, State> {
@@ -110,59 +110,20 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		};
 	};
 
-	onKeyUp () {
-		const { param } = this.props;
-		const { data } = param;
-		const { tier } = data;
-		const name = this.refName.getValue();
-
+	onKeyUp (e: any) {
 		this.disableButtons(true);
 		this.setState({ statusText: '', status: '' });
 
 		window.clearTimeout(this.timeout);
-
-		if (!name.length) {
-			return;
-		};
-
-		this.timeout = window.setTimeout(() => {
-			C.MembershipIsNameValid(tier, name, (message: any) => {
-				if (message.error.code) {
-					this.setState({ status: 'error', statusText: message.error.description });
-					return;
-				};
-
-				this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
-
-				C.NameServiceResolveName(name, (message: any) => {
-					let error = '';
-					if (message.error.code) {
-						error = message.error.description;
-					} else
-					if (!message.available) {
-						error = translate('popupMembershipStatusNameNotAvailable');
-					};
-
-					if (error) {
-						this.setState({ status: 'error', statusText: error });
-					} else {
-						this.disableButtons(false);
-						this.setState({ status: 'ok', statusText: translate('popupMembershipStatusNameAvailable') });
-					};
-				});
-			});
-		}, Constant.delay.keyboard);
-	};
-
-	disableButtons (v: boolean) {
-		this.refButtonCard?.setDisabled(v);
-		this.refButtonCrypto?.setDisabled(v);
+		this.timeout = window.setTimeout(() => this.validateName(), Constant.delay.keyboard);
 	};
 
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		this.onPay(I.PaymentMethod.Stripe);
+		if (this.state.status != I.InterfaceStatus.Error) {
+			this.validateName(() => this.onPay(I.PaymentMethod.Stripe));
+		};
 	};
 
 	onPay (method: I.PaymentMethod) {
@@ -171,30 +132,93 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { tier } = data;
 		const globalName = this.getName();
 		const tierItem = UtilData.getMembershipTier(tier);
-		const { namesCount } = tierItem;
-		const name = globalName || !namesCount ? '' : this.refName.getValue();
+		const name = globalName || !tierItem.namesCount ? '' : this.refName.getValue();
 		const refButton = method == I.PaymentMethod.Stripe ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);
 
-		C.MembershipGetPaymentUrl(tier, method, name, (message) => {
-			refButton.setLoading(false);
+		this.checkName(name, () => {
+			C.MembershipRegisterPaymentRequest(tier, method, name, (message) => {
+				refButton.setLoading(false);
 
+				if (message.error.code) {
+					this.setError(message.error.description);
+					return;
+				};
+
+				if (message.url) {
+					UtilCommon.onUrl(message.url);
+				};
+
+				analytics.event('ClickMembership', { params: { tier, method }});
+			});
+		});
+	};
+
+	validateName (callBack?: () => void) {
+		const name = this.refName.getValue().trim();
+		if (!name.length) {
+			return;
+		};
+
+		this.checkName(name, () => {
+			this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
+
+			C.NameServiceResolveName(name, (message: any) => {
+				let error = '';
+				if (message.error.code) {
+					error = message.error.description;
+				} else
+				if (!message.available) {
+					error = translate('popupMembershipStatusNameNotAvailable');
+				};
+
+				if (error) {
+					this.setError(error);
+				} else {
+					this.disableButtons(false);
+					this.setOk(translate('popupMembershipStatusNameAvailable'));
+
+					if (callBack) {
+						callBack();
+					};
+				};
+			});
+		});
+	};
+
+	checkName (name: string, callBack: () => void) {
+		const { param } = this.props;
+		const { data } = param;
+		const { tier } = data;
+
+		C.MembershipIsNameValid(tier, name, (message: any) => {
 			if (message.error.code) {
-				this.setState({ status: 'error', statusText: message.error.description });
+				this.setError(message.error.description);
 				return;
 			};
 
-			if (message.url) {
-				UtilCommon.onUrl(message.url);
+			if (callBack) {
+				callBack();
 			};
-
-			analytics.event('ClickMembership', { params: { tier, method }});
 		});
 	};
 
 	getName () {
 		return String(authStore.membership?.name || '');
+	};
+
+	disableButtons (v: boolean) {
+		this.refButtonCard?.setDisabled(v);
+		this.refButtonCrypto?.setDisabled(v);
+	};
+
+	setOk (t: string) {
+		this.setState({ status: I.InterfaceStatus.Ok, statusText: t });
+	};
+
+	setError (t: string) {
+		this.setState({ status: I.InterfaceStatus.Error, statusText: t });
 	};
 
 });

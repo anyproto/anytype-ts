@@ -263,3 +263,8 @@ export enum NavigationMenuMode {
 	Click		 = 2,
 	Hover		 = 3,
 };
+
+export enum InterfaceStatus {
+	Ok		 = 'ok',
+	Error	 = 'error',
+};

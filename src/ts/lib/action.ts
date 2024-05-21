@@ -325,8 +325,8 @@ class Action {
 
 		popupStore.open('confirm', {
 			data: {
-				title: UtilCommon.sprintf(translate('commonDeletionWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
-				text: translate('commonDeletionWarningText'),
+				title: UtilCommon.sprintf(translate('popupConfirmDeleteWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
+				text: translate('popupConfirmDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
 					C.ObjectListDelete(ids); 
@@ -550,7 +550,7 @@ class Action {
 			};
 		});
 
-		analytics.event(isCut ? 'CutBlock' : 'CopyBlock');
+		analytics.event(isCut ? 'CutBlock' : 'CopyBlock', { count: blocks.length });
 	};
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {

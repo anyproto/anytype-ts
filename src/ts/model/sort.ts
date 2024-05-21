@@ -8,6 +8,7 @@ class Sort implements I.Sort {
 	type: I.SortType = I.SortType.Asc;
 	includeTime = false;
 	customOrder: string[] = [];
+	empty: I.EmptyType = I.EmptyType.None;
 
 	constructor (props: I.Sort) {
 
@@ -16,6 +17,7 @@ class Sort implements I.Sort {
 		this.type = Number(props.type) || I.SortType.Asc;
 		this.includeTime = Boolean(props.includeTime);
 		this.customOrder = Array.isArray(props.customOrder) ? props.customOrder : [];
+		this.empty = Number(props.empty) || I.SortType.Asc;
 
 		makeObservable(this, {
 			relationKey: observable,

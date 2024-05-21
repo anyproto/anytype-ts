@@ -189,7 +189,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.close();
 
 		focus.clear(false);
-		blockStore.clear(this.props.rootId);
 
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
@@ -1090,17 +1089,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const dir = pressed.match(Key.up) ? -1 : 1;
-		const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
-			return (
-				!it.isIcon() && 
-				!it.isTextTitle() && 
-				!it.isTextDescription() && 
-				!it.isFeatured() && 
-				!it.isSystem() && 
-				!it.isTableRow() &&
+
+		let next = blockStore.getNextBlock(rootId, block.id, dir, it => (
+			!it.isIcon() && 
+			!it.isTextTitle() && 
+			!it.isTextDescription() && 
+			!it.isFeatured() && 
+			!it.isSystem() && 
+			!it.isTable() &&
+			!it.isTableColumn() &&
+			!it.isTableRow() &&
+			!blockStore.checkIsChild(rootId, block.id, it.id)
+		));
+
+		if (next && blockStore.checkIsInsideTable(rootId, next.id)) {
+			next = blockStore.getNextBlock(rootId, block.id, dir, it => (
+				it.isTable() && 
 				!blockStore.checkIsChild(rootId, block.id, it.id)
-			);
-		});
+			));
+		};
 
 		if (!next) {
 			return;
@@ -1723,11 +1730,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
+			let count = 0;
+
 			if (message.isSameBlockCaret) {
 				id = focused;
 			} else 
 			if (message.blockIds && message.blockIds.length) {
-				const lastId = message.blockIds[message.blockIds.length - 1];
+				count = message.blockIds.length;
+
+				const lastId = message.blockIds[count - 1];
 				const block = blockStore.getLeaf(rootId, lastId);
 				
 				if (!block) {
@@ -1743,7 +1754,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.focus(id, from, to, true);
-			analytics.event('PasteBlock');
+			analytics.event('PasteBlock', { count });
 		});
 	};
 
@@ -2113,7 +2124,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!last) {
 			create = true;
 		} else {
-			if (!last.isText() || last.isTextCode()) {
+			if (!last.isText() || last.isTextCode() || last.isTextCallout()) {
 				create = true;
 			} else {
 				length = last.getLength();

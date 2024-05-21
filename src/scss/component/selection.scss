@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 #selection { position: relative; user-select: none; }
 #selection * { user-select: none; }

@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .cell.c-shortText, .cell.c-url, .cell.c-email, .cell.c-phone {
 	.name { @include text-overflow-nw; display: inline-block; vertical-align: top; width: 100%; }
@@ -79,7 +79,7 @@
 	.element {
 		.iconObject { margin: 0px !important; }
 		.flex { align-items: center; gap: 0px 4px; }
-		.name { line-height: 18px; width: 100%; @include text-overflow-nw; }
+		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
 }
 .cellContent.c-object.canEdit {

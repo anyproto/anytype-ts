@@ -353,6 +353,7 @@ export const Mapper = {
 				relationKey: obj.getRelationkey(),
 				type: obj.getType() as number,
 				customOrder: (obj.getCustomorderList() || []).map(Decode.value),
+				empty: obj.getEmptyplacement() as number,
 			};
 		},
 
@@ -875,6 +876,7 @@ export const Mapper = {
 			item.setCustomorderList((obj.customOrder || []).map(Encode.value));
 			item.setFormat(obj.format);
 			item.setIncludetime(obj.includeTime);
+			item.setEmptyplacement(obj.empty);
 
 			return item;
 		},
