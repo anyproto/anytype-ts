@@ -1030,8 +1030,8 @@
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchCreateObject": "Create Object",
 	"popupSearchAddRelation": "Add Relation",
-	"popupSearchTooltipSearchByBacklinks": "Search by backlinks ->",
-	"popupSearchBacklinksFrom": "Backlinks from: %s",
+	"popupSearchTooltipSearchByBacklinks": "Show related objects ->",
+	"popupSearchBacklinksFrom": "Related to: %s",
 
 	"popupAboutTitle": "Anytype",
 	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",

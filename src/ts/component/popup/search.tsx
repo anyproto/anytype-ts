@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { C, I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, Key, focus, translate, analytics, Action, UtilSpace } from 'Lib';
+import { C, I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, Key, focus, translate, analytics, Action, UtilSpace, Relation } from 'Lib';
 import { commonStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -507,15 +507,24 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
+		let limit = Constant.limit.menuRecords;
+
+		if (!filter && clear && !backlink) {
+			limit = 8;
+		};
+
 		if (backlink) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: backlink.backlinks })
+			const links = Relation.getArrayValue(backlink.links);
+			const backlinks = Relation.getArrayValue(backlink.backlinks);
+
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(links, backlinks) });
 		};
 
 		if (clear) {
 			this.setState({ isLoading: true });
 		};
 
-		C.ObjectSearchWithMeta(filters, sorts, [], filter, this.offset, !filter && clear ? 8 : Constant.limit.menuRecords, (message) => {
+		C.ObjectSearchWithMeta(filters, sorts, Constant.defaultRelationKeys.concat([ 'links', 'backlinks' ]), filter, this.offset, limit, (message) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
 				return;
