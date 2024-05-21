@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { C, I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, Key, focus, translate, analytics, Action, UtilSpace, Relation } from 'Lib';
+import { C, I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, Key, focus, translate, analytics, Action, UtilSpace, Relation, Mark } from 'Lib';
 import { commonStore, dbStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -56,7 +56,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const items = this.getItems();
 
 		const Context = (meta: any): any => {
-			const { highlight, relationKey } = meta;
+			const { highlight, relationKey, ranges } = meta;
 			const relationDetails = meta.relationDetails || {};
 
 			let key: any = '';
@@ -72,7 +72,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 
 			if (highlight) {
-				value = <div className="value" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(meta.highlight) }} />;
+				const marks = ranges.map(it => ({ type: I.MarkType.Highlight, range: it }));
+				const text = Mark.toHtml(highlight, marks);
+
+				value = <div className="value" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} />;
 			} else 
 			if (relationDetails.name) {
 				const { relationOptionColor } = relationDetails;
@@ -87,12 +90,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				value = <div className={cn.join(' ')}>{relationDetails.name}</div>;
 			};
 
-			return !value ? '' : (
+			return value ? (
 				<div className="context">
 					{key}
 					{value}
 				</div>
-			);
+			) : '';
 		};
 
 		const Item = (item: any) => {

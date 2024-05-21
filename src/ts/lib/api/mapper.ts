@@ -622,12 +622,13 @@ export const Mapper = {
 			};
 		},
 
-		MetaList: (obj: any): any => {
+		MetaList: (obj: Model.Search.Meta): any => {
 			return {
 				highlight: obj.getHighlight(),
 				blockId: obj.getBlockid(),
 				relationKey: obj.getRelationkey(),
 				relationDetails: Decode.struct(obj.getRelationdetails()),
+				ranges: (obj.getHighlightrangesList() || []).map(Mapper.From.Range),
 			};
 		},
 
