@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
 import { I, C, translate, UtilCommon, UtilData, analytics, keyboard } from 'Lib';
-import { authStore } from 'Store';
+import { commonStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -35,6 +35,9 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const { status, statusText } = this.state;
+		const { config } = commonStore;
+		const { testCryptoPayment } = config;
+
 		const tierItem = UtilData.getMembershipTier(tier);
 
 		if (!tierItem) {
@@ -87,7 +90,10 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				</div>
 
 				<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
-				{/*<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />*/}
+
+				{ testCryptoPayment ? (
+					<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
+				) : ''}
 			</form>
 		);
 	};
