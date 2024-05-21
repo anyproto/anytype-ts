@@ -37,7 +37,6 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { status, statusText } = this.state;
 		const { config } = commonStore;
 		const { testCryptoPayment } = config;
-
 		const tierItem = UtilData.getMembershipTier(tier);
 
 		if (!tierItem) {
@@ -91,7 +90,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 				<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
 
-				{ testCryptoPayment ? (
+				{testCryptoPayment ? (
 					<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
 				) : ''}
 			</form>
