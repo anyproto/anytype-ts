@@ -575,10 +575,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		let items = this.items.filter(it => this.filterMapper(it, config));
-		if (items.length) {
-			const name = backlink ? UtilCommon.sprintf(translate('popupSearchBacklinksFrom'), backlink.name) : translate('popupSearchRecentObjects');
 
-			items.unshift({ name, isSection: true, withClear: !!backlink });
+		if (backlink) {
+			items.unshift({ name: UtilCommon.sprintf(translate('popupSearchBacklinksFrom'), backlink.name), isSection: true, withClear: true });
+		} else 
+		if (!filter && !items.length) {
+			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
 		};
 
 		items = items.map(it => {
