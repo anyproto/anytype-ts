@@ -23,7 +23,7 @@
 			.dropTarget { padding: 0px !important; }
 
 			.viewContent {
-				.record { position: relative !important; left: 0px !important; top: 0px !important; overflow: hidden; }
+				.record { position: relative !important; left: 0px !important; top: 0px !important; overflow: hidden; background-color: var(--color-bg-primary); }
 				.record {
 					.selectionTarget.isSelectionSelected::after { display: none; }
 				}
