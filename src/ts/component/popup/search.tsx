@@ -139,6 +139,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 						<Icon
 							className="advanced"
 							tooltip={translate('popupSearchTooltipSearchByBacklinks')}
+							tooltipCaption="->"
 							tooltipY={I.MenuDirection.Top}
 							onClick={(e) => this.onSearchByBacklinks(e, item)}
 						/>

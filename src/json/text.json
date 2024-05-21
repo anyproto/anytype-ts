@@ -1030,7 +1030,7 @@
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchCreateObject": "Create Object",
 	"popupSearchAddRelation": "Add Relation",
-	"popupSearchTooltipSearchByBacklinks": "Show related objects ->",
+	"popupSearchTooltipSearchByBacklinks": "Show related objects",
 	"popupSearchBacklinksFrom": "Related to: %s",
 
 	"popupAboutTitle": "Anytype",
