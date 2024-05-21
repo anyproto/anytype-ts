@@ -579,7 +579,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		if (backlink) {
 			items.unshift({ name: UtilCommon.sprintf(translate('popupSearchBacklinksFrom'), backlink.name), isSection: true, withClear: true });
 		} else 
-		if (!filter && !items.length) {
+		if (!filter && items.length) {
 			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
 		};
 
