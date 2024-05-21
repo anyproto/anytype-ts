@@ -278,7 +278,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			const c2: any[] = [
 				hasLink ? { id: 'linkSettings', icon: `linkStyle${content.cardStyle}`, name: translate('commonPreview'), arrow: true } : null,
 				hasTurnFile ? { id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true } : null,
-				hasTurnFile && config.experimental ? { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true } : null,
+				hasTurnFile ? { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true } : null,
 				hasTurnText ? turnText : null,
 				hasTurnDiv ? { id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
 				hasAlign ? { id: 'align', icon: UtilData.alignHIcon(align), name: translate('commonAlign'), arrow: true } : null,

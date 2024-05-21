@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
 import { I, C, translate, UtilCommon, UtilData, analytics, keyboard } from 'Lib';
-import { authStore } from 'Store';
+import { commonStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -35,6 +35,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const { status, statusText } = this.state;
+		const { config } = commonStore;
+		const { testCryptoPayment } = config;
 		const tierItem = UtilData.getMembershipTier(tier);
 
 		if (!tierItem) {
@@ -87,7 +89,10 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				</div>
 
 				<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
-				{/*<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />*/}
+
+				{testCryptoPayment ? (
+					<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
+				) : ''}
 			</form>
 		);
 	};
@@ -97,7 +102,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const tierItem = UtilData.getMembershipTier(tier);
-		const globalName = this.getName();
+		const globalName = this.getGlobalName();
 
 		if (!globalName && tierItem.namesCount) {
 			this.disableButtons(true);
@@ -130,9 +135,9 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const globalName = this.getName();
+		const globalName = this.getGlobalName();
 		const tierItem = UtilData.getMembershipTier(tier);
-		const name = globalName || !tierItem.namesCount ? '' : this.refName.getValue();
+		const name = globalName || !tierItem.namesCount ? '' : this.getName();
 		const refButton = method == I.PaymentMethod.Stripe ? this.refButtonCard : this.refButtonCrypto;
 
 		refButton.setLoading(true);
@@ -156,10 +161,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	validateName (callBack?: () => void) {
-		const name = this.refName.getValue().trim();
-		if (!name.length) {
-			return;
-		};
+		const name = this.getName();
 
 		this.checkName(name, () => {
 			this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
@@ -188,6 +190,11 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	checkName (name: string, callBack: () => void) {
+		name = String(name || '').trim();
+		if (!name.length) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
@@ -205,6 +212,10 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	getName () {
+		return this.refName.getValue().trim();
+	};
+
+	getGlobalName () {
 		return String(authStore.membership?.name || '');
 	};
 
