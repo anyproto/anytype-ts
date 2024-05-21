@@ -148,7 +148,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, recordId, getRecord, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder } = this.props;
+		const { rootId, subId, recordId, getRecord, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder, isInline } = this.props;
 		const record = getRecord(recordId);
 		const relation = this.getRelation();
 
@@ -156,8 +156,6 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			return;
 		};
 
-		const { config } = commonStore;
-		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const value = record[relation.relationKey] || '';
 		const canEdit = this.canCellEdit(relation, record);
 
@@ -168,16 +166,27 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			return;
 		};
 
+		const { config } = commonStore;
+		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const win = $(window);
 		const cell = $(`#${cellId}`);
+		const className = [];
+
+		if (menuClassName) {
+			className.push(menuClassName);
+		};
+
+		if (isInline) {
+			className.push('isInline');
+		};
 
 		let width = cell.outerWidth();
+		let closeIfOpen = true;
+		let menuId = '';
+
 		if (undefined !== maxWidth) {
 			width = Math.max(width, maxWidth);
 		};
-
-		let closeIfOpen = true;
-		let menuId = '';
 
 		const setOn = () => {
 			cell.addClass('isEditing');
@@ -221,7 +230,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			offsetY: 2,
 			noAnimation: true,
 			passThrough: true,
-			className: menuClassName,
+			className: className.join(' '),
 			classNameWrap: menuClassNameWrap,
 			onOpen: () => setOn(),
 			onClose: () => setOff(),
