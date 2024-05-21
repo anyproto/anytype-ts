@@ -280,7 +280,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		this._isMounted = true;
 		this.resetSearch();
-		this.reload();
 		this.rebind();
 
 		focus.clear(true);
@@ -337,16 +336,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		$(window).off('keydown.search');
 	};
 
-	resetSearch () {
-		this.n = -1;
-		this.refFilter?.setValue('');
-
-		this.load(true);
-		this.rebind();
-
-		focus.clear(true);
-	};
-	
 	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
@@ -492,6 +481,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 	};
 
+	resetSearch () {
+		this.refFilter?.setValue('');
+		this.reload();
+	};
+
 	reload () {
 		this.n = -1;
 		this.offset = 0;
@@ -546,6 +540,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	getItems () {
+		const { config } = commonStore;
 		const { backlink } = this.state;
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
@@ -561,7 +556,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			name = translate('popupSearchCreateObject');
 		};
 
-		let items = this.items.filter(this.filterMapper);
+		let items = this.items.filter(it => this.filterMapper(it, config));
 		if (items.length) {
 			const name = backlink ? UtilCommon.sprintf(translate('popupSearchBacklinksFrom'), backlink.name) : translate('popupSearchRecentObjects');
 
@@ -675,16 +670,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 	};
 
-	filterMapper (it: any) {
-		if (it.isSection) {
-			return true;
-		};
-
-		const { config } = commonStore;
-		if (!config.debug.hiddenObject && it.isHidden) {
-			return false;
-		};
-		return true;
+	filterMapper (it: any, config: any) {
+		return !(it.isHidden && !config.debug.hiddenObject);
 	};
 
 	onOver (e: any, item: any) {
@@ -716,14 +703,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			if (item.isObject) {
 				UtilObject.openEvent(e, { ...item, id: item.id }, {
 					onRouteChange: () => {
-						if (meta.blockId) {
-							window.setTimeout(() => {
-								const container = UtilCommon.getScrollContainer(false);
-								const top = $('#editorWrapper').find(`#block-${meta.blockId}`).position().top;
-
-								container.scrollTop(top);
-							}, Constant.delay.route);
+						if (!meta.blockId) {
+							return;
 						};
+
+						window.setTimeout(() => {
+							focus.scroll(keyboard.isPopup(), meta.blockId);
+						}, Constant.delay.route);
 					}
 				});
 			} else 
