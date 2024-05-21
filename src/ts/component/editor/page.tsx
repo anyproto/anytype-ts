@@ -257,7 +257,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			this.containerScrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
+			this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
 			this.focusTitle();
 
 			UtilCommon.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
@@ -301,8 +301,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const { rootId } = this.props;
 		const { focused, range } = focus.state;
-		const popupOpen = popupStore.isOpen();
-		const menuOpen = menuStore.isOpen();
+		const popupOpen = popupStore.isOpen('', [ 'page' ]);
+		const menuOpen = this.menuCheck();
 
 		let length = 0;
 		if (focused) {
@@ -367,25 +367,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.unbind();
 
 		if (!isReadonly) {
-			win.on('mousemove.editor' + namespace, throttle(e => this.onMouseMove(e), THROTTLE));
+			win.on(`mousemove.editor${namespace}`, throttle(e => this.onMouseMove(e), THROTTLE));
 		};
 
-		win.on('keydown.editor' + namespace, e => this.onKeyDownEditor(e));
-		win.on('paste.editor' + namespace, (e: any) => {
+		win.on(`keydown.editor${namespace}`, e => this.onKeyDownEditor(e));
+		win.on(`paste.editor${namespace}`, (e: any) => {
 			if (!keyboard.isFocused) {
 				this.onPaste(e, {});
 			};
 		});
 
-		win.on('focus.editor' + namespace, () => {
-			const isPopupOpen = popupStore.isOpen('', [ 'page' ]);
-			const isMenuOpen = menuStore.isOpen('', '', [ 'blockContext' ]);
+		win.on(`focus.editor${namespace}`, () => {
+			const popupOpen = popupStore.isOpen('', [ 'page' ]);
+			const menuOpen = this.menuCheck();
 
 			let ids: string[] = [];
 			if (selection) {
 				ids = selection.get(I.SelectType.Block, true);
 			};
-			if (!ids.length && !isMenuOpen && !isPopupOpen) {
+			if (!ids.length && !menuOpen && !popupOpen) {
 				focus.restore();
 				focus.apply(); 
 			};
@@ -393,8 +393,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			container.scrollTop(this.containerScrollTop);
 		});
 
-		win.on('resize.editor' + namespace, () => this.resizePage());
-		container.on('scroll.editor' + namespace, e => this.onScroll());
+		win.on(`resize.editor${namespace}`, () => this.resizePage());
+		container.on(`scroll.editor${namespace}`, e => this.onScroll());
 		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 	
@@ -412,7 +412,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { selection } = dataset || {};
 		const readonly = this.isReadonly();
 		const node = $(this.node);
-		const menuOpen = menuStore.isOpen() && !menuStore.isOpen('onboarding');
+		const menuOpen = this.menuCheck();
+		const popupOpen = popupStore.isOpen('', [ 'page' ]);
 
 		const clear = () => {
 			node.find('.block.showMenu').removeClass('showMenu');
@@ -433,7 +434,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			keyboard.isDragging || 
 			(selection && selection.isSelecting) || 
 			menuOpen || 
-			popupStore.isOpen('', [ 'page' ]) ||
+			popupOpen ||
 			isLoading
 		) {
 			out();
@@ -530,7 +531,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const { selection } = dataset || {};
-		const menuOpen = menuStore.isOpen();
+		const menuOpen = this.menuCheck();
 		const popupOpen = popupStore.isOpenKeyboard();
 		const root = blockStore.getLeaf(rootId, rootId);
 
@@ -704,6 +705,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Enter
 		keyboard.shortcut('enter', e, () => {
+			console.log('ENTER', menuOpen);
+
 			if (menuOpen || popupOpen || readonly) {
 				return;
 			};
@@ -1407,9 +1410,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	menuCheck () {
-		const menus = menuStore.list;
-		const exclude = [ 'blockContext', 'onboarding' ];
-		return (menus.length > 1) || ((menus.length == 1) && (!exclude.includes(menus[0].id)));
+		return menuStore.isOpen('', '', [ 'blockContext', 'searchText', 'onboarding' ]);
 	};
 
 	getNextTableRow (id: string, dir: number) {
@@ -1420,7 +1421,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onArrowVertical (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
-		if (menuStore.isOpen()) {
+		if (this.menuCheck()) {
 			return;
 		};
 
@@ -1594,7 +1595,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		focus.clear(true);
 
 		this.blockCreate(block.id, this.hoverPosition, { type: I.BlockType.Text }, (blockId: string) => {
-			$('.placeholder.c' + blockId).text(translate('placeholderFilter'));
+			$(`.placeholder.c${blockId}`).text(translate('placeholderFilter'));
 			this.onMenuAdd(blockId, '', { from: 0, to: 0 }, []);
 		});
 	};
@@ -1645,7 +1646,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.containerScrollTop = top;
 		this.winScrollTop = win.scrollTop();
 
-		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
+		Storage.setScroll('editor', rootId, top, isPopup);
 		Preview.previewHide(false);
 	};
 	
