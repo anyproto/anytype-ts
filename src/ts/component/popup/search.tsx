@@ -134,7 +134,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 				let advanced = null;
 
-				if (item.links || item.backlinks.length) {
+				if (item.links.length || item.backlinks.length) {
 					advanced = (
 						<Icon
 							className="advanced"
@@ -347,6 +347,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	onKeyDown (e: any) {
+		const { backlink } = this.state;
 		const items = this.getItems();
 		const cmd = keyboard.cmdKey();
 		const k = keyboard.eventKey(e);
@@ -358,21 +359,22 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		keyboard.disableMouse(true);
 
-		keyboard.shortcut('arrowup, arrowdown, arrowright, arrowleft', e, (pressed: string) => {
-			if ([ 'arrowleft', 'arrowright' ].includes(pressed)) {
-				const item = items[this.n];
-
-				if (pressed == 'arrowleft') {
-					this.onClearSearch();
-					return;
-				};
-
-				if (item && (item.links.length || item.backlinks.length)) {
-					this.onSearchByBacklinks(e, item);
-				};
-			} else {
-				this.onArrow(pressed == 'arrowup' ? -1 : 1);
+		keyboard.shortcut('arrowleft', e, () => {
+			if (backlink) {
+				this.onClearSearch();
 			};
+		});
+
+		keyboard.shortcut('arrowright', e, () => {
+			const item = items[this.n];
+
+			if (item && (item.links.length || item.backlinks.length)) {
+				this.onSearchByBacklinks(e, item);
+			};
+		});
+
+		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
+			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 		});
 
 		keyboard.shortcut(`enter, shift+enter, ${cmd}+enter`, e, (pressed: string) => {
