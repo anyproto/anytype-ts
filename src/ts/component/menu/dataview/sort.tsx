@@ -87,7 +87,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					</div>
 					{!isReadonly ? (
 						<div className="buttons">
-							{config.experimental ? <Icon className="more" onClick={e => this.onMore(e, item)} /> : ''}
+							<Icon className="more" onClick={e => this.onMore(e, item)} />
 							<Icon className="delete" onClick={e => this.onRemove(e, item)} />
 						</div>
 					) : ''}
