@@ -170,6 +170,7 @@ class Dataview {
 		if (vr && vr.includeTime) {
 			it.includeTime = true;
 		};
+
 		return it;
 	};
 

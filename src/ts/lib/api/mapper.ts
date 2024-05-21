@@ -853,7 +853,7 @@ export const Mapper = {
 
 		Sort: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Sort();
-			
+
 			item.setId(obj.id);
 			item.setRelationkey(obj.relationKey);
 			item.setType(obj.type);

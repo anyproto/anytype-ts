@@ -183,7 +183,7 @@ class UtilData {
 		const routeParam = Object.assign({ replace: true }, (param || {}).routeParam || {});
 
 		if (!widgets) {
-			console.error('[onAuth] No widgets defined');
+			console.error('[UtilData].onAuth No widgets defined');
 			return;
 		};
 
@@ -844,7 +844,9 @@ class UtilData {
 	};
 
 	sortMapper (it: any) {
-		it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
+		if (undefined === it.includeTime) {
+			it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
+		};
 		return it;
 	};
 
