@@ -233,7 +233,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 						icon="search"
 						value={filter}
 						ref={ref => this.refFilter = ref} 
-						placeholder={translate('popupSearchPlaceholder')} 
+						placeholder={translate('popupSearchPlaceholder')}
 						onKeyUp={this.onFilterChange}
 						onClear={this.onFilterClear}
 					/>
@@ -352,6 +352,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const cmd = keyboard.cmdKey();
 		const k = keyboard.eventKey(e);
 		const filter = this.getFilter();
+		const item = items[this.n];
 
 		if ((this.n == -1) && ![ Key.down, Key.left, Key.enter ].includes(k)) {
 			return;
@@ -366,8 +367,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 
 		keyboard.shortcut('arrowright', e, () => {
-			const item = items[this.n];
-
 			if (item && (item.links.length || item.backlinks.length)) {
 				this.onSearchByBacklinks(e, item);
 			};
