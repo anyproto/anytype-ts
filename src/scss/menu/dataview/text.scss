@@ -15,9 +15,12 @@
 		#placeholder { padding: 13px 14px; }
 	}
 
+	.menu.menuDataviewText.isInline {
+		#input, #placeholder { padding: 9px 14px; }
+	}
+
 	.menu.menuDataviewText.fromBlock {
-		#input { padding: 5px 8px; }
-		#placeholder { padding: 5px 8px; }
+		#input, #placeholder { padding: 5px 8px; }
 	}
 
 	.menu.menuDataviewText.show:not(.fromFeatured) {
