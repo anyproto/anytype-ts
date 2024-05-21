@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
 import { C, I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, Key, focus, translate, analytics, Action, UtilSpace, Relation, Mark } from 'Lib';
-import { commonStore, dbStore, popupStore, menuStore } from 'Store';
+import { commonStore, dbStore, popupStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -541,6 +541,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 
 			const records = (message.records || []).map(it => {
+				it = detailStore.mapper(it);
 				it.links = Relation.getArrayValue(it.links);
 				it.backlinks = Relation.getArrayValue(it.backlinks);
 				return it;
