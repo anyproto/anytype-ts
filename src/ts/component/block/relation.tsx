@@ -160,7 +160,11 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 		
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
-		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
+		let key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
+		if (relationKey == 'name') {
+			key = 'SetObjectTitle';
+		};
+
 		analytics.event(key, { type: 'block' });
 	};
 

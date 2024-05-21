@@ -894,7 +894,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], callBack);
 
-		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
+		let key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
+
+		if (relationKey == 'name') {
+			key = 'SetObjectTitle';
+		};
+
 		analytics.event(key, { type: 'dataview' });
 	};
 
