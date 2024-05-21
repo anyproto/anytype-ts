@@ -318,12 +318,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
-		let key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';
-		if (relationKey == 'name') {
-			key = 'SetObjectTitle';
-		};
-
-		analytics.event(key, { type: 'menu' });
+		analytics.changeRelationValue(relation, value, 'menu');
 	};
 
 	scrollTo (relationKey: string) {
