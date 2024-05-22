@@ -7,7 +7,7 @@ import { Loader, Label } from 'Component';
 import { analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon, translate } from 'Lib';
 import { blockStore, dbStore, detailStore } from 'Store';
 import Item from './item';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;

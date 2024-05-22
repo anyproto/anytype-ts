@@ -1,7 +1,7 @@
 import arrayMove from 'array-move';
 import { dbStore, commonStore, blockStore, detailStore } from 'Store';
 import { I, M, C, UtilCommon, UtilData, UtilObject, Relation, translate, UtilDate } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class Dataview {
 

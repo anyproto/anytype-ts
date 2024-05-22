@@ -5,7 +5,7 @@ import { Loader } from 'Component';
 import { I, C, focus, UtilObject, Action } from 'Lib';
 import { menuStore, blockStore, detailStore, commonStore } from 'Store';
 import ControlButtons from './controlButtons';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.PageComponent {
 	readonly?: boolean;

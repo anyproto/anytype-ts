@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
 import { I, C, keyboard, UtilCommon } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	focused: string;

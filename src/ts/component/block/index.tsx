@@ -27,7 +27,7 @@ import BlockPdf from './media/pdf';
 
 import BlockEmbed from './embed';
 
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
 	css?: any;

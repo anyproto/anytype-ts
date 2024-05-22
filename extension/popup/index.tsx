@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
 import { I, C, UtilRouter, Storage } from 'Lib';
 import { extensionStore } from 'Store';
-import Url from 'json/url.json';
+const Url = require('json/url.json');
 
 import Util from '../lib/util';
 

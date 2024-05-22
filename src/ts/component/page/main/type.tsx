@@ -6,8 +6,8 @@ import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analyt
 import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
-import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
+const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 
 interface State {
 	isLoading: boolean;

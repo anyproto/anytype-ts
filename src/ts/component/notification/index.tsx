@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, Error } from 'Component';
 import { I, C, UtilRouter, translate, Action, analytics, UtilSpace } from 'Lib';
 import { notificationStore, popupStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	error: string;

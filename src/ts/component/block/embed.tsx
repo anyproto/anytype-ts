@@ -8,8 +8,8 @@ import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
-import Theme from 'json/theme.json';
+const Constant = require('json/constant.json');
+const Theme = require('json/theme.json');
 
 const katex = require('katex');
 const pako = require('pako');

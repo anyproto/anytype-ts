@@ -1,6 +1,6 @@
 import { I, UtilCommon, UtilSpace } from 'Lib';
 import { commonStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const SPACE_KEYS = [
 	'toggle',

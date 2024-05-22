@@ -1,6 +1,6 @@
 import { I, Storage, UtilCommon, analytics, Renderer, translate, UtilObject, UtilSpace, UtilData, UtilDate } from 'Lib';
 import { popupStore, authStore } from 'Store';
-import Surveys from 'json/survey.json';
+const Surveys = require('json/survey.json');
 
 class Survey {
 

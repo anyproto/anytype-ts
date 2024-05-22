@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate, UtilSpace } from 'Lib';
 import { blockStore, detailStore, commonStore, menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
+const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 
 class MenuObject extends React.Component<I.Menu> {
 	

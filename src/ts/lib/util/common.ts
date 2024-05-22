@@ -1,9 +1,9 @@
 import $ from 'jquery';
 import { I, C, Preview, Renderer, translate, UtilSpace } from 'Lib';
 import { popupStore } from 'Store';
-import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
-import Text from 'json/text.json';
+const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
+const Text = require('json/text.json');
 import DOMPurify from 'dompurify';
 
 const TEST_HTML = /<[^>]*>/;

@@ -6,7 +6,7 @@ import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
 import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject, UtilMenu, analytics } from 'Lib';
 import { blockStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	dataset?: I.Dataset;

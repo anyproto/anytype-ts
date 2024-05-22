@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, translate, Action, Preview } from 'Lib';
 import { commonStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class MenuTemplateContext extends React.Component<I.Menu> {
 

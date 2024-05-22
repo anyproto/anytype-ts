@@ -1,6 +1,6 @@
 import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 import * as Sentry from '@sentry/browser';
 
 type SearchSubscribeParams = Partial<{

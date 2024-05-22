@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Loader, Frame, Title, Error, Button } from 'Component';
 import { I, UtilCommon, UtilSpace, UtilData, translate, analytics } from 'Lib';
 import { popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	error: string;

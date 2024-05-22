@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action, UtilDate, Storage } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';

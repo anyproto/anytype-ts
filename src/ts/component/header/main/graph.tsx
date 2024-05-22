@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon } from 'Component';
 import { I, UtilData, translate } from 'Lib';
 import { commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 

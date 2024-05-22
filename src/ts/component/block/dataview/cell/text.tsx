@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, UtilCommon, UtilData, UtilObject, keyboard, translate, Relation, UtilDate } from 'Lib';
 import { Input, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State { 
 	isEditing: boolean; 

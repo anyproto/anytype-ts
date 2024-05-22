@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Icon, Error } from 'Component';
 import { I, C, translate, focus, Action, keyboard } from 'Lib';
 import { commonStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const BlockImage = observer(class BlockImage extends React.Component<I.BlockComponent> {
 

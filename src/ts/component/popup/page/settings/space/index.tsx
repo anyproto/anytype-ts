@@ -3,7 +3,7 @@ import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, Obje
 import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
 import { menuStore, commonStore, authStore, dbStore, detailStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	error: string;

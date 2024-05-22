@@ -1,7 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import { I, UtilCommon, Preview } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class MenuStore {
 
