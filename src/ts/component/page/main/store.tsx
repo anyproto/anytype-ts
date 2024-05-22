@@ -17,6 +17,10 @@ enum View {
 	Library = 'library',
 };
 
+const KEY_SORT = 'sortStore';
+const KEY_TAB = 'tabStore';
+const KEY_BANNER = 'storeBannerClosed';
+
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 
@@ -35,6 +39,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	refList: any = null;
 	refFilter: any = null;
 	tab: I.StoreTab = null;
+	sort = '';
 	view: View = View.Marketplace;
 	frame = 0;
 	limit = 0;
@@ -55,6 +60,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.onFilterClick = this.onFilterClick.bind(this);
 		this.onBanner = this.onBanner.bind(this);
 		this.onBannerClose = this.onBannerClose.bind(this);
+		this.onSort = this.onSort.bind(this);
 	};
 	
 	render () {
@@ -124,15 +130,25 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		const TabList = (item: any) => (
 			<div className="tabs">
-				{views.map((item: any, i: number) => (
-					<div 
-						key={item.id} 
-						className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} 
-						onClick={() => this.onView(item.id, true)}
-					>
-						{item.name}
-					</div>
-				))}
+				<div className="side left">
+					{views.map((item: any, i: number) => (
+						<div 
+							key={item.id} 
+							className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} 
+							onClick={() => this.onView(item.id, true)}
+						>
+							{item.name}
+						</div>
+					))}
+				</div>
+				<div className="side right">
+					<Icon 
+						id="button-store-sort" 
+						className="sort" 
+						onClick={this.onSort} 
+						tooltip={translate('pageMainStoreSort')} 
+					/>
+				</div>
 			</div>
 		);
 
@@ -279,6 +295,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this._isMounted = true;
 
 		const items = this.getItems();
+		const tab = Storage.get(KEY_TAB) || I.StoreTab.Type;
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -288,8 +305,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		this.resize();
 		this.rebind();
-		this.onTab(Storage.get('tabStore') || I.StoreTab.Type, false);
-		this.setState({ withBanner: !Storage.get('storeBannerClosed') });
+		this.onTab(tab, false);
+		this.setState({ withBanner: !Storage.get(KEY_BANNER) });
 	};
 
 	componentDidUpdate () {
@@ -315,6 +332,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	unbind () {
 		$(window).off('keydown.store');
+	};
+
+	getSortKey (tab: I.StoreTab) {
+		return UtilCommon.toCamelCase(`${KEY_SORT}-${tab}`);
 	};
 
 	onKeyDown (e: any) {
@@ -343,9 +364,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		this.tab = id;
+		this.sort = String(Storage.get(this.getSortKey(id)) || '');
 		this.onView(Storage.get('viewStore') || View.Library, isInner, true);
 
-		Storage.set('tabStore', id);
+		Storage.set(KEY_TAB, id);
 
 		if (!isPopup) {
 			let key = '';
@@ -366,7 +388,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		this.view = id;
-		this.getData(true);
+		this.load(true);
 
 		menuStore.closeAll(Constant.menuIds.store);
 		analytics.event('LibraryView', { view: id, type: this.tab, route: (isInner ? 'inner' : 'outer') });
@@ -469,15 +491,23 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		return menuId;
 	};
 
-	getData (clear: boolean, callBack?: (message: any) => void) {
+	load (clear: boolean, callBack?: (message: any) => void) {
 		const { space } = commonStore;
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: this.getTabLayout() },
 		];
-		const sorts: I.Sort[] = [
-			{ type: I.SortType.Desc, relationKey: 'createdDate' },
-			{ type: I.SortType.Asc, relationKey: 'name' },
-		];
+		const option = this.getSortOptions().find(it => it.id == this.sort);
+
+		let sorts: I.Sort[] = [];
+
+		if (this.sort && option) {
+			sorts.push({ type: option.type, relationKey: option.relationKey });
+		} else {
+			sorts = sorts.concat([
+				{ type: I.SortType.Desc, relationKey: 'createdDate' },
+				{ type: I.SortType.Asc, relationKey: 'name' },
+			]);
+		};
 
 		let keys: string[] = Constant.defaultRelationKeys;
 
@@ -656,9 +686,47 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		e.preventDefault();
 
 		this.setState({ withBanner: false });
-		Storage.set('storeBannerClosed', true);
+		Storage.set(KEY_BANNER, true);
 
 		analytics.event('ClickOnboardingTooltip', { type: 'close', id: 'gallery' });
+	};
+
+	onSort (e: any) {
+		const options = this.getSortOptions();
+
+		menuStore.open('select', {
+			element: '#button-store-sort',
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			data: {
+				options,
+				value: this.sort,
+				onSelect: (e: any, item: any) => {
+					this.sort = item.id;
+					this.load(true);
+
+					Storage.set(this.getSortKey(this.tab), item.id);
+				},
+			}
+		});
+	};
+
+	getSortOptions () {
+		let options = [
+			{ id: 'nameAsc', name: translate('pageMainStoreSortNameAsc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Asc },
+			{ id: 'nameDesc', name: translate('pageMainStoreSortNameDesc'), relationKey: 'name',  icon: 'relation c-shortText', type: I.SortType.Desc },
+			{ isDiv: true },
+			{ id: 'createdDateDesc', name: translate('pageMainStoreSortCreatedDesc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Desc },
+			{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate',  icon: 'relation c-date', type: I.SortType.Asc },
+		];
+
+		if (this.tab == I.StoreTab.Type) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'lastUsedDateDesc', name: translate('pageMainStoreSortLastUsedDesc'), relationKey: 'lastUsedDate', icon: 'time', type: I.SortType.Desc },
+			]);
+		};
+		return options;
 	};
 
 	resize () {
