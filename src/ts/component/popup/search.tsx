@@ -31,7 +31,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	timeout = 0;
 	cache: any = {};
 	items: any[] = [];
-	n = -1;
+	n = 0;
 	top = 0;
 	offset = 0;
 	filter = '';
@@ -294,6 +294,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	componentDidUpdate () {
 		const items = this.getItems();
 		const filter = this.getFilter();
+		const length = this.filter.length;
 
 		if (filter != this.filter) {
 			this.filter = filter;
@@ -303,6 +304,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		this.setActive(items[this.n]);
 		this.refFilter.setValue(this.filter);
+		this.refFilter.setRange({ from: length, to: length });
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -310,9 +312,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			keyMapper: i => (items[i] || {}).id,
 		});
 
-		if (this.refFilter && (this.n == -1)) {
-			this.refFilter.focus();
-		};
 		if (this.refList && this.top) {
 			this.refList.scrollToPosition(this.top);
 		};
@@ -354,10 +353,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const filter = this.getFilter();
 		const item = items[this.n];
 
-		if ((this.n == -1) && ![ Key.down, Key.left, Key.enter ].includes(k)) {
-			return;
-		};
-
 		keyboard.disableMouse(true);
 
 		keyboard.shortcut('arrowleft', e, () => {
@@ -366,7 +361,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 		});
 
-		keyboard.shortcut('arrowright', e, () => {
+		keyboard.shortcut('space', e, () => {
 			if (item && (item.links.length || item.backlinks.length)) {
 				this.onSearchByBacklinks(e, item);
 			};
@@ -409,22 +404,15 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const items = this.getItems();
 		const l = items.length;
 
-		if ((dir > 0) && (this.n == -1)) {
-			this.refFilter.blur();
-		};
-
 		this.n += dir;
+		this.n = Math.max(0, this.n);
 
-		if (((dir < 0) && (this.n == -1)) || ((dir > 0) && (this.n > l - 1))) {
-			this.n = -1;
-			this.refFilter.focus();
-			this.refList.scrollToRow(0);
-			this.unsetActive();
-			return;
+		if ((dir > 0) && (this.n > l - 1)) {
+			this.n = 0;
 		};
 
 		const item = items[this.n];
-		if (item.isSection) {
+		if (item && item.isSection) {
 			this.onArrow(dir);
 			return;
 		};
@@ -438,10 +426,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			return;
 		};
 
+		const node = $(this.node);
+
 		this.n = this.getItems().findIndex(it => it.id == item.id);
 		this.unsetActive();
 
-		const node = $(this.node);
 		node.find(`#item-${item.id}`).addClass('active');
 	};
 
@@ -486,7 +475,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
 			this.offset += Constant.limit.menuRecords;
-			this.load(false, resolve);
+			this.load(false, () => resolve(null));
 		});
 	};
 
@@ -496,13 +485,19 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	reload () {
-		this.n = -1;
+		this.n = 0;
 		this.offset = 0;
 		this.top = 0;
-		this.load(true);
+		this.load(true, () => {
+			const items = this.getItems().filter(it => !it.isSection);
+
+			if (items.length) {
+				window.setTimeout(() => this.setActive(items[0]));
+			};
+		});
 	};
 
-	load (clear: boolean, callBack?: (value: any) => void) {
+	load (clear: boolean, callBack?: () => void) {
 		const { space } = commonStore;
 		const { backlink } = this.state;
 		const filter = this.getFilter();
@@ -537,10 +532,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				return;
 			};
 
-			if (callBack) {
-				callBack(null);
-			};
-
 			if (clear) {
 				this.items = [];
 			};
@@ -555,9 +546,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.items = this.items.concat(records);
 
 			if (clear) {
-				this.setState({ isLoading: false });
+				this.setState({ isLoading: false }, callBack);
 			} else {
-				this.forceUpdate();
+				this.forceUpdate(callBack);
 			};
 		});
 	};
