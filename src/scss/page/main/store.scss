@@ -36,7 +36,7 @@
 			}
 		}
 
-		.tabs { display: flex; justify-content: space-between; }
+		.tabs { display: flex; flex-direction: row; justify-content: space-between; align-items: center; }
 		.tabs {
 			.side.left { white-space: nowrap; text-align: left; display: flex; flex-direction: row; gap: 0px 24px; flex-grow: 1; }
 			.side.right { flex-shrink: 0; }
