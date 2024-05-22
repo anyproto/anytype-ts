@@ -514,6 +514,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		$('.block.isAdding').removeClass('isAdding top bottom');
 
 		const menuParam: Partial<I.MenuParam> = Object.assign({
+			noFlipX: true,
 			subIds: Constant.menuIds.action,
 			onClose: () => {
 				if (selection) {

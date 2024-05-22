@@ -357,6 +357,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			offsetX: offsetX,
 			offsetY: node.offset().top - el.offset().top - 36,
 			isSub: true,
+			noFlipX: true,
 			data: {
 				rootId,
 				blockId,
