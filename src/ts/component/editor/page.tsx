@@ -1726,6 +1726,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let from = 0;
 		let to = 0;
 
+		keyboard.setFocus(false);
+
 		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks }, '', (message: any) => {
 			if (message.error.code) {
 				return;
