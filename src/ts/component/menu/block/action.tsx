@@ -469,6 +469,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					onChange: (color: string) => {
 						C.BlockTextListSetColor(rootId, blockIds, color, (message: any) => {
 							this.setFocus(blockIds[0]);
+
+							analytics.event('ChangeBlockColor', { color, count: blockIds.length });
 						});
 
 						close();
@@ -487,7 +489,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 						C.BlockListSetBackgroundColor(rootId, ids, color, (message: any) => {
 							this.setFocus(blockIds[0]);
 
-							analytics.event('ChangeBlockBackground', { color: color, count: blockIds.length });
+							analytics.event('ChangeBlockBackground', { color, count: blockIds.length });
 						});
 
 						close();

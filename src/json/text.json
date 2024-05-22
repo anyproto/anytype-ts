@@ -403,6 +403,12 @@
 	"pageMainStoreMyRelations": "My Relations",
 	"pageMainStoreBannerTitle": "What can I build with Anytype?",
 	"pageMainStoreBannerButton": "Explore",
+	"pageMainStoreSort": "Sort by",
+	"pageMainStoreSortNameAsc": "Name A->Z",
+	"pageMainStoreSortNameDesc": "Name Z->A",
+	"pageMainStoreSortCreatedAsc": "Oldest created",
+	"pageMainStoreSortCreatedDesc": "Newest created",
+	"pageMainStoreSortLastUsedDesc": "Recently used",
 
 	"pageMainTypeRecommendedLayout": "Recommended layout",
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
