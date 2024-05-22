@@ -36,10 +36,16 @@
 			}
 		}
 
-		.tabs { white-space: nowrap; text-align: left; display: flex; flex-direction: row; gap: 0px 24px; }
+		.tabs { display: flex; justify-content: space-between; }
 		.tabs {
+			.side.left { white-space: nowrap; text-align: left; display: flex; flex-direction: row; gap: 0px 24px; flex-grow: 1; }
+			.side.right { flex-shrink: 0; }
+
 			.tab { display: inline-block; @include text-header3; color: var(--color-control-active); transition: $transitionAllCommon; }
 			.tab:hover, .tab.active { color: var(--color-text-primary); }
+
+			.icon.sort { width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/store/sort.svg'); border-radius: 6px; }
+			.icon.sort:hover, .icon.sort.hover { background-color: var(--color-shape-highlight-medium); }
 		}
 
 		.loaderWrapper { position: relative !important; }
