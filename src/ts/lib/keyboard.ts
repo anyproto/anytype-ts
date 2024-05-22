@@ -816,6 +816,7 @@ class Keyboard {
 
 	onSearchPopup (route: string) {
 		popupStore.open('search', {
+			preventClose: true,
 			data: { isPopup: this.isPopup(), route },
 		});
 	};

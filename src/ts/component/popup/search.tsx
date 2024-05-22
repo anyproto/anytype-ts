@@ -139,9 +139,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 						<Icon
 							className="advanced"
 							tooltip={translate('popupSearchTooltipSearchByBacklinks')}
-							tooltipCaption="->"
+							tooltipCaption="Shift + Enter"
 							tooltipY={I.MenuDirection.Top}
-							onClick={(e) => this.onSearchByBacklinks(e, item)}
+							onClick={e => this.onSearchByBacklinks(e, item)}
 						/>
 					);
 				};
@@ -346,22 +346,26 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	onKeyDown (e: any) {
+		e.stopPropagation();
+
+		const { close } = this.props;
 		const { backlink } = this.state;
 		const items = this.getItems();
 		const cmd = keyboard.cmdKey();
-		const k = keyboard.eventKey(e);
 		const filter = this.getFilter();
 		const item = items[this.n];
 
 		keyboard.disableMouse(true);
 
-		keyboard.shortcut('arrowleft', e, () => {
+		keyboard.shortcut('escape', e, () => {
 			if (backlink) {
 				this.onClearSearch();
+			} else {
+				close();
 			};
 		});
 
-		keyboard.shortcut('space', e, () => {
+		keyboard.shortcut('shift+enter', e, () => {
 			if (item && (item.links.length || item.backlinks.length)) {
 				this.onSearchByBacklinks(e, item);
 			};
@@ -371,7 +375,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 		});
 
-		keyboard.shortcut(`enter, shift+enter, ${cmd}+enter`, e, (pressed: string) => {
+		keyboard.shortcut(`enter, ${cmd}+enter`, e, (pressed: string) => {
 			const regScheme = new RegExp(`^${Constant.protocol}:\/\/`);
 			const regUrl = /invite.any.coop\/([a-zA-Z0-9]+)#([a-zA-Z0-9]+)/;
 
