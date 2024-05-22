@@ -884,7 +884,7 @@ class UtilData {
 		];
 
 		if (templateType) {
-			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ templateType.id ] },);
+			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType.id });
 		};
 		return filters;
 	};
