@@ -362,7 +362,6 @@
 		"cover": 1920,
 
 		"sidebar": {
-			"height": { "min": 400 },
 			"width": { "min": 240, "max": 500, "default": 336, "close": 180 }
 		},
 
