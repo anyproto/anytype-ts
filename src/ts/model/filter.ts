@@ -9,6 +9,7 @@ class Filter implements I.Filter {
 	condition: I.FilterCondition = I.FilterCondition.None;
 	quickOption: I.FilterQuickOption = I.FilterQuickOption.ExactDate;
 	value: any = {};
+	nestedFilters: I.Filter[] = [];
 
 	constructor (props: I.Filter) {
 
@@ -18,6 +19,7 @@ class Filter implements I.Filter {
 		this.condition = Number(props.condition) || I.FilterCondition.None;
 		this.quickOption = Number(props.quickOption) || I.FilterQuickOption.ExactDate;
 		this.value = props.value;
+		this.nestedFilters = (Array.isArray(props.nestedFilters) ? props.nestedFilters : []).map((filter: I.Filter) => new Filter(filter));
 
 		makeObservable(this, {
 			relationKey: observable,
@@ -25,6 +27,7 @@ class Filter implements I.Filter {
 			condition: observable,
 			value: observable,
 			quickOption: observable,
+			nestedFilters: observable,
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));

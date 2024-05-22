@@ -15,8 +15,8 @@ export enum DateFormat {
 };
 
 export enum TimeFormat {
-	H12 = 0,
-	H24 = 1,
+	H12		 = 0,
+	H24		 = 1,
 };
 
 export enum ViewType {
@@ -41,8 +41,9 @@ export enum EmptyType {
 };
 
 export enum FilterOperator { 
-	And		 = 0, 
-	Or		 = 1,
+	None	 = 0,
+	And		 = 1,
+	Or		 = 2,
 };
 
 export enum FilterCondition { 
@@ -97,6 +98,7 @@ export interface Filter {
 	format?: I.RelationType;
 	quickOption?: FilterQuickOption;
 	value: any;
+	nestedFilters?: Filter[];
 };
 
 export interface ViewRelation {
