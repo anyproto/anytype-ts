@@ -647,6 +647,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		popupStore.closeAll(null, () => {
 			popupStore.open('usecase', {});
 		});
+
+		analytics.event('ClickOnboardingTooltip', { type: 'explore', id: 'gallery' });
 	};
 
 	onBannerClose (e: any) {
@@ -655,6 +657,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		this.setState({ withBanner: false });
 		Storage.set('storeBannerClosed', true);
+
+		analytics.event('ClickOnboardingTooltip', { type: 'close', id: 'gallery' });
 	};
 
 	resize () {
