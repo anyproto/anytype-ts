@@ -257,6 +257,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 		];
 
 		if (types && types.length) {
