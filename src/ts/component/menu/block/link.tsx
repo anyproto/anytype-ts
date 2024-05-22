@@ -5,7 +5,7 @@ import { MenuItemVertical, Filter, ObjectName } from 'Component';
 import { I, UtilCommon, keyboard, UtilData, UtilObject, UtilMenu, analytics, focus, translate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;

@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Filter, MenuItemVertical, Icon, Loader, EmptySearch } from 'Component';
 import { I, UtilCommon, Relation, keyboard, UtilData, UtilObject, UtilFile, translate, Action, C } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;

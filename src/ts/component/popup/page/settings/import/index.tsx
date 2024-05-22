@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
 import { I, UtilCommon, translate, Action, UtilMenu } from 'Lib';
 import { observer } from 'mobx-react';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 import Head from '../head';
 
 interface Props extends I.PopupSettings {

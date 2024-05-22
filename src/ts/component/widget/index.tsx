@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
 import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace } from 'Lib';
 import { blockStore, detailStore, menuStore, dbStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import WidgetSpace from './space';
 import WidgetList from './list';

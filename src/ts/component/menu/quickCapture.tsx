@@ -5,7 +5,7 @@ import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, UtilMenu, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isExpanded: boolean;

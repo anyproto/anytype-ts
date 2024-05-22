@@ -12,8 +12,8 @@ import {
 import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
-import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
+const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;

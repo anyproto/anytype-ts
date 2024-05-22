@@ -6,7 +6,7 @@ import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon } from 'Component';
 import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage, UtilSpace } from 'Lib';
 import { dbStore, detailStore, commonStore, menuStore, extensionStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 import Util from '../lib/util';
 
 interface State {

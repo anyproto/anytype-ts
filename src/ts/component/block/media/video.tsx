@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Loader, Error, MediaVideo } from 'Component';
 import { I, C, translate, focus, Action, keyboard } from 'Lib';
 import { commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComponent> {
 

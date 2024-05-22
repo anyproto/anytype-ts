@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, Mark, UtilData, focus, keyboard, Storage, translate, UtilObject, analytics } from 'Lib';
 import { blockStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuBlockContext = observer(class MenuBlockContext extends React.Component<I.Menu> {
 	

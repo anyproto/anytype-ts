@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
 import { I, UtilCommon, UtilSpace, UtilRouter, keyboard, translate, UtilMenu, analytics, Storage } from 'Lib';
 import { commonStore, popupStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const ITEM_WIDTH = 112;
 

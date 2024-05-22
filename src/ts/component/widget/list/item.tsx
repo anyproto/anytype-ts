@@ -6,7 +6,7 @@ import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } fr
 import { blockStore, menuStore, detailStore } from 'Store';
 import { I, UtilCommon, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 type Props = {
 	block: I.Block;

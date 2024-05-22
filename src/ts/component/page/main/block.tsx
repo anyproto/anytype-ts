@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { Header, Loader, Block, Deleted } from 'Component';
 import { I, C, UtilCommon, Action, UtilSpace, translate, UtilRouter } from 'Lib';
 import { blockStore, detailStore } from 'Store';
-import Errors from 'json/error.json';
+const Errors = require('json/error.json');
 
 interface State {
 	isDeleted: boolean;

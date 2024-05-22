@@ -4,8 +4,8 @@ import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
 import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject, UtilCommon, translate } from 'Lib';
 import { commonStore, menuStore } from 'Store';
-import Colors from 'json/colors.json';
-import Theme from 'json/theme.json';
+const Colors = require('json/colors.json');
+const Theme = require('json/theme.json');
 
 interface Props {
 	id?: string;

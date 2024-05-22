@@ -4,7 +4,7 @@ import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
 import { keyboard, Storage } from 'Lib';
 import { popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	value: string;

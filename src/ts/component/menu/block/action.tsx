@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { detailStore, blockStore, menuStore, commonStore } from 'Store';
 import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	filter: string;

@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, Windo
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
 import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
 import { dbStore, blockStore, commonStore, menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
