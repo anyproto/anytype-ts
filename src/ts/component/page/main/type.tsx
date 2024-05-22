@@ -70,7 +70,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const totalObject = dbStore.getMeta(subIdObject, '').total;
 		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
 		const filtersObject: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
 		];
 
 		if (!recommendedRelations.includes('rel-description')) {
@@ -282,8 +282,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		UtilData.searchSubscribe({
 			subId: this.getSubIdTemplate(),
 			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
-				{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
+				{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
+				{ relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
 			],
 			sorts: [
 				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },

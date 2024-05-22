@@ -678,7 +678,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const filters = [];
 
 		if (relation.format == I.RelationType.File) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() });
+			filters.push({ relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() });
 		};
 
 		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList', 'select' ], () => {

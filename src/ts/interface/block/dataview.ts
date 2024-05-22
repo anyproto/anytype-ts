@@ -93,11 +93,11 @@ export interface Sort {
 export interface Filter {
 	id?: string;
 	relationKey: string;
-	operator: FilterOperator;
 	condition: FilterCondition;
+	value: any;
+	operator?: FilterOperator;
 	format?: I.RelationType;
 	quickOption?: FilterQuickOption;
-	value: any;
 	nestedFilters?: Filter[];
 };
 

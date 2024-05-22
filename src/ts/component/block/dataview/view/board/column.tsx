@@ -153,8 +153,8 @@ const Column = observer(class Column extends React.Component<Props> {
 		const subId = getSubId();
 		const limit = getLimit() + this.offset;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
-		].concat(view.filters);
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+		].concat(view.filters as any[]);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
 
@@ -162,7 +162,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			sorts.unshift({ relationKey: '', type: I.SortType.Custom, customOrder: objectIds });
 		};
 
-		const filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
+		const filter: any = { relationKey: relation.relationKey };
 
 		let value = this.props.value;
 		switch (relation.format) {
@@ -185,7 +185,7 @@ const Column = observer(class Column extends React.Component<Props> {
 
 		filters.push(filter);
 		if (searchIds) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
 		if (clear) {

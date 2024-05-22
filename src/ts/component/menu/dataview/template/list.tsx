@@ -200,8 +200,8 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const templateType = dbStore.getTemplateType();
 
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
-			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
+			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
+			{ relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
 		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
@@ -334,7 +334,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				rebind: this.rebind,
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
+					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
 				],
 				onClick: type => {
 					data.typeId = type.id;

@@ -283,8 +283,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			case 'source': {
 				const templateType = dbStore.getTemplateType();
 				const filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
+					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 				];
 
 				menuId = 'searchObject';

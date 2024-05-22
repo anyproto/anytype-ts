@@ -22,7 +22,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 	
 	render () {
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
+			{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
 		];
 		const sorts: I.Sort[] = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },

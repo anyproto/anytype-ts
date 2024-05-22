@@ -292,7 +292,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const templateType = dbStore.getTemplateType();
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Option ] },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Option ] },
 		].concat(data.filters || []);
 
 		const sorts = [].concat(data.sorts || []);
@@ -303,14 +303,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		if (skipIds && skipIds.length) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
 		};
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo ].includes(type)) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
+			filters.push({ relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo, I.NavigationType.Link ].includes(type)) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id });
+			filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() });
+			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id });
 		};
 
 		if (clear) {

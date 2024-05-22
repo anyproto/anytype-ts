@@ -126,7 +126,7 @@ class Dataview {
 		const filters = UtilCommon.objectCopy(view.filters).concat(param.filters || []);
 		const sorts = UtilCommon.objectCopy(view.sorts).concat(param.sorts || []);
 
-		filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() });
+		filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() });
 
 		if (viewChange) {
 			meta.viewId = newViewId;

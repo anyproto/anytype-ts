@@ -408,7 +408,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					type: I.NavigationType.Move, 
 					skipIds: [ rootId ],
@@ -425,7 +425,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, blockIds, item.uniqueKey, (message: any) => {

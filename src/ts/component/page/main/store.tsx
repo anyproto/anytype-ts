@@ -494,7 +494,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { space } = commonStore;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: this.getTabLayout() },
+			{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: this.getTabLayout() },
 		];
 		const option = this.getSortOptions().find(it => it.id == this.sort);
 
@@ -513,11 +513,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.view) {
 			case View.Marketplace:
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
+				filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
 				break;
 
 			case View.Library:
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
+				filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
 				break;
 		};
 
