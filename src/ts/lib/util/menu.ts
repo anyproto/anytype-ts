@@ -668,6 +668,11 @@ class UtilMenu {
 								break;
 							};
 
+							case 'revoke': {
+								Action.inviteRevoke(targetSpaceId);
+								break;
+							};
+
 							case 'cancel': {
 								C.SpaceJoinCancel(targetSpaceId, (message: any) => {
 									if (message.error.code) {
