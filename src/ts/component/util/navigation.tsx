@@ -100,7 +100,10 @@ const Navigation = observer(class Navigation extends React.Component {
 								key={item.id} 
 								id={`button-navigation-${item.id}`}
 								className={cn.join(' ')}
-								onClick={item.onClick}
+								onClick={e => {
+									window.clearTimeout(this.timeoutPlus);
+									item.onClick(e);
+								}}
 								onContextMenu={item.onContextMenu}
 								onMouseEnter={item.onMouseEnter}
 								onMouseLeave={item.onMouseLeave}
