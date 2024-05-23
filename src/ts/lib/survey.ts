@@ -38,8 +38,6 @@ class Survey {
 		const survey = Surveys[t];
 		const param: any = {};
 
-		console.log(survey);
-
 		switch (type) {
 			default:
 				param.complete = true;
