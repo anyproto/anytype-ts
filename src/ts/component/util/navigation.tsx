@@ -171,6 +171,8 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	onProfile () {
+		window.clearTimeout(this.timeoutPlus);
+
 		if (menuStore.isOpen('space')) {
 			menuStore.close('space');
 		} else {
