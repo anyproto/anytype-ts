@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, Windo
 import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
 import { UtilData, I, UtilCommon, translate, UtilObject, UtilFile } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
     subId: string;

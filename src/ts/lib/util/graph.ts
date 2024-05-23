@@ -1,7 +1,7 @@
 import { I, Relation, UtilCommon, UtilObject, UtilFile, UtilSmile } from 'Lib';
 import { commonStore } from 'Store';
-import Colors from 'json/colors.json';
-import Theme from 'json/theme.json';
+const Colors = require('json/colors.json');
+const Theme = require('json/theme.json');
 
 class UtilGraph {
 

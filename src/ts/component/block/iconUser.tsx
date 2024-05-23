@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { IconObject, Loader } from 'Component';
 import { I, C, UtilObject, Action, translate } from 'Lib';
 import { menuStore, detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;

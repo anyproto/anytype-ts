@@ -3,11 +3,11 @@ import { observer } from 'mobx-react';
 import { Label, Button, Cell, Error, Icon, EmptySearch } from 'Component';
 import { I, M, C, UtilCommon, Relation, UtilData, translate } from 'Lib';
 import { dbStore, commonStore, popupStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const ID_PREFIX = 'popupRelation';
-const SUB_ID_OBJECT = 'popupRelation-objects';
-const SUB_ID_DEPS = 'popupRelation-deps';
+const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;
+const SUB_ID_DEPS = `${ID_PREFIX}-deps`;
 
 interface State {
 	error: string;
@@ -110,7 +110,8 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	componentWillUnmount(): void {
-		menuStore.closeAll(Constant.menuIds.cell);	
+		menuStore.closeAll(Constant.menuIds.cell);
+		C.ObjectSearchUnsubscribe([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
 	};
 
 	loadObjects (callBack?: () => void) {

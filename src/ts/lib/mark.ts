@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, UtilCommon, analytics } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const Tags = {};
 for (const i in I.MarkType) {

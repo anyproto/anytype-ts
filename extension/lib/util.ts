@@ -1,6 +1,6 @@
 import { UtilData, dispatcher } from 'Lib';
 import { authStore, commonStore, extensionStore } from 'Store';
-import Extension from 'json/extension.json';
+const Extension = require('json/extension.json');
 
 const INDEX_POPUP = '/popup/index.html';
 const INDEX_IFRAME = '/iframe/index.html'

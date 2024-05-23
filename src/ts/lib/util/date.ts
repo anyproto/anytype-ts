@@ -1,5 +1,5 @@
 import { I, UtilCommon, translate } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class UtilDate {
 

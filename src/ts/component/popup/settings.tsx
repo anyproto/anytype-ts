@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
 import { I, UtilCommon, UtilSpace, analytics, Action, keyboard, translate, Preview, UtilData } from 'Lib';
 import { popupStore, commonStore, authStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';

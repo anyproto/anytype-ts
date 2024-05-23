@@ -7,7 +7,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { Icon } from 'Component';
 import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject, translate, UtilMenu, Dataview } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
 const LIMIT = 20;

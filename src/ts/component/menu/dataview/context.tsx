@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, translate, UtilObject, focus, Action, UtilSpace } from 'Lib';
 import { detailStore, menuStore, blockStore, popupStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class MenuContext extends React.Component<I.Menu> {
 	
@@ -66,7 +66,7 @@ class MenuContext extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		menuStore.closeAll(Constant.menuIds.more);
+		menuStore.closeAll(Constant.menuIds.object);
 	};
 
 	rebind () {
@@ -91,8 +91,8 @@ class MenuContext extends React.Component<I.Menu> {
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
-		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
-		let exportObject = { id: 'export', icon: 'export', name: translate('menuBlockMoreExport') };
+		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
+		let exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
 		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
 		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuDataviewContextEditRelations') };
 		let archive = null;
@@ -226,7 +226,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (!item.arrow || !objectIds.length) {
-			menuStore.closeAll(Constant.menuIds.more);
+			menuStore.closeAll(Constant.menuIds.object);
 			return;
 		};
 
@@ -290,7 +290,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.more, () => {
+			menuStore.closeAll(Constant.menuIds.object, () => {
 				menuStore.open(menuId, menuParam);
 			});
 		};

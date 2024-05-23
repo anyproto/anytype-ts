@@ -40,9 +40,9 @@ import 'scss/notification/common.scss';
 import 'scss/media/print.scss';
 import 'scss/theme/dark/common.scss';
 
-import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
-import Routes from 'json/route.json';
+const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
+const Routes = require('json/route.json');
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();

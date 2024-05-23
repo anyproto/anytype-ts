@@ -2,7 +2,7 @@ import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import { I, M, UtilCommon, UtilObject, UtilFile, Storage, Mark, translate, keyboard, UtilSpace } from 'Lib';
 import { detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class BlockStore {
 

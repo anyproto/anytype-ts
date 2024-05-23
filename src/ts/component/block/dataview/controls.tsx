@@ -33,6 +33,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this.onViewContext = this.onViewContext.bind(this);
 		this.onViewCopy = this.onViewCopy.bind(this);
 		this.onViewRemove = this.onViewRemove.bind(this);
+		this.onViewSettings = this.onViewSettings.bind(this);
 	};
 
 	render () {
@@ -389,6 +390,10 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		});
 	};
 
+	onViewSettings () {
+		this.onButton(`#button-${this.props.block.id}-settings`, 'dataviewViewSettings');
+	};
+
 	onSortStart () {
 		keyboard.disableSelection(true);
 	};
@@ -418,11 +423,9 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			return;
 		};
 
-		const { block, isPopup, isInline } = this.props;
+		const { isPopup, isInline } = this.props;
 		const container = UtilCommon.getPageContainer(isPopup);
 		const win = $(window);
-		const obj = $(`#block-${block.id}`);
-		const hoverArea = obj.find('.hoverArea');
 
 		this.refFilter.setActive(true);
 		this.toggleHoverArea(true);

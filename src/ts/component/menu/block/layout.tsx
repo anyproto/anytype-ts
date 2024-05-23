@@ -4,7 +4,7 @@ import { MenuItemVertical } from 'Component';
 import { blockStore } from 'Store';
 import { I, keyboard, analytics, UtilData, UtilObject, UtilMenu, UtilCommon, translate } from 'Lib';
 import { detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class MenuBlockLayout extends React.Component<I.Menu> {
 	

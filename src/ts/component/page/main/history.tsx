@@ -6,7 +6,8 @@ import { Header, Footer, Block, Loader, Icon, IconObject, Deleted, ObjectName, B
 import { blockStore, detailStore, commonStore } from 'Store';
 import { I, M, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate, UtilSpace, translate, analytics, dispatcher } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
-import Constant from 'json/constant.json';
+
+const Constant = require('json/constant.json');
 
 interface State {
 	versions: I.HistoryVersion[];

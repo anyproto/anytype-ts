@@ -6,7 +6,7 @@ import { I, Relation, UtilData, UtilCommon, UtilObject } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewComponent> {
 

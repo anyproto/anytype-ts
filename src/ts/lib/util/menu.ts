@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
 import { blockStore, menuStore, detailStore, commonStore, dbStore, authStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class UtilMenu {
 
@@ -108,15 +108,11 @@ class UtilMenu {
 	};
 
 	getBlockObject () {
-		const { config } = commonStore;
 		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }
 		];
-
-		if (config.experimental) {
-			ret.push({ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] });
-		};
 
 		items.sort((c1, c2) => UtilData.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
 
@@ -564,7 +560,7 @@ class UtilMenu {
 						};
 					};
 				},
-				onSelect: (e, item: any) => {
+				onSelect: (e: any, item: any) => {
 					if (item.arrow) {
 						return;
 					};

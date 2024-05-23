@@ -5,7 +5,7 @@ import { C, UtilCommon, UtilRouter } from 'Lib';
 import Popup from './popup';
 import Iframe from './iframe';
 import Util from './lib/util';
-import Extension from 'json/extension.json';
+const Extension = require('json/extension.json');
 import * as Store from 'Store';
 
 import './scss/common.scss';

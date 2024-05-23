@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
 import { I, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
 import { detailStore, blockStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
 	

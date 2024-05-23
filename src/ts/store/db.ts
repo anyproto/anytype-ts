@@ -1,7 +1,7 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, M, UtilCommon, UtilData, Dataview } from 'Lib';
 import { detailStore, commonStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 enum KeyMapType {
 	Relation = 'relation',

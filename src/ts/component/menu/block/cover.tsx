@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { I, C, UtilData, analytics, UtilCommon, translate, UtilObject, keyboard, Action, UtilMenu } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
 import { detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 enum Tab {
 	Gallery	 = 0,

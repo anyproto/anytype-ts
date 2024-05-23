@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action, UtilDate, Storage } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
@@ -174,6 +174,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
 			onViewSettings: () => {
+				console.log(this.refControls, this.refControls.onViewSettings);
+
 				if (this.refControls && this.refControls.onViewSettings) {
 					this.refControls.onViewSettings();
 				};
@@ -892,8 +894,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], callBack);
 
-		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
-		analytics.event(key, { type: 'dataview' });
+		analytics.changeRelationValue(relation, value, 'dataview');
 	};
 
 	onContext (e: any, id: string): void {

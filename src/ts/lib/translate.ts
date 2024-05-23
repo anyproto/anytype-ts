@@ -1,5 +1,5 @@
 import { commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 /**
  * 

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Loader, Error, MediaVideo } from 'Component';
 import { I, C, translate, focus, Action, keyboard } from 'Lib';
 import { commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComponent> {
 
@@ -68,7 +68,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 				
 			case I.FileState.Done:
 				element = (
-					<div className="wrap resizable blockVideo" style={css}>
+					<div className="wrap resizable" style={css}>
 						<MediaVideo
 							src={commonStore.fileUrl(targetObjectId)}
 							onPlay={this.onPlay}

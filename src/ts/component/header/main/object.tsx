@@ -4,7 +4,7 @@ import { Icon, IconObject, Sync, ObjectName } from 'Component';
 import { I, UtilObject, UtilData, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, popupStore } from 'Store';
 import HeaderBanner from 'Component/page/elements/head/banner';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	templatesCnt: number;
@@ -120,9 +120,9 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	onMore () {
 		const { isPopup, match, rootId, menuOpen } = this.props;
 
-		menuOpen('blockMore', '#button-header-more', {
+		menuOpen('object', '#button-header-more', {
 			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.more,
+			subIds: Constant.menuIds.object,
 			data: {
 				rootId,
 				blockId: rootId,

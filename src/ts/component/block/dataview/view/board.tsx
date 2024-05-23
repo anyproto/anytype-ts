@@ -7,7 +7,7 @@ import { I, C, UtilCommon, Dataview, keyboard, Relation, translate } from 'Lib';
 import { dbStore, detailStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PADDING = 46;
 

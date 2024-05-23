@@ -137,10 +137,6 @@ class Util {
 					const src = p.replace('file://', '').replace(/\?.*/, '').replace(/\/app.asar\//g, '/app.asar.unpacked/');
 					const dst = path.join(filesPath, name).replace(/\?.*/, '');
 
-					console.log(src);
-					console.log(dst);
-					console.log(filesPath);
-
 					fs.copyFileSync(src, dst);
 					return `'./${fn}/${name}'`;
 				});

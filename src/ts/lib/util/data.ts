@@ -1,6 +1,6 @@
 import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 import * as Sentry from '@sentry/browser';
 
 type SearchSubscribeParams = Partial<{
@@ -193,7 +193,7 @@ class UtilData {
 		const routeParam = Object.assign({ replace: true }, (param || {}).routeParam || {});
 
 		if (!widgets) {
-			console.error('[onAuth] No widgets defined');
+			console.error('[UtilData].onAuth No widgets defined');
 			return;
 		};
 
@@ -854,7 +854,9 @@ class UtilData {
 	};
 
 	sortMapper (it: any) {
-		it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
+		if (undefined === it.includeTime) {
+			it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
+		};
 		return it;
 	};
 
