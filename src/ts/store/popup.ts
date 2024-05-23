@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { I, UtilCommon, focus, Preview } from 'Lib';
 import { menuStore, authStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const AUTH_IDS = [ 'settings' ];
 const SHOW_DIMMER = [

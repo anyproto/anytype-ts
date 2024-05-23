@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Pin } from 'Component';
 import { I, C, translate, UtilCommon, UtilDate, analytics, UtilRouter, UtilData, Action } from 'Lib';
 import { authStore, commonStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.Popup {
 	onChangeEmail: () => void;

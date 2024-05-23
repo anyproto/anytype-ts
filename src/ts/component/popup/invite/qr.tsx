@@ -4,7 +4,7 @@ import { Title, Button } from 'Component';
 import { I, translate, Renderer, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import QRCode from 'qrcode.react';
-import Theme from 'json/theme.json';
+const Theme = require('json/theme.json');
 
 class PopupInviteQr extends React.Component<I.Popup> {
 

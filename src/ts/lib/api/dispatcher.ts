@@ -11,7 +11,7 @@ import {
 } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const SORT_IDS = [ 
 	'blockAdd', 

@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Header, Footer, Icon, ListObjectManager } from 'Component';
 import { I, UtilCommon, analytics, translate, Action } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PageMainArchive = observer(class PageMainArchive extends React.Component<I.PageComponent> {
 

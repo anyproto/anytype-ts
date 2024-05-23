@@ -7,7 +7,7 @@ import { Icon } from 'Component';
 import { I, C, keyboard, focus, UtilCommon, Mark, Action, translate, UtilMenu, UtilData } from 'Lib';
 import { menuStore, blockStore } from 'Store';
 import Row from './table/row';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PADDING = 46;
 const SNAP = 10;

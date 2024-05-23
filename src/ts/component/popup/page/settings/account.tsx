@@ -3,7 +3,7 @@ import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
 import { I, C, translate, UtilCommon, Action, UtilObject, UtilSpace } from 'Lib';
 import { authStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.PopupSettings {
 	setPinConfirmed: (v: boolean) => void;

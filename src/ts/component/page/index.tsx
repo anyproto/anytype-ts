@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
 import { Sidebar, Label, Frame } from 'Component';
 import { authStore, commonStore, menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';

@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.40.16-alpha",
+	"version": "0.40.18-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -424,10 +424,6 @@
 				"to": "node_modules/lodash.isequal"
 			},
 			{
-				"from": "node_modules/lru-cache",
-				"to": "node_modules/lru-cache"
-			},
-			{
 				"from": "node_modules/mime-db",
 				"to": "node_modules/mime-db"
 			},
@@ -542,10 +538,6 @@
 			{
 				"from": "node_modules/xtend",
 				"to": "node_modules/xtend"
-			},
-			{
-				"from": "node_modules/yallist",
-				"to": "node_modules/yallist"
 			}
 		],
 		"dmg": {

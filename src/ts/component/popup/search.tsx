@@ -3,9 +3,10 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { C, I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard, Key, focus, translate, analytics, Action, UtilSpace, Relation, Mark } from 'Lib';
+import { C, I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard,focus, translate, analytics, Action, UtilSpace, Relation, Mark } from 'Lib';
 import { commonStore, dbStore, popupStore, menuStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;

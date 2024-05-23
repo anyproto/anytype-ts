@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Label } from 'Component';
 import { I, translate, UtilCommon } from 'Lib';
-import Url from 'json/url.json';
+const Url = require('json/url.json');
 
 class FooterAuthDisclaimer extends React.Component<I.FooterComponent> {
 	

@@ -7,7 +7,7 @@ import { configure } from 'mobx';
 import { ListMenu } from 'Component';
 import { UtilRouter, C, UtilData } from 'Lib'; 
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, extensionStore } from 'Store';
-import Extension from 'json/extension.json';
+const Extension = require('json/extension.json');
 
 import Index from './popup/index';
 import Challenge from './popup/challenge';

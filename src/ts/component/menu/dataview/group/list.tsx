@@ -8,7 +8,7 @@ import { Icon, Switch } from 'Component';
 import Cell from 'Component/block/dataview/cell';
 import { I, C, Dataview, keyboard, translate } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
 const LIMIT = 20;

@@ -2,7 +2,7 @@ import { action, computed, intercept, makeObservable, observable, set } from 'mo
 import $ from 'jquery';
 import { I, M, Storage, UtilCommon, UtilObject, Renderer, UtilRouter } from 'Lib';
 import { dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Filter {
 	from: number;

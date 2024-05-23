@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader } from 'Component';
 import { C, I, translate, UtilData, UtilCommon } from 'Lib';
 import { authStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	status: string,

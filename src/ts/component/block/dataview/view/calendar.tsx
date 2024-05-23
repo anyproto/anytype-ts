@@ -4,7 +4,7 @@ import { Select, Icon } from 'Component';
 import { I, UtilData, UtilCommon, UtilDate, UtilObject, translate, Dataview } from 'Lib';
 import { dbStore, menuStore, detailStore } from 'Store';
 import Item from './calendar/item';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PADDING = 46;
 

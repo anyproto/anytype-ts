@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, Icon, Label, Input, Button, Checkbox, Pin } from 'Component';
 import { I, C, translate, UtilCommon, UtilRouter, analytics, UtilDate } from 'Lib';
 import { commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	verificationStep: number;

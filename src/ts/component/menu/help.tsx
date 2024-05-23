@@ -2,7 +2,7 @@ import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
 import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilSpace, translate } from 'Lib';
 import { popupStore, blockStore } from 'Store';
-import Url from 'json/url.json';
+const Url = require('json/url.json');
 
 class MenuHelp extends React.Component<I.Menu> {
 

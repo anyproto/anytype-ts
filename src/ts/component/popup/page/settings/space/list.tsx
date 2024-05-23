@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
 import { I, UtilSpace, UtilRouter, translate, UtilMenu, analytics } from 'Lib';
 import { dbStore, detailStore, authStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<I.PopupSettings> {
 

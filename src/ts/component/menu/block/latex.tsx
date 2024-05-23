@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { I, keyboard, UtilData, UtilMenu, UtilCommon } from 'Lib';
 import { commonStore, menuStore } from 'Store';
-import Sections from 'json/latex.json';
+const Sections = require('json/latex.json');
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');

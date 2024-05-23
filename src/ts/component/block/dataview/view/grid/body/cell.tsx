@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { I, Relation } from 'Lib';
 import { Cell, Icon } from 'Component';
 import { dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	rootId?: string;

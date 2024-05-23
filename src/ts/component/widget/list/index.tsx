@@ -8,7 +8,7 @@ import { Dataview, I, C, M, UtilCommon, Relation, keyboard, translate, Action, U
 import { SortableContainer } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import WidgetListItem from './item';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.WidgetComponent {
 	isCompact?: boolean;

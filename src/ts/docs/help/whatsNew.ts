@@ -1,5 +1,5 @@
 import { I, keyboard } from 'Lib';
-import Url from 'json/url.json';
+const Url = require('json/url.json');
 
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();

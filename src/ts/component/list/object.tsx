@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { I, C, UtilData, Relation, UtilObject, translate, keyboard } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
 import { detailStore, dbStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Column {
 	relationKey: string;

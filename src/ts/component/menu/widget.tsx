@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { MenuItemVertical, Button } from 'Component';
 import { C, I, keyboard, UtilMenu, translate, Action, UtilObject, analytics } from 'Lib';
 import { blockStore, menuStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
