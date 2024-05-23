@@ -410,10 +410,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const l = items.length;
 
 		this.n += dir;
-		this.n = Math.max(0, this.n);
 
 		if ((dir > 0) && (this.n > l - 1)) {
 			this.n = 0;
+		};
+
+		if ((dir < 0) && (this.n < 0)) {
+			this.n = l - 1;
 		};
 
 		const item = items[this.n];
