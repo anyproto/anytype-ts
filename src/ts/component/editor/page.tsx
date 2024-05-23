@@ -7,13 +7,13 @@ import { Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { 
 	I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, 
-	Renderer, sidebar, UtilSpace 
+	Renderer, sidebar 
 } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
+
 const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
@@ -705,8 +705,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Enter
 		keyboard.shortcut('enter', e, () => {
-			console.log('ENTER', menuOpen);
-
 			if (menuOpen || popupOpen || readonly) {
 				return;
 			};
@@ -1726,8 +1724,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let from = 0;
 		let to = 0;
 
-		keyboard.setFocus(false);
-
 		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks }, '', (message: any) => {
 			if (message.error.code) {
 				return;
@@ -1750,6 +1746,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				
 				id = block.id;
 				from = to = block.getLength();
+
+				keyboard.setFocus(false);
 			} else 
 			if (message.caretPosition >= 0) {
 				id = focused;
