@@ -1651,6 +1651,10 @@
 	"survey3Text": "Hi there, we hope you're enjoying your experience with Anytype! Would you take 5 minutes to help us improve our product?",
 	"survey3Confirm": "Sure, let's go",
 	"survey3Cancel": "No thanks",
+	"survey4Title": "Hi there!",
+	"survey4Text": "We’d love if you’d help us improve Anytype by taking part in this 3-minute survey.",
+	"survey4Confirm": "Let’s Go!",
+	"survey4Cancel": "No thanks",
 
 	"widget0Name": "Link",
 	"widget0Description": "Compact version of the Object",
