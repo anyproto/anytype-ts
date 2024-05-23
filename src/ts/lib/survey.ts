@@ -92,11 +92,9 @@ class Survey {
 		const registerTime = timeRegister <= time - week;
 		const completeTime = obj.complete && registerTime && (lastCompleted <= time - month);
 		const cancelTime = obj.cancel && registerTime && (lastCanceled <= time - month);
-		const randSeed = 10000000;
-		const rand = UtilCommon.rand(0, randSeed);
 
 		// Show this survey to 5% of users
-		if ((rand > randSeed * 0.05) && !completeTime) {
+		if (this.checkRandSeed(5) && !completeTime) {
 			Storage.setSurvey(type, { time });
 			return;
 		};
@@ -157,16 +155,20 @@ class Survey {
 			return;
 		};
 
-		const randSeed = 10000000;
-		const rand = UtilCommon.rand(0, randSeed);
-
 		// Show this survey to 10% of users
-		if ((rand > randSeed * 0.99)) {
+		if (!this.checkRandSeed(100)) {
 			Storage.setSurvey(type, { complete: true });
 			return;
 		};
 
 		this.show(type);
+	};
+
+	checkRandSeed (percent: number) {
+		const randSeed = 10000000;
+		const rand = UtilCommon.rand(0, randSeed);
+
+		return rand < randSeed * percent / 100;
 	};
 
 };
