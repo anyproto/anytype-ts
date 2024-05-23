@@ -1502,6 +1502,11 @@
 	"menuQuickCapturePin": "Pin on top",
 	"menuQuickCaptureUnpin": "Unpin",
 
+	"menuSyncStatusTitle": "Sync status",
+
+	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
+	"menuSyncStatusP2PNoDevicesConnected": "No devices connected",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",

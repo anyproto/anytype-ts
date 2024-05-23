@@ -77,6 +77,7 @@ import MenuDataviewTemplateContext from './dataview/template/context';
 import MenuDataviewTemplateList from './dataview/template/list';
 
 import MenuQuickCapture from './quickCapture';
+import MenuSyncStatus from './syncStatus';
 
 interface State {
 	tab: string;
@@ -157,6 +158,7 @@ const Components: any = {
 	dataviewTemplateList:	 MenuDataviewTemplateList,
 
 	quickCapture: 			 MenuQuickCapture,
+	syncStatus:				 MenuSyncStatus,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {
