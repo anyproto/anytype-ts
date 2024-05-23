@@ -190,13 +190,15 @@ class PopupStore {
 		return this.getItems().length ? Constant.delay.popup : 0;
 	};
 
-	closeLast () {
-		if (this.popupList.length) {
-			const last = this.popupList[this.popupList.length - 1];
+	getLast () {
+		const l = this.popupList.length;
+		return l ? this.popupList[l - 1] : null;
+	};
 
-			if (last && !last.param.preventClose) {
-				this.close(last.id);
-			};
+	closeLast () {
+		const last = this.getLast();
+		if (last) {
+			this.close(last.id);
 		};
 	};
 

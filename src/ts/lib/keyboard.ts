@@ -185,7 +185,10 @@ class Keyboard {
 				};
 
 				if (canClose) {
-					popupStore.closeLast();
+					const last = popupStore.getLast();
+					if (last && !last.param.preventCloseByEscape) {
+						popupStore.close(last.id);
+					};
 				};
 			};
 			
@@ -816,7 +819,7 @@ class Keyboard {
 
 	onSearchPopup (route: string) {
 		popupStore.open('search', {
-			preventClose: true,
+			preventCloseByEscape: true,
 			data: { isPopup: this.isPopup(), route },
 		});
 	};

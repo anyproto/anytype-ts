@@ -721,7 +721,8 @@ class Action {
 	welcome () {
 		popupStore.open('confirm', {
 			className: 'welcome',
-			preventClose: true,
+			preventCloseByClick: true,
+			preventCloseByEscape: true,
 			data: {
 				icon: 'welcome',
 				title: translate('popupConfirmWelcomeTitle'),
