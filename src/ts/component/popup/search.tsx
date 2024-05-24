@@ -719,7 +719,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { close } = this.props;
 		const filter = this.getFilter();
 		const rootId = keyboard.getRootId();
-		const { metaList } = item;
+		const metaList = item.metaList || [];
 		const meta = metaList.length ? metaList[0] : {};
 
 		close(() => {
