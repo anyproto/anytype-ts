@@ -720,7 +720,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const filter = this.getFilter();
 		const rootId = keyboard.getRootId();
 		const { metaList } = item;
-		const meta = metaList[0] || {};
+		const meta = metaList.length ? metaList[0] : {};
 
 		close(() => {
 			// Object
