@@ -38,6 +38,8 @@ export default [
 	bullet(`<b>Link Block:</b> Default link style has been changed to Card. Personalize this behaviour in Settings 🔗`),
 	img('40.5/4.png'),
 	bullet(`<b>Gallery View Adjustment:</b> Better visual experience with fewer cards in inline set columns 🎨 Thanks, ${link('https://community.anytype.io/t/change-dynamically-the-width-of-gallery-items-when-on-2col-layout/15623', '@Eban')}`),
+	bullet(`<b>Library:</b> now has options to sort 📚`),
+	img('40.5/5.png'),
 
 	h2(`🛠️ Technical Updates:`),
 	bullet(`Electron updated to ${link('https://releases.electronjs.org/releases/stable', '30.0.7')}`),
