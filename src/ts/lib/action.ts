@@ -325,8 +325,8 @@ class Action {
 
 		popupStore.open('confirm', {
 			data: {
-				title: UtilCommon.sprintf(translate('commonDeletionWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
-				text: translate('commonDeletionWarningText'),
+				title: UtilCommon.sprintf(translate('popupConfirmDeleteWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
+				text: translate('popupConfirmDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
 					C.ObjectListDelete(ids); 
@@ -721,7 +721,8 @@ class Action {
 	welcome () {
 		popupStore.open('confirm', {
 			className: 'welcome',
-			preventClose: true,
+			preventCloseByClick: true,
+			preventCloseByEscape: true,
 			data: {
 				icon: 'welcome',
 				title: translate('popupConfirmWelcomeTitle'),
