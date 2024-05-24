@@ -604,7 +604,13 @@
 					"name": "anytype-release",
 					"region": "fra1"
 				}
-			]
+			],
+			"desktop": {
+				"Name": "Anytype",
+				"Categories": "Utility;Office;Calendar;ProjectManagement;",
+				"Keywords": "project management;",
+				"StartupWMClass": "anytype"
+			}
 		},
 		"rpm": {
 			"fpm": [
