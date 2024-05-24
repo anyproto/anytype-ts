@@ -725,7 +725,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];
 		};
-		return isPreview ? 0 : limit;
+		return isPreview ? Constant.limit.menuRecords : limit;
 	};
 
 	addGroupLabels (records: any[], widgetId: string) {
