@@ -175,12 +175,16 @@ class UtilData {
 	};
 	
 	onAuth (param?: any, callBack?: () => void) {
+		param = param || {};
+		param.routeParam = param.routeParam || {};
+
 		const pin = Storage.get('pin');
 		const { root, widgets } = blockStore;
 		const { redirect, space } = commonStore;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
-		const routeParam = Object.assign({ replace: true }, (param || {}).routeParam || {});
+		const routeParam = Object.assign({ replace: true }, param.routeParam);
+		const route = param.route || redirect;
 
 		if (!widgets) {
 			console.error('[UtilData].onAuth No widgets defined');
@@ -205,8 +209,8 @@ class UtilData {
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
 					} else {
-						if (redirect) {
-							UtilRouter.go(redirect, routeParam);
+						if (route) {
+							UtilRouter.go(route, routeParam);
 						} else {
 							UtilSpace.openDashboard('route', routeParam);
 						};

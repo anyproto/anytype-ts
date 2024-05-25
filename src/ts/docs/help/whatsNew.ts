@@ -19,7 +19,54 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Welcome to Local-First Sharing & Collaboration`),
+	title(`Wrapping up Spring with an Update 🌸 Presenting Batch Relation Editing`),
+	text(`You didn't think we'd let the waning days of Spring slip by before we snuck in another release, did you?`),
+	text(`This request has been a long-time coming, so it brings us great pleasure to present v1 of Batch Relation Editing!`),
+	text(`Wave goodbye to the days of tediously managing objects one by one. This new function allows you to add Tags and Relations to many Objects at a time, making it much quicker to organize your content and tidy-up your graph.`),
+
+	h2(`🌿 Quality-of-Life Improvements:`),
+	bullet(`<b>Batch Relation Editing:</b> Easily manage Tags and Relations across multiple objects 📋`),
+	video(`40.5/1.mp4`),
+	bullet(`<b>Reuse Files:</b> Incorporate existing files within file blocks in the editor 📂 `),
+	video(`40.5/2.mp4`),
+	bullet(`<b>Improved Global Search:</b> Highlights results, shows more total results, searches by text relations, blocks, tags, and statuses, and allows searching links and backlinks.`),
+	video(`40.5/3.mp4`),
+	bullet(`<b>Keyboard shortcut: ${hl(`${cmd} + Enter`)} checks and unchecks checkboxes ✅ Thanks, ${link('https://github.com/anyproto/anytype-ts/pull/709', '@mikailcf')}!`),
+	bullet(`<b>Text Justification:</b> New option to justify text in blocks for better formatting 📄`),
+	img('40.5/4.png'),
+	bullet(`<b>Enhanced Graph Settings:</b> Distinct settings for global and local graphs in Sets/Collections ⚙️ Thanks, ${link('https://community.anytype.io/t/graph-view-with-space-local-graph-clashes/20599', '@Donatas')}`),
+	bullet(`<b>Drag'n'Drop Widgets:</b> Improved widget headers and linked widgets for easier organization 🖱️ Thanks, ${link('https://community.anytype.io/t/drag-drop-not-working-for-sidebar-widgets-with-link-appearance/20195', '@siouso')}`),
+	bullet(`<b>Link Block:</b> Default link style has been changed to Card. Personalize this behaviour in Settings 🔗`),
+	img('40.5/5.png'),
+	bullet(`<b>Gallery View Adjustment:</b> Better visual experience with fewer cards in inline set columns 🎨 Thanks, ${link('https://community.anytype.io/t/change-dynamically-the-width-of-gallery-items-when-on-2col-layout/15623', '@Eban')}`),
+	bullet(`<b>Library:</b> now has options to sort 📚`),
+	img('40.5/6.png'),
+
+	h2(`🛠️ Technical Updates:`),
+	bullet(`Electron updated to ${link('https://releases.electronjs.org/releases/stable', '30.0.7')}`),
+	bullet(`<b>Membership System:</b> All email domains now supported 📧 Thanks, @Afonso!`),
+	bullet(`<b>App Updates:</b> Now works even without logging in ⬆️`),
+
+	h2(`🐞 Bug Fixes:`),
+	bullet(`<b>Slash Menu:</b> Now shows only after a space character to prevent saving issues ✨ Thanks, ${link('https://community.anytype.io/t/dont-show-the-slash-menu-if-there-is-a-character-or-nunber-direct-before-the-cursor/20500', '@code-jack')}`),
+	bullet(`<b>Task Checkbox:</b> Fixed the issue of checkbox deleting object names in sets ✅`),
+	bullet(`<b>Editor:</b> Fixed a bug that was breaking the editor when object was opened from history or by deeplink 🌐`),
+	bullet(`<b>URL Relation Bug:</b> Resolved the issue with opening Windows Explorer when the URL is blank 🖥️ Thanks, ${link('https://community.anytype.io/t/pasting-a-url-in-url-relation-within-a-collection-press-enter-opens-this-pc-on-windows/11197', '@hexara')}`),
+	bullet(`<b>Emoji Markdown:</b> Fixed markdown sequence issues with text blocks starting with an emoji 😃 Thanks, ${link('https://community.anytype.io/t/13159', '@pavloUA')}`),
+	bullet(`<b>System Relations:</b> System relations can now be unlinked from Types 🔗 Thanks, ${link('https://community.anytype.io/t/16517', '@filip')}`),
+	bullet(`<b>Shift + Click:</b> Proper functionality for shift+click on Link/Bookmark blocks 🔍 Thanks, ${link('https://community.anytype.io/t/20194', '@siousu')}`),
+	bullet(`<b>White Flash Issue:</b> Fixed the white flash when returning to the main screen from login/signup 💡`),
+	bullet(`<b>Settings Modal:</b> Now properly adjusts to window height 🖥️`),
+	bullet(`<b>Deeplink Routing:</b> Correct redirection after PIN check 🔒 Thanks, ${link('https://community.anytype.io/t/gallerys-open-in-app-button-failed-to-trigger-while-when-the-app-is-closed/12968', '@JorgeE')}`),
+	bullet(`<b>Delete Link:</b> Fixed the delete link in the space context menu and local-only mode ❌`),
+
+	text(``),
+	text(`Enjoy and keep an eye out for our next release featuring another banger: 💥Tags as Objects 🏷️`),
+
+	div(),
+	// --------------------------------------------//
+
+	h1(`Release 0.40.0 - Welcome to Local-First Sharing & Collaboration`),
 	text(`Folks, this is the one we’ve been waiting for. This release, in which creating trusted networks with your friends, family and communities in Anytype becomes a reality, is the culmination of nearly five years of R&D.`),
 	text(`What does this mean for you? Now you can share what matters, with those you care about, knowing that everything you share is encrypted and owned by you. Not anytype, nor anybody else can peek inside or deny your access.`),
 	text(`From today onward, we warmly welcome you to begin testing out shared spaces, starting with the small things: idea boards, shopping lists, projects, and wikis. As you’re testing, please kindly note that this is v1 of multiplayer, representing the first step towards full-fledged collaborative experiences. We’ll be enriching this experience with more features in the coming months, so your feedback is, as always, warmly welcomed.`), 
@@ -68,7 +115,7 @@ export default [
 	text(`You can now set an object icon by reusing an image that has already been uploaded to the space.`),
 
 	h2(`💻 Tech:`),
-	bullet(`Electron updated to 29.1.6`),
+	bullet(`Electron has been updated to 29.1.6`),
 	bullet(`Debug logs for Middleware were split into different flags`),
 
 	h2(`🐛 Bug Fixes:`),

@@ -75,7 +75,7 @@ class UtilObject {
 		if ((e.metaKey || e.ctrlKey)) {
 			this.openWindow(object);
 		} else {
-			this.openRoute(object);
+			this.openRoute(object, param);
 		};
 	};
 

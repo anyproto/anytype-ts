@@ -205,6 +205,12 @@ export const ObjectSearch = (response: Rpc.Object.Search.Response) => {
 	};
 };
 
+export const ObjectSearchWithMeta = (response: Rpc.Object.SearchWithMeta.Response) => {
+	return {
+		records: (response.getResultsList() || []).map(Mapper.From.ObjectSearchWithMeta),
+	};
+};
+
 export const ObjectGroupsSubscribe = (response: Rpc.Object.GroupsSubscribe.Response) => {
 	return {
 		subId: response.getSubid(),

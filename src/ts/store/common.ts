@@ -234,7 +234,7 @@ class CommonStore {
 		if (ret === null) {
 			ret = Storage.get('navigationMenu');
 		};
-		return Number(ret) || I.NavigationMenuMode.Click;
+		return Number(ret) || I.NavigationMenuMode.Hover;
 	};
 
 	get linkStyle (): I.LinkCardStyle {

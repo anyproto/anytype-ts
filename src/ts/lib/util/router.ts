@@ -144,17 +144,13 @@ class UtilRouter {
 				replace: true, 
 				animate: true,
 				onFadeOut: () => {
-					if (route) {
-						commonStore.redirectSet(route);
-					};
-
 					analytics.removeContext();
 					blockStore.clear(blockStore.widgets);
 					commonStore.defaultType = '';
 					Storage.set('spaceId', id);
 
 					UtilData.onInfo(message.info);
-					UtilData.onAuth({ routeParam: { replace: true } }, callBack);
+					UtilData.onAuth({ route }, callBack);
 				}
 			});
 		});

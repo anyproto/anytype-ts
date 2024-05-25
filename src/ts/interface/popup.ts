@@ -5,7 +5,8 @@ export interface PopupParam {
 	className?: string;
 	preventResize?: boolean;
 	preventMenuClose?: boolean;
-	preventClose?: boolean;
+	preventCloseByClick?: boolean;
+	preventCloseByEscape?: boolean;
 	onClose?(): void;
 };
 

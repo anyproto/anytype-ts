@@ -109,7 +109,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedUnlink = isCollection;
 		let allowedExport = true;
 		let allowedWidget = true;
-		let allowedRelation = config.experimental;
+		let allowedRelation = true;
 
 		objectIds.forEach((it: string) => {
 			let object = null; 
