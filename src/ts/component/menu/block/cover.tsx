@@ -226,6 +226,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 				];
 
 				this.setState({ isLoading: true });

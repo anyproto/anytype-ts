@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.40.18-alpha",
+	"version": "0.40.21-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -62,7 +62,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^30.0.6",
+		"electron": "^30.0.7",
 		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
@@ -604,7 +604,13 @@
 					"name": "anytype-release",
 					"region": "fra1"
 				}
-			]
+			],
+			"desktop": {
+				"Name": "Anytype",
+				"Categories": "Utility;Office;Calendar;ProjectManagement;",
+				"Keywords": "project management;",
+				"StartupWMClass": "anytype"
+			}
 		},
 		"rpm": {
 			"fpm": [

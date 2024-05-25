@@ -705,8 +705,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Enter
 		keyboard.shortcut('enter', e, () => {
-			console.log('ENTER', menuOpen);
-
 			if (menuOpen || popupOpen || readonly) {
 				return;
 			};
@@ -1726,8 +1724,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let from = 0;
 		let to = 0;
 
-		keyboard.setFocus(false);
-
 		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks }, '', (message: any) => {
 			if (message.error.code) {
 				return;
@@ -1750,6 +1746,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				
 				id = block.id;
 				from = to = block.getLength();
+
+				keyboard.setFocus(false);
 			} else 
 			if (message.caretPosition >= 0) {
 				id = focused;

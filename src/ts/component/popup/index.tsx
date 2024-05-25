@@ -4,7 +4,6 @@ import raf from 'raf';
 import { I, UtilCommon, analytics, Storage, Preview, translate } from 'Lib';
 import { Dimmer } from 'Component';
 import { menuStore, popupStore, commonStore } from 'Store';
-const Constant = require('json/constant.json');
 
 import PopupSettings from './settings';
 import PopupSettingsOnboarding from './settings/onboarding';
@@ -221,7 +220,7 @@ class Popup extends React.Component<I.Popup> {
 	};
 
 	onDimmer () {
-		if (!this.props.param.preventClose) {
+		if (!this.props.param.preventCloseByClick) {
 			this.close();
 		};
 	};

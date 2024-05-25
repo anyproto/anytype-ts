@@ -1527,6 +1527,19 @@ export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[
 	dispatcher.request(ObjectSearch.name, request, callBack);
 };
 
+export const ObjectSearchWithMeta = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SearchWithMeta.Request();
+
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setFulltext(fullText);
+	request.setOffset(offset);
+	request.setLimit(limit);
+	request.setKeysList(keys);
+
+	dispatcher.request(ObjectSearchWithMeta.name, request, callBack);
+};
+
 export const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchSubscribe.Request();
 

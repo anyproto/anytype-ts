@@ -317,7 +317,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			};
 
 			sections = sections.concat([
-				{ id: 'action', icon: 'action', name: translate('menuBlockActionsSectionsActions'), color: '', children: actions },
+				{ id: 'action', icon: 'action', name: translate('commonActions'), color: '', children: actions },
 			]);
 
 			if (block.canHaveAlign()) {

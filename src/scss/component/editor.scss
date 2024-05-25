@@ -96,6 +96,9 @@
 			}
 		}
 
+		.block.blockText {
+			 .wrapContent { min-height: 24px; }
+		}
 		.block.blockDiv { margin: 30px 0px; }
 	}
 }

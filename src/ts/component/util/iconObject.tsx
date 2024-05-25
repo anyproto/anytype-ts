@@ -58,6 +58,7 @@ const IconSize = {
 	32: 28,
 	36: 24,
 	40: 24,
+	42: 24,
 	44: 24,
 	48: 24,
 	56: 32,
@@ -80,6 +81,7 @@ const FontSize = {
 	32: 18,
 	36: 24,
 	40: 24,
+	42: 24,
 	44: 24,
 	48: 28,
 	56: 34,
@@ -486,6 +488,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	userSvg (): string {
+		const { size } = this.props;
 		const object = this.getObject();
 		const { layout } = object;
 		const iconSize = this.iconSize();
@@ -530,12 +533,12 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	commonSvg (): string {
+		const { size } = this.props;
 		const object = this.getObject();
 		const { layout } = object;
 		const iconSize = this.iconSize();
 		const name = this.iconName();
-
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, size)}px">${name}</text>`;
 		const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">${text}</svg>`;
 
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
