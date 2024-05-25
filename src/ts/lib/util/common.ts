@@ -874,7 +874,7 @@ class UtilCommon {
 			return s;
 		};
 
-		const tags = [ 'b', 'br', 'a', 'ul', 'li', 'h1', 'span', 'p', 'name', 'smile', 'img', 'search' ];
+		const tags = [ 'b', 'br', 'a', 'ul', 'li', 'h1', 'span', 'p', 'name', 'smile', 'img' ];
 
 		for (const i in I.MarkType) {
 			if (isNaN(I.MarkType[i] as any)) {
