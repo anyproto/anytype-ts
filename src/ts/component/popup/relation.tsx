@@ -109,6 +109,18 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		this.loadObjects(() => this.initValues());
 	};
 
+	componentDidUpdate (): void {
+		const id = commonStore.cellId;		
+		if (id) {
+			commonStore.cellId = '';
+			
+			const ref = this.cellRefs.get(id);
+			if (ref) {
+				ref.onClick($.Event('click'));
+			};
+		};
+	};
+
 	componentWillUnmount(): void {
 		menuStore.closeAll(Constant.menuIds.cell);
 		C.ObjectSearchUnsubscribe([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
@@ -129,25 +141,31 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	loadDeps (callBack?: () => void) {
+		const types = [ I.RelationType.File, I.RelationType.Object, I.RelationType.Select, I.RelationType.MultiSelect ];
+		const cb = callBack || (() => {});
+
 		let depIds = [];
 
 		for (const k in this.details) {
 			const relation = dbStore.getRelationByKey(k);
 
-			if (relation && [ I.RelationType.File, I.RelationType.Object ].includes(relation.format)) {
+			if (relation && types.includes(relation.format)) {
 				depIds = depIds.concat(Relation.getArrayValue(this.details[k]));
 			};
 		};
 
-		if (depIds.length) {
-			UtilData.searchSubscribe({
-				subId: SUB_ID_DEPS,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: depIds },
-				],
-				noDeps: true,
-			}, callBack);
+		if (!depIds.length) {
+			cb();
+			return;
 		};
+
+		UtilData.searchSubscribe({
+			subId: SUB_ID_DEPS,
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: depIds },
+			],
+			noDeps: true,
+		}, cb);
 	};
 
 	initValues () {
@@ -182,7 +200,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	getRelationKeys (): string[] {
-		return this.props.param.data.relationKeys || Constant.defaultRelationKeys;
+		return [ 'tag' ].concat(this.props.param.data.relationKeys || Constant.defaultRelationKeys);
 	};
 
 	getRelations (): any[] {
@@ -206,7 +224,12 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
-		this.details[relationKey] = value;
+		const relation = dbStore.getRelationByKey(relationKey);
+		if (!relation) {
+			return;
+		};
+
+		this.details[relationKey] = Relation.formatValue(relation, value, true);
 		this.loadDeps(() => this.forceUpdate());
 
 		if (callBack) {
