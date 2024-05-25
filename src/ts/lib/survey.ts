@@ -156,7 +156,7 @@ class Survey {
 		};
 
 		// Show this survey to 10% of users
-		if (!this.checkRandSeed(100)) {
+		if (!this.checkRandSeed(10)) {
 			Storage.setSurvey(type, { complete: true });
 			return;
 		};
