@@ -44,8 +44,8 @@ export default [
 
 	h2(`🛠️ Technical Updates:`),
 	bullet(`Electron updated to ${link('https://releases.electronjs.org/releases/stable', '30.0.7')}`),
-	bullet(`Membership System: All email domains now supported 📧 Thanks, @Afonso!`),
-	bullet(`App Updates: Now works even without logging in ⬆️`),
+	bullet(`<b>Membership System:</b> All email domains now supported 📧 Thanks, @Afonso!`),
+	bullet(`<b>App Updates:</b> Now works even without logging in ⬆️`),
 
 	h2(`🐞 Bug Fixes:`),
 	bullet(`<b>Slash Menu:</b> Now shows only after a space character to prevent saving issues ✨ Thanks, ${link('https://community.anytype.io/t/dont-show-the-slash-menu-if-there-is-a-character-or-nunber-direct-before-the-cursor/20500', '@code-jack')}`),
