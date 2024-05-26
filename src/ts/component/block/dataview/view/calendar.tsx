@@ -155,9 +155,12 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const { isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
 		const object = getTarget();
 		const view = getView();
+		if (!view) {
+			return;
+		};
+
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
-		
-		if (!relation || !view) {
+		if (!relation) {
 			return;
 		};
 
