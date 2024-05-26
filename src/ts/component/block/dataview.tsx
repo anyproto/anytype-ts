@@ -901,7 +901,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { dataset } = this.props;
+		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
@@ -923,12 +923,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			},
 			onClose: () => selection.clear(),
 			data: {
+				blockId: block.id,
 				targetId: this.getObjectId(),
 				objectIds,
 				subId,
 				isCollection,
 				route: this.analyticsRoute(),
 				relationKeys: this.getVisibleRelations().map(it => it.relationKey),
+				view,
 				allowedLink: true,
 				allowedOpen: true,
 			}

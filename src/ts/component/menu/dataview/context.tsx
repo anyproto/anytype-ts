@@ -303,7 +303,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { subId, objectIds, onSelect, targetId, isCollection, route, relationKeys } = data;
+		const { subId, objectIds, onSelect, targetId, isCollection, route, relationKeys, view, blockId } = data;
 		const win = $(window);
 		const count = objectIds.length;
 		const first = count == 1 ? detailStore.get(subId, objectIds[0], []) : null;
@@ -389,7 +389,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'relation': {
-				popupStore.open('relation', { data: { objectIds, relationKeys, route } });
+				popupStore.open('relation', { data: { objectIds, relationKeys, route, view, targetId, blockId } });
 				break;
 			};
 

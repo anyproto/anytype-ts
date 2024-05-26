@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button, Cell, Error, Icon, EmptySearch } from 'Component';
-import { I, M, C, UtilCommon, Relation, UtilData, translate } from 'Lib';
+import { Label, Button, Cell, Error, Icon, EmptySearch, Checkbox } from 'Component';
+import { I, M, C, UtilCommon, Relation, UtilData, translate, Dataview } from 'Lib';
 import { dbStore, commonStore, popupStore, menuStore } from 'Store';
 const Constant = require('json/constant.json');
 
@@ -15,8 +15,10 @@ interface State {
 
 const PopupRelation = observer(class PopupRelation extends React.Component<I.Popup, State> {
 
+	refCheckbox = null;
 	cellRefs: Map<string, any> = new Map();
 	details: any = {};
+	addRelationKeys = [];
 	state = {
 		error: '',
 	};
@@ -28,12 +30,13 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { readonly } = data;
+		const { readonly, view } = data;
 		const { error } = this.state;
 		const objects = this.getObjects();
 		const relations = this.getRelations();
@@ -70,6 +73,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 								idPrefix={ID_PREFIX}
 								menuClassName="fromBlock"
 								onCellChange={this.onCellChange}
+								getView={view ? (() => view): null}
 								pageContainer={UtilCommon.getCellContainer('popupRelation')}
 							/>
 						</div>
@@ -94,6 +98,13 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 					<Icon className="plus" />
 					{translate('commonAddRelation')}
 				</div>
+
+				{view && this.addRelationKeys.length ? (
+					<div className="item add" onClick={this.onCheckbox}>
+						<Checkbox ref={ref => this.refCheckbox = ref} />
+						{translate('popupRelationAddToView')}
+					</div>
+				) : null}
 
 				<div className="buttons">
 					<Button text="Save" className="c28" onClick={this.save} />
@@ -257,10 +268,16 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					this.details[relation.relationKey] = Relation.formatValue(relation, null, true);
 					this.props.param.data.relationKeys = this.getRelationKeys().concat([ relation.relationKey ]);
+
+					this.addRelationKeys.push(relation.relationKey);
 					this.loadObjects();
 				},
 			}
 		});
+	};
+
+	onCheckbox () {
+		this.refCheckbox.toggle();
 	};
 
 	save () {
@@ -287,10 +304,34 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 							close();
 						};
 					});
+
+					if (this.addRelationKeys.length && this.refCheckbox?.getValue()) {
+						const cb = () => {
+							this.addRelationKeys.shift();
+							if (!this.addRelationKeys.length) {
+								return;
+							};
+
+							this.addRelation(this.addRelationKeys[0], cb);
+						};
+
+						this.addRelation(this.addRelationKeys[0], cb);
+					};
 				},
 			},
 		});
+	};
 
+	addRelation (relationKey: string, callBack?: (message: any) => void){
+		const { param } = this.props;
+		const { data } = param;
+		const { targetId, blockId, view } = data;
+
+		if (!view) {
+			return;
+		};
+
+		Dataview.relationAdd(targetId, blockId, relationKey, view.relations.length, view, callBack);
 	};
 
 });
