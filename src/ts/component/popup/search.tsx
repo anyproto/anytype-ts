@@ -112,6 +112,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			let content = null;
 			let icon = null;
 			let object = null;
+			let size = 40;
 
 			if (item.isObject) {
 				object = item;
@@ -123,8 +124,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				object = UtilSpace.getSpaceview();
 			};
 
+			if ([ 'account', 'spaceIndex' ].includes(item.id)) {
+				size = 20;
+			};
+
 			if (object) {
-				icon = <IconObject object={object} size={40} />;
+				icon = <IconObject object={object} size={size}  />;
 			} else {
 				icon = <Icon className={item.icon} />;
 			};
@@ -652,7 +657,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			const pageItems: any[] = [
 				{ id: 'graph', icon: 'graph', name: translate('commonGraph'), shortcut: [ cmd, alt, 'O' ], layout: I.ObjectLayout.Graph },
 				{ id: 'navigation', icon: 'navigation', name: translate('commonFlow'), shortcut: [ cmd, 'O' ], layout: I.ObjectLayout.Navigation },
-			];
+			].map(it => ({ ...it, isSmall: true }));
 
 			const settingsItems = settingsAccount.concat(settingsSpace).map(it => ({ ...it, isSettings: true, isSmall: true }));
 			const filtered = itemsImport.concat(settingsItems).concat(pageItems).filter(it => {
