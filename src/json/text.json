@@ -1517,6 +1517,11 @@
 	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
 	"menuSyncStatusP2PNoDevicesConnected": "No devices connected",
 
+	"menuSyncStatusInfoTitleNetwork": "Anytype network",
+	"menuSyncStatusInfoTitleP2p": "P2P Connection",
+	"menuSyncStatusInfoTitleSelf": "Self Host",
+	"menuSyncStatusInfoTitleLocalOnly": "Local Only",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",

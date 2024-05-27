@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Title, Button, Icon, IconObject, ObjectName, Label } from 'Component';
 import { I, translate, UtilObject, UtilData, UtilSpace, UtilFile, UtilCommon } from 'Lib';
-import { popupStore, blockStore, dbStore, authStore } from 'Store';
+import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HEIGHT_SECTION = 26;
@@ -14,11 +14,13 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	cache: any = {};
 	items: any[] = [];
+	currentInfo = '';
 
 	constructor (props: I.Menu) {
 		super(props);
 
 		this.onPanelIconClick = this.onPanelIconClick.bind(this);
+		this.onCloseInfo = this.onCloseInfo.bind(this);
 	};
 
 	render () {
@@ -29,7 +31,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			const { id, status } = item;
 
 			return (
-				<div className={[ 'iconWrapper', status ? status : ''].join(' ')} onClick={e => this.onPanelIconClick(e, item)}>
+				<div id={UtilCommon.toCamelCase([ 'icon', id ].join('-'))} className={[ 'iconWrapper', status ? status : ''].join(' ')} onClick={e => this.onPanelIconClick(e, item)}>
 					<Icon className={id} />
 				</div>
 			);
@@ -45,7 +47,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						<IconObject object={item} size={20} />
 						<div className="info">
 							<ObjectName object={item} />
-							<span className="size">{UtilFile.size(item.sizeInBytes)}</span>
+							{item.sizeInBytes ? <span className="size">{UtilFile.size(item.sizeInBytes)}</span> : ''}
 						</div>
 					</div>
 					<div className="side right">
@@ -83,7 +85,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		return (
-			<React.Fragment>
+			<div className="syncMenuWrapper" onClick={this.onCloseInfo}>
 				<div className="syncPanel">
 					<Title text={translate('menuSyncStatusTitle')} />
 
@@ -120,7 +122,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						</InfiniteLoader>
 					</div>
 				) : ''}
-			</React.Fragment>
+			</div>
 		);
 	};
 
@@ -138,14 +140,49 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		});
 	};
 
+	componentWillUnmount () {
+		this.onCloseInfo();
+	};
+
 	onPanelIconClick (e, item) {
-		console.log('ITEM: ', item);
+		const { id } = item;
+		const { param } = this.props;
+		const { classNameWrap } = param;
+		const element = `.syncPanel ${UtilCommon.toCamelCase([ '#icon', id ].join('-'))}`;
+		const menuParam = {
+			classNameWrap,
+			element,
+			offsetY: 4,
+			passThrough: true,
+			data: item
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (menuStore.isOpen('syncStatusInfo')) {
+			if (id == this.currentInfo) {
+				this.onCloseInfo();
+			} else {
+				this.currentInfo = id;
+				menuStore.update('syncStatusInfo', menuParam);
+			};
+		} else {
+			this.currentInfo = id;
+			menuStore.open('syncStatusInfo', menuParam);
+		};
+	};
+
+	onCloseInfo () {
+		this.currentInfo = '';
+		if (menuStore.isOpen('syncStatusInfo')) {
+			menuStore.close('syncStatusInfo');
+		};
 	};
 
 	load () {
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() }
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
