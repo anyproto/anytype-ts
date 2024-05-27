@@ -1,8 +1,9 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Title, Button, Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, translate, UtilObject, UtilData, UtilSpace, UtilFile, UtilCommon } from 'Lib';
+import { Action, I, translate, UtilObject, UtilData, UtilSpace, UtilFile, UtilCommon } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -19,6 +20,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	constructor (props: I.Menu) {
 		super(props);
 
+		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onPanelIconClick = this.onPanelIconClick.bind(this);
 		this.onCloseInfo = this.onCloseInfo.bind(this);
 	};
@@ -38,10 +40,14 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		const Item = (item: any) => {
+			const { syncStatus } = item;
+			const icon = this.getClassBySyncStatus(syncStatus);
+
 			return (
 				<div
 					id={'item-' + item.id}
 					className="item sides"
+					onContextMenu={e => this.onContextMenu(e, item)}
 				>
 					<div className="side left">
 						<IconObject object={item} size={20} />
@@ -51,7 +57,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						</div>
 					</div>
 					<div className="side right">
-						<Icon className={'loading'} />
+						<Icon className={icon} />
+						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
 					</div>
 				</div>
 			);
@@ -144,6 +151,43 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		this.onCloseInfo();
 	};
 
+	onContextMenu (e, item) {
+		const { id } = item;
+		const { param } = this.props;
+		const { classNameWrap } = param;
+		const options = [
+			{ id: 'open', name: translate('commonOpen') },
+			{ id: 'archive', name: translate('commonMoveToBin'), isRed: true }
+		];
+		const itemNode = $(`#item-${id}`);
+
+		itemNode.addClass('selected');
+		menuStore.open('select', {
+			classNameWrap,
+			className: 'menuSyncStatusContext',
+			element: itemNode.find('.more'),
+			offsetY: 4,
+			onClose: () => {
+				itemNode.removeClass('selected');
+			},
+			data: {
+				options,
+				onSelect: (e, option) => {
+					switch (option.id) {
+						case 'open': {
+							UtilObject.openAuto(item);
+							break;
+						};
+						case 'archive': {
+							Action.archive([ id ]);
+							break;
+						};
+					};
+				}
+			}
+		})
+	};
+
 	onPanelIconClick (e, item) {
 		const { id } = item;
 		const { param } = this.props;
@@ -185,12 +229,13 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
 		];
 		const sorts = [
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'syncDate', type: I.SortType.Desc },
 		];
 
 		UtilData.search({
 			filters,
 			sorts,
+			keys: Constant.defaultRelationKeys.concat(Constant.syncStatusRelationKeys),
 			fullText: '',
 			offset: 0,
 			limit: 30,
@@ -208,7 +253,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	getItems () {
 		let items = this.items.slice();
 
-		items = UtilCommon.groupDateSections(items, 'createdDate');
+		items = UtilCommon.groupDateSections(items, 'syncDate');
 
 		return items;
 	};
@@ -220,6 +265,13 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		];
 
 		return icons;
+	};
+
+	getClassBySyncStatus (status: I.SyncStatus) {
+		if (status == undefined) {
+			return '';
+		};
+		return I.SyncStatus[status].toLowerCase();
 	};
 
 	getRowHeight (item: any) {
