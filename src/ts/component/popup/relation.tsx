@@ -264,6 +264,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			onOpen: () => $(element).addClass('active'),
 			onClose: () => $(element).removeClass('active'),
 			data: {
+				menuIdEdit: 'blockRelationEdit',
 				skipKeys: this.getRelationKeys(),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					this.details[relation.relationKey] = Relation.formatValue(relation, null, true);
@@ -271,6 +272,8 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 					this.addRelationKeys.push(relation.relationKey);
 					this.loadObjects();
+
+					menuStore.close('relationSuggest');
 				},
 			}
 		});
