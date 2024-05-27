@@ -138,7 +138,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		return (
 			<div 
 				ref={ref => this.node = ref} 
-				id="sideRight" 
+				id="historySideRight" 
 				className={showButtons ? 'withButtons' : ''}
 			>
 				<div className="head">
@@ -365,6 +365,8 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			this.setState({ version: message.version }, () => {
 				this.loadDiff(id);
 			});
+
+			$(window).trigger('resize');
 		});
 	};
 

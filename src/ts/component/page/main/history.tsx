@@ -79,6 +79,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	componentWillUnmount(): void {
 		this.unbind();
+
 		blockStore.clear(this.getRootId());
 		commonStore.diffSet([]);
 	};
@@ -165,7 +166,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	scrollToElement (element: any) {
 		const { isPopup } = this.props;
 		const node = $(this.node);
-		const container = node.find('#sideLeft');
+		const container = node.find('#historySideLeft');
 		const ch = container.height();
 		const no = element.offset().top;
 		const st = container.scrollTop();
@@ -334,9 +335,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	resize () {
 		const { isPopup } = this.props;
 		const node = $(this.node);
-		const sideLeft = node.find('#sideLeft');
-		const sideRight = node.find('#sideRight');
-		const editorWrapper = sideLeft.find('#editorWrapper');
+		const sideLeft = node.find('#historySideLeft');
+		const sideRight = node.find('#historySideRight');
+		const editorWrapper = node.find('#editorWrapper');
 		const cover = node.find('.block.blockCover');
 		const container = UtilCommon.getPageContainer(isPopup);
 		const sc = UtilCommon.getScrollContainer(isPopup);
@@ -357,10 +358,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		};
 
 		sideLeft.css(cssl);
-		
-		if (!this.isSetOrCollection()) {
-			editorWrapper.css({ width: this.getWrapperWidth() });
-		};
+		editorWrapper.css({ width: !this.isSetOrCollection() ? this.getWrapperWidth() : '' });
 	};
 
 	getWrapperWidth (): number {
@@ -374,7 +372,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		w = Number(w) || 0;
 
 		const node = $(this.node);
-		const sideLeft = node.find('#sideLeft');
+		const sideLeft = node.find('#historySideLeft');
 		const min = 300;
 
 		let mw = sideLeft.width();
@@ -411,6 +409,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	setVersion (version: I.HistoryVersion) {
 		this.refHeader?.refChild.setVersion(version);
+		this.refSideLeft?.refHead?.forceUpdate();
+
+		$(window).trigger('updateDataviewData');
 	};
 
 });

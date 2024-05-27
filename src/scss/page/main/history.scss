@@ -8,10 +8,10 @@
 	#footer.snapLeft { right: 336px; }
 
 	#body {
-		> #sideLeft { padding: 52px 0px 80px 0px; width: calc(100% - 336px); overflow-x: hidden; overflow-y: auto; position: relative; }
+		> #historySideLeft { padding: 52px 0px 80px 0px; width: calc(100% - 336px); overflow-x: hidden; overflow-y: auto; position: relative; }
 
-		> #sideRight { width: 336px; z-index: 20; background: var(--color-shape-tertiary); display: flex; flex-direction: column; position: relative; }
-		> #sideRight {
+		> #historySideRight { width: 336px; z-index: 20; background: var(--color-shape-tertiary); display: flex; flex-direction: column; position: relative; }
+		> #historySideRight {
 			> .head { 
 				display: flex; flex-direction: row; align-items: center; justify-content: space-between; -webkit-app-region: no-drag; 
 				@include text-paragraph; font-weight: 600; padding: 0px 4px; flex-shrink: 0; padding: 12px 16px;
@@ -95,7 +95,7 @@
 			}
 		}
 
-		> #sideRight.withButtons {
+		> #historySideRight.withButtons {
 			.scroll { padding-bottom: 68px; }
 		}
 	}
@@ -106,7 +106,7 @@
 html.platformWindows {
 	.pageMainHistory {
 		#body {
-			> #sideLeft, > #sideRight > .scroll { overflow-y: overlay; }
+			> #historySideLeft, > #historySideRight > .scroll { overflow-y: overlay; }
 		}
 	}
 }

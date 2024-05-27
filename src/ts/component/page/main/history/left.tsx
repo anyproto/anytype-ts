@@ -26,16 +26,21 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 	render () {
 		const { rootId, onCopy } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return null;
+		};
+
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		const icon = new M.Block({ id: `${rootId}-icon`, type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cover = new M.Block({ id: `${rootId}-cover`, type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cn = [ 'editorWrapper', check.className ];
-		const isSet = root?.isObjectSet();
-		const isCollection = root?.isObjectCollection();
-		const isHuman = root?.isObjectHuman();
-		const isParticipant = root?.isObjectParticipant();
+		const isSet = root.isObjectSet();
+		const isCollection = root.isObjectCollection();
+		const isHuman = root.isObjectHuman();
+		const isParticipant = root.isObjectParticipant();
 
 		let head = null;
 		let children = blockStore.getChildren(rootId, rootId);
@@ -61,7 +66,7 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 		};
 
 		return (
-			<div ref={ref => this.node = ref} id="sideLeft" onScroll={this.onScroll}>
+			<div ref={ref => this.node = ref} id="historySideLeft" onScroll={this.onScroll}>
 				<div id="editorWrapper" className={cn.join(' ')}>
 					<div className="editor">
 						<div className="blocks">

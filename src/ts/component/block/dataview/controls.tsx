@@ -121,7 +121,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				className={cn.join(' ')}
 			>
 				<div className="sides">
-					<div id="sideLeft" className="side left">
+					<div id="dataviewControlsSideLeft" className="side left">
 						{head}
 
 						<div 
@@ -147,7 +147,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 						/>
 					</div>
 
-					<div id="sideRight" className="side right">
+					<div id="dataviewControlsSideRight" className="side right">
 						<Filter
 							ref={ref => this.refFilter = ref}
 							placeholder={translate('blockDataviewSearch')} 
@@ -481,8 +481,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		const { isPopup, isInline } = this.props;
 		const node = $(this.node);
-		const sideLeft = node.find('#sideLeft');
-		const sideRight = node.find('#sideRight');
+		const sideLeft = node.find('#dataviewControlsSideLeft');
+		const sideRight = node.find('#dataviewControlsSideRight');
 		const container = UtilCommon.getPageContainer(isPopup);
 		const { left } = sideLeft.offset();
 		const sidebar = $('#sidebar');
