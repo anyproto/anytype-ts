@@ -211,17 +211,34 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			return;
 		};
 
+		const { id, time }  = version;
+		const groups = this.groupData();
+		const unwrapped = this.unwrapGroups('', groups);
 		const node = $(this.node);
-		const groupId = this.getGroupId(version.time);
+		const groupId = this.getGroupId(time);
 		const hash = sha1(groupId);
-		const item = node.find(`#item-${version.id}`);
+		const item = node.find(`#item-${id}`);
 		const section = node.find(`#section-${hash}`);
+
+		const group = unwrapped.find(it => it.id == id);
+		if (!group) {
+			return;
+		};
+
+		const parent = unwrapped.find(it => it.id == group.parentId);
+		if (!parent) {
+			return;
+		};
+
+		const children = node.find(`#children-${parent.id}`);
 
 		section.addClass('isExpanded');
 		section.find('.items').show();
 
 		node.find('.active').removeClass('active');
-		item.addClass('active');
+		item.addClass('active isExpanded');
+
+		children.show();
 	};
 
 	toggleSection (e: any, id: string) {
@@ -414,6 +431,23 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		};
 
 		return groups;
+	};
+
+	unwrapGroups (parentId: string, groups: any[]) {
+		let out = [];
+
+		for (const group of groups) {
+			const list = group.list;
+
+			out.push({ ...group, parentId });
+			if (list && (list.length > 0)) {
+				out = out.concat(this.unwrapGroups(group.id, list));
+			};
+
+			delete(group.list);
+		};
+
+		return out;
 	};
 
 	getGroupId (time: number) {
