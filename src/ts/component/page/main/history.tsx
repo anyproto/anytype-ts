@@ -1,15 +1,19 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Header, Footer } from 'Component';
+import { Header, Footer, Loader } from 'Component';
 import { blockStore, detailStore, commonStore } from 'Store';
-import { I, C, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate } from 'Lib';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
 
 const Constant = require('json/constant.json');
 
-const PageMainHistory = observer(class PageMainHistory extends React.Component<I.PageComponent> {
+interface State {
+	isLoading: boolean;
+};
+
+const PageMainHistory = observer(class PageMainHistory extends React.Component<I.PageComponent, State> {
 
 	node = null;
 	refHeader = null;
@@ -18,6 +22,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	refSideLeft = null;
 	refSideRight = null;
 	refHead = null;
+	state = {
+		isLoading: false,
+	};
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -25,17 +32,17 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.renderDiff = this.renderDiff.bind(this);
 		this.setVersion = this.setVersion.bind(this);
+		this.setLoading = this.setLoading.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onClose = this.onClose.bind(this);
 	};
 
 	render () {
+		const { isLoading } = this.state;
 		const rootId = this.getRootId();
 
 		return (
-			<div 
-				ref={node => this.node = node}
-			>
+			<div ref={node => this.node = node}>
 				<Header 
 					{...this.props} 
 					ref={ref => this.refHeader = ref}
@@ -43,6 +50,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					rootId={rootId}
 					layout={I.ObjectLayout.History}
 				/>
+
+				{isLoading ?  <Loader id="loader" /> : ''}
 
 				<div id="body" className="flex">
 					<HistoryLeft 
@@ -59,6 +68,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						rootId={rootId}
 						renderDiff={this.renderDiff}
 						setVersion={this.setVersion}
+						setLoading={this.setLoading}
 					/>
 				</div>
 
@@ -412,6 +422,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		this.refSideLeft?.refHead?.forceUpdate();
 
 		$(window).trigger('updateDataviewData');
+	};
+
+	setLoading (v: boolean) {
+		console.log('setLoading', v);
+		this.setState({ isLoading: v });
 	};
 
 });

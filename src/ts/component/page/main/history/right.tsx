@@ -10,6 +10,7 @@ interface Props {
 	rootId: string;
 	renderDiff: (previousId: string, events: any[]) => void;
 	setVersion: (version: I.HistoryVersion) => void;
+	setLoading: (v: boolean) => void;
 };
 
 interface State {
@@ -321,7 +322,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 	loadList (lastId: string) { 
 		const { versions, version, isLoading } = this.state;
-		const { rootId } = this.props;
+		const { rootId, setLoading } = this.props;
 		const object = detailStore.get(rootId, rootId);
 		
 		if (isLoading || (this.lastId && (lastId == this.lastId))) {
@@ -331,8 +332,11 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		this.setState({ isLoading: true });
 		this.lastId = lastId;
 
+		setLoading(true);
+
 		C.HistoryGetVersions(rootId, lastId, LIMIT_RECORDS, (message: any) => {
 			this.setState({ isLoading: false });
+			setLoading(false);
 
 			if (message.error.code) {
 				UtilObject.openRoute({ id: rootId, layout: object.layout });
