@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { MenuItemVertical, Icon, Cell } from 'Component';
 import { I, Mark, keyboard, C, focus, Action, UtilCommon, UtilData, UtilMenu, UtilObject, Storage, translate, analytics, Relation } from 'Lib';
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
@@ -317,7 +317,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			};
 
 			sections = sections.concat([
-				{ id: 'action', icon: 'action', name: translate('menuBlockActionsSectionsActions'), color: '', children: actions },
+				{ id: 'action', icon: 'action', name: translate('commonActions'), color: '', children: actions },
 			]);
 
 			if (block.canHaveAlign()) {

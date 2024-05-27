@@ -5,7 +5,7 @@ import { I, C, UtilCommon, UtilFile, UtilDate, translate, UtilSpace, analytics }
 import { menuStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Mousewheel } from 'swiper/modules';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;

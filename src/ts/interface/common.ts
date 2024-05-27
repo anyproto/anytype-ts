@@ -191,18 +191,19 @@ export interface ButtonComponent {
 };
 
 export enum SurveyType {
-	Register 	= 0,
-	Delete 		= 1,
-	Pmf 		= 2,
-	Object 		= 3,
+	Register	 = 0,
+	Delete		 = 1,
+	Pmf			 = 2,
+	Object		 = 3,
+	Shared		 = 4,
 };
 
 export enum SliceOperation {
-	None	 = 0,
-	Add		 = 1,
-    Move	 = 2,
-	Remove	 = 3,
-    Replace	 = 4,
+	None		 = 0,
+	Add			 = 1,
+    Move		 = 2,
+	Remove		 = 3,
+    Replace		 = 4,
 };
 
 export interface Dataset {

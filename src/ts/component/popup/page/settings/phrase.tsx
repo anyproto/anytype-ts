@@ -4,7 +4,7 @@ import QRCode from 'qrcode.react';
 import { Title, Label, Phrase } from 'Component';
 import { I, C, translate, analytics, UtilCommon, Storage, Renderer } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
-import Theme from 'json/theme.json';
+const Theme = require('json/theme.json');
 
 interface State {
 	entropy: string;

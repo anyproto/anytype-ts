@@ -1,6 +1,6 @@
 import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject, UtilMenu } from 'Lib';
 import { dbStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const DICTIONARY = [ 'layout', 'origin', 'importType' ];
 const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];

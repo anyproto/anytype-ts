@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, C, UtilCommon, UtilData, keyboard, Dataview, Relation } from 'Lib';
 import { Graph } from 'Component';
 import { detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PADDING = 46;
 

@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
 import { I, keyboard, Storage, UtilObject, translate, UtilCommon, UtilSpace, analytics } from 'Lib';
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.WidgetTreeItem {
 	block: I.Block;

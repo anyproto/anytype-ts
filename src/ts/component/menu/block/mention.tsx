@@ -5,7 +5,7 @@ import { MenuItemVertical, Loader, ObjectName } from 'Component';
 import { I, keyboard, UtilCommon, UtilData, UtilObject, UtilMenu, Mark, analytics, translate } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -214,6 +214,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
 		];
 

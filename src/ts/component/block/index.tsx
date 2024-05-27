@@ -27,7 +27,7 @@ import BlockPdf from './media/pdf';
 
 import BlockEmbed from './embed';
 
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
 	css?: any;
@@ -514,6 +514,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		$('.block.isAdding').removeClass('isAdding top bottom');
 
 		const menuParam: Partial<I.MenuParam> = Object.assign({
+			noFlipX: true,
 			subIds: Constant.menuIds.action,
 			onClose: () => {
 				if (selection) {

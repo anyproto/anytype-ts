@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
 import { C, I, M, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	dataset?: any;

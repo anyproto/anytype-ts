@@ -1,7 +1,7 @@
 import loadImage from 'blueimp-load-image';
 import { UtilCommon, Relation } from 'Lib';
 import { commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const SIZE_UNIT = 1024;
 const UNITS = {

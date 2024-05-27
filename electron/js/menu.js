@@ -267,9 +267,17 @@ class MenuManager {
 				Separator,
 
 				{
-					label: 'Test payment', type: 'checkbox', checked: config.testPayment,
+					label: 'Test payments', type: 'checkbox', checked: config.testPayment,
 					click: () => {
 						Api.setConfig(this.win, { testPayment: !config.testPayment });
+						this.win.reload();
+					}
+				},
+
+				{
+					label: 'Test crypto payments', type: 'checkbox', checked: config.testCryptoPayment,
+					click: () => {
+						Api.setConfig(this.win, { testCryptoPayment: !config.testCryptoPayment });
 						this.win.reload();
 					}
 				},

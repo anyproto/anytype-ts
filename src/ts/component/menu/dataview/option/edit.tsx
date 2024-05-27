@@ -5,7 +5,7 @@ import $ from 'jquery';
 import { I, C, UtilMenu, Relation, translate, keyboard, analytics } from 'Lib';
 import { Filter, MenuItemVertical, Icon } from 'Component';
 import { menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
 	

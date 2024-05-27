@@ -7,7 +7,7 @@ import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
 import { I, C, keyboard, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, Storage, translate, analytics, Renderer, UtilRouter } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;

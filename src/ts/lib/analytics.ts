@@ -1,7 +1,7 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, UtilCommon, Storage, UtilSpace } from 'Lib';
+import { I, C, UtilCommon, Storage, UtilSpace, Relation } from 'Lib';
 import { commonStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
@@ -486,6 +486,20 @@ class Analytics {
 
 	createObject (objectType: string, layout: I.ObjectLayout, route: string, time: number) {
 		this.event('CreateObject', { objectType, layout, route, middleTime: time });
+	};
+
+	changeRelationValue (relation: any, value: any, type: string) {
+		if (!relation) {
+			return;
+		};
+
+		let key = '';
+		if (relation.relationKey == 'name') {
+			key = 'SetObjectTitle';
+		} else {
+			key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';
+		};
+		this.event(key, { type });
 	};
 
 	pageMapper (params: any): string {

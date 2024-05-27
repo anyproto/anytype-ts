@@ -1,9 +1,9 @@
 import $ from 'jquery';
 import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate, UtilSpace } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
-import KeyCode from 'json/key.json';
+const Constant = require('json/constant.json');
+const Url = require('json/url.json');
+const KeyCode = require('json/key.json');
 
 class Keyboard {
 	
@@ -185,7 +185,10 @@ class Keyboard {
 				};
 
 				if (canClose) {
-					popupStore.closeLast();
+					const last = popupStore.getLast();
+					if (last && !last.param.preventCloseByEscape) {
+						popupStore.close(last.id);
+					};
 				};
 			};
 			
@@ -816,6 +819,7 @@ class Keyboard {
 
 	onSearchPopup (route: string) {
 		popupStore.open('search', {
+			preventCloseByEscape: true,
 			data: { isPopup: this.isPopup(), route },
 		});
 	};

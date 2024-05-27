@@ -5,7 +5,7 @@ import { observable } from 'mobx';
 import { I, C, UtilObject, UtilMenu, Relation, translate, Dataview, keyboard, analytics, Preview, UtilData, UtilCommon } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 import { blockStore, dbStore, menuStore, detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<I.Menu> {
 
@@ -310,6 +310,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			case 'remove': {
+				this.props.close();
 				C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ]);
 				break;
 			};

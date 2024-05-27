@@ -2,7 +2,7 @@ import * as React from 'react';
 import sha1 from 'sha1';
 import { Input } from 'Component';
 import { keyboard } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	/** the length of the pin, defaults to Constant.pinLength */

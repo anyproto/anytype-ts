@@ -3,7 +3,7 @@ import { Cell, Icon } from 'Component';
 import { I, C, UtilCommon, focus, analytics, Relation, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { menuStore, detailStore, dbStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const BlockRelation = observer(class BlockRelation extends React.Component<I.BlockComponent> {
 
@@ -160,8 +160,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 		
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
-		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
-		analytics.event(key, { type: 'block' });
+		analytics.changeRelationValue(relation, value, 'block');
 	};
 
 	onCellClick (e: any) {

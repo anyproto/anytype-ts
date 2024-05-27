@@ -7,7 +7,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, Switch } from 'Component';
 import { I, C, Relation, keyboard, Dataview, translate } from 'Lib';
 import { menuStore, dbStore, blockStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
 const LIMIT = 20;

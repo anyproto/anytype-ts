@@ -5,7 +5,7 @@ import * as Docs from 'Docs';
 import { Label, Icon, Cover, Button } from 'Component';
 import { I, UtilCommon, translate } from 'Lib';
 import Block from 'Component/block/help';
-import Url from 'json/url.json';
+const Url = require('json/url.json');
 
 interface State {
 	showFull: boolean;

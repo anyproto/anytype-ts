@@ -2,7 +2,7 @@ import Commands from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import { detailStore } from 'Store';
 import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 import { MembershipTier } from 'Interface';
 
 const Rpc = Commands.Rpc;
@@ -1518,6 +1518,19 @@ export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[
 	request.setKeysList(keys);
 
 	dispatcher.request(ObjectSearch.name, request, callBack);
+};
+
+export const ObjectSearchWithMeta = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SearchWithMeta.Request();
+
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setFulltext(fullText);
+	request.setOffset(offset);
+	request.setLimit(limit);
+	request.setKeysList(keys);
+
+	dispatcher.request(ObjectSearchWithMeta.name, request, callBack);
 };
 
 export const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {

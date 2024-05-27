@@ -2,7 +2,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { I, keyboard, Storage, UtilCommon } from 'Lib';
 import { commonStore, menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface SidebarData {
 	x: number;

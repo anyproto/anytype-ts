@@ -8,7 +8,7 @@ import { I, C, UtilCommon, translate, keyboard, Relation } from 'Lib';
 import { dbStore, menuStore, blockStore, detailStore } from 'Store';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PADDING = 46;
 

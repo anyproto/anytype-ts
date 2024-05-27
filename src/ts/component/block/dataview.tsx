@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action, UtilDate, Storage } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
@@ -894,15 +894,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], callBack);
 
-		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
-		analytics.event(key, { type: 'dataview' });
+		analytics.changeRelationValue(relation, value, 'dataview');
 	};
 
 	onContext (e: any, id: string): void {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { dataset } = this.props;
+		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
@@ -924,12 +923,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			},
 			onClose: () => selection.clear(),
 			data: {
+				blockId: block.id,
 				targetId: this.getObjectId(),
 				objectIds,
 				subId,
 				isCollection,
 				route: this.analyticsRoute(),
 				relationKeys: this.getVisibleRelations().map(it => it.relationKey),
+				view,
 				allowedLink: true,
 				allowedOpen: true,
 			}

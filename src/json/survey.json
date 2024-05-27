@@ -1,17 +1,21 @@
 {
- 	"0": {
+ 	"register": {
 		"url": "https://community.anytype.io/survey0"
 	},
 
-	"1": {
+	"delete": {
 		"url": "https://community.anytype.io/survey1"
 	},
 
-	"2": {
+	"pmf": {
 		"url": "https://community.anytype.io/survey2#anytypeid=%s"
 	},
 
-	"3": {
+	"object": {
 		"url": "https://community.anytype.io/survey3"
+	},
+
+	"shared": {
+		"url": "https://community.anytype.io/survey4"
 	}
 }

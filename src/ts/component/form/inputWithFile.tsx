@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
 import { I, keyboard, focus, translate, Action } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	icon?: string;

@@ -96,7 +96,7 @@ class Block implements I.Block {
 	};
 
 	canHaveBackground (): boolean {
-		return !this.isFilePdf() && !this.isDataview();
+		return !this.isFilePdf();
 	};
 
 	canHaveMarks () {

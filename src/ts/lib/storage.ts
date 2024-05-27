@@ -1,6 +1,6 @@
 import { I, UtilCommon, UtilSpace } from 'Lib';
 import { commonStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const SPACE_KEYS = [
 	'toggle',
@@ -193,7 +193,9 @@ class Storage {
 		this.set('toggle', obj, true);
 	};
 
-	setScroll (key: string, rootId: string, scroll: number) {
+	setScroll (key: string, rootId: string, scroll: number, isPopup: boolean) {
+		key = this.getScrollKey(key, isPopup);
+
 		const obj = this.get('scroll') || {};
 		try {
 			obj[key] = obj[key] || {};
@@ -204,9 +206,15 @@ class Storage {
 		return obj;
 	};
 
-	getScroll (key: string, rootId: string) {
+	getScroll (key: string, rootId: string, isPopup: boolean) {
+		key = this.getScrollKey(key, isPopup);
+
 		const obj = this.get('scroll') || {};
 		return Number((obj[key] || {})[rootId]) || 0;
+	};
+
+	getScrollKey (key: string, isPopup: boolean) {
+		return isPopup ? `${key}Popup` : key;
 	};
 
 	setOnboarding (key: string) {

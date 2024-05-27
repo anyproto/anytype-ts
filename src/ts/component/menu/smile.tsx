@@ -4,7 +4,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
 import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action, UtilData } from 'Lib';
 import { menuStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 enum Tab {
 	None	 = 0,
@@ -399,6 +399,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 				];
 
 				this.setState({ isLoading: true });

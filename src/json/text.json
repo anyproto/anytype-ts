@@ -143,11 +143,10 @@
 	"commonUpdate": "Update",
 	"commonOwner": "Owner",
 	"commonUpdateProgress": "Downloading update... %s/%s",
+	"commonActions": "Actions",
 	"commonAddRelation": "Add Relation",
 	"commonCollection": "Collection",
 	"commonSet": "Set",
-	"commonDeletionWarningTitle": "Are you sure you want to delete %s %s?",
-	"commonDeletionWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -403,6 +402,12 @@
 	"pageMainStoreMyRelations": "My Relations",
 	"pageMainStoreBannerTitle": "What can I build with Anytype?",
 	"pageMainStoreBannerButton": "Explore",
+	"pageMainStoreSort": "Sort by",
+	"pageMainStoreSortNameAsc": "Name A->Z",
+	"pageMainStoreSortNameDesc": "Name Z->A",
+	"pageMainStoreSortCreatedAsc": "Oldest created",
+	"pageMainStoreSortCreatedDesc": "Newest created",
+	"pageMainStoreSortLastUsedDesc": "Recently used",
 
 	"pageMainTypeRecommendedLayout": "Recommended layout",
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
@@ -991,6 +996,9 @@
 
 	"popupConfirmRelationOptionRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
 
+	"popupConfirmDeleteWarningTitle": "Are you sure you want to delete %s %s?",
+	"popupConfirmDeleteWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1027,6 +1035,9 @@
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchCreateObject": "Create Object",
+	"popupSearchAddRelation": "Add Relation",
+	"popupSearchTooltipSearchByBacklinks": "Show related objects",
+	"popupSearchBacklinksFrom": "Related to: %s",
 
 	"popupAboutTitle": "Anytype",
 	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -1086,7 +1097,6 @@
 	"popupShortcutMainSelection4": "Expand your selection up or down",
 	"popupShortcutMainSelection5": "On block will select or de-select an entire block",
 	"popupShortcutMainSelection6": "Select block and all blocks in between",
-	"popupShortcutMainActions": "Actions",
 	"popupShortcutMainActions1": "Activate command menu",
 	"popupShortcutMainActions2": "Open action menu",
 	"popupShortcutMainActions3": "Deletes the words left to the cursor",
@@ -1216,6 +1226,7 @@
 
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no relations shown yet",
+	"popupRelationAddToView": "Add relations to the view",
 
 	"menuVaultPeer": "%d\/%d peers",
 	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
@@ -1238,7 +1249,6 @@
 	"menuBlockActionsSectionsListStyle": "List style",
 	"menuBlockActionsSectionsDividerStyle": "Divider style",
 	"menuBlockActionsSectionsFileStyle": "File style",
-	"menuBlockActionsSectionsActions": "Actions",
 	"menuBlockActionsSectionsBackground": "Background",
 	"menuBlockActionsSectionsColor": "Color",
 	"menuBlockActionsSectionsDataview": "Dataview",
@@ -1635,7 +1645,7 @@
 	"edgeType1": "Relation",
 
 	"survey0Title": "Time to take a survey!",
-	"survey0Text": "Hi there, We hope you're enjoying your experience in Anytype! We'd love to hear your feedback so we can keep improving the product.",
+	"survey0Text": "Hi there! We hope you're enjoying your experience in Anytype! We'd love to hear your feedback so we can keep improving the product.",
 	"survey0Confirm": "Let's Go!",
 	"survey0Cancel": "Skip",
 	"survey1Title": "Help us to become better",
@@ -1650,6 +1660,10 @@
 	"survey3Text": "Hi there, we hope you're enjoying your experience with Anytype! Would you take 5 minutes to help us improve our product?",
 	"survey3Confirm": "Sure, let's go",
 	"survey3Cancel": "No thanks",
+	"survey4Title": "Hi there!",
+	"survey4Text": "We’d love if you’d help us improve Anytype by taking part in this 3-minute survey.",
+	"survey4Confirm": "Let’s Go!",
+	"survey4Cancel": "No thanks",
 
 	"widget0Name": "Link",
 	"widget0Description": "Compact version of the Object",

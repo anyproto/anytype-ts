@@ -1,7 +1,7 @@
 import { I, UtilCommon, UtilData, UtilObject, Storage, translate } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
+const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 
 class UtilSpace {
 
