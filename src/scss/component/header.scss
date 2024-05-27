@@ -54,8 +54,8 @@
 	.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
 	.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
 
-	.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
-	.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
+	.icon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }
+	.icon.toggle:hover { background-image: url('~img/icon/widget/toggle1.svg'); }
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }

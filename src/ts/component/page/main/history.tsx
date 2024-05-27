@@ -136,7 +136,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				className="child" 
 				onClick={e => this.loadVersion(item.id)}
 			>
-				<div className="bullet" />
+				<Icon className="bullet" />
 				<div className="date">{UtilDate.date('g:i A', item.time)}</div>
 			</div>
 		);
