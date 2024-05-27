@@ -73,19 +73,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	componentDidUpdate () {
-		const rootId = this.getRootId();
-		const sideLeft = $(this.refSideLeft);
-		const sideRight = $(this.refSideRight);
-
 		this.resize();
 		this.rebind();
-
-		sideLeft.scrollTop(this.scrollLeft);
-		sideRight.scrollTop(this.scrollRight);
-		sideLeft.off('scroll').on('scroll', () => this.onScrollLeft());
-		sideRight.off('scroll').on('scroll', () => this.onScrollRight());
-
-		blockStore.updateNumbers(rootId);
 	};
 
 	componentWillUnmount(): void {
@@ -141,10 +130,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	onScrollLeft () {
 		this.scrollLeft = $(this.refSideLeft).scrollTop();
 		UtilCommon.getScrollContainer(this.props.isPopup).trigger('scroll');
-	};
-
-	onScrollRight () {
-		this.scrollRight = $(this.refSideRight).scrollTop();
 	};
 
 	renderDiff (previousId: string, diff: any[]) {

@@ -24,11 +24,13 @@ const LIMIT_AUTHORS = 5;
 const HistoryRight = observer(class HistoryRight extends React.Component<Props, State> {
 
 	node = null;
+	refScroll = null;
 	state = {
 		versions: [] as I.HistoryVersion[],
 		version: null,
 		isLoading: false,
 	};
+	top = 0;
 	lastId = '';
 
 	constructor (props: Props) {
@@ -37,6 +39,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		this.onCurrent = this.onCurrent.bind(this);
 		this.onRestore = this.onRestore.bind(this);
 		this.onClose = this.onClose.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 
 	render () {
@@ -133,13 +136,21 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		};
 		
 		return (
-			<div ref={ref => this.node = ref} id="sideRight" className={showButtons ? 'withButtons' : ''}>
+			<div 
+				ref={ref => this.node = ref} 
+				id="sideRight" 
+				className={showButtons ? 'withButtons' : ''}
+			>
 				<div className="head">
 					<div className="name">{translate('commonVersionHistory')}</div>
 					<Icon className="close" onClick={this.onClose} />
 				</div>
 
-				<div className="scroll">
+				<div 
+					ref={ref => this.refScroll = ref} 
+					className="scroll" 
+					onScroll={this.onScroll}
+				>
 					<div className="section" onClick={this.onCurrent}>
 						<div className="head">
 							<div className="name">{translate('pageMainHistoryCurrent')}</div>
@@ -166,7 +177,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 	};
 
 	componentDidUpdate () {
-		this.show();
+		this.init();
 	};
 	
 	onClose () {
@@ -205,7 +216,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		});
 	};
 
-	show () {
+	init () {
 		const { version } = this.state;
 		if (!version) {
 			return;
@@ -239,6 +250,8 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		item.addClass('active isExpanded');
 
 		children.show();
+
+		$(this.refScroll).scrollTop(this.top);
 	};
 
 	toggleSection (e: any, id: string) {
@@ -256,6 +269,18 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		const node = $(this.node);
 
 		this.toggleChildren(node.find(`#item-${id}`), node.find(`#children-${id}`));
+	};
+
+	onScroll () {
+		const { versions } = this.state;
+
+		this.top = $(this.refScroll).scrollTop();
+
+		/*
+		if (this.top >= wrap.height() - wh) {
+			this.loadList(versions[versions.length - 1].id);
+		};
+		*/
 	};
 
 	toggleChildren (item: any, children: any) {

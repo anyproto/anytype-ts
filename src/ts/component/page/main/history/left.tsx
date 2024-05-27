@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Block } from 'Component';
 import { blockStore, detailStore } from 'Store';
-import { I, M, C, UtilData, translate } from 'Lib';
+import { I, M, UtilData, translate, UtilCommon } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface Props extends I.PageComponent {
@@ -15,6 +15,13 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 
 	node = null;
 	refHead = null;
+	top = 0;
+
+	constructor (props: Props) {
+		super(props);
+
+		this.onScroll = this.onScroll.bind(this);
+	};
 
 	render () {
 		const { rootId, onCopy } = this.props;
@@ -54,7 +61,7 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 		};
 
 		return (
-			<div ref={ref => this.node = ref} id="sideLeft">
+			<div ref={ref => this.node = ref} id="sideLeft" onScroll={this.onScroll}>
 				<div id="editorWrapper" className={cn.join(' ')}>
 					<div className="editor">
 						<div className="blocks">
@@ -84,6 +91,12 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 	
 	componentDidUpdate () {
 		blockStore.updateNumbers(this.props.rootId);
+		$(this.node).scrollTop(this.top);
+	};
+
+	onScroll () {
+		this.top = $(this.node).scrollTop();
+		UtilCommon.getScrollContainer(this.props.isPopup).trigger('scroll');
 	};
 
 });
