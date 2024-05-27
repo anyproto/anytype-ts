@@ -288,23 +288,24 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	unbind () {
-		const { block } = this.props;
+		const { isPopup, block } = this.props;
 		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear' ];
+		const ns = block.id + UtilCommon.getEventNamespace(isPopup);
 
-		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
+		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 	};
 
 	rebind () {
-		const { block } = this.props;
+		const { isPopup, block } = this.props;
 		const win = $(window);
+		const ns = block.id + UtilCommon.getEventNamespace(isPopup);
 
 		this.unbind();
 
-		win.on(`resize.${block.id} sidebarResize.${block.id}`, () => this.resize());
-		win.on(`updateDataviewData.${block.id}`, () => this.loadData(this.getView().id, 0, true));
-		win.on(`setDataviewSource.${block.id}`, () => this.onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
-		win.on(`selectionEnd.${block.id}`, () => this.onSelectEnd());
-		win.on(`selectionClear.${block.id}`, () => this.onSelectEnd());
+		win.on(`resize.${ns} sidebarResize.${ns}`, () => this.resize());
+		win.on(`updateDataviewData.${ns}`, () => this.loadData(this.getView().id, 0, true));
+		win.on(`setDataviewSource.${ns}`, () => this.onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
+		win.on(`selectionEnd.${ns} selectionClear.${ns}`, () => this.onSelectEnd());
 	};
 
 	onKeyDown (e: any) {
@@ -901,7 +902,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { dataset } = this.props;
+		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
@@ -923,12 +924,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			},
 			onClose: () => selection.clear(),
 			data: {
+				blockId: block.id,
 				targetId: this.getObjectId(),
 				objectIds,
 				subId,
 				isCollection,
 				route: this.analyticsRoute(),
 				relationKeys: this.getVisibleRelations().map(it => it.relationKey),
+				view,
 				allowedLink: true,
 				allowedOpen: true,
 			}
@@ -1295,9 +1298,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const ids = selection.get(I.SelectType.Record);
-
-		this.setSelected(ids);
+		this.setSelected(selection.get(I.SelectType.Record));
 		this.selectionCheck();
 	};
 

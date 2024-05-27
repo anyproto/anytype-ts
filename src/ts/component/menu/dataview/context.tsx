@@ -66,7 +66,7 @@ class MenuContext extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		menuStore.closeAll(Constant.menuIds.object);
+		menuStore.closeAll(Constant.menuIds.dataviewContext);
 	};
 
 	rebind () {
@@ -80,7 +80,6 @@ class MenuContext extends React.Component<I.Menu> {
 	};
 	
 	getSections () {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { subId, objectIds, getObject, isCollection } = data;
@@ -226,7 +225,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (!item.arrow || !objectIds.length) {
-			menuStore.closeAll(Constant.menuIds.object);
+			menuStore.closeAll(Constant.menuIds.dataviewContext);
 			return;
 		};
 
@@ -290,7 +289,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.object, () => {
+			menuStore.closeAll(Constant.menuIds.dataviewContext, () => {
 				menuStore.open(menuId, menuParam);
 			});
 		};
@@ -303,7 +302,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { subId, objectIds, onSelect, targetId, isCollection, route, relationKeys } = data;
+		const { subId, objectIds, onSelect, targetId, isCollection, route, relationKeys, view, blockId } = data;
 		const win = $(window);
 		const count = objectIds.length;
 		const first = count == 1 ? detailStore.get(subId, objectIds[0], []) : null;
@@ -389,7 +388,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'relation': {
-				popupStore.open('relation', { data: { objectIds, relationKeys, route } });
+				popupStore.open('relation', { data: { objectIds, relationKeys, route, view, targetId, blockId } });
 				break;
 			};
 

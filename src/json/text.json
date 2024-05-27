@@ -1228,6 +1228,7 @@
 
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no relations shown yet",
+	"popupRelationAddToView": "Add relations to the view",
 
 	"menuVaultPeer": "%d\/%d peers",
 	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
