@@ -17,20 +17,20 @@
 
             .iconWrapper {
                 .icon { width: 20px; height: 20px; }
-                .icon.network { background: url('~img/icon/menu/syncStatus/networkGrey.svg'); }
-                .icon.self { background: url('~img/icon/menu/syncStatus/selfGrey.svg'); }
-                .icon.p2p { background: url('~img/icon/menu/syncStatus/p2pGrey.svg'); }
+                .icon.network { background: url('~img/icon/menu/syncStatus/network/grey.svg'); }
+                .icon.self { background: url('~img/icon/menu/syncStatus/self/grey.svg'); }
+                .icon.p2p { background: url('~img/icon/menu/syncStatus/p2p/grey.svg'); }
                 .icon.localOnly { background: url('~img/icon/menu/syncStatus/localOnly.svg'); }
             }
             .iconWrapper.connected {
-                .icon.network { background: url('~img/icon/menu/syncStatus/networkGreen.svg'); }
-                .icon.self { background: url('~img/icon/menu/syncStatus/selfGreen.svg'); }
-                .icon.p2p { background: url('~img/icon/menu/syncStatus/p2pGreen.svg'); }
+                .icon.network { background: url('~img/icon/menu/syncStatus/network/green.svg'); }
+                .icon.self { background: url('~img/icon/menu/syncStatus/self/green.svg'); }
+                .icon.p2p { background: url('~img/icon/menu/syncStatus/p2p/green.svg'); }
             }
             .iconWrapper.error {
-                .icon.network { background: url('~img/icon/menu/syncStatus/networkRed.svg'); }
-                .icon.self { background: url('~img/icon/menu/syncStatus/selfRed.svg'); }
-                .icon.p2p { background: url('~img/icon/menu/syncStatus/p2pRed.svg'); }
+                .icon.network { background: url('~img/icon/menu/syncStatus/network/red.svg'); }
+                .icon.self { background: url('~img/icon/menu/syncStatus/self/red.svg'); }
+                .icon.p2p { background: url('~img/icon/menu/syncStatus/p2p/red.svg'); }
             }
         }
 
@@ -42,6 +42,7 @@
                 .side.right { width: 20px; flex-shrink: 0; }
                 .side.right {
                     .icon { width: 20px; height: 20px; }
+                    .loading { background: url('~img/icon/menu/syncStatus/loading.svg'); transform: translateZ(0); animation: rotate 0.8s infinite linear; }
                     .ok { background: url('~img/icon/menu/syncStatus/ok.svg'); }
                     .failed { background: url('~img/icon/menu/syncStatus/failed.svg'); }
                 }

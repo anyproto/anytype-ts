@@ -49,7 +49,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						</div>
 					</div>
 					<div className="side right">
-						<Icon className={'ok'} />
+						<Icon className={'loading'} />
 					</div>
 				</div>
 			);
