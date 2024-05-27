@@ -231,8 +231,8 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		const item = node.find(`#item-${id}`);
 		const section = node.find(`#section-${hash}`);
 		const scroll = $(this.refScroll);
-
 		const group = unwrapped.find(it => it.id == id);
+
 		if (!group) {
 			return;
 		};
@@ -242,15 +242,23 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			return;
 		};
 
-		const children = node.find(`#children-${parent.id}`);
+		let children = null; 
+		if (group.isTimeGroup) {
+			children = node.find(`#children-${group.id}`);
+		} else {
+			children = node.find(`#children-${parent.id}`);
+		};
 
 		section.addClass('isExpanded');
 		section.find('.items').show();
 
 		node.find('.active').removeClass('active');
-		item.addClass('active isExpanded');
+		item.addClass('active');
 
-		children.show();
+		if (children.length) {
+			item.addClass('isExpanded');
+			children.show();
+		};
 
 		scroll.scrollTop(this.top);
 	};
@@ -440,7 +448,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 				if (group) {
 					group.list.push(current);
 				} else {
-					out.push({ timeGroupId, ...current, list: [] });
+					out.push({ timeGroupId, ...current, list: [], isTimeGroup: true });
 				};
 			};
 
