@@ -211,7 +211,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	getRelationKeys (): string[] {
-		return UtilCommon.arrayUnique([ 'tag' ].concat(this.props.param.data.relationKeys || Constant.defaultRelationKeys));
+		return UtilCommon.arrayUnique([].concat(this.props.param.data.relationKeys || Constant.defaultRelationKeys));
 	};
 
 	getRelations (): any[] {
