@@ -43,7 +43,7 @@ import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './m
 import { ObjectLayout, ObjectFlag, RelationType, RelationScope, ObjectOrigin } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
 import { NotificationType, NotificationStatus, NotificationAction, NotificationPayloadImport, Notification, NotificationComponent } from './notification';
-import { SyncStatus } from './syncStatus';
+import { SyncStatus, SyncStatusNetwork, SyncStatusError } from './syncStatus';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockHAlign, BlockVAlign, BlockComponent, Block, BlockStructure } from './block';
 import {
@@ -255,4 +255,6 @@ export {
 	PaymentMethod,
 
 	SyncStatus,
+	SyncStatusNetwork,
+	SyncStatusError,
 };

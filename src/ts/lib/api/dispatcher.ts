@@ -160,6 +160,8 @@ class Dispatcher {
 		if (v == V.PAYLOADBROADCAST)			 t = 'payloadBroadcast';
 		
 		if (v == V.MEMBERSHIPUPDATE)			 t = 'membershipUpdate';
+		if (v == V.SPACESYNCSTATUSUPDATE)		 t = 'spaceSyncStatusUpdate';
+		if (v == V.P2PSTATUSUPDATE)			 	 t = 'p2pStatusUpdate'
 
 		return t;
 	};
