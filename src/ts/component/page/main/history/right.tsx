@@ -230,6 +230,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		const hash = sha1(groupId);
 		const item = node.find(`#item-${id}`);
 		const section = node.find(`#section-${hash}`);
+		const scroll = $(this.refScroll);
 
 		const group = unwrapped.find(it => it.id == id);
 		if (!group) {
@@ -251,7 +252,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 		children.show();
 
-		$(this.refScroll).scrollTop(this.top);
+		scroll.scrollTop(this.top);
 	};
 
 	toggleSection (e: any, id: string) {
@@ -273,14 +274,15 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 	onScroll () {
 		const { versions } = this.state;
+		const lastId = versions[versions.length - 1].id;
+		const scroll = $(this.refScroll);
+		const height = scroll.get(0).scrollHeight;
 
-		this.top = $(this.refScroll).scrollTop();
+		this.top = scroll.scrollTop();
 
-		/*
-		if (this.top >= wrap.height() - wh) {
-			this.loadList(versions[versions.length - 1].id);
+		if ((this.lastId != lastId) && (this.top >= height - scroll.height() - 12)) {
+			this.loadList(lastId);
 		};
-		*/
 	};
 
 	toggleChildren (item: any, children: any) {
@@ -329,8 +331,9 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 				return;
 			};
 
-			const list = message.versions || [];
-			this.setState({ versions: versions.concat(list) });
+			const list = UtilCommon.arrayUniqueObjects(versions.concat(message.versions || []), 'id');
+
+			this.setState({ versions: list });
 
 			if (!version && list.length) {
 				this.loadVersion(list[0].id);
