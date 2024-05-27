@@ -626,6 +626,14 @@ class Relation {
 	isDictionary (relationKey: string): boolean {
 		return DICTIONARY.includes(relationKey);
 	};
+
+	arrayTypes () {
+		return [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.File, I.RelationType.Object, I.RelationType.Relations ];
+	};
+
+	isArrayType (format: I.RelationType): boolean {
+		return this.arrayTypes().includes(format);
+	};
 	
 };
 
