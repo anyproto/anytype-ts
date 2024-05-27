@@ -49,19 +49,36 @@
 			}
 
 			.item {
-				.info { padding: 8px 12px; display: flex; flex-direction: column; transition: $transitionAllCommon; border-radius: 6px; }
-				.info:hover { background-color: var(--color-shape-highlight-medium); }
+				> .info { padding: 8px 12px; display: flex; flex-direction: column; transition: $transitionAllCommon; border-radius: 6px; }
+				> .info:hover { background-color: var(--color-shape-highlight-medium); }
 
-				.author { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; @include text-small; color: var(--color-text-secondary); }
+				.author { display: flex; flex-direction: row; gap: 0px 6px; @include text-small; color: var(--color-text-secondary); align-items: center; }
 
-				.child { padding: 3px 16px; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
 				.child {
-					.bullet { width: 5px; height: 5px; background: var(--color-control-accent); border-radius: 50%; }
+					> .info { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 6px; padding: 3px 16px; transition: $transitionAllCommon; }
+					> .info:hover { background-color: var(--color-shape-highlight-medium); }
+
+					.icon { width: 20px; height: 20px; flex-shrink: 0; transition: transform $transitionCommon; border-radius: 4px; cursor: default; }
+					.icon.blank { background-image: url('~img/icon/widget/blank.svg'); }
+					.icon.arrow { background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); }
+
+					.child {
+						> .info { padding-left: 42px; }
+						.icon { display: none; }
+					}
+
+					.children { display: none; transition: $transitionAllCommon; }
 				}
-				.child:hover, .child.active { background-color: var(--color-shape-highlight-medium); border-radius: 6px; }
+				.child.active { 
+					> .info { background-color: var(--color-shape-highlight-medium); }
+				}
+
+				.child.isExpanded {
+					.icon.arrow { transform: none; }
+				}
 			}
 			.item.active { 
-				.info { background-color: var(--color-shape-highlight-medium);  }
+				> .info { background-color: var(--color-shape-highlight-medium);  }
 			}
 
 			> .buttons { 
