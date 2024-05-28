@@ -249,7 +249,6 @@ class App extends React.Component<object, State> {
 
 		dispatcher.init(getGlobal('serverAddress'));
 		dispatcher.listenEvents();
-
 		keyboard.init();
 
 		this.registerIpcEvents();
