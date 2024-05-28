@@ -21,7 +21,7 @@ class UtilCommon {
 			return '0';
 		};
 
-		return electron.currentWindow().windowId.toString();
+		return String(electron.currentWindow().windowId || '');
 	};
 
 	getGlobalConfig () {
