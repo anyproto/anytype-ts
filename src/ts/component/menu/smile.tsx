@@ -414,7 +414,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 				];
 
-				this.setState({ isLoading: true });
+				this.setLoading(true);
 
 				UtilData.search({
 					filters,
@@ -426,7 +426,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 						this.items = message.records || [];
 					};
 
-					this.setState({ isLoading: false });
+					this.setLoading(false);
 				});
 				break;
 			};
@@ -669,7 +669,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				};
 
 				case Tab.Library: {
-					this.upload(this.active.id);
+					this.onObjectSelect(this.active.id);
 					break;
 				};
 			};
@@ -696,7 +696,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				};
 
 				case Tab.Library: {
-					this.upload(this.active.id);
+					this.onObjectSelect(this.active.id);
 					break;
 				};
 			};
@@ -790,18 +790,6 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		this.setActive(current.children[this.coll], this.row);
 	};
 
-	onUpload () {
-		this.props.close();
-
-		Action.openFile(Constant.fileExtension.cover, paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
-				if (!message.error.code) {
-					this.upload(message.objectId);
-				};
-			});
-		});
-	};
-	
 	onSmileSelect (id: string, skin: number) {
 		const { param, storageSet } = this.props;
 		const { data } = param;
@@ -822,6 +810,18 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		};
 
 		analytics.event(id ? 'SetIcon' : 'RemoveIcon');
+	};
+
+	onObjectSelect (id: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onUpload } = data;
+
+		data.value = id;
+
+		if (onUpload) {
+			onUpload(id);
+		};
 	};
 
 	onMouseEnter (e: any, item: any) {
@@ -879,7 +879,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			};
 
 			case Tab.Library: {
-				this.upload(item.id);
+				this.onObjectSelect(item.id);
 				break;
 			};
 		};
@@ -1035,18 +1035,38 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		preventCommonDrop(true);
 
 		zone.removeClass('isDraggingOver');
-		this.setState({ isLoading: true });
+		this.setLoading(true);
 		
 		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
-			this.setState({ isLoading: false });
+			this.setLoading(false);
 			
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
-				this.upload(message.objectId);
+				this.onObjectSelect(message.objectId);
 			};
 		
 			close();
+		});
+	};
+
+	onUpload () {
+		Action.openFile(Constant.fileExtension.cover, paths => {
+			if (!paths.length) {
+				return;
+			};
+
+			this.setLoading(true);
+
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
+				this.setLoading(false);
+
+				if (!message.error.code) {
+					this.onObjectSelect(message.objectId);
+				};
+
+				this.props.close();
+			});
 		});
 	};
 
@@ -1087,24 +1107,16 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		this.forceUpdate();
 	};
 
-	upload (id: string) {
-		const { param } = this.props;
-		const { data } = param;
-		const { onUpload } = data;
-
-		data.value = id;
-
-		if (onUpload) {
-			onUpload(id);
-		};
-	};
-
 	getTooltip (item) {
 		switch (this.state.tab) {
 			case Tab.Smile: {
 				return UtilSmile.aliases[item.itemId] || item.itemId;
 			};
 		};
+	};
+
+	setLoading (v: boolean) {
+		this.setState({ isLoading: v });
 	};
 
 });

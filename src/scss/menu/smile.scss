@@ -89,8 +89,8 @@
 			.item {
 				.img { width: 100%; height: 100%; border-radius: 2px; }
 				.name { 
-					position: absolute; left: 0px; bottom: 0px; padding: 6px; @include clamp2; width: 100%; word-wrap: break-word; z-index: 1; 
-					transition: opacity 0.2s $easeInQuint; opacity: 0; @include text-very-small; color: #fff; height: 37px;
+					position: absolute; left: 0px; bottom: 6px; padding: 0px 6px; @include clamp2; width: 100%; word-wrap: break-word; z-index: 1; 
+					transition: opacity 0.2s $easeInQuint; opacity: 1; @include text-very-small; color: #fff; max-height: 28px; line-height: 14px;
 				}
 			}
 			.item::after {
@@ -105,7 +105,7 @@
 
 		.body.upload { padding: 16px; }
 		.body.upload {
-			.loaderWrapper { height: 292px; position: relative; background: none; }
+			.loaderWrapper { height: calc(100% - 36px); top: 36px; }
 
 			.dropzone { 
 				height: 292px; display: flex; align-items: center; border-radius: 2px; background: var(--color-shape-highlight-medium);
