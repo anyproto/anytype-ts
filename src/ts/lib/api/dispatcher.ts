@@ -36,6 +36,13 @@ class Dispatcher {
 	reconnects = 0;
 
 	init (address: string) {
+		address = String(address || '');
+
+		if (!address) {
+			console.error('[Dispatcher.init] No address');
+			return;
+		};
+
 		this.service = new Service.ClientCommandsClient(address, null, null);
 	};
 
