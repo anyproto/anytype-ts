@@ -175,61 +175,31 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 
 	onIcon (e: any) {
-		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
-
-		if (!root) {
-			return;
-		};
-		
-		focus.clear(true);
-		root.isObjectHuman() || root.isObjectParticipant() ? this.onIconUser() : this.onIconPage();
-	};
-	
-	onIconPage () {
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
 		const object = detailStore.get(rootId, rootId, []);
-		const { iconEmoji, iconImage } = object;
-		
+		const cb = () => menuStore.update('smile', { element: `#block-icon-${rootId}` });
+
+		focus.clear(true);
+
 		menuStore.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => {
-				elements.addClass('hover');
-			},
-			onClose: () => {
-				elements.removeClass('hover');
-			},
+			onOpen: () => elements.addClass('hover'),
+			onClose: () => elements.removeClass('hover'),
 			data: {
-				noRemove: !(iconEmoji || iconImage),
+				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => {
-					UtilObject.setIcon(rootId, icon, '', () => {
-						menuStore.update('smile', { element: `#block-icon-${rootId}` });
-					});
+					UtilObject.setIcon(rootId, icon, '', cb);
 				},
 				onUpload (objectId: string) {
-					UtilObject.setIcon(rootId, '', objectId, () => {
-						menuStore.update('smile', { element: `#block-icon-${rootId}` });
-					});
+					UtilObject.setIcon(rootId, '', objectId, cb);
 				},
 			}
 		});
 	};
 	
-	onIconUser () {
-		const { rootId } = this.props;
-
-		Action.openFile(Constant.fileExtension.cover, paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
-				if (!message.error.code) {
-					UtilObject.setIcon(rootId, '', message.objectId);
-				};
-			});
-		});
-	};
-
 	onLayout (e: any) {
 		const { rootId, block } = this.props;
 		const node = $(this.node);

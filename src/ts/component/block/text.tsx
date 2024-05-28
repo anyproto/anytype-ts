@@ -1144,7 +1144,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			},
 			data: {
 				noHead: true,
-				rootId: rootId,
+				rootId,
 				blockId: block.id,
 				onSelect: (icon: string) => {
 					const to = range.from + 1;

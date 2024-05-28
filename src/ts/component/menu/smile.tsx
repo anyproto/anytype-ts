@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
 import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action, UtilData } from 'Lib';
@@ -27,11 +28,11 @@ const LIMIT_SEARCH = 12;
 
 const HEIGHT_SECTION = 40;
 const HEIGHT_SMILE_ITEM = 40;
-const HEIGHT_LIBRARY_ITEM = 94;
+const HEIGHT_LIBRARY_ITEM = 96;
 
 const ID_RECENT = 'recent';
 
-class MenuSmile extends React.Component<I.Menu, State> {
+const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State> {
 
 	_isMounted = false;
 	state = {
@@ -76,7 +77,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const { filter, isLoading, tab } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { noHead } = data;
+		const { noHead, noRemove, value } = data;
 		const tabs = this.getTabs();
 		const items = this.getItems();
 
@@ -314,17 +315,26 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				ref={node => this.node = node}
 				className="wrap"
 			>
-				{tabs.length ? (
+				{!noHead ? (
 					<div className="head">
-						{tabs.map((item, i) => (
-							<div 
-								key={i} 
-								className={[ 'tab', (tab == item.id ? 'active' : '') ].join(' ')} 
-								onClick={item.onClick || (() => this.onTab(item.id))}
-							>
-								{item.text}
-							</div>
-						))}
+						<div className="side left">
+							{tabs.map((item, i) => (
+								<div 
+									key={i} 
+									className={[ 'tab', (tab == item.id ? 'active' : '') ].join(' ')} 
+									onClick={item.onClick || (() => this.onTab(item.id))}
+								>
+									{item.text}
+								</div>
+							))}
+						</div>
+						<div className="side right">
+							{!noRemove && value ? (
+								<div className="tab" onClick={this.onRemove}>
+									{translate('commonRemove')}
+								</div>
+							) : ''}
+						</div>
 					</div>
 				) : ''}
 				
@@ -695,7 +705,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	setActive (item?: any, row?: number) {
 		const node = $(this.node);
-		const items = $(this.refItems);
+		const items = node.find('.items');
 
 		if (row && this.refList) {
 			this.refList.scrollToRow(Math.max(0, row));
@@ -791,8 +801,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const { param, storageSet } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
+		const value = id ? UtilSmile.nativeById(id, this.skin) : '';
+
+		data.value = value;
 		
-		if (id) {
+		if (value) {
 			this.skin = Number(skin) || 1;
 			this.setLastIds(id, this.skin);
 
@@ -800,7 +813,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 
 		if (onSelect) {
-			onSelect(id ? UtilSmile.nativeById(id, this.skin) : '');
+			onSelect(value);
 		};
 
 		analytics.event(id ? 'SetIcon' : 'RemoveIcon');
@@ -1035,13 +1048,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	getTabs () {
 		const { param } = this.props;
 		const { data } = param;
-		const { noHead, noGallery, noUpload, noRemove } = data;
+		const { noHead, noGallery, noUpload } = data;
 
 		if (noHead) {
 			return [];
 		};
 
-		let tabs: any[] = [];
+		const tabs: any[] = [];
 
 		if (!noUpload) {
 			tabs.push({ id: Tab.Library, text: translate('commonLibrary') });
@@ -1053,10 +1066,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		if (!noUpload) {
 			tabs.push({ id: Tab.Upload, text: translate('menuSmileUpload') });
-		};
-
-		if (!noRemove) {
-			tabs.push({ text: translate('commonRemove'), onClick: this.onRemove });
 		};
 
 		return tabs;
@@ -1078,6 +1087,10 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const { data } = param;
 		const { onUpload } = data;
 
+		data.value = id;
+
+		console.log(data);
+
 		if (onUpload) {
 			onUpload(id);
 		};
@@ -1095,6 +1108,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 	};
 
-};
+});
 
 export default MenuSmile;
