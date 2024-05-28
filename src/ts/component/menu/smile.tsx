@@ -224,6 +224,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 						onMouseDown={e => this.onMouseDown(e, item)}
 					>
 						<div className="img" style={{ backgroundImage: `url("${commonStore.imageUrl(item.id, 72)}")` }} />
+						<div className="name">{item.name}</div>
 					</div>
 				);
 				

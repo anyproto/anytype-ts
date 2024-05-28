@@ -85,10 +85,22 @@
 			.row { padding: 3px 14px; }
 			.row { display: grid; grid-template-columns: repeat(4, 1fr); grid-gap: 0px 8px; }
 
-			.item { padding: 0px; color: var(--color-text-secondary); }
+			.item { padding: 0px; color: var(--color-text-secondary); position: relative; }
 			.item {
 				.img { width: 100%; height: 100%; border-radius: 2px; }
+				.name { 
+					position: absolute; left: 0px; bottom: 0px; padding: 6px; @include clamp2; width: 100%; word-wrap: break-word; z-index: 1; 
+					transition: opacity 0.2s $easeInQuint; opacity: 0; @include text-very-small; color: #fff; 
+				}
 			}
+			.item::after {
+				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border-radius: 2px; opacity: 0;
+				transition: opacity 0.2s $easeInQuint; background: rgba(0,0,0,0.3);
+			}
+			.item.active {
+				.name { opacity: 1; }
+			}
+			.item.active::after { opacity: 1; } 
 		}
 
 		.body.upload { padding: 16px; }
