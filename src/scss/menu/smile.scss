@@ -90,7 +90,7 @@
 				.img { width: 100%; height: 100%; border-radius: 2px; }
 				.name { 
 					position: absolute; left: 0px; bottom: 0px; padding: 6px; @include clamp2; width: 100%; word-wrap: break-word; z-index: 1; 
-					transition: opacity 0.2s $easeInQuint; opacity: 0; @include text-very-small; color: #fff; 
+					transition: opacity 0.2s $easeInQuint; opacity: 0; @include text-very-small; color: #fff; height: 37px;
 				}
 			}
 			.item::after {

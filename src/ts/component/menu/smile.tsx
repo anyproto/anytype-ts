@@ -5,6 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
 import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action, UtilData } from 'Lib';
 import { menuStore, commonStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 enum Tab {
@@ -722,9 +723,12 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		};
 
 		const element = node.find(`#item-${$.escapeSelector(item.id)}`);
+		const tt = this.getTooltip(item);
 
 		element.addClass('active');
-		Preview.tooltipShow({ text: this.getTooltip(item), element });
+		if (tt) {
+			Preview.tooltipShow({ text: tt, element });
+		};
 	};
 
 	onArrowVertical (dir: number) {
@@ -1099,10 +1103,6 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		switch (this.state.tab) {
 			case Tab.Smile: {
 				return UtilSmile.aliases[item.itemId] || item.itemId;
-			};
-
-			case Tab.Library: {
-				return item.name;
 			};
 		};
 	};
