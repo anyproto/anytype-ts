@@ -737,7 +737,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			relationKey = 'lastModifiedDate';
 		};
 
-		return UtilCommon.groupDateSections(records, relationKey, { type: '', links: [] });
+		return UtilData.groupDateSections(records, relationKey, { type: '', links: [] });
 	};
 
 });

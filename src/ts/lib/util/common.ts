@@ -945,57 +945,6 @@ class UtilCommon {
 		return String(s || '').replace(/<[^>]+>/g, '');
 	};
 
-	groupDateSections (records: any[], key: string, sectionTemplate?: any) {
-		const now = UtilDate.now();
-		const { d, m, y } = UtilDate.getCalendarDateParam(now);
-		const today = now - UtilDate.timestamp(y, m, d);
-		const yesterday = now - UtilDate.timestamp(y, m, d - 1);
-		const lastWeek = now - UtilDate.timestamp(y, m, d - 7);
-		const lastMonth = now - UtilDate.timestamp(y, m - 1, d);
-		const groups = {
-			today: [],
-			yesterday: [],
-			lastWeek: [],
-			lastMonth: [],
-			older: []
-		};
-
-		let groupedRecords = [];
-
-		if (!sectionTemplate) {
-			sectionTemplate = {};
-		};
-
-
-		records.forEach((record) => {
-			const diff = now - record[key];
-
-			if (diff < today) {
-				groups.today.push(record);
-			} else
-			if (diff < yesterday) {
-				groups.yesterday.push(record);
-			} else
-			if (diff < lastWeek) {
-				groups.lastWeek.push(record);
-			} else
-			if (diff < lastMonth) {
-				groups.lastMonth.push(record);
-			} else {
-				groups.older.push(record);
-			};
-		});
-
-		Object.keys(groups).forEach((key) => {
-			if (groups[key].length) {
-				groupedRecords.push(Object.assign({ id: key, isSection: true }, sectionTemplate));
-				groupedRecords = groupedRecords.concat(groups[key]);
-			};
-		});
-
-		return groupedRecords;
-	};
-
 };
 
 export default new UtilCommon();

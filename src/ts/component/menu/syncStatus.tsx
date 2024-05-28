@@ -253,7 +253,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	getItems () {
 		let items = this.items.slice();
 
-		items = UtilCommon.groupDateSections(items, 'syncDate');
+		items = UtilData.groupDateSections(items, 'syncDate');
 
 		return items;
 	};
