@@ -99,7 +99,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onIcon (e: any) {
 		const { rootId } = this.props;
 		const node = $(this.node);
-		const elements = node.find('#elements');
 		const object = detailStore.get(rootId, rootId, []);
 		const cb = () => menuStore.update('smile', { element: `#block-icon-${rootId}` });
 
