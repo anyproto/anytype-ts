@@ -3,8 +3,8 @@
 .menus {
 	.menu.menuSmile { width: 404px; user-select: none; }
 	.menu.menuSmile {
-		.content { overflow: visible; padding-bottom: 0px; max-height: unset; }
-		.wrap { display: flex; flex-direction: column; }
+		.content { overflow: visible; padding-bottom: 0px; max-height: unset; height: 404px; }
+		.wrap { display: flex; flex-direction: column; height: 100%; }
 		.ReactVirtualized__List { padding: 0px 0px 8px 0px; }
 
 		.head { 
@@ -23,8 +23,9 @@
 			.inner { height: 35px; }
 		}
 
+		.body.smile, .body.library { display: flex; flex-direction: column; height: 100%; }
 		.body.smile, .body.library {
-			.items { height: 238px; }
+			.items { height: 100%; }
 		}
 
 		.body.smile {
@@ -103,12 +104,12 @@
 			.item.active::after { opacity: 1; } 
 		}
 
-		.body.upload { padding: 16px; }
+		.body.upload { padding: 16px; height: 100%; }
 		.body.upload {
 			.loaderWrapper { height: calc(100% - 36px); top: 36px; }
 
 			.dropzone { 
-				height: 292px; display: flex; align-items: center; border-radius: 2px; background: var(--color-shape-highlight-medium);
+				height: 100%; display: flex; align-items: center; border-radius: 2px; background: var(--color-shape-highlight-medium);
 				justify-content: center; flex-direction: column; gap: 6px 0px; padding: 16px; text-align: center;
 			}
 			.dropzone.isDraggingOver { background: var(--color-system-drop-zone); }
