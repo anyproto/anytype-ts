@@ -1090,8 +1090,6 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 		data.value = id;
 
-		console.log(data);
-
 		if (onUpload) {
 			onUpload(id);
 		};
