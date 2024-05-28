@@ -96,22 +96,20 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		this._isMounted = false;
 	};
 
-
 	onIcon (e: any) {
-		const { rootId, isPopup } = this.props;
+		const { rootId } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
 		const object = detailStore.get(rootId, rootId, []);
-		const container = UtilCommon.getPageContainer(isPopup);
 		const cb = () => menuStore.update('smile', { element: `#block-icon-${rootId}` });
 
 		focus.clear(true);
 
 		menuStore.open('smile', { 
-			element: `${container} .editorControls #button-icon`,
+			element: node.find('#button-icon'),
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => elements.addClass('hover'),
-			onClose: () => elements.removeClass('hover'),
+			onOpen: () => node.addClass('hover'),
+			onClose: () => node.removeClass('hover'),
 			data: {
 				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => {
