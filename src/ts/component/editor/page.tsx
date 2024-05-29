@@ -1892,7 +1892,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	getClipboardData (e: any) {
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const data: any = {
-			text: String(cb.getData('text/plain') || ''),
+			text: this.normalizeLineEndings(String(cb.getData('text/plain') || '')),
 			html: String(cb.getData('text/html') || ''),
 			anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
 			files: [],
@@ -2282,6 +2282,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	setLoading (v: boolean): void {
 		this.setState({ isLoading: v });
 	};
+
+	normalizeLineEndings (text: string) {
+		return text.replace(/\r\n|\r/g, '\n');
+	}
 
 });
 
