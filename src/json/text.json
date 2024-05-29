@@ -928,6 +928,8 @@
 	"popupMembershipChangeEmail": "Change e-mail",
 	"popupMembershipManagePayment": "Manage payment",
 	"popupMembershipWriteToAnyteam": "Write to Anyteam",
+	"popupMembershipManageOnMobilePlatform": "Manage available on Mobile platform",
+	"popupMembershipPaidOnOtherPlatform": "You've already acquired Membership plan on another platform, please cancel Membership first.",
 
 	"popupMembershipWhatsIncluded": "What’s included",
 

@@ -47,12 +47,14 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	render() {
 		const { verificationStep, countdown, status, statusText } = this.state;
 		const { membership } = authStore;
+		console.log('MEMBERSHIP: ', membership)
 		const { tier, dateEnds, paymentMethod, userEmail } = membership;
 		const tierItem = UtilData.getMembershipTier(tier);
 
 		let dateText = '';
 		let paidText = '';
 		let buttonText = '';
+		let manageText = '';
 		let verificationForm: any = null;
 
 		if (tierItem.period && membership.dateEnds) {
@@ -122,6 +124,8 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 				} else
 				if (paymentMethod == I.PaymentMethod.Stripe) {
 					buttonText = translate('popupMembershipManagePayment');
+				} else {
+					manageText = translate('popupMembershipManageOnMobilePlatform');
 				};
 			};
 		};
@@ -139,6 +143,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 				</div>
 
 				{buttonText ? <Button onClick={this.onButton} text={buttonText} className="c36" color="blank" /> : ''}
+				{manageText ? <Label className="manageText" text={manageText} /> : ''}
 				{verificationForm}
 			</div>
 		);

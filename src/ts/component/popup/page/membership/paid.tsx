@@ -50,6 +50,11 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		let periodText = '';
 		let labelText = '';
+		let paidOnOtherPlatform = false;
+
+		if (membership.tier == I.TierType.Builder && membership.paymentMethod != I.PaymentMethod.Stripe) {
+			paidOnOtherPlatform = true;
+		};
 
 		if (period) {
 			if (period == 1) {
@@ -89,13 +94,19 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 					{periodText}
 				</div>
 
-				<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
+				{paidOnOtherPlatform ? (
+					<Label className="paidOnOtherPlatform" text={translate('popupMembershipPaidOnOtherPlatform')} />
+				) : (
+					<React.Fragment>
+						<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
 
-				{testCryptoPayment ? (
-					<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
-				) : ''}
+						{testCryptoPayment ? (
+							<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
+						) : ''}
 
-				<FooterAuthDisclaimer />
+						<FooterAuthDisclaimer />
+					</React.Fragment>
+				)}
 			</form>
 		);
 	};
