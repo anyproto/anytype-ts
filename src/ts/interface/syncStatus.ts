@@ -1,4 +1,4 @@
-export enum SyncStatus {
+export enum SyncStatusStatus {
 	Synced		 = 0,
 	Syncing		 = 1,
 	Error		 = 2,
@@ -16,4 +16,11 @@ export enum SyncStatusError {
 	StorageLimitExceed 		= 1,
 	IncompatibleVersion		= 2,
 	NetworkError 			= 3,
+};
+
+export interface SyncStatus {
+	status: SyncStatusStatus,
+	network: SyncStatusNetwork,
+	error: SyncStatusError,
+	syncingCounter: number
 };

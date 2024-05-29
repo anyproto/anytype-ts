@@ -1517,10 +1517,26 @@
 	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
 	"menuSyncStatusP2PNoDevicesConnected": "No devices connected",
 
-	"menuSyncStatusInfoTitleNetwork": "Anytype network",
-	"menuSyncStatusInfoTitleP2p": "P2P Connection",
-	"menuSyncStatusInfoTitleSelf": "Self Host",
-	"menuSyncStatusInfoTitleLocalOnly": "Local Only",
+	"menuSyncStatusInfoNetworkTitle": "Anytype network",
+	"menuSyncStatusInfoNetworkMessageSynced": "End-to-end encrypted",
+	"menuSyncStatusInfoNetworkMessageSyncing": "%s %s syncing...",
+
+	"menuSyncStatusInfoNetworkMessageErrorNetwork": "No access to the space",
+	"menuSyncStatusInfoNetworkMessageErrorVersion": "Incompatible version",
+	"menuSyncStatusInfoNetworkMessageErrorLimit": "Storage limit reached",
+	"menuSyncStatusInfoNetworkMessageErrorUpdateApp": "Update the app",
+	"menuSyncStatusInfoNetworkMessageErrorSeeMembership": "See membership plans",
+
+	"menuSyncStatusInfoNetworkMessageOffline": "No internet connection",
+
+	"menuSyncStatusInfoSelfTitle": "Self Host",
+	"menuSyncStatusInfoSelfMessageSynced": "Synced",
+	"menuSyncStatusInfoSelfMessageSyncing": "Syncing...",
+	"menuSyncStatusInfoSelfMessageError": "Error",
+	"menuSyncStatusInfoLocalOnlyTitle": "Local Only",
+	"menuSyncStatusInfoLocalOnlyMessage": "Data backup is disabled",
+
+	"menuSyncStatusInfoP2pTitle": "P2P Connection",
 
 	"previewEdit": "Edit Link",
 

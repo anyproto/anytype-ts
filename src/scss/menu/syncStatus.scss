@@ -74,10 +74,17 @@
     }
 
     .menu.menuSyncStatusInfo {
-        .content { padding: 8px 16px; }
+        .content { padding: 8px 0px; }
 
-        .title { padding: 0px; color: var(--color-text-primary); font-weight: 500; }
+        .title,
+        .label { padding: 0px 16px; }
+        .title { color: var(--color-text-primary); font-weight: 500; }
         .label { @include text-small; color: var(--color-text-secondary); }
+
+        .items {
+            .item { padding: 4px 16px; }
+        }
+        .items:before { content: ''; display: block; height: 1px; margin: 8px 16px 6px; background-color: var(--color-shape-secondary); }
     }
 
     .menu.menuSyncStatusContext {

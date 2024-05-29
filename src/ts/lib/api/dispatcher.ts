@@ -160,8 +160,9 @@ class Dispatcher {
 		if (v == V.PAYLOADBROADCAST)			 t = 'payloadBroadcast';
 		
 		if (v == V.MEMBERSHIPUPDATE)			 t = 'membershipUpdate';
+
 		if (v == V.SPACESYNCSTATUSUPDATE)		 t = 'spaceSyncStatusUpdate';
-		if (v == V.P2PSTATUSUPDATE)			 	 t = 'p2pStatusUpdate'
+		if (v == V.P2PSTATUSUPDATE)			 	 t = 'p2pStatusUpdate';
 
 		return t;
 	};
@@ -1023,10 +1024,11 @@ class Dispatcher {
 					break;
 				};
 
-				case 'membershipUpdate':
+				case 'membershipUpdate': {
 					authStore.membershipUpdate(Mapper.From.Membership(data.getData()));
 					UtilData.getMembershipTiers(true);
 					break;
+				};
 
 				case 'processNew':
 				case 'processUpdate':
@@ -1064,6 +1066,20 @@ class Dispatcher {
 							break;
 						};
 					};
+					break;
+				};
+
+				case 'spaceSyncStatusUpdate': {
+					const status: I.SyncStatus = {
+						error: data.getError(),
+						network: data.getNetwork(),
+						status: data.getStatus(),
+						syncingCounter: data.getSyncingobjectscounter()
+					};
+					break;
+				};
+
+				case 'p2pStatusUpdate': {
 					break;
 				};
 			};

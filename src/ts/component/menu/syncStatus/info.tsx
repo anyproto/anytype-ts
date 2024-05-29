@@ -10,24 +10,35 @@ class MenuSyncStatusInfo extends React.Component<I.Menu> {
 
 	constructor (props: I.Menu) {
 		super(props);
+
+		this.getItems = this.getItems.bind(this);
+		this.onClick = this.onClick.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
 	};
 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { id } = data;
+		const { title, message } = data;
 		const items = this.getItems();
 
 		return (
 			<React.Fragment>
 				<div className="data">
-					<Title text={translate(UtilCommon.toCamelCase([ 'menuSyncStatusInfoTitle', id ].join('-')))} />
-					<Label text={'End-to-end encrypted'} />
+					<Title text={title} />
+					<Label text={message} />
 				</div>
 
 				{items.length ? (
 					<div className="items">
-
+						{items.map((item: any, i: number) => (
+							<MenuItemVertical
+								key={i}
+								{...item}
+								onClick={e => this.onClick(e, item)}
+								onMouseEnter={e => this.onMouseEnter(e, item)}
+							/>
+						))}
 					</div>
 				) : ''}
 			</React.Fragment>
@@ -52,8 +63,26 @@ class MenuSyncStatusInfo extends React.Component<I.Menu> {
 		$(window).off('keydown.menu');
 	};
 
+	onClick (e, item) {
+		console.log('ITEM: ', item)
+	};
+
+	onMouseEnter (e: any, item: any) {
+		const { setActive } = this.props;
+
+		if (!keyboard.isMouseDisabled) {
+			setActive(item, false);
+		};
+	};
+
+
+
 	getItems () {
-		return [];
+		const { param } = this.props;
+		const { data } = param;
+		const { buttons } = data;
+
+		return buttons;
 	};
 
 };

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Title, Button, Icon, IconObject, ObjectName, Label } from 'Component';
 import { Action, I, translate, UtilObject, UtilData, UtilSpace, UtilFile, UtilCommon } from 'Lib';
-import { menuStore } from 'Store';
+import { menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HEIGHT_SECTION = 26;
@@ -259,19 +259,106 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIcons () {
-		const icons = [
-			{ id: 'network', status: 'connected', message: translate('menuSyncStatusNetworkMessageE2EE') },
-			{ id: 'p2p', message: translate('menuSyncStatusNetworkMessageE2EE') },
-		];
+		const iconNetwork = this.getIconNetwork();
 
-		return icons;
+		return [ iconNetwork ];
 	};
 
-	getClassBySyncStatus (status: I.SyncStatus) {
+	getIconNetwork () {
+		const syncData = authStore.syncData;
+		// const syncData = { network: 0, error: 1, status: 2, syncingCounter: 0 };
+		const { network, error, syncingCounter } = syncData;
+
+		let id = '';
+		let title = '';
+		let status = '';
+		let message = '';
+		let buttons: any[] = [];
+
+		let isConnected = false;
+		let isError = false;
+
+		if ([ I.SyncStatusStatus.Syncing, I.SyncStatusStatus.Synced ].includes(syncData.status)) {
+			isConnected = true;
+			status = 'connected';
+		} else
+		if (I.SyncStatusStatus.Error == syncData.status) {
+			isError = true;
+			status = 'error';
+		};
+
+		switch (network) {
+			case I.SyncStatusNetwork.Anytype: {
+				id = 'network';
+				title = translate('menuSyncStatusInfoNetworkTitle');
+
+				if (isConnected) {
+					if (syncingCounter) {
+						message = UtilCommon.sprintf(translate('menuSyncStatusInfoNetworkMessageSyncing'), syncingCounter, UtilCommon.plural(syncingCounter, translate('pluralLCObject')));
+					} else {
+						message = translate('menuSyncStatusInfoNetworkMessageSynced');
+					};
+				} else
+				if (isError) {
+					switch (error) {
+						case I.SyncStatusError.NetworkError: {
+							message = translate('menuSyncStatusInfoNetworkMessageErrorNetwork');
+							break;
+						};
+						case I.SyncStatusError.IncompatibleVersion: {
+							message = translate('menuSyncStatusInfoNetworkMessageErrorVersion');
+							buttons.push({ id: 'updateApp', name: translate('menuSyncStatusInfoNetworkMessageErrorUpdateApp') });
+							break;
+						};
+						case I.SyncStatusError.StorageLimitExceed: {
+							message = translate('menuSyncStatusInfoNetworkMessageErrorLimit');
+							buttons.push({ id: 'upgradeMembership', name: translate('menuSyncStatusInfoNetworkMessageErrorSeeMembership') });
+							break;
+						};
+					};
+				} else {
+					message = translate('menuSyncStatusInfoNetworkMessageOffline');
+				};
+
+				break;
+			};
+			case I.SyncStatusNetwork.SelfHost: {
+				id = 'self';
+				title = translate('menuSyncStatusInfoSelfTitle');
+
+				switch (syncData.status) {
+					case I.SyncStatusStatus.Syncing: {
+						message = translate('menuSyncStatusInfoSelfMessageSyncing');
+						break;
+					};
+					case I.SyncStatusStatus.Synced: {
+						message = translate('menuSyncStatusInfoSelfMessageSynced');
+						break;
+					};
+					case I.SyncStatusStatus.Error: {
+						message = translate('menuSyncStatusInfoSelfMessageError');
+						break;
+					};
+				};
+
+				break;
+			};
+			case I.SyncStatusNetwork.LocalOnly: {
+				id = 'localOnly';
+				title = translate('menuSyncStatusInfoLocalOnlyTitle');
+				message = translate('menuSyncStatusInfoLocalOnlyMessage');
+				break;
+			};
+		};
+
+		return { id, status, title, message, buttons };
+	};
+
+	getClassBySyncStatus (status: I.SyncStatusStatus) {
 		if (status == undefined) {
 			return '';
 		};
-		return I.SyncStatus[status].toLowerCase();
+		return I.SyncStatusStatus[status].toLowerCase();
 	};
 
 	getRowHeight (item: any) {
