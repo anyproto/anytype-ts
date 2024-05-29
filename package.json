@@ -562,9 +562,12 @@
 			"artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
 			"publish": [
 				{
-					"provider": "spaces",
-					"name": "anytype-release",
-					"region": "fra1"
+					"provider": "generic",
+					"url": "https://publish-releases.anytype.io/electron",
+					"channel": "latest",
+					"requestHeaders": {
+						"Authorization": "Bearer ${PUBLISH_RELEASES_TOKEN}"
+					}
 				}
 			],
 			"signIgnore": [
@@ -582,9 +585,12 @@
 			"icon": "electron/img/icons/256x256.ico",
 			"publish": [
 				{
-					"provider": "spaces",
-					"name": "anytype-release",
-					"region": "fra1"
+					"provider": "generic",
+					"url": "https://publish-releases.anytype.io/electron",
+					"channel": "latest",
+					"requestHeaders": {
+						"Authorization": "Bearer ${PUBLISH_RELEASES_TOKEN}"
+					}
 				}
 			]
 		},
@@ -600,9 +606,12 @@
 			"description": "Anytype",
 			"publish": [
 				{
-					"provider": "spaces",
-					"name": "anytype-release",
-					"region": "fra1"
+					"provider": "generic",
+					"url": "https://publish-releases.anytype.io/electron",
+					"channel": "latest",
+					"requestHeaders": {
+						"Authorization": "Bearer ${PUBLISH_RELEASES_TOKEN}"
+					}
 				}
 			]
 		},
