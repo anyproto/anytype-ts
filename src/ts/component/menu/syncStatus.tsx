@@ -157,7 +157,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		const { classNameWrap } = param;
 		const options = [
 			{ id: 'open', name: translate('commonOpen') },
-			{ id: 'archive', name: translate('commonMoveToBin'), isRed: true }
+			{ id: 'archive', name: translate('commonDeleteImmediately'), isRed: true }
 		];
 		const itemNode = $(`#item-${id}`);
 
@@ -179,7 +179,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 							break;
 						};
 						case 'archive': {
-							Action.archive([ id ]);
+							Action.delete([ id ], 'syncStatus');
 							break;
 						};
 					};
