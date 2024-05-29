@@ -22,6 +22,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	render () {
 		const { membership } = authStore;
 		const { membershipTiers, interfaceLang } = commonStore;
+		const { tier, status } = membership;
 		const cnt = [];
 
 		if (interfaceLang == Constant.default.interfaceLang) {
