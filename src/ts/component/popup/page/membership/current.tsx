@@ -47,7 +47,6 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	render() {
 		const { verificationStep, countdown, status, statusText } = this.state;
 		const { membership } = authStore;
-		console.log('MEMBERSHIP: ', membership)
 		const { tier, dateEnds, paymentMethod, userEmail } = membership;
 		const tierItem = UtilData.getMembershipTier(tier);
 

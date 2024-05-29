@@ -46,13 +46,13 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		const { period } = tierItem;
 		const { membership } = authStore;
-		const { name, nameType } = membership;
+		const { name, nameType, paymentMethod } = membership;
 
 		let periodText = '';
 		let labelText = '';
 		let paidOnOtherPlatform = false;
 
-		if (membership.tier == I.TierType.Builder && membership.paymentMethod != I.PaymentMethod.Stripe) {
+		if ((membership.tier == I.TierType.Builder) && (paymentMethod != I.PaymentMethod.Stripe)) {
 			paidOnOtherPlatform = true;
 		};
 
