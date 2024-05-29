@@ -89,6 +89,11 @@
 						.button { margin: 10px 0px 0px 0px; }
                     }
                 }
+
+                .disclaimer { @include text-small; color: var(--color-text-secondary); padding-top: 6px; }
+                .disclaimer {
+                    a { color: var(--color-text-secondary); }
+                }
             }
         }
 

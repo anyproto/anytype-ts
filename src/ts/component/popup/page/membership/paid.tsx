@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
-import { I, C, translate, UtilCommon, UtilData, analytics, keyboard } from 'Lib';
+import { I, C, translate, UtilCommon, UtilData, analytics } from 'Lib';
 import { commonStore, authStore } from 'Store';
+import FooterAuthDisclaimer from '../../../footer/auth/disclaimer';
 const Constant = require('json/constant.json');
 
 interface State {
@@ -93,6 +94,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				{testCryptoPayment ? (
 					<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
 				) : ''}
+
+				<FooterAuthDisclaimer />
 			</form>
 		);
 	};
