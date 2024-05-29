@@ -1054,7 +1054,7 @@ class Dispatcher {
 	};
 
 	onObjectView (rootId: string, traceId: string, objectView: any) {
-		const { details, restrictions, relationLinks } = objectView;
+		const { details, restrictions, relationLinks, participants } = objectView;
 		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
@@ -1068,6 +1068,7 @@ class Dispatcher {
 		dbStore.relationsSet(contextId, rootId, relationLinks);
 		detailStore.set(contextId, details);
 		blockStore.restrictionsSet(contextId, restrictions);
+		blockStore.participantsSet(contextId, participants);
 
 		if (root) {
 			const object = detailStore.get(contextId, rootId, [ 'layout' ], true);

@@ -19,6 +19,10 @@
 		}
 		.wrapContent > .dropTarget.targetBot { height: 2px; bottom: 0px; }
 
+		.wrapMenu {
+			.iconObject { margin: 6px 4px 0px 0px; }
+		}
+
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
 			width: 12px; height: 100%; background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; right: 6px; top: 0px;

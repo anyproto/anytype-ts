@@ -419,13 +419,13 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	setVersion (version: I.HistoryVersion) {
 		this.refHeader?.refChild.setVersion(version);
+		this.refSideLeft?.forceUpdate();
 		this.refSideLeft?.refHead?.forceUpdate();
 
 		$(window).trigger('updateDataviewData');
 	};
 
 	setLoading (v: boolean) {
-		console.log('setLoading', v);
 		this.setState({ isLoading: v });
 	};
 

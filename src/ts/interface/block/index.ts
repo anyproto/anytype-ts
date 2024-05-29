@@ -94,6 +94,11 @@ export interface BlockStructure {
 	childrenIds: string[];
 };
 
+export interface BlockParticipant {
+	blockId: string;
+	participantId: string;
+};
+
 export interface Block {
 	id?: string;
 	type: BlockType;
