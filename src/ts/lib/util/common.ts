@@ -978,6 +978,10 @@ class UtilCommon {
 		return diff;
 	};
 
+	normalizeLineEndings (s: string) {
+		return String(s || '').replace(/\r\n?/g, '\n');
+	};
+
 };
 
 export default new UtilCommon();
