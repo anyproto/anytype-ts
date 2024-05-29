@@ -160,7 +160,10 @@ class Phrase extends React.Component<Props, State> {
 		const { onKeyDown } = this.props;
 		const entry = $(this.refEntry);
 
-		keyboard.shortcut('space, enter', e, () => e.preventDefault());
+		keyboard.shortcut('space, enter', e, () => {
+			e.preventDefault();
+			this.updateValue();
+		});
 
 		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
@@ -186,11 +189,6 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: React.KeyboardEvent) {
-		keyboard.shortcut('space, enter', e, () => {
-			e.preventDefault();
-			this.updateValue();
-		});
-
 		this.placeholderCheck();
 	};
 
@@ -202,7 +200,9 @@ class Phrase extends React.Component<Props, State> {
 		};
 
 		this.clear();
-		this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat([ value ])) }));
+
+		this.state.phrase = this.checkValue(this.state.phrase.concat([ value ]));
+		this.setState({ phrase: this.state.phrase });
 	};
 
 	onPaste (e) {

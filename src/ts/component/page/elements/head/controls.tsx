@@ -2,9 +2,10 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, C, focus, UtilObject, Action } from 'Lib';
+import { I, C, focus, UtilObject, Action, UtilCommon } from 'Lib';
 import { menuStore, blockStore, detailStore, commonStore } from 'Store';
 import ControlButtons from './controlButtons';
+
 const Constant = require('json/constant.json');
 
 interface Props extends I.PageComponent {
@@ -97,58 +98,26 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	onIcon (e: any) {
 		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
-
-		if (!root) {
-			return;
-		};
-		
-		focus.clear(true);
-		root.isObjectHuman() || root.isObjectParticipant() ? this.onIconUser() : this.onIconPage();
-	};
-	
-	onIconPage () {
-		const { rootId } = this.props;
 		const node = $(this.node);
 		const object = detailStore.get(rootId, rootId, []);
-		const { iconEmoji, iconImage, layout } = object;
-		const noUpload = layout == I.ObjectLayout.Type;
+		const cb = () => menuStore.update('smile', { element: `#block-icon-${rootId}` });
+
+		focus.clear(true);
 
 		menuStore.open('smile', { 
-			element: '.editorControls #button-icon',
+			element: node.find('#button-icon'),
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => {
-				node.addClass('hover');
-			},
-			onClose: () => {
-				node.removeClass('hover');
-			},
+			onOpen: () => node.addClass('hover'),
+			onClose: () => node.removeClass('hover'),
 			data: {
-				noUpload,
-				noRemove: !(iconEmoji || iconImage),
+				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => {
-					UtilObject.setIcon(rootId, icon, '', () => {
-						menuStore.update('smile', { element: `#block-icon-${rootId}` });
-					});
+					UtilObject.setIcon(rootId, icon, '', cb);
 				},
 				onUpload (objectId: string) {
-					UtilObject.setIcon(rootId, '', objectId, () => {
-						menuStore.update('smile', { element: `#block-icon-${rootId}` });
-					});
+					UtilObject.setIcon(rootId, '', objectId, cb);
 				},
 			}
-		});
-	};
-	
-	onIconUser () {
-		const { rootId } = this.props;
-
-		Action.openFile(Constant.fileExtension.cover, paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
-				if (message.objectId) {
-					UtilObject.setIcon(rootId, '', message.objectId);
-				};
-			});
 		});
 	};
 	
