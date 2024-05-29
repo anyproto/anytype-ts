@@ -196,7 +196,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		switch (type) {
 			case 'BlockAdd': {
 				data.blocks.forEach(it => {
-					elements.push({ type: I.DiffType.Add, element: `#block-${it.id} > .wrapContent` });
+					elements = elements.concat([
+						{ type: I.DiffType.None, element: `#block-${it.id}` },
+						{ type: I.DiffType.Add, element: `#block-${it.id} > .wrapContent` },
+					]);
 				});
 				break;
 			};
@@ -259,7 +262,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockSetDiv':
 			case 'BlockSetLink':
 			case 'BlockSetFields': {
-				elements.push({ type: I.DiffType.Change, element: `#block-${data.id} > .wrapContent` });
+				elements = elements.concat([
+					{ type: I.DiffType.None, element: `#block-${data.id}` },
+					{ type: I.DiffType.Change, element: `#block-${data.id} > .wrapContent` },
+				]);
 				break;
 			};
 
@@ -272,6 +278,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 			case 'BlockDataviewViewOrder': {
 				elements = elements.concat([
+					{ type: I.DiffType.None, element: `#block-${data.id}` },
 					{ type: I.DiffType.Change, element: `#block-${data.id} #view-selector` },
 					{ type: I.DiffType.Change, element: `#block-${data.id} #views` },
 				]);
@@ -279,6 +286,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			};
 
 			case 'BlockDataviewViewUpdate': {
+				elements.push({ type: I.DiffType.None, element: `#block-${data.id}` });
+
 				if (data.fields !== null) {
 					elements = elements.concat([
 						{ type: I.DiffType.Change, element: `#block-${data.id} #view-selector` },
@@ -302,7 +311,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 			case 'BlockDataviewRelationDelete':
 			case 'BlockDataviewRelationSet': {
-				elements.push({ type: I.DiffType.Change, element: `#block-${data.id} #button-dataview-settings` });
+				elements = elements.concat([
+					{ type: I.DiffType.None, element: `#block-${data.id}` },
+					{ type: I.DiffType.Change, element: `#block-${data.id} #button-dataview-settings` },
+				]);
 				break;
 			};
 
