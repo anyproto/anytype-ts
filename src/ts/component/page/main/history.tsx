@@ -7,6 +7,7 @@ import { I, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate 
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
 
+const Diff = require('diff');
 const Constant = require('json/constant.json');
 
 interface State {
@@ -229,24 +230,34 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			};
 
 			case 'BlockSetText': {
+				const block = blockStore.getLeaf(rootId, data.id);
 				const oldBlock = blockStore.getLeaf(oldContextId, data.id);
-				if (!oldBlock) {
+
+				if (!block || !oldBlock) {
 					break;
 				};
 
-				const marks = oldBlock.content.marks || [];
+				const marks = block.content.marks || [];
 				const newText = data.text;
 				const oldText = oldBlock.getText();
-				const diff = UtilCommon.stringDiffRanges(oldText, newText);
+				const diff = Diff.diffChars(oldText, newText);
 
-				if (diff.length) {
-					diff.forEach(it => {
-						marks.push({ type: I.MarkType.Change, param: '', range: it });
-					});
+				let from = 0;
+				for (const item of diff) {
+					if (item.removed) {
+						continue;
+					};
+
+					const to = from + item.count;
+
+					if (item.added) {
+						marks.push({ type: I.MarkType.Change, param: '', range: { from, to } });
+					};
+
+					from = to;
 				};
 
 				blockStore.updateContent(rootId, data.id, { marks });
-
 				elements.push({ type: I.DiffType.None, element: `#block-${data.id}` });
 				break;
 			};

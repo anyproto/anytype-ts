@@ -943,41 +943,6 @@ class UtilCommon {
 		return String(s || '').replace(/<[^>]+>/g, '');
 	};
 
-	stringDiffRanges (oldStr: string, newStr: string): I.TextRange[] {
-		oldStr = String(oldStr || '');
-		newStr = String(newStr || '');
-
-		const diff = [];
-		const ol = oldStr.length;
-		const nl = newStr.length;
-		const minLength = Math.min(ol, nl);
-
-		let start = null;
-
-		// Iterate over characters in both strings
-		for (let i = 0; i < minLength; i++) {
-			if (oldStr[i] !== newStr[i]) {
-				if (start === null) {
-					start = i;
-				};
-			} else 
-			if (start !== null) {
-				diff.push({ from: start, to: i });
-				start = null;
-			};
-		};
-
-		// Check for a difference at the end of the longer string
-		if (start !== null) {
-			diff.push({ from: start, to: Math.max(ol, nl) });
-		} else 
-		if (oldStr.length !== newStr.length) {
-			// Handle case where one string is longer than the other
-			diff.push({ from: minLength, to: Math.max(ol, nl) });
-		};
-		return diff;
-	};
-
 	normalizeLineEndings (s: string) {
 		return String(s || '').replace(/\r\n?/g, '\n');
 	};
