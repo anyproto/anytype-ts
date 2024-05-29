@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Button, Title, Label } from 'Component';
 import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilSpace, translate } from 'Lib';
-import { popupStore, blockStore } from 'Store';
+import { popupStore, blockStore, menuStore } from 'Store';
 const Url = require('json/url.json');
 
 class MenuSyncStatusInfo extends React.Component<I.Menu> {
@@ -64,7 +64,16 @@ class MenuSyncStatusInfo extends React.Component<I.Menu> {
 	};
 
 	onClick (e, item) {
-		console.log('ITEM: ', item)
+		menuStore.closeAll();
+		switch (item.id) {
+			case 'updateApp': {
+				break;
+			};
+			case 'upgradeMembership': {
+				popupStore.open('settings', { data: { page: 'membership' } });
+				break;
+			};
+		};
 	};
 
 	onMouseEnter (e: any, item: any) {
