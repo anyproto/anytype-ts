@@ -67,6 +67,7 @@ class MenuSyncStatusInfo extends React.Component<I.Menu> {
 		menuStore.closeAll();
 		switch (item.id) {
 			case 'updateApp': {
+				Renderer.send('updateCheck');
 				break;
 			};
 			case 'upgradeMembership': {

@@ -265,8 +265,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIconNetwork () {
-		// const syncData = authStore.syncData;
-		const syncData = { network: 0, error: 1, status: 2, syncingCounter: 0 };
+		const syncData = authStore.syncData;
 		const { network, error, syncingCounter } = syncData;
 
 		let id = '';
