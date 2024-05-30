@@ -321,6 +321,19 @@ class Action {
 	delete (ids: string[], route: string, callBack?: () => void): void {
 		const count = ids.length;
 
+		if (!UtilSpace.canMyParticipantWrite()) {
+			popupStore.open('confirm', {
+				data: {
+					title: translate('popupConfirmActionRestrictedTitle'),
+					text: translate('popupConfirmActionRestrictedText'),
+					textConfirm: translate('commonOk'),
+					canCancel: false
+				},
+			});
+
+			return;
+		};
+
 		analytics.event('ShowDeletionWarning');
 
 		popupStore.open('confirm', {

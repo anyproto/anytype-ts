@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Header, Footer, Icon, ListObjectManager } from 'Component';
-import { I, UtilCommon, analytics, translate, Action } from 'Lib';
+import { I, UtilCommon, analytics, translate, Action, UtilSpace } from 'Lib';
 const Constant = require('json/constant.json');
 
 const PageMainArchive = observer(class PageMainArchive extends React.Component<I.PageComponent> {
@@ -59,6 +59,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 						iconSize={48}
 						resize={this.resize}
 						textEmpty={translate('pageMainArchiveEmpty')}
+						isReadonly={!UtilSpace.canMyParticipantWrite()}
 					/>
 				</div>
 
