@@ -1003,6 +1003,9 @@
 	"popupConfirmDeleteWarningTitle": "Are you sure you want to delete %s %s?",
 	"popupConfirmDeleteWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
 
+	"popupConfirmActionRestrictedTitle": "Action restricted!",
+	"popupConfirmActionRestrictedText": "You cannot do this in read-only space",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",

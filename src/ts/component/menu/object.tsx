@@ -197,6 +197,7 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!canWrite) {
 			template = null;
 			setDefaultTemplate = null;
+			remove = null;
 		};
 
 		let sections = [];
