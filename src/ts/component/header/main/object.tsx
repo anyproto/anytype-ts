@@ -145,26 +145,10 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	onRelation () {
-		const { isPopup, rootId, menuOpen } = this.props;
-		const cnw = [ 'fixed' ];
+		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'isArchived' ]);
 
-		if (!isPopup) {
-			cnw.push('fromHeader');
-		};
-
-		menuOpen('blockRelationView', '#button-header-relation', {
-			noFlipX: true,
-			noFlipY: true,
-			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.cell,
-			classNameWrap: cnw.join(' '),
-			data: {
-				isPopup,
-				rootId,
-				readonly: object.isArchived
-			},
-		});
+		this.props.onRelation({}, { readonly: object.isArchived });
 	};
 
 	updateTemplatesCnt () {

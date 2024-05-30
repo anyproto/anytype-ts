@@ -60,6 +60,7 @@ class CommonStore {
 		categories: [],
 		list: [],
 	};
+	public diffValue: I.Diff[] = [];
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -258,6 +259,10 @@ class CommonStore {
 
 	get membershipTiers (): I.MembershipTier[] {
 		return this.membershipTiersList || [];
+	};
+
+	get diff (): I.Diff[] {
+		return this.diffValue || [];
 	};
 
     gatewaySet (v: string) {
@@ -505,6 +510,10 @@ class CommonStore {
 
 	membershipTiersListSet (list: I.MembershipTier[]) {
 		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
+	};
+
+	diffSet (diff: I.Diff[]) {
+		this.diffValue = diff || [];
 	};
 
 	getGraph (key: string): Graph {

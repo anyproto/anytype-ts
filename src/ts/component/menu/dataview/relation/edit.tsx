@@ -78,6 +78,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						icon="clock" 
 						name={translate('menuDataviewRelationEditIncludeTime')}
 						onMouseEnter={this.menuClose}
+						readonly={isReadonly}
 						withSwitch={true}
 						switchValue={viewRelation?.includeTime}
 						onSwitch={(e: any, v: boolean) => { this.onChangeTime(v); }}
@@ -478,6 +479,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	onDateSettings (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
+
+		const isReadonly = this.isReadonly();
+		if (isReadonly) {
+			return;
+		};
 
 		const { param, getId } = this.props;
 		const { data } = param;

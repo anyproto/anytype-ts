@@ -129,6 +129,17 @@ class UtilData {
 		};
 		return c;
 	};
+
+	diffClass (t: I.DiffType): string {
+		let c = '';
+		switch (t) {
+			case I.DiffType.None: c = 'diffNone'; break;
+			case I.DiffType.Add: c = 'diffAdd'; break;
+			case I.DiffType.Change: c = 'diffChange'; break;
+			case I.DiffType.Remove: c = 'diffRemove'; break;
+		};
+		return c;
+	};
 	
 	alignHIcon (v: I.BlockHAlign): string {
 		v = v || I.BlockHAlign.Left;

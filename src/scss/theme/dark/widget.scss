@@ -23,9 +23,9 @@
 }
 
 .widget.widgetTree {
-	.icon.set { background-image: url('#{$themePath}/icon/sidebar/set.svg'); }
-	.icon.collection { background-image: url('#{$themePath}/icon/sidebar/collection.svg'); }
-	.icon.blank { background-image: url('#{$themePath}/icon/sidebar/blank.svg'); }
+	.icon.set { background-image: url('#{$themePath}/icon/widget/set.svg'); }
+	.icon.collection { background-image: url('#{$themePath}/icon/widget/collection.svg'); }
+	.icon.blank { background-image: url('#{$themePath}/icon/widget/blank.svg'); }
 	.icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
 }
 
@@ -44,6 +44,6 @@
 }
 
 .button.widget {
-	.icon.store { background-image: url('#{$themePath}/icon/sidebar/store.svg'); }
-	.icon.bin { background-image: url('#{$themePath}/icon/sidebar/bin.svg'); }
+	.icon.store { background-image: url('#{$themePath}/icon/widget/store.svg'); }
+	.icon.bin { background-image: url('#{$themePath}/icon/widget/bin.svg'); }
 }

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { I, UtilObject, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
-import { popupStore, menuStore } from 'Store';
+import { popupStore, menuStore, detailStore } from 'Store';
+import Constant from 'json/constant.json';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -41,6 +42,7 @@ class Header extends React.Component<Props> {
 		this.onTooltipHide = this.onTooltipHide.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);
 		this.onExpand = this.onExpand.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 	};
 	
 	render () {
@@ -67,6 +69,7 @@ class Header extends React.Component<Props> {
 					menuOpen={this.menuOpen}
 					renderLeftIcons={this.renderLeftIcons}
 					renderTabs={this.renderTabs}
+					onRelation={this.onRelation}
 				/>
 			</div>
 		);
@@ -163,6 +166,32 @@ class Header extends React.Component<Props> {
 		};
 
 		menuStore.closeAllForced(null, () => menuStore.open(id, menuParam));
+	};
+
+	onRelation (param?: Partial<I.MenuParam>, data?: any) {
+		param = param || {};
+		data = data || {};
+
+		const { isPopup, rootId } = this.props;
+		const cnw = [ 'fixed' ];
+
+		if (!isPopup) {
+			cnw.push('fromHeader');
+		};
+
+		this.menuOpen('blockRelationView', '#button-header-relation', {
+			noFlipX: true,
+			noFlipY: true,
+			horizontal: I.MenuDirection.Right,
+			subIds: Constant.menuIds.cell,
+			classNameWrap: cnw.join(' '),
+			...param,
+			data: {
+				isPopup,
+				rootId,
+				...data,
+			},
+		});
 	};
 
 	getContainer () {

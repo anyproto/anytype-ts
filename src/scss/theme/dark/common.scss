@@ -260,18 +260,6 @@ html.themeDark {
         .headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
     }
 
-    .header.mainHistory {
-        .side {
-            .item {
-                .icon.arrow { background-image: url('#{$themePath}/arrow/history0.svg'); margin: 0px; }
-            }
-        }
-        
-		.item:hover {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/history1.svg'); }
-		}
-    }
-
 	.header.mainStore.withBanner {
 		.bannerWrapper {
 			.banner { color: var(--color-text-inversion); }

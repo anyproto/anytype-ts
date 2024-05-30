@@ -90,7 +90,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		return (
 			<div 
 				ref={node => this.node = node}
-				className={[ 'setWrapper', check.className ].join(' ')}
+				className={[ 'editorWrapper', check.className ].join(' ')}
 			>
 				<Header 
 					{...this.props} 
@@ -99,7 +99,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 					rootId={rootId} 
 				/>
 
-				{content}
+				<div id="bodyWrapper" className="wrapper">
+					{content}
+				</div>
 
 				<Footer component="mainObject" {...this.props} />
 			</div>
@@ -288,7 +290,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			};
 
 			container.css({ minHeight: isPopup ? '' : win.height() });
-			node.css({ paddingTop: isPopup ? 0 : hh });
 		});
 	};
 

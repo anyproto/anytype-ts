@@ -30,6 +30,7 @@ interface Props {
 	noRemove?: boolean;
 	noClick?: boolean;
 	menuParam?: Partial<I.MenuParam>;
+	style?: any;
 	getObject?(): any;
 	onSelect?(id: string): void;
 	onUpload?(objectId: string): void;
@@ -133,6 +134,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		tooltipY: I.MenuDirection.Bottom,
 		color: 'grey',
 		menuParam: {},
+		style: {},
 	};
 
 	constructor (props: Props) {
@@ -145,7 +147,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	render () {
-		const { className, size, canEdit, forceLetter } = this.props;
+		const { className, size, canEdit, forceLetter, style } = this.props;
 		const { theme } = commonStore;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
@@ -308,6 +310,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 				draggable={true}
+				style={style}
 				onDragStart={(e: any) => { 
 					e.preventDefault(); 
 					e.stopPropagation(); 

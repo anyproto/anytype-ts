@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
-import { I, UtilCommon, Relation, keyboard, translate } from 'Lib';
+import { I, UtilCommon, Relation, keyboard, translate, UtilData } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -20,6 +20,7 @@ interface Props {
 	canEdit?: boolean;
 	canDrag?: boolean;
 	canFav?: boolean;
+	diffType?: I.DiffType;
 	onEdit(e: any, item: any): void;
 	onRef(id: string, ref: any): void;
 	onFav(e: any, item: any): void;
@@ -48,7 +49,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 	};
 
 	render () {
-		const { rootId, block, id, scope, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
+		const { rootId, block, id, scope, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, diffType, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
 		const tooltip = translate(isFeatured ? 'menuItemRelationViewFeaturedRemove' : 'menuItemRelationViewFeaturedAdd');
 		const object = detailStore.get(rootId, rootId, [ relationKey ]);
 		const cellId = Relation.cellId(PREFIX, relationKey, object.id);
@@ -73,6 +74,9 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		};
 		if (!readonly) {
 			ccn.push('canEdit');
+		};
+		if (diffType != I.DiffType.None) {
+			cn.push(UtilData.diffClass(diffType));
 		};
 
 		return (

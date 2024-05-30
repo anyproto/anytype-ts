@@ -143,6 +143,7 @@
 	"commonUpdate": "Update",
 	"commonOwner": "Owner",
 	"commonUpdateProgress": "Downloading update... %s/%s",
+	"commonVersionHistory": "Version history",
 	"commonActions": "Actions",
 	"commonAddRelation": "Add Relation",
 	"commonCollection": "Collection",
@@ -296,8 +297,6 @@
 
 	"spellcheckAdd": "Add to dictionary",
 
-	"headerHistoryCurrent": "Current version",
-	"headerHistoryRestore": "Restore version",
 	"headerTooltipPath": "Click to search",
 
 	"headerGraphTooltipSearch": "Search",
@@ -428,6 +427,9 @@
 
 	"pageMainMembershipTitle": "Retrieving membership",
 	"pageMainMembershipError": "Something went wrong",
+
+	"pageMainHistoryCurrent": "Current version",
+	"pageMainHistoryRestore": "Restore",
 
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 
@@ -1579,6 +1581,8 @@
 	"toastObjectTypeRemoved": "Object type <b>%s</b> has been removed from your Library",
 	"toastRelationRemoved": "Relation <b>%s</b> has been removed from your Library",
 	"toastSetDefaultTemplate": "This Template was Set as default",
+
+	"toastFileLimitReached": "Your local storage exceeds syncing limit. Locally stored files won't be synced",
 
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
