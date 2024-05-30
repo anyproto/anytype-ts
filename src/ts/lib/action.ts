@@ -330,7 +330,6 @@ class Action {
 					canCancel: false
 				},
 			});
-
 			return;
 		};
 
