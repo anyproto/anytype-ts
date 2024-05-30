@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
-import { I, C, translate, UtilCommon, UtilData, analytics, keyboard } from 'Lib';
+import { I, C, translate, UtilCommon, UtilData, analytics } from 'Lib';
 import { commonStore, authStore } from 'Store';
+import FooterAuthDisclaimer from '../../../footer/auth/disclaimer';
 const Constant = require('json/constant.json');
 
 interface State {
@@ -45,10 +46,15 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		const { period } = tierItem;
 		const { membership } = authStore;
-		const { name, nameType } = membership;
+		const { name, nameType, paymentMethod } = membership;
 
 		let periodText = '';
 		let labelText = '';
+		let paidOnOtherPlatform = false;
+
+		if ((membership.tier == I.TierType.Builder) && (paymentMethod != I.PaymentMethod.Stripe)) {
+			paidOnOtherPlatform = true;
+		};
 
 		if (period) {
 			if (period == 1) {
@@ -88,11 +94,19 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 					{periodText}
 				</div>
 
-				<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
+				{paidOnOtherPlatform ? (
+					<Label className="paidOnOtherPlatform" text={translate('popupMembershipPaidOnOtherPlatform')} />
+				) : (
+					<React.Fragment>
+						<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
 
-				{testCryptoPayment ? (
-					<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
-				) : ''}
+						{testCryptoPayment ? (
+							<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
+						) : ''}
+
+						<FooterAuthDisclaimer />
+					</React.Fragment>
+				)}
 			</form>
 		);
 	};
