@@ -5,6 +5,8 @@ import { blockStore, dbStore, detailStore } from 'Store';
 import { Dataview, I, C, M, UtilCommon, Relation, keyboard, translate, UtilRouter } from 'Lib';
 
 import WidgetViewList from './list';
+import WidgetViewGallery from './gallery';
+import WidgetViewBoard from './board';
 import WidgetViewCalendar from './calendar';
 
 const Constant = require('json/constant.json');
@@ -84,15 +86,16 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 					content = <WidgetViewList {...props} />;
 					break;
 				};
-/*
+
 				case I.ViewType.Gallery: {
+					content = <WidgetViewGallery {...props} />;
 					break;
 				};
 
 				case I.ViewType.Board: {
+					content = <WidgetViewBoard {...props} />;
 					break;
 				};
-*/
 
 				case I.ViewType.Calendar: {
 					content = <WidgetViewCalendar  {...props} />;
