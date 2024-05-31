@@ -354,6 +354,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	onKeyDown (e: any) {
 		e.stopPropagation();
 
+		if (keyboard.isComposition) {
+			return;
+		};
+
 		const { close } = this.props;
 		const { backlink } = this.state;
 		const items = this.getItems();
