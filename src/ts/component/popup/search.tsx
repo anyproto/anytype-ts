@@ -64,7 +64,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			let value: any = '';
 
 			if (relationKey) {
-				if (relationKey == 'name') {
+				if ([ 'name', 'type' ].includes(relationKey)) {
 					return '';
 				} else {
 					const relation = dbStore.getRelationByKey(relationKey);
