@@ -5,6 +5,7 @@ export enum WidgetLayout {
 	Tree	 	 = 1,
 	List		 = 2,
 	Compact		 = 3,
+	View		 = 4,
 
 	Space	 	 = 100,
 };

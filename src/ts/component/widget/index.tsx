@@ -7,7 +7,7 @@ import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, A
 import { blockStore, detailStore, menuStore, dbStore, commonStore } from 'Store';
 
 import WidgetSpace from './space';
-import WidgetList from './list';
+import WidgetView from './view';
 import WidgetTree from './tree';
 
 const Constant = require('json/constant.json');
@@ -192,8 +192,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			case I.WidgetLayout.List:
-			case I.WidgetLayout.Compact: {
-				content = <WidgetList key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} isCompact={layout == I.WidgetLayout.Compact} />;
+			case I.WidgetLayout.Compact:
+			case I.WidgetLayout.View: {
+				content = <WidgetView key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} />;
 				break;
 			};
 
