@@ -5,6 +5,7 @@ import { blockStore, dbStore, detailStore } from 'Store';
 import { Dataview, I, C, M, UtilCommon, Relation, keyboard, translate, UtilRouter } from 'Lib';
 
 import WidgetViewList from './list';
+import WidgetViewCalendar from './calendar';
 
 const Constant = require('json/constant.json');
 
@@ -41,7 +42,15 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const length = records.length;
 		const views = dbStore.getViews(rootId, BLOCK_ID).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
 		const view = Dataview.getView(rootId, BLOCK_ID, viewId);
+		const props = {
+			...this.props,
+			ref: ref => this.refChild = ref,
+			getRecords: this.getRecords,
+			rootId,
+			subId,
+		};
 
+		let content = null;
 		let viewSelect = null;
 		let viewType = I.ViewType.List;
 
@@ -67,22 +76,12 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			);
 		};
 
-		let content = null;
-
 		if (!isLoading && !length) {
 			content = <Label className="empty" text={translate('widgetEmptyLabel')} />;
 		} else {
 			switch (viewType) {
 				default: {
-					content = (
-						<WidgetViewList 
-							ref={ref => this.refChild = ref}
-							{...this.props} 
-							getRecords={this.getRecords} 
-							rootId={rootId}
-							subId={subId}
-						/>
-					);
+					content = <WidgetViewList {...props} />;
 					break;
 				};
 /*
@@ -93,11 +92,12 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 				case I.ViewType.Board: {
 					break;
 				};
+*/
 
 				case I.ViewType.Calendar: {
+					content = <WidgetViewCalendar  {...props} />;
 					break;
 				};
-*/
 			};
 		};
 

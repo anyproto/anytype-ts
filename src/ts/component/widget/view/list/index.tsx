@@ -10,25 +10,18 @@ import WidgetListItem from './item';
 
 const Constant = require('json/constant.json');
 
-interface Props extends I.WidgetComponent {
-	rootId: string;
-	subId: string;
-	parent?: I.Block;
-	getRecords: () => any[];
-};
-
 const LIMIT = 30;
 const HEIGHT_COMPACT = 28;
 const HEIGHT_LIST = 64;
 
-const WidgetViewList = observer(class WidgetViewList extends React.Component<Props> {
+const WidgetViewList = observer(class WidgetViewList extends React.Component<I.WidgetListComponent> {
 
 	node = null;
 	refList = null;
 	cache: any = null;
 	top = 0;
 
-	constructor (props: Props) {
+	constructor (props: I.WidgetListComponent) {
 		super(props);
 		
 		this.onSortStart = this.onSortStart.bind(this);

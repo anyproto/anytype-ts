@@ -25,6 +25,13 @@ export interface WidgetComponent {
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
 };
 
+export interface WidgetListComponent extends I.WidgetComponent {
+	rootId: string;
+	subId: string;
+	parent?: I.Block;
+	getRecords: () => any[];
+};
+
 export interface WidgetTreeItem {
 	id: string;
 	rootId: string; // the id of the root node (root node)
