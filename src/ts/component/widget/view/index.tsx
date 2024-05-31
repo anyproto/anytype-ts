@@ -1,13 +1,10 @@
 import * as React from 'react';
-import raf from 'raf';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
 import { Select, Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, M, UtilCommon, Relation, keyboard, translate, Action, UtilRouter } from 'Lib';
-import { SortableContainer } from 'react-sortable-hoc';
-import arrayMove from 'array-move';
-import WidgetListItem from './item';
+import { Dataview, I, C, M, UtilCommon, Relation, keyboard, translate, UtilRouter } from 'Lib';
+
+import WidgetViewList from './list';
 
 const Constant = require('json/constant.json');
 
@@ -16,28 +13,21 @@ interface State {
 };
 
 const BLOCK_ID = 'dataview';
-const LIMIT = 30;
-const HEIGHT_COMPACT = 28;
-const HEIGHT_LIST = 64;
 
 const WidgetView = observer(class WidgetView extends React.Component<I.WidgetComponent, State> {
 
 	node = null;
-	refSelect = null;
-	refList = null;
 	state = {
 		isLoading: false,
 	};
-	cache: any = null;
-	top = 0;
+	refSelect = null;
+	refChild = null;
 
 	constructor (props: I.WidgetComponent) {
 		super(props);
 		
-		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onScroll = this.onScroll.bind(this);
 		this.getSubId = this.getSubId.bind(this);
+		this.getRecords = this.getRecords.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -46,146 +36,69 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
 		const rootId = this.getRootId();
+		const subId = this.getSubId();
+		const records = this.getRecords();
+		const length = records.length;
 		const views = dbStore.getViews(rootId, BLOCK_ID).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
-		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-		const { total } = dbStore.getMeta(subId, '');
-		const isSelect = !isPreview || !UtilCommon.isPlatformMac();
-		const items = this.getItems();
-		const length = items.length;
-		const isCompact = this.isCompact();
-
-		if (!this.cache) {
-			return null;
-		};
+		const view = Dataview.getView(rootId, BLOCK_ID, viewId);
 
 		let viewSelect = null;
+		let viewType = I.ViewType.List;
+
+		if (view) {
+			viewType = view.type;
+		};
 
 		if (!isSystemTarget() && (views.length > 1)) {
-			if (isSelect) {
-				viewSelect = (
-					<Select 
-						ref={ref => this.refSelect = ref}
-						id={`select-view-${rootId}`} 
-						value={viewId} 
-						options={views} 
-						onChange={this.onChangeView}
-						arrowClassName="light"
-						menuParam={{ 
-							width: 300,
-							className: 'fixed',
-							classNameWrap: 'fromSidebar',
-						}}
-					/>
-				);
-			} else {
-				const Item = (item) => (
-					<div 
-						className={[ 'viewItem', (item.id == viewId ? 'active' : '') ].join(' ')} 
-						onClick={() => this.onChangeView(item.id)}
-					>
-						{UtilCommon.shorten(item.name, 32)}
-					</div>
-				);
-
-				viewSelect = (
-					<div className="viewList">
-						<div className="inner">
-							{views.map(item => (
-								<Item key={`widget-${block.id}-view-${item.id}`} {...item} />
-							))}
-						</div>
-					</div>
-				);
-			};
+			viewSelect = (
+				<Select 
+					ref={ref => this.refSelect = ref}
+					id={`select-view-${rootId}`} 
+					value={viewId} 
+					options={views} 
+					onChange={this.onChangeView}
+					arrowClassName="light"
+					menuParam={{ 
+						width: 300,
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
+					}}
+				/>
+			);
 		};
 
 		let content = null;
 
 		if (!isLoading && !length) {
 			content = <Label className="empty" text={translate('widgetEmptyLabel')} />;
-		} else
-		if (isPreview) {
-			const rowRenderer = ({ index, key, parent, style }) => (
-				<CellMeasurer
-					key={key}
-					parent={parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={index}
-					fixedWidth
-				>
-					<WidgetListItem 
-						{...this.props}
-						{...items[index]}
-						subId={subId} 
-						id={items[index].id}
-						style={style} 
-						index={index}
-						isCompact={isCompact}
-					/>
-				</CellMeasurer>
-			);
-
-			const List = SortableContainer(() => (
-				<div className="items">
-					<InfiniteLoader
-						rowCount={total}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => true}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<VList
-										ref={ref => this.refList = ref}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={length}
-										rowHeight={({ index }) => this.getRowHeight(items[index], index, isCompact)}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={LIMIT}
-										scrollToAlignment="center"
-										onScroll={this.onScroll}
-									/>
-							)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				</div>
-			));
-
-			content = (
-				<List 
-					axis="y" 
-					lockAxis="y"
-					lockToContainerEdges={true}
-					transitionDuration={150}
-					distance={10}
-					onSortStart={this.onSortStart}
-					onSortEnd={this.onSortEnd}
-					useDragHandle={true}
-					helperClass="isDragging"
-					helperContainer={() => $(`#widget-${parent.id} .items`).get(0)}
-				/>
-			);
 		} else {
-			content = (
-				<React.Fragment>
-					{items.map((item: any) => (
-						<WidgetListItem 
-							key={`widget-${block.id}-${item.id}`} 
+			switch (viewType) {
+				default: {
+					content = (
+						<WidgetViewList 
+							ref={ref => this.refChild = ref}
 							{...this.props} 
-							{...item} 
-							subId={subId} 
-							id={item.id} 
-							isCompact={isCompact}
+							getRecords={this.getRecords} 
+							rootId={rootId}
+							subId={subId}
 						/>
-					))}
-				</React.Fragment>
-			);
+					);
+					break;
+				};
+/*
+				case I.ViewType.Gallery: {
+					break;
+				};
+
+				case I.ViewType.Board: {
+					break;
+				};
+
+				case I.ViewType.Calendar: {
+					break;
+				};
+*/
+			};
 		};
 
 		return (
@@ -194,10 +107,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 				className="innerWrap"
 			>
 				{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
-
-				<div id="body" className="body">
-					{content}
-				</div>
+				{content}
 			</div>
 		);
 	};
@@ -208,7 +118,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const { targetBlockId } = block.content;
 
 		if (isSystemTarget()) {
-			getData(this.getSubId(), () => this.resize());
+			getData(this.getSubId());
 		} else {
 			this.setState({ isLoading: true });
 
@@ -221,9 +131,6 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 				};
 			});
 		};
-
-		this.initCache();
-		this.forceUpdate();
 	};
 
 	componentDidUpdate (): void {
@@ -235,32 +142,10 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		if (!isSystemTarget() && view && (viewId != view.id)) {
 			this.load(viewId);
 		};
-
-		if (this.refList) {
-			this.refList.scrollToPosition(this.top);
-		};
-
-		this.initCache();
-		this.resize();
 	};
 
 	componentWillUnmount(): void {
-		C.ObjectSearchUnsubscribe([ dbStore.getSubId(this.getRootId(), BLOCK_ID) ]);
-	};
-
-	initCache () {
-		if (this.cache) {
-			return;
-		};
-
-		const items = this.getItems();
-		const isCompact = this.isCompact();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: i => this.getRowHeight(items[i], i, isCompact),
-			keyMapper: i => items[i],
-		});
+		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
 	};
 
 	updateData () {
@@ -279,7 +164,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		};
 
 		if (isSystemTarget()) {
-			getData(this.getSubId(), () => this.resize());
+			getData(this.getSubId());
 		} else {
 			const view = Dataview.getView(this.getRootId(), BLOCK_ID);
 			if (view) {
@@ -321,7 +206,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		return [ targetBlockId, 'widget', block.id ].join('-');
 	};
 
-	load = (viewId: string) => {
+	load (viewId: string) {
 		const { widgets } = blockStore;
 		const { block, parent, getLimit } = this.props;
 		const { targetBlockId } = block.content;
@@ -343,40 +228,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			limit,
 			collectionId: (isCollection ? targetBlockId : ''),
 			keys: Constant.sidebarRelationKeys,
-		}, () => {
-			this.resize();
 		});
-	};
-
-	onSortStart () {
-		keyboard.disableSelection(true);
-	};
-
-	onSortEnd (result: any) {
-		const { oldIndex, newIndex } = result;
-		const { block } = this.props;
-		const { targetBlockId } = block.content;
-
-		keyboard.disableSelection(false);
-
-		if ((oldIndex == newIndex) || (targetBlockId != Constant.widgetId.favorite)) {
-			return;
-		};
-
-		const { root } = blockStore;
-		const records = this.getRecords();
-		const children = blockStore.getChildren(root, root, it => it.isLink());
-		const ro = records[oldIndex];
-		const rn = records[newIndex];
-		const oidx = children.findIndex(it => it.content.targetBlockId == ro);
-		const nidx = children.findIndex(it => it.content.targetBlockId == rn);
-		const current = children[oidx];
-		const target = children[nidx];
-		const childrenIds = blockStore.getChildrenIds(root, root);
-		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-
-		blockStore.updateStructure(root, root, arrayMove(childrenIds, oidx, nidx));
-		Action.move(root, root, target.id, [ current.id ], position);
 	};
 
 	onChangeView = (viewId: string): void => {
@@ -387,99 +239,13 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const { parent, block, sortFavorite } = this.props;
 		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
-		const subId = dbStore.getSubId(rootId, BLOCK_ID);
+		const subId = this.getSubId();
 		const records = dbStore.getRecordIds(subId, '');
 		const views = dbStore.getViews(rootId, BLOCK_ID);
 		const viewId = parent.content.viewId || (views.length ? views[0].id : '');
 		const ret = Dataview.applyObjectOrder(rootId, BLOCK_ID, viewId, '', UtilCommon.objectCopy(records));
 
 		return (targetBlockId == Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
-	};
-
-	getItems () {
-		const { block, addGroupLabels, isPreview } = this.props;
-		const rootId = this.getRootId();
-		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-		const { targetBlockId } = block.content;
-		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
-
-		let items = this.getRecords().map(id => detailStore.get(subId, id, Constant.sidebarRelationKeys));
-
-		if (isPreview && isRecent) {
-			// add group labels
-			items = addGroupLabels(items, targetBlockId);
-		};
-
-		return items;
-	};
-
-	resize () {
-		const { parent, isPreview } = this.props;
-		const length = this.getItems().length;
-
-		raf(() => {
-			const node = $(this.node);
-			const body = node.find('#body');
-			const head = $(`#widget-${parent.id} .head`);
-			const viewSelect = node.find('#viewSelect');
-			const inner = viewSelect.find('.inner');
-			const viewItem = viewSelect.find('.viewItem');
-			const offset = isPreview ? 20 : 8;
-
-			let height = this.getTotalHeight() + offset;
-			if (isPreview) {
-				let maxHeight = $('#listWidget').height() - head.outerHeight(true);
-				if (viewSelect.length) {
-					maxHeight -= viewSelect.outerHeight(true);
-				};
-
-				height = Math.min(maxHeight, height);
-			};
-
-			const css: any = { height, paddingTop: '', paddingBottom: 8 };
-			
-			if (!length) {
-				css.paddingTop = 20;
-				css.paddingBottom = 22;
-				css.height = 36 + css.paddingTop + css.paddingBottom;
-			};
-
-			body.css(css);
-
-			let width = 32;
-			viewItem.each((i: number, item) => { width += $(item).outerWidth(true); });
-			inner.css({ width });
-		});
-	};
-
-	getTotalHeight () {
-		const items = this.getItems();
-		const isCompact = this.isCompact();
-
-		let height = 0;
-
-		items.forEach((item, index) => {
-			height += this.getRowHeight(item, index, isCompact);
-		});
-
-		return height;
-	};
-
-	getRowHeight (item: any, index: number, isCompact: boolean) {
-		if (item && item.isSection) {
-			return index ? HEIGHT_COMPACT + 12 : HEIGHT_COMPACT;
-		};
-		return isCompact ? HEIGHT_COMPACT : HEIGHT_LIST;
-	};
-
-	onScroll ({ scrollTop }) {
-		if (scrollTop) {
-			this.top = scrollTop;
-		};
-	};
-
-	isCompact () {
-		return this.props.parent.content.layout == I.WidgetLayout.Compact;
 	};
 
 });

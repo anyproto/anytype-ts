@@ -4,23 +4,12 @@
 .widget.widgetList, .widget.widgetCompact {
 	.loaderWrapper { position: relative; }
 	.innerWrap { height: 100%; }
-	.contentWrapper { flex-grow: 1; }
+	.contentWrapper { flex-grow: 1; min-height: 8px; }
 	.head { padding-bottom: 4px; }
 
 	#viewSelect { padding: 0px 16px; }
 	#viewSelect:empty { display: none; }
 	#viewSelect {
-		.viewList { width: 100%; overflow-x: auto; overflow-y: hidden; }
-		.viewList {
-			.inner { padding: 0px 16px; white-space: nowrap; }
-
-			.viewItem { 
-				@include text-common; font-weight: 500; color: var(--color-control-active); transition: $transitionAllCommon; 	margin-right: 16px; display: inline-block; 
-				vertical-align: top;
-			}
-			.viewItem:last-child { margin: 0px; }
-		}
-
 		.select { border: none; margin-left: -6px; padding-right: 16px; }
 		.select {
 			.item { @include text-small; line-height: 18px !important; font-weight: 500; }
@@ -94,7 +83,7 @@
 
 .widget.widgetList.isPreview, .widget.widgetCompact.isPreview { padding: 0px; }
 .widget.widgetList.isPreview, .widget.widgetCompact.isPreview {
-	.head { margin: 0px; }
+	.head { margin: 0px; padding-bottom: 10px; }
 	.body { height: 100%; padding: 0px; }
 	.ReactVirtualized__List { padding: 12px 8px; }
 	.contentWrapper { height: calc(100% - 77px); }
