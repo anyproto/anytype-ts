@@ -64,6 +64,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const childKey = `widget-${child?.id}-${layout}`;
 		const withPlus = this.isPlusAllowed();
 		const canDrop = object && !this.isSystemTarget() && !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+		const isFavorite = targetBlockId == Constant.widgetId.favorite;
 
 		const props = {
 			...this.props,
@@ -133,6 +134,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					{back}
 					<div className="clickable" onClick={onClick}>
 						<ObjectName object={object} />
+						{isFavorite ? <span className="count">{this.getFavoriteIds().length}</span> : ''}
 					</div>
 					{buttons}
 				</div>
@@ -406,9 +408,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const object = message.details;
 
 			if (isFavorite) {
-				Action.setIsFavorite([ object.id ], true, analytics.route.widget, () => {
-					window.setTimeout(() => this.sliceFavorite(), 40);
-				});
+				Action.setIsFavorite([ object.id ], true, analytics.route.widget);
 			};
 
 			if (isCollection) {
@@ -549,7 +549,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	getData (subId: string, callBack?: () => void) {
-		const { block, isPreview } = this.props;
+		const { block } = this.props;
 		const child = this.getTargetBlock();
 
 		if (!child) {
@@ -608,19 +608,22 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			limit,
 			keys: Constant.sidebarRelationKeys,
 		}, () => {
-			this.sliceFavorite();
-
 			if (callBack) {
 				callBack();
 			};
 		});
 	};
 
-	sortFavorite (records: string[]): string[] {
+	getFavoriteIds (): string[] {
 		const { root } = blockStore;
-		const ids = blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
+		return blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
+	};
 
-		return UtilCommon.objectCopy(records || []).sort((c1: string, c2: string) => {
+	sortFavorite (records: string[]): string[] {
+		const { block, isPreview } = this.props;
+		const ids = this.getFavoriteIds();
+
+		let sorted = UtilCommon.objectCopy(records || []).sort((c1: string, c2: string) => {
 			const i1 = ids.indexOf(c1);
 			const i2 = ids.indexOf(c2);
 
@@ -628,18 +631,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			if (i1 < i2) return -1;
 			return 0;
 		});
-	};
-
-	sliceFavorite () {
-		const { block, isPreview } = this.props;
-
-		let records = this.sortFavorite(dbStore.getRecordIds(this.subId, ''));
 
 		if (!isPreview) {
-			records = records.slice(0, this.getLimit(block.content));
+			sorted = sorted.slice(0, this.getLimit(block.content));
 		};
 
-		dbStore.recordsSet(this.subId, '', records);
+		return sorted;
 	};
 
 	onSetPreview () {
