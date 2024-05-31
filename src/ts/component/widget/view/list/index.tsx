@@ -2,9 +2,8 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
-import { Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { I, keyboard, translate, Action } from 'Lib';
+import { I, keyboard, Action } from 'Lib';
 import { SortableContainer } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import WidgetListItem from './item';
@@ -50,9 +49,6 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<Pro
 
 		let content = null;
 
-		if (!length) {
-			content = <Label className="empty" text={translate('widgetEmptyLabel')} />;
-		} else
 		if (isPreview) {
 			const rowRenderer = ({ index, key, parent, style }) => (
 				<CellMeasurer
@@ -224,18 +220,17 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<Pro
 		const length = this.getItems().length;
 
 		raf(() => {
+			const container = $('#listWidget');
 			const obj = $(`#widget-${parent.id}`);
 			const node = $(this.node);
 			const head = obj.find('.head');
 			const viewSelect = obj.find('#viewSelect');
 			const offset = isPreview ? 20 : 8;
 
-			console.log(node, obj);
-
-
 			let height = this.getTotalHeight() + offset;
+
 			if (isPreview) {
-				let maxHeight = $('#listWidget').height() - head.outerHeight(true);
+				let maxHeight = container.height() - head.outerHeight(true);
 				if (viewSelect.length) {
 					maxHeight -= viewSelect.outerHeight(true);
 				};
@@ -250,8 +245,6 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<Pro
 				css.paddingBottom = 22;
 				css.height = 36 + css.paddingTop + css.paddingBottom;
 			};
-
-			console.log(css);
 
 			node.css(css);
 		});
