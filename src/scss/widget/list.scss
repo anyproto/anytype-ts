@@ -5,6 +5,7 @@
 	.loaderWrapper { position: relative; }
 	.innerWrap { height: 100%; }
 	.contentWrapper { flex-grow: 1; }
+	.head { padding-bottom: 4px; }
 
 	#viewSelect { padding: 0px 16px; }
 	#viewSelect:empty { display: none; }
@@ -85,6 +86,11 @@
 		.item.isDragging { margin-top: -46px; margin-left: -12px; }
 	}
 };
+
+.widget.widgetList.isClosed, .widget.widgetCompact.isClosed {
+	.contentWrapper { height: 8px; }
+	.innerWrap { opacity: 0; }
+}
 
 .widget.widgetList.isPreview, .widget.widgetCompact.isPreview { padding: 0px; }
 .widget.widgetList.isPreview, .widget.widgetCompact.isPreview {

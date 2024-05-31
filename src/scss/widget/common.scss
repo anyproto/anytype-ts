@@ -37,6 +37,7 @@
 	.label.empty { text-align: center; @include text-small; white-space: nowrap; }
 
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
+	.innerWrap { transition: opacity 0.4s $easeInQuint; }
 
 	.icon.remove { position: absolute; top: -15px; left: -15px; height: 40px; width: 40px; display: none; z-index: 2; cursor: default !important; }
 	.icon.remove {

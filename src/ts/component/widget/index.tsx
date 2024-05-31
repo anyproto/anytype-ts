@@ -493,12 +493,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block } = this.props;
 		const node = $(this.node);
 		const icon = node.find('.icon.collapse');
+		const innerWrap = node.find('.innerWrap');
 		const wrapper = node.find('#wrapper').css({ height: 'auto' });
 		const height = wrapper.outerHeight();
+		const minHeight = this.getMinHeight();
 
 		node.addClass('isClosed');
 		icon.removeClass('isClosed');
-		wrapper.css({ height: 0 });
+		wrapper.css({ height: minHeight });
+		innerWrap.css({ opacity: 1 });
 
 		raf(() => { wrapper.css({ height }); });
 
@@ -516,15 +519,18 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	close () {
 		const { block } = this.props;
 		const node = $(this.node);
+		const innerWrap = node.find('.innerWrap');
 		const icon = node.find('.icon.collapse');
 		const wrapper = node.find('#wrapper');
+		const minHeight = this.getMinHeight();
 
 		wrapper.css({ height: wrapper.outerHeight() });
 		icon.addClass('isClosed');
+		innerWrap.css({ opacity: 0 });
 
 		raf(() => { 
 			node.addClass('isClosed'); 
-			wrapper.css({ height: 0 });
+			wrapper.css({ height: minHeight });
 		});
 
 		window.clearTimeout(this.timeout);
@@ -535,6 +541,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				wrapper.css({ height: '' });
 			};
 		}, 450);
+	};
+
+	getMinHeight () {
+		return [ I.WidgetLayout.List,  I.WidgetLayout.Compact ].includes(this.props.block.content.layout) ? 8 : 0;
 	};
 
 	getData (subId: string, callBack?: () => void) {
