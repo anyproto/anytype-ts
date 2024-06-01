@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, UtilDate, translate } from 'Lib';
+import { I, UtilDate } from 'Lib';
 
 interface State {
 	value: number;
@@ -24,12 +24,14 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 
 	render (): React.ReactNode {
 		const { value } = this.state;
-		const data = this.getData();
+		const data = UtilDate.getCalendarMonth(value);
 		const { m, y } = this.getDateParam(value);
 		const today = this.getDateParam(UtilDate.now());
 		const days = UtilDate.getWeekDays();
 		const months = UtilDate.getMonths();
 		const years = UtilDate.getYears(0, 3000);
+
+		console.log(data, m, y);
 
 		return (
 			<div ref={ref => this.node = ref} className="body">
@@ -106,10 +108,6 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	getDateParam (t: number) {
 		const [ d, m, y ] = UtilDate.date('j,n,Y', t).split(',').map(it => Number(it));
 		return { d, m, y };
-	};
-
-	getData () {
-		return UtilDate.getCalendarMonth(this.state.value);
 	};
 
 	onArrow (dir: number) {
