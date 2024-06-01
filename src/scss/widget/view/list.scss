@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
-.viewList { display: flex; flex-direction: column; height: 100%; }
-.viewList {
+.viewList, .viewGrid { display: flex; flex-direction: column; height: 100%; }
+.viewList, .viewGrid {
 	.body { display: flex; flex-direction: column; }
 	.body {
 		.items { height: 100%; }
