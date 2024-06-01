@@ -15,8 +15,6 @@ interface State {
 	isLoading: boolean;
 };
 
-const BLOCK_ID = 'dataview';
-
 const WidgetView = observer(class WidgetView extends React.Component<I.WidgetComponent, State> {
 
 	node = null;
@@ -42,8 +40,8 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const subId = this.getSubId();
 		const records = this.getRecords();
 		const length = records.length;
-		const views = dbStore.getViews(rootId, BLOCK_ID).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
-		const view = Dataview.getView(rootId, BLOCK_ID, viewId);
+		const views = dbStore.getViews(rootId, Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
+		const view = Dataview.getView(rootId, Constant.blockId.dataview, viewId);
 		const cn = [ 'innerWrap' ];
 		const props = {
 			...this.props,
@@ -131,7 +129,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			C.ObjectShow(targetBlockId, this.getTraceId(), UtilRouter.getRouteSpaceId(), () => {
 				this.setState({ isLoading: false });
 
-				const view = Dataview.getView(this.getRootId(), BLOCK_ID, viewId);
+				const view = Dataview.getView(this.getRootId(), Constant.blockId.dataview, viewId);
 				if (view) {
 					this.load(view.id);
 				};
@@ -143,7 +141,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const { parent, isSystemTarget } = this.props;
 		const { viewId } = parent.content;
 		const rootId = this.getRootId();
-		const view = Dataview.getView(rootId, BLOCK_ID);
+		const view = Dataview.getView(rootId, Constant.blockId.dataview);
 
 		if (!isSystemTarget() && view && (viewId != view.id)) {
 			this.load(viewId);
@@ -158,11 +156,11 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const { block, isSystemTarget, getData } = this.props;
 		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
-		const srcBlock = blockStore.getLeaf(targetBlockId, BLOCK_ID);
+		const srcBlock = blockStore.getLeaf(targetBlockId, Constant.blockId.dataview);
 
 		// Update block in widget with source block if object is open
 		if (srcBlock) {
-			let dstBlock = blockStore.getLeaf(rootId, BLOCK_ID);
+			let dstBlock = blockStore.getLeaf(rootId, Constant.blockId.dataview);
 
 			if (dstBlock) {
 				dstBlock = Object.assign(dstBlock, srcBlock);
@@ -172,7 +170,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		if (isSystemTarget()) {
 			getData(this.getSubId());
 		} else {
-			const view = Dataview.getView(this.getRootId(), BLOCK_ID);
+			const view = Dataview.getView(this.getRootId(), Constant.blockId.dataview);
 			if (view) {
 				this.load(view.id);
 			};
@@ -182,15 +180,15 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	updateViews () {
 		const { block } = this.props;
 		const { targetBlockId } = block.content;
-		const views = UtilCommon.objectCopy(dbStore.getViews(targetBlockId, BLOCK_ID)).map(it => new M.View(it));
+		const views = UtilCommon.objectCopy(dbStore.getViews(targetBlockId, Constant.blockId.dataview)).map(it => new M.View(it));
 		const rootId = this.getRootId();
 
 		if (!views.length || (targetBlockId != keyboard.getRootId())) {
 			return;
 		};
 
-		dbStore.viewsClear(rootId, BLOCK_ID);
-		dbStore.viewsSet(rootId, BLOCK_ID, views);
+		dbStore.viewsClear(rootId, Constant.blockId.dataview);
+		dbStore.viewsSet(rootId, Constant.blockId.dataview, views);
 
 		if (this.refSelect) {
 			this.refSelect.setOptions(views);
@@ -198,7 +196,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	getSubId () {
-		return dbStore.getSubId(this.getRootId(), BLOCK_ID);
+		return dbStore.getSubId(this.getRootId(), Constant.blockId.dataview);
 	};
 
 	getTraceId = (): string => {
@@ -228,7 +226,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 
 		Dataview.getData({
 			rootId: this.getRootId(),
-			blockId: BLOCK_ID,
+			blockId: Constant.blockId.dataview,
 			newViewId: viewId,
 			sources: setOf,
 			limit,
@@ -247,9 +245,9 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
 		const records = dbStore.getRecordIds(subId, '');
-		const views = dbStore.getViews(rootId, BLOCK_ID);
+		const views = dbStore.getViews(rootId, Constant.blockId.dataview);
 		const viewId = parent.content.viewId || (views.length ? views[0].id : '');
-		const ret = Dataview.applyObjectOrder(rootId, BLOCK_ID, viewId, '', UtilCommon.objectCopy(records));
+		const ret = Dataview.applyObjectOrder(rootId, Constant.blockId.dataview, viewId, '', UtilCommon.objectCopy(records));
 
 		return (targetBlockId == Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
 	};

@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, UtilDate } from 'Lib';
+import { I, UtilDate, Dataview } from 'Lib';
+import { menuStore } from 'Store';
 
 interface State {
 	value: number;
 };
+
+const Constant = require('json/constant.json');
 
 const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Component<I.WidgetListComponent, State> {
 
@@ -30,8 +33,6 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 		const days = UtilDate.getWeekDays();
 		const months = UtilDate.getMonths();
 		const years = UtilDate.getYears(0, 3000);
-
-		console.log(data, m, y);
 
 		return (
 			<div ref={ref => this.node = ref} className="body">
@@ -82,7 +83,16 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 							if (i < 7) {
 								cn.push('first');
 							};
-							return <div key={i} className={cn.join(' ')}>{item.d}</div>;
+							return (
+								<div 
+									id={`day-${item.d}-${item.m}-${item.y}`} 
+									key={i}
+									className={cn.join(' ')} 
+									onClick={() => this.onClick(item.d, item.m, item.y)}
+								>
+									{item.d}
+								</div>	
+							);
 						})}
 					</div>
 				</div>
@@ -128,6 +138,36 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 
 	setValue (value: number) {
 		this.setState({ value });
+	};
+
+	onClick (d: number, m: number, y: number) {
+		const { parent, rootId } = this.props;
+		const { viewId } = parent.content;
+		const blockId = Constant.blockId.dataview;
+		const view = Dataview.getView(rootId, blockId, viewId);
+		const element = `#day-${d}-${m}-${y}`;
+
+		menuStore.closeAll([ 'dataviewCalendarDay' ], () => {
+			menuStore.open('dataviewCalendarDay', {
+				element,
+				className: 'fixed fromWidget',
+				classNameWrap: 'fromSidebar',
+				horizontal: I.MenuDirection.Center,
+				noFlipX: true,
+				onOpen: () => $(element).addClass('active'),
+				onClose: () => $(element).removeClass('active'),
+				data: {
+					rootId,
+					blockId,
+					relationKey: view.groupRelationKey,
+					d,
+					m, 
+					y,
+					hideIcon: view.hideIcon,
+					fromWidget: true,
+				}
+			});
+		});
 	};
 
 });

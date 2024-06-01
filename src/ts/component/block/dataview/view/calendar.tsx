@@ -279,11 +279,12 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const margin = (cw - mw) / 2;
 		const { top } = node.offset();
 		const day = node.find('.day').first();
+		const menu = menuStore.get('dataviewCalendarDay');
 
 		wrap.css({ width: cw, height: Math.max(600, ch - top - 130), marginLeft: -margin - 2 });
 		win.trigger('resize.menuDataviewCalendarDay');
 
-		if (day.length) {
+		if (menu && !menu.param.data.fromWidget && day.length) {
 			menuStore.update('dataviewCalendarDay', { width: day.outerWidth() + 8 });
 		};
 	};

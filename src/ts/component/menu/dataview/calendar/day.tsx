@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilObject, keyboard, UtilDate } from 'Lib';
+import { I, UtilObject, keyboard, UtilDate, translate } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -19,12 +19,19 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	render () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { d, getView, className } = data;
+		const { y, m, d, hideIcon, className, fromWidget } = data;
 		const items = this.getItems();
-		const view = getView();
-		const { hideIcon } = view;
-		const cn = [ 'day' ];
+		const cn = [ 'wrap' ];
 		const menuId = getId();
+		
+		let label = d;
+		let size = 16;
+
+		if (fromWidget) {
+			const w = UtilDate.date('N', UtilDate.timestamp(y, m, d));
+			label = `${translate(`day${w}`)} ${d}`;
+			size = 18;
+		};
 
 		if (className) {
 			cn.push(className);
@@ -57,7 +64,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		return (
 			<div className={cn.join(' ')}>
 				<div className="number">
-					<div className="inner">{d}</div>
+					<div className="inner">{label}</div>
 				</div>
 				<div className="items">
 					{items.map((item, i) => (
@@ -115,12 +122,11 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, block, getView, d, m, y } = data;
-		const view = getView();
-		const items = dbStore.getRecords(dbStore.getSubId(rootId, block.id), [ view.groupRelationKey ]);
+		const { rootId, blockId, d, m, y, relationKey } = data;
+		const items = dbStore.getRecords(dbStore.getSubId(rootId, blockId), [ relationKey ]);
 		const current = [ d, m, y ].join('-');
 
-		return items.filter(it => UtilDate.date('j-n-Y', it[view.groupRelationKey]) == current);
+		return items.filter(it => UtilDate.date('j-n-Y', it[relationKey]) == current);
 	};
 
 });

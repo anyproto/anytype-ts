@@ -118,7 +118,9 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	onMore () {
+		const { block, getView } = this.props;
 		const node = $(this.node);
+		const view = getView();
 
 		menuStore.closeAll([ 'dataviewCalendarDay' ], () => {
 			menuStore.open('dataviewCalendarDay', {
@@ -126,9 +128,13 @@ const Item = observer(class Item extends React.Component<Props> {
 				horizontal: I.MenuDirection.Center,
 				width: node.outerWidth() + 8,
 				offsetY: -(node.outerHeight() + 4),
+				className: 'fromBlock',
 				noFlipX: true,
 				data: {
 					...this.props,
+					blockId: block.id,
+					relationKey: view.groupRelationKey,
+					hideIcon: view.hideIcon,
 				}
 			});
 		});

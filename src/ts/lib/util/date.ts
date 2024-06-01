@@ -79,7 +79,7 @@ class UtilDate {
 	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
 
-		const d = new Date((timestamp) * 1000);
+		const d = new Date(timestamp * 1000);
 
 		const pad = (n: number, c: number) => {
 			let s = String(n);
