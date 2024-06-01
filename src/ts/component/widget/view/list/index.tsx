@@ -35,9 +35,14 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 		const items = this.getItems();
 		const length = items.length;
 		const isCompact = this.isCompact();
+		const cn = [ 'body' ];
 
 		if (!this.cache) {
 			return null;
+		};
+
+		if (isCompact) {
+			cn.push('isCompact');
 		};
 
 		let content = null;
@@ -127,7 +132,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 		};
 
 		return (
-			<div ref={ref => this.node = ref} className="body">
+			<div ref={ref => this.node = ref} className={cn.join(' ')}>
 				{content}
 			</div>
 		);
@@ -218,7 +223,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 			const node = $(this.node);
 			const head = obj.find('.head');
 			const viewSelect = obj.find('#viewSelect');
-			const offset = isPreview ? 20 : 8;
+			const offset = isPreview ? 12 : 0;
 
 			let height = this.getTotalHeight() + offset;
 
@@ -231,7 +236,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 				height = Math.min(maxHeight, height);
 			};
 
-			const css: any = { height, paddingTop: '', paddingBottom: 8 };
+			const css: any = { height, paddingTop: '', paddingBottom: 0 };
 			
 			if (!length) {
 				css.paddingTop = 20;

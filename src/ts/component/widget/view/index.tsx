@@ -44,6 +44,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const length = records.length;
 		const views = dbStore.getViews(rootId, BLOCK_ID).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
 		const view = Dataview.getView(rootId, BLOCK_ID, viewId);
+		const cn = [ 'innerWrap' ];
 		const props = {
 			...this.props,
 			ref: ref => this.refChild = ref,
@@ -59,6 +60,8 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		if (view) {
 			viewType = view.type;
 		};
+
+		cn.push(`view${I.ViewType[viewType]}`);
 
 		if (!isSystemTarget() && (views.length > 1)) {
 			viewSelect = (
@@ -107,7 +110,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		return (
 			<div 
 				ref={node => this.node = node}
-				className="innerWrap"
+				className={cn.join(' ')}
 			>
 				{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
 				{content}

@@ -355,6 +355,30 @@ class UtilDate {
 		return true;
 	};
 
+	getWeekDays (): { id: number, name: string }[] {
+		const ret = [];
+		for (let i = 1; i <= 7; ++i) {
+			ret.push({ id: i, name: translate(`day${i}`) });
+		};
+		return ret;
+	};
+
+	getMonths (): { id: number, name: string }[] {
+		const ret = [];
+		for (let i = 1; i <= 12; ++i) {
+			ret.push({ id: i, name: translate(`month${i}`) });
+		};
+		return ret;
+	};
+
+	getYears (start: number, end: number): { id: number, name: string }[] {
+		const ret = [];
+		for (let i = start; i <= end; ++i) {
+			ret.push({ id: i, name: i });
+		};
+		return ret;
+	};
+
 };
 
 export default new UtilDate();

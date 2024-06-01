@@ -57,7 +57,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		const { targetBlockId } = child?.content || {};
-		const cn = [ 'widget', UtilCommon.toCamelCase(`widget-${I.WidgetLayout[layout]}`) ];
+		const cn = [ 'widget' ];
 		const object = this.getObject();
 
 		const withSelect = !this.isSystemTarget() && (!isPreview || !UtilCommon.isPlatformMac());
@@ -68,6 +68,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		const props = {
 			...this.props,
+			ref: ref => this.ref = ref,
+			key: childKey,
 			parent: block,
 			block: child,
 			isSystemTarget: this.isSystemTarget,
@@ -182,19 +184,22 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		switch (layout) {
 
 			case I.WidgetLayout.Space: {
-				content = <WidgetSpace key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} />;
+				cn.push('widgetSpace');
+				content = <WidgetSpace {...props} />;
 				break;
 			};
 
 			case I.WidgetLayout.Tree: {
-				content = <WidgetTree key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} />;
+				cn.push('widgetTree');
+				content = <WidgetTree {...props} />;
 				break;
 			};
 
 			case I.WidgetLayout.List:
 			case I.WidgetLayout.Compact:
 			case I.WidgetLayout.View: {
-				content = <WidgetView key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} />;
+				cn.push('widgetView');
+				content = <WidgetView {...props} />;
 				break;
 			};
 
