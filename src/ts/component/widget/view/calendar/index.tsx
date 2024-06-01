@@ -62,7 +62,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 				<div className="table">
 					<div className="tableHead">
 						{days.map((item, i) => (
-							<div key={i} className="day">
+							<div key={i} className="item">
 								{item.name.substring(0, 2)}
 							</div>
 						))}

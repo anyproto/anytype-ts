@@ -26,9 +26,9 @@
 	.table { display: flex; flex-flow: column; padding: 0px 16px; }
 	.table {
 		.tableHead, .tableBody { display: grid; grid-template-columns: repeat(7, 1fr); }
-		.tableHead { flex-shrink: 0; }
+		.tableHead { flex-shrink: 0; margin: 0px 0px 8px 0px; }
 		.tableHead {
-			.day { color: var(--color-text-secondary); }
+			.item { @include text-small; text-align: center; color: var(--color-text-secondary); }
 		}
 	}
 
