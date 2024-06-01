@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import { I, UtilDate, Dataview } from 'Lib';
-import { menuStore } from 'Store';
+import { menuStore, dbStore } from 'Store';
 
 interface State {
 	value: number;
@@ -10,7 +10,7 @@ interface State {
 
 const Constant = require('json/constant.json');
 
-const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Component<I.WidgetListComponent, State> {
+const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Component<I.WidgetViewComponent, State> {
 
 	node = null;
 	refMonth = null;
@@ -19,7 +19,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 		value: UtilDate.now(),
 	};
 
-	constructor (props: I.WidgetListComponent) {
+	constructor (props: I.WidgetViewComponent) {
 		super(props);
 
 		this.onArrow = this.onArrow.bind(this);
@@ -137,7 +137,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	};
 
 	setValue (value: number) {
-		this.setState({ value });
+		this.setState({ value }, () => this.props.reload());
 	};
 
 	onClick (d: number, m: number, y: number) {
@@ -168,6 +168,47 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 				}
 			});
 		});
+	};
+
+	getFilters (): I.Filter[] {
+		const { parent, rootId } = this.props;
+		const { viewId } = parent.content;
+		const blockId = Constant.blockId.dataview;
+		const view = Dataview.getView(rootId, blockId, viewId);
+		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+
+		if (!relation) {
+			return [];
+		};
+
+		const data = UtilDate.getCalendarMonth(this.state.value);
+		if (!data.length) {
+			return;
+		};
+
+		const first = data[0];
+		const last = data[data.length - 1];
+		const start = UtilDate.timestamp(first.y, first.m, first.d, 0, 0, 0);
+		const end = UtilDate.timestamp(last.y, last.m, last.d, 23, 59, 59);
+
+		return [
+			{ 
+				operator: I.FilterOperator.And, 
+				relationKey: relation.relationKey, 
+				condition: I.FilterCondition.GreaterOrEqual, 
+				value: start, 
+				quickOption: I.FilterQuickOption.ExactDate,
+				format: relation.format,
+			},
+			{ 
+				operator: I.FilterOperator.And, 
+				relationKey: relation.relationKey, 
+				condition: I.FilterCondition.LessOrEqual, 
+				value: end, 
+				quickOption: I.FilterQuickOption.ExactDate,
+				format: relation.format,
+			}
+		];
 	};
 
 });

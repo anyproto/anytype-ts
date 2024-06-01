@@ -25,11 +25,12 @@ export interface WidgetComponent {
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
 };
 
-export interface WidgetListComponent extends I.WidgetComponent {
+export interface WidgetViewComponent extends I.WidgetComponent {
 	rootId: string;
 	subId: string;
 	parent?: I.Block;
 	getRecords: () => any[];
+	reload: () => void;
 };
 
 export interface WidgetTreeItem {

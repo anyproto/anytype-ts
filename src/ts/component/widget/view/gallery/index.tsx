@@ -2,11 +2,11 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I } from 'Lib';
 
-const WidgetViewGallery = observer(class WidgetViewGallery extends React.Component<I.WidgetListComponent> {
+const WidgetViewGallery = observer(class WidgetViewGallery extends React.Component<I.WidgetViewComponent> {
 
 	node = null;
 
-	constructor (props: I.WidgetListComponent) {
+	constructor (props: I.WidgetViewComponent) {
 		super(props);
 	};
 

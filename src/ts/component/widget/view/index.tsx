@@ -29,10 +29,11 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		
 		this.getSubId = this.getSubId.bind(this);
 		this.getRecords = this.getRecords.bind(this);
+		this.reload = this.reload.bind(this);
 	};
 
 	render (): React.ReactNode {
-		const { parent, block, isSystemTarget, isPreview } = this.props;
+		const { parent, block, isSystemTarget } = this.props;
 		const { viewId, limit } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
@@ -41,23 +42,20 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const records = this.getRecords();
 		const length = records.length;
 		const views = dbStore.getViews(rootId, Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
-		const view = Dataview.getView(rootId, Constant.blockId.dataview, viewId);
+		const viewType = this.getViewType();
 		const cn = [ 'innerWrap' ];
+		const showEmpty = ![ I.ViewType.Calendar ].includes(viewType);
 		const props = {
 			...this.props,
 			ref: ref => this.refChild = ref,
 			getRecords: this.getRecords,
+			reload: this.reload,
 			rootId,
 			subId,
 		};
 
 		let content = null;
 		let viewSelect = null;
-		let viewType = I.ViewType.List;
-
-		if (view) {
-			viewType = view.type;
-		};
 
 		cn.push(`view${I.ViewType[viewType]}`);
 
@@ -79,7 +77,9 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			);
 		};
 
-		if (!isLoading && !length) {
+
+
+		if (!isLoading && !length && showEmpty) {
 			content = <Label className="empty" text={translate('widgetEmptyLabel')} />;
 		} else {
 			switch (viewType) {
@@ -212,13 +212,13 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 
 	load (viewId: string) {
 		const { widgets } = blockStore;
-		const { block, parent, getLimit } = this.props;
+		const { block } = this.props;
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(widgets, targetBlockId);
 		const setOf = Relation.getArrayValue(object.setOf);
 		const target = detailStore.get(widgets, targetBlockId);
 		const isCollection = target.layout == I.ObjectLayout.Collection;
-		const limit = getLimit(parent.content);
+		const limit = this.getLimit();
 
 		if (!setOf.length && !isCollection) {
 			return;
@@ -230,9 +230,58 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			newViewId: viewId,
 			sources: setOf,
 			limit,
+			filters: this.getFilters(),
 			collectionId: (isCollection ? targetBlockId : ''),
 			keys: Constant.sidebarRelationKeys,
 		});
+	};
+
+	reload () {
+		this.load(this.props.parent.content.viewId);
+	};
+
+	getFilters () {
+		const view = this.getView();
+		if (!view) {
+			return [];
+		};
+
+		let filters: I.Filter[] = [];
+
+		if (this.refChild && this.refChild.getFilters) {
+			filters = filters.concat(this.refChild.getFilters());
+		};
+
+		return filters;
+	};
+
+	getView () {
+		return Dataview.getView(this.getRootId(), Constant.blockId.dataview, this.props.parent.content.viewId);
+	};
+
+	getViewType () {
+		const view = this.getView();
+		return view ? view.type : I.ViewType.List;
+	};
+
+	getLimit (): number {
+		const { parent, getLimit } = this.props;
+		const viewType = this.getViewType();
+
+		let limit = getLimit(parent.content);
+
+		switch (viewType) {
+			default: {
+				break;
+			};
+
+			case I.ViewType.Calendar: {
+				limit = 0;
+				break;
+			};
+		};
+
+		return limit;
 	};
 
 	onChangeView = (viewId: string): void => {

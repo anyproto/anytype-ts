@@ -28,7 +28,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		let size = 16;
 
 		if (fromWidget) {
-			const w = UtilDate.date('N', UtilDate.timestamp(y, m, d));
+			const w = Number(UtilDate.date('N', UtilDate.timestamp(y, m, d))) + 1;
 			label = `${translate(`day${w}`)} ${d}`;
 			size = 18;
 		};
@@ -67,9 +67,15 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 					<div className="inner">{label}</div>
 				</div>
 				<div className="items">
-					{items.map((item, i) => (
-						<Item key={i} {...item} />
-					))}
+					{!items.length ? (
+						<div className="item empty">{translate('menuDataviewObjectListEmptySearch')}</div>
+					) : (
+						<React.Fragment>
+							{items.map((item, i) => (
+								<Item key={i} {...item} />
+							))}
+						</React.Fragment>
+					)}
 				</div>
 			</div>
 		);

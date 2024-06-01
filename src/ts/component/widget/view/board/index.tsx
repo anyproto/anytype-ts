@@ -2,11 +2,11 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I } from 'Lib';
 
-const WidgetViewBoard = observer(class WidgetViewBoard extends React.Component<I.WidgetListComponent> {
+const WidgetViewBoard = observer(class WidgetViewBoard extends React.Component<I.WidgetViewComponent> {
 
 	node = null;
 
-	constructor (props: I.WidgetListComponent) {
+	constructor (props: I.WidgetViewComponent) {
 		super(props);
 	};
 

@@ -14,14 +14,14 @@ const LIMIT = 30;
 const HEIGHT_COMPACT = 28;
 const HEIGHT_LIST = 64;
 
-const WidgetViewList = observer(class WidgetViewList extends React.Component<I.WidgetListComponent> {
+const WidgetViewList = observer(class WidgetViewList extends React.Component<I.WidgetViewComponent> {
 
 	node = null;
 	refList = null;
 	cache: any = null;
 	top = 0;
 
-	constructor (props: I.WidgetListComponent) {
+	constructor (props: I.WidgetViewComponent) {
 		super(props);
 		
 		this.onSortStart = this.onSortStart.bind(this);
