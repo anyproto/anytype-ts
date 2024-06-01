@@ -72,7 +72,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 						<div className="table">
 							<div className="head">
 								{days.map((item, i) => (
-									<div key={i} className="item th">
+									<div key={i} className="item">
 										{item.name.substring(0, 2)}
 									</div>
 								))}

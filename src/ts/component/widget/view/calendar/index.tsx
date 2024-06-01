@@ -62,7 +62,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 				<div className="table">
 					<div className="tableHead">
 						{days.map((item, i) => (
-							<div key={i} className="item th">
+							<div key={i} className="day">
 								{item.name.substring(0, 2)}
 							</div>
 						))}
@@ -70,22 +70,37 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 
 					<div className="tableBody">
 						{data.map((item, i) => {
-							const cn = [];
+							const cn = [ 'day' ];
 							if (m != item.m) {
 								cn.push('other');
 							};
 							if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
-								cn.push('active');
+								cn.push('today');
 							};
 							if (i < 7) {
 								cn.push('first');
 							};
-							return <div key={i} className="day">{item.d}</div>;
+							return <div key={i} className={cn.join(' ')}>{item.d}</div>;
 						})}
 					</div>
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount(): void {
+		this.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
+	};
+
+	init () {
+		const { m, y } = this.getDateParam(this.state.value);
+
+		this.refMonth?.setValue(m);
+		this.refYear?.setValue(y);
 	};
 
 	getDateParam (t: number) {
