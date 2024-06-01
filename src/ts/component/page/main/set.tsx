@@ -3,10 +3,11 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, UtilData, UtilCommon, Action, UtilSpace, keyboard, UtilRouter, translate } from 'Lib';
+import { I, M, C, UtilData, UtilCommon, Action, UtilSpace, keyboard, UtilRouter, translate, UtilObject } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -263,6 +264,12 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				});
 			};
 		};
+
+		// History
+		keyboard.shortcut('ctrl+h, cmd+y', e, () => {
+			e.preventDefault();
+			UtilObject.openAuto({ layout: I.ObjectLayout.History, id: rootId });
+		});
 	};
 
 	isReadonly () {

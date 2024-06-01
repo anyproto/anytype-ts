@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconObject, ObjectName } from 'Component';
 import { I, UtilObject, keyboard, UtilDate } from 'Lib';
-import { blockStore, dbStore, detailStore } from 'Store';
+import { blockStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I.Menu> {

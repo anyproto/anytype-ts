@@ -570,7 +570,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		// Redo
-		keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
+		keyboard.shortcut(`${cmd}+shift+z`, e, () => {
 			if (readonly) {
 				e.preventDefault();
 				keyboard.onRedo(rootId, 'editor');
@@ -1902,13 +1902,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onHistory (e: any) {
-		const { rootId } = this.props;
-
-		e.shiftKey = false;
-		e.ctrlKey = false;
-		e.metaKey = false;
-
-		UtilObject.openEvent(e, { layout: I.ObjectLayout.History, id: rootId });
+		UtilObject.openAuto({ layout: I.ObjectLayout.History, id: this.props.rootId });
 	};
 
 	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {

@@ -37,7 +37,6 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 	constructor (props: Props) {
 		super(props);
 
-		this.onCurrent = this.onCurrent.bind(this);
 		this.onRestore = this.onRestore.bind(this);
 		this.onClose = this.onClose.bind(this);
 		this.onScroll = this.onScroll.bind(this);
@@ -152,12 +151,6 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 					className="scroll" 
 					onScroll={this.onScroll}
 				>
-					<div className="section" onClick={this.onCurrent}>
-						<div className="head">
-							<div className="name">{translate('pageMainHistoryCurrent')}</div>
-						</div>
-					</div>
-
 					{groups.map((item: any, i: number) => (
 						<Section key={i} {...item} />
 					))}
@@ -185,14 +178,6 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		const { rootId } = this.props;
 
 		UtilObject.openAuto(detailStore.get(rootId, rootId, []));
-	};
-
-	onCurrent () {
-		const { versions } = this.state;
-
-		if (versions.length) {
-			this.loadVersion(versions[0].id);
-		};
 	};
 
 	onRestore (e: any) {
@@ -244,9 +229,13 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		};
 
 		let children = null; 
+		let groupItem = null;
+
 		if (group.isTimeGroup) {
+			groupItem = node.find(`#item-${group.id}`);
 			children = node.find(`#children-${group.id}`);
 		} else {
+			groupItem = node.find(`#item-${parent.id}`);
 			children = node.find(`#children-${parent.id}`);
 		};
 
@@ -256,9 +245,13 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		node.find('.active').removeClass('active');
 		item.addClass('active');
 
-		if (children.length) {
+		if (children && children.length) {
 			item.addClass('isExpanded');
 			children.show();
+		};
+
+		if (groupItem && groupItem.length) {
+			groupItem.addClass('isExpanded');
 		};
 
 		scroll.scrollTop(this.top);

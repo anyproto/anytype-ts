@@ -191,8 +191,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const rootId = this.getRootId();
 		const oldContextId = [ rootId, previousId ].join('-');
 
-		console.log('TYPE', type, data);
-
 		let elements = [];
 		switch (type) {
 			case 'BlockAdd': {
@@ -238,7 +236,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				};
 
 				const marks = block.content.marks || [];
-				const newText = data.text;
+				const newText = String(data.text || '');
 				const oldText = oldBlock.getText();
 				const diff = Diff.diffChars(oldText, newText);
 
