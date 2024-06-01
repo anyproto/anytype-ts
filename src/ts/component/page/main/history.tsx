@@ -191,8 +191,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const rootId = this.getRootId();
 		const oldContextId = [ rootId, previousId ].join('-');
 
-		console.log('TYPE', type, data);
-
 		let elements = [];
 		switch (type) {
 			case 'BlockAdd': {
