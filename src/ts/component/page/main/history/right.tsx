@@ -217,6 +217,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		this.toggles.forEach(id => this.initToggle(id, unwrapped));
 
 		if (version) {
+			this.initToggle(version.id, unwrapped);
 			node.find(`#item-${version.id}`).addClass('active');
 		};
 
