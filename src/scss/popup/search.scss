@@ -60,7 +60,7 @@
 				.sides { width: 100%; display: flex; justify-content: space-between; gap: 0px 12px; }
 				.sides {
 					.side.left { width: calc(100% - 40px); overflow: hidden; }
-					.side.right { min-width: 40px; flex-shrink: 0; display: flex; justify-content: right; }
+					.side.right { min-width: 40px; flex-shrink: 0; display: flex; justify-content: right; align-items: center; }
 					.side.right {
 						.label {
 							padding: 0px 2px; border-radius: 4px; background: var(--color-shape-highlight-medium); display: inline-block; vertical-align: middle; min-width: 18px;
@@ -69,7 +69,7 @@
 						.label:last-child { margin: 0px; }
 					}
 				}
-				.name { @include text-overflow-nw; }
+				.name { @include text-overflow-nw; font-weight: 500; }
 				.context { @include text-small; padding: 2px 0px; white-space: normal; display: flex; gap: 0 4px; }
 
 				.context {
