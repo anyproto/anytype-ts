@@ -229,18 +229,13 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				let type = I.DiffType.None;
 
 				if (data.text !== null) {
-					const diff = Diff.diffChars(oldBlock.getText(), String(data.text || ''));
-					const check = diff.filter(it => it.added).length;
+					const diff = Diff.diffChars(oldBlock.getText(), String(data.text || '')).filter(it => it.added);
 
-					if (check) {
+					if (diff.length) {
 						const marks = UtilCommon.objectCopy(block.content.marks || []);
 
 						let from = 0;
 						for (const item of diff) {
-							if (item.removed) {
-								continue;
-							};
-
 							const to = from + item.count;
 
 							if (item.added) {
