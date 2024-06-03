@@ -58,7 +58,11 @@
 	"fileExtension": {
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
 		"video": [ "mp4", "m4v", "mov" ],
+<<<<<<< Updated upstream
 		"cover": [ "jpg", "jpeg", "png", "gif" ],
+=======
+		"cover": [ "jpg", "jpeg", "png", "gif", "webp" ],
+>>>>>>> Stashed changes
 		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ],
 		"pdf": [ "pdf" ],
 		"import": {
