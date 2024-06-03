@@ -53,6 +53,10 @@ class WindowManager {
 
 		this.list.add(win);
 
+		win.on('close', () => {
+			Util.send(win, 'will-close-window', win.id);
+		});
+
 		win.on('closed', () => {
 			this.list.delete(win);
 			win = null;
@@ -60,7 +64,7 @@ class WindowManager {
 
 		win.on('focus', () => { 
 			UpdateManager.setWindow(win);
-			MenuManager.setWindow(win); 
+			MenuManager.setWindow(win);
 		});
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
 		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
@@ -228,15 +232,13 @@ class WindowManager {
 
 	sendToAll () {
 		const args = [ ...arguments ];
-		this.list.forEach(it => {
-			Util.send.apply(this, [ it ].concat(args));
-		});
+		this.list.forEach(it => Util.send.apply(this, [ it ].concat(args)));
 	};
 
 	reloadAll () {
-		this.list.forEach(it => it.webContents.reload());
+		this.sendToAll('reload');
 	};
-
+	
 };
 
 module.exports = new WindowManager();

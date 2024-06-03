@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .pager { 
     text-align: center; color: var(--color-control-active); white-space: nowrap; @include text-common; user-select: none; 

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
 import { C, I, M, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	dataset?: any;
@@ -47,7 +47,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		const { isEditing, previewId } = this.state;
 		const { widgets } = blockStore;
 		const cn = [ 'listWidget' ];
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		let content = null;
 
@@ -130,7 +130,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						cacheKey="firstTarget"
 					>
 						<Widget 
-							block={new M.Block({ id: 'widget-space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })} 
+							block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })} 
 							disableContextMenu={true} 
 							onDragStart={this.onDragStart}
 							onDragOver={this.onDragOver}
@@ -169,15 +169,13 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 							icon="store" 
 							onClick={this.onLibrary} 
 						/>
-						{canWrite ? (
-							<Button 
-								text={translate('widgetBin')}
-								color="" 
-								className="widget" 
-								icon="bin" 
-								onClick={this.onArchive} 
-							/>
-						) : ''}
+						<Button
+							text={translate('widgetBin')}
+							color=""
+							className="widget"
+							icon="bin"
+							onClick={this.onArchive}
+						/>
 					</DropTarget>
 
 					<div className="buttons">
@@ -325,7 +323,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onContextMenu () {
 		const { previewId } = this.state;
-		if (previewId || !UtilSpace.canParticipantWrite()) {
+		if (previewId || !UtilSpace.canMyParticipantWrite()) {
 			return;
 		};
 

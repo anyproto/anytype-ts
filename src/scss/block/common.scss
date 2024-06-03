@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block { 
@@ -7,6 +7,12 @@
 	}
 	.block.isHidden {
 		.wrapMenu, .wrapContent { display: none; }
+	}
+
+	.block.diffNone {
+		.wrapMenu {
+			.iconObject { display: block; }
+		}
 	}
 
 	.block {
@@ -18,6 +24,10 @@
 			padding: 0px; width: 100%; position: absolute; left: 0px; border-radius: 0px !important; pointer-events: none;
 		}
 		.wrapContent > .dropTarget.targetBot { height: 2px; bottom: 0px; }
+
+		.wrapMenu {
+			.iconObject { position: absolute; top: 4px; right: 2px; display: none; }
+		}
 
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
@@ -49,11 +59,9 @@
 		.emptyToggle:hover { color: var(--color-text-primary); }
 	}
 
-	.block.isFirst { padding-top: 0px !important; }
-
 	.block {
 		> .wrapContent {
-			> .selectable { position: relative; }
+			> .selectionTarget { position: relative; }
 		}
 	}
 
@@ -65,6 +73,7 @@
 	.block.align0 > .wrapContent { text-align: left; }
 	.block.align1 > .wrapContent { text-align: center; }
 	.block.align2 > .wrapContent { text-align: right; }
+	.block.align3 > .wrapContent { text-align: justify; }
 	
 	.block.isResizing { user-select: none; }
 	.block.isResizing {
@@ -82,20 +91,20 @@
 	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
 
-	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { border-radius: 0px 0px 4px 4px !important; }
-	.block.isAdding.bottom > .wrapContent > .selectable > .dropTarget { border-radius: 4px 4px 0px 0px !important; }
+	.block.isAdding.top > .wrapContent > .selectionTarget > .dropTarget { border-radius: 0px 0px 4px 4px !important; }
+	.block.isAdding.bottom > .wrapContent > .selectionTarget > .dropTarget { border-radius: 4px 4px 0px 0px !important; }
 
 	.block > .wrapContent > .children.canToggle { display: none; }
 	.block.isToggled > .wrapContent > .children { display: block; }
 	.block.isToggled > .wrapContent > .emptyToggle { display: block; }
-	.block.isToggled > .wrapContent > .selectable > .dropTarget > .flex > .markers > .marker.toggle { transform: rotateZ(90deg); }
+	.block.isToggled > .wrapContent > .selectionTarget > .dropTarget > .flex > .markers > .marker.toggle { transform: rotateZ(90deg); }
 	
 	.block.blockIconPage > .wrapMenu { visibility: hidden; }
 	.block.blockIconUser > .wrapMenu { visibility: hidden; }
 }
 
 #dragProvider.isDragging {
-	.block > .wrapContent > .selectable.isSelectionSelected::after { display: none; }
+	.block > .wrapContent > .selectionTarget.isSelectionSelected::after { display: none; }
 	.block > .wrapMenu > .icon.dnd { opacity: 1; }
 }
 

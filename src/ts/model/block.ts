@@ -96,7 +96,7 @@ class Block implements I.Block {
 	};
 
 	canHaveBackground (): boolean {
-		return !this.isFilePdf() && !this.isDataview();
+		return !this.isFilePdf();
 	};
 
 	canHaveMarks () {
@@ -461,6 +461,13 @@ class Block implements I.Block {
 
 	isTextCallout (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Callout);
+	};
+
+	getText (): string {
+		if (this.isText() || this.isEmbed()) {
+			return String(this.content.text || '');
+		};
+		return '';
 	};
 
 	getLength (): number {

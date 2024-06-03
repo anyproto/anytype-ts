@@ -6,14 +6,15 @@ import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
 import { I, UtilCommon, UtilObject, UtilSpace, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
 import { commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
-import Theme from 'json/theme.json';
+const Constant = require('json/constant.json');
+const Theme = require('json/theme.json');
 
 interface Props {
 	id?: string;
 	isPopup?: boolean;
 	rootId: string;
 	data: any;
+	storageKey: string;
 };
 
 const Graph = observer(class Graph extends React.Component<Props> {
@@ -95,15 +96,16 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	init () {
-		const { data, rootId } = this.props;
+		const { data, rootId, storageKey } = this.props;
 		const node = $(this.node);
 		const density = window.devicePixelRatio;
 		const elementId = `#${this.getId()}`;
 		const width = node.width();
 		const height = node.height();
 		const theme = commonStore.getThemeClass();
+		const settings = commonStore.getGraph(storageKey);
 
-		this.zoom = d3.zoom().scaleExtent([ 0.2, 10 ]).on('zoom', e => this.onZoom(e));
+		this.zoom = d3.zoom().scaleExtent([ 0.05, 10 ]).on('zoom', e => this.onZoom(e));
 		this.edges = (data.edges || []).map(this.edgeMapper);
 		this.nodes = (data.nodes || []).map(this.nodeMapper);
 
@@ -127,7 +129,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			edges: this.edges,
 			theme: theme,
 			colors: Theme[theme].graph || {},
-			settings: commonStore.graph,
+			settings,
 			rootId,
 		}, [ transfer ]);
 
@@ -139,9 +141,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			on('end', (e: any, d: any) => this.onDragEnd(e))
 		)
 		.call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1.5))
+		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1))
 		.on('click', (e: any) => {
-			const { local } = commonStore.graph;
+			const { local } = commonStore.getGraph(storageKey);
 			const [ x, y ] = d3.pointer(e);
 
 			if (local) {
@@ -219,8 +221,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	updateSettings () {
-		this.send('updateSettings', commonStore.graph);
-
+		this.send('updateSettings', commonStore.getGraph(this.props.storageKey));
 		analytics.event('GraphSettings');
 	};
 
@@ -396,7 +397,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		menuStore.open('dataviewContext', {
 			...param,
 			data: {
-				route: 'Graph',
+				route: analytics.route.graph,
 				subId: Constant.subId.graph,
 				objectIds: ids,
 				getObject: id => this.getNode(id),
@@ -451,7 +452,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onContextSpaceClick (param: any, data: any) {
-		if (!UtilSpace.canParticipantWrite()) {
+		if (!UtilSpace.canMyParticipantWrite()) {
 			return;
 		};
 
@@ -466,7 +467,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						case 'newObject': {
 							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, flags, 'Graph', (message: any) => {
+							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', flags, 'Graph', (message: any) => {
 								UtilObject.openPopup(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
 							});
 							break;

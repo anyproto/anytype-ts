@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Loader, IconObject, Cover, Icon, ObjectType } from 'Component';
 import { commonStore, detailStore, blockStore } from 'Store';
 import { I, C, UtilData, UtilRouter, Action, translate } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 import $ from 'jquery';
 
 interface Props {

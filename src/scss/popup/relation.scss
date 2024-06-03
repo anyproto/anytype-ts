@@ -1,0 +1,30 @@
+@import "~scss/_mixins";
+
+.popups {
+	.popup.popupRelation {
+		.innerWrap { width: 600px; max-height: calc(100% - 180px); padding: 8px 16px; border-radius: 8px; }
+		.label { margin: 0px 0px 4px 0px; font-weight: 600; }
+		.line { width: 100%; height: 1px; background: var(--color-shape-secondary); margin: 8px 0px; }
+		.buttons { display: flex; gap: 0px 16px; margin: 8px 0px 0px 0px; }
+
+		.emptySearch { height: 156px; }
+
+		.blocks {
+			.block.blockRelation {
+				.info { padding-left: 0px; }
+			}
+		}
+
+		.item.add { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 3px 0px; }
+		.item.add {
+			.icon { width: 20px; height: 20px; }
+			.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
+		}
+		.item:hover, .item.active { background-color: var(--color-shape-highlight-light); }
+
+		.cellContent.isName {
+			.iconObject { display: none; }
+		}
+
+	}
+}

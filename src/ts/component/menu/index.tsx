@@ -5,7 +5,7 @@ import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
 import { I, keyboard, UtilCommon, analytics, Storage } from 'Lib';
 import { menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -32,7 +32,6 @@ import MenuBlockColor from './block/color';
 import MenuBlockBackground from './block/background';
 import MenuBlockCover from './block/cover';
 import MenuBlockAction from './block/action';
-import MenuBlockMore from './block/more';
 import MenuBlockHAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
@@ -49,6 +48,7 @@ import MenuTypeSuggest from './type/suggest';
 import MenuGraphSettings from './graph/settings';
 import MenuWidget from './widget';
 import MenuSpace from './space';
+import MenuObject from './object';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
@@ -111,7 +111,6 @@ const Components: any = {
 	blockAdd:				 MenuBlockAdd,
 	blockColor:				 MenuBlockColor,
 	blockBackground:		 MenuBlockBackground,
-	blockMore:				 MenuBlockMore,
 	blockAlign:				 MenuBlockHAlign,
 	blockLink:				 MenuBlockLink,
 	blockCover:				 MenuBlockCover,
@@ -129,6 +128,7 @@ const Components: any = {
 	graphSettings:			 MenuGraphSettings,
 	widget:					 MenuWidget,
 	space:					 MenuSpace,
+	object:					 MenuObject,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
@@ -293,7 +293,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 							getSize={this.getSize}
 							getPosition={this.getPosition}
 							position={this.position} 
-							close={() => this.close()}
+							close={this.close}
 						/>
 					</div>
 				</div>
@@ -446,13 +446,28 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			});
 		};
 	};
+
+	getBorderTop () {
+		return Number(window.AnytypeGlobalConfig?.menuBorderTop) || UtilCommon.sizeHeader();
+	};
 	
+	getBorderBottom () {
+		const { id } = this.props;
+		
+		let ret = Number(window.AnytypeGlobalConfig?.menuBorderBottom) || 80;
+		if ([ 'help', 'onboarding' ].includes(id)) {
+			ret = 16;
+		};
+
+		return ret;
+	};
+
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
 		const { border } = Constant.size.menu;
-		const borderTop = Number(window.AnytypeGlobalConfig?.menuBorderTop) || UtilCommon.sizeHeader();
-		const borderBottom = Number(window.AnytypeGlobalConfig?.menuBorderBottom) || 80;
+		const borderTop = this.getBorderTop();
+		const borderBottom = this.getBorderBottom();
 
 		if (this.ref && this.ref.beforePosition) {
 			this.ref.beforePosition();
@@ -715,7 +730,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	onKeyDown (e: any) {
-		if (!this.ref || !this.ref.getItems) {
+		if (!this.ref || !this.ref.getItems || keyboard.isComposition) {
 			return;
 		};
 

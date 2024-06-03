@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { I, C, analytics, UtilMenu, UtilObject, Preview, translate, keyboard, Relation, UtilCommon } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 import { dbStore, menuStore, blockStore, detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<I.Menu> {
 
@@ -32,7 +32,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, ref, readonly } = data;
+		const { rootId, ref, readonly, noDelete } = data;
 
 		const relation = this.getRelation();
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -41,19 +41,20 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isReadonly = this.isReadonly();
 
 		let canDuplicate = true;
-		let canDelete = true;
+		let canDelete = !noDelete;
 		let opts: any = null;
 		let deleteText = translate('commonDelete');
 		let deleteIcon = 'remove';
 
-		if (root) {
-			canDuplicate = canDelete = !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		};
-		if (relation && Relation.isSystem(relation.relationKey)) {
-			canDelete = false;
-		};
 		if (readonly) {	
-			canDuplicate = false;
+			canDuplicate = canDelete = false;
+		} else
+		if (root) {
+			if (root.isLocked() || !blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ])) {
+				canDuplicate = canDelete = false;
+			};
+		};
+		if (relation && Relation.isSystemWithoutUser(relation.relationKey)) {
 			canDelete = false;
 		};
 
@@ -481,7 +482,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			details.push({ key: k, value: item[k] });
 		};
 
-		C.ObjectSetDetails(relationId, details);
+		C.ObjectListSetDetails([ relationId ], details);
 	};
 
 	getRelation () {

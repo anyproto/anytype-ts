@@ -5,7 +5,7 @@ import { observable } from 'mobx';
 import { I, C, UtilObject, UtilMenu, Relation, translate, Dataview, keyboard, analytics, Preview, UtilData, UtilCommon } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 import { blockStore, dbStore, menuStore, detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<I.Menu> {
 
@@ -78,6 +78,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						icon="clock" 
 						name={translate('menuDataviewRelationEditIncludeTime')}
 						onMouseEnter={this.menuClose}
+						readonly={isReadonly}
 						withSwitch={true}
 						switchValue={viewRelation?.includeTime}
 						onSwitch={(e: any, v: boolean) => { this.onChangeTime(v); }}
@@ -310,6 +311,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			case 'remove': {
+				this.props.close();
 				C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ]);
 				break;
 			};
@@ -478,6 +480,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		e.preventDefault();
 		e.stopPropagation();
 
+		const isReadonly = this.isReadonly();
+		if (isReadonly) {
+			return;
+		};
+
 		const { param, getId } = this.props;
 		const { data } = param;
 		const relation = this.getRelation();
@@ -639,7 +646,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			details.push({ key: k, value: item[k] });
 		};
 
-		C.ObjectSetDetails(relationId, details);
+		C.ObjectListSetDetails([ relationId ], details);
 	};
 
 	getRelation (): any {

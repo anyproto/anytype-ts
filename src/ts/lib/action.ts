@@ -1,10 +1,10 @@
-import { I, C, focus, analytics, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper } from 'Lib';
+import { I, C, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class Action {
 
-	pageClose (rootId: string, close: boolean) {
+	pageClose (rootId: string, withCommand: boolean) {
 		const { root, widgets } = blockStore;
 		const { space } = commonStore;
 
@@ -26,10 +26,10 @@ class Action {
 			authStore.threadRemove(rootId);
 		};
 
-		if (close) {
-			C.ObjectClose(rootId, space, onClose);
-		} else {
-			onClose();
+		onClose();
+
+		if (withCommand) {
+			C.ObjectClose(rootId, space);
 		};
 	};
 
@@ -153,6 +153,8 @@ class Action {
 			return;
 		};
 
+		const { layout } = block.content;
+
 		C.BlockListDelete(widgets, [ id ]);
 		Storage.setToggle('widget', id, false);
 		Storage.deleteToggle(`widget${id}`);
@@ -162,7 +164,7 @@ class Action {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
 
-		analytics.event('DeleteWidget', { target });
+		analytics.event('DeleteWidget', { layout, params: { target } });
 	};
 
 	focusToEnd (rootId: string, id: string) {
@@ -319,12 +321,24 @@ class Action {
 	delete (ids: string[], route: string, callBack?: () => void): void {
 		const count = ids.length;
 
+		if (!UtilSpace.canMyParticipantWrite()) {
+			popupStore.open('confirm', {
+				data: {
+					title: translate('popupConfirmActionRestrictedTitle'),
+					text: translate('popupConfirmActionRestrictedText'),
+					textConfirm: translate('commonOk'),
+					canCancel: false
+				},
+			});
+			return;
+		};
+
 		analytics.event('ShowDeletionWarning');
 
 		popupStore.open('confirm', {
 			data: {
-				title: UtilCommon.sprintf(translate('commonDeletionWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
-				text: translate('commonDeletionWarningText'),
+				title: UtilCommon.sprintf(translate('popupConfirmDeleteWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
+				text: translate('popupConfirmDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
 					C.ObjectListDelete(ids); 
@@ -333,11 +347,8 @@ class Action {
 						callBack();
 					};
 
-					// Remove last opened object in case it is deleted
-					const home = Storage.get('lastOpened');
-					if (home && ids.includes(home.id)) {
-						Storage.delete('lastOpened');
-					};
+					// Remove last opened objects in case any is deleted
+					Storage.deleteLastOpenedByObjectId(ids);
 
 					analytics.event('RemoveCompletely', { count, route });
 				},
@@ -377,10 +388,18 @@ class Action {
 						commonStore.configSet(message.account.config, false);
 
 						UtilData.onInfo(message.account.info);
-						UtilData.onAuth({ routeParam: { animate: true } }, () => {
-							window.setTimeout(() => { popupStore.open('migration', { data: { type: 'import' } }); }, popupStore.getTimeout());
-							blockStore.closeRecentWidgets();
-						});
+
+						const routeParam = {
+							replace: true,
+							animate: true,
+							onFadeIn: () => {
+								popupStore.open('migration', { data: { type: 'import' } });
+								blockStore.closeRecentWidgets();
+							},
+						};
+
+						UtilData.onAuth({ routeParam });
+						UtilData.onAuthOnce(true);
 					});
 				});
 			});
@@ -439,20 +458,24 @@ class Action {
 			analytics.event('ClickImportFile', { type });
 
 			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
-				if (!message.error.code) {
-					if (message.collectionId) {
-						window.setTimeout(() => {
-							popupStore.open('objectManager', { 
-								data: { 
-									collectionId: message.collectionId, 
-									type: I.ObjectManagerPopup.Favorites,
-								} 
-							});
-						}, popupStore.getTimeout() + 10);
-					};
-
-					analytics.event('Import', { middleTime: message.middleTime, type });
+				if (message.error.code) {
+					return;
 				};
+
+				const { collectionId, count } = message;
+
+				if (collectionId) {
+					window.setTimeout(() => {
+						popupStore.open('objectManager', { 
+							data: { 
+								collectionId, 
+								type: I.ObjectManagerPopup.Favorites,
+							} 
+						});
+					}, popupStore.getTimeout() + 10);
+				};
+
+				analytics.event('Import', { middleTime: message.middleTime, type, count });
 
 				if (callBack) {	
 					callBack(message);
@@ -539,27 +562,35 @@ class Action {
 			};
 		});
 
-		analytics.event(isCut ? 'CutBlock' : 'CopyBlock');
+		analytics.event(isCut ? 'CutBlock' : 'CopyBlock', { count: blocks.length });
 	};
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
-		const { accountSpaceId } = authStore;
-		const space = UtilSpace.getSpaceview();
 		const deleted = UtilSpace.getSpaceviewBySpaceId(id);
 
 		if (!deleted) {
 			return;
 		};
 
-		analytics.event('ClickDeleteSpace', { route });
+		const { accountSpaceId } = authStore;
+		const { space } = commonStore;
+		const isOwner = UtilSpace.isMyOwner(id);
+		const name = UtilCommon.shorten(deleted.name, 32);
+		const suffix = isOwner ? 'Delete' : 'Leave';
+		const title = UtilCommon.sprintf(translate(`space${suffix}WarningTitle`), name);
+		const text = UtilCommon.sprintf(translate(`space${suffix}WarningText`), name);
+		const toast = UtilCommon.sprintf(translate(`space${suffix}Toast`), name);
+		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
+
+		analytics.event(`Click${suffix}Space`, { route });
 
 		popupStore.open('confirm', {
 			data: {
-				title: UtilCommon.sprintf(translate('spaceDeleteWarningTitle'), deleted.name),
-				text: translate('spaceDeleteWarningText'),
-				textConfirm: translate('commonDelete'),
+				title,
+				text,
+				textConfirm: confirm,
 				onConfirm: () => {
-					analytics.event('ClickDeleteSpaceWarning', { type: 'Delete', route });
+					analytics.event(`Click${suffix}SpaceWarning`, { type: suffix, route });
 
 					const cb = () => {
 						C.SpaceDelete(id, (message: any) => {
@@ -568,28 +599,35 @@ class Action {
 							};
 
 							if (!message.error.code) {
-								Preview.toastShow({ text: UtilCommon.sprintf(translate('spaceDeleteToast'), deleted.name) });
-								analytics.event('DeleteSpace', { type: deleted.spaceAccessType, route });
+								Preview.toastShow({ text: toast });
+								analytics.event(`${suffix}Space`, { type: deleted.spaceAccessType, route });
 							};
 						});
 					};
 
-					if (space.id == deleted.id) {
+					if (space == id) {
 						UtilRouter.switchSpace(accountSpaceId, '', cb);
 					} else {
 						cb();
 					};
 				},
 				onCancel: () => {
-					analytics.event('ClickDeleteSpaceWarning', { type: 'Cancel', route });
+					analytics.event(`Click${suffix}SpaceWarning`, { type: 'Cancel', route });
 				}
 			},
 		});
 	};
 
-	removeParticipant (spaceId: string, identity: string, name: string) {
-		C.SpaceParticipantRemove(spaceId, [ identity ], () => {
-			Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
+	leaveApprove (spaceId: string, identities: string[], name: string, route: string, callBack?: (message: any) => void) {
+		C.SpaceLeaveApprove(spaceId, identities, (message: any) => {
+			if (!message.error.code) {
+				Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
+				analytics.event('ApproveLeaveRequest', { route });
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 
@@ -613,9 +651,17 @@ class Action {
 		});
 	};
 
-	setIsFavorite (objectIds: string[], v: boolean, route: string) {
-		C.ObjectListSetIsFavorite(objectIds, v, () => {
+	setIsFavorite (objectIds: string[], v: boolean, route: string, callBack?: (message: any) => void) {
+		C.ObjectListSetIsFavorite(objectIds, v, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			analytics.event(v ? 'AddToFavorites' : 'RemoveFromFavorites', { count: objectIds.length, route });
+
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 
@@ -646,6 +692,63 @@ class Action {
 
 		C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, layout, limit, () => {
 			analytics.event('AddWidget', { type: layout });
+		});
+	};
+
+	membershipUpgrade () {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupConfirmMembershipUpgradeTitle'),
+				text: translate('popupConfirmMembershipUpgradeText'),
+				textConfirm: translate('popupConfirmMembershipUpgradeButton'),
+				onConfirm: () => keyboard.onMembershipUpgrade(),
+				canCancel: false
+			}
+		})
+	};
+
+	inviteRevoke (spaceId: string, callBack?: () => void) {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupConfirmRevokeLinkTitle'),
+				text: translate('popupConfirmRevokeLinkText'),
+				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					C.SpaceInviteRevoke(spaceId, () => {
+						if (callBack) {
+							callBack();
+						};
+
+						Preview.toastShow({ text: translate('toastInviteRevoke') });
+						analytics.event('RevokeShareLink');
+					});
+				},
+			},
+		});
+
+		analytics.event('ScreenRevokeShareLink');
+	};
+
+	welcome () {
+		popupStore.open('confirm', {
+			className: 'welcome',
+			preventCloseByClick: true,
+			preventCloseByEscape: true,
+			data: {
+				icon: 'welcome',
+				title: translate('popupConfirmWelcomeTitle'),
+				text: translate('popupConfirmWelcomeText'),
+				textConfirm: translate('popupConfirmWelcomeButton'),
+				canCancel: false,
+				onConfirm: () => {
+					popupStore.replace('confirm', 'usecase', {
+						onClose: () => {
+							Onboarding.start('dashboard', false, false);
+						}
+					});
+				},
+			},
 		});
 	};
 

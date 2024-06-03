@@ -19,11 +19,17 @@ contextBridge.exposeInMainWorld('Electron', {
 	userPath: () => app.getPath('userData'),
 	tmpPath,
 	logPath: () => path.join(app.getPath('userData'), 'logs'),
+	filePath: (...args) => path.join(...args),
+	dirname: fp => path.dirname(fp),
+	defaultPath: () => path.join(app.getPath('appData'), app.getName()),
 
 	currentWindow: () => getCurrentWindow(),
 	isMaximized: () => BrowserWindow.getFocusedWindow()?.isMaximized(),
 	isFocused: () => getCurrentWindow().isFocused(),
-	focus: () => getCurrentWindow().focus(),
+	focus: () => {
+		getCurrentWindow().focus();
+		app.focus({ steal: true });
+	},
 	getGlobal: (key) => getGlobal(key),
 	showOpenDialog: dialog.showOpenDialog,
 
@@ -40,19 +46,22 @@ contextBridge.exposeInMainWorld('Electron', {
 		return fp;
 	},
 
-	filePath (...args) {
-		return path.join(...args);
-	},
-
-	dirname: fp => path.dirname(fp),
-
 	on: (event, callBack) => ipcRenderer.on(event, callBack),
 	removeAllListeners: (event) => ipcRenderer.removeAllListeners(event),
+
 	Api: (id, cmd, args) => {
 		id = Number(id) || 0;
 		cmd = String(cmd || '');
 		args = args || [];
 
-		return ipcRenderer.invoke('Api', id, cmd, args);
+		let ret = new Promise(() => {});
+
+		try { 
+			ret = ipcRenderer.invoke('Api', id, cmd, args).catch((error) => {
+				console.log(error);
+			}); 
+		} catch (e) {};
+
+		return ret;
 	},
 });

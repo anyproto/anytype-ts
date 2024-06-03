@@ -1,58 +1,45 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
-import { Icon } from 'Component';
-import { I, UtilObject, keyboard, sidebar, translate } from 'Lib';
+import { Title, Button, Icon } from 'Component';
+import { I, translate } from 'Lib';
 
-const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I.HeaderComponent, object> {
-
-	constructor (props: I.HeaderComponent) {
-		super(props);
-
-		this.onOpen = this.onOpen.bind(this);
-	};
+class HeaderMainStore extends React.Component<I.HeaderComponent> {
 
 	render () {
-		const { tabs, tab, onTab, onTooltipShow, onTooltipHide } = this.props;
-		const cmd = keyboard.cmdSymbol();
+		const { renderLeftIcons, renderTabs, withBanner, onBanner, onBannerClose } = this.props;
+
+		let banner = null;
+		if (withBanner) {
+			banner = (
+				<div className="bannerWrapper">
+					<div className="banner" onClick={onBanner}>
+						<Icon className="close" onClick={onBannerClose} />
+
+						<div className="side left">
+							<Title text={translate('pageMainStoreBannerTitle')} />
+							<Button text={translate('pageMainStoreBannerButton')} className="c28" />
+						</div>
+
+						<div className="side right">
+							<div className="pic" />
+						</div>
+					</div>
+				</div>
+			);
+		};
 		
 		return (
 			<React.Fragment>
-				<div className="side left">
-					<Icon
-						className="toggle"
-						tooltip={translate('sidebarToggle')}
-						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
-						tooltipY={I.MenuDirection.Bottom}
-						onClick={() => sidebar.toggleExpandCollapse()}
-					/>
-					<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
-				</div>
+				{banner}
 
-				<div className="side center">
-					<div id="tabs" className="tabs">
-						{tabs.map((item: any) => (
-							<div 
-								key={`tab-store-${item.id}`} 
-								className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
-								onClick={() => onTab(item.id)}
-								onMouseOver={e => onTooltipShow(e, item.tooltip, item.tooltipCaption)} 
-								onMouseOut={onTooltipHide}
-							>
-								{item.name}
-							</div>
-						))}
-					</div>
+				<div className="sides">
+					<div className="side left">{renderLeftIcons()}</div>
+					<div className="side center">{renderTabs()}</div>
+					<div className="side right" />
 				</div>
-
-				<div className="side right" />
 			</React.Fragment>
 		);
 	};
 
-	onOpen () {
-		UtilObject.openRoute({ layout: I.ObjectLayout.Store });
-	};
-
-});
+};
 
 export default HeaderMainStore;

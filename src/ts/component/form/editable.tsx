@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { getRange, setRange } from 'selection-ranges';
-import { I, Mark, UtilCommon } from 'Lib';
+import { I, keyboard, Mark, UtilCommon } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -28,7 +28,6 @@ class Editable extends React.Component<Props> {
 
 	_isMounted = false;
 	node: any = null;
-	composition = false;
 	refPlaceholder = null;
 	refEditable = null;
 
@@ -180,48 +179,40 @@ class Editable extends React.Component<Props> {
 	};
 
 	onKeyDown (e: any): void {
-		const { onKeyDown } = this.props;
-
 		// Chinese IME is open
-		if (this.composition) {
+		if (keyboard.isComposition) {
 			return;
 		};
 
-		if (onKeyDown) {
-			onKeyDown(e);
+		if (this.props.onKeyDown) {
+			this.props.onKeyDown(e);
 		};
 	};
 
 	onKeyUp (e: any): void {
-		const { onKeyUp } = this.props;
-
 		// Chinese IME is open
-		if (this.composition) {
+		if (keyboard.isComposition) {
 			return;
 		};
 
-		if (onKeyUp) {
-			onKeyUp(e);
+		if (this.props.onKeyUp) {
+			this.props.onKeyUp(e);
 		};
 	};
 
 	onCompositionStart (e: any) {
-		const { onCompositionStart } = this.props;
+		keyboard.setComposition(true);
 
-		this.composition = true;
-
-		if (onCompositionStart) {
-			onCompositionStart(e);
+		if (this.props.onCompositionStart) {
+			this.props.onCompositionStart(e);
 		};
 	};
 
 	onCompositionEnd (e: any) {
-		const { onCompositionEnd } = this.props;
+		keyboard.setComposition(false);
 
-		this.composition = false;
-
-		if (onCompositionEnd) {
-			onCompositionEnd(e);
+		if (this.props.onCompositionEnd) {
+			this.props.onCompositionEnd(e);
 		};
 	};
 

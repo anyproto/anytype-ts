@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .progressBar {
     .bar { position: relative; overflow: hidden; height: 12px; border-radius: 4px; display: flex; flex-direction: row; gap: 0px 2px; }

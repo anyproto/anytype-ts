@@ -5,13 +5,12 @@ import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
 import { I, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
 import { detailStore, blockStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
 	
 	_isMounted = false;
 	node: any = null;
-	frame = 0;
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -259,16 +258,13 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { selection } = dataset || {};
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
-		const { _empty_ } = object;
 		const ids = selection ? selection.get(I.SelectType.Block) : [];
 
-		if (_empty_ || (targetBlockId == rootId)) {
+		if (object._empty_ || (targetBlockId == rootId) || (keyboard.withCommand(e) && ids.length)) {
 			return;
 		};
-		
-		if (!(keyboard.withCommand(e) && ids.length)) {
-			UtilObject.openEvent(e, object);
-		};
+
+		UtilObject.openEvent(e, object);
 	};
 	
 	onSelect (icon: string) {
@@ -346,11 +342,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	};
 
 	resize () {
-		if (this.frame) {
-			raf.cancel(this.frame);
-		};
-
-		this.frame = raf(() => {
+		window.setTimeout(() => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -359,11 +351,10 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			const node = $(this.node);
 			const card = node.find('.linkCard');
 			const icon = node.find('.iconObject');
-			const rect = (node.get(0) as Element).getBoundingClientRect();
 			const mw = getWrapperWidth();
 
 			icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
-			rect.width <= mw / 2 ? card.addClass('isVertical') : card.removeClass('isVertical');
+			node.width() <= mw / 2 ? card.addClass('isVertical') : card.removeClass('isVertical');
 		});
 	};
 

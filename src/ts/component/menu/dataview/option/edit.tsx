@@ -5,12 +5,12 @@ import $ from 'jquery';
 import { I, C, UtilMenu, Relation, translate, keyboard, analytics } from 'Lib';
 import { Filter, MenuItemVertical, Icon } from 'Component';
 import { menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
 	
-	refName: any = null;
-	color: string = null;
+	refName = null;
+	color = '';
 	timeout = 0;
 	n = -1;
 
@@ -166,7 +166,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 					icon: 'confirm',
 					bgColor: 'red',
 					title: translate('commonAreYouSure'),
-					text: translate('popupRelationValueRemoveText'),
+					text: translate('popupConfirmRelationOptionRemoveText'),
 					textConfirm: translate('commonDelete'),
 					onConfirm: () => {
 						this.remove();
@@ -210,7 +210,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			return;
 		};
 
-		C.ObjectSetDetails(option.id, [ 
+		C.ObjectListSetDetails([ option.id ], [ 
 			{ key: 'name', value },
 			{ key: 'relationOptionColor', value: this.color },
 		]);

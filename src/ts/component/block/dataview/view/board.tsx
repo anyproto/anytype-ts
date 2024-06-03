@@ -7,7 +7,7 @@ import { I, C, UtilCommon, Dataview, keyboard, Relation, translate } from 'Lib';
 import { dbStore, detailStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PADDING = 46;
 
@@ -468,10 +468,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			dbStore.recordDelete(oldSubId, '', record.id);
 			dbStore.recordAdd(newSubId, '', record.id, this.newIndex);
 
-			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], () => {
+			C.ObjectListSetDetails([ record.id ], [ { key: view.groupRelationKey, value: newGroup.value } ], () => {
 				orders = [
-					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') },
-					{ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecords(newSubId, '') }
+					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecordIds(oldSubId, '') },
+					{ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecordIds(newSubId, '') }
 				];
 
 				objectOrderUpdate(orders, records);
@@ -485,7 +485,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				this.newIndex -= 1;
 			};
 
-			records = arrayMove(dbStore.getRecords(oldSubId, ''), current.index, this.newIndex);
+			records = arrayMove(dbStore.getRecordIds(oldSubId, ''), current.index, this.newIndex);
 			orders = [ { viewId: view.id, groupId: current.groupId, objectIds: records } ];
 
 			objectOrderUpdate(orders, records, (message) => {
@@ -565,8 +565,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	resize () {
 		const { rootId, block, isPopup, isInline } = this.props;
-		const element = blockStore.getMapElement(rootId, block.id);
-		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const parent = blockStore.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const view = node.find('.viewContent');
@@ -580,7 +579,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			const maxWidth = cw - PADDING * 2;
 			const margin = width >= maxWidth ? (cw - maxWidth) / 2 : 0;
 
-			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 });
+			scroll.css({ width: cw, marginLeft: -margin, paddingLeft: margin / 2 });
 			view.css({ width: width < maxWidth ? maxWidth : width + margin / 2 + size.margin + 4 });
 		} else 
 		if (parent && (parent.isPage() || parent.isLayoutDiv())) {

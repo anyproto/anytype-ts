@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, C, UtilData, analytics, UtilCommon, translate, UtilObject, keyboard, Action } from 'Lib';
+import { I, C, UtilData, analytics, UtilCommon, translate, UtilObject, keyboard, Action, UtilMenu } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
 import { detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 enum Tab {
 	Gallery	 = 0,
@@ -221,11 +221,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			case Tab.Library: {
 				const filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
-					{ operator: I.FilterOperator.And, relationKey: 'widthInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 1000 },
-					{ operator: I.FilterOperator.And, relationKey: 'heightInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 500 },
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 				];
 
 				this.setState({ isLoading: true });
@@ -234,8 +233,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					filters,
 					sorts,
 					fullText: filter,
-					limit: 300,
+					limit: 1000,
 				}, (message: any) => {
+					this.setState({ isLoading: false });
+
 					if (message.error.code) {
 						this.setState({ isLoading: false });
 						return;
@@ -251,7 +252,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 						});
 					});
 
-					this.setState({ isLoading: false });
+					this.forceUpdate();
 				});
 				break;
 			};
@@ -330,8 +331,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		switch (this.tab) {
 			case Tab.Gallery: {
 				sections = sections.concat([
-					{ name: translate('menuBlockCoverGradients'), children: UtilData.coverGradients() },
-					{ name: translate('menuBlockCoverSolidColors'), children: UtilData.coverColors() },
+					{ name: translate('menuBlockCoverGradients'), children: UtilMenu.getCoverGradients() },
+					{ name: translate('menuBlockCoverSolidColors'), children: UtilMenu.getCoverColors() },
 				]);
 				break;
 			};
@@ -344,7 +345,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				break;
 			};
 		};
-
 		return sections;
 	};
 
@@ -392,7 +392,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			preventCommonDrop(false);
 			
 			if (!message.error.code) {
-				UtilObject.setCover(rootId, I.CoverType.Upload, message.obejctId);
+				UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
 			};
 		
 			close();

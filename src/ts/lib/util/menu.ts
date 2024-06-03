@@ -1,7 +1,7 @@
 import $ from 'jquery';
-import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action } from 'Lib';
+import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
 import { blockStore, menuStore, detailStore, commonStore, dbStore, authStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class UtilMenu {
 
@@ -110,7 +110,8 @@ class UtilMenu {
 	getBlockObject () {
 		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
-			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }
 		];
 
 		items.sort((c1, c2) => UtilData.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
@@ -201,7 +202,6 @@ class UtilMenu {
 		if (hasFile) {
 			items = items.concat([
 				{ id: 'download', icon: 'download', name: translate('commonDownload') },
-				{ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') },
 				//{ id: 'rename', icon: 'rename', name: translate('libMenuRename') ),
 				//{ id: 'replace', icon: 'replace', name: translate('libMenuReplace') },
 			]);
@@ -209,7 +209,7 @@ class UtilMenu {
 
 		if (hasDataview) {
 			const isCollection = Dataview.isCollection(rootId, blockId);
-			const sourceName = isCollection ? translate('commonLCCollection') : translate('commonLCSet');
+			const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
 
 			items.push({ id: 'dataviewSource', icon: 'source', name: UtilCommon.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
 		};
@@ -241,18 +241,36 @@ class UtilMenu {
 		return items;
 	};
 	
-	getAlign (hasQuote: boolean) {
-		let ret = [
-			{ id: I.BlockHAlign.Left, icon: 'align left', name: translate('commonAlignLeft'), isAlign: true },
-			{ id: I.BlockHAlign.Center, icon: 'align center', name: translate('commonAlignCenter'), isAlign: true },
-			{ id: I.BlockHAlign.Right, icon: 'align right', name: translate('commonAlignRight'), isAlign: true },
+	getHAlign (restricted: I.BlockHAlign[]) {
+		let ret: any[] = [
+			{ id: I.BlockHAlign.Left },
+			{ id: I.BlockHAlign.Center },
+			{ id: I.BlockHAlign.Right },
+			{ id: I.BlockHAlign.Justify },
 		];
 
-		if (hasQuote) {
-			ret = ret.filter(it => it.id != I.BlockHAlign.Center);
+		if (restricted.length) {
+			ret = ret.filter(it => !restricted.includes(it.id));
 		};
 
-		return ret;
+		return ret.map((it: any) => {
+			it.icon = UtilData.alignHIcon(it.id);
+			it.name = translate(`commonHAlign${I.BlockHAlign[it.id]}`);
+			it.isAlign = true;
+			return it;
+		});
+	};
+
+	getVAlign () {
+		return [
+			{ id: I.BlockVAlign.Top },
+			{ id: I.BlockVAlign.Middle },
+			{ id: I.BlockVAlign.Bottom },
+		].map((it: any) => {
+			it.icon = UtilData.alignVIcon(it.id);
+			it.name = translate(`commonVAlign${I.BlockVAlign[it.id]}`);
+			return it;
+		});
 	};
 
 	getLayouts () {
@@ -282,16 +300,14 @@ class UtilMenu {
 	};
 
 	getViews () {
-		const { config } = commonStore;
-
 		return [
 			{ id: I.ViewType.Grid },
 			{ id: I.ViewType.Gallery },
 			{ id: I.ViewType.List },
 			{ id: I.ViewType.Board },
 			{ id: I.ViewType.Calendar },
-			config.experimental ? { id: I.ViewType.Graph } : null,
-		].filter(it => it).map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
+			{ id: I.ViewType.Graph },
+		].map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
 	};
 
 	viewContextMenu (param: any) {
@@ -363,6 +379,22 @@ class UtilMenu {
 			};
 		};
 		return options.map(id => ({ id: String(id), name: id }));
+	};
+
+	getCoverColors () {
+		return [ 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'green', 'lightgrey', 'darkgrey', 'black' ].map(id => ({
+			id,
+			type: I.CoverType.Color,
+			name: translate(`textColor-${id}`),
+		}));
+	};
+
+	getCoverGradients () {
+		return [ 'pinkOrange', 'bluePink', 'greenOrange', 'sky', 'yellow', 'red', 'blue', 'teal' ].map(id => ({
+			id,
+			type: I.CoverType.Gradient,
+			name: translate(`gradientColor-${id}`),
+		}));
 	};
 	
 	sectionsFilter (sections: any[], filter: string) {
@@ -528,7 +560,7 @@ class UtilMenu {
 						};
 					};
 				},
-				onSelect: (e, item: any) => {
+				onSelect: (e: any, item: any) => {
 					if (item.arrow) {
 						return;
 					};
@@ -605,26 +637,29 @@ class UtilMenu {
 
 	spaceContext (space: any, param: any) {
 		const { accountSpaceId } = authStore;
-		const { targetSpaceId, spaceAccountStatus, spaceAccessType } = space;
+		const { targetSpaceId } = space;
 
 		if ((targetSpaceId == accountSpaceId)) {
 			return;
 		};
 
-		const options: any[] = [];
-		const isOwner = UtilSpace.isOwner(targetSpaceId);
-		const isJoining = spaceAccountStatus == I.SpaceStatus.Joining;
-		const isRemoving = spaceAccountStatus == I.SpaceStatus.Removing;
+		const isOwner = UtilSpace.isMyOwner(targetSpaceId);
+		const isLocalNetwork = UtilData.isLocalNetwork();
+		const { isOnline } = commonStore;
 
-		if (UtilSpace.isOwner(targetSpaceId) && (spaceAccessType == I.SpaceType.Shared)) {
+		let options: any[] = [];
+
+		if (isOwner && space.isShared && !isLocalNetwork && isOnline) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
-		if (isRemoving) {
-			options.push({ id: 'export', name: translate('popupSettingsSpaceIndexExport') });
-		};
-
-		if (isJoining) {
+		if (space.isAccountRemoving) {
+			options = options.concat([
+				{ id: 'export', name: translate('popupSettingsSpaceIndexExport') },
+				{ id: 'remove', color: 'red', name: translate('commonDelete') },
+			]);
+		} else 
+		if (space.isAccountJoining) {
 			options.push({ id: 'cancel', color: 'red', name: translate('popupSettingsSpacesCancelRequest') });
 		} else {
 			options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });
@@ -638,7 +673,7 @@ class UtilMenu {
 					window.setTimeout(() => {
 						switch (element.id) {
 							case 'export': {
-								Action.export(targetSpaceId, [], I.ExportType.Markdown, { 
+								Action.export(targetSpaceId, [], I.ExportType.Protobuf, { 
 									zip: true, 
 									nested: true, 
 									files: true, 
@@ -669,14 +704,57 @@ class UtilMenu {
 								});
 								break;
 							};
+
+							case 'revoke': {
+								Action.inviteRevoke(targetSpaceId);
+								break;
+							};
 						};
 
 					}, menuStore.getTimeout());
 				},
 			},
 		});
-
 	};
+
+	inviteContext (param: any) {
+		const { isOnline } = commonStore
+		const { containerId, cid, key, onInviteRevoke } = param || {};
+		const isOwner = UtilSpace.isMyOwner();
+		const isLocalNetwork = UtilData.isLocalNetwork();
+
+		const options: any[] = [
+			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
+		];
+
+		if (isOnline && isOwner && !isLocalNetwork) {
+			options.push({ id: 'revoke', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
+		};
+
+		menuStore.open('select', {
+			element: `#${containerId} #button-more-link`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'qr': {
+							popupStore.open('inviteQr', { data: { link: UtilSpace.getInviteLink(cid, key) } });
+							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
+							break;
+						};
+
+						case 'revoke': {
+							Action.inviteRevoke(commonStore.space, onInviteRevoke);
+							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
+							break;
+						};
+					};
+				},
+			}
+		});
+	};
+
 };
 
 export default new UtilMenu();

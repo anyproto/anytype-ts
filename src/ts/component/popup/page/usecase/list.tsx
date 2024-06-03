@@ -35,6 +35,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			fixedWidth: true,
 		});
 
+		this.onBanner = this.onBanner.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onCategory = this.onCategory.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
@@ -60,15 +61,27 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 			textEmpty = UtilCommon.sprintf(translate('popupUsecaseListEmptyCategory'), category.name);
 		};
 
-		const Category = (item: any) => (
-			<div 
-				className={[ 'item', (category && (category?.id == item.id)) ? 'active' : '' ].join(' ')} 
-				onClick={() => this.onCategory(item)}
-			>
-				{item.icon ? <Icon className={item.icon} /> : ''}
-				{item.name}
-			</div>
-		);
+		const Category = (item: any) => {
+			const cn = [ 'item' ];
+
+			if (category && (category?.id == item.id)) {
+				cn.push('active');
+			};
+
+			if (item.id == 'collaboration') {
+				cn.push('hl');
+			};
+
+			return (
+				<div 
+					className={cn.join(' ')} 
+					onClick={() => this.onCategory(item)}
+				>
+					{item.icon ? <Icon className={item.icon} /> : ''}
+					{item.name}
+				</div>
+			);
+		};
 
 		const Item = (item: any) => {
 			const screenshot = item.screenshots.length ? item.screenshots[0] : '';
@@ -123,7 +136,12 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 					<Icon id="arrowRight" className="arrow right" onClick={() => this.onArrow(1)} />
 				</div>
 
+				<div className="banner" onClick={this.onBanner}>
+					<div className="inner">{translate('popupUsecaseBannerText')}</div>
+				</div>
+
 				<div className="mid">
+
 					<Title text={translate('popupUsecaseListTitle')} />
 					<Label text={translate('popupUsecaseListText')} />
 
@@ -318,6 +336,15 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		this.checkPage();
 
 		inner.css({ transform: `translate3d(${-this.page * 100}%, 0px, 0px)` });
+	};
+
+	onBanner () {
+		const { gallery } = commonStore;
+		const category = gallery.categories.find(it => it.id == 'collaboration');
+
+		if (category) {
+			this.onCategory(category);
+		};
 	};
 
 };

@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, UtilCommon, analytics } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const Tags = {};
 for (const i in I.MarkType) {
@@ -27,37 +27,27 @@ const Patterns = {
 
 	'--': '—',
 
-	'(c)': '©',
+	//'(c)': '©',
 	'(r)': '®',
 	'(tm)': '™',
 	'...': '…',
 };
 
 const Order: any = {};
-
-Order[I.MarkType.Object]	 = 0;
-Order[I.MarkType.Emoji]		 = 1;
-Order[I.MarkType.Mention]	 = 2;
-Order[I.MarkType.Link]		 = 3;
-Order[I.MarkType.Underline]	 = 4;
-Order[I.MarkType.Strike]	 = 5;
-Order[I.MarkType.Italic]	 = 6;
-Order[I.MarkType.Bold]		 = 7;
-Order[I.MarkType.Color]		 = 8;
-Order[I.MarkType.BgColor]	 = 9;
-Order[I.MarkType.Code]		 = 10;
-
-enum Overlap {
-	Equal		 = 0,		 // a == b
-	Outer		 = 1,		 // b inside a
-	Inner		 = 2,		 // a inside b
-	InnerLeft	 = 3,		 // a inside b, left side eq
-	InnerRight	 = 4,		 // a inside b, right side eq
-	Left		 = 5,		 // a-b
-	Right		 = 6,		 // b-a
-	Before		 = 7,		 // a ... b
-	After		 = 8,		 // b ... a
-};
+[
+	I.MarkType.Change,
+	I.MarkType.Object,
+	I.MarkType.Emoji,
+	I.MarkType.Mention,
+	I.MarkType.Link,
+	I.MarkType.Underline,
+	I.MarkType.Strike,
+	I.MarkType.Italic,
+	I.MarkType.Bold,
+	I.MarkType.Color,
+	I.MarkType.BgColor,
+	I.MarkType.Code,
+].forEach((type, i) => Order[type] = i);
 
 class Mark {
 
@@ -103,7 +93,7 @@ class Mark {
 			let del = false;
 			
 			switch (overlap) {
-				case Overlap.Equal:
+				case I.MarkOverlap.Equal:
 					if (!mark.param) {
 						del = true;
 					} else {
@@ -112,11 +102,11 @@ class Mark {
 					add = false;
 					break;
 					
-				case Overlap.Outer:
+				case I.MarkOverlap.Outer:
 					del = true;
 					break;
 				
-				case Overlap.InnerLeft:
+				case I.MarkOverlap.InnerLeft:
 					el.range.from = mark.range.to;
 
 					if (!mark.param) {
@@ -124,14 +114,14 @@ class Mark {
 					};
 					break;
 					
-				case Overlap.InnerRight:
+				case I.MarkOverlap.InnerRight:
 					el.range.to = mark.range.from;
 					if (!mark.param) {
 						add = false;
 					};
 					break;
 					
-				case Overlap.Inner:
+				case I.MarkOverlap.Inner:
 					map[type].push({ type: el.type, param: el.param, range: { from: mark.range.to, to: el.range.to } });
 					
 					el.range.to = mark.range.from;
@@ -141,7 +131,7 @@ class Mark {
 					i = map[type].length;
 					break;
 					
-				case Overlap.Left:
+				case I.MarkOverlap.Left:
 					if (el.param == mark.param) {
 						el.range.from = mark.range.from;
 						add = false;
@@ -150,7 +140,7 @@ class Mark {
 					};
 					break;
 					
-				case Overlap.Right:
+				case I.MarkOverlap.Right:
 					if (![ I.MarkType.Emoji ].includes(el.type) && (el.param == mark.param)) {
 						el.range.to = mark.range.to;
 						mark = el;
@@ -161,7 +151,7 @@ class Mark {
 					};
 					break;
 					
-				case Overlap.Before:
+				case I.MarkOverlap.Before:
 					i = map[type].length;
 					break;
 			};
@@ -244,14 +234,14 @@ class Mark {
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
 		const map = UtilCommon.mapToArray(marks, 'type');
+		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
 
 		if (!map[type] || !map[type].length) {
 			return null;
 		};
 		
 		for (const mark of map[type]) {
-			const overlap = this.overlap(range, mark.range);
-			if ([ Overlap.Inner, Overlap.InnerLeft, Overlap.InnerRight, Overlap.Equal ].indexOf(overlap) >= 0) {
+			if (overlaps.includes(this.overlap(range, mark.range))) {
 				return mark;
 			};
 		};
@@ -280,7 +270,6 @@ class Mark {
 
 		const r = text.split('');
 		const parts: I.Mark[] = [];
-		let borders: any[] = [];
 		const ranges: any[] = [];
 		const hasParam = [ 
 			I.MarkType.Link, 
@@ -290,6 +279,9 @@ class Mark {
 			I.MarkType.Mention, 
 			I.MarkType.Emoji,
 		];
+		const priorityRender = [ I.MarkType.Mention, I.MarkType.Emoji ];
+
+		let borders: any[] = [];
 		
 		for (const mark of marks) {
 			borders.push(Number(mark.range.from));
@@ -354,16 +346,16 @@ class Mark {
 			};
 		};
 
-		// Render mentions
+		// Render priority marks
 		for (const mark of marks) {
-			if (mark.type == I.MarkType.Mention) {
+			if (priorityRender.includes(mark.type)) {
 				render(mark);
 			};
 		};
 
-		// Render everything except mentions
+		// Render everything except priority marks
 		for (const mark of parts) {
-			if (mark.type != I.MarkType.Mention) {
+			if (!priorityRender.includes(mark.type)) {
 				render(mark);
 			};
 		};
@@ -373,6 +365,7 @@ class Mark {
 			r[i] = r[i].replace(/<$/, '&lt;');
 			r[i] = r[i].replace(/^>/, '&gt;');
 		};
+
 		return r.join('');
 	};
 
@@ -414,38 +407,38 @@ class Mark {
 		const marks: I.Mark[] = [];
 
 		html = obj.html();
-		html = html.replace(/data-range="[^"]+"/g, '');
-		html = html.replace(/contenteditable="[^"]+"/g, '');
 
 		let text = html;
 
+		text = text.replace(/data-range="[^"]+"/g, '');
+		text = text.replace(/contenteditable="[^"]+"/g, '');
+
 		// TODO: find classes by color or background
-		html.replace(/<font([^>]*?)>([^<]*)(?:<\/font>)?/g, (s: string, p1: string, p2: string) => {
-			text = text.replace(s, p2);
-			return '';
+		text = text.replace(/<font(?:[^>]*?)>([^<]*)(?:<\/font>)?/g, (s: string, p: string) => {
+			return p;
 		});
-		html.replace(/<span style="background-color: ([^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p1: string, p2: string) => {
-			text = text.replace(s, p2);
-			return '';
+		text = text.replace(/<span style="background-color:(?:[^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p: string) => {
+			return p;
+		});
+		text = text.replace(/<span style="font-weight:(?:[^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p: string) => {
+			return p;
 		});
 
 		// Fix browser markup bug
-		html.replace(/<\/?(i|b|font|search)[^>]*>/g, (s: string, p: string) => {
+		text = text.replace(/<\/?(i|b|font|search)[^>]*>/g, (s: string, p: string) => {
 			let r = '';
 			if (p == 'i') r = this.getTag(I.MarkType.Italic);
 			if (p == 'b') r = this.getTag(I.MarkType.Bold);
 			p = r ? s.replace(p, r) : '';
-			text = text.replace(s, p);
-			return '';
+			return p;
 		});
 
 		// Fix html special symbols
-		html.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
+		text = text.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
 			if (p == '&lt;') p = '<';
 			if (p == '&gt;') p = '>';
 			if (p == '&amp;') p = '&';
-			text = text.replace(s, p);
-			return '';
+			return p;
 		});
 
 		html = text;
@@ -492,6 +485,7 @@ class Mark {
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean): { marks: I.Mark[], text: string, adjustMarks: boolean } {
 		const test = /((^|\s)_|[`\*~\[]){1}/.test(html);
 		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
+		const overlaps = [ I.MarkOverlap.Left, I.MarkOverlap.Right, I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight ];
 
 		if (!test) {
 			return { marks, text: html, adjustMarks };
@@ -519,7 +513,8 @@ class Mark {
 
 				let check = true;
 				for (const mark of checked) {
-					if ((mark.range.from <= from) && (mark.range.to >= to)) {
+					const overlap = this.overlap({ from, to }, mark.range);
+					if (overlaps.includes(overlap)) {
 						check = false;
 						break;
 					};
@@ -584,6 +579,7 @@ class Mark {
 		const keys = Object.keys(Patterns).map(it => UtilCommon.regexEscape(it));
 		const reg = new RegExp(`(${keys.join('|')})`, 'g');
 		const test = reg.test(html);
+		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
 
 		if (!test) {
 			return { marks, text: html, adjustMarks: false };
@@ -597,7 +593,8 @@ class Mark {
 		html.replace(reg, (s: string, p: string, o: number) => {
 			let check = true;
 			for (const mark of checked) {
-				if ((mark.range.from <= o) && (mark.range.to >= o)) {
+				const overlap = this.overlap({ from: o, to: o }, mark.range);
+				if (overlaps.includes(overlap)) {
 					check = false;
 					break;
 				};
@@ -657,32 +654,32 @@ class Mark {
 		return this.toggle(marks, newMark);
 	};
 	
-	overlap (a: I.TextRange, b: I.TextRange): Overlap {
+	overlap (a: I.TextRange, b: I.TextRange): I.MarkOverlap {
 		if (a.from == b.from && a.to == b.to) {
-			return Overlap.Equal;
+			return I.MarkOverlap.Equal;
 		} else
 		if (a.to < b.from) {
-			return Overlap.Before;
+			return I.MarkOverlap.Before;
 		} else
 		if (a.from > b.to) {
-			return Overlap.After;
+			return I.MarkOverlap.After;
 		} else
 		if ((a.from <= b.from) && (a.to >= b.to)) {
-			return Overlap.Outer;
+			return I.MarkOverlap.Outer;
 		} else
 		if ((a.from > b.from) && (a.to < b.to)) {
-			return Overlap.Inner;
+			return I.MarkOverlap.Inner;
 		} else
 		if ((a.from == b.from) && (a.to < b.to)) {
-			return Overlap.InnerLeft;
+			return I.MarkOverlap.InnerLeft;
 		} else
 		if ((a.from > b.from) && (a.to == b.to)) {
-			return Overlap.InnerRight;
+			return I.MarkOverlap.InnerRight;
 		} else
 		if ((a.from < b.from) && (a.to >= b.from)) {
-			return Overlap.Left;
+			return I.MarkOverlap.Left;
 		} else {
-			return Overlap.Right;
+			return I.MarkOverlap.Right;
 		};
 	};
 

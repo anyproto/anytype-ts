@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 @keyframes shake1 {
 	0% { transform: rotate(-0.5deg); }
@@ -46,8 +46,9 @@
 	> .dropTarget.lastTarget.isOver::before { top: -7px; }
 }
 
+.listWidget.isEditing { padding-bottom: 58px; }
 .listWidget.isEditing {
-	> .buttons { position: fixed; bottom: 0px; left: 0px; padding: 16px; }
+	> .buttons { position: fixed; bottom: 0px; left: 0px; padding: 0px 16px 16px 16px; }
 	
 	.widget:not(.isEditable) { opacity: 0.5; }
 	.widget:not(.isEditable) {

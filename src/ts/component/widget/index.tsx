@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
 import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace } from 'Lib';
 import { blockStore, detailStore, menuStore, dbStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import WidgetSpace from './space';
 import WidgetList from './list';
@@ -25,6 +25,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	node = null;
 	ref = null;
 	timeout = 0;
+	subId = '';
 
 	constructor (props: Props) {
 		super(props);
@@ -36,7 +37,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.onOptions = this.onOptions.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
-		this.isCollection = this.isCollection.bind(this);
+		this.isSystemTarget = this.isSystemTarget.bind(this);
 		this.getData = this.getData.bind(this);
 		this.getLimit = this.getLimit.bind(this);
 		this.sortFavorite = this.sortFavorite.bind(this);
@@ -57,15 +58,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { targetBlockId } = child?.content || {};
 		const cn = [ 'widget', UtilCommon.toCamelCase(`widget-${I.WidgetLayout[layout]}`) ];
 		const object = this.getObject();
-		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !UtilCommon.isPlatformMac());
+
+		const withSelect = !this.isSystemTarget() && (!isPreview || !UtilCommon.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
 		const withPlus = this.isPlusAllowed();
+		const canDrop = object && !this.isSystemTarget() && !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 
 		const props = {
 			...this.props,
 			parent: block,
 			block: child,
-			isCollection: this.isCollection,
+			isSystemTarget: this.isSystemTarget,
 			getData: this.getData,
 			getLimit: this.getLimit,
 			sortFavorite: this.sortFavorite,
@@ -122,7 +125,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (layout != I.WidgetLayout.Space) {
-			const onClick = this.isCollection(targetBlockId) ? this.onSetPreview : this.onClick;
+			const onClick = this.isSystemTarget() ? this.onSetPreview : this.onClick;
 
 			head = (
 				<div className="head">
@@ -133,6 +136,22 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					{buttons}
 				</div>
 			);
+
+			if (canDrop) {
+				head = (
+					<DropTarget
+						cacheKey={[ block.id, object.id ].join('-')}
+						id={object.id}
+						rootId={targetBlockId}
+						targetContextId={object.id}
+						dropType={I.DropType.Menu}
+						canDropMiddle={true}
+						className="targetHead"
+					>
+						{head}
+					</DropTarget>
+				);
+			};
 
 			targetTop = (
 				<DropTarget 
@@ -306,11 +325,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		const { targetBlockId } = child.content;
 		const isSetOrCollection = UtilObject.isSetLayout(object.layout);
+		const isFavorite = targetBlockId == Constant.widgetId.favorite;
 
 		let details: any = {};
 		let flags: I.ObjectFlag[] = [];
-		let typeKey: string = '';
-		let templateId: string = '';
+		let typeKey = '';
+		let templateId = '';
 		let createWithLink: boolean = false;
 		let isCollection = false;
 
@@ -352,7 +372,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					typeKey = type.uniqueKey;
 					templateId = type.defaultTemplateId;
 
-					if (!this.isCollection(targetBlockId)) {
+					if (!this.isSystemTarget()) {
 						details.type = type.id;
 						createWithLink = true;
 					};
@@ -384,8 +404,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 			const object = message.details;
 
-			if (targetBlockId == Constant.widgetId.favorite) {
-				Action.setIsFavorite([ object.id ], true, 'widget');
+			if (isFavorite) {
+				Action.setIsFavorite([ object.id ], true, analytics.route.widget, () => {
+					window.setTimeout(() => this.sliceFavorite(), 40);
+				});
 			};
 
 			if (isCollection) {
@@ -396,9 +418,18 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (createWithLink) {
-			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, 'Widget', callBack);
+			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, flags, analytics.route.widget, callBack);
 		} else {
-			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, callBack);
+			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				const object = message.details;
+
+				analytics.createObject(object.type, object.layout, analytics.route.widget, message.middleTime);
+				callBack(message);
+			});
 		};
 	};
 
@@ -406,7 +437,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!UtilSpace.canParticipantWrite()) {
+		if (!UtilSpace.canMyParticipantWrite()) {
 			return;
 		};
 
@@ -514,6 +545,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
+		this.subId = subId;
+
 		const { targetBlockId } = child.content;
 		const space = UtilSpace.getSpaceview();
 		const templateType = dbStore.getTemplateType();
@@ -564,15 +597,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			limit,
 			keys: Constant.sidebarRelationKeys,
 		}, () => {
-			if (targetBlockId == Constant.widgetId.favorite) {
-				let records = this.sortFavorite(dbStore.getRecords(subId, ''));
-
-				if (!isPreview) {
-					records = records.slice(0, this.getLimit(block.content));
-				};
-
-				dbStore.recordsSet(subId, '', records);
-			};
+			this.sliceFavorite();
 
 			if (callBack) {
 				callBack();
@@ -594,6 +619,18 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		});
 	};
 
+	sliceFavorite () {
+		const { block, isPreview } = this.props;
+
+		let records = this.sortFavorite(dbStore.getRecordIds(this.subId, ''));
+
+		if (!isPreview) {
+			records = records.slice(0, this.getLimit(block.content));
+		};
+
+		dbStore.recordsSet(this.subId, '', records);
+	};
+
 	onSetPreview () {
 		const { block, isPreview, setPreview } = this.props;
 		const object = this.getObject();
@@ -603,7 +640,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
-		const { targetBlockId } = child.content;
 		const data: any = { view: 'Widget' };
 
 		let blockId = '';
@@ -612,7 +648,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (!isPreview) {
 			blockId = block.id;
 			event = 'SelectHomeTab';
-			data.tab = this.isCollection(targetBlockId) ? object.name : analytics.typeMapper(object.type);
+			data.tab = this.isSystemTarget() ? object.name : analytics.typeMapper(object.type);
 		};
 
 		setPreview(blockId);
@@ -620,20 +656,29 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	onDragEnd () {
-		const target = this.getObject();
+		const { block } = this.props;
+		const { layout } = block.content;
 
-		analytics.event('ReorderWidget', { target });
+		analytics.event('ReorderWidget', {
+			layout,
+			params: { target: this.getObject() }
+		});
 	};
 
-	isCollection (blockId: string) {
-		return Object.values(Constant.widgetId).includes(blockId);
+	isSystemTarget (): boolean {
+		const target = this.getTargetBlock();
+		if (!target) {
+			return false;
+		};
+
+		return Object.values(Constant.widgetId).includes(target.getTargetObjectId());
 	};
 
 	isPlusAllowed (): boolean {
 		const object = this.getObject();
 		const { block, isEditing } = this.props;
 
-		if (!object || isEditing || !UtilSpace.canParticipantWrite()) {
+		if (!object || isEditing || !UtilSpace.canMyParticipantWrite()) {
 			return false;
 		};
 
@@ -680,7 +725,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];
 		};
-		return isPreview ? 0 : limit;
+		return isPreview ? Constant.limit.menuRecords : limit;
 	};
 
 	addGroupLabels (records: any[], widgetId: string) {

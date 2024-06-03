@@ -5,7 +5,7 @@ import { observable } from 'mobx';
 import { ObjectType, Cell } from 'Component';
 import { I, C, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
@@ -23,7 +23,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	node = null;
 
 	public static defaultProps = {
-		iconSize: 24,
+		iconSize: 20,
 	};
 
 	constructor (props: Props) {
@@ -44,69 +44,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	render () {
-		const { rootId, block, iconSize, isPopup, readonly } = this.props;
+		const { rootId, block, iconSize, isPopup } = this.props;
 		const storeId = this.getStoreId();
 		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
 		const object = detailStore.get(rootId, storeId, featuredRelations);
-		const type = detailStore.get(rootId, object.type, [ 'name', 'isDeleted' ]);
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();
-		const bullet = <div className="bullet" />;
-		const typeName = (
-			<div className="name">
-				<ObjectType object={type} />
-			</div>
-		);
-
-		let typeRelation = null;
-
-		if (featuredRelations.includes('type')) {
-			if (UtilObject.isTemplate(object.type)) {
-				typeRelation = (
-					<span className="cell">
-						<div className="cellContent type disabled">
-							{typeName}
-						</div>
-					</span>
-				);
-			} else {
-				typeRelation = (
-					<span className="cell canEdit">
-						<div
-							id={Relation.cellId(PREFIX, 'type', object.id)}
-							className="cellContent type"
-							onClick={this.onType}
-							onMouseEnter={e => this.onMouseEnter(e, 'type')}
-							onMouseLeave={this.onMouseLeave}
-						>
-							{typeName}
-						</div>
-					</span>
-				);
-			};
-		};
-
-		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
-		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
-		const setOfString = [];
-		const tl = types.length;
-		const rl = relations.length;
-
-		if (tl) {
-			setOfString.push(UtilCommon.sprintf('%s: %s', UtilCommon.plural(tl, translate('pluralObjectType')), types.slice(0, SOURCE_LIMIT).join(', ')));
-
-			if (tl > SOURCE_LIMIT) {
-				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
-			};
-		};
-		if (rl) {
-			setOfString.push(`${UtilCommon.plural(rl, translate('pluralUCRelation'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
-
-			if (rl > SOURCE_LIMIT) {
-				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);
-			};
-		};
 
 		return (
 			<div 
@@ -118,30 +62,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			>
 				<span id="onboardingAnchor" />
 
-				{typeRelation}
-
-				{featuredRelations.includes('setOf') ? (
-					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
-						{bullet}
-						<div
-							id={Relation.cellId(PREFIX, 'setOf', object.id)}
-							className="cellContent setOf"
-							onClick={this.onSource}
-							onMouseEnter={e => this.onMouseEnter(e, 'setOf', 'Query')}
-							onMouseLeave={this.onMouseLeave}
-						>
-							{setOfString.length ? (
-								<div className="name">
-									{setOfString.map((it: any, i: number) => (
-										<div className="element" key={i}>{it}</div>
-									))}
-								</div>
-							) : (
-								<div className="empty">{translate('blockFeaturedQuery')}</div>
-							)}
-						</div>
-					</span>
-				) : ''}
+				{this.renderType()}
+				{this.renderSetOf()}
+				{this.renderIdentity()}
 
 				{items.map((relationKey: any, i: any) => {
 					const id = Relation.cellId(PREFIX + block.id, relationKey, object.id);
@@ -160,21 +83,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					};
 
 					if ([ 'links', 'backlinks' ].includes(relationKey)) {
-						const options = Relation.getArrayValue(value).map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
-						const l = options.length;
-
-						if (!l) {
-							return null;
-						};
-
-						return (
-							<span id={id} className="cell" key={i} onClick={e => this.onLinks(e, relationKey)}>
-								{bullet}
-								<div className="cellContent">
-									{`${l} ${UtilCommon.plural(l, translate(UtilCommon.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
-								</div>
-							</span>
-						);
+						return this.renderLinks(relationKey, i);
 					};
 
 					return (
@@ -186,7 +95,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								this.onRelation(e, relationKey);
 							}}
 						>
-							{bullet}
+							<div className="bullet" />
 							<Cell
 								ref={ref => this.cellRefs.set(id, ref)}
 								placeholder={relation.name}
@@ -198,7 +107,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								getRecord={() => object}
 								viewType={I.ViewType.Grid}
 								pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
-								iconSize={relation.format == I.RelationType.Object ? 20 : iconSize}
+								iconSize={iconSize}
 								readonly={!canEdit}
 								isInline={true}
 								idPrefix={PREFIX + block.id}
@@ -235,6 +144,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this.init();
 	};
 
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+
 	init () {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
@@ -251,8 +164,163 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 	};
 
-	componentWillUnmount () {
-		this._isMounted = false;
+	renderType () {
+		const { rootId } = this.props;
+		const featuredRelations = this.getRelationList();
+
+		if (!featuredRelations.includes('type')) {
+			return null;
+		};
+
+		const object = this.getObject();
+		const type = detailStore.get(rootId, object.type, [ 'name', 'isDeleted' ]);
+		const name = (
+			<div className="name">
+				<ObjectType object={type} />
+			</div>
+		);
+
+		let ret = null;
+
+		if (UtilObject.isTemplate(object.type)) {
+			ret = (
+				<span className="cell">
+					<div className="cellContent type disabled">
+						{name}
+					</div>
+				</span>
+			);
+		} else {
+			ret = (
+				<span className="cell canEdit">
+					<div
+						id={Relation.cellId(PREFIX, 'type', object.id)}
+						className="cellContent type"
+						onClick={this.onType}
+						onMouseEnter={e => this.onMouseEnter(e, 'type')}
+						onMouseLeave={this.onMouseLeave}
+					>
+						{name}
+					</div>
+				</span>
+			);
+		};
+
+		return ret;
+	};
+
+	renderSetOf () {
+		const { rootId, readonly } = this.props;
+		const storeId = this.getStoreId();
+		const featuredRelations = this.getRelationList();
+
+		if (!featuredRelations.includes('setOf')) {
+			return null;
+		};
+
+		const object = this.getObject();
+		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
+		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
+		const setOfString = [];
+		const tl = types.length;
+		const rl = relations.length;
+
+		if (tl) {
+			setOfString.push(UtilCommon.sprintf('%s: %s', UtilCommon.plural(tl, translate('pluralObjectType')), types.slice(0, SOURCE_LIMIT).join(', ')));
+
+			if (tl > SOURCE_LIMIT) {
+				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
+			};
+		};
+		if (rl) {
+			setOfString.push(`${UtilCommon.plural(rl, translate('pluralRelation'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
+
+			if (rl > SOURCE_LIMIT) {
+				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);
+			};
+		};
+
+		return (
+			<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
+				<div className="bullet" />
+				<div
+					id={Relation.cellId(PREFIX, 'setOf', object.id)}
+					className="cellContent setOf"
+					onClick={this.onSource}
+					onMouseEnter={e => this.onMouseEnter(e, 'setOf', translate('blockFeaturedQuery'))}
+					onMouseLeave={this.onMouseLeave}
+				>
+					{setOfString.length ? (
+						<div className="name">
+							{setOfString.map((it: any, i: number) => (
+								<div className="element" key={i}>{it}</div>
+							))}
+						</div>
+					) : (
+						<div className="empty">{translate('blockFeaturedQuery')}</div>
+					)}
+				</div>
+			</span>
+		);
+	};
+
+	renderIdentity () {
+		const { rootId } = this.props;
+		const storeId = this.getStoreId();
+		const short = detailStore.get(rootId, storeId, [ 'layout' ], true);
+		if (short.layout != I.ObjectLayout.Participant) {
+			return null;
+		};
+
+		const object = detailStore.get(rootId, storeId, UtilData.participantRelationKeys());
+		const relationKey = object.globalName ? 'globalName': 'identity';
+
+		return (
+			<span className="cell">
+				<div className="bullet" />
+				<div
+					id={Relation.cellId(PREFIX, relationKey, object.id)}
+					className="cellContent c-longText"
+					onMouseEnter={e => this.onMouseEnter(e, relationKey, translate('blockFeaturedIdentity'))}
+					onMouseLeave={this.onMouseLeave}
+				>
+					<div className="name">
+						{UtilCommon.shorten(object[relationKey], 150)}
+					</div>
+				</div>
+			</span>
+		);
+	};
+
+	renderLinks (relationKey: string, index: number) {
+		const { rootId, block } = this.props;
+		const object = this.getObject();
+		const id = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+		const value = object[relationKey];
+		const options = Relation.getArrayValue(value).map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
+		const l = options.length;
+
+		if (!l) {
+			return null;
+		};
+
+		return (
+			<span id={id} className="cell" key={index} onClick={e => this.onLinks(e, relationKey)}>
+				<div className="bullet" />
+				<div className="cellContent">
+					{`${l} ${UtilCommon.plural(l, translate(UtilCommon.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
+				</div>
+			</span>
+		);
+	};
+
+	getRelationList () {
+		const object = detailStore.get(this.props.rootId, this.getStoreId(), [ 'featuredRelations' ], true);
+		return Relation.getArrayValue(object.featuredRelations);
+	};
+
+	getObject () {
+		return detailStore.get(this.props.rootId, this.getStoreId(), this.getRelationList());
 	};
 
 	checkType () {
@@ -367,20 +435,18 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const typeIsDeleted = type._empty_ || type.isDeleted;
 		const options: any[] = [];
 
-		if (readonly) {
-			return;
-		};
-
 		if (!typeIsDeleted) {
 			options.push({ id: 'open', name: translate('blockFeaturedTypeMenuOpenType') });
 		};
 
-		if (!readonly && allowed) {
-			options.push({ id: 'change', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true });
-		};
+		if (!readonly) {
+			if (allowed) {
+				options.push({ id: 'change', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true });
+			};
 
-		if (!typeIsDeleted && (object.layout == I.ObjectLayout.Set)) {
-			options.push({ id: 'turnCollection', name: translate('blockFeaturedTypeMenuTurnSetIntoCollection') });
+			if (!typeIsDeleted && (object.layout == I.ObjectLayout.Set)) {
+				options.push({ id: 'turnCollection', name: translate('blockFeaturedTypeMenuTurnSetIntoCollection') });
+			};
 		};
 
 		const showMenu = () => {
@@ -477,7 +543,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						});
 
 						this.menuContext.close();
-						analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: 'FeaturedRelations' });
+						analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: analytics.route.featured });
 					},
 				});
 				break;
@@ -605,7 +671,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		let menuId: string = '';
+		let menuId = '';
 		let menuParam: any = {};
 		let menuData: any = {};
 
@@ -679,7 +745,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				const details = [
 					{ key: relationKey, value: Relation.formatValue(relation, !object[relationKey], true) },
 				];
-				C.ObjectSetDetails(rootId, details);
+				C.ObjectListSetDetails([ rootId ], details);
 				break;
 			};
 
@@ -701,6 +767,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					},
 					data: {
 						relationKey,
+						rootId,
 					},
 				};
 
@@ -749,7 +816,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					const details = [
 						{ key: relationKey, value: Relation.formatValue(relation, v, true) },
 					];
-					C.ObjectSetDetails(rootId, details);
+					C.ObjectListSetDetails([ rootId ], details);
 
 					if (callBack) {
 						callBack();

@@ -3,8 +3,8 @@ import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
 import { I, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
+const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 
 interface State {
 	error: string;
@@ -15,6 +15,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	node = null;
 	refPhrase = null;
 	refSubmit = null;
+	isSelecting = false;
 
 	state = {
 		error: '',
@@ -25,7 +26,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCancel = this.onCancel.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyDownPhrase = this.onKeyDownPhrase.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.canSubmit = this.canSubmit.bind(this);
@@ -34,12 +34,11 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	
 	render () {
 		const { error } = this.state;
-		const { config } = commonStore;
 		const { accounts } = authStore;
 		const length = accounts.length;
 		
         return (
-			<div ref={ref => this.node = ref} onKeyDown={this.onKeyDown}>
+			<div ref={ref => this.node = ref}>
 				<Header {...this.props} component="authIndex" />
 				<Icon className="arrow back" onClick={this.onCancel} />
 				
@@ -53,6 +52,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 								onChange={this.onChange} 
 								onKeyDown={this.onKeyDownPhrase}
 								isHidden={true} 
+								placeholder={translate('phrasePlaceholder')}
 							/>
 						</div>
 						<div className="buttons">
@@ -76,18 +76,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	componentDidUpdate () {
-		const { accounts } = authStore;
-
 		this.focus();
-
-		if (accounts && accounts.length) {
-			const account = accounts[0];
-
-			authStore.accountSet(account);
-			Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
-
-			this.select();
-		};
+		this.select();
 	};
 
 	focus () {
@@ -126,11 +116,22 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	select () {
-		const { account, networkConfig } = authStore;
+		const { accounts, networkConfig } = authStore;
+		if (this.isSelecting || !accounts.length) {
+			return;
+		};
+
+		this.isSelecting = true;
+
 		const { mode, path } = networkConfig;
+		const account = accounts[0];
+
+		authStore.accountSet(account);
+		Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
 
 		C.AccountSelect(account.id, commonStore.dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
+				this.isSelecting = false;
 				return;
 			};
 
@@ -138,7 +139,12 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			commonStore.configSet(message.account.config, false);
 
 			UtilData.onInfo(message.account.info);
-			Animation.from(() => UtilData.onAuth());
+			Animation.from(() => {
+				UtilData.onAuth();
+				UtilData.onAuthOnce(true);
+
+				this.isSelecting = false;
+			});
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
@@ -159,20 +165,15 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		authStore.accountListClear();
 
-		UtilCommon.checkError(error.code);
-		return true;
+		return UtilCommon.checkErrorCommon(error.code);
 	};
 
 	checkButton () {
 		this.refSubmit.setDisabled(!this.canSubmit());
 	};
 
-	canSubmit () {
-		return this.refPhrase.getValue().length;
-	};
-
-	onKeyDown (e: React.KeyboardEvent) {
-		keyboard.shortcut('enter', e, () => this.onSubmit(e));
+	canSubmit (): boolean {
+		return this.refPhrase.getValue().split(' ').length == Constant.limit.phrase.word;
 	};
 
 	onKeyDownPhrase (e: React.KeyboardEvent) {
@@ -182,11 +183,13 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			this.refPhrase?.setError(false);
 			this.setState({ error: '' });
 		};
+
+		keyboard.shortcut('enter', e, () => this.onSubmit(e));
 	};
 	
 	onCancel () {
 		authStore.logout(true, false);
-		Animation.from(() => UtilRouter.go('/auth/select', { replace: true }));
+		Animation.from(() => UtilRouter.go('/', { replace: true }));
 	};
 
 	onChange () {
@@ -194,9 +197,13 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	onForgot () {
+		const platform = UtilCommon.getPlatform();
+
 		popupStore.open('confirm', {
+			className: 'lostPhrase isLeft',
             data: {
-                text: translate('authLoginLostPhrasePopupContent'),
+				title: translate('popupConfirmLostPhraseTitle'),
+                text: translate(`popupConfirmLostPhraseText${platform}`),
 				textConfirm: translate('commonOkay'),
 				canConfirm: true,
 				canCancel: false,

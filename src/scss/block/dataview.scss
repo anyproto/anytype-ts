@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockDataview { @include text-common; padding: 8px 0px 6px 0px; }
@@ -20,6 +20,7 @@
 		}
 		.loadMore {
 			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
+			.name { @include text-overflow-nw; width: calc(100% - 20px); }
 		}
 
 		.loadMore:hover { color: var(--color-text-primary); }
@@ -185,7 +186,6 @@
 
 		.content {
 			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); padding-bottom: 14px; }
-			.scrollWrap { background: var(--color-bg-primary); }
 		}
 
 		.viewContent {
@@ -268,7 +268,7 @@
 
 	.block.blockDataview.isInline.isVertical {
 		.dataviewControls {
-			> .sides { flex-direction: column; align-items: flex-start; justify-content: flex-start; }
+			.btn-filter, .btn-sort { display: none; }
 		}
 	}
 

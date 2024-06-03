@@ -1,6 +1,7 @@
 import { I, UtilCommon, UtilData, UtilObject, Storage, translate } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 
 class UtilSpace {
 
@@ -8,8 +9,15 @@ class UtilSpace {
 		const fn = UtilCommon.toCamelCase(`open-${type}`);
 		
 		let home = this.getDashboard();
+
 		if (home && (home.id == I.HomePredefinedId.Last)) {
-			home = Storage.get('lastOpened');
+			home = Storage.getLastOpened(UtilCommon.getCurrentElectronWindowId());
+
+			// Invalid data protection
+			if (!home || !home.id) {
+				home = null;
+			};
+
 			if (home && !home.spaceId) {
 				home.spaceId = commonStore.space;
 			};
@@ -65,20 +73,34 @@ class UtilSpace {
 		};
 	};
 
+	getList () {
+		const subId = Constant.subId.space;
+		const { spaceview } = blockStore;
+
+		let items = dbStore.getRecords(subId, UtilData.spaceRelationKeys());
+		items = items.filter(it => it.isAccountActive && it.isLocalOk);
+		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));
+
+		items.sort((c1, c2) => {
+			if (c1.isActive && !c2.isActive) return -1;
+			if (!c1.isActive && c2.isActive) return 1;
+			return 0;
+		});
+
+		return items;
+	};
+
 	getSpaceview (id?: string) {
 		return detailStore.get(Constant.subId.space, id || blockStore.spaceview);
 	};
 
 	getSpaceviewBySpaceId (id: string) {
-		const subId = Constant.subId.space;
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).find(it => it.targetSpaceId == id);
+		return dbStore.getRecords(Constant.subId.space).find(it => it.targetSpaceId == id);
 	};
 
-	getParticipantsList (statuses: I.ParticipantStatus[]) {
-		const subId = Constant.subId.participant;
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
-
-		return records.sort(UtilData.sortByOwner);
+	getParticipantsList (statuses?: I.ParticipantStatus[]) {
+		const ret = dbStore.getRecords(Constant.subId.participant);
+		return statuses ? ret.filter(it => statuses.includes(it.status)) : ret;
 	};
 
 	getParticipantId (spaceId: string, accountId: string) {
@@ -119,18 +141,42 @@ class UtilSpace {
 		return object._empty_ ? null : object;
 	};
 
-	canParticipantWrite (spaceId?: string): boolean {
+	canMyParticipantWrite (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId);
-		return participant ? [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Owner ].includes(participant.permissions) : true;
+		return participant ? (participant.isWriter || participant.isOwner) : true;
 	};
 
-	isOwner (spaceId?: string): boolean {
+	isMyOwner (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId || commonStore.space);
-		return participant && (participant.permissions == I.ParticipantPermissions.Owner) ? true : false;
+		return participant ? participant.isOwner : false;
 	};
 
 	isShareActive () {
-		return commonStore.isOnline && UtilData.isAnytypeNetwork();
+		return commonStore.isOnline && !UtilData.isLocalNetwork();
+	};
+
+	getReaderLimit () {
+		const space = this.getSpaceview();
+		if (!space) {
+			return 0;
+		};
+
+		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]);
+		return space.readersLimit - participants.length;
+	};
+
+	getWriterLimit () {
+		const space = this.getSpaceview();
+		if (!space) {
+			return 0;
+		};
+
+		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isOwner);
+		return space.writersLimit - participants.length;
+	};
+
+	getInviteLink (cid: string, key: string) {
+		return UtilData.isAnytypeNetwork() ? UtilCommon.sprintf(Url.invite, cid, key) : `${Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
 };

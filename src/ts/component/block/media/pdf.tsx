@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf } from 'Component';
+import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
 import { I, C, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Renderer, keyboard } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { pdfjs } from 'react-pdf';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
 import 'react-pdf/dist/cjs/Page/TextLayer.css';
@@ -47,7 +47,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		const { state, targetObjectId } = content;		
 		const { page, pages } = this.state;
 		const object = detailStore.get(rootId, targetObjectId, []);
-		const width = Number(fields) || 0;
+		const width = Number(fields.width) || 0;
 		const css: any = {};
 
 		let element = null;
@@ -102,7 +102,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 				element = (
 					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
 						<div className="info" onMouseDown={this.onOpen}>
-							<span className="name">{UtilFile.name(object)}</span>
+							<ObjectName object={object} />
 							<span className="size">{UtilFile.size(object.sizeInBytes)}</span>
 						</div>
 
@@ -307,7 +307,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		};
 		
 		const { rootId, block } = this.props;
-		const { id } = block;
+		const { id, fields } = block;
 		const node = $(this.node);
 		const wrap = node.find('.wrap');
 		
@@ -328,7 +328,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		this.height = 0;
 
 		C.BlockListSetFields(rootId, [
-			{ blockId: id, fields: { width: w } },
+			{ blockId: id, fields: { ...fields, width: w } },
 		]);
 	};
 
@@ -336,7 +336,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		const { block } = this.props;
 		const { id, fields } = block;
 		const width = Number(fields.width) || 1;
-		const el = $(`#selectable-${id}`);
+		const el = $(`#selectionTarget-${id}`);
 
 		if (!el.length) {
 			return width;

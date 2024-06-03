@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate, UtilSpace } from 'Lib';
 import { commonStore, dbStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -240,7 +240,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { filter, label, canAdd, addParam } = data;
 		const length = this.items.length;
 		const items = [].concat(this.items);
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 		
 		if (label && length) {
 			items.unshift({ isSection: true, name: label });
@@ -416,7 +416,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Link:
-					C.BlockCreate(rootId, blockId, position, this.getBlockParam(target.id, item.type), (message: any) => {
+					C.BlockCreate(rootId, blockId, position, this.getBlockParam(target.id, item.layout), (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -451,15 +451,18 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 		};
 
+
+
 		if (item.isAdd) {
+			details = { name: filter, ...details };
+
 			if (addParam.onClick) {
-				addParam.onClick();
+				addParam.onClick(details);
 				close();
 			} else {
 				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
-				details = { name: filter, type: commonStore.type, ...details };
 
-				UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, 'Search', (message: any) => {
+				UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Search', (message: any) => {
 					process(message.details, true);
 					close();
 				});
@@ -471,6 +474,18 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	getBlockParam (id: string, layout: I.ObjectLayout) {
 		const param: Partial<I.Block> = {};
+
+		if (UtilObject.isFileLayout(layout)) {
+			return {
+				type: I.BlockType.File,
+				content: {
+					targetObjectId: id,
+					style: I.FileStyle.Embed,
+					state: I.FileState.Done,
+					type: UtilObject.getFileTypeByLayout(layout),
+				},
+			};
+		};
 
 		switch (layout) {
 			case I.ObjectLayout.Bookmark: {

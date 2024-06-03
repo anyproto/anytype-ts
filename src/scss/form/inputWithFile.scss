@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .inputWithFile {
 	padding: 11px 13px; border-radius: 8px; border: solid 1px var(--color-shape-secondary); color: var(--color-control-active); @include text-common; 

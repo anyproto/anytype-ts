@@ -2,7 +2,8 @@ import Commands from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import { detailStore } from 'Store';
 import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
+import { MembershipTier } from 'Interface';
 
 const Rpc = Commands.Rpc;
 
@@ -606,7 +607,7 @@ export const BlockLatexSetText = (contextId: string, blockId: string, text: stri
 
 // ---------------------- BLOCK LINK ---------------------- //
 
-export const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
+export const BlockLinkCreateWithObject = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, block: I.Block, flags: I.ObjectFlag[], typeKey: string, spaceId: string, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.BlockLink.CreateWithObject.Request();
@@ -616,10 +617,10 @@ export const BlockLinkCreateWithObject = (contextId: string, targetId: string, d
 	request.setPosition(position as number);
 	request.setDetails(Encode.struct(details));
 	request.setTemplateid(templateId);
-	request.setFields(Encode.struct(fields || {}));
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 	request.setObjecttypeuniquekey(typeKey);
 	request.setSpaceid(spaceId);
+	request.setBlock(Mapper.To.Block(block));
 
 	dispatcher.request(BlockLinkCreateWithObject.name, request, callBack);
 };
@@ -794,6 +795,16 @@ export const BlockFileListSetStyle = (contextId: string, blockIds: string[], sty
     request.setStyle(style as number);
 
 	dispatcher.request(BlockFileListSetStyle.name, request, callBack);
+};
+
+export const BlockFileSetTargetObjectId = (contextId: string, blockId: string, objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockFile.SetTargetObjectId.Request();
+
+	request.setContextid(contextId);
+    request.setBlockid(blockId);
+    request.setObjectid(objectId);
+
+	dispatcher.request(BlockFileSetTargetObjectId.name, request, callBack);
 };
 
 // ---------------------- BLOCK TEXT ---------------------- //
@@ -1150,10 +1161,6 @@ export const HistoryShowVersion = (objectId: string, versionId: string, callBack
 	request.setVersionid(versionId);
 
 	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
-		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, '', message.objectView);
-		};
-
 		if (callBack) {
 			callBack(message);
 		};
@@ -1177,6 +1184,17 @@ export const HistoryGetVersions = (objectId: string, lastVersionId: string, limi
 	request.setLimit(limit);
 
 	dispatcher.request(HistoryGetVersions.name, request, callBack);
+};
+
+export const HistoryDiffVersions = (objectId: string, spaceId: string, current: string, previous: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.DiffVersions.Request();
+
+	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
+	request.setCurrentversion(current);
+	request.setPreviousversion(previous);
+
+	dispatcher.request(HistoryDiffVersions.name, request, callBack);
 };
 
 // ---------------------- OBJECT TYPE ---------------------- //
@@ -1307,8 +1325,10 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 
 		// Save last opened object
 		const object = detailStore.get(objectId, objectId, []);
+		const windowId = UtilCommon.getCurrentElectronWindowId();
+
 		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
-			Storage.set('lastOpened', { id: object.id, layout: object.layout, spaceId: object.spaceId });
+			Storage.setLastOpened(windowId, { id: object.id, layout: object.layout, spaceId: object.spaceId });
 		};
 
 		if (callBack) {
@@ -1483,15 +1503,15 @@ export const ObjectSetSource = (contextId: string, sources: string[], callBack?:
 	dispatcher.request(ObjectSetSource.name, request, callBack);
 };
 
-export const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
+export const ObjectListSetDetails = (objectIds: string[], details: any[], callBack?: (message: any) => void) => {
 	details = details.map(Mapper.To.Details);
 
-	const request = new Rpc.Object.SetDetails.Request();
+	const request = new Rpc.Object.ListSetDetails.Request();
 
-	request.setContextid(contextId);
+	request.setObjectidsList(objectIds);
 	request.setDetailsList(details);
 
-	dispatcher.request(ObjectSetDetails.name, request, callBack);
+	dispatcher.request(ObjectListSetDetails.name, request, callBack);
 };
 
 export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
@@ -1505,6 +1525,19 @@ export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[
 	request.setKeysList(keys);
 
 	dispatcher.request(ObjectSearch.name, request, callBack);
+};
+
+export const ObjectSearchWithMeta = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SearchWithMeta.Request();
+
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setFulltext(fullText);
+	request.setOffset(offset);
+	request.setLimit(limit);
+	request.setKeysList(keys);
+
+	dispatcher.request(ObjectSearchWithMeta.name, request, callBack);
 };
 
 export const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
@@ -1613,7 +1646,7 @@ export const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, call
 	dispatcher.request(ObjectSetIsFavorite.name, request, callBack);
 };
 
-export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], callBack?: (message: any) => void) => {
+export const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], collectionId: string, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Graph.Request();
 
 	request.setSpaceid(spaceId);
@@ -1621,6 +1654,8 @@ export const ObjectGraph = (spaceId: string, filters: any[], limit: number, type
     request.setLimit(limit);
 	request.setObjecttypefilterList(types);
 	request.setKeysList(keys);
+	request.setCollectionid(collectionId);
+	request.setSetsourceList(sources);
 
 	dispatcher.request(ObjectGraph.name, request, callBack);
 };
@@ -1864,6 +1899,88 @@ export const NotificationReply = (ids: string[], action: I.NotificationAction, c
 	dispatcher.request(NotificationReply.name, request, callBack);
 };
 
+// ---------------------- NAME SERVICE ---------------------- //
+
+export const NameServiceResolveName = (name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.NameService.ResolveName.Request();
+
+	request.setNsname(name);
+	request.setNsnametype(I.NameType.Any as number);
+
+	dispatcher.request(NameServiceResolveName.name, request, callBack);
+};
+
+// ---------------------- PAYMENTS ---------------------- //
+
+export const MembershipGetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.GetStatus.Request();
+	
+	request.setNocache(noCache);
+
+	dispatcher.request(MembershipGetStatus.name, request, callBack);
+};
+
+export const MembershipGetTiers = (noCache: boolean, locale: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.GetTiers.Request();
+
+	request.setNocache(noCache);
+	request.setLocale(locale);
+
+	dispatcher.request(MembershipGetTiers.name, request, callBack);
+};
+
+export const MembershipIsNameValid = (tier: I.TierType, name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.IsNameValid.Request();
+
+	request.setRequestedtier(tier as number);
+	request.setNsname(name);
+	request.setNsnametype(I.NameType.Any as number);
+
+	dispatcher.request(MembershipIsNameValid.name, request, callBack);
+};
+
+export const MembershipRegisterPaymentRequest = (tier: I.TierType, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.RegisterPaymentRequest.Request();
+
+	request.setRequestedtier(tier as number);
+	request.setPaymentmethod(method as number);
+	request.setNsname(name);
+	request.setNsnametype(I.NameType.Any as number);
+
+	dispatcher.request(MembershipRegisterPaymentRequest.name, request, callBack);
+};
+
+export const MembershipGetPortalLinkUrl = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+	dispatcher.request(MembershipGetPortalLinkUrl.name, request, callBack);
+};
+
+export const MembershipGetVerificationEmail = (email: string, isSubscribed: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.GetVerificationEmail.Request();
+	
+	request.setEmail(email);
+	request.setSubscribetonewsletter(isSubscribed);
+	
+	dispatcher.request(MembershipGetVerificationEmail.name, request, callBack);
+};
+
+export const MembershipVerifyEmailCode = (code: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.VerifyEmailCode.Request();
+	
+	request.setCode(code);
+	
+	dispatcher.request(MembershipVerifyEmailCode.name, request, callBack);
+};
+
+export const MembershipFinalize = (name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.Finalize.Request();
+
+	request.setNsname(name);
+	request.setNsnametype(I.NameType.Any as number);
+
+	dispatcher.request(MembershipFinalize.name, request, callBack);
+};
+
 // ---------------------- SPACE ---------------------- //
 
 export const SpaceInviteGenerate = (spaceId: string, callBack?: (message: any) => void) => {
@@ -1891,6 +2008,14 @@ export const SpaceInviteRevoke = (spaceId: string, callBack?: (message: any) => 
 	dispatcher.request(SpaceInviteRevoke.name, request, callBack);
 };
 
+export const SpaceInviteGetCurrent = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.InviteGetCurrent.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(SpaceInviteGetCurrent.name, request, callBack);
+};
+
 export const SpaceStopSharing = (spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Space.StopSharing.Request();
 
@@ -1899,12 +2024,12 @@ export const SpaceStopSharing = (spaceId: string, callBack?: (message: any) => v
 	dispatcher.request(SpaceStopSharing.name, request, callBack);
 };
 
-export const SpaceInviteGetCurrent = (spaceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Space.InviteGetCurrent.Request();
+export const SpaceMakeShareable = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.StopSharing.Request();
 
 	request.setSpaceid(spaceId);
 
-	dispatcher.request(SpaceInviteGetCurrent.name, request, callBack);
+	dispatcher.request(SpaceMakeShareable.name, request, callBack);
 };
 
 export const SpaceJoin = (networkId: string, spaceId: string, cid: string, key: string, callBack?: (message: any) => void) => {
@@ -1961,6 +2086,15 @@ export const SpaceParticipantRemove = (spaceId: string, identities: string[], ca
 	request.setIdentitiesList(identities);
 
 	dispatcher.request(SpaceParticipantRemove.name, request, callBack);
+};
+
+export const SpaceLeaveApprove = (spaceId: string, identities: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Space.LeaveApprove.Request();
+
+	request.setSpaceid(spaceId);
+	request.setIdentitiesList(identities);
+
+	dispatcher.request(SpaceLeaveApprove.name, request, callBack);
 };
 
 // ---------------------- EXTENSION ---------------------- //

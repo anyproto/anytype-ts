@@ -5,7 +5,7 @@ import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, UtilMenu, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isExpanded: boolean;
@@ -254,7 +254,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				this.items = [];
 			};
 
-			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
+			this.items = this.items.concat(message.records || []);
 			this.forceUpdate();
 		});
 	};
@@ -436,11 +436,15 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 		const cb = (created?: any) => {
 			const { isExpanded } = this.state;
-			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
 			const type = created || item;
 
 			if (isExpanded && this.filter.length) {
 				analytics.event('TypeSearchResult');
+			};
+
+			let flags: I.ObjectFlag[] = [];
+			if (!UtilObject.isSetLayout(type.recommendedLayout)) {
+				flags = flags.concat([ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 			};
 
 			C.ObjectCreate({ layout: type.recommendedLayout }, flags, item.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
@@ -451,7 +455,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				const object = message.details;
 
 				UtilObject.openAuto(object);
-				analytics.createObject(object.type, object.layout, 'Navigation', message.middleTime);
+				analytics.createObject(object.type, object.layout, analytics.route.navigation, message.middleTime);
 			});
 		};
 
@@ -492,6 +496,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const canPin = type.isInstalled;
 		const canDefault = type.isInstalled && !UtilObject.getSetLayouts().includes(item.recommendedLayout) && (type.id != commonStore.type);
 		const canDelete = type.isInstalled && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+		const route = analytics.route.navigation;
 
 		let options: any[] = [
 			canPin ? { id: 'pin', name: (isPinned ? translate('menuQuickCaptureUnpin') : translate('menuQuickCapturePin')) } : null,
@@ -524,21 +529,21 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 						case 'pin': {
 							isPinned ? Storage.removePinnedType(item.itemId) : Storage.addPinnedType(item.itemId);
-							analytics.event(isPinned ? 'UnpinObjectType' : 'PinObjectType', { objectType: item.uniqueKey, route: 'Navigation' });
+							analytics.event(isPinned ? 'UnpinObjectType' : 'PinObjectType', { objectType: item.uniqueKey, route });
 							this.forceUpdate();
 							break;
 						};
 
 						case 'default': {
 							commonStore.typeSet(item.uniqueKey);
-							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Navigation' });
+							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route });
 							this.forceUpdate();
 							break;
 						};
 
 						case 'remove': {
 							if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
-								Action.uninstall({ ...item, id: item.itemId }, true, 'Navigation');
+								Action.uninstall({ ...item, id: item.itemId }, true, route);
 							};
 							break;
 						};
@@ -636,7 +641,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 						UtilObject.openAuto(object);
 					});
 
-					analytics.createObject(object.type, object.layout, 'Clipboard', message.middleTime);
+					analytics.createObject(object.type, object.layout, analytics.route.clipboard, message.middleTime);
 				});
 			};
 		});

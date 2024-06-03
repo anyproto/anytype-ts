@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, UtilObject, UtilData, keyboard, sidebar, translate } from 'Lib';
+import { I, UtilData, translate } from 'Lib';
 import { commonStore } from 'Store';
+const Constant = require('json/constant.json');
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
@@ -14,41 +15,15 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 		this.onSearch = this.onSearch.bind(this);
 		this.onFilter = this.onFilter.bind(this);
 		this.onSettings = this.onSettings.bind(this);
-		this.onOpen = this.onOpen.bind(this);
 	};
 
 	render () {
-		const { tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
-		const cmd = keyboard.cmdSymbol();
+		const { renderLeftIcons, renderTabs } = this.props;
 
 		return (
 			<React.Fragment>
-				<div className="side left">
-					<Icon
-						className="toggle"
-						tooltip={translate('sidebarToggle')}
-						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
-						tooltipY={I.MenuDirection.Bottom}
-						onClick={() => sidebar.toggleExpandCollapse()}
-					/>
-					<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
-				</div>
-
-				<div className="side center">
-					<div id="tabs" className="tabs">
-						{tabs.map((item: any, i: number) => (
-							<div 
-								key={i}
-								className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
-								onClick={() => onTab(item.id)}
-								onMouseOver={e => onTooltipShow(e, item.tooltip, item.tooltipCaption)} 
-								onMouseOut={onTooltipHide}
-							>
-								{item.name}
-							</div>
-						))}
-					</div>
-				</div>
+				<div className="side left">{renderLeftIcons()}</div>
+				<div className="side center">{renderTabs()}</div>
 
 				<div className="side right">
 					<Icon id="button-header-search" className="btn-search" tooltip={translate('headerGraphTooltipSearch')} onClick={this.onSearch} />
@@ -60,41 +35,40 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	componentDidMount(): void {
-		this.rootId = this.props.rootId;
-	};
-
-	onOpen () {
-		UtilObject.openRoute({ rootId: this.rootId, layout: I.ObjectLayout.Graph });
+		this.setRootId(this.props.rootId);
 	};
 
 	onSearch () {
-		const { graph } = commonStore;
-		const menuParam = {
+		this.props.menuOpen('searchObject', '#button-header-search', {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				rootId: this.rootId,
 				blockId: this.rootId,
 				blockIds: [ this.rootId ],
 				filters: UtilData.graphFilters(),
-				filter: graph.filter,
+				filter: commonStore.getGraph(Constant.graphId.global).filter,
 				canAdd: true,
 				onSelect: (item: any) => {
 					$(window).trigger('updateGraphRoot', { id: item.id });
 				},
 				onFilterChange: (v: string) => {
-					commonStore.graphSet({ filter: v });
+					commonStore.graphSet(Constant.graphId.global, { filter: v });
 				},
 			}
-		};
-
-		this.props.menuOpen('searchObject', '#button-header-search', menuParam);
+		});
 	};
 
 	onFilter () {
 	};
 
 	onSettings () {
-		this.props.menuOpen('graphSettings', '#button-header-settings', { horizontal: I.MenuDirection.Right });
+		this.props.menuOpen('graphSettings', '#button-header-settings', { 
+			horizontal: I.MenuDirection.Right,
+			data: {
+				allowLocal: true,
+				storageKey: Constant.graphId.global,
+			}
+		});
 	};
 
 	setRootId (id: string) {

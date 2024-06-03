@@ -43,7 +43,7 @@
 	"commonLastWeek": "Previous 7 days",
 	"commonLastMonth": "Previous 30 days",
 	"commonOlder": "Older",
-	"commonPhrase": "Recovery Phrase",
+	"commonPhrase": "Key",
 	"commonCopy": "Copy",
 	"commonOpen": "Open",
 	"commonOpenObject": "Open as Object",
@@ -64,9 +64,13 @@
 	"commonDeletedRelation": "Deleted Relation",
 	"commonSort": "Sort",
 	"commonAlign": "Align",
-	"commonAlignLeft": "Align left",
-	"commonAlignCenter": "Align center",
-	"commonAlignRight": "Align right",
+	"commonHAlignLeft": "Left",
+	"commonHAlignCenter": "Center",
+	"commonHAlignRight": "Right",
+	"commonHAlignJustify": "Justify",
+	"commonVAlignTop": "Top",
+	"commonVAlignMiddle": "Middle",
+	"commonVAlignBottom": "Bottom",
 	"commonAppearance": "Appearance",
 	"commonPreview": "Preview",
 	"commonColor": "Color",
@@ -125,30 +129,40 @@
 	"commonLanguage": "Language",
 	"commonSpelling": "Spelling",
 	"commonGallery": "Gallery",
+	"commonEmail": "E-mail",
+	"commonContinue": "Continue",
+	"commonJoin": "Join",
 	"commonLeaveSpace": "Leave space",
 	"commonYou": "you",
 	"commonApprove": "Approve",
 	"commonAreYouSure": "Are you sure?",
-
-	"commonLCCollection": "Collection",
-	"commonLCSet": "Set",
-
-	"commonDeletionWarningTitle": "Are you sure you want to delete %s %s?",
-	"commonDeletionWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
+	"commonVersion": "Version",
+	"commonConfirm": "Confirm",
+	"commonOpenSpace": "Open space",
+	"commonReset": "Reset",
+	"commonUpdate": "Update",
+	"commonOwner": "Owner",
+	"commonUpdateProgress": "Downloading update... %s/%s",
+	"commonVersionHistory": "Version history",
+	"commonActions": "Actions",
+	"commonAddRelation": "Add Relation",
+	"commonCollection": "Collection",
+	"commonSet": "Set",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
+	"pluralLCObject": "object|objects",
 	"pluralTemplate": "template|templates",
 	"pluralRelation": "Relation|Relations",
 	"pluralBlock": "Block|Blocks",
 	"pluralObjectType": "Object Type|Object Types",
-	"pluralUCRelation": "Relation|Relations",
 	"pluralLinks": "link|links",
 	"pluralBacklinks": "backlink|backlinks",
 	"pluralMember": "member|members",
 	"pluralRequest": "request|requests",
 	"pluralReader": "reader|readers",
 	"pluralWriter": "writers|writers",
+	"pluralYear": "year|years",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -162,14 +176,16 @@
 	"electronMenuUnhide": "Show All",
 	"electronMenuCheckUpdates": "Check for updates",
 	"electronMenuSpaceSettings": "Space",
-	"electronMenuAccountSettings": "Account",
-	"electronMenuShowTray": "Show Anytype in Menu Bar",
-	"electronMenuShowMenu": "Show system menu",
+	"electronMenuAccountSettings": "Vault",
+	"electronMenuShowTray": "Show Anytype in system tray",
+	"electronMenuShowMenu": "Show menu bar",
 	"electronMenuQuit": "Quit",
 	"electronMenuFile": "File",
-	"electronMenuWorkDirectory": "Show Work Directory",
-	"electronMenuDataDirectory": "Show Data Directory",
-	"electronMenuLogs": "Show Logs",
+	"electronMenuDirectory": "Show Directory",
+	"electronMenuWorkDirectory": "Work",
+	"electronMenuDataDirectory": "Data",
+	"electronMenuConfigDirectory": "Config",
+	"electronMenuLogsDirectory": "Logs",
 	"electronMenuImport": "Import to Space",
 	"electronMenuExport": "Export Space",
 	"electronMenuSaveAs": "Export Object",
@@ -275,23 +291,17 @@
 	"progress1": "Import in progress",
 	"progress2": "Export in progress",
 	"progress3": "Download in progress",
-	"progress4": "Recovering account",
+	"progress4": "Recovering vault",
 	"progress5": "Migration in progress",
 	"progressUpdateCheck": "Checking for update...",
 
 	"spellcheckAdd": "Add to dictionary",
 
-	"headerHistoryCurrent": "Current version",
-	"headerHistoryRestore": "Restore version",
 	"headerTooltipPath": "Click to search",
 
 	"headerGraphTooltipSearch": "Search",
 	"headerGraphTooltipFilters": "Filters",
 	"headerGraphTooltipSettings": "Settings",
-
-	"confirmUpdateTitle": "It's time to update",
-	"confirmUpdateText": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features.",
-	"confirmUpdateConfirm": "Update",
 
 	"authInviteTitle": "Welcome to Anytype",
 	"authInviteLabel": "Enter your invite code. If you don't have one, visit <a href=\"https:\/\/anytype.io\">anytype.io<\/a> to register for early access. We are inviting new testers on a rolling basis.",
@@ -299,14 +309,13 @@
 	"authInviteLogin": "Enter",
 	"authInviteEmpty": "Invite code is empty",
 
-	"authSelectLabel": "Anytype is your safe space to write, plan, think and organise everything that matters to you.",
-	"authSelectLogin": "Log In",
-	"authSelectSignup": "Join",
+	"authSelectLabel": "Create & collaborate in spaces you own.<br/>Encrypted, offline & <a href=\"https://github.com/anyproto\">open</a>.",
+	"authSelectLogin": "I have a Key",
+	"authSelectSignup": "New Vault",
 	"authDisclaimer": "By continuing you agree to our <a href=\"%s\">Terms of Use</a> and <a href=\"%s\">Privacy Policy</a>",
 
-	"authLoginSubmit": "Log In",
-	"authLoginLostPhrase": "I've lost the Phrase",
-	"authLoginLostPhrasePopupContent": "<h1>Anytype cannot recover your Recovery Phrase for you<\/h1><p>Currently, there are no methods of accessing your recovery phrase, as we do not store a copy of it. Check out the other places where it might stored:<\/p> <ul class=\"last\"><li>In system password storage. We did it for you automatically<\/li><li>Inside a password manager if you use one<\/li><li>On a piece of paper stored in a secure place chosen prior<\/li><\/ul>",
+	"authLoginSubmit": "Enter my Vault",
+	"authLoginLostPhrase": "I've lost the Key",
 
 	"authRegisterTitle": "Add name and profile picture",
 	"authRegisterLabel": "New Profile",
@@ -315,29 +324,32 @@
 	"authRegisterAdvanced": "Advanced",
 
 	"authDeleteTitle": "Delete Profile",
-	"authDeleteTitleDeleted": "Account data removed from the backup node",
-	"authDeleteDescription": "We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
-	"authDeleteDescriptionDeleted": "All logged-in devices may have your data stored locally. However, you are not able to sign into Anytype on new devices using your Recovery Phrase.",
+	"authDeleteTitleDeleted": "Vault data removed from the backup node",
+	"authDeleteDescription": "We're sorry to see you go. Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
+	"authDeleteDescriptionDeleted": "All logged-in devices may have your data stored locally. However, you are not able to sign into Anytype on new devices using your Key.",
 	"authDeleteCancelButton": "Cancel deletion",
 	"authDeleteExportButton": "Export data to markdown",
 	"authDeleteRemoveButton": "Remove local data",
-	"authDeleteRemovePopupTitle": "Are you sure you want to delete your local account data?",
+	"authDeleteRemovePopupTitle": "Are you sure you want to delete your local vault data?",
 	"authDeleteRemovePopupText": "These objects will be deleted irrevocably. You can't undo this action.",
 	"authDeleteRemovePopupConfirm": "Delete",
 
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
 
-	"authOnboardGoApp": "Go to the app",
-	"authOnboardAccountDataLocation": "Account data location",
-	"authOnboardMoreInfo": "You can find your Recovery Phrase later in Anytype settings",
+	"authOnboardMoreInfo": "You can find this key later in Anytype settings",
 
-	"authOnboardVoidTitle": "Choose your name",
-	"authOnboardVoidLabel": "This is how you will appear in the app",
+	"authOnboardVaultTitle": "This is your Vault",
+	"authOnboardVaultLabel": "Everything inside is encrypted.<br/>It's local-first – everything works offline.<br/>Only you have the key.",
+	"authOnboardVaultButton": "Get my Key",
 
-	"authOnboardPhraseTitle": "Save your Recovery Phrase",
-	"authOnboardPhraseLabel": "It's a novel way of authentication that gives you full ownership over your account and data. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
-	"authOnboardPhraseSubmit": "Show Recovery Phrase",
+	"authOnboardSoulTitle": "Set your name",
+	"authOnboardSoulLabel": "Only seen by people you share something with.<br/>There is no central registry of these names.",
+	"authOnboardSoulButton": "Enter my Vault",
+
+	"authOnboardPhraseTitle": "This is your Key",
+	"authOnboardPhraseLabel": "It gives you full ownership over your vault.<br/>It cannot be recovered. <span id='tooltipPhrase' class='tooltipLink'>Read more<\/span>",
+	"authOnboardPhraseSubmit": "Show my Key",
 
 	"usecase2Title": "Personal projects",
 	"usecase2Label": "Manage your personal projects and tasks with complete privacy",
@@ -365,6 +377,7 @@
 	"usecaseCategoryOther": "Other",
 	"usecaseCategoryFeatured": "Featured",
 	"usecaseCategoryMadeByAny": "Made by Any",
+	"usecaseCategoryCollaboration": "Collaboration",
 
 	"pageMainEmptyDescription": "Select an Object to show when you login. You can always change it in Settings.",
 
@@ -386,8 +399,15 @@
 	"pageMainStoreRelationsEmpty": "<b>Your Relation list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above",
 	"pageMainStoreMyTypes": "My Types",
 	"pageMainStoreMyRelations": "My Relations",
+	"pageMainStoreBannerTitle": "What can I build with Anytype?",
+	"pageMainStoreBannerButton": "Explore",
+	"pageMainStoreSort": "Sort by",
+	"pageMainStoreSortNameAsc": "Name A->Z",
+	"pageMainStoreSortNameDesc": "Name Z->A",
+	"pageMainStoreSortCreatedAsc": "Oldest created",
+	"pageMainStoreSortCreatedDesc": "Newest created",
+	"pageMainStoreSortLastUsedDesc": "Recently used",
 
-	"pageMainTypeOwner": "Owner",
 	"pageMainTypeRecommendedLayout": "Recommended layout",
 	"pageMainTypeNewSetOfObjects": "New Set of Objects",
 	"pageMainTypeNoTemplates": "This Object Type doesn't have Templates",
@@ -404,19 +424,24 @@
 
 	"pageMainInviteTitle": "Downloading invite",
 	"pageMainInviteErrorData": "Incorrect invite data",
-	"pageMainInviteErrorDuplicate": "You are joining or have already joined the %s space",
 
-	"pageAuthLoginInvalidPhrase": "Invalid Recovery Phrase",
+	"pageMainMembershipTitle": "Retrieving membership",
+	"pageMainMembershipError": "Something went wrong",
 
-	"pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in %s",
+	"pageMainHistoryCurrent": "Current version",
+	"pageMainHistoryRestore": "Restore",
+
+	"pageAuthLoginInvalidPhrase": "Invalid Key",
+
+	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
 
 	"pageAuthOnboardPersonalSpace": "Personal Space",
 	"pageAuthOnboardMoreInfo": "More info",
 
-	"pageAuthSetupCongratulations": "⚡️ Congratulations!",
-	"pageAuthSetupLongread": "You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported.",
+	"pageAuthSetupImportTitle": "⚡️ Congratulations!",
+	"pageAuthSetupImportText": "You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported.",
 	"pageAuthSetupImportBackup": "Import backup",
-	"pageAuthSetupEntering": "Entering the Account...",
+	"pageAuthSetupEntering": "Entering the Vault...",
 
 	"pageHeadControlButtonsChangeCover": "Change cover",
 	"pageHeadControlButtonsReposition": "Reposition",
@@ -448,7 +473,8 @@
 	"blockNameBulleted": "Bulleted list",
 	"blockNameNumbered": "Numbered list",
 	"blockNameToggle": "Toggle",
-	"blockNameExisting": "Add link",
+	"blockNameExistingPage": "Add link",
+	"blockNameExistingFile": "Add file",
 	"blockNameFile": "File",
 	"blockNameImage": "Picture",
 	"blockNameVideo": "Video",
@@ -477,7 +503,8 @@
 	"blockTextBulleted": "Simple list",
 	"blockTextNumbered": "Numbered list",
 	"blockTextToggle": "Hide and show content inside",
-	"blockTextExisting": "Create link to another object",
+	"blockTextExistingPage": "Create link to another object",
+	"blockTextExistingFile": "Create link to another file",
 	"blockTextFile": "Store file in original state",
 	"blockTextImage": "Upload and enrich the page with image",
 	"blockTextVideo": "Upload playable video",
@@ -528,8 +555,6 @@
 	"blockDataviewControlsSettings": "Settings",
 	"blockDataviewControlsViewAdd": "Create new View",
 
-	"blockDataviewSelectionMoveToBin": "Move to Bin",
-	"blockDataviewSelectionDeselect": "Deselect all",
 	"blockDataviewSelectionSelected": "%s selected",
 
 	"blockDataviewHeadMenuEdit": "Edit title",
@@ -571,6 +596,7 @@
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 
 	"blockFeaturedQuery": "Query",
+	"blockFeaturedIdentity": "Identity",
 
 	"blockFeaturedTypeMenuOpenType": "Open type",
 	"blockFeaturedTypeMenuChangeType": "Change type",
@@ -601,14 +627,7 @@
 	"blockTableOptionsColorClearStyle": "Clear style",
 
 	"blockTableOptionsAlignText": "Text align",
-	"blockTableOptionsAlignTextLeft": "Left",
-	"blockTableOptionsAlignTextCenter": "Center",
-	"blockTableOptionsAlignTextRight": "Right",
-
 	"blockTableOptionsAlignVertical": "Vertical align",
-	"blockTableOptionsAlignVerticalTop": "Top",
-	"blockTableOptionsAlignVerticalMiddle": "Middle",
-	"blockTableOptionsAlignVerticalBottom": "Bottom",
 
 	"blockTypeMyTypes": "My Types",
 
@@ -617,13 +636,12 @@
 	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
 	"popupSettingsAccountPersonalInformationDescriptionPlaceholder": "A few words about yourself",
 	"popupSettingsAccountAnytypeIdentityTitle": "Anytype Identity",
-	"popupSettingsAccountTitle": "Profile",
-	"popupSettingsAccountDeleteTitle": "Delete Account",
+	"popupSettingsAccountDeleteTitle": "Delete Vault",
 
 	"popupSettingsSpaceTitle": "Space",
 	"popupSettingsProfileTitle": "Profile",
 	"popupSettingsApplicationTitle": "Application",
-	"popupSettingsVoidTitle": "Void & Key",
+	"popupSettingsAccountAndKeyTitle": "Vault & Key",
 
 	"popupSettingsPersonalTitle": "Preferences",
 	"popupSettingsPersonalDefaultObjectType": "Default Object Type",
@@ -636,6 +654,7 @@
 	"popupSettingsPersonalNavigationMenuContext": "Right click",
 	"popupSettingsPersonalNavigationMenuClick": "Click",
 	"popupSettingsPersonalNavigationMenuHover": "Hover",
+	"popupSettingsPersonalLinkStyle": "Link to object style",
 
 	"popupSettingsAppearanceTitle": "Appearance",
 	"popupSettingsAppearanceColorMode": "Color mode",
@@ -654,20 +673,20 @@
 	"popupSettingsGradient": "Gradients",
 	"popupSettingsCodeStub": "Follow the white rabbit",
 
-	"popupSettingsMobileQRSubTitle": "Log in your account on Android and iOS",
-	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your account.",
+	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
+	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
 
-	"popupSettingsPhraseTitle": "Recovery Phrase",
+	"popupSettingsPhraseTitle": "Key",
 	"popupSettingsPhraseStub": "You take the red pill, you stay in Wonderland, and I show you how deep the rabbit hole goes.",
-	"popupSettingsPhraseShowPhrase": "Show and copy Phrase",
-	"popupSettingsPhraseHidePhrase": "Hide Phrase",
+	"popupSettingsPhraseShowPhrase": "Show and copy Key",
+	"popupSettingsPhraseHidePhrase": "Hide Key",
 	"popupSettingsPhraseShowQR": "Show QR-code",
 	"popupSettingsPhraseHideQR": "Hide QR-code",
-	"popupSettingsPhraseText": "Your Recovery phrase protects your account. You'll need it to sign in if you don't have access to your devices. Keep it in a safe place. Click to show:",
-	"popupSettingsPhraseBackup": "Back up Phrase",
+	"popupSettingsPhraseText": "Your key protects your vault. You'll need it to sign in if you don't have access to your devices. Keep it in a safe place. Click to show:",
+	"popupSettingsPhraseBackup": "Back up Key",
 
 	"popupSettingsPinTitle": "Pin Code",
-	"popupSettingsPinText": "The Pin Code will protect your Recovery Phrase. As we do not store your Recovery Phrase or Pin Code and do not ask for your e-mail or phone number, it is impossible to recover your data without this information. So, please, remember or write it down somewhere in a safe place.",
+	"popupSettingsPinText": "The Pin Code will protect your Key. As we do not store your Key or Pin Code and do not ask for your e-mail or phone number, it is impossible to recover your data without this information. So, please, remember or write it down somewhere in a safe place.",
 	"popupSettingsPinOn": "Turn Pin Code on",
 	"popupSettingsPinOff": "Turn Pin Code off",
 	"popupSettingsPinChange": "Update Pin Code",
@@ -694,27 +713,32 @@
 	"popupSettingsDataManagementOffloadFilesLocalOnly": "Remove files from this device",
 	"popupSettingsDataManagementDataLocation": "Data location",
 	"popupSettingsDataManagementDeleteTitle": "Danger zone",
-	"popupSettingsDataManagementDeleteText": "Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
-	"popupSettingsDataManagementDeleteButton": "Delete account",
+	"popupSettingsDataManagementDeleteText": "Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
+	"popupSettingsDataManagementDeleteButton": "Delete vault",
 
 	"popupSettingsSpaceIndexTitle": "Space Settings",
-	"popupSettingsSpaceIndexSpaceNameLabel": "Space name",
 	"popupSettingsSpaceIndexDescriptionPlaceholder": "Add a few words about the space...",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": "End-to-end encryption (E2EE)",
 	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction.",
+	"popupSettingsSpaceIndexInfoLabel": "Encrypted & local-first",
 
 	"popupSettingsSpaceIndexShareShareTitle": "Share space",
 	"popupSettingsSpaceIndexShareShareText": "Generate invite link and share the space with other members",
+	"popupSettingsSpaceIndexShareDefaultText": "Entry space can’t be shared. Create a new one to share",
+	"popupSettingsSpaceIndexShareInviteText": "Generate invite link and share the space with other members",
+	"popupSettingsSpaceIndexShareLinkTitle": "Invitation link",
+	"popupSettingsSpaceIndexShareLinkText": "Share this invite link so that others can join your Space",
 
 	"popupSettingsSpaceIndexShareManageTitle": "Manage sharing",
 	"popupSettingsSpaceIndexShareManageText": "Copy invite link, approve requests and manage members",
 
-	"popupSettingsSpaceIndexShareMembersTitle": "Space members",
-	"popupSettingsSpaceIndexShareMembersText": "List of members",
+	"popupSettingsSpaceIndexShareMembersTitle": "Members",
+	"popupSettingsSpaceIndexShareMembersManageText": "Manage space members",
+	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
 	"popupSettingsSpaceIndexManageSpaceTitle": "Manage Space",
 	"popupSettingsSpaceIndexRemoteStorageTitle": "Remote Storage",
-	"popupSettingsSpaceIndexRemoteStorageExtend": "Get more Storage",
+	"popupSettingsSpaceIndexRemoteStorageUpgradeText": "✦ Upgrade to add more storage",
 	"popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
@@ -764,7 +788,10 @@
 	"popupSettingsSpaceShareTitle": "Sharing",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
 	"popupSettingsSpaceShareInviteLinkLabel": "Share this link to invite others to your Space. Once they request to join, you can set their access rights.",
-	"popupSettingsSpaceShareInvitesLimit": "You can add up to %s %s and up to %s %s",
+	"popupSettingsSpaceShareInvitesReaderLimitReachedLabel": "You can't add more members",
+	"popupSettingsSpaceShareInvitesReaderLimitReachedButton": "✦ Upgrade to add more members",
+	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
+	"popupSettingsSpaceShareInvitesWriterLimitReachedButton": "✦ Upgrade to add more editors",
 
 	"popupSettingsSpaceShareMembersTitle": "Members",
 	"popupSettingsSpaceShareJoinRequest": "Join Request",
@@ -779,41 +806,43 @@
 
 	"popupSettingsSpaceMembersTitle": "Members",
 
-	"popupConfirmUpdatePromptTitle": "Update available",
-	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
-	"popupConfirmUpdatePromptRestartOk": "Restart and update",
-	"popupConfirmUpdatePromptOk": "Update",
-	"popupConfirmUpdatePromptCancel": "Later",
-	"popupConfirmUpdateDoneTitle": "You are up-to-date",
-	"popupConfirmUpdateDoneText": "You are on the latest version: %s",
-	"popupConfirmUpdateDoneOk": "Great!",
-	"popupConfirmUpdateErrorTitle": "Oops!",
-	"popupConfirmUpdateErrorText": "Can't check available updates, please try again later.<br\/><span class=\"error\">%s<\/span>",
-
-	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
-	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
-	"popupConfirmStopSharingSpaceConfirm": "Stop sharing",
-
-	"popupConfirmMemberRemoveTitle": "Remove member",
-	"popupConfirmMemberRemoveText": "<b>%s</b> will be removed from the space",
-
-	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
-
-	"popupConfirmRevokeLinkTitle": "Delete sharing link",
-	"popupConfirmRevokeLinkText": "New members won’t be able to join the space. You can generate a new link anytime.",
-	"popupConfirmRevokeLinkConfirm": "Delete link",
-
-	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
-	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
-
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
 	"popupSettingsSpaceRemoveText": "Members could no longer see any objects inside",
 	"popupSettingsSpaceRemoveButton": "Move to Bin",
 
+	"popupSettingsMembershipTitle1": "Membership",
+	"popupSettingsMembershipTitle2": "Let’s build together",
+	"popupSettingsMembershipText": "Joining Anytype network means contributing to its story",
+
+	"popupSettingsMembershipSlide0Title": "Build the Vision Together",
+	"popupSettingsMembershipSlide0Text": "As a valued member your voice matters! Engage in exclusive events, shape strategic choices, and influence our roadmap.",
+	"popupSettingsMembershipSlide1Title": "Unlock Member Benefits",
+	"popupSettingsMembershipSlide1Text": "Members enjoy higher backup storage & sync limits, invitations for multiple guests to collaborate in shared spaces, and a unique identity on the Anytype Network.",
+	"popupSettingsMembershipSlide2Title": "Support Digital Independence",
+	"popupSettingsMembershipSlide2Text": "Your contribution supports our team and endorses <a href=\"%s\">our&nbsp;vision</a> of a user-owned, secure, and collaborative digital network.",
+	"popupSettingsMembershipSlide3Title": "Invest in Connectivity",
+	"popupSettingsMembershipSlide3Text": "Our network's value exceeds the sum of its parts. Your membership sustains the infrastructure for its growth which underpins this network.",
+
+	"popupSettingsMembershipJustEmail": "Just e-mail",
+	"popupSettingsMembershipPerYear": "per year",
+	"popupSettingsMembershipPerYears": "per %s %s",
+	"popupSettingsMembershipLearnMore": "Learn more",
+	"popupSettingsMembershipCurrent": "Current",
+	"popupSettingsMembershipManage": "Manage",
+	"popupSettingsMembershipValidUntil": "Valid until %s",
+	"popupSettingsMembershipForeverFree": "Forever free",
+	"popupSettingsMembershipPending": "Pending...",
+
+	"popupSettingsMembershipLevelsDetails": "Membership plan details",
+	"popupSettingsMembershipPrivacyPolicy": "Privacy policy",
+	"popupSettingsMembershipTermsAndConditions": "Terms and conditions",
+
+	"popupSettingsMembershipSpecial": "Would you like to use Anytype for business, education, etc.? <span>Please let us know here</span>︎.",
+
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",
-	"popupSettingsOnboardingStoragePath": "Account Data Location",
+	"popupSettingsOnboardingStoragePath": "Vault Data Location",
 	"popupSettingsOnboardingLocalOnlyWarningText": "Anytype can't transfer your data between directories. <br/>Your Spaces data will be downloaded from another device. <br/>Please ensure that you have such a device active on the same network.",
 	"popupSettingsOnboardingLocalOnlyWarningConfirm": "Yes, I understand",
 
@@ -824,11 +853,11 @@
 	"popupSettingsDataKeepFiles": "Keep files",
 	"popupSettingsDataRemoveFiles": "Remove files",
 
-	"popupSettingsDeleteTitle1": "1. You have 30 days to cancel account deletion",
-	"popupSettingsDeleteText1": "We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
+	"popupSettingsDeleteTitle1": "1. You have 30 days to cancel vault deletion",
+	"popupSettingsDeleteText1": "We're sorry to see you go. Once you request your vault to be deleted, you have 30 days to cancel this request. After 30 days, your vault data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
 	"popupSettingsDeleteTitle2": "2. Delete data from other devices",
 	"popupSettingsDeleteText2": "Since Anytype stores all your data locally on the device, you need to remove it from other devices also. Launch and remove data in Anytype or just delete the app.",
-	"popupSettingsDeleteCheckboxLabel": "I have read it and want to delete my account",
+	"popupSettingsDeleteCheckboxLabel": "I have read it and want to delete my vault",
 
 	"popupSettingsImportCsvTable": "Table",
 	"popupSettingsImportCsvCollection": "Collection",
@@ -841,14 +870,14 @@
 
 	"popupSettingsImportNotionHelpTitle": "How to import from Notion",
 	"popupSettingsImportNotionHelpStep": "Step %s",
-	"popupSettingsImportNotionHelpStep11": "Open Settings and members.",
-	"popupSettingsImportNotionHelpStep12": "Open My Connections and then Develop or manage integrations.",
+	"popupSettingsImportNotionHelpStep11": "Open Settings &amp; members.",
+	"popupSettingsImportNotionHelpStep12": "Open My Connections and then click Develop or manage integrations.",
 	"popupSettingsImportNotionHelpStep13": "Click New integration or Create new integration.",
 	"popupSettingsImportNotionHelpStep14": "Select your workspace and set Name for integration.",
-	"popupSettingsImportNotionHelpStep15": "Important! ️Go to <b>Capabilities</b> and select following capabilities and press save changes: <ul><li>Read content</li><li>Read user information</li></ul>️",
+	"popupSettingsImportNotionHelpStep15": "Important! ️Go to <b>Capabilities</b> and select following capabilities and press Save changes: <ul><li>Read content</li><li>Read user information</li></ul>️",
 	"popupSettingsImportNotionHelpStep16": "Copy Internal Integration Secret for connecting and importing your data.",
 	"popupSettingsImportNotionHelpStep2Descr": "Add integration to the pages you want to import into Anytype. Page will be imported with all children documents. Select your root object to import all objects.",
-	"popupSettingsImportNotionHelpStep21": "Click on three dots on the upper right corner, then Add connections (you need to scroll the menu). Select your Anytype integration.",
+	"popupSettingsImportNotionHelpStep21": "Click on three dots on the upper right corner, then click Connect to (you need to scroll the menu). Select your Anytype integration.",
 	"popupSettingsImportNotionHelpStep22": "Press Confirm. Now you just need to paste your Internal Integration Token to Anytype.",
 
 	"popupSettingsImportNotionWarningTitle": "Some data formats will be imported as text",
@@ -871,6 +900,112 @@
 
 	"popupSettingsPinCheckTimeOut": "PIN code check time-out",
 
+	"popupMembershipFreeTitleStep1": "Get your free membership with just your email!",
+	"popupMembershipFreeTitleStep2": "Enter the code sent to your email",
+	"popupMembershipFreeText": "We need your email to keep spam at bay and the fun in play!",
+	"popupMembershipFreeCheckboxText": "I'd like to get updates on products and enjoy free perks!",
+	"popupMembershipFreeEnterCode": "Enter code",
+
+	"popupMembershipCurrentEmailTitle": "Get updates and enjoy free perks!",
+	"popupMembershipCurrentEmailText": "It is not linked to your vault in any way.",
+	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
+
+	"popupMembershipPaidTitle": "Pick your unique name",
+	"popupMembershipPaidTextPerYear": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a year.",
+	"popupMembershipPaidTextPerYears": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
+	"popupMembershipPaidPlaceholder": "Enter your name",
+	"popupMembershipPayByCard": "Pay by Card",
+	"popupMembershipPayByCrypto": "Pay by Crypto",
+	"popupMembershipPaidBy": "Paid by %s",
+
+	"popupMembershipResend": "Resend",
+	"popupMembershipCountdown": " in %s sec",
+
+	"popupMembershipStatusWaitASecond": "Wait a second...",
+	"popupMembershipStatusNameAvailable": "This name is available!",
+	"popupMembershipStatusNameNotAvailable": "Oops! This name is already taken!",
+	"popupMembershipCurrentStatus": "Current status",
+	"popupMembershipValidUntil": "Valid until",
+	"popupMembershipForever": "Forever",
+	"popupMembershipChangeEmail": "Change e-mail",
+	"popupMembershipManagePayment": "Manage payment",
+	"popupMembershipWriteToAnyteam": "Write to Anyteam",
+	"popupMembershipManageOnMobilePlatform": "Manage available on Mobile platform",
+	"popupMembershipPaidOnOtherPlatform": "You've already acquired Membership plan on another platform, please cancel Membership first.",
+
+	"popupMembershipWhatsIncluded": "What’s included",
+
+	"popupMembershipSuccessTitle": "Welcome to the network, %s",
+	"popupMembershipSuccessTextCuriosity": "Big cheers for your curiosity!",
+	"popupMembershipSuccessTextSupport": "Big cheers for your support!",
+	"popupMembershipSuccessVerificationTitle": "Thank you for confirming your email!",
+	"popupMembershipSuccessVerificationText": "You are now set to receive the latest updates and perks. Enjoy exploring!",
+
+	"popupMembershipCode1": "Unknown error occurred",
+	"popupMembershipCode2": "No .any provided",
+	"popupMembershipCode3": "Name is too short",
+	"popupMembershipCode4": "Name is too long",
+	"popupMembershipCode5": "Name has invalid characters",
+	"popupMembershipCode6": "This tier does not support name",
+
+	"popupMembershipTierFeatureAnyNameContent": "Unique name (from %s characters)",
+
+	"popupConfirmUpdatePromptTitle": "Update available",
+	"popupConfirmUpdatePromptText": "Do you want to update on a new version?",
+	"popupConfirmUpdatePromptRestartOk": "Restart and update",
+	"popupConfirmUpdatePromptCancel": "Later",
+	"popupConfirmUpdateDoneTitle": "You are up-to-date",
+	"popupConfirmUpdateDoneText": "You are on the latest version: %s",
+	"popupConfirmUpdateDoneOk": "Great!",
+	"popupConfirmUpdateErrorTitle": "Oops!",
+	"popupConfirmUpdateErrorText": "Can't check available updates, please try again later.<br\/><span class=\"error\">%s<\/span>",
+
+	"popupConfirmNeedUpdateTitle": "It's time to update",
+	"popupConfirmNeedUpdateText": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features.",
+
+	"popupConfirmObjectOpenErrorText": "There was a problem while opening the object, please send the debug info to the support team.",
+	"popupConfirmObjectOpenErrorButton": "Collect debug info",
+
+	"popupConfirmStopSharingSpaceTitle": "Stop sharing the space",
+	"popupConfirmStopSharingSpaceText": "Members will no longer sync to this space and the share link will be deactivated.",
+	"popupConfirmStopSharingSpaceConfirm": "Stop sharing",
+
+	"popupConfirmMemberRemoveTitle": "Remove member",
+	"popupConfirmMemberRemoveText": "<b>%s</b> will be removed from the space",
+
+	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
+
+	"popupConfirmRevokeLinkTitle": "Delete sharing link",
+	"popupConfirmRevokeLinkText": "New members won’t be able to join the space. You can generate a new link anytime.",
+	"popupConfirmRevokeLinkConfirm": "Delete link",
+
+	"popupConfirmSpaceShareMoreInfoTitle": "How to share a space?",
+	"popupConfirmSpaceShareMoreInfoText": "<ul><li>Please provide the link to the person you'd like to collaborate with.</li><li>By clicking the link, a person requests to join the space.</li><li>After approving the request, you can choose the access rights for that person.</li></ul>",
+
+	"popupConfirmDuplicateSpace": "You are already a member of this space",
+	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
+
+	"popupConfirmWelcomeTitle": "Welcome to your Space",
+	"popupConfirmWelcomeText": "Your <b>Space</b> is an encrypted, local-first container.<br/><b>Spaces</b> can be shared and co-created with others.<br/>Each space contains a <b>Graph of objects</b>.",
+	"popupConfirmWelcomeButton": "Show me what I can build",
+
+	"popupConfirmLostPhraseTitle": "Recovering Your Lost Key",
+	"popupConfirmLostPhraseTextWindows": "<p><p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your Windows Credential Manager. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the Control Panel and change the \"View by\" option to \"Large icons\".<\/li><li>Locate and open the \"Credential Manager\" application.<\/li><li>Click on the \"Windows Credentials\" tab to view your saved credentials.<\/li><li>Search for the entry related to Anytype and click \"Edit\" to see details.<\/li><\/ul>",
+	"popupConfirmLostPhraseTextLinux": "<p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your Linux Keyring. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the \"Passwords and Keys\" application, which you can find in the Utilities folder.<\/li><li>In the \"Passwords and Keys\" window, select the \"Default\" keyring on the left.<\/li><li>Search for the entry related to Anytype and double-click on it.<\/li><li>Click on the key icon to reveal the key, or select the \"Copy\" option to copy the key.<\/li><\/ul><p>Copy the key and secure it safely.<\/p>",
+	"popupConfirmLostPhraseTextMac": "<p>We understand how important your key is, but Anytype doesn't store a copy of it. Your key was generated on the device and automatically saved in your macOS Keychain Access. Follow these steps to recover it:<\/p> <ul class=\"last\"><li>Open the Keychain Access application, which you can find in the Utilities folder.<\/li><li>In the Keychain Access window, select \"Login\" from the list of Keychains on the left.<\/li><li>Click on the \"Passwords\" tab to view your saved passwords.<\/li><li>Search for the entry related to Anytype and double-click on it.<\/li><li>Check the \"Show password\" box, and your key will be displayed.<\/li><\/ul><p>Copy the key and secure it safely.<\/p>",
+
+	"popupConfirmMembershipUpgradeTitle": "Membership Upgrade",
+	"popupConfirmMembershipUpgradeText": "Reach us for extra storage, space editors, or more shared spaces. Anytype team will provide details and conditions tailored to your needs.",
+	"popupConfirmMembershipUpgradeButton": "Contact Anytype Team",
+
+	"popupConfirmRelationOptionRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
+
+	"popupConfirmDeleteWarningTitle": "Are you sure you want to delete %s %s?",
+	"popupConfirmDeleteWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
+
+	"popupConfirmActionRestrictedTitle": "Action restricted!",
+	"popupConfirmActionRestrictedText": "You cannot do this in read-only space",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -882,18 +1017,13 @@
 	"popupInviteInviteConfirmCancel": "Manage spaces",
 
 	"popupInviteConfirmTitle": "%s requested to join %s",
-	"popupInviteConfirmButtonConfirmReader": "Grant read access",
-	"popupInviteConfirmButtonConfirmEditor": "Grant edit access",
+	"popupInviteConfirmButtonReader": "Viewer access",
+	"popupInviteConfirmButtonReaderLimit": "✦ Add more space members",
+	"popupInviteConfirmButtonWriter": "Editor access",
+	"popupInviteConfirmButtonWriterLimit": "✦ Add more editors",
 	"popupInviteConfirmButtonReject": "Reject",
 
-	"popupInviteQrTitle": "QR code for joing a Space",
-
-	"networkMode0Title": "Anytype",
-	"networkMode0Text": "Back up to the network managed by Anytype",
-	"networkMode1Title": "Local-only",
-	"networkMode1Text": "Don't back up; sync within local network",
-	"networkMode2Title": "Self-hosted",
-	"networkMode2Text": "Back up to your self-hosted network",
+	"popupInviteQrTitle": "QR code for joining a Space",
 
 	"popupHelpLabel": "Stay tuned for Anytype's news",
 
@@ -913,6 +1043,8 @@
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchCreateObject": "Create Object",
 	"popupSearchAddRelation": "Add Relation",
+	"popupSearchTooltipSearchByBacklinks": "Show related objects",
+	"popupSearchBacklinksFrom": "Related to: %s",
 
 	"popupAboutTitle": "Anytype",
 	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -972,7 +1104,6 @@
 	"popupShortcutMainSelection4": "Expand your selection up or down",
 	"popupShortcutMainSelection5": "On block will select or de-select an entire block",
 	"popupShortcutMainSelection6": "Select block and all blocks in between",
-	"popupShortcutMainActions": "Actions",
 	"popupShortcutMainActions1": "Activate command menu",
 	"popupShortcutMainActions2": "Open action menu",
 	"popupShortcutMainActions3": "Deletes the words left to the cursor",
@@ -991,10 +1122,10 @@
 	"popupShortcutMainTextStyle7": "Apply previously selected font color",
 	"popupShortcutMainTextStyle8": "Apply previously selected highlight",
 
-	"popupShortcutNavigationBasics1": "Open settings",
-	"popupShortcutNavigationBasics2": "Open the navigation pane",
-	"popupShortcutNavigationBasics3": "Open the graph pane",
-	"popupShortcutNavigationBasics4": "Open the search pane",
+	"popupShortcutNavigationBasics1": "Open Settings",
+	"popupShortcutNavigationBasics2": "Open the Flow pane",
+	"popupShortcutNavigationBasics3": "Open the Graph pane",
+	"popupShortcutNavigationBasics4": "Open the Search pane",
 	"popupShortcutNavigationBasics5": "Open the Library pane",
 	"popupShortcutNavigationBasics6": "Return to the home screen",
 	"popupShortcutNavigationBasics7": "Show previous object from History",
@@ -1016,6 +1147,7 @@
 	"popupShortcutNavigationPage7": "Go to the end of the Object",
 	"popupShortcutNavigationPage8": "Move selected block(s) around",
 	"popupShortcutNavigationPage9": "Open relations view",
+	"popupShortcutNavigationPage10": "Check / Uncheck Checkbox",
 	
 	"popupShortcutMarkdownWhileTyping": "While typing",
 	"popupShortcutMarkdownWhileTyping1": "Inline code",
@@ -1080,12 +1212,12 @@
 	"popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
 	"popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
 
-	"popupPhraseTitle1": "What is a Recovery Phrase?",
-	"popupPhraseTitle2": "How to save my phrase?",
-	"popupPhraseLabel1": "Your Recovery Phrase is 12 random words from which your account is magically generated on this device.",
-	"popupPhraseLabel2": "Whomever knows your Recovery Phrase, owns the account. At this moment, you are the only person in the world who knows it.",
-	"popupPhraseLabel3": "That's why it's essential to keep your Recovery Phrase safe. As the sole owner, nobody can help you if it's lost.",
-	"popupPhraseLabel4": "The easiest way to store your Recovery Phrase is to save it in your password manager.",
+	"popupPhraseTitle1": "What is a Key?",
+	"popupPhraseTitle2": "How to save my key?",
+	"popupPhraseLabel1": "It is represented by a recovery phrase – 12 random words from which your vault is magically generated on this device.",
+	"popupPhraseLabel2": "Whomever knows the combination of these words owns your vault. Right now, you are the only person in the world who knows it.",
+	"popupPhraseLabel3": "All computational resources on Earth are not enough to break in. If you lose it, it cannot be recovered. So, store it somewhere safe!",
+	"popupPhraseLabel4": "The easiest way to store your Key is to save it in your password manager.",
 	"popupPhraseLabel5": "The most secure way is to write it down on paper and keep it offline, in a safe and secure place.",
 
 	"popupUsecaseAuthor": "Made by @%s",
@@ -1097,18 +1229,21 @@
 	"popupUsecaseListText": "Explore experiences made by power users.<br/>Simply install to your space and boost up your workflow.",
 	"popupUsecaseListEmptyCategory": "No Experiences found in the <b>%s</b> category",
 	"popupUsecaseListEmptyFilter": "There are no Experiences named <b>\"%s\"<\/b>",
+	"popupUsecaseBannerText": "Introducing local-first collaboration! Co-create, share and collaborate on Spaces!",
 
-	"popupRelationValueRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
+	"popupRelationTitle": "Edit %d %s",
+	"popupRelationEmpty": "There are no relations shown yet",
+	"popupRelationAddToView": "Add relations to the view",
 
-	"menuAccountPeer": "%d\/%d peers",
-	"menuAccountPathText": "Your key files will be stored here. Click to change the path",
+	"menuVaultPeer": "%d\/%d peers",
+	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
 
-	"menuSmileRandom": "Random emoji",
-	"menuSmileGallery": "Gallery",
-	"menuSmileUpload": "Upload image",
-	"menuSmileEmpty": "<b>There are no emojis named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
+	"menuSmileGallery": "Emojis",
+	"menuSmileUpload": "Upload",
+	"menuSmileEmpty": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
+	"menuSmileRandom": "Random emoji",
 
 	"menuBlockCoverEdit": "Reposition",
 	"menuBlockCoverEmpty": "There are no covers found",
@@ -1121,11 +1256,11 @@
 	"menuBlockActionsSectionsListStyle": "List style",
 	"menuBlockActionsSectionsDividerStyle": "Divider style",
 	"menuBlockActionsSectionsFileStyle": "File style",
-	"menuBlockActionsSectionsActions": "Actions",
 	"menuBlockActionsSectionsBackground": "Background",
 	"menuBlockActionsSectionsColor": "Color",
 	"menuBlockActionsSectionsDataview": "Dataview",
 	"menuBlockActionsCreateNew": "Create new %s",
+	"menuBlockActionsExistingFile": "Use existing file",
 
 	"menuBlockAddNewRelation": "New relation",
 	"menuBlockAddSectionsText": "Text",
@@ -1168,20 +1303,6 @@
 	"menuBlockLinkFilterPlaceholder": "Paste link or search Objects",
 	"menuBlockLinkSectionsLinkToWebsite": "Link to website",
 
-	"menuBlockMorePrint": "Print",
-	"menuBlockMoreSearchOnPage": "Search on page",
-	"menuBlockMoreMoveTo": "Move to",
-	"menuBlockMoreVersionHistory": "Version History",
-	"menuBlockMoreExport": "Export",
-	"menuBlockMoreReloadFromSource": "Reload from Source",
-	"menuBlockMoreCreateObject": "Create Object",
-	"menuBlockMoreUseAsTemplate": "Use as a Template",
-	"menuBlockMoreUnlockPage": "Unlock page",
-	"menuBlockMoreLockPage": "Lock page",
-	"menuBlockMoreInstall": "Install",
-	"menuBlockMoreSetDefaultTemplate": "Set as default Template",
-	"menuBlockMoreCreateWidget": "Create Widget",
-
 	"menuBlockRelationEditUnlinkFromType": "Unlink from Type",
 	"menuBlockRelationEditUnlinkFromObject": "Unlink from Object",
 	"menuBlockRelationEditSelectObjectType": "Select Object Type",
@@ -1223,9 +1344,10 @@
 
 	"menuDataviewContextNoAvailableActions": "No available actions",
 	"menuDataviewContextUnlinkFromCollection": "Unlink from collection",
+	"menuDataviewContextTryAgain": "Please try again",
+	"menuDataviewContextEditRelations": "Edit relations",
 
 	"menuDataviewCreateSomethingWentWrong": "Oops - something went wrong!",
-	"menuDataviewContextTryAgain": "Please try again",
 
 	"menuDataviewDateDateFormat": "Date format",
 	"menuDataviewDateTimeFormat": "Time format",
@@ -1266,10 +1388,11 @@
 	"menuDataviewRelationEditFilterObjectTypes": "Filter Object types...",
 	"menuDataviewRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your Library",
 
-	"menuDataviewRelationListAddRelation": "Add Relation",
-
 	"menuDataviewSortNoSortsApplied": "No sorts applied to this View",
 	"menuDataviewSortNewSort": "New sort",
+	"menuDataviewSortShowEmpty": "Show empty values",
+	"menuDataviewSortShowEmptyTop": "On top",
+	"menuDataviewSortShowEmptyBottom": "On bottom",
 
 	"menuDataviewSourceSelectOneOrMoreSources": "Select one or more sources",
 	"menuDataviewSourceAddRelation": "Add a Relation",
@@ -1306,6 +1429,7 @@
 	"menuGraphSettingsLinks": "Links",
 	"menuGraphSettingsRelations": "Relations",
 	"menuGraphSettingsUnlinkedObjects": "Unlinked Objects",
+	"menuGraphSettingsFiles": "Files",
 	"menuGraphSettingsLocal": "Local graph",
 
 	"menuHelpWhatsNew": "What's New",
@@ -1318,6 +1442,19 @@
 	"menuHelpTerms": "Terms of Use",
 	"menuHelpPrivacy": "Privacy Policy",
 	"menuHelpGallery": "ANY Experience Gallery",
+
+	"menuObjectPrint": "Print",
+	"menuObjectSearchOnPage": "Search on page",
+	"menuObjectVersionHistory": "Version History",
+	"menuObjectExport": "Export",
+	"menuObjectReloadFromSource": "Reload from Source",
+	"menuObjectCreateObject": "Create Object",
+	"menuObjectUseAsTemplate": "Use as a Template",
+	"menuObjectUnlockPage": "Unlock page",
+	"menuObjectLockPage": "Lock page",
+	"menuObjectInstall": "Install",
+	"menuObjectSetDefaultTemplate": "Set as default Template",
+	"menuObjectCreateWidget": "Create Widget",
 
 	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
 	"menuItemRelationViewFeaturedRemove": "Remove from featured Relations",
@@ -1448,6 +1585,8 @@
 	"toastRelationRemoved": "Relation <b>%s</b> has been removed from your Library",
 	"toastSetDefaultTemplate": "This Template was Set as default",
 
+	"toastFileLimitReached": "Your local storage exceeds syncing limit. Locally stored files won't be synced",
+
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
 	"textColor-orange": "Amber",
@@ -1510,11 +1649,11 @@
 	"edgeType1": "Relation",
 
 	"survey0Title": "Time to take a survey!",
-	"survey0Text": "Hi there, We hope you're enjoying your experience in Anytype! We'd love to hear your feedback so we can keep improving the product.",
+	"survey0Text": "Hi there! We hope you're enjoying your experience in Anytype! We'd love to hear your feedback so we can keep improving the product.",
 	"survey0Confirm": "Let's Go!",
 	"survey0Cancel": "Skip",
 	"survey1Title": "Help us to become better",
-	"survey1Text": "We'd love to learn more about why you've chosen to delete your account. Would you be willing to take 3 minutes to help us improve?",
+	"survey1Text": "We'd love to learn more about why you've chosen to delete your vault. Would you be willing to take 3 minutes to help us improve?",
 	"survey1Confirm": "Sure, let's go",
 	"survey1Cancel": "No thanks",
 	"survey2Title": "We need your opinion",
@@ -1525,6 +1664,10 @@
 	"survey3Text": "Hi there, we hope you're enjoying your experience with Anytype! Would you take 5 minutes to help us improve our product?",
 	"survey3Confirm": "Sure, let's go",
 	"survey3Cancel": "No thanks",
+	"survey4Title": "Improve Anytype with Your Feedback",
+	"survey4Text": "Take our 1-minute survey to enhance space sharing. Your input makes Anytype better for everyone.",
+	"survey4Confirm": "Let’s Go!",
+	"survey4Cancel": "No thanks",
 
 	"widget0Name": "Link",
 	"widget0Description": "Compact version of the Object",
@@ -1548,13 +1691,13 @@
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
 	"widgetCreate": "Create new object",
 
-	"phrasePlaceholder": "Please enter your Recovery Phrase here",
+	"phrasePlaceholder": "Please enter your Key",
 
 	"navigationCreateNew": "Create new Object",
 	"navigationAccount": "Spaces",
 
 	"spaceAccessType0": "Private Space",
-	"spaceAccessType1": "Default Space",
+	"spaceAccessType1": "Entry Space",
 	"spaceAccessType2": "Shared Space",
 
 	"spaceLast": "Last opened Object",
@@ -1562,6 +1705,9 @@
 	"spaceDeleteWarningTitle": "Delete \"%s\" space",
 	"spaceDeleteWarningText": "This space will be deleted irrevocably. You can't undo this action.",
 	"spaceDeleteToast": "Space \"%s\" was deleted",
+	"spaceLeaveWarningTitle": "Leave a space",
+	"spaceLeaveWarningText": "\"%s\" will be removed from your devices and you will no longer have access to it",
+	"spaceLeaveToast": "You have left the \"%s\" space",
 
 	"quickOption0": "Exact date",
 	"quickOption1": "Yesterday",
@@ -1616,14 +1762,14 @@
 	"onboardingObjectCreationFinish1Button": "Ok! I like it",
 
 	"onboardingDashboard": "Onboarding",
-	"onboardingDashboard11": "<b>Welcome to your Homepage.</b> This is your personalized page, which you can customize to your liking.",
-	"onboardingDashboard12": "Feel free to make adjustments as needed.",
-	"onboardingDashboard13": "Let's take a few minutes to explore the features together.",
-	"onboardingDashboard41": "<b>You'll find the Sidebar on the left.</b> It's a navigation tool that you can customize with multiple widget types.",
-	"onboardingDashboard42": "Change the Widget appearance and see what looks best. Make your Favorites as a Tree Widget.",
-	"onboardingDashboard51": "<b>Great job!</b> You have completed this section. Feel free to explore other menus in the interface, such as Library and Sets.",
-	"onboardingDashboard52": "If you have any questions, don't hesitate to press the <span class=\"highlight\">?</span> button.",
-	"onboardingDashboard53": "To continue working on your project where you left off, you can import your data and make it your own.",
+	"onboardingDashboard1Title": "Let's start by quickly exploring Anytype's key features.",
+	"onboardingDashboard1Text": "Prefer to do it later?<br/>Just hit the <span class=\"highlight\">?</span> button and then Show hints when you feel ready.",
+
+	"onboardingDashboard2Title": "Widgets on the left provide quick access to objects in your space.",
+	"onboardingDashboard2Text": "Personalize them by clicking the Edit Widgets button.",
+
+	"onboardingDashboard31": "<b>Well done!</b> Jump to Sets or Library from the sidebar to explore more or continue by importing your data and making it your own.",
+	"onboardingDashboard32": "For help, press the <span class=\"highlight\">?</span> button.",
 
 	"onboardingEditor": "Editor",
 	"onboardingEditor1Title": "Connect your Objects",
@@ -1638,7 +1784,7 @@
 	"onboardingTypeDeleted1Description": "If you want to keep using this Object, change this Object Type.",
 
 	"onboardingSourceDeleted1Title": "Please check your Installed Types & Relations",
-	"onboardingSourceDeleted1Description": "Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Marketplace to re-install these entities and continue using your Set.",
+	"onboardingSourceDeleted1Description": "Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Library to re-install these entities and continue using your Set.",
 
 	"onboardingInlineSet1Title": "This is Inline Set",
 	"onboardingInlineSet1Description": "Congratulations! You can embed a Set or Collection and modify it using Filters and Views without altering the original instance.",
@@ -1659,11 +1805,14 @@
 	"onboardingTemplateSelectTitle": "New Template Selector",
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
-	"onboardingSpaceSelectTitle": "Meet Multiple Spaces",
-	"onboardingSpaceSelectDescription": "Click your profile icon to access the space selector. Switch between spaces or create new ones here.",
+	"onboardingSpaceSelectTitle": "Create and Share Spaces",
+	"onboardingSpaceSelectDescription": "Click here to create a new space and share it with others!",
 
-	"onboardingQuickCaptureTitle": "Create objects with different types",
-	"onboardingQuickCaptureDescription": "Right-click the <span class=\"highlight\">\"Plus\"</span> button to use recent types. In this menu, you can select existing types, install from Anytype Library, or create new ones.",
+	"onboardingQuickCaptureTitle": "Use Different Object Types",
+	"onboardingQuickCaptureDescription": "Select types for your objects to categorize and connect them.",
+
+	"onboardingShareSpaceTitle": "Co-create, share and collaborate on Spaces!",
+	"onboardingShareSpaceDescription": "Click the space widget to open space settings. From there, you can share the space and invite members to collaborate.",
 
 	"libDataviewRelations": "Relations",
 	"libDataviewGroups": "Groups",
@@ -1673,9 +1822,9 @@
 	"libKeyboardAppVersion": "App version",
 	"libKeyboardBuildNumber": "Build number",
 	"libKeyboardLibraryVersion": "Library version",
-	"libKeyboardAccountID": "Anytype Identity",
-	"libKeyboardAnalyticsID": "Analytics ID",
-	"libKeyboardDeviceID": "Device ID",
+	"libKeyboardAccountId": "Anytype Identity",
+	"libKeyboardAnalyticsId": "Analytics ID",
+	"libKeyboardDeviceId": "Device ID",
 	"libKeyboardTechInformation": "Tech information",
 
 	"libRelationSmall": "Small",
@@ -1709,7 +1858,8 @@
 	"errorAccountCreate901": "Network error",
 	"errorAccountCreate902": "Connection refused",
 	"errorAccountCreate903": "Network offline",
-	"errorAccountRecover101": "No accounts have been found",
+
+	"errorAccountRecover101": "No vaults have been found",
 	"errorAccountRecover102": "You'll have to convert your wallet first",
 	"errorAccountRecover103": "Failed to create local repo",
 	"errorAccountRecover104": "Local repo exists but is corrupted",
@@ -1717,8 +1867,146 @@
 	"errorAccountRecover106": "Wallet recover has not been performed",
 	"errorAccountRecover107": "Failed to stop running node",
 	"errorAccountRecover108": "Another process is running",
-	"errorAccountRecover109": "Account has been deleted",
+	"errorAccountRecover109": "Vault has been deletesd",
+
 	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns.",
+
+	"errorNameServiceResolveName3": "Please connect to the internet",
+
+	"errorMembershipGetStatus6": "Membership not found",
+	"errorMembershipGetStatus7": "Membership has wrong state",
+	"errorMembershipGetStatus8": "Please connect to the internet",
+
+	"errorMembershipIsNameValid3": "Name is too short",
+	"errorMembershipIsNameValid4": "Name is too long",
+	"errorMembershipIsNameValid5": "Name contains invalid characters",
+	"errorMembershipIsNameValid6": "This tier features no name",
+	"errorMembershipIsNameValid7": "Tier not found",
+	"errorMembershipIsNameValid8": "Not logged in",
+	"errorMembershipIsNameValid9": "Unable to connect to payment node",
+	"errorMembershipIsNameValid10": "Cache error",
+	"errorMembershipIsNameValid11": "Name cannot be taken",
+	"errorMembershipIsNameValid12": "Please connect to the internet",
+
+	"errorMembershipRegisterPaymentRequest4": "Unable to connect to payment node",
+	"errorMembershipRegisterPaymentRequest6": "Tier not found",
+	"errorMembershipRegisterPaymentRequest7": "Tier is invalid",
+	"errorMembershipRegisterPaymentRequest8": "Payment method is invalid",
+	"errorMembershipRegisterPaymentRequest9": "Bad Any name",
+	"errorMembershipRegisterPaymentRequest10": "Membership already exists",
+	"errorMembershipRegisterPaymentRequest11": "Please connect to the internet",
+
+	"errorMembershipFinalize6": "Membership not found",
+	"errorMembershipFinalize7": "Membership has wrong state",
+	"errorMembershipFinalize8": "Bad Any name",
+	"errorMembershipFinalize9": "Please connect to the internet",
+
+	"errorMembershipGetVerificationEmail6": "Email format is invalid",
+	"errorMembershipGetVerificationEmail7": "This email is already verified",
+	"errorMembershipGetVerificationEmail8": "Email has been already sent",
+	"errorMembershipGetVerificationEmail9": "Failed to send email",
+	"errorMembershipGetVerificationEmail10": "Membership already exists",
+
+	"errorMembershipVerifyEmailCode6": "This email is already verified",
+	"errorMembershipVerifyEmailCode7": "Code has expired",
+	"errorMembershipVerifyEmailCode8": "Wrong code",
+	"errorMembershipVerifyEmailCode9": "Membership not found",
+	"errorMembershipVerifyEmailCode10": "Membership is already active",
+
+	"errorMembershipGetTiers4": "Unable to connect to payment node",
+	"errorMembershipGetPortalLinkUrl4": "Unable to connect to payment node",
+	"errorMembershipGetPortalLinkUrl6": "Please connect to the internet",
+
+	"errorSpaceInviteGenerate101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceInviteGenerate102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceInviteGenerate103": "Oops! The request failed. Please check your Internet connection and try again.",
+	"errorSpaceInviteGenerate104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+	"errorSpaceInviteGenerate105": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
+
+	"errorSpaceInviteView101": "The invitation does not exist. Please ensure that your devices are synchronized.",
+	"errorSpaceInviteView102": "The invitation link could not be parsed. It may contain errors in the format or invalid data.",
+
+	"errorSpaceInviteRevoke101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceInviteRevoke102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceInviteRevoke103": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+	"errorSpaceInviteRevoke104": "Oops! The request failed. Please check your Internet connection and try again.",
+	"errorSpaceInviteRevoke105": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
+
+	"errorSpaceStopSharing101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceStopSharing102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceStopSharing103": "Oops! The request failed. Please check your Internet connection and try again.",
+	"errorSpaceStopSharing104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+
+	"errorSpaceInviteGetCurrent101": "The invitation does not exist. Please ensure that your devices are synchronized.",
+
+	"errorSpaceJoin101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceJoin102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceJoin103": "The invitation does not exist. Please ensure that your devices are synchronized.",
+	"errorSpaceJoin104": "The invitation link could not be parsed. It may contain errors in the format or invalid data.",
+	"errorSpaceJoin105": "Oops! The request failed. Please check your Internet connection and try again.",
+	"errorSpaceJoin106": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+	"errorSpaceJoin107": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
+
+	"errorSpaceJoinCancel101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceJoinCancel102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceJoinCancel103": "Oops! The request failed. Please check your Internet connection and try again.",
+	"errorSpaceJoinCancel104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+	"errorSpaceJoinCancel105": "The request no longer exists. No actions needed, but please ensure that your devices are synchronized.",
+	"errorSpaceJoinCancel106": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
+
+	"errorSpaceRequestApprove101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceRequestApprove102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceRequestApprove103": "The request no longer exists. No actions needed, but please ensure that your devices are synchronized.",
+	"errorSpaceRequestApprove104": "The request could not be approved with these access rights. Please ensure that the correct access rights are assigned.",
+	"errorSpaceRequestApprove105": "Oops! The request failed. Please check your Internet connection and try again.",
+	"errorSpaceRequestApprove106": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+	"errorSpaceRequestApprove107": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
+
+	"errorSpaceRequestDecline101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceRequestDecline102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceRequestDecline103": "Oops! The request failed. Please check your Internet connection and try again.",
+	"errorSpaceRequestDecline104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+	"errorSpaceRequestDecline105": "The request no longer exists. No actions needed, but please ensure that your devices are synchronized.",
+	"errorSpaceRequestDecline106": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
+
+	"errorSpaceParticipantPermissionsChange101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceParticipantPermissionsChange102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceParticipantPermissionsChange103": "Oops! The request failed. Please check your Internet connection and try again.",
+	"errorSpaceParticipantPermissionsChange104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+	"errorSpaceParticipantPermissionsChange105": "The space member could not be found. Please ensure that your devices are synchronized.",
+	"errorSpaceParticipantPermissionsChange106": "Access rights could not be assigned to the space member. Please ensure that the correct access rights are assigned.",
+	"errorSpaceParticipantPermissionsChange107": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
+
+	"errorSpaceParticipantRemove101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceParticipantRemove102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceParticipantRemove103": "The space member could not be found. Please ensure that your devices are synchronized.",
+	"errorSpaceParticipantRemove104": "Oops! The request failed. Please check your Internet connection and try again.",
+	"errorSpaceParticipantRemove105": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+	"errorSpaceParticipantRemove106": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
+
+	"errorSpaceLeaveApprove101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceLeaveApprove102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceLeaveApprove103": "Oops! The request failed. Please check your Internet connection and try again.",
+	"errorSpaceLeaveApprove104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+	"errorSpaceLeaveApprove105": "The request no longer exists. No actions needed, but please ensure that your devices are synchronized.",
+	"errorSpaceLeaveApprove106": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
+
+	"errorSpaceExit101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceExit102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceExit103": "Oops! The request failed. Please check your Internet connection and try again.",
+
+	"errorSpaceDelete101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceDelete102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceDelete103": "Oops! The request failed. Please check your Internet connection and try again.",
+	"errorSpaceDelete104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+	"errorSpaceDelete105": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
+
+	"errorSpaceMakeShareable101": "Oops! Something went wrong. Please try again later.",
+	"errorSpaceMakeShareable102": "It looks like the space has been deleted. Please ensure that your devices are synchronized.",
+	"errorSpaceMakeShareable103": "Oops! The request failed. Please check your Internet connection and try again.",
+	"errorSpaceMakeShareable104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
+
+	"errorIncorrectEmail": "Incorrect E-mail",
 
 	"origin0": "None",
 	"origin1": "Clipboard",
@@ -1752,7 +2040,7 @@
 	"notificationGallerySuccessTitle": "<b>'%s'</b> was installed",
 	"notificationGallerySuccessText": "Experience was successfully installed to the <b>'%s'</b> space. You can now open and start using it.",
 	"notificationGalleryErrorTitle": "Something went wrong",
-	"notificationGalleryErrorText": "Oops! <b>'%s'</b> wasn't installed. Please check your internet connection and try again or post a report on forum.",
+	"notificationGalleryErrorText": "Oops! <b>'%s'</b> wasn't installed. Please check your Internet connection and try again or post a report in our community.",
 
 	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
 	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration",
@@ -1761,7 +2049,7 @@
 
 	"notificationLeaveSuccessText": "<b>%s</b> wants to leave <b>'%s'</b> space",
 
-	"notificationApproveSuccessText": "Your request to join <b>'%s'</b> space has been approved with <b>%s</b> access rights. The space will be available in your account soon.",
+	"notificationApproveSuccessText": "Your request to join <b>'%s'</b> space has been approved with <b>%s</b> access rights. The space will be available in your vault soon.",
 
 	"notificationRemoveSuccessText": "You were removed from <b>'%s'</b> space, or the space has been deleted by the owner",
 
@@ -1798,6 +2086,19 @@
 	"spaceStatus10": "Removing",
 
 	"challengeTitle": "Please enter the following numbers in the extension",
-	"webclipperEmptySelection": "Selection is empty"
+	"webclipperEmptySelection": "Selection is empty",
+
+	"paymentMethod0": "None",
+	"paymentMethod1": "Stripe",
+	"paymentMethod2": "Crypto",
+	"paymentMethod3": "ApplePay",
+	"paymentMethod4": "GooglePay",
+
+	"networkMode0Title": "Anytype",
+	"networkMode0Text": "Back up to the network managed by Anytype",
+	"networkMode1Title": "Local-only",
+	"networkMode1Text": "Don't back up; sync within local network",
+	"networkMode2Title": "Self-hosted",
+	"networkMode2Text": "Back up to your self-hosted network"
 
 }

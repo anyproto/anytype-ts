@@ -5,7 +5,7 @@ import { MenuItemVertical, Filter, ObjectName } from 'Component';
 import { I, UtilCommon, keyboard, UtilData, UtilObject, UtilMenu, analytics, focus, translate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -366,7 +366,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			onChange(I.MarkType.Link, url);
 		} else
 		if (item.itemId == 'add') {
-			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], 'Link', (message: any) => {
+			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], 'Link', (message: any) => {
 				onChange(I.MarkType.Object, message.targetId);
 			});
 		} else {

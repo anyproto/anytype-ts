@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { I, UtilCommon, focus, Preview } from 'Lib';
 import { menuStore, authStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const AUTH_IDS = [ 'settings' ];
 const SHOW_DIMMER = [
@@ -17,6 +17,9 @@ const SHOW_DIMMER = [
 	'inviteRequest',
 	'inviteConfirm',
 	'inviteQr',
+	'usecase',
+	'membership',
+	'membershipFinalization',
 ];
 
 class PopupStore {
@@ -33,7 +36,7 @@ class PopupStore {
             update: action,
             updateData: action,
             close: action,
-            closeAll: action
+            closeAll: action,
         });
     };
 
@@ -42,12 +45,8 @@ class PopupStore {
 	};
 
     open (id: string, param: I.PopupParam) {
-		if (AUTH_IDS.includes(id)) {
-			const { account } = authStore;
-
-			if (!account) {
-				return;
-			};
+		if (AUTH_IDS.includes(id) && !authStore.account) {
+			return;
 		};
 
 		param.data = param.data || {};
@@ -127,7 +126,7 @@ class PopupStore {
 		return this.isOpenList([ 'search', 'template' ]);
 	};
 
-    close (id: string, callBack?: () => void) {
+    close (id: string, callBack?: () => void, force?: boolean) {
 		const item = this.get(id);
 		if (!item) {
 			if (callBack) {
@@ -140,33 +139,42 @@ class PopupStore {
 			item.param.onClose();
 		};
 		
-		const el = $(`#${UtilCommon.toCamelCase(`popup-${id}`)}`);
 		const filtered = this.popupList.filter(it => it.id != id);
-
-		if (el.length) {
-			raf(() => { el.css({ transform: '' }).removeClass('show'); });
-		};
 
 		if (!this.checkShowDimmer(filtered)) {
 			$('#navigationPanel').removeClass('hide');
 		};
-		
-		window.setTimeout(() => {
-			this.popupList = filtered;
 
+		if (force) {
+			this.popupList = filtered;
+		
 			if (callBack) {
 				callBack();
 			};
+		} else {
+			const el = $(`#${UtilCommon.toCamelCase(`popup-${id}`)}`);
 
-			$(window).trigger('resize');
-		}, Constant.delay.popup);
+			if (el.length) {
+				raf(() => { el.css({ transform: '' }).removeClass('show'); });
+			};
+
+			window.setTimeout(() => {
+				this.popupList = filtered;
+
+				if (callBack) {
+					callBack();
+				};
+
+				$(window).trigger('resize');
+			}, Constant.delay.popup);
+		};
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
 		const timeout = items.length ? Constant.delay.popup : 0;
 
-		items.forEach(it => this.close(it.id));
+		items.forEach(it => this.close(it.id, null, true));
 
 		this.clearTimeout();
 		if (callBack) {
@@ -182,9 +190,15 @@ class PopupStore {
 		return this.getItems().length ? Constant.delay.popup : 0;
 	};
 
+	getLast () {
+		const l = this.popupList.length;
+		return l ? this.popupList[l - 1] : null;
+	};
+
 	closeLast () {
-		if (this.popupList.length) {
-			this.close(this.popupList[this.popupList.length - 1].id);
+		const last = this.getLast();
+		if (last) {
+			this.close(last.id);
 		};
 	};
 
@@ -205,6 +219,10 @@ class PopupStore {
 			};
 		};
 		return ret;
+	};
+
+	replace (oldId: string, newId: string, param: I.PopupParam) {
+		this.close(oldId, () => this.open(newId, param));
 	};
 
 };

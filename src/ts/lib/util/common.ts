@@ -1,9 +1,9 @@
 import $ from 'jquery';
-import { I, Preview, Renderer, translate } from 'Lib';
+import { I, C, Preview, Renderer, translate, UtilSpace, Mark } from 'Lib';
 import { popupStore } from 'Store';
-import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
-import Text from 'json/text.json';
+const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
+const Text = require('json/text.json');
 import DOMPurify from 'dompurify';
 
 const TEST_HTML = /<[^>]*>/;
@@ -12,6 +12,16 @@ class UtilCommon {
 
 	getElectron () {
 		return window.Electron || {};
+	};
+
+	getCurrentElectronWindowId (): string {
+		const electron = this.getElectron();
+
+		if (!electron) {
+			return '0';
+		};
+
+		return String(electron.currentWindow().windowId || '');
 	};
 
 	getGlobalConfig () {
@@ -453,8 +463,12 @@ class UtilCommon {
 		Renderer.send('pathOpen', path);
 	};
 	
-	emailCheck (v: string) {
-		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
+	checkEmail (v: string) {
+		v = String(v || '');
+
+		const uc = '\\P{Script_Extensions=Latin}';
+		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,6}$`, 'gu');
+		return reg.test(v);
 	};
 
 	getSelectionRange (): Range {
@@ -517,7 +531,7 @@ class UtilCommon {
 		return this.getPlatform() == I.Platform.Linux;
 	};
 
-	checkError (code: number): boolean {
+	checkErrorCommon (code: number): boolean {
 		if (!code) {
 			return true;
 		};
@@ -538,20 +552,78 @@ class UtilCommon {
 		return true;
 	};
 
+	checkErrorOnOpen (rootId: string, code: number, context: any): boolean {
+		if (!rootId || !code) {
+			return true;
+		};
+
+		if (context) {
+			context.setState({ isLoading: false });
+		};
+
+		if (!this.checkErrorCommon(code)) {
+			return false;
+		};
+
+		if ([ Errors.Code.NOT_FOUND, Errors.Code.OBJECT_DELETED ].includes(code)) {
+			if (context) {
+				context.setState({ isDeleted: true });
+			};
+		} else {
+			const logPath = this.getElectron().logPath();
+
+			popupStore.open('confirm', {
+				data: {
+					icon: 'error',
+					bgColor: 'red',
+					title: translate('commonError'),
+					text: translate('popupConfirmObjectOpenErrorText'),
+					textConfirm: translate('popupConfirmObjectOpenErrorButton'),
+					onConfirm: () => {
+						C.DebugTree(rootId, logPath, (message: any) => {
+							if (!message.error.code) {
+								Renderer.send('pathOpen', logPath);
+							};
+						});
+
+						UtilSpace.openDashboard('route', { replace: true });
+					}
+				},
+			});
+		};
+
+		return false;
+	};
+
 	onErrorUpdate (onConfirm?: () => void) {
 		popupStore.open('confirm', {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
-				title: translate('confirmUpdateTitle'),
-				text: translate('confirmUpdateText'),
-				textConfirm: translate('confirmUpdateConfirm'),
+				title: translate('popupConfirmUpdateNeedTitle'),
+				text: translate('popupConfirmUpdateNeedText'),
+				textConfirm: translate('commonUpdate'),
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('update');
+
 					if (onConfirm) {
 						onConfirm();
 					};
+				},
+			},
+		});
+	};
+
+	onInviteRequest () {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupInviteInviteConfirmTitle'),
+				text: translate('popupInviteInviteConfirmText'),
+				textConfirm: translate('commonDone'),
+				textCancel: translate('popupInviteInviteConfirmCancel'),
+				onCancel: () => {
+					window.setTimeout(() => { popupStore.open('settings', { data: { page: 'spaceList' } }); }, popupStore.getTimeout());
 				},
 			},
 		});
@@ -574,23 +646,6 @@ class UtilCommon {
 		return $(isPopup ? '#popupPage-innerWrap' : '#page.isFull');
 	};
 
-	getBodyContainer (type: string) {
-		switch (type) {
-			default:
-			case 'page':
-				return 'body';
-
-			case 'popup':
-				return '#popupPage-innerWrap';
-			
-			case 'menuBlockAdd':
-				return `#${type} .content`;
-
-			case 'menuBlockRelationView':
-				return `#${type} .scrollWrap`;
-		};
-	};
-
 	getCellContainer (type: string) {
 		switch (type) {
 			default:
@@ -602,7 +657,10 @@ class UtilCommon {
 
 			case 'menuBlockAdd':
 			case 'menuBlockRelationView':
-				return '#' + type;
+				return `#${type}`;
+
+			case 'popupRelation':
+				return `#${type}-innerWrap`;
 		};
 	};
 
@@ -816,15 +874,19 @@ class UtilCommon {
 			return s;
 		};
 
+		const tags = [ 'b', 'br', 'a', 'ul', 'li', 'h1', 'span', 'p', 'name', 'smile', 'img' ];
+
+		for (const i in I.MarkType) {
+			if (isNaN(I.MarkType[i] as any)) {
+				continue;
+			};
+			tags.push(Mark.getTag(I.MarkType[i] as any));
+		};
+
 		return DOMPurify.sanitize(s, { 
-			ADD_TAGS: [ 
-				'b', 'br', 'a', 'ul', 'li', 'h1', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 'markupUnderline', 'markupLink', 'markupColor',
-				'markupBgcolor', 'markupMention', 'markupEmoji', 'markupObject', 'span', 'p', 'name', 'smile', 'img', 'search'
-			],
-			ADD_ATTR: [
-				'contenteditable'
-			],
-			ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|file|anytype):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+			ADD_TAGS: tags,
+			ADD_ATTR: [ 'contenteditable' ],
+			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 		});
 	};
 
@@ -879,6 +941,10 @@ class UtilCommon {
 
 	stripTags (s: string): string {
 		return String(s || '').replace(/<[^>]+>/g, '');
+	};
+
+	normalizeLineEndings (s: string) {
+		return String(s || '').replace(/\r\n?/g, '\n');
 	};
 
 };

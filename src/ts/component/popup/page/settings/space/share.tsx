@@ -1,12 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Select, Tag, Error, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace, Preview, Action } from 'Lib';
-import { dbStore, detailStore, popupStore, commonStore, menuStore } from 'Store';
+import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
+import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics, UtilObject, UtilMenu } from 'Lib';
+import { authStore, popupStore, commonStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
-import Constant from 'json/constant.json';
 
 interface State {
 	isLoading: boolean;
@@ -16,7 +15,6 @@ interface State {
 };
 
 const HEIGHT = 64;
-const MEMBER_LIMIT = 10;
 
 const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends React.Component<I.PopupSettings, State> {
 
@@ -27,6 +25,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	refList: any = null;
 	refCopy: any = null;
 	refButton: any = null;
+
 	state = {
 		isLoading: false,
 		error: '',
@@ -39,13 +38,14 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 		this.onScroll = this.onScroll.bind(this);
 		this.onCopy = this.onCopy.bind(this);
-		this.onInviteRevoke = this.onInviteRevoke.bind(this);
 		this.onInitLink = this.onInitLink.bind(this);
 		this.onStopSharing = this.onStopSharing.bind(this);
 		this.onChangePermissions = this.onChangePermissions.bind(this);
 		this.onInfo = this.onInfo.bind(this);
 		this.onMoreSpace = this.onMoreSpace.bind(this);
 		this.onMoreLink = this.onMoreLink.bind(this);
+		this.onPermissionsSelect = this.onPermissionsSelect.bind(this);
+		this.onUpgrade = this.onUpgrade.bind(this);
 	};
 
 	render () {
@@ -55,31 +55,41 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			return <Loader id="loader" />;
 		};
 
+		const { membership } = authStore;
 		const hasLink = cid && key;
 		const space = UtilSpace.getSpaceview();
-		const { readersLimit, writersLimit } = space;
-		const isShared = space.spaceAccessType == I.SpaceType.Shared;
 		const participant = UtilSpace.getParticipant();
-		const members = this.getMembers();
-		const memberOptions = this.getMemberOptions();
+		const members = this.getParticipantList();
 		const length = members.length;
 		const isShareActive = UtilSpace.isShareActive();
 
-		const readersLimitText = UtilCommon.plural(readersLimit, translate('pluralReader'));
-		const writersLimitText = UtilCommon.plural(writersLimit, translate('pluralWriter'));
+		let limitLabel = '';
+		let limitButton = '';
+		let showLimit = false;
+		let memberUpgradeType = '';
+
+		if (space.isShared) {
+			if (!UtilSpace.getReaderLimit() && membership.isExplorer) {
+				limitLabel = translate('popupSettingsSpaceShareInvitesReaderLimitReachedLabel');
+				limitButton = translate('popupSettingsSpaceShareInvitesReaderLimitReachedButton');
+				memberUpgradeType = 'members';
+				showLimit = true;
+			} else
+			if (!UtilSpace.getWriterLimit()) {
+				limitLabel = translate('popupSettingsSpaceShareInvitesWriterLimitReachedLabel');
+				limitButton = translate('popupSettingsSpaceShareInvitesWriterLimitReachedButton');
+				memberUpgradeType = 'editors';
+				showLimit = true;
+			};
+		};
 
 		const Member = (item: any) => {
-			const isActive = item.id == participant.id;
-			const isOwner = item.permissions == I.ParticipantPermissions.Owner;
-			const isJoining = [ I.ParticipantStatus.Joining ].includes(item.status);
-			const isDeclined = [ I.ParticipantStatus.Declined ].includes(item.status);
-			const isRemoving = [ I.ParticipantStatus.Removing ].includes(item.status);
-			const isRemoved = [ I.ParticipantStatus.Removed ].includes(item.status);
+			const isCurrent = item.id == participant.id;
 
 			let tag = null;
 			let button = null;
 
-			if (isJoining) {
+			if (item.isJoining) {
 				tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
 				button = (
 					<Button
@@ -90,7 +100,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					/>
 				);
 			} else 
-			if (isRemoving) {
+			if (item.isRemoving) {
 				tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
 				button = (
 					<Button
@@ -101,31 +111,29 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					/>
 				);
 			} else 
-			if (isDeclined || isRemoved) {
+			if (item.isDeclined || item.isRemoved) {
 				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
 			} else
-			if (isOwner) {
+			if (item.isOwner) {
 				button = <Label color="grey" text={translate(`participantPermissions${I.ParticipantPermissions.Owner}`)} />;
 			} else {
 				button = (
-					<Select
-						id={`item-${item.id}-select`}
-						value={item.permissions}
-						options={memberOptions}
-						arrowClassName="light"
-						menuParam={{ horizontal: I.MenuDirection.Right }}
-						onChange={v => this.onChangePermissions(item, v)}
-					/>
+					<div id={`item-${item.id}-select`} className="select" onClick={() => this.onPermissionsSelect(item)}>
+						<div className="item">
+							<div className="name">{translate(`participantPermissions${item.permissions}`)}</div>
+						</div>
+						<Icon className="arrow light" />
+					</div>
 				);
 			};
 		
 			return (
 				<div id={`item-${item.id}`} className="row" style={item.style} >
-					<div className="side left">
+					<div className="side left" onClick={() => UtilObject.openPopup(item)}>
 						<IconObject size={48} object={item} />
 						<ObjectName object={item} />
 						{tag}
-						{isActive ? <div className="caption">({translate('commonYou')})</div> : ''}
+						{isCurrent ? <div className="caption">({translate('commonYou')})</div> : ''}
 					</div>
 					<div className="side right">
 						{button}
@@ -159,7 +167,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 					<div className="icons">
 						<Icon className="question" onClick={this.onInfo} />
-						{isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''}
+						{space.isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''}
 					</div>
 				</div>
 
@@ -168,19 +176,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					<Label text={translate('popupSettingsSpaceShareInviteLinkLabel')} />
 
 					{hasLink ? (
-						<React.Fragment>
-							<div className="inviteLinkWrapper">
-								<div className="inputWrapper">
-									<Input ref={ref => this.refInput = ref} readonly={true} value={this.getLink()} onClick={() => this.refInput?.select()} />
-									<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
-								</div>
-								<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
+						<div className="inviteLinkWrapper">
+							<div className="inputWrapper">
+								<Input ref={ref => this.refInput = ref} readonly={true} value={UtilSpace.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
+								<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
 							</div>
-
-							<div className="invitesLimit">
-								{UtilCommon.sprintf(translate('popupSettingsSpaceShareInvitesLimit'), readersLimit, readersLimitText, writersLimit, writersLimitText)}
-							</div>
-						</React.Fragment>
+							<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
+						</div>
 					) : (
 						<div className="buttons">
 							<Button 
@@ -197,9 +199,16 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				<div id="sectionMembers" className="section sectionMembers">
 					<Title text={translate('popupSettingsSpaceShareMembersTitle')} />
 
+					{showLimit ? (
+						<div className="row payment">
+							<Label text={limitLabel} />
+							<Button className="payment" text={limitButton} onClick={() => this.onUpgrade(memberUpgradeType)} />
+						</div>
+					) : ''}
+
 					{this.cache ? (
 						<div id="list" className="rows">
-							<WindowScroller scrollElement={$('#popupSettings-innerWrap').get(0)}>
+							<WindowScroller scrollElement={$('#popupSettings-innerWrap .mainSides #sideRight').get(0)}>
 								{({ height, isScrolling, registerChild, scrollTop }) => (
 									<AutoSizer disableHeight={true} className="scrollArea">
 										{({ width }) => (
@@ -230,35 +239,38 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	componentDidMount () {
-		this.updateCache();
-		this.setState({ isLoading: true });
-
-		C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
-			this.setState({ isLoading: false });
-
-			if (!message.error.code) {
-				this.setInvite(message.inviteCid, message.inviteKey);
-			};
-		});
-	};
-
-	componentDidUpdate() {
-		this.resize();
-	};
-
-	setInvite (cid: string, key: string) {
-		this.setState({ cid, key });
-	};
-
-	updateCache () {
-		const members = this.getMembers();
+		const items = this.getParticipantList();
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: i => (members[i] || {}).id,
+			keyMapper: i => (items[i] || {}).id,
 		});
+
+		this.init();
 		this.forceUpdate();
+	};
+
+	componentDidUpdate() {
+		this.init();
+		this.resize();
+	};
+
+	init () {
+		const { cid, key } = this.state;
+		const space = UtilSpace.getSpaceview();
+
+		if (space.isShared && !cid && !key) {
+			C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
+				if (!message.error.code) {
+					this.setInvite(message.inviteCid, message.inviteKey);
+				};
+			});
+		};
+	};
+
+	setInvite (cid: string, key: string) {
+		this.setState({ cid, key });
 	};
 
 	onScroll ({ scrollTop }) {
@@ -267,54 +279,66 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		};
 	};
 
-	getMembers () {
-		const subId = Constant.subId.participant;
-		const statuses = [ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ];
-		const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).filter(it => statuses.includes(it.status));
+	onUpgrade (type: string) {
+		const { membership } = authStore;
+
+		if (membership.tier >= I.TierType.Builder) {
+			Action.membershipUpgrade();
+		} else {
+			this.props.close(() => {
+				popupStore.open('settings', { data: { page: 'membership' } });
+			});
+		};
+
+		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.settingsSpaceShare });
+	};
+
+	getParticipantList () {
+		const records = UtilSpace.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing, I.ParticipantStatus.Active ]);
 
 		return records.sort((c1, c2) => {
-			const isJoining1 = c1.status === I.ParticipantStatus.Joining;
-			const isJoining2 = c2.status === I.ParticipantStatus.Joining;
-			const isLeaving1 = c1.status === I.ParticipantStatus.Removing;
-			const isLeaving2 = c2.status === I.ParticipantStatus.Removing;
-			const isOwner1 = c1.permissions === I.ParticipantPermissions.Owner;
-			const isOwner2 = c2.permissions === I.ParticipantPermissions.Owner;
+			const isRequest1 = c1.isJoining || c1.isRemoving;
+			const isRequest2 = c2.isJoining || c2.isRemoving;
+			const cd1 = c1.createdDate;
+			const cd2 = c2.createdDate;
 
-			if (isJoining1 && !isJoining2) return -1;
-			if (!isJoining1 && isJoining2) return 1;
-			if (isLeaving1 && !isLeaving2) return -1;
-			if (!isLeaving1 && isLeaving2) return 1;
-			if (isOwner1 && !isOwner2) return -1;
-			if (!isOwner1 && isOwner2) return 1;
+			if (isRequest1 && !isRequest2) return -1;
+			if (!isRequest1 && isRequest2) return 1;
+			if (isRequest1 && isRequest2) return cd1 < cd2 ? -1 : 1;
 
 			return 0;
 		});
 	};
 
-	getLink () {
-		const { cid, key } = this.state;
-		return `${Constant.protocol}://invite/?cid=${cid}&key=${key}`
-	};
-
 	onCopy () {
 		const { cid, key } = this.state;
-
-		if (cid && key) {
-			UtilCommon.copyToast('', this.getLink(), translate('toastInviteCopy'));
+		if (!cid || !key) {
+			return;
 		};
+
+		UtilCommon.copyToast('', UtilSpace.getInviteLink(cid, key), translate('toastInviteCopy'));
+		analytics.event('ClickShareSpaceCopyLink');
 	};
 
 	onInitLink () {
 		this.refButton?.setLoading(true);
 
-		C.SpaceInviteGenerate(commonStore.space, (message: any) => {
-			this.refButton?.setLoading(false);
-
-			if (!this.setError(message.error)) {
-				this.setInvite(message.inviteCid, message.inviteKey);
-
-				Preview.toastShow({ text: translate('toastInviteGenerate') });
+		C.SpaceMakeShareable(commonStore.space, (message: any) => {
+			if (this.setError(message.error)) {
+				this.refButton?.setLoading(false);
+				return;
 			};
+
+			C.SpaceInviteGenerate(commonStore.space, (message: any) => {
+				this.refButton?.setLoading(false);
+
+				if (!this.setError(message.error)) {
+					this.setInvite(message.inviteCid, message.inviteKey);
+
+					Preview.toastShow({ text: translate('toastInviteGenerate') });
+					analytics.event('ShareSpace');
+				};
+			});
 		});
 	};
 
@@ -328,44 +352,53 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				onConfirm: () => {
 					C.SpaceStopSharing(commonStore.space);
 					this.setInvite('', '');
+
+					analytics.event('StopSpaceShare');
 				},
 			},
 		});
+
+		analytics.event('ScreenStopShare');
 	};
 
-	onInviteRevoke () {
-		const { space } = commonStore;
+	getParticipantOptions () {
+		const { membership } = authStore;
 
-		popupStore.open('confirm', {
-			data: {
-				title: translate('popupConfirmRevokeLinkTitle'),
-				text: translate('popupConfirmRevokeLinkText'),
-				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
-				colorConfirm: 'red',
-				onConfirm: () => {
-					C.SpaceInviteRevoke(space, (message: any) => {
-						this.setInvite('', '');
+		let items: any[] = [] as any[];
 
-						Preview.toastShow({ text: translate('toastInviteRevoke') });
-					});
-				},
-			},
-		});
-	};
+		if (membership.isExplorer || (UtilSpace.getReaderLimit() - 1 >= 0)) {
+			items.push({ id: I.ParticipantPermissions.Reader });
+		};
+		if (membership.isExplorer || (UtilSpace.getWriterLimit() - 1 >= 0)) {
+			items.push({ id: I.ParticipantPermissions.Writer });
+		};
 
-	getMemberOptions () {
-		let items: any[] = ([
-			{ id: I.ParticipantPermissions.Reader },
-			{ id: I.ParticipantPermissions.Writer },
-		] as any[]).map(it => {
+		items = items.map(it => {
 			it.name = translate(`participantPermissions${it.id}`);
 			return it;
 		});
 
-		return items.concat([
-			{ id: '', name: '', isDiv: true },
-			{ id: 'remove', name: translate('popupSettingsSpaceShareRemoveMember'), color: 'red' }
-		]);
+		if (items.length) {
+			items.push({ isDiv: true });
+		};
+
+		items.push({ id: 'remove', name: translate('popupSettingsSpaceShareRemoveMember'), color: 'red' });
+
+		return items;
+	};
+
+	onPermissionsSelect (item: any) {
+		menuStore.open('select', {
+			element: `#item-${item.id}-select`,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				value: item.permissions,
+				options: this.getParticipantOptions(),
+				onSelect: (e: any, el: any) => {
+					this.onChangePermissions(item, el.id);
+				},
+			},
+		});
 	};
 
 	onChangePermissions (item: any, v: any) {
@@ -384,6 +417,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 				onConfirm = () => {
 					C.SpaceParticipantRemove(space, [ item.identity ]);
+
+					analytics.event('RemoveSpaceMember');
 				};
 				break;
 			};
@@ -396,6 +431,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 				onConfirm = () => {
 					C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: Number(v) } ]);
+
+					analytics.event('ChangeSpaceMemberPermissions', { type: v })
 				};
 				break;
 			};
@@ -422,6 +459,8 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				canCancel: false,
 			},
 		});
+
+		analytics.event('ClickSettingsSpaceShare', { type: 'MoreInfo' });
 	};
 
 	onJoinRequest (item: any) {
@@ -431,12 +470,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				icon: item.iconImage,
 				spaceId: commonStore.space,
 				identity: item.identity,
+				route: analytics.route.settings,
 			}
 		});
 	};
 
 	onLeaveRequest (item: any) {
-		Action.removeParticipant(commonStore.space, item.identity, item.name);
+		Action.leaveApprove(commonStore.space, [ item.identity ], item.name, analytics.route.settings);
 	};
 
 	onMoreSpace () {
@@ -464,30 +504,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 
 	onMoreLink () {
 		const { getId } = this.props;
-		const options = [
-			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
-			{ id: 'delete', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') },
-		];
+		const { cid, key } = this.state;
 
-		menuStore.open('select', {
-			element: `#${getId()} #button-more-link`,
-			horizontal: I.MenuDirection.Center,
-			data: {
-				options,
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'qr': {
-							popupStore.open('inviteQr', { data: { link: this.getLink() } });
-							break;
-						};
-
-						case 'delete': {
-							this.onInviteRevoke();
-							break;
-						};
-					};
-				},
-			}
+		UtilMenu.inviteContext({
+			containerId: getId(),
+			cid,
+			key,
+			onInviteRevoke: () => this.setInvite('', ''),
 		});
 	};
 

@@ -1,6 +1,6 @@
 import { UtilCommon, translate } from 'Lib';
 import { init } from 'emoji-mart';
-import data from 'json/emoji.json';
+const data = require('json/emoji.json');
 
 const DIV = 65039;
 const CAP = 8419;

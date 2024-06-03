@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, C, UtilCommon, UtilData, keyboard, Dataview, Relation } from 'Lib';
 import { Graph } from 'Component';
 import { detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PADDING = 46;
 
@@ -39,6 +39,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 						id={block.id}
 						rootId="" 
 						data={this.data}
+						storageKey={Constant.graphId.dataview}
 					/>
 				</div>
 			</div>
@@ -84,31 +85,19 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	load () {
-		const { rootId, getView, getSearchIds, getTarget } = this.props;
+		const { getView, getSearchIds, getTarget, isCollection } = this.props;
 		const view = getView();
 		const searchIds = getSearchIds();
 		const filters = [].concat(view.filters).concat(UtilData.graphFilters()).map(it => Dataview.filterMapper(view, it));
 		const target = getTarget();
-		const types = Relation.getSetOfObjects(rootId, target.id, I.ObjectLayout.Type).map(it => it.id);
-		const relations = Relation.getSetOfObjects(rootId, target.id, I.ObjectLayout.Relation).map(it => it.relationKey);
 
 		if (searchIds) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
-		if (types.length) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types });
-		};
-
-		if (relations.length) {
-			relations.forEach(relationKey => {
-				filters.push({ operator: I.FilterOperator.And, relationKey, condition: I.FilterCondition.NotEmpty });
-			});
-		};
-
 		this.setLoading(true);
 
-		C.ObjectGraph(commonStore.space, filters, 0, [], Constant.graphRelationKeys, (message: any) => {
+		C.ObjectGraph(commonStore.space, filters, 0, [], Constant.graphRelationKeys, (isCollection ? target.id : ''), target.setOf, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

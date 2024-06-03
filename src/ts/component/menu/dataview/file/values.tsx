@@ -3,10 +3,10 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, MenuItemVertical, EmptySearch } from 'Component';
-import { I, C, UtilCommon, UtilFile, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
+import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
+import { I, C, UtilCommon, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MENU_ID = 'dataviewFileList';
 
@@ -35,7 +35,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const File = (item: any) => (
 			<React.Fragment>
 				<IconObject object={item} />
-				<div className="name">{UtilFile.name(item)}</div>
+				<ObjectName object={item} />
 			</React.Fragment>
 		);
 
@@ -212,17 +212,22 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { getId, param, id, position } = this.props;
 		const { data, classNameWrap } = param;
 		const { onChange } = data;
-		const element = $(`#${getId()} #item-${item.id}`);
+		const itemEl = $(`#${getId()} #item-${item.id}`);
+		const element = `#${getId()} #item-${item.id} .icon.more`;
 
 		let value = Relation.getArrayValue(data.value);
 
-		element.addClass('active');
 		menuStore.open('select', { 
 			element,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap: classNameWrap,
+			onOpen: () => {
+				itemEl.addClass('active');
+				$(element).addClass('active');
+			},
 			onClose: () => {
-				element.removeClass('active');
+				itemEl.removeClass('active');
+				$(element).removeClass('active')
 			},
 			data: {
 				value: '',

@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .menus {
 
@@ -72,7 +72,7 @@
     /* Smile */
 
     .menu.menuSmile {
-		.body.gallery {
+		.body.smile {
 			.foot {
 				.icon.recent.active { background-image: url('#{$themePath}/icon/emoji/recent1.svg'); }
 				.icon.people.active { background-image: url('#{$themePath}/icon/emoji/people1.svg'); }
@@ -169,7 +169,7 @@
 
     /* Onboarding */
 
-	.menu.menuOnboarding { width: 288px; background: #373632; color: #fff; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%); }
+	.menu.menuOnboarding { /*background: #373632; color: #fff; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%);*/ }
 	.menu.menuOnboarding {
 		a { color: var(--color-bg-primary); }
 		.highlight { color: var(--color-system-accent-100); }

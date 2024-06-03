@@ -6,7 +6,7 @@ import { I, Relation, UtilData, UtilCommon, UtilObject } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewComponent> {
 
@@ -43,15 +43,15 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
 		const limit = getLimit();
-		const length = records.length;
 		const cn = [ 'viewContent', className ];
 		const cardHeight = this.getCardHeight();
 
-		if (!length) {
+		if (!records.length) {
 			return getEmpty('view');
 		};
 
 		const items = this.getItems();
+		const length = items.length;
 
 		// Subscriptions on dependent objects
 		for (const id of records) {
@@ -133,13 +133,13 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 								<List
 									autoHeight={true}
 									ref={ref => this.refList = ref}
-									width={width}
-									height={height}
+									width={Number(width) || 0}
+									height={Number(height) || 0}
 									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
+									rowCount={length}
 									rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}
 									rowRenderer={rowRenderer}
-									overscanRowCount={20}
+									overscanRowCount={length}
 									scrollToAlignment="start"
 								/>
 							)}

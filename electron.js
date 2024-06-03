@@ -47,8 +47,7 @@ powerMonitor.on('suspend', () => {
 });
 
 powerMonitor.on('resume', () => {
-	BrowserWindow.getAllWindows().forEach(win => win.webContents.reload());
-
+	WindowManager.reloadAll();
 	Util.log('info', '[PowerMonitor] resume');
 });
 
@@ -115,11 +114,21 @@ function createWindow () {
 		
 		e.preventDefault();
 
+		const onClose = () => {
+			const { config } = ConfigManager;
+
+			if (config.hideTray) {
+				Api.exit(mainWindow, '', false);
+			} else {
+				mainWindow.hide();
+			};
+		};
+
 		if (mainWindow.isFullScreen()) {
 			mainWindow.setFullScreen(false);
-			mainWindow.once('leave-full-screen', () => mainWindow.hide());
+			mainWindow.once('leave-full-screen', () => onClose());
 		} else {
-			mainWindow.hide();
+			onClose();
 		};
 		return false;
 	});
@@ -168,15 +177,17 @@ app.on('ready', () => {
 app.on('second-instance', (event, argv) => {
 	Util.log('info', 'second-instance');
 
-	if (!is.macos) {
-		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
-	};
-
-	if (!mainWindow || !deeplinkingUrl) {
+	if (!mainWindow) {
 		return;
 	};
 
-	Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
+	if (!is.macos) {
+		deeplinkingUrl = argv.find(arg => arg.startsWith(`${protocol}://`));
+	};
+
+	if (deeplinkingUrl) {
+		Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
+	};
 
 	if (mainWindow.isMinimized()) {
 		mainWindow.restore();

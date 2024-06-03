@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockDataview {
@@ -9,7 +9,7 @@
 			.card { 
 				width: 100%; border: 1px solid var(--color-shape-highlight-medium); transition-property: border-color, background; transition-duration: 0.1s; 
 				transition-timing-function: $easeInQuint; border-radius: 8px; display: inline-block; background: var(--color-bg-primary);
-				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); min-height: 72px; position: relative;
+				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); min-height: 72px; position: relative; overflow: hidden;
 			}
 
 			.card.add { box-shadow: 0px 0px; }
@@ -24,9 +24,9 @@
 				.dropTarget.isOver.top::before { left: -10px; }
 				.dropTarget.isOver.bottom::before { right: -10px; }
 
-				.selectable.isSelectionSelected::after { border-radius: 8px; }
+				.selectionTarget.isSelectionSelected::after { border-radius: 8px; }
 
-				.selectable { height: 100%; }
+				.selectionTarget { height: 100%; }
 				.itemContent > .inner { padding: 16px; }
 
 				.cover { 
@@ -107,6 +107,14 @@
 			.card { width: auto; }
 
 			.loadMore { padding: 0px 2px 10px;}
+		}
+	}
+
+	.block.blockDataview.isInline.isVertical {
+		.viewContent.viewGallery {
+			.galleryWrap.small { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+			.galleryWrap.medium { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+			.galleryWrap.large { grid-template-columns: repeat(1, minmax(0, 1fr)); }
 		}
 	}
 }

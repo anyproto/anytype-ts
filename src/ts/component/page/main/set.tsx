@@ -3,12 +3,12 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, UtilData, UtilCommon, Action, UtilSpace, keyboard, UtilRouter, translate } from 'Lib';
+import { I, M, C, UtilData, UtilCommon, Action, UtilSpace, keyboard, UtilRouter, translate, UtilObject } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
-import Errors from 'json/error.json';
-import Constant from 'json/constant.json';
+
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -24,7 +24,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	refHead: any = null;
 	refControls: any = null;
 	loading = false;
-	composition = false;
 	timeout = 0;
 	blockRefs: any = {};
 
@@ -92,11 +91,18 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		return (
 			<div 
 				ref={node => this.node = node}
-				className={[ 'setWrapper', check.className ].join(' ')}
+				className={[ 'editorWrapper', check.className ].join(' ')}
 			>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header 
+					{...this.props} 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					rootId={rootId} 
+				/>
 
-				{content}
+				<div id="bodyWrapper" className="wrapper">
+					{content}
+				</div>
 
 				<Footer component="mainObject" {...this.props} />
 			</div>
@@ -170,12 +176,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		this.setState({ isDeleted: false, isLoading: true });
 
 		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true, isLoading: false });
-				} else {
-					UtilSpace.openDashboard('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -185,18 +186,10 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				return;
 			};
 
+			this.refHeader?.forceUpdate();
+			this.refHead?.forceUpdate();
+			this.refControls?.forceUpdate();
 			this.setState({ isLoading: false });
-
-			if (this.refHeader) {
-				this.refHeader.forceUpdate();
-			};
-			if (this.refHead) {
-				this.refHead.forceUpdate();
-			};
-			if (this.refControls) {
-				this.refControls.forceUpdate();
-			};
-
 			this.resize();
 		});
 	};
@@ -259,7 +252,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			keyboard.shortcut(`${cmd}+a`, e, () => {
 				e.preventDefault();
 
-				const records = dbStore.getRecords(dbStore.getSubId(rootId, Constant.blockId.dataview), '');
+				const records = dbStore.getRecordIds(dbStore.getSubId(rootId, Constant.blockId.dataview), '');
 				selection.set(I.SelectType.Record, records);
 			});
 
@@ -271,10 +264,16 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				});
 			};
 		};
+
+		// History
+		keyboard.shortcut('ctrl+h, cmd+y', e, () => {
+			e.preventDefault();
+			UtilObject.openAuto({ layout: I.ObjectLayout.History, id: rootId });
+		});
 	};
 
 	isReadonly () {
-		return !UtilSpace.canParticipantWrite();
+		return !UtilSpace.canMyParticipantWrite();
 	};
 
 	resize () {
@@ -298,7 +297,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			};
 
 			container.css({ minHeight: isPopup ? '' : win.height() });
-			node.css({ paddingTop: isPopup ? 0 : hh });
 		});
 	};
 

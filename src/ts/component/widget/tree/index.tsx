@@ -7,7 +7,7 @@ import { Loader, Label } from 'Component';
 import { analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon, translate } from 'Lib';
 import { blockStore, dbStore, detailStore } from 'Store';
 import Item from './item';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -31,6 +31,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	subscriptionHashes: { [ key: string ]: string } = {};
 	branches: string[] = [];
 	refList = null;
+	deletedIds = new Set();
 
 	constructor (props: I.WidgetComponent) {
 		super(props);
@@ -40,6 +41,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.onToggle = this.onToggle.bind(this);
 		this.getSubId = this.getSubId.bind(this);
 		this.initCache = this.initCache.bind(this);
+		this.getSubKey = this.getSubKey.bind(this);
 	};
 
 	render () {
@@ -51,6 +53,8 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		if (!this.cache) {
 			return null;
 		};
+
+		this.getDeleted();
 
 		let content = null;
 
@@ -83,6 +87,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 							onClick={this.onClick}
 							onToggle={this.onToggle}
 							getSubId={this.getSubId}
+							getSubKey={this.getSubKey}
 						/>
 					</CellMeasurer>
 				);
@@ -132,6 +137,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 								onClick={this.onClick}
 								onToggle={this.onToggle}
 								getSubId={this.getSubId}
+								getSubKey={this.getSubKey}
 							/>
 						);
 					})}
@@ -153,18 +159,20 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { block, isCollection, getData } = this.props;
-		const { targetBlockId } = block.content;
+		const { isSystemTarget, getData } = this.props;
 
-		if (isCollection(targetBlockId)) {
-			getData(this.getSubId(targetBlockId), this.initCache);
+		if (isSystemTarget()) {
+			getData(this.getSubId(), this.initCache);
 		} else {
 			this.initCache();
 		};
+
+		this.getDeleted();
 	};
 
 	componentDidUpdate () {
 		this.resize();
+		this.getDeleted();
 
 		if (this.refList) {
 			this.refList.scrollToPosition(this.top);
@@ -180,12 +188,19 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		};
 	};
 
-	updateData () {
-		const { block, isCollection, getData } = this.props;
-		const { targetBlockId } = block.content;
+	getDeleted () {
+		const deleted = dbStore.getRecordIds(Constant.subId.deleted, '');
+		const length = deleted.length;
 
-		if (isCollection(targetBlockId)) {
-			getData(this.getSubId(targetBlockId), this.initCache);
+		this.deletedIds = new Set(deleted);
+		return this.deletedIds;
+	};
+
+	updateData () {
+		const { isSystemTarget, getData } = this.props;
+
+		if (isSystemTarget()) {
+			getData(this.getSubId(), this.initCache);
 		};
 	};
 
@@ -202,7 +217,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	loadTree (): I.WidgetTreeItem[] {
-		const { block, isCollection, isPreview, sortFavorite, addGroupLabels } = this.props;
+		const { block, isSystemTarget, isPreview, sortFavorite, addGroupLabels } = this.props;
 		const { targetBlockId } = block.content;
 		const { widgets } = blockStore;
 		const object = detailStore.get(widgets, targetBlockId, [ 'links' ]);
@@ -211,10 +226,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.branches = [];
 
 		let children = [];
-		if (isCollection(targetBlockId)) {
+		if (isSystemTarget()) {
 			const subId = this.getSubId(targetBlockId);
 			
-			let records = dbStore.getRecords(subId, '');
+			let records = dbStore.getRecordIds(subId, '');
 			if (targetBlockId == Constant.widgetId.favorite) {
 				records = sortFavorite(records);
 			};
@@ -279,20 +294,21 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	filterDeletedLinks (ids: string[]): string[] {
-		const deleted = dbStore.getRecords(Constant.subId.deleted, '');
-
-		return ids.filter(id => !deleted.includes(id));
+		return ids.filter(id => !this.deletedIds.has(id));
 	};
 
 	// return the child nodes details for the given subId
 	getChildNodesDetails (nodeId: string): I.WidgetTreeDetails[] {
-		const subId = this.getSubId(nodeId);
-
-		return dbStore.getRecords(subId, '').map(id => this.mapper(detailStore.get(subId, id, [ 'id', 'layout', 'links' ], true)));
+		return dbStore.getRecords(this.getSubId(nodeId), [ 'id', 'layout', 'links' ], true).map(it => this.mapper(it));
 	};
 
 	mapper (item) {
-		item.links = (item.layout != I.ObjectLayout.Set) ? this.filterDeletedLinks(Relation.getArrayValue(item.links)) : [];
+		let links = [];
+		if (item.layout != I.ObjectLayout.Set) {
+			links = this.filterDeletedLinks(Relation.getArrayValue(item.links));
+		};
+
+		item.links = links;
 		return item;
 	};
 
@@ -325,8 +341,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		return `widget${this.props.block.id}`;
 	};
 
-	getSubId (nodeId: string): string {
-		return dbStore.getSubId(this.getSubKey(), nodeId);
+	getSubId (nodeId?: string): string {
+		const { block } = this.props;
+		const { targetBlockId } = block.content;
+
+		return dbStore.getSubId(this.getSubKey(), nodeId || targetBlockId);
 	};
 
 	// a composite key for the tree node in the form rootId-parentId-Id-depth

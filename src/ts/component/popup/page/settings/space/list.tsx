@@ -2,55 +2,47 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, UtilSpace, UtilRouter, translate, UtilMenu } from 'Lib';
+import { I, UtilSpace, UtilRouter, translate, UtilMenu, analytics } from 'Lib';
 import { dbStore, detailStore, authStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<I.PopupSettings> {
-
-	constructor (props) {
-		super(props);
-	};
 
 	render () {
 		const { accountSpaceId } = authStore;
 		const spaces = this.getItems();
 
 		const Row = (space: any) => {
+			const { targetSpaceId } = space;
+			const participant = UtilSpace.getMyParticipant(targetSpaceId);
 			const creator = detailStore.get(Constant.subId.space, space.creator);
-			const participant = UtilSpace.getMyParticipant(space.targetSpaceId);
-			const isOwner = participant && (participant.permissions == I.ParticipantPermissions.Owner);
-			const permissions = participant ? translate(`participantPermissions${participant.permissions}`) : '';
-			const hasMenu = space.targetSpaceId != accountSpaceId;
+			const hasMenu = targetSpaceId != accountSpaceId;
+
+			let creatorElement = null;
+			if (participant && !participant.isOwner && !creator._empty_) {
+				creatorElement = (
+					<div className="creator">
+						<IconObject object={creator} size={16} />
+						<ObjectName object={creator} />
+					</div>
+				);
+			};
 
 			return (
-				<tr>
-					<td className="columnSpace">
-						<div className="spaceNameWrapper" onClick={() => this.onClick(space)}>
-							<IconObject object={space} size={40} />
-							<div className="info">
-								<ObjectName object={space} />
-
-								{!isOwner && !creator._empty_ ? (
-									<div className="creatorNameWrapper">
-										<IconObject object={creator} size={16} />
-										<ObjectName object={creator} />
-									</div>
-								) : ''}
-							</div>
+				<div className="row">
+					<div className="col colSpace" onClick={() => this.onClick(space)}>
+						<IconObject object={space} size={40} />
+						<div className="info">
+							<ObjectName object={space} />
+							{creatorElement}
 						</div>
-					</td>
-					<td>{permissions}</td>
-					<td>{translate(`spaceStatus${space.spaceAccountStatus}`)}</td>
-
-					<td className="columnMore">
-						{hasMenu ? (
-							<div id={`icon-more-${space.id}`} onClick={() => this.onMore(space)} className="iconWrap">
-								<Icon className="more" />
-							</div>
-						) : ''}
-					</td>
-				</tr>
+					</div>
+					<div className="col">{participant ? translate(`participantPermissions${participant.permissions}`) : ''}</div>
+					<div className="col">{translate(`spaceStatus${space.spaceAccountStatus}`)}</div>
+					<div className="col colMore">
+						{hasMenu ? <Icon id={`icon-more-${space.id}`} className="more" onClick={() => this.onMore(space)} /> : ''}
+					</div>
+				</div>
 			);
 		};
 
@@ -59,33 +51,52 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 				<Title text={translate('popupSettingsSpacesListTitle')} />
 
 				<div className="items">
-					<table>
-						<thead>
-							<tr>
-								<th className="columnSpace">{translate('popupSettingsSpacesListSpace')}</th>
-								<th>{translate('popupSettingsSpacesListAccess')}</th>
-								<th>{translate('popupSettingsSpacesListNetwork')}</th>
-								<th className="columnMore"> </th>
-							</tr>
-						</thead>
-						<tbody>
-							{spaces.map((item: any, i: number) => <Row key={i} {...item} />)}
-						</tbody>
-					</table>
+					<div className="row isHead">
+						<div className="col colSpace">{translate('popupSettingsSpacesListSpace')}</div>
+						<div className="col">{translate('popupSettingsSpacesListAccess')}</div>
+						<div className="col">{translate('popupSettingsSpacesListNetwork')}</div>
+						<div className="col colMore" />
+					</div>
+					{spaces.map((item: any, i: number) => <Row key={i} {...item} />)}
 				</div>
 			</React.Fragment>
 		);
 	};
 
 	getItems () {
-		const subId = Constant.subId.space;
-		const items = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+		const items = dbStore.getRecords(Constant.subId.space);
 
-		return items.filter(it => ![ I.SpaceStatus.Deleted ].includes(it.spaceAccountStatus));
+		return items.filter(it => !it.isAccountDeleted && it.isLocalOk).map(it => {
+			it.participant = UtilSpace.getMyParticipant(it.targetSpaceId) || {};
+			return it;
+		}).sort((c1, c2) => {
+			if (c1.isAccountJoining && !c2.isAccountJoining) return -1;
+			if (!c1.isAccountJoining && c2.isAccountJoining) return 1;
+
+			if (c1.isAccountActive && !c2.isAccountActive) return -1;
+			if (!c1.isAccountActive && c2.isAccountActive) return 1;
+
+			const p1 = c1.participant;
+			const p2 = c2.participant;
+
+			if (p1.isOwner && !p2.isOwner) return -1;
+			if (!p1.isOwner && p2.isOwner) return 1;
+
+			if (p1.isWriter && !p2.isWriter) return -1;
+			if (!p1.isWriter && p2.isWriter) return 1;
+
+			if (p1.isReader && !p2.isReader) return -1;
+			if (!p1.isReader && p2.isReader) return 1;
+
+			if (c1.isAccountRemoving && !c2.isAccountRemoving) return -1;
+			if (!c1.isAccountRemoving && c2.isAccountRemoving) return 1;
+
+			return 0;
+		});
 	};
 
 	onClick (space: any) {
-		if (space.spaceAccountStatus != I.SpaceStatus.Joining) {
+		if (space.isAccountActive) {
 			UtilRouter.switchSpace(space.targetSpaceId);
 		};
 	};
@@ -101,7 +112,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 			offsetY: 4,
 			onOpen: () => element.addClass('active'),
 			onClose: () => element.removeClass('active'),
-			route: 'Settings',
+			route: analytics.route.settings,
 		});
 	};
 

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, UtilObject, UtilData, keyboard, sidebar, translate } from 'Lib';
+import { I, UtilObject, UtilData, keyboard, translate, UtilSpace } from 'Lib';
 import { blockStore, detailStore, popupStore } from 'Store';
 import HeaderBanner from 'Component/page/elements/head/banner';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	templatesCnt: number;
@@ -27,13 +27,18 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	render () {
-		const { rootId, onSearch, onTooltipShow, onTooltipHide, isPopup } = this.props;
+		const { rootId, onSearch, onTooltipShow, onTooltipHide, isPopup, renderLeftIcons } = this.props;
 		const { templatesCnt } = this.state;
 		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return null;
+		};
+
 		const object = detailStore.get(rootId, rootId, Constant.templateRelationKeys);
 		const isLocked = root ? root.isLocked() : false;
 		const showMenu = !UtilObject.isTypeOrRelationLayout(object.layout);
-		const canSync = showMenu && !object.templateIsBundled;
+		const canSync = showMenu && !object.templateIsBundled && !root.isObjectParticipant();
 		const cmd = keyboard.cmdSymbol();
 		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 		const bannerProps: any = {};
@@ -41,7 +46,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		let center = null;
 		let banner = I.BannerType.None;
 
-		if (object.isArchived) {
+		if (object.isArchived && UtilSpace.canMyParticipantWrite()) {
 			banner = I.BannerType.IsArchived;
 		} else
 		if (UtilObject.isTemplate(object.type)) {
@@ -75,14 +80,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		return (
 			<React.Fragment>
 				<div className="side left">
-					<Icon
-						className="toggle"
-						tooltip={translate('sidebarToggle')}
-						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
-						tooltipY={I.MenuDirection.Bottom}
-						onClick={() => sidebar.toggleExpandCollapse()}
-					/>
-					<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
+					{renderLeftIcons(this.onOpen)}
 					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
 				</div>
 
@@ -122,9 +120,9 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	onMore () {
 		const { isPopup, match, rootId, menuOpen } = this.props;
 
-		menuOpen('blockMore', '#button-header-more', {
+		menuOpen('object', '#button-header-more', {
 			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.more,
+			subIds: Constant.menuIds.object,
 			data: {
 				rootId,
 				blockId: rootId,
@@ -147,26 +145,10 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	onRelation () {
-		const { isPopup, rootId, menuOpen } = this.props;
-		const cnw = [ 'fixed' ];
+		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'isArchived' ]);
 
-		if (!isPopup) {
-			cnw.push('fromHeader');
-		};
-
-		menuOpen('blockRelationView', '#button-header-relation', {
-			noFlipX: true,
-			noFlipY: true,
-			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.cell,
-			classNameWrap: cnw.join(' '),
-			data: {
-				isPopup,
-				rootId,
-				readonly: object.isArchived
-			},
-		});
+		this.props.onRelation({}, { readonly: object.isArchived });
 	};
 
 	updateTemplatesCnt () {

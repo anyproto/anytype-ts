@@ -1,1 +1,1 @@
-.blocks .block.blockText #value { -webkit-user-modify: read-only; }
+.blocks .block.blockText #value { -webkit-user-modify: read-only !important; }

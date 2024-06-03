@@ -1,8 +1,8 @@
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
+import { I, M, Storage, UtilCommon, UtilObject, Renderer, UtilRouter } from 'Lib';
 import { dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Filter {
 	from: number;
@@ -16,6 +16,7 @@ interface Graph {
 	label: boolean;
 	relation: boolean;
 	link: boolean;
+	files: boolean;
 	local: boolean;
 	filter: string;
 };
@@ -42,6 +43,7 @@ class CommonStore {
 	public nativeThemeIsDark = false;
 	public defaultType = '';
 	public pinTimeId = 0;
+	public emailConfirmationTimeId = 0;
 	public isFullScreen = false;
 	public redirect = '';
 	public languages: string[] = [];
@@ -52,11 +54,13 @@ class CommonStore {
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
 	public navigationMenuValue = null;
+	public linkStyleValue = null;
 	public isOnlineValue = false;
 	public gallery = {
 		categories: [],
 		list: [],
 	};
+	public diffValue: I.Diff[] = [];
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -66,12 +70,13 @@ class CommonStore {
 		marks: [],
 	};
 
-	public graphObj: Graph = { 
+	private graphObj: Graph = { 
 		icon: true,
 		orphan: true,
 		marker: true,
 		label: true,
 		relation: true,
+		files: false,
 		link: true,
 		local: false,
 		filter: '',
@@ -82,6 +87,8 @@ class CommonStore {
 		localUsage: 0,
 		spaces: [],
 	};
+
+	public membershipTiersList: I.MembershipTier[] = [];
 
     constructor() {
         makeObservable(this, {
@@ -100,6 +107,7 @@ class CommonStore {
 			isSidebarFixedValue: observable,
 			fullscreenObjectValue: observable,
 			navigationMenuValue: observable,
+			linkStyleValue: observable,
 			isOnlineValue: observable,
 			spaceId: observable,
             config: computed,
@@ -125,6 +133,8 @@ class CommonStore {
 			nativeThemeSet: action,
 			spaceSet: action,
 			spaceStorageSet: action,
+			navigationMenuSet: action,
+			linkStyleSet: action,
 			isOnlineSet: action,
 		});
 
@@ -179,6 +189,10 @@ class CommonStore {
 		return (Number(this.pinTimeId) || Storage.get('pinTime') || Constant.default.pinTime) * 1000;
 	};
 
+	get emailConfirmationTime(): number {
+		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
+	};
+
 	get autoSidebar(): boolean {
 		return this.boolGet('autoSidebar');
 	};
@@ -203,10 +217,6 @@ class CommonStore {
 		return String(this.spaceId || '');
 	};
 
-	get graph(): Graph {
-		return Object.assign(this.graphObj, Storage.get('graph') || {});
-	};
-
 	get spaceStorage (): SpaceStorage {
 		const spaces = this.spaceStorageObj.spaces || [];
 		return { ...this.spaceStorageObj, spaces };
@@ -225,7 +235,18 @@ class CommonStore {
 		if (ret === null) {
 			ret = Storage.get('navigationMenu');
 		};
-		return Number(ret) || I.NavigationMenuMode.Context;
+		return Number(ret) || I.NavigationMenuMode.Hover;
+	};
+
+	get linkStyle (): I.LinkCardStyle {
+		let ret = this.linkStyleValue;
+		if (ret === null) {
+			ret = Storage.get('linkStyle');
+		};
+		if (undefined === ret) {
+			ret = I.LinkCardStyle.Card;
+		};
+		return Number(ret) || I.LinkCardStyle.Text;
 	};
 
 	get dataPath (): string {
@@ -234,6 +255,14 @@ class CommonStore {
 
 	get isOnline (): boolean {
 		return Boolean(this.isOnlineValue);
+	};
+
+	get membershipTiers (): I.MembershipTier[] {
+		return this.membershipTiersList || [];
+	};
+
+	get diff (): I.Diff[] {
+		return this.diffValue || [];
 	};
 
     gatewaySet (v: string) {
@@ -273,10 +302,8 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
-	graphSet (graph: Partial<Graph>) {
-		this.graphObj = Object.assign(this.graphObj, graph);
-
-		Storage.set('graph', this.graphObj);
+	graphSet (key: string, param: Partial<Graph>) {
+		Storage.set(key, Object.assign(this.getGraph(key), param));
 		$(window).trigger('updateGraphSettings');
 	};
 
@@ -311,7 +338,6 @@ class CommonStore {
 		this.spaceId = String(id || '');
 	};
 
-
 	previewClear () {
 		this.previewObj = { type: null, target: null, element: null, range: { from: 0, to: 0 }, marks: [] };
 	};
@@ -330,6 +356,12 @@ class CommonStore {
 		this.pinTimeId = Number(v) || Constant.default.pinTime;
 
 		Storage.set('pinTime', this.pinTimeId);
+	};
+
+	emailConfirmationTimeSet (t: number) {
+		this.emailConfirmationTimeId = t;
+
+		Storage.set('emailConfirmationTime', this.emailConfirmationTimeId);
 	};
 
 	autoSidebarSet (v: boolean) {
@@ -363,6 +395,12 @@ class CommonStore {
 	};
 
 	redirectSet (v: string) {
+		const param = UtilRouter.getParam(v);
+
+		if ((param.page == 'auth') && (param.action == 'pin-check')) {
+			return;
+		};
+
 		this.redirect = v;
 	};
 
@@ -431,8 +469,15 @@ class CommonStore {
 		Storage.set('navigationMenu', v);
 	};
 
+	linkStyleSet (v: I.NavigationMenuMode) {
+		v = Number(v);
+		this.linkStyleValue = v;
+		Storage.set('linkStyle', v);
+	};
+
 	isOnlineSet (v: boolean) {
 		this.isOnlineValue = Boolean(v);
+		console.log('[Online status]:', v);
 	};
 
 	configSet (config: any, force: boolean) {
@@ -461,6 +506,18 @@ class CommonStore {
 
 	dataPathSet (v: string) {
 		this.dataPathValue = String(v || '');
+	};
+
+	membershipTiersListSet (list: I.MembershipTier[]) {
+		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
+	};
+
+	diffSet (diff: I.Diff[]) {
+		this.diffValue = diff || [];
+	};
+
+	getGraph (key: string): Graph {
+		return Storage.get(key) || UtilCommon.objectCopy(this.graphObj);
 	};
 
 };

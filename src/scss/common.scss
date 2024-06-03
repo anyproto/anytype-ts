@@ -1,4 +1,5 @@
 @import "~scss/_vars";
+@import "~scss/_mixins";
 
 * { padding: 0px; margin: 0px; border: 0px; box-sizing: border-box; }
 html, body { height: 100%; }
@@ -33,18 +34,18 @@ select:-webkit-autofill:focus { transition: background-color 5000s ease-in-out 0
 input, textarea, select { font-family: 'Inter'; }
 
 #drag { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1; user-select: none; pointer-events: all; }
-#root-loader { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: #060606; z-index: 1000; transition: opacity 0.5s ease-in-out; }
+#root-loader { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: #060606; z-index: 1000; transition: opacity 0.3s ease-in-out; }
 #root-loader {
 	.inner { 
 		width: 120px; text-align: center; position: absolute; transform: translate3d(-50%,-50%,0px); display: flex; flex-direction: column; gap: 6px 0px;
 		left: 50%; top: 50%;
 	}
-	.anim { opacity: 1; transform: scale3d(1,1,1); transition-duration: 0.5s; transition-property: opacity, transform; transition-timing-function: ease-in-out; }
+	.anim { opacity: 1; transform: scale3d(1,1,1); transition-duration: 0.3s; transition-property: opacity, transform; transition-timing-function: ease-in-out; }
 	.anim.from { opacity: 0; transform: scale3d(0.8,0.8,1); }
 	.anim.to { opacity: 0; transform: translate3d(0px,-20px,0px); }
 
 	.logo { width: 120px; height: 24px; background: url('~img/logo/color.svg') no-repeat; background-size: 100%; }
-	.version { @include text-small; color: var(--color-text-inversion); transition-delay: 0.25s; }
+	.version { @include text-small; color: var(--color-text-inversion); transition-delay: 0.15s; }
 }
 
 #globalFade { 
@@ -102,8 +103,8 @@ html.platformWindows, html.platformLinux {
 .editableWrap { position: relative; }
 
 a { color: var(--color-text-primary); }
-search { background: yellow !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
-search.active { background: orange !important; }
+markuphighlight { background: yellow !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
+markuphighlight.active { background: orange !important; }
 
 .dropTarget.isOver.middle { background: var(--color-system-drop-zone) !important; }
 .dropTarget.isOver.top { box-shadow: 0px -2px 0px var(--color-system-accent-100); }
@@ -115,10 +116,19 @@ search.active { background: orange !important; }
 .dropTarget.targetTop.isOver.top { box-shadow: 0px -2px 0px var(--color-system-accent-100) inset; }
 .dropTarget.targetBot.isOver.bottom { box-shadow: 0px 2px 0px var(--color-system-accent-100) inset; }
 
+/* Diff elements for history */
+.diffAdd, .diffChange, .diffRemove { position: relative; }
+.diffAdd::after, .diffChange::after, .diffRemove::after { content: ""; border-radius: inherit; opacity: 0.5; }
+.diffAdd::after, .diffChange::after	{ position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 10; }
+.diffRemove::after { position: relative; height: 30px; display: block; width: 100%; }
+.diffAdd::after { background-color: var(--color-shape-highlight-add); }
+.diffChange::after { background-color: var(--color-shape-highlight-change); }
+.diffRemove::after { background-color: var(--color-shape-highlight-remove); }
+
 .isSelectionSelected { position: relative; }
 
-.selectable.isSelectionSelected::after, 
-.block.isSelectionSelected > .wrapContent > .selectable::after 
+.selectionTarget.isSelectionSelected::after, 
+.block.isSelectionSelected > .wrapContent > .selectionTarget::after 
 { 
 	display: block; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; background-color: var(--color-system-selection);
 	pointer-events: none; z-index: 10; content: ""; border-radius: 2px;

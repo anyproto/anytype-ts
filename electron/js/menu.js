@@ -54,7 +54,7 @@ class MenuManager {
 				role: 'fileMenu', label: Util.translate('electronMenuFile'),
 				submenu: [
 					{ label: Util.translate('commonNewObject'), accelerator: 'CmdOrCtrl+N', click: () => Util.send(this.win, 'commandGlobal', 'createObject') },
-					{ label: Util.translate('commonNewSpace'), accelerator: 'CmdOrCtrl+N', click: () => Util.send(this.win, 'commandGlobal', 'createSpace') },
+					{ label: Util.translate('commonNewSpace'), click: () => Util.send(this.win, 'commandGlobal', 'createSpace') },
 
 					Separator,
 
@@ -64,9 +64,14 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuWorkDirectory'), click: () => shell.openPath(Util.userPath()) },
-					{ label: Util.translate('electronMenuDataDirectory'), click: () => shell.openPath(Util.dataPath()) },
-					{ label: Util.translate('electronMenuLogs'), click: () => shell.openPath(Util.logPath()) },
+					{ 
+						label: Util.translate('electronMenuDirectory'), submenu: [
+							{ label: Util.translate('electronMenuWorkDirectory'), click: () => shell.openPath(Util.userPath()) },
+							{ label: Util.translate('electronMenuDataDirectory'), click: () => shell.openPath(Util.dataPath()) },
+							{ label: Util.translate('electronMenuConfigDirectory'), click: () => shell.openPath(Util.defaultUserDataPath()) },
+							{ label: Util.translate('electronMenuLogsDirectory'), click: () => shell.openPath(Util.logPath()) },
+						] 
+					},
 
 					Separator,
 
@@ -261,6 +266,24 @@ class MenuManager {
 
 				Separator,
 
+				{
+					label: 'Test payments', type: 'checkbox', checked: config.testPayment,
+					click: () => {
+						Api.setConfig(this.win, { testPayment: !config.testPayment });
+						this.win.reload();
+					}
+				},
+
+				{
+					label: 'Test crypto payments', type: 'checkbox', checked: config.testCryptoPayment,
+					click: () => {
+						Api.setConfig(this.win, { testCryptoPayment: !config.testCryptoPayment });
+						this.win.reload();
+					}
+				},
+
+				Separator,
+
 				{ label: 'Export templates', click: () => Util.send(this.win, 'commandGlobal', 'exportTemplates') },
 				{ label: 'Export objects', click: () => Util.send(this.win, 'commandGlobal', 'exportObjects') },
 				{ label: 'Export localstore', click: () => Util.send(this.win, 'commandGlobal', 'exportLocalstore') },
@@ -310,9 +333,11 @@ class MenuManager {
 
 		// Force on top and focus because in some case Electron fail with this.winShow()
 		this.tray.on('double-click', () => {
-			this.win.setAlwaysOnTop(true);
-			this.winShow();
-			this.win.setAlwaysOnTop(false);
+			if (this.win && !this.win.isDestroyed()) {
+				this.win.setAlwaysOnTop(true);
+				this.winShow();
+				this.win.setAlwaysOnTop(false);
+			};
 		});
 	};
 
@@ -431,7 +456,7 @@ class MenuManager {
 	};
 
 	destroy () {
-		if (this.tray) {
+		if (this.tray && !this.tray.isDestroyed()) {
 			this.tray.destroy();
 			this.tray = null;
 		};

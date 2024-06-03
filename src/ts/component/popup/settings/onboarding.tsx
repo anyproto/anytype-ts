@@ -16,14 +16,17 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		this.onSave = this.onSave.bind(this);
 		this.onPathClick = this.onPathClick.bind(this);
 		this.onChangeStorage = this.onChangeStorage.bind(this);
+		this.onResetStorage = this.onResetStorage.bind(this);
+		this.onConfirmStorage = this.onConfirmStorage.bind(this);
 		this.onTooltipShow = this.onTooltipShow.bind(this);
 		this.onTooltipHide = this.onTooltipHide.bind(this);
 	};
 
 	render () {
 		const { mode, path, userPath } = this.config;
-		const { interfaceLang, config } = commonStore;
+		const { interfaceLang } = commonStore;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
+		const isDefault = path == UtilCommon.getElectron().defaultPath();
 		const networkModes: any[] = ([
 			{ id: I.NetworkMode.Default },
 			{ id: I.NetworkMode.Local },
@@ -85,15 +88,16 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 							</div>
 						) : ''}
 
-						{config.experimental ? (
-							<div className="item" onMouseEnter={e => this.onTooltipShow(e, userPath)} onMouseLeave={this.onTooltipHide}>
-								<div onClick={() => this.onPathClick(userPath)}>
-									<Label text={translate('popupSettingsOnboardingStoragePath')} />
-									<Label className="small" text={UtilCommon.shorten(userPath, 32)} />
-								</div>
-								<Button className="c28" text={translate('commonChange')} onClick={this.onChangeStorage} />
+						<div className="item" onMouseEnter={e => this.onTooltipShow(e, userPath)} onMouseLeave={this.onTooltipHide}>
+							<div onClick={() => this.onPathClick(userPath)}>
+								<Label text={translate('popupSettingsOnboardingStoragePath')} />
+								<Label className="small" text={UtilCommon.shorten(userPath, 32)} />
 							</div>
-						) : ''}
+							<div className="buttons">
+								<Button className="c28" text={translate('commonChange')} onClick={this.onChangeStorage} />
+								{!isDefault ? <Button className="c28" text={translate('commonReset')} onClick={this.onResetStorage} /> : ''}
+							</div>
+						</div>
 					</div>
 
 					<div className="buttons">
@@ -107,7 +111,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	componentDidMount(): void {
 		const { networkConfig } = authStore;
 		const { mode, path } = networkConfig;
-		const userPath = window.Electron.userPath();
+		const userPath = UtilCommon.getElectron().userPath();
 
 		this.config = {
 			userPath,
@@ -129,14 +133,14 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	onSave () {
 		const { networkConfig } = authStore;
-		const userPath = window.Electron.userPath();
+		const userPath = UtilCommon.getElectron().userPath();
 
 		if (this.config.mode !== networkConfig.mode) {
-			analytics.event('SelectNetwork', { route: 'Onboarding', type: this.config.mode });
+			analytics.event('SelectNetwork', { route: analytics.route.onboarding, type: this.config.mode });
 		};
 
 		if (this.config.path !== networkConfig.path) {
-			analytics.event('UploadNetworkConfiguration', { route: 'Onboarding' });
+			analytics.event('UploadNetworkConfiguration', { route: analytics.route.onboarding });
 		};
 
 		if (this.config.userPath !== userPath) {
@@ -161,18 +165,33 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 		};
 
 		if (this.config.mode == I.NetworkMode.Local) {
-			popupStore.open('confirm', {
-				className: 'isWide',
-				data: {
-					title: translate('commonAreYouSure'),
-					text: translate('popupSettingsOnboardingLocalOnlyWarningText'),
-					textConfirm: translate('popupSettingsOnboardingLocalOnlyWarningConfirm'),
-					onConfirm,
-				},
-			});
+			this.onConfirmStorage(onConfirm);
 		} else {
 			onConfirm();
 		};
+	};
+
+	onResetStorage () {
+		const onConfirm = () => {
+			this.onChange('userPath', UtilCommon.getElectron().defaultPath());
+		};
+
+		if (this.config.mode == I.NetworkMode.Local) {
+			this.onConfirmStorage(onConfirm);
+		} else {
+			onConfirm();
+		};
+	};
+
+	onConfirmStorage (onConfirm: () => void) {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('commonAreYouSure'),
+				text: translate('popupSettingsOnboardingLocalOnlyWarningText'),
+				textConfirm: translate('popupSettingsOnboardingLocalOnlyWarningConfirm'),
+				onConfirm,
+			},
+		});
 	};
 
 	onTooltipShow (e: any, text: string) {

@@ -77,7 +77,7 @@ const Column = observer(class Column extends React.Component<Props> {
 							onClick={this.onMore}
 						>
 							<Cell 
-								id={'board-head-' + id} 
+								id={`board-head-${id}`} 
 								rootId={rootId}
 								subId={subId}
 								block={block}
@@ -139,9 +139,12 @@ const Column = observer(class Column extends React.Component<Props> {
 		const { id, block, isCollection, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget, getSearchIds } = this.props;
 		const object = getTarget();
 		const view = getView();
+		if (!view) {
+			return;
+		};
+
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
-		
-		if (!relation || !view) {
+		if (!relation) {
 			return;
 		};
 
@@ -201,7 +204,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		}, () => {
-			dbStore.recordsSet(subId, '', applyObjectOrder(id, dbStore.getRecords(subId, '')));
+			dbStore.recordsSet(subId, '', applyObjectOrder(id, dbStore.getRecordIds(subId, '')));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -217,7 +220,7 @@ const Column = observer(class Column extends React.Component<Props> {
 	getItems () {
 		const { id, getSubId, applyObjectOrder } = this.props;
 
-		return applyObjectOrder(id, UtilCommon.objectCopy(dbStore.getRecords(getSubId(), ''))).map(id => ({ id }));
+		return applyObjectOrder(id, UtilCommon.objectCopy(dbStore.getRecordIds(getSubId(), ''))).map(id => ({ id }));
 	};
 
 	onLoadMore () {
@@ -240,12 +243,13 @@ const Column = observer(class Column extends React.Component<Props> {
 
 		const { rootId, block, id, getView } = this.props;
 		const node = $(this.node);
-
-		node.addClass('active');
+		const element = `#button-${id}-more`;
 
 		menuStore.open('dataviewGroupEdit', {
-			element: `#column-${id}-head`,
+			element,
 			horizontal: I.MenuDirection.Center,
+			offsetY: 4,
+			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
 			data: {
 				rootId,

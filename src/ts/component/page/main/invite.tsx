@@ -1,18 +1,19 @@
 import * as React from 'react';
-import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, UtilCommon, UtilRouter, UtilSpace, keyboard, translate } from 'Lib';
+import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
+import { I, C, UtilCommon, UtilRouter, UtilSpace, translate } from 'Lib';
 import { popupStore } from 'Store';
-import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
 };
 
-class PageMainImport extends React.Component<I.PageComponent, State> {
+class PageMainInvite extends React.Component<I.PageComponent, State> {
 
 	state = {
 		error: '',
 	};
+	cid = '';
+	key = '';
 	node = null;
 	refFrame = null;
 
@@ -25,48 +26,91 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				className="wrapper"
 			>
 				<Frame ref={ref => this.refFrame = ref}>
-					<Title text={translate('pageMainInviteTitle')} />
+					<Title text={error ? translate('commonError') : translate('pageMainInviteTitle')} />
 					<Error text={error} />
 
 					{error ? (
 						<div className="buttons">
-							<Button text={translate('commonBack')} className="c28" onClick={() => UtilSpace.openDashboard('route')} />
+							<Button 
+								text={translate('commonBack')} 
+								color="blank" 
+								className="c36" 
+								onClick={() => UtilSpace.openDashboard('route')} 
+							/>
 						</div>
 					) : <Loader />}
 				</Frame>
+
+				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
 	};
 
 	componentDidMount (): void {
+		this.init();
+		this.resize();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
+		this.resize();
+	};
+
+	init () {
 		const data = UtilCommon.searchParam(UtilRouter.history.location.search);
-		const allowedStatuses = [ I.SpaceStatus.Deleted ];
+
+		if ((this.cid == data.cid) && (this.key == data.key)) {
+			return;
+		};
+
+		this.cid = data.cid;
+		this.key = data.key;
 
 		if (!data.cid || !data.key) {
 			this.setState({ error: translate('pageMainInviteErrorData') });
 		} else {
 			C.SpaceInviteView(data.cid, data.key, (message: any) => {
-				if (message.error.code) {
-					this.setState({ error: message.error.description });
-					return;
-				};
-
-				const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
-				if (space && !allowedStatuses.includes(space.spaceAccountStatus)) {
-					this.setState({ error: UtilCommon.sprintf(translate('pageMainInviteErrorDuplicate'), space.name) });
-					return;
-				};
-
 				UtilSpace.openDashboard('route');
-				window.setTimeout(() => popupStore.open('inviteRequest', { data: { invite: message, ...data } }), popupStore.getTimeout());
+
+				popupStore.closeAll(null, () => {
+					const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
+
+					if (message.error.code) {
+						popupStore.open('confirm', {
+							data: {
+								icon: 'sad',
+								bgColor: 'red',
+								title: translate('popupInviteRequestTitle'),
+								text: translate('popupConfirmInviteError'),
+								textConfirm: translate('commonOkay'),
+								canCancel: false,
+							},
+						});
+					} else 
+					if (space) {
+						if (space.isAccountJoining) {
+							UtilCommon.onInviteRequest();
+						} else
+						if (!space.isAccountRemoving && !space.isAccountDeleted) {
+							popupStore.open('confirm', {
+								data: {
+									title: translate('popupConfirmDuplicateSpace'),
+									textConfirm: translate('commonOpenSpace'),
+									textCancel: translate('commonCancel'),
+									onConfirm: () => {
+										UtilRouter.switchSpace(message.spaceId);
+									},
+								},
+							});
+						} else {
+							popupStore.open('inviteRequest', { data: { invite: message, ...data } });
+						};
+					} else {
+						popupStore.open('inviteRequest', { data: { invite: message, ...data } });
+					};
+				});
 			});
 		};
-
-		this.resize();
-	};
-
-	componentDidUpdate (): void {
-		this.resize();
 	};
 
 	resize () {
@@ -85,4 +129,4 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 
 };
 
-export default PageMainImport;
+export default PageMainInvite;

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, C, UtilCommon, UtilMenu, UtilData, UtilObject, keyboard } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
 import { detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
 
@@ -42,6 +42,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 					tabs={UtilMenu.getGraphTabs()} 
 					tab="graph" 
 					onTab={this.onTab} 
+					layout={I.ObjectLayout.Graph}
 				/>
 
 				<Loader id="loader" />
@@ -54,6 +55,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 						id="global"
 						rootId={rootId} 
 						data={this.data}
+						storageKey={Constant.graphId.global}
 					/>
 				</div>
 
@@ -105,7 +107,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	load () {
 		this.setLoading(true);
 
-		C.ObjectGraph(commonStore.space, UtilData.graphFilters(), 0, [], Constant.graphRelationKeys, (message: any) => {
+		C.ObjectGraph(commonStore.space, UtilData.graphFilters(), 0, [], Constant.graphRelationKeys, '', [], (message: any) => {
 			if (message.error.code) {
 				return;
 			};

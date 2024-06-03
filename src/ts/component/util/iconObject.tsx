@@ -4,8 +4,8 @@ import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
 import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject, UtilCommon, translate } from 'Lib';
 import { commonStore, menuStore } from 'Store';
-import Colors from 'json/colors.json';
-import Theme from 'json/theme.json';
+const Colors = require('json/colors.json');
+const Theme = require('json/theme.json');
 
 interface Props {
 	id?: string;
@@ -30,6 +30,7 @@ interface Props {
 	noRemove?: boolean;
 	noClick?: boolean;
 	menuParam?: Partial<I.MenuParam>;
+	style?: any;
 	getObject?(): any;
 	onSelect?(id: string): void;
 	onUpload?(objectId: string): void;
@@ -43,6 +44,7 @@ const LAYOUT_EMOJI = [
 	I.ObjectLayout.Page, 
 	I.ObjectLayout.Type,
 	I.ObjectLayout.SpaceView,
+	I.ObjectLayout.Human,
 ].concat(UtilObject.getSetLayouts());
 
 const IconSize = {
@@ -57,6 +59,7 @@ const IconSize = {
 	32: 28,
 	36: 24,
 	40: 24,
+	42: 24,
 	44: 24,
 	48: 24,
 	56: 32,
@@ -79,6 +82,7 @@ const FontSize = {
 	32: 18,
 	36: 24,
 	40: 24,
+	42: 24,
 	44: 24,
 	48: 28,
 	56: 34,
@@ -130,6 +134,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		tooltipY: I.MenuDirection.Bottom,
 		color: 'grey',
 		menuParam: {},
+		style: {},
 	};
 
 	constructor (props: Props) {
@@ -142,7 +147,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	render () {
-		const { className, size, canEdit, forceLetter } = this.props;
+		const { className, size, canEdit, forceLetter, style } = this.props;
 		const { theme } = commonStore;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
@@ -305,6 +310,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 				draggable={true}
+				style={style}
 				onDragStart={(e: any) => { 
 					e.preventDefault(); 
 					e.stopPropagation(); 
@@ -397,18 +403,18 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 		const { id, offsetX, offsetY, onSelect, onUpload, noRemove, menuParam } = this.props;
 		const object = this.getObject();
-		const { iconEmoji, iconImage, layout } = object;
-		const noGallery = this.props.noGallery || (layout == I.ObjectLayout.SpaceView);
-		const noUpload = this.props.noUpload || (layout == I.ObjectLayout.Type);
+		const noGallery = this.props.noGallery || [ I.ObjectLayout.SpaceView, I.ObjectLayout.Human ].includes(object.layout);
+		const noUpload = this.props.noUpload || [ I.ObjectLayout.Type ].includes(object.layout);
 
 		menuStore.open('smile', { 
 			element: `#${id}`,
 			offsetX,
 			offsetY,
 			data: {
+				value: (object.iconEmoji || object.iconImage || ''),
 				noGallery,
 				noUpload,
-				noRemove: noRemove || !(iconEmoji || iconImage),
+				noRemove,
 				onSelect: (icon: string) => {
 					if (onSelect) {
 						onSelect(icon);
@@ -483,6 +489,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	userSvg (): string {
+		const { size } = this.props;
 		const object = this.getObject();
 		const { layout } = object;
 		const iconSize = this.iconSize();
@@ -527,12 +534,12 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	commonSvg (): string {
+		const { size } = this.props;
 		const object = this.getObject();
 		const { layout } = object;
 		const iconSize = this.iconSize();
 		const name = this.iconName();
-
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, size)}px">${name}</text>`;
 		const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">${text}</svg>`;
 
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));

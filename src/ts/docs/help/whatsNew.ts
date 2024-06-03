@@ -1,5 +1,5 @@
 import { I, keyboard } from 'Lib';
-import Url from 'json/url.json';
+const Url = require('json/url.json');
 
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
@@ -19,7 +19,126 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Webclipper, Files as Objects and Experience Gallery Galore!`),
+	title(`Wrapping up Spring with an Update 🌸 Presenting Batch Relation Editing`),
+	text(`You didn't think we'd let the waning days of Spring slip by before we snuck in another release, did you?`),
+	text(`This request has been a long-time coming, so it brings us great pleasure to present v1 of Batch Relation Editing!`),
+	text(`Wave goodbye to the days of tediously managing objects one by one. This new function allows you to add Tags and Relations to many Objects at a time, making it much quicker to organize your content and tidy-up your graph.`),
+
+	h2(`🌿 Quality-of-Life Improvements:`),
+	bullet(`<b>Batch Relation Editing:</b> Easily manage Tags and Relations across multiple objects 📋`),
+	video(`40.5/1.mp4`),
+	bullet(`<b>Reuse Files:</b> Incorporate existing files within file blocks in the editor 📂 `),
+	video(`40.5/2.mp4`),
+	bullet(`<b>Improved Global Search:</b> Highlights results, shows more total results, searches by text relations, blocks, tags, and statuses, and allows searching links and backlinks.`),
+	video(`40.5/3.mp4`),
+	bullet(`<b>Keyboard shortcut: ${hl(`${cmd} + Enter`)} checks and unchecks checkboxes ✅ Thanks, ${link('https://github.com/anyproto/anytype-ts/pull/709', '@mikailcf')}!`),
+	bullet(`<b>Text Justification:</b> New option to justify text in blocks for better formatting 📄`),
+	img('40.5/4.png'),
+	bullet(`<b>Enhanced Graph Settings:</b> Distinct settings for global and local graphs in Sets/Collections ⚙️ Thanks, ${link('https://community.anytype.io/t/graph-view-with-space-local-graph-clashes/20599', '@Donatas')}`),
+	bullet(`<b>Drag'n'Drop Widgets:</b> Improved widget headers and linked widgets for easier organization 🖱️ Thanks, ${link('https://community.anytype.io/t/drag-drop-not-working-for-sidebar-widgets-with-link-appearance/20195', '@siouso')}`),
+	bullet(`<b>Link Block:</b> Default link style has been changed to Card. Personalize this behaviour in Settings 🔗`),
+	img('40.5/5.png'),
+	bullet(`<b>Gallery View Adjustment:</b> Better visual experience with fewer cards in inline set columns 🎨 Thanks, ${link('https://community.anytype.io/t/change-dynamically-the-width-of-gallery-items-when-on-2col-layout/15623', '@Eban')}`),
+	bullet(`<b>Library:</b> now has options to sort 📚`),
+	img('40.5/6.png'),
+
+	h2(`🛠️ Technical Updates:`),
+	bullet(`Electron updated to ${link('https://releases.electronjs.org/releases/stable', '30.0.7')}`),
+	bullet(`<b>Membership System:</b> All email domains now supported 📧 Thanks, @Afonso!`),
+	bullet(`<b>App Updates:</b> Now works even without logging in ⬆️`),
+
+	h2(`🐞 Bug Fixes:`),
+	bullet(`<b>Slash Menu:</b> Now shows only after a space character to prevent saving issues ✨ Thanks, ${link('https://community.anytype.io/t/dont-show-the-slash-menu-if-there-is-a-character-or-nunber-direct-before-the-cursor/20500', '@code-jack')}`),
+	bullet(`<b>Task Checkbox:</b> Fixed the issue of checkbox deleting object names in sets ✅`),
+	bullet(`<b>Editor:</b> Fixed a bug that was breaking the editor when object was opened from history or by deeplink 🌐`),
+	bullet(`<b>URL Relation Bug:</b> Resolved the issue with opening Windows Explorer when the URL is blank 🖥️ Thanks, ${link('https://community.anytype.io/t/pasting-a-url-in-url-relation-within-a-collection-press-enter-opens-this-pc-on-windows/11197', '@hexara')}`),
+	bullet(`<b>Emoji Markdown:</b> Fixed markdown sequence issues with text blocks starting with an emoji 😃 Thanks, ${link('https://community.anytype.io/t/13159', '@pavloUA')}`),
+	bullet(`<b>System Relations:</b> System relations can now be unlinked from Types 🔗 Thanks, ${link('https://community.anytype.io/t/16517', '@filip')}`),
+	bullet(`<b>Shift + Click:</b> Proper functionality for shift+click on Link/Bookmark blocks 🔍 Thanks, ${link('https://community.anytype.io/t/20194', '@siousu')}`),
+	bullet(`<b>White Flash Issue:</b> Fixed the white flash when returning to the main screen from login/signup 💡`),
+	bullet(`<b>Settings Modal:</b> Now properly adjusts to window height 🖥️`),
+	bullet(`<b>Deeplink Routing:</b> Correct redirection after PIN check 🔒 Thanks, ${link('https://community.anytype.io/t/gallerys-open-in-app-button-failed-to-trigger-while-when-the-app-is-closed/12968', '@JorgeE')}`),
+	bullet(`<b>Delete Link:</b> Fixed the delete link in the space context menu and local-only mode ❌`),
+
+	text(``),
+	text(`Enjoy and keep an eye out for our next release featuring another banger: 💥Tags as Objects 🏷️`),
+
+	div(),
+	// --------------------------------------------//
+
+	h1(`Release 0.40.0 - Welcome to Local-First Sharing & Collaboration`),
+	text(`Folks, this is the one we’ve been waiting for. This release, in which creating trusted networks with your friends, family and communities in Anytype becomes a reality, is the culmination of nearly five years of R&D.`),
+	text(`What does this mean for you? Now you can share what matters, with those you care about, knowing that everything you share is encrypted and owned by you. Not anytype, nor anybody else can peek inside or deny your access.`),
+	text(`From today onward, we warmly welcome you to begin testing out shared spaces, starting with the small things: idea boards, shopping lists, projects, and wikis. As you’re testing, please kindly note that this is v1 of multiplayer, representing the first step towards full-fledged collaborative experiences. We’ll be enriching this experience with more features in the coming months, so your feedback is, as always, warmly welcomed.`), 
+	text(`If you need inspiration, you can always check the ${link('https://gallery.any.coop/Collaboration', 'Multiplayer Experiences')} newly added to the Experience Gallery - for communities, neighbors, families, teams, and digital creators.`),
+	text(`We can’t wait to see what you’ll create, and look forward to this new, networked era of Anytype.`),
+
+	h2(`💎 Highlights of this Release:`),
+
+	h3(`Multiplayer! Sharing! Collaboration! is LIVE!`),
+	video(`40/1.mp4`),
+	text(`To experience local-first collaboration for yourself, first ${hl('create a new space')} using the space navigation menu. In the Space Settings menu, you’ll see the option to ${hl('Share Space')}. By clicking here, you can generate an invite link for the Space, which can be sent to anyone.`),
+	text(`Once they click the link and request to join your Space, you’ll receive a notification prompting you to add this person as an Editor, Viewer, or to reject the request entirely. Editors have edit access to all objects within the Space, while Viewers have read-only access to all objects within the space.`),
+	text(`As a Space owner, it is possible to share up to three Spaces at this time. You can manage the roles of guests you have invited to your Space, or remove them altogether. Guests who have been removed from a space will receive a notification that they have been removed from the Space, and will see an option to export the contents of the Space.`),
+
+	h3(`Memberships`),
+	video(`40/2.mp4`),
+	text(`For those of you who’ve inquired how to support Anytype’s development and growth, we’re pleased to share that the time has come! Memberships in the Anytype network are now live. You can check your Membership status at any time by clicking on the new ${hl('Memberships')} tab in your Profile Settings.`),
+	text(`If you joined Anytype prior to this release, you should be auto-updated to the ‘Beta Users’ Plan, which includes your previous storage limits plus all benefits of the Explorer Plan.`),
+	text(`If you would like to upgrade your membership, select your desired plan and follow the on-screen instructions to submit the Name you would like to purchase on the Anytype network. Then, complete the transaction in Stripe. Once your payment has been confirmed, your membership plan will update in the app.`),
+
+	h3(`Custom Storage Location`),
+	text(`When creating a vault, it’s now possible to select the storage location on your hard drive. If your vault has already been created, you can also change the location and retrieve the data from the network. To do so, first logout, then tap the settings wheel on the black login screen.`),
+	text(`Please be cautious when using local-only mode, as your data can only be transferred to a second device via peer-to-peer (P2P) connection.`),
+
+	h2(`⚡ Quality-of-Life Improvements:`),
+
+	h3(`Updated Preferences Options in Profile Menu`),
+	video(`40/3.mp4`),
+	text(`With this release, we also introduce greater customization over UX patterns. When clicking on your Profile > Preferences, you’ll see new options for personalizing your account including Quick Capture Menu display settings, default Link Appearance settings, and whether Objects open in Full-Screen view.`),
+
+	h3(`${hl('Graph')} Added as Layout View to Sets & Collections`),
+	video(`40/5.mp4`),
+	text(`For those of you who’ve longed for more precise graph filters, this release brings us one step closer. As a new layout option in Sets & Collections, you’ll now see an option for ${hl('Graph')}. By selecting it, you’ll be able to visualize filtered view of your graph which contains objects that match your Set or Collection criteria. This would allow you to use your graph to view for instance, all objects with Priority: High, or all objects with Type: Book.`),
+
+	h3(`Files & Media Relation Formats added to Set Filter Menu`),
+	video(`40/4.mp4`),
+	text(`When filtering Sets that use File and Media relations, the Set filter menu now includes options to filter according to relations with type: File and Media.`),
+
+	h3(`Design Improvements in Widgets`),
+	text(`Border radiuses on widget select and hover menus have been adjusted for better visual consistency.`),
+
+	h3(`System Tray & Menu Settings Renamed on Windows & Linux`),
+	text(`For better consistency with OS naming conventions, ${hl('System Menu')} has been renamed to ${hl('Menu Bar')}, and ${hl('Menu Bar')} has been renamed to ${hl('System Tray')} on Windows and Linux versions`),
+
+	h3(`Use Uploaded Images as Object Icons`),
+	text(`You can now set an object icon by reusing an image that has already been uploaded to the space.`),
+
+	h2(`💻 Tech:`),
+	bullet(`Electron has been updated to 29.1.6`),
+	bullet(`Debug logs for Middleware were split into different flags`),
+
+	h2(`🐛 Bug Fixes:`),
+	bullet(`Brave Browser automatic pairing issue resolved in Web-clipper. Thanks, ${link('https://community.anytype.io/t/web-clipper-not-pairing-automatically/17214', 'anicholslcsw')}!`),
+	bullet(`Maximum relation menu height corrected so set filters are no longer cut off. Thanks, ${link('https://community.anytype.io/t/filter-in-set-view-dont-show-all-available-relations/18504', 'Henri')}!`),
+	bullet(`Experience Gallery links now open Experience page, rather than list of experiences`),
+	bullet(`Inline Kanban sets no longer overlap with editor content. Thanks, ${link('https://community.anytype.io/t/inline-set-kanban-view-bleeds-over-pre-existing-text/17485', 'zma17')}!`),
+	bullet(`Clipboard paste for large amount of content has been greatly optimized`),
+	bullet(`Rendering of ${hl('\\newline')}, ${hl('\\sqrt')}, ${hl('\\vec')} in LaTex now fixed to display correctly. Thanks, ${link('https://community.anytype.io/t/in-latex-or-newline-does-nothing-in-display-mode-newlineindisplaymode/11820', 'BioLinua')}!`),
+	bullet(`When creating link blocks or inline links, first item in Link selection menu no longer being skipped on when using downward arrow key. Thanks, ${link('https://community.anytype.io/t/add-link-menu-first-item-is-always-skipped-keyboard-navigation/18815', 'siousu')}!`),
+	bullet(`Source relation now opens correctly from featured relations`),
+	bullet(`Relation filter in Graph fixed to display Objects connected by Relation only. Thanks, ${link('https://community.anytype.io/t/graph-doesnt-show-all-objects-connected-by-relation/18920', 'Code-Jack')}!`),
+	bullet(`Text select with keyboard command now includes last character in selection. Thanks, ${link('https://community.anytype.io/t/selecting-text-with-the-arrow-keys-last-typed-character-is-missed-in-the-selection/18507', 'Code-Jack')}!`),
+	bullet(`Contents inside closed toggles now being selected when copying or moving. Thanks, ${link('https://community.anytype.io/t/contents-not-selected-inside-collapsed-toggle-blocks-when-copying-or-moving/18857', 'yuriy144')}!`),
+	bullet(`Content can now be dragged and dropped into empty toggles`),
+	bullet(`Link and bookmark cards no longer resizing when leaving and returning to an object. Thanks, ${link('https://community.anytype.io/t/link-preview-as-card-with-page-cover-in-columns-dont-keep-larger-size-after-leaving-the-object/16642', 'nathan.connor')}!`),
+	bullet(`Inline set & collection titles no longer being cut-off. Thanks, ${link('https://community.anytype.io/t/collections-title-gets-cut-out-after-a-few-characters/16190', 'Lixz')}!`),
+	bullet(`Cursor no longer jumping when using backspace in lines that contain inline @mentions. Thanks, ${link('https://community.anytype.io/t/using-backspace-on-a-line-with-multiple-links-is-causing-issues/19135', 'tomshreds')}!`),
+
+	div(),
+	// --------------------------------------------//
+
+	h1(`Release 0.39.0 - Webclipper, Files as Objects and Experience Gallery Galore!`),
 	text(`Midwinter greetings, Anytypers! As we chug along towards multiplayer, we’re excited to bring you another release packed with some long-anticipated features. We hope you’ll enjoy this update and as always, look forward to hearing your feedback!`),
 
 	h2(`💎 Highlights of this Release:`),
@@ -97,9 +216,9 @@ export default [
 	bullet(`Github gist`),
 	bullet(`Graphviz diagrams`),
 	bullet(`CodePen`),
-	bullet(`Sketchfab models (Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!)`),
-	bullet(`Kroki diagrams (Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!)`),
-	bullet(`Bilibili videos (Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!)`),
+	bullet(`Sketchfab models. Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!`),
+	bullet(`Kroki diagrams. Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!`),
+	bullet(`Bilibili videos. Thanks, @${link('https://github.com/LavaCxx', 'LavaCxx')}!`),
 
 	h2(`⚡ Quality-of-Life Improvements:`),
 
@@ -448,6 +567,7 @@ export default [
 	div(),
 	// --------------------------------------------//
 
+	/*
 	h2(`Release 0.33.0 - Enter the Void 😶‍🌫️`),
 
 	text(`After an enormous pre-beta launch, we're following up this month with an update to inject some magic into our onboarding experience.`),
@@ -462,8 +582,8 @@ export default [
 	video(`33/onboarding.mp4`),
 	text(`We're calling this one feature, but it's really a whole series of features and designs wrapped into one experience that comprises everything from installation to login.`),
 	text(`During the onboarding experience, new users are situated within the "Void" to understand where their space will be created.`),
-	text(`From there, users receive supplemental education on the importance of protecting and backing up their recovery phrases. Finally, users are able to visualize their identity and personal space as two distinct entities.`),
-	text(`Although this flow is primarily designed for new users, existing account holders will also get to join in on some of the fun. You'll notice when logging in or out of your account, that your recovery phrase window got a colorful new design and that the void concept has been introduced uniformly in all accounts.`),
+	text(`From there, users receive supplemental education on the importance of protecting and backing up their keys. Finally, users are able to visualize their identity and personal space as two distinct entities.`),
+	text(`Although this flow is primarily designed for new users, existing account holders will also get to join in on some of the fun. You'll notice when logging in or out of your account, that your key window got a colorful new design and that the void concept has been introduced uniformly in all accounts.`),
 
 	h2(`⚡ Quality-of-Life Improvements:`),
 
@@ -526,8 +646,6 @@ export default [
 	div(),
 	// --------------------------------------------//
 
-	/*
-
 	h1(`Release 0.31.0: Inline Sets are Here 😍`),
 	text(`Throughout the past months, our team has been researching &amp; designing solutions to our community's needs to manage several objects at once.`),
 	text(`As the first in a series of projects addressing this topic, we're happy to bring you inline sets, which will allow more flexible interaction between sets & objects, allowing you to freely embed the former within the latter. If February is about surprising your loved ones, consider this feature our early Valentine's gift to you 💖`),
@@ -554,7 +672,7 @@ export default [
 	bullet(`<b>Profile added to Settings</b><br/>You can now edit your profile name & picture from your account settings. Any changes made there will be immediately synced with your Profile object.`),
 	img(`31/4-profile.png`, 'half screen'),
 
-	bullet(`<b>Upgrades to recovery phrase panel</b><br/>Buttons in the "Recovery Phrase" panel of your Settings menu now show "Hide" or "Show", depending on whether the phrase is blurred or not. Thanks, ${link('https://community.anytype.io/t/8029', 'sambouwer')}!`),
+	bullet(`<b>Upgrades to key panel</b><br/>Buttons in the "Recovery Phrase" panel of your Settings menu now show "Hide" or "Show", depending on whether the phrase is blurred or not. Thanks, ${link('https://community.anytype.io/t/8029', 'sambouwer')}!`),
 
 	h2(`💻 Tech &amp; Performance`),
 	bullet(`Electron upgraded to 22.0.0`),
@@ -708,7 +826,7 @@ export default [
 	h2(`🚀 Quality-of-life Improvements:`),
 	bullet(`Previously-uploaded images now saved in Image Library: When selecting Object covers you can now choose from a library of any images you have uploaded to your workspace`),
 	bullet(`Delete block shortcut added: Simply press Backspace with your block menu open (orange three-dots menu), and you'll delete the whole block`),
-	bullet(`Copy Recovery Phrase button added to Settings: To reduce the number of lost recovery phrases, we introduced buttons in our Recovery Phrase and Logout screens to show and automatically copy your phrase`),
+	bullet(`Copy Recovery Phrase button added to Settings: To reduce the number of lost keys, we introduced buttons in our Recovery Phrase and Logout screens to show and automatically copy your phrase`),
 	bullet(`'What's New' window optimization: For faster performance, the 'Whats New' window was optimized and now shows the previous three releases. Older releases can be viewed by clicking the ${hl(`Older Releases`)} button at the bottom of the window`),
 	bullet(`Settings keyboard navigation introduced: Navigate back in Settings using keystrokes ${hl(`${cmd} + \[`)} or ${hl(`Alt + arrow left`)}`),
 	bullet(`Emoji group icons introduced: Search for emojis more quickly using the group icons at the bottom of the emoji picker`),
@@ -767,7 +885,7 @@ export default [
 	bullet(`Link styles have been updated and the double squircle icons next to text links have been removed`),
 	bullet(`Code blocks now have a ${hl(`copy`)} button in the interface`),
 	bullet(`Sidebar and editor got a technical update, and now work a bit faster`),
-	bullet(`Recovery phrase and QR code are now not only blurred, but replaced with a substitute for security purposes`),
+	bullet(`Key and QR code are now not only blurred, but replaced with a substitute for security purposes`),
 	bullet(`The preload screen has a new Anytype icon and logo`),
 	bullet(`Mentions and link menus were modified`),
 	bullet(`Dates everywhere in the app were changed to work in local timezones, including filters in Sets`),
@@ -798,7 +916,7 @@ export default [
 	bullet(`A shiny new app icon! 💅🏻`),
 
 	h2(`Features`),
-	bullet(`Permanently erase your Anytype account, recovery phrase, and objects stored on the backup node. This is irreversible, and we cannot help you recover your data. You will have 30 days to change your mind.`),
+	bullet(`Permanently erase your Anytype account, key, and objects stored on the backup node. This is irreversible, and we cannot help you recover your data. You will have 30 days to change your mind.`),
 	bullet(`Highlight block now changes style to paragraph when pressing backspace in empty block, like lists`),
 	bullet(`Objects in ${hl(`move to menu`)} are now being sorted by last edited date`),
 	bullet(`Ability to drag-and-drop blocks directly to the sidebar`),
@@ -1014,7 +1132,7 @@ export default [
 	bullet(`Optimisations to reduce the wait from starting Anytype to reaching the home screen.  ${link('https://community.anytype.io/t/anytype-taking-2-5-minutes-to-get-past-the-logging-in-screen/2859', 'Thanks, lynxlove, Srinath')}`),
 
 	h2(`Enhancements`),
-	bullet(`New users will be shown their recovery phrase during their first session. ⚠️⚠️⚠️ Please write it down. Please keep it safe.`),
+	bullet(`New users will be shown their key during their first session. ⚠️⚠️⚠️ Please write it down. Please keep it safe.`),
 	bullet(`Change the view to non-popup when the window's width is smaller than the width of the pop-up. <a herf="https://community.anytype.io/d/969-default-to-non-popup-view-when-windows-width-is-popuppages-width/1">Thanks, triangles</a>`),
 	bullet(`The ${hl(`Done`)} relation will be added to new Sets views by default. `),
 	bullet(`${hl(`СTRL / CMD + N`)} now creates a new object inside a Set.`),
@@ -1225,7 +1343,7 @@ export default [
 	text(`Enhance your Daily notes with handy date shortcuts! Anytype will create an object with a relative date automatically. Write it the way you like: ${hl(`@now`)}, ${hl(`@today`)}, ${hl(`@yesterday`)}, ${hl(`@three days ago`)}, ${hl(`@last month`)}, ${hl(`@one year from now`)}, ${hl(`@sunday`)}, ${hl(`@next January`)}, ${hl(`@last February`)}, ${hl(`@December 25th`)}, ${hl(`@01.10.21`)}, ${hl(`@2016-05-12`)}. So handy with backlinks! Thanks, ${link('https://community.anytype.io/d/770-timedate-shortcuts-eg-now-today-date-etc', 'levifig')}`),
 
 	h2(`Fixes`),
-	bullet(`The recovery phrase is visible without any password authentication. Thanks, shizoxlife`),
+	bullet(`The key is visible without any password authentication. Thanks, shizoxlife`),
 	bullet(`Navigating back and forth between objects is unreliable. Thanks, ${link('https://community.anytype.io/d/643-forward-and-back-buttons-stop-working', 'irdinamaztura &amp; abheek')}`),
 	bullet(`Carriage returns to the top of the screen whenever I select something in the quick editor. Thanks, ${link('https://community.anytype.io/d/851-selection-jumps-to-top-in-popup-mode/1', 'bluatruli')}`),
 	bullet(`Anytype (Human) version history breaks app login, triggers an infinite loop. Thanks, ${link('https://community.anytype.io/d/805-version-history-of-anytype-page-breaks-the-app/1', 'selimsandal')}`),
@@ -1308,7 +1426,7 @@ export default [
 	bullet(`Hyperlink pop up window persisted across pages. Thanks, ${link('https://community.anytype.io/d/341-hyperlink-pop-up-window-persists-across-pages/1', 'jmsinnz')}.`),
 	bullet(`New Checkbox was created pre-checked if the one above was checked. Thanks, ${link('https://community.anytype.io/d/311-new-checkbox-pre-checked/1', 'bskinner')}.`),
 	bullet(`When you dragged pictures into a toggle, it resized to the width of the toggle. Thanks, ${link('https://community.anytype.io/d/461-when-you-drag-pictures-into-a-toggle-it-resizes-to-the-width-of-the-toggle/1', 'Inkqb')}.`),
-	bullet(`When first setting up Anytype using a recovery phrase to log in, pressing ${hl(`Enter`)} didn't submit the input. Thanks, ${link('https://community.anytype.io/d/498-enter-key-should-submit-seed-phrase/1', 'gil')}.`),
+	bullet(`When first setting up Anytype using a key to log in, pressing ${hl(`Enter`)} didn't submit the input. Thanks, ${link('https://community.anytype.io/d/498-enter-key-should-submit-seed-phrase/1', 'gil')}.`),
 	bullet(`Numeration could start from 1 in different circumstances. Thanks, ${link('https://community.anytype.io/d/450-changing-long-text-into-nummerous-list-bug/1', 'XxxBalCion')}.`),
 	bullet(`"Type text or / for commands" was visible on desktop overlapping the newly added text from Android. Thanks, ${link('https://community.anytype.io/d/420-help-text-overlap-bug/1', 'abiak')}.`),
 	bullet(`Background color wasn't exporting when printing. Thanks, ${link('https://community.anytype.io/d/368-background-colour-not-exported-when-printing/1', 'firmicutes')}.`),
@@ -1408,9 +1526,9 @@ export default [
 	bullet(`Markdown <b>export</b> Located in Settings, you can now export your Anytype pages into markdown.`),
 	bullet(`Greater page customisation options. Users can now change page alignment, and make changes to overall page size. This can be found in the menu while editing a page on the top-right of Anytype.`),
 	bullet(`You can now add/remove pages to/from the dashboard. Simply click the menu from any page.`),
-	bullet(`It can be tough to login to the mobile app with a mnemonic phrase, so you can do that with a QR code. Your unique QR code is found under Settings > Recovery phrase.`),
+	bullet(`It can be tough to login to the mobile app with a mnemonic phrase, so you can do that with a QR code. Your unique QR code is found under Settings > Key.`),
 	text(''),
-	text(`${hl(`Please don't share your recovery phrase or your QR code with anyone.`)}`),
+	text(`${hl(`Please don't share your key or your QR code with anyone.`)}`),
 
 	h2(`Enhancements`),
 	bullet(`Men-oeuvres. Menus will now flip vertically/horizontally when they run out of space.`),

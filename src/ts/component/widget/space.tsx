@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, C, UtilSpace, UtilCommon, translate } from 'Lib';
+import { I, C, UtilSpace, UtilCommon, translate, Onboarding, keyboard } from 'Lib';
 import { popupStore, commonStore } from 'Store';
 	
 const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
@@ -17,16 +17,16 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 
 	render (): React.ReactNode {
 		const space = UtilSpace.getSpaceview();
-		const canWrite = UtilSpace.canParticipantWrite();
-		const members = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining ]);
-		const memberCnt = members.filter(it => it.status == I.ParticipantStatus.Active).length;
-		const requestCnt = members.filter(it => it.status == I.ParticipantStatus.Joining).length;
-		const isSpaceOwner = UtilSpace.isOwner();
+		const canWrite = UtilSpace.canMyParticipantWrite();
+		const participants = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
+		const memberCnt = participants.filter(it => it.isActive).length;
+		const requestCnt = participants.filter(it => it.isJoining || it.isRemoving).length;
+		const isSpaceOwner = UtilSpace.isMyOwner();
 		const showCnt = isSpaceOwner && requestCnt;
 
 		let status = '';
 		if (space && !space._empty_) {
-			if (space.spaceAccessType == I.SpaceType.Shared) {
+			if (space.isShared) {
 				status = UtilCommon.sprintf('%d %s', memberCnt, UtilCommon.plural(memberCnt, translate('pluralMember')));
 			} else {
 				status = translate(`spaceAccessType${space.spaceAccessType}`);
@@ -63,7 +63,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 
 	onSettings (e: React.MouseEvent) {
 		e.stopPropagation();
-
 		this.openSettings('spaceIndex');
 	};
 

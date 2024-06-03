@@ -33,6 +33,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this.onViewContext = this.onViewContext.bind(this);
 		this.onViewCopy = this.onViewCopy.bind(this);
 		this.onViewRemove = this.onViewRemove.bind(this);
+		this.onViewSettings = this.onViewSettings.bind(this);
 	};
 
 	render () {
@@ -43,7 +44,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
-		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const allowedView = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
 		const buttonWrapCn = [ 'buttonWrap' ];
 		const hasSources = (isCollection || getSources().length);
@@ -120,7 +121,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				className={cn.join(' ')}
 			>
 				<div className="sides">
-					<div id="sideLeft" className="side left">
+					<div id="dataviewControlsSideLeft" className="side left">
 						{head}
 
 						<div 
@@ -146,7 +147,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 						/>
 					</div>
 
-					<div id="sideRight" className="side right">
+					<div id="dataviewControlsSideRight" className="side right">
 						<Filter
 							ref={ref => this.refFilter = ref}
 							placeholder={translate('blockDataviewSearch')} 
@@ -389,6 +390,10 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		});
 	};
 
+	onViewSettings () {
+		this.onButton(`#button-${this.props.block.id}-settings`, 'dataviewViewSettings');
+	};
+
 	onSortStart () {
 		keyboard.disableSelection(true);
 	};
@@ -418,11 +423,9 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			return;
 		};
 
-		const { block, isPopup, isInline } = this.props;
+		const { isPopup, isInline } = this.props;
 		const container = UtilCommon.getPageContainer(isPopup);
 		const win = $(window);
-		const obj = $(`#block-${block.id}`);
-		const hoverArea = obj.find('.hoverArea');
 
 		this.refFilter.setActive(true);
 		this.toggleHoverArea(true);
@@ -478,8 +481,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		const { isPopup, isInline } = this.props;
 		const node = $(this.node);
-		const sideLeft = node.find('#sideLeft');
-		const sideRight = node.find('#sideRight');
+		const sideLeft = node.find('#dataviewControlsSideLeft');
+		const sideRight = node.find('#dataviewControlsSideRight');
 		const container = UtilCommon.getPageContainer(isPopup);
 		const { left } = sideLeft.offset();
 		const sidebar = $('#sidebar');

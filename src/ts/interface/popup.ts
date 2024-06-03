@@ -5,6 +5,8 @@ export interface PopupParam {
 	className?: string;
 	preventResize?: boolean;
 	preventMenuClose?: boolean;
+	preventCloseByClick?: boolean;
+	preventCloseByEscape?: boolean;
 	onClose?(): void;
 };
 
@@ -20,7 +22,7 @@ export interface Popup {
 
 export interface PopupSettings extends Popup {
 	prevPage: string;
-	onPage: (id: string) => void;
+	onPage: (id: string, data?: any) => void;
 	setConfirmPin: (v: () => void) => void;
 	setPinConfirmed: (v: boolean) => void;
 	onConfirmPin: () => void;

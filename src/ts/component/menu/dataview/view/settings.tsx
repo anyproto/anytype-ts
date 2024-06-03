@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon, UtilData, UtilObject } from 'Lib';
 import { InputWithLabel, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuViewSettings = observer(class MenuViewSettings extends React.Component<I.Menu> {
 	
@@ -345,7 +345,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 						analytics.event('DuplicateView', {
 							type: view.type,
 							objectType: object.type,
-							embedType: analytics.embedType(isInline)
+							embedType: analytics.embedType(isInline),
 						});
 					});
 					break;

@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .menus {
 
@@ -79,7 +79,7 @@
 				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background $transitionCommon; 
 				flex-shrink: 0; padding: 6px; color: var(--color-text-secondary); display: flex; gap: 0px 6px; align-items: center; position: relative;
 			}
-			.info.canEdit:hover { background: var(--color-shape-highlight-light); }
+			.info:hover, .info.active { background: var(--color-shape-highlight-light); }
 
 			.cellContent { min-height: 22px; }
 			.cellContent {
@@ -165,10 +165,6 @@
 			.line { margin: 0px; position: absolute; top: 0px; left: 32px; width: calc(100% - 64px); }
 			.info { width: 100%; transition: $transitionAllCommon; }
 		}
-		.item.add:hover { 
-            .info { color: var(--color-text-primary); } 
-			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
-        }
 	}
 
 }

@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
 import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate, UtilSpace } from 'Lib';
 import { commonStore, detailStore, menuStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -265,7 +265,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				this.items = [];
 			};
 
-			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -283,7 +283,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.spaceId == space));
 		const librarySources = library.map(it => it.sourceObject);
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		let sections: any[] = [
 			{ id: 'library', name: translate('menuTypeSuggestMyTypes'), children: library },

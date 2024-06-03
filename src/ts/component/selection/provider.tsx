@@ -162,8 +162,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		this.initNodes();
 
-		if (e.shiftKey) {
-			const target = $(e.target).closest('.selectable');
+		if (e.shiftKey && focused) {
+			const target = $(e.target).closest('.selectionTarget');
 			const type = target.attr('data-type') as I.SelectType;
 			const id = target.attr('data-id');
 			const ids = this.get(type);
@@ -181,7 +181,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	initNodes () {
-		const nodes = this.getPageContainer().find('.selectable');
+		const nodes = this.getPageContainer().find('.selectionTarget');
 
 		nodes.each((i: number, item: any) => {
 			item = $(item);
@@ -264,7 +264,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		if (!this.hasMoved) {
-			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
+			if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
 				if (!keyboard.isSelectionClearDisabled) {
 					this.initIds();
 					this.renderSelection();
@@ -285,10 +285,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				};
 				
 				const ids = this.get(I.SelectType.Block, true);
-				const target = $(e.target).closest('.selectable');
+				const target = $(e.target).closest('.selectionTarget');
 				const id = target.attr('data-id');
 				const type = target.attr('data-type');
-				
+
 				if (target.length && e.shiftKey && ids.length && (type == I.SelectType.Block)) {
 					const first = ids.length ? ids[0] : this.focused;
 					const tree = blockStore.getTree(this.rootId, blockStore.getBlocks(this.rootId));
@@ -372,10 +372,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		return cache;
 	};
 	
-	checkEachNode (e: any, type: I.SelectType, rect: any, node: any, ids: string[]) {
+	checkEachNode (e: any, type: I.SelectType, rect: any, node: any, ids: string[]): string[] {
 		const cache = this.cacheNode(node);
 		if (!cache || !UtilCommon.rectsCollide(rect, cache)) {
-			return;
+			return ids;
 		};
 
 		if (e.ctrlKey || e.metaKey) {
@@ -386,6 +386,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		} else {
 			ids.push(node.id);
 		};
+		return ids;
 	};
 	
 	checkNodes (e: any) {
@@ -397,7 +398,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const { x, y } = this.recalcCoords(e.pageX, e.pageY);
 		const rect = UtilCommon.objectCopy(this.getRect(this.x, this.y, x, y));
 
-		if (!e.shiftKey && !e.altKey && !e.ctrlKey || e.metaKey) {
+		if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
 			this.initIds();
 		};
 
@@ -406,11 +407,15 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			const type = I.SelectType[i];
 			
 			ids[type] = this.get(type, false);
-			this.nodes.filter(it => it.type == type).forEach(item => this.checkEachNode(e, type, rect, item, ids[type]));
+
+			this.nodes.filter(it => it.type == type).forEach(item => {
+				ids[type] = this.checkEachNode(e, type, rect, item, ids[type]);
+			});
+
 			this.ids.set(type, ids[type]);
 		};
 		
-		const length = ids[I.SelectType.Block].length;
+		const length = (ids[I.SelectType.Block] || []).length;
 
 		if (length > 0) {
 			if ((length == 1) && !(e.ctrlKey || e.metaKey)) {
@@ -570,7 +575,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				const ids = this.get(type, true);
 
 				for (const id of ids) {
-					$(`#selectable-${id}`).addClass('isSelectionSelected');
+					$(`#selectionTarget-${id}`).addClass('isSelectionSelected');
 
 					if (type == I.SelectType.Block) {
 						$(`#block-${id}`).addClass('isSelectionSelected');

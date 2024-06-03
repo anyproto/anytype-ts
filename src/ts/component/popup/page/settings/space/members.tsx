@@ -22,8 +22,8 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	render () {
-		const members = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active ]);
-		const length = members.length;
+		const items = this.getItems();
+		const length = items.length;
 		const participant = UtilSpace.getParticipant();
 
 		const Member = (item: any) => {
@@ -47,7 +47,8 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 		};
 
 		const rowRenderer = (param: any) => {
-			const item: any = members[param.index];
+			const item: any = items[param.index];
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -65,13 +66,12 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 		return (
 			<div ref={node => this.node = node}>
 				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
-
 				<Title text={translate('popupSettingsSpaceMembersTitle')} />
 
 				<div className="section sectionMembers">
 					{this.cache ? (
 						<div id="list" className="rows">
-							<WindowScroller scrollElement={$('#popupSettings-innerWrap').get(0)}>
+							<WindowScroller scrollElement={$('#popupSettings-innerWrap .mainSides #sideRight').get(0)}>
 								{({ height, isScrolling, registerChild, scrollTop }) => (
 									<AutoSizer disableHeight={true} className="scrollArea">
 										{({ width }) => (
@@ -100,22 +100,22 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	componentDidMount() {
-		this.updateCache();
+		const items = this.getItems();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: i => (items[i] || {}).id,
+		});
+		this.forceUpdate();
 	};
 
 	componentDidUpdate() {
 		this.resize();
 	};
 
-	updateCache () {
-		const members = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active ]);
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: i => (members[i] || {}).id,
-		});
-		this.forceUpdate();
+	getItems () {
+		return UtilSpace.getParticipantsList([ I.ParticipantStatus.Active ]);
 	};
 
 	onScroll ({ scrollTop }) {

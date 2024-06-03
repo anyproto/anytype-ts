@@ -8,7 +8,12 @@
 	
 	"networkId": {
 		"production": "N83gJpVd9MuNRZAuJLZ7LiMntTThhPc6DtzWWVjb1M3PouVU",
-		"development": "N9DU6hLkTAbvcpji3TCKPPd3UQWKGyzUxGmgJEyvhByqAjfD"
+		"development": "N9DU6hLkTAbvcpji3TCKPPd3UQWKGyzUxGmgJEyvhByqAjfD",
+		"testing": "N4N1wDHFpFpovXBqdbq2TDXE9tXdXbtV1eTJFpKJW4YeaJqR"
+	},
+
+	"namespace": {
+		"0": ".any"
 	},
 
 	"platforms": {
@@ -64,6 +69,11 @@
 		}
 	},
 
+	"graphId": {
+		"global": "graphGlobal",
+		"dataview": "graphDataview"
+	},
+
 	"menuIds": {
 		"cell": [
 			"select",
@@ -87,10 +97,17 @@
 		"context": [
 			"select",
 			"blockStyle",
-			"blockMore",
 			"blockLink",
 			"blockColor",
-			"blockBackground"
+			"blockBackground",
+			"searchObject",
+			"typeSuggest",
+			"blockAlign"
+		],
+		"selectContext": [
+			"searchObject",
+			"typeSuggest",
+			"blockAlign"
 		],
 		"add": [ "searchObject", "blockRelationEdit", "typeSuggest" ],
 		"action": [
@@ -102,7 +119,7 @@
 			"searchObject",
 			"typeSuggest"
 		],
-		"more": [ "select", "searchObject", "blockAlign", "typeSuggest" ],
+		"object": [ "select", "searchObject" ],
 		"index": [ "searchObject" ],
 		"relationEdit": [
 			"select",
@@ -120,7 +137,8 @@
 		"widget": [ "searchObject", "select" ],
 		"dataviewTemplate": [ "previewObject" ],
 		"table": [ "select2", "blockColor", "blockBackground" ],
-		"navigation": [ "quickCapture", "space" ]
+		"navigation": [ "quickCapture", "space" ],
+		"dataviewContext": [ "typeSuggest", "searchObject" ]
 	},
 
 	"popupPinIds": [ "search" ],
@@ -259,6 +277,7 @@
 		"spaceAccessType",
 		"readersLimit",
 		"writersLimit",
+		"sharedSpacesLimit",
 		"targetSpaceId",
 		"creator",
 		"createdDate"
@@ -266,7 +285,8 @@
 	"participantRelationKeys": [
 		"identity",
 		"participantPermissions",
-		"participantStatus"
+		"participantStatus",
+		"globalName"
 	],
 
 	"pageCoverRelationKey": "pageCover",
@@ -343,7 +363,6 @@
 		"cover": 1920,
 
 		"sidebar": {
-			"height": { "min": 400 },
 			"width": { "min": 240, "max": 500, "default": 336, "close": 180 }
 		},
 
@@ -437,6 +456,7 @@
 		"arduino": "Arduino",
 		"bash": "Bash",
 		"basic": "BASIC",
+		"bsl": "BSL",
 		"c": "C",
 		"csharp": "C#",
 		"cpp": "C++",
@@ -452,6 +472,7 @@
 		"flow": "Flow",
 		"fortran": "Fortran",
 		"fsharp": "F#",
+		"gdscript": "GDScript",
 		"gherkin": "Gherkin",
 		"graphql": "GraphQL",
 		"groovy": "Groovy",
@@ -494,6 +515,7 @@
 		"shell": "Shell",
 		"sql": "SQL",
 		"swift": "Swift",
+		"toml": "TOML",
 		"typescript": "TypeScript",
 		"vbnet": "Vb.Net",
 		"verilog": "Verilog",

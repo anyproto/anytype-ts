@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockDataview {
@@ -69,8 +69,8 @@
 			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
 			.row:hover { background-color: var(--color-shape-highlight-light); }
 
-			.row > .selectable,
-			.row > .dropTarget > .selectable { display: grid; }
+			.row > .selectionTarget,
+			.row > .dropTarget > .selectionTarget { display: grid; }
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {

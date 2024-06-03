@@ -8,7 +8,7 @@ import { I, C, UtilCommon, translate, keyboard, Relation } from 'Lib';
 import { dbStore, menuStore, blockStore, detailStore } from 'Store';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PADDING = 46;
 
@@ -196,7 +196,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		});
 
 		node.find('.rowHead').css({ gridTemplateColumns: str });
-		node.find('.row .selectable').css({ gridTemplateColumns: str });
+		node.find('.row .selectionTarget').css({ gridTemplateColumns: str });
 	};
 
 	getColumnWidths (relationKey: string, width: number): any {
@@ -232,7 +232,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const width = content.outerWidth();
 		const sx = scroll.scrollLeft();
 		const sw = scroll.width();
-		const container = $(UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page'));
+		const container = $(isPopup ? '#popupPage-innerWrap' : 'body');
 		const ww = container.width();
 		const rx = x - sx + width;
 
@@ -355,20 +355,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 	resize () {
 		const { rootId, block, isPopup, isInline, getVisibleRelations } = this.props;
-		const element = blockStore.getMapElement(rootId, block.id);
-		
-		if (!element) {
-			return;
-		};
-
-		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const parent = blockStore.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = UtilCommon.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
-		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
+		const length = dbStore.getRecordIds(dbStore.getSubId(rootId, block.id), '').length;
 		const cw = container.width();
 		const rh = this.getRowHeight();
 

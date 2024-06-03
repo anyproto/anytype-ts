@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .widget.widgetList, .widget.widgetCompact { display: flex; flex-direction: column; };
 .widget.widgetList, .widget.widgetCompact {
@@ -36,20 +36,11 @@
 
 		.item { position: relative; display: flex; flex-direction: row; align-items: center; }
 
-		.item:hover, .item.active {
-			.buttons { display: flex; }
-			.icon.more { opacity: 1; }
-		}
-
-		.item.active { 
-			.icon.more { background-color: var(--color-shape-highlight-medium); }
-		}
-
 		.item::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
 			opacity: 0;
 		}
-		.item:hover::before { opacity: 1; }
+		.item:hover::before, .item.active::before { opacity: 1; }
 
 		.item { 
 			.dropTarget { position: relative; display: flex; flex-direction: row; align-items: center; width: 100%; border-radius: 6px; height: 100%; }
@@ -69,9 +60,21 @@
 			.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 			.buttons {
 				.icon { width: 24px; height: 24px; border-radius: 4px; flex-shrink: 0; background-size: 20px; z-index: 2; cursor: default; }
-				.icon:hover { background-color: var(--color-shape-highlight-medium); }
-				.icon.active { opacity: 1; background-color: var(--color-shape-highlight-medium); }
 				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+				.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
+			}
+		}
+
+		.item.active { 
+			.buttons {
+				.icon.more { background-image: url('~img/icon/menu/action/more1.svg'); }
+			}
+		}
+
+		.item:hover, .item.active {
+			.buttons { display: flex; }
+			.buttons {
+				.icon.more { opacity: 1; }
 			}
 		}
 
@@ -111,7 +114,7 @@
 			.info { width: calc(100% - 96px); }
 		}
 
-		.item::before { border-radius: 12px; }
+		.item::before { border-radius: 6px; }
 	}
 }
 
@@ -130,6 +133,6 @@
 		.item.withIcon:hover, .item.withIcon.active {
 			.info { width: calc(100% - 54px); }
 		}
-		.item::before { border-radius: 4px; }
+		.item::before { border-radius: 6px; }
 	}
 }

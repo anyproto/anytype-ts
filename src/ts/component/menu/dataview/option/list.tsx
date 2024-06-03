@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Icon, Tag, Filter, DragBox } from 'Component';
 import { I, C, UtilCommon, UtilMenu, keyboard, Relation, translate } from 'Lib';
 import { menuStore, dbStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 import arrayMove from 'array-move';
 
 const HEIGHT = 28;
@@ -196,6 +196,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	};
 
 	onKeyDown (e: any) {
+		// Chinese IME is open
+		if (keyboard.isComposition) {
+			return;
+		};
+
 		const items = this.getItems();
 		
 		let ret = false;
@@ -205,11 +210,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			ret = true;
 		});
 
-		if (ret) {
-			return;
+		if (!ret) {
+			this.props.onKeyDown(e);
 		};
-
-		this.props.onKeyDown(e);
 	};
 
 	onFilterChange (v: string) {
@@ -244,6 +247,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			this.onValueAdd(id);
 		};
 
+		this.refFilter?.setValue('');
 		this.onFilterChange('');
 	};
 
@@ -355,7 +359,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const value = Relation.getArrayValue(data.value);
 		const ret = [];
 
-		let items = Relation.getOptions(dbStore.getRecords(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
+		let items = Relation.getOptions(dbStore.getRecordIds(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
 		let check = [];
 
 		items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InputWithFile, Loader, IconObject, Error } from 'Component';
+import { InputWithFile, Loader, IconObject, Error, ObjectName } from 'Component';
 import { I, UtilObject, UtilFile, focus, translate, Action } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -51,9 +51,9 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 				
 			case I.FileState.Done:
 				element = (
-					<div className="flex" onMouseDown={this.onOpen}>
-						<IconObject object={{ ...object, layout: I.ObjectLayout.File }} size={24} />
-						<span className="name">{UtilFile.name(object)}</span>
+					<div className="inner" onMouseDown={this.onOpen}>
+						<IconObject object={object} size={24} />
+						<ObjectName object={object} />
 						<span className="size">{UtilFile.size(object.sizeInBytes)}</span>
 					</div>
 				);

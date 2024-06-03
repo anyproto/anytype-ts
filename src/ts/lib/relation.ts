@@ -1,6 +1,6 @@
 import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject, UtilMenu } from 'Lib';
 import { dbStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const DICTIONARY = [ 'layout', 'origin', 'importType' ];
 const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];
@@ -12,15 +12,17 @@ class Relation {
 	};
 
 	public className (v: I.RelationType): string {
-		let c = this.typeName(v);
-		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].indexOf(v) >= 0) {
-			c = 'select ' + this.selectClassName(v);
+		let c = '';
+		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].includes(v)) {
+			c = `select ${this.selectClassName(v)}`;
+		} else {
+			c = this.typeName(v);
 		};
-		return 'c-' + c;
+		return `c-${c}`;
 	};
 
 	public selectClassName (v: I.RelationType): string {
-		return UtilCommon.toCamelCase('is-' + I.RelationType[v]);
+		return `is${I.RelationType[v]}`;
 	};
 
 	public cellId (prefix: string, relationKey: string, id: string|number) {
@@ -29,7 +31,7 @@ class Relation {
 
 	public width (width: number, format: I.RelationType): number {
 		const size = Constant.size.dataview.cell;
-		return Number(width || size['format' + format]) || size.default;
+		return Number(width || size[`format${format}`]) || size.default;
 	};
 
 	public filterConditionsByType (type: I.RelationType): { id: I.FilterCondition, name: string}[] {
@@ -189,21 +191,12 @@ class Relation {
 	public formatValue (relation: any, value: any, maxCount: boolean) {
 		switch (relation.format) {
 			default: {
-				value = String(value || '');
+				value = this.getStringValue(value);
 				break;
 			};
 
 			case I.RelationType.Number: {
-				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+-]*/gi, '');
-				if ((value === '') || (value === undefined)) {
-					value = null;
-				};
-				if (value !== null) {
-					value = Number(value);
-				};
-				if (isNaN(value)) {
-					value = null;
-				};
+				value = this.getNumberValue(value);
 				break;
 			};
 
@@ -444,12 +437,25 @@ class Relation {
 		return options;
 	};
 
-	public getStringValue (value: any) {
-		if ((typeof value === 'object') && value && UtilCommon.hasProperty(value, 'length')) {
-			return String(value.length ? value[0] : '');
-		} else {
-			return String(value || '');
+	public getNumberValue (value: any): number {
+		value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+-]*/gi, '');
+		if ((value === '') || (value === undefined)) {
+			value = null;
 		};
+		if (value !== null) {
+			value = Number(value);
+		};
+		if (isNaN(value)) {
+			value = null;
+		};
+		return value;
+	};
+
+	public getStringValue (value: any): string {
+		if ((typeof value === 'object') && value && UtilCommon.hasProperty(value, 'length')) {
+			value = value.length ? value[0] : '';
+		};
+		return String(value || '');
 	};
 
 	public getArrayValue (value: any): any[] {
@@ -613,8 +619,20 @@ class Relation {
 		return this.systemKeys().includes(relationKey);
 	};
 
+	isSystemWithoutUser (relationKey: string): boolean {
+		return this.systemKeysWithoutUser().includes(relationKey);
+	};
+
 	isDictionary (relationKey: string): boolean {
 		return DICTIONARY.includes(relationKey);
+	};
+
+	arrayTypes () {
+		return [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.File, I.RelationType.Object, I.RelationType.Relations ];
+	};
+
+	isArrayType (format: I.RelationType): boolean {
+		return this.arrayTypes().includes(format);
 	};
 	
 };

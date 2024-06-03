@@ -2,8 +2,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
 import { I, UtilCommon, UtilSpace, UtilRouter, keyboard, translate, UtilMenu, analytics, Storage } from 'Lib';
-import { dbStore, popupStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+import { commonStore, popupStore, blockStore } from 'Store';
+const Constant = require('json/constant.json');
 
 const ITEM_WIDTH = 112;
 
@@ -28,14 +28,10 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 		const Item = (item) => {
 			const cn = [ 'item', 'space' ];
+			const icon = item.isShared ? 'shared' : '';
 
 			if (item.id == spaceview) {
 				cn.push('isActive');
-			};
-
-			let icon = null;
-			if (item.spaceAccessType == I.SpaceType.Shared) {
-				icon = 'shared';
 			};
 
 			return (
@@ -166,7 +162,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
 			},
-			route: 'Navigation',
+			route: analytics.route.navigation,
 		});
 	};
 
@@ -191,12 +187,13 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const items = UtilCommon.objectCopy(dbStore.getSpaces());
+		const { config } = commonStore;
+		const items = UtilCommon.objectCopy(UtilSpace.getList());
 		const length = items.length;
 
 		items.push({ id: 'gallery', name: translate('commonGallery') });
 
-		if (length < Constant.limit.space) {
+		if (config.sudo || (length < Constant.limit.space)) {
 			items.push({ id: 'add', name: translate('commonCreateNew') });
 		};
 
@@ -204,16 +201,17 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	onClick (e: any, item: any) {
-		if (item.id == 'add') {
-			this.onAdd();
-		} else
-		if (item.id == 'gallery') {
-			popupStore.open('usecase', {});
-		} else {
-			UtilRouter.switchSpace(item.targetSpaceId);
-			analytics.event('SwitchSpace');
-			this.props.close();
-		};
+		this.props.close(() => {
+			if (item.id == 'add') {
+				this.onAdd();
+			} else
+			if (item.id == 'gallery') {
+				popupStore.open('usecase', {});
+			} else {
+				UtilRouter.switchSpace(item.targetSpaceId);
+				analytics.event('SwitchSpace');
+			};
+		});
 	};
 
 	onAdd () {
@@ -228,13 +226,12 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				},
 			}, 
 		});
-		
-		this.props.close();
 	};
 
 	onSettings () {
-		popupStore.open('settings', {});
-		this.props.close();
+		this.props.close(() => {
+			popupStore.open('settings', {});
+		});
 	};
 
 	beforePosition () {

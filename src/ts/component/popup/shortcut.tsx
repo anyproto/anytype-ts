@@ -172,7 +172,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 					},
 
 					{
-						name: translate('popupShortcutMainActions'), children: [
+						name: translate('commonActions'), children: [
 							{ com: '/',						 name: translate('popupShortcutMainActions1') },
 							{ com: `${cmd} + /`,			 name: translate('popupShortcutMainActions2') },
 							{ mac: `${cmd} + Delete`,		 com: 'Ctrl + Backspace',	 name: translate('popupShortcutMainActions3') },
@@ -238,6 +238,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 							{ com: `${cmd} + ↓`,	 name: translate('popupShortcutNavigationPage7') },
 							{ com: `${cmd} + Shift + ↑↓`, name: translate('popupShortcutNavigationPage8') },
 							{ com: `${cmd} + Shift + R`, name: translate('popupShortcutNavigationPage9') },
+							{ com: `${cmd} + Enter`, name: translate('popupShortcutNavigationPage10') },
 						]
 					},
 				],
@@ -277,9 +278,9 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 							{ com: '[] + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine6') },
 							{ com: '1. + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine7') },
 							{ com: '>  + Space',		 name: translate('popupShortcutMarkdownBeginningOfLine8') },
-							{ com: '```',				 name: translate('popupShortcutMarkdownBeginningOfLine9') },
-							{ com: '---',				 name: translate('popupShortcutMarkdownBeginningOfLine10') },
-							{ com: '***',				 name: translate('popupShortcutMarkdownBeginningOfLine11') },
+							{ com: '``` + Space',				 name: translate('popupShortcutMarkdownBeginningOfLine9') },
+							{ com: '--- + Space',				 name: translate('popupShortcutMarkdownBeginningOfLine10') },
+							{ com: '*** + Space',				 name: translate('popupShortcutMarkdownBeginningOfLine11') },
 						]
 					},
 				],

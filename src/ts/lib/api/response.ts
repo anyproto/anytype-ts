@@ -1,5 +1,5 @@
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
-import { Decode, Mapper } from 'Lib';
+import { Decode, Mapper, dispatcher } from 'Lib';
 
 export const AppGetVersion = (response: Rpc.App.GetVersion.Response) => {
 	return {
@@ -133,6 +133,7 @@ export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response)
 export const ObjectImport = (response: any) => {
 	return {
 		collectionId: response.getCollectionid(),
+		count: response.getObjectscount(),
 	};
 };
 
@@ -201,6 +202,12 @@ export const ObjectShow = (response: Rpc.Object.Show.Response) => {
 export const ObjectSearch = (response: Rpc.Object.Search.Response) => {
 	return {
 		records: (response.getRecordsList() || []).map(Decode.struct),
+	};
+};
+
+export const ObjectSearchWithMeta = (response: Rpc.Object.SearchWithMeta.Response) => {
+	return {
+		records: (response.getResultsList() || []).map(Mapper.From.ObjectSearchWithMeta),
 	};
 };
 
@@ -370,6 +377,25 @@ export const HistoryGetVersions = (response: Rpc.History.GetVersions.Response) =
 	};
 };
 
+export const HistoryShowVersion = (response: Rpc.History.ShowVersion.Response) => {
+	const version = response.getVersion();
+	return {
+		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
+		objectView: Mapper.From.ObjectView(response.getObjectview()),
+	};
+};
+
+export const HistoryDiffVersions = (response: Rpc.History.DiffVersions.Response) => {
+	return {
+		events: (response.getHistoryeventsList() || []).map(it => {
+			const type = Mapper.Event.Type(it.getValueCase());
+			const data = Mapper.Event[type](Mapper.Event.Data(it));
+
+			return { type, data };
+		}),
+	};
+};
+
 export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObjectInfoWithLinks.Response) => {
 	const object = response.getObject();
 	const links = object.getLinks();
@@ -383,14 +409,6 @@ export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObj
 				outbound: (links.getOutboundList() || []).map(Mapper.From.ObjectInfo),
 			},
 		},
-	};
-};
-
-export const HistoryShowVersion = (response: Rpc.History.ShowVersion.Response) => {
-	const version = response.getVersion();
-	return {
-		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
-		objectView: Mapper.From.ObjectView(response.getObjectview()),
 	};
 };
 
@@ -453,6 +471,41 @@ export const GalleryDownloadManifest = (response: Rpc.Gallery.DownloadManifest.R
 export const NotificationList = (response: Rpc.Notification.List.Response) => {
 	return {
 		list: (response.getNotificationsList() || []).map(Mapper.From.Notification),
+	};
+};
+
+export const NameServiceResolveName = (response: Rpc.NameService.ResolveName.Response) => {
+	return {
+		available: response.getAvailable(),
+		ownerScwEthAddress: response.getOwnerscwethaddress(),
+		ownerEtherAddress: response.getOwnerethaddress(),
+		ownerAnyAddress: response.getOwneranyaddress(),
+		spaceId: response.getSpaceid(),
+		nameExpires: response.getNameexpires(),
+	};
+};
+
+export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response) => {
+	return {
+		membership: Mapper.From.Membership(response.getData()),
+	};
+};
+
+export const MembershipGetTiers = (response: Rpc.Membership.GetTiers.Response) => {
+	return {
+		tiers: (response.getTiersList() || []).map(it => Mapper.From.MembershipTierData(it)),
+	};
+};
+
+export const MembershipRegisterPaymentRequest = (response: Rpc.Membership.RegisterPaymentRequest.Response) => {
+	return {
+		url: response.getPaymenturl(),
+	};
+};
+
+export const MembershipGetPortalLinkUrl = (response: Rpc.Membership.GetPortalLinkUrl.Response) => {
+	return { 
+		url: response.getPortalurl(),
 	};
 };
 

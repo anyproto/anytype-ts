@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Icon, Error } from 'Component';
 import { I, C, translate, focus, Action, keyboard } from 'Lib';
 import { commonStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const BlockImage = observer(class BlockImage extends React.Component<I.BlockComponent> {
 
@@ -236,7 +236,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	getWidth (checkMax: boolean, v: number): number {
 		const { block } = this.props;
 		const { id, fields } = block;
-		const el = $('#selectable-' + id);
+		const el = $(`#selectionTarget-${id}`);
 		const width = Number(fields.width) || 1;
 		
 		if (!el.length) {

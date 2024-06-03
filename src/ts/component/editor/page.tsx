@@ -7,13 +7,13 @@ import { Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { 
 	I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, 
-	Renderer, sidebar, UtilSpace 
+	Renderer, sidebar 
 } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
-import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
+
+const Constant = require('json/constant.json');
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
@@ -189,9 +189,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.close();
 
 		focus.clear(false);
+
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
 		window.clearTimeout(this.timeoutMove);
+
 		Renderer.remove('commandEditor');
 	};
 
@@ -239,20 +241,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		window.clearTimeout(this.timeoutLoading);
 		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
 
+		blockStore.clear(this.props.rootId);
+
 		C.ObjectOpen(this.id, '', UtilRouter.getRouteSpaceId(), (message: any) => {
 			window.clearTimeout(this.timeoutLoading);
 			this.setLoading(false);
 
-			if (!UtilCommon.checkError(message.error.code)) {
-				return;
-			};
-
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true });
-				} else {
-					UtilSpace.openDashboard('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -262,7 +257,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			this.containerScrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
+			this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
 			this.focusTitle();
 
 			UtilCommon.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
@@ -306,8 +301,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const { rootId } = this.props;
 		const { focused, range } = focus.state;
-		const popupOpen = popupStore.isOpen();
-		const menuOpen = menuStore.isOpen();
+		const popupOpen = popupStore.isOpen('', [ 'page' ]);
+		const menuOpen = this.menuCheck();
 
 		let length = 0;
 		if (focused) {
@@ -372,25 +367,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.unbind();
 
 		if (!isReadonly) {
-			win.on('mousemove.editor' + namespace, throttle(e => this.onMouseMove(e), THROTTLE));
+			win.on(`mousemove.editor${namespace}`, throttle(e => this.onMouseMove(e), THROTTLE));
 		};
 
-		win.on('keydown.editor' + namespace, e => this.onKeyDownEditor(e));
-		win.on('paste.editor' + namespace, (e: any) => {
+		win.on(`keydown.editor${namespace}`, e => this.onKeyDownEditor(e));
+		win.on(`paste.editor${namespace}`, (e: any) => {
 			if (!keyboard.isFocused) {
 				this.onPaste(e, {});
 			};
 		});
 
-		win.on('focus.editor' + namespace, () => {
-			const isPopupOpen = popupStore.isOpen('', [ 'page' ]);
-			const isMenuOpen = menuStore.isOpen('', '', [ 'blockContext' ]);
+		win.on(`focus.editor${namespace}`, () => {
+			const popupOpen = popupStore.isOpen('', [ 'page' ]);
+			const menuOpen = this.menuCheck();
 
 			let ids: string[] = [];
 			if (selection) {
 				ids = selection.get(I.SelectType.Block, true);
 			};
-			if (!ids.length && !isMenuOpen && !isPopupOpen) {
+			if (!ids.length && !menuOpen && !popupOpen) {
 				focus.restore();
 				focus.apply(); 
 			};
@@ -398,8 +393,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			container.scrollTop(this.containerScrollTop);
 		});
 
-		win.on('resize.editor' + namespace, () => this.resizePage());
-		container.on('scroll.editor' + namespace, e => this.onScroll());
+		win.on(`resize.editor${namespace}`, () => this.resizePage());
+		container.on(`scroll.editor${namespace}`, e => this.onScroll());
 		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 	
@@ -417,7 +412,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { selection } = dataset || {};
 		const readonly = this.isReadonly();
 		const node = $(this.node);
-		const menuOpen = menuStore.isOpen() && !menuStore.isOpen('onboarding');
+		const menuOpen = this.menuCheck();
+		const popupOpen = popupStore.isOpen('', [ 'page' ]);
 
 		const clear = () => {
 			node.find('.block.showMenu').removeClass('showMenu');
@@ -438,7 +434,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			keyboard.isDragging || 
 			(selection && selection.isSelecting) || 
 			menuOpen || 
-			popupStore.isOpen('', [ 'page' ]) ||
+			popupOpen ||
 			isLoading
 		) {
 			out();
@@ -535,7 +531,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const { selection } = dataset || {};
-		const menuOpen = menuStore.isOpen();
+		const menuOpen = this.menuCheck();
 		const popupOpen = popupStore.isOpenKeyboard();
 		const root = blockStore.getLeaf(rootId, rootId);
 
@@ -574,7 +570,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		// Redo
-		keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
+		keyboard.shortcut(`${cmd}+shift+z`, e, () => {
 			if (readonly) {
 				e.preventDefault();
 				keyboard.onRedo(rootId, 'editor');
@@ -801,6 +797,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					blockStore.toggle(rootId, block.id, !Storage.checkToggle(rootId, block.id));
 				});
 			};
+
+			if (block.isTextCheckbox()) {
+				keyboard.shortcut(`${cmd}+enter`, e, () => {
+					UtilData.blockSetText(rootId, block.id, text, marks, true, () => {
+						C.BlockTextSetChecked(rootId, block.id, !block.content.checked);
+					});
+				});
+			};
 		};
 
 		// History
@@ -856,7 +860,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (range.from == range.to) {
-			keyboard.shortcut(`${cmd}+k`, e, () => keyboard.onSearchPopup('Shortcut'));
+			keyboard.shortcut(`${cmd}+k`, e, () => keyboard.onSearchPopup(analytics.route.shortcut));
 		};
 
 		if (!isInsideTable && block.isText()) {
@@ -983,11 +987,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const element = blockStore.getMapElement(rootId, first.id);
-		const parent = blockStore.getLeaf(rootId, element.parentId);
-		const parentElement = blockStore.getMapElement(rootId, parent.id);
+		const parent = blockStore.getParentLeaf(rootId, first.id);
+		if (!parent) {
+			return;
+		};
 
-		if (!element || !parentElement) {
+		const parentElement = blockStore.getParentMapElement(rootId, first.id);
+		if (!parentElement) {
 			return;
 		};
 
@@ -1033,10 +1039,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const element = blockStore.getMapElement(rootId, block.id);
-		const parentElement = blockStore.getMapElement(rootId, block.parentId);
+		const parentElement = blockStore.getParentMapElement(rootId, block.id);
 		const nextElement = blockStore.getMapElement(rootId, next.id);
-		const nextParent = blockStore.getLeaf(rootId, next.parentId);
-		const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
+		const nextParent = blockStore.getParentLeaf(rootId, next.id);
+		const nextParentElement = blockStore.getParentMapElement(rootId, next.id);
 
 		if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
 			return;
@@ -1084,26 +1090,35 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const dir = pressed.match(Key.up) ? -1 : 1;
-		const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
-			return (
-				!it.isIcon() && 
-				!it.isTextTitle() && 
-				!it.isTextDescription() && 
-				!it.isFeatured() && 
-				!it.isSystem() && 
+
+		let next = blockStore.getNextBlock(rootId, block.id, dir, it => (
+			!it.isIcon() && 
+			!it.isTextTitle() && 
+			!it.isTextDescription() && 
+			!it.isFeatured() && 
+			!it.isSystem() && 
+			!it.isTable() &&
+			!it.isTableColumn() &&
+			!it.isTableRow() &&
+			!blockStore.checkIsChild(rootId, block.id, it.id)
+		));
+
+		if (next && blockStore.checkIsInsideTable(rootId, next.id)) {
+			next = blockStore.getNextBlock(rootId, block.id, dir, it => (
+				it.isTable() && 
 				!blockStore.checkIsChild(rootId, block.id, it.id)
-			);
-		});
+			));
+		};
 
 		if (!next) {
 			return;
 		};
 
 		const element = blockStore.getMapElement(rootId, block.id);
-		const parentElement = blockStore.getMapElement(rootId, block.parentId);
+		const parentElement = blockStore.getParentMapElement(rootId, block.id);
 		const nextElement = blockStore.getMapElement(rootId, next.id);
-		const nextParent = blockStore.getLeaf(rootId, next.parentId);
-		const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
+		const nextParent = blockStore.getParentLeaf(rootId, next.id);
+		const nextParentElement = blockStore.getParentMapElement(rootId, next.id);
 
 		if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
 			return;
@@ -1319,11 +1334,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const element = blockStore.getMapElement(rootId, block.id);
-		const parent = blockStore.getLeaf(rootId, element?.parentId);
-		const parentElement = blockStore.getMapElement(rootId, parent?.id);
+		const parent = blockStore.getParentLeaf(rootId, block.id);
+		const parentElement = blockStore.getParentMapElement(rootId, block.id);
 
-		if (!element || !parent || !parentElement) {
+		if (!parent || !parentElement) {
 			return;
 		};
 
@@ -1394,9 +1408,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	menuCheck () {
-		const menus = menuStore.list;
-		const exclude = [ 'blockContext', 'onboarding' ];
-		return (menus.length > 1) || ((menus.length == 1) && (!exclude.includes(menus[0].id)));
+		return menuStore.isOpen('', '', [ 'blockContext', 'searchText', 'onboarding' ]);
 	};
 
 	getNextTableRow (id: string, dir: number) {
@@ -1407,7 +1419,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onArrowVertical (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
-		if (menuStore.isOpen()) {
+		if (this.menuCheck()) {
 			return;
 		};
 
@@ -1454,8 +1466,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (isInsideTable) {
-			const element = blockStore.getMapElement(rootId, block.id);
-			const rowElement = blockStore.getMapElement(rootId, element.parentId);
+			const rowElement = blockStore.getParentMapElement(rootId, block.id);
 			const idx = rowElement.childrenIds.indexOf(block.id);
 			const nextRow = this.getNextTableRow(block.id, dir);
 
@@ -1497,7 +1508,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (isInsideTable) {
 			const element = blockStore.getMapElement(rootId, block.id);
-			const rowElement = blockStore.getMapElement(rootId, element?.parentId);
+			const rowElement = blockStore.getParentMapElement(rootId, block.id);
 
 			if (!rowElement) {
 				return;
@@ -1582,7 +1593,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		focus.clear(true);
 
 		this.blockCreate(block.id, this.hoverPosition, { type: I.BlockType.Text }, (blockId: string) => {
-			$('.placeholder.c' + blockId).text(translate('placeholderFilter'));
+			$(`.placeholder.c${blockId}`).text(translate('placeholderFilter'));
 			this.onMenuAdd(blockId, '', { from: 0, to: 0 }, []);
 		});
 	};
@@ -1633,7 +1644,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.containerScrollTop = top;
 		this.winScrollTop = win.scrollTop();
 
-		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
+		Storage.setScroll('editor', rootId, top, isPopup);
 		Preview.previewHide(false);
 	};
 	
@@ -1718,11 +1729,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
+			let count = 0;
+
 			if (message.isSameBlockCaret) {
 				id = focused;
 			} else 
 			if (message.blockIds && message.blockIds.length) {
-				const lastId = message.blockIds[message.blockIds.length - 1];
+				count = message.blockIds.length;
+
+				const lastId = message.blockIds[count - 1];
 				const block = blockStore.getLeaf(rootId, lastId);
 				
 				if (!block) {
@@ -1731,6 +1746,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				
 				id = block.id;
 				from = to = block.getLength();
+
+				keyboard.setFocus(false);
 			} else 
 			if (message.caretPosition >= 0) {
 				id = focused;
@@ -1738,7 +1755,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.focus(id, from, to, true);
-			analytics.event('PasteBlock');
+			analytics.event('PasteBlock', { count });
 		});
 	};
 
@@ -1798,13 +1815,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				value: '',
 				options,
 				onSelect: (event: any, item: any) => {
-					const marks = UtilCommon.objectCopy(block.content.marks || []);
-
+					let marks = UtilCommon.objectCopy(block.content.marks || []);
 					let value = block.content.text;
 					let to = 0;
 
 					switch (item.id) {
 						case 'link': {
+							const param = isLocal ? `file://${url}` : url;
+
 							if (currentFrom == currentTo) {
 								value = UtilCommon.stringInsert(value, url + ' ', currentFrom, currentFrom);
 								to = currentFrom + url.length;
@@ -1812,16 +1830,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								to = currentTo;
 							};
 
-							let param = url;
-							if (isLocal) {
-								param = `file://${url}`;
-							};
-
-							marks.push({
-								type: I.MarkType.Link,
-								range: { from: currentFrom, to },
-								param,
-							});
+							marks = Mark.adjust(marks, currentFrom - 1, url.length + 1);
+							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param});
 
 							UtilData.blockSetText(rootId, block.id, value, marks, true, () => {
 								focus.set(block.id, { from: to + 1, to: to + 1 });
@@ -1834,7 +1844,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							C.ObjectToBookmark(rootId, url, (message: any) => {
 								if (!message.error.code) {
 									UtilObject.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
-									analytics.createObject(Constant.typeKey.bookmark, I.ObjectLayout.Bookmark, 'Bookmark', message.middleTime);
+									analytics.createObject(Constant.typeKey.bookmark, I.ObjectLayout.Bookmark, analytics.route.bookmark, message.middleTime);
 								};
 							});
 							break;
@@ -1882,7 +1892,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	getClipboardData (e: any) {
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const data: any = {
-			text: String(cb.getData('text/plain') || ''),
+			text: UtilCommon.normalizeLineEndings(String(cb.getData('text/plain') || '')),
 			html: String(cb.getData('text/html') || ''),
 			anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
 			files: [],
@@ -1892,13 +1902,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onHistory (e: any) {
-		const { rootId } = this.props;
-
-		e.shiftKey = false;
-		e.ctrlKey = false;
-		e.metaKey = false;
-
-		UtilObject.openEvent(e, { layout: I.ObjectLayout.History, id: rootId });
+		UtilObject.openAuto({ layout: I.ObjectLayout.History, id: this.props.rootId });
 	};
 
 	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
@@ -2094,10 +2098,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	onLastClick (e: any) {
 		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
 		const readonly = this.isReadonly();
 
-		if (!root || readonly) {
+		if (readonly) {
 			return;
 		};
 
@@ -2106,8 +2109,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let length = 0;
 
 		if (last) {
-			const element = blockStore.getMapElement(rootId, last.id);
-			const parent = blockStore.getLeaf(rootId, element.parentId);
+			const parent = blockStore.getParentLeaf(rootId, last.id);
 
 			if (parent && !parent.isLayoutDiv() && !parent.isPage()) {
 				last = null;
@@ -2117,7 +2119,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!last) {
 			create = true;
 		} else {
-			if (!last.isText() || last.isTextCode()) {
+			if (!last.isText() || last.isTextCode() || last.isTextCallout()) {
 				create = true;
 			} else {
 				length = last.getLength();
@@ -2229,11 +2231,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isPopup, rootId } = this.props;
 		const container = UtilCommon.getPageContainer(isPopup);
 		const root = blockStore.getLeaf(rootId, rootId);
+		const isSet = root?.isObjectSet();
+		const isCollection = root?.isObjectCollection();
 
 		let mw = container.width();
 		let width = 0;
 
-		if (root && root.isObjectSet()) {
+		if (isSet || isCollection) {
 			width = mw - 192;
 		} else {
 			const size = mw * 0.6;
@@ -2265,10 +2269,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const object = detailStore.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
 		if (object.isArchived || object.isDeleted) {
-			return true;
-		};
-
-		if (!UtilSpace.canParticipantWrite()) {
 			return true;
 		};
 

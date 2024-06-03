@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
 import { I, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate, analytics } from 'Lib';
 import { menuStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -216,7 +216,12 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	};
 
 	onKeyDown (e: any) {
-		const { param } = this.props;
+		// Chinese IME is open
+		if (keyboard.isComposition) {
+			return;
+		};
+
+		const { param, onKeyDown } = this.props;
 		const { data } = param;
 		const { cellRef } = data;
 
@@ -226,7 +231,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			};
 		});
 
-		this.props.onKeyDown(e);
+		onKeyDown(e);
 	};
 
 	onScroll ({ scrollTop }) {
@@ -252,6 +257,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 		];
 
 		if (types && types.length) {
@@ -282,10 +288,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				this.items = [];
 			};
 
-			this.items = this.items.concat((message.records || []).map((it: any) => {
-				it.name = String(it.name || translate('defaultNamePage'));
-				return it;
-			}));
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ isLoading: false });
@@ -400,7 +403,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (item.id == 'add') {
 			const { details, flags } = Relation.getParamForNewObject(filter, relation);
 
-			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, 'Relation', (message: any) => {
+			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', (message: any) => {
 				cb(message.targetId);
 				close();
 			});

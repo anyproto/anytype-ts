@@ -1,7 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import { I, UtilCommon, Preview } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class MenuStore {
 
@@ -169,13 +169,6 @@ class MenuStore {
 
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
-		if (!items.length) {
-			if (callBack) {
-				callBack();
-			};
-			return;
-		};
-
 		const timeout = this.getTimeout();
 
 		items.filter(it => !it.param.noClose).forEach(it => this.close(it.id));
@@ -191,9 +184,8 @@ class MenuStore {
 	};
 
 	onCloseAll (timeout: number, callBack?: () => void) {
-		this.clearTimeout();
-
 		if (callBack) {
+			this.clearTimeout();
 			this.timeout = window.setTimeout(() => callBack(), timeout);
 		};
 	};

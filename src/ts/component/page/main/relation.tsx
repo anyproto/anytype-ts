@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
 import { I, C, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate, UtilSpace } from 'Lib';
 import { detailStore, dbStore, commonStore } from 'Store';
-import Errors from 'json/error.json';
+const Errors = require('json/error.json');
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -60,7 +60,12 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		return (
 			<div>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header 
+					{...this.props} 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					rootId={rootId} 
+				/>
 
 				{isLoading ? <Loader id="loader" /> : ''}
 
@@ -131,12 +136,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		this.setState({ isLoading: true });
 		
 		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true, isLoading: false });
-				} else {
-					UtilSpace.openDashboard('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -146,14 +146,9 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				return;
 			};
 
+			this.refHeader?.forceUpdate();
+			this.refHead?.forceUpdate();
 			this.setState({ isLoading: false });
-
-			if (this.refHeader) {
-				this.refHeader.forceUpdate();
-			};
-			if (this.refHead) {
-				this.refHead.forceUpdate();
-			};
 		});
 	};
 

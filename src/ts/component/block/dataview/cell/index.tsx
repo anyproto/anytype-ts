@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { I, C, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate, UtilDate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import CellText from './text';
 import CellSelect from './select';
@@ -148,7 +148,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, recordId, getRecord, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder } = this.props;
+		const { rootId, subId, recordId, getRecord, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder, isInline } = this.props;
 		const record = getRecord(recordId);
 		const relation = this.getRelation();
 
@@ -156,8 +156,6 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			return;
 		};
 
-		const { config } = commonStore;
-		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const value = record[relation.relationKey] || '';
 		const canEdit = this.canCellEdit(relation, record);
 
@@ -168,16 +166,27 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			return;
 		};
 
+		const { config } = commonStore;
+		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const win = $(window);
 		const cell = $(`#${cellId}`);
+		const className = [];
+
+		if (menuClassName) {
+			className.push(menuClassName);
+		};
+
+		if (isInline) {
+			className.push('isInline');
+		};
 
 		let width = cell.outerWidth();
+		let closeIfOpen = true;
+		let menuId = '';
+
 		if (undefined !== maxWidth) {
 			width = Math.max(width, maxWidth);
 		};
-
-		let closeIfOpen = true;
-		let menuId = '';
 
 		const setOn = () => {
 			cell.addClass('isEditing');
@@ -190,14 +199,11 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				keyboard.disableBlur(true);
 			};
 
-			if (this.ref) {
-				if (this.ref.setEditing) {
-					this.ref.setEditing(true);
-				};
-
-				if (this.ref.onClick) {
-					this.ref.onClick();
-				};
+			if (this.ref && this.ref.setEditing) {
+				this.ref.setEditing(true);
+			};
+			if (this.ref && this.ref.onClick) {
+				this.ref.onClick();
 			};
 
 			win.trigger('resize');
@@ -206,13 +212,11 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const setOff = () => {
 			keyboard.disableBlur(false);
 
-			if (this.ref) {
-				if (this.ref.onBlur) {
-					this.ref.onBlur();
-				};
-				if (this.ref.setEditing) {
-					this.ref.setEditing(false);
-				};
+			if (this.ref && this.ref.onBlur) {
+				this.ref.onBlur();
+			};
+			if (this.ref && this.ref.setEditing) {
+				this.ref.setEditing(false);
 			};
 
 			$(`#${cellId}`).removeClass('isEditing');
@@ -226,10 +230,10 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			offsetY: 2,
 			noAnimation: true,
 			passThrough: true,
-			className: menuClassName,
+			className: className.join(' '),
 			classNameWrap: menuClassNameWrap,
-			onOpen: setOn,
-			onClose: setOff,
+			onOpen: () => setOn(),
+			onClose: () => setOff(),
 			data: { 
 				cellId,
 				cellRef: this.ref,
@@ -362,28 +366,30 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					noFilter: true,
 					options,
 					onSelect: (event: any, item: any) => {
-						let value = '';
-						if (this.ref && this.ref.ref) {
-							value = this.ref.ref.getValue();
+						const value = this.ref?.ref?.getValue();
+						if (!value) {
+							return;
 						};
 
 						const scheme = Relation.getUrlScheme(relation.format, value);
-						
-						if (item.id == 'go') {
-							Renderer.send('urlOpen', scheme + value);
-							analytics.event('RelationUrlOpen');
-						};
 
-						if (item.id == 'copy') {
-							UtilCommon.clipboardCopy({ text: value, html: value });
-							analytics.event('RelationUrlCopy');
-						};
+						switch (item.id) {
+							case 'go': {
+								Renderer.send('urlOpen', scheme + value);
+								analytics.event('RelationUrlOpen');
+								break;
+							};
 
-						if (item.id == 'reload') {
-							UtilCommon.clipboardCopy({ text: value, html: value });
-							C.ObjectBookmarkFetch(rootId, value, () => {
-								analytics.event('ReloadSourceData');
-							});
+							case 'copy': {
+								UtilCommon.clipboardCopy({ text: value, html: value });
+								analytics.event('RelationUrlCopy');
+								break;
+							};
+
+							case 'reload': {
+								C.ObjectBookmarkFetch(rootId, value, () => analytics.event('ReloadSourceData'));
+								break;
+							};
 						};
 					},
 				});

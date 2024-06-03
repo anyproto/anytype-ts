@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, C, UtilCommon, UtilData, keyboard, focus, Storage } from 'Lib';
-import { DropTarget, ListChildren, Icon } from 'Component';
+import { I, C, UtilCommon, UtilData, keyboard, focus, Storage, UtilSpace } from 'Lib';
+import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject} from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore, detailStore } from 'Store';
 
@@ -27,7 +27,7 @@ import BlockPdf from './media/pdf';
 
 import BlockEmbed from './embed';
 
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
 	css?: any;
@@ -83,6 +83,12 @@ const Block = observer(class Block extends React.Component<Props> {
 		const cd: string[] = [ 'wrapContent' ];
 		const setRef = ref => this.ref = ref;
 		const key = [ 'block', block.id, 'component' ].join(' ');
+		const participantId = blockStore.getParticipant(rootId, block.id);
+
+		let participant = null;
+		if (participantId) {
+			participant = UtilSpace.getParticipant(participantId);
+		};
 
 		let canSelect = !isInsideTable && !isSelectionDisabled;
 		let canDrop = !readonly && !isInsideTable;
@@ -324,20 +330,13 @@ const Block = observer(class Block extends React.Component<Props> {
 		
 		if (canSelect) {
 			object = (
-				<div 
-					id={`selectable-${id}`} 
-					className={[ 'selectable', `type-${I.SelectType.Block}` ].join(' ')} 
-					{...UtilCommon.dataProps({ id, type: I.SelectType.Block })}
-				>
+				<SelectionTarget id={id} type={I.SelectType.Block}>
 					{object}
-				</div>
+				</SelectionTarget>
 			);
 		} else {
 			object = (
-				<div 
-					id={`selectable-${id}`} 
-					className="selectable"
-				>
+				<div id={`selectionTarget-${id}`} className="selectionTarget">
 					{object}
 				</div>
 			);
@@ -362,6 +361,7 @@ const Block = observer(class Block extends React.Component<Props> {
 						onMouseDown={this.onMenuDown} 
 						onClick={this.onMenuClick} 
 					/>
+					{participant ? <IconObject object={participant} size={24} iconSize={18} /> : ''}
 				</div>
 				
 				<div className={cd.join(' ')}>
@@ -485,9 +485,13 @@ const Block = observer(class Block extends React.Component<Props> {
 	onContextMenu (e: any) {
 		const { focused } = focus.state;
 		const { rootId, block, readonly, isContextMenuDisabled } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (isContextMenuDisabled || readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
+			return;
+		};
+
+		const root = blockStore.getLeaf(rootId, rootId);
+		if (!root) {
 			return;
 		};
 
@@ -517,6 +521,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		$('.block.isAdding').removeClass('isAdding top bottom');
 
 		const menuParam: Partial<I.MenuParam> = Object.assign({
+			noFlipX: true,
 			subIds: Constant.menuIds.action,
 			onClose: () => {
 				if (selection) {

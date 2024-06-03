@@ -8,7 +8,7 @@ class BlockStructure implements I.BlockStructure {
 	
 	constructor (props: I.BlockStructure) {
 		this.parentId = String(props.parentId || '');
-		this.childrenIds = props.childrenIds || [];
+		this.childrenIds = Array.isArray(props.childrenIds) ? props.childrenIds : [];
 
 		makeObservable(this, {
 			parentId: observable,

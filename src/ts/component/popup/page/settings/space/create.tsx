@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { Title, Label, Input, IconObject, Button, Select, Loader, Error } from 'Component';
 import { UtilObject, UtilCommon, I, C, translate, keyboard, Preview, analytics } from 'Lib';
 import { menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	error: string;
@@ -69,13 +69,19 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								placeholder={translate('defaultNamePage')}
 							/>
 						</div>
-
-						<Label
-							className="spaceAccessType"
-							text={translate(`spaceAccessType${I.SpaceType.Private}`)}
-							onMouseEnter={onSpaceTypeTooltip}
-							onMouseLeave={e => Preview.tooltipHide(false)}
-						/>
+						<div className="info">
+							<Label
+								className="infoLabel spaceAccessType"
+								text={translate(`spaceAccessType${I.SpaceType.Private}`)}
+							/>
+							<div className="bullet" />
+							<Label 
+								className="infoLabel withTooltip"
+								text={translate('popupSettingsSpaceIndexInfoLabel')} 
+								onMouseEnter={onSpaceTypeTooltip}
+								onMouseLeave={e => Preview.tooltipHide(false)}
+							/>
+						</div>
 					</div>
 				</div>
 
@@ -215,7 +221,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				onCreate(message.objectId);
 			};
 
-			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route: 'Navigation' });
+			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route: analytics.route.navigation });
 			analytics.event('SelectUsecase', { type: usecase });
 		});
 	};

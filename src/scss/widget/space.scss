@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .widget.widgetSpace { padding: 10px 16px; }
 .widget.widgetSpace {
@@ -25,5 +25,7 @@
 		}
 	}
 
-	.body.withCnt { width: calc(100% - 30px); }
+	.body.withCnt {
+		.side.left { width: calc(100% - 30px); }
+	}
 }

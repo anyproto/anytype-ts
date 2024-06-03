@@ -4,7 +4,6 @@ import raf from 'raf';
 import { I, UtilCommon, analytics, Storage, Preview, translate } from 'Lib';
 import { Dimmer } from 'Component';
 import { menuStore, popupStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
 
 import PopupSettings from './settings';
 import PopupSettingsOnboarding from './settings/onboarding';
@@ -22,9 +21,12 @@ import PopupPhrase from './phrase';
 import PopupObjectManager from './objectManager';
 import PopupUsecase from './usecase';
 import PopupAbout from './about';
+import PopupRelation from './relation';
 import PopupInviteRequest from './invite/request';
 import PopupInviteConfirm from './invite/confirm';
 import PopupInviteQr from './invite/qr';
+import PopupMembership from './membership';
+import PopupMembershipFinalization from './membership/finalization';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -40,6 +42,7 @@ class Popup extends React.Component<I.Popup> {
 		this.storageGet = this.storageGet.bind(this);
 		this.storageSet = this.storageSet.bind(this);
 		this.getId = this.getId.bind(this);
+		this.onDimmer = this.onDimmer.bind(this);
 	};
 
 	render () {
@@ -63,9 +66,12 @@ class Popup extends React.Component<I.Popup> {
 			objectManager:			 PopupObjectManager,
 			usecase:				 PopupUsecase,
 			about:					 PopupAbout,
+			relation:				 PopupRelation,
 			inviteRequest:			 PopupInviteRequest,
 			inviteConfirm:			 PopupInviteConfirm,
 			inviteQr:				 PopupInviteQr,
+			membership: 		 	 PopupMembership,
+			membershipFinalization:  PopupMembershipFinalization,
 		};
 		
 		const popupId = this.getId();
@@ -102,7 +108,7 @@ class Popup extends React.Component<I.Popup> {
 						/>
 					</div>
 				</div>
-				<Dimmer onClick={() => this.close()} />
+				<Dimmer onClick={this.onDimmer} />
 			</div>
 		);
 	};
@@ -211,6 +217,12 @@ class Popup extends React.Component<I.Popup> {
 		};
 
 		popupStore.close(id, callBack);
+	};
+
+	onDimmer () {
+		if (!this.props.param.preventCloseByClick) {
+			this.close();
+		};
 	};
 
 	storageGet () {

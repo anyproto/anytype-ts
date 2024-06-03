@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { C, UtilData, Preview, analytics, Storage, keyboard } from 'Lib';
 import { commonStore, authStore, blockStore, menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 type RouteParam = { 
 	replace: boolean;
@@ -86,6 +86,10 @@ class UtilRouter {
 
 			if (!animate) {
 				this.history.push(route); 
+
+				if (onRouteChange) {
+					onRouteChange();
+				};
 				return;
 			};
 
@@ -140,24 +144,24 @@ class UtilRouter {
 				replace: true, 
 				animate: true,
 				onFadeOut: () => {
-					if (route) {
-						commonStore.redirectSet(route);
-					};
-
 					analytics.removeContext();
 					blockStore.clear(blockStore.widgets);
 					commonStore.defaultType = '';
 					Storage.set('spaceId', id);
 
 					UtilData.onInfo(message.info);
-					UtilData.onAuth({ routeParam: { replace: true } }, callBack);
+					UtilData.onAuth({ route }, callBack);
 				}
 			});
 		});
 	};
 
+	getRoute () {
+		return String(this.history.location.pathname || '');
+	};
+
 	getRouteSpaceId () {
-		const param = this.getParam(this.history.location.pathname);
+		const param = this.getParam(this.getRoute());
 		return param.spaceId || commonStore.space;
 	};
 

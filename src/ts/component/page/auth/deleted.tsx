@@ -6,7 +6,6 @@ import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 import { OnboardStage } from './animation/constants';
-import Constant from 'json/constant.json';
 
 interface State {
 	error: string;
@@ -71,7 +70,6 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 
         return (
 			<div>
-				<Header {...this.props} component="authIndex" />
 				<CanvasWorkerBridge state={OnboardStage.Void} />
 				
 				<Frame>
@@ -131,7 +129,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 			files: true, 
 			archived: true, 
 			json: false, 
-			route: 'Deleted',
+			route: analytics.route.deleted,
 		});
 	};
 

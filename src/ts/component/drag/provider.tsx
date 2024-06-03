@@ -6,7 +6,7 @@ import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
 import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject, UtilMenu, analytics } from 'Lib';
 import { blockStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	dataset?: I.Dataset;
@@ -321,6 +321,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				if (selection) {
 					selection.renderSelection();
 				};
+
+				raf(() => $('.resizable').trigger('resizeInit'));
 			};
 
 			if (withAlt) {
@@ -375,8 +377,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 							return;
 						};
 					} else {
-						const element = blockStore.getMapElement(targetContextId, targetId);
-						const parent = blockStore.getLeaf(targetContextId, element.parentId);
+						const parent = blockStore.getParentLeaf(targetContextId, targetId);
 
 						if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 							targetId = parent.id;

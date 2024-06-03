@@ -1,5 +1,5 @@
 import { I, UtilCommon, translate } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class UtilDate {
 
@@ -175,6 +175,16 @@ class UtilDate {
 			case I.DateFormat.Short:				 f = 'd.m.Y'; break;
 			case I.DateFormat.ShortUS:				 f = 'm.d.Y'; break;
 			case I.DateFormat.ISO:					 f = 'Y-m-d'; break;
+		};
+		return f;
+	};
+
+	timeFormat (v: I.TimeFormat): string {
+		let f = '';
+		switch (v) {
+			default:
+			case I.TimeFormat.H12:	 f = 'g:i A'; break;
+			case I.TimeFormat.H24:	 f = 'H:i'; break;
 		};
 		return f;
 	};

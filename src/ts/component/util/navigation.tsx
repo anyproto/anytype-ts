@@ -3,12 +3,13 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
-import { I, UtilObject, keyboard, UtilCommon, Preview, translate, UtilSpace } from 'Lib';
+import { I, UtilObject, keyboard, UtilCommon, Preview, translate, UtilSpace, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
 
 	_isMounted = false;
 	node: any = null;
+	timeoutPlus = 0;
 
 	constructor (props: object) {
 		super(props);
@@ -30,7 +31,7 @@ const Navigation = observer(class Navigation extends React.Component {
 		const isLinux = UtilCommon.isPlatformLinux();
 		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
 		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
-		const canWrite = UtilSpace.canParticipantWrite();
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		let buttonPlus: any = null;
 		if (canWrite) {
@@ -51,7 +52,10 @@ const Navigation = observer(class Navigation extends React.Component {
 				case I.NavigationMenuMode.Hover: {
 					buttonPlus.onClick = this.onAdd;
 					buttonPlus.onMouseEnter = e => {
-						keyboard.onQuickCapture(false, { isSub: true, passThrough: false });
+						window.clearTimeout(this.timeoutPlus);
+						this.timeoutPlus = window.setTimeout(() => {
+							keyboard.onQuickCapture(false, { isSub: true, passThrough: false });
+						}, 1000);
 					};
 					buttonPlus.onMouseLeave = () => {};
 					break;
@@ -96,7 +100,10 @@ const Navigation = observer(class Navigation extends React.Component {
 								key={item.id} 
 								id={`button-navigation-${item.id}`}
 								className={cn.join(' ')}
-								onClick={item.onClick}
+								onClick={e => {
+									window.clearTimeout(this.timeoutPlus);
+									item.onClick(e);
+								}}
 								onContextMenu={item.onContextMenu}
 								onMouseEnter={item.onMouseEnter}
 								onMouseLeave={item.onMouseLeave}
@@ -155,7 +162,7 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	onAdd (e: any) {
-		e.altKey ? keyboard.onQuickCapture(false) : keyboard.pageCreate({}, 'Navigation');
+		e.altKey ? keyboard.onQuickCapture(false) : keyboard.pageCreate({}, analytics.route.navigation);
 	};
 
 	onGraph () {
@@ -163,10 +170,12 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	onSearch () {
-		keyboard.onSearchPopup('Navigation');
+		keyboard.onSearchPopup(analytics.route.navigation);
 	};
 
 	onProfile () {
+		window.clearTimeout(this.timeoutPlus);
+
 		if (menuStore.isOpen('space')) {
 			menuStore.close('space');
 		} else {

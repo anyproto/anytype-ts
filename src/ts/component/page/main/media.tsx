@@ -5,7 +5,7 @@ import { Header, Footer, Loader, Block, Button, IconObject, Deleted } from 'Comp
 import { I, C, UtilCommon, Action, Renderer, UtilSpace, translate, UtilRouter } from 'Lib';
 import { blockStore, detailStore } from 'Store';
 import HeadSimple from 'Component/page/elements/head/simple';
-import Errors from 'json/error.json';
+const Errors = require('json/error.json');
 
 interface State {
 	isLoading: boolean;
@@ -102,7 +102,12 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 		return (
 			<div ref={node => this.node = node}>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header 
+					{...this.props} 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					rootId={rootId} 
+				/>
 
 				<div id="blocks" className={cn.join(' ')}>
 					{file ? (
@@ -183,12 +188,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		this.setState({ isLoading: true});
 
 		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true });
-				} else {
-					UtilSpace.openDashboard('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -198,14 +198,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 				return;
 			};
 
-			if (this.refHeader) {
-				this.refHeader.forceUpdate();
-			};
-
-			if (this.refHead) {
-				this.refHead.forceUpdate();
-			};
-
+			this.refHeader?.forceUpdate();
+			this.refHead?.forceUpdate();
 			this.setState({ isLoading: false });
 		});
 	};

@@ -34,6 +34,12 @@ export enum SortType {
 	Custom	 = 2,
 };
 
+export enum EmptyType {
+	None	 = 0,
+	Start	 = 1,
+	End		 = 2,
+};
+
 export enum FilterOperator { 
 	And		 = 0, 
 	Or		 = 1,
@@ -80,6 +86,7 @@ export interface Sort {
 	type: SortType;
 	includeTime?: boolean;
 	customOrder?: string[];
+	empty?: EmptyType;
 };
 
 export interface Filter {

@@ -1,7 +1,8 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .pageMainStore {
-	.content { height: 100%; padding-top: 40px; }
+	.wrapper.withBanner { padding-top: 200px; }
+
 
 	.body { display: flex; flex-direction: column; }
 	.body {
@@ -35,14 +36,20 @@
 			}
 		}
 
-		.tabs { white-space: nowrap; text-align: left; display: flex; flex-direction: row; gap: 0px 24px; }
+		.tabs { display: flex; flex-direction: row; justify-content: space-between; align-items: center; }
 		.tabs {
+			.side.left { white-space: nowrap; text-align: left; display: flex; flex-direction: row; gap: 0px 24px; flex-grow: 1; }
+			.side.right { flex-shrink: 0; }
+
 			.tab { display: inline-block; @include text-header3; color: var(--color-control-active); transition: $transitionAllCommon; }
 			.tab:hover, .tab.active { color: var(--color-text-primary); }
+
+			.icon.sort { width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/store/sort.svg'); border-radius: 6px; }
+			.icon.sort:hover, .icon.sort.hover { background-color: var(--color-shape-highlight-medium); }
 		}
 
 		.loaderWrapper { position: relative !important; }
-		.ReactVirtualized__List { padding: 48px 80px 80px 80px; }
+		.ReactVirtualized__List { padding: 0px 80px 80px 80px; }
 
 		.emptySearch { padding: 56px 0px; border: 1px solid var(--color-shape-primary); border-radius: 12px; height: auto; @include text-paragraph; }
 		.emptySearch { 

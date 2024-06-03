@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, UtilCommon, UtilData, UtilObject, keyboard, translate, Relation, UtilDate } from 'Lib';
 import { Input, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State { 
 	isEditing: boolean; 
@@ -22,6 +22,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	ref = null;
 	value: any = null;
 	isComposition = false;
+	timeout = 0;
 
 	constructor (props: I.Cell) {
 		super(props);
@@ -31,6 +32,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onPaste = this.onPaste.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
 		this.onCheckbox = this.onCheckbox.bind(this);
@@ -53,14 +55,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		const isDate = relation.format == I.RelationType.Date;
 		const isNumber = relation.format == I.RelationType.Number;
 		const isUrl = relation.format == I.RelationType.Url;
-
-		let view = null;
-		let viewRelation: any = {};
-
-		if (getView) {
-			view = getView();
-			viewRelation = view.getRelation(relation.relationKey);
-		};
+		const view = getView ? getView() : null;
+		const viewRelation = this.getViewRelation();
 
 		let Name = null;
 		let EditorComponent = null;
@@ -81,7 +77,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		if (isEditing) {
 			if (isLongText) {
-				EditorComponent = (item: any) => (
+				EditorComponent = () => (
 					<span>{value}</span>
 				);
 			} else 
@@ -115,7 +111,6 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						maskOptions={maskOptions} 
 						placeholder={ph.join(' ')} 
 						onKeyUp={this.onKeyUpDate} 
-						onSelect={this.onSelect}
 					/>
 				);
 			} else {
@@ -125,8 +120,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						id="input" 
 						{...item} 
 						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
-						onSelect={this.onSelect}
-						
+						onKeyUp={this.onKeyUp} 
 					/>
 				);
 			};
@@ -135,9 +129,11 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				<EditorComponent 
 					value={item.name} 
 					className="name" 
-					onKeyUp={this.onKeyUp} 
 					onFocus={this.onFocus} 
 					onBlur={this.onBlur}
+					onSelect={this.onSelect}
+					onPaste={this.onPaste}
+					onCut={this.onPaste}
 					onCompositionStart={this.onCompositionStart}
 					onCompositionEnd={this.onCompositionEnd}
 				/>
@@ -172,7 +168,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 					const day = showRelativeDates ? UtilDate.dayString(value) : null;
 					const date = day ? day : UtilDate.date(UtilDate.dateFormat(viewRelation.dateFormat), value);
-					const time = UtilDate.date(UtilData.timeFormat(viewRelation.timeFormat), value);
+					const time = UtilDate.date(UtilDate.timeFormat(viewRelation.timeFormat), value);
 					
 					value = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 				} else {
@@ -242,21 +238,10 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		const { id, relation, viewType, recordId, getRecord, cellPosition, getView } = this.props;
 		const record = getRecord(recordId);
 		const cell = $(`#${id}`);
+		const viewRelation = this.getViewRelation();
+		const card = viewType == I.ViewType.Grid ? null : $(`#record-${record.id}`);
 
 		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
-
-		let view = null;
-		let viewRelation: any = {};
-		let card = null;
-		
-		if (getView) {
-			view = getView();
-			viewRelation = view.getRelation(relation.relationKey);
-		};
-
-		if (viewType != I.ViewType.Grid) {
-			card = $(`#record-${record.id}`);
-		};
 
 		if (isEditing) {
 			let value = this.value;
@@ -314,6 +299,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		window.clearTimeout(this.timeout);
 	};
 
 	onSelect (e: any) {
@@ -340,8 +326,20 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.setValue(v);
 	};
 
+	onPaste (e: any, value: any) {
+		const { relation } = this.props;
+
+		if (relation.format == I.RelationType.Date) {
+			value = this.fixDateValue(value);
+		};
+
+		this.range = this.ref?.getRange();
+		this.setValue(value);
+		this.save(value);
+	};
+
 	onKeyUp (e: any, value: string) {
-		const { relation, onChange } = this.props;
+		const { relation } = this.props;
 
 		if (relation.format == I.RelationType.LongText) {
 			return;
@@ -353,39 +351,56 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		this.setValue(value);
 
-		if (!this.isComposition) {
-			keyboard.shortcut('enter, escape', e, () => {
-				e.preventDefault();
-
-				if (onChange) {
-					onChange(value, () => {
-						menuStore.closeAll(Constant.menuIds.cell);
-
-						this.range = null;
-						this.setEditing(false);
-					});
-				};
-			});
+		if (this.isComposition) {
+			return;
 		};
+
+		let ret = false;
+
+		keyboard.shortcut('enter, escape', e, () => {
+			e.preventDefault();
+
+			this.save(value, () => {
+				menuStore.closeAll(Constant.menuIds.cell);
+
+				this.range = null;
+				this.setEditing(false);
+			});
+
+			ret = true;
+		});
+
+		/*
+		if (!ret) {
+			window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(() => this.save(value), Constant.delay.keyboard);
+		};
+		*/
 	};
 
 	onKeyUpDate (e: any, value: any) {
-		const { onChange } = this.props;
-
 		this.setValue(this.fixDateValue(value));
 
 		if (this.value) {
 			menuStore.updateData(MENU_ID, { value: this.value });
 		};
 
-		if (!this.isComposition) {
-			keyboard.shortcut('enter', e, () => {
-				e.preventDefault();
+		if (this.isComposition) {
+			return;
+		};
 
-				if (onChange) {
-					onChange(this.value, () => menuStore.close(MENU_ID));
-				};
-			});
+		let ret = false;
+
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			this.save(this.value, () => menuStore.close(MENU_ID));
+
+			ret = true;
+		});
+
+		if (!ret) {
+			window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(() => this.save(this.value), Constant.delay.keyboard);
 		};
 	};
 
@@ -394,7 +409,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onBlur (e: any) {
-		const { relation, recordId, getRecord, onChange } = this.props;
+		const { relation, recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
 
 		if (!this.ref || keyboard.isBlurDisabled || !record) {
@@ -409,17 +424,23 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			return;
 		};
 
-		if (onChange) {
-			onChange(this.value, () => {
-				if (!menuStore.isOpen(MENU_ID)) {
-					this.setEditing(false);
-				};
-			});
-		};
+		this.save(this.value, () => {
+			if (!menuStore.isOpen(MENU_ID)) {
+				this.setEditing(false);
+			};
+		});
 	};
 
 	setValue (v: any) {
 		this.value = v;
+	};
+
+	save (value: any, callBack?: () => void) {
+		const { onChange } = this.props;
+
+		if (onChange) {
+			onChange(value, callBack);
+		};
 	};
 
 	fixDateValue (v: any) {
@@ -451,10 +472,11 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		UtilObject.setIcon(record.id, '', objectId);
 	};
 
-	onCheckbox () {
+	onCheckbox (e: any) {
 		const { recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
 
+		this.onBlur(e);
 		UtilObject.setDone(record.id, !record.done, () => {
 			if (this._isMounted) {
 				this.forceUpdate();
@@ -468,6 +490,16 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	onCompositionEnd () {
 		this.isComposition = false;
+	};
+
+	getViewRelation (): any {
+		const { relation, getView } = this.props;
+
+		if (!relation || !getView) {
+			return {};
+		};
+
+		return getView().getRelation(relation.relationKey) || {};
 	};
 
 });

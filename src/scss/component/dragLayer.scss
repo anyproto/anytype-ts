@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .dragLayer { position: fixed; z-index: 1000; left: -100000px; top: -100000px; }
 .dragLayer {
@@ -23,9 +23,9 @@
 			.dropTarget { padding: 0px !important; }
 
 			.viewContent {
-				.record { position: relative !important; left: 0px !important; top: 0px !important; overflow: hidden; }
+				.record { position: relative !important; left: 0px !important; top: 0px !important; overflow: hidden; background-color: var(--color-bg-primary); }
 				.record {
-					.selectable.isSelectionSelected::after { display: none; }
+					.selectionTarget.isSelectionSelected::after { display: none; }
 				}
 			}
 			.viewContent.viewGallery {

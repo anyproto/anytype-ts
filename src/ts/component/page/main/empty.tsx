@@ -22,7 +22,12 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 				ref={node => this.node = node}
 				className="wrapper"
 			>
-				<Header component="mainEmpty" text={translate('commonSearch')} layout={I.ObjectLayout.SpaceView} {...this.props} />
+				<Header 
+					{...this.props} 
+					component="mainEmpty" 
+					text={translate('commonSearch')}
+					layout={I.ObjectLayout.SpaceView}
+				/>
 
 				<div className="wrapper">
 					<IconObject object={space} size={96} forceLetter={true} />

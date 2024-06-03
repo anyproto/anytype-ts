@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockBookmark { padding: 6px 0px; }
@@ -54,8 +54,8 @@
 	}
 	
 	.block.blockBookmark > .wrapContent { border-radius: 6px; }
-	.block.blockBookmark > .wrapContent > .selectable > .dropTarget { padding-top: 0px; padding-bottom: 0px; }
+	.block.blockBookmark > .wrapContent > .selectionTarget > .dropTarget { padding-top: 0px; padding-bottom: 0px; }
 
-	.block.blockBookmark > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
-	.block.blockBookmark.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 8px; }
+	.block.blockBookmark > .wrapContent > .selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
+	.block.blockBookmark.withContent > .wrapContent > .selectionTarget.isSelectionSelected::after { border-radius: 8px; }
 }

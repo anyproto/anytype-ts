@@ -4,7 +4,7 @@ import { Icon } from 'Component';
 import { I, UtilData, UtilObject, UtilCommon, translate, analytics, focus } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	rootId: string;

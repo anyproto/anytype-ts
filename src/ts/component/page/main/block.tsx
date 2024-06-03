@@ -5,10 +5,11 @@ import { observer } from 'mobx-react';
 import { Header, Loader, Block, Deleted } from 'Component';
 import { I, C, UtilCommon, Action, UtilSpace, translate, UtilRouter } from 'Lib';
 import { blockStore, detailStore } from 'Store';
-import Errors from 'json/error.json';
+const Errors = require('json/error.json');
 
 interface State {
 	isDeleted: boolean;
+	isLoading: boolean;
 };
 
 const PageMainBlock = observer(class PageMainBlock extends React.Component<I.PageComponent, State> {
@@ -17,10 +18,10 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 	node: any = null;
 	id = '';
 	refHeader: any = null;
-	loading = false;
 
 	state = {
 		isDeleted: false,
+		isLoading: true,
 	};
 
 	constructor (props: any) {
@@ -32,12 +33,13 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 	render () {
 		const { params } = this.getMatch();
 		const { blockId } = params;
+		const { isDeleted, isLoading } = this.state;
 
-		if (this.state.isDeleted) {
+		if (isDeleted) {
 			return <Deleted {...this.props} />;
 		};
 
-		if (this.loading) {
+		if (isLoading) {
 			return <Loader id="loader" />;
 		};
 
@@ -49,7 +51,12 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 				ref={node => this.node = node}
 				className="setWrapper"
 			>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					{...this.props} 
+					rootId={rootId} 
+				/>
 
 				<div className="blocks wrapper">
 					{block ? (
@@ -91,32 +98,24 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 
 		this.close();
 		this.id = rootId;
-		this.loading = true;
-		this.forceUpdate();
+		this.setState({ isLoading: true });
 
 		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true });
-				} else {
-					UtilSpace.openDashboard('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
 			const object = detailStore.get(rootId, rootId, []);
 			if (object.isDeleted) {
-				this.setState({ isDeleted: true });
+				this.setState({ isDeleted: true, isLoading: false });
 				return;
 			};
-
-			this.loading = false;
-			this.forceUpdate();
 
 			if (this.refHeader) {
 				this.refHeader.forceUpdate();
 			};
 
+			this.setState({ isLoading: true });
 			this.resize();
 		});
 	};
@@ -148,7 +147,9 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 	};
 
 	resize () {
-		if (this.loading || !this._isMounted) {
+		const { isLoading } = this.state;
+
+		if (!this._isMounted || isLoading) {
 			return;
 		};
 

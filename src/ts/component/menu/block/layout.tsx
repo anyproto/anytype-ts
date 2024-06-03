@@ -4,7 +4,7 @@ import { MenuItemVertical } from 'Component';
 import { blockStore } from 'Store';
 import { I, keyboard, analytics, UtilData, UtilObject, UtilMenu, UtilCommon, translate } from 'Lib';
 import { detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class MenuBlockLayout extends React.Component<I.Menu> {
 	
@@ -77,7 +77,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		
-		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
 
 		if (!allowedDetails || (object.layout == I.ObjectLayout.Task)) {

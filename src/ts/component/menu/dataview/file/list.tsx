@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Filter, MenuItemVertical, Icon, Loader, EmptySearch } from 'Component';
 import { I, UtilCommon, Relation, keyboard, UtilData, UtilObject, UtilFile, translate, Action, C } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -72,7 +72,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 					<MenuItemVertical 
 						id={item.id}
 						object={item}
-						name={UtilFile.name(item)}
+						name={item.name}
 						onMouseEnter={e => this.onOver(e, item)} 
 						onClick={e => this.onClick(e, item)}
 						caption={type ? type.name : undefined}
@@ -261,10 +261,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				this.items = [];
 			};
 
-			this.items = this.items.concat((message.records || []).map((it: any) => {
-				it.name = String(it.name || translate('defaultNamePage'));
-				return it;
-			}));
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ isLoading: false });

@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockLink {
@@ -166,11 +166,11 @@
 		}
 	}
 
-	.block.blockLink > .wrapContent > .selectable > .dropTarget.isOver.middle {
+	.block.blockLink > .wrapContent > .selectionTarget > .dropTarget.isOver.middle {
 		.side.left { background: none !important; }
 	}
 
-	.block.blockLink > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
-	.block.blockLink.text > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
-	.block.blockLink.card > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 8px; left: 0px; width: 100%; }
+	.block.blockLink > .wrapContent > .dropTarget.targetTop { display: block; height: 2px; bottom: -7px; }
+	.block.blockLink.text > .wrapContent > .selectionTarget > .dropTarget { padding: 2px 0px; }
+	.block.blockLink.card > .wrapContent > .selectionTarget.isSelectionSelected::after { border-radius: 8px; left: 0px; width: 100%; }
 }

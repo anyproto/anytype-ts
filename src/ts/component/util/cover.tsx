@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { I, UtilCommon } from 'Lib';
+import { I } from 'Lib';
 import { commonStore } from 'Store';
 
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	id?: string;

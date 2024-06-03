@@ -2,7 +2,7 @@ import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import { I, M, UtilCommon, UtilObject, UtilFile, Storage, Mark, translate, keyboard, UtilSpace } from 'Lib';
 import { detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class BlockStore {
 
@@ -14,6 +14,7 @@ class BlockStore {
     public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
     public blockMap: Map<string, Map<string, I.Block>> = new Map();
     public restrictionMap: Map<string, Map<string, any>> = new Map();
+	public participantMap: Map<string, Map<string, string>> = new Map();
 
     constructor() {
         makeObservable(this, {
@@ -101,6 +102,8 @@ class BlockStore {
 	clear (rootId: string) {
 		this.blockMap.delete(rootId);
 		this.treeMap.delete(rootId);
+		this.restrictionMap.delete(rootId);
+		this.participantMap.delete(rootId);
 	};
 
     clearAll () {
@@ -111,6 +114,7 @@ class BlockStore {
 		this.blockMap.clear();
 		this.treeMap.clear();
 		this.restrictionMap.clear();
+		this.participantMap.clear();
 	};
 
 	setStructure (rootId: string, list: any[]) {
@@ -132,10 +136,9 @@ class BlockStore {
 	};
 
     updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
-		const map = this.getMap(rootId);
 		const element = this.getMapElement(rootId, blockId);
-
 		if (!element) {
+			const map = this.getMap(rootId);
 			map.set(blockId, new M.BlockStructure({ parentId: '', childrenIds }));
 		} else {
 			set(element, 'childrenIds', childrenIds);
@@ -180,6 +183,20 @@ class BlockStore {
 		this.restrictionMap.set(rootId, map);
 	};
 
+	participantsSet (rootId: string, participants: I.BlockParticipant[]) {
+		let map = this.participantMap.get(rootId);
+
+		if (!map) {
+			map = new Map();
+		};
+
+		for (const item of participants) {
+			map.set(item.blockId, item.participantId);
+		};
+
+		this.participantMap.set(rootId, map);
+	};
+
     getMap (rootId: string) {
 		return this.treeMap.get(rootId) || new Map();
 	};
@@ -192,6 +209,16 @@ class BlockStore {
     getLeaf (rootId: string, id: string): any {
 		const map = this.blockMap.get(rootId);
 		return map ? map.get(id) : null;
+	};
+
+	getParentLeaf (rootId: string, id: string) {
+		const element = this.getMapElement(rootId, id);
+		return element ? this.getLeaf(rootId, element.parentId) : null;
+	};
+
+	getParentMapElement (rootId: string, id: string) {
+		const element = this.getMapElement(rootId, id);
+		return element ? this.getMapElement(rootId, element.parentId) : null;
 	};
 
     getBlocks (rootId: string, filter?: (it: any) => boolean): I.Block[] {
@@ -240,12 +267,12 @@ class BlockStore {
 	};
 
     getHighestParent (rootId: string, blockId: string): I.Block {
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = this.getLeaf(rootId, blockId);
 		if (!block) {
 			return null;
 		};
 
-		const parent = blockStore.getLeaf(rootId, block.parentId);
+		const parent = this.getLeaf(rootId, block.parentId);
 
 		if (!parent || (parent && (parent.isPage() || parent.isLayoutDiv()))) {
 			return block;
@@ -276,6 +303,12 @@ class BlockStore {
 		};
 
 		return ret;
+	};
+
+	// Check if blockId is inside table
+	checkIsInsideTable (rootId: string, blockId: string): boolean {
+		const parent = this.getParentLeaf(rootId, blockId);
+		return parent && parent.isTableRow();
 	};
 
     updateNumbers (rootId: string) {
@@ -393,6 +426,15 @@ class BlockStore {
 		return map.get(blockId) || [];
 	};
 
+	getParticipants (rootId: string) {
+		return this.participantMap.get(rootId) || new Map();
+	};
+
+	getParticipant (rootId: string, blockId: string): string {
+		const map = this.getParticipants(rootId);
+		return map ? String(map.get(blockId) || '') : '';
+	};
+
 	checkFlags (rootId: string, blockId: string, flags: any[]): boolean {
 		if (!rootId || !blockId) {
 			return false;
@@ -402,7 +444,7 @@ class BlockStore {
 	};
 
     isAllowed (restrictions: any[], flags: any[]): boolean {
-		if (!UtilSpace.canParticipantWrite()) {
+		if (!UtilSpace.canMyParticipantWrite()) {
 			return false;
 		};
 
@@ -460,15 +502,15 @@ class BlockStore {
 
 				let name = '';
 				if (object.layout == I.ObjectLayout.Note) {
-					name = name || translate('commonEmpty');
+					name = object.name || translate('commonEmpty');
 				} else
 				if (UtilObject.isFileLayout(object.layout)) {
 					name = UtilFile.name(object);
 				} else {
-					name = UtilCommon.shorten(object.name, 30);
+					name = object.name;
 				};
 
-				name = name.trim();
+				name = UtilCommon.shorten(object.name.trim(), 30);
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
@@ -532,12 +574,7 @@ class BlockStore {
 		
 		let ret: any[] = [];
 		for (const id of ids) {
-			const element = blockStore.getMapElement(rootId, id);
-			if (!element) {
-				continue;
-			};
-
-			const parent = blockStore.getLeaf(rootId, element.parentId);
+			const parent = this.getParentLeaf(rootId, id);
 			if (!parent || !parent.isLayout() || parent.isLayoutDiv() || parent.isLayoutHeader()) {
 				continue;
 			};

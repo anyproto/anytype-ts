@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon } from 'Lib';
 import { Label, Icon, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.Menu> {
 	
@@ -359,6 +359,9 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 			case 'graphSettings': {
 				menuId = 'graphSettings';
+				menuParam.data = Object.assign(menuParam.data, {
+					storageKey: Constant.graphId.dataview,
+				});
 				break;
 			};
 		};
@@ -401,7 +404,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			analytics.event('ChangeViewType', {
 				type: item.id,
 				objectType: object.type,
-				embedType: analytics.embedType(isInline)
+				embedType: analytics.embedType(isInline),
 			});
 		}
 

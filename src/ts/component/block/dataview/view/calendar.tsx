@@ -4,7 +4,7 @@ import { Select, Icon } from 'Component';
 import { I, UtilData, UtilCommon, UtilDate, UtilObject, translate, Dataview } from 'Lib';
 import { dbStore, menuStore, detailStore } from 'Store';
 import Item from './calendar/item';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PADDING = 46;
 
@@ -155,9 +155,12 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const { isCollection, getView, getKeys, getTarget, getSearchIds } = this.props;
 		const object = getTarget();
 		const view = getView();
+		if (!view) {
+			return;
+		};
+
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
-		
-		if (!relation || !view) {
+		if (!relation) {
 			return;
 		};
 
@@ -261,9 +264,8 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	getItems () {
 		const { getView } = this.props;
 		const view = getView();
-		const subId = this.getSubId();
 
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, [ view.groupRelationKey ]));
+		return dbStore.getRecords(this.getSubId(), [ view.groupRelationKey ]);
 	};
 
 	resize () {

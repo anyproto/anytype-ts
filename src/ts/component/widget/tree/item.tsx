@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, keyboard, Storage, UtilObject, translate, UtilCommon, UtilSpace } from 'Lib';
+import { I, keyboard, Storage, UtilObject, translate, UtilCommon, UtilSpace, analytics } from 'Lib';
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.WidgetTreeItem {
 	block: I.Block;
@@ -16,6 +16,7 @@ interface Props extends I.WidgetTreeItem {
 	onToggle?(e: React.MouseEvent, props): void;
 	setActive?(id: string): void;
 	getSubId?(id: string): string;
+	getSubKey?(): string;
 };
 
 const TreeItem = observer(class Node extends React.Component<Props> { 
@@ -32,9 +33,9 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 	};
 
 	render () {
-		const { id, parentId, treeKey, depth, style, numChildren, isEditing, onClick, isSection } = this.props;
-		const subKey = this.getSubKey();
-		const subId = dbStore.getSubId(subKey, parentId);
+		const { id, parentId, treeKey, depth, style, numChildren, isEditing, onClick, isSection, getSubKey, getSubId } = this.props;
+		const subKey = getSubKey();
+		const subId = getSubId(parentId);
 		const isOpen = Storage.checkToggle(subKey, treeKey);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, type, restrictions, done, layout } = object;
@@ -43,7 +44,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 6;
-		const hasMore = UtilSpace.canParticipantWrite();
+		const hasMore = UtilSpace.canMyParticipantWrite();
 
 		let arrow = null;
 		let onArrowClick = null;
@@ -161,7 +162,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
 			data: {
-				route: 'Widget',
+				route: analytics.route.widget,
 				objectIds: [ id ],
 				subId,
 			},
@@ -182,16 +183,11 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id, parentId, onToggle } = this.props;
-		const subId = dbStore.getSubId(this.getSubKey(), parentId);
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys, true);
+		const { id, parentId, onToggle, getSubId } = this.props;
+		const object = detailStore.get(getSubId(parentId), id, Constant.sidebarRelationKeys, true);
 
 		onToggle(e, { ...this.props, details: object });
 		this.forceUpdate();
-	};
-
-	getSubKey (): string {
-		return `widget${this.props.block.id}`;
 	};
 
 	onSelect (icon: string) {
@@ -203,10 +199,8 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 	};
 
 	onCheckbox () {
-		const { id, parentId } = this.props;
-		const subKey = this.getSubKey();
-		const subId = dbStore.getSubId(subKey, parentId);
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const { id, parentId, getSubId } = this.props;
+		const object = detailStore.get(getSubId(parentId), id, Constant.sidebarRelationKeys);
 
 		UtilObject.setDone(id, !object.done);
 	};

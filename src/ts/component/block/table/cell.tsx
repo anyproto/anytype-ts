@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I, keyboard, UtilCommon } from 'Lib';
 import { Icon, Block } from 'Component';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponentTable {
 	rowIdx: number;
@@ -95,7 +95,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 			return (
 				<div className={cn.join(' ')}>
 					<div className="wrapContent">
-						<div className="selectable">
+						<div className="selectionTarget">
 							<div className="dropTarget">
 								<div className="flex">
 									<div className="markers" />

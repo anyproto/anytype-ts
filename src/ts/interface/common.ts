@@ -18,6 +18,7 @@ export enum DropType {
 };
 
 export enum SelectType {
+	None	 = '',
 	Block	 = 'block',
 	Record	 = 'record',
 };
@@ -142,13 +143,17 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	tab?: string;
 	text?: string;
 	layout?: I.ObjectLayout;
+	withBanner?: boolean;
+	renderLeftIcons?: (onOpen?: () => void) => any;
+	renderTabs?: () => any;
 	onTab?: (id: string) => void;
 	onSearch?: () => void;
-	onNavigation?: () => void;
-	onGraph?: () => void;
 	onTooltipShow?: (e: any, text: string, caption?: string) => void;
 	onTooltipHide?: () => void;
 	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;
+	onBanner?: (e: any) => void;
+	onBannerClose?: (e: any) => void;
+	onRelation?: (param?: Partial<I.MenuParam>, data?: any) => void;
 };
 
 export interface PageComponent extends RouteComponentProps<any> {
@@ -187,18 +192,19 @@ export interface ButtonComponent {
 };
 
 export enum SurveyType {
-	Register 	= 0,
-	Delete 		= 1,
-	Pmf 		= 2,
-	Object 		= 3,
+	Register	 = 0,
+	Delete		 = 1,
+	Pmf			 = 2,
+	Object		 = 3,
+	Shared		 = 4,
 };
 
 export enum SliceOperation {
-	None	 = 0,
-	Add		 = 1,
-    Move	 = 2,
-	Remove	 = 3,
-    Replace	 = 4,
+	None		 = 0,
+	Add			 = 1,
+    Move		 = 2,
+	Remove		 = 3,
+    Replace		 = 4,
 };
 
 export interface Dataset {
@@ -254,7 +260,13 @@ export enum NetworkMode {
 };
 
 export enum NavigationMenuMode {
-	Context		 = 0,
-	Click		 = 1,
-	Hover		 = 2,
+	None		 = 0,
+	Context		 = 1,
+	Click		 = 2,
+	Hover		 = 3,
+};
+
+export enum InterfaceStatus {
+	Ok		 = 'ok',
+	Error	 = 'error',
 };

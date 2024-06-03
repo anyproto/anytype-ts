@@ -115,7 +115,7 @@ class Api {
 	};
 
 	updateCheck (win) {
-		if (this.isPinChecked) {
+		if (this.isPinChecked || !this.account) {
 			UpdateManager.checkUpdate(false);
 		};
 	};
@@ -167,7 +167,7 @@ class Api {
 			return;
 		};
 
-		if (win) {
+		if (win && !win.isDestroyed()) {
 			win.hide();
 		};
 
@@ -208,6 +208,11 @@ class Api {
 
 	showChallenge (win, param) {
 		WindowManager.createChallenge(param);
+	};
+
+	reload (win, route) {
+		win.route = route;
+		win.webContents.reload();
 	};
 
 };

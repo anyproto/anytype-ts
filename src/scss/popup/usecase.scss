@@ -1,6 +1,7 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 $shadow: 0px 2px 20px rgba(0,0,0,0.2);
+$hl-gradient: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%);
 
 .popups {
 	.popup.popupUsecase {
@@ -21,6 +22,11 @@ $shadow: 0px 2px 20px rgba(0,0,0,0.2);
 		}
 
 		.page.pageList {
+			.banner { 
+				padding: 16px; background-image: $hl-gradient; display: flex; align-items: center; justify-content: center; @include text-paragraph; 
+				color: var(--color-control-accent);
+			}
+
 			.mid { padding: 56px 56px 0px 56px; text-align: center; }
 			.mid {
 				.title { margin: 0px 0px 2px 0px; }
@@ -34,8 +40,8 @@ $shadow: 0px 2px 20px rgba(0,0,0,0.2);
 			}
 
 			.categories { 
-				padding: 18px 24px; background: var(--color-shape-highlight-light-solid); border-bottom: 1px solid var(--color-shape-secondary); 
-				position: sticky; top: 0px; left: 0px; z-index: 1;
+				padding: 18px 24px; background: var(--color-shape-highlight-light-solid); /*border-bottom: 1px solid var(--color-shape-secondary);*/
+				position: sticky; top: 0px; left: 0px; z-index: 10;
 			}
 			.categories {
 				.inner { transform: translate3d(0px,0px,0px); transition: 0.3s transform $easeInQuint; white-space: nowrap; }
@@ -44,6 +50,7 @@ $shadow: 0px 2px 20px rgba(0,0,0,0.2);
 					background: var(--color-bg-primary); transition: $transitionAllCommon; display: inline-flex; flex-direction: row; align-items: center; gap: 0px 8px;
 					margin: 0px 8px 0px 0px; vertical-align: top;;
 				}
+				.item.hl { background-image: $hl-gradient; }
 				.item:hover, .item.active { background: var(--color-control-accent); color: var(--color-text-inversion); }
 				.item:hover, .item.active {
 					.icon.heart { background-image: url('~img/icon/popup/usecase/heart1.svg'); }

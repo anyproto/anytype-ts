@@ -1,19 +1,15 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import Prism from 'prismjs';
 import raf from 'raf';
 import { instance as viz } from '@viz-js/viz';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
-import Excalidraw from 'excalidraw';
 import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
-import Theme from 'json/theme.json';
-
-import 'excalidraw/dist/excalidraw.min.css';
+const Constant = require('json/constant.json');
+const Theme = require('json/theme.json');
 
 const katex = require('katex');
 const pako = require('pako');
@@ -773,31 +769,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Excalidraw: {
-				let data = [];
-				try {
-					data = JSON.parse(this.text);
-				} catch (e) { 
-					console.error(e);
-				};
-
-				const w = width * (fields.width || 1);
-				const component = (
-					<Excalidraw 
-						initialData={data} 
-						width={w} 
-						height={w}
-						onChange={(elements) => {
-							window.clearTimeout(this.timeoutChange);
-							this.timeoutChange = window.setTimeout(() => {
-								this.text = JSON.stringify(elements);
-								this.setValue(this.text);
-								this.save();
-							}, 50);
-						}}
-					/>
-				);
-
-				ReactDOM.render(component, node.find('#value').get(0));
 				break;
 			};
 
@@ -957,7 +928,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { block } = this.props;
 		const { id, fields } = block;
 		const width = Number(fields.width) || 1;
-		const el = $(`#selectable-${id}`);
+		const el = $(`#selectionTarget-${id}`);
 
 		if (!el.length) {
 			return width;

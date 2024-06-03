@@ -6,7 +6,7 @@ import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon } from 'Component';
 import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage, UtilSpace } from 'Lib';
 import { dbStore, detailStore, commonStore, menuStore, extensionStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 import Util from '../lib/util';
 
 interface State {
@@ -35,7 +35,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	state = {
 		error: '',
 		isLoading: false,
-		withContent: false,
+		withContent: true,
 	};
 
 	constructor (props: I.PageComponent) {
@@ -188,24 +188,23 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		let space = commonStore.space || Storage.get('lastSpaceId');
-
-		if (!space) {
-			space = spaces.find(it => it.spaceAccessType == I.SpaceType.Personal)?.id;
-		};
-
 		let check = null;
-		if (space) {
-			check = spaces.find(it => it.id == space);
+		let spaceId = commonStore.space || Storage.get('lastSpaceId');
+
+		if (!spaceId) {
+			spaceId = spaces.find(it => it.isPersonal)?.id;
+		};
+		if (spaceId) {
+			check = spaces.find(it => it.id == spaceId);
 		};
 
-		if (!space || !check) {
-			space = spaces[0].id;
+		if (!spaceId || !check) {
+			spaceId = spaces[0].id;
 		};
 
 		this.refSpace.setOptions(spaces);
-		this.refSpace.setValue(space);
-		this.onSpaceChange(space);
+		this.refSpace.setValue(spaceId);
+		this.onSpaceChange(spaceId);
 	};
 
 	initType () {
@@ -238,12 +237,12 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getObjects (subId: string) {
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+		return dbStore.getRecords(subId);
 	};
 
 	getSpaces () {
-		return dbStore.getSpaces()
-			.filter(it => it && UtilSpace.canParticipantWrite(it.targetSpaceId))
+		return UtilSpace.getList()
+			.filter(it => it && UtilSpace.canMyParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, id: it.targetSpaceId, object: it }));
 	};
 
@@ -273,7 +272,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getTagsValue () {
-		return dbStore.getRecords(Constant.subId.option, '').
+		return dbStore.getRecordIds(Constant.subId.option, '').
 			filter(id => this.details.tag.includes(id)).
 			map(id => detailStore.get(Constant.subId.option, id)).
 			filter(it => it && !it._empty_);

@@ -14,15 +14,20 @@ const util = new Util();
 
 // CONSTANTS
 
-const transformThreshold = 1.5;
+const transformThreshold = 1;
 const transformThresholdHalf = transformThreshold / 2;
 const delayFocus = 1000;
 
-const ObjectLayout = {
+const Layout = {
 	Human:		 1,
 	Task:		 2,
+	File:		 6,
+	Image:		 8,
+	Audio:		 15,
+	Video:		 16,
 	Bookmark:	 11,
 	Participant: 19,
+	Pdf:		 20,
 };
 
 const EdgeType = {
@@ -37,10 +42,10 @@ const forceProps = {
 	},
 	charge: {
 		strength: -250,
-		distanceMax: 300,
+		distanceMax: 1000,
 	},
 	link: {
-		distance: 50,
+		distance: 100,
 	},
 	forceX: {
 		strength: 0.1,
@@ -99,7 +104,7 @@ init = (param) => {
 	ctx.lineCap = 'round';
 	ctx.fillStyle = data.colors.bg;
 	
-	transform = d3.zoomIdentity.translate(0, 0).scale(1.5);
+	transform = d3.zoomIdentity.translate(0, 0).scale(1);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
 
@@ -108,21 +113,13 @@ init = (param) => {
 	simulation.on('tick', () => redraw());
 	simulation.tick(100);
 
-	setTimeout(() => {
-		root = getNodeById(rootId);
+	root = getNodeById(rootId);
 
-		let x = width / 2;
-		let y = height / 2;
+	const x = root ? root.x : width / 2;
+	const y = root ? root.y : height / 2;
 
-		if (root) {
-			x = root.x;
-			y = root.y;
-		};
-
-		transform = Object.assign(transform, getCenter(x, y));
-		send('onTransform', { ...transform });
-		redraw();
-	}, 100);
+	transform = Object.assign(transform, getCenter(x, y));
+	send('onTransform', { ...transform });
 };
 
 initTheme = (theme) => {
@@ -197,31 +194,36 @@ updateForces = () => {
 
 	// Filter links
 	if (!settings.link) {
-		nodes = nodes.filter(d => !d.linkCnt);
+		edges = edges.filter(d => d.type != EdgeType.Link);
+
+		const ids = nodeIdsFromEdges(edges);
+		nodes = nodes.filter(d => ids.has(d.id) || d.isOrphan);
 	};
 
 	// Filter relations
 	if (!settings.relation) {
-		nodes = nodes.filter(d => !d.relationCnt);
+		edges = edges.filter(d => d.type != EdgeType.Relation);
+
+		const ids = nodeIdsFromEdges(edges);
+		nodes = nodes.filter(d => ids.has(d.id) || d.isOrphan);
 	};
 
-	// Filte local only edges
+	// Filter local only edges
 	if (settings.local) {
 		edges = getEdgesByNodeId(rootId);
 
-		const nodeIds = util.arrayUnique([ rootId ].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
-		nodes = nodes.filter(d => nodeIds.includes(d.id));
-	};
+		const ids = nodeIdsFromEdges(edges);
+		ids.add(rootId);
 
-	let map = getNodeMap();
-	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
+		nodes = nodes.filter(d => ids.has(d.id));
+	};
 
 	// Filter orphans
 	if (!settings.orphan) {
 		nodes = nodes.filter(d => !d.isOrphan || d.forceShow);
 	};
 
-	map = getNodeMap();
+	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
 	// Shallow copy to disable mutations
@@ -752,15 +754,15 @@ const checkNodeInViewport = (d) => {
 };
 
 const isLayoutHuman = (d) => {
-	return d.layout == ObjectLayout.Human;
+	return d.layout == Layout.Human;
 };
 
 const isLayoutParticipant = (d) => {
-	return d.layout == ObjectLayout.Participant;
+	return d.layout == Layout.Participant;
 };
 
 const isLayoutBookmark = (d) => {
-	return d.layout == ObjectLayout.Bookmark;
+	return d.layout == Layout.Bookmark;
 };
 
 const getNodeById = (id) => {
@@ -773,6 +775,10 @@ const getNodeByCoords = (x, y) => {
 
 const getEdgesByNodeId = (id) => {
 	return edges.filter(d => (d.source == id) || (d.target == id));
+};
+
+const nodeIdsFromEdges = (edges) => {
+	return new Set([].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
 };
 
 const getRadius = (d) => {
