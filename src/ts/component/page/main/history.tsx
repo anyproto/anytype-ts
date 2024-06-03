@@ -18,11 +18,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	node = null;
 	refHeader = null;
-	scrollLeft = 0;
-	scrollRight = 0;
 	refSideLeft = null;
 	refSideRight = null;
-	refHead = null;
 	state = {
 		isLoading: false,
 	};
@@ -139,11 +136,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		Action.copyBlocks(rootId, ids, false);
 	};
 
-	onScrollLeft () {
-		this.scrollLeft = $(this.refSideLeft).scrollTop();
-		UtilCommon.getScrollContainer(this.props.isPopup).trigger('scroll');
-	};
-
 	renderDiff (previousId: string, diff: any[]) {
 		const node = $(this.node);
 
@@ -175,13 +167,12 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	scrollToElement (element: any) {
-		const { isPopup } = this.props;
 		const node = $(this.node);
 		const container = node.find('#historySideLeft');
 		const ch = container.height();
 		const no = element.offset().top;
 		const st = container.scrollTop();
-		const y = (isPopup ? (no - container.offset().top + st) : no) + ch / 2;
+		const y = no - container.offset().top + st + ch / 2;
 
 		container.scrollTop(Math.max(y, ch) - ch);
 	};
@@ -235,28 +226,33 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					break;
 				};
 
-				const marks = block.content.marks || [];
-				const newText = String(data.text || '');
-				const oldText = oldBlock.getText();
-				const diff = Diff.diffChars(oldText, newText);
+				let type = I.DiffType.None;
 
-				let from = 0;
-				for (const item of diff) {
-					if (item.removed) {
-						continue;
+				if (data.text !== null) {
+					const marks = UtilCommon.objectCopy(block.content.marks || []);
+					const diff = Diff.diffChars(oldBlock.getText(), String(data.text || ''));
+
+					let from = 0;
+					for (const item of diff) {
+						if (item.removed) {
+							continue;
+						};
+
+						const to = from + item.count;
+
+						if (item.added) {
+							marks.push({ type: I.MarkType.Change, param: '', range: { from, to } });
+						};
+
+						from = to;
 					};
 
-					const to = from + item.count;
-
-					if (item.added) {
-						marks.push({ type: I.MarkType.Change, param: '', range: { from, to } });
-					};
-
-					from = to;
+					blockStore.updateContent(rootId, data.id, { marks });
+				} else {
+					type = I.DiffType.Change;	
 				};
 
-				blockStore.updateContent(rootId, data.id, { marks });
-				elements.push({ type: I.DiffType.None, element: `#block-${data.id}` });
+				elements.push({ type, element: `#block-${data.id}` });
 				break;
 			};
 
