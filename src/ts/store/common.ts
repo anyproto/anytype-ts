@@ -110,6 +110,7 @@ class CommonStore {
 			linkStyleValue: observable,
 			isOnlineValue: observable,
 			spaceId: observable,
+			membershipTiersList: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -118,6 +119,7 @@ class CommonStore {
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
+			membershipTiers: computed,
 			space: computed,
 			isOnline: computed,
             gatewaySet: action,
@@ -136,6 +138,7 @@ class CommonStore {
 			navigationMenuSet: action,
 			linkStyleSet: action,
 			isOnlineSet: action,
+			membershipTiersListSet: action,
 		});
 
 		intercept(this.configObj as any, change => UtilCommon.intercept(this.configObj, change));
