@@ -229,30 +229,40 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				let type = I.DiffType.None;
 
 				if (data.text !== null) {
-					const marks = UtilCommon.objectCopy(block.content.marks || []);
 					const diff = Diff.diffChars(oldBlock.getText(), String(data.text || ''));
+					const check = diff.filter(it => it.added).length;
 
-					let from = 0;
-					for (const item of diff) {
-						if (item.removed) {
-							continue;
+					if (check) {
+						const marks = UtilCommon.objectCopy(block.content.marks || []);
+
+						let from = 0;
+						for (const item of diff) {
+							if (item.removed) {
+								continue;
+							};
+
+							const to = from + item.count;
+
+							if (item.added) {
+								marks.push({ type: I.MarkType.Change, param: '', range: { from, to } });
+							};
+
+							from = to;
 						};
 
-						const to = from + item.count;
-
-						if (item.added) {
-							marks.push({ type: I.MarkType.Change, param: '', range: { from, to } });
-						};
-
-						from = to;
+						blockStore.updateContent(rootId, data.id, { marks });
+					} else {
+						type = I.DiffType.Change;
 					};
-
-					blockStore.updateContent(rootId, data.id, { marks });
 				} else {
-					type = I.DiffType.Change;	
+					type = I.DiffType.Change;
 				};
 
-				elements.push({ type, element: `#block-${data.id}` });
+				if (type == I.DiffType.Change) {
+					elements = elements.concat(this.getBlockChangeElements(data.id));
+				} else {
+					elements.push({ type, element: `#block-${data.id}` });
+				};
 				break;
 			};
 
