@@ -55,14 +55,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		const isDate = relation.format == I.RelationType.Date;
 		const isNumber = relation.format == I.RelationType.Number;
 		const isUrl = relation.format == I.RelationType.Url;
-
-		let view = null;
-		let viewRelation: any = {};
-
-		if (getView) {
-			view = getView();
-			viewRelation = view.getRelation(relation.relationKey);
-		};
+		const view = getView ? getView() : null;
+		const viewRelation = this.getViewRelation();
 
 		let Name = null;
 		let EditorComponent = null;
@@ -244,21 +238,10 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		const { id, relation, viewType, recordId, getRecord, cellPosition, getView } = this.props;
 		const record = getRecord(recordId);
 		const cell = $(`#${id}`);
+		const viewRelation = this.getViewRelation();
+		const card = viewType == I.ViewType.Grid ? null : $(`#record-${record.id}`);
 
 		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
-
-		let view = null;
-		let viewRelation: any = {};
-		let card = null;
-		
-		if (getView) {
-			view = getView();
-			viewRelation = view.getRelation(relation.relationKey);
-		};
-
-		if (viewType != I.ViewType.Grid) {
-			card = $(`#record-${record.id}`);
-		};
 
 		if (isEditing) {
 			let value = this.value;
@@ -507,6 +490,16 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	onCompositionEnd () {
 		this.isComposition = false;
+	};
+
+	getViewRelation (): any {
+		const { relation, getView } = this.props;
+
+		if (!relation || !getView) {
+			return {};
+		};
+
+		return getView().getRelation(relation.relationKey) || {};
 	};
 
 });

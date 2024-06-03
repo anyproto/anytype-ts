@@ -408,6 +408,14 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 	
 	onClick (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (!item) {
+			this.props.close();
+			return;
+		};
+
 		if (item.arrow) {
 			return;
 		};
@@ -416,14 +424,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { data, classNameWrap } = param;
 		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall } = data;
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
-
-		e.preventDefault();
-		e.stopPropagation();
-
-		if (!item) {
-			close();
-			return;
-		};
 
 		if (item.id == 'add') {
 			menuStore.open(menuIdEdit, { 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, C, UtilCommon, UtilData, keyboard, focus, Storage } from 'Lib';
-import { DropTarget, ListChildren, Icon, SelectionTarget } from 'Component';
+import { I, C, UtilCommon, UtilData, keyboard, focus, Storage, UtilSpace } from 'Lib';
+import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject} from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore, detailStore } from 'Store';
 
@@ -83,6 +83,12 @@ const Block = observer(class Block extends React.Component<Props> {
 		const cd: string[] = [ 'wrapContent' ];
 		const setRef = ref => this.ref = ref;
 		const key = [ 'block', block.id, 'component' ].join(' ');
+		const participantId = blockStore.getParticipant(rootId, block.id);
+
+		let participant = null;
+		if (participantId) {
+			participant = UtilSpace.getParticipant(participantId);
+		};
 
 		let canSelect = !isInsideTable && !isSelectionDisabled;
 		let canDrop = !readonly && !isInsideTable;
@@ -355,6 +361,7 @@ const Block = observer(class Block extends React.Component<Props> {
 						onMouseDown={this.onMenuDown} 
 						onClick={this.onMenuClick} 
 					/>
+					{participant ? <IconObject object={participant} size={24} iconSize={18} /> : ''}
 				</div>
 				
 				<div className={cd.join(' ')}>

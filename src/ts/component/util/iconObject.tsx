@@ -30,6 +30,7 @@ interface Props {
 	noRemove?: boolean;
 	noClick?: boolean;
 	menuParam?: Partial<I.MenuParam>;
+	style?: any;
 	getObject?(): any;
 	onSelect?(id: string): void;
 	onUpload?(objectId: string): void;
@@ -43,6 +44,7 @@ const LAYOUT_EMOJI = [
 	I.ObjectLayout.Page, 
 	I.ObjectLayout.Type,
 	I.ObjectLayout.SpaceView,
+	I.ObjectLayout.Human,
 ].concat(UtilObject.getSetLayouts());
 
 const IconSize = {
@@ -132,6 +134,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		tooltipY: I.MenuDirection.Bottom,
 		color: 'grey',
 		menuParam: {},
+		style: {},
 	};
 
 	constructor (props: Props) {
@@ -144,7 +147,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	render () {
-		const { className, size, canEdit, forceLetter } = this.props;
+		const { className, size, canEdit, forceLetter, style } = this.props;
 		const { theme } = commonStore;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
@@ -307,6 +310,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 				draggable={true}
+				style={style}
 				onDragStart={(e: any) => { 
 					e.preventDefault(); 
 					e.stopPropagation(); 
@@ -399,18 +403,18 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 		const { id, offsetX, offsetY, onSelect, onUpload, noRemove, menuParam } = this.props;
 		const object = this.getObject();
-		const { iconEmoji, iconImage, layout } = object;
-		const noGallery = this.props.noGallery || (layout == I.ObjectLayout.SpaceView);
-		const noUpload = this.props.noUpload || (layout == I.ObjectLayout.Type);
+		const noGallery = this.props.noGallery || [ I.ObjectLayout.SpaceView, I.ObjectLayout.Human ].includes(object.layout);
+		const noUpload = this.props.noUpload || [ I.ObjectLayout.Type ].includes(object.layout);
 
 		menuStore.open('smile', { 
 			element: `#${id}`,
 			offsetX,
 			offsetY,
 			data: {
+				value: (object.iconEmoji || object.iconImage || ''),
 				noGallery,
 				noUpload,
-				noRemove: noRemove || !(iconEmoji || iconImage),
+				noRemove,
 				onSelect: (icon: string) => {
 					if (onSelect) {
 						onSelect(icon);

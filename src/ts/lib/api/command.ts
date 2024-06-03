@@ -1161,10 +1161,6 @@ export const HistoryShowVersion = (objectId: string, versionId: string, callBack
 	request.setVersionid(versionId);
 
 	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
-		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, '', message.objectView);
-		};
-
 		if (callBack) {
 			callBack(message);
 		};
@@ -1188,6 +1184,17 @@ export const HistoryGetVersions = (objectId: string, lastVersionId: string, limi
 	request.setLimit(limit);
 
 	dispatcher.request(HistoryGetVersions.name, request, callBack);
+};
+
+export const HistoryDiffVersions = (objectId: string, spaceId: string, current: string, previous: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.DiffVersions.Request();
+
+	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
+	request.setCurrentversion(current);
+	request.setPreviousversion(previous);
+
+	dispatcher.request(HistoryDiffVersions.name, request, callBack);
 };
 
 // ---------------------- OBJECT TYPE ---------------------- //

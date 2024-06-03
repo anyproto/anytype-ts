@@ -307,7 +307,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		};
 		
 		const { rootId, block } = this.props;
-		const { id } = block;
+		const { id, fields } = block;
 		const node = $(this.node);
 		const wrap = node.find('.wrap');
 		
@@ -328,7 +328,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		this.height = 0;
 
 		C.BlockListSetFields(rootId, [
-			{ blockId: id, fields: { width: w } },
+			{ blockId: id, fields: { ...fields, width: w } },
 		]);
 	};
 

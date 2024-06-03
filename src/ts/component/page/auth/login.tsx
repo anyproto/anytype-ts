@@ -26,7 +26,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCancel = this.onCancel.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyDownPhrase = this.onKeyDownPhrase.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.canSubmit = this.canSubmit.bind(this);
@@ -39,7 +38,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const length = accounts.length;
 		
         return (
-			<div ref={ref => this.node = ref} onKeyDown={this.onKeyDown}>
+			<div ref={ref => this.node = ref}>
 				<Header {...this.props} component="authIndex" />
 				<Icon className="arrow back" onClick={this.onCancel} />
 				
@@ -173,12 +172,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.refSubmit.setDisabled(!this.canSubmit());
 	};
 
-	canSubmit () {
-		return this.refPhrase.getValue().length;
-	};
-
-	onKeyDown (e: React.KeyboardEvent) {
-		keyboard.shortcut('enter', e, () => this.onSubmit(e));
+	canSubmit (): boolean {
+		return this.refPhrase.getValue().split(' ').length == Constant.limit.phrase.word;
 	};
 
 	onKeyDownPhrase (e: React.KeyboardEvent) {
@@ -188,6 +183,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			this.refPhrase?.setError(false);
 			this.setState({ error: '' });
 		};
+
+		keyboard.shortcut('enter', e, () => this.onSubmit(e));
 	};
 	
 	onCancel () {

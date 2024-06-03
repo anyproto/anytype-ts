@@ -169,15 +169,13 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 							icon="store" 
 							onClick={this.onLibrary} 
 						/>
-						{canWrite ? (
-							<Button 
-								text={translate('widgetBin')}
-								color="" 
-								className="widget" 
-								icon="bin" 
-								onClick={this.onArchive} 
-							/>
-						) : ''}
+						<Button
+							text={translate('widgetBin')}
+							color=""
+							className="widget"
+							icon="bin"
+							onClick={this.onArchive}
+						/>
 					</DropTarget>
 
 					<div className="buttons">

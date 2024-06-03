@@ -21,7 +21,7 @@ class UtilCommon {
 			return '0';
 		};
 
-		return electron.currentWindow().windowId.toString();
+		return String(electron.currentWindow().windowId || '');
 	};
 
 	getGlobalConfig () {
@@ -885,9 +885,7 @@ class UtilCommon {
 
 		return DOMPurify.sanitize(s, { 
 			ADD_TAGS: tags,
-			ADD_ATTR: [
-				'contenteditable'
-			],
+			ADD_ATTR: [ 'contenteditable' ],
 			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 		});
 	};
@@ -943,6 +941,10 @@ class UtilCommon {
 
 	stripTags (s: string): string {
 		return String(s || '').replace(/<[^>]+>/g, '');
+	};
+
+	normalizeLineEndings (s: string) {
+		return String(s || '').replace(/\r\n?/g, '\n');
 	};
 
 };

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, UtilObject, UtilData, keyboard, translate } from 'Lib';
+import { I, UtilObject, UtilData, keyboard, translate, UtilSpace } from 'Lib';
 import { blockStore, detailStore, popupStore } from 'Store';
 import HeaderBanner from 'Component/page/elements/head/banner';
 const Constant = require('json/constant.json');
@@ -46,7 +46,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		let center = null;
 		let banner = I.BannerType.None;
 
-		if (object.isArchived) {
+		if (object.isArchived && UtilSpace.canMyParticipantWrite()) {
 			banner = I.BannerType.IsArchived;
 		} else
 		if (UtilObject.isTemplate(object.type)) {
@@ -145,26 +145,10 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	onRelation () {
-		const { isPopup, rootId, menuOpen } = this.props;
-		const cnw = [ 'fixed' ];
+		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'isArchived' ]);
 
-		if (!isPopup) {
-			cnw.push('fromHeader');
-		};
-
-		menuOpen('blockRelationView', '#button-header-relation', {
-			noFlipX: true,
-			noFlipY: true,
-			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.cell,
-			classNameWrap: cnw.join(' '),
-			data: {
-				isPopup,
-				rootId,
-				readonly: object.isArchived
-			},
-		});
+		this.props.onRelation({}, { readonly: object.isArchived });
 	};
 
 	updateTemplatesCnt () {

@@ -9,6 +9,7 @@ interface Props {
 	rootId: string;
 	placeholder?: string;
 	isContextMenuDisabled?: boolean;
+	readonly?: boolean;
 	onCreate?: () => void;
 };
 
@@ -37,11 +38,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	render (): any {
-		const { rootId, onCreate, isContextMenuDisabled } = this.props;
+		const { rootId, onCreate, isContextMenuDisabled, readonly } = this.props;
 		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
-		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowDetails = !readonly && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });

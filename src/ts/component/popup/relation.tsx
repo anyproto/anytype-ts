@@ -152,7 +152,6 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	loadDeps (callBack?: () => void) {
-		const types = [ I.RelationType.File, I.RelationType.Object, I.RelationType.Select, I.RelationType.MultiSelect ];
 		const cb = callBack || (() => {});
 
 		let depIds = [];
@@ -160,7 +159,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		for (const k in this.details) {
 			const relation = dbStore.getRelationByKey(k);
 
-			if (relation && types.includes(relation.format)) {
+			if (relation && Relation.isArrayType(relation.format)) {
 				depIds = depIds.concat(Relation.getArrayValue(this.details[k]));
 			};
 		};
@@ -191,14 +190,28 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 				const { relationKey } = relation;
 				const value = Relation.formatValue(relation, object[relationKey], false);
 
-				cnt[relationKey] = cnt[relationKey] || 1;
+				if (Relation.isArrayType(relation.format)) {
+					const tmp = [];
 
-				if (reference && (JSON.stringify(value) == JSON.stringify(reference[relationKey]))) {
-					cnt[relationKey]++;
-				};
+					value.forEach(id => {
+						cnt[relationKey] = cnt[relationKey] || {};
+						cnt[relationKey][id] = cnt[relationKey][id] || 0;
+						cnt[relationKey][id]++;
 
-				if (cnt[relationKey] == objects.length) {
-					this.details[relationKey] = value;
+						if (cnt[relationKey][id] == objects.length) {
+							tmp.push(id);
+						};
+					});
+
+					this.details[relationKey] = tmp;
+				} else {
+					cnt[relationKey] = cnt[relationKey] || 1;
+					if (reference && (JSON.stringify(value) == JSON.stringify(reference[relationKey]))) {
+						cnt[relationKey]++;
+					};
+					if (cnt[relationKey] == objects.length) {
+						this.details[relationKey] = value;
+					};
 				};
 
 				object[relationKey] = value;
@@ -211,7 +224,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	getRelationKeys (): string[] {
-		return UtilCommon.arrayUnique([ 'tag' ].concat(this.props.param.data.relationKeys || Constant.defaultRelationKeys));
+		return UtilCommon.arrayUnique([].concat(this.props.param.data.relationKeys || Constant.defaultRelationKeys));
 	};
 
 	getRelations (): any[] {
@@ -264,6 +277,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			onOpen: () => $(element).addClass('active'),
 			onClose: () => $(element).removeClass('active'),
 			data: {
+				menuIdEdit: 'blockRelationEdit',
 				skipKeys: this.getRelationKeys(),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					this.details[relation.relationKey] = Relation.formatValue(relation, null, true);
@@ -271,6 +285,8 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 					this.addRelationKeys.push(relation.relationKey);
 					this.loadObjects();
+
+					menuStore.close('relationSuggest');
 				},
 			}
 		});

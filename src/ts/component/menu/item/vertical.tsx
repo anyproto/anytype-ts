@@ -53,9 +53,6 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		if (readonly) {
 			cn.push('isReadonly');
 		};
-		if (readonly) {
-			cn.push('isReadonly');
-		};
 
 		let iconElement = null;
 		if (object) {
