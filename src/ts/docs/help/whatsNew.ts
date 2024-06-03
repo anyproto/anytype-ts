@@ -19,18 +19,18 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Wrapping up Spring with an Update 🌸 Presenting Batch Relation Editing`),
-	text(`You didn't think we'd let the waning days of Spring slip by before we snuck in another release, did you?`),
-	text(`This request has been a long-time coming, so it brings us great pleasure to present v1 of Batch Relation Editing!`),
+	title(`Spring Update 🌸 Batch Editing V1`),
+	text(`You didn't think we'd let Spring slip by before sneaking in a release, did you?`),
+	text(`This request has been a long-time coming, so it brings us great pleasure to present V1 of Batch Relation Editing!`),
 	text(`Wave goodbye to the days of tediously managing objects one by one. This new function allows you to add Tags and Relations to many Objects at a time, making it much quicker to organize your content and tidy-up your graph.`),
 
 	h2(`🌿 Quality-of-Life Improvements:`),
-	bullet(`<b>Batch Relation Editing:</b> Easily manage Tags and Relations across multiple objects 📋`),
+	bullet(`<b>Improved Global Search:</b> Highlights results, shows more total results, searches by text relations, blocks, tags, and statuses, and allows searching links & backlinks.`),
+	video(`40.5/3.mp4`),
+	bullet(`<b>Batch Relation Editing:</b> Easily manage Tags & Relations across multiple objects 📋`),
 	video(`40.5/1.mp4`),
 	bullet(`<b>Reuse Files:</b> Incorporate existing files within file blocks in the editor 📂 `),
 	video(`40.5/2.mp4`),
-	bullet(`<b>Improved Global Search:</b> Highlights results, shows more total results, searches by text relations, blocks, tags, and statuses, and allows searching links and backlinks.`),
-	video(`40.5/3.mp4`),
 	bullet(`<b>Keyboard shortcut: ${hl(`${cmd} + Enter`)} checks and unchecks checkboxes ✅ Thanks, ${link('https://github.com/anyproto/anytype-ts/pull/709', '@mikailcf')}!`),
 	bullet(`<b>Text Justification:</b> New option to justify text in blocks for better formatting 📄`),
 	img('40.5/4.png'),
@@ -38,6 +38,8 @@ export default [
 	bullet(`<b>Drag'n'Drop Widgets:</b> Improved widget headers and linked widgets for easier organization 🖱️ Thanks, ${link('https://community.anytype.io/t/drag-drop-not-working-for-sidebar-widgets-with-link-appearance/20195', '@siouso')}`),
 	bullet(`<b>Link Block:</b> Default link style has been changed to Card. Personalize this behaviour in Settings 🔗`),
 	img('40.5/5.png'),
+	bullet(`<b>Version History: </b> Now available in Sets & Collections with a new design that groups changes by Space members and edit time, and highlights changes in the Object 📝🔄`),
+	
 	bullet(`<b>Gallery View Adjustment:</b> Better visual experience with fewer cards in inline set columns 🎨 Thanks, ${link('https://community.anytype.io/t/change-dynamically-the-width-of-gallery-items-when-on-2col-layout/15623', '@Eban')}`),
 	bullet(`<b>Library:</b> now has options to sort 📚`),
 	img('40.5/6.png'),
