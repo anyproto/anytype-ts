@@ -267,10 +267,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockSetDiv':
 			case 'BlockSetLink':
 			case 'BlockSetFields': {
-				elements = elements.concat([
-					{ type: I.DiffType.None, element: `#block-${data.id}` },
-					{ type: I.DiffType.Change, element: `#block-${data.id} > .wrapContent` },
-				]);
+				elements = elements.concat(this.getBlockChangeElements(data.id));
 				break;
 			};
 
@@ -352,11 +349,28 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					elements.push({ type: I.DiffType.Change, element: `#block-${Constant.blockId.featured}` });
 				};
 
+				if (type == 'ObjectDetailsAmend') {
+					for (const k in data.details) {
+						const blocks = blockStore.getBlocks(rootId, it => it.isRelation() && (it.content.key == k));
+
+						blocks.forEach(it => {
+							elements = elements.concat(this.getBlockChangeElements(it.id))
+						});
+					};
+				};
+
 				break;
 			};
 		};
 
 		return elements;
+	};
+
+	getBlockChangeElements (id: string) {
+		return [
+			{ type: I.DiffType.None, element: `#block-${id}` },
+			{ type: I.DiffType.Change, element: `#block-${id} > .wrapContent` },
+		];
 	};
 
 	resize () {
