@@ -45,7 +45,7 @@
                     .icon { width: 20px; height: 20px; }
                     .icon.syncing { background-image: url('~img/icon/menu/syncStatus/loading.svg'); transform: translateZ(0); animation: rotate 0.8s infinite linear; }
                     .icon.synced { background-image: url('~img/icon/menu/syncStatus/ok.svg'); }
-                    .icon.error { background-image: url('~img/icon/menu/syncStatus/failed.svg'); }
+                    .icon.error { background-image: url('~img/icon/menu/syncStatus/failed.svg'); display: block; margin: 0; }
                     .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); opacity: 0; position: static; margin: 0px; }
                 }
             }

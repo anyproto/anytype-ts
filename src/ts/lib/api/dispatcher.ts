@@ -971,6 +971,7 @@ class Dispatcher {
 						status: data.getStatus(),
 						syncingCounter: data.getSyncingobjectscounter()
 					};
+					authStore.syncStatusUpdate(status);
 					break;
 				};
 
