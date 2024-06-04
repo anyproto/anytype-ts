@@ -24,14 +24,11 @@ const Sync = observer(class Sync extends React.Component<Props> {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
 		const { id, className } = this.props;
-		const status = this.getStatus();
-		const color = UtilData.threadColor(status);
+		const { icon, name } = this.getStatus();
 		const cn = [ 'sync' ];
 
 		if (className) {
@@ -43,43 +40,43 @@ const Sync = observer(class Sync extends React.Component<Props> {
 				ref={node => this.node = node}
 				id={id} 
 				className={cn.join(' ')} 
-				onClick={this.onClick} 
-				onMouseEnter={this.onMouseEnter} 
-				onMouseLeave={this.onMouseLeave}
+				onClick={this.onClick}
 			>
-				{color ? <Icon className={UtilData.threadColor(status)} /> : ''}
-				<div className="name">{translate(`threadStatus${status}`)}</div>
+				<Icon className={icon} />
+				{name ? <div className="name">{name}</div> : ''}
 			</div>
 		);
 	};
 
 	onClick (e: any) {
 		const { onClick } = this.props;
-		const status = this.getStatus();
 
-		if (status == I.ThreadStatus.Incompatible) {
-			UtilCommon.onErrorUpdate();
-		} else
 		if (onClick) {
 			onClick(e);
 		};
 	};
 
-	onMouseEnter () {
-		const node = $(this.node);
-		const status = this.getStatus();
+	getStatus (): any {
+		const syncData = authStore.syncData;
+		const { status, network, error } = syncData;
 
-		if (status) {
-			Preview.tooltipShow({ text: translate(`threadStatus${status}Tooltip`), element: node, typeY: I.MenuDirection.Bottom });
+		let icon: string;
+		let name = '';
+
+		if (network == I.SyncStatusNetwork.LocalOnly) {
+			icon = String(I.SyncStatusStatus.Offline).toLowerCase()
+		} else {
+			icon = I.SyncStatusStatus[status].toLowerCase()
+		}
+
+		if (status == I.SyncStatusStatus.Error) {
+			name = translate(`syncButtonNameError${error}`);
+		} else
+		if (status == I.SyncStatusStatus.Offline) {
+			name = translate(`syncButtonNameOffline`);
 		};
-	};
-	
-	onMouseLeave () {
-		Preview.tooltipHide(false);
-	};
 
-	getStatus () {
-		return UtilData.getThreadStatus(this.props.rootId, 'summary');
+		return { icon, name };
 	};
 
 });

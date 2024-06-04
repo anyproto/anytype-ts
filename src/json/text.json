@@ -1519,6 +1519,11 @@
 	"menuQuickCapturePin": "Pin on top",
 	"menuQuickCaptureUnpin": "Unpin",
 
+	"syncButtonNameError1": "Storage limit reached",
+	"syncButtonNameError2": "Incompatible version",
+	"syncButtonNameError3": "No access",
+	"syncButtonNameOffline": "No internet",
+
 	"menuSyncStatusTitle": "Sync status",
 
 	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
@@ -1528,9 +1533,9 @@
 	"menuSyncStatusInfoNetworkMessageSynced": "End-to-end encrypted",
 	"menuSyncStatusInfoNetworkMessageSyncing": "%s %s syncing...",
 
-	"menuSyncStatusInfoNetworkMessageErrorNetwork": "No access to the space",
-	"menuSyncStatusInfoNetworkMessageErrorVersion": "Incompatible version",
-	"menuSyncStatusInfoNetworkMessageErrorLimit": "Storage limit reached",
+	"menuSyncStatusInfoNetworkMessageError1": "Storage limit reached",
+	"menuSyncStatusInfoNetworkMessageError2": "Incompatible version",
+	"menuSyncStatusInfoNetworkMessageError3": "No access to the space",
 	"menuSyncStatusInfoNetworkMessageErrorUpdateApp": "Update the app",
 	"menuSyncStatusInfoNetworkMessageErrorSeeMembership": "See membership plans",
 

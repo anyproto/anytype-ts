@@ -22,9 +22,6 @@ import MenuSearchObject from './search/object';
 import MenuPreviewObject from './preview/object';
 import MenuPreviewLatex from './preview/latex';
 
-import MenuThreadList from './thread/list';
-import MenuThreadStatus from './thread/status';
-
 import MenuBlockContext from './block/context';
 import MenuBlockStyle from './block/style';
 import MenuBlockAdd from './block/add';
@@ -104,9 +101,6 @@ const Components: any = {
 
 	previewObject:			 MenuPreviewObject,
 	previewLatex:			 MenuPreviewLatex,
-
-	threadList:				 MenuThreadList,
-	threadStatus:			 MenuThreadStatus,
 	
 	blockContext:			 MenuBlockContext,
 	blockAction:			 MenuBlockAction,

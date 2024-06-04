@@ -260,8 +260,13 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	getIcons () {
 		const iconNetwork = this.getIconNetwork();
+		const iconP2P = this.getIconP2P();
 
 		return [ iconNetwork ];
+	};
+
+	getIconP2P () {
+		return {};
 	};
 
 	getIconNetwork () {
@@ -299,21 +304,13 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					};
 				} else
 				if (isError) {
-					switch (error) {
-						case I.SyncStatusError.NetworkError: {
-							message = translate('menuSyncStatusInfoNetworkMessageErrorNetwork');
-							break;
-						};
-						case I.SyncStatusError.IncompatibleVersion: {
-							message = translate('menuSyncStatusInfoNetworkMessageErrorVersion');
-							buttons.push({ id: 'updateApp', name: translate('menuSyncStatusInfoNetworkMessageErrorUpdateApp') });
-							break;
-						};
-						case I.SyncStatusError.StorageLimitExceed: {
-							message = translate('menuSyncStatusInfoNetworkMessageErrorLimit');
-							buttons.push({ id: 'upgradeMembership', name: translate('menuSyncStatusInfoNetworkMessageErrorSeeMembership') });
-							break;
-						};
+					message = translate(`menuSyncStatusInfoNetworkMessageError${error}`);
+
+					if (error == I.SyncStatusError.IncompatibleVersion) {
+						buttons.push({ id: 'updateApp', name: translate('menuSyncStatusInfoNetworkMessageErrorUpdateApp') });
+					} else
+					if (error == I.SyncStatusError.StorageLimitExceed) {
+						buttons.push({ id: 'upgradeMembership', name: translate('menuSyncStatusInfoNetworkMessageErrorSeeMembership') });
 					};
 				} else {
 					message = translate('menuSyncStatusInfoNetworkMessageOffline');

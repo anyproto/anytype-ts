@@ -118,18 +118,6 @@ class UtilData {
 		return String(I.CardSize[v]).toLowerCase();
 	};
 
-	threadColor (s: I.ThreadStatus) {
-		let c = '';
-		switch (s) {
-			default: c = ''; break;
-			case I.ThreadStatus.Syncing: c = 'orange'; break;
-			case I.ThreadStatus.Failed: 
-			case I.ThreadStatus.Incompatible: c = 'red'; break;
-			case I.ThreadStatus.Synced: c = 'green'; break;
-		};
-		return c;
-	};
-
 	diffClass (t: I.DiffType): string {
 		let c = '';
 		switch (t) {
@@ -923,53 +911,6 @@ class UtilData {
 			};
 		});
 	};
-
-	getThreadStatus (rootId: string, key: string) {
-		const { account } = authStore;
-
-		if (!account) {
-			return I.ThreadStatus.Unknown;
-		};
-
-		const { info } = account || {};
-		const thread = authStore.threadGet(rootId);
-		const { summary } = thread;
-
-		if (!info.networkId) {
-			return I.ThreadStatus.Local;
-		};
-
-		if (!summary) {
-			return I.ThreadStatus.Unknown;
-		};
-
-		return (thread[key] || {}).status || I.ThreadStatus.Unknown;
-	};
-
-	getNetworkName (): string {
-		const { account } = authStore;
-		const { info } = account;
-
-		let ret = '';
-		switch (info.networkId) {
-			default:
-				ret = translate('menuThreadListSelf');
-				break;
-
-			case Constant.networkId.production:
-				ret = translate('menuThreadListProduction');
-				break;
-
-			case Constant.networkId.development:
-				ret = translate('menuThreadListDevelopment');
-				break;
-
-			case '':
-				ret = translate('menuThreadListLocal');
-				break;
-		};
-		return ret;
-	}
 
 	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
 		if (!this.isAnytypeNetwork()) {

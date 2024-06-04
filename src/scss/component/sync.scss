@@ -1,14 +1,17 @@
 @import "~scss/_mixins";
 
 .sync { 
-	height: 18px; display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary); background: var(--color-shape-tertiary); 
-	border-radius: 4px; padding: 0px 6px; gap: 0px 4px;
+	height: 28px; min-width: 28px; display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary);
+	border-radius: 4px; gap: 0px 8px;
 }
+.sync:hover,
+.sync.hover { background: var(--color-shape-highlight-medium); }
 .sync {
-	.icon { width: 8px; height: 8px; }
-	.icon.green { background-image: url('~img/icon/status/green.svg'); }
-	.icon.orange { background-image: url('~img/icon/status/orange.svg'); }
-	.icon.red { background-image: url('~img/icon/status/red.svg'); }
+	.icon { width: 8px; height: 8px; margin-left: 10px; background-image: url('~img/icon/syncStatus/offline.svg'); }
+	.icon:hover { background-color: transparent; }
+	.icon.synced { background-image: url('~img/icon/syncStatus/synced.svg'); }
+	.icon.syncing { background-image: url('~img/icon/syncStatus/syncing.svg'); width: 28px; height: 28px; margin-left: 0px; background-size: 28px; }
+	.icon.error { background-image: url('~img/icon/syncStatus/error.svg'); display: block; }
 
-	.name { @include text-overflow-nw; }
+	.name { @include text-overflow-nw; margin-right: 10px; }
 }
