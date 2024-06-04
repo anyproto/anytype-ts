@@ -56,6 +56,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		];
 		const filtersObject: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Option },
 		];
 
 		return (
