@@ -325,6 +325,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				break;
 			};
 
+			case 'ObjectRelationsAmend': {
+				elements.push({ type: I.DiffType.Change, element: '#button-header-relation' });
+				break;
+			};
+
 			case 'ObjectDetailsSet': 
 			case 'ObjectDetailsAmend': {
 				const rootId = this.getRootId();
