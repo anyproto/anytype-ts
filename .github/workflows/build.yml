@@ -151,12 +151,18 @@ jobs:
 
       - name: debug
         if: matrix.os != 'windows-latest'
-        run: ls -alh dist/
+        run: |
+          echo "list dist/:"
+          ls -alh dist/
+          echo "list artifacts/:"
+          ls -alh artifacts/
 
       - name: debug Windows
         if: matrix.os == 'windows-latest'
         shell: pwsh
-        run: Get-ChildItem -Path dist | Format-Table -Property Mode, LastWriteTime, Length, Name
+        run: |
+          Get-ChildItem -Path dist | Format-Table -Property Mode, LastWriteTime, Length, Name
+          Get-ChildItem -Path artifacts | Format-Table -Property Mode, LastWriteTime, Length, Name
 
       - name: Upload artifacts to HTTP server
         if: matrix.os != 'windows-latest'
