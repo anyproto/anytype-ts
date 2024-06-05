@@ -145,7 +145,7 @@ class Survey {
 
 	checkShared (type: I.SurveyType) {
 		const isComplete = this.isComplete(type);
-		if (isComplete) {
+		if (isComplete || this.isComplete(I.SurveyType.Multiplayer)) {
 			return;
 		};
 
@@ -155,13 +155,21 @@ class Survey {
 			return;
 		};
 
-		// Show this survey to 10% of users
-		if (!this.checkRandSeed(10)) {
-			Storage.setSurvey(type, { complete: true });
+		this.show(type);
+	};
+
+	checkMultiplayer (type: I.SurveyType) {
+		const isComplete = this.isComplete(type);
+		const timeRegister = this.getTimeRegister();
+		const surveyTime = timeRegister && (timeRegister >= UtilDate.now() - 86400 * 7);
+
+		if (isComplete || this.isComplete(I.SurveyType.Shared) || !surveyTime) {
 			return;
 		};
 
-		this.show(type);
+		if (this.checkRandSeed(30)) {
+			this.show(type);
+		};
 	};
 
 	checkRandSeed (percent: number) {
