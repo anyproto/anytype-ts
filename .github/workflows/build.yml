@@ -178,10 +178,11 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
-          cd artifacts
-          $files = Get-ChildItem -File
+          $files = Get-ChildItem -File artifacts
           foreach ($file in $files) {
-            curl.exe -H "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" -T $file.FullName "https://publish-releases.anytype.io/electron/${{ steps.release-version.outputs.RELEASE_VERSION }}/$($file.Name)"
+            $uploadUrl = "https://publish-releases.anytype.io/electron/${{ steps.release-version.outputs.RELEASE_VERSION }}/$($file.Name)"
+            echo "Uploading files to $uploadUrl"
+            curl.exe -H "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" -T $file.FullName $uploadUrl
           }
 
       - name: Delete old releases
