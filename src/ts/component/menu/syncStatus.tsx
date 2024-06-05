@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Title, Button, Icon, IconObject, ObjectName, Label } from 'Component';
-import { Action, I, translate, UtilObject, UtilData, UtilSpace, UtilFile, UtilCommon } from 'Lib';
+import { C, Action, I, translate, UtilObject, UtilData, UtilSpace, UtilFile, UtilCommon } from 'Lib';
 import { menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -266,6 +266,9 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIconP2P () {
+		C.DeviceListRequest((message) => {
+			console.log('MESSAGE: ', message)
+		});
 		return {};
 	};
 
