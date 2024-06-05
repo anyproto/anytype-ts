@@ -292,7 +292,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const templateType = dbStore.getTemplateType();
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Option ] },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
 		].concat(data.filters || []);
 
 		const sorts = [].concat(data.sorts || []);

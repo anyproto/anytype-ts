@@ -71,7 +71,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
 		const filtersObject: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Option },
 		];
 
 		if (!recommendedRelations.includes('rel-description')) {
