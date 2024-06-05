@@ -577,10 +577,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		if (!isInline) {
 			const maxWidth = cw - PADDING * 2;
-			const margin = width >= maxWidth ? (cw - maxWidth) / 2 : 0;
+			const margin = width >= maxWidth ? PADDING : 0;
 
-			scroll.css({ width: cw, marginLeft: -margin, paddingLeft: margin / 2 });
-			view.css({ width: width < maxWidth ? maxWidth : width + margin / 2 + size.margin + 4 });
+			scroll.css({ width: `calc(100% + ${PADDING * 2}px)`, marginLeft: -margin, paddingLeft: margin / 2 });
+
+			if (width > maxWidth) {
+				view.css({ width: width + size.margin });
+			};
 		} else 
 		if (parent && (parent.isPage() || parent.isLayoutDiv())) {
 			const wrapper = $('#editorWrapper');
