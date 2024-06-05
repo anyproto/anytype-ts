@@ -156,31 +156,30 @@ jobs:
       - name: debug Windows
         if: matrix.os == 'windows-latest'
         shell: pwsh
-        run: Get-ChildItem -Path dist -Recurse | Format-Table -Property Mode, LastWriteTime, Length, Name
-
-      - name: get release version
-        id: release-version
-        run: |
-          echo "$GITHUB_REF_NAME" | sed 's|^[a-zA-Z]\+|RELEASE_VERSION=|' >> $GITHUB_OUTPUT
+        run: Get-ChildItem -Path dist | Format-Table -Property Mode, LastWriteTime, Length, Name
 
       - name: Upload artifacts to HTTP server
         if: matrix.os != 'windows-latest'
         run: |
+          RELEASE_VERSION=$( echo "$GITHUB_REF_NAME" | sed 's|^[a-zA-Z]\+||')
           cd artifacts/
           for FILE in *; do
+            UPLOAD_URL="https://publish-releases.anytype.io/electron/${RELEASE_VERSION}/${FILE}"
+            echo "Uploading files to ${UPLOAD_URL}"
             curl \
               --header "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" \
               --upload-file ${FILE} \
-              https://publish-releases.anytype.io/electron/${{ steps.release-version.outputs.RELEASE_VERSION }}/${FILE}
+              ${UPLOAD_URL}
           done
 
       - name: Upload artifacts to HTTP server Windows
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
+          $releaseVersion = $env:GITHUB_REF_NAME -replace '^[a-zA-Z]+', ''
           $files = Get-ChildItem -File artifacts
           foreach ($file in $files) {
-            $uploadUrl = "https://publish-releases.anytype.io/electron/${{ steps.release-version.outputs.RELEASE_VERSION }}/$($file.Name)"
+            $uploadUrl = "https://publish-releases.anytype.io/electron/$releaseVersion/$($file.Name)"
             echo "Uploading files to $uploadUrl"
             curl.exe -H "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" -T $file.FullName $uploadUrl
           }
