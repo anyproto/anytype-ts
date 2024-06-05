@@ -179,7 +179,8 @@ jobs:
           $releaseVersion = $env:GITHUB_REF_NAME -replace '^[a-zA-Z]+', ''
           $files = Get-ChildItem -File artifacts
           foreach ($file in $files) {
-            $uploadUrl = "https://publish-releases.anytype.io/electron/$releaseVersion/$($file.Name)"
+            $encodedFileName = [System.Uri]::EscapeDataString($file.Name)
+            $uploadUrl = "https://publish-releases.anytype.io/electron/$releaseVersion/$encodedFileName"
             echo "Uploading files to $uploadUrl"
             curl.exe -H "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" -T $file.FullName $uploadUrl
           }
