@@ -232,11 +232,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			{ relationKey: 'syncDate', type: I.SortType.Desc },
 		];
 
-		UtilData.search({
+		UtilData.searchSubscribe({
+			subId: 'syncStatusObjectsList',
 			filters,
 			sorts,
 			keys: Constant.defaultRelationKeys.concat(Constant.syncStatusRelationKeys),
-			fullText: '',
 			offset: 0,
 			limit: 30,
 		}, (message: any) => {
@@ -354,7 +354,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getClassBySyncStatus (status: I.SyncStatusStatus) {
-		if (status == undefined) {
+		console.log('STATUS: ', status)
+		if (status == undefined || !I.SyncStatusStatus[status]) {
 			return '';
 		};
 		return I.SyncStatusStatus[status].toLowerCase();
