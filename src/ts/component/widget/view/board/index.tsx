@@ -61,6 +61,10 @@ const WidgetViewBoard = observer(class WidgetViewBoard extends React.Component<I
 		const { rootId, getView } = this.props;
 		const view = getView();
 
+		if (!view) {
+			return [];
+		};
+
 		return Dataview.getGroups(rootId, Constant.blockId.dataview, view.id, withHidden);
 	};
 

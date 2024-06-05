@@ -134,6 +134,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	getGroups (withHidden: boolean) {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
+		if (!view) {
+			return [];
+		};
 
 		return Dataview.getGroups(rootId, block.id, view.id, withHidden);
 	};

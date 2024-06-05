@@ -18,7 +18,6 @@
 				width: 24px; height: 24px; background-size: 20px; flex-shrink: 0px; background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); 
 				transition: $transitionAllCommon;
 			}
-			.icon.arrow:hover { background-color: var(--color-shape-highlight-medium); }
 
 			.cellContent {
 				.empty { display: block; color: var(--color-text-secondary); }
