@@ -180,8 +180,9 @@ jobs:
           $files = Get-ChildItem -File artifacts
           foreach ($file in $files) {
             $uploadUrl = "https://publish-releases.anytype.io/electron/$releaseVersion/$($file.Name)"
-            echo "Uploading files to $uploadUrl"
-            curl.exe -H "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" -T $file.FullName $uploadUrl
+            $encodedUploadUrl = [System.Uri]::EscapeDataString($uploadUrl)
+            echo "Uploading files to $encodedUploadUrl"
+            curl.exe -H "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" -T $file.FullName $encodedUploadUrl
           }
 
       - name: Delete old releases
