@@ -564,7 +564,6 @@
 				{
 					"provider": "generic",
 					"url": "https://publish-releases.anytype.io/electron",
-					"channel": "latest",
 					"requestHeaders": {
 						"Authorization": "Bearer ${PUBLISH_RELEASES_TOKEN}"
 					}
@@ -587,7 +586,6 @@
 				{
 					"provider": "generic",
 					"url": "https://publish-releases.anytype.io/electron",
-					"channel": "latest",
 					"requestHeaders": {
 						"Authorization": "Bearer ${PUBLISH_RELEASES_TOKEN}"
 					}
@@ -608,7 +606,6 @@
 				{
 					"provider": "generic",
 					"url": "https://publish-releases.anytype.io/electron",
-					"channel": "latest",
 					"requestHeaders": {
 						"Authorization": "Bearer ${PUBLISH_RELEASES_TOKEN}"
 					}
