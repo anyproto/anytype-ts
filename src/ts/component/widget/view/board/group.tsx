@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, UtilCommon, translate, Dataview, UtilObject, UtilData, Relation } from 'Lib';
+import { I, UtilCommon, translate, Dataview, UtilObject, UtilData } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import Cell from 'Component/block/dataview/cell';
+import Item from './item';
 
 const Constant = require('json/constant.json');
 
@@ -27,7 +28,7 @@ const Group = observer(class Group extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, id, getView, value } = this.props;
+		const { rootId, block, id, getView, value } = this.props;
 		const view = getView();
 		const subId = this.getSubId();
 		const items = this.getItems();
@@ -61,6 +62,16 @@ const Group = observer(class Group extends React.Component<Props> {
 						placeholder={translate('commonUncategorized')}
 					/>
 				</div>
+				<div className="items">
+					{items.map((item: any, index: number) => (
+						<Item 
+							{...this.props}
+							key={item.id} 
+							subId={subId}
+							id={item.id} 
+						/>
+					))}
+				</div>
 			</div>
 		);
 	};
@@ -74,7 +85,7 @@ const Group = observer(class Group extends React.Component<Props> {
 	};
 
 	load () {
-		const { id, getView, getObject, getViewLimit } = this.props;
+		const { id, getView, getObject, getViewLimit, value } = this.props;
 		const subId = this.getSubId(); 
 		const object = getObject();
 		const view = getView();
@@ -91,32 +102,10 @@ const Group = observer(class Group extends React.Component<Props> {
 
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+			Dataview.getGroupFilter(relation, value),
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const limit = getViewLimit();
-
-		const filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
-
-		let value = this.props.value;
-		switch (relation.format) {
-			default:
-				filter.condition = I.FilterCondition.Equal;
-				filter.value = value;
-				break;
-
-			case I.RelationType.Select:
-				filter.condition = value ? I.FilterCondition.Equal : I.FilterCondition.Empty;
-				filter.value = value ? value : null;
-				break;
-
-			case I.RelationType.MultiSelect:
-				value = Relation.getArrayValue(value);
-				filter.condition = value.length ? I.FilterCondition.ExactIn : I.FilterCondition.Empty;
-				filter.value = value.length ? value : null;
-				break;
-		};
-
-		filters.push(filter);
 
 		UtilData.searchSubscribe({
 			subId,
