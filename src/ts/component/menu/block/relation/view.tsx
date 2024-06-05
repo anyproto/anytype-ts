@@ -39,7 +39,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const readonly = data.readonly || isLocked;
 		const diffKeys = this.getDiffKeys();
 
-
 		let allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		let allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		let allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -373,13 +372,23 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 	getDiffKeys (): string[] {
 		const { diff } = commonStore;
-		const types = [ 'ObjectDetailsSet', 'ObjectDetailsAmend' ];
+		const types = [ 'ObjectDetailsSet', 'ObjectDetailsAmend', 'ObjectRelationsAmend' ];
 		const events = diff.filter(it => types.includes(it.type));
 
 		let keys = [];
 
 		events.forEach(it => {
-			keys = keys.concat(Object.keys(it.data.details));
+			switch (it.type) {
+				default: {
+					keys = keys.concat(Object.keys(it.data.details || {}));
+					break;
+				};
+
+				case 'ObjectRelationsAmend': {
+					keys = keys.concat(it.data.relations.map(it => it.relationKey));
+					break;
+				};
+			};
 		});
 
 		return keys;

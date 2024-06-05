@@ -361,7 +361,7 @@ const Block = observer(class Block extends React.Component<Props> {
 						onMouseDown={this.onMenuDown} 
 						onClick={this.onMenuClick} 
 					/>
-					{participant ? <IconObject object={participant} size={18} /> : ''}
+					{participant ? <IconObject object={participant} size={24} iconSize={18} /> : ''}
 				</div>
 				
 				<div className={cd.join(' ')}>

@@ -18,11 +18,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	node = null;
 	refHeader = null;
-	scrollLeft = 0;
-	scrollRight = 0;
 	refSideLeft = null;
 	refSideRight = null;
-	refHead = null;
 	state = {
 		isLoading: false,
 	};
@@ -139,11 +136,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		Action.copyBlocks(rootId, ids, false);
 	};
 
-	onScrollLeft () {
-		this.scrollLeft = $(this.refSideLeft).scrollTop();
-		UtilCommon.getScrollContainer(this.props.isPopup).trigger('scroll');
-	};
-
 	renderDiff (previousId: string, diff: any[]) {
 		const node = $(this.node);
 
@@ -175,13 +167,12 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	scrollToElement (element: any) {
-		const { isPopup } = this.props;
 		const node = $(this.node);
 		const container = node.find('#historySideLeft');
 		const ch = container.height();
 		const no = element.offset().top;
 		const st = container.scrollTop();
-		const y = (isPopup ? (no - container.offset().top + st) : no) + ch / 2;
+		const y = no - container.offset().top + st + ch / 2;
 
 		container.scrollTop(Math.max(y, ch) - ch);
 	};
@@ -235,28 +226,38 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					break;
 				};
 
-				const marks = block.content.marks || [];
-				const newText = String(data.text || '');
-				const oldText = oldBlock.getText();
-				const diff = Diff.diffChars(oldText, newText);
+				let type = I.DiffType.None;
 
-				let from = 0;
-				for (const item of diff) {
-					if (item.removed) {
-						continue;
+				if (data.text !== null) {
+					const diff = Diff.diffChars(oldBlock.getText(), String(data.text || '')).filter(it => it.added);
+
+					if (diff.length) {
+						const marks = UtilCommon.objectCopy(block.content.marks || []);
+
+						let from = 0;
+						for (const item of diff) {
+							const to = from + item.count;
+
+							if (item.added) {
+								marks.push({ type: I.MarkType.Change, param: '', range: { from, to } });
+							};
+
+							from = to;
+						};
+
+						blockStore.updateContent(rootId, data.id, { marks });
+					} else {
+						type = I.DiffType.Change;
 					};
-
-					const to = from + item.count;
-
-					if (item.added) {
-						marks.push({ type: I.MarkType.Change, param: '', range: { from, to } });
-					};
-
-					from = to;
+				} else {
+					type = I.DiffType.Change;
 				};
 
-				blockStore.updateContent(rootId, data.id, { marks });
-				elements.push({ type: I.DiffType.None, element: `#block-${data.id}` });
+				if (type == I.DiffType.Change) {
+					elements = elements.concat(this.getBlockChangeElements(data.id));
+				} else {
+					elements.push({ type, element: `#block-${data.id}` });
+				};
 				break;
 			};
 
@@ -271,10 +272,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockSetDiv':
 			case 'BlockSetLink':
 			case 'BlockSetFields': {
-				elements = elements.concat([
-					{ type: I.DiffType.None, element: `#block-${data.id}` },
-					{ type: I.DiffType.Change, element: `#block-${data.id} > .wrapContent` },
-				]);
+				elements = elements.concat(this.getBlockChangeElements(data.id));
 				break;
 			};
 
@@ -327,6 +325,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				break;
 			};
 
+			case 'ObjectRelationsAmend': {
+				elements.push({ type: I.DiffType.Change, element: '#button-header-relation' });
+				break;
+			};
+
 			case 'ObjectDetailsSet': 
 			case 'ObjectDetailsAmend': {
 				const rootId = this.getRootId();
@@ -356,11 +359,28 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					elements.push({ type: I.DiffType.Change, element: `#block-${Constant.blockId.featured}` });
 				};
 
+				if (type == 'ObjectDetailsAmend') {
+					for (const k in data.details) {
+						const blocks = blockStore.getBlocks(rootId, it => it.isRelation() && (it.content.key == k));
+
+						blocks.forEach(it => {
+							elements = elements.concat(this.getBlockChangeElements(it.id))
+						});
+					};
+				};
+
 				break;
 			};
 		};
 
 		return elements;
+	};
+
+	getBlockChangeElements (id: string) {
+		return [
+			{ type: I.DiffType.None, element: `#block-${id}` },
+			{ type: I.DiffType.Change, element: `#block-${id} > .wrapContent` },
+		];
 	};
 
 	resize () {

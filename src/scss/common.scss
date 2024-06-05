@@ -103,8 +103,12 @@ html.platformWindows, html.platformLinux {
 .editableWrap { position: relative; }
 
 a { color: var(--color-text-primary); }
-markuphighlight { background: yellow !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
+
+markuphighlight { background: #b2dff9 !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
 markuphighlight.active { background: orange !important; }
+
+markupsearch { background: yellow !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
+markupsearch.active { background: orange !important; }
 
 .dropTarget.isOver.middle { background: var(--color-system-drop-zone) !important; }
 .dropTarget.isOver.top { box-shadow: 0px -2px 0px var(--color-system-accent-100); }

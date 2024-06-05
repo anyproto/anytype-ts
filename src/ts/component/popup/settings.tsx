@@ -260,6 +260,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { param } = this.props;
 		const { data } = param;
 		const { isSpace } = data;
+		const { isOnline } = commonStore;
+		const isAnytypeNetwork = UtilData.isAnytypeNetwork();
 
 		if (isSpace) {
 			return [
@@ -285,7 +287,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 				{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 			];
-			if (UtilData.isAnytypeNetwork()) {
+			if (isAnytypeNetwork && isOnline) {
 				settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') })
 			};
 
