@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, UtilDate, Dataview } from 'Lib';
+import { I, UtilDate } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 
 interface State {
@@ -141,10 +141,8 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	};
 
 	onClick (d: number, m: number, y: number) {
-		const { parent, rootId } = this.props;
-		const { viewId } = parent.content;
-		const blockId = Constant.blockId.dataview;
-		const view = Dataview.getView(rootId, blockId, viewId);
+		const { rootId, getView } = this.props;
+		const view = getView();
 		const element = `#day-${d}-${m}-${y}`;
 
 		menuStore.closeAll([ 'dataviewCalendarDay' ], () => {
@@ -158,7 +156,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 				onClose: () => $(element).removeClass('active'),
 				data: {
 					rootId,
-					blockId,
+					blockId: Constant.blockId.dataview,
 					relationKey: view.groupRelationKey,
 					d,
 					m, 
@@ -171,10 +169,8 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	};
 
 	getFilters (): I.Filter[] {
-		const { parent, rootId } = this.props;
-		const { viewId } = parent.content;
-		const blockId = Constant.blockId.dataview;
-		const view = Dataview.getView(rootId, blockId, viewId);
+		const { getView } = this.props;
+		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 
 		if (!relation) {

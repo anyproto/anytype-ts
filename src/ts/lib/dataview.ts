@@ -203,6 +203,72 @@ class Dataview {
 		return target ? target.layout == I.ObjectLayout.Collection : isCollection;
 	};
 
+	loadGroupList (rootId: string, blockId: string, viewId: string, object: any) {
+		const view = this.getView(rootId, blockId, viewId);
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		if (!view || !block) {
+			return;
+		};
+
+		const subId = dbStore.getGroupSubId(rootId, block.id, 'groups');
+		const isCollection = object.layout == I.ObjectLayout.Collection;
+
+		dbStore.groupsClear(rootId, block.id);
+
+		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+		if (!relation) {
+			return;
+		};
+
+		const groupOrder: any = {};
+		const el = block.content.groupOrder.find(it => it.viewId == view.id);
+
+		if (el) {
+			el.groups.forEach(it => groupOrder[it.groupId] = it);
+		};
+
+		C.ObjectGroupsSubscribe(commonStore.space, subId, view.groupRelationKey, view.filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const groups = (message.groups || []).map((it: any) => {
+				let bgColor = 'grey';
+				let value: any = it.value;
+				let option: any = null;
+
+				switch (relation.format) {
+					case I.RelationType.MultiSelect:
+						value = Relation.getArrayValue(value);
+						if (value.length) {
+							option = detailStore.get(Constant.subId.option, value[0]);
+							bgColor = option?.color;
+						};
+						break;
+
+					case I.RelationType.Select:
+						option = detailStore.get(Constant.subId.option, value);
+						bgColor = option?.color;
+						break;
+				};
+
+				it.isHidden = groupOrder[it.id]?.isHidden;
+				it.bgColor = groupOrder[it.id]?.bgColor || bgColor;
+				return it;
+			});
+
+			dbStore.groupsSet(rootId, block.id, this.applyGroupOrder(rootId, block.id, view.id, groups));
+		});
+	};
+
+	getGroups (rootId: string, blockId: string, viewId: string, withHidden: boolean) {
+		const groups = UtilCommon.objectCopy(dbStore.getGroups(rootId, blockId));
+		const ret = this.applyGroupOrder(rootId, blockId, viewId, groups);
+
+		return !withHidden ? ret.filter(it => !it.isHidden) : ret;
+	};
+
 	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
 		const block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {
@@ -233,6 +299,34 @@ class Dataview {
 		};
 
 		blockStore.updateContent(rootId, blockId, { groupOrder });
+	};
+
+	applyGroupOrder (rootId: string, blockId: string, viewId: string, groups: any[]) {
+		if (!viewId || !groups.length) {
+			return groups;
+		};
+
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return groups;
+		};
+
+		const el = block.content.groupOrder.find(it => it.viewId == viewId);
+		const groupOrder: any = {};
+
+		if (el) {
+			el.groups.forEach(it => groupOrder[it.groupId] = it);
+		};
+
+		groups.sort((c1: any, c2: any) => {
+			const idx1 = groupOrder[c1.id]?.index;
+			const idx2 = groupOrder[c2.id]?.index;
+			if (idx1 > idx2) return 1;
+			if (idx1 < idx2) return -1;
+			return 0;
+		});
+
+		return groups;
 	};
 
 	applyObjectOrder (rootId: string, blockId: string, viewId: string, groupId: string, records: string[]): string[] {

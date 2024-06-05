@@ -27,8 +27,12 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	constructor (props: I.WidgetComponent) {
 		super(props);
 		
+		this.getView = this.getView.bind(this);
+		this.getViewType = this.getViewType.bind(this);
 		this.getSubId = this.getSubId.bind(this);
 		this.getRecords = this.getRecords.bind(this);
+		this.getObject = this.getObject.bind(this);
+		this.getLimit = this.getLimit.bind(this);
 		this.reload = this.reload.bind(this);
 	};
 
@@ -44,12 +48,16 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const views = dbStore.getViews(rootId, Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
 		const viewType = this.getViewType();
 		const cn = [ 'innerWrap' ];
-		const showEmpty = ![ I.ViewType.Calendar ].includes(viewType);
+		const showEmpty = ![ I.ViewType.Calendar, I.ViewType.Board ].includes(viewType);
 		const props = {
 			...this.props,
 			ref: ref => this.refChild = ref,
-			getRecords: this.getRecords,
 			reload: this.reload,
+			getRecords: this.getRecords,
+			getView: this.getView,
+			getViewType: this.getViewType,
+			getObject: this.getObject,
+			getViewLimit: this.getLimit,
 			rootId,
 			subId,
 		};
@@ -76,8 +84,6 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 				/>
 			);
 		};
-
-
 
 		if (!isLoading && !length && showEmpty) {
 			content = <Label className="empty" text={translate('widgetEmptyLabel')} />;
@@ -117,8 +123,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	componentDidMount (): void {
-		const { parent, block, isSystemTarget, getData } = this.props;
-		const { viewId } = parent.content;
+		const { block, isSystemTarget, getData } = this.props;
 		const { targetBlockId } = block.content;
 
 		if (isSystemTarget()) {
@@ -129,7 +134,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			C.ObjectShow(targetBlockId, this.getTraceId(), UtilRouter.getRouteSpaceId(), () => {
 				this.setState({ isLoading: false });
 
-				const view = Dataview.getView(this.getRootId(), Constant.blockId.dataview, viewId);
+				const view = this.getView();
 				if (view) {
 					this.load(view.id);
 				};
@@ -140,8 +145,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	componentDidUpdate (): void {
 		const { parent, isSystemTarget } = this.props;
 		const { viewId } = parent.content;
-		const rootId = this.getRootId();
-		const view = Dataview.getView(rootId, Constant.blockId.dataview);
+		const view = Dataview.getView(this.getRootId(), Constant.blockId.dataview);
 
 		if (!isSystemTarget() && view && (viewId != view.id)) {
 			this.load(viewId);
@@ -211,13 +215,14 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	load (viewId: string) {
-		const { widgets } = blockStore;
-		const { block } = this.props;
-		const { targetBlockId } = block.content;
-		const object = detailStore.get(widgets, targetBlockId);
+		if (this.refChild && this.refChild.load) {
+			this.refChild.load();
+			return;
+		};
+
+		const object = this.getObject();
 		const setOf = Relation.getArrayValue(object.setOf);
-		const target = detailStore.get(widgets, targetBlockId);
-		const isCollection = target.layout == I.ObjectLayout.Collection;
+		const isCollection = object.layout == I.ObjectLayout.Collection;
 		const limit = this.getLimit();
 
 		if (!setOf.length && !isCollection) {
@@ -231,7 +236,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			sources: setOf,
 			limit,
 			filters: this.getFilters(),
-			collectionId: (isCollection ? targetBlockId : ''),
+			collectionId: (isCollection ? object.id : ''),
 			keys: Constant.sidebarRelationKeys,
 		});
 	};
@@ -262,6 +267,10 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	getViewType () {
 		const view = this.getView();
 		return view ? view.type : I.ViewType.List;
+	};
+
+	getObject () {
+		return detailStore.get(blockStore.widgets, this.props.parent.content.targetBlockId);
 	};
 
 	getLimit (): number {

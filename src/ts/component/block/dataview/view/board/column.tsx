@@ -64,7 +64,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		return (
 			<div 
 				ref={node => this.node = node} 
-				id={'column-' + id} 
+				id={`column-${id}`} 
 				className={cn.join(' ')}
 				{...UtilCommon.dataProps({ id })}
 			>

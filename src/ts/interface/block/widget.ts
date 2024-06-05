@@ -30,6 +30,10 @@ export interface WidgetViewComponent extends I.WidgetComponent {
 	subId: string;
 	parent?: I.Block;
 	getRecords: () => any[];
+	getView: () => I.View;
+	getViewType: () => I.ViewType;
+	getObject: () => any;
+	getViewLimit: () => number;
 	reload: () => void;
 };
 

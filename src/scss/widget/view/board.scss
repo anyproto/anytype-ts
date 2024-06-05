@@ -1,0 +1,29 @@
+@import "~scss/_mixins";
+
+.viewBoard {
+	.body { padding: 0px 8px; }
+
+	.group { }
+	.group {
+		.clickable { 
+			transition: $transitionAllCommon; display: flex; flex-direction: row; align-items: center; height: 28px; padding: 0px 8px; border-radius: 4px; 
+			gap: 0px 4px;
+		}
+		.clickable:hover { background-color: var(--color-shape-highlight-medium); }
+
+		.icon.arrow { 
+			width: 24px; height: 24px; background-size: 20px; flex-shrink: 0px; background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); 
+			transition: $transitionAllCommon;
+		}
+		.icon.arrow:hover { background-color: var(--color-shape-highlight-medium); }
+
+		.cellContent {
+			.empty { display: block; color: var(--color-text-secondary); }
+		}
+
+		.cellContent.c-select {
+			.empty { line-height: 18px; }
+			.wrap { height: 18px; }
+		}
+	}
+}
