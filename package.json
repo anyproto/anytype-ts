@@ -563,10 +563,7 @@
 			"publish": [
 				{
 					"provider": "generic",
-					"url": "https://publish-releases.anytype.io/electron",
-					"requestHeaders": {
-						"Authorization": "Bearer ${PUBLISH_RELEASES_TOKEN}"
-					}
+					"url": "https://publish-releases.anytype.io/electron"
 				}
 			],
 			"signIgnore": [
@@ -585,10 +582,7 @@
 			"publish": [
 				{
 					"provider": "generic",
-					"url": "https://publish-releases.anytype.io/electron",
-					"requestHeaders": {
-						"Authorization": "Bearer ${PUBLISH_RELEASES_TOKEN}"
-					}
+					"url": "https://publish-releases.anytype.io/electron"
 				}
 			]
 		},
@@ -605,10 +599,7 @@
 			"publish": [
 				{
 					"provider": "generic",
-					"url": "https://publish-releases.anytype.io/electron",
-					"requestHeaders": {
-						"Authorization": "Bearer ${PUBLISH_RELEASES_TOKEN}"
-					}
+					"url": "https://publish-releases.anytype.io/electron"
 				}
 			]
 		},
