@@ -151,25 +151,20 @@ jobs:
 
       - name: debug
         if: matrix.os != 'windows-latest'
-        run: |
-          echo "list dist/:"
-          ls -alh dist/
-          echo "list artifacts/:"
-          ls -alh artifacts/
+        run: ls -alh dist/
 
       - name: debug Windows
         if: matrix.os == 'windows-latest'
         shell: pwsh
-        run: |
-          Get-ChildItem -Path dist | Format-Table -Property Mode, LastWriteTime, Length, Name
-          Get-ChildItem -Path artifacts | Format-Table -Property Mode, LastWriteTime, Length, Name
+        run: Get-ChildItem -Path dist | Format-Table -Property Mode, LastWriteTime, Length, Name
 
       - name: Upload artifacts to HTTP server
         if: matrix.os != 'windows-latest'
         run: |
+          RELEASE_VERSION=$( echo "$GITHUB_REF_NAME" | sed 's|^[a-zA-Z]\+||')
           cd artifacts/
           for FILE in *; do
-            UPLOAD_URL="https://publish-releases.anytype.io/electron/${GITHUB_REF_NAME}/${FILE}"
+            UPLOAD_URL="https://publish-releases.anytype.io/electron/${RELEASE_VERSION}/${FILE}"
             echo "Uploading files to ${UPLOAD_URL}"
             curl \
               --header "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" \
@@ -181,7 +176,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
-          $releaseVersion = $env:GITHUB_REF_NAME
+          $releaseVersion = $env:GITHUB_REF_NAME -replace '^[a-zA-Z]+', ''
           $files = Get-ChildItem -File artifacts
           foreach ($file in $files) {
             $encodedFileName = [System.Uri]::EscapeDataString($file.Name)
