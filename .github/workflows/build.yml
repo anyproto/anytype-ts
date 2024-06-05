@@ -149,6 +149,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.TOKEN}}
 
+      - name: get release version
+        id: release-version
+        run: |
+          echo "$GITHUB_REF_NAME" | sed 's|^[a-zA-Z]\+|RELEASE_VERSION=|' >> $GITHUB_OUTPUT
+
       - name: Upload artifacts to HTTP server
         run: |
           cd artifacts/
@@ -156,8 +161,11 @@ jobs:
             curl \
               --header "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" \
               --upload-file ${FILE} \
-              https://publish-releases.anytype.io/electron/${FILE}
+              https://publish-releases.anytype.io/electron/${{ steps.release-version.outputs.RELEASE_VERSION }}/${FILE}
           done
+
+      - name: debug
+        run: ls -alh dist/
 
       - name: Delete old releases
         uses: dev-drprasad/delete-older-releases@v0.2.0
