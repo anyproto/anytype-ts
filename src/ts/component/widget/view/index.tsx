@@ -270,7 +270,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	getObject () {
-		return detailStore.get(blockStore.widgets, this.props.parent.content.targetBlockId);
+		return detailStore.get(blockStore.widgets, this.props.block.getTargetObjectId());
 	};
 
 	getLimit (): number {
