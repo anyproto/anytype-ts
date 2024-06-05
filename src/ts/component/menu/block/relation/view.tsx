@@ -380,7 +380,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		events.forEach(it => {
 			switch (it.type) {
 				default: {
-					keys = keys.concat(Object.keys(it.data.details));
+					keys = keys.concat(Object.keys(it.data.details || {}));
 					break;
 				};
 
