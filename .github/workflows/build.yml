@@ -167,7 +167,7 @@ jobs:
       - name: Upload artifacts to HTTP server
         if: matrix.os != 'windows-latest'
         run: |
-          RELEASE_VERSION=$( echo "$GITHUB_REF_NAME" | sed 's|^[a-zA-Z]\+||')
+          RELEASE_VERSION=$( echo "$GITHUB_REF_NAME" | perl -pe 's/^[a-zA-Z]+//' )
           cd artifacts/
           for FILE in *; do
             UPLOAD_URL="https://publish-releases.anytype.io/electron/${RELEASE_VERSION}/${FILE}"
