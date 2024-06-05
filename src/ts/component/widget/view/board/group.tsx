@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, UtilCommon, translate, Dataview, UtilObject, UtilData } from 'Lib';
+import { I, UtilCommon, translate, Dataview, UtilObject, UtilData, Storage } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import Cell from 'Component/block/dataview/cell';
 import Item from './item';
@@ -15,16 +15,12 @@ interface Props extends I.WidgetViewComponent {
 
 const Group = observer(class Group extends React.Component<Props> {
 
-	node: any = null;
-	cache: any = {};
-	width = 0;
-	columnWidth = 0;
-	columnCount = 0;
-	offset = 0;
+	node = null;
 
 	constructor (props: Props) {
 		super(props);
 
+		this.onToggle = this.onToggle.bind(this);
 	};
 
 	render () {
@@ -46,7 +42,7 @@ const Group = observer(class Group extends React.Component<Props> {
 				ref={node => this.node = node} 
 				className="group"
 			>
-				<div className="clickable">
+				<div id={`item-${id}`} className="clickable" onClick={this.onToggle}>
 					<Icon className="arrow" />
 					<Cell 
 						id={`board-head-${id}`} 
@@ -62,11 +58,12 @@ const Group = observer(class Group extends React.Component<Props> {
 						placeholder={translate('commonUncategorized')}
 					/>
 				</div>
-				<div className="items">
-					{items.map((item: any, index: number) => (
+
+				<div id={`item-${id}-children`} className="items">
+					{items.map(item => (
 						<Item 
 							{...this.props}
-							key={item.id} 
+							key={`widget-${block.id}-item-${item.id}`} 
 							subId={subId}
 							id={item.id} 
 						/>
@@ -78,6 +75,7 @@ const Group = observer(class Group extends React.Component<Props> {
 
 	componentDidMount () {
 		this.load();
+		this.initToggle();
 	};
 
 	componentWillUnmount () {
@@ -146,6 +144,59 @@ const Group = observer(class Group extends React.Component<Props> {
 		return Dataview.applyObjectOrder(rootId, Constant.blockId.dataview, parent.content.viewId, groupId, ids);
 	};
 
+	getToggleKey () {
+		return `widget${this.props.block.id}`;
+	};
+
+	initToggle () {
+		const { id } = this.props;
+		const subKey = this.getToggleKey();
+		const isOpen = Storage.checkToggle(subKey, id);
+
+		if (!isOpen) {
+			return;
+		};
+
+		const node = $(this.node);
+		const item = node.find(`#item-${id}`);
+		const children = node.find(`#item-${id}-children`);
+
+		item.addClass('isExpanded');
+		children.show();
+	};
+
+	onToggle () {
+		const { id } = this.props;
+		const subKey = this.getToggleKey();
+		const isOpen = Storage.checkToggle(subKey, id);
+		const node = $(this.node);
+		const item = node.find(`#item-${id}`);
+		const children = node.find(`#item-${id}-children`);
+
+		let height = 0;
+		if (isOpen) {
+			item.removeClass('isExpanded');
+
+			children.css({ overflow: 'visible', height: 'auto' });
+			height = children.height();
+			children.css({ overflow: 'hidden', height: height });
+
+			window.setTimeout(() => children.css({ height: 0 }), 15);
+			window.setTimeout(() => children.hide(), 215);
+		} else {
+			item.addClass('isExpanded');
+
+			children.show();
+			children.css({ overflow: 'visible', height: 'auto' });
+			height = children.height();
+
+			children.css({ overflow: 'hidden', height: 0 });
+			window.setTimeout(() => children.css({ height: height }), 15);
+			window.setTimeout(() => children.css({ overflow: 'visible', height: 'auto' }), 215);
+		};
+
+		Storage.setToggle(subKey, id, !isOpen);
+	};
 
 });
 

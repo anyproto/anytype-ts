@@ -8,8 +8,7 @@ import { I, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
 
 const Constant = require('json/constant.json');
 
-type Props = {
-	block: I.Block;
+interface Props extends I.WidgetViewComponent {
 	subId: string;
 	id: string;
 	isEditing?: boolean;
@@ -122,7 +121,12 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { subId, id } = this.props;
+		const { subId, id, getView } = this.props;
+		const view = getView();
+		if (!view) {
+			return;
+		};
+
 		const node = $(this.node);
 		const more = node.find('.icon.more');
 		const { x, y } = keyboard.mouse.page;
@@ -135,6 +139,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 				route: analytics.route.widget,
 				objectIds: [ id ],
 				subId,
+				relationKeys: Constant.defaultRelationKeys.concat(view.groupRelationKey),
 			},
 		};
 

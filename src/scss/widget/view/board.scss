@@ -29,6 +29,11 @@
 			}
 		}
 
+		.clickable.isExpanded {
+			.icon.arrow { transform: none; }
+		}
+
+		.items { display: none; transition: $transitionAllCommon; }
 		.items {
 			.item { padding: 0px 8px 0px 36px; position: relative; }
 			.item::before {
