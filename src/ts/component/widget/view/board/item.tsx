@@ -40,13 +40,8 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		const iconKey = `widget-icon-${block.id}-${id}`;
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const hasMore = UtilSpace.canMyParticipantWrite();
+		const more = hasMore ? <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} /> : null;
 
-		let more = null;
-
-		if (hasMore) {
-			more = <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />;
-		};
-		
 		let inner = (
 			<div className="inner" onMouseDown={this.onClick}>
 				<IconObject 
