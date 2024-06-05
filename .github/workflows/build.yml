@@ -150,7 +150,13 @@ jobs:
           GITHUB_TOKEN: ${{secrets.TOKEN}}
 
       - name: debug
+        if: matrix.os != 'windows-latest'
         run: ls -alh dist/
+
+      - name: debug Windows
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: Get-ChildItem -Path dist -Recurse | Format-Table -Property Mode, LastWriteTime, Length, Name
 
       - name: get release version
         id: release-version
