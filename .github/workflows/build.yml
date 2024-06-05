@@ -106,7 +106,6 @@ jobs:
           DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
           USE_HARD_LINKS: false
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
-          PUBLISH_RELEASES_TOKEN: ${{ secrets.PUBLISH_RELEASES_TOKEN }}
 
       - name: Build Front Other
         if: matrix.os != 'macos-12'
@@ -125,7 +124,6 @@ jobs:
           AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
-          PUBLISH_RELEASES_TOKEN: ${{ secrets.PUBLISH_RELEASES_TOKEN }}
 
       - name: Make artifacts dir
         run: |
@@ -150,6 +148,16 @@ jobs:
           files: "artifacts/**"
         env:
           GITHUB_TOKEN: ${{secrets.TOKEN}}
+
+      - name: Upload artifacts to HTTP server
+        run: |
+          cd artifacts/
+          for FILE in *; do
+            curl \
+              --header "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" \
+              --upload-file ${FILE} \
+              https://publish-releases.anytype.io/electron/${FILE}
+          done
 
       - name: Delete old releases
         uses: dev-drprasad/delete-older-releases@v0.2.0
