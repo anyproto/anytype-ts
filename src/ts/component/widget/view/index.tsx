@@ -34,6 +34,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		this.getObject = this.getObject.bind(this);
 		this.getLimit = this.getLimit.bind(this);
 		this.reload = this.reload.bind(this);
+		this.onChangeView = this.onChangeView.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -217,6 +218,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	load (viewId: string) {
 		if (this.refChild && this.refChild.load) {
 			this.refChild.load();
+			dbStore.metaSet(this.getSubId(), '', { viewId });
 			return;
 		};
 
@@ -293,7 +295,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		return limit;
 	};
 
-	onChangeView = (viewId: string): void => {
+	onChangeView (viewId: string) {
 		C.BlockWidgetSetViewId(blockStore.widgets, this.props.parent.id, viewId);
 	};
 
