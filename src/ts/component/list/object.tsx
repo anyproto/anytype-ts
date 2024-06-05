@@ -191,8 +191,11 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	getData (page: number, callBack?: (message: any) => void) {
-		const { subId, sources, filters } = this.props;
+		const { subId, sources } = this.props;
 		const offset = (page - 1) * LIMIT;
+		const filters = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+		].concat(this.props.filters || []);
 
 		dbStore.metaSet(subId, '', { offset });
 
