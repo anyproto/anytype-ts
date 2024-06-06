@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, keyboard, Storage, UtilObject, translate, UtilCommon, UtilSpace, analytics } from 'Lib';
-import { blockStore, dbStore, detailStore, menuStore } from 'Store';
+import { I, keyboard, Storage, translate, UtilCommon, UtilSpace, analytics } from 'Lib';
+import { blockStore, detailStore, menuStore } from 'Store';
 const Constant = require('json/constant.json');
 
 interface Props extends I.WidgetTreeItem {
-	block: I.Block;
 	index: number;
 	treeKey: string;
-	style?;
+	style?: any;
 	isEditing?: boolean;
 	isSection?: boolean;
 	onClick?(e: React.MouseEvent, props): void;
@@ -17,6 +16,7 @@ interface Props extends I.WidgetTreeItem {
 	setActive?(id: string): void;
 	getSubId?(id: string): string;
 	getSubKey?(): string;
+	onContext?(param: any): void;
 };
 
 const TreeItem = observer(class Node extends React.Component<Props> { 
@@ -145,32 +145,12 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id, parentId, getSubId } = this.props;
+		const { id, parentId, getSubId, onContext } = this.props;
 		const subId = getSubId(parentId);
 		const node = $(this.node);
-		const more = node.find('.icon.more');
-		const { x, y } = keyboard.mouse.page;
-		const menuParam: any = {
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			onOpen: () => node.addClass('active'),
-			onClose: () => node.removeClass('active'),
-			data: {
-				route: analytics.route.widget,
-				objectIds: [ id ],
-				subId,
-			},
-		};
+		const element = node.find('.icon.more');
 
-		if (withElement) {
-			menuParam.element = more;
-			menuParam.vertical = I.MenuDirection.Center;
-			menuParam.offsetX = 32;
-		} else {
-			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
-		};
-
-		menuStore.open('dataviewContext', menuParam);
+		onContext({ node, element, withElement, subId, objectId: id });
 	};
 
 	onToggle (e: React.MouseEvent): void {

@@ -112,37 +112,25 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { subId, id, getView } = this.props;
+		const { subId, id, getView, onContext } = this.props;
 		const view = getView();
 		if (!view) {
 			return;
 		};
 
 		const node = $(this.node);
-		const more = node.find('.icon.more');
-		const { x, y } = keyboard.mouse.page;
-		const menuParam: any = {
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			onOpen: () => node.addClass('active'),
-			onClose: () => node.removeClass('active'),
+		const element = node.find('.icon.more');
+
+		onContext({ 
+			node, 
+			element, 
+			withElement, 
+			subId, 
+			objectId: id, 
 			data: {
-				route: analytics.route.widget,
-				objectIds: [ id ],
-				subId,
 				relationKeys: Constant.defaultRelationKeys.concat(view.groupRelationKey),
 			},
-		};
-
-		if (withElement) {
-			menuParam.element = more;
-			menuParam.vertical = I.MenuDirection.Center;
-			menuParam.offsetX = 32;
-		} else {
-			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
-		};
-
-		menuStore.open('dataviewContext', menuParam);
+		});
 	};
 
 });

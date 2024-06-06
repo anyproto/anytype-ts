@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace } from 'Lib';
+import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace, keyboard } from 'Lib';
 import { blockStore, detailStore, menuStore, dbStore, commonStore } from 'Store';
 
 import WidgetSpace from './space';
@@ -43,6 +43,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.getLimit = this.getLimit.bind(this);
 		this.sortFavorite = this.sortFavorite.bind(this);
 		this.isPlusAllowed = this.isPlusAllowed.bind(this);
+		this.onContext = this.onContext.bind(this);
 	};
 
 	render () {
@@ -77,6 +78,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			getLimit: this.getLimit,
 			sortFavorite: this.sortFavorite,
 			addGroupLabels: this.addGroupLabels,
+			onContext: this.onContext,
 		};
 
 		if (className) {
@@ -795,6 +797,35 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		});
 
 		return groupedRecords;
+	};
+
+	onContext (param: any) {
+		const { node, element, withElement, subId, objectId, data } = param;
+
+		const menuParam: any = {
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			onOpen: () => node.addClass('active'),
+			onClose: () => node.removeClass('active'),
+			data: {
+				route: analytics.route.widget,
+				objectIds: [ objectId ],
+				subId,
+			},
+		};
+
+		menuParam.data = Object.assign(menuParam.data, data || {});
+
+		if (withElement) {
+			menuParam.element = element;
+			menuParam.vertical = I.MenuDirection.Center;
+			menuParam.offsetX = 32;
+		} else {
+			const { x, y } = keyboard.mouse.page;
+			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
+		};
+
+		menuStore.open('dataviewContext', menuParam);
 	};
 
 });

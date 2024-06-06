@@ -6,10 +6,10 @@ import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } fr
 import { blockStore, menuStore, detailStore } from 'Store';
 import { I, UtilCommon, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
+
 const Constant = require('json/constant.json');
 
-type Props = {
-	block: I.Block;
+interface Props extends I.WidgetViewComponent {
 	subId: string;
 	id: string;
 	index?: number;
@@ -173,31 +173,11 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { subId, id } = this.props;
+		const { subId, id, onContext } = this.props;
 		const node = $(this.node);
-		const more = node.find('.icon.more');
-		const { x, y } = keyboard.mouse.page;
-		const menuParam: any = {
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			onOpen: () => node.addClass('active'),
-			onClose: () => node.removeClass('active'),
-			data: {
-				route: analytics.route.widget,
-				objectIds: [ id ],
-				subId,
-			},
-		};
+		const element = node.find('.icon.more');
 
-		if (withElement) {
-			menuParam.element = more;
-			menuParam.vertical = I.MenuDirection.Center;
-			menuParam.offsetX = 32;
-		} else {
-			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
-		};
-
-		menuStore.open('dataviewContext', menuParam);
+		onContext({ node, element, withElement, subId, objectId: id });
 	};
 
 	resize () {

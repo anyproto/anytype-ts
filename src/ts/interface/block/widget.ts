@@ -13,7 +13,7 @@ export enum WidgetLayout {
 export interface WidgetComponent {
 	dataset?: any;
 	parent?: I.Block;
-	block: I.Block;
+	block?: I.Block;
 	isEditing?: boolean;
 	isPreview?: boolean;
 	isSystemTarget?: () => boolean;
@@ -23,6 +23,7 @@ export interface WidgetComponent {
 	getLimit?: (content: ContentWidget) => number;
 	sortFavorite?: (records: string[]) => string[];
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
+	onContext?: (param: any) => void;
 };
 
 export interface WidgetViewComponent extends I.WidgetComponent {
@@ -37,7 +38,7 @@ export interface WidgetViewComponent extends I.WidgetComponent {
 	reload: () => void;
 };
 
-export interface WidgetTreeItem {
+export interface WidgetTreeItem extends I.WidgetComponent {
 	id: string;
 	rootId: string; // the id of the root node (root node)
 	parentId: string; // the id of the parent node
