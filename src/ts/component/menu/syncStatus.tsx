@@ -266,7 +266,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIconP2P () {
-		C.DeviceListRequest((message) => {
+		C.DeviceList((message) => {
 			console.log('MESSAGE: ', message)
 		});
 		return {};

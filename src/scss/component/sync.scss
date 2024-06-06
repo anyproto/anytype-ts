@@ -1,5 +1,11 @@
 @import "~scss/_mixins";
 
+@keyframes syncing {
+	0% { width: 8px; height: 8px; margin: -4px 0px 0px -4px; opacity: .4; }
+	70% { width: 28px; height: 28px; margin: -14px 0px 0px -14px; opacity: 0; }
+	100% { width: 28px; height: 28px; margin: -14px 0px 0px -14px; opacity: 0; }
+};
+
 .sync { 
 	height: 28px; min-width: 28px; display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary);
 	border-radius: 4px; gap: 0px 8px;
@@ -9,9 +15,16 @@
 .sync {
 	.icon { width: 8px; height: 8px; margin-left: 10px; background-image: url('~img/icon/syncStatus/offline.svg'); }
 	.icon:hover { background-color: transparent; }
-	.icon.synced { background-image: url('~img/icon/syncStatus/synced.svg'); }
-	.icon.syncing { background-image: url('~img/icon/syncStatus/syncing.svg'); width: 28px; height: 28px; margin-left: 0px; background-size: 28px; }
 	.icon.error { background-image: url('~img/icon/syncStatus/error.svg'); display: block; }
+	.icon.synced,
+	.icon.syncing { background-image: url('~img/icon/syncStatus/synced.svg'); }
+	.icon.syncing::before,
+	.icon.syncing::after {
+		content: ''; @include pos-abs-mid; z-index: 0; margin: -4px 0px 0px -4px;
+		display: block; width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-lime);
+		animation: syncing 1.6s ease-out infinite;
+	}
+	.icon.syncing::after { animation-delay: 0.3s; }
 
 	.name { @include text-overflow-nw; margin-right: 10px; }
 }

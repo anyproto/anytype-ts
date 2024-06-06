@@ -2109,8 +2109,8 @@ export const BroadcastPayloadEvent = (payload: any, callBack?: (message: any) =>
 
 // ---------------------- DEVICES ---------------------- //
 
-export const DeviceListRequest = (callBack?: (message: any) => void) => {
+export const DeviceList = (callBack?: (message: any) => void) => {
 	const request = new Rpc.Device.List.Request();
 
-	dispatcher.request(DeviceListRequest.name, request, callBack);
+	dispatcher.request(DeviceList.name, request, callBack);
 };
