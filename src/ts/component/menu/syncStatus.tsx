@@ -232,7 +232,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			{ relationKey: 'syncDate', type: I.SortType.Desc },
 		];
 
-		UtilData.search({
+		UtilData.searchSubscribe({
 			subId: 'syncStatusObjectsList',
 			filters,
 			sorts,
