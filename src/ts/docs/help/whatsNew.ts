@@ -45,7 +45,7 @@ export default [
 	img('40.5/6.png'),
 
 	h2(`🛠️ Technical Updates:`),
-	bullet(`Electron updated to ${link('https://releases.electronjs.org/releases/stable', '30.0.7')}`),
+	bullet(`Electron updated to ${link('https://releases.electronjs.org/releases/stable', '30.1.0')}`),
 	bullet(`<b>Membership System:</b> All email domains now supported 📧 Thanks, @Afonso!`),
 	bullet(`<b>App Updates:</b> Now works even without logging in ⬆️`),
 
