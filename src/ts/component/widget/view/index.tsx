@@ -282,10 +282,6 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		let limit = getLimit(parent.content);
 
 		switch (viewType) {
-			default: {
-				break;
-			};
-
 			case I.ViewType.Calendar: {
 				limit = 0;
 				break;
