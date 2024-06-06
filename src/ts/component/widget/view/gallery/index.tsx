@@ -10,16 +10,10 @@ const WidgetViewGallery = observer(class WidgetViewGallery extends React.Compone
 
 	node = null;
 
-	constructor (props: I.WidgetViewComponent) {
-		super(props);
-	};
-
 	render (): React.ReactNode {
 		const { block, subId, getView } = this.props;
 		const view = getView();
 		const items = this.getItems();
-
-		console.log(items);
 
 		return (
 			<div ref={ref => this.node = ref} className="body">
