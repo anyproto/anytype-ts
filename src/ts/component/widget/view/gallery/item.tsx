@@ -24,9 +24,6 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 
 		this.onClick = this.onClick.bind(this);
 		this.onContext = this.onContext.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
@@ -54,9 +51,6 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 					size={16} 
 					iconSize={16}
 					canEdit={!isReadonly && !isArchived && allowedDetails} 
-					onSelect={this.onSelect} 
-					onUpload={this.onUpload} 
-					onCheckbox={this.onCheckbox} 
 					menuParam={{ 
 						className: 'fixed',
 						classNameWrap: 'fromSidebar',
@@ -148,21 +142,6 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		};
 
 		menuStore.open('dataviewContext', menuParam);
-	};
-
-	onSelect (icon: string) {
-		UtilObject.setIcon(this.props.id, icon, '');
-	};
-
-	onUpload (objectId: string) {
-		UtilObject.setIcon(this.props.id, '', objectId);
-	};
-
-	onCheckbox () {
-		const { subId, id } = this.props;
-		const object = detailStore.get(subId, id, []);
-
-		UtilObject.setDone(id, !object.done);
 	};
 
 	getCoverObject (): any {

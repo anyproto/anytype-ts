@@ -27,9 +27,6 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		super(props);
 
 		this.onToggle = this.onToggle.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
@@ -102,9 +99,6 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 						object={object} 
 						size={20} 
 						canEdit={!isReadonly && !isArchived && allowedDetails} 
-						onSelect={this.onSelect} 
-						onUpload={this.onUpload} 
-						onCheckbox={this.onCheckbox}
 						menuParam={{ 
 							className: 'fixed',
 							classNameWrap: 'fromSidebar',
@@ -188,21 +182,6 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 
 		onToggle(e, { ...this.props, details: object });
 		this.forceUpdate();
-	};
-
-	onSelect (icon: string) {
-		UtilObject.setIcon(this.props.id, icon, '');
-	};
-
-	onUpload (objectId: string) {
-		UtilObject.setIcon(this.props.id, '', objectId);
-	};
-
-	onCheckbox () {
-		const { id, parentId, getSubId } = this.props;
-		const object = detailStore.get(getSubId(parentId), id, Constant.sidebarRelationKeys);
-
-		UtilObject.setDone(id, !object.done);
 	};
 
 });

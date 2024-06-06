@@ -30,9 +30,6 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 
 		this.onClick = this.onClick.bind(this);
 		this.onContext = this.onContext.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
@@ -88,9 +85,6 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					size={isCompact ? 18 : 48} 
 					iconSize={isCompact ? 18 : 28}
 					canEdit={!isReadonly && !isArchived && allowedDetails} 
-					onSelect={this.onSelect} 
-					onUpload={this.onUpload} 
-					onCheckbox={this.onCheckbox} 
 					menuParam={{ 
 						className: 'fixed',
 						classNameWrap: 'fromSidebar',
@@ -204,21 +198,6 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		};
 
 		menuStore.open('dataviewContext', menuParam);
-	};
-
-	onSelect (icon: string) {
-		UtilObject.setIcon(this.props.id, icon, '');
-	};
-
-	onUpload (objectId: string) {
-		UtilObject.setIcon(this.props.id, '', objectId);
-	};
-
-	onCheckbox () {
-		const { subId, id } = this.props;
-		const object = detailStore.get(subId, id, []);
-
-		UtilObject.setDone(id, !object.done);
 	};
 
 	resize () {

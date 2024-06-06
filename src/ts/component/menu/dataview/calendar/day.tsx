@@ -8,14 +8,6 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	
 	n = 0;
 
-	constructor (props: I.Menu) {
-		super(props);
-
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
-	};
-
 	render () {
 		const { param, getId } = this.props;
 		const { data } = param;
@@ -51,9 +43,6 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 							object={item} 
 							size={16} 
 							canEdit={canEdit}
-							onSelect={icon => this.onSelect(item, icon)} 
-							onUpload={objectId => this.onUpload(item, objectId)} 
-							onCheckbox={() => this.onCheckbox(item)} 
 						/>
 					) : ''}
 					<ObjectName object={item} onMouseDown={e => this.onClick(e, item)} />
@@ -111,18 +100,6 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 
 	onClick (e: any, item: any) {
 		UtilObject.openPopup(item);
-	};
-
-	onSelect (item: any, icon: string) {
-		UtilObject.setIcon(item.id, icon, '');
-	};
-
-	onUpload (item: any, objectId: string) {
-		UtilObject.setIcon(item.id, '', objectId);
-	};
-
-	onCheckbox (item: any) {
-		UtilObject.setDone(item.id, !item.done);
 	};
 
 	getItems () {
