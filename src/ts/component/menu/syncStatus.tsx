@@ -155,11 +155,14 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		const { id } = item;
 		const { param } = this.props;
 		const { classNameWrap } = param;
-		const options = [
-			{ id: 'open', name: translate('commonOpen') },
-			{ id: 'archive', name: translate('commonDeleteImmediately'), isRed: true }
-		];
 		const itemNode = $(`#item-${id}`);
+		const options: any[] = [
+			{ id: 'open', name: translate('commonOpen') }
+		];
+
+		if (UtilSpace.canMyParticipantWrite()) {
+			options.push({ id: 'archive', name: translate('commonDeleteImmediately'), isRed: true });
+		};
 
 		itemNode.addClass('selected');
 		menuStore.open('select', {
@@ -241,7 +244,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			limit: 30,
 		}, (message: any) => {
 			if (message.error.code) {
-				this.setState({ isLoading: false });
 				return;
 			};
 
@@ -266,9 +268,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIconP2P () {
-		C.DeviceList((message) => {
-			console.log('MESSAGE: ', message)
-		});
+		// C.DeviceList((message) => {
+		// });
 		return {};
 	};
 
@@ -354,9 +355,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getClassBySyncStatus (status: I.SyncStatusStatus) {
-		console.log('STATUS: ', status)
-		if (status == undefined || !I.SyncStatusStatus[status]) {
-			return '';
+		if (!status) {
+			status = 0;
 		};
 		return I.SyncStatusStatus[status].toLowerCase();
 	};
