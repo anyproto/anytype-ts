@@ -308,7 +308,9 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					};
 				} else
 				if (isError) {
-					message = translate(`menuSyncStatusInfoNetworkMessageError${error}`);
+					if (error) {
+						message = translate(`menuSyncStatusInfoNetworkMessageError${error}`);
+					};
 
 					if (error == I.SyncStatusError.IncompatibleVersion) {
 						buttons.push({ id: 'updateApp', name: translate('menuSyncStatusInfoNetworkMessageErrorUpdateApp') });

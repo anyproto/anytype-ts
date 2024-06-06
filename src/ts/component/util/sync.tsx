@@ -69,7 +69,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 			icon = I.SyncStatusStatus[status].toLowerCase()
 		}
 
-		if (status == I.SyncStatusStatus.Error) {
+		if ((status == I.SyncStatusStatus.Error) && error) {
 			name = translate(`syncButtonNameError${error}`);
 		} else
 		if (status == I.SyncStatusStatus.Offline) {
