@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { ObjectName, Icon, IconObject, DropTarget } from 'Component';
-import { blockStore, menuStore, detailStore } from 'Store';
-import { I, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
+import { ObjectName, IconObject, DropTarget, Cover, MediaAudio, MediaVideo } from 'Component';
+import { blockStore, menuStore, detailStore, commonStore } from 'Store';
+import { I, UtilObject, keyboard, analytics, UtilSpace, Dataview } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -37,8 +37,12 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-		const hasMore = UtilSpace.canMyParticipantWrite();
-		const more = hasMore ? <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} /> : null;
+		const cn = [ 'item' ];
+		const cover = this.getCover();
+
+		if (cover) {
+			cn.push('withCover');
+		};
 
 		let icon = null;
 		if (!hideIcon) {
@@ -47,8 +51,8 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 					id={iconKey}
 					key={iconKey}
 					object={object} 
-					size={18} 
-					iconSize={18}
+					size={16} 
+					iconSize={16}
 					canEdit={!isReadonly && !isArchived && allowedDetails} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
@@ -63,11 +67,10 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 
 		let inner = (
 			<div className="inner" onMouseDown={this.onClick}>
-				{icon}
-				<ObjectName object={object} />
-
-				<div className="buttons">
-					{more}
+				{cover}
+				<div className="info">
+					{icon}
+					<ObjectName object={object} />
 				</div>
 			</div>
 		);
@@ -90,9 +93,8 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		return (
 			<div
 				ref={node => this.node = node}
-				className="item"
-				key={object.id}
-				onContextMenu={e => this.onContext(e, false)}
+				className={cn.join(' ')}
+				onContextMenu={this.onContext}
 			>
 				{inner}
 			</div>
@@ -114,7 +116,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		analytics.event('OpenSidebarObject');
 	};
 
-	onContext (e: React.SyntheticEvent, withElement: boolean) {
+	onContext (e: React.MouseEvent) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -124,28 +126,25 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 			return;
 		};
 
+		const canWrite = UtilSpace.canMyParticipantWrite();
+		if (!canWrite) {
+			return;
+		};
+
 		const node = $(this.node);
-		const more = node.find('.icon.more');
-		const { x, y } = keyboard.mouse.page;
 		const menuParam: any = {
+			element: node,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
+			offsetX: node.outerWidth(true),
+			vertical: I.MenuDirection.Center,
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
 			data: {
 				route: analytics.route.widget,
 				objectIds: [ id ],
 				subId,
-				relationKeys: Constant.defaultRelationKeys.concat(view.groupRelationKey),
 			},
-		};
-
-		if (withElement) {
-			menuParam.element = more;
-			menuParam.vertical = I.MenuDirection.Center;
-			menuParam.offsetX = 32;
-		} else {
-			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
 		};
 
 		menuStore.open('dataviewContext', menuParam);
@@ -164,6 +163,65 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		const object = detailStore.get(subId, id, []);
 
 		UtilObject.setDone(id, !object.done);
+	};
+
+	getCoverObject (): any {
+		const { getView, subId, id } = this.props;
+		const view = getView();
+
+		return view ? Dataview.getCoverObject(subId, detailStore.get(subId, id), view.coverRelationKey) : null;
+	};
+
+	getCover () {
+		const object = this.getCoverObject();
+		if (!object) {
+			return null;
+		};
+
+		const { id, name, layout, coverType, coverId, coverX, coverY, coverScale } = object;
+		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
+
+		let mc = null;
+		if (coverId && coverType) {
+			mc = (
+				<Cover
+					type={coverType}
+					id={coverId}
+					image={coverId}
+					className={coverId}
+					x={coverX}
+					y={coverY}
+					scale={coverScale}
+					withScale={false}
+				/>
+			);
+		} else {
+			switch (layout) {
+				case I.ObjectLayout.Image: {
+					cn.push('coverImage');
+					mc = <img src={commonStore.imageUrl(id, 600)} onDragStart={e => e.preventDefault()} />;
+					break;
+				};
+
+				case I.ObjectLayout.Audio: {
+					cn.push('coverAudio');
+					mc = <MediaAudio playlist={[ { name, src: commonStore.fileUrl(id) } ]}/>;
+					break;
+				};
+
+				case I.ObjectLayout.Video: {
+					cn.push('coverVideo');
+					mc = <MediaVideo src={commonStore.fileUrl(id)}/>;
+					break;
+				};
+			};
+		};
+
+		if (mc) {
+			mc = <div className={cn.join(' ')}>{mc}</div>;
+		};
+
+		return mc;
 	};
 
 });

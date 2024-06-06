@@ -1,0 +1,41 @@
+@import "~scss/_mixins";
+
+.viewGallery {
+	.body { padding: 16px; }
+
+	.items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-gap: 8px; }
+	.items {
+		.item {
+			.cover { 
+				position: relative; height: 80px; background-position: top center; display: flex; align-items: center;
+				background-color: var(--color-shape-highlight-medium); width: 100%; justify-content: center; border-radius: 8px 8px 0px 0px; overflow: hidden;
+			}
+
+			.cover {
+				img { width: 100%; height: 100%; object-fit: cover; }
+
+				.inner { 
+					position: relative; color: var(--color-text-tertiary); transition: $transitionAllCommon; width: 100%; height: 100%; 
+					background-image: url('~img/icon/dataview/gallery-image-preview.svg'); background-repeat: no-repeat; background-position: center center;
+				}
+
+				.mediaVideo { height: 100%; }
+				.mediaVideo {
+					video { width: 100%; height: 100%; object-fit: cover; }
+				}
+
+				.mediaAudio { padding: 8px 16px; }
+			}
+
+			.info { padding: 12px 16px; border: 1px solid var(--color-shape-primary); border-radius: 8px; }
+			.info {
+				.iconObject { vertical-align: middle; margin-right: 6px; float: left; }
+				.name { @include text-small; @include clamp2; word-wrap: break-word; height: 36px; }
+			}
+		}
+
+		.item.withCover {
+			.info { border-top: 0px; border-radius: 0px 0px 8px 8px; padding: 8px 12px 16px 12px; }
+		}
+	}
+}

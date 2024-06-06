@@ -173,7 +173,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { block, getRecords } = this.props;
+		const { block, getRecordIds } = this.props;
 		const { targetBlockId } = block.content;
 
 		keyboard.disableSelection(false);
@@ -183,7 +183,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 		};
 
 		const { root } = blockStore;
-		const records = getRecords();
+		const records = getRecordIds();
 		const children = blockStore.getChildren(root, root, it => it.isLink());
 		const ro = records[oldIndex];
 		const rn = records[newIndex];
@@ -199,11 +199,11 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 	};
 
 	getItems () {
-		const { block, addGroupLabels, isPreview, getRecords, subId } = this.props;
+		const { block, addGroupLabels, isPreview, getRecordIds, subId } = this.props;
 		const { targetBlockId } = block.content;
 		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
 
-		let items = getRecords().map(id => detailStore.get(subId, id, Constant.sidebarRelationKeys));
+		let items = getRecordIds().map(id => detailStore.get(subId, id, Constant.sidebarRelationKeys));
 
 		if (isPreview && isRecent) {
 			// add group labels

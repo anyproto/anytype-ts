@@ -66,6 +66,7 @@ const Group = observer(class Group extends React.Component<Props> {
 							key={`widget-${block.id}-item-${item.id}`} 
 							subId={subId}
 							id={item.id} 
+							hideIcon={view.hideIcon}
 						/>
 					))}
 				</div>

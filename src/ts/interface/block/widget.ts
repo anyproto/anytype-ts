@@ -29,7 +29,7 @@ export interface WidgetViewComponent extends I.WidgetComponent {
 	rootId: string;
 	subId: string;
 	parent?: I.Block;
-	getRecords: () => any[];
+	getRecordIds: () => any[];
 	getView: () => I.View;
 	getViewType: () => I.ViewType;
 	getObject: () => any;

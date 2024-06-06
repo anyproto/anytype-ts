@@ -503,6 +503,40 @@ class Dataview {
 		};
 	};
 
+	getCoverObject (subId: string, object: any, relationKey: string): any {
+		if (!relationKey) {
+			return null;
+		};
+
+		const value = Relation.getArrayValue(object[relationKey]);
+		const fileLayouts = UtilObject.getFileLayouts();
+
+		let ret = null;
+		if (relationKey == Constant.pageCoverRelationKey) {
+			ret = object;
+		} else {
+			for (const id of value) {
+				const file = detailStore.get(subId, id, []);
+				if (file._empty_ || !fileLayouts.includes(file.layout)) {
+					continue;
+				};
+
+				ret = file;
+				break;
+			};
+		};
+
+		if (!ret || ret._empty_) {
+			return null;
+		};
+
+		if (!ret.coverId && !ret.coverType && !fileLayouts.includes(ret.layout)) {
+			return null;
+		};
+
+		return ret;
+	};
+
 };
 
 export default new Dataview();

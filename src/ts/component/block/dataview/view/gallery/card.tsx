@@ -178,16 +178,15 @@ const Card = observer(class Card extends React.Component<Props> {
 		onCellClick(e, relation.relationKey, record.id);
 	};
 
-	getCover (): any {
-		const { recordId, getRecord, getCoverObject } = this.props;
-		const record = getRecord(recordId);
-		const cover = getCoverObject(record.id);
+	getCover () {
+		const { recordId, getCoverObject } = this.props;
+		const object = getCoverObject(recordId);
 
-		return cover ? this.mediaCover(cover) : null;
-	};
+		if (!object) {
+			return null;
+		};
 
-	mediaCover (item: any) {
-		const { layout, coverType, coverId, coverX, coverY, coverScale } = item;
+		const { id, name, layout, coverType, coverId, coverX, coverY, coverScale } = object;
 		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
 
 		let mc = null;
@@ -208,25 +207,29 @@ const Card = observer(class Card extends React.Component<Props> {
 			switch (layout) {
 				case I.ObjectLayout.Image: {
 					cn.push('coverImage');
-					mc = <img src={commonStore.imageUrl(item.id, 600)} onDragStart={e => e.preventDefault()} />;
+					mc = <img src={commonStore.imageUrl(id, 600)} onDragStart={e => e.preventDefault()} />;
 					break;
 				};
 
 				case I.ObjectLayout.Audio: {
 					cn.push('coverAudio');
-					mc = <MediaAudio playlist={[ { name: item.name, src: commonStore.fileUrl(item.id) } ]}/>;
+					mc = <MediaAudio playlist={[ { name, src: commonStore.fileUrl(id) } ]}/>;
 					break;
 				};
 
 				case I.ObjectLayout.Video: {
 					cn.push('coverVideo');
-					mc = <MediaVideo src={commonStore.fileUrl(item.id)}/>;
+					mc = <MediaVideo src={commonStore.fileUrl(id)}/>;
 					break;
 				};
 			};
 		};
 
-		return mc ? <div className={cn.join(' ')}>{mc}</div> : null;
+		if (mc) {
+			mc = <div className={cn.join(' ')}>{mc}</div>;
+		};
+
+		return mc;
 	};
 
 });

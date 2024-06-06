@@ -30,7 +30,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		this.getView = this.getView.bind(this);
 		this.getViewType = this.getViewType.bind(this);
 		this.getSubId = this.getSubId.bind(this);
-		this.getRecords = this.getRecords.bind(this);
+		this.getRecordIds = this.getRecordIds.bind(this);
 		this.getObject = this.getObject.bind(this);
 		this.getLimit = this.getLimit.bind(this);
 		this.reload = this.reload.bind(this);
@@ -44,7 +44,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const { isLoading } = this.state;
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
-		const records = this.getRecords();
+		const records = this.getRecordIds();
 		const length = records.length;
 		const views = dbStore.getViews(rootId, Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
 		const viewType = this.getViewType();
@@ -54,7 +54,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			...this.props,
 			ref: ref => this.refChild = ref,
 			reload: this.reload,
-			getRecords: this.getRecords,
+			getRecordIds: this.getRecordIds,
 			getView: this.getView,
 			getViewType: this.getViewType,
 			getObject: this.getObject,
@@ -299,7 +299,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		C.BlockWidgetSetViewId(blockStore.widgets, this.props.parent.id, viewId);
 	};
 
-	getRecords () {
+	getRecordIds () {
 		const { parent, block, sortFavorite } = this.props;
 		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();

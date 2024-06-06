@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
-import { I, Relation, UtilData, UtilCommon, UtilObject } from 'Lib';
+import { I, Relation, UtilData, UtilCommon, UtilObject, Dataview } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
@@ -321,33 +321,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = detailStore.get(subId, id, getKeys(view.id));
-		const value = Relation.getArrayValue(record[view.coverRelationKey]);
-		const fileLayouts = UtilObject.getFileLayouts();
 
-		let object = null;
-		if (view.coverRelationKey == Constant.pageCoverRelationKey) {
-			object = record;
-		} else {
-			for (const id of value) {
-				const file = detailStore.get(subId, id, []);
-				if (file._empty_ || !fileLayouts.includes(file.layout)) {
-					continue;
-				};
-
-				object = file;
-				break;
-			};
-		};
-
-		if (!object || object._empty_) {
-			return null;
-		};
-
-		if (!object.coverId && !object.coverType && !fileLayouts.includes(object.layout)) {
-			return null;
-		};
-
-		return object;
+		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
 	};
 
 });
