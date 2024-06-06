@@ -5,7 +5,7 @@
 
 	.group {
 		.clickable { 
-			transition: $transitionAllCommon; display: flex; flex-direction: row; align-items: center; height: 28px; padding: 0px 8px; gap: 0px 4px; position: relative;
+			transition: $transitionAllCommon; display: flex; flex-direction: row; align-items: center; height: 28px; padding: 0px 8px 0px 4px; gap: 0px 4px; position: relative;
 		}
 		.clickable::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
@@ -16,7 +16,7 @@
 		.clickable {
 			.icon.arrow { 
 				width: 24px; height: 24px; background-size: 20px; flex-shrink: 0px; background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); 
-				transition: $transitionAllCommon;
+				transition: $transitionAllCommon; flex-shrink: 0;
 			}
 
 			.cellContent {
@@ -33,9 +33,9 @@
 			.icon.arrow { transform: none; }
 		}
 
-		.items { display: none; transition: $transitionAllCommon; }
+		.items { display: none; transition: height 0.4s $easeInQuint; }
 		.items {
-			.item { padding: 0px 8px 0px 36px; position: relative; }
+			.item { padding: 0px 8px 0px 32px; position: relative; }
 			.item::before {
 				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
 				opacity: 0; border-radius: 4px;

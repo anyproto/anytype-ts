@@ -182,7 +182,7 @@ const Group = observer(class Group extends React.Component<Props> {
 			children.css({ overflow: 'hidden', height: height });
 
 			window.setTimeout(() => children.css({ height: 0 }), 15);
-			window.setTimeout(() => children.hide(), 215);
+			window.setTimeout(() => children.hide(), 415);
 		} else {
 			item.addClass('isExpanded');
 
@@ -192,7 +192,7 @@ const Group = observer(class Group extends React.Component<Props> {
 
 			children.css({ overflow: 'hidden', height: 0 });
 			window.setTimeout(() => children.css({ height: height }), 15);
-			window.setTimeout(() => children.css({ overflow: 'visible', height: 'auto' }), 215);
+			window.setTimeout(() => children.css({ overflow: 'visible', height: 'auto' }), 415);
 		};
 
 		Storage.setToggle(subKey, id, !isOpen);
