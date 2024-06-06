@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { ObjectName, IconObject, DropTarget, Cover, MediaAudio, MediaVideo } from 'Component';
 import { blockStore, menuStore, detailStore, commonStore } from 'Store';
@@ -93,6 +94,14 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 				{inner}
 			</div>
 		);
+	};
+
+	componentDidMount (): void {
+		this.resize();
+	};
+
+	componentDidUpdate (): void {
+		this.resize();
 	};
 
 	onClick (e: React.MouseEvent) {
@@ -201,6 +210,19 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		};
 
 		return mc;
+	};
+
+	resize () {
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
+		this.frame = raf(() => {
+			const node = $(this.node);
+			const icon = node.find('.iconObject');
+
+			icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');
+		});
 	};
 
 });

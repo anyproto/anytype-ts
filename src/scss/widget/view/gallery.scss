@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .viewGallery {
-	.body { padding: 16px; }
+	.body { padding: 8px 16px; }
 
 	.items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-gap: 8px; }
 	.items {
@@ -27,10 +27,16 @@
 				.mediaAudio { padding: 8px 16px; }
 			}
 
-			.info { padding: 12px 16px; border: 1px solid var(--color-shape-primary); border-radius: 8px; }
+			.info { padding: 12px 16px; border: 1px solid var(--color-shape-primary); border-radius: 8px; position: relative; }
 			.info {
-				.iconObject { vertical-align: middle; margin-right: 6px; float: left; }
-				.name { @include text-small; @include clamp2; word-wrap: break-word; height: 36px; }
+				.iconObject { vertical-align: middle; position: absolute; top: 12px; left: 16px; }
+				.name { @include text-small; @include clamp2; height: 36px; }
+			}
+		}
+
+		.item.withIcon {
+			.info {
+				.name { text-indent: 22px; }
 			}
 		}
 
