@@ -175,13 +175,24 @@ class Dataview {
 	};
 
 	getView (rootId: string, blockId: string, viewId?: string): I.View {
-		const views = dbStore.getViews(rootId, blockId);
-		if (!views.length) {
-			return null;
+		let view = null;
+
+		if (!viewId) {
+			viewId = dbStore.getMeta(dbStore.getSubId(rootId, blockId), '').viewId;
 		};
 
-		viewId = viewId || dbStore.getMeta(dbStore.getSubId(rootId, blockId), '').viewId;
-		return dbStore.getView(rootId, blockId, viewId) || views[0];
+		if (viewId) {
+			view = dbStore.getView(rootId, blockId, viewId);
+		};
+
+		if (!view) {
+			const views = dbStore.getViews(rootId, blockId);
+			if (views.length) {
+				view = views[0];
+			};
+		};
+
+		return view;
 	};
 
 	isCollection (rootId: string, blockId: string): boolean {

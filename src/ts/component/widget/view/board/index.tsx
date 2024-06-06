@@ -18,7 +18,6 @@ const WidgetViewBoard = observer(class WidgetViewBoard extends React.Component<I
 		const { block, getView } = this.props;
 		const view = getView();
 		const groups = this.getGroups(false);
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 
 		return (
 			<div ref={ref => this.node = ref} className="body">
