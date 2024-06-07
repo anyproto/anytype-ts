@@ -22,6 +22,7 @@ const Group = observer(class Group extends React.Component<Props> {
 
 		this.onAll = this.onAll.bind(this);
 		this.onToggle = this.onToggle.bind(this);
+		this.onCreate = this.onCreate.bind(this);
 	};
 
 	render () {
@@ -60,6 +61,7 @@ const Group = observer(class Group extends React.Component<Props> {
 						withName={true}
 						placeholder={translate('commonUncategorized')}
 					/>
+					<Icon className="plus" onClick={this.onCreate} />
 				</div>
 
 				<div id={`item-${id}-children`} className="items">
@@ -161,8 +163,7 @@ const Group = observer(class Group extends React.Component<Props> {
 
 	initToggle () {
 		const { id } = this.props;
-		const subKey = this.getToggleKey();
-		const isOpen = Storage.checkToggle(subKey, id);
+		const isOpen = Storage.checkToggle(this.getToggleKey(), id);
 
 		if (!isOpen) {
 			return;
@@ -207,6 +208,25 @@ const Group = observer(class Group extends React.Component<Props> {
 		};
 
 		Storage.setToggle(subKey, id, !isOpen);
+	};
+
+	onCreate (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { onCreate, getView, value } = this.props;
+		const view = getView();
+		const { id } = this.props;
+		const isOpen = Storage.checkToggle(this.getToggleKey(), id);
+		const details = {};
+
+		details[view.groupRelationKey] = value;
+
+		onCreate({ details });
+
+		if (!isOpen) {
+			this.onToggle();
+		};
 	};
 
 	onAll (e: any) {

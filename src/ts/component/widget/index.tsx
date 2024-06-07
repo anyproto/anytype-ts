@@ -34,16 +34,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.onSetPreview = this.onSetPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onClick = this.onClick.bind(this);
-		this.onCreate = this.onCreate.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
+		this.onContext = this.onContext.bind(this);
+		this.onCreateClick = this.onCreateClick.bind(this);
+		this.onCreate = this.onCreate.bind(this);
 		this.isSystemTarget = this.isSystemTarget.bind(this);
 		this.getData = this.getData.bind(this);
 		this.getLimit = this.getLimit.bind(this);
 		this.sortFavorite = this.sortFavorite.bind(this);
-		this.isPlusAllowed = this.isPlusAllowed.bind(this);
-		this.onContext = this.onContext.bind(this);
+		this.canCreate = this.canCreate.bind(this);
 	};
 
 	render () {
@@ -63,7 +64,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		const withSelect = !this.isSystemTarget() && (!isPreview || !UtilCommon.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
-		const withPlus = this.isPlusAllowed();
+		const canCreate = this.canCreate();
 		const canDrop = object && !this.isSystemTarget() && !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 		const isFavorite = targetBlockId == Constant.widgetId.favorite;
 
@@ -73,12 +74,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			key: childKey,
 			parent: block,
 			block: child,
+			canCreate,
 			isSystemTarget: this.isSystemTarget,
 			getData: this.getData,
 			getLimit: this.getLimit,
 			sortFavorite: this.sortFavorite,
 			addGroupLabels: this.addGroupLabels,
 			onContext: this.onContext,
+			onCreate: this.onCreate,
 		};
 
 		if (className) {
@@ -118,9 +121,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 							<Icon className="options" tooltip={translate('widgetOptions')} onClick={this.onOptions} />
 						</div>
 					) : ''}
-					{withPlus ? (
+					{canCreate ? (
 						<div className="iconWrap create">
-							<Icon className="plus" tooltip={translate('widgetCreate')} onClick={this.onCreate} />
+							<Icon className="plus" tooltip={translate('widgetCreate')} onClick={this.onCreateClick} />
 						</div>
 					) : ''}
 					<div className="iconWrap collapse">
@@ -317,9 +320,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 	};
 
-	onCreate (e: React.MouseEvent): void {
+	onCreateClick (e: React.MouseEvent): void {
 		e.preventDefault();
 		e.stopPropagation();
+
+		this.onCreate();
+	};
+
+	onCreate (param?: any): void {
+		param = param || {};
 
 		const { block } = this.props;
 		const { viewId, layout } = block.content;
@@ -338,7 +347,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const isSetOrCollection = UtilObject.isSetLayout(object.layout);
 		const isFavorite = targetBlockId == Constant.widgetId.favorite;
 
-		let details: any = {};
+		let details: any = Object.assign({}, param.details || {});
 		let flags: I.ObjectFlag[] = [];
 		let typeKey = '';
 		let templateId = '';
@@ -363,7 +372,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				return;
 			};
 
-			details = Dataview.getDetails(rootId, Constant.blockId.dataview, object.id, viewId);
+			details = Object.assign(details, Dataview.getDetails(rootId, Constant.blockId.dataview, object.id, viewId));
 			flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 			typeKey = type.uniqueKey;
 			templateId = view.defaultTemplateId || type.defaultTemplateId;
@@ -689,7 +698,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		return Object.values(Constant.widgetId).includes(target.getTargetObjectId());
 	};
 
-	isPlusAllowed (): boolean {
+	canCreate (): boolean {
 		const object = this.getObject();
 		const { block, isEditing } = this.props;
 
@@ -698,10 +707,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		const { layout } = block.content;
-		const child = this.getTargetBlock();
-		const { targetBlockId } = child?.content || {};
-		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
+		const target = this.getTargetBlock();
 		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact ].includes(layout);
+		const isRecent = target ? [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(target.getTargetObjectId()) : null;
 
 		if (isRecent || !layoutWithPlus) {
 			return false;

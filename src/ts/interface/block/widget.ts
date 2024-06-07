@@ -24,6 +24,7 @@ export interface WidgetComponent {
 	sortFavorite?: (records: string[]) => string[];
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
 	onContext?: (param: any) => void;
+	onCreate?: (param: any) => void;
 };
 
 export interface WidgetViewComponent extends I.WidgetComponent {
