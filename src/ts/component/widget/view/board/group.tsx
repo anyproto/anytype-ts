@@ -20,14 +20,17 @@ const Group = observer(class Group extends React.Component<Props> {
 	constructor (props: Props) {
 		super(props);
 
+		this.onAll = this.onAll.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 	};
 
 	render () {
-		const { rootId, block, id, getView, value } = this.props;
+		const { rootId, block, id, getView, value, getViewLimit } = this.props;
 		const view = getView();
 		const subId = this.getSubId();
 		const items = this.getItems();
+		const limit = getViewLimit();
+		const { total } = dbStore.getMeta(subId, '');
 		const head = {};
 
 		head[view.groupRelationKey] = value;
@@ -73,6 +76,7 @@ const Group = observer(class Group extends React.Component<Props> {
 									hideIcon={view.hideIcon}
 								/>
 							))}
+							{total > limit ? <div className="item more" onClick={this.onAll}>{translate('widgetViewBoardAll')}</div> : ''}
 						</React.Fragment>
 					)}
 				</div>
@@ -203,6 +207,13 @@ const Group = observer(class Group extends React.Component<Props> {
 		};
 
 		Storage.setToggle(subKey, id, !isOpen);
+	};
+
+	onAll (e: any) {
+		const { getObject, parent } = this.props;
+		const object = getObject();
+
+		UtilObject.openEvent(e, { ...object, _routeParam_: { viewId: parent.content.viewId } });
 	};
 
 });

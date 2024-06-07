@@ -1690,6 +1690,7 @@
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
 	"widgetCreate": "Create new object",
+	"widgetViewBoardAll": "See all Objects",
 
 	"phrasePlaceholder": "Please enter your Key",
 
