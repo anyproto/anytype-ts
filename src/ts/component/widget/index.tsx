@@ -453,19 +453,18 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block, setEditing } = this.props;
 		const object = this.getObject();
 		const node = $(this.node);
-		const element = `#widget-${block.id}`;
 
 		if (!object || object._empty_) {
 			return;
 		};
 
+		const { x, y } = keyboard.mouse.page;
+
 		menuStore.open('widget', {
-			element,
+			rect: { width: 0, height: 0, x: x + 4, y },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			subIds: Constant.menuIds.widget,
-			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Right,
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
 			data: {
