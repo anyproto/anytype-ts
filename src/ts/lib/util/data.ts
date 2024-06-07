@@ -236,7 +236,12 @@ class UtilData {
 						Storage.set('bgColor', 'orange');
 					};
 
-					[ I.SurveyType.Register, I.SurveyType.Object, I.SurveyType.Shared ].forEach(it => Survey.check(it));
+					[ 
+						I.SurveyType.Register, 
+						I.SurveyType.Object, 
+						I.SurveyType.Multiplayer,
+						I.SurveyType.Shared, 
+					].forEach(it => Survey.check(it));
 
 					const space = UtilSpace.getSpaceview();
 
