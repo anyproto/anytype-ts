@@ -82,9 +82,10 @@
 		.items {
 			.item { display: flex; flex-direction: row; align-items: center; @include text-overflow-nw; }
 			.item {
-				.iconObject { flex-shrink: 0; margin: 0px; }
+				.iconObject, .icon { flex-shrink: 0; margin: 0px; }
 				.name { @include text-overflow-nw; }
 			}
+			.item.add { color: var(--color-text-secondary); }
 		}
 	}
 

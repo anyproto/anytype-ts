@@ -16,6 +16,7 @@ export interface WidgetComponent {
 	block?: I.Block;
 	isEditing?: boolean;
 	isPreview?: boolean;
+	canCreate?: boolean;
 	isSystemTarget?: () => boolean;
 	setPreview?: (id: string) => void;
 	setEditing?: (v: boolean) => void;

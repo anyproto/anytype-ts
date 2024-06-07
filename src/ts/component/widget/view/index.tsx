@@ -225,9 +225,14 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const object = this.getObject();
 		const setOf = Relation.getArrayValue(object.setOf);
 		const isCollection = object.layout == I.ObjectLayout.Collection;
-		const limit = this.getLimit();
 
 		if (!setOf.length && !isCollection) {
+			return;
+		};
+
+		const limit = this.getLimit();
+		const view = this.getView();
+		if (!view) {
 			return;
 		};
 
@@ -239,7 +244,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			limit,
 			filters: this.getFilters(),
 			collectionId: (isCollection ? object.id : ''),
-			keys: Constant.sidebarRelationKeys,
+			keys: Constant.sidebarRelationKeys.concat(view.groupRelationKey),
 		});
 	};
 

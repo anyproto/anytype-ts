@@ -26,7 +26,7 @@ const Group = observer(class Group extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, id, getView, value, getViewLimit } = this.props;
+		const { rootId, block, id, getView, value, getViewLimit, canCreate } = this.props;
 		const view = getView();
 		const subId = this.getSubId();
 		const items = this.getItems();
@@ -61,7 +61,7 @@ const Group = observer(class Group extends React.Component<Props> {
 						withName={true}
 						placeholder={translate('commonUncategorized')}
 					/>
-					<Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={this.onCreate} />
+					{canCreate ? <Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={this.onCreate} /> : ''}
 				</div>
 
 				<div id={`item-${id}-children`} className="items">

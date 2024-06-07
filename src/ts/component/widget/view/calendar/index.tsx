@@ -141,7 +141,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	};
 
 	onClick (d: number, m: number, y: number) {
-		const { rootId, getView } = this.props;
+		const { rootId, getView, canCreate, onCreate } = this.props;
 		const view = getView();
 		const element = `#day-${d}-${m}-${y}`;
 
@@ -163,6 +163,15 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 					y,
 					hideIcon: view.hideIcon,
 					fromWidget: true,
+					readonly: !canCreate,
+					onCreate: () => {
+						const details = {};
+
+						details[view.groupRelationKey] = UtilDate.timestamp(y, m, d, 12, 0, 0);
+
+						console.log(details);
+						onCreate({ details });
+					}
 				}
 			});
 		});

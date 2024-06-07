@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconObject, ObjectName } from 'Component';
+import { Icon, IconObject, ObjectName } from 'Component';
 import { I, UtilObject, keyboard, UtilDate, translate } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -11,7 +11,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	render () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { y, m, d, hideIcon, className, fromWidget } = data;
+		const { y, m, d, hideIcon, className, fromWidget, readonly, onCreate } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
 		const menuId = getId();
@@ -31,20 +31,30 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 
 		const Item = (item) => {
 			const canEdit = !item.isReadonly && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
+
+			let icon = item.icon;
+
+			if (item.icon) {
+				icon = <Icon className={item.icon} />;
+			} else 
+			if (!hideIcon) {
+				icon = (
+					<IconObject 
+						id={[ menuId, item.id, 'icon' ].join('-')}
+						object={item} 
+						size={16} 
+						canEdit={canEdit}
+					/>
+				);
+			};
+
 			return (
 				<div 
 					id={`item-${item.id}`}
 					className="item" 
 					onMouseEnter={e => this.onMouseEnter(e, item)}
 				>
-					{!hideIcon ? (
-						<IconObject 
-							id={[ menuId, item.id, 'icon' ].join('-')}
-							object={item} 
-							size={16} 
-							canEdit={canEdit}
-						/>
-					) : ''}
+					{icon}
 					<ObjectName object={item} onMouseDown={e => this.onClick(e, item)} />
 				</div>
 			);
@@ -99,17 +109,32 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	};
 
 	onClick (e: any, item: any) {
-		UtilObject.openPopup(item);
+		const { param } = this.props;
+		const { data } = param;
+		const { onCreate } = data;
+
+		if (item.id == 'add') {
+			if (onCreate) {
+				onCreate();
+			};
+		} else {
+			UtilObject.openPopup(item);
+		};
 	};
 
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, d, m, y, relationKey } = data;
+		const { rootId, blockId, d, m, y, relationKey, readonly, onCreate } = data;
 		const items = dbStore.getRecords(dbStore.getSubId(rootId, blockId), [ relationKey ]);
 		const current = [ d, m, y ].join('-');
+		const ret = items.filter(it => UtilDate.date('j-n-Y', it[relationKey]) == current);
 
-		return items.filter(it => UtilDate.date('j-n-Y', it[relationKey]) == current);
+		if (!readonly && onCreate) {
+			ret.push({ id: 'add', icon: 'plus', name: translate('commonCreateNewObject') });
+		};
+
+		return ret;
 	};
 
 });

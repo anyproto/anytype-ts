@@ -94,7 +94,7 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	onMore () {
-		const { block, getView } = this.props;
+		const { block, getView, readonly } = this.props;
 		const node = $(this.node);
 		const view = getView();
 
@@ -111,6 +111,7 @@ const Item = observer(class Item extends React.Component<Props> {
 					blockId: block.id,
 					relationKey: view.groupRelationKey,
 					hideIcon: view.hideIcon,
+					readonly,
 				}
 			});
 		});

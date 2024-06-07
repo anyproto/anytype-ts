@@ -708,7 +708,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		const { layout } = block.content;
 		const target = this.getTargetBlock();
-		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact ].includes(layout);
+		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(layout);
 		const isRecent = target ? [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(target.getTargetObjectId()) : null;
 
 		if (isRecent || !layoutWithPlus) {
