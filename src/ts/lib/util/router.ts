@@ -44,11 +44,17 @@ class UtilRouter {
 		return param;
 	};
 
-	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; }>): string {
+	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; viewId: string; blockId: string; }>): string {
 		let route = [ param.page, param.action, param.id ];
 
 		if (param.spaceId) {
 			route = route.concat([ 'spaceId', param.spaceId ]);
+		};
+		if (param.viewId) {
+			route = route.concat([ 'viewId', param.viewId ]);
+		};
+		if (param.blockId) {
+			route = route.concat([ 'blockId', param.blockId ]);
 		};
 
 		return route.join('/');

@@ -313,7 +313,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	onClick (e: React.MouseEvent): void {
 		if (!e.button) {
-			UtilObject.openEvent(e, this.getObject());
+			UtilObject.openEvent(e, { ...this.getObject(), _routeParam_: { viewId: this.props.block.content.viewId } });
 		};
 	};
 
