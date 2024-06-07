@@ -521,7 +521,9 @@ class Analytics {
 
 	popupMapper (params: any): string {
 		const { id } = params;
-		const map = {};
+		const map = {
+			inviteRequest:		 'ScreenInviteRequest',
+		};
 
 		return map[id] || '';
 	};
