@@ -1071,8 +1071,6 @@ export const BlockDataviewViewSetActive = (contextId: string, blockId: string, v
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setViewid(viewId);
-	request.setOffset(offset);
-	request.setLimit(limit);
 
 	dispatcher.request(BlockDataviewViewSetActive.name, request, callBack);
 };
