@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { ObjectName, IconObject, DropTarget, Cover, MediaAudio, MediaVideo } from 'Component';
+import { ObjectName, IconObject, DropTarget, Cover, MediaAudio, MediaVideo, ObjectCover } from 'Component';
 import { blockStore, menuStore, detailStore, commonStore } from 'Store';
 import { I, UtilObject, keyboard, analytics, UtilSpace, Dataview } from 'Lib';
 
@@ -36,7 +36,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		const iconKey = `widget-icon-${block.id}-${id}`;
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const cn = [ 'item' ];
-		const cover = this.getCover();
+		const cover = this.getCoverObject();
 
 		if (cover) {
 			cn.push('withCover');
@@ -62,7 +62,8 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 
 		let inner = (
 			<div className="inner" onMouseDown={this.onClick}>
-				{cover}
+				<ObjectCover object={cover} />
+
 				<div className="info">
 					{icon}
 					<ObjectName object={object} />
@@ -158,58 +159,6 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		const view = getView();
 
 		return view ? Dataview.getCoverObject(subId, detailStore.get(subId, id), view.coverRelationKey) : null;
-	};
-
-	getCover () {
-		const object = this.getCoverObject();
-		if (!object) {
-			return null;
-		};
-
-		const { id, name, layout, coverType, coverId, coverX, coverY, coverScale } = object;
-		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
-
-		let mc = null;
-		if (coverId && coverType) {
-			mc = (
-				<Cover
-					type={coverType}
-					id={coverId}
-					image={coverId}
-					className={coverId}
-					x={coverX}
-					y={coverY}
-					scale={coverScale}
-					withScale={false}
-				/>
-			);
-		} else {
-			switch (layout) {
-				case I.ObjectLayout.Image: {
-					cn.push('coverImage');
-					mc = <img src={commonStore.imageUrl(id, 600)} onDragStart={e => e.preventDefault()} />;
-					break;
-				};
-
-				case I.ObjectLayout.Audio: {
-					cn.push('coverAudio');
-					mc = <MediaAudio playlist={[ { name, src: commonStore.fileUrl(id) } ]}/>;
-					break;
-				};
-
-				case I.ObjectLayout.Video: {
-					cn.push('coverVideo');
-					mc = <MediaVideo src={commonStore.fileUrl(id)}/>;
-					break;
-				};
-			};
-		};
-
-		if (mc) {
-			mc = <div className={cn.join(' ')}>{mc}</div>;
-		};
-
-		return mc;
 	};
 
 	resize () {

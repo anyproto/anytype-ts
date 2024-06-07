@@ -509,7 +509,11 @@ class Dataview {
 		};
 
 		const value = Relation.getArrayValue(object[relationKey]);
-		const fileLayouts = UtilObject.getFileLayouts();
+		const layouts = [
+			I.ObjectLayout.Image,
+			I.ObjectLayout.Audio,
+			I.ObjectLayout.Video,
+		];
 
 		let ret = null;
 		if (relationKey == Constant.pageCoverRelationKey) {
@@ -517,7 +521,7 @@ class Dataview {
 		} else {
 			for (const id of value) {
 				const file = detailStore.get(subId, id, []);
-				if (file._empty_ || !fileLayouts.includes(file.layout)) {
+				if (file._empty_ || !layouts.includes(file.layout)) {
 					continue;
 				};
 
@@ -530,7 +534,7 @@ class Dataview {
 			return null;
 		};
 
-		if (!ret.coverId && !ret.coverType && !fileLayouts.includes(ret.layout)) {
+		if (!ret.coverId && !ret.coverType && !layouts.includes(ret.layout)) {
 			return null;
 		};
 

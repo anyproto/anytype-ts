@@ -22,6 +22,9 @@
 				.mediaVideo { height: 100%; }
 				.mediaVideo {
 					video { width: 100%; height: 100%; object-fit: cover; }
+					.controls {
+						.icon.play { width: 32px; height: 32px; margin: -16px 0px 0px -16px; background-size: 12px 14px; background-position: 12px center; }
+					}
 				}
 
 				.mediaAudio { padding: 8px 16px; }
