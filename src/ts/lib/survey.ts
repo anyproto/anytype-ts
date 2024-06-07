@@ -161,7 +161,7 @@ class Survey {
 	checkMultiplayer (type: I.SurveyType) {
 		const isComplete = this.isComplete(type);
 		const timeRegister = this.getTimeRegister();
-		const surveyTime = timeRegister && (timeRegister >= UtilDate.now() - 86400 * 7);
+		const surveyTime = timeRegister && (timeRegister <= UtilDate.now() - 86400 * 7);
 
 		if (isComplete || this.isComplete(I.SurveyType.Shared) || !surveyTime) {
 			return;
