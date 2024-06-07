@@ -167,7 +167,7 @@ class Survey {
 			return;
 		};
 
-		if (this.checkRandSeed(100)) {
+		if (this.checkRandSeed(30)) {
 			this.show(type);
 		};
 	};
