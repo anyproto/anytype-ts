@@ -148,6 +148,7 @@
 	"commonAddRelation": "Add Relation",
 	"commonCollection": "Collection",
 	"commonSet": "Set",
+	"commonCreateNewObject": "Create new Object",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -529,7 +530,6 @@
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
 
-	"blockDataviewCreateNew": "Create new Object",
 	"blockDataviewCreateNewCollection": "Create new Collection",
 	"blockDataviewCreateNewSet": "Create new Set",
 	"blockDataviewCreateNewTooltipCollection": "Create new Object in this Collection",
@@ -1692,12 +1692,10 @@
 	"widgetOptions": "Options",
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
-	"widgetCreate": "Create new object",
 	"widgetViewBoardAll": "See all Objects",
 
 	"phrasePlaceholder": "Please enter your Key",
 
-	"navigationCreateNew": "Create new Object",
 	"navigationAccount": "Spaces",
 
 	"spaceAccessType0": "Private Space",

@@ -61,7 +61,7 @@ const Group = observer(class Group extends React.Component<Props> {
 						withName={true}
 						placeholder={translate('commonUncategorized')}
 					/>
-					<Icon className="plus" onClick={this.onCreate} />
+					<Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={this.onCreate} />
 				</div>
 
 				<div id={`item-${id}-children`} className="items">

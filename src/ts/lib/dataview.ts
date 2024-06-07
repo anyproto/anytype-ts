@@ -493,7 +493,7 @@ class Dataview {
 				return UtilCommon.sprintf(translate('blockDataviewCreateNewTooltipType'), type.name);
 			};
 		};
-		return translate('blockDataviewCreateNew');
+		return translate('commonCreateNewObject');
 	};
 
 	viewUpdate (rootId: string, blockId: string, viewId: string, param: Partial<I.View>, callBack?: (message: any) => void) {

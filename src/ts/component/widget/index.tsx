@@ -123,7 +123,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					) : ''}
 					{canCreate ? (
 						<div className="iconWrap create">
-							<Icon className="plus" tooltip={translate('widgetCreate')} onClick={this.onCreateClick} />
+							<Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={this.onCreateClick} />
 						</div>
 					) : ''}
 					<div className="iconWrap collapse">
