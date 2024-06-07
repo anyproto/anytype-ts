@@ -54,6 +54,8 @@
 				}
 			}
 
+			.item.empty { color: var(--color-text-tertiary); display: flex; align-items: center; height: 28px; }
+
 			.item.active { 
 				.buttons {
 					.icon.more { background-image: url('~img/icon/menu/action/more1.svg'); }

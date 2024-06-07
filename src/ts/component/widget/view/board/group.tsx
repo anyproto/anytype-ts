@@ -60,15 +60,21 @@ const Group = observer(class Group extends React.Component<Props> {
 				</div>
 
 				<div id={`item-${id}-children`} className="items">
-					{items.map(item => (
-						<Item 
-							{...this.props}
-							key={`widget-${block.id}-item-${item.id}`} 
-							subId={subId}
-							id={item.id} 
-							hideIcon={view.hideIcon}
-						/>
-					))}
+					{!items.length ? (
+						<div className="item empty">{translate('commonNoObjects')}</div>
+					) : (
+						<React.Fragment>
+							{items.map(item => (
+								<Item 
+									{...this.props}
+									key={`widget-${block.id}-item-${item.id}`} 
+									subId={subId}
+									id={item.id} 
+									hideIcon={view.hideIcon}
+								/>
+							))}
+						</React.Fragment>
+					)}
 				</div>
 			</div>
 		);
