@@ -167,6 +167,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	scrollToElement (element: any) {
+		if (!element || !element.length) {
+			return;
+		};
+
 		const node = $(this.node);
 		const container = node.find('#historySideLeft');
 		const ch = container.height();
