@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
 import { C, I, M, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface Props {
@@ -43,7 +44,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.setPreview = this.setPreview.bind(this);
 	};
 
-	render(): React.ReactNode {
+	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = blockStore;
 		const cn = [ 'listWidget' ];

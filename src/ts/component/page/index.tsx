@@ -108,7 +108,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		} else {
 			content = (
 				<div className="pageFlex">
-					<Sidebar key="sidebar" {...this.props} />
 					<div id="sidebarDummyLeft" className="sidebarDummy left" />
 					{wrap}
 					<div id="sidebarDummyRight" className="sidebarDummy right" />
