@@ -37,8 +37,9 @@ class UtilObject {
 			return '';
 		};
 
-		const { id, spaceId, layout } = object;
-		const action = this.actionByLayout(layout);
+		const id = String(object.id || '');
+		const spaceId = object.spaceId || commonStore.space;
+		const action = this.actionByLayout(object.layout);
 
 		if (!action) {
 			return '';

@@ -26,7 +26,6 @@ import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
-import PageMainBlock from './main/block';
 import PageMainImport from './main/import';
 import PageMainInvite from './main/invite';
 import PageMainMembership from './main/membership';
@@ -55,7 +54,6 @@ const Components = {
 	'main/navigation':		 PageMainNavigation,
 	'main/create':			 PageMainCreate,
 	'main/archive':			 PageMainArchive,
-	'main/block':			 PageMainBlock,
 	'main/import':			 PageMainImport,
 	'main/invite':			 PageMainInvite,
 	'main/membership':		 PageMainMembership,

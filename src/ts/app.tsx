@@ -159,6 +159,7 @@ Sentry.setContext('info', {
 });
 
 class RoutePage extends React.Component<RouteComponentProps> {
+
 	render () {
 		return (
 			<SelectionProvider>
@@ -173,6 +174,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 			</SelectionProvider>
 		);
 	};
+
 };
 
 class App extends React.Component<object, State> {

@@ -169,7 +169,6 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 
 						details[view.groupRelationKey] = UtilDate.timestamp(y, m, d, 12, 0, 0);
 
-						console.log(details);
 						onCreate({ details });
 					}
 				}
