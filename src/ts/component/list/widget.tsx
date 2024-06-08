@@ -44,7 +44,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.setPreview = this.setPreview.bind(this);
 	};
 
-	render(): React.ReactNode {
+	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = blockStore;
 		const cn = [ 'listWidget' ];
