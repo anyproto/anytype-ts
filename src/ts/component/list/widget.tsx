@@ -310,7 +310,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		const { isEditing } = this.state;
 
 		if (!isEditing && !e.button) {
-			UtilObject.openEvent(e, { id: '-', layout: I.ObjectLayout.Store });
+			UtilObject.openEvent(e, { layout: I.ObjectLayout.Store });
 		};
 	};
 
@@ -318,7 +318,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		const { isEditing } = this.state;
 
 		if (!isEditing && !e.button) {
-			UtilObject.openEvent(e, { id: '-', layout: I.ObjectLayout.Archive });
+			UtilObject.openEvent(e, { layout: I.ObjectLayout.Archive });
 		};
 	};
 
