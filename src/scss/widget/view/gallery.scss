@@ -1,12 +1,34 @@
 @import "~scss/_mixins";
 
 .viewGallery {
-	.body { padding: 8px 16px; }
+	.body { padding: 8px 16px; position: relative; }
+	.arrowWrap {
+		width: 24px; height: 24px; box-shadow: 0px 2px 8px rgba(0,0,0,0.2); border-radius: 50%; position: absolute; top: 50%; margin-top: -12px; 
+		background-color: var(--color-bg-primary); z-index: 1; 
+	}
+	.arrowWrap {
+		.icon { width: 100%; height: 100%; background-image: url('~img/arrow/widgetGallery.svg'); background-size: 6px 10px; }
+	}
+	.arrowWrap.left { left: 4px; }
+	.arrowWrap.right { right: 4px; }
+	.arrowWrap.right {
+		.icon { transform: rotate(180deg); }
+	}
 
-	.items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-gap: 8px; transition: $transitionAllCommon; border-radius: 8px; }
+	.wrap { overflow: hidden; }
+
+	.items { display: flex; flex-wrap: nowrap; gap: 8px; border-radius: 8px; }
+	.items.anim { transition: $transitionAllCommon; }
 	.items {
+		.item { flex-shrink: 0; flex-grow: 0; }
+		.item.blank { 
+			border: 1px solid var(--color-shape-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center;
+			@include text-small; color: var(--color-text-secondary);
+		}
+
 		.item {
-			> .inner { display: flex; flex-direction: column; height: 100%; align-items: stretch; }
+			.dropTarget { height: 100%; }
+			.inner { display: flex; flex-direction: column; height: 100%; align-items: stretch; }
 
 			.cover { 
 				position: relative; height: 80px; background-position: top center; display: flex; align-items: center; flex-shrink: 0px;

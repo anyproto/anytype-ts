@@ -78,7 +78,7 @@ const Group = observer(class Group extends React.Component<Props> {
 									hideIcon={view.hideIcon}
 								/>
 							))}
-							{total > limit ? <div className="item more" onClick={this.onAll}>{translate('widgetViewBoardAll')}</div> : ''}
+							{total > limit ? <div className="item more" onClick={this.onAll}>{translate('widgetViewAll')}</div> : ''}
 						</React.Fragment>
 					)}
 				</div>

@@ -113,11 +113,13 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { subId, id, } = this.props;
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
-
-		UtilObject.openEvent(e, object);
+		UtilObject.openEvent(e, this.getObject());
 		analytics.event('OpenSidebarObject');
+	};
+
+	getObject () {
+		const { subId, id, } = this.props;
+		return detailStore.get(subId, id);
 	};
 
 	onContext (e: React.MouseEvent) {
@@ -155,10 +157,10 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 	};
 
 	getCoverObject (): any {
-		const { getView, subId, id } = this.props;
+		const { getView, subId } = this.props;
 		const view = getView();
 
-		return view ? Dataview.getCoverObject(subId, detailStore.get(subId, id), view.coverRelationKey) : null;
+		return view ? Dataview.getCoverObject(subId, this.getObject(), view.coverRelationKey) : null;
 	};
 
 	resize () {
