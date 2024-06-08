@@ -2,10 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
-import { Sidebar, Label, Frame } from 'Component';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
+import { Label, Frame } from 'Component';
 import { authStore, commonStore, menuStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -97,7 +96,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		const wrap = (
-			<div id="page" className={'page ' + this.getClass('page')}>
+			<div id="page" className={`page ${this.getClass('page')}`}>
 				<Component ref={ref => this.refChild = ref} {...this.props} />
 			</div>
 		);
