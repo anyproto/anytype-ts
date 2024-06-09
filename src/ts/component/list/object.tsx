@@ -2,7 +2,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I, C, UtilData, Relation, UtilObject, translate, keyboard } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
-import { detailStore, dbStore, menuStore } from 'Store';
+import { detailStore, dbStore, menuStore, commonStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface Column {
@@ -20,7 +21,6 @@ interface Props {
 	columns: Column[];
 	sources?: string[];
 	filters?: I.Filter[];
-	dataset?: any;
 };
 
 const PREFIX = 'listObject';
@@ -220,8 +220,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { subId } = this.props;
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selection');
 
 		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
 		if (!objectIds.length) {

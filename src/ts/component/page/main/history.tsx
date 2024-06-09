@@ -122,8 +122,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	onCopy () {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selection');
 		const rootId = this.getRootId();
 		const { focused } = focus.state;
 

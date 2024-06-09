@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { I, M, focus, keyboard, scrollOnMove, UtilCommon } from 'Lib';
-import { blockStore, menuStore, popupStore } from 'Store';
+import { blockStore, menuStore, popupStore, commonStore } from 'Store';
 
 interface Props {
 	children?: React.ReactNode;

@@ -256,7 +256,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		e.stopPropagation();
 
 		const { dataset } = this.props;
-		const { selection, preventCommonDrop } = dataset || {};
+		const { preventCommonDrop } = dataset || {};
+		const selection = commonStore.getRef('selection');
 		const node = $(this.node);
 		const view = node.find('.viewContent');
 		const clone = target.clone();

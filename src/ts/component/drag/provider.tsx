@@ -4,8 +4,9 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject, UtilMenu, analytics } from 'Lib';
-import { blockStore, detailStore } from 'Store';
+import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject } from 'Lib';
+import { blockStore, commonStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface Props {
@@ -199,10 +200,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	};
 
 	onDragStart (e: any, dropType: I.DropType, ids: string[], component: any) {
-		const { dataset } = this.props;
 		const rootId = keyboard.getRootId();
 		const isPopup = keyboard.isPopup();
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selection');
 		const win = $(window);
 		const node = $(this.node);
 		const container = UtilCommon.getScrollContainer(isPopup);
@@ -294,8 +294,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	};
 
 	onDrop (e: any, targetType: string, targetId: string, position: I.BlockPosition) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selection');
 
 		let data: any = {};
 		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) { /**/ };

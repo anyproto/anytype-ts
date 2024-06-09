@@ -143,9 +143,9 @@ const Card = observer(class Card extends React.Component<Props> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		const { recordId, getRecord, onContext, dataset } = this.props;
+		const { recordId, getRecord, onContext } = this.props;
 		const record = getRecord(recordId);
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selection');
 		const cb = {
 			0: () => { 
 				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openConfig(record); 

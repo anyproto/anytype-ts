@@ -144,8 +144,8 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selection');
 		const win = $(window);
 		const node = $(this.node);
 		

@@ -3,7 +3,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
 import { C, I, M, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
-import { blockStore, menuStore, detailStore } from 'Store';
+import { blockStore, menuStore, detailStore, commonStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface Props {
@@ -227,7 +228,8 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		e.stopPropagation();
 
 		const { dataset } = this.props;
-		const { selection, preventCommonDrop } = dataset;
+		const { preventCommonDrop } = dataset;
+		const selection = commonStore.getRef('selection');
 		const win = $(window);
 		const node = $(this.node);
 		const obj = node.find(`#widget-${blockId}`);

@@ -845,8 +845,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selection');
 		const relation = dbStore.getRelationByKey(relationKey);
 		const id = Relation.cellId(this.getIdPrefix(), relationKey, recordId);
 		const ref = this.refCells.get(id);
@@ -900,8 +899,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selection');
 		const subId = this.getSubId();
 		const isCollection = this.isCollection();
 		const view = this.getView();
@@ -1044,7 +1043,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.stopPropagation();
 
 		const { dataset, block } = this.props;
-		const { selection, onDragStart } = dataset || {};
+		const { onDragStart } = dataset || {};
+		const selection = commonStore.getRef('selection');
 		const record = this.getRecord(recordId);
 
 		let ids = selection.get(I.SelectType.Record);
@@ -1069,8 +1069,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onRecordDrop (targetId: string, ids: string[]) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selection');
 		const subId = this.getSubId();
 		const view = this.getView();
 
@@ -1260,8 +1259,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { dataset, isInline } = this.props;
-		const { selection } = dataset || {};
+		const { isInline } = this.props;
+		const selection = commonStore.getRef('selection');
 
 		if (!selection || isInline) {
 			return;
@@ -1276,8 +1275,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	selectionCheck () {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selection');
 		const node = $(this.node);
 		const con = node.find('#dataviewControls');
 		const sel = node.find('#dataviewSelection');
@@ -1289,8 +1287,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onSelectEnd () {
-		const { dataset, isInline, readonly } = this.props;
-		const { selection } = dataset || {};
+		const { isInline, readonly } = this.props;
+		const selection = commonStore.getRef('selection');
 
 		if (!selection || isInline || readonly) {
 			return;
@@ -1335,8 +1333,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	multiSelectAction (id: string) {
-		const { dataset, isInline } = this.props;
-		const { selection } = dataset || {};
+		const { isInline } = this.props;
+		const selection = commonStore.getRef('selection');
 
 		if (!selection || isInline) {
 			return;

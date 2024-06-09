@@ -5,8 +5,9 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
 import { I, C, keyboard, focus, UtilCommon, Mark, Action, translate, UtilMenu, UtilData } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { menuStore, blockStore, commonStore } from 'Store';
 import Row from './table/row';
+
 const Constant = require('json/constant.json');
 
 const PADDING = 46;
@@ -681,8 +682,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	onCellFocus (e: any, rowId: string, columnId: string, cellId: string) {
-		const { rootId, readonly, dataset } = this.props;
-		const { selection } = dataset || {};
+		const { rootId, readonly } = this.props;
+		const selection = commonStore.getRef('selection');
 
 		if (readonly) {
 			return;

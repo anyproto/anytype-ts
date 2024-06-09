@@ -151,9 +151,8 @@ class UtilData {
 		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 	
-	selectionGet (id: string, withChildren: boolean, save: boolean, props: any): string[] {
-		const { dataset } = props;
-		const { selection } = dataset || {};
+	selectionGet (id: string, withChildren: boolean, save: boolean): string[] {
+		const selection = commonStore.getRef('selection');
 		
 		if (!selection) {
 			return [];
@@ -908,9 +907,8 @@ class UtilData {
 		return filters;
 	};
 
-	moveToPage (rootId: string, blockId: string, typeId: string, route: string, props: any) {
-		const { dataset } = props;
-		const { selection } = dataset || {};
+	moveToPage (rootId: string, blockId: string, typeId: string, route: string) {
+		const selection = commonStore.getRef('selection');
 		const type = dbStore.getTypeById(typeId);
 
 		if (!type) {

@@ -672,7 +672,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { data } = param;
 		const { blockId, rootId } = data;
 		
-		UtilData.moveToPage(rootId, blockId, typeId, 'Powertool', this.props);
+		UtilData.moveToPage(rootId, blockId, typeId, 'Powertool');
 	};
 
 	resize () {

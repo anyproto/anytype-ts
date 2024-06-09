@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
 import { I, UtilCommon, Relation, keyboard, translate, UtilData } from 'Lib';
-import { detailStore } from 'Store';
+import { detailStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -130,7 +130,8 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		};
 		
 		const { dataset, relationKey } = this.props;
-		const { selection, onDragStart } = dataset || {};
+		const { onDragStart } = dataset || {};
+		const selection = commonStore.getRef('selection');
 
 		if (!selection || !onDragStart) {
 			return;

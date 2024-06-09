@@ -1,10 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
 import { I, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
-import { detailStore, blockStore, dbStore } from 'Store';
+import { detailStore, blockStore, dbStore, commonStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
@@ -254,8 +254,8 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const { rootId, block, dataset } = this.props;
-		const { selection } = dataset || {};
+		const { rootId, block } = this.props;
+		const selection = commonStore.getRef('selection');
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
 		const ids = selection ? selection.get(I.SelectType.Block) : [];

@@ -851,8 +851,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selection');
 		const win = $(window);
 
 		focus.set(block.id, { from: 0, to: 0 });
