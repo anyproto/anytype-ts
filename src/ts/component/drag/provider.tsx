@@ -241,12 +241,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		$('.colResize.active').removeClass('active');
 		scrollOnMove.onMouseDown(e, isPopup);
 
-		if (selection) {
-			if (dropType == I.DropType.Block) {
-				selection.set(I.SelectType.Block, ids);
-			};
-			selection.hide();
+		if (dropType == I.DropType.Block) {
+			selection?.set(I.SelectType.Block, ids);
 		};
+		selection?.hide();
 	};
 
 	onDragOver (e: any) {
@@ -314,10 +312,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 					blockStore.toggle(contextId, targetId, true);
 				};
 
-				if (selection) {
-					selection.renderSelection();
-				};
-
+				selection?.renderSelection();
 				raf(() => $('.resizable').trigger('resizeInit'));
 			};
 

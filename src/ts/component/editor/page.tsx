@@ -380,11 +380,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		win.on(`focus.editor${namespace}`, () => {
 			const popupOpen = popupStore.isOpen('', [ 'page' ]);
 			const menuOpen = this.menuCheck();
-
-			let ids: string[] = [];
-			if (selection) {
-				ids = selection.get(I.SelectType.Block, true);
-			};
+			const ids = selection?.get(I.SelectType.Block, true) || [];
+			
 			if (!ids.length && !menuOpen && !popupOpen) {
 				focus.restore();
 				focus.apply(); 

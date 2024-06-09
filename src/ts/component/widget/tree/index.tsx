@@ -390,9 +390,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			this.top = scrollTop;
 		};
 
-		if (dragProvider) {
-			dragProvider.onScroll();
-		};
+		dragProvider?.onScroll();
 	};
 
 	onClick (e: React.MouseEvent, item: unknown): void {

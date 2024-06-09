@@ -132,13 +132,9 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		const dragProvider = commonStore.getRef('dragProvider');
 		const selection = commonStore.getRef('selectionProvider');
 
-		if (!selection) {
-			return;
-		};
-		
 		keyboard.disableSelection(true);
-		selection.clear();
-		dragProvider.onDragStart(e, I.DropType.Relation, [ relationKey ], this);
+		selection?.clear();
+		dragProvider?.onDragStart(e, I.DropType.Relation, [ relationKey ], this);
 	};
 
 });

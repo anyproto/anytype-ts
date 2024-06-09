@@ -858,9 +858,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		
-		if (selection) {
-			selection.hide();
-		};
+		selection?.hide();
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);

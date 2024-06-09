@@ -217,15 +217,13 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 	onScroll () {
 		const { isPopup } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 
 		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 
-		const selection = commonStore.getRef('selectionProvider');
-		if (selection) {
-			selection.renderSelection();
-		};
+		selection?.renderSelection();
 	};
 
 	onKeyDown (e: any): void {

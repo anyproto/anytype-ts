@@ -1046,17 +1046,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const dragProvider = commonStore.getRef('dragProvider');
 		const selection = commonStore.getRef('selectionProvider');
 		const record = this.getRecord(recordId);
+		const ids = selection?.get(I.SelectType.Record) || [];
 
-		let ids = selection.get(I.SelectType.Record);
 		if (!ids.length) {
-			ids = [ record.id ];
+			ids.push(record.id);
 		};
 
 		keyboard.setSelectionClearDisabled(false);
-
-		if (!selection) {
-			return;
-		};
 
 		if (!block.isDraggable()) {
 			e.preventDefault();
@@ -1064,7 +1060,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		keyboard.disableSelection(true);
-		dragProvider.onDragStart(e, I.DropType.Record, ids, this);
+		dragProvider?.onDragStart(e, I.DropType.Record, ids, this);
 	};
 
 	onRecordDrop (targetId: string, ids: string[]) {
@@ -1076,9 +1072,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		if (selection) {
-			selection.clear();
-		};
+		selection?.clear();
 
 		let records = this.getRecords();
 		if (records.indexOf(targetId) > records.indexOf(ids[0])) {

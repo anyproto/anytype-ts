@@ -448,7 +448,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 
 		this.ids = UtilData.selectionGet(block.id, false, true);
-		dragProvider.onDragStart(e, I.DropType.Block, this.ids, this);
+		dragProvider?.onDragStart(e, I.DropType.Block, this.ids, this);
 	};
 	
 	onMenuDown (e: any) {
@@ -521,9 +521,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			noFlipX: true,
 			subIds: Constant.menuIds.action,
 			onClose: () => {
-				if (selection) {
-					selection.clear();
-				};
+				selection?.clear();
 				focus.apply();
 			},
 			data: {
@@ -556,9 +554,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + Constant.size.blockMenu ;
 		const add = $('#button-block-add');
 		
-		if (selection) {
-			selection.clear();
-		};
+		selection?.clear();
 
 		this.unbind();
 		node.addClass('isResizing');
