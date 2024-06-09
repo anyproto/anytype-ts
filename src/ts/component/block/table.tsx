@@ -683,7 +683,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	onCellFocus (e: any, rowId: string, columnId: string, cellId: string) {
 		const { rootId, readonly } = this.props;
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 
 		if (readonly) {
 			return;
@@ -930,8 +930,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		this.initCache(I.BlockType.TableColumn);
 		this.setEditing('');
 		this.onOptionsOpen(I.BlockType.TableColumn, '', id, '');
-		this.preventDrop(true);
 
+		keyboard.disableCommonDrop(true);
 		keyboard.disableSelection(true);
 	};
 
@@ -987,10 +987,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		this.cache = {};
 		this.onSortEndColumn(id, this.hoverId, this.position);
-		this.preventDrop(false);
 		this.onOptionsClose();
 		this.frameRemove([ I.BlockPosition.Left, I.BlockPosition.Right ]);
 
+		keyboard.disableCommonDrop(false);
 		keyboard.disableSelection(false);
 
 		win.off('drag.tableColumn dragend.tableColumn');
@@ -1022,8 +1022,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		this.initCache(I.BlockType.TableRow);
 		this.setEditing('');
 		this.onOptionsOpen(I.BlockType.TableRow, id, '', '');
-		this.preventDrop(true);
 
+		keyboard.disableCommonDrop(true);
 		keyboard.disableSelection(true);
 	};
 
@@ -1083,10 +1083,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		this.cache = {};
 		this.onSortEndRow(id, this.hoverId, this.position);
-		this.preventDrop(false);
 		this.onOptionsClose();
 		this.frameRemove([ I.BlockPosition.Top, I.BlockPosition.Bottom ]);
 
+		keyboard.disableCommonDrop(false);
 		keyboard.disableSelection(false);
 
 		win.off('drag.tableRow dragend.tableRow');
@@ -1189,13 +1189,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		$('body').removeClass('grab');
 		keyboard.disableSelection(false);
-	};
-
-	preventDrop (v: boolean) {
-		const { dataset } = this.props;
-		const { preventCommonDrop } = dataset || {};
-
-		preventCommonDrop(v);
 	};
 
 	initSize () {

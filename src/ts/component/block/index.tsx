@@ -433,13 +433,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { onDragStart } = dataset || {};
-		const selection = commonStore.getRef('selection');
-		
-		if (!onDragStart) {
-			return;
-		};
+		const { block } = this.props;
+		const dragProvider = commonStore.getRef('dragProvider');
+		const selection = commonStore.getRef('selectionProvider');
 		
 		if (!block.isDraggable()) {
 			e.preventDefault();
@@ -452,7 +448,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 
 		this.ids = UtilData.selectionGet(block.id, false, true);
-		onDragStart(e, I.DropType.Block, this.ids, this);
+		dragProvider.onDragStart(e, I.DropType.Block, this.ids, this);
 	};
 	
 	onMenuDown (e: any) {
@@ -464,7 +460,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	
 	onMenuClick () {
 		const { block } = this.props;
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 		const element = $(`#button-block-menu-${block.id}`);
 
 		if (!element.length) {
@@ -513,8 +509,8 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	menuOpen (param?: Partial<I.MenuParam>) {
-		const { dataset, rootId, block, blockRemove, onCopy } = this.props;
-		const selection = commonStore.getRef('selection');
+		const { rootId, block, blockRemove, onCopy } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 
 		// Hide block menus and plus button
 		$('#button-block-add').removeClass('show');
@@ -534,7 +530,6 @@ const Block = observer(class Block extends React.Component<Props> {
 				blockId: block.id,
 				blockIds: this.ids,
 				rootId,
-				dataset,
 				blockRemove,
 				onCopy,
 			}
@@ -554,7 +549,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];

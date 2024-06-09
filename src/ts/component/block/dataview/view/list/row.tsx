@@ -116,7 +116,7 @@ const Row = observer(class Row extends React.Component<Props> {
 
 		const { onContext, recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 		const cb = {
 			0: () => {
 				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openConfig(record); 

@@ -10,7 +10,6 @@ export enum WidgetLayout {
 };
 
 export interface WidgetComponent {
-	dataset?: any;
 	parent?: I.Block;
 	block: I.Block;
 	isEditing?: boolean;

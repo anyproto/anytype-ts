@@ -113,7 +113,6 @@ export interface ViewComponent {
 	block?: I.Block;
 	readonly: boolean;
 	pageContainer?: string;
-	dataset?: I.Dataset;
 	isPopup?: boolean;
 	isInline?: boolean;
 	isCollection?: boolean;

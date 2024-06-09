@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Label } from 'Component';
 import { analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon, translate } from 'Lib';
-import { blockStore, dbStore, detailStore } from 'Store';
+import { blockStore, dbStore, detailStore, commonStore } from 'Store';
 import Item from './item';
 const Constant = require('json/constant.json');
 
@@ -384,8 +384,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	onScroll ({ scrollTop }): void {
-		const { dataset } = this.props;
-		const { dragProvider } = dataset || {};
+		const dragProvider = commonStore.getRef('dragProvider');
 
 		if (scrollTop) {
 			this.top = scrollTop;

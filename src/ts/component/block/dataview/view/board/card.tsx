@@ -93,7 +93,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		e.preventDefault();
 
 		const { rootId, block, groupId, id, onContext } = this.props;
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const record = detailStore.get(subId, id);
 		const cb = {

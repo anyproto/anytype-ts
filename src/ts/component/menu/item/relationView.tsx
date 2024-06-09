@@ -11,7 +11,6 @@ interface Props {
 	name: string;
 	format: I.RelationType;
 	isHidden: boolean;
-	dataset?: I.Dataset;
 	rootId: string;
 	block?: I.Block;
 	isFeatured?: boolean;
@@ -129,18 +128,17 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 			return;
 		};
 		
-		const { dataset, relationKey } = this.props;
-		const { onDragStart } = dataset || {};
-		const selection = commonStore.getRef('selection');
+		const { relationKey } = this.props;
+		const dragProvider = commonStore.getRef('dragProvider');
+		const selection = commonStore.getRef('selectionProvider');
 
-		if (!selection || !onDragStart) {
+		if (!selection) {
 			return;
 		};
 		
 		keyboard.disableSelection(true);
 		selection.clear();
-
-		onDragStart(e, I.DropType.Relation, [ relationKey ], this);
+		dragProvider.onDragStart(e, I.DropType.Relation, [ relationKey ], this);
 	};
 
 });

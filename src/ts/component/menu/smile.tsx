@@ -1026,21 +1026,18 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			return;
 		};
 		
-		const { dataset, close } = this.props;
-		const { preventCommonDrop } = dataset || {};
+		const { close } = this.props;
 		const file = e.dataTransfer.files[0].path;
 		const node = $(this.node);
 		const zone = node.find('.dropzone');
 		
-		preventCommonDrop(true);
-
 		zone.removeClass('isDraggingOver');
 		this.setLoading(true);
+		keyboard.disableCommonDrop(true);
 		
 		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setLoading(false);
-			
-			preventCommonDrop(false);
+			keyboard.disableCommonDrop(false);
 			
 			if (!message.error.code) {
 				this.onObjectSelect(message.objectId);

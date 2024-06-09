@@ -35,6 +35,7 @@ class Keyboard {
 	isSelectionDisabled = false;
 	isSelectionClearDisabled = false;
 	isComposition = false;
+	isCommonDropDisabled = false;
 	
 	init () {
 		this.unbind();
@@ -1082,8 +1083,14 @@ class Keyboard {
 		this.isPasteDisabled = v;
 	};
 
+	// Flag to disable selection
 	disableSelection (v: boolean) {
 		this.isSelectionDisabled = v;
+	};
+
+	// Flag to disable common drop
+	disableCommonDrop (v: boolean) {
+		this.isCommonDropDisabled = v;
 	};
 	
 	isSpecial (e: any): boolean {

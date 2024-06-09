@@ -152,7 +152,7 @@ class UtilData {
 	};
 	
 	selectionGet (id: string, withChildren: boolean, save: boolean): string[] {
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 		
 		if (!selection) {
 			return [];
@@ -908,7 +908,7 @@ class UtilData {
 	};
 
 	moveToPage (rootId: string, blockId: string, typeId: string, route: string) {
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 		const type = dbStore.getTypeById(typeId);
 
 		if (!type) {

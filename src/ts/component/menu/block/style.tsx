@@ -134,7 +134,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 		
 		close();
 		onSelect(item);

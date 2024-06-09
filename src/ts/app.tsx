@@ -161,8 +161,8 @@ Sentry.setContext('info', {
 class RoutePage extends React.Component<RouteComponentProps> {
 	render () {
 		return (
-			<SelectionProvider ref={ref => commonStore.refSet('selection', ref)}>
-				<DragProvider>
+			<SelectionProvider ref={ref => commonStore.refSet('selectionProvider', ref)}>
+				<DragProvider  ref={ref => commonStore.refSet('dragProvider', ref)}>
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
 					<Navigation />

@@ -63,7 +63,6 @@ export enum BlockVAlign {
 };
 
 export interface BlockComponent {
-	dataset?: I.Dataset;
 	rootId?: string;
 	traceId?: string;
 	block?: I.Block;

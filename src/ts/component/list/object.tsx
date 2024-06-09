@@ -220,7 +220,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { subId } = this.props;
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 
 		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
 		if (!objectIds.length) {

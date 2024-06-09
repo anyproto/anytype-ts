@@ -10,7 +10,6 @@ import { blockStore, commonStore } from 'Store';
 const Constant = require('json/constant.json');
 
 interface Props {
-	dataset?: I.Dataset;
 	children?: React.ReactNode;
 };
 
@@ -20,7 +19,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	node: any = null;
 	refLayer: any = null;
-	commonDropPrevented = false;
 	position: I.BlockPosition = I.BlockPosition.None;
 	hoverData: any = null;
 	canDrop = false;
@@ -41,11 +39,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		this.onDragEnd = this.onDragEnd.bind(this);
 		this.onDropCommon = this.onDropCommon.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.preventCommonDrop = this.preventCommonDrop.bind(this);
 	};
 
 	render () {
-		const children = this.injectProps(this.props.children);
+		const { children } = this.props;
 
 		return (
 			<div
@@ -127,7 +124,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	onDropCommon (e: any) {
 		e.preventDefault();
 
-		if (this.commonDropPrevented) {
+		if (keyboard.isCommonDropDisabled) {
 			this.clearState();
 			return;
 		};
@@ -202,7 +199,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	onDragStart (e: any, dropType: I.DropType, ids: string[], component: any) {
 		const rootId = keyboard.getRootId();
 		const isPopup = keyboard.isPopup();
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		const container = UtilCommon.getScrollContainer(isPopup);
@@ -253,7 +250,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	};
 
 	onDragOver (e: any) {
-		if (this.commonDropPrevented) {
+		if (keyboard.isCommonDropDisabled) {
 			return;
 		};
 
@@ -294,7 +291,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	};
 
 	onDrop (e: any, targetType: string, targetId: string, position: I.BlockPosition) {
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 
 		let data: any = {};
 		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) { /**/ };
@@ -766,33 +763,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			case I.BlockPosition.InnerFirst: c = 'middle'; break;
 		};
 		return c;
-	};
-
-	injectProps (children: any) {
-		return React.Children.map(children, (child: any) => {
-			if (!child) {
-				return null;
-			};
-
-			const props = child.props || {};
-			const children = props.children;
-			const dataset = props.dataset || {};
-
-			if (children) {
-				child = React.cloneElement(child, { children: this.injectProps(children) });
-			};
-
-			dataset.dragProvider = this;
-			dataset.onDragStart = this.onDragStart;
-			dataset.onDrop = this.onDrop;
-			dataset.preventCommonDrop = this.preventCommonDrop;
-
-			return React.cloneElement(child, { dataset: dataset });
-		});
-	};
-
-	preventCommonDrop (v: boolean) {
-		this.commonDropPrevented = Boolean(v);
 	};
 
 	clearStyle () {

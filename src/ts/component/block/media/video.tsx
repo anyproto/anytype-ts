@@ -220,7 +220,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		};
 		
 		const { block } = this.props;
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 		
 		focus.set(block.id, { from: 0, to: 0 });

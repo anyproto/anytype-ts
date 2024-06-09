@@ -145,7 +145,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 		};
 		
 		const { block } = this.props;
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		

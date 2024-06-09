@@ -122,7 +122,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	onCopy () {
-		const selection = commonStore.getRef('selection');
+		const selection = commonStore.getRef('selectionProvider');
 		const rootId = this.getRootId();
 		const { focused } = focus.state;
 
