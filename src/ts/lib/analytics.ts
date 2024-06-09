@@ -36,6 +36,8 @@ class Analytics {
 		webclipper: 'Webclipper',
 		clipboard: 'Clipboard',
 		shortcut: 'Shortcut',
+		turn: 'TurnInto',
+		powertool: 'Powertool',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',

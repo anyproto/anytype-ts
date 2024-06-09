@@ -484,7 +484,8 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	onContextMenu (e: any) {
 		const { focused } = focus.state;
-		const { rootId, block, readonly, isContextMenuDisabled } = this.props;
+		const { rootId, block, readonly, isContextMenuDisabled, dataset } = this.props;
+		const { selection } = dataset || {};
 
 		if (isContextMenuDisabled || readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
 			return;
@@ -505,6 +506,9 @@ const Block = observer(class Block extends React.Component<Props> {
 		focus.clear(true);
 		menuStore.closeAll([], () => {
 			this.ids = UtilData.selectionGet(block.id, false, false, this.props);
+
+			selection.set(I.SelectType.Block, this.ids);
+
 			this.menuOpen({
 				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
 			});
