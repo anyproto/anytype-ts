@@ -373,6 +373,8 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			});
 
 			$(window).trigger('resize');
+
+			analytics.event('ScreenHistoryVersion');
 		});
 	};
 
