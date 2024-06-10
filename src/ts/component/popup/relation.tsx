@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Label, Button, Cell, Error, Icon, EmptySearch, Checkbox } from 'Component';
 import { I, M, C, UtilCommon, Relation, UtilData, translate, Dataview } from 'Lib';
 import { dbStore, commonStore, popupStore, menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const ID_PREFIX = 'popupRelation';
