@@ -1661,6 +1661,10 @@
 	"survey4Text": "Take our 1-minute survey to enhance space sharing. Your input makes Anytype better for everyone.",
 	"survey4Confirm": "Let’s Go!",
 	"survey4Cancel": "No thanks",
+	"survey5Title": "Improve Anytype with Your Feedback",
+	"survey5Text": "Take our 1-minute survey to enhance collaboration. Your input makes Anytype better for everyone.",
+	"survey5Confirm": "Let’s Go!",
+	"survey5Cancel": "No thanks",
 
 	"widget0Name": "Link",
 	"widget0Description": "Compact version of the Object",

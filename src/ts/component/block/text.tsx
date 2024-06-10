@@ -20,7 +20,7 @@ const langs = [
 	'livescript', 'lua', 'markdown', 'makefile', 'matlab', 'nginx', 'nix', 'objectivec', 'ocaml', 'pascal', 'perl', 'php', 'powershell', 'prolog',
 	'python', 'r', 'reason', 'ruby', 'rust', 'sass', 'java', 'scala', 'scheme', 'scss', 'sql', 'swift', 'typescript', 'vbnet', 'verilog',
 	'vhdl', 'visual-basic', 'wasm', 'yaml', 'javascript', 'css', 'markup', 'markup-templating', 'csharp', 'php', 'go', 'swift', 'kotlin',
-	'wolfram', 'dot', 'toml', 'bsl'
+	'wolfram', 'dot', 'toml', 'bsl', 'cfscript', 'gdscript',
 ];
 for (const lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
@@ -898,7 +898,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			'##':			 I.TextStyle.Header2,
 			'###':			 I.TextStyle.Header3,
 			'"':			 I.TextStyle.Quote,
-			'```':			 I.TextStyle.Code,
+			'```([a-z]+)?':	 I.TextStyle.Code,
 			'\\>':			 I.TextStyle.Toggle,
 			'1\\.':			 I.TextStyle.Numbered,
 		};
@@ -1001,7 +1001,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				const reg = new RegExp(`^(${k}\\s)`);
 				const newStyle = Markdown[k];
 
-				if ((newStyle == content.style) || !value.match(reg) || ((newStyle == I.TextStyle.Numbered) && block.isTextHeader())) {
+				if (newStyle == content.style) {
+					continue;
+				};
+
+				if (block.isTextHeader() && (newStyle == I.TextStyle.Numbered)) {
+					continue;
+				};
+
+				const match = value.match(reg);
+				if (!match) {
 					continue;
 				};
 
@@ -1024,6 +1033,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 					if (newStyle == I.TextStyle.Toggle) {
 						blockStore.toggle(rootId, id, true);
+					};
+
+					if ((newStyle == I.TextStyle.Code) && match[2]) {
+						C.BlockListSetFields(rootId, [ 
+							{ blockId: block.id, fields: { ...block.fields, lang: match[2] } } 
+						]);
 					};
 				});
 

@@ -33,6 +33,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 	};
 	top = 0;
 	lastId = '';
+	toggles = [];
 
 	constructor (props: Props) {
 		super(props);
@@ -57,7 +58,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 			return (
 				<div id={`section-${item.hash}`} className="section">
-					<div className="head" onClick={e => this.toggleSection(e, item.hash)}>
+					<div className="head" onClick={e => this.toggleSection(e, item.id, item.hash)}>
 						<div className="date">{date}</div>
 						<div className="authors">
 							{authors.map((id: string, i: number) => (
@@ -173,6 +174,10 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 	componentDidUpdate () {
 		this.init();
 	};
+
+	componentWillUnmount(): void {
+		this.toggles = [];
+	};
 	
 	onClose () {
 		const { rootId } = this.props;
@@ -204,26 +209,36 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 	init () {
 		const { version } = this.state;
+		const node = $(this.node);
+		const groups = this.groupData();
+		const unwrapped = this.unwrapGroups('', groups);
+
+		node.find('.active').removeClass('active');
+		this.toggles.forEach(id => this.initToggle(id, unwrapped));
+
+		if (version) {
+			this.initToggle(version.id, unwrapped);
+			node.find(`#item-${version.id}`).addClass('active');
+		};
+
+		$(this.refScroll).scrollTop(this.top);
+	};
+
+	initToggle (id: string, list: any[]) {
+		const version = list.find(it => it.id == id);
 		if (!version) {
 			return;
 		};
 
-		const { id, time }  = version;
-		const groups = this.groupData();
-		const unwrapped = this.unwrapGroups('', groups);
 		const node = $(this.node);
-		const groupId = this.getGroupId(time);
+		const groupId = this.getGroupId(version.time);
 		const hash = sha1(groupId);
-		const item = node.find(`#item-${id}`);
 		const section = node.find(`#section-${hash}`);
-		const scroll = $(this.refScroll);
-		const group = unwrapped.find(it => it.id == id);
 
-		if (!group) {
-			return;
-		};
+		section.addClass('isExpanded');
+		section.find('.items').show();
 
-		const parent = unwrapped.find(it => it.id == group.parentId);
+		const parent = list.find(it => it.id == version.parentId);
 		if (!parent) {
 			return;
 		};
@@ -231,39 +246,29 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		let children = null; 
 		let groupItem = null;
 
-		if (group.isTimeGroup) {
-			groupItem = node.find(`#item-${group.id}`);
-			children = node.find(`#children-${group.id}`);
+		if (version.isTimeGroup) {
+			groupItem = node.find(`#item-${id}`);
+			children = node.find(`#children-${id}`);
 		} else {
 			groupItem = node.find(`#item-${parent.id}`);
 			children = node.find(`#children-${parent.id}`);
 		};
 
-		section.addClass('isExpanded');
-		section.find('.items').show();
-
-		node.find('.active').removeClass('active');
-		item.addClass('active');
-
 		if (children && children.length) {
-			item.addClass('isExpanded');
 			children.show();
 		};
 
 		if (groupItem && groupItem.length) {
 			groupItem.addClass('isExpanded');
 		};
-
-		scroll.scrollTop(this.top);
 	};
 
-	toggleSection (e: any, id: string) {
+	toggleSection (e: any, id: string, hash: string) {
 		e.stopPropagation();
 
-		const node = $(this.node);;
-		const section = node.find(`#section-${id}`);
+		const section = $(this.node).find(`#section-${hash}`);
 
-		this.toggleChildren(section, section.find('.items'));
+		this.toggleChildren(id, section, section.find('.items'));
 	};
 
 	onArrow (e: any, id: string) {
@@ -271,7 +276,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 		const node = $(this.node);
 
-		this.toggleChildren(node.find(`#item-${id}`), node.find(`#children-${id}`));
+		this.toggleChildren(id, node.find(`#item-${id}`), node.find(`#children-${id}`));
 	};
 
 	onScroll () {
@@ -287,7 +292,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		};
 	};
 
-	toggleChildren (item: any, children: any) {
+	toggleChildren (id: string, item: any, children: any) {
 		const isActive = item.hasClass('isExpanded');
 
 		let height = 0;
@@ -300,6 +305,8 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 			window.setTimeout(() => children.css({ height: 0 }), 15);
 			window.setTimeout(() => children.hide(), 215);
+
+			this.toggles = this.toggles.filter(it => it != id);
 		} else {
 			item.addClass('isExpanded');
 
@@ -310,6 +317,8 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			children.css({ overflow: 'hidden', height: 0 });
 			window.setTimeout(() => children.css({ height: height }), 15);
 			window.setTimeout(() => children.css({ overflow: 'visible', height: 'auto' }), 215);
+
+			this.toggles.push(id);
 		};
 	};
 
@@ -364,6 +373,8 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			});
 
 			$(window).trigger('resize');
+
+			analytics.event('ScreenHistoryVersion');
 		});
 	};
 
@@ -461,7 +472,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			if (group) {
 				group.list.push(version);
 			} else {
-				groups.push({ id, list: [ version ], time: version.time, hash: sha1(id) });
+				groups.push({ id, list: [ version ], time: version.time, hash: sha1(id), isSection: true });
 			};
 		};
 

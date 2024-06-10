@@ -167,6 +167,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	scrollToElement (element: any) {
+		if (!element || !element.length) {
+			return;
+		};
+
 		const node = $(this.node);
 		const container = node.find('#historySideLeft');
 		const ch = container.height();
@@ -229,9 +233,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				let type = I.DiffType.None;
 
 				if (data.text !== null) {
-					const diff = Diff.diffChars(oldBlock.getText(), String(data.text || '')).filter(it => it.added);
+					const diff = Diff.diffChars(oldBlock.getText(), String(data.text || ''));
+					const added = diff.filter(it => it.added).length;
 
-					if (diff.length) {
+					if (added) {
 						const marks = UtilCommon.objectCopy(block.content.marks || []);
 
 						let from = 0;
@@ -241,7 +246,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 							if (item.added) {
 								marks.push({ type: I.MarkType.Change, param: '', range: { from, to } });
 							};
-
 							from = to;
 						};
 
@@ -322,6 +326,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					{ type: I.DiffType.None, element: `#block-${data.id}` },
 					{ type: I.DiffType.Change, element: `#block-${data.id} #button-dataview-settings` },
 				]);
+				break;
+			};
+
+			case 'ObjectRelationsAmend': {
+				elements.push({ type: I.DiffType.Change, element: '#button-header-relation' });
 				break;
 			};
 

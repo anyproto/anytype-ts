@@ -135,7 +135,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const node = $(this.node);
 		const cnt = node.find('#cnt');
 		const switcher = node.find('#switcher').removeClass('active');
-		const tag = Mark.getTag(I.MarkType.Highlight);
+		const tag = Mark.getTag(I.MarkType.Search);
 
 		if (this.last != value) {
 			this.n = 0;
@@ -251,7 +251,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { isPopup } = data;
 		const scrollContainer = this.getScrollContainer();
 		const offset = Constant.size.lastBlock + UtilCommon.sizeHeader();
-		const tag = Mark.getTag(I.MarkType.Highlight);
+		const tag = Mark.getTag(I.MarkType.Search);
 
 		this.container.find(`${tag}.active`).removeClass('active');
 

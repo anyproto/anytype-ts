@@ -207,6 +207,7 @@ export const Mapper = {
 		BlockDataview: (obj: Model.Block.Content.Dataview) => {
 			return {
 				sources: obj.getSourceList(),
+				viewId: obj.getActiveview(),
 				views: (obj.getViewsList() || []).map(Mapper.From.View),
 				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
 				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),

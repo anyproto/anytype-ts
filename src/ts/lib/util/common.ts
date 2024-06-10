@@ -467,7 +467,7 @@ class UtilCommon {
 		v = String(v || '');
 
 		const uc = '\\P{Script_Extensions=Latin}';
-		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,6}$`, 'gu');
+		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,12}$`, 'gu');
 		return reg.test(v);
 	};
 

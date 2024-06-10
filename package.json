@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.40.30-beta",
+	"version": "0.41.0",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -62,7 +62,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^30.0.8",
+		"electron": "^30.1.0",
 		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",

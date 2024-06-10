@@ -32,6 +32,7 @@ export enum MarkType {
 
 	Change		 = 100,
 	Highlight	 = 101,
+	Search		 = 102,
 };
 
 export enum MarkOverlap {

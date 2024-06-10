@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
+import { I, UtilObject } from 'Lib';
+import { blockStore } from 'Store';
 
 interface Props {
-	object: any;
+	cellId: string;
 	iconSize: number;
 	relation?: any;
 	canEdit?: boolean;
+	getObject: () => any;
 	elementMapper?: (relation: any, item: any) => any;
 	onClick?: (e: any, item: any) => void;
 	onRemove?: (e: any, id: string) => void;
@@ -19,12 +22,17 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 
 		this.onClick = this.onClick.bind(this);
 		this.onRemove = this.onRemove.bind(this);
+		this.onSelect = this.onSelect.bind(this);
+		this.onUpload = this.onUpload.bind(this);
+		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
-		const { iconSize, relation, canEdit } = this.props;
+		const { cellId, iconSize, relation, canEdit } = this.props;
 		const cn = [ 'element' ];
 		const object = this.getObject();
+		const { done, isReadonly, isArchived } = object;
+		const allowedDetails = blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 
 		let iconObject = null;
 		let iconRemove = null;
@@ -37,14 +45,24 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 			iconRemove = <Icon className="objectRemove" onClick={this.onRemove} />;
 		};
 		if (relation.relationKey != 'type') {
-			iconObject = <IconObject object={object} size={iconSize} />;
+			iconObject = (
+				<IconObject 
+					id={`${cellId}-icon`}
+					object={object} 
+					size={iconSize} 
+					canEdit={!isReadonly && !isArchived && allowedDetails} 
+					onSelect={this.onSelect} 
+					onUpload={this.onUpload} 
+					onCheckbox={this.onCheckbox} 
+				/>
+			);
 		};
 
 		return (
-			<div className={cn.join(' ')} onClick={this.onClick}>
+			<div className={cn.join(' ')}>
 				<div className="flex">
 					{iconObject}
-					<ObjectName object={object} />
+					<ObjectName object={object} onClick={this.onClick} />
 					{iconRemove}
 				</div>
 			</div>
@@ -55,15 +73,34 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 		const { onClick, canEdit } = this.props;
 		const object = this.getObject();
 
-		if (!canEdit && onClick) {
+		if (onClick) {
 			onClick(e, object);
 		};
+	};
+
+	onSelect (icon: string) {
+		const object = this.getObject();
+
+		UtilObject.setIcon(object.id, icon, '');
+	};
+
+	onUpload (objectId: string) {
+		const object = this.getObject();
+
+		UtilObject.setIcon(object.id, '', objectId);
+	};
+
+	onCheckbox () {
+		const object = this.getObject();
+
+		UtilObject.setDone(object.id, !object.done);
 	};
 
 	onRemove (e: any) {
 		e.stopPropagation();
 
-		const { object, canEdit, onRemove } = this.props;
+		const { canEdit, onRemove } = this.props;
+		const object = this.getObject();
 
 		if (canEdit && onRemove) {
 			onRemove(e, object.id);
@@ -71,9 +108,9 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 	};
 
 	getObject () {
-		const { relation, elementMapper } = this.props;
+		const { relation, elementMapper, getObject } = this.props;
 
-		let object = this.props.object || {};
+		let object = getObject();
 		if (elementMapper) {
 			object = elementMapper(relation, object);
 		};

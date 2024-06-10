@@ -232,6 +232,7 @@ export interface BoardGroup {
 
 export interface ContentDataview {
 	sources: string[];
+	viewId: string;
 	views: View[];
 	relationLinks: any[];
 	groupOrder: any[];
