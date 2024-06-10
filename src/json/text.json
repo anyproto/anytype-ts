@@ -1694,7 +1694,7 @@
 	"widgetOptions": "Options",
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
-	"widgetViewAll": "See all Objects",
+	"widgetShowAll": "See all Objects",
 
 	"phrasePlaceholder": "Please enter your Key",
 
