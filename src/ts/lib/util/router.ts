@@ -45,8 +45,9 @@ class UtilRouter {
 	};
 
 	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; viewId: string; }>): string {
-		const { page, action, spaceId, viewId } = param;
-		const id = String(param.id || '-');
+		const { page, action, spaceId } = param;
+		const id = String(param.id || '_blank_');
+		const viewId = String(param.viewId || '_blank_');
 
 		let route = [ page, action, id ];
 		route = route.concat([ 'spaceId', spaceId ]);

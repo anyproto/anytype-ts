@@ -919,7 +919,17 @@ class Keyboard {
 	};
 
 	getMatch () {
-		return (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
+		const ret = (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
+
+		for (const k in ret.params) {
+			if (ret.params[k] == '_blank_') {
+				ret.params[k] = '';
+			};
+		};
+
+		console.log(JSON.stringify(ret));
+
+		return ret;
 	};
 
 	isMain () {
