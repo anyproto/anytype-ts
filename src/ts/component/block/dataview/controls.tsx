@@ -206,10 +206,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onViewSwitch (view: any) {
-		const { block } = this.props;
-
 		this.onViewSet(view);
-		window.setTimeout(() => { $(`#button-${block.id}-settings`).trigger('click'); }, 50);
+		window.setTimeout(() => { $(`#button-${this.props.block.id}-settings`).trigger('click'); }, 50);
 	};
 
 	onViewCopy (view) {
@@ -352,15 +350,16 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		});
 	};
 
-	onViewSet (item: any) {
+	onViewSet (view: any) {
 		const { rootId, block, isInline, getTarget } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const object = getTarget();
 
-		dbStore.metaSet(subId, '', { viewId: item.id });
+		dbStore.metaSet(subId, '', { viewId: view.id });
+		C.BlockDataviewViewSetActive(rootId, block.id, view.id);
 
 		analytics.event('SwitchView', {
-			type: item.type,
+			type: view.type,
 			objectType: object.type,
 			embedType: analytics.embedType(isInline)
 		});
