@@ -199,7 +199,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		};
 
 		const selection = commonStore.getRef('selectionProvider');
-		const ids = selection.get(I.SelectType.Block);
+		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (!(keyboard.withCommand(e) && ids.length)) {
 			this.open();
