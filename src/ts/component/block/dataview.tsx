@@ -6,6 +6,7 @@ import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action, UtilDate, Storage } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, commonStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 import Controls from './dataview/controls';
@@ -243,12 +244,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { isInline, isPopup } = this.props;
-		const view = this.getView();
+		const { block, isInline, isPopup } = this.props;
+		const { viewId } = block.content;
 		const match = keyboard.getMatch();
+		const subId = this.getSubId();
 
-		if (match.params.viewId) {
-			dbStore.metaSet(this.getSubId(), '', { viewId: match.params.viewId });
+		if (match.params.viewId || viewId) {
+			dbStore.metaSet(subId, '', { viewId: match.params.viewId || viewId });
 		};
 
 		this.reloadData();
@@ -256,7 +258,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.resize();
 		this.rebind();
 
+		const view = this.getView();
 		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
+
 		analytics.event(eventName, { embedType: analytics.embedType(isInline), type: view?.type });
 
 		if (!isInline && Onboarding.isCompleted('mainSet') && this.isAllowedObject() && this.isAllowedDefaultType()) {
@@ -413,11 +417,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	reloadData () {
-		const { rootId, block } = this.props;
 		const view = this.getView();
 
 		if (view) {
-			dbStore.metaSet(rootId, block.id, { viewId: view.id, offset: 0, total: 0 });
+			dbStore.metaSet(this.getSubId(), '', { viewId: view.id, offset: 0, total: 0 });
 			this.loadData(view.id, 0, true);
 		};
 	};

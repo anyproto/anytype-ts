@@ -1065,7 +1065,7 @@ export const BlockDataviewViewRelationSort = (contextId: string, blockId: string
 	dispatcher.request(BlockDataviewViewRelationSort.name, request, callBack);
 };
 
-export const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+export const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.View.SetActive.Request();
 
 	request.setContextid(contextId);
