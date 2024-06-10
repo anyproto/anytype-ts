@@ -437,10 +437,14 @@ class Action {
 
 	import (type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
 		const fileOptions: any = { 
-			properties: [ 'openFile', 'openDirectory' ],
+			properties: [ 'openFile' ],
 			filters: [ 
 				{ name: 'Filtered extensions', extensions },
 			],
+		};
+
+		if (!UtilCommon.isPlatformLinux()) {
+			fileOptions.properties.push('openDirectory');
 		};
 
 		analytics.event('ClickImport', { type });
