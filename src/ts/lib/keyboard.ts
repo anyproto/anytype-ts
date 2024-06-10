@@ -922,12 +922,10 @@ class Keyboard {
 		const ret = (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
 
 		for (const k in ret.params) {
-			if (ret.params[k] == '_blank_') {
+			if (ret.params[k] == Constant.blankRouteId) {
 				ret.params[k] = '';
 			};
 		};
-
-		console.log(JSON.stringify(ret));
 
 		return ret;
 	};
