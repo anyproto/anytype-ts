@@ -233,9 +233,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				let type = I.DiffType.None;
 
 				if (data.text !== null) {
-					const diff = Diff.diffChars(oldBlock.getText(), String(data.text || '')).filter(it => it.added);
+					const diff = Diff.diffChars(oldBlock.getText(), String(data.text || ''));
+					const added = diff.filter(it => it.added).length;
 
-					if (diff.length) {
+					if (added) {
 						const marks = UtilCommon.objectCopy(block.content.marks || []);
 
 						let from = 0;
@@ -245,7 +246,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 							if (item.added) {
 								marks.push({ type: I.MarkType.Change, param: '', range: { from, to } });
 							};
-
 							from = to;
 						};
 
