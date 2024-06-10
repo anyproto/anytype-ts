@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { MenuItemVertical, Title, Button, Icon, IconObject, ObjectName, Label } from 'Component';
+import { Title, Icon, IconObject, ObjectName } from 'Component';
 import { C, Action, I, translate, UtilObject, UtilData, UtilSpace, UtilFile, UtilCommon } from 'Lib';
 import { menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';

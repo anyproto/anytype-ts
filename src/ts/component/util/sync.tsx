@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, Preview, UtilData, translate, UtilCommon } from 'Lib';
+import { I, translate } from 'Lib';
 import { authStore } from 'Store';
 
 interface Props {
