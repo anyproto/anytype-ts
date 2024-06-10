@@ -17,7 +17,7 @@ class AuthStore {
 	public appKey = '';
 	public threadMap: Map<string, any> = new Map();
 	public membershipData: I.Membership = { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
-	public syncStatus: I.SyncStatus = { error: 0, network: 0, status: 3, syncingCounter: 0 };
+	public syncStatusData: I.SyncStatus = { error: 0, network: 0, status: 3, syncingCounter: 0 };
 	
 	constructor () {
 		makeObservable(this, {
@@ -25,7 +25,7 @@ class AuthStore {
 			accountList: observable,
 			threadMap: observable,
 			membershipData: observable,
-			syncStatus: observable,
+			syncStatusData: observable,
 			membership: computed,
 			accounts: computed,
 			account: computed,
@@ -64,8 +64,8 @@ class AuthStore {
 		return this.membershipData || { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
 	};
 
-	get syncData (): I.SyncStatus {
-		return this.syncStatus || { error: 0, network: 0, status: 3, syncingCounter: 0 };
+	get syncStatus (): I.SyncStatus {
+		return this.syncStatusData || { error: 0, network: 0, status: 3, syncingCounter: 0 };
 	};
 
 	tokenSet (v: string) {
@@ -93,7 +93,7 @@ class AuthStore {
 	};
 
 	syncStatusUpdate (v: I.SyncStatus) {
-		set(this.syncStatus, v);
+		set(this.syncStatusData, v);
 	};
 
 	accountAdd (account: any) {

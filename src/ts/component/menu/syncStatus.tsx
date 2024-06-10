@@ -45,7 +45,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 			return (
 				<div
-					id={'item-' + item.id}
+					id={`item-${item.id}`}
 					className="item sides"
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
@@ -155,7 +155,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		const { id } = item;
 		const { param } = this.props;
 		const { classNameWrap } = param;
-		const itemNode = $(`#item-${id}`);
+		const itemNode = $(`.syncMenuWrapper #item-${id}`);
 		const options: any[] = [
 			{ id: 'open', name: translate('commonOpen') }
 		];
@@ -268,13 +268,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIconP2P () {
-		// C.DeviceList((message) => {
-		// });
 		return {};
 	};
 
 	getIconNetwork () {
-		const syncData = authStore.syncData;
+		const syncData = authStore.syncStatus;
 		const { network, error, syncingCounter } = syncData;
 
 		let id = '';

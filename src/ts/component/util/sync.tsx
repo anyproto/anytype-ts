@@ -57,7 +57,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 	};
 
 	getStatus (): any {
-		const syncData = authStore.syncData;
+		const syncData = authStore.syncStatus;
 		const { status, network, error } = syncData;
 
 		let icon: string;
@@ -67,7 +67,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 			icon = String(I.SyncStatusStatus.Offline).toLowerCase()
 		} else {
 			icon = I.SyncStatusStatus[status].toLowerCase()
-		}
+		};
 
 		if ((status == I.SyncStatusStatus.Error) && error) {
 			name = translate(`syncButtonNameError${error}`);

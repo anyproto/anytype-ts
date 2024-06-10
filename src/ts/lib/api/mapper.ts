@@ -1516,6 +1516,14 @@ export const Mapper = {
 			};
 		},
 
+		spaceSyncStatusUpdate: (obj: Events.Event.Space.SyncStatus.Update) => {
+			return {
+				error: obj.getError(),
+				network: obj.getNetwork(),
+				status: obj.getStatus(),
+				syncingCounter: obj.getSyncingobjectscounter()
+			};
+		},
 	},
 
 };

@@ -85,8 +85,6 @@ class MenuSyncStatusInfo extends React.Component<I.Menu> {
 		};
 	};
 
-
-
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;

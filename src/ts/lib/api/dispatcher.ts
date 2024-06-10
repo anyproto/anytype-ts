@@ -965,13 +965,7 @@ class Dispatcher {
 				};
 
 				case 'spaceSyncStatusUpdate': {
-					const status: I.SyncStatus = {
-						error: data.getError(),
-						network: data.getNetwork(),
-						status: data.getStatus(),
-						syncingCounter: data.getSyncingobjectscounter()
-					};
-					authStore.syncStatusUpdate(status);
+					authStore.syncStatusUpdate(mapped);
 					break;
 				};
 
