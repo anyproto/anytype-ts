@@ -443,7 +443,7 @@ class Action {
 			],
 		};
 
-		if (!UtilCommon.isPlatformLinux()) {
+		if (UtilCommon.isPlatformMac()) {
 			fileOptions.properties.push('openDirectory');
 		};
 
