@@ -1014,7 +1014,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId, isPopup } = this.props;
 		const selection = commonStore.getRef('selectionProvider');
 		const dir = pressed.match(Key.up) ? -1 : 1;
-		const ids = selection.get(I.SelectType.Block, false);
+		const ids = selection?.get(I.SelectType.Block, false) || [];
 
 		if (!ids.length) {
 			return;
@@ -1164,8 +1164,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const selection = commonStore.getRef('selectionProvider');
 		const dir = pressed.match(Key.up) ? -1 : 1;
-		const ids = selection.get(I.SelectType.Block, false);
-		const idsWithChildren = selection.get(I.SelectType.Block, true);
+		const ids = selection?.get(I.SelectType.Block, false) || [];
+		const idsWithChildren = selection?.get(I.SelectType.Block, true) || [];
 
 		if (ids.length == 1) {
 			this.dir = dir;
@@ -1297,7 +1297,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const isDelete = pressed == 'delete';
-		const ids = selection.get(I.SelectType.Block, true);
+		const ids = selection?.get(I.SelectType.Block, true) || [];
 
 		if (block.isText()) {
 			if (!isDelete && !range.to) {
@@ -1654,7 +1654,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		let ids = selection.get(I.SelectType.Block, true);
+		let ids = selection?.get(I.SelectType.Block, true) || [];
 
 		if (root.isLocked() && !ids.length) {
 			return;
@@ -1719,7 +1719,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let from = 0;
 		let to = 0;
 
-		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks }, '', (message: any) => {
+		C.BlockPaste(rootId, focused, range, selection?.get(I.SelectType.Block, true) || [], data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks }, '', (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -2046,7 +2046,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	blockRemove (focused?: I.Block) {
 		const { rootId } = this.props;
 		const selection = commonStore.getRef('selectionProvider');
-		const ids = selection.get(I.SelectType.Block);
+		const ids = selection?.get(I.SelectType.Block) || [];
 
 		menuStore.closeAll();
 		popupStore.closeAll([ 'preview' ]);

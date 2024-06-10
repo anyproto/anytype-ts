@@ -153,7 +153,7 @@ const Card = observer(class Card extends React.Component<Props> {
 			2: () => onContext(e, record.id)
 		};
 
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		const ids = selection?.get(I.SelectType.Record) || [];
 		if ((keyboard.withCommand(e) && ids.length) || keyboard.isSelectionClearDisabled) {
 			return;
 		};

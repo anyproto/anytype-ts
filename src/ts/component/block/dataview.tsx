@@ -869,7 +869,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if ((relationKey == 'name') && (!ref.ref.state.isEditing)) {
-			const ids = selection ? selection.get(I.SelectType.Record) : [];
+			const ids = selection?.get(I.SelectType.Record) || [];
 
 			if (keyboard.withCommand(e)) {
 				if (!ids.length) {
@@ -916,7 +916,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 		
-		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
+		let objectIds = selection?.get(I.SelectType.Record) || [];
 		if (!objectIds.length) {
 			objectIds = [ id ];
 		};
@@ -1279,7 +1279,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const node = $(this.node);
 		const con = node.find('#dataviewControls');
 		const sel = node.find('#dataviewSelection');
-		const ids = selection.get(I.SelectType.Record);
+		const ids = selection?.get(I.SelectType.Record) || [];
 		const length = ids.length;
 
 		length ? con.hide() : con.show();

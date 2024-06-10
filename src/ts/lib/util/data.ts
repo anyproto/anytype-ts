@@ -915,7 +915,7 @@ class UtilData {
 			return;
 		};
 		
-		const ids = selection ? selection.get(I.SelectType.Block) : [];
+		const ids = selection?.get(I.SelectType.Block) || [];
 		if (!ids.length) {
 			ids.push(blockId);
 		};

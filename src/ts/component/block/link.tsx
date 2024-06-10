@@ -258,7 +258,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const selection = commonStore.getRef('selectionProvider');
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
-		const ids = selection ? selection.get(I.SelectType.Block) : [];
+		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (object._empty_ || (targetBlockId == rootId) || (keyboard.withCommand(e) && ids.length)) {
 			return;

@@ -126,7 +126,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const rootId = this.getRootId();
 		const { focused } = focus.state;
 
-		let ids = selection.get(I.SelectType.Block, true);
+		let ids = selection?.get(I.SelectType.Block, true) || [];
 		if (!ids.length) {
 			ids = [ focused ];
 		};

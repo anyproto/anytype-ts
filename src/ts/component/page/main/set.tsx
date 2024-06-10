@@ -236,7 +236,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		const node = $(this.node);
 		const selection = commonStore.getRef('selectionProvider');
 		const cmd = keyboard.cmdKey();
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
 		const rootId = this.getRootId();
 
