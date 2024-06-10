@@ -36,7 +36,7 @@
 			.icon.arrow { transform: none; }
 		}
 
-		.items { display: none; transition: height 0.4s $easeInQuint; }
+		.items { display: none; transition: height 0.2s $easeInQuint; }
 		.items {
 			.item { padding: 0px 8px 0px 32px; position: relative; }
 			.item::before {

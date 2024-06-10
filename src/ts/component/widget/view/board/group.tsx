@@ -7,6 +7,7 @@ import Cell from 'Component/block/dataview/cell';
 import Item from './item';
 
 const Constant = require('json/constant.json');
+const ANIMATION = 200;
 
 interface Props extends I.WidgetViewComponent {
 	id: string;
@@ -194,7 +195,7 @@ const Group = observer(class Group extends React.Component<Props> {
 			children.css({ overflow: 'hidden', height: height });
 
 			window.setTimeout(() => children.css({ height: 0 }), 15);
-			window.setTimeout(() => children.hide(), 415);
+			window.setTimeout(() => children.hide(), ANIMATION + 15);
 		} else {
 			item.addClass('isExpanded');
 
@@ -204,7 +205,7 @@ const Group = observer(class Group extends React.Component<Props> {
 
 			children.css({ overflow: 'hidden', height: 0 });
 			window.setTimeout(() => children.css({ height: height }), 15);
-			window.setTimeout(() => children.css({ overflow: 'visible', height: 'auto' }), 415);
+			window.setTimeout(() => children.css({ overflow: 'visible', height: 'auto' }), ANIMATION + 15);
 		};
 
 		Storage.setToggle(subKey, id, !isOpen);
