@@ -85,7 +85,6 @@
 	"commonComment": "Comment",
 	"commonIcon": "Icon",
 	"commonObjects": "Objects",
-	"commonCreateObject": "Create Object \"%s\"",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
@@ -149,6 +148,8 @@
 	"commonCollection": "Collection",
 	"commonSet": "Set",
 	"commonCreateNewObject": "Create new Object",
+	"commonCreateObjectWithName": "Create Object \"%s\"",
+	"commonCreateObject": "Create Object",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -548,7 +549,6 @@
 	"blockDataviewEmptySourceButton": "Select query",
 
 	"blockDataviewEmptyViewDescription": "Create your first one to begin",
-	"blockDataviewEmptyViewButton": "Create Object",
 
 	"blockDataviewControlsFilters": "Filters",
 	"blockDataviewControlsSorts": "Sorts",
@@ -1041,7 +1041,6 @@
 	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
-	"popupSearchCreateObject": "Create Object",
 	"popupSearchAddRelation": "Add Relation",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
 	"popupSearchBacklinksFrom": "Related to: %s",
@@ -1448,7 +1447,6 @@
 	"menuObjectVersionHistory": "Version History",
 	"menuObjectExport": "Export",
 	"menuObjectReloadFromSource": "Reload from Source",
-	"menuObjectCreateObject": "Create Object",
 	"menuObjectUseAsTemplate": "Use as a Template",
 	"menuObjectUnlockPage": "Unlock page",
 	"menuObjectLockPage": "Lock page",

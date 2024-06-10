@@ -1158,7 +1158,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				if (this.isAllowedObject()) {
 					emptyProps.description = translate('blockDataviewEmptyViewDescription');
-					emptyProps.button = translate('blockDataviewEmptyViewButton');
+					emptyProps.button = translate('commonCreateObject');
 					emptyProps.onClick = e => this.onRecordAdd(e, 1, '', { horizontal: I.MenuDirection.Center });
 				};
 				break;

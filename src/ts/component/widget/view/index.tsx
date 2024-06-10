@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Select, Label } from 'Component';
+import { Select, Label, Button } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, M, UtilCommon, Relation, keyboard, translate, UtilRouter } from 'Lib';
+import { Dataview, I, C, M, UtilCommon, Relation, keyboard, translate, UtilRouter, UtilObject } from 'Lib';
 
 import WidgetViewList from './list';
 import WidgetViewGallery from './gallery';
@@ -38,7 +38,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	render (): React.ReactNode {
-		const { parent, block, isSystemTarget } = this.props;
+		const { parent, block, isSystemTarget, canCreate } = this.props;
 		const { viewId, limit } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
@@ -87,7 +87,12 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		};
 
 		if (!isLoading && !length && showEmpty) {
-			content = <Label className="empty" text={translate('widgetEmptyLabel')} />;
+			content = (
+				<div className="emptyWrap">
+					<Label className="empty" text={translate('widgetEmptyLabel')} />
+					{canCreate && this.isAllowedObject() ? <Button text={translate('commonCreateObject')} color="blank" className="c28" /> : ''}
+				</div>
+			);
 		} else {
 			switch (viewType) {
 				default: {
@@ -224,7 +229,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 
 		const object = this.getObject();
 		const setOf = Relation.getArrayValue(object.setOf);
-		const isCollection = object.layout == I.ObjectLayout.Collection;
+		const isCollection = this.isCollection();
 
 		if (!setOf.length && !isCollection) {
 			return;
@@ -311,6 +316,56 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const ret = Dataview.applyObjectOrder(rootId, Constant.blockId.dataview, viewId, '', UtilCommon.objectCopy(records));
 
 		return (targetBlockId == Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
+	};
+
+	isAllowedObject () {
+		const rootId = this.getRootId();
+		const object = this.getObject();
+		const isCollection = object.layout == I.ObjectLayout.Collection;
+
+		let isAllowed = blockStore.checkFlags(rootId, Constant.blockId.dataview, [ I.RestrictionDataview.Object ]);
+		if (!isAllowed) {
+			return false;
+		};
+
+		if (isAllowed && isCollection) {
+			return true;
+		};
+
+		const sources = this.getSources();
+		if (!sources.length) {
+			return false;
+		};
+
+		const types = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Type);
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(UtilObject.getFileAndSystemLayouts());
+
+		for (const type of types) {
+			if (skipLayouts.includes(type.recommendedLayout)) {
+				isAllowed = false;
+				break;
+			};
+		};
+
+		return isAllowed;
+	};
+
+	getSources (): string[] {
+		if (this.isCollection()) {
+			return [];
+		};
+
+		const rootId = this.getRootId();
+		const object = this.getObject();
+		const types = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Type).map(it => it.id);
+		const relations = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Relation).map(it => it.id);
+
+		return [].concat(types).concat(relations);
+	};
+
+	isCollection () {
+		const object = this.getObject();
+		return object.layout == I.ObjectLayout.Collection;
 	};
 
 });
