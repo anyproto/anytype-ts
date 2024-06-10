@@ -563,7 +563,7 @@
 			"publish": [
 				{
 					"provider": "generic",
-					"url": "https://publish-releases.anytype.io/electron"
+					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
 			],
 			"signIgnore": [
@@ -582,7 +582,7 @@
 			"publish": [
 				{
 					"provider": "generic",
-					"url": "https://publish-releases.anytype.io/electron"
+					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
 			]
 		},
@@ -599,7 +599,7 @@
 			"publish": [
 				{
 					"provider": "generic",
-					"url": "https://publish-releases.anytype.io/electron"
+					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
 			]
 		},
