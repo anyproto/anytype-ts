@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, C, focus, UtilObject, Action, UtilCommon } from 'Lib';
-import { menuStore, blockStore, detailStore, commonStore } from 'Store';
+import { I, C, focus, UtilObject, keyboard } from 'Lib';
+import { menuStore, detailStore, commonStore } from 'Store';
 import ControlButtons from './controlButtons';
 
 const Constant = require('json/constant.json');
@@ -185,18 +185,16 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { dataset } = this.props;
-		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(this.node);
 		
 		node.removeClass('isDraggingOver');
-		preventCommonDrop(true);
+		keyboard.disableCommonDrop(true);
 		this.onUploadStart();
 		
 		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setState({ loading: false });
-			preventCommonDrop(false);
+			keyboard.disableCommonDrop(false);
 			
 			if (!message.error.code) {
 				this.onUpload(I.CoverType.Upload, message.objectId);

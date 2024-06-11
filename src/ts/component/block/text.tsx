@@ -1339,8 +1339,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onSelect () {
-		const { rootId, dataset, block, isPopup, isInsideTable, readonly } = this.props;
-		const ids = UtilData.selectionGet('', false, true, this.props);
+		const { rootId, block, isPopup, isInsideTable, readonly } = this.props;
+		const ids = UtilData.selectionGet('', false, true);
 		const range = this.getRange();
 
 		focus.set(block.id, range);
@@ -1411,7 +1411,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						blockId: block.id,
 						blockIds: [ block.id ],
 						rootId,
-						dataset,
 						range: { from: currentFrom, to: currentTo },
 						marks: this.marks,
 						isInsideTable,
@@ -1432,8 +1431,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onMouseDown (e: any) {
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 
 		window.clearTimeout(this.timeoutClick);
 

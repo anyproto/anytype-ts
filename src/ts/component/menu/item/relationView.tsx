@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
 import { I, UtilCommon, Relation, keyboard, translate, UtilData } from 'Lib';
-import { detailStore } from 'Store';
+import { detailStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -11,7 +11,6 @@ interface Props {
 	name: string;
 	format: I.RelationType;
 	isHidden: boolean;
-	dataset?: I.Dataset;
 	rootId: string;
 	block?: I.Block;
 	isFeatured?: boolean;
@@ -129,17 +128,13 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 			return;
 		};
 		
-		const { dataset, relationKey } = this.props;
-		const { selection, onDragStart } = dataset || {};
+		const { relationKey } = this.props;
+		const dragProvider = commonStore.getRef('dragProvider');
+		const selection = commonStore.getRef('selectionProvider');
 
-		if (!selection || !onDragStart) {
-			return;
-		};
-		
 		keyboard.disableSelection(true);
-		selection.clear();
-
-		onDragStart(e, I.DropType.Relation, [ relationKey ], this);
+		selection?.clear();
+		dragProvider?.onDragStart(e, I.DropType.Relation, [ relationKey ], this);
 	};
 
 });

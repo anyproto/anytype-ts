@@ -143,9 +143,9 @@ const Card = observer(class Card extends React.Component<Props> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		const { recordId, getRecord, onContext, dataset } = this.props;
+		const { recordId, getRecord, onContext } = this.props;
 		const record = getRecord(recordId);
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selectionProvider');
 		const cb = {
 			0: () => { 
 				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openConfig(record); 
@@ -153,7 +153,7 @@ const Card = observer(class Card extends React.Component<Props> {
 			2: () => onContext(e, record.id)
 		};
 
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		const ids = selection?.get(I.SelectType.Record) || [];
 		if ((keyboard.withCommand(e) && ids.length) || keyboard.isSelectionClearDisabled) {
 			return;
 		};

@@ -138,7 +138,6 @@ export enum HomePredefinedId {
 export interface HeaderComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
-	dataset?: I.Dataset;
 	tabs?: any[];
 	tab?: string;
 	text?: string;
@@ -160,7 +159,6 @@ export interface PageComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
 	matchPopup?: any;
-	dataset?: I.Dataset;
 	storageGet?(): any;
 	storageSet?(data: any): void;
 };
@@ -206,25 +204,6 @@ export enum SliceOperation {
     Move		 = 2,
 	Remove		 = 3,
     Replace		 = 4,
-};
-
-export interface Dataset {
-	selection: {
-		isSelecting: boolean;
-		checkSelected: (type: I.SelectType) => boolean;
-		renderSelection: () => void;
-		scrollToElement: (id: string, dir: number) => void;
-		set: (type: I.SelectType, ids: string[]) => void;
-		get: (type: I.SelectType, withChildren?: boolean) => string[];
-		clear: () => void;
-		hide: () => void;
-		setIsSelecting: (v: boolean) => void;
-	};
-	dragProvider: {
-		onScroll: () => void;
-	};
-	onDragStart: (e: React.DragEvent, dropType: I.DropType, ids: string[], component: unknown) => void;
-	preventCommonDrop: (value: boolean) => void;
 };
 
 export enum FileSyncStatus {

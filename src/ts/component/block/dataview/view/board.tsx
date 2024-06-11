@@ -209,8 +209,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	onDragStartCommon (e: any, target: any) {
 		e.stopPropagation();
 
-		const { dataset } = this.props;
-		const { selection, preventCommonDrop } = dataset || {};
+		const selection = commonStore.getRef('selectionProvider');
 		const node = $(this.node);
 		const view = node.find('.viewContent');
 		const clone = target.clone();
@@ -229,15 +228,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		keyboard.setDragging(true);
 		keyboard.disableSelection(true);
+		keyboard.disableCommonDrop(true);
+
 		selection.clear();
-		preventCommonDrop(true);
 	};
 
 	onDragEndCommon (e: any) {
 		e.preventDefault();
 
-		const { dataset } = this.props;
-		const { preventCommonDrop } = dataset || {};
 		const node = $(this.node);
 
 		$('body').removeClass('grab');
@@ -248,7 +246,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		node.find('.isOver').removeClass('isOver left right top bottom');
 
 		keyboard.disableSelection(false);
-		preventCommonDrop(false);
+		keyboard.disableCommonDrop(false);
 		keyboard.setDragging(false);
 
 		if (this.frame) {

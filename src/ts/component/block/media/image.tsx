@@ -144,17 +144,15 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off('mousemove.media mouseup.media');
 		
-		if (selection) {
-			selection.hide();
-		};
+		selection?.hide();
 
 		keyboard.disableSelection(true);		
 		node.addClass('isResizing');

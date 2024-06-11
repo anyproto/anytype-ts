@@ -162,8 +162,8 @@ class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
 		return (
-			<SelectionProvider>
-				<DragProvider>
+			<SelectionProvider ref={ref => commonStore.refSet('selectionProvider', ref)}>
+				<DragProvider ref={ref => commonStore.refSet('dragProvider', ref)}>
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
 					<Sidebar key="sidebar" {...this.props} />

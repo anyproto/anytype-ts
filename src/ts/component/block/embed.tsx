@@ -851,16 +851,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		
-		if (selection) {
-			selection.hide();
-		};
+		selection?.hide();
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);

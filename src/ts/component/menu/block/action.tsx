@@ -481,7 +481,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 				
 			case 'background': {
-				ids = UtilData.selectionGet(blockId, false, false, this.props);
+				ids = UtilData.selectionGet(blockId, false, false);
 				menuId = 'blockBackground';
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -597,7 +597,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const ids = UtilData.selectionGet(blockId, false, false, data);
+		const ids = UtilData.selectionGet(blockId, false, false);
 		const targetObjectId = block.getTargetObjectId();
 
 		switch (item.itemId) {
@@ -681,11 +681,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	};
 
 	moveToPage (typeId: string) {
-		const { param, dataset } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { selection } = dataset || {};
-		const ids = selection ? selection.get(I.SelectType.Block) : [];
+		const selection = commonStore.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (!ids.length) {
 			ids.push(blockId);
