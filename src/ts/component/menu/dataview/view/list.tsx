@@ -284,6 +284,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const object = getTarget();
 
 		dbStore.metaSet(subId, '', { viewId: item.id });
+		C.BlockDataviewViewSetActive(rootId, blockId, item.id);
 
 		analytics.event('SwitchView', {
 			type: item.type,
