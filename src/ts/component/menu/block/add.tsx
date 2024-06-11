@@ -379,6 +379,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 
+		if (!block) {
+			return;
+		};
+
 		let menuId = '';
 		const menuParam: I.MenuParam = {
 			menuKey: item.itemId,
