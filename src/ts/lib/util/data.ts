@@ -151,6 +151,9 @@ class UtilData {
 		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 	
+	/*
+	Used to click and set selection automatically in block menu for example
+	*/
 	selectionGet (id: string, withChildren: boolean, save: boolean): string[] {
 		const selection = commonStore.getRef('selectionProvider');
 		
