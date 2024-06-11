@@ -90,6 +90,7 @@
 
 .widget.isClosed {
 	.contentWrapper { height: 0px; overflow: hidden; }
+	> .dropTarget.targetHead { border-radius: 12px; }
 }
 
 .widget.widgetLink {
