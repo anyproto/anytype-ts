@@ -235,7 +235,7 @@
 	"electronMenuFlagMw": "Middleware",
 	"electronMenuFlagMwRequest": "Request/Response",
 	"electronMenuFlagMwEvent": "Common events",
-	"electronMenuFlagMwThread": "Sync events",
+	"electronMenuFlagMwSync": "Sync events",
 	"electronMenuFlagMwFile": "File events",
 	"electronMenuFlagMwJson": "JSON logs",
 	"electronMenuFlagMwTime": "Time",
