@@ -32,8 +32,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		const Item = (item) => {
 			const canEdit = !item.isReadonly && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
 
-			let icon = item.icon;
-
+			let icon = null;
 			if (item.icon) {
 				icon = <Icon className={item.icon} />;
 			} else 

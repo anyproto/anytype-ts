@@ -277,21 +277,24 @@ class Dataview {
 		const filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
 
 		switch (relation.format) {
-			default:
+			default: {
 				filter.condition = I.FilterCondition.Equal;
 				filter.value = value;
 				break;
+			};
 
-			case I.RelationType.Select:
+			case I.RelationType.Select: {
 				filter.condition = value ? I.FilterCondition.Equal : I.FilterCondition.Empty;
 				filter.value = value ? value : null;
 				break;
+			};
 
-			case I.RelationType.MultiSelect:
+			case I.RelationType.MultiSelect: {
 				value = Relation.getArrayValue(value);
 				filter.condition = value.length ? I.FilterCondition.ExactIn : I.FilterCondition.Empty;
 				filter.value = value.length ? value : null;
 				break;
+			};
 		};
 		return filter;
 	};
