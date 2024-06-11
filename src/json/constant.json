@@ -459,6 +459,7 @@
 		"bsl": "BSL",
 		"c": "C",
 		"cfscript": "CFScript",
+		"cmake": "CMake",
 		"csharp": "C#",
 		"cpp": "C++",
 		"clojure": "Clojure",
