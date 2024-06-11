@@ -246,10 +246,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	componentDidMount () {
 		const { block, isInline, isPopup } = this.props;
 		const { viewId } = block.content;
+		const match = keyboard.getMatch();
 		const subId = this.getSubId();
 
-		if (viewId) {
-			dbStore.metaSet(subId, '', { viewId, offset: 0, total: 0 });
+		if (match.params.viewId || viewId) {
+			dbStore.metaSet(subId, '', { viewId: match.params.viewId || viewId });
 		};
 
 		this.reloadData();
@@ -268,8 +269,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidUpdate () {
-		const { rootId, block } = this.props;
-		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+		const { viewId } = dbStore.getMeta(this.getSubId(), '');
 
 		if (viewId && (viewId != this.viewId)) {
 			this.loadData(viewId, 0, true);
@@ -1161,7 +1161,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				if (this.isAllowedObject()) {
 					emptyProps.description = translate('blockDataviewEmptyViewDescription');
-					emptyProps.button = translate('blockDataviewEmptyViewButton');
+					emptyProps.button = translate('commonCreateObject');
 					emptyProps.onClick = e => this.onRecordAdd(e, 1, '', { horizontal: I.MenuDirection.Center });
 				};
 				break;

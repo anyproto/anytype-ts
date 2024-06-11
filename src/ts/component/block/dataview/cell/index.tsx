@@ -40,12 +40,17 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	render () {
-		const { elementId, relationKey, recordId, getRecord, onClick, idPrefix } = this.props;
+		const { elementId, relationKey, recordId, getRecord, getView, onClick, idPrefix } = this.props;
 		const record = getRecord(recordId);
 		const relation = this.getRelation();
+		const view = getView ? getView() : null;
 
 		if (!relation || !record) {
 			return null;
+		};
+
+		if (view) {
+			const { hideIcon } = view;
 		};
 
 		const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
@@ -124,12 +129,25 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	checkIcon () {
-		const relation = this.getRelation();
-		if (relation && (relation.format == I.RelationType.ShortText)) {
-			const node = $(this.node);
-			const icon = node.find('.iconObject');
+		const { getView } = this.props;
+		const view = getView ? getView() : null;
+		const node = $(this.node);
 
-			icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');
+		node.removeClass('withIcon');
+
+		if (view && view.hideIcon) {
+			return;
+		};
+
+		const relation = this.getRelation();
+		if (!relation || (relation.relationKey != 'name')) {
+			return;
+		};
+
+		const icon = node.find('.iconObject');
+
+		if (icon.length) {
+			node.addClass('withIcon');
 		};
 	};
 

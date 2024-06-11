@@ -148,8 +148,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		return (
 			<div
 				ref={node => this.node = node}
-				id="body" 
-				className="body"
+				className="innerWrap"
 			>
 				{content}
 			</div>

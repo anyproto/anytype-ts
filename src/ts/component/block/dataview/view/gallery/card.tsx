@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Cell, Cover, MediaAudio, MediaVideo, DropTarget, SelectionTarget } from 'Component';
+import { Cell, Cover, MediaAudio, MediaVideo, DropTarget, SelectionTarget, ObjectCover } from 'Component';
 import { I, UtilData, UtilObject, Relation, keyboard } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 
@@ -22,7 +22,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
+		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection, getCoverObject } = this.props;
 		const record = getRecord(recordId);
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
@@ -30,7 +30,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const idPrefix = getIdPrefix();
 		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout), UtilData.cardSizeClass(cardSize) ];
 		const subId = dbStore.getSubId(rootId, block.id);
-		const cover = this.getCover();
+		const cover = getCoverObject(recordId);
 
 		if (coverFit) {
 			cn.push('coverFit');
@@ -42,7 +42,7 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		let content = (
 			<div className="itemContent">
-				{cover}
+				<ObjectCover object={cover} />
 
 				<div className="inner">
 					{relations.map(relation => {
@@ -176,57 +176,6 @@ const Card = observer(class Card extends React.Component<Props> {
 		e.stopPropagation();
 
 		onCellClick(e, relation.relationKey, record.id);
-	};
-
-	getCover (): any {
-		const { recordId, getRecord, getCoverObject } = this.props;
-		const record = getRecord(recordId);
-		const cover = getCoverObject(record.id);
-
-		return cover ? this.mediaCover(cover) : null;
-	};
-
-	mediaCover (item: any) {
-		const { layout, coverType, coverId, coverX, coverY, coverScale } = item;
-		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
-
-		let mc = null;
-		if (coverId && coverType) {
-			mc = (
-				<Cover
-					type={coverType}
-					id={coverId}
-					image={coverId}
-					className={coverId}
-					x={coverX}
-					y={coverY}
-					scale={coverScale}
-					withScale={false}
-				/>
-			);
-		} else {
-			switch (layout) {
-				case I.ObjectLayout.Image: {
-					cn.push('coverImage');
-					mc = <img src={commonStore.imageUrl(item.id, 600)} onDragStart={e => e.preventDefault()} />;
-					break;
-				};
-
-				case I.ObjectLayout.Audio: {
-					cn.push('coverAudio');
-					mc = <MediaAudio playlist={[ { name: item.name, src: commonStore.fileUrl(item.id) } ]}/>;
-					break;
-				};
-
-				case I.ObjectLayout.Video: {
-					cn.push('coverVideo');
-					mc = <MediaVideo src={commonStore.fileUrl(item.id)}/>;
-					break;
-				};
-			};
-		};
-
-		return mc ? <div className={cn.join(' ')}>{mc}</div> : null;
 	};
 
 });

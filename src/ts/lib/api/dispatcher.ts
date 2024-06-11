@@ -751,6 +751,7 @@ class Dispatcher {
 					};
 
 					Dataview.groupOrderUpdate(rootId, id, groupOrder.viewId, groupOrder.groups);
+					blockStore.updateWidgetData(rootId);
 					break;
 				};
 
@@ -876,6 +877,8 @@ class Dispatcher {
 					} else {
 						dbStore.groupsAdd(rootId, blockId, [ group ]);
 					};
+
+					blockStore.updateWidgetData(rootId);
 					break;
 				};
 

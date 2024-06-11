@@ -31,8 +31,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	constructor (props: Props) {
 		super(props);
 
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
 		this.onInstall = this.onInstall.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 	};
@@ -133,8 +131,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 								object={object} 
 								forceLetter={true}
 								canEdit={canEditIcon} 
-								onSelect={this.onSelect} 
-								onUpload={this.onUpload} 
 							/>
 						) : ''}
 						<Editor className="title" id="title" />
@@ -190,15 +186,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		keyboard.setFocus(false);
 		window.clearTimeout(this.timeout);
 		this.save();
-	};
-
-	onSelect (icon: string) {
-		const { rootId } = this.props;
-		UtilObject.setIcon(rootId, icon, '');
-	};
-
-	onUpload (objectId: string) {
-		UtilObject.setIcon(this.props.rootId, '', objectId);
 	};
 
 	onKeyDown (e: any, item: any) {

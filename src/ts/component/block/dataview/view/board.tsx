@@ -7,6 +7,7 @@ import { I, C, UtilCommon, Dataview, keyboard, Relation, translate } from 'Lib';
 import { dbStore, detailStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
+
 const Constant = require('json/constant.json');
 
 const PADDING = 46;
@@ -16,7 +17,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	node: any = null;
 	cache: any = {};
 	frame = 0;
-	groupRelationKey = '';
 	newIndex = -1;
 	newGroupId = '';
 	columnRefs: any = {};
@@ -117,74 +117,28 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	loadGroupList () {
-		const { rootId, block, getView, getTarget, isCollection } = this.props;
+		const { rootId, block, getView, getTarget } = this.props;
 		const object = getTarget();
 		const view = getView();
-		const subId = dbStore.getGroupSubId(rootId, block.id, 'groups');
 
 		dbStore.groupsClear(rootId, block.id);
-		this.groupRelationKey = view.groupRelationKey;
 
 		if (!view.groupRelationKey) {
 			this.forceUpdate();
 			return;
 		};
 
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
-		if (!relation) {
-			return;
-		};
-
-		const groupOrder: any = {};
-		const el = block.content.groupOrder.find(it => it.viewId == view.id);
-
-		if (el) {
-			el.groups.forEach(it => groupOrder[it.groupId] = it);
-		};
-
-		C.ObjectGroupsSubscribe(commonStore.space, subId, view.groupRelationKey, view.filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const groups = (message.groups || []).map((it: any) => {
-				let bgColor = 'grey';
-				let value: any = it.value;
-				let option: any = null;
-
-				switch (relation.format) {
-					case I.RelationType.MultiSelect:
-						value = Relation.getArrayValue(value);
-						if (value.length) {
-							option = detailStore.get(Constant.subId.option, value[0]);
-							bgColor = option?.color;
-						};
-						break;
-
-					case I.RelationType.Select:
-						option = detailStore.get(Constant.subId.option, value);
-						bgColor = option?.color;
-						break;
-				};
-
-				it.isHidden = groupOrder[it.id]?.isHidden;
-				it.bgColor = groupOrder[it.id]?.bgColor || bgColor;
-				return it;
-			});
-
-			dbStore.groupsSet(rootId, block.id, this.applyGroupOrder(groups));
-		});
+		Dataview.loadGroupList(rootId, block.id, view.id, object);
 	};
 
 	getGroups (withHidden: boolean) {
-		const { rootId, block } = this.props;
-		let groups = this.applyGroupOrder(UtilCommon.objectCopy(dbStore.getGroups(rootId, block.id)));
-
-		if (!withHidden) {
-			groups = groups.filter(it => !it.isHidden);
+		const { rootId, block, getView } = this.props;
+		const view = getView();
+		if (!view) {
+			return [];
 		};
 
-		return groups;
+		return Dataview.getGroups(rootId, block.id, view.id, withHidden);
 	};
 
 	initCacheColumn () {
@@ -488,36 +442,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			records = arrayMove(dbStore.getRecordIds(oldSubId, ''), current.index, this.newIndex);
 			orders = [ { viewId: view.id, groupId: current.groupId, objectIds: records } ];
 
-			objectOrderUpdate(orders, records, (message) => {
-				dbStore.recordsSet(oldSubId, '', records);
-			});
+			objectOrderUpdate(orders, records, () => dbStore.recordsSet(oldSubId, '', records));
 		};
-	};
-
-	applyGroupOrder (groups: any[]) {
-		const { block, getView } = this.props;
-		const view = getView();
-		
-		if (!view) {
-			return [];
-		};
-
-		const el = block.content.groupOrder.find(it => it.viewId == view.id);
-		const groupOrder: any = {};
-
-		if (el) {
-			el.groups.forEach(it => groupOrder[it.groupId] = it);
-		};
-
-		groups.sort((c1: any, c2: any) => {
-			const idx1 = groupOrder[c1.id]?.index;
-			const idx2 = groupOrder[c2.id]?.index;
-			if (idx1 > idx2) return 1;
-			if (idx1 < idx2) return -1;
-			return 0;
-		});
-
-		return groups;
 	};
 
 	onScrollView () {

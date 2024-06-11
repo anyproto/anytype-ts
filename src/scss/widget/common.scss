@@ -8,10 +8,10 @@
 		padding: 12px 8px 10px 16px;
 	}
 	.head {
-		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; flex-grow: 1; width: 100%; }
+		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-grow: 1; width: 100%; @include text-paragraph; font-weight: 600; }
 		.clickable {
-			.iconObject { flex-shrink: 0; }
-			.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; flex-grow: 1; }
+			.name { @include text-overflow-nw; }
+			.count { color: var(--color-text-secondary); }
 		}
 
 		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: default; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
@@ -37,6 +37,7 @@
 	.label.empty { text-align: center; @include text-small; white-space: nowrap; }
 
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
+	.innerWrap { transition: opacity 0.4s $easeInQuint; }
 
 	.icon.remove { position: absolute; top: -15px; left: -15px; height: 40px; width: 40px; display: none; z-index: 2; cursor: default !important; }
 	.icon.remove {
@@ -110,5 +111,5 @@
 }
 
 @import "./space.scss";
-@import "./list.scss";
 @import "./tree.scss";
+@import "./view/common.scss";

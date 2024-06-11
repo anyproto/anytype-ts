@@ -6,10 +6,10 @@ import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } fr
 import { blockStore, menuStore, detailStore } from 'Store';
 import { I, UtilCommon, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
+
 const Constant = require('json/constant.json');
 
-type Props = {
-	block: I.Block;
+interface Props extends I.WidgetViewComponent {
 	subId: string;
 	id: string;
 	index?: number;
@@ -30,9 +30,6 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 
 		this.onClick = this.onClick.bind(this);
 		this.onContext = this.onContext.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
@@ -88,9 +85,6 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					size={isCompact ? 18 : 48} 
 					iconSize={isCompact ? 18 : 28}
 					canEdit={!isReadonly && !isArchived && allowedDetails} 
-					onSelect={this.onSelect} 
-					onUpload={this.onUpload} 
-					onCheckbox={this.onCheckbox} 
 					menuParam={{ 
 						className: 'fixed',
 						classNameWrap: 'fromSidebar',
@@ -179,46 +173,11 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { subId, id } = this.props;
+		const { subId, id, onContext } = this.props;
 		const node = $(this.node);
-		const more = node.find('.icon.more');
-		const { x, y } = keyboard.mouse.page;
-		const menuParam: any = {
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			onOpen: () => node.addClass('active'),
-			onClose: () => node.removeClass('active'),
-			data: {
-				route: analytics.route.widget,
-				objectIds: [ id ],
-				subId,
-			},
-		};
+		const element = node.find('.icon.more');
 
-		if (withElement) {
-			menuParam.element = more;
-			menuParam.vertical = I.MenuDirection.Center;
-			menuParam.offsetX = 32;
-		} else {
-			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
-		};
-
-		menuStore.open('dataviewContext', menuParam);
-	};
-
-	onSelect (icon: string) {
-		UtilObject.setIcon(this.props.id, icon, '');
-	};
-
-	onUpload (objectId: string) {
-		UtilObject.setIcon(this.props.id, '', objectId);
-	};
-
-	onCheckbox () {
-		const { subId, id } = this.props;
-		const object = detailStore.get(subId, id, []);
-
-		UtilObject.setDone(id, !object.done);
+		onContext({ node, element, withElement, subId, objectId: id });
 	};
 
 	resize () {

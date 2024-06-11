@@ -85,7 +85,6 @@
 	"commonComment": "Comment",
 	"commonIcon": "Icon",
 	"commonObjects": "Objects",
-	"commonCreateObject": "Create Object \"%s\"",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
@@ -148,6 +147,9 @@
 	"commonAddRelation": "Add Relation",
 	"commonCollection": "Collection",
 	"commonSet": "Set",
+	"commonCreateNewObject": "Create new Object",
+	"commonCreateObjectWithName": "Create Object \"%s\"",
+	"commonCreateObject": "Create Object",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -529,7 +531,6 @@
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
 
-	"blockDataviewCreateNew": "Create new Object",
 	"blockDataviewCreateNewCollection": "Create new Collection",
 	"blockDataviewCreateNewSet": "Create new Set",
 	"blockDataviewCreateNewTooltipCollection": "Create new Object in this Collection",
@@ -548,7 +549,6 @@
 	"blockDataviewEmptySourceButton": "Select query",
 
 	"blockDataviewEmptyViewDescription": "Create your first one to begin",
-	"blockDataviewEmptyViewButton": "Create Object",
 
 	"blockDataviewControlsFilters": "Filters",
 	"blockDataviewControlsSorts": "Sorts",
@@ -1041,7 +1041,6 @@
 	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
-	"popupSearchCreateObject": "Create Object",
 	"popupSearchAddRelation": "Add Relation",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
 	"popupSearchBacklinksFrom": "Related to: %s",
@@ -1448,7 +1447,6 @@
 	"menuObjectVersionHistory": "Version History",
 	"menuObjectExport": "Export",
 	"menuObjectReloadFromSource": "Reload from Source",
-	"menuObjectCreateObject": "Create Object",
 	"menuObjectUseAsTemplate": "Use as a Template",
 	"menuObjectUnlockPage": "Unlock page",
 	"menuObjectLockPage": "Lock page",
@@ -1678,9 +1676,12 @@
 	"widget1Name": "Tree",
 	"widget1Description": "Hierarchical structure of Objects",
 	"widget2Name": "List",
-	"widget2Description": "Widget with list view of Set Object",
+	"widget2Description": "Widget with a list view of Set Object",
 	"widget3Name": "Compact list",
-	"widget3Description": "Widget with list view of Set Object",
+	"widget3Description": "Widget with a list view of Set Object",
+	"widget4Name": "View",
+	"widget4Description": "Widget with a view of the Set Object",
+
 	"widgetFavorite": "Favorites",
 	"widgetRecent": "Recently edited",
 	"widgetRecentOpen": "Recently opened",
@@ -1693,11 +1694,10 @@
 	"widgetOptions": "Options",
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
-	"widgetCreate": "Create new object",
+	"widgetShowAll": "See all Objects",
 
 	"phrasePlaceholder": "Please enter your Key",
 
-	"navigationCreateNew": "Create new Object",
 	"navigationAccount": "Spaces",
 
 	"spaceAccessType0": "Private Space",

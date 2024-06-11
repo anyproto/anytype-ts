@@ -5,6 +5,7 @@ export enum WidgetLayout {
 	Tree	 	 = 1,
 	List		 = 2,
 	Compact		 = 3,
+	View		 = 4,
 
 	Space	 	 = 100,
 };
@@ -12,9 +13,10 @@ export enum WidgetLayout {
 export interface WidgetComponent {
 	dataset?: any;
 	parent?: I.Block;
-	block: I.Block;
+	block?: I.Block;
 	isEditing?: boolean;
 	isPreview?: boolean;
+	canCreate?: boolean;
 	isSystemTarget?: () => boolean;
 	setPreview?: (id: string) => void;
 	setEditing?: (v: boolean) => void;
@@ -22,9 +24,23 @@ export interface WidgetComponent {
 	getLimit?: (content: ContentWidget) => number;
 	sortFavorite?: (records: string[]) => string[];
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
+	onContext?: (param: any) => void;
+	onCreate?: (param: any) => void;
 };
 
-export interface WidgetTreeItem {
+export interface WidgetViewComponent extends I.WidgetComponent {
+	rootId: string;
+	subId: string;
+	parent?: I.Block;
+	getRecordIds: () => any[];
+	getView: () => I.View;
+	getViewType: () => I.ViewType;
+	getObject: () => any;
+	getViewLimit: () => number;
+	reload: () => void;
+};
+
+export interface WidgetTreeItem extends I.WidgetComponent {
 	id: string;
 	rootId: string; // the id of the root node (root node)
 	parentId: string; // the id of the parent node

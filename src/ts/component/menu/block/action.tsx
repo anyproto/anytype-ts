@@ -618,12 +618,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				break;
 			};
 
-			case 'openDataviewFullscreen': {
-				UtilObject.openConfig({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
-				analytics.event('InlineSetOpenFullscreen');
-				break;
-			};
-
 			case 'copy': {
 				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom);
 				break;
@@ -687,11 +681,17 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	};
 
 	moveToPage (typeId: string) {
-		const { param } = this.props;
+		const { param, dataset } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
+		const { selection } = dataset || {};
+		const ids = selection ? selection.get(I.SelectType.Block) : [];
+
+		if (!ids.length) {
+			ids.push(blockId);
+		};
 		
-		UtilData.moveToPage(rootId, blockId, typeId, 'TurnInto', this.props);
+		UtilData.moveToPage(rootId, ids, typeId, analytics.route.turn);
 	};
 
 	setFocus (id: string) {

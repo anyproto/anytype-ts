@@ -389,7 +389,11 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		};
 
 		if (isTask) {
-			onCheckbox(e);
+			if (onCheckbox) {
+				onCheckbox(e);
+			} else {
+				UtilObject.setDone(object.id, !object.done);
+			};
 		} else
 		if (isEmoji) {
 			this.onEmoji(e);
@@ -418,13 +422,17 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				onSelect: (icon: string) => {
 					if (onSelect) {
 						onSelect(icon);
+					} else {
+						UtilObject.setIcon(object.id, icon, '');
 					};
 				},
 				onUpload: (objectId: string) => {
 					if (onUpload) {
 						onUpload(objectId);
+					} else {
+						UtilObject.setIcon(object.id, '', objectId);
 					};
-				}
+				},
 			},
 			...menuParam,
 		});

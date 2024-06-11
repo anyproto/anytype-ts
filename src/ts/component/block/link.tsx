@@ -18,9 +18,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onClick = this.onClick.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
@@ -122,9 +119,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 						iconSize={iconSize}
 						object={object} 
 						canEdit={!readonly && !isArchived} 
-						onSelect={this.onSelect} 
-						onUpload={this.onUpload} 
-						onCheckbox={this.onCheckbox}
 						noClick={true}
 					/>
 				);
@@ -267,22 +261,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		UtilObject.openEvent(e, object);
 	};
 	
-	onSelect (icon: string) {
-		UtilObject.setIcon(this.props.block.content.targetBlockId, icon, '');
-	};
-
-	onUpload (objectId: string) {
-		UtilObject.setIcon(this.props.block.content.targetBlockId, '', objectId);
-	};
-
-	onCheckbox () {
-		const { rootId, block } = this.props;
-		const { targetBlockId } = block.content;
-		const object = detailStore.get(rootId, targetBlockId, []);
-
-		UtilObject.setDone(targetBlockId, !object.done);
-	};
-
 	onMouseEnter (e: React.MouseEvent) {
 		if (!this._isMounted) {
 			return;

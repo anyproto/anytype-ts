@@ -128,7 +128,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	unbind () {
-		const namespace = this.getNamespace();
+		const { isPopup } = this.props;
+		const namespace = UtilCommon.getEventNamespace(isPopup);
 		const events = [ 'keydown', 'scroll' ];
 
 		$(window).off(events.map(it => `${it}.set${namespace}`).join(' '));
@@ -137,7 +138,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	rebind () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const namespace = this.getNamespace();
+		const namespace = UtilCommon.getEventNamespace(isPopup);
 		const container = UtilCommon.getScrollContainer(isPopup);
 
 		this.unbind();
@@ -158,10 +159,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		if (object.isDeleted) {
 			this.setState({ isDeleted: true });
 		};
-	};
-
-	getNamespace () {
-		return this.props.isPopup ? '-popup' : '';
 	};
 
 	open () {
