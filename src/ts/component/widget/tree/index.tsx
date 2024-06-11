@@ -385,10 +385,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	onScroll ({ scrollTop }): void {
 		const dragProvider = commonStore.getRef('dragProvider');
 
-		if (scrollTop) {
-			this.top = scrollTop;
-		};
-
+		this.top = scrollTop;
 		dragProvider?.onScroll();
 	};
 
