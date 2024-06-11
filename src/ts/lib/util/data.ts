@@ -916,7 +916,7 @@ class UtilData {
 			return;
 		};
 		
-		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, (message: any) => {
+		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, (message: any) => {
 			if (!message.error.code) {
 				analytics.createObject(type.id, type.recommendedLayout, route, message.middleTime);
 			};
