@@ -29,16 +29,30 @@
 	.icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
 }
 
-.widget.widgetList, .widget.widgetCompact {
-	#viewSelect {
-		.select {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/widget.svg') !important; }
+.widget.widgetView {
+	.viewList, .viewGrid {
+		#viewSelect {
+			.select {
+				.icon.arrow { background-image: url('#{$themePath}/arrow/widget.svg') !important; }
+			}
+		}
+
+		.body {
+			.item {
+				.iconObject.isTask, .iconObject.isBookmark { background: none; }
+			}
 		}
 	}
 
-	.body {
-		.item {
-			.iconObject.isTask, .iconObject.isBookmark { background: none; }
+	.viewGallery {
+		.arrowWrap { background-color: var(--color-control-accent); }
+	}
+
+	.viewBoard {
+		.group {
+			.clickable {
+				.icon.arrow {  background-image: url('~img/arrow/select/light.svg'); }
+			}
 		}
 	}
 }

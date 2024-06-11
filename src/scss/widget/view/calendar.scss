@@ -32,7 +32,10 @@
 		}
 	}
 
-	.day { display: flex; flex-direction: row; align-items: center; justify-content: center; @include text-small; aspect-ratio: 1; border-radius: 4px; }
+	.day { 
+		display: flex; flex-direction: row; align-items: center; justify-content: center; @include text-small; aspect-ratio: 1; border-radius: 4px; 
+		transition: $transitionAllCommon;
+	}
 	.day.today { color: #c38400; font-weight: 500; }
 	.day.other { color: var(--color-text-secondary); }
 
