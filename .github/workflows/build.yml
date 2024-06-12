@@ -199,7 +199,7 @@ jobs:
             echo "Uploading files to $uploadUrl"
             curl.exe -H "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" -T $file.FullName $uploadUrl
           }
-          $yml_files = Get-ChildItem -File dist
+          $yml_files = Get-ChildItem -File dist -Filter *.yml
           foreach ($file in $yml_files) {
             $encodedFileName = [System.Uri]::EscapeDataString($file.Name)
             $uploadUrl = "https://publish-releases.anytype.io/electron/$releaseVersion/$encodedFileName"
