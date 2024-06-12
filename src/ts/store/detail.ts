@@ -1,7 +1,7 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, Relation, UtilObject, translate, UtilFile } from 'Lib';
 import { dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Detail {
 	relationKey: string;

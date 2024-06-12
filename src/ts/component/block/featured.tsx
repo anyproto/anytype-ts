@@ -5,7 +5,7 @@ import { observable } from 'mobx';
 import { ObjectType, Cell } from 'Component';
 import { I, C, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;

@@ -5,9 +5,9 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Label } from 'Component';
 import { analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon, translate } from 'Lib';
-import { blockStore, dbStore, detailStore } from 'Store';
+import { blockStore, dbStore, detailStore, commonStore } from 'Store';
 import Item from './item';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -148,8 +148,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		return (
 			<div
 				ref={node => this.node = node}
-				id="body" 
-				className="body"
+				className="innerWrap"
 			>
 				{content}
 			</div>
@@ -384,16 +383,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	onScroll ({ scrollTop }): void {
-		const { dataset } = this.props;
-		const { dragProvider } = dataset || {};
+		const dragProvider = commonStore.getRef('dragProvider');
 
-		if (scrollTop) {
-			this.top = scrollTop;
-		};
-
-		if (dragProvider) {
-			dragProvider.onScroll();
-		};
+		this.top = scrollTop;
+		dragProvider?.onScroll();
 	};
 
 	onClick (e: React.MouseEvent, item: unknown): void {

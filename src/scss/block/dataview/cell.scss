@@ -85,6 +85,7 @@
 .cellContent.c-object.canEdit {
 	.element { cursor: grab; }
 	.element {
+		.iconObject { cursor: default; }
 		.icon.objectRemove { cursor: default; display: none; }
 	}
 }

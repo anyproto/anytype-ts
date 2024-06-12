@@ -63,7 +63,6 @@ export enum BlockVAlign {
 };
 
 export interface BlockComponent {
-	dataset?: I.Dataset;
 	rootId?: string;
 	traceId?: string;
 	block?: I.Block;
@@ -94,6 +93,11 @@ export interface BlockStructure {
 	childrenIds: string[];
 };
 
+export interface BlockParticipant {
+	blockId: string;
+	participantId: string;
+};
+
 export interface Block {
 	id?: string;
 	type: BlockType;
@@ -106,6 +110,7 @@ export interface Block {
 	content: any;
 	childrenIds?: string[];
 	
+	getText?(): string;
 	getLength?(): number;
 	getTargetObjectId?(): string;
 	isSystem?(): boolean;

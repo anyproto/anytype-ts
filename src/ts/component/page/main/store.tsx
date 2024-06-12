@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, Windo
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
 import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
 import { dbStore, blockStore, commonStore, menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -712,13 +712,18 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getSortOptions () {
-		let options = [
+		let options: any[] = [
 			{ id: 'nameAsc', name: translate('pageMainStoreSortNameAsc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Asc },
 			{ id: 'nameDesc', name: translate('pageMainStoreSortNameDesc'), relationKey: 'name',  icon: 'relation c-shortText', type: I.SortType.Desc },
-			{ isDiv: true },
-			{ id: 'createdDateDesc', name: translate('pageMainStoreSortCreatedDesc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Desc },
-			{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate',  icon: 'relation c-date', type: I.SortType.Asc },
 		];
+
+		if (this.view == View.Library) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'createdDateDesc', name: translate('pageMainStoreSortCreatedDesc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Desc },
+				{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate',  icon: 'relation c-date', type: I.SortType.Asc },
+			]);
+		};
 
 		if (this.tab == I.StoreTab.Type) {
 			options = options.concat([

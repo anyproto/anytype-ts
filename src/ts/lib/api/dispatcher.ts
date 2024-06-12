@@ -11,18 +11,18 @@ import {
 } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const SORT_IDS = [ 
-	'blockAdd', 
-	'blockDelete', 
-	'blockSetChildrenIds', 
-	'objectDetailsSet', 
-	'objectDetailsAmend', 
-	'objectDetailsUnset', 
-	'subscriptionCounters',
-	'blockDataviewViewSet',
-	'blockDataviewViewDelete',
+	'BlockAdd', 
+	'BlockDelete', 
+	'BlockSetChildrenIds', 
+	'ObjectDetailsSet', 
+	'ObjectDetailsAmend', 
+	'ObjectDetailsUnset', 
+	'SubscriptionCounters',
+	'BlockDataviewViewSet',
+	'BlockDataviewViewDelete',
 ];
 const SKIP_IDS = [ 'BlockSetCarriage' ];
 const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent' ];
@@ -36,6 +36,13 @@ class Dispatcher {
 	reconnects = 0;
 
 	init (address: string) {
+		address = String(address || '');
+
+		if (!address) {
+			console.error('[Dispatcher.init] No address');
+			return;
+		};
+
 		this.service = new Service.ClientCommandsClient(address, null, null);
 	};
 
@@ -89,81 +96,6 @@ class Dispatcher {
 		}, t * 1000);
 	};
 
-	eventType (v: number): string {
-		const V = Events.Event.Message.ValueCase;
-
-		let t = '';
-		if (v == V.ACCOUNTSHOW)					 t = 'accountShow';
-		if (v == V.ACCOUNTDETAILS)				 t = 'accountDetails';
-		if (v == V.ACCOUNTUPDATE)				 t = 'accountUpdate';
-		if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'accountConfigUpdate';
-		if (v == V.ACCOUNTLINKCHALLENGE)		 t = 'accountLinkChallenge';
-
-		if (v == V.THREADSTATUS)				 t = 'threadStatus';
-
-		if (v == V.BLOCKADD)					 t = 'blockAdd';
-		if (v == V.BLOCKDELETE)					 t = 'blockDelete';
-		if (v == V.BLOCKSETFIELDS)				 t = 'blockSetFields';
-		if (v == V.BLOCKSETCHILDRENIDS)			 t = 'blockSetChildrenIds';
-		if (v == V.BLOCKSETBACKGROUNDCOLOR)		 t = 'blockSetBackgroundColor';
-		if (v == V.BLOCKSETTEXT)				 t = 'blockSetText';
-		if (v == V.BLOCKSETFILE)				 t = 'blockSetFile';
-		if (v == V.BLOCKSETLINK)				 t = 'blockSetLink';
-		if (v == V.BLOCKSETBOOKMARK)			 t = 'blockSetBookmark';
-		if (v == V.BLOCKSETALIGN)				 t = 'blockSetAlign';
-		if (v == V.BLOCKSETVERTICALALIGN)		 t = 'blockSetVerticalAlign';
-		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
-		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
-		if (v == V.BLOCKSETLATEX)				 t = 'blockSetLatex';
-		if (v == V.BLOCKSETTABLEROW)			 t = 'blockSetTableRow';
-
-		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
-		if (v == V.BLOCKDATAVIEWVIEWUPDATE)		 t = 'blockDataviewViewUpdate';
-		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
-		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
-
-		if (v == V.BLOCKDATAVIEWTARGETOBJECTIDSET)	 t = 'blockDataviewTargetObjectIdSet';
-		if (v == V.BLOCKDATAVIEWISCOLLECTIONSET)	 t = 'blockDataviewIsCollectionSet';
-
-		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
-		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
-		if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'blockDataviewGroupOrderUpdate';
-		if (v == V.BLOCKDATAVIEWOBJECTORDERUPDATE)	 t = 'blockDataviewObjectOrderUpdate';
-
-		if (v == V.BLOCKSETWIDGET)				 t = 'blockSetWidget';
-
-		if (v == V.SUBSCRIPTIONADD)				 t = 'subscriptionAdd';
-		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
-		if (v == V.SUBSCRIPTIONPOSITION)		 t = 'subscriptionPosition';
-		if (v == V.SUBSCRIPTIONCOUNTERS)		 t = 'subscriptionCounters';
-		if (v == V.SUBSCRIPTIONGROUPS)			 t = 'subscriptionGroups';
-
-		if (v == V.PROCESSNEW)					 t = 'processNew';
-		if (v == V.PROCESSUPDATE)				 t = 'processUpdate';
-		if (v == V.PROCESSDONE)					 t = 'processDone';
-
-		if (v == V.OBJECTREMOVE)				 t = 'objectRemove';
-		if (v == V.OBJECTDETAILSSET)			 t = 'objectDetailsSet';
-		if (v == V.OBJECTDETAILSAMEND)			 t = 'objectDetailsAmend';
-		if (v == V.OBJECTDETAILSUNSET)			 t = 'objectDetailsUnset';
-		if (v == V.OBJECTRELATIONSAMEND)		 t = 'objectRelationsAmend';
-		if (v == V.OBJECTRELATIONSREMOVE)		 t = 'objectRelationsRemove';
-		if (v == V.OBJECTRESTRICTIONSSET)		 t = 'objectRestrictionsSet';
-
-		if (v == V.FILESPACEUSAGE)				 t = 'fileSpaceUsage';
-		if (v == V.FILELOCALUSAGE)				 t = 'fileLocalUsage';
-		if (v == V.FILELIMITREACHED)			 t = 'fileLimitReached';
-		if (v == V.FILELIMITUPDATED)			 t = 'fileLimitUpdated';
-
-		if (v == V.NOTIFICATIONSEND)			 t = 'notificationSend';
-		if (v == V.NOTIFICATIONUPDATE)			 t = 'notificationUpdate';
-		if (v == V.PAYLOADBROADCAST)			 t = 'payloadBroadcast';
-		
-		if (v == V.MEMBERSHIPUPDATE)			 t = 'membershipUpdate';
-
-		return t;
-	};
-
 	event (event: Events.Event, skipDebug?: boolean) {
 		const { config } = commonStore;
 		const traceId = event.getTraceid();
@@ -174,6 +106,7 @@ class Dispatcher {
 		const isMainWindow = windowId === 1;
 		const debugEvent = config.flagsMw.event;
 		const debugJson = config.flagsMw.json;
+		const win = $(window);
 		
 		if (traceId) {
 			ctx.push(traceId);
@@ -197,108 +130,86 @@ class Dispatcher {
 			};
 		};
 
-		let blocks: any[] = [];
-		let id = '';
-		let block: any = null;
-		let details: any = null;
-		let viewId = '';
-		let keys: string[] = [];
-		let subIds: string[] = [];
-		let subId = '';
-		let afterId = '';
-		let content: any = {};
 		let updateParents = false;
 
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
 		for (const message of messages) {
-			const win = $(window);
-			const type = this.eventType(message.getValueCase());
-			const fn = `get${UtilCommon.ucFirst(type)}`;
-			const data = message[fn] ? message[fn]() : {};
+			const type = Mapper.Event.Type(message.getValueCase());
+			const data = Mapper.Event.Data(message);
+			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : {};
 			const needLog = this.checkLog(type) && !skipDebug;
 
 			switch (type) {
 
-				case 'accountShow': {
-					authStore.accountAdd(Mapper.From.Account(data.getAccount()));
+				case 'AccountShow': {
+					authStore.accountAdd(mapped.account);
 					break;
 				};
 
-				case 'accountUpdate': {
-					authStore.accountSetStatus(Mapper.From.AccountStatus(data.getStatus()));
+				case 'AccountUpdate': {
+					authStore.accountSetStatus(mapped.status);
 					break;	
 				};
 
-				case 'accountConfigUpdate': {
-					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
+				case 'AccountConfigUpdate': {
+					commonStore.configSet(mapped.config, true);
 					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
 					break;
 				};
 
-				case 'accountLinkChallenge': {
+				case 'AccountLinkChallenge': {
 					if (!isMainWindow) {
 						break;
 					};
 
 					Renderer.send('showChallenge', {
-						challenge: data.getChallenge(),
+						challenge: mapped.challenge,
 						theme: commonStore.getThemeClass(),
 						lang: commonStore.interfaceLang,
 					});
 					break;
 				};
 
-				case 'threadStatus': {
-					authStore.threadSet(rootId, {
-						summary: Mapper.From.ThreadSummary(data.getSummary()),
-						cafe: Mapper.From.ThreadCafe(data.getCafe()),
-						accounts: (data.getAccountsList() || []).map(Mapper.From.ThreadAccount),
-					});
+				case 'ThreadStatus': {
+					authStore.threadSet(rootId, mapped);
 					break;
 				};
 
-				case 'objectRemove': {
+				case 'ObjectRelationsAmend': {
+					dbStore.relationsSet(rootId, mapped.id, mapped.relations);
 					break;
 				};
 
-				case 'objectRelationsAmend': {
-					id = data.getId();
-					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
+				case 'ObjectRelationsRemove': {
+					dbStore.relationListDelete(rootId, mapped.id, mapped.relationKeys);
 					break;
 				};
 
-				case 'objectRelationsRemove': {
-					id = data.getId();
-					dbStore.relationListDelete(rootId, id, data.getRelationkeysList() || []);
+				case 'ObjectRestrictionsSet': {
+					blockStore.restrictionsSet(rootId, mapped.restrictions);
 					break;
 				};
 
-				case 'objectRestrictionsSet': {
-					blockStore.restrictionsSet(rootId, Mapper.From.Restrictions(data.getRestrictions()));
-					break;
-				};
-
-				case 'fileSpaceUsage': {
-					const spaceId = data.getSpaceid();
+				case 'FileSpaceUsage': {
 					const { spaces } = commonStore.spaceStorage;
-					const space = spaces.find(it => it.spaceId == spaceId);
-					const bytesUsage = data.getBytesusage();
+					const space = spaces.find(it => it.spaceId == mapped.spaceId);
 
 					if (space) {
-						set(space, { bytesUsage });
+						set(space, { bytesUsage: mapped.bytesUsage });
 					} else {
-						spaces.push({ spaceId, bytesUsage });
+						spaces.push(mapped);
 					};
 					break;
 				};
 
-				case 'fileLocalUsage': {
-					commonStore.spaceStorageSet({ localUsage: data.getLocalbytesusage() });
+				case 'FileLimitUpdated':
+				case 'FileLocalUsage': {
+					commonStore.spaceStorageSet(mapped);
 					break;
 				};
 
-				case 'fileLimitReached': {
+				case 'FileLimitReached': {
 					const { bytesLimit, localUsage, spaces } = commonStore.spaceStorage;
 					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
 					const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
@@ -307,21 +218,15 @@ class Dispatcher {
 						Preview.toastShow({ action: I.ToastAction.StorageFull });
 					} else
 					if (localUsage > bytesLimit) {
-						Preview.toastShow({ text: 'Your local storage exceeds syncing limit. Locally stored files won\'t be synced' });
+						Preview.toastShow({ text: translate('toastFileLimitReached') });
 					};
 					break;
 				};
 
-				case 'fileLimitUpdated': {
-					commonStore.spaceStorageSet({ bytesLimit: data.getByteslimit() });
-					break;
-				};
+				case 'BlockAdd': {
+					const { blocks } = mapped;
 
-				case 'blockAdd': {
-					blocks = data.getBlocksList() || [];
-					for (let block of blocks) {
-						block = Mapper.From.Block(block);
-
+					for (const block of blocks) {
 						if (block.type == I.BlockType.Dataview) {
 							dbStore.relationsSet(rootId, block.id, block.content.relationLinks);
 							dbStore.viewsSet(rootId, block.id, block.content.views);
@@ -335,9 +240,9 @@ class Dispatcher {
 					break;
 				};
 
-				case 'blockDelete': {
-					const blockIds = data.getBlockidsList() || [];
-					
+				case 'BlockDelete': {
+					const { blockIds } = mapped;
+
 					for (const blockId of blockIds) {
 						const block = blockStore.getLeaf(rootId, blockId);
 						if (!block) {
@@ -355,10 +260,10 @@ class Dispatcher {
 					break;
 				};
 
-				case 'blockSetChildrenIds': {
-					id = data.getId();
+				case 'BlockSetChildrenIds': {
+					const { id, childrenIds } = mapped;
 
-					blockStore.updateStructure(rootId, id, data.getChildrenidsList());
+					blockStore.updateStructure(rootId, id, childrenIds);
 
 					if (id == rootId) {
 						blockStore.checkTypeSelect(rootId);
@@ -368,303 +273,331 @@ class Dispatcher {
 					break;
 				};
 
-				case 'blockSetFields': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetFields': {
+					const { id, fields } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					blockStore.update(rootId, id, { fields: data.hasFields() ? Decode.struct(data.getFields()) : {} });
+					blockStore.update(rootId, id, { fields });
 					break;
 				};
 
-				case 'blockSetLink': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetLink': {
+					const { id, cardStyle, iconSize, description, targetBlockId, relations, fields } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasCardstyle()) {
-						block.content.cardStyle = data.getCardstyle().getValue();
+					const content: any = {};
+
+					if (cardStyle !== null) {
+						content.cardStyle = cardStyle;
 					};
 
-					if (data.hasIconsize()) {
-						block.content.iconSize = data.getIconsize().getValue();
+					if (iconSize !== null) {
+						content.iconSize = iconSize;
 					};
 
-					if (data.hasDescription()) {
-						block.content.description = data.getDescription().getValue();
+					if (description !== null) {
+						content.description = description;
 					};
 
-					if (data.hasTargetblockid()) {
-						block.content.targetblockId = data.getTargetblockid().getValue();
+					if (targetBlockId !== null) {
+						content.targetBlockId = targetBlockId;
 					};
 
-					if (data.hasRelations()) {
-						block.content.relations = data.getRelations().getValueList() || [];
+					if (relations !== null) {
+						content.relations = relations;
 					};
 
-					if (data.hasTargetblockid()) {
-						block.content.targetBlockId = data.getTargetblockid().getValue();
-					};
-
-					if (data.hasFields()) {
-						block.content.fields = Decode.struct(data.getFields());
-					};
-
-					blockStore.updateContent(rootId, id, block.content);
-					break;
-				};
-
-				case 'blockSetText': {
-					id = data.getId();
-					content = {};
-
-					if (data.hasText()) {
-						content.text = data.getText().getValue();
-					};
-
-					if (data.hasMarks()) {
-						content.marks = (data.getMarks().getValue().getMarksList() || []).map(Mapper.From.Mark);
-					};
-
-					if (data.hasStyle()) {
-						content.style = data.getStyle().getValue();
-					};
-
-					if (data.hasChecked()) {
-						content.checked = data.getChecked().getValue();
-					};
-
-					if (data.hasColor()) {
-						content.color = data.getColor().getValue();
-					};
-
-					if (data.hasIconemoji()) {
-						content.iconEmoji = data.getIconemoji().getValue();
-					};
-
-					if (data.hasIconimage()) {
-						content.iconImage = data.getIconimage().getValue();
+					if (fields !== null) {
+						content.fields = fields;
 					};
 
 					blockStore.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockSetDiv': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetText': {
+					const { id, text, marks, style, checked, color, iconEmoji, iconImage } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasStyle()) {
-						block.content.style = data.getStyle().getValue();
+					const content: any = {};
+
+					if (text !== null) {
+						content.text = text;
+					};
+
+					if (marks !== null) {
+						content.marks = marks;
+					};
+
+					if (style !== null) {
+						content.style = style;
+					};
+
+					if (checked !== null) {
+						content.checked = checked;
+					};
+
+					if (color !== null) {
+						content.color = color;
+					};
+
+					if (iconEmoji !== null) {
+						content.iconEmoji = iconEmoji;
+					};
+
+					if (iconImage !== null) {
+						content.iconImage = iconImage;
+					};
+
+					blockStore.updateContent(rootId, id, content);
+					break;
+				};
+
+				case 'BlockSetDiv': {
+					const { id, style } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
+					if (!block) {
+						break;
+					};
+
+					if (style !== null) {
+						block.content.style = style;
 					};
 
 					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
-				case 'blockDataviewTargetObjectIdSet': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockDataviewTargetObjectIdSet': {
+					const { id, targetObjectId } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					block.content.targetObjectId = data.getTargetobjectid();
-					blockStore.updateContent(rootId, id, block.content);
+					blockStore.updateContent(rootId, id, { targetObjectId });
 					break;
 				};
 
-				case 'blockDataviewIsCollectionSet':
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockDataviewIsCollectionSet': {
+					const { id, isCollection } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					block.content.isCollection = data.getValue();
-					blockStore.updateContent(rootId, id, block.content);
-					break;
-
-				case 'blockSetWidget': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
-					if (data.hasLayout()) {
-						block.content.layout = data.getLayout().getValue();
-					};
-
-					if (data.hasLimit()) {
-						block.content.limit = data.getLimit().getValue();
-					};
-
-					if (data.hasViewid()) {
-						block.content.viewId = data.getViewid().getValue();
-					};
-
-					blockStore.updateContent(rootId, id, block.content);
+					blockStore.updateContent(rootId, id, { isCollection });
 					break;
 				};
 
-				case 'blockSetFile': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetWidget': {
+					const { id, layout, limit, viewId } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasTargetobjectid()) {
-						block.content.targetObjectId = data.getTargetobjectid().getValue();
+					const content: any = {};
+
+					if (layout !== null) {
+						content.layout = layout;
 					};
 
-					if (data.hasType()) {
-						block.content.type = data.getType().getValue();
+					if (limit !== null) {
+						content.limit = limit;
 					};
 
-					if (data.hasStyle()) {
-						block.content.style = data.getStyle().getValue();
+					if (viewId !== null) {
+						content.viewId = viewId;
 					};
 
-					if (data.hasState()) {
-						block.content.state = data.getState().getValue();
-					};
-
-					blockStore.updateContent(rootId, id, block.content);
+					blockStore.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockSetBookmark': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetFile': {
+					const { id, targetObjectId, type, style, state } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasTargetobjectid()) {
-						block.content.targetObjectId = data.getTargetobjectid().getValue();
+					const content: any = {};
+
+					if (targetObjectId !== null) {
+						content.targetObjectId = targetObjectId;
 					};
 
-					if (data.hasState()) {
-						block.content.state = data.getState().getValue();
+					if (type !== null) {
+						content.type = type;
 					};
 
-					blockStore.updateContent(rootId, id, block.content);
+					if (style !== null) {
+						content.style = style;
+					};
+
+					if (state !== null) {
+						content.state = state;
+					};
+
+					blockStore.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockSetBackgroundColor': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetBookmark': {
+					const { id, targetObjectId, state } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					blockStore.update(rootId, id, { bgColor: data.getBackgroundcolor() });
+					const content: any = {};
+
+					if (targetObjectId !== null) {
+						content.targetObjectId = targetObjectId;
+					};
+
+					if (state !== null) {
+						content.state = state;
+					};
+
+					blockStore.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockSetAlign': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetBackgroundColor': {
+					const { id, bgColor } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					blockStore.update(rootId, id, { hAlign: data.getAlign() });
+					blockStore.update(rootId, id, { bgColor });
 					break;
 				};
 
-				case 'blockSetVerticalAlign': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetAlign': {
+					const { id, align } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					blockStore.update(rootId, id, { vAlign: data.getVerticalalign() });
+					blockStore.update(rootId, id, { hAlign: align });
 					break;
 				};
 
-				case 'blockSetRelation': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetVerticalAlign': {
+					const { id, align } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasKey()) {
-						block.content.key = data.getKey().getValue();
-					};
-
-					blockStore.updateContent(rootId, id, block.content);
+					blockStore.update(rootId, id, { vAlign: align });
 					break;
 				};
 
-				case 'blockSetLatex': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetRelation': {
+					const { id, key } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasText()) {
-						block.content.text = data.getText().getValue();
+					const content: any = {};
+
+					if (key !== null) {
+						content.key = key;
 					};
 
-					blockStore.updateContent(rootId, id, block.content);
+					blockStore.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockSetTableRow': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetLatex': {
+					const { id, text } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasIsheader()) {
-						block.content.isHeader = data.getIsheader().getValue();
+					const content: any = {};
+
+					if (text !== null) {
+						content.key = text;
 					};
 
-					blockStore.updateContent(rootId, id, block.content);
+					blockStore.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockDataviewViewSet': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetTableRow': {
+					const { id, isHeader } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					dbStore.viewAdd(rootId, id, Mapper.From.View(data.getView()));
+					const content: any = {};
+
+					if (isHeader !== null) {
+						content.isHeader = isHeader;
+					};
+
+					blockStore.updateContent(rootId, id, content);
+					break;
+				};
+
+				case 'BlockDataviewViewSet': {
+					const { id, view } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
+					if (!block) {
+						break;
+					};
+
+					dbStore.viewAdd(rootId, id, view);
 					blockStore.updateWidgetViews(rootId);
 					break;
 				};
 
-				case 'blockDataviewViewUpdate': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockDataviewViewUpdate': {
+					const { id, viewId, fields } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					viewId = data.getViewid();
-
 					let view = dbStore.getView(rootId, id, viewId);
 					let updateData = false;
 
-					if (data.hasFields()) {
-						const fields = Mapper.From.ViewFields(data.getFields());
+					if (fields !== null) {
 						const updateKeys = [ 'type', 'groupRelationKey', 'pageLimit' ];
 
 						for (const f of updateKeys) {
@@ -684,31 +617,25 @@ class Dispatcher {
 					];
 
 					keys.forEach(key => {
-						const items = data[UtilCommon.toCamelCase(`get-${key.id}-list`)]() || [];
-						const mapper = Mapper.From[key.mapper];
+						const elements = mapped[key.field] || [];
 
-						items.forEach(item => {
-							let list = view[key.field];
+						let list = view[key.field];
 
-							if (item.hasAdd()) {
-								const op = item.getAdd();
-								const afterId = op.getAfterid();
-								const items = (op.getItemsList() || []).map(mapper);
+						elements.forEach(element => {
+
+							if (element.add) {
+								const { afterId, items } = element.add;
 								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) + 1 : list.length;
 
-								items.forEach((it, i) => { 
-									list.splice(idx + i, 0, it);
-								});
+								items.forEach((it, i) => list.splice(idx + i, 0, it));
 
 								if ([ 'filter', 'sort', 'relation' ].includes(key.id)) {
 									updateData = true;
 								};
 							};
 
-							if (item.hasMove()) {
-								const op = item.getMove();
-								const afterId = op.getAfterid();
-								const ids = op.getIdsList() || [];
+							if (element.move) {
+								const { afterId, ids } = element.move;
 								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) + 1 : 0;
 
 								ids.forEach((id: string, i: number) => {
@@ -723,12 +650,11 @@ class Dispatcher {
 								};
 							};
 
-							if (item.hasUpdate()) {
-								const op = item.getUpdate();
+							if (element.update) {
+								const { id, item } = element.update;
 
-								if (op.hasItem()) {
-									const idx = list.findIndex(it => it[key.idField] == op.getId());
-									const item = Mapper.From[key.mapper](op.getItem());
+								if (item) {
+									const idx = list.findIndex(it => it[key.idField] == id);
 
 									if ([ 'filter', 'sort' ].includes(key.id)) {
 										updateData = true;
@@ -751,21 +677,18 @@ class Dispatcher {
 								};
 							};
 
-							if (item.hasRemove()) {
-								const op = item.getRemove();
-								const ids = op.getIdsList() || [];
+							if (element.remove) {
+								const { ids } = element.remove;
 
-								ids.forEach(id => { 
-									list = list.filter(it => it[key.idField] != id);
-								});
+								list = list.filter(it => !ids.includes(it[key.idField]));
 
 								if ([ 'filter', 'sort' ].includes(key.id)) {
 									updateData = true;
 								};
 							};
-
-							view[key.field] = list;
 						});
+
+						view[key.field] = list;
 					});
 
 					dbStore.viewUpdate(rootId, id, view);
@@ -778,70 +701,68 @@ class Dispatcher {
 					break;
 				};
 
-				case 'blockDataviewViewDelete': {
-					id = data.getId();
-					subId = dbStore.getSubId(rootId, id);
-					viewId = dbStore.getMeta(subId, '').viewId;
+				case 'BlockDataviewViewDelete': {
+					const { id, viewId } = mapped;
+					const subId = dbStore.getSubId(rootId, id);
+
+					let current = dbStore.getMeta(subId, '').viewId;
 					
-					const deleteId = data.getViewid();
-					dbStore.viewDelete(rootId, id, deleteId);
+					dbStore.viewDelete(rootId, id, viewId);
 
-					if (deleteId == viewId) {
+					if (viewId == current) {
 						const views = dbStore.getViews(rootId, id);
-						viewId = views.length ? views[views.length - 1].id : '';
 
-						dbStore.metaSet(subId, '', { viewId: viewId });
+						current = views.length ? views[views.length - 1].id : '';
+						dbStore.metaSet(subId, '', { viewId: current });
 					};
 
 					blockStore.updateWidgetViews(rootId);
 					break;
 				};
 
-				case 'blockDataviewViewOrder': {
-					id = data.getId();
+				case 'BlockDataviewViewOrder': {
+					const { id, viewIds } = mapped;
 
-					dbStore.viewsSort(rootId, id, data.getViewidsList());
+					dbStore.viewsSort(rootId, id, viewIds);
 					blockStore.updateWidgetViews(rootId);
 					break; 
 				};
 
-				case 'blockDataviewRelationDelete': {
-					id = data.getId();
-					dbStore.relationListDelete(rootId, id, data.getRelationkeysList() || []);
+				case 'BlockDataviewRelationDelete': {
+					const { id, relationKeys } = mapped;
+
+					dbStore.relationListDelete(rootId, id, relationKeys);
 					break;
 				};
 
-				case 'blockDataviewRelationSet': {
-					id = data.getId();
-					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
+				case 'BlockDataviewRelationSet': {
+					const { id, relations } = mapped;
+
+					dbStore.relationsSet(rootId, id, relations);
 					break;
 				};
 
-				case 'blockDataviewGroupOrderUpdate': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockDataviewGroupOrderUpdate': {
+					const { id, groupOrder } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
 
-					if (!block || !data.hasGrouporder()) {
+					if (!block || (groupOrder === null)) {
 						break;
 					};
 
-					const order = Mapper.From.GroupOrder(data.getGrouporder());
-
-					Dataview.groupOrderUpdate(rootId, id, order.viewId, order.groups);
+					Dataview.groupOrderUpdate(rootId, id, groupOrder.viewId, groupOrder.groups);
+					blockStore.updateWidgetData(rootId);
 					break;
 				};
 
-				case 'blockDataviewObjectOrderUpdate': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockDataviewObjectOrderUpdate': {
+					const { id, viewId, groupId, changes } = mapped;
+					const block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					viewId = data.getViewid();
-					
-					const groupId = data.getGroupid();
-					const changes = data.getSlicechangesList() || [];
 					const cb = it => (it.viewId == viewId) && (it.groupId == groupId);
 					const index = block.content.objectOrder.findIndex(cb);
 
@@ -852,21 +773,18 @@ class Dispatcher {
 					};
 
 					changes.forEach(it => {
-						const op = it.getOp();
-						const ids = it.getIdsList() || [];
-						const afterId = it.getAfterid();
-						const idx = afterId ? el.objectIds.indexOf(afterId) + 1 : 0;
+						const idx = it.afterId ? el.objectIds.indexOf(it.afterId) + 1 : 0;
 
-						switch (op) {
+						switch (it.operation) {
 							case I.SliceOperation.Add:
-								ids.forEach((id: string, i: number) => {
+								it.ids.forEach((id: string, i: number) => {
 									idx >= 0 ? el.objectIds.splice(idx + i, 0, id) : el.objectIds.unshift(id);
 								});
 								break;
 
 							case I.SliceOperation.Move:
 								if (idx >= 0) {
-									ids.forEach((id: string, i: number) => {
+									it.ids.forEach((id: string, i: number) => {
 										const oidx = el.objectIds.indexOf(id);
 										if (oidx >= 0) {
 											el.objectIds = arrayMove(el.objectIds, oidx, idx + i);
@@ -876,11 +794,11 @@ class Dispatcher {
 								break;
 
 							case I.SliceOperation.Remove:
-								el.objectIds = el.objectIds.filter(id => !ids.includes(id));
+								el.objectIds = el.objectIds.filter(id => !it.ids.includes(id));
 								break;
 
 							case I.SliceOperation.Replace:
-								el.objectIds = ids;
+								el.objectIds = it.ids;
 								break;
 						};
 					});
@@ -891,34 +809,22 @@ class Dispatcher {
 					break;
 				};
 
-				case 'objectDetailsSet': {
-					id = data.getId();
-					subIds = data.getSubidsList() || [];
-					block = blockStore.getLeaf(rootId, id);
-					details = Decode.struct(data.getDetails());
+				case 'ObjectDetailsSet': {
+					const { id, subIds, details } = mapped;
 
 					this.detailsUpdate(details, rootId, id, subIds, true);
 					break;
 				};
 
-				case 'objectDetailsAmend': {
-					id = data.getId();
-					subIds = data.getSubidsList() || [];
-					block = blockStore.getLeaf(rootId, id);
-
-					details = {};
-					for (const item of (data.getDetailsList() || [])) {
-						details[item.getKey()] = Decode.value(item.getValue());
-					};
+				case 'ObjectDetailsAmend': {
+					const { id, subIds, details } = mapped;
 
 					this.detailsUpdate(details, rootId, id, subIds, false);
 					break;
 				};
 
-				case 'objectDetailsUnset': {
-					id = data.getId();
-					subIds = data.getSubidsList() || [];
-					keys = data.getKeysList() || [];
+				case 'ObjectDetailsUnset': {
+					const { id, subIds, keys } = mapped;
 
 					// Subscriptions
 					this.getUniqueSubIds(subIds).forEach(subId => detailStore.delete(subId, id, keys));
@@ -928,18 +834,16 @@ class Dispatcher {
 					break;
 				};
 
-				case 'subscriptionAdd': {
-					id = data.getId();
-					afterId = data.getAfterid();
-					subId = data.getSubid();
+				case 'SubscriptionAdd': {
+					const { id, afterId, subId } = mapped;
 
 					this.subscriptionPosition(subId, id, afterId, true);
 					break;
 				};
 
-				case 'subscriptionRemove': {
-					id = data.getId();
-					const [ subId, dep ] = data.getSubid().split('/');
+				case 'SubscriptionRemove': {
+					const { id } = mapped;
+					const [ subId, dep ] = mapped.subId.split('/');
 
 					if (!dep) {
 						dbStore.recordDelete(subId, '', id);
@@ -948,39 +852,38 @@ class Dispatcher {
 					break;
 				};
 
-				case 'subscriptionPosition': {
-					id = data.getId();
-					afterId = data.getAfterid();
-					subId = data.getSubid();
+				case 'SubscriptionPosition': {
+					const { id, afterId, subId } = mapped;
 
 					this.subscriptionPosition(subId, id, afterId, false);
 					break;
 				};
 
-				case 'subscriptionCounters': {
-					const total = data.getTotal();
-					const [ subId, dep ] = data.getSubid().split('/');
+				case 'SubscriptionCounters': {
+					const [ subId, dep ] = mapped.subId.split('/');
 					
 					if (!dep) {
-						dbStore.metaSet(subId, '', { total: total });
+						dbStore.metaSet(subId, '', { total: mapped.total });
 					};
 					break;
 				};
 
-				case 'subscriptionGroups': {
-					const [ rid, bid ] = data.getSubid().split('-');
-					const group = Mapper.From.BoardGroup(data.getGroup());
+				case 'SubscriptionGroups': {
+					const { group, remove } = mapped;
+					const [ rootId, blockId ] = mapped.subId.split('-');
 
-					if (data.getRemove()) {
-						dbStore.groupsRemove(rid, bid, [ group.id ]);
+					if (remove) {
+						dbStore.groupsRemove(rootId, blockId, [ group.id ]);
 					} else {
-						dbStore.groupsAdd(rid, bid, [ group ]);
+						dbStore.groupsAdd(rootId, blockId, [ group ]);
 					};
+
+					blockStore.updateWidgetData(rootId);
 					break;
 				};
 
-				case 'notificationSend': {
-					const item = new M.Notification(Mapper.From.Notification(data.getNotification()));
+				case 'NotificationSend': {
+					const item = new M.Notification(mapped.notification);
 
 					notificationStore.add(item);
 
@@ -990,18 +893,18 @@ class Dispatcher {
 					break;
 				};
 
-				case 'notificationUpdate': {
-					notificationStore.update(Mapper.From.Notification(data.getNotification()));
+				case 'NotificationUpdate': {
+					notificationStore.update(mapped.notification);
 					break;
 				};
 
-				case 'payloadBroadcast': {
+				case 'PayloadBroadcast': {
 					if (!isMainWindow) {
 						break;
 					};
 
 					let payload: any = {};
-					try { payload = JSON.parse(data.getPayload()); } catch (e) { /**/ };
+					try { payload = JSON.parse(mapped.payload); } catch (e) { /**/ };
 
 					switch (payload.type) {
 						case 'openObject': {
@@ -1021,18 +924,16 @@ class Dispatcher {
 					break;
 				};
 
-				case 'membershipUpdate':
-					authStore.membershipUpdate(Mapper.From.Membership(data.getData()));
+				case 'MembershipUpdate':
+					authStore.membershipUpdate(mapped.membership);
 					UtilData.getMembershipTiers(true);
 					break;
 
-				case 'processNew':
-				case 'processUpdate':
-				case 'processDone': {
-					const process = data.getProcess();
-					const progress = process.getProgress();
-					const state = process.getState();
-					const type = process.getType();
+				case 'ProcessNew':
+				case 'ProcessUpdate':
+				case 'ProcessDone': {
+					const { process } = mapped;
+					const { id, progress, state, type } = process;
 
 					switch (state) {
 						case I.ProgressState.Running: {
@@ -1045,10 +946,10 @@ class Dispatcher {
 							};
 
 							commonStore.progressSet({
-								id: process.getId(),
+								id,
 								status: translate(`progress${type}`),
-								current: progress.getDone(),
-								total: progress.getTotal(),
+								current: progress.done,
+								total: progress.total,
 								isUnlocked,
 								canCancel,
 							});
@@ -1145,8 +1046,10 @@ class Dispatcher {
 	};
 
 	sort (c1: any, c2: any) {
-		const idx1 = SORT_IDS.findIndex(it => it == this.eventType(c1.getValueCase()));
-		const idx2 = SORT_IDS.findIndex(it => it == this.eventType(c2.getValueCase()));
+		const t1 = Mapper.Event.Type(c1.getValueCase());
+		const t2 = Mapper.Event.Type(c2.getValueCase());
+		const idx1 = SORT_IDS.findIndex(it => it == t1);
+		const idx2 = SORT_IDS.findIndex(it => it == t2);
 
 		if (idx1 > idx2) return 1;
 		if (idx1 < idx2) return -1;
@@ -1154,7 +1057,7 @@ class Dispatcher {
 	};
 
 	onObjectView (rootId: string, traceId: string, objectView: any) {
-		const { details, restrictions, relationLinks } = objectView;
+		const { details, restrictions, relationLinks, participants } = objectView;
 		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
@@ -1168,6 +1071,7 @@ class Dispatcher {
 		dbStore.relationsSet(contextId, rootId, relationLinks);
 		detailStore.set(contextId, details);
 		blockStore.restrictionsSet(contextId, restrictions);
+		blockStore.participantsSet(contextId, participants);
 
 		if (root) {
 			const object = detailStore.get(contextId, rootId, [ 'layout' ], true);
@@ -1303,18 +1207,18 @@ class Dispatcher {
 
 	checkLog (type: string) {
 		const { config } = commonStore;
-		const event = config.flagsMw.event;
-		const thread = config.flagsMw.thread;
-		const file = config.flagsMw.file;
+		const { event, thread, file } = config.flagsMw;
+		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
+		const threadEvents = [ 'ThreadStatus' ];
 
 		let check = false;
-		if (event && ![ 'threadStatus', 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {
+		if (event && !threadEvents.concat(fileEvents).includes(type)) {
 			check = true;
 		};
-		if (thread && [ 'threadStatus' ].includes(type)) {
+		if (thread && threadEvents.includes(type)) {
 			check = true;
 		};
-		if (file && [ 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {
+		if (file && fileEvents.includes(type)) {
 			check = true;
 		};
 		return check;

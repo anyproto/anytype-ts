@@ -463,6 +463,13 @@ class Block implements I.Block {
 		return this.isText() && (this.content.style == I.TextStyle.Callout);
 	};
 
+	getText (): string {
+		if (this.isText() || this.isEmbed()) {
+			return String(this.content.text || '');
+		};
+		return '';
+	};
+
 	getLength (): number {
 		let l = 0;
 		if (this.isText()) {

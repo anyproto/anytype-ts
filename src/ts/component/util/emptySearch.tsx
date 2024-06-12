@@ -1,6 +1,4 @@
 import * as React from 'react';
-import $ from 'jquery';
-import raf from 'raf';
 import { UtilCommon } from 'Lib';
 
 interface Props {
@@ -23,30 +21,6 @@ class EmptySearch extends React.Component<Props> {
 		);
 	};
 	
-	componentDidMount () {
-		this._isMounted = true;
-		this.resize();
-	};
-
-	componentDidUpdate () {
-		this.resize();
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
-	resize () {
-		raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
-
-			const node = $(this.node);
-			node.css({ lineHeight: node.height() + 'px' });
-		});
-	};
-
 };
 
 export default EmptySearch;

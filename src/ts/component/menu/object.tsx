@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate, UtilSpace } from 'Lib';
 import { blockStore, detailStore, commonStore, menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
+const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 
 class MenuObject extends React.Component<I.Menu> {
 	
@@ -117,14 +117,14 @@ class MenuObject extends React.Component<I.Menu> {
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
-		let history = { id: 'history', name: translate('menuObjectVersionHistory'), caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
+		let history = { id: 'history', name: translate('commonVersionHistory'), caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 
 		if (isTemplate) {	
-			template = { id: 'pageCreate', icon: 'template', name: translate('menuObjectCreateObject') };
+			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
 			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('menuObjectSetDefaultTemplate') };
 			pageCopy.name = translate('commonDuplicate');
 		} else {
@@ -161,7 +161,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 		const allowedArchive = canWrite && canDelete;
 		const allowedSearch = !UtilObject.isSetLayout(object.layout);
-		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !UtilObject.isSetLayout(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
+		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
 		const allowedFav = canWrite && !object.isArchived && !UtilObject.isFileOrSystemLayout(object.layout) && !object.templateIsBundled;
 		const allowedLock = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite;
@@ -197,6 +197,7 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!canWrite) {
 			template = null;
 			setDefaultTemplate = null;
+			remove = null;
 		};
 
 		let sections = [];
@@ -206,7 +207,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			sections = [
-				{ children: [ createWidget, fav, pageLock ] },
+				{ children: [ createWidget, fav, pageLock, history ] },
 				{ children: [ linkTo ] },
 				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },

@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
 import { blockStore, menuStore, detailStore, commonStore, dbStore, authStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class UtilMenu {
 

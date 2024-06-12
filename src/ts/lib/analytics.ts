@@ -1,7 +1,7 @@
 import * as amplitude from 'amplitude-js';
 import { I, C, UtilCommon, Storage, UtilSpace, Relation } from 'Lib';
 import { commonStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
@@ -36,6 +36,8 @@ class Analytics {
 		webclipper: 'Webclipper',
 		clipboard: 'Clipboard',
 		shortcut: 'Shortcut',
+		turn: 'TurnInto',
+		powertool: 'Powertool',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
@@ -512,7 +514,6 @@ class Analytics {
 			'main/navigation':	 'ScreenNavigation',
 			'main/type':		 'ScreenType',
 			'main/relation':	 'ScreenRelation',
-			'main/space':		 'ScreenSpace',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
 		};
@@ -522,7 +523,9 @@ class Analytics {
 
 	popupMapper (params: any): string {
 		const { id } = params;
-		const map = {};
+		const map = {
+			inviteRequest:		 'ScreenInviteRequest',
+		};
 
 		return map[id] || '';
 	};

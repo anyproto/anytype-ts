@@ -4,7 +4,7 @@ import { I, C, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Rende
 import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { pdfjs } from 'react-pdf';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
 import 'react-pdf/dist/cjs/Page/TextLayer.css';
@@ -260,16 +260,13 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 		
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off('mousemove.media mouseup.media');
-		
-		if (selection) {
-			selection.hide();
-		};
+		selection?.hide();
 
 		$(`#block-${block.id}`).addClass('isResizing');
 
@@ -307,7 +304,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		};
 		
 		const { rootId, block } = this.props;
-		const { id } = block;
+		const { id, fields } = block;
 		const node = $(this.node);
 		const wrap = node.find('.wrap');
 		
@@ -328,7 +325,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		this.height = 0;
 
 		C.BlockListSetFields(rootId, [
-			{ blockId: id, fields: { width: w } },
+			{ blockId: id, fields: { ...fields, width: w } },
 		]);
 	};
 

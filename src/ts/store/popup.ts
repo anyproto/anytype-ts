@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { I, UtilCommon, focus, Preview } from 'Lib';
 import { menuStore, authStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const AUTH_IDS = [ 'settings' ];
 const SHOW_DIMMER = [
@@ -190,13 +190,15 @@ class PopupStore {
 		return this.getItems().length ? Constant.delay.popup : 0;
 	};
 
-	closeLast () {
-		if (this.popupList.length) {
-			const last = this.popupList[this.popupList.length - 1];
+	getLast () {
+		const l = this.popupList.length;
+		return l ? this.popupList[l - 1] : null;
+	};
 
-			if (last && !last.param.preventClose) {
-				this.close(last.id);
-			};
+	closeLast () {
+		const last = this.getLast();
+		if (last) {
+			this.close(last.id);
 		};
 	};
 

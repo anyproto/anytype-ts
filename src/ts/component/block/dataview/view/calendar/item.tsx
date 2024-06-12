@@ -22,9 +22,6 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		this.onOpen = this.onOpen.bind(this);
 		this.onMore = this.onMore.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
@@ -54,16 +51,7 @@ const Item = observer(class Item extends React.Component<Props> {
 
 			let icon = null;
 			if (!hideIcon) {
-				icon = (
-					<IconObject 
-						object={item} 
-						size={16} 
-						canEdit={canEdit} 
-						onSelect={icon => this.onSelect(item, icon)} 
-						onUpload={objectId => this.onUpload(item, objectId)} 
-						onCheckbox={() => this.onCheckbox(item)} 
-					/>
-				);
+				icon = <IconObject object={item} size={16} canEdit={canEdit} />;
 			};
 
 			return (
@@ -105,20 +93,10 @@ const Item = observer(class Item extends React.Component<Props> {
 		UtilObject.openConfig(record);
 	};
 
-	onSelect (item: any, icon: string) {
-		UtilObject.setIcon(item.id, icon, '');
-	};
-
-	onUpload (item: any, objectId: string) {
-		UtilObject.setIcon(item.id, '', objectId);
-	};
-
-	onCheckbox (item: any) {
-		UtilObject.setDone(item.id, !item.done);
-	};
-
 	onMore () {
+		const { block, getView, readonly } = this.props;
 		const node = $(this.node);
+		const view = getView();
 
 		menuStore.closeAll([ 'dataviewCalendarDay' ], () => {
 			menuStore.open('dataviewCalendarDay', {
@@ -126,9 +104,14 @@ const Item = observer(class Item extends React.Component<Props> {
 				horizontal: I.MenuDirection.Center,
 				width: node.outerWidth() + 8,
 				offsetY: -(node.outerHeight() + 4),
+				className: 'fromBlock',
 				noFlipX: true,
 				data: {
 					...this.props,
+					blockId: block.id,
+					relationKey: view.groupRelationKey,
+					hideIcon: view.hideIcon,
+					readonly,
 				}
 			});
 		});

@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
-import { I, UtilCommon, keyboard, translate, analytics } from 'Lib';
-import Constant from 'json/constant.json';
+import { I, UtilCommon, keyboard, translate, analytics, Mark } from 'Lib';
+const Constant = require('json/constant.json');
 
 const SKIP = [ 
 	'span', 'div', 'name', 'markupMention', 'markupColor', 'markupBgcolor', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 
@@ -135,6 +135,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const node = $(this.node);
 		const cnt = node.find('#cnt');
 		const switcher = node.find('#switcher').removeClass('active');
+		const tag = Mark.getTag(I.MarkType.Search);
 
 		if (this.last != value) {
 			this.n = 0;
@@ -153,7 +154,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		findAndReplaceDOMText(this.container.get(0), {
 			preset: 'prose',
 			find: new RegExp(UtilCommon.regexEscape(value), 'gi'),
-			wrap: 'search',
+			wrap: tag,
 			portionMode: 'first',
 			filterElements: (el: any) => {
 				const tag = el.nodeName.toLowerCase();
@@ -178,7 +179,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			},
 		});
 
-		this.items = this.container.get(0).querySelectorAll('search') || [];
+		this.items = this.container.get(0).querySelectorAll(tag) || [];
 		this.items.length ? switcher.addClass('active') : switcher.removeClass('active');
 
 		cnt.text(`${this.n + 1}/${this.items.length}`);
@@ -250,8 +251,9 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { isPopup } = data;
 		const scrollContainer = this.getScrollContainer();
 		const offset = Constant.size.lastBlock + UtilCommon.sizeHeader();
+		const tag = Mark.getTag(I.MarkType.Search);
 
-		this.container.find('search.active').removeClass('active');
+		this.container.find(`${tag}.active`).removeClass('active');
 
 		const next = $(this.items[this.n]);
 

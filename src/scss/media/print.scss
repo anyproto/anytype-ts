@@ -46,7 +46,8 @@ html.printMedia {
 		#editorSize { display: none !important; }
 	}
 
-	.pageMainEdit #bodyWrapper { padding: 0px !important; }
+	#bodyWrapper { padding: 0px !important; }
+
 	.pageMainType, .pageMainRelation {
 		.wrapper { padding: 2cm 0px; }
 		.wrapper {

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate, Storage } from 'Lib';
 import { popupStore, detailStore, blockStore, menuStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const BlockType = observer(class BlockType extends React.Component<I.BlockComponent> {
 

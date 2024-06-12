@@ -110,7 +110,8 @@ html.themeDark {
 		}
 	}
 
-	search { color: var(--color-bg-primary) !important; }
+	markupsearch { color: var(--color-bg-primary) !important; }
+	markuphighlight { background: #044062 !important; }
 
     /* Components */
 
@@ -258,18 +259,6 @@ html.themeDark {
     .header.isCommon {
         .path { border: 0px; line-height: 28px; }
         .headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
-    }
-
-    .header.mainHistory {
-        .side {
-            .item {
-                .icon.arrow { background-image: url('#{$themePath}/arrow/history0.svg'); margin: 0px; }
-            }
-        }
-        
-		.item:hover {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/history1.svg'); }
-		}
     }
 
 	.header.mainStore.withBanner {

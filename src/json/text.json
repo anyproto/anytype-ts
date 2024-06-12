@@ -85,7 +85,6 @@
 	"commonComment": "Comment",
 	"commonIcon": "Icon",
 	"commonObjects": "Objects",
-	"commonCreateObject": "Create Object \"%s\"",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
@@ -143,11 +142,14 @@
 	"commonUpdate": "Update",
 	"commonOwner": "Owner",
 	"commonUpdateProgress": "Downloading update... %s/%s",
+	"commonVersionHistory": "Version history",
+	"commonActions": "Actions",
 	"commonAddRelation": "Add Relation",
 	"commonCollection": "Collection",
 	"commonSet": "Set",
-	"commonDeletionWarningTitle": "Are you sure you want to delete %s %s?",
-	"commonDeletionWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
+	"commonCreateNewObject": "Create new Object",
+	"commonCreateObjectWithName": "Create Object \"%s\"",
+	"commonCreateObject": "Create Object",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -297,8 +299,6 @@
 
 	"spellcheckAdd": "Add to dictionary",
 
-	"headerHistoryCurrent": "Current version",
-	"headerHistoryRestore": "Restore version",
 	"headerTooltipPath": "Click to search",
 
 	"headerGraphTooltipSearch": "Search",
@@ -430,6 +430,9 @@
 	"pageMainMembershipTitle": "Retrieving membership",
 	"pageMainMembershipError": "Something went wrong",
 
+	"pageMainHistoryCurrent": "Current version",
+	"pageMainHistoryRestore": "Restore",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 
 	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
@@ -528,7 +531,6 @@
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
 
-	"blockDataviewCreateNew": "Create new Object",
 	"blockDataviewCreateNewCollection": "Create new Collection",
 	"blockDataviewCreateNewSet": "Create new Set",
 	"blockDataviewCreateNewTooltipCollection": "Create new Object in this Collection",
@@ -547,7 +549,6 @@
 	"blockDataviewEmptySourceButton": "Select query",
 
 	"blockDataviewEmptyViewDescription": "Create your first one to begin",
-	"blockDataviewEmptyViewButton": "Create Object",
 
 	"blockDataviewControlsFilters": "Filters",
 	"blockDataviewControlsSorts": "Sorts",
@@ -929,6 +930,8 @@
 	"popupMembershipChangeEmail": "Change e-mail",
 	"popupMembershipManagePayment": "Manage payment",
 	"popupMembershipWriteToAnyteam": "Write to Anyteam",
+	"popupMembershipManageOnMobilePlatform": "Manage available on Mobile platform",
+	"popupMembershipPaidOnOtherPlatform": "You've already acquired Membership plan on another platform, please cancel Membership first.",
 
 	"popupMembershipWhatsIncluded": "What’s included",
 
@@ -997,6 +1000,12 @@
 
 	"popupConfirmRelationOptionRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
 
+	"popupConfirmDeleteWarningTitle": "Are you sure you want to delete %s %s?",
+	"popupConfirmDeleteWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
+
+	"popupConfirmActionRestrictedTitle": "Action restricted!",
+	"popupConfirmActionRestrictedText": "You cannot do this in read-only space",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1032,7 +1041,9 @@
 	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
-	"popupSearchCreateObject": "Create Object",
+	"popupSearchAddRelation": "Add Relation",
+	"popupSearchTooltipSearchByBacklinks": "Show related objects",
+	"popupSearchBacklinksFrom": "Related to: %s",
 
 	"popupAboutTitle": "Anytype",
 	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -1092,7 +1103,6 @@
 	"popupShortcutMainSelection4": "Expand your selection up or down",
 	"popupShortcutMainSelection5": "On block will select or de-select an entire block",
 	"popupShortcutMainSelection6": "Select block and all blocks in between",
-	"popupShortcutMainActions": "Actions",
 	"popupShortcutMainActions1": "Activate command menu",
 	"popupShortcutMainActions2": "Open action menu",
 	"popupShortcutMainActions3": "Deletes the words left to the cursor",
@@ -1222,6 +1232,7 @@
 
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no relations shown yet",
+	"popupRelationAddToView": "Add relations to the view",
 
 	"menuVaultPeer": "%d\/%d peers",
 	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
@@ -1244,7 +1255,6 @@
 	"menuBlockActionsSectionsListStyle": "List style",
 	"menuBlockActionsSectionsDividerStyle": "Divider style",
 	"menuBlockActionsSectionsFileStyle": "File style",
-	"menuBlockActionsSectionsActions": "Actions",
 	"menuBlockActionsSectionsBackground": "Background",
 	"menuBlockActionsSectionsColor": "Color",
 	"menuBlockActionsSectionsDataview": "Dataview",
@@ -1437,7 +1447,6 @@
 	"menuObjectVersionHistory": "Version History",
 	"menuObjectExport": "Export",
 	"menuObjectReloadFromSource": "Reload from Source",
-	"menuObjectCreateObject": "Create Object",
 	"menuObjectUseAsTemplate": "Use as a Template",
 	"menuObjectUnlockPage": "Unlock page",
 	"menuObjectLockPage": "Lock page",
@@ -1574,6 +1583,8 @@
 	"toastRelationRemoved": "Relation <b>%s</b> has been removed from your Library",
 	"toastSetDefaultTemplate": "This Template was Set as default",
 
+	"toastFileLimitReached": "Your local storage exceeds syncing limit. Locally stored files won't be synced",
+
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
 	"textColor-orange": "Amber",
@@ -1636,7 +1647,7 @@
 	"edgeType1": "Relation",
 
 	"survey0Title": "Time to take a survey!",
-	"survey0Text": "Hi there, We hope you're enjoying your experience in Anytype! We'd love to hear your feedback so we can keep improving the product.",
+	"survey0Text": "Hi there! We hope you're enjoying your experience in Anytype! We'd love to hear your feedback so we can keep improving the product.",
 	"survey0Confirm": "Let's Go!",
 	"survey0Cancel": "Skip",
 	"survey1Title": "Help us to become better",
@@ -1651,15 +1662,26 @@
 	"survey3Text": "Hi there, we hope you're enjoying your experience with Anytype! Would you take 5 minutes to help us improve our product?",
 	"survey3Confirm": "Sure, let's go",
 	"survey3Cancel": "No thanks",
+	"survey4Title": "Improve Anytype with Your Feedback",
+	"survey4Text": "Take our 1-minute survey to enhance space sharing. Your input makes Anytype better for everyone.",
+	"survey4Confirm": "Let’s Go!",
+	"survey4Cancel": "No thanks",
+	"survey5Title": "Improve Anytype with Your Feedback",
+	"survey5Text": "Take our 1-minute survey to enhance collaboration. Your input makes Anytype better for everyone.",
+	"survey5Confirm": "Let’s Go!",
+	"survey5Cancel": "No thanks",
 
 	"widget0Name": "Link",
 	"widget0Description": "Compact version of the Object",
 	"widget1Name": "Tree",
 	"widget1Description": "Hierarchical structure of Objects",
 	"widget2Name": "List",
-	"widget2Description": "Widget with list view of Set Object",
+	"widget2Description": "Widget with a list view of Set Object",
 	"widget3Name": "Compact list",
-	"widget3Description": "Widget with list view of Set Object",
+	"widget3Description": "Widget with a list view of Set Object",
+	"widget4Name": "View",
+	"widget4Description": "Widget with a view of the Set Object",
+
 	"widgetFavorite": "Favorites",
 	"widgetRecent": "Recently edited",
 	"widgetRecentOpen": "Recently opened",
@@ -1672,11 +1694,10 @@
 	"widgetOptions": "Options",
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
-	"widgetCreate": "Create new object",
+	"widgetShowAll": "See all Objects",
 
 	"phrasePlaceholder": "Please enter your Key",
 
-	"navigationCreateNew": "Create new Object",
 	"navigationAccount": "Spaces",
 
 	"spaceAccessType0": "Private Space",

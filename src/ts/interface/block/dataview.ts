@@ -115,7 +115,6 @@ export interface ViewComponent {
 	block?: I.Block;
 	readonly: boolean;
 	pageContainer?: string;
-	dataset?: I.Dataset;
 	isPopup?: boolean;
 	isInline?: boolean;
 	isCollection?: boolean;
@@ -234,6 +233,7 @@ export interface BoardGroup {
 
 export interface ContentDataview {
 	sources: string[];
+	viewId: string;
 	views: View[];
 	relationLinks: any[];
 	groupOrder: any[];

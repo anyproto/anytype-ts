@@ -1,6 +1,6 @@
 import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject, UtilMenu } from 'Lib';
 import { dbStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const DICTIONARY = [ 'layout', 'origin', 'importType' ];
 const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];
@@ -625,6 +625,14 @@ class Relation {
 
 	isDictionary (relationKey: string): boolean {
 		return DICTIONARY.includes(relationKey);
+	};
+
+	arrayTypes () {
+		return [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.File, I.RelationType.Object, I.RelationType.Relations ];
+	};
+
+	isArrayType (format: I.RelationType): boolean {
+		return this.arrayTypes().includes(format);
 	};
 	
 };

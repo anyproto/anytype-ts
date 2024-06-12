@@ -7,7 +7,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { Icon } from 'Component';
 import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject, translate, UtilMenu, Dataview } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -284,6 +284,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const object = getTarget();
 
 		dbStore.metaSet(subId, '', { viewId: item.id });
+		C.BlockDataviewViewSetActive(rootId, blockId, item.id);
 
 		analytics.event('SwitchView', {
 			type: item.type,

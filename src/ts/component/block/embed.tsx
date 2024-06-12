@@ -8,8 +8,8 @@ import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
-import Theme from 'json/theme.json';
+const Constant = require('json/constant.json');
+const Theme = require('json/theme.json');
 
 const katex = require('katex');
 const pako = require('pako');
@@ -851,16 +851,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		
-		if (selection) {
-			selection.hide();
-		};
+		selection?.hide();
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);

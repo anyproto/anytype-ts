@@ -5,7 +5,7 @@ import { MenuItemVertical, Filter, ObjectName } from 'Component';
 import { I, UtilCommon, keyboard, UtilData, UtilObject, UtilMenu, analytics, focus, translate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -257,7 +257,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		sections.push({ 
 			id: I.MarkType.Link, name: '', children: [
-				{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), icon: 'plus' },
+				{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObjectWithName'), filter), icon: 'plus' },
 			] 
 		});
 

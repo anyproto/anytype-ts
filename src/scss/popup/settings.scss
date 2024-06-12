@@ -379,14 +379,15 @@
 
 				.actionItems {
 					.title { @include text-common; font-weight: 400; margin-bottom: 0; }
-					.label { @include text-small; color: var(--color-text-secondary); }
+					.label { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
 
 					.side.left {
 						display: flex; flex-direction: row; gap: 0px 12px; align-items: center; border-radius: 8px; transition: $transitionAllCommon;
+						max-width: calc(100% - 80px);
 					}
 					.side.left {
 						.iconObject { flex-shrink: 0; }
-						.txt { width: calc(100% - 40px); }
+						.txt { width: calc(100% - 56px); }
 						.name { @include text-common; }
 						.type { @include text-small; color: var(--color-text-secondary); }
 					}

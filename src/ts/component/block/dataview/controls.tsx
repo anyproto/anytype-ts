@@ -44,7 +44,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
-		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const allowedView = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
 		const buttonWrapCn = [ 'buttonWrap' ];
 		const hasSources = (isCollection || getSources().length);
@@ -121,7 +121,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				className={cn.join(' ')}
 			>
 				<div className="sides">
-					<div id="sideLeft" className="side left">
+					<div id="dataviewControlsSideLeft" className="side left">
 						{head}
 
 						<div 
@@ -147,7 +147,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 						/>
 					</div>
 
-					<div id="sideRight" className="side right">
+					<div id="dataviewControlsSideRight" className="side right">
 						<Filter
 							ref={ref => this.refFilter = ref}
 							placeholder={translate('blockDataviewSearch')} 
@@ -206,10 +206,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onViewSwitch (view: any) {
-		const { block } = this.props;
-
 		this.onViewSet(view);
-		window.setTimeout(() => { $(`#button-${block.id}-settings`).trigger('click'); }, 50);
+		window.setTimeout(() => { $(`#button-${this.props.block.id}-settings`).trigger('click'); }, 50);
 	};
 
 	onViewCopy (view) {
@@ -352,15 +350,16 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		});
 	};
 
-	onViewSet (item: any) {
+	onViewSet (view: any) {
 		const { rootId, block, isInline, getTarget } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const object = getTarget();
 
-		dbStore.metaSet(subId, '', { viewId: item.id });
+		dbStore.metaSet(subId, '', { viewId: view.id });
+		C.BlockDataviewViewSetActive(rootId, block.id, view.id);
 
 		analytics.event('SwitchView', {
-			type: item.type,
+			type: view.type,
 			objectType: object.type,
 			embedType: analytics.embedType(isInline)
 		});
@@ -481,8 +480,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		const { isPopup, isInline } = this.props;
 		const node = $(this.node);
-		const sideLeft = node.find('#sideLeft');
-		const sideRight = node.find('#sideRight');
+		const sideLeft = node.find('#dataviewControlsSideLeft');
+		const sideRight = node.find('#dataviewControlsSideRight');
 		const container = UtilCommon.getPageContainer(isPopup);
 		const { left } = sideLeft.offset();
 		const sidebar = $('#sidebar');

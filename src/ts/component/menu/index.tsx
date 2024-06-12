@@ -5,7 +5,7 @@ import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
 import { I, keyboard, UtilCommon, analytics, Storage } from 'Lib';
 import { menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
