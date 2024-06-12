@@ -260,16 +260,13 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 		
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off('mousemove.media mouseup.media');
-		
-		if (selection) {
-			selection.hide();
-		};
+		selection?.hide();
 
 		$(`#block-${block.id}`).addClass('isResizing');
 

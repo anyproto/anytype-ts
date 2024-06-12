@@ -61,6 +61,7 @@ class CommonStore {
 		list: [],
 	};
 	public diffValue: I.Diff[] = [];
+	public refs: Map<string, any> = new Map();
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -411,6 +412,10 @@ class CommonStore {
 		this.notionToken = v;
 	};
 
+	refSet (id: string, ref: any) {
+		this.refs.set(id, ref);
+	};
+
 	boolGet (k: string) {
 		const tk = `${k}Value`;
 		if (this[tk] === null) {
@@ -521,6 +526,10 @@ class CommonStore {
 
 	getGraph (key: string): Graph {
 		return Storage.get(key) || UtilCommon.objectCopy(this.graphObj);
+	};
+
+	getRef (id: string) {
+		return this.refs.get(id);
 	};
 
 };

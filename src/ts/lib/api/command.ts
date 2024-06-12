@@ -540,12 +540,13 @@ export const BlockListMoveToExistingObject = (contextId: string, targetContextId
 	dispatcher.request(BlockListMoveToExistingObject.name, request, callBack);
 };
 
-export const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, callBack?: (message: any) => void) => {
+export const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListConvertToObjects.Request();
 
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
 	request.setObjecttypeuniquekey(typeKey);
+	request.setTemplateid(templateId);
 
 	dispatcher.request(BlockListConvertToObjects.name, request, callBack);
 };

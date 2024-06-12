@@ -375,21 +375,20 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			return;
 		};
 		
-		const { dataset, param, close } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(this.node);
 		const zone = node.find('.dropzone');
 		
 		zone.removeClass('isDraggingOver');
-		preventCommonDrop(true);
+		keyboard.disableCommonDrop(true);
 		this.setState({ isLoading: true });
 		
 		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setState({ isLoading: false });
-			preventCommonDrop(false);
+			keyboard.disableCommonDrop(false);
 			
 			if (!message.error.code) {
 				UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);

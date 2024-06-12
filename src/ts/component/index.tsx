@@ -80,6 +80,7 @@ import Cell from './block/dataview/cell';
 import ObjectName from './util/object/name';
 import ObjectDescription from './util/object/description';
 import ObjectType from './util/object/type';
+import ObjectCover from './util/object/cover';
 
 import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
@@ -162,6 +163,7 @@ export {
 	ObjectName,
 	ObjectDescription,
 	ObjectType,
+	ObjectCover,
 
 	Menu,
 	MenuItemVertical,

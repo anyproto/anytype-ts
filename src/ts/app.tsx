@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar } from 'Component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, notificationStore } from 'Store';
 import { 
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
@@ -159,19 +159,22 @@ Sentry.setContext('info', {
 });
 
 class RoutePage extends React.Component<RouteComponentProps> {
+
 	render () {
 		return (
-			<SelectionProvider>
-				<DragProvider>
+			<SelectionProvider ref={ref => commonStore.refSet('selectionProvider', ref)}>
+				<DragProvider ref={ref => commonStore.refSet('dragProvider', ref)}>
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
-					<Navigation />
+					<Sidebar key="sidebar" {...this.props} />
+					<Navigation key="navigation" {...this.props} />
 
 					<Page {...this.props} />
 				</DragProvider>
 			</SelectionProvider>
 		);
 	};
+
 };
 
 class App extends React.Component<object, State> {

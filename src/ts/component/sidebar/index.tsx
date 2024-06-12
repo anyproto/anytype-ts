@@ -7,15 +7,11 @@ import { Icon } from 'Component';
 import { I, keyboard, Preview, sidebar, translate } from 'Lib';
 import { commonStore } from 'Store';
 import ListWidget from 'Component/list/widget';
+
 const Constant = require('json/constant.json');
-
-interface Props {
-	dataset?: any;
-};
-
 const THROTTLE = 20;
 	
-const Sidebar = observer(class Sidebar extends React.Component<Props> {
+const Sidebar = observer(class Sidebar extends React.Component {
 	
 	private _isMounted = false;
 	node = null;
@@ -28,7 +24,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	width = 0;
 	movedX = false;
 
-	constructor (props: Props) {
+	constructor (props) {
 		super(props);
 
 		this.onDragStart = this.onDragStart.bind(this);

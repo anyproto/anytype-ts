@@ -35,7 +35,7 @@ const Navigation = observer(class Navigation extends React.Component {
 
 		let buttonPlus: any = null;
 		if (canWrite) {
-			buttonPlus = { id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${cmd} + ${alt} + N` };
+			buttonPlus = { id: 'plus', tooltip: translate('commonCreateNewObject'), caption: `${cmd} + N / ${cmd} + ${alt} + N` };
 
 			switch (navigationMenu) {
 				case I.NavigationMenuMode.Context: {

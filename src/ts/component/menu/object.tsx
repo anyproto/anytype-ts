@@ -124,7 +124,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 
 		if (isTemplate) {	
-			template = { id: 'pageCreate', icon: 'template', name: translate('menuObjectCreateObject') };
+			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
 			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('menuObjectSetDefaultTemplate') };
 			pageCopy.name = translate('commonDuplicate');
 		} else {

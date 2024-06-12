@@ -582,9 +582,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		let name = '';
 		if (filter) {
-			name = UtilCommon.sprintf(translate('commonCreateObject'), filter);
+			name = UtilCommon.sprintf(translate('commonCreateObjectWithName'), filter);
 		} else {
-			name = translate('popupSearchCreateObject');
+			name = translate('commonCreateObject');
 		};
 
 		let items = this.items.filter(it => this.filterMapper(it, config));

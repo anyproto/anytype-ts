@@ -122,6 +122,9 @@
 		.empty { color: var(--color-text-secondary); }
 		.wrap.isEditing { background: var(--color-shape-highlight-medium); }
 	}
+	.block.blockEmbed:not(.isLatex) {
+		#value svg { background: none; }
+	}
 
     /* BlockText */
 

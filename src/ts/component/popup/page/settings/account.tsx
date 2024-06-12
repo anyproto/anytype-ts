@@ -28,8 +28,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	constructor (props: Props) {
 		super(props);
 
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 		this.onDescription = this.onDescription.bind(this);
 	};
@@ -56,8 +54,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 							object={profile}
 							size={108}
 							canEdit={true}
-							onSelect={this.onSelect}
-							onUpload={this.onUpload}
 						/>
 					</div>
 				</div>
@@ -94,14 +90,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				</div>
 			</div>
 		);
-	};
-
-	onSelect (icon: string) {
-		UtilObject.setIcon(blockStore.profile, icon, '');
-	};
-
-	onUpload (objectId: string) {
-		UtilObject.setIcon(blockStore.profile, '', objectId);
 	};
 
     onName () {

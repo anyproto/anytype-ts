@@ -235,7 +235,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							C.BlockListConvertToObjects(rootId, blockIds, '');
+							C.BlockListConvertToObjects(rootId, blockIds, '', '');
 						};
 						
 						close();
@@ -428,7 +428,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
-						C.BlockListConvertToObjects(rootId, blockIds, item.uniqueKey, (message: any) => {
+						C.BlockListConvertToObjects(rootId, blockIds, item.uniqueKey, item.defaultTemplateId, (message: any) => {
 							analytics.createObject(item.id, item.recommendedLayout, route, message.middleTime);
 						});
 

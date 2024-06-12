@@ -471,23 +471,22 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 	
 	onDrop (e: any) {
-		const { rootId, dataset, readonly } = this.props;
+		const { rootId, readonly } = this.props;
 
 		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
 			return;
 		};
 		
-		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(this.node);
 		
 		node.removeClass('isDraggingOver');
-		preventCommonDrop(true);
+		keyboard.disableCommonDrop(true);
 		this.setLoading(true);
 		
 		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setLoading(false);
-			preventCommonDrop(false);
+			keyboard.disableCommonDrop(false);
 			
 			if (!message.error.code) {
 				this.loaded = false;

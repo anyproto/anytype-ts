@@ -217,6 +217,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		if (this.target) {
 			if (!isCollection) {
+				const isSet = UtilObject.isSetLayout(this.target.layout);
 				const setLayouts = UtilObject.getSetLayouts();
 				const treeSkipLayouts = setLayouts.concat(UtilObject.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
 
@@ -224,8 +225,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				if (treeSkipLayouts.includes(this.target.layout)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				};
-				if (!setLayouts.includes(this.target.layout)) {
+				if (!isSet) {
 					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it) );
+				} else {
+					options = [ I.WidgetLayout.View, I.WidgetLayout.Link ];
 				};
 			};
 

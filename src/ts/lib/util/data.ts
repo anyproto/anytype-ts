@@ -151,9 +151,11 @@ class UtilData {
 		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 	
-	selectionGet (id: string, withChildren: boolean, save: boolean, props: any): string[] {
-		const { dataset } = props;
-		const { selection } = dataset || {};
+	/*
+	Used to click and set selection automatically in block menu for example
+	*/
+	selectionGet (id: string, withChildren: boolean, save: boolean): string[] {
+		const selection = commonStore.getRef('selectionProvider');
 		
 		if (!selection) {
 			return [];
@@ -908,21 +910,13 @@ class UtilData {
 		return filters;
 	};
 
-	moveToPage (rootId: string, blockId: string, typeId: string, route: string, props: any) {
-		const { dataset } = props;
-		const { selection } = dataset || {};
+	moveToPage (rootId: string, ids: string[], typeId: string, route: string) {
 		const type = dbStore.getTypeById(typeId);
-
 		if (!type) {
 			return;
 		};
 		
-		const ids = selection ? selection.get(I.SelectType.Block) : [];
-		if (!ids.length) {
-			ids.push(blockId);
-		};
-
-		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, (message: any) => {
+		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, (message: any) => {
 			if (!message.error.code) {
 				analytics.createObject(type.id, type.recommendedLayout, route, message.middleTime);
 			};

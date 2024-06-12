@@ -2,19 +2,24 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import { I, UtilData, UtilCommon, UtilDate, UtilObject, translate, Dataview } from 'Lib';
-import { dbStore, menuStore, detailStore } from 'Store';
+import { dbStore, menuStore } from 'Store';
 import Item from './calendar/item';
-const Constant = require('json/constant.json');
+
+interface State {
+	value: number;
+};
 
 const PADDING = 46;
 
-const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent> {
+const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewComponent, State> {
 
 	node: any = null;
 	refMonth = null;
 	refYear = null;
-	value = UtilDate.now();
 	scroll = false;
+	state = {
+		value: UtilDate.now(),
+	};
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -24,26 +29,14 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	render () {
 		const { className } = this.props;
+		const { value } = this.state;
 		const cn = [ 'viewContent', className ];
 		const data = this.getData();
-		const { m, y } = this.getDateParam(this.value);
+		const { m, y } = this.getDateParam(value);
 		const today = this.getDateParam(UtilDate.now());
-
-		const days = [];
-		const months = [];
-		const years = [];
-
-		for (let i = 1; i <= 7; ++i) {
-			days.push({ id: i, name: translate(`day${i}`) });
-		};
-
-		for (let i = 1; i <= 12; ++i) {
-			months.push({ id: i, name: translate('month' + i) });
-		};
-
-		for (let i = 0; i <= 3000; ++i) {
-			years.push({ id: i, name: i });
-		};
+		const days = UtilDate.getWeekDays();
+		const months = UtilDate.getMonths();
+		const years = UtilDate.getYears(0, 3000);
 
 		return (
 			<div ref={node => this.node = node}>
@@ -79,7 +72,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 						<div className="table">
 							<div className="head">
 								{days.map((item, i) => (
-									<div key={i} className="item th">
+									<div key={i} className="item">
 										{item.name.substring(0, 2)}
 									</div>
 								))}
@@ -131,7 +124,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	init () {
-		const { m, y } = this.getDateParam(this.value);
+		const { m, y } = this.getDateParam(this.state.value);
 
 		this.refMonth?.setValue(m);
 		this.refYear?.setValue(y);
@@ -143,7 +136,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	getData () {
-		return UtilDate.getCalendarMonth(this.value);
+		return UtilDate.getCalendarMonth(this.state.value);
 	};
 
 	getSubId () {
@@ -215,7 +208,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	onArrow (dir: number) {
-		let { m, y } = this.getDateParam(this.value);
+		let { m, y } = this.getDateParam(this.state.value);
 
 		m += dir;
 		if (m < 0) {
@@ -256,9 +249,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	setValue (value: number) {
-		this.value = value;
-		this.forceUpdate();
-		this.load();
+		this.setState({ value }, () => this.load());
 	};
 
 	getItems () {
@@ -288,11 +279,12 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const margin = (cw - mw) / 2;
 		const { top } = node.offset();
 		const day = node.find('.day').first();
+		const menu = menuStore.get('dataviewCalendarDay');
 
 		wrap.css({ width: cw, height: Math.max(600, ch - top - 130), marginLeft: -margin - 2 });
 		win.trigger('resize.menuDataviewCalendarDay');
 
-		if (day.length) {
+		if (menu && !menu.param.data.fromWidget && day.length) {
 			menuStore.update('dataviewCalendarDay', { width: day.outerWidth() + 8 });
 		};
 	};
