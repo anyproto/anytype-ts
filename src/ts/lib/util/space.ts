@@ -13,6 +13,8 @@ class UtilSpace {
 		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = Storage.getLastOpened(UtilCommon.getCurrentElectronWindowId());
 
+			console.log(UtilCommon.getCurrentElectronWindowId(), home);
+
 			// Invalid data protection
 			if (!home || !home.id) {
 				home = null;
