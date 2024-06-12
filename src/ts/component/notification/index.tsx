@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, Error } from 'Component';
 import { I, C, UtilRouter, translate, Action, analytics, UtilSpace } from 'Lib';
 import { notificationStore, popupStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	error: string;
@@ -53,7 +53,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			case I.NotificationType.Join: {
 				buttons = buttons.concat([
 					{ id: 'request', text: translate('notificationButtonRequest') },
-					{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch') },
+					{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch'), color: 'blank' },
 				]);
 				break;
 			};
@@ -68,7 +68,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			case I.NotificationType.Remove: {
 				buttons = buttons.concat([
 					{ id: 'spaceExport', text: translate('notificationButtonSpaceExport') },
-					{ id: 'spaceDelete', text: translate('notificationButtonSpaceDelete') },
+					{ id: 'spaceDelete', text: translate('notificationButtonSpaceDelete'), color: 'red' },
 				]);
 				break;
 			};
@@ -96,7 +96,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 					{buttons.length ? (
 						<div className="buttons">
 							{buttons.map((item: any, i: number) => (
-								<Button key={i} color="blank" className="c28" {...item} onClick={e => this.onButton(e, item.id)} />
+								<Button key={i} className="c28" {...item} onClick={e => this.onButton(e, item.id)} />
 							))}
 						</div>
 					) : ''}

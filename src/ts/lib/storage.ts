@@ -1,6 +1,6 @@
 import { I, UtilCommon, UtilSpace } from 'Lib';
 import { commonStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const SPACE_KEYS = [
 	'toggle',
@@ -123,7 +123,6 @@ class Storage {
 		const obj = this.get('lastOpenedObject') || {};
 
 		obj[windowId] = Object.assign(obj[windowId] || {}, param);
-
 		this.set('lastOpenedObject', obj, true);
 	};
 
@@ -131,25 +130,27 @@ class Storage {
 		objectIds = objectIds || [];
 
 		const obj = this.get('lastOpenedObject') || {};
-		const windowIdsToDelete = Object.keys(obj).reduce((windowIds, windowId) => {
-			return !obj[windowId] || objectIds.includes(obj[windowId].id) ? windowIds.concat(windowId) : windowIds;
-		}, []);
+		const windowIds = [];
 
-		this.deleteLastOpenedByWindowId(windowIdsToDelete, true);
+		for (const windowId in obj) {
+			if (!obj[windowId] || objectIds.includes(obj[windowId].id)) {
+				windowIds.push(windowId);
+			};
+		};
+
+		this.deleteLastOpenedByWindowId(windowIds);
 	};
 
-	deleteLastOpenedByWindowId (windowIdsToDelete: string[], homeIncluded?: boolean) {
-		if (windowIdsToDelete.length == 0) {
+	deleteLastOpenedByWindowId (windowIds: string[],) {
+		windowIds = windowIds.filter(id => id != '1');
+
+		if (!windowIds.length) {
 			return;
 		};
 
 		const obj = this.get('lastOpenedObject') || {};
 
-		if (!homeIncluded) {
-			windowIdsToDelete = windowIdsToDelete.filter(id => id != '1');
-		};
-
-		windowIdsToDelete.forEach(windowId => delete(obj[windowId]));
+		windowIds.forEach(windowId => delete(obj[windowId]));
 		this.set('lastOpenedObject', obj, true);
 	};
 
@@ -193,7 +194,9 @@ class Storage {
 		this.set('toggle', obj, true);
 	};
 
-	setScroll (key: string, rootId: string, scroll: number) {
+	setScroll (key: string, rootId: string, scroll: number, isPopup: boolean) {
+		key = this.getScrollKey(key, isPopup);
+
 		const obj = this.get('scroll') || {};
 		try {
 			obj[key] = obj[key] || {};
@@ -204,9 +207,15 @@ class Storage {
 		return obj;
 	};
 
-	getScroll (key: string, rootId: string) {
+	getScroll (key: string, rootId: string, isPopup: boolean) {
+		key = this.getScrollKey(key, isPopup);
+
 		const obj = this.get('scroll') || {};
 		return Number((obj[key] || {})[rootId]) || 0;
+	};
+
+	getScrollKey (key: string, isPopup: boolean) {
+		return isPopup ? `${key}Popup` : key;
 	};
 
 	setOnboarding (key: string) {

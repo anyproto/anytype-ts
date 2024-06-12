@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Error, MediaAudio } from 'Component';
 import { I, translate, focus, keyboard, Action } from 'Lib';
 import { commonStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
 

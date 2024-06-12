@@ -1,9 +1,9 @@
 import $ from 'jquery';
-import { I, C, Preview, Renderer, translate, UtilSpace } from 'Lib';
+import { I, C, Preview, Renderer, translate, UtilSpace, Mark } from 'Lib';
 import { popupStore } from 'Store';
-import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
-import Text from 'json/text.json';
+const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
+const Text = require('json/text.json');
 import DOMPurify from 'dompurify';
 
 const TEST_HTML = /<[^>]*>/;
@@ -21,7 +21,7 @@ class UtilCommon {
 			return '0';
 		};
 
-		return electron.currentWindow().windowId.toString();
+		return String(electron.currentWindow().windowId || '');
 	};
 
 	getGlobalConfig () {
@@ -467,7 +467,7 @@ class UtilCommon {
 		v = String(v || '');
 
 		const uc = '\\P{Script_Extensions=Latin}';
-		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,6}$`, 'gu');
+		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,12}$`, 'gu');
 		return reg.test(v);
 	};
 
@@ -874,14 +874,18 @@ class UtilCommon {
 			return s;
 		};
 
+		const tags = [ 'b', 'br', 'a', 'ul', 'li', 'h1', 'span', 'p', 'name', 'smile', 'img' ];
+
+		for (const i in I.MarkType) {
+			if (isNaN(I.MarkType[i] as any)) {
+				continue;
+			};
+			tags.push(Mark.getTag(I.MarkType[i] as any));
+		};
+
 		return DOMPurify.sanitize(s, { 
-			ADD_TAGS: [ 
-				'b', 'br', 'a', 'ul', 'li', 'h1', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 'markupUnderline', 'markupLink', 'markupColor',
-				'markupBgcolor', 'markupMention', 'markupEmoji', 'markupObject', 'span', 'p', 'name', 'smile', 'img', 'search'
-			],
-			ADD_ATTR: [
-				'contenteditable'
-			],
+			ADD_TAGS: tags,
+			ADD_ATTR: [ 'contenteditable' ],
 			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 		});
 	};
@@ -937,6 +941,10 @@ class UtilCommon {
 
 	stripTags (s: string): string {
 		return String(s || '').replace(/<[^>]+>/g, '');
+	};
+
+	normalizeLineEndings (s: string) {
+		return String(s || '').replace(/\r\n?/g, '\n');
 	};
 
 };

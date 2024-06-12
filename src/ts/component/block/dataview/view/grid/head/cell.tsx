@@ -4,7 +4,7 @@ import { SortableElement } from 'react-sortable-hoc';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import Handle from './handle';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId: string;

@@ -192,12 +192,6 @@ updateForces = () => {
 
 	updateOrphans();
 
-	// Filter files
-	if (!settings.files) {
-		const layouts = [ Layout.File, Layout.Image, Layout.Audio, Layout.Video, Layout.Pdf ];
-		nodes = nodes.filter(d => !layouts.includes(d.layout) || d.forceShow);
-	};
-
 	// Filter links
 	if (!settings.link) {
 		edges = edges.filter(d => d.type != EdgeType.Link);
@@ -262,7 +256,7 @@ updateForces = () => {
 };
 
 updateSettings = (param) => {
-	const updateKeys = [ 'link', 'relation', 'orphan', 'local', 'files' ];
+	const updateKeys = [ 'link', 'relation', 'orphan', 'local' ];
 	
 	let needUpdate = false;
 	let needFocus = false;

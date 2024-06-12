@@ -3,10 +3,10 @@ import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate, UtilSpace } from 'Lib';
 import { blockStore, detailStore, commonStore, menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
+const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 
-class MenuBlockMore extends React.Component<I.Menu> {
+class MenuObject extends React.Component<I.Menu> {
 	
 	n = -1;
 	
@@ -76,7 +76,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		menuStore.closeAll(Constant.menuIds.more);
+		menuStore.closeAll(Constant.menuIds.object);
 	};
 
 	rebind () {
@@ -92,7 +92,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { config } = commonStore;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -103,11 +102,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const object = detailStore.get(rootId, blockId);
 		const cmd = keyboard.cmdSymbol();
 		const isTemplate = UtilObject.isTemplate(object.type);
-		const print = { id: 'print', name: translate('menuBlockMorePrint'), caption: `${cmd} + P` };
-		const move = { id: 'move', name: translate('menuBlockMoreMoveTo'), arrow: true };
-		const turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
-		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
-		const blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
+		const print = { id: 'print', name: translate('menuObjectPrint'), caption: `${cmd} + P` };
+		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		const canWrite = UtilSpace.canMyParticipantWrite();
 		const canDelete = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
@@ -120,19 +116,19 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let setDefaultTemplate = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
-		let search = { id: 'search', name: translate('menuBlockMoreSearchOnPage'), caption: `${cmd} + F` };
-		let history = { id: 'history', name: translate('menuBlockMoreVersionHistory'), caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
+		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
+		let history = { id: 'history', name: translate('commonVersionHistory'), caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
-		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuBlockMoreReloadFromSource') };
-		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuBlockMoreCreateWidget') };
+		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
+		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 
 		if (isTemplate) {	
-			template = { id: 'pageCreate', icon: 'template', name: translate('menuBlockMoreCreateObject') };
-			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('menuBlockMoreSetDefaultTemplate') };
+			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
+			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('menuObjectSetDefaultTemplate') };
 			pageCopy.name = translate('commonDuplicate');
 		} else {
-			template = { id: 'templateCreate', icon: 'template', name: translate('menuBlockMoreUseAsTemplate') };
+			template = { id: 'templateCreate', icon: 'template', name: translate('menuObjectUseAsTemplate') };
 		};
 
 		if (object.isFavorite) {
@@ -150,22 +146,22 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		};
 
 		if (block.isLocked()) {
-			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuBlockMoreUnlockPage'), caption: `Ctrl + Shift + L` };
+			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuObjectUnlockPage'), caption: `Ctrl + Shift + L` };
 		} else {
-			pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuBlockMoreLockPage'), caption: `Ctrl + Shift + L` };
+			pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuObjectLockPage'), caption: `Ctrl + Shift + L` };
 		};
 
 		if (object.isInstalled) {
 			pageInstall = { id: 'pageUninstall', icon: 'remove', name: translate('commonDelete') };
 		} else {
-			pageInstall = { id: 'pageInstall', icon: 'install', name: translate('menuBlockMoreInstall') };
+			pageInstall = { id: 'pageInstall', icon: 'install', name: translate('menuObjectInstall') };
 		};
 
 		// Restrictions
 
 		const allowedArchive = canWrite && canDelete;
 		const allowedSearch = !UtilObject.isSetLayout(object.layout);
-		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !UtilObject.isSetLayout(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
+		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
 		const allowedFav = canWrite && !object.isArchived && !UtilObject.isFileOrSystemLayout(object.layout) && !object.templateIsBundled;
 		const allowedLock = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite;
@@ -201,6 +197,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (!canWrite) {
 			template = null;
 			setDefaultTemplate = null;
+			remove = null;
 		};
 
 		let sections = [];
@@ -210,13 +207,12 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			sections = [
-				{ children: [ createWidget, fav, pageLock ] },
+				{ children: [ createWidget, fav, pageLock, history ] },
 				{ children: [ linkTo ] },
 				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },
 			];
-		} else
-		if (block.isPage()) {
+		} else {
 			if (isTemplate) {
 				sections = [
 					{ children: [ search, template, pageCopy, setDefaultTemplate, pageExport, archive, history ] },
@@ -239,12 +235,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
-		} else {
-			const align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(block.hAlign) ].join(' '), arrow: true };
-
-			sections = [
-				{ children: [ turn, move, align, blockRemove ]},
-			];
 		};
 
 		sections = sections.filter((section: any) => {
@@ -275,15 +265,14 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			menuStore.closeAll(Constant.menuIds.more);
+			menuStore.closeAll(Constant.menuIds.object);
 			return;
 		};
 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onMenuSelect } = data;
+		const { rootId, blockId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const route = analytics.route.menuObject;
 
 		if (!block) {
 			return;
@@ -307,67 +296,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		let menuId = '';
 		switch (item.id) {
-			case 'turnObject': {
-				menuId = 'typeSuggest';
-				menuParam.data = Object.assign(menuParam.data, {
-					filter: '',
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
-					],
-					onClick: (item: any) => {
-						C.BlockListConvertToObjects(rootId, [ blockId ], item.uniqueKey, (message: any) => {
-							analytics.createObject(item.id, item.recommendedLayout, route, message.middleTime);
-						});
-						
-						close();
-
-						if (onMenuSelect) {
-							onMenuSelect(item);
-						};
-					},
-				});
-				break;
-			};
-
-			case 'move': {
-				menuId = 'searchObject';
-				menuParam.data = Object.assign(menuParam.data, {
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
-					],
-					type: I.NavigationType.Move, 
-					skipIds: [ rootId ],
-					position: I.BlockPosition.Bottom,
-					onSelect: (item: any) => {
-						close();
-
-						if (onMenuSelect) {
-							onMenuSelect(item);
-						};
-					}
-				});
-				break;
-			};
-
-			case 'align': {
-				menuId = 'blockAlign';
-				menuParam.data = Object.assign(menuParam.data, {
-					value: block.hAlign,
-					onSelect: (align: I.BlockHAlign) => {
-						C.BlockListSetAlign(rootId, [ blockId ], align, () => {
-							analytics.event('ChangeBlockAlign', { align, count: 1 });
-						});
-						
-						close();
-
-						if (onMenuSelect) {
-							onMenuSelect(item);
-						};
-					}
-				});
-				break;
-			};
-
 			case 'linkTo': {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
@@ -385,7 +313,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.more, () => {
+			menuStore.closeAll(Constant.menuIds.object, () => {
 				menuStore.open(menuId, menuParam);
 			});
 		};
@@ -394,7 +322,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, rootId, onSelect, isPopup } = data;
+		const { blockId, rootId, onSelect } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const object = detailStore.get(rootId, rootId);
 		const route = analytics.route.menuObject;
@@ -525,17 +453,9 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 			};
 
-			case 'blockRemove': {
-				C.BlockListDelete(rootId, [ blockId ], () => {
-					isPopup ? popupStore.close('page') : onBack();
-				});
-				break;
-			};
-
 			case 'templateCreate': {
 				C.TemplateCreateFromObject(rootId, (message: any) => {
 					UtilObject.openPopup({ id: message.id, layout: object.layout });
-					Preview.toastShow({ text: translate('toastTemplateCreate') });
 					Preview.toastShow({ action: I.ToastAction.TemplateCreate, objectId: rootId });
 
 					analytics.event('CreateTemplate', { objectType: object.type, route });
@@ -565,4 +485,4 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 };
 
-export default MenuBlockMore;
+export default MenuObject;

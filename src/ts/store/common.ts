@@ -2,7 +2,7 @@ import { action, computed, intercept, makeObservable, observable, set } from 'mo
 import $ from 'jquery';
 import { I, M, Storage, UtilCommon, UtilObject, Renderer, UtilRouter } from 'Lib';
 import { dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Filter {
 	from: number;
@@ -60,6 +60,8 @@ class CommonStore {
 		categories: [],
 		list: [],
 	};
+	public diffValue: I.Diff[] = [];
+	public refs: Map<string, any> = new Map();
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -69,7 +71,7 @@ class CommonStore {
 		marks: [],
 	};
 
-	public graphObj: Graph = { 
+	private graphObj: Graph = { 
 		icon: true,
 		orphan: true,
 		marker: true,
@@ -109,6 +111,7 @@ class CommonStore {
 			linkStyleValue: observable,
 			isOnlineValue: observable,
 			spaceId: observable,
+			membershipTiersList: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -117,6 +120,7 @@ class CommonStore {
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
+			membershipTiers: computed,
 			space: computed,
 			isOnline: computed,
             gatewaySet: action,
@@ -135,6 +139,7 @@ class CommonStore {
 			navigationMenuSet: action,
 			linkStyleSet: action,
 			isOnlineSet: action,
+			membershipTiersListSet: action,
 		});
 
 		intercept(this.configObj as any, change => UtilCommon.intercept(this.configObj, change));
@@ -234,7 +239,7 @@ class CommonStore {
 		if (ret === null) {
 			ret = Storage.get('navigationMenu');
 		};
-		return Number(ret) || I.NavigationMenuMode.Click;
+		return Number(ret) || I.NavigationMenuMode.Hover;
 	};
 
 	get linkStyle (): I.LinkCardStyle {
@@ -258,6 +263,10 @@ class CommonStore {
 
 	get membershipTiers (): I.MembershipTier[] {
 		return this.membershipTiersList || [];
+	};
+
+	get diff (): I.Diff[] {
+		return this.diffValue || [];
 	};
 
     gatewaySet (v: string) {
@@ -297,10 +306,8 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
-	graphSet (key: string, graph: Partial<Graph>) {
-		this.graphObj = Object.assign(this.graphObj, graph);
-
-		Storage.set(key, this.graphObj);
+	graphSet (key: string, param: Partial<Graph>) {
+		Storage.set(key, Object.assign(this.getGraph(key), param));
 		$(window).trigger('updateGraphSettings');
 	};
 
@@ -403,6 +410,10 @@ class CommonStore {
 
 	notionTokenSet (v: string) {
 		this.notionToken = v;
+	};
+
+	refSet (id: string, ref: any) {
+		this.refs.set(id, ref);
 	};
 
 	boolGet (k: string) {
@@ -509,8 +520,16 @@ class CommonStore {
 		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
 	};
 
+	diffSet (diff: I.Diff[]) {
+		this.diffValue = diff || [];
+	};
+
 	getGraph (key: string): Graph {
-		return Object.assign(this.graphObj, Storage.get(key) || {});
+		return Storage.get(key) || UtilCommon.objectCopy(this.graphObj);
+	};
+
+	getRef (id: string) {
+		return this.refs.get(id);
 	};
 
 };

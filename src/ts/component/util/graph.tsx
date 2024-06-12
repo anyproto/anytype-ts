@@ -6,8 +6,8 @@ import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
 import { I, UtilCommon, UtilObject, UtilSpace, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
 import { commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
-import Theme from 'json/theme.json';
+const Constant = require('json/constant.json');
+const Theme = require('json/theme.json');
 
 interface Props {
 	id?: string;
@@ -222,7 +222,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	updateSettings () {
 		this.send('updateSettings', commonStore.getGraph(this.props.storageKey));
-
 		analytics.event('GraphSettings');
 	};
 

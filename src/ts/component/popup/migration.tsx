@@ -4,8 +4,8 @@ import { Title, Label, Button } from 'Component';
 import { analytics, I, Onboarding, translate, UtilCommon } from 'Lib';
 import { commonStore } from 'Store';
 import QRCode from 'qrcode.react';
-import Theme from 'json/theme.json';
-import Url from 'json/url.json';
+const Theme = require('json/theme.json');
+const Url = require('json/url.json');
 
 interface State {
 	step: number;

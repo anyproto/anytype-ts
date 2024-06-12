@@ -1,5 +1,5 @@
 import { I, UtilCommon } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const DOMAINS: any = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
@@ -83,7 +83,8 @@ class UtilEmbed {
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (const i in DOMAINS) {
-			const reg = new RegExp(DOMAINS[i].join('|'), 'gi');
+			const reg = new RegExp(`:\/\/([^.]*.)?(${DOMAINS[i].join('|')})`, 'gi');
+
 			if (url.match(reg)) {
 				p = Number(i);
 				break;

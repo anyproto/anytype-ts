@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .previewWrapper { position: absolute; left: 0px; top: 0px; width: 320px; z-index: 1000; display: none; opacity: 0; }
 .previewWrapper.anim { transition-duration: 0.3s; transition-timing-function: $easeInQuint; transition-property: opacity, transform; }

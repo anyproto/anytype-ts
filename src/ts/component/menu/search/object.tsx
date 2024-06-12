@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate, UtilSpace } from 'Lib';
 import { commonStore, dbStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -255,7 +255,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				items.push({ id: 'add', icon: 'plus', name: addParam.name, isAdd: true });
 			} else
 			if (filter) {
-				items.push({ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), isAdd: true });
+				items.push({ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObjectWithName'), filter), isAdd: true });
 			};
 		};
 
@@ -292,7 +292,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const templateType = dbStore.getTemplateType();
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Option ] },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
 		].concat(data.filters || []);
 
 		const sorts = [].concat(data.sorts || []);

@@ -1,9 +1,9 @@
 import $ from 'jquery';
 import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate, UtilSpace } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
-import KeyCode from 'json/key.json';
+const Constant = require('json/constant.json');
+const Url = require('json/url.json');
+const KeyCode = require('json/key.json');
 
 class Keyboard {
 	
@@ -34,6 +34,8 @@ class Keyboard {
 	isPasteDisabled = false;
 	isSelectionDisabled = false;
 	isSelectionClearDisabled = false;
+	isComposition = false;
+	isCommonDropDisabled = false;
 	
 	init () {
 		this.unbind();
@@ -136,6 +138,7 @@ class Keyboard {
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
 		const canWrite = UtilSpace.canMyParticipantWrite();
+		const selection = commonStore.getRef('selectionProvider');
 
 		this.pressed.push(key);
 
@@ -175,8 +178,8 @@ class Keyboard {
 						UtilCommon.clearSelection();
 						canClose = false;
 					} else
-					if (this.selection) {
-						const ids = this.selection.get(I.SelectType.Block);
+					if (selection) {
+						const ids = selection.get(I.SelectType.Block);
 						if (ids.length) {
 							canClose = false;
 						};
@@ -184,7 +187,10 @@ class Keyboard {
 				};
 
 				if (canClose) {
-					popupStore.closeLast();
+					const last = popupStore.getLast();
+					if (last && !last.param.preventCloseByEscape) {
+						popupStore.close(last.id);
+					};
 				};
 			};
 			
@@ -310,8 +316,9 @@ class Keyboard {
 	// Check if smth is selected
 	checkSelection () {
 		const range = UtilCommon.getSelectionRange();
+		const selection = commonStore.getRef('selectionProvider');
 
-		if ((range && !range.collapsed) || (this.selection && this.selection.get(I.SelectType.Block).length)) {
+		if ((range && !range.collapsed) || (selection && selection.get(I.SelectType.Block).length)) {
 			return true;
 		};
 
@@ -792,14 +799,11 @@ class Keyboard {
 			isDisabled = [ 'set', 'store', 'graph' ].includes(popupMatch.params.action);
 		};
 
-		console.log('onSearchMenu', value, isDisabled);
-
 		if (isDisabled) {
 			return;
 		};
 
 		menuStore.closeAll([ 'blockContext' ], () => {
-			console.log(123);
 			menuStore.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
@@ -818,6 +822,7 @@ class Keyboard {
 
 	onSearchPopup (route: string) {
 		popupStore.open('search', {
+			preventCloseByEscape: true,
 			data: { isPopup: this.isPopup(), route },
 		});
 	};
@@ -917,7 +922,15 @@ class Keyboard {
 	};
 
 	getMatch () {
-		return (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
+		const ret = (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
+
+		for (const k in ret.params) {
+			if (ret.params[k] == Constant.blankRouteId) {
+				ret.params[k] = '';
+			};
+		};
+
+		return ret;
 	};
 
 	isMain () {
@@ -983,12 +996,12 @@ class Keyboard {
 		this.source = UtilCommon.objectCopy(source);
 	};
 
-	setSelection (v: any) {
-		this.selection = v;
-	};
-
 	setSelectionClearDisabled (v: boolean) {
 		this.isSelectionClearDisabled = v;
+	};
+
+	setComposition (v: boolean) {
+		this.isComposition = v;
 	};
 
 	initPinCheck () {
@@ -1076,8 +1089,14 @@ class Keyboard {
 		this.isPasteDisabled = v;
 	};
 
+	// Flag to disable selection
 	disableSelection (v: boolean) {
 		this.isSelectionDisabled = v;
+	};
+
+	// Flag to disable common drop
+	disableCommonDrop (v: boolean) {
+		this.isCommonDropDisabled = v;
 	};
 	
 	isSpecial (e: any): boolean {

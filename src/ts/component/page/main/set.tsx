@@ -3,12 +3,12 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, UtilData, UtilCommon, Action, UtilSpace, keyboard, UtilRouter, translate } from 'Lib';
-import { blockStore, detailStore, dbStore, menuStore } from 'Store';
+import { I, M, C, UtilData, UtilCommon, Action, UtilSpace, keyboard, UtilRouter, translate, UtilObject } from 'Lib';
+import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
-import Errors from 'json/error.json';
-import Constant from 'json/constant.json';
+
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -24,7 +24,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	refHead: any = null;
 	refControls: any = null;
 	loading = false;
-	composition = false;
 	timeout = 0;
 	blockRefs: any = {};
 
@@ -90,10 +89,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		return (
-			<div 
-				ref={node => this.node = node}
-				className={[ 'setWrapper', check.className ].join(' ')}
-			>
+			<div ref={node => this.node = node}>
 				<Header 
 					{...this.props} 
 					component="mainObject" 
@@ -101,7 +97,11 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 					rootId={rootId} 
 				/>
 
-				{content}
+				<div id="bodyWrapper" className="wrapper">
+					<div className={[ 'editorWrapper', check.className ].join(' ')}>
+						{content}
+					</div>
+				</div>
 
 				<Footer component="mainObject" {...this.props} />
 			</div>
@@ -127,7 +127,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	unbind () {
-		const namespace = this.getNamespace();
+		const { isPopup } = this.props;
+		const namespace = UtilCommon.getEventNamespace(isPopup);
 		const events = [ 'keydown', 'scroll' ];
 
 		$(window).off(events.map(it => `${it}.set${namespace}`).join(' '));
@@ -136,7 +137,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	rebind () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const namespace = this.getNamespace();
+		const namespace = UtilCommon.getEventNamespace(isPopup);
 		const container = UtilCommon.getScrollContainer(isPopup);
 
 		this.unbind();
@@ -157,10 +158,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		if (object.isDeleted) {
 			this.setState({ isDeleted: true });
 		};
-	};
-
-	getNamespace () {
-		return this.props.isPopup ? '-popup' : '';
 	};
 
 	open () {
@@ -215,29 +212,27 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	onScroll () {
-		const { dataset, isPopup } = this.props;
+		const { isPopup } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 
 		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 
-		const { selection } = dataset || {};
-		if (selection) {
-			selection.renderSelection();
-		};
+		selection?.renderSelection();
 	};
 
 	onKeyDown (e: any): void {
-		const { dataset, isPopup } = this.props;
+		const { isPopup } = this.props;
 
 		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 
 		const node = $(this.node);
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selectionProvider');
 		const cmd = keyboard.cmdKey();
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
 		const rootId = this.getRootId();
 
@@ -263,6 +258,12 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				});
 			};
 		};
+
+		// History
+		keyboard.shortcut('ctrl+h, cmd+y', e, () => {
+			e.preventDefault();
+			UtilObject.openAuto({ layout: I.ObjectLayout.History, id: rootId });
+		});
 	};
 
 	isReadonly () {
@@ -290,7 +291,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			};
 
 			container.css({ minHeight: isPopup ? '' : win.height() });
-			node.css({ paddingTop: isPopup ? 0 : hh });
 		});
 	};
 

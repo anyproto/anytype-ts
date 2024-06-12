@@ -5,7 +5,7 @@ import { Header, Footer, Loader, Block, Button, IconObject, Deleted } from 'Comp
 import { I, C, UtilCommon, Action, Renderer, UtilSpace, translate, UtilRouter } from 'Lib';
 import { blockStore, detailStore } from 'Store';
 import HeadSimple from 'Component/page/elements/head/simple';
-import Errors from 'json/error.json';
+const Errors = require('json/error.json');
 
 interface State {
 	isLoading: boolean;

@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Pin } from 'Component';
 import { I, C, translate, UtilCommon, UtilDate, analytics, UtilRouter, UtilData, Action } from 'Lib';
 import { authStore, commonStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.Popup {
 	onChangeEmail: () => void;
@@ -53,6 +53,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 		let dateText = '';
 		let paidText = '';
 		let buttonText = '';
+		let manageText = '';
 		let verificationForm: any = null;
 
 		if (tierItem.period && membership.dateEnds) {
@@ -122,6 +123,8 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 				} else
 				if (paymentMethod == I.PaymentMethod.Stripe) {
 					buttonText = translate('popupMembershipManagePayment');
+				} else {
+					manageText = translate('popupMembershipManageOnMobilePlatform');
 				};
 			};
 		};
@@ -139,6 +142,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 				</div>
 
 				{buttonText ? <Button onClick={this.onButton} text={buttonText} className="c36" color="blank" /> : ''}
+				{manageText ? <Label className="manageText" text={manageText} /> : ''}
 				{verificationForm}
 			</div>
 		);

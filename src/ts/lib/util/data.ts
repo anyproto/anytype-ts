@@ -1,6 +1,6 @@
 import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 import * as Sentry from '@sentry/browser';
 
 type SearchSubscribeParams = Partial<{
@@ -129,6 +129,17 @@ class UtilData {
 		};
 		return c;
 	};
+
+	diffClass (t: I.DiffType): string {
+		let c = '';
+		switch (t) {
+			case I.DiffType.None: c = 'diffNone'; break;
+			case I.DiffType.Add: c = 'diffAdd'; break;
+			case I.DiffType.Change: c = 'diffChange'; break;
+			case I.DiffType.Remove: c = 'diffRemove'; break;
+		};
+		return c;
+	};
 	
 	alignHIcon (v: I.BlockHAlign): string {
 		v = v || I.BlockHAlign.Left;
@@ -140,9 +151,11 @@ class UtilData {
 		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 	
-	selectionGet (id: string, withChildren: boolean, save: boolean, props: any): string[] {
-		const { dataset } = props;
-		const { selection } = dataset || {};
+	/*
+	Used to click and set selection automatically in block menu for example
+	*/
+	selectionGet (id: string, withChildren: boolean, save: boolean): string[] {
+		const selection = commonStore.getRef('selectionProvider');
 		
 		if (!selection) {
 			return [];
@@ -175,15 +188,19 @@ class UtilData {
 	};
 	
 	onAuth (param?: any, callBack?: () => void) {
+		param = param || {};
+		param.routeParam = param.routeParam || {};
+
 		const pin = Storage.get('pin');
 		const { root, widgets } = blockStore;
 		const { redirect, space } = commonStore;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
-		const routeParam = Object.assign({ replace: true }, (param || {}).routeParam || {});
+		const routeParam = Object.assign({ replace: true }, param.routeParam);
+		const route = param.route || redirect;
 
 		if (!widgets) {
-			console.error('[onAuth] No widgets defined');
+			console.error('[UtilData].onAuth No widgets defined');
 			return;
 		};
 
@@ -205,8 +222,8 @@ class UtilData {
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
 					} else {
-						if (redirect) {
-							UtilRouter.go(redirect, routeParam);
+						if (route) {
+							UtilRouter.go(route, routeParam);
 						} else {
 							UtilSpace.openDashboard('route', routeParam);
 						};
@@ -221,8 +238,12 @@ class UtilData {
 						Storage.set('bgColor', 'orange');
 					};
 
-					Survey.check(I.SurveyType.Register);
-					Survey.check(I.SurveyType.Object);
+					[ 
+						I.SurveyType.Register, 
+						I.SurveyType.Object, 
+						I.SurveyType.Multiplayer,
+						I.SurveyType.Shared, 
+					].forEach(it => Survey.check(it));
 
 					const space = UtilSpace.getSpaceview();
 
@@ -755,9 +776,10 @@ class UtilData {
 			ids: [],
 			keys: Constant.defaultRelationKeys,
 			noDeps: false,
+			idField: 'id',
 		}, param);
 
-		const { subId, keys, noDeps } = param;
+		const { subId, keys, noDeps, idField } = param;
 		const ids = UtilCommon.arrayUnique(param.ids.filter(it => it));
 
 		if (!subId) {
@@ -767,6 +789,10 @@ class UtilData {
 		if (!ids.length) {
 			console.error('[UtilData].subscribeIds: ids list is empty');
 			return;
+		};
+
+		if (!keys.includes(idField)) {
+			keys.push(idField);
 		};
 
 		C.ObjectSubscribeIds(subId, ids, keys, true, noDeps, (message: any) => {
@@ -839,7 +865,9 @@ class UtilData {
 	};
 
 	sortMapper (it: any) {
-		it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
+		if (undefined === it.includeTime) {
+			it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
+		};
 		return it;
 	};
 
@@ -871,7 +899,7 @@ class UtilData {
 			{ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] },
 		];
@@ -882,21 +910,13 @@ class UtilData {
 		return filters;
 	};
 
-	moveToPage (rootId: string, blockId: string, typeId: string, route: string, props: any) {
-		const { dataset } = props;
-		const { selection } = dataset || {};
+	moveToPage (rootId: string, ids: string[], typeId: string, route: string) {
 		const type = dbStore.getTypeById(typeId);
-
 		if (!type) {
 			return;
 		};
 		
-		const ids = selection ? selection.get(I.SelectType.Block) : [];
-		if (!ids.length) {
-			ids.push(blockId);
-		};
-
-		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, (message: any) => {
+		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, (message: any) => {
 			if (!message.error.code) {
 				analytics.createObject(type.id, type.recommendedLayout, route, message.middleTime);
 			};
@@ -962,6 +982,7 @@ class UtilData {
 				const { status, tier } = membership;
 
 				authStore.membershipSet(membership);
+				analytics.setTier(tier);
 				
 				if (status && (status == I.MembershipStatus.Finalization)) {
 					popupStore.open('membershipFinalization', { data: { tier } });
@@ -998,6 +1019,10 @@ class UtilData {
 
 	isAnytypeNetwork (): boolean {
 		return Object.values(Constant.networkId).includes(authStore.account?.info?.networkId);
+	};
+
+	isLocalNetwork (): boolean {
+		return !authStore.account?.info?.networkId;
 	};
 
 	isLocalOnly (): boolean {

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { Title, Label, Input, IconObject, Button, Select, Loader, Error } from 'Component';
 import { UtilObject, UtilCommon, I, C, translate, keyboard, Preview, analytics } from 'Lib';
 import { menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	error: string;

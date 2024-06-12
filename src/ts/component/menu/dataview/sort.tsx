@@ -6,8 +6,8 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'Component';
 import { I, C, Relation, UtilCommon, keyboard, analytics, translate } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+import { commonStore, menuStore, dbStore, blockStore } from 'Store';
+const Constant = require('json/constant.json');
 
 const HEIGHT = 48;
 const LIMIT = 20;
@@ -31,6 +31,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	};
 	
 	render () {
+		const { config } = commonStore;
 		const { param, getId, setHover } = this.props;
 		const { data } = param;
 		const { getView } = data;
@@ -86,7 +87,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					</div>
 					{!isReadonly ? (
 						<div className="buttons">
-							<Icon className="more" onClick={e => this.onClick(e, item)} />
+							<Icon className="more" onClick={e => this.onMore(e, item)} />
 							<Icon className="delete" onClick={e => this.onRemove(e, item)} />
 						</div>
 					) : ''}
@@ -266,6 +267,32 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		});
 	};
 
+	onMore (e: any, item: any) {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const options = [
+			{ name: translate('menuDataviewSortShowEmpty'), isSection: true },
+			{ id: I.EmptyType.Start, name: translate('menuDataviewSortShowEmptyTop') },
+			{ id: I.EmptyType.End, name: translate('menuDataviewSortShowEmptyBottom') },
+		];
+
+		menuStore.open('select', {
+			element: `#${getId()} #item-${item.id} .more`,
+			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
+			data: {
+				...data,
+				options,
+				value: String(item.empty),
+				itemId: item.id,
+				onSelect: (e: any, el: any) => {
+					this.onChange(item.id, 'empty', el.id);
+				}
+			}
+		});
+	};
+
+
 	onAdd () {
 		const { param, getId } = this.props;
 		const { data } = param;
@@ -310,7 +337,8 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		analytics.event('ChangeSortValue', {
 			type: item.type,
 			objectType: object.type,
-			embedType: analytics.embedType(isInline)
+			embedType: analytics.embedType(isInline),
+			emptyType: item.empty,
 		});
 		this.forceUpdate();
 	};

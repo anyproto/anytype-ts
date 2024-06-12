@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, UtilCommon, analytics } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const Tags = {};
 for (const i in I.MarkType) {
@@ -27,25 +27,27 @@ const Patterns = {
 
 	'--': '—',
 
-	'(c)': '©',
+	//'(c)': '©',
 	'(r)': '®',
 	'(tm)': '™',
 	'...': '…',
 };
 
 const Order: any = {};
-
-Order[I.MarkType.Object]	 = 0;
-Order[I.MarkType.Emoji]		 = 1;
-Order[I.MarkType.Mention]	 = 2;
-Order[I.MarkType.Link]		 = 3;
-Order[I.MarkType.Underline]	 = 4;
-Order[I.MarkType.Strike]	 = 5;
-Order[I.MarkType.Italic]	 = 6;
-Order[I.MarkType.Bold]		 = 7;
-Order[I.MarkType.Color]		 = 8;
-Order[I.MarkType.BgColor]	 = 9;
-Order[I.MarkType.Code]		 = 10;
+[
+	I.MarkType.Change,
+	I.MarkType.Object,
+	I.MarkType.Emoji,
+	I.MarkType.Mention,
+	I.MarkType.Link,
+	I.MarkType.Underline,
+	I.MarkType.Strike,
+	I.MarkType.Italic,
+	I.MarkType.Bold,
+	I.MarkType.Color,
+	I.MarkType.BgColor,
+	I.MarkType.Code,
+].forEach((type, i) => Order[type] = i);
 
 class Mark {
 
@@ -232,14 +234,14 @@ class Mark {
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
 		const map = UtilCommon.mapToArray(marks, 'type');
+		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
 
 		if (!map[type] || !map[type].length) {
 			return null;
 		};
 		
 		for (const mark of map[type]) {
-			const overlap = this.overlap(range, mark.range);
-			if ([ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ].indexOf(overlap) >= 0) {
+			if (overlaps.includes(this.overlap(range, mark.range))) {
 				return mark;
 			};
 		};
@@ -268,7 +270,6 @@ class Mark {
 
 		const r = text.split('');
 		const parts: I.Mark[] = [];
-		let borders: any[] = [];
 		const ranges: any[] = [];
 		const hasParam = [ 
 			I.MarkType.Link, 
@@ -278,6 +279,9 @@ class Mark {
 			I.MarkType.Mention, 
 			I.MarkType.Emoji,
 		];
+		const priorityRender = [ I.MarkType.Mention, I.MarkType.Emoji ];
+
+		let borders: any[] = [];
 		
 		for (const mark of marks) {
 			borders.push(Number(mark.range.from));
@@ -342,16 +346,16 @@ class Mark {
 			};
 		};
 
-		// Render mentions
+		// Render priority marks
 		for (const mark of marks) {
-			if (mark.type == I.MarkType.Mention) {
+			if (priorityRender.includes(mark.type)) {
 				render(mark);
 			};
 		};
 
-		// Render everything except mentions
+		// Render everything except priority marks
 		for (const mark of parts) {
-			if (mark.type != I.MarkType.Mention) {
+			if (!priorityRender.includes(mark.type)) {
 				render(mark);
 			};
 		};
@@ -361,6 +365,7 @@ class Mark {
 			r[i] = r[i].replace(/<$/, '&lt;');
 			r[i] = r[i].replace(/^>/, '&gt;');
 		};
+
 		return r.join('');
 	};
 
@@ -402,38 +407,38 @@ class Mark {
 		const marks: I.Mark[] = [];
 
 		html = obj.html();
-		html = html.replace(/data-range="[^"]+"/g, '');
-		html = html.replace(/contenteditable="[^"]+"/g, '');
 
 		let text = html;
 
+		text = text.replace(/data-range="[^"]+"/g, '');
+		text = text.replace(/contenteditable="[^"]+"/g, '');
+
 		// TODO: find classes by color or background
-		html.replace(/<font([^>]*?)>([^<]*)(?:<\/font>)?/g, (s: string, p1: string, p2: string) => {
-			text = text.replace(s, p2);
-			return '';
+		text = text.replace(/<font(?:[^>]*?)>([^<]*)(?:<\/font>)?/g, (s: string, p: string) => {
+			return p;
 		});
-		html.replace(/<span style="background-color: ([^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p1: string, p2: string) => {
-			text = text.replace(s, p2);
-			return '';
+		text = text.replace(/<span style="background-color:(?:[^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p: string) => {
+			return p;
+		});
+		text = text.replace(/<span style="font-weight:(?:[^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p: string) => {
+			return p;
 		});
 
 		// Fix browser markup bug
-		html.replace(/<\/?(i|b|font|search)[^>]*>/g, (s: string, p: string) => {
+		text = text.replace(/<\/?(i|b|font|search)[^>]*>/g, (s: string, p: string) => {
 			let r = '';
 			if (p == 'i') r = this.getTag(I.MarkType.Italic);
 			if (p == 'b') r = this.getTag(I.MarkType.Bold);
 			p = r ? s.replace(p, r) : '';
-			text = text.replace(s, p);
-			return '';
+			return p;
 		});
 
 		// Fix html special symbols
-		html.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
+		text = text.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
 			if (p == '&lt;') p = '<';
 			if (p == '&gt;') p = '>';
 			if (p == '&amp;') p = '&';
-			text = text.replace(s, p);
-			return '';
+			return p;
 		});
 
 		html = text;

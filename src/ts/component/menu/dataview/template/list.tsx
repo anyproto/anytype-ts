@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { Icon, Title, PreviewObject, IconObject } from 'Component';
 import { C, I, UtilObject, translate, UtilData, UtilCommon, keyboard } from 'Lib';
 import { dbStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 import { observer } from 'mobx-react';
 
 const TEMPLATE_WIDTH = 230;

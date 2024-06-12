@@ -3,7 +3,7 @@ import { Frame, Title, Label, Error, Button, Header, Footer, Icon, Loader } from
 import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter, Renderer } from 'Lib';
 import { authStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
-import Errors from 'json/error.json';
+const Errors = require('json/error.json');
 
 interface State {
 	index: number;
@@ -26,7 +26,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		this.onCancel = this.onCancel.bind(this);
 		this.onBackup = this.onBackup.bind(this);
 		this.setError = this.setError.bind(this);
-		this.onBack = this.onBack.bind(this);
 	};
 
 	render () {
@@ -179,14 +178,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	onCancel () {
-		UtilRouter.go('/', {});
-	};
-
-	onBack () {
 		authStore.logout(true, false);
 		Animation.from(() => UtilRouter.go('/', { replace: true }));
 	};
-	
+
 });
 
 export default PageAuthSetup;

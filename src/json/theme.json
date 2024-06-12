@@ -55,7 +55,13 @@
 
 		"mermaid": {
 			"fontFamily": "Helvetica, Arial, sans-serif",
-			"fontSize": "14px"
+			"fontSize": "14px",
+			"primaryColor": "#bb2528",
+			"primaryTextColor": "#fff",
+			"primaryBorderColor": "#7c0000",
+			"lineColor": "#F8b229",
+			"secondaryColor": "#006100",
+			"tertiaryColor": "#fff"
 		},
 
 		"qr": {

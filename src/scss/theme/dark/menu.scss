@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .menus {
 
@@ -22,6 +22,7 @@
 		.icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
 		.icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
 		.icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
+		.icon.widget-4 { background-image: url('#{$themePath}/icon/menu/widget/view.svg'); }
 
         .icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
 

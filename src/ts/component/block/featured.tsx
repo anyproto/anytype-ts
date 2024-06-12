@@ -5,7 +5,7 @@ import { observable } from 'mobx';
 import { ObjectType, Cell } from 'Component';
 import { I, C, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
@@ -23,7 +23,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	node = null;
 
 	public static defaultProps = {
-		iconSize: 24,
+		iconSize: 20,
 	};
 
 	constructor (props: Props) {
@@ -107,7 +107,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								getRecord={() => object}
 								viewType={I.ViewType.Grid}
 								pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
-								iconSize={relation.format == I.RelationType.Object ? 20 : iconSize}
+								iconSize={iconSize}
 								readonly={!canEdit}
 								isInline={true}
 								idPrefix={PREFIX + block.id}
@@ -233,7 +233,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 		};
 		if (rl) {
-			setOfString.push(`${UtilCommon.plural(rl, translate('pluralUCRelation'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
+			setOfString.push(`${UtilCommon.plural(rl, translate('pluralRelation'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
 
 			if (rl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);

@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .tagItem {
 	padding: 0px 4px; @include text-common; line-height: 18px; border-radius: 3px; white-space: nowrap; position: relative;

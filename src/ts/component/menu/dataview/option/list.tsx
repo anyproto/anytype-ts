@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Icon, Tag, Filter, DragBox } from 'Component';
 import { I, C, UtilCommon, UtilMenu, keyboard, Relation, translate } from 'Lib';
 import { menuStore, dbStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 import arrayMove from 'array-move';
 
 const HEIGHT = 28;
@@ -196,6 +196,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	};
 
 	onKeyDown (e: any) {
+		// Chinese IME is open
+		if (keyboard.isComposition) {
+			return;
+		};
+
 		const items = this.getItems();
 		
 		let ret = false;
@@ -205,11 +210,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			ret = true;
 		});
 
-		if (ret) {
-			return;
+		if (!ret) {
+			this.props.onKeyDown(e);
 		};
-
-		this.props.onKeyDown(e);
 	};
 
 	onFilterChange (v: string) {

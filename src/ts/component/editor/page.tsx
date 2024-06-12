@@ -7,13 +7,13 @@ import { Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { 
 	I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, 
-	Renderer, sidebar, UtilSpace 
+	Renderer, sidebar 
 } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
-import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
+
+const Constant = require('json/constant.json');
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
@@ -189,7 +189,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.close();
 
 		focus.clear(false);
-		blockStore.clear(this.props.rootId);
 
 		window.clearInterval(this.timeoutScreen);
 		window.clearTimeout(this.timeoutLoading);
@@ -258,7 +257,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			this.containerScrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
+			this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
 			this.focusTitle();
 
 			UtilCommon.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
@@ -302,8 +301,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const { rootId } = this.props;
 		const { focused, range } = focus.state;
-		const popupOpen = popupStore.isOpen();
-		const menuOpen = menuStore.isOpen();
+		const popupOpen = popupStore.isOpen('', [ 'page' ]);
+		const menuOpen = this.menuCheck();
 
 		let length = 0;
 		if (focused) {
@@ -358,8 +357,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	rebind () {
-		const { dataset, isPopup } = this.props;
-		const { selection } = dataset || {};
+		const { isPopup } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 		const namespace = UtilCommon.getEventNamespace(isPopup);
 		const container = UtilCommon.getScrollContainer(isPopup);
@@ -368,25 +367,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.unbind();
 
 		if (!isReadonly) {
-			win.on('mousemove.editor' + namespace, throttle(e => this.onMouseMove(e), THROTTLE));
+			win.on(`mousemove.editor${namespace}`, throttle(e => this.onMouseMove(e), THROTTLE));
 		};
 
-		win.on('keydown.editor' + namespace, e => this.onKeyDownEditor(e));
-		win.on('paste.editor' + namespace, (e: any) => {
+		win.on(`keydown.editor${namespace}`, e => this.onKeyDownEditor(e));
+		win.on(`paste.editor${namespace}`, (e: any) => {
 			if (!keyboard.isFocused) {
 				this.onPaste(e, {});
 			};
 		});
 
-		win.on('focus.editor' + namespace, () => {
-			const isPopupOpen = popupStore.isOpen('', [ 'page' ]);
-			const isMenuOpen = menuStore.isOpen('', '', [ 'blockContext' ]);
-
-			let ids: string[] = [];
-			if (selection) {
-				ids = selection.get(I.SelectType.Block, true);
-			};
-			if (!ids.length && !isMenuOpen && !isPopupOpen) {
+		win.on(`focus.editor${namespace}`, () => {
+			const popupOpen = popupStore.isOpen('', [ 'page' ]);
+			const menuOpen = this.menuCheck();
+			const ids = selection?.get(I.SelectType.Block, true) || [];
+			
+			if (!ids.length && !menuOpen && !popupOpen) {
 				focus.restore();
 				focus.apply(); 
 			};
@@ -394,8 +390,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			container.scrollTop(this.containerScrollTop);
 		});
 
-		win.on('resize.editor' + namespace, () => this.resizePage());
-		container.on('scroll.editor' + namespace, e => this.onScroll());
+		win.on(`resize.editor${namespace}`, () => this.resizePage());
+		container.on(`scroll.editor${namespace}`, e => this.onScroll());
 		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 	
@@ -409,11 +405,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 		
 		const { isLoading } = this.state;
-		const { rootId, dataset } = this.props;
-		const { selection } = dataset || {};
+		const { rootId } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const readonly = this.isReadonly();
 		const node = $(this.node);
-		const menuOpen = menuStore.isOpen() && !menuStore.isOpen('onboarding');
+		const menuOpen = this.menuCheck();
+		const popupOpen = popupStore.isOpen('', [ 'page' ]);
 
 		const clear = () => {
 			node.find('.block.showMenu').removeClass('showMenu');
@@ -434,7 +431,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			keyboard.isDragging || 
 			(selection && selection.isSelecting) || 
 			menuOpen || 
-			popupStore.isOpen('', [ 'page' ]) ||
+			popupOpen ||
 			isLoading
 		) {
 			out();
@@ -524,14 +521,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	onKeyDownEditor (e: any) {
-		const { dataset, rootId, isPopup } = this.props;
+		const { rootId, isPopup } = this.props;
 
 		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 
-		const { selection } = dataset || {};
-		const menuOpen = menuStore.isOpen();
+		const selection = commonStore.getRef('selectionProvider');
+		const menuOpen = this.menuCheck();
 		const popupOpen = popupStore.isOpenKeyboard();
 		const root = blockStore.getLeaf(rootId, rootId);
 
@@ -570,7 +567,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		// Redo
-		keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
+		keyboard.shortcut(`${cmd}+shift+z`, e, () => {
 			if (readonly) {
 				e.preventDefault();
 				keyboard.onRedo(rootId, 'editor');
@@ -662,7 +659,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							blockId: ids[0],
 							blockIds: ids,
 							rootId,
-							dataset,
 							onCopy: this.onCopy,
 						},
 						onClose: () => {
@@ -723,10 +719,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: any, props: any) {
 		range = range || {};
 
-		const { dataset, rootId } = this.props;
+		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const { focused } = focus.state;
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selectionProvider');
 		const block = blockStore.getLeaf(rootId, focused);
 
 		if (!block) {
@@ -797,6 +793,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					blockStore.toggle(rootId, block.id, !Storage.checkToggle(rootId, block.id));
 				});
 			};
+
+			if (block.isTextCheckbox()) {
+				keyboard.shortcut(`${cmd}+enter`, e, () => {
+					UtilData.blockSetText(rootId, block.id, text, marks, true, () => {
+						C.BlockTextSetChecked(rootId, block.id, !block.content.checked);
+					});
+				});
+			};
 		};
 
 		// History
@@ -819,9 +823,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					offsetX: Constant.size.blockMenu,
 					data: {
 						blockId: block.id,
-						blockIds: UtilData.selectionGet(block.id, true, true, this.props),
+						blockIds: UtilData.selectionGet(block.id, true, true),
 						rootId,
-						dataset,
 						onCopy: this.onCopy,
 					},
 					onClose: () => {
@@ -1008,10 +1011,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onCtrlShiftArrowEditor (e: any, pressed: string) {
 		e.preventDefault();
 
-		const { dataset, rootId, isPopup } = this.props;
-		const { selection } = dataset || {};
+		const { rootId, isPopup } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const dir = pressed.match(Key.up) ? -1 : 1;
-		const ids = selection.get(I.SelectType.Block, false);
+		const ids = selection?.get(I.SelectType.Block, false) || [];
 
 		if (!ids.length) {
 			return;
@@ -1082,17 +1085,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const dir = pressed.match(Key.up) ? -1 : 1;
-		const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
-			return (
-				!it.isIcon() && 
-				!it.isTextTitle() && 
-				!it.isTextDescription() && 
-				!it.isFeatured() && 
-				!it.isSystem() && 
-				!it.isTableRow() &&
+
+		let next = blockStore.getNextBlock(rootId, block.id, dir, it => (
+			!it.isIcon() && 
+			!it.isTextTitle() && 
+			!it.isTextDescription() && 
+			!it.isFeatured() && 
+			!it.isSystem() && 
+			!it.isTable() &&
+			!it.isTableColumn() &&
+			!it.isTableRow() &&
+			!blockStore.checkIsChild(rootId, block.id, it.id)
+		));
+
+		if (next && blockStore.checkIsInsideTable(rootId, next.id)) {
+			next = blockStore.getNextBlock(rootId, block.id, dir, it => (
+				it.isTable() && 
 				!blockStore.checkIsChild(rootId, block.id, it.id)
-			);
-		});
+			));
+		};
 
 		if (!next) {
 			return;
@@ -1150,11 +1161,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	// Expand selection up/down
 	onShiftArrowEditor (e: any, pressed: string) {
-		const { dataset, rootId } = this.props;
-		const { selection } = dataset || {};
+		const { rootId } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const dir = pressed.match(Key.up) ? -1 : 1;
-		const ids = selection.get(I.SelectType.Block, false);
-		const idsWithChildren = selection.get(I.SelectType.Block, true);
+		const ids = selection?.get(I.SelectType.Block, false) || [];
+		const idsWithChildren = selection?.get(I.SelectType.Block, true) || [];
 
 		if (ids.length == 1) {
 			this.dir = dir;
@@ -1180,8 +1191,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	// Expand selection up/down
 	onShiftArrowBlock (e: any, range: I.TextRange, length: number, pressed: string) {
-		const { dataset, rootId } = this.props;
-		const { selection } = dataset || {};
+		const { rootId } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const { focused } = focus.state;
 		const dir = pressed.match(Key.up) ? -1 : 1;
 		const block = blockStore.getLeaf(rootId, focused);
@@ -1275,9 +1286,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	// Backspace / Delete
 	onBackspaceBlock (e: any, range: I.TextRange, pressed: string, length: number, props: any) {
-		const { dataset, rootId } = this.props;
+		const { rootId } = this.props;
 		const { isInsideTable } = props;
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selectionProvider');
 		const { focused } = focus.state;
 		const block = blockStore.getLeaf(rootId, focused);
 
@@ -1286,7 +1297,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const isDelete = pressed == 'delete';
-		const ids = selection.get(I.SelectType.Block, true);
+		const ids = selection?.get(I.SelectType.Block, true) || [];
 
 		if (block.isText()) {
 			if (!isDelete && !range.to) {
@@ -1392,9 +1403,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	menuCheck () {
-		const menus = menuStore.list;
-		const exclude = [ 'blockContext', 'onboarding' ];
-		return (menus.length > 1) || ((menus.length == 1) && (!exclude.includes(menus[0].id)));
+		return menuStore.isOpen('', '', [ 'blockContext', 'searchText', 'onboarding' ]);
 	};
 
 	getNextTableRow (id: string, dir: number) {
@@ -1405,7 +1414,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onArrowVertical (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
-		if (menuStore.isOpen()) {
+		if (this.menuCheck()) {
 			return;
 		};
 
@@ -1551,8 +1560,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onSelectAll () {
-		const { dataset, rootId } = this.props;
-		const { selection } = dataset || {};
+		const { rootId } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 
 		if (!selection) {
 			return;
@@ -1579,7 +1588,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		focus.clear(true);
 
 		this.blockCreate(block.id, this.hoverPosition, { type: I.BlockType.Text }, (blockId: string) => {
-			$('.placeholder.c' + blockId).text(translate('placeholderFilter'));
+			$(`.placeholder.c${blockId}`).text(translate('placeholderFilter'));
 			this.onMenuAdd(blockId, '', { from: 0, to: 0 }, []);
 		});
 	};
@@ -1630,13 +1639,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.containerScrollTop = top;
 		this.winScrollTop = win.scrollTop();
 
-		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
+		Storage.setScroll('editor', rootId, top, isPopup);
 		Preview.previewHide(false);
 	};
 	
 	onCopy (e: any, isCut: boolean) {
-		const { dataset, rootId } = this.props;
-		const { selection } = dataset || {};
+		const { rootId } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const readonly = this.isReadonly();
 		const root = blockStore.getLeaf(rootId, rootId);
 		const { focused } = focus.state;
@@ -1645,7 +1654,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		let ids = selection.get(I.SelectType.Block, true);
+		let ids = selection?.get(I.SelectType.Block, true) || [];
 
 		if (root.isLocked() && !ids.length) {
 			return;
@@ -1667,8 +1676,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const { dataset, rootId } = this.props;
-		const { selection } = dataset || {};
+		const { rootId } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const { focused, range } = focus.state;
 		const files = UtilCommon.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
 
@@ -1710,16 +1719,20 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let from = 0;
 		let to = 0;
 
-		C.BlockPaste(rootId, focused, range, selection.get(I.SelectType.Block, true), data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks }, '', (message: any) => {
+		C.BlockPaste(rootId, focused, range, selection?.get(I.SelectType.Block, true) || [], data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks }, '', (message: any) => {
 			if (message.error.code) {
 				return;
 			};
+
+			let count = 0;
 
 			if (message.isSameBlockCaret) {
 				id = focused;
 			} else 
 			if (message.blockIds && message.blockIds.length) {
-				const lastId = message.blockIds[message.blockIds.length - 1];
+				count = message.blockIds.length;
+
+				const lastId = message.blockIds[count - 1];
 				const block = blockStore.getLeaf(rootId, lastId);
 				
 				if (!block) {
@@ -1728,6 +1741,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				
 				id = block.id;
 				from = to = block.getLength();
+
+				keyboard.setFocus(false);
 			} else 
 			if (message.caretPosition >= 0) {
 				id = focused;
@@ -1735,7 +1750,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.focus(id, from, to, true);
-			analytics.event('PasteBlock');
+			analytics.event('PasteBlock', { count });
 		});
 	};
 
@@ -1872,7 +1887,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	getClipboardData (e: any) {
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const data: any = {
-			text: String(cb.getData('text/plain') || ''),
+			text: UtilCommon.normalizeLineEndings(String(cb.getData('text/plain') || '')),
 			html: String(cb.getData('text/html') || ''),
 			anytype: JSON.parse(String(cb.getData('application/json') || '{}')),
 			files: [],
@@ -1882,13 +1897,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	onHistory (e: any) {
-		const { rootId } = this.props;
-
-		e.shiftKey = false;
-		e.ctrlKey = false;
-		e.metaKey = false;
-
-		UtilObject.openEvent(e, { layout: I.ObjectLayout.History, id: rootId });
+		UtilObject.openAuto({ layout: I.ObjectLayout.History, id: this.props.rootId });
 	};
 
 	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
@@ -2035,9 +2044,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	blockRemove (focused?: I.Block) {
-		const { rootId, dataset } = this.props;
-		const { selection } = dataset || {};
-		const ids = selection.get(I.SelectType.Block);
+		const { rootId } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
 
 		menuStore.closeAll();
 		popupStore.closeAll([ 'preview' ]);
@@ -2105,7 +2114,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!last) {
 			create = true;
 		} else {
-			if (!last.isText() || last.isTextCode()) {
+			if (!last.isText() || last.isTextCode() || last.isTextCallout()) {
 				create = true;
 			} else {
 				length = last.getLength();
@@ -2217,11 +2226,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isPopup, rootId } = this.props;
 		const container = UtilCommon.getPageContainer(isPopup);
 		const root = blockStore.getLeaf(rootId, rootId);
+		const isSet = root?.isObjectSet();
+		const isCollection = root?.isObjectCollection();
 
 		let mw = container.width();
 		let width = 0;
 
-		if (root && root.isObjectSet()) {
+		if (isSet || isCollection) {
 			width = mw - 192;
 		} else {
 			const size = mw * 0.6;

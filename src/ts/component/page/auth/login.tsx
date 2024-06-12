@@ -3,8 +3,8 @@ import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
 import { I, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
+const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 
 interface State {
 	error: string;
@@ -26,7 +26,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCancel = this.onCancel.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyDownPhrase = this.onKeyDownPhrase.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.canSubmit = this.canSubmit.bind(this);
@@ -39,7 +38,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const length = accounts.length;
 		
         return (
-			<div ref={ref => this.node = ref} onKeyDown={this.onKeyDown}>
+			<div ref={ref => this.node = ref}>
 				<Header {...this.props} component="authIndex" />
 				<Icon className="arrow back" onClick={this.onCancel} />
 				
@@ -173,12 +172,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.refSubmit.setDisabled(!this.canSubmit());
 	};
 
-	canSubmit () {
-		return this.refPhrase.getValue().length;
-	};
-
-	onKeyDown (e: React.KeyboardEvent) {
-		keyboard.shortcut('enter', e, () => this.onSubmit(e));
+	canSubmit (): boolean {
+		return this.refPhrase.getValue().split(' ').length == Constant.limit.phrase.word;
 	};
 
 	onKeyDownPhrase (e: React.KeyboardEvent) {
@@ -188,6 +183,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			this.refPhrase?.setError(false);
 			this.setState({ error: '' });
 		};
+
+		keyboard.shortcut('enter', e, () => this.onSubmit(e));
 	};
 	
 	onCancel () {
@@ -203,7 +200,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const platform = UtilCommon.getPlatform();
 
 		popupStore.open('confirm', {
-			className: 'lostPhrase',
+			className: 'lostPhrase isLeft',
             data: {
 				title: translate('popupConfirmLostPhraseTitle'),
                 text: translate(`popupConfirmLostPhraseText${platform}`),

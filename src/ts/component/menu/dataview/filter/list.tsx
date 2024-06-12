@@ -8,7 +8,7 @@ import { Icon } from 'Component';
 import { dbStore, menuStore, blockStore } from 'Store';
 import { I, C, UtilCommon, keyboard, analytics, Relation, translate } from 'Lib';
 import Item from 'Component/menu/item/filter';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const HEIGHT = 48;
 const LIMIT = 20;

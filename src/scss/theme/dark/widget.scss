@@ -23,27 +23,41 @@
 }
 
 .widget.widgetTree {
-	.icon.set { background-image: url('#{$themePath}/icon/sidebar/set.svg'); }
-	.icon.collection { background-image: url('#{$themePath}/icon/sidebar/collection.svg'); }
-	.icon.blank { background-image: url('#{$themePath}/icon/sidebar/blank.svg'); }
+	.icon.set { background-image: url('#{$themePath}/icon/widget/set.svg'); }
+	.icon.collection { background-image: url('#{$themePath}/icon/widget/collection.svg'); }
+	.icon.blank { background-image: url('#{$themePath}/icon/widget/blank.svg'); }
 	.icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
 }
 
-.widget.widgetList, .widget.widgetCompact {
-	#viewSelect {
-		.select {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/widget.svg') !important; }
+.widget.widgetView {
+	.viewList, .viewGrid {
+		#viewSelect {
+			.select {
+				.icon.arrow { background-image: url('#{$themePath}/arrow/widget.svg') !important; }
+			}
+		}
+
+		.body {
+			.item {
+				.iconObject.isTask, .iconObject.isBookmark { background: none; }
+			}
 		}
 	}
 
-	.body {
-		.item {
-			.iconObject.isTask, .iconObject.isBookmark { background: none; }
+	.viewGallery {
+		.arrowWrap { background-color: var(--color-control-accent); }
+	}
+
+	.viewBoard {
+		.group {
+			.clickable {
+				.icon.arrow {  background-image: url('~img/arrow/select/light.svg'); }
+			}
 		}
 	}
 }
 
 .button.widget {
-	.icon.store { background-image: url('#{$themePath}/icon/sidebar/store.svg'); }
-	.icon.bin { background-image: url('#{$themePath}/icon/sidebar/bin.svg'); }
+	.icon.store { background-image: url('#{$themePath}/icon/widget/store.svg'); }
+	.icon.bin { background-image: url('#{$themePath}/icon/widget/bin.svg'); }
 }

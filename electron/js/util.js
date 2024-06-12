@@ -137,10 +137,6 @@ class Util {
 					const src = p.replace('file://', '').replace(/\?.*/, '').replace(/\/app.asar\//g, '/app.asar.unpacked/');
 					const dst = path.join(filesPath, name).replace(/\?.*/, '');
 
-					console.log(src);
-					console.log(dst);
-					console.log(filesPath);
-
 					fs.copyFileSync(src, dst);
 					return `'./${fn}/${name}'`;
 				});
@@ -225,14 +221,14 @@ class Util {
 
 	enabledLangs () {
 		return [
-			"cs-CZ", "da-DK", "de-DE", 
-			"en-US", "es-ES", "fr-FR", 
-			"hi-IN", "id-ID", "it-IT", 
-			"lt-LT", "ja-JP", "ko-KR", 
-			"nl-NL", "no-NO", "pl-PL", 
-			"pt-BR", "ro-RO", "ru-RU", 
-			"tr-TR", "uk-UA", "vi-VN", 
-			"zh-CN", "zh-TW" 
+			"be-BY", "cs-CZ", "da-DK",
+			"de-DE", "en-US", "es-ES",
+			"fr-FR", "hi-IN", "id-ID",
+			"it-IT", "lt-LT", "ja-JP",
+			"ko-KR", "nl-NL", "no-NO",
+			"pl-PL", "pt-BR", "ro-RO",
+			"ru-RU", "tr-TR", "uk-UA",
+			"vi-VN", "zh-CN", "zh-TW" 
 		];
 	};
 

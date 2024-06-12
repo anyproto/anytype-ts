@@ -7,7 +7,7 @@ import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
 import { I, C, keyboard, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, Storage, translate, analytics, Renderer, UtilRouter } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
@@ -20,7 +20,7 @@ const langs = [
 	'livescript', 'lua', 'markdown', 'makefile', 'matlab', 'nginx', 'nix', 'objectivec', 'ocaml', 'pascal', 'perl', 'php', 'powershell', 'prolog',
 	'python', 'r', 'reason', 'ruby', 'rust', 'sass', 'java', 'scala', 'scheme', 'scss', 'sql', 'swift', 'typescript', 'vbnet', 'verilog',
 	'vhdl', 'visual-basic', 'wasm', 'yaml', 'javascript', 'css', 'markup', 'markup-templating', 'csharp', 'php', 'go', 'swift', 'kotlin',
-	'wolfram', 'dot', 'toml', 'bsl'
+	'wolfram', 'dot', 'toml', 'bsl', 'cfscript', 'gdscript', 'cmake',
 ];
 for (const lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
@@ -643,7 +643,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { onKeyDown, rootId, block, isInsideTable } = this.props;
 		const { id } = block;
 
-		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
+		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'object' ])) {
 			e.preventDefault();
 			return;
 		};
@@ -898,7 +898,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			'##':			 I.TextStyle.Header2,
 			'###':			 I.TextStyle.Header3,
 			'"':			 I.TextStyle.Quote,
-			'```':			 I.TextStyle.Code,
+			'```([a-z]+)?':	 I.TextStyle.Code,
 			'\\>':			 I.TextStyle.Toggle,
 			'1\\.':			 I.TextStyle.Numbered,
 		};
@@ -1001,7 +1001,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				const reg = new RegExp(`^(${k}\\s)`);
 				const newStyle = Markdown[k];
 
-				if ((newStyle == content.style) || !value.match(reg) || ((newStyle == I.TextStyle.Numbered) && block.isTextHeader())) {
+				if (newStyle == content.style) {
+					continue;
+				};
+
+				if (block.isTextHeader() && (newStyle == I.TextStyle.Numbered)) {
+					continue;
+				};
+
+				const match = value.match(reg);
+				if (!match) {
 					continue;
 				};
 
@@ -1024,6 +1033,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 					if (newStyle == I.TextStyle.Toggle) {
 						blockStore.toggle(rootId, id, true);
+					};
+
+					if ((newStyle == I.TextStyle.Code) && match[2]) {
+						C.BlockListSetFields(rootId, [ 
+							{ blockId: block.id, fields: { ...block.fields, lang: match[2] } } 
+						]);
 					};
 				});
 
@@ -1144,7 +1159,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			},
 			data: {
 				noHead: true,
-				rootId: rootId,
+				rootId,
 				blockId: block.id,
 				onSelect: (icon: string) => {
 					const to = range.from + 1;
@@ -1324,8 +1339,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onSelect () {
-		const { rootId, dataset, block, isPopup, isInsideTable, readonly } = this.props;
-		const ids = UtilData.selectionGet('', false, true, this.props);
+		const { rootId, block, isPopup, isInsideTable, readonly } = this.props;
+		const ids = UtilData.selectionGet('', false, true);
 		const range = this.getRange();
 
 		focus.set(block.id, range);
@@ -1396,7 +1411,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						blockId: block.id,
 						blockIds: [ block.id ],
 						rootId,
-						dataset,
 						range: { from: currentFrom, to: currentTo },
 						marks: this.marks,
 						isInsideTable,
@@ -1417,8 +1431,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onMouseDown (e: any) {
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 
 		window.clearTimeout(this.timeoutClick);
 

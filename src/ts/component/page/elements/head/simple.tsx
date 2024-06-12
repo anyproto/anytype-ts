@@ -3,12 +3,13 @@ import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable } from 'Component';
 import { I, M, Action, UtilData, UtilObject, focus, keyboard, Relation, translate, UtilSpace } from 'Lib';
 import { blockStore, detailStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	rootId: string;
 	placeholder?: string;
 	isContextMenuDisabled?: boolean;
+	readonly?: boolean;
 	onCreate?: () => void;
 };
 
@@ -30,18 +31,16 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	constructor (props: Props) {
 		super(props);
 
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
 		this.onInstall = this.onInstall.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 	};
 
 	render (): any {
-		const { rootId, onCreate, isContextMenuDisabled } = this.props;
+		const { rootId, onCreate, isContextMenuDisabled, readonly } = this.props;
 		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
-		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowDetails = !readonly && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
@@ -132,8 +131,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 								object={object} 
 								forceLetter={true}
 								canEdit={canEditIcon} 
-								onSelect={this.onSelect} 
-								onUpload={this.onUpload} 
 							/>
 						) : ''}
 						<Editor className="title" id="title" />
@@ -189,15 +186,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		keyboard.setFocus(false);
 		window.clearTimeout(this.timeout);
 		this.save();
-	};
-
-	onSelect (icon: string) {
-		const { rootId } = this.props;
-		UtilObject.setIcon(rootId, icon, '');
-	};
-
-	onUpload (objectId: string) {
-		UtilObject.setIcon(this.props.rootId, '', objectId);
 	};
 
 	onKeyDown (e: any, item: any) {

@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockText { @include text-paragraph; word-wrap: break-word; }
@@ -27,7 +27,7 @@
 		}
 		markuplink.disabled, markupobject.disabled { border-width: 0px; }
 
-		markupmention { display: inline; user-select: all !important; position: relative; cursor: default; }
+		markupmention { display: inline; user-select: all !important; position: relative; cursor: default; white-space: nowrap; }
 		markupmention * { user-select: text !important; }
 		markupmention {
 			smile { display: none; position: relative; z-index: 1; }
@@ -54,6 +54,8 @@
 		markupitalic { font-style: italic; }
 		markupstrike { text-decoration: line-through; }
 		markupunderline { border-bottom: 0.05em solid; }
+
+		markupchange { background-color: var(--color-shape-highlight-change); }
 		
 		.markers { display: flex; padding: 1px 0px; }
 		.markers {

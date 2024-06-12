@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
 import { blockStore, menuStore, detailStore, commonStore, dbStore, authStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class UtilMenu {
 
@@ -108,15 +108,11 @@ class UtilMenu {
 	};
 
 	getBlockObject () {
-		const { config } = commonStore;
 		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }
 		];
-
-		if (config.experimental) {
-			ret.push({ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] });
-		};
 
 		items.sort((c1, c2) => UtilData.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
 
@@ -213,7 +209,7 @@ class UtilMenu {
 
 		if (hasDataview) {
 			const isCollection = Dataview.isCollection(rootId, blockId);
-			const sourceName = isCollection ? translate('commonLCCollection') : translate('commonLCSet');
+			const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
 
 			items.push({ id: 'dataviewSource', icon: 'source', name: UtilCommon.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
 		};
@@ -564,7 +560,7 @@ class UtilMenu {
 						};
 					};
 				},
-				onSelect: (e, item: any) => {
+				onSelect: (e: any, item: any) => {
 					if (item.arrow) {
 						return;
 					};
@@ -648,12 +644,12 @@ class UtilMenu {
 		};
 
 		const isOwner = UtilSpace.isMyOwner(targetSpaceId);
-		const isAnytypeNetwork = UtilData.isAnytypeNetwork();
+		const isLocalNetwork = UtilData.isLocalNetwork();
 		const { isOnline } = commonStore;
 
 		let options: any[] = [];
 
-		if (isOwner && space.isShared && isAnytypeNetwork && isOnline) {
+		if (isOwner && space.isShared && !isLocalNetwork && isOnline) {
 			options.push({ id: 'revoke', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
@@ -725,13 +721,13 @@ class UtilMenu {
 		const { isOnline } = commonStore
 		const { containerId, cid, key, onInviteRevoke } = param || {};
 		const isOwner = UtilSpace.isMyOwner();
-		const isAnytypeNetwork = UtilData.isAnytypeNetwork();
+		const isLocalNetwork = UtilData.isLocalNetwork();
 
 		const options: any[] = [
 			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
 		];
 
-		if (isOnline && isOwner && isAnytypeNetwork) {
+		if (isOnline && isOwner && !isLocalNetwork) {
 			options.push({ id: 'revoke', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 

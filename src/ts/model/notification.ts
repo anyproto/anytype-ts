@@ -1,6 +1,6 @@
 import { I, UtilCommon, translate } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
-import Errors from 'json/error.json';
+const Errors = require('json/error.json');
 
 class Notification implements I.Notification {
 
