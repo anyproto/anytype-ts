@@ -22,9 +22,6 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 
 		this.onClick = this.onClick.bind(this);
 		this.onRemove = this.onRemove.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
@@ -51,9 +48,6 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 					object={object} 
 					size={iconSize} 
 					canEdit={!isReadonly && !isArchived && allowedDetails} 
-					onSelect={this.onSelect} 
-					onUpload={this.onUpload} 
-					onCheckbox={this.onCheckbox} 
 				/>
 			);
 		};
@@ -70,30 +64,12 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 	};
 
 	onClick (e: any) {
-		const { onClick, canEdit } = this.props;
+		const { onClick } = this.props;
 		const object = this.getObject();
 
 		if (onClick) {
 			onClick(e, object);
 		};
-	};
-
-	onSelect (icon: string) {
-		const object = this.getObject();
-
-		UtilObject.setIcon(object.id, icon, '');
-	};
-
-	onUpload (objectId: string) {
-		const object = this.getObject();
-
-		UtilObject.setIcon(object.id, '', objectId);
-	};
-
-	onCheckbox () {
-		const object = this.getObject();
-
-		UtilObject.setDone(object.id, !object.done);
 	};
 
 	onRemove (e: any) {

@@ -379,6 +379,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 
+		if (!block) {
+			return;
+		};
+
 		let menuId = '';
 		const menuParam: I.MenuParam = {
 			menuKey: item.itemId,
@@ -671,8 +675,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
+		const selection = commonStore.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
+
+		if (!ids.length) {
+			ids.push(blockId);
+		};
 		
-		UtilData.moveToPage(rootId, blockId, typeId, 'Powertool', this.props);
+		UtilData.moveToPage(rootId, ids, typeId, analytics.route.powertool);
 	};
 
 	resize () {

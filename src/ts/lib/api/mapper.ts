@@ -1049,6 +1049,7 @@ export const Mapper = {
 			if (v == V.OBJECTRELATIONSAMEND)		 t = 'ObjectRelationsAmend';
 			if (v == V.OBJECTRELATIONSREMOVE)		 t = 'ObjectRelationsRemove';
 			if (v == V.OBJECTRESTRICTIONSSET)		 t = 'ObjectRestrictionsSet';
+			if (v == V.OBJECTCLOSE)					 t = 'objectClose';
 
 			if (v == V.FILESPACEUSAGE)				 t = 'FileSpaceUsage';
 			if (v == V.FILELOCALUSAGE)				 t = 'FileLocalUsage';

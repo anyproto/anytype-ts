@@ -1,0 +1,220 @@
+import * as React from 'react';
+import { observer } from 'mobx-react';
+import { Select, Icon } from 'Component';
+import { I, UtilDate } from 'Lib';
+import { menuStore, dbStore } from 'Store';
+
+interface State {
+	value: number;
+};
+
+const Constant = require('json/constant.json');
+
+const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Component<I.WidgetViewComponent, State> {
+
+	node = null;
+	refMonth = null;
+	refYear = null;
+	state = {
+		value: UtilDate.now(),
+	};
+
+	constructor (props: I.WidgetViewComponent) {
+		super(props);
+
+		this.onArrow = this.onArrow.bind(this);
+	};
+
+	render (): React.ReactNode {
+		const { value } = this.state;
+		const data = UtilDate.getCalendarMonth(value);
+		const { m, y } = this.getDateParam(value);
+		const today = this.getDateParam(UtilDate.now());
+		const days = UtilDate.getWeekDays();
+		const months = UtilDate.getMonths();
+		const years = UtilDate.getYears(0, 3000);
+
+		return (
+			<div ref={ref => this.node = ref} className="body">
+				<div id="dateSelect" className="dateSelect">
+					<div className="side left">
+						<Select 
+							ref={ref => this.refMonth = ref}
+							id="calendar-month" 
+							value={m} 
+							options={months} 
+							className="month" 
+							onChange={m => this.setValue(UtilDate.timestamp(y, m, 1))} 
+						/>
+						<Select 
+							ref={ref => this.refYear = ref}
+							id="calendar-year" 
+							value={y} 
+							options={years} 
+							className="year" 
+							onChange={y => this.setValue(UtilDate.timestamp(y, m, 1))} 
+						/>
+					</div>
+
+					<div className="side right">
+						<Icon className="arrow left" onClick={() => this.onArrow(-1)} />
+						<Icon className="arrow right" onClick={() => this.onArrow(1)} />
+					</div>
+				</div>
+
+				<div className="table">
+					<div className="tableHead">
+						{days.map((item, i) => (
+							<div key={i} className="item">
+								{item.name.substring(0, 2)}
+							</div>
+						))}
+					</div>
+
+					<div className="tableBody">
+						{data.map((item, i) => {
+							const cn = [ 'day' ];
+							if (m != item.m) {
+								cn.push('other');
+							};
+							if ((today.d == item.d) && (today.m == item.m) && (today.y == item.y)) {
+								cn.push('today');
+							};
+							if (i < 7) {
+								cn.push('first');
+							};
+							return (
+								<div 
+									id={`day-${item.d}-${item.m}-${item.y}`} 
+									key={i}
+									className={cn.join(' ')} 
+									onClick={() => this.onClick(item.d, item.m, item.y)}
+								>
+									{item.d}
+								</div>	
+							);
+						})}
+					</div>
+				</div>
+			</div>
+		);
+	};
+
+	componentDidMount(): void {
+		this.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
+	};
+
+	init () {
+		const { m, y } = this.getDateParam(this.state.value);
+
+		this.refMonth?.setValue(m);
+		this.refYear?.setValue(y);
+	};
+
+	getDateParam (t: number) {
+		const [ d, m, y ] = UtilDate.date('j,n,Y', t).split(',').map(it => Number(it));
+		return { d, m, y };
+	};
+
+	onArrow (dir: number) {
+		let { m, y } = this.getDateParam(this.state.value);
+
+		m += dir;
+		if (m < 0) {
+			m = 12;
+			y--;
+		};
+		if (m > 12) {
+			m = 1;
+			y++;
+		};
+
+		this.setValue(UtilDate.timestamp(y, m, 1));
+	};
+
+	setValue (value: number) {
+		this.setState({ value }, () => this.props.reload());
+	};
+
+	onClick (d: number, m: number, y: number) {
+		const { rootId, getView, canCreate, onCreate } = this.props;
+		const view = getView();
+		const element = `#day-${d}-${m}-${y}`;
+
+		menuStore.closeAll([ 'dataviewCalendarDay' ], () => {
+			menuStore.open('dataviewCalendarDay', {
+				element,
+				className: 'fixed fromWidget',
+				classNameWrap: 'fromSidebar',
+				horizontal: I.MenuDirection.Center,
+				noFlipX: true,
+				onOpen: () => $(element).addClass('active'),
+				onClose: () => $(element).removeClass('active'),
+				data: {
+					rootId,
+					blockId: Constant.blockId.dataview,
+					relationKey: view.groupRelationKey,
+					d,
+					m, 
+					y,
+					hideIcon: view.hideIcon,
+					fromWidget: true,
+					readonly: !canCreate,
+					onCreate: () => {
+						const details = {};
+
+						details[view.groupRelationKey] = UtilDate.timestamp(y, m, d, 12, 0, 0);
+
+						onCreate({ details });
+					}
+				}
+			});
+		});
+	};
+
+	getFilters (): I.Filter[] {
+		const { getView } = this.props;
+		const view = getView();
+		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+
+		if (!relation) {
+			return [];
+		};
+
+		const data = UtilDate.getCalendarMonth(this.state.value);
+		if (!data.length) {
+			return;
+		};
+
+		const first = data[0];
+		const last = data[data.length - 1];
+		const start = UtilDate.timestamp(first.y, first.m, first.d, 0, 0, 0);
+		const end = UtilDate.timestamp(last.y, last.m, last.d, 23, 59, 59);
+
+		return [
+			{ 
+				operator: I.FilterOperator.And, 
+				relationKey: relation.relationKey, 
+				condition: I.FilterCondition.GreaterOrEqual, 
+				value: start, 
+				quickOption: I.FilterQuickOption.ExactDate,
+				format: relation.format,
+			},
+			{ 
+				operator: I.FilterOperator.And, 
+				relationKey: relation.relationKey, 
+				condition: I.FilterCondition.LessOrEqual, 
+				value: end, 
+				quickOption: I.FilterQuickOption.ExactDate,
+				format: relation.format,
+			}
+		];
+	};
+
+});
+
+export default WidgetViewCalendar;

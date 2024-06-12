@@ -2,8 +2,8 @@ import Commands from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import { detailStore } from 'Store';
 import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
+
 const Constant = require('json/constant.json');
-import { MembershipTier } from 'Interface';
 
 const Rpc = Commands.Rpc;
 
@@ -540,12 +540,13 @@ export const BlockListMoveToExistingObject = (contextId: string, targetContextId
 	dispatcher.request(BlockListMoveToExistingObject.name, request, callBack);
 };
 
-export const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, callBack?: (message: any) => void) => {
+export const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListConvertToObjects.Request();
 
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
 	request.setObjecttypeuniquekey(typeKey);
+	request.setTemplateid(templateId);
 
 	dispatcher.request(BlockListConvertToObjects.name, request, callBack);
 };

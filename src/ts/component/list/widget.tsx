@@ -3,19 +3,16 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
 import { C, I, M, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
-import { blockStore, menuStore, detailStore } from 'Store';
-const Constant = require('json/constant.json');
+import { blockStore, menuStore, detailStore, commonStore } from 'Store';
 
-interface Props {
-	dataset?: any;
-};
+const Constant = require('json/constant.json');
 
 type State = {
 	isEditing: boolean;
 	previewId: string;
 };
 
-const ListWidget = observer(class ListWidget extends React.Component<Props, State> {
+const ListWidget = observer(class ListWidget extends React.Component<{}, State> {
 		
 	state: State = {
 		isEditing: false,
@@ -28,7 +25,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	isDragging = false;
 	frame = 0;
 
-	constructor (props: Props) {
+	constructor (props) {
 		super(props);
 
 		this.onEdit = this.onEdit.bind(this);
@@ -43,7 +40,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.setPreview = this.setPreview.bind(this);
 	};
 
-	render(): React.ReactNode {
+	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = blockStore;
 		const cn = [ 'listWidget' ];
@@ -226,8 +223,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	onDragStart (e: React.DragEvent, blockId: string): void {
 		e.stopPropagation();
 
-		const { dataset } = this.props;
-		const { selection, preventCommonDrop } = dataset;
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		const obj = node.find(`#widget-${blockId}`);
@@ -241,11 +237,12 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 		clone.append(obj.find('.head').clone());
 		node.append(clone);
+		selection?.clear();
 
-		preventCommonDrop(true);
-		selection.clear();
+		keyboard.disableCommonDrop(true);
 		keyboard.disableSelection(true);
 		keyboard.setDragging(true);
+
 		this.isDragging = true;
 
 		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
@@ -289,8 +286,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 		e.stopPropagation();
 
-		const { dataset } = this.props;
-		const { preventCommonDrop } = dataset;
 		const { widgets } = blockStore;
 		const blockId = e.dataTransfer.getData('text');
 
@@ -298,9 +293,10 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			C.BlockListMoveToExistingObject(widgets, widgets, this.dropTargetId, [ blockId ], this.position);
 		};
 
-		preventCommonDrop(false);
+		keyboard.disableCommonDrop(false);
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
+
 		this.isDragging = false;
 		this.clear();
 	};

@@ -35,6 +35,7 @@ class Keyboard {
 	isSelectionDisabled = false;
 	isSelectionClearDisabled = false;
 	isComposition = false;
+	isCommonDropDisabled = false;
 	
 	init () {
 		this.unbind();
@@ -137,6 +138,7 @@ class Keyboard {
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
 		const canWrite = UtilSpace.canMyParticipantWrite();
+		const selection = commonStore.getRef('selectionProvider');
 
 		this.pressed.push(key);
 
@@ -176,8 +178,8 @@ class Keyboard {
 						UtilCommon.clearSelection();
 						canClose = false;
 					} else
-					if (this.selection) {
-						const ids = this.selection.get(I.SelectType.Block);
+					if (selection) {
+						const ids = selection.get(I.SelectType.Block);
 						if (ids.length) {
 							canClose = false;
 						};
@@ -314,8 +316,9 @@ class Keyboard {
 	// Check if smth is selected
 	checkSelection () {
 		const range = UtilCommon.getSelectionRange();
+		const selection = commonStore.getRef('selectionProvider');
 
-		if ((range && !range.collapsed) || (this.selection && this.selection.get(I.SelectType.Block).length)) {
+		if ((range && !range.collapsed) || (selection && selection.get(I.SelectType.Block).length)) {
 			return true;
 		};
 
@@ -919,7 +922,15 @@ class Keyboard {
 	};
 
 	getMatch () {
-		return (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
+		const ret = (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
+
+		for (const k in ret.params) {
+			if (ret.params[k] == Constant.blankRouteId) {
+				ret.params[k] = '';
+			};
+		};
+
+		return ret;
 	};
 
 	isMain () {
@@ -983,10 +994,6 @@ class Keyboard {
 
 	setSource (source: any) {
 		this.source = UtilCommon.objectCopy(source);
-	};
-
-	setSelection (v: any) {
-		this.selection = v;
 	};
 
 	setSelectionClearDisabled (v: boolean) {
@@ -1082,8 +1089,14 @@ class Keyboard {
 		this.isPasteDisabled = v;
 	};
 
+	// Flag to disable selection
 	disableSelection (v: boolean) {
 		this.isSelectionDisabled = v;
+	};
+
+	// Flag to disable common drop
+	disableCommonDrop (v: boolean) {
+		this.isCommonDropDisabled = v;
 	};
 	
 	isSpecial (e: any): boolean {

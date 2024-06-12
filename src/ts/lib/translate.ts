@@ -9,12 +9,10 @@ const Constant = require('json/constant.json');
  */
 export const translate = (key: string, force?: string): string => {
 	const lang = force || commonStore.interfaceLang;
-	const defaultData = require(`json/text.json`);
+	const defaultData = require('json/text.json');
 
 	let data = defaultData;
-	if (lang == Constant.default.interfaceLang) {
-		data = defaultData; 
-	} else {
+	if (lang != Constant.default.interfaceLang) {
 		try { 
 			data = require(`lib/json/lang/${lang}.json`);
 		} catch(e) {

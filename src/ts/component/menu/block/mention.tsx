@@ -185,7 +185,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		if (filter) {
 			sections.push({ 
 				children: [
-					{ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObject'), filter) }
+					{ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObjectWithName'), filter) }
 				]
 			});
 		};

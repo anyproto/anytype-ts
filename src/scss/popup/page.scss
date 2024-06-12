@@ -26,10 +26,11 @@
 			.content > .wrap { height: 100%; }
 
 			.block.blockCover { top: 38px; }
+		}
 
-			/* Set */
-			.editorWrapper.isSet { width: calc(100% - 96px); }
-			.editorWrapper.isSet {
+		.pageMainSet {
+			.editorWrapper.isSet,
+			.editorWrapper.isCollection {
 				.block.blockCover {
 					.elements { width: 100%; left: 0px; }
 				}

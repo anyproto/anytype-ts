@@ -47,7 +47,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	render () {
 		const { list } = popupStore;
-		const children = this.injectProps(this.props.children);
+		const { children } = this.props;
 		const length = list.length;
 
 		return (
@@ -601,27 +601,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		return { x, y };
 	};
 	
-	injectProps (children: any) {
-		keyboard.setSelection(this);
-
-		return React.Children.map(children, (child: any) => {
-			if (!child) {
-				return;
-			};
-
-			const props = child.props || {};
-			const children = props.children;
-			const dataset = props.dataset || {};
-			
-			if (children) {
-				child = React.cloneElement(child, { children: this.injectProps(children) });
-			};
-			
-			dataset.selection = this;
-			return React.cloneElement(child, { dataset: dataset });
-		});
-	};
-
 	setIsSelecting (v: boolean) {
 		this.isSelecting = v;
 

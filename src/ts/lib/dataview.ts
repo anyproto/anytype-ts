@@ -175,13 +175,24 @@ class Dataview {
 	};
 
 	getView (rootId: string, blockId: string, viewId?: string): I.View {
-		const views = dbStore.getViews(rootId, blockId);
-		if (!views.length) {
-			return null;
+		let view = null;
+
+		if (!viewId) {
+			viewId = dbStore.getMeta(dbStore.getSubId(rootId, blockId), '').viewId;
 		};
 
-		viewId = viewId || dbStore.getMeta(dbStore.getSubId(rootId, blockId), '').viewId;
-		return dbStore.getView(rootId, blockId, viewId) || views[0];
+		if (viewId) {
+			view = dbStore.getView(rootId, blockId, viewId);
+		};
+
+		if (!view) {
+			const views = dbStore.getViews(rootId, blockId);
+			if (views.length) {
+				view = views[0];
+			};
+		};
+
+		return view;
 	};
 
 	isCollection (rootId: string, blockId: string): boolean {
@@ -201,6 +212,98 @@ class Dataview {
 		const target = targetObjectId ? detailStore.get(rootId, targetObjectId, [ 'layout' ], true) : null;
 
 		return target ? target.layout == I.ObjectLayout.Collection : isCollection;
+	};
+
+	loadGroupList (rootId: string, blockId: string, viewId: string, object: any) {
+		const view = this.getView(rootId, blockId, viewId);
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		if (!view || !block) {
+			return;
+		};
+
+		const subId = dbStore.getGroupSubId(rootId, block.id, 'groups');
+		const isCollection = object.layout == I.ObjectLayout.Collection;
+
+		dbStore.groupsClear(rootId, block.id);
+
+		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+		if (!relation) {
+			return;
+		};
+
+		const groupOrder: any = {};
+		const el = block.content.groupOrder.find(it => it.viewId == view.id);
+
+		if (el) {
+			el.groups.forEach(it => groupOrder[it.groupId] = it);
+		};
+
+		C.ObjectGroupsSubscribe(commonStore.space, subId, view.groupRelationKey, view.filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const groups = (message.groups || []).map((it: any) => {
+				let bgColor = 'grey';
+				let value: any = it.value;
+				let option: any = null;
+
+				switch (relation.format) {
+					case I.RelationType.MultiSelect:
+						value = Relation.getArrayValue(value);
+						if (value.length) {
+							option = detailStore.get(Constant.subId.option, value[0]);
+							bgColor = option?.color;
+						};
+						break;
+
+					case I.RelationType.Select:
+						option = detailStore.get(Constant.subId.option, value);
+						bgColor = option?.color;
+						break;
+				};
+
+				it.isHidden = groupOrder[it.id]?.isHidden;
+				it.bgColor = groupOrder[it.id]?.bgColor || bgColor;
+				return it;
+			});
+
+			dbStore.groupsSet(rootId, block.id, this.applyGroupOrder(rootId, block.id, view.id, groups));
+		});
+	};
+
+	getGroupFilter (relation: any, value: any): I.Filter {
+		const filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
+
+		switch (relation.format) {
+			default: {
+				filter.condition = I.FilterCondition.Equal;
+				filter.value = value;
+				break;
+			};
+
+			case I.RelationType.Select: {
+				filter.condition = value ? I.FilterCondition.Equal : I.FilterCondition.Empty;
+				filter.value = value ? value : null;
+				break;
+			};
+
+			case I.RelationType.MultiSelect: {
+				value = Relation.getArrayValue(value);
+				filter.condition = value.length ? I.FilterCondition.ExactIn : I.FilterCondition.Empty;
+				filter.value = value.length ? value : null;
+				break;
+			};
+		};
+		return filter;
+	};
+
+	getGroups (rootId: string, blockId: string, viewId: string, withHidden: boolean) {
+		const groups = UtilCommon.objectCopy(dbStore.getGroups(rootId, blockId));
+		const ret = this.applyGroupOrder(rootId, blockId, viewId, groups);
+
+		return !withHidden ? ret.filter(it => !it.isHidden) : ret;
 	};
 
 	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
@@ -233,6 +336,34 @@ class Dataview {
 		};
 
 		blockStore.updateContent(rootId, blockId, { groupOrder });
+	};
+
+	applyGroupOrder (rootId: string, blockId: string, viewId: string, groups: any[]) {
+		if (!viewId || !groups.length) {
+			return groups;
+		};
+
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return groups;
+		};
+
+		const el = block.content.groupOrder.find(it => it.viewId == viewId);
+		const groupOrder: any = {};
+
+		if (el) {
+			el.groups.forEach(it => groupOrder[it.groupId] = it);
+		};
+
+		groups.sort((c1: any, c2: any) => {
+			const idx1 = groupOrder[c1.id]?.index;
+			const idx2 = groupOrder[c2.id]?.index;
+			if (idx1 > idx2) return 1;
+			if (idx1 < idx2) return -1;
+			return 0;
+		});
+
+		return groups;
 	};
 
 	applyObjectOrder (rootId: string, blockId: string, viewId: string, groupId: string, records: string[]): string[] {
@@ -365,7 +496,7 @@ class Dataview {
 				return UtilCommon.sprintf(translate('blockDataviewCreateNewTooltipType'), type.name);
 			};
 		};
-		return translate('blockDataviewCreateNew');
+		return translate('commonCreateNewObject');
 	};
 
 	viewUpdate (rootId: string, blockId: string, viewId: string, param: Partial<I.View>, callBack?: (message: any) => void) {
@@ -373,6 +504,44 @@ class Dataview {
 		if (view) {
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, Object.assign(view, param), callBack);
 		};
+	};
+
+	getCoverObject (subId: string, object: any, relationKey: string): any {
+		if (!relationKey) {
+			return null;
+		};
+
+		const value = Relation.getArrayValue(object[relationKey]);
+		const layouts = [
+			I.ObjectLayout.Image,
+			I.ObjectLayout.Audio,
+			I.ObjectLayout.Video,
+		];
+
+		let ret = null;
+		if (relationKey == Constant.pageCoverRelationKey) {
+			ret = object;
+		} else {
+			for (const id of value) {
+				const file = detailStore.get(subId, id, []);
+				if (file._empty_ || !layouts.includes(file.layout)) {
+					continue;
+				};
+
+				ret = file;
+				break;
+			};
+		};
+
+		if (!ret || ret._empty_) {
+			return null;
+		};
+
+		if (!ret.coverId && !ret.coverType && !layouts.includes(ret.layout)) {
+			return null;
+		};
+
+		return ret;
 	};
 
 };
