@@ -354,17 +354,27 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		const { storageGet } = this.props;
 		const items = this.getItems();
 		const tabs = this.getTabs();
-
+		const storage = storageGet();
+		const { tab, skin } = storage;
+		
 		this.rebind();
 
-		this.skin = Number(storageGet().skin) || 1;
+		this.skin = Number(skin) || 1;
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_SECTION,
 			keyMapper: i => (items[i] || {}).id,
 		});
 
-		this.onTab(tabs.length ? tabs[0].id : Tab.Smile);
+		let t = Tab.Smile;
+		if (tab && tabs.find(it => it.id == tab)) {
+			t = tab;
+		} else 
+		if (tabs.length) {
+			t = tabs[0].id;
+		};
+
+		this.onTab(t);
 	};
 	
 	componentDidUpdate () {
@@ -1076,18 +1086,17 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			return [];
 		};
 
-		const tabs: any[] = [];
-
-		if (!noUpload) {
-			tabs.push({ id: Tab.Library, text: translate('commonLibrary') });
-		};
+		let tabs: any[] = [];
 
 		if (!noGallery) {
 			tabs.push({ id: Tab.Smile, text: translate('menuSmileGallery') });
 		};
 
 		if (!noUpload) {
-			tabs.push({ id: Tab.Upload, text: translate('menuSmileUpload') });
+			tabs = tabs.concat([
+				{ id: Tab.Library, text: translate('commonLibrary') },
+				{ id: Tab.Upload, text: translate('menuSmileUpload') }
+			]);
 		};
 
 		return tabs;
@@ -1095,6 +1104,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 	onTab (tab: Tab) {
 		this.setState({ tab }, () => this.load());
+		this.props.storageSet({ tab });
 	};
 
 	onRandom () {
