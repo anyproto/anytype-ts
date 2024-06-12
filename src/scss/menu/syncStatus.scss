@@ -39,7 +39,7 @@
             }
         }
 
-        .items { height: 100%; padding: 0px 8px; }
+        .items { height: 100%; padding: 0px; }
         .items {
             .sides { display: flex; justify-content: space-between; align-items: center; }
             .sides {
@@ -55,8 +55,8 @@
                 }
             }
 
-            .sectionName { padding: 4px 8px; }
-            .item { padding: 3px 8px; line-height: 22px; border-radius: 6px; }
+            .sectionName { padding: 4px 16px; }
+            .item { padding: 3px 8px; margin: 0px 8px; width: unset; line-height: 22px; border-radius: 6px; }
             .item {
                 .info { display: flex; align-items: baseline; }
                 .info {
