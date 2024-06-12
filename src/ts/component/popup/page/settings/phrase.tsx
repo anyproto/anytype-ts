@@ -71,7 +71,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		Renderer.send('keytarGet', account.id).then((value: string) => {
 			C.WalletConvert(value, '', (message: any) => {
 				if (!message.error.code) {
-					this.refPhrase.setValue(value);
+					this.refPhrase?.setValue(value);
 					this.setState({ entropy: message.entropy });
 				};
 			});

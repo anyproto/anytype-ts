@@ -409,7 +409,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onWillCloseWindow (e: any, windowId: string) {
-		Storage.deleteLastOpenedByWindowId([windowId]);
+		Storage.deleteLastOpenedByWindowId([ windowId ]);
 	};
 
 	onPopup (e: any, id: string, param: any, close?: boolean) {

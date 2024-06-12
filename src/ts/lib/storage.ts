@@ -123,7 +123,6 @@ class Storage {
 		const obj = this.get('lastOpenedObject') || {};
 
 		obj[windowId] = Object.assign(obj[windowId] || {}, param);
-
 		this.set('lastOpenedObject', obj, true);
 	};
 
@@ -131,25 +130,27 @@ class Storage {
 		objectIds = objectIds || [];
 
 		const obj = this.get('lastOpenedObject') || {};
-		const windowIdsToDelete = Object.keys(obj).reduce((windowIds, windowId) => {
-			return !obj[windowId] || objectIds.includes(obj[windowId].id) ? windowIds.concat(windowId) : windowIds;
-		}, []);
+		const windowIds = [];
 
-		this.deleteLastOpenedByWindowId(windowIdsToDelete, true);
+		for (const windowId in obj) {
+			if (!obj[windowId] || objectIds.includes(obj[windowId].id)) {
+				windowIds.push(windowId);
+			};
+		};
+
+		this.deleteLastOpenedByWindowId(windowIds);
 	};
 
-	deleteLastOpenedByWindowId (windowIdsToDelete: string[], homeIncluded?: boolean) {
-		if (windowIdsToDelete.length == 0) {
+	deleteLastOpenedByWindowId (windowIds: string[],) {
+		windowIds = windowIds.filter(id => id != '1');
+
+		if (!windowIds.length) {
 			return;
 		};
 
 		const obj = this.get('lastOpenedObject') || {};
 
-		if (!homeIncluded) {
-			windowIdsToDelete = windowIdsToDelete.filter(id => id != '1');
-		};
-
-		windowIdsToDelete.forEach(windowId => delete(obj[windowId]));
+		windowIds.forEach(windowId => delete(obj[windowId]));
 		this.set('lastOpenedObject', obj, true);
 	};
 

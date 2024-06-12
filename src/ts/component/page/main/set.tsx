@@ -89,10 +89,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		return (
-			<div 
-				ref={node => this.node = node}
-				className={[ 'editorWrapper', check.className ].join(' ')}
-			>
+			<div ref={node => this.node = node}>
 				<Header 
 					{...this.props} 
 					component="mainObject" 
@@ -101,7 +98,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				/>
 
 				<div id="bodyWrapper" className="wrapper">
-					{content}
+					<div className={[ 'editorWrapper', check.className ].join(' ')}>
+						{content}
+					</div>
 				</div>
 
 				<Footer component="mainObject" {...this.props} />
