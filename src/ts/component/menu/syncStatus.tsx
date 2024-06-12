@@ -6,6 +6,7 @@ import { Title, Icon, IconObject, ObjectName } from 'Component';
 import { C, Action, I, translate, UtilObject, UtilData, UtilSpace, UtilFile, UtilCommon } from 'Lib';
 import { menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
+import { SyncStatusObject } from 'Interface';
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 28;
@@ -284,11 +285,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		let isConnected = false;
 		let isError = false;
 
-		if ([ I.SyncStatusStatus.Syncing, I.SyncStatusStatus.Synced ].includes(syncData.status)) {
+		if ([ I.SyncStatusSpace.Syncing, I.SyncStatusSpace.Synced ].includes(syncData.status)) {
 			isConnected = true;
 			status = 'connected';
 		} else
-		if (I.SyncStatusStatus.Error == syncData.status) {
+		if (I.SyncStatusSpace.Error == syncData.status) {
 			isError = true;
 			status = 'error';
 		};
@@ -327,15 +328,15 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				title = translate('menuSyncStatusInfoSelfTitle');
 
 				switch (syncData.status) {
-					case I.SyncStatusStatus.Syncing: {
+					case I.SyncStatusSpace.Syncing: {
 						message = translate('menuSyncStatusInfoSelfMessageSyncing');
 						break;
 					};
-					case I.SyncStatusStatus.Synced: {
+					case I.SyncStatusSpace.Synced: {
 						message = translate('menuSyncStatusInfoSelfMessageSynced');
 						break;
 					};
-					case I.SyncStatusStatus.Error: {
+					case I.SyncStatusSpace.Error: {
 						message = translate('menuSyncStatusInfoSelfMessageError');
 						break;
 					};
@@ -354,11 +355,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		return { id, status, title, message, buttons };
 	};
 
-	getClassBySyncStatus (status: I.SyncStatusStatus) {
+	getClassBySyncStatus (status: I.SyncStatusObject) {
 		if (!status) {
 			status = 0;
 		};
-		return I.SyncStatusStatus[status].toLowerCase();
+		return I.SyncStatusObject[status].toLowerCase();
 	};
 
 	getRowHeight (item: any) {

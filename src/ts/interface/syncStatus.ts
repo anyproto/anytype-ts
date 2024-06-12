@@ -1,8 +1,15 @@
-export enum SyncStatusStatus {
+export enum SyncStatusSpace {
 	Synced		 = 0,
 	Syncing		 = 1,
 	Error		 = 2,
 	Offline		 = 3,
+};
+
+export enum SyncStatusObject {
+	Synced		 = 0,
+	Syncing		 = 1,
+	Error		 = 2,
+	Queued 		 = 3,
 };
 
 export enum SyncStatusNetwork {
@@ -19,7 +26,7 @@ export enum SyncStatusError {
 };
 
 export interface SyncStatus {
-	status: SyncStatusStatus,
+	status: SyncStatusSpace,
 	network: SyncStatusNetwork,
 	error: SyncStatusError,
 	syncingCounter: number

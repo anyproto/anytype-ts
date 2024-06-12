@@ -64,15 +64,15 @@ const Sync = observer(class Sync extends React.Component<Props> {
 		let name = '';
 
 		if (network == I.SyncStatusNetwork.LocalOnly) {
-			icon = String(I.SyncStatusStatus.Offline).toLowerCase()
+			icon = String(I.SyncStatusSpace.Offline).toLowerCase()
 		} else {
-			icon = I.SyncStatusStatus[status].toLowerCase()
+			icon = I.SyncStatusSpace[status].toLowerCase()
 		};
 
-		if ((status == I.SyncStatusStatus.Error) && error) {
+		if ((status == I.SyncStatusSpace.Error) && error) {
 			name = translate(`syncButtonNameError${error}`);
 		} else
-		if (status == I.SyncStatusStatus.Offline) {
+		if (status == I.SyncStatusSpace.Offline) {
 			name = translate(`syncButtonNameOffline`);
 		};
 
