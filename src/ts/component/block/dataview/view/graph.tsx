@@ -87,6 +87,10 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	load () {
 		const { getView, getSearchIds, getTarget, isCollection } = this.props;
 		const view = getView();
+		if (!view) {
+			return;
+		};
+
 		const searchIds = getSearchIds();
 		const filters = [].concat(view.filters).concat(UtilData.graphFilters()).map(it => Dataview.filterMapper(view, it));
 		const target = getTarget();
