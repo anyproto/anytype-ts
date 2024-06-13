@@ -11,6 +11,7 @@ interface Filter {
 
 interface Graph {
 	icon: boolean;
+	preview: boolean;
 	orphan: boolean;
 	marker: boolean;
 	label: boolean;
@@ -73,6 +74,7 @@ class CommonStore {
 
 	private graphObj: Graph = { 
 		icon: true,
+		preview: true,
 		orphan: true,
 		marker: true,
 		label: true,
@@ -525,7 +527,10 @@ class CommonStore {
 	};
 
 	getGraph (key: string): Graph {
-		return Storage.get(key) || UtilCommon.objectCopy(this.graphObj);
+		const stored = Storage.get(key);
+		const def = UtilCommon.objectCopy(this.graphObj);
+
+		return Object.assign(def, stored);
 	};
 
 	getRef (id: string) {

@@ -299,6 +299,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onMessage (e) {
+		const { storageKey } = this.props;
+		const settings = commonStore.getGraph(storageKey);
 		const { id, data } = e.data;
 		const node = $(this.node);
 		const { left, top } = node.offset();
@@ -330,7 +332,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case 'onMouseMove': {
-				if (this.isDragging) {
+				if (this.isDragging || !settings.preview) {
 					break;
 				};
 
