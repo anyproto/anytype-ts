@@ -90,7 +90,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			content = (
 				<div className="emptyWrap">
 					<Label className="empty" text={canCreate && this.isAllowedObject() ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
-					{canCreate && this.isAllowedObject() ? <Button text={translate('commonCreateObject')} color="blank" className="c26" /> : ''}
+					{canCreate && this.isAllowedObject() ? <Button text={translate('commonCreateObject')} color="blank" className="c28" /> : ''}
 				</div>
 			);
 		} else {
