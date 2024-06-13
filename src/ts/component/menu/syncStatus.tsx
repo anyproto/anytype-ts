@@ -4,22 +4,28 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, ObjectName } from 'Component';
 import { C, Action, I, translate, UtilObject, UtilData, UtilSpace, UtilFile, UtilCommon } from 'Lib';
-import { menuStore, authStore } from 'Store';
+import { menuStore, authStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
-import { SyncStatusObject } from 'Interface';
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 28;
 const LIMIT_HEIGHT = 12;
+const SUB_ID = 'syncStatusObjectsList';
 
 const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, {}> {
 
+	_isMounted = false;
 	cache: any = {};
 	items: any[] = [];
 	currentInfo = '';
 
 	constructor (props: I.Menu) {
 		super(props);
+
+		this.cache = new CellMeasurerCache({
+			defaultHeight: HEIGHT_ITEM,
+			fixedWidth: true,
+		});
 
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onPanelIconClick = this.onPanelIconClick.bind(this);
@@ -135,20 +141,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
 		this.load();
 	};
 
-	componentDidUpdate () {
-		const items = this.getItems();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
-			keyMapper: i => (items[i] || {}).id,
-		});
-	};
-
 	componentWillUnmount () {
+		this._isMounted = false;
 		this.onCloseInfo();
 	};
 
@@ -237,28 +235,17 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		];
 
 		UtilData.searchSubscribe({
-			subId: 'syncStatusObjectsList',
+			subId: SUB_ID,
 			filters,
 			sorts,
 			keys: Constant.defaultRelationKeys.concat(Constant.syncStatusRelationKeys),
 			offset: 0,
 			limit: 30,
-		}, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			this.items = this.items.concat(message.records || []);
-			this.forceUpdate();
 		});
 	};
 
 	getItems () {
-		let items = this.items.slice();
-
-		items = UtilData.groupDateSections(items, 'syncDate');
-
-		return items;
+		return UtilData.groupDateSections(dbStore.getRecords(SUB_ID), 'syncDate');
 	};
 
 	getIcons () {
