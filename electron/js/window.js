@@ -152,7 +152,8 @@ class WindowManager {
 
 		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', `index.html`));
 		win.setMenu(null);
-		win.showInactive();
+		
+		is.windows ? win.showInactive() : win.show();
 
 		win.webContents.once('did-finish-load', () => {
 			win.webContents.postMessage('challenge', options);
