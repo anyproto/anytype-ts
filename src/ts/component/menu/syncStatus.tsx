@@ -40,7 +40,11 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			const { id, status } = item;
 
 			return (
-				<div id={UtilCommon.toCamelCase([ 'icon', id ].join('-'))} className={[ 'iconWrapper', status ? status : ''].join(' ')} onClick={e => this.onPanelIconClick(e, item)}>
+				<div
+					id={UtilCommon.toCamelCase([ 'icon', id ].join('-'))}
+					className={[ 'iconWrapper', status ? status : ''].join(' ')}
+					onClick={e => this.onPanelIconClick(e, item)}
+				>
 					<Icon className={id} />
 				</div>
 			);

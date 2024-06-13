@@ -25,6 +25,12 @@
 		animation: syncing 1.6s ease-out infinite;
 	}
 	.icon.syncing::after { animation-delay: 0.3s; }
-
 	.name { @include text-overflow-nw; margin-right: 10px; }
+}
+.sync:not(.errorIncompatibleVersion) {
+	.name { display: none; }
+}
+.sync:hover,
+.sync.hover {
+	.name { display: block; }
 }

@@ -28,11 +28,14 @@ const Sync = observer(class Sync extends React.Component<Props> {
 
 	render () {
 		const { id, className } = this.props;
-		const { icon, name } = this.getStatus();
+		const { icon, name, error } = this.getStatus();
 		const cn = [ 'sync' ];
 
 		if (className) {
 			cn.push(className);
+		};
+		if (error) {
+			cn.push(`error${I.SyncStatusError[error]}`);
 		};
 		
 		return (
@@ -76,7 +79,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 			name = translate(`syncButtonNameOffline`);
 		};
 
-		return { icon, name };
+		return { icon, name, error };
 	};
 
 });
