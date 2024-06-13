@@ -89,8 +89,8 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		if (!isLoading && !length && showEmpty) {
 			content = (
 				<div className="emptyWrap">
-					<Label className="empty" text={translate('widgetEmptyLabel')} />
-					{canCreate && this.isAllowedObject() ? <Button text={translate('commonCreateObject')} color="blank" className="c28" /> : ''}
+					<Label className="empty" text={canCreate && this.isAllowedObject() ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
+					{canCreate && this.isAllowedObject() ? <Button text={translate('commonCreateObject')} color="blank" className="c26" /> : ''}
 				</div>
 			);
 		} else {
