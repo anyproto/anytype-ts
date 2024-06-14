@@ -5,16 +5,17 @@ class Util {
 	execPromise (command) {
 		return new Promise(function(resolve, reject) {
 			exec(command, (error, stdout, stderr) => {
+				const out = String(stdout || '').trim();
+
 				console.log('Error: ', error, stderr);
+				console.log('Out: ', out);
 
 				if (error || stderr) {
 					reject(error || stderr);
 					return;
 				};
 
-				console.log('Out: ', stdout.trim());
-
-				resolve(stdout.trim());
+				resolve(out);
 			});
 		});
 	};
