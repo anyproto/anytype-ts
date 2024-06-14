@@ -1,9 +1,12 @@
+const fs = require('fs');
 const Util = require('./util.js');
 
 exports.default = async function (context) {
 	if (process.env.ELECTRON_SKIP_NOTARIZE) {
 		return;
 	};
+
+	fs.chmodSync(context.path, '777');
 
 	const cmd = [
 		`azuresigntool sign`,
