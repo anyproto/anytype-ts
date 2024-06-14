@@ -17,7 +17,7 @@ exports.default = async function (context) {
 		`--azure-key-vault-client-secret "${process.env.AZURE_CLIENT_SECRET}"`,
 		`--azure-key-vault-certificate "${process.env.AZURE_CERT_NAME}"`,
 		`--verbose`,
-		`"${context.path}"`,
+		`"${context.path.replace(/\\/g, '/')}"`,
 	].join(' ');
 
 	return await Util.execPromise(cmd);
