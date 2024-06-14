@@ -23,6 +23,10 @@
 			.buttons { display: block; }
 			.icon.chk { right: 32px; }
 		}
+		.item.withCheckbox:hover, .item.withCheckbox.hover {
+			.clickable { width: calc(100% - 44px); }
+		}
+
 		.item.add {
 			.name { @include text-overflow-nw; width: calc(100% - 24px); }
 		}
