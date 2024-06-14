@@ -6,14 +6,14 @@ exports.default = async function (context) {
 		return;
 	};
 
-	fs.chmodSync(context.path, '777');
+	const tsUrl = 'https://rfc3161.ai.moda';
 
 	const cmd = [
 		`azuresigntool sign`,
 		`--description-url "${context.site}"`,
 		`--file-digest sha384`,
 		`--timestamp-digest sha384`,
-		`--timestamp-rfc3161 http://timestamp.digicert.com`,
+		`--timestamp-rfc3161 ${tsUrl}`,
 		`--azure-key-vault-url "${process.env.AZURE_KEY_VAULT_URI}"`,
 		`--azure-key-vault-client-id "${process.env.AZURE_CLIENT_ID}"`,
 		`--azure-key-vault-tenant-id "${process.env.AZURE_TENANT_ID}"`,
