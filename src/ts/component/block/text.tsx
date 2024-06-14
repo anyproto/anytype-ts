@@ -1068,6 +1068,25 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const text = block.canHaveMarks() ? parsed.text : value;
 
+		// When typing text adjust links markup to break it
+		if (!keyboard.isSpecial(e)) {
+			const d = text.length - this.text.length;
+			const markTypes = [ I.MarkType.Link, I.MarkType.Object ];
+
+			if (d > 0) {
+				for (let i = 0; i < this.marks.length; ++i) {
+					let mark = this.marks[i];
+
+					if (markTypes.includes(mark.type) && (mark.range.to == range.to)) {
+						const adjusted = Mark.adjust([ mark ], mark.range.from, -d);
+
+						this.marks[i] = adjusted[0];
+						adjustMarks = true;
+					};
+				};
+			};
+		};
+
 		if (!ret && (adjustMarks || (value != text))) {
 			this.setValue(text);
 

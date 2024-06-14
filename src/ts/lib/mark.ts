@@ -249,10 +249,10 @@ class Mark {
 	};
 
 	adjust (marks: I.Mark[], from: number, length: number) {
-		marks = marks || [];
+		marks = UtilCommon.objectCopy(marks || []);
 
 		for (const mark of marks) {
-			if ((mark.range.from <= from) && (mark.range.to > from)) {
+			if ((mark.range.from < from) && (mark.range.to > from)) {
 				mark.range.to += length;
 			} else
 			if (mark.range.from >= from) {
@@ -261,6 +261,7 @@ class Mark {
 			};
 			mark.range.from = Math.max(0, mark.range.from);
 		};
+
 		return marks;
 	};
 	
