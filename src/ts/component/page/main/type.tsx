@@ -410,6 +410,9 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			type: I.MenuType.Horizontal,
 			element: `#button-create`,
 			horizontal: I.MenuDirection.Right,
+			data: {
+				route: analytics.route.type,
+			}
 		});
 	};
 
