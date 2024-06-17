@@ -489,12 +489,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	initToggle () {
 		const { block, isPreview } = this.props;
 		const node = $(this.node);
+		const wrapper = node.find('#wrapper');
 		const icon = node.find('.icon.collapse');
 		const isClosed = Storage.checkToggle('widget', block.id);
 
 		if (!isPreview) {
 			isClosed ? node.addClass('isClosed') : node.removeClass('isClosed');
 			isClosed ? icon.addClass('isClosed') : node.removeClass('isClosed');
+			isClosed ? wrapper.hide() : wrapper.show();
 		};
 	};
 
@@ -510,14 +512,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block } = this.props;
 		const node = $(this.node);
 		const icon = node.find('.icon.collapse');
-		const innerWrap = node.find('.innerWrap');
+		const innerWrap = node.find('#innerWrap');
 		const wrapper = node.find('#wrapper').css({ height: 'auto' });
 		const height = wrapper.outerHeight();
 		const minHeight = this.getMinHeight();
 
 		node.addClass('isClosed');
 		icon.removeClass('isClosed');
-		wrapper.css({ height: minHeight });
+		wrapper.css({ height: minHeight }).show();
 		innerWrap.css({ opacity: 1 });
 
 		raf(() => { wrapper.css({ height }); });
@@ -536,8 +538,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	close () {
 		const { block } = this.props;
 		const node = $(this.node);
-		const innerWrap = node.find('.innerWrap');
 		const icon = node.find('.icon.collapse');
+		const innerWrap = node.find('#innerWrap');
 		const wrapper = node.find('#wrapper');
 		const minHeight = this.getMinHeight();
 
@@ -555,7 +557,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const isClosed = Storage.checkToggle('widget', block.id);
 
 			if (isClosed) {
-				wrapper.css({ height: '' });
+				wrapper.css({ height: '' }).hide();
 			};
 		}, 450);
 	};
@@ -632,7 +634,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	getFavoriteIds (): string[] {
 		const { root } = blockStore;
-		return blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
+		const ids = blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
+		const items = ids.map(id => detailStore.get(root, id)).filter(it => !it.isArchived).map(it => it.id);
+
+		return items;
 	};
 
 	sortFavorite (records: string[]): string[] {

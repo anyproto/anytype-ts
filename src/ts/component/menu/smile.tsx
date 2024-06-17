@@ -374,7 +374,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			t = tabs[0].id;
 		};
 
-		this.onTab(t);
+		this.setState({ tab: t }, () => this.load());
 	};
 	
 	componentDidUpdate () {

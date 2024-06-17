@@ -295,11 +295,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
 		].concat(data.filters || []);
 
-		const sorts = [].concat(data.sorts || []);
+		let sorts = [].concat(data.sorts || []);
 
 		if (!sorts.length) {
-			sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
-			sorts.push({ relationKey: 'type', type: I.SortType.Asc });
+			sorts = sorts.concat([
+				{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+				{ relationKey: 'type', type: I.SortType.Asc }
+			]);
 		};
 
 		if (skipIds && skipIds.length) {
