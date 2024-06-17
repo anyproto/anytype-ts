@@ -179,7 +179,7 @@ class UtilData {
 		param = param || {};
 		param.routeParam = param.routeParam || {};
 
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const { root, widgets } = blockStore;
 		const { redirect, space } = commonStore;
 		const color = Storage.get('color');

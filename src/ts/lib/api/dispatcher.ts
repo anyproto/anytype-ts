@@ -7,7 +7,7 @@ import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
 import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore } from 'Store';
 import { 
-	UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage, UtilSpace, UtilData 
+	UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage, UtilSpace, UtilData, keyboard 
 } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
@@ -1107,6 +1107,8 @@ class Dispatcher {
 		blockStore.updateNumbers(contextId); 
 		blockStore.updateMarkup(contextId);
 		blockStore.checkTypeSelect(contextId);
+
+		keyboard.setWindowTitle();
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {

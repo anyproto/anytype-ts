@@ -235,7 +235,7 @@ class Phrase extends React.Component<Props, State> {
 	onToggle () {
 		const { checkPin, onToggle } = this.props;
 		const { isHidden } = this.state;
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const onSuccess = () => {
 			this.setState({ isHidden: !isHidden });
 

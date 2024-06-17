@@ -240,8 +240,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 						let from = 0;
 						for (const item of diff) {
-							const to = from + item.count;
+							if (item.removed) {
+								continue;
+							};
 
+							const to = from + item.count;
 							if (item.added) {
 								marks.push({ type: I.MarkType.Change, param: '', range: { from, to } });
 							};

@@ -332,6 +332,7 @@ class App extends React.Component<object, State> {
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const route = String(data.route || redirect || '');
+		const spaceId = Storage.get('spaceId');
 
 		commonStore.configSet(config, true);
 		commonStore.nativeThemeSet(isDark);
@@ -379,8 +380,13 @@ class App extends React.Component<object, State> {
 							authStore.accountSet(account);
 							commonStore.configSet(account.config, false);
 
-							UtilData.onInfo(account.info);
-							UtilData.onAuth({}, cb);
+							if (spaceId) {
+								UtilRouter.switchSpace(spaceId, '', cb);
+							} else {
+								UtilData.onInfo(account.info);
+								UtilData.onAuth({}, cb);
+							};
+
 							UtilData.onAuthOnce(false);
 						};
 					});
