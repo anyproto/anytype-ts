@@ -820,7 +820,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
-	getRange () {
+	getRange (): I.TextRange {
 		return UtilCommon.objectCopy(this.refEditable.getRange());
 	};
 
