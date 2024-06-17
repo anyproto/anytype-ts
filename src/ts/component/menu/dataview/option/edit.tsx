@@ -2,15 +2,15 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import $ from 'jquery';
-import { I, C, UtilMenu, Relation, translate, keyboard } from 'Lib';
-import { Filter, MenuItemVertical } from 'Component';
-import { menuStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, C, UtilMenu, Relation, translate, keyboard, analytics } from 'Lib';
+import { Filter, MenuItemVertical, Icon } from 'Component';
+import { menuStore, popupStore } from 'Store';
+const Constant = require('json/constant.json');
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
 	
-	refName: any = null;
-	color: string = null;
+	refName = null;
+	color = '';
 	timeout = 0;
 	n = -1;
 
@@ -20,14 +20,23 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const { option } = data;
 		const sections = this.getSections();
 
+		const Color = (item: any) => (
+			<div
+				id={`item-${item.id}`}
+				className={[ 'item', 'color', `color-${item.className}` ].join(' ')}
+				onClick={e => this.onClick(e, item)}
+				onMouseEnter={e => this.onMouseEnter(e, item)}
+			>
+				{this.color == item.value ? <Icon className="tick" /> : ''}
+			</div>
+		);
+
 		const Section = (item: any) => (
-			<div className="section">
+			<div className={[ 'section', (item.className ? item.className : '') ].join(' ')}>
 				<div className="items">
 					{item.children.map((action: any, i: number) => {
 						if (action.isBgColor) {
-							action.inner = <div className={`inner isMultiSelect textColor textColor-${action.className}`} />;
-							action.icon = 'color';
-							action.checkbox = action.value == this.color;
+							return <Color key={i} {...action} />;
 						};
 
 						return (
@@ -49,7 +58,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 					ref={ref => this.refName = ref}
 					placeholder={translate('menuDataviewOptionEditPlaceholder')}
 					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
-					className={'textColor-' + this.color}
+					className={'outlined textColor-' + this.color}
 					value={option.name}
 					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
 				/>
@@ -101,7 +110,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const colors = UtilMenu.getBgColors().filter(it => it.id != 'bgColor-default');
 
 		return [
-			{ children: colors },
+			{ children: colors, className: 'colorPicker' },
 			{ 
 				children: [
 					{ id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') }
@@ -145,7 +154,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		this.timeout = window.setTimeout(() => this.save(), Constant.delay.keyboard);
 	};
 
-
 	onClick (e: any, item: any) {
 		if (item.isBgColor) {
 			this.color = item.value;
@@ -153,7 +161,18 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			this.forceUpdate();
 		} else
 		if (item.id == 'remove') {
-			this.remove();
+			popupStore.open('confirm', {
+				data: {
+					icon: 'confirm',
+					bgColor: 'red',
+					title: translate('commonAreYouSure'),
+					text: translate('popupConfirmRelationOptionRemoveText'),
+					textConfirm: translate('commonDelete'),
+					onConfirm: () => {
+						this.remove();
+					}
+				}
+			});
 		};
 	};
 
@@ -173,7 +192,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 		menuStore.updateData(id, { value });
 		menuStore.updateData('dataviewOptionList', { value });
-		
+
 		if (onChange) {
 			onChange(value);
 		};
@@ -191,7 +210,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			return;
 		};
 
-		C.ObjectSetDetails(option.id, [ 
+		C.ObjectListSetDetails([ option.id ], [ 
 			{ key: 'name', value },
 			{ key: 'relationOptionColor', value: this.color },
 		]);

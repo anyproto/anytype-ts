@@ -10,6 +10,7 @@ const ConfigManager = require('./config.js');
 const UpdateManager = require('./update.js');
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
+const { set } = require('lodash');
 
 const DEFAULT_WIDTH = 1024;
 const DEFAULT_HEIGHT = 768;
@@ -29,7 +30,9 @@ class WindowManager {
 			backgroundColor: Util.getBgColor('dark'),
 			show: false,
 			titleBarStyle: 'hidden-inset',
-			webPreferences: {},
+			webPreferences: {
+				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.js')),
+			},
 		}, param);
 
 		param.webPreferences = Object.assign({
@@ -42,21 +45,26 @@ class WindowManager {
 
 		let win = new BrowserWindow(param);
 
+		remote.enable(win.webContents);
+
 		win.isChild = isChild;
 		win.route = route;
 		win.windowId = win.id;
 
 		this.list.add(win);
 
+		win.on('close', () => {
+			Util.send(win, 'will-close-window', win.id);
+		});
+
 		win.on('closed', () => {
 			this.list.delete(win);
 			win = null;
 		});
 
-		win.once('ready-to-show', () => { win.show(); });
 		win.on('focus', () => { 
 			UpdateManager.setWindow(win);
-			MenuManager.setWindow(win); 
+			MenuManager.setWindow(win);
 		});
 		win.on('enter-full-screen', () => Util.send(win, 'enter-full-screen'));
 		win.on('leave-full-screen', () => Util.send(win, 'leave-full-screen'));
@@ -83,10 +91,6 @@ class WindowManager {
 			minHeight: MIN_HEIGHT,
 			width: DEFAULT_WIDTH, 
 			height: DEFAULT_HEIGHT,
-
-			webPreferences: {
-				preload: fixPathForAsarUnpack(path.join(Util.electronPath(), 'js', 'preload.js')),
-			},
 		};
 
 		if (is.macos) {
@@ -98,7 +102,7 @@ class WindowManager {
 			param.trafficLightPosition = { x: 20, y: 18 };
 		} else
 		if (is.windows) {
-			param.icon = path.join(Util.imagePath(), 'icon32x32.png');
+			param.icon = path.join(Util.imagePath(), 'icons', '256x256.ico');
 		} else
 		if (is.linux) {
 			param.icon = image;
@@ -121,13 +125,13 @@ class WindowManager {
 
 		const win = this.create(options, param);
 
-		remote.enable(win.webContents);
-
 		if (!isChild) {
 			state.manage(win);
 		};
 
 		win.loadURL(is.development ? `http://localhost:${port}` : 'file://' + path.join(Util.appPath, 'dist', 'index.html'));
+
+		win.once('ready-to-show', () => win.show());
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
 
@@ -138,29 +142,28 @@ class WindowManager {
 		return win;
 	};
 
-	createAbout () {
-		const win = this.create({}, { 
-			width: 400, 
-			height: 400, 
-			useContentSize: true,
-			backgroundColor: Util.getBgColor(Util.getTheme()),
+	createChallenge (options) {
+		const win = this.create({}, {
+			backgroundColor: '',
+			width: 424, 
+			height: 232,
+			titleBarStyle: 'hidden',
 		});
 
-		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}&lang=${Util.getLang()}`));
+		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', `index.html`));
 		win.setMenu(null);
 
-		win.webContents.on('will-navigate', (e, url) => {
-			e.preventDefault();
-			// eslint-disable-next-line no-undef
-			shell.openExternal(url);
+		is.windows ? win.showInactive() : win.show();
+
+		win.webContents.once('did-finish-load', () => {
+			win.webContents.postMessage('challenge', options);
 		});
 
-		win.webContents.on('new-window', (e, url) => {
-			e.preventDefault();
-			// eslint-disable-next-line no-undef
-			shell.openExternal(url);
-		});
-
+		setTimeout(() => {
+			if (win && !win.isDestroyed()) {
+				win.close();
+			};
+		}, 30000);
 		return win;
 	};
 
@@ -211,7 +214,7 @@ class WindowManager {
 		let y = Math.round(displayHeight / 2 - param.height / 2 + 20);
 
 		if (currentWindow) {
-			const [xPos, yPos] = currentWindow.getPosition();
+			const [ xPos, yPos ] = currentWindow.getPosition();
 
 			x = xPos + NEW_WINDOW_SHIFT;
 			y = yPos + NEW_WINDOW_SHIFT;
@@ -230,15 +233,13 @@ class WindowManager {
 
 	sendToAll () {
 		const args = [ ...arguments ];
-		this.list.forEach(it => {
-			Util.send.apply(this, [ it ].concat(args));
-		});
+		this.list.forEach(it => Util.send.apply(this, [ it ].concat(args)));
 	};
 
 	reloadAll () {
-		this.list.forEach(it => it.webContents.reload());
+		this.sendToAll('reload');
 	};
-
+	
 };
 
 module.exports = new WindowManager();

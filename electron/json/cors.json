@@ -118,7 +118,9 @@
 		"wss://*.bilibili.com:*",
 		"wss://*.biliapi.net",
 		"https://sketchfab.com",
-		"https://media.sketchfab.com"
+		"https://media.sketchfab.com",
+		"https://sentry.io",
+		"https://*.any.coop"
 	],
 
 	"script-src-elem": [
@@ -157,6 +159,7 @@
 
 	"frame-src": [
 		"chrome-extension://react-developer-tools",
+		"file://*",
 		"http://localhost:*/embed/iframe.html",
 		"https://*.youtube.com",
 		"https://*.vimeo.com",
@@ -164,8 +167,9 @@
 		"https://*.google.com",
 		"https://miro.com",
 		"https://*.miro.com",
-		"https://*.figma.com/",
-		"file://*",
+		"https://*.figma.com",
+		"https://*.github.com",
+		"https://*.bilibili.com",
 		"https://platform.twitter.com",
 		"https://*.openstreetmap.org",
 		"https://embed.reddit.com",
@@ -174,7 +178,6 @@
 		"https://t.me",
 		"https://codepen.io",
 		"https://cdpn.io",
-		"https://*.bilibili.com",
 		"https://kroki.io",
 		"https://sketchfab.com"
 	],

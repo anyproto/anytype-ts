@@ -5,13 +5,19 @@ import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, UtilMenu, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isExpanded: boolean;
 };
 
 const LIMIT_PINNED = 5;
+
+enum SystemIds {
+	Add = 'add',
+	Search = 'search',
+	Clipboard = 'clipboard',
+};
 
 class MenuQuickCapture extends React.Component<I.Menu, State> {
 
@@ -22,7 +28,9 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	filter = '';
 	refFilter: any = null;
 	timeoutFilter = 0;
+	intervalClipboard = 0;
 	items: any[] = [];
+	clipboardItems: any[] = [];
 	offset = 0;
 	state = {
 		isExpanded: false,
@@ -88,13 +96,17 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				cn.push('isDefault');
 			};
 
-			if ([ 'search', 'add' ].includes(item.itemId)) {
+			if (item.className) {
+				cn.push(item.className);
+			};
+
+			if ([ SystemIds.Search, SystemIds.Add, SystemIds.Clipboard ].includes(item.itemId)) {
 				icon = <Icon className={item.itemId} />;
 			} else {
 				icon = <IconObject object={item} />;
 			};
 
-			if (item.itemId != 'search') {
+			if (![ SystemIds.Search, SystemIds.Clipboard ].includes(item.itemId)) {
 				name = <ObjectName object={item} />;
 			};
 
@@ -103,7 +115,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 					id={`item-${item.id}`}
 					className={cn.join(' ')}
 					onClick={e => this.onClick(e, item)}
-					onContextMenu={e => this.onContextMneu(e, item)}
+					onContextMenu={e => this.onContextMenu(e, item)}
 					onMouseEnter={e => this.onOver(e, item)}
 					onMouseLeave={e => this.onOut(e, item)}
 				>
@@ -136,9 +148,31 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	};
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { isExpanded } = data;
+
 		this._isMounted = true;
 		this.load(true);
 		this.rebind();
+
+		const check = async () => {
+			const items = await this.getClipboardData();
+			const needUpdate = this.clipboardItems.length != items.length;
+
+			this.clipboardItems = items;
+
+			if (needUpdate) {
+				this.forceUpdate();
+			};
+		};
+
+		check();
+		this.intervalClipboard = window.setInterval(check, 2000);
+
+		if (isExpanded) {
+			this.onExpand();
+		};
 	};
 
 	componentDidUpdate () {
@@ -159,16 +193,29 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		window.clearInterval(this.intervalClipboard);
 	};
 
 	rebind () {
+		const { getId, close, setActive } = this.props;
+
 		this.unbind();
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		window.setTimeout(() => this.props.setActive(), 15);
+		window.setTimeout(() => setActive(), 15);
+
+		if (commonStore.navigationMenu == I.NavigationMenuMode.Hover) {
+			$(`#${getId()}`).off(`mouseleave`).on(`mouseleave`, () => {
+				if (!this.state.isExpanded) {
+					close();
+				};
+			});
+		};
 	};
 
 	unbind () {
 		$(window).off('keydown.menu');
+		$(`#${this.props.getId()}`).off(`mouseleave`);
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
@@ -207,7 +254,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				this.items = [];
 			};
 
-			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
+			this.items = this.items.concat(message.records || []);
 			this.forceUpdate();
 		});
 	};
@@ -216,6 +263,8 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const { isExpanded } = this.state;
 		const { space, type } = commonStore;
 		const pinnedIds = Storage.getPinnedTypes();
+		const hasClipboard = this.clipboardItems && this.clipboardItems.length;
+		const cmd = keyboard.cmdSymbol();
 
 		let sections: any[] = [];
 		let items: any[] = [];
@@ -236,7 +285,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 			if (this.filter) {
 				objects.push({ 
-					id: 'add', 
+					id: SystemIds.Add, 
 					name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter),
 				});
 			};
@@ -273,11 +322,20 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			});
 
 			items.unshift({ 
-				id: 'search', 
+				id: SystemIds.Search, 
 				icon: 'search', 
 				name: '', 
 				tooltip: translate('menuQuickCaptureTooltipSearch'),
 				caption: '0',
+			});
+
+			items.push({ 
+				id: SystemIds.Clipboard, 
+				icon: 'clipboard', 
+				name: '', 
+				tooltip: translate('menuQuickCaptureTooltipClipboard'),
+				caption: `${cmd} + V`,
+				className: [ 'clipboard', (hasClipboard ? 'active' : '') ].join(' '),
 			});
 
 			sections.push({ id: 'collapsed', children: items });
@@ -313,6 +371,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const { setHover, onKeyDown } = this.props;
 		const items = this.getItems();
 		const length = items.length;
+		const cmd = keyboard.cmdKey();
 
 		keyboard.disableMouse(true);
 
@@ -338,7 +397,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		});
 
 		if (!isExpanded) {
-			keyboard.shortcut('0, 1, 2, 3, 4, 5, 6, 7, 8, 9', e, (pressed) => {
+			keyboard.shortcut('0, 1, 2, 3, 4, 5, 6, 7, 8, 9', e, (pressed: string) => {
 				e.preventDefault();
 
 				const n = Number(pressed) || 0;
@@ -349,34 +408,58 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			});
 		};
 
+		keyboard.shortcut(`${cmd}+v`, e, () => {
+			e.preventDefault();
+
+			this.onPaste();
+			ret = true;
+		});
+
 		if (!ret) {
 			onKeyDown(e);
 		};
 	};
 
 	onClick (e: any, item: any) {
-		if (item.itemId == 'search') {
+		if (item.itemId == SystemIds.Clipboard) {
+			this.onPaste();
+			return;
+		};
+
+		if (item.itemId == SystemIds.Search) {
 			this.onExpand();
+			analytics.event('ScreenObjectTypeSearch');
 			return;
 		};
 
 		const { close } = this.props;
 
 		const cb = (created?: any) => {
-			const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
+			const { isExpanded } = this.state;
 			const type = created || item;
+
+			if (isExpanded && this.filter.length) {
+				analytics.event('TypeSearchResult');
+			};
+
+			let flags: I.ObjectFlag[] = [];
+			if (!UtilObject.isSetLayout(type.recommendedLayout)) {
+				flags = flags.concat([ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+			};
 
 			C.ObjectCreate({ layout: type.recommendedLayout }, flags, item.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
 				if (message.error.code || !message.details) {
 					return;
 				};
 
-				UtilObject.openAuto(message.details);
-				analytics.event('CreateObject', { route: 'Navigation', objectType: type.id });
+				const object = message.details;
+
+				UtilObject.openAuto(object);
+				analytics.createObject(object.type, object.layout, analytics.route.navigation, message.middleTime);
 			});
 		};
 
-		if (item.itemId == 'add') {
+		if (item.itemId == SystemIds.Add) {
 			C.ObjectCreateObjectType({ name: this.filter }, [], commonStore.space, (message: any) => {
 				if (!message.error.code) {
 					cb(message.details);
@@ -387,14 +470,14 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			if (item.isInstalled) {
 				cb();
 			} else {
-				Action.install(item, true, message => cb(message.details));
+				Action.install({ ...item, id: item.itemId }, true, message => cb(message.details));
 			};
 		};
 
 		close();
 	};
 
-	onContextMneu (e: any, item: any) {
+	onContextMenu (e: any, item: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -402,7 +485,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if ([ 'add', 'search' ].includes(item.itemId)) {
+		if ([ SystemIds.Add, SystemIds.Search, SystemIds.Clipboard ].includes(item.itemId)) {
 			return;
 		};
 
@@ -413,6 +496,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const canPin = type.isInstalled;
 		const canDefault = type.isInstalled && !UtilObject.getSetLayouts().includes(item.recommendedLayout) && (type.id != commonStore.type);
 		const canDelete = type.isInstalled && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+		const route = analytics.route.navigation;
 
 		let options: any[] = [
 			canPin ? { id: 'pin', name: (isPinned ? translate('menuQuickCaptureUnpin') : translate('menuQuickCapturePin')) } : null,
@@ -445,24 +529,24 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 						case 'pin': {
 							isPinned ? Storage.removePinnedType(item.itemId) : Storage.addPinnedType(item.itemId);
+							analytics.event(isPinned ? 'UnpinObjectType' : 'PinObjectType', { objectType: item.uniqueKey, route });
 							this.forceUpdate();
 							break;
 						};
 
 						case 'default': {
 							commonStore.typeSet(item.uniqueKey);
-							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: 'Settings' });
+							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route });
 							this.forceUpdate();
 							break;
 						};
 
 						case 'remove': {
 							if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
-								Action.uninstall({ ...item, id: item.itemId }, true);
+								Action.uninstall({ ...item, id: item.itemId }, true, route);
 							};
 							break;
 						};
-
 					};
 				}
 			}
@@ -511,15 +595,79 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		$('body').removeClass('grab');
 	};
 
-	beforePosition () {
-		const node = $(this.node);
+	async onPaste () {
+		const type = dbStore.getTypeById(commonStore.type);
+		const data = await this.getClipboardData();
 
-		node.find('.item').each((i: number, item: any) => {
+		data.forEach(async item => {
+			let text = '';
+			let html = '';
+
+			if (item.types.includes('text/plain')) {
+				const textBlob = await item.getType('text/plain');
+
+				if (textBlob) {
+					text = await textBlob.text();
+				};
+			};
+
+			if (item.types.includes('text/html')) {
+				const htmlBlob = await item.getType('text/html');
+
+				if (htmlBlob) {
+					html = await htmlBlob.text();
+				};
+			};
+
+			if (!text && !html) {
+				return;
+			};
+
+			const url = UtilCommon.matchUrl(text);
+
+			if (url) {
+				C.ObjectCreateBookmark({ source: url }, commonStore.space, (message: any) => {
+					UtilObject.openAuto(message.details);
+				});
+			} else {
+				C.ObjectCreate({}, [], type?.defaultTemplateId, type?.uniqueKey, commonStore.space, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
+					const object = message.details;
+
+					C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html, text }, '', () => {
+						UtilObject.openAuto(object);
+					});
+
+					analytics.createObject(object.type, object.layout, analytics.route.clipboard, message.middleTime);
+				});
+			};
+		});
+	};
+
+	async getClipboardData () {
+		let ret = [];
+		try { ret = await navigator.clipboard.read(); } catch (e) { /**/ };
+		return ret;
+	};
+
+	beforePosition () {
+		const { getId } = this.props;
+		const obj = $(`#${getId()}`);
+		const { ww } = UtilCommon.getWindowDimensions();
+		const sidebar = $('#sidebar');
+		const sw = sidebar.outerWidth();
+		
+		obj.css({ width: '' });
+
+		obj.find('.item').each((i: number, item: any) => {
 			item = $(item);
 			item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
-
-			item.css({ width: Math.ceil(item.outerWidth()) });
 		});
+
+		obj.css({ width: Math.min(ww - Constant.size.menu.border * 2 - sw, Math.ceil(obj.outerWidth())) });
 	};
 
 };

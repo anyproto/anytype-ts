@@ -30,6 +30,22 @@ export enum MarkType {
 	Emoji		 = 9,
 	Object		 = 10,
 	Latex		 = 11,
+
+	Change		 = 100,
+	Highlight	 = 101,
+	Search		 = 102,
+};
+
+export enum MarkOverlap {
+	Equal		 = 0,		 // a == b
+	Outer		 = 1,		 // b inside a
+	Inner		 = 2,		 // a inside b
+	InnerLeft	 = 3,		 // a inside b, left side eq
+	InnerRight	 = 4,		 // a inside b, right side eq
+	Left		 = 5,		 // a-b
+	Right		 = 6,		 // b-a
+	Before		 = 7,		 // a ... b
+	After		 = 8,		 // b ... a
 };
 
 export interface TextRange {

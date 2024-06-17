@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, Windo
 import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
 import { UtilData, I, UtilCommon, translate, UtilObject, UtilFile } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
     subId: string;
@@ -22,6 +22,7 @@ interface Props {
 	collectionId?: string;
 	resize?: () => void;
 	onAfterLoad?: (message: any) => void;
+	isReadonly?: boolean;
 };
 
 interface State {
@@ -60,7 +61,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         };
 
         const { isLoading } = this.state;
-        const { buttons, rowHeight, iconSize, info } = this.props;
+        const { buttons, rowHeight, iconSize, info, isReadonly } = this.props;
         const items = this.getItems();
         const cnControls = [ 'controls' ];
 		const filter = this.getFilterValue();
@@ -80,6 +81,10 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         } else {
             buttonsList.push({ icon: 'checkbox', text: translate('commonSelectAll'), onClick: this.onSelectAll });
         };
+
+		if (isReadonly) {
+			buttonsList = [];
+		};
 
 		const Info = (item: any) => {
 			let itemInfo: any = null;
@@ -109,11 +114,13 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
         const Item = (item: any) => (
             <div className="item">
-				<Checkbox
-					ref={ref => this.refCheckbox.set(item.id, ref)}
-					value={this.selected.includes(item.id)}
-					onChange={(e) => this.onClick(e, item)}
-				/>
+				{isReadonly ? '' : (
+					<Checkbox
+						ref={ref => this.refCheckbox.set(item.id, ref)}
+						value={this.selected.includes(item.id)}
+						onChange={e => this.onClick(e, item)}
+					/>
+				)}
                 <div className="objectClickArea" onClick={() => UtilObject.openPopup(item)}>
 					<IconObject object={item} size={iconSize} />
 
@@ -179,9 +186,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 				textEmpty = UtilCommon.sprintf(translate('popupSearchNoObjects'), filter);
 			};
 
-            content = (
-				<EmptySearch text={textEmpty} />
-            );
+            content = <EmptySearch text={textEmpty} />;
         } else {
             content = (
                 <div className="items">
@@ -241,7 +246,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
     componentDidUpdate () {
         const { subId, resize, rowHeight } = this.props;
-        const records = dbStore.getRecords(subId, '');
+        const records = dbStore.getRecordIds(subId, '');
         const items = this.getItems();
 
         if (!this.cache) {
@@ -299,7 +304,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         e.stopPropagation();
 
         const { subId } = this.props;
-        const records = dbStore.getRecords(subId, '');
+        const records = dbStore.getRecordIds(subId, '');
 
         if (e.shiftKey) {
             const idx = records.findIndex(id => id == item.id);
@@ -327,7 +332,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
     getSelectedIndexes () {
         const { subId } = this.props;
-        const records = dbStore.getRecords(subId, '');
+        const records = dbStore.getRecordIds(subId, '');
         const indexes = this.selected.map(id => records.findIndex(it => it == id));
 
         return indexes.filter(idx => idx >= 0);
@@ -340,7 +345,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
 	setSelectedRange (start: number, end: number) {
 		const { subId } = this.props;
-		const records = dbStore.getRecords(subId, '');
+		const records = dbStore.getRecordIds(subId, '');
 
 		if (end > records.length) {
 			end = records.length;
@@ -350,13 +355,18 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 		this.forceUpdate();
 	};
 
+	setSelection (ids: string[]) {
+		this.selected = ids;
+		this.forceUpdate();
+	};
+
     onSelectAll () {
         this.selected.length ? this.selectionClear() : this.selectionAll();
     };
 
     selectionAll () {
         const { subId } = this.props;
-        this.selected = dbStore.getRecords(subId, '');
+        this.selected = dbStore.getRecordIds(subId, '');
         this.forceUpdate();
     };
 
@@ -400,7 +410,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
     getItems () {
         const { subId, rowLength } = this.props;
         const ret: any[] = [];
-        const records = dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id));
+        const records = dbStore.getRecords(subId);
 
         let row = { children: [] };
         let n = 0;

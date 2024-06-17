@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { MenuItemVertical, Icon, Cell } from 'Component';
 import { I, Mark, keyboard, C, focus, Action, UtilCommon, UtilData, UtilMenu, UtilObject, Storage, translate, analytics, Relation } from 'Lib';
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
@@ -50,8 +50,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					<div 
 						id="item-relation-add" 
 						className="item add" 
-						onClick={(e: any) => { this.onClick(e, item); }} 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+						onClick={e => this.onClick(e, item)} 
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						style={param.style}
 					>
 						<Icon className="plus" />
@@ -84,11 +84,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								block={block}
 								relationKey={item.relationKey}
 								getRecord={() => detailStore.get(rootId, rootId, [ item.relationKey ])}
-								recordId={rootId}
 								viewType={I.ViewType.Grid}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
-								bodyContainer={UtilCommon.getBodyContainer('menuBlockAdd')}
 								pageContainer={UtilCommon.getCellContainer('menuBlockAdd')}
 								readonly={true}
 								canOpen={false}
@@ -136,8 +134,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						{...item} 
 						className={cn.join(' ')}
 						withDescription={item.isBlock} 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }} 
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
+						onClick={e => this.onClick(e, item)} 
 						style={param.style}
 					/>
 				);
@@ -207,7 +205,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			keyMapper: i => (items[i] || {}).id,
 		});
 		
-		$(`#${getId()}`).off('mouseleave').on('mouseleave', () => { window.clearTimeout(this.timeout); });
+		$(`#${getId()}`).off('mouseleave').on('mouseleave', () => window.clearTimeout(this.timeout));
 	};
 	
 	componentDidUpdate () {
@@ -257,7 +255,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -280,7 +278,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			map(it => dbStore.getRelationById(it)).
 			filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
-		const ret = relations.concat(typeRelations).filter(it => !config.debug.ho && it.isHidden ? false : it.isInstalled).sort(UtilData.sortByName);
+		const ret = relations.concat(typeRelations).filter(it => !config.debug.hiddenObject && it.isHidden ? false : it.isInstalled).sort(UtilData.sortByName);
 
 		ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
 
@@ -319,11 +317,19 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			};
 
 			sections = sections.concat([
-				{ id: 'action', icon: 'action', name: translate('menuBlockActionsSectionsActions'), color: '', children: actions },
+				{ id: 'action', icon: 'action', name: translate('commonActions'), color: '', children: actions },
 			]);
 
 			if (block.canHaveAlign()) {
-				sections.push({ id: 'align', icon: 'align', name: translate('commonAlign'), color: '', children: UtilMenu.getAlign(block.isTextQuote()) });
+				const restricted = [];
+				if (!block.isText()) {
+					restricted.push(I.BlockHAlign.Justify);
+				};
+				if (block.isTextQuote()) {
+					restricted.push(I.BlockHAlign.Center);
+				};
+
+				sections.push({ id: 'align', icon: 'align', name: translate('commonAlign'), color: '', children: UtilMenu.getHAlign(restricted) });
 			};
 			if (block.canHaveColor()) {
 				sections.push({ id: 'color', icon: 'color', name: translate('menuBlockAddSectionsTextColor'), color: '', children: UtilMenu.getTextColors() });
@@ -373,6 +379,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 
+		if (!block) {
+			return;
+		};
+
 		let menuId = '';
 		const menuParam: I.MenuParam = {
 			menuKey: item.itemId,
@@ -414,11 +424,22 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				});
 				break;
 
-			case 'existing':
+			case 'existingPage':
 				menuId = 'searchObject';
 				menuParam.data.canAdd = true;
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Link,
+				});
+				break;
+
+			case 'existingFile':
+				menuId = 'searchObject';
+				menuParam.data.canAdd = true;
+				menuParam.data = Object.assign(menuParam.data, {
+					type: I.NavigationType.Link,
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() },
+					],
 				});
 				break;
 
@@ -457,7 +478,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onSelect, blockCreate } = data;
-		const { filter } = commonStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -466,20 +486,21 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 		keyboard.setFocus(false);
 
+		const win = $(window);
+		const { filter } = commonStore;
 		const text = String(data.text || '');
 		const length = text.length;
-
-		let marks = data.marks || [];
-		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
-
 		const onCommand = (blockId: string) => {
 			const block = blockStore.getLeaf(rootId, blockId);
 
-			if (block.isText()) {
+			if (block && block.isText()) {
 				focus.set(blockId, { from: length, to: length });
 				focus.apply();
 			};
 		};
+
+		let marks = data.marks || [];
+		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 
 		const cb = () => {
 			if (item.isTextColor) {
@@ -600,40 +621,38 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					});
 				} else 
 				if (item.isObject) {
-					const type = dbStore.getTypeById(item.objectTypeId);
-					const details: any = { type: item.objectTypeId };
+					const type = dbStore.getTypeById(item.objectTypeId) || {};
+					const details: any = { type: type.id };
 
 					if (UtilObject.isSetLayout(type.recommendedLayout)) {
 						details.layout = type.recommendedLayout;
 					};
 
-					UtilObject.create(rootId, blockId, details, position, '', UtilData.defaultLinkSettings(), [ I.ObjectFlag.SelectTemplate ], (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						UtilObject.openPopup({ ...details, id: message.targetId });
-
+					UtilObject.create(rootId, blockId, details, position, type.defaultTemplateId, [ I.ObjectFlag.SelectTemplate ], 'Powertool', (message: any) => {
+						UtilObject.openConfig(message.details);
 						analytics.event('CreateLink');
-						analytics.event('CreateObject', { objectType: item.objectTypeId, route: 'Powertool' });
 					});
 				} else {
 					keyboard.setFocus(false);
 
 					blockCreate(blockId, position, param, (newBlockId: string) => {
-						// Auto-open BlockRelation suggest menu
-						if ((param.type == I.BlockType.Relation) && !param.content.key) {
-							window.setTimeout(() => { $(`#block-${newBlockId} .info`).trigger('click'); }, Constant.delay.menu);
-						};
+						const element = $(`#block-${newBlockId}`);
 
-						// Auto-open BlockEmbed edit mode
-						if (param.type == I.BlockType.Embed) {
-							window.setTimeout(() => { $(`#block-${newBlockId} .focusable`).trigger('edit'); }, Constant.delay.menu);
-						};
+						window.setTimeout(() => { 
+							// Auto-open BlockRelation suggest menu
+							if ((param.type == I.BlockType.Relation) && !param.content.key) {
+								element.find(`.info`).trigger('click');
+							};
 
-						if (param.type == I.BlockType.Dataview) {
-							window.setTimeout(() => { $(window).trigger(`setDataviewSource.${newBlockId}`); }, Constant.delay.menu);
-						};
+							// Auto-open BlockEmbed edit mode
+							if (param.type == I.BlockType.Embed) {
+								element.find(`.focusable`).trigger('edit');
+							};
+
+							if (param.type == I.BlockType.Dataview) {
+								win.trigger(`setDataviewSource.${newBlockId}`);
+							};
+						}, menuStore.getTimeout());
 					});
 				};
 			};
@@ -649,15 +668,21 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 		// Hack to prevent onBlur save
 		$(`#block-${blockId} #value`).first().text(text);
-		UtilData.blockSetText(rootId, block.id, text, marks, true, cb);
+		UtilData.blockSetText(rootId, blockId, text, marks, true, cb);
 	};
 
 	moveToPage (typeId: string) {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
+		const selection = commonStore.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
+
+		if (!ids.length) {
+			ids.push(blockId);
+		};
 		
-		UtilData.moveToPage(rootId, blockId, typeId, 'Powertool', this.props);
+		UtilData.moveToPage(rootId, ids, typeId, analytics.route.powertool);
 	};
 
 	resize () {

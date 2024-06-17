@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon, UtilData, UtilObject } from 'Lib';
 import { InputWithLabel, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuViewSettings = observer(class MenuViewSettings extends React.Component<I.Menu> {
 	
@@ -26,10 +26,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 
 	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { readonly } = data;
 		const { type, name } = this.param;
+		const isReadonly = this.isReadonly();
 		const sections = this.getSections();
 
 		const Section = (item: any) => (
@@ -41,11 +39,10 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 							key={i} 
 							{...action} 
 							icon={action.icon}
-							readonly={readonly}
 							checkbox={(type == action.id) && (item.id == 'type')}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
-							onMouseLeave={(e: any) => { this.onMouseLeave(e, action); }}
-							onClick={(e: any) => { this.onClick(e, action); }} 
+							onMouseEnter={e => this.onMouseEnter(e, action)}
+							onMouseLeave={e => this.onMouseLeave(e, action)}
+							onClick={e => this.onClick(e, action)} 
 						/>
 					))}
 				</div>
@@ -59,7 +56,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 						ref={ref => this.refName = ref}
 						value={name}
 						label={translate('menuDataviewViewName')}
-						readonly={readonly}
+						readonly={isReadonly}
 						placeholder={Dataview.defaultViewName(type)}
 						maxLength={32}
 						onKeyUp={this.onKeyUp}
@@ -207,8 +204,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { data } = param;
 		const { rootId, blockId, onSave, readonly } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-
-		let view = data.view.get();
+		const view = data.view.get();
 
 		if (readonly || !block || !view) {
 			return;
@@ -218,20 +214,18 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			this.param.name = this.getViewName();
 		};
 
-		view = Object.assign(view, this.param);
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, this.param, onSave);
+		Dataview.viewUpdate(rootId, blockId, view.id, this.param, onSave);
 	};
 
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly } = data;
+		const { rootId, blockId } = data;
 		const { id, type } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
 		const view = data.view.get();
-
+		const isReadonly = this.isReadonly();
 		const isBoard = type == I.ViewType.Board;
-		const isCalendar = type == I.ViewType.Calendar;
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
@@ -261,7 +255,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			{ id: 'tools', name: '', children: tools }
 		].filter(it => it);
 
-		if (id && !readonly) {
+		if (id && !isReadonly) {
 			sections.push({
 				id: 'actions', children: [
 					{ id: 'copy', icon: 'copy', name: translate('menuDataviewViewEditDuplicateView') },
@@ -351,7 +345,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 						analytics.event('DuplicateView', {
 							type: view.type,
 							objectType: object.type,
-							embedType: analytics.embedType(isInline)
+							embedType: analytics.embedType(isInline),
 						});
 					});
 					break;
@@ -399,6 +393,15 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		obj.css({ height: 'auto' });
 		position();
+	};
+
+	isReadonly () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, readonly } = data;
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+
+		return readonly || !allowedView;
 	};
 	
 });

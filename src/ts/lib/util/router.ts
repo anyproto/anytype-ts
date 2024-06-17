@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { C, UtilData, Preview, analytics, Storage, keyboard } from 'Lib';
 import { commonStore, authStore, blockStore, menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 type RouteParam = { 
 	replace: boolean;
@@ -44,12 +44,14 @@ class UtilRouter {
 		return param;
 	};
 
-	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; }>): string {
-		let route = [ param.page, param.action, param.id ];
+	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; viewId: string; }>): string {
+		const { page, action, spaceId } = param;
+		const id = String(param.id || Constant.blankRouteId);
+		const viewId = String(param.viewId || Constant.blankRouteId);
 
-		if (param.spaceId) {
-			route = route.concat([ 'spaceId', param.spaceId ]);
-		};
+		let route = [ page, action, id ];
+		route = route.concat([ 'spaceId', spaceId ]);
+		route = route.concat([ 'viewId', viewId ]);
 
 		return route.join('/');
 	};
@@ -61,17 +63,17 @@ class UtilRouter {
 
 		const { replace, animate, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
-		const { space, techSpace } = commonStore;
+		const { space } = commonStore;
 
-		let timeout = menuStore.getTimeout(menuStore.getItems());
+		let timeout = menuStore.getTimeout();
 		if (!timeout) {
-			timeout = popupStore.getTimeout(popupStore.getItems());
+			timeout = popupStore.getTimeout();
 		};
 
 		menuStore.closeAll();
 		popupStore.closeAll();
 
-		if (routeParam.spaceId && ![ Constant.storeSpaceId, space, techSpace ].includes(routeParam.spaceId)) {
+		if (routeParam.spaceId && ![ Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route);
 			return;
 		};
@@ -86,6 +88,10 @@ class UtilRouter {
 
 			if (!animate) {
 				this.history.push(route); 
+
+				if (onRouteChange) {
+					onRouteChange();
+				};
 				return;
 			};
 
@@ -140,24 +146,24 @@ class UtilRouter {
 				replace: true, 
 				animate: true,
 				onFadeOut: () => {
-					if (route) {
-						commonStore.redirectSet(route);
-					};
-
 					analytics.removeContext();
 					blockStore.clear(blockStore.widgets);
 					commonStore.defaultType = '';
 					Storage.set('spaceId', id);
 
 					UtilData.onInfo(message.info);
-					UtilData.onAuth({ routeParam: { replace: true } }, callBack);
+					UtilData.onAuth({ route }, callBack);
 				}
 			});
 		});
 	};
 
+	getRoute () {
+		return String(this.history.location.pathname || '');
+	};
+
 	getRouteSpaceId () {
-		const param = this.getParam(this.history.location.pathname);
+		const param = this.getParam(this.getRoute());
 		return param.spaceId || commonStore.space;
 	};
 

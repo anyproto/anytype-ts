@@ -24,8 +24,8 @@ const Selection = observer(class Selection extends React.Component<Props> {
 		};
 
 		const buttons: any[] = [
-			{ id: 'archive', text: translate('blockDataviewSelectionMoveToBin') },
-			{ id: 'done', text: translate('blockDataviewSelectionDeselect') },
+			{ id: 'archive', text: translate('commonMoveToBin') },
+			{ id: 'done', text: translate('commonDeselectAll') },
 		];
 
 		if (isCollection) {

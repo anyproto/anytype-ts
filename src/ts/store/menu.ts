@@ -1,7 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import { I, UtilCommon, Preview } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class MenuStore {
 
@@ -50,8 +50,8 @@ class MenuStore {
 		param.data = param.data || {};
 
 		if (param.isSub) {
-			param.noAnimation = true;
-			param.passThrough = true;
+			param.noAnimation = 'undefined' == typeof(param.noAnimation) ? true : param.noAnimation;
+			param.passThrough = 'undefined' == typeof(param.passThrough) ? true : param.passThrough;
 		};
 
 		return param;
@@ -126,7 +126,7 @@ class MenuStore {
 		const { param } = item;
 		const { noAnimation, subIds, onClose } = param;
 		const t = noAnimation ? 0 : Constant.delay.menu;
-		const el = $('#' + UtilCommon.toCamelCase('menu-' + id));
+		const el = $(`#${UtilCommon.toCamelCase(`menu-${id}`)}`);
 
 		if (subIds && subIds.length) {
 			this.closeAll(subIds);
@@ -143,7 +143,7 @@ class MenuStore {
 			if (onClose) {
 				onClose();
 			};
-			
+
 			if (callBack) {
 				callBack();
 			};
@@ -169,14 +169,7 @@ class MenuStore {
 
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
-		if (!items.length) {
-			if (callBack) {
-				callBack();
-			};
-			return;
-		};
-
-		const timeout = this.getTimeout(items);
+		const timeout = this.getTimeout();
 
 		items.filter(it => !it.param.noClose).forEach(it => this.close(it.id));
 		this.onCloseAll(timeout, callBack);
@@ -184,21 +177,22 @@ class MenuStore {
 
 	closeAllForced (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
-		const timeout = this.getTimeout(items);
+		const timeout = this.getTimeout();
 
 		items.forEach(it => this.close(it.id));
 		this.onCloseAll(timeout, callBack);
 	};
 
 	onCloseAll (timeout: number, callBack?: () => void) {
-		this.clearTimeout();
-
 		if (callBack) {
+			this.clearTimeout();
 			this.timeout = window.setTimeout(() => callBack(), timeout);
 		};
 	};
 
-	getTimeout (items: I.Menu[]): number {
+	getTimeout (): number {
+		const items = this.getItems();
+
 		let t = 0;
 		for (const item of items) {
 			if (!item.param.noAnimation) {
@@ -229,10 +223,7 @@ class MenuStore {
 
 	resizeAll () {
 		const win = $(window);
-
-		this.list.forEach(it => {
-			win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${it.id}`));
-		});
+		this.list.forEach(it => win.trigger(`resize.${UtilCommon.toCamelCase(`menu-${it.id}`)}`));
 	};
 
 };

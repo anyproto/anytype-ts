@@ -1,13 +1,18 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockDataview {
 		.cellHead { 
 			@include text-small; text-align: left; color: var(--color-text-secondary); font-weight: 400; line-height: 20px; position: relative; height: 38px;
-			cursor: grab; display: inline-block; vertical-align: top; transition: background-color $transitionCommon; 
+			display: inline-block; vertical-align: top; transition: background-color $transitionCommon; 
 		}
+		.cellHead.canDrag { cursor: grab; }
+		.cellHead.canDrag {
+			.cellContent { cursor: grab; }
+		}
+
 		.cellHead {
-			.cellContent { cursor: grab; height: 36px !important; overflow: visible !important; }
+			.cellContent { height: 36px !important; overflow: visible !important; }
 			.flex { padding: 9px 14px; gap: 0px 6px; align-items: center; }
 			.iconObject { width: 20px; height: 20px; margin: 0px; vertical-align: top; flex-shrink: 0; display: none; }
 			.icon.lock { flex-shrink: 0; }
@@ -64,8 +69,8 @@
 			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
 			.row:hover { background-color: var(--color-shape-highlight-light); }
 
-			.row > .selectable,
-			.row > .dropTarget > .selectable { display: grid; }
+			.row > .selectionTarget,
+			.row > .dropTarget > .selectionTarget { display: grid; }
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {
@@ -105,7 +110,7 @@
 				}
 			}
 			.cell.isEditing.c-select { 
-				.cellContent { padding-bottom: 6px; height: auto !important; }
+				.cellContent { padding-bottom: 10px; height: auto !important; }
 				.wrap { overflow: visible; white-space: normal; }
 			}
 			.cell.isEditing.c-object { 

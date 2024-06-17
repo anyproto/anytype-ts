@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I, keyboard, UtilMenu, analytics, translate } from 'Lib';
-import { blockStore } from 'Store';
+import { blockStore, commonStore } from 'Store';
 
 const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.Menu> {
 	
@@ -26,8 +26,8 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 						key={i} 
 						{...action} 
 						checkbox={action.itemId == active} 
-						onClick={(e: any) => { this.onClick(e, action); }} 
-						onMouseEnter={(e: any) => { this.onOver(e, action); }}  
+						onClick={e => this.onClick(e, action)} 
+						onMouseEnter={e => this.onOver(e, action)}  
 					/>
 				))}
 			</div>
@@ -52,7 +52,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -131,18 +131,15 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, close, dataset } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selectionProvider');
 		
 		close();
 		onSelect(item);
 
-		if (selection) {
-			selection.clear();
-		};
-
+		selection?.clear();
 		analytics.event('ChangeBlockStyle', { type: item.type, style: item.itemId });
 	};
 

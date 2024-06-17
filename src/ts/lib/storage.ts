@@ -1,10 +1,10 @@
-import { I, UtilCommon } from 'Lib';
+import { I, UtilCommon, UtilSpace } from 'Lib';
 import { commonStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const SPACE_KEYS = [
 	'toggle',
-	'lastOpened',
+	'lastOpenedObject',
 	'scroll',
 	'defaultType',
 	'pinnedTypes',
@@ -44,7 +44,7 @@ class Storage {
 		};
 		
 		let o = this.get(key);
-		if (typeof o === 'object') {
+		if ((typeof o === 'object') && (o !== null)) {
 			for (const i in obj) {
 				o[i] = obj[i];
 			};
@@ -108,6 +108,61 @@ class Storage {
 		this.setSpace(obj);
 	};
 
+	clearDeletedSpaces () {
+		const keys = Object.keys(this.getSpace());
+
+		keys.forEach(key => {
+			const spaceview = UtilSpace.getSpaceviewBySpaceId(key);
+			if (!spaceview) {
+				this.deleteSpace(key);
+			};
+		});
+	};
+
+	getPin () {
+		return this.get('pin');
+	};
+
+	setLastOpened (windowId: string, param: any) {
+		const obj = this.get('lastOpenedObject') || {};
+
+		obj[windowId] = Object.assign(obj[windowId] || {}, param);
+		this.set('lastOpenedObject', obj, true);
+	};
+
+	deleteLastOpenedByObjectId (objectIds: string[]) {
+		objectIds = objectIds || [];
+
+		const obj = this.get('lastOpenedObject') || {};
+		const windowIds = [];
+
+		for (const windowId in obj) {
+			if (!obj[windowId] || objectIds.includes(obj[windowId].id)) {
+				windowIds.push(windowId);
+			};
+		};
+
+		this.deleteLastOpenedByWindowId(windowIds);
+	};
+
+	deleteLastOpenedByWindowId (windowIds: string[],) {
+		windowIds = windowIds.filter(id => id != '1');
+
+		if (!windowIds.length) {
+			return;
+		};
+
+		const obj = this.get('lastOpenedObject') || {};
+
+		windowIds.forEach(windowId => delete(obj[windowId]));
+		this.set('lastOpenedObject', obj, true);
+	};
+
+	getLastOpened (windowId: string) {
+		const obj = this.get('lastOpenedObject') || {};
+		return obj[windowId] || null;
+	};
+
 	setToggle (rootId: string, id: string, value: boolean) {
 		let obj = this.get('toggle');
 		if (!obj || UtilCommon.hasProperty(obj, 'length')) {
@@ -143,19 +198,28 @@ class Storage {
 		this.set('toggle', obj, true);
 	};
 
-	setScroll (key: string, rootId: string, scroll: number) {
+	setScroll (key: string, rootId: string, scroll: number, isPopup: boolean) {
+		key = this.getScrollKey(key, isPopup);
+
 		const obj = this.get('scroll') || {};
 		try {
 			obj[key] = obj[key] || {};
 			obj[key][rootId] = Number(scroll) || 0;
+
 			this.set('scroll', obj, true);
 		} catch (e) { /**/ };
 		return obj;
 	};
 
-	getScroll (key: string, rootId: string) {
+	getScroll (key: string, rootId: string, isPopup: boolean) {
+		key = this.getScrollKey(key, isPopup);
+
 		const obj = this.get('scroll') || {};
 		return Number((obj[key] || {})[rootId]) || 0;
+	};
+
+	getScrollKey (key: string, isPopup: boolean) {
+		return isPopup ? `${key}Popup` : key;
 	};
 
 	setOnboarding (key: string) {
@@ -265,8 +329,6 @@ class Storage {
 		const keys = [ 
 			'accountId',
 			'spaceId',
-			'tabStore', 
-			'graph',
 			'pin',
 		];
 

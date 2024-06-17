@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { I, C, analytics, UtilMenu, UtilObject, Preview, translate, keyboard, Relation, UtilCommon } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 import { dbStore, menuStore, blockStore, detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<I.Menu> {
 
@@ -32,7 +32,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, ref, readonly } = data;
+		const { rootId, ref, readonly, noDelete } = data;
 
 		const relation = this.getRelation();
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -40,19 +40,23 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isObject = this.format == I.RelationType.Object;
 		const isReadonly = this.isReadonly();
 
-		let canDuplicate = false;
-		let canDelete = false;
+		let canDuplicate = true;
+		let canDelete = !noDelete;
 		let opts: any = null;
 		let deleteText = translate('commonDelete');
 		let deleteIcon = 'remove';
 
+		if (readonly) {	
+			canDuplicate = canDelete = false;
+		} else
 		if (root) {
-			canDuplicate = !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+			if (root.isLocked() || !blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ])) {
+				canDuplicate = canDelete = false;
+			};
 		};
-		if (readonly || (relation && Relation.isSystem(relation.relationKey))) {
-			canDuplicate = false;
+		if (relation && Relation.isSystemWithoutUser(relation.relationKey)) {
+			canDelete = false;
 		};
-		canDelete = canDuplicate;
 
 		switch (ref) {
 			case 'type':
@@ -292,7 +296,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			vertical: I.MenuDirection.Center,
 			data: {
 				rootId,
-				blockId,
 				nameAdd: translate('menuBlockRelationEditAddObjectType'),
 				placeholderFocus: translate('menuBlockRelationEditFilterObjectTypes'),
 				value: this.objectTypes, 
@@ -479,7 +482,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			details.push({ key: k, value: item[k] });
 		};
 
-		C.ObjectSetDetails(relationId, details);
+		C.ObjectListSetDetails([ relationId ], details);
 	};
 
 	getRelation () {

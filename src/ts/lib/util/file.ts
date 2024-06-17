@@ -1,6 +1,7 @@
 import loadImage from 'blueimp-load-image';
-import { UtilCommon } from 'Lib';
-import Constant from 'json/constant.json';
+import { UtilCommon, Relation } from 'Lib';
+import { commonStore } from 'Store';
+const Constant = require('json/constant.json');
 
 const SIZE_UNIT = 1024;
 const UNITS = {
@@ -30,10 +31,13 @@ class UtilFile {
 		return UtilCommon.formatNumber(Number(UtilCommon.sprintf(`%0.2f`, ret))) + unit;
 	};
 
-	icon (obj: any): string {
-		const n = obj.name.split('.');
-		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '').toLowerCase();
-		const e = String(obj.fileExt || n[n.length - 1] || '').toLowerCase();
+	icon (object: any): string {
+		object = object || {};
+
+		const name = Relation.getStringValue(object.name);
+		const n = name.split('.');
+		const mime = String(object.mime || object.mimeType || object.fileMimeType || '').toLowerCase();
+		const e = String(object.fileExt || n[n.length - 1] || '').toLowerCase();
 
 		let t: string[] = [];
 		let icon = 'other';
@@ -90,8 +94,8 @@ class UtilFile {
 			icon = 'presentation';
 		};
 
-		for (const k in Constant.extension) {
-			const el = Constant.extension[k];
+		for (const k in Constant.fileExtension) {
+			const el = Constant.fileExtension[k];
 			if (!UtilCommon.hasProperty(el, 'length')) {
 				continue;
 			};
@@ -103,6 +107,16 @@ class UtilFile {
 		};
 
 		return icon;
+	};
+
+	iconPath (object: any) {
+		const tp = commonStore.getThemePath();
+		return `img/${tp}icon/file/${this.icon(object)}.svg`;
+	};
+
+	iconImage (object: any): string {
+		const tp = commonStore.getThemePath();
+		return require(`img/${tp}icon/file/${this.icon(object)}.svg`).default;
 	};
 
 	loadPreviewCanvas (file: any, param: any, success?: (canvas: any) => void) {
@@ -146,14 +160,16 @@ class UtilFile {
 	};
 
 	name (object: any) {
-		const { name, fileExt } = object;
-		const ret = [ name ];
+		object = object || {};
 
-		if (fileExt) {
-			ret.push(fileExt);
+		const name = String(object.name || '');
+		const fileExt = String(object.fileExt || '');
+
+		if (!fileExt || new RegExp(`\\.${UtilCommon.regexEscape(fileExt)}$`).test(name)) {
+			return name;
 		};
 
-		return ret.join('.');
+		return `${name}.${fileExt}`;
 	};
 
 };

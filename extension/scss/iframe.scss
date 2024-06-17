@@ -1,0 +1,23 @@
+#anytypeWebclipper-iframe {
+	@import "~scss/_mixins";
+
+	.page.pageCreate { display: flex; flex-direction: column; }
+	.page.pageCreate {
+		.head { display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 8px; }
+		.head {
+			.side { display: flex; flex-direction: row; align-items: center; width: 50%; gap: 0px 14px; }
+			.side.right { justify-content: flex-end; }
+
+			.button.simple { @include text-common; font-weight: 500; cursor: pointer; height: 32px; line-height: 32px; }
+
+			.select { cursor: pointer; height: 32px; line-height: 32px; border: 0px; padding: 8px 20px 8px 8px; max-width: 320px; }
+			.select {
+				.item {
+					.name { line-height: 16px; }
+				}
+			}
+		}
+
+		.blocks { padding: 20px 48px 48px 0px; height: 100%; overflow: auto; }
+	}
+}

@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockDataview { @include text-common; padding: 8px 0px 6px 0px; }
@@ -20,6 +20,7 @@
 		}
 		.loadMore {
 			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
+			.name { @include text-overflow-nw; width: calc(100% - 20px); }
 		}
 
 		.loadMore:hover { color: var(--color-text-primary); }
@@ -63,10 +64,13 @@
 
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; width: 100%; color: var(--color-text-primary); }
 		.dataviewHead {
-			.icon.source { width: 28px; height: 28px; background-size: 24px; background-image: url('~img/icon/dataview/button/source0.svg'); opacity: 0; }
+			.icon.source { 
+				width: 28px; height: 28px; background-size: 24px; background-image: url('~img/icon/dataview/button/source0.svg'); opacity: 0; 
+				flex-shrink: 0;
+			}
 			.icon.source.active { opacity: 1; }
 
-			.editableWrap { @include text-header2; height: 28px; max-width: calc(100% - 26px); @include text-overflow-nw; }
+			.editableWrap { @include text-header2; height: 28px; @include text-overflow-nw; }
 			.editableWrap.isEmpty { min-width: 90px; }
 			.editableWrap {
 				.editable { height: 100%; }
@@ -85,7 +89,6 @@
 
 		.dataviewControls { font-weight: 500; color: var(--color-control-active); position: relative; }
 		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: var(--color-shape-secondary); position: absolute; bottom: 0px; }
-
 		.dataviewControls.viewGrid::after, .dataviewControls.viewList::after { display: block; }
 
 		.dataviewControls {
@@ -183,7 +186,6 @@
 
 		.content {
 			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); padding-bottom: 14px; }
-			.scrollWrap { background: var(--color-bg-primary); }
 		}
 
 		.viewContent {
@@ -238,9 +240,11 @@
 
 		.dataviewEmpty { height: auto; padding: 48px 0px; border-top: 1px solid var(--color-shape-secondary); border-bottom: 1px solid var(--color-shape-secondary); }
 
+		.dataviewControls { margin: 0px 0px 8px 0px; }
 		.dataviewControls {
+			> .sides { align-items: flex-end; }
 			> .sides {
-				> .side { padding: 0px 0px 8px 0px; }
+				> .side { padding: 0px; }
 				> .side.left { display: flex; flex-direction: column; align-items: flex-start; gap: 4px 0px; }
 				> .side.right { transition: opacity $transitionCommon; opacity: 0; }
 			}
@@ -265,7 +269,7 @@
 
 	.block.blockDataview.isInline.isVertical {
 		.dataviewControls {
-			> .sides { flex-direction: column; align-items: flex-start; justify-content: flex-start; }
+			.btn-filter, .btn-sort { display: none; }
 		}
 	}
 

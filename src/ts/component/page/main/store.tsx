@@ -3,12 +3,13 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate } from 'Lib';
-import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
+import { dbStore, blockStore, commonStore, menuStore, popupStore } from 'Store';
+const Constant = require('json/constant.json');
 
 interface State {
-	loading: boolean;
+	isLoading: boolean;
+	withBanner: boolean;
 };
 
 enum View {
@@ -16,14 +17,18 @@ enum View {
 	Library = 'library',
 };
 
+const KEY_SORT = 'sortStore';
+const KEY_TAB = 'tabStore';
+const KEY_BANNER = 'storeBannerClosed';
+
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
-
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
 
 	state = {
-		loading: false,
+		isLoading: false,
+		withBanner: false,
 	};
 
 	_isMounted = false;
@@ -33,12 +38,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	cache: any = null;
 	refList: any = null;
 	refFilter: any = null;
-	tab: I.StoreTab = I.StoreTab.Type;
+	tab: I.StoreTab = null;
+	sort = '';
 	view: View = View.Marketplace;
 	frame = 0;
 	limit = 0;
 	midHeight = 0;
-	filter: string = '';
+	filter = '';
 	timeoutFilter = 0;
 
 	constructor (props: I.PageComponent) {
@@ -52,6 +58,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.onFilterBlur = this.onFilterBlur.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onFilterClick = this.onFilterClick.bind(this);
+		this.onBanner = this.onBanner.bind(this);
+		this.onBannerClose = this.onBannerClose.bind(this);
+		this.onSort = this.onSort.bind(this);
 	};
 	
 	render () {
@@ -59,6 +68,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			return null;
 		};
 
+		const { withBanner } = this.state;
+		const canWrite = UtilSpace.canMyParticipantWrite();
 		const { isPopup } = this.props;
 		const views = this.getViews();
 		const items = this.getItems();
@@ -119,20 +130,30 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		const TabList = (item: any) => (
 			<div className="tabs">
-				{views.map((item: any, i: number) => (
-					<div 
-						key={item.id} 
-						className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} 
-						onClick={(e: any) => { this.onView(item.id, true); }}
-					>
-						{item.name}
-					</div>
-				))}
+				<div className="side left">
+					{views.map((item: any, i: number) => (
+						<div 
+							key={item.id} 
+							className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} 
+							onClick={() => this.onView(item.id, true)}
+						>
+							{item.name}
+						</div>
+					))}
+				</div>
+				<div className="side right">
+					<Icon 
+						id="button-store-sort" 
+						className="sort" 
+						onClick={this.onSort} 
+						tooltip={translate('pageMainStoreSort')} 
+					/>
+				</div>
 			</div>
 		);
 
 		const Item = (item: any) => {
-			const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+			const allowedDelete = canWrite && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 			const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
 			const icons: any[] = [];
 			const buttons: any[] = [];
@@ -150,14 +171,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					if (sources.includes(item.id)) {
 						icons.push({ className: 'check', tooltip: textInstalled });
 					} else {
-						icons.push({ className: 'plus', tooltip: textInstall, onClick: (e: any) => { this.onInstall(e, item); } });
+						icons.push({ className: 'plus', tooltip: textInstall, onClick: e => this.onInstall(e, item) });
 					};
 					break;
 			};
 			
 			return (
 				<div className={cn.join(' ')}>
-					<div className="flex" onClick={(e: any) => { this.onClick(e, item); }}>
+					<div className="flex" onClick={e => this.onClick(e, item)}>
 						<IconObject iconSize={iconSize} object={item} />
 						<div className="name">{item.name}</div>
 					</div>
@@ -212,9 +233,19 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		return (
 			<div 
 				ref={node => this.node = node}
-				className={[ 'wrapper', this.tab, this.view ].join(' ')}
+				className={[ 'wrapper', this.tab, this.view, (withBanner ? 'withBanner' : '') ].join(' ')}
 			>
-				<Header component="mainStore" {...this.props} tabs={tabs} tab={this.tab} onTab={id => this.onTab(id, true)} />
+				<Header 
+					{...this.props}
+					component="mainStore" 
+					tabs={tabs}
+					tab={this.tab}
+					layout={I.ObjectLayout.Store}
+					onTab={id => this.onTab(id, true)}
+					withBanner={withBanner}
+					onBanner={this.onBanner}
+					onBannerClose={this.onBannerClose}
+				/>
 
 				<div className="body">
 					<div className="items">
@@ -264,6 +295,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this._isMounted = true;
 
 		const items = this.getItems();
+		const tab = Storage.get(KEY_TAB) || I.StoreTab.Type;
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -273,7 +305,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		this.resize();
 		this.rebind();
-		this.onTab(Storage.get('tabStore') || I.StoreTab.Type, false);
+		this.onTab(tab, false);
+		this.setState({ withBanner: !Storage.get(KEY_BANNER) });
 	};
 
 	componentDidUpdate () {
@@ -301,6 +334,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		$(window).off('keydown.store');
 	};
 
+	getSortKey (tab: I.StoreTab) {
+		return UtilCommon.toCamelCase(`${KEY_SORT}-${tab}`);
+	};
+
 	onKeyDown (e: any) {
 		const cmd = keyboard.cmdKey();
 
@@ -322,10 +359,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	onTab (id: any, isInner: boolean) {
 		const { isPopup } = this.props;
 
-		this.tab = id;
-		this.onView(Storage.get('viewStore') || View.Library, isInner);
+		if (this.tab == id) {
+			return;
+		};
 
-		Storage.set('tabStore', id);
+		this.tab = id;
+		this.sort = String(Storage.get(this.getSortKey(id)) || '');
+		this.onView(Storage.get('viewStore') || View.Library, isInner, true);
+
+		Storage.set(KEY_TAB, id);
 
 		if (!isPopup) {
 			let key = '';
@@ -340,9 +382,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 	};
 
-	onView (id: View, isInner: boolean) {
+	onView (id: View, isInner: boolean, isChangeTab: boolean = false) {
+		if (!isChangeTab && (this.view == id)) {
+			return;
+		};
+
 		this.view = id;
-		this.getData(true);
+		this.load(true);
 
 		menuStore.closeAll(Constant.menuIds.store);
 		analytics.event('LibraryView', { view: id, type: this.tab, route: (isInner ? 'inner' : 'outer') });
@@ -445,15 +491,23 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		return menuId;
 	};
 
-	getData (clear: boolean, callBack?: (message: any) => void) {
+	load (clear: boolean, callBack?: (message: any) => void) {
 		const { space } = commonStore;
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: this.getTabLayout() },
 		];
-		const sorts: I.Sort[] = [
-			{ type: I.SortType.Desc, relationKey: 'createdDate' },
-			{ type: I.SortType.Asc, relationKey: 'name' },
-		];
+		const option = this.getSortOptions().find(it => it.id == this.sort);
+
+		let sorts: I.Sort[] = [];
+
+		if (this.sort && option) {
+			sorts.push({ type: option.type, relationKey: option.relationKey });
+		} else {
+			sorts = sorts.concat([
+				{ type: I.SortType.Desc, relationKey: 'createdDate' },
+				{ type: I.SortType.Asc, relationKey: 'name' },
+			]);
+		};
 
 		let keys: string[] = Constant.defaultRelationKeys;
 
@@ -478,7 +532,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		if (clear) {
-			this.setState({ loading: true });
+			this.setState({ isLoading: true });
 			dbStore.recordsSet(Constant.subId.store, '', []);
 		};
 
@@ -491,7 +545,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			ignoreDeleted: true,
 			ignoreHidden: true,
 		}, (message: any) => {
-			this.setState({ loading: false });
+			this.setState({ isLoading: false });
 
 			if (callBack) {
 				callBack(message);
@@ -511,19 +565,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getItems () {
-		const identity = UtilObject.getIdentityId();
-		const { loading } = this.state;
-		const records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
+		const { isLoading } = this.state;
+		const records = dbStore.getRecords(Constant.subId.store);
 		const limit = this.getLimit();
-
-		records.sort((c1: any, c2: any) => {
-			const cr1 = c1.creator;
-			const cr2 = c2.creator;
-
-			if ((cr1 == identity) && (cr2 != identity)) return -1;
-			if ((cr1 != identity) && (cr2 == identity)) return 1;
-			return 0;
-		});
 
 		let ret: any[] = [
 			{ id: 'mid', className: 'block', children: [ { id: 'mid' } ] },
@@ -532,7 +576,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		let n = 0;
 		let row = { children: [] };
 
-		if (!loading && !records.length) {
+		if (!isLoading && !records.length) {
 			ret.push({ id: 'empty', className: 'block', children: [ { id: 'empty' } ] },);
 		};
 
@@ -557,6 +601,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getViews (): any[] {
 		const views: any[] = [];
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
@@ -568,7 +613,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				break;
 		};
 
-		views.push({ id: View.Marketplace, name: translate('commonAnytypeLibrary') });
+		if (canWrite) {
+			views.push({ id: View.Marketplace, name: translate('commonAnytypeLibrary') });
+		};
 		return views;
 	};
 
@@ -601,6 +648,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
 			Action.uninstall(item, true);
+			analytics.event('ObjectUninstall', { route: analytics.route.store });
 		};
 	};
 
@@ -623,6 +671,67 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const limit = Math.floor(maxWidth / (size.width + size.margin));
 
 		return Math.max(1, Math.min(5, limit));
+	};
+
+	onBanner () {
+		popupStore.closeAll(null, () => {
+			popupStore.open('usecase', {});
+		});
+
+		analytics.event('ClickOnboardingTooltip', { type: 'explore', id: 'gallery' });
+	};
+
+	onBannerClose (e: any) {
+		e.stopPropagation();
+		e.preventDefault();
+
+		this.setState({ withBanner: false });
+		Storage.set(KEY_BANNER, true);
+
+		analytics.event('ClickOnboardingTooltip', { type: 'close', id: 'gallery' });
+	};
+
+	onSort (e: any) {
+		const options = this.getSortOptions();
+
+		menuStore.open('select', {
+			element: '#button-store-sort',
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			data: {
+				options,
+				value: this.sort,
+				onSelect: (e: any, item: any) => {
+					this.sort = item.id;
+					this.load(true);
+
+					Storage.set(this.getSortKey(this.tab), item.id);
+				},
+			}
+		});
+	};
+
+	getSortOptions () {
+		let options: any[] = [
+			{ id: 'nameAsc', name: translate('pageMainStoreSortNameAsc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Asc },
+			{ id: 'nameDesc', name: translate('pageMainStoreSortNameDesc'), relationKey: 'name',  icon: 'relation c-shortText', type: I.SortType.Desc },
+		];
+
+		if (this.view == View.Library) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'createdDateDesc', name: translate('pageMainStoreSortCreatedDesc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Desc },
+				{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate',  icon: 'relation c-date', type: I.SortType.Asc },
+			]);
+		};
+
+		if (this.tab == I.StoreTab.Type) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'lastUsedDateDesc', name: translate('pageMainStoreSortLastUsedDesc'), relationKey: 'lastUsedDate', icon: 'time', type: I.SortType.Desc },
+			]);
+		};
+		return options;
 	};
 
 	resize () {

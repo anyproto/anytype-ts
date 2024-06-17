@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, UtilData, UtilFile, Relation, UtilObject, translate } from 'Lib';
-import { IconObject, Pager, ObjectName, Cell } from 'Component';
-import { detailStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, C, UtilData, Relation, UtilObject, translate, keyboard } from 'Lib';
+import { IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
+import { detailStore, dbStore, menuStore, commonStore } from 'Store';
+
+const Constant = require('json/constant.json');
 
 interface Column {
 	relationKey: string;
@@ -47,7 +48,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 					offset={offset} 
 					limit={LIMIT} 
 					total={total} 
-					onChange={(page: number) => { this.getData(page); }} 
+					onChange={page => this.getData(page)} 
 				/>
 			);
 		};
@@ -69,15 +70,20 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			};
 
 			return (
-				<tr className={cn.join(' ')}>
-					<td className="cell">
+				<SelectionTarget 
+					id={item.id} 
+					type={I.SelectType.Record} 
+					className={cn.join(' ')}
+					onContextMenu={e => this.onContext(e, item.id)}
+				>
+					<div className="cell isName">
 						<div className="cellContent isName" onClick={() => UtilObject.openPopup(item)}>
 							<div className="flex">
 								<IconObject object={item} />
 								<ObjectName object={item} />
 							</div>
 						</div>
-					</td>
+					</div>
 
 					{columns.map(column => {
 						const cnc = [ 'cellContent' ];
@@ -94,17 +100,11 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 							if (column.isObject) {
 								const object = detailStore.get(subId, value, []);
 								if (!object._empty_) {
-									let { name } = object;
-
-									if (UtilObject.isFileLayout(object.layout)) {
-										name = UtilFile.name(object);
-									};
-
 									onClick = () => UtilObject.openPopup(object);
 									content = (
 										<div className="flex">
 											<IconObject object={object} />
-											<ObjectName object={{ ...object, name }} />
+											<ObjectName object={object} />
 										</div>
 									);
 								};
@@ -118,7 +118,6 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 										block={null}
 										relationKey={column.relationKey}
 										getRecord={() => item}
-										recordId={item.id}
 										viewType={I.ViewType.Grid}
 										idPrefix={PREFIX}
 										iconSize={20}
@@ -133,48 +132,42 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 						};
 
 						return (
-							<td key={`cell-${column.relationKey}`} className="cell">
-								{content ? (
-									<div className={cnc.join(' ')} onClick={onClick}>
-										{content}
-									</div>
-								) : ''}
-							</td>
+							<div key={`cell-${column.relationKey}`} className="cell">
+								{content ? <div className={cnc.join(' ')} onClick={onClick}>{content}</div> : ''}
+							</div>
 						);
 					})}
-				</tr>
+				</SelectionTarget>
 			);
 		};
 
 		return (
 			<div className="listObject">
-				<table>
-					<thead>
-						<tr className="row">
-							<th className="cellHead">
-								<div className="name">{translate('commonName')}</div>
-							</th>
-							{columns.map(column => (
-								<th key={`head-${column.relationKey}`} className="cellHead">
-									<div className="name">{column.name}</div>
-								</th>
+				<div className="table">
+					<div className="row isHead">
+						<div className="cell">
+							<div className="name">{translate('commonName')}</div>
+						</div>
+
+						{columns.map(column => (
+							<div key={`head-${column.relationKey}`} className="cell isHead">
+								<div className="name">{column.name}</div>
+							</div>
+						))}
+					</div>
+
+					{!items.length ? (
+						<div className="row">
+							<div className="cell empty">{translate('commonNoObjects')}</div>
+						</div>
+					) : (
+						<React.Fragment>
+							{items.map((item: any, i: number) => (
+								<Row key={i} {...item} />
 							))}
-						</tr>
-					</thead>
-					<tbody>
-						{!items.length ? (
-							<tr>
-								<td className="cell empty" colSpan={3}>{translate('commonNoObjects')}</td>
-							</tr>
-						) : (
-							<React.Fragment>
-								{items.map((item: any, i: number) => (
-									<Row key={i} {...item} />
-								))}
-							</React.Fragment>
-						)}
-					</tbody>
-				</table>
+						</React.Fragment>
+					)}
+				</div>
 				
 				{pager}
 			</div>
@@ -190,8 +183,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	getItems () {
-		const { subId } = this.props;
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, this.getKeys()));
+		return dbStore.getRecords(this.props.subId, this.getKeys());
 	};
 
 	getKeys () {
@@ -199,8 +191,11 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	getData (page: number, callBack?: (message: any) => void) {
-		const { subId, sources, filters } = this.props;
+		const { subId, sources } = this.props;
 		const offset = (page - 1) * LIMIT;
+		const filters = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+		].concat(this.props.filters || []);
 
 		dbStore.metaSet(subId, '', { offset });
 
@@ -218,6 +213,32 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			ignoreDeleted: true,
 			ignoreWorkspace: true,
 		}, callBack);
+	};
+
+	onContext (e: any, id: string): void {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { subId } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
+
+		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
+		if (!objectIds.length) {
+			objectIds = [ id ];
+		};
+		
+		menuStore.open('dataviewContext', {
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
+			data: {
+				objectIds,
+				subId,
+				allowedLink: true,
+				allowedOpen: true,
+			}
+		});
 	};
 
 });

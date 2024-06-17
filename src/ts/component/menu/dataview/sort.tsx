@@ -6,8 +6,8 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'Component';
 import { I, C, Relation, UtilCommon, keyboard, analytics, translate } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+import { commonStore, menuStore, dbStore, blockStore } from 'Store';
+const Constant = require('json/constant.json');
 
 const HEIGHT = 48;
 const LIMIT = 20;
@@ -31,18 +31,19 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	};
 	
 	render () {
-		const { param, getId } = this.props;
+		const { config } = commonStore;
+		const { param, getId, setHover } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { getView } = data;
 		const view = getView();
 		
 		if (!view) {
 			return null;
 		};
 
+		const isReadonly = this.isReadonly();
 		const items = this.getItems();
 		const sortCnt = items.length;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		
 		const typeOptions = [
 			{ id: String(I.SortType.Asc), name: translate('commonAscending') },
@@ -60,18 +61,19 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			return (
 				<div 
 					id={'item-' + item.id} 
-					className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}
-					onMouseEnter={(e: any) => { this.onOver(e, item); }}
+					className={[ 'item', (isReadonly ? 'isReadonly' : '') ].join(' ')}
+					onMouseEnter={e => this.onOver(e, item)}
 					style={item.style}
 				>
-					{allowedView ? <Handle /> : ''}
+					{!isReadonly ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 					<div className="txt">
 						<Select 
 							id={[ 'filter', 'relation', item.id ].join('-')} 
 							options={relationOptions} 
 							value={item.relationKey} 
-							onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} 
+							onChange={v => this.onChange(item.id, 'relationKey', v)} 
+							readonly={isReadonly}
 						/>
 
 						<Select 
@@ -79,13 +81,14 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 							className="grey" 
 							options={typeOptions} 
 							value={item.type} 
-							onChange={(v: string) => { this.onChange(item.id, 'type', v); }} 
+							onChange={v => this.onChange(item.id, 'type', v)} 
+							readonly={isReadonly}
 						/>
 					</div>
-					{allowedView ? (
+					{!isReadonly ? (
 						<div className="buttons">
-							<Icon className="more" onClick={(e: any) => { this.onClick(e, item); }} />
-							<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+							<Icon className="more" onClick={e => this.onMore(e, item)} />
+							<Icon className="delete" onClick={e => this.onRemove(e, item)} />
 						</div>
 					) : ''}
 				</div>
@@ -164,15 +167,15 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					helperClass="isDragging"
 					helperContainer={() => $(`#${getId()} .items`).get(0)}
 				/>
-				{allowedView ? (
+				{!isReadonly ? (
 					<div className="bottom">
 						<div className="line" />
 						<div 
 							id="item-add" 
 							className="item add" 
 							onClick={this.onAdd}
-							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
-							onMouseLeave={() => { this.props.setHover(); }}
+							onMouseEnter={() => setHover({ id: 'add' })} 
+							onMouseLeave={() => setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewSortNewSort')}</div>
@@ -213,7 +216,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -264,6 +267,32 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		});
 	};
 
+	onMore (e: any, item: any) {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const options = [
+			{ name: translate('menuDataviewSortShowEmpty'), isSection: true },
+			{ id: I.EmptyType.Start, name: translate('menuDataviewSortShowEmptyTop') },
+			{ id: I.EmptyType.End, name: translate('menuDataviewSortShowEmptyBottom') },
+		];
+
+		menuStore.open('select', {
+			element: `#${getId()} #item-${item.id} .more`,
+			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
+			data: {
+				...data,
+				options,
+				value: String(item.empty),
+				itemId: item.id,
+				onSelect: (e: any, el: any) => {
+					this.onChange(item.id, 'empty', el.id);
+				}
+			}
+		});
+	};
+
+
 	onAdd () {
 		const { param, getId } = this.props;
 		const { data } = param;
@@ -308,7 +337,8 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		analytics.event('ChangeSortValue', {
 			type: item.type,
 			objectType: object.type,
-			embedType: analytics.embedType(isInline)
+			embedType: analytics.embedType(isInline),
+			emptyType: item.empty,
 		});
 		this.forceUpdate();
 	};
@@ -362,11 +392,20 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 62;
+		const offset = !this.isReadonly() ? 62 : 16;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height });
 		position();
+	};
+
+	isReadonly () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, readonly } = data;
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+
+		return readonly || !allowedView;
 	};
 	
 });

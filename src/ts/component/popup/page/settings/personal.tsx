@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Select } from 'Component';
+import { Title, Label, Select, Switch } from 'Component';
 import { I, translate, UtilMenu, Action } from 'Lib';
 import { commonStore } from 'Store';
 
@@ -11,10 +11,19 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	};
 
 	render () {
-		const { config, interfaceLang } = commonStore;
+		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject } = commonStore;
 		const { languages } = config;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const spellingLanguages = UtilMenu.getSpellingLanguages();
+		const navigationMenuModes: I.Option[] = [
+			{ id: I.NavigationMenuMode.Click, name: translate('popupSettingsPersonalNavigationMenuClick') },
+			{ id: I.NavigationMenuMode.Hover, name: translate('popupSettingsPersonalNavigationMenuHover') },
+			{ id: I.NavigationMenuMode.Context, name: translate('popupSettingsPersonalNavigationMenuContext') },
+		];
+		const linkStyles: I.Option[] = [
+			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
+			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
+		].map(it => ({ ...it, id: String(it.id) }));
 
 		return (
 			<React.Fragment>
@@ -46,12 +55,39 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							options={interfaceLanguages}
 							onChange={v => Action.setInterfaceLang(v)}
 							arrowClassName="black"
-							menuParam={{ 
-								horizontal: I.MenuDirection.Right, 
-								width: 300,
-								className: 'fixed',
-							}}
+							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
 						/>
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalNavigationMenu')} />
+
+						<Select
+							id="navigationMenu"
+							value={navigationMenu}
+							options={navigationMenuModes}
+							onChange={v => commonStore.navigationMenuSet(v)}
+							arrowClassName="black"
+							menuParam={{ horizontal: I.MenuDirection.Right }}
+						/>
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalLinkStyle')} />
+
+						<Select
+							id="linkStyle"
+							value={String(linkStyle)}
+							options={linkStyles}
+							onChange={v => commonStore.linkStyleSet(v)}
+							arrowClassName="black"
+							menuParam={{ horizontal: I.MenuDirection.Right }}
+						/>
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalFullscreen')} />
+						<Switch className="big" value={fullscreenObject} onChange={(e: any, v: boolean) => commonStore.fullscreenObjectSet(v)} />
 					</div>
 				</div>
 

@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .menus {
 	.menu.menuOnboarding { width: 334px; }
@@ -16,7 +16,7 @@
 
 		.highlight { 
 			background: var(--color-shape-secondary); white-space: nowrap; border-radius: 4px; padding: 2px 6px; color: var(--color-text-primary); 
-			font-family: 'Plex'; font-weight: 400; font-size: 14px; line-height: 14px; letter-spacing: -0.12px;
+			font-family: 'Plex'; @include text-common; line-height: 14px;
 		}
 		a { color: var(--color-text-inversion); text-decoration: underline; }
 
@@ -24,10 +24,12 @@
 			width: 16px; height: 16px; position: absolute; right: 16px; top: 17px; background-image: url('~img/icon/menu/onboarding/close.svg');
 		}
 
-		video { margin-top: 12px; border-radius: 4px; border: 1px solid var(--color-shape-secondary); cursor: zoom-in; }
+		video { margin-top: 12px; border-radius: 4px; border: 1px solid var(--color-shape-secondary); cursor: zoom-in; aspect-ratio: 16/9; object-fit: cover; }
 		.confettiCanvas { position: absolute; pointer-events: none; width: 100%;  height: 100%; left: 0; top: 0; }
 		
 		.bottom { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin-top: 20px; }
+		.bottom:empty { display: none; }
+
 		.bottom {
 			.round {
 				display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%;
@@ -68,8 +70,13 @@
 		}
 	}
 
-	.menu.menuOnboarding.wizard { width: 280px; min-height: 458px; }
-	.menu.menuOnboarding.wizard {
+	.menu.menuOnboarding.isWizard { width: 280px; min-height: 458px; }
+	.menu.menuOnboarding.isWizard {
 		.bottom { position: absolute; bottom: 16px; width: calc(100% - 32px); margin: 0px; }
 	}
+
+	.menu.menuOnboarding.isSpace {
+		video { height: auto; }
+	}
+
 }

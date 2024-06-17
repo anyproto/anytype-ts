@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { I, keyboard, UtilCommon, UtilData } from 'Lib';
+import { I, keyboard, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
-import { DropTarget, Icon } from 'Component';
+import { DropTarget, Icon, SelectionTarget } from 'Component';
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
-	recordId: string;
 	style?: any;
 	cellPosition?: (cellId: string) => void;
 	onRef?(ref: any, id: string): void;
@@ -15,10 +14,10 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, recordId, block, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
+		const { rootId, block, style, recordId, getRecord, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
 		const relations = getVisibleRelations();
-		const record = getRecord(recordId);
 		const widths = getColumnWidths('', 0);
+		const record = getRecord(recordId);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const cn = [ 'row', UtilData.layoutClass('', record.layout), ];
 
@@ -38,6 +37,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 					<Cell
 						key={[ 'grid', block.id, relation.relationKey, record.id ].join(' ')}
 						{...this.props}
+						getRecord={() => record}
 						width={relation.width}
 						relationKey={relation.relationKey}
 						className={`index${i}`}
@@ -55,14 +55,9 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 			);
 		} else {
 			content = (
-				<div
-					id={'selectable-' + record.id}
-					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
-					style={{ gridTemplateColumns: str }}
-				>
+				<SelectionTarget id={record.id} type={I.SelectType.Record} style={{ gridTemplateColumns: str }}>
 					{content}
-				</div>
+				</SelectionTarget>
 			);
 		};
 
@@ -73,7 +68,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 						className="drag"
 						draggable={true}
 						onClick={e => onSelectToggle(e, record.id)}
-						onDragStart={e => onDragRecordStart(e, recordId)}
+						onDragStart={e => onDragRecordStart(e, record.id)}
 						onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
 						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 					/>
@@ -86,7 +81,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 		return (
 			<div
-				id={'record-' + recordId}
+				id={`record-${record.id}`}
 				className={cn.join(' ')}
 				style={style}
 				onContextMenu={e => onContext(e, record.id)}

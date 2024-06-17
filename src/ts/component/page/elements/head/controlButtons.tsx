@@ -4,7 +4,7 @@ import { Icon } from 'Component';
 import { I, UtilData, UtilObject, UtilCommon, translate, analytics, focus } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	rootId: string;
@@ -16,7 +16,7 @@ interface Props {
 	onLayout?: (e: any) => void;
 	onEdit?: (e: any) => void;
 	onUploadStart?: (e: any) => void;
-	onUpload?: (type: I.CoverType, hash: string) => void;
+	onUpload?: (type: I.CoverType, objectId: string) => void;
 };
 
 const ControlButtons = observer(class ControlButtons extends React.Component<Props> {
@@ -151,7 +151,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			onOpen: onCoverOpen,
 			onClose: () => {
 				window.clearTimeout(this.timeout);
-				this.timeout = window.setTimeout(() => { onCoverClose(); }, Constant.delay.menu);
+				this.timeout = window.setTimeout(() => onCoverClose(), menuStore.getTimeout());
 			},
 			data: {
 				options: options,
@@ -161,7 +161,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 							window.setTimeout(() => {
 								window.clearTimeout(this.timeout);
 								this.onChange(element);
-							}, Constant.delay.menu);
+							}, menuStore.getTimeout());
 							break;
 						
 						case 'position':

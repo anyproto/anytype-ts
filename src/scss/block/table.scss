@@ -1,8 +1,6 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
-
-	$tableBorderOrange: #ffcf6f;
 
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable {
@@ -13,14 +11,14 @@
 
 		#selectionFrameContainer { position: absolute; left: 0px; top: 0px; pointer-events: none; z-index: 10; }
 		#selectionFrameContainer {
-			.selectionFrame { border: 2px solid $tableBorderOrange; position: absolute; border-radius: 4px; }
+			.selectionFrame { border: 2px solid var(--color-system-accent-50); position: absolute; border-radius: 4px; }
 			.selectionFrame.left { border-width: 0px; border-left-width: 2px; border-radius: 0px; }
 			.selectionFrame.right { border-width: 0px; border-right-width: 2px; border-radius: 0px; }
 			.selectionFrame.top { border-width: 0px; border-top-width: 2px; border-radius: 0px; }
 			.selectionFrame.bottom { border-width: 0px; border-bottom-width: 2px; border-radius: 0px; }
 		}
 
-		.handle { z-index: 11;  position: absolute; display: none; transition: none; padding: 6px; transform: translateX(-50%) translateY(-50%); }
+		.handle { z-index: 11;  position: absolute; opacity: 0; pointer-events: none; transition: none; padding: 6px; transform: translateX(-50%) translateY(-50%); }
 		.handle.canDrag { cursor: grab; }
 
 		.handle {
@@ -65,7 +63,7 @@
 
 		.table { display: block; border-collapse: collapse; position: relative; border-radius: 4px; }
 
-		.table.isClone { border-radius: 4px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border: 2px solid $tableBorderOrange; }
+		.table.isClone { border-radius: 4px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border: 2px solid var(--color-system-accent-50); }
 		.table.isClone {
 			.handleColumn { display: block; border-color: var(--color-system-accent-100); }
 		}
@@ -94,7 +92,7 @@
 		}
 
 		.row.isHighlightedRow {
-			.handleRow { display: block; }
+			.handleRow { opacity: 1; pointer-events: all; }
 		}
 
 		.row.isHeader {
@@ -110,11 +108,11 @@
 		.cell.isHighlightedColumn.isFirst { border-radius: 4px 4px 0px 0px; }
 		.cell.isHighlightedColumn.isLast { border-radius: 0px 0px 4px 4px; }
 		.cell.isHighlightedColumn {
-			.handleColumn { display: block; }
+			.handleColumn { opacity: 1; pointer-events: all; }
 		}
 
 		.cell.isEditing {
-			.handleRow, .handleColumn { display: block; }
+			.handleRow, .handleColumn { opacity: 1; pointer-events: all; }
 		}
 
 		.cell.isHighlightedCell, .cell:hover {
@@ -123,12 +121,12 @@
 
 		.cell.isHighlightedCell {
 			.icon.menu { 
-				.inner { border-color: $tableBorderOrange; box-shadow: 0px 0px 0px 2px $tableBorderOrange; }
+				.inner { border-color: var(--color-system-accent-50); box-shadow: 0px 0px 0px 2px var(--color-system-accent-50); }
 			}
 		}
 
 		.cell:hover {
-			.handleRow, .handleColumn { display: block; }
+			.handleRow, .handleColumn { opacity: 1; pointer-events: all; }
 		}
 
 		.cell.align-h0 .value { text-align: left; }
@@ -151,7 +149,7 @@
 
 			.block { height: 100%; border: 0px !important; padding: 0px; margin: 0px; color: var(--color-text-primary); }
 			.block {
-				.selectable { flex-grow: 1; }
+				.selectionTarget { flex-grow: 1; }
 				.wrapContent, .wrap, .flex, .dropTarget { height: 100%; }
 
 				.wrapMenu { display: none; }
@@ -180,7 +178,7 @@
 			.block.blockText { @include text-common; }
 			.block.blockText {
 				> .wrapContent {
-					> .selectable {
+					> .selectionTarget {
 						> .dropTarget {
 							> .flex {
 								> .editableWrap { display: table; }

@@ -1,10 +1,11 @@
+import { I, M, UtilCommon, Encode, Decode } from 'Lib';
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
-import { I, M, UtilCommon, Encode, Decode } from 'Lib';
+import Events from 'dist/lib/pb/protos/events_pb';
 
 export const Mapper = {
 
-	BlockType: (v: number): I.BlockType => {
+	BlockType: (v: Model.Block.ContentCase): I.BlockType => {
 		const V = Model.Block.ContentCase;
 
 		let t = I.BlockType.Empty;
@@ -27,7 +28,7 @@ export const Mapper = {
 		return t;
 	},
 
-	BoardGroupType (v: number) {
+	BoardGroupType (v: Model.Block.Content.Dataview.Group.ValueCase) {
 		const V = Model.Block.Content.Dataview.Group.ValueCase;
 
 		let t = '';
@@ -38,13 +39,20 @@ export const Mapper = {
 		return t;
 	},
 
-	NotificationPayload (v: number) {
+	NotificationPayload (v: Model.Notification.PayloadCase) {
 		const V = Model.Notification.PayloadCase;
 
 		let t = '';
 		if (v == V.IMPORT)			 t = 'import';
 		if (v == V.EXPORT)			 t = 'export';
 		if (v == V.GALLERYIMPORT)	 t = 'galleryImport';
+		if (v == V.REQUESTTOJOIN)	 t = 'requestToJoin';
+		if (v == V.REQUESTTOLEAVE)	 t = 'requestToLeave';
+		if (v == V.PARTICIPANTREQUESTAPPROVED)	 t = 'participantRequestApproved';
+		if (v == V.PARTICIPANTREMOVE) t = 'participantRemove';
+		if (v == V.PARTICIPANTREQUESTDECLINE) t = 'participantRequestDecline';
+		if (v == V.PARTICIPANTPERMISSIONSCHANGE) t = 'participantPermissionsChange';
+
 		return t;
 	},
 
@@ -59,7 +67,7 @@ export const Mapper = {
 			};
 		},
 
-		AccountInfo: (obj: any): I.AccountInfo => {
+		AccountInfo: (obj: Model.Account.Info): I.AccountInfo => {
 			return {
 				homeObjectId: obj.getHomeobjectid(),
 				profileObjectId: obj.getProfileobjectid(),
@@ -67,7 +75,6 @@ export const Mapper = {
 				deviceId: obj.getDeviceid(),
 				localStoragePath: obj.getLocalstoragepath(),
 				accountSpaceId: obj.getAccountspaceid(),
-				techSpaceId: obj.getTechspaceid(),
 				spaceViewId: obj.getSpaceviewid(),
 				widgetsId: obj.getWidgetsid(),
 				analyticsId: obj.getAnalyticsid(),
@@ -75,13 +82,13 @@ export const Mapper = {
 			};
 		},
 
-		AccountConfig: (obj: any): I.AccountConfig => {
+		AccountConfig: (obj: Model.Account.Config): I.AccountConfig => {
 			return {};
 		},
 
-		AccountStatus: (obj: any): I.AccountStatus => {
+		AccountStatus: (obj: Model.Account.Status): I.AccountStatus => {
 			return {
-				type: obj.getStatustype(),
+				type: obj.getStatustype() as number,
 				date: obj.getDeletiondate(),
 			};
 		},
@@ -99,22 +106,22 @@ export const Mapper = {
 			return Decode.struct(obj);
 		},
 
-		Range: (obj: any): I.TextRange => {
+		Range: (obj: Model.Range): I.TextRange => {
 			return {
 				from: obj.getFrom(),
 				to: obj.getTo(),
 			};
 		},
 
-		Mark: (obj: any): I.Mark => {
+		Mark: (obj: Model.Block.Content.Text.Mark): I.Mark => {
 			return {
-				type: obj.getType(),
+				type: obj.getType() as number,
 				param: obj.getParam(),
 				range: Mapper.From.Range(obj.getRange()),
 			};
 		},
 
-		PreviewLink: (obj: any) => {
+		PreviewLink: (obj: Model.LinkPreview) => {
             return {
                 type: obj.getType(),
                 title: obj.getTitle(),
@@ -140,19 +147,19 @@ export const Mapper = {
 			return {};
 		},
 
-		BlockLayout: (obj: any) => {
+		BlockLayout: (obj: Model.Block.Content.Layout) => {
 			return {
 				style: obj.getStyle(),
 			};
 		},
 
-		BlockDiv: (obj: any) => {
+		BlockDiv: (obj: Model.Block.Content.Div) => {
 			return {
 				style: obj.getStyle(),
 			};
 		},
 
-		BlockLink: (obj: any) => {
+		BlockLink: (obj: Model.Block.Content.Link) => {
 			return {
 				targetBlockId: obj.getTargetblockid(),
 				iconSize: obj.getIconsize(),
@@ -162,7 +169,7 @@ export const Mapper = {
 			};
 		},
 
-		BlockBookmark: (obj: any) => {
+		BlockBookmark: (obj: Model.Block.Content.Bookmark) => {
 			return {
 				targetObjectId: obj.getTargetobjectid(),
 				state: obj.getState(),
@@ -170,7 +177,7 @@ export const Mapper = {
 			};
 		},
 
-		BlockText: (obj: any) => {
+		BlockText: (obj: Model.Block.Content.Text) => {
 			let marks = [];
 			if (obj.hasMarks()) {
 				marks = (obj.getMarks().getMarksList() || []).map(Mapper.From.Mark);
@@ -187,22 +194,20 @@ export const Mapper = {
 			};
 		},
 
-		BlockFile: (obj: any) => {
+		BlockFile: (obj: Model.Block.Content.File) => {
 			return {
-				hash: obj.getHash(),
-				name: obj.getName(),
+				targetObjectId: obj.getTargetobjectid(),
 				type: obj.getType(),
 				style: obj.getStyle(),
-				mime: obj.getMime(),
-				size: obj.getSize(),
 				addedAt: obj.getAddedat(),
 				state: obj.getState(),
 			};
 		},
 
-		BlockDataview: (obj: any) => {
+		BlockDataview: (obj: Model.Block.Content.Dataview) => {
 			return {
 				sources: obj.getSourceList(),
+				viewId: obj.getActiveview(),
 				views: (obj.getViewsList() || []).map(Mapper.From.View),
 				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
 				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
@@ -212,13 +217,13 @@ export const Mapper = {
 			};
 		},
 
-		BlockRelation: (obj: any) => {
+		BlockRelation: (obj: Model.Block.Content.Relation) => {
 			return {
 				key: obj.getKey(),
 			};
 		},
 
-		BlockLatex: (obj: any) => {
+		BlockLatex: (obj: Model.Block.Content.Latex) => {
 			return {
 				text: obj.getText(),
 				processor: obj.getProcessor(),
@@ -237,13 +242,13 @@ export const Mapper = {
 			return {};
 		},
 
-		BlockTableRow: (obj: any) => {
+		BlockTableRow: (obj: Model.Block.Content.TableRow) => {
 			return {
 				isHeader: obj.getIsheader(),
 			};
 		},
 
-		BlockWidget: (obj: any) => {
+		BlockWidget: (obj: Model.Block.Content.Widget) => {
 			return {
 				layout: obj.getLayout(),
 				limit: obj.getLimit(),
@@ -251,19 +256,19 @@ export const Mapper = {
 			};
 		},
 
-		Block: (obj: any): I.Block => {
+		Block: (obj: Model.Block): I.Block => {
 			const cc = obj.getContentCase();
 			const type = Mapper.BlockType(obj.getContentCase());
-			const fn = 'get' + UtilCommon.ucFirst(type);
-			const fm = UtilCommon.toUpperCamelCase('block-' + type);
+			const fn = `get${UtilCommon.ucFirst(type)}`;
+			const fm = UtilCommon.toUpperCamelCase(`block-${type}`);
 			const content = obj[fn] ? obj[fn]() : {};
 			const item: I.Block = {
 				id: obj.getId(),
 				type: type,
 				childrenIds: obj.getChildrenidsList() || [],
 				fields: Decode.struct(obj.getFields()) || {},
-				hAlign: obj.getAlign(),
-				vAlign: obj.getVerticalalign(),
+				hAlign: obj.getAlign() as number,
+				vAlign: obj.getVerticalalign() as number,
 				bgColor: obj.getBackgroundcolor(),
 				content: {} as any,
 			};
@@ -290,14 +295,14 @@ export const Mapper = {
 			};
 		},
 
-		RelationLink: (obj: any): any => {
+		RelationLink: (obj: Model.RelationLink): any => {
 			return {
 				relationKey: obj.getKey(),
 				format: obj.getFormat(),
 			};
 		},
 
-		View: (obj: any): I.View => {
+		View: (obj: Model.Block.Content.Dataview.View): I.View => {
 			return Object.assign({
 				id: obj.getId(),
 				sorts: obj.getSortsList().map(Mapper.From.Sort),
@@ -322,7 +327,7 @@ export const Mapper = {
 			};
 		},
 
-		ViewRelation: (obj: any) => {
+		ViewRelation: (obj: Model.Block.Content.Dataview.Relation) => {
             return {
                 relationKey: obj.getKey(),
                 isVisible: obj.getIsvisible(),
@@ -333,32 +338,32 @@ export const Mapper = {
             };
         },
 
-		Filter: (obj: any): I.Filter => {
+		Filter: (obj: Model.Block.Content.Dataview.Filter): I.Filter => {
 			return {
 				id: obj.getId(),
 				relationKey: obj.getRelationkey(),
-				operator: obj.getOperator(),
-				condition: obj.getCondition(),
-				quickOption: obj.getQuickoption(),
+				operator: obj.getOperator() as number,
+				condition: obj.getCondition() as number,
+				quickOption: obj.getQuickoption() as number,
 				value: obj.hasValue() ? Decode.value(obj.getValue()) : null,
 			};
 		},
 
-		Sort: (obj: any): I.Sort => {
+		Sort: (obj: Model.Block.Content.Dataview.Sort): I.Sort => {
 			return {
 				id: obj.getId(),
 				relationKey: obj.getRelationkey(),
-				type: obj.getType(),
+				type: obj.getType() as number,
 				customOrder: (obj.getCustomorderList() || []).map(Decode.value),
+				empty: obj.getEmptyplacement() as number,
 			};
 		},
 
-		HistoryVersion: (obj: any): I.HistoryVersion => {
+		HistoryVersion: (obj: Rpc.History.Version): I.HistoryVersion => {
 			return {
 				id: obj.getId(),
 				previousIds: obj.getPreviousidsList() || [],
 				authorId: obj.getAuthorid(),
-				authorName: obj.getAuthorname(),
 				groupId: obj.getGroupid(),
 				time: obj.getTime(),
 			};
@@ -409,7 +414,7 @@ export const Mapper = {
             };
         },
 
-		GraphEdge: (obj: any) => {
+		GraphEdge: (obj: Rpc.Object.Graph.Edge) => {
             return {
 				type: obj.getType(),
 				source: obj.getSource(),
@@ -422,7 +427,7 @@ export const Mapper = {
             };
         },
 
-		UnsplashPicture: (obj: any) => {
+		UnsplashPicture: (obj: Rpc.Unsplash.Search.Response.Picture) => {
 			return {
                 id: obj.getId(),
 				url: obj.getUrl(),
@@ -431,33 +436,33 @@ export const Mapper = {
             };
 		},
 
-		ObjectView: (obj: any) => {
+		ObjectView: (obj: Model.ObjectView) => {
 			return {
 				rootId: obj.getRootid(),
 				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
 				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
 				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
-				restrictions: Mapper.From.Restrictions(obj.getRestrictions())
+				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
+				participants: (obj.getBlockparticipantsList() || []).map(it => ({
+					blockId: it.getBlockid(),
+					participantId: it.getParticipantid(),
+				})),
 			};
 		},
 
 		BoardGroup: (obj: any): I.BoardGroup => {
 			const type = Mapper.BoardGroupType(obj.getValueCase());
-			const field = obj['get' + UtilCommon.ucFirst(type)]();
+			const fn = `get${UtilCommon.ucFirst(type)}`;
+			const field = obj[fn] ? obj[fn]() : null;
 
 			let value: any = null;
-			switch (type) {
-				case 'status':
-					value = field.getId();
-					break;
 
-				case 'tag':
-					value = field.getIdsList();
-					break;
-
-				case 'checkbox':
-					value = field.getChecked();
-					break;
+			if (field) {
+				switch (type) {
+					case 'status':	 value = field.getId(); break;
+					case 'tag':		 value = field.getIdsList(); break;
+					case 'checkbox': value = field.getChecked(); break;
+				};
 			};
 
 			return { 
@@ -466,7 +471,7 @@ export const Mapper = {
 			};
 		},
 
-		GroupOrder: (obj: any) => {
+		GroupOrder: (obj: Model.Block.Content.Dataview.GroupOrder) => {
 			return {
 				viewId: obj.getViewid(),
 				groups: (obj.getViewgroupsList() || []).map((it: any) => {
@@ -480,7 +485,7 @@ export const Mapper = {
 			};
 		},
 
-		ObjectOrder: (obj: any) => {
+		ObjectOrder: (obj: Model.Block.Content.Dataview.ObjectOrder) => {
 			return {
 				viewId: obj.getViewid(),
 				groupId: obj.getGroupid(),
@@ -488,46 +493,165 @@ export const Mapper = {
 			};
 		},
 
-		Notification: (obj: any): I.Notification => {
+		ObjectSearchWithMeta: (obj: any) => {
+			return {
+				...Decode.struct(obj.getDetails()),
+				metaList: (obj.getMetaList() || []).map(Mapper.From.MetaList),
+			};
+		},
+
+		Notification: (obj: Model.Notification): I.Notification => {
 			const type = Mapper.NotificationPayload(obj.getPayloadCase());
-			const field = obj['get' + UtilCommon.ucFirst(type)]();
+			const fn = `get${UtilCommon.ucFirst(type)}`;
+			const field = obj[fn] ? obj[fn]() : null;
 			
 			let payload: any = {};
 
-			switch (type) {
+			if (field) {
+				switch (type) {
 
-				case 'import':
-				case 'galleryImport': {
-					payload = Object.assign(payload, {
-						processId: field.getProcessid(),
-						errorCode: field.getErrorcode(),
-						spaceId: field.getSpaceid(),
-						name: field.getName(),
-					});
+					case I.NotificationType.Import:
+					case I.NotificationType.Gallery: {
+						payload = Object.assign(payload, {
+							processId: field.getProcessid(),
+							errorCode: field.getErrorcode(),
+							spaceId: field.getSpaceid(),
+							name: field.getName(),
+						});
 
-					if (type == 'import') {
-						payload.importType = field.getImporttype();
+						if (type == I.NotificationType.Import) {
+							payload.importType = field.getImporttype();
+						};
+
+						if (type == I.NotificationType.Gallery) {
+							payload.spaceName = field.getSpacename();
+						};
+						break;
 					};
-					break;
-				};
 
-				case 'export': {
-					payload = Object.assign(payload, {
-						errorCode: field.getErrorcode(),
-						exportType: field.getExporttype(),
-					});
-					break;
-				};
+					case I.NotificationType.Export: {
+						payload = Object.assign(payload, {
+							errorCode: field.getErrorcode(),
+							exportType: field.getExporttype(),
+						});
+						break;
+					};
 
+					case I.NotificationType.Join: 
+					case I.NotificationType.Leave: 
+					case I.NotificationType.Remove: {
+						payload = Object.assign(payload, {
+							spaceId: field.getSpaceid(),
+							spaceName: field.getSpacename(),
+							identity: field.getIdentity(),
+							identityName: field.getIdentityname(),
+							identityIcon: field.getIdentityicon(),
+						});
+						break;
+					};
+
+					case I.NotificationType.Permission:
+					case I.NotificationType.Approve: {
+						payload = Object.assign(payload, {
+							spaceId: field.getSpaceid(),
+							spaceName: field.getSpacename(),
+        					permissions: field.getPermissions(),
+						});
+						break;
+					};
+
+					case I.NotificationType.Decline: {
+						payload = Object.assign(payload, {
+							spaceId: field.getSpaceid(),
+							spaceName: field.getSpacename(),
+						});
+						break;
+					};
+
+				};
 			};
 
 			return {
 				id: obj.getId(),
 				createTime: obj.getCreatetime(),
-				status: obj.getStatus(),
+				status: obj.getStatus() as number,
 				isLocal: obj.getIslocal(),
 				type: type as I.NotificationType,
 				payload,
+			};
+		},
+
+		Manifest: (obj: Model.ManifestInfo) => {
+			return {
+				id: obj.getId(),
+				schema: obj.getSchema(),
+				name: obj.getName(),
+				author: obj.getAuthor(),
+				license: obj.getLicense(),
+				title: obj.getTitle(),
+				description: obj.getDescription(),
+				downloadLink: obj.getDownloadlink(),
+				size: obj.getFilesize(),
+				screenshots: obj.getScreenshotsList() || [],
+				categories: obj.getCategoriesList() || [],
+			};
+		},
+
+		Membership: (obj: Model.Membership): I.Membership => {
+			return {
+				tier: obj.getTier(),
+				status: obj.getStatus() as number,
+				dateStarted: obj.getDatestarted(),
+				dateEnds: obj.getDateends(),
+				isAutoRenew: obj.getIsautorenew(),
+				paymentMethod: obj.getPaymentmethod() as number,
+				name: obj.getNsname(),
+				nameType: obj.getNsnametype() as number,
+				userEmail: obj.getUseremail(),
+				subscribeToNewsletter: obj.getSubscribetonewsletter(),	
+			};
+		},
+
+		MembershipTierData: (obj: Model.MembershipTierData): I.MembershipTier => {
+			return {
+				id: obj.getId(),
+				name: obj.getName(),
+				description: obj.getDescription(),
+				nameMinLength: obj.getAnynameminlength(),
+				isTest: obj.getIstest(),
+				periodType: obj.getPeriodtype(),
+				period: obj.getPeriodvalue(),
+				priceCents: obj.getPricestripeusdcents(),
+				colorStr: obj.getColorstr(),
+				features: obj.getFeaturesList(),
+				namesCount: obj.getAnynamescountincluded()
+			};
+		},
+
+		Process: (obj: Events.Model.Process) => {
+			return {
+				id: obj.getId(),
+				state: obj.getState() as number,
+				type: obj.getType() as number,
+				progress: Mapper.From.Progress(obj.getProgress())
+			};
+		},
+
+		Progress: (obj: Events.Model.Process.Progress) => {
+			return {
+				done: obj.getDone(),
+				total: obj.getTotal(),
+				message: obj.getMessage(),
+			};
+		},
+
+		MetaList: (obj: Model.Search.Meta): any => {
+			return {
+				highlight: obj.getHighlight(),
+				blockId: obj.getBlockid(),
+				relationKey: obj.getRelationkey(),
+				relationDetails: Decode.struct(obj.getRelationdetails()),
+				ranges: (obj.getHighlightrangesList() || []).map(Mapper.From.Range),
 			};
 		},
 
@@ -557,7 +681,7 @@ export const Mapper = {
 		},
 
 		Details: (obj: any) => {
-			const item = new Rpc.Object.SetDetails.Detail();
+			const item = new Model.Detail();
 
 			item.setKey(obj.key);
 			item.setValue(Encode.value(obj.value));
@@ -572,6 +696,10 @@ export const Mapper = {
 			item.setFields(Encode.struct(obj.fields || {}));
 
 			return item;
+		},
+
+		BlockFeatured: () => {
+			return new Model.Block.Content.FeaturedRelations();
 		},
 
 		BlockLayout: (obj: any) => {
@@ -600,13 +728,12 @@ export const Mapper = {
 		BlockFile: (obj: any) => {
 			const content = new Model.Block.Content.File();
 	
-			content.setHash(obj.hash);
-			content.setName(obj.name);
+			content.setTargetobjectid(obj.targetObjectId);
 			content.setType(obj.type);
-			content.setMime(obj.mime);
-			content.setSize(obj.size);
 			content.setAddedat(obj.addedAt);
 			content.setState(obj.state);
+			content.setStyle(obj.style);
+			content.setTargetobjectid(obj.targetObjectId);
 
 			return content;
 		},
@@ -705,6 +832,8 @@ export const Mapper = {
 		},
 
 		Block: (obj: any) => {
+			obj = obj || {};
+			obj.type = String(obj.type || I.BlockType.Empty);
 			obj.content = UtilCommon.objectCopy(obj.content || {});
 	
 			const block = new Model.Block();
@@ -722,8 +851,8 @@ export const Mapper = {
 				block.setFields(Encode.struct(obj.fields || {}));
 			};
 
-			const fb = UtilCommon.toCamelCase('set-' + obj.type.toLowerCase());
-			const fm = UtilCommon.toUpperCamelCase('block-' + obj.type);
+			const fb = UtilCommon.toCamelCase(`set-${obj.type.toLowerCase()}`);
+			const fm = UtilCommon.toUpperCamelCase(`block-${obj.type}`);
 
 			if (block[fb] && Mapper.To[fm]) {
 				block[fb](Mapper.To[fm](obj.content));
@@ -764,13 +893,14 @@ export const Mapper = {
 
 		Sort: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Sort();
-			
+
 			item.setId(obj.id);
 			item.setRelationkey(obj.relationKey);
 			item.setType(obj.type);
 			item.setCustomorderList((obj.customOrder || []).map(Encode.value));
 			item.setFormat(obj.format);
 			item.setIncludetime(obj.includeTime);
+			item.setEmptyplacement(obj.empty);
 
 			return item;
 		},
@@ -853,6 +983,538 @@ export const Mapper = {
 			return item;
 		},
 
-	}
+		ParticipantPermissionChange: (obj: any) => {
+			const item = new Model.ParticipantPermissionChange();
+
+			item.setIdentity(obj.identity);
+			item.setPerms(obj.permissions);
+
+			return item;
+		},
+
+	},
+
+	Event: {
+
+		Type (v: number): string {
+			const V = Events.Event.Message.ValueCase;
+
+			let t = '';
+			if (v == V.ACCOUNTSHOW)					 t = 'AccountShow';
+			if (v == V.ACCOUNTDETAILS)				 t = 'AccountDetails';
+			if (v == V.ACCOUNTUPDATE)				 t = 'AccountUpdate';
+			if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'AccountConfigUpdate';
+			if (v == V.ACCOUNTLINKCHALLENGE)		 t = 'AccountLinkChallenge';
+
+			if (v == V.BLOCKADD)					 t = 'BlockAdd';
+			if (v == V.BLOCKDELETE)					 t = 'BlockDelete';
+			if (v == V.BLOCKSETFIELDS)				 t = 'BlockSetFields';
+			if (v == V.BLOCKSETCHILDRENIDS)			 t = 'BlockSetChildrenIds';
+			if (v == V.BLOCKSETBACKGROUNDCOLOR)		 t = 'BlockSetBackgroundColor';
+			if (v == V.BLOCKSETTEXT)				 t = 'BlockSetText';
+			if (v == V.BLOCKSETFILE)				 t = 'BlockSetFile';
+			if (v == V.BLOCKSETLINK)				 t = 'BlockSetLink';
+			if (v == V.BLOCKSETBOOKMARK)			 t = 'BlockSetBookmark';
+			if (v == V.BLOCKSETALIGN)				 t = 'BlockSetAlign';
+			if (v == V.BLOCKSETVERTICALALIGN)		 t = 'BlockSetVerticalAlign';
+			if (v == V.BLOCKSETDIV)					 t = 'BlockSetDiv';
+			if (v == V.BLOCKSETRELATION)			 t = 'BlockSetRelation';
+			if (v == V.BLOCKSETLATEX)				 t = 'BlockSetLatex';
+			if (v == V.BLOCKSETTABLEROW)			 t = 'BlockSetTableRow';
+			if (v == V.BLOCKSETWIDGET)				 t = 'BlockSetWidget';
+
+			if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'BlockDataviewViewSet';
+			if (v == V.BLOCKDATAVIEWVIEWUPDATE)		 t = 'BlockDataviewViewUpdate';
+			if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'BlockDataviewViewDelete';
+			if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'BlockDataviewViewOrder';
+
+			if (v == V.BLOCKDATAVIEWTARGETOBJECTIDSET)	 t = 'BlockDataviewTargetObjectIdSet';
+			if (v == V.BLOCKDATAVIEWISCOLLECTIONSET)	 t = 'BlockDataviewIsCollectionSet';
+
+			if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'BlockDataviewRelationSet';
+			if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'BlockDataviewRelationDelete';
+			if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'BlockDataviewGroupOrderUpdate';
+			if (v == V.BLOCKDATAVIEWOBJECTORDERUPDATE)	 t = 'BlockDataviewObjectOrderUpdate';
+
+			if (v == V.SUBSCRIPTIONADD)				 t = 'SubscriptionAdd';
+			if (v == V.SUBSCRIPTIONREMOVE)			 t = 'SubscriptionRemove';
+			if (v == V.SUBSCRIPTIONPOSITION)		 t = 'subscriptionPosition';
+			if (v == V.SUBSCRIPTIONCOUNTERS)		 t = 'SubscriptionCounters';
+			if (v == V.SUBSCRIPTIONGROUPS)			 t = 'SubscriptionGroups';
+
+			if (v == V.OBJECTREMOVE)				 t = 'ObjectRemove';
+			if (v == V.OBJECTDETAILSSET)			 t = 'ObjectDetailsSet';
+			if (v == V.OBJECTDETAILSAMEND)			 t = 'ObjectDetailsAmend';
+			if (v == V.OBJECTDETAILSUNSET)			 t = 'ObjectDetailsUnset';
+			if (v == V.OBJECTRELATIONSAMEND)		 t = 'ObjectRelationsAmend';
+			if (v == V.OBJECTRELATIONSREMOVE)		 t = 'ObjectRelationsRemove';
+			if (v == V.OBJECTRESTRICTIONSSET)		 t = 'ObjectRestrictionsSet';
+			if (v == V.OBJECTCLOSE)					 t = 'objectClose';
+
+			if (v == V.FILESPACEUSAGE)				 t = 'FileSpaceUsage';
+			if (v == V.FILELOCALUSAGE)				 t = 'FileLocalUsage';
+			if (v == V.FILELIMITREACHED)			 t = 'FileLimitReached';
+			if (v == V.FILELIMITUPDATED)			 t = 'FileLimitUpdated';
+
+			if (v == V.NOTIFICATIONSEND)			 t = 'NotificationSend';
+			if (v == V.NOTIFICATIONUPDATE)			 t = 'NotificationUpdate';
+
+			if (v == V.THREADSTATUS)				 t = 'ThreadStatus';
+
+			if (v == V.PAYLOADBROADCAST)			 t = 'PayloadBroadcast';
+			
+			if (v == V.MEMBERSHIPUPDATE)			 t = 'MembershipUpdate';
+
+			if (v == V.PROCESSNEW)					 t = 'ProcessNew';
+			if (v == V.PROCESSUPDATE)				 t = 'ProcessUpdate';
+			if (v == V.PROCESSDONE)					 t = 'ProcessDone';
+
+			return t;
+		},
+
+		Data (e: any) {
+			const type = Mapper.Event.Type(e.getValueCase());
+			const fn = `get${UtilCommon.ucFirst(type)}`;
+
+			return e[fn] ? e[fn]() : {};
+		},
+
+		AccountShow: (obj: Events.Event.Account.Show) => {
+			return {
+				account: Mapper.From.Account(obj.getAccount()),
+			};
+		},
+
+		AccountUpdate: (obj: Events.Event.Account.Update) => {
+			return {
+				status: Mapper.From.AccountStatus(obj.getStatus()),
+			};
+		},
+
+		AccountConfigUpdate: (obj: Events.Event.Account.Config.Update) => {
+			return {
+				config: Mapper.From.AccountConfig(obj.getConfig()),
+			};
+		},
+
+		AccountLinkChallenge: (obj: Events.Event.Account.LinkChallenge) => {
+			return {
+				challenge: obj.getChallenge(),
+			};
+		},
+
+		ThreadStatus: (obj: Events.Event.Status.Thread) => {
+			return {
+				summary: Mapper.From.ThreadSummary(obj.getSummary()),
+				cafe: Mapper.From.ThreadCafe(obj.getCafe()),
+				accounts: (obj.getAccountsList() || []).map(Mapper.From.ThreadAccount),
+			};
+		},
+
+		ObjectRelationsAmend: (obj: Events.Event.Object.Relations.Amend) => {
+			return {
+				id: obj.getId(),
+				relations: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
+			};
+		},
+
+		ObjectRelationsRemove: (obj: Events.Event.Object.Relations.Remove) => {
+			return {
+				id: obj.getId(),
+				relationKeys: obj.getRelationkeysList() || [],
+			};
+		},
+
+		ObjectRestrictionsSet: (obj: Events.Event.Object.Restrictions.Set) => {
+			return {
+				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
+			};
+		},
+
+		FileSpaceUsage: (obj: Events.Event.File.SpaceUsage) => {
+			return {
+				spaceId: obj.getSpaceid(),
+				bytesUsage: obj.getBytesusage(),
+			};
+		},
+
+		FileLocalUsage: (obj: Events.Event.File.LocalUsage) => {
+			return {
+				localUsage: obj.getLocalbytesusage(),
+			};
+		},
+
+		FileLimitUpdated: (obj: Events.Event.File.LimitUpdated) => {
+			return {
+				bytesLimit: obj.getByteslimit(),
+			};
+		},
+
+		BlockAdd: (obj: Events.Event.Block.Add) => {
+			return {
+				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
+			};
+		},
+
+		BlockDelete: (obj: Events.Event.Block.Delete) => {
+			return {
+				blockIds: obj.getBlockidsList() || [],
+			};
+		},
+
+		BlockSetChildrenIds: (obj: Events.Event.Block.Set.ChildrenIds) => {
+			return {
+				id: obj.getId(),
+				childrenIds: obj.getChildrenidsList() || [],
+			};
+		},
+
+		BlockSetFields: (obj: Events.Event.Block.Set.Fields) => {
+			return {
+				id: obj.getId(),
+				fields: obj.hasFields() ? Decode.struct(obj.getFields()) : {},
+			};
+		},
+
+		BlockSetLink: (obj: Events.Event.Block.Set.Link) => {
+			return {
+				id: obj.getId(),
+				targetBlockId: obj.hasTargetblockid() ? obj.getTargetblockid().getValue() : null,
+				cardStyle: obj.hasCardstyle() ? obj.getCardstyle().getValue() : null,
+				iconSize: obj.hasIconsize() ? obj.getIconsize().getValue() : null,
+				description: obj.hasDescription() ? obj.getDescription().getValue() : null,
+				relations: obj.hasRelations() ? obj.getRelations().getValueList() || [] : null,
+				fields: obj.hasFields() ? Decode.struct(obj.getFields()) : null,
+			};
+		},
+
+		BlockSetText: (obj: Events.Event.Block.Set.Text) => {
+			return {
+				id: obj.getId(),
+				text: obj.hasText() ? obj.getText().getValue() : null,
+				style: obj.hasStyle() ? obj.getStyle().getValue() : null,
+				checked: obj.hasChecked() ? obj.getChecked().getValue() : null,
+				color: obj.hasColor() ? obj.getColor().getValue() : null,
+				iconEmoji: obj.hasIconemoji() ? obj.getIconemoji().getValue() : null,
+				iconImage: obj.hasIconimage() ? obj.getIconimage().getValue() : null,
+				marks: obj.hasMarks() ? (obj.getMarks().getValue().getMarksList() || []).map(Mapper.From.Mark) : null,
+			};
+		},
+
+		BlockSetDiv: (obj: Events.Event.Block.Set.Div) => {
+			return {
+				id: obj.getId(),
+				style: obj.hasStyle() ? obj.getStyle().getValue() : null,
+			};
+		},
+
+		BlockDataviewTargetObjectIdSet: (obj: Events.Event.Block.Dataview.TargetObjectIdSet) => {
+			return {
+				id: obj.getId(),
+				targetObjectId: obj.getTargetobjectid(),
+			};
+		},
+
+		BlockDataviewIsCollectionSet: (obj: Events.Event.Block.Dataview.IsCollectionSet) => {
+			return {
+				id: obj.getId(),
+				isCollection: obj.getValue(),
+			};
+		},
+
+		BlockSetWidget: (obj: Events.Event.Block.Set.Widget) => {
+			return {
+				id: obj.getId(),
+				layout: obj.hasLayout() ? obj.getLayout().getValue() : null,
+				limit: obj.hasLimit() ? obj.getLimit().getValue() : null,
+				viewId: obj.hasViewid() ? obj.getViewid().getValue() : null,
+			};
+		},
+
+		BlockSetFile: (obj: Events.Event.Block.Set.File) => {
+			return {
+				id: obj.getId(),
+				targetObjectId: obj.hasTargetobjectid() ? obj.getTargetobjectid().getValue() : null,
+				type: obj.hasType() ? obj.getType().getValue() : null,
+				style: obj.hasStyle() ? obj.getStyle().getValue() : null,
+				state: obj.hasState() ? obj.getState().getValue() : null,
+			};
+		},
+
+		BlockSetBookmark: (obj: Events.Event.Block.Set.Bookmark) => {
+			return {
+				id: obj.getId(),
+				targetObjectId: obj.hasTargetobjectid() ? obj.getTargetobjectid().getValue() : null,
+				state: obj.hasState() ? obj.getState().getValue() : null,
+			};
+		},
+
+		BlockSetBackgroundColor: (obj: Events.Event.Block.Set.BackgroundColor) => {
+			return {
+				id: obj.getId(),
+				bgColor: obj.getBackgroundcolor(),
+			};
+		},
+
+		BlockSetAlign: (obj: Events.Event.Block.Set.Align) => {
+			return {
+				id: obj.getId(),
+				align: obj.getAlign(),
+			};
+		},
+
+		BlockSetVerticalAlign: (obj: Events.Event.Block.Set.VerticalAlign) => {
+			return {
+				id: obj.getId(),
+				align: obj.getVerticalalign(),
+			};
+		},
+
+		BlockSetRelation: (obj: Events.Event.Block.Set.Relation) => {
+			return {
+				id: obj.getId(),
+				key: obj.hasKey() ? obj.getKey().getValue() : null,
+			};
+		},
+
+		BlockSetLatex: (obj: Events.Event.Block.Set.Latex) => {
+			return {
+				id: obj.getId(),
+				text: obj.hasText() ? obj.getText().getValue() : null,
+			};
+		},
+
+		BlockSetTableRow: (obj: Events.Event.Block.Set.TableRow) => {
+			return {
+				id: obj.getId(),
+				isHeader: obj.hasIsheader() ? obj.getIsheader().getValue() : null,
+			};
+		},
+
+		BlockDataviewViewSet: (obj: Events.Event.Block.Dataview.ViewSet) => {
+			return {
+				id: obj.getId(),
+				view: Mapper.From.View(obj.getView()),
+			};
+		},
+
+		BlockDataviewViewUpdate: (obj: Events.Event.Block.Dataview.ViewUpdate) => {
+			const ret = {
+				id: obj.getId(),
+				viewId: obj.getViewid(),
+				fields: obj.hasFields() ? Mapper.From.ViewFields(obj.getFields()) : null,
+			};
+
+			const keys = [ 
+				{ id: 'filter', field: 'filters', mapper: 'Filter' },
+				{ id: 'sort', field: 'sorts', mapper: 'Sort' },
+				{ id: 'relation', field: 'relations', mapper: 'ViewRelation' },
+			];
+
+			keys.forEach(key => {
+				const items = obj[UtilCommon.toCamelCase(`get-${key.id}-list`)]() || [];
+
+				ret[key.field] = [];
+
+				items.forEach(item => {
+					if (item.hasAdd()) {
+						const op = item.getAdd();
+						const afterId = op.getAfterid();
+						const items = (op.getItemsList() || []).map(Mapper.From[key.mapper]);
+
+						ret[key.field].push({ add: { afterId, items } });
+					};
+
+					if (item.hasMove()) {
+						const op = item.getMove();
+						const afterId = op.getAfterid();
+						const ids = op.getIdsList() || [];
+
+						ret[key.field].push({ move: { afterId, ids } });
+					};
+
+					if (item.hasUpdate()) {
+						const op = item.getUpdate();
+
+						if (op.hasItem()) {
+							const item = Mapper.From[key.mapper](op.getItem());
+
+							ret[key.field].push({ update: { id: op.getId(), item } });
+						};
+					};
+
+					if (item.hasRemove()) {
+						const op = item.getRemove();
+						const ids = op.getIdsList() || [];
+
+						ret[key.field].push({ remove: { ids } });
+					};
+				});
+			});
+
+			return ret;
+		},
+
+		BlockDataviewViewDelete: (obj: Events.Event.Block.Dataview.ViewDelete) => {
+			return {
+				id: obj.getId(),
+				viewId: obj.getViewid(),
+			};
+		},
+
+		BlockDataviewViewOrder: (obj: Events.Event.Block.Dataview.ViewOrder) => {
+			return {
+				id: obj.getId(),
+				viewIds: obj.getViewidsList() || [],
+			};
+		},
+
+		BlockDataviewRelationDelete: (obj: Events.Event.Block.Dataview.RelationDelete) => {
+			return {
+				id: obj.getId(),
+				relationKeys: obj.getRelationkeysList() || [],
+			};
+		},
+
+		BlockDataviewRelationSet: (obj: Events.Event.Block.Dataview.RelationSet) => {
+			return {
+				id: obj.getId(),
+				relations: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
+			};
+		},
+
+		BlockDataviewGroupOrderUpdate: (obj: Events.Event.Block.Dataview.GroupOrderUpdate) => {
+			return {
+				id: obj.getId(),
+				groupOrder: obj.hasGrouporder() ? Mapper.From.GroupOrder(obj.getGrouporder()) : null,
+			};
+		},
+
+		BlockDataviewObjectOrderUpdate: (obj: Events.Event.Block.Dataview.ObjectOrderUpdate) => {
+			return {
+				id: obj.getId(),
+				groupId: obj.getGroupid(),
+				viewId: obj.getViewid(),
+				changes: (obj.getSlicechangesList() || []).map(it => {
+					return {
+						operation: it.getOp(),
+						ids: it.getIdsList() || [],
+						afterId: it.getAfterid(),
+					};
+				})
+			};
+		},
+
+		ObjectDetailsSet: (obj: Events.Event.Object.Details.Set) => {
+			return {
+				id: obj.getId(),
+				subIds: obj.getSubidsList() || [],
+				details: Decode.struct(obj.getDetails()),
+			};
+		},
+
+		ObjectDetailsAmend: (obj: Events.Event.Object.Details.Amend) => {
+			const details = {};
+
+			(obj.getDetailsList() || []).forEach(it => {
+				details[it.getKey()] = Decode.value(it.getValue());
+			});
+
+			return {
+				id: obj.getId(),
+				subIds: obj.getSubidsList() || [],
+				details,
+			};
+		},
+
+		ObjectDetailsUnset: (obj: Events.Event.Object.Details.Unset) => {
+			return {
+				id: obj.getId(),
+				subIds: obj.getSubidsList() || [],
+				keys: obj.getKeysList() || [],
+			};
+		},
+
+		SubscriptionAdd: (obj: Events.Event.Object.Subscription.Add) => {
+			return {
+				id: obj.getId(),
+				afterId: obj.getAfterid(),
+				subId: obj.getSubid(),
+			};
+		},
+
+		SubscriptionRemove: (obj: Events.Event.Object.Subscription.Remove) => {
+			return {
+				id: obj.getId(),
+				subId: obj.getSubid(),
+			};
+		},
+
+		SubscriptionPosition: (obj: Events.Event.Object.Subscription.Position) => {
+			return {
+				id: obj.getId(),
+				afterId: obj.getAfterid(),
+				subId: obj.getSubid(),
+			};
+		},
+
+		SubscriptionCounters: (obj: Events.Event.Object.Subscription.Counters) => {
+			return {
+				total: obj.getTotal(),
+				subId: obj.getSubid(),
+			};
+		},
+
+		SubscriptionGroups: (obj: Events.Event.Object.Subscription.Groups) => {
+			return {
+				subId: obj.getSubid(),
+				group: Mapper.From.BoardGroup(obj.getGroup()),
+				remove: obj.getRemove(),
+			};
+		},
+
+		NotificationSend: (obj: Events.Event.Notification.Send) => {
+			return {
+				notification: Mapper.From.Notification(obj.getNotification()),
+			};
+		},
+
+		NotificationUpdate: (obj: Events.Event.Notification.Update) => {
+			return {
+				notification: Mapper.From.Notification(obj.getNotification()),
+			};
+		},
+
+		PayloadBroadcast: (obj: Events.Event.Payload.Broadcast) => {
+			return {
+				payload: obj.getPayload(),
+			};
+		},
+
+		MembershipUpdate: (obj: Events.Event.Membership.Update) => {
+			return {
+				membership: Mapper.From.Membership(obj.getData()),
+			};
+		},
+
+		ProcessNew: (obj: Events.Event.Process.New) => {
+			return {
+				process: Mapper.From.Process(obj.getProcess()),
+			};
+		},
+
+		ProcessUpdate: (obj: Events.Event.Process.Update) => {
+			return {
+				process: Mapper.From.Process(obj.getProcess()),
+			};
+		},
+
+		ProcessDone: (obj: Events.Event.Process.Done) => {
+			return {
+				process: Mapper.From.Process(obj.getProcess()),
+			};
+		},
+
+	},
 
 };

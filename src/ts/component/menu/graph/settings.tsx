@@ -27,8 +27,8 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 							<MenuItemVertical 
 								key={i} 
 								{...item} 
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-								onClick={(e: any) => { this.onClick(e, item); }} 
+								onMouseEnter={e => this.onMouseEnter(e, item)} 
+								onClick={e => this.onClick(e, item)} 
 							/>
 						);
 					})}
@@ -60,7 +60,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	rebind () {
 		this.unbind();
 
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -75,16 +75,27 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	onClick (e: any, item: any) {
-		const { graph } = commonStore;
+		const values = this.getValues();
 
-		graph[item.id] = !graph[item.id];
-		commonStore.graphSet(graph);
+		values[item.id] = !values[item.id];
+		commonStore.graphSet(this.getKey(), values);
 
 		this.forceUpdate();
 	};
 
+	getKey () {
+		return String(this.props.param.data.storageKey);
+	};
+
+	getValues () {
+		return commonStore.getGraph(this.getKey());
+	};
+
 	getSections (): any[] {
-		const { graph } = commonStore;
+		const { param } = this.props;
+		const { data } = param;
+		const { allowLocal } = data;
+		const values = this.getValues();
 
 		let sections: any[] = [
 			{ 
@@ -92,6 +103,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 					{ id: 'label', name: translate('menuGraphSettingsTitles') },
 					{ id: 'marker', name: translate('menuGraphSettingsArrows') },
 					{ id: 'icon', name: translate('menuGraphSettingsIcons') },
+					{ id: 'preview', name: translate('menuGraphSettingsPreview') },
 				] 
 			},
 			{ 
@@ -101,18 +113,17 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 					{ id: 'orphan', name: translate('menuGraphSettingsUnlinkedObjects') },
 				] 
 			},
-			{
-				children: [
-					{ id: 'local', name: translate('menuGraphSettingsLocal') },
-				]
-			}
 		];
+
+		if (allowLocal) {
+			sections.push({ children: [ { id: 'local', name: translate('menuGraphSettingsLocal') } ]  });
+		};
 
 		sections = sections.map(s => {
 			s.children = s.children.filter(it => it).map(c => {
-				c.switchValue = graph[c.id];
+				c.switchValue = values[c.id];
 				c.withSwitch = true;
-				c.onSwitch = (e: any, v: boolean) => { this.onClick(e, c); };
+				c.onSwitch = (e: any, v: boolean) => this.onClick(e, c);
 				return c;
 			});
 			return s;

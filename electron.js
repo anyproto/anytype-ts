@@ -7,16 +7,15 @@ const storage = require('electron-json-storage');
 const port = process.env.SERVER_PORT;
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
+const { installNativeMessagingHost } = require('./electron/js/lib/installNativeMessagingHost.js');
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
-
-if (is.development) {
-	app.setPath('userData', path.join(app.getPath('userData'), '_dev'));
-};
 
 // Fix notifications app name
 if (is.windows) {
     app.setAppUserModelId(app.name);
 };
+
+storage.setDataPath(app.getPath('userData'));
 
 const Api = require('./electron/js/api.js');
 const ConfigManager = require('./electron/js/config.js');
@@ -26,9 +25,6 @@ const WindowManager = require('./electron/js/window.js');
 const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
 const Cors = require('./electron/json/cors.json');
-
-const userPath = Util.userPath();
-const logPath = Util.logPath();
 const csp = [];
 
 for (let i in Cors) {
@@ -51,8 +47,7 @@ powerMonitor.on('suspend', () => {
 });
 
 powerMonitor.on('resume', () => {
-	BrowserWindow.getAllWindows().forEach(win => win.webContents.reload());
-
+	WindowManager.reloadAll();
 	Util.log('info', '[PowerMonitor] resume');
 });
 
@@ -72,19 +67,27 @@ if (app.isPackaged && !app.requestSingleInstanceLock()) {
 };
 
 remote.initialize();
-storage.setDataPath(userPath);
 Util.setAppPath(path.join(__dirname));
-Util.mkDir(logPath);
-
-if (process.env.ANYTYPE_USE_SIDE_SERVER) {
-	// use the grpc server started from the outside
-	Server.setAddress(process.env.ANYTYPE_USE_SIDE_SERVER);
-	waitLibraryPromise = Promise.resolve();
-} else {
-	waitLibraryPromise = Server.start(binPath, userPath);
-};
 
 function waitForLibraryAndCreateWindows () {
+	const { userDataPath } = ConfigManager.config;
+
+	let currentPath = app.getPath('userData');
+	if (userDataPath && (userDataPath != currentPath)) {
+		currentPath = userDataPath;
+		app.setPath('userData', userDataPath);
+	};
+
+	if (process.env.ANYTYPE_USE_SIDE_SERVER) {
+		// use the grpc server started from the outside
+		Server.setAddress(process.env.ANYTYPE_USE_SIDE_SERVER);
+		waitLibraryPromise = Promise.resolve();
+	} else {
+		waitLibraryPromise = Server.start(binPath, currentPath);
+	};
+
+	Util.mkDir(Util.logPath());
+
 	waitLibraryPromise.then(() => {
 		global.serverAddress = Server.getAddress();
 		createWindow();
@@ -102,7 +105,7 @@ nativeTheme.on('updated', () => {
 function createWindow () {
 	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
 
-	mainWindow.on('close', (e) => {
+	mainWindow.on('close', e => {
 		Util.log('info', 'closeMain: ' + app.isQuiting);
 
 		if (app.isQuiting) {
@@ -111,11 +114,21 @@ function createWindow () {
 		
 		e.preventDefault();
 
+		const onClose = () => {
+			const { config } = ConfigManager;
+
+			if (config.hideTray) {
+				Api.exit(mainWindow, '', false);
+			} else {
+				mainWindow.hide();
+			};
+		};
+
 		if (mainWindow.isFullScreen()) {
 			mainWindow.setFullScreen(false);
-			mainWindow.once('leave-full-screen', () => { mainWindow.hide(); });
+			mainWindow.once('leave-full-screen', () => onClose());
 		} else {
-			mainWindow.hide();
+			onClose();
 		};
 		return false;
 	});
@@ -126,6 +139,8 @@ function createWindow () {
 	MenuManager.setWindow(mainWindow);
 	MenuManager.initMenu();
 	MenuManager.initTray();
+
+	installNativeMessagingHost();
 
 	ipcMain.removeHandler('Api');
 	ipcMain.handle('Api', (e, id, cmd, args) => {
@@ -138,9 +153,10 @@ function createWindow () {
 		};
 
 		if (Api[cmd]) {
-			Api[cmd].apply(Api, [ win ].concat(args || []));
+			return Api[cmd].apply(Api, [ win ].concat(args || []));
 		} else {
 			console.error('[Api] method not defined:', cmd);
+			return null;
 		};
 	});
 };
@@ -161,25 +177,27 @@ app.on('ready', () => {
 app.on('second-instance', (event, argv) => {
 	Util.log('info', 'second-instance');
 
+	if (!mainWindow) {
+		return;
+	};
+
 	if (!is.macos) {
-		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
+		deeplinkingUrl = argv.find(arg => arg.startsWith(`${protocol}://`));
 	};
 
-	if (mainWindow) {
-		if (deeplinkingUrl) {
-			Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
-		};
-
-		if (mainWindow.isMinimized()) {
-			mainWindow.restore();
-		};
-
-		mainWindow.show();
-		mainWindow.focus();
+	if (deeplinkingUrl) {
+		Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
 	};
+
+	if (mainWindow.isMinimized()) {
+		mainWindow.restore();
+	};
+
+	mainWindow.show();
+	mainWindow.focus();
 });
 
-app.on('before-quit', (e) => {
+app.on('before-quit', e => {
 	Util.log('info', 'before-quit');
 
 	if (app.isQuiting) {

@@ -1,14 +1,17 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .menus {
-	.menu.menuBlockAdd, .menu.menuBlockStyle, .menu.menuBlockAction, .menu.menuBlockMore {
-		.item.empty { font-size: 12px; line-height: 18px; padding-top: 8px; }
+	.menu.menuBlockAdd, .menu.menuBlockStyle, .menu.menuBlockAction, .menu.menuObject {
+		.item.empty { @include text-small; padding-top: 8px; }
 	}
 
 	.menu.menuBlockAction { width: 240px; }
+	.menu.menuBlockAction {
+		.content { padding-top: 12px; }
+	}
 
-	.menu.menuBlockMore { width: 256px; }
-	.menu.menuBlockMore {
+	.menu.menuObject { width: 256px; }
+	.menu.menuObject {
 		.content { overflow: visible !important; max-height: unset; }
 		.item { display: flex; }
 		.item {
@@ -90,6 +93,7 @@
 			.icon.embed-telegram { background-image: url('~img/icon/menu/action/block/embed/telegram.svg'); }
 			.icon.embed-twitter { background-image: url('~img/icon/menu/action/block/embed/twitter.svg'); }
 			.icon.embed-excalidraw { background-image: url('~img/icon/menu/action/block/embed/excalidraw.svg'); }
+			.icon.embed-sketchfab { background-image: url('~img/icon/menu/action/block/embed/sketchfab.svg'); }
 
 			.icon.existing { background-image: url('~img/icon/menu/action/block/existing1.svg'); }
 			.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark1.svg'); }

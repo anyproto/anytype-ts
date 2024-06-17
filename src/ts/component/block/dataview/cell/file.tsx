@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { IconObject } from 'Component';
-import { I, UtilFile, UtilObject, translate, Relation } from 'Lib';
+import { IconObject, ObjectName } from 'Component';
+import { I, UtilObject, translate, Relation } from 'Lib';
 import { detailStore } from 'Store';
 
 interface State { 
@@ -31,7 +31,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 
 		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
 		value = value.map(it => detailStore.get(subId, it, []));
-		value = value.filter(it => !it._empty_);
+		value = value.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
 		
 		if (elementMapper) {
 			value = value.map(it => elementMapper(relation, it));
@@ -48,10 +48,10 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 		};
 
 		const Item = (item: any) => (
-			<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
+			<div className="element" onClick={e => this.onClick(e, item)}>
 				<div className="flex">
 					<IconObject object={item} size={iconSize} />
-					<div className="name">{UtilFile.name(item)}</div>
+					<ObjectName object={item} />
 				</div>
 			</div>
 		);

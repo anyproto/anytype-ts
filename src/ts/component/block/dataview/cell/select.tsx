@@ -16,7 +16,7 @@ const MAX_LENGTH = 320;
 const CellSelect = observer(class CellSelect extends React.Component<I.Cell, State> {
 
 	_isMounted = false;
-	node: any = null;
+	node = null;
 	state = {
 		isEditing: false,
 	};
@@ -36,9 +36,10 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	render () {
-		const { relation, getRecord, recordId, elementMapper, arrayLimit } = this.props;
+		const { relation, recordId, getRecord, elementMapper, arrayLimit } = this.props;
 		const { isEditing } = this.state;
 		const record = getRecord(recordId);
+		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		const isSelect = relation.format == I.RelationType.Select;
 		const cn = [ 'wrap' ];
 
@@ -49,7 +50,6 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		let value = this.getItems();
 		let content = null;
 
-		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		const length = value.length;
 
 		if (elementMapper) {
@@ -91,7 +91,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 										color={item.color}
 										canEdit={!isSelect} 
 										className={Relation.selectClassName(relation.format)}
-										onRemove={() => { this.onValueRemove(item.id); }}
+										onRemove={() => this.onValueRemove(item.id)}
 									/>
 								</span>
 							))}
@@ -108,6 +108,8 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
+						onCompositionStart={() => keyboard.setComposition(true)}
+						onCompositionEnd={() => keyboard.setComposition(false)}
 						onClick={e => e.stopPropagation()}
 					>
 						{'\n'}
@@ -185,7 +187,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	}; 
 
 	onKeyPress (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || keyboard.isComposition) {
 			return;
 		};
 
@@ -198,7 +200,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || keyboard.isComposition) {
 			return;
 		};
 
@@ -226,6 +228,10 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	onKeyUp (e: any) {
+		if (!this._isMounted || keyboard.isComposition) {
+			return;
+		};
+
 		menuStore.updateData('dataviewOptionList', { filter: this.getValue().new });
 
 		this.placeholderCheck();
@@ -344,10 +350,10 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	getItems (): any[] {
-		const { relation, getRecord, recordId } = this.props;
+		const { relation, recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
 
-		return record && relation ? Relation.getOptions(record[relation.relationKey]) : [];
+		return relation && record ? Relation.getOptions(record[relation.relationKey]).filter(it => !it.isArchived && !it.isDeleted) : [];
 	};
 
 	getItemIds (): string[] {
@@ -382,8 +388,9 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		
 		value = UtilCommon.arrayUnique(value);
 
-		if (maxCount && value.length > maxCount) {
-			value = value.slice(value.length - maxCount, value.length);
+		const length = value.length;
+		if (maxCount && (length > maxCount)) {
+			value = value.slice(length - maxCount, length);
 		};
 
 		if (onChange) {

@@ -22,11 +22,14 @@ class MenuManager {
 		const WindowManager = require('./window.js');
 		const UpdateManager = require('./update.js');
 
+		config.debug = config.debug || {};
+		config.flagsMw = config.flagsMw || {};
+
 		const menuParam = [
 			{
 				label: 'Anytype',
 				submenu: [
-					{ label: Util.translate('electronMenuAbout'), click: () => WindowManager.createAbout() },
+					{ label: Util.translate('electronMenuAbout'), click: () => Util.send(this.win, 'popup', 'about', {}, true) },
 
 					Separator,
 
@@ -50,19 +53,25 @@ class MenuManager {
 			{
 				role: 'fileMenu', label: Util.translate('electronMenuFile'),
 				submenu: [
-					{ label: Util.translate('electronMenuDirectory'), click: () => shell.openPath(Util.userPath()) },
-					{ label: Util.translate('electronMenuLogs'), click: () => shell.openPath(Util.logPath()) },
+					{ label: Util.translate('commonNewObject'), accelerator: 'CmdOrCtrl+N', click: () => Util.send(this.win, 'commandGlobal', 'createObject') },
+					{ label: Util.translate('commonNewSpace'), click: () => Util.send(this.win, 'commandGlobal', 'createSpace') },
 
 					Separator,
+
 					{ label: Util.translate('electronMenuImport'), click: () => this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }) },
 					{ label: Util.translate('electronMenuExport'), click: () => this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }) },
 					{ label: Util.translate('electronMenuSaveAs'), click: () => Util.send(this.win, 'commandGlobal', 'save') },
 
 					Separator,
 
-					{ label: Util.translate('electronMenuDebugSpace'), click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
-					{ label: Util.translate('electronMenuDebugObject'), click: () => Util.send(this.win, 'commandGlobal', 'debugTree') },
-					{ label: Util.translate('electronMenuDebugProcess'), click: () => Util.send(this.win, 'commandGlobal', 'debugProcess') },
+					{ 
+						label: Util.translate('electronMenuDirectory'), submenu: [
+							{ label: Util.translate('electronMenuWorkDirectory'), click: () => shell.openPath(Util.userPath()) },
+							{ label: Util.translate('electronMenuDataDirectory'), click: () => shell.openPath(Util.dataPath()) },
+							{ label: Util.translate('electronMenuConfigDirectory'), click: () => shell.openPath(Util.defaultUserDataPath()) },
+							{ label: Util.translate('electronMenuLogsDirectory'), click: () => shell.openPath(Util.logPath()) },
+						] 
+					},
 
 					Separator,
 
@@ -137,7 +146,7 @@ class MenuManager {
 				label: Util.translate('electronMenuHelp'),
 				submenu: [
 					{
-						label: Util.translate('electronMenuReleaseNotes') + ` (${app.getVersion()})`,
+						label: `${Util.translate('electronMenuReleaseNotes')} (${app.getVersion()})`,
 						click: () => Util.send(this.win, 'popup', 'help', { preventResize: true, data: { document: 'whatsNew' } })
 					},
 					{
@@ -162,42 +171,71 @@ class MenuManager {
 			},
 		];
 
-		//if (config.allowDebug || config.allowBeta) {
-			config.debug = config.debug || {};
+		const flags = { 
+			ui: Util.translate('electronMenuFlagInterface'), 
+			hiddenObject: Util.translate('electronMenuFlagHidden'), 
+			analytics: Util.translate('electronMenuFlagAnalytics'),
+		};
 
-			const flags = { 
-				ui: Util.translate('electronMenuFlagInterface'), 
-				ho: Util.translate('electronMenuFlagHidden'), 
-				mw: Util.translate('electronMenuFlagMiddleware'), 
-				th: Util.translate('electronMenuFlagThreads'), 
-				fi: Util.translate('electronMenuFlagFiles'), 
-				an: Util.translate('electronMenuFlagAnalytics'), 
-				js: Util.translate('electronMenuFlagJson'),
-			};
-			const flagMenu = [];
+		const flagsMw = {
+			request: Util.translate('electronMenuFlagMwRequest'),
+			event: Util.translate('electronMenuFlagMwEvent'),
+			thread: Util.translate('electronMenuFlagMwThread'),
+			file: Util.translate('electronMenuFlagMwFile'),
+			time: Util.translate('electronMenuFlagMwTime'),
+			json: Util.translate('electronMenuFlagMwJson'),
+		};
 
-			for (const i in flags) {
-				flagMenu.push({
-					label: flags[i], type: 'checkbox', checked: config.debug[i],
-					click: () => {
-						config.debug[i] = !config.debug[i];
-						Api.setConfig(this.win, { debug: config.debug });
-						
-						if ([ 'ho' ].includes(i)) {
-							this.win.reload();
-						};
-					}
-				});
-			};
+		const flagMenu = [];
+		const flagMwMenu = [];
 
-			menuParam.push({
-				label: Util.translate('electronMenuDebug'),
-				submenu: [
-					{ label: Util.translate('electronMenuFlags'), submenu: flagMenu },
-					{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.toggleDevTools() },
-				]
+		for (const i in flags) {
+			flagMenu.push({
+				label: flags[i], type: 'checkbox', checked: config.debug[i],
+				click: () => {
+					config.debug[i] = !config.debug[i];
+					Api.setConfig(this.win, { debug: config.debug });
+					
+					if ([ 'ho' ].includes(i)) {
+						this.win.reload();
+					};
+				}
 			});
-		//};
+		};
+
+		for (const i in flagsMw) {
+			flagMwMenu.push({
+				label: flagsMw[i], type: 'checkbox', checked: config.flagsMw[i],
+				click: () => {
+					config.flagsMw[i] = !config.flagsMw[i];
+					Api.setConfig(this.win, config);
+				}
+			});
+		};
+
+		flagMenu.push(Separator);
+		flagMenu.push({
+			label: Util.translate('electronMenuFlagMw'),
+			submenu: flagMwMenu,
+		});
+
+		menuParam.push({
+			label: Util.translate('electronMenuDebug'),
+			submenu: [
+				{ label: Util.translate('electronMenuFlags'), submenu: flagMenu },
+
+				Separator,
+
+				{ label: Util.translate('electronMenuDebugSpace'), click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
+				{ label: Util.translate('electronMenuDebugObject'), click: () => Util.send(this.win, 'commandGlobal', 'debugTree') },
+				{ label: Util.translate('electronMenuDebugProcess'), click: () => Util.send(this.win, 'commandGlobal', 'debugProcess') },
+				{ label: Util.translate('electronMenuDebugStat'), click: () => Util.send(this.win, 'commandGlobal', 'debugStat') },
+
+				Separator,
+
+				{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.toggleDevTools() },
+			]
+		});
 
 		const channels = ConfigManager.getChannels().map(it => {
 			it.click = () => { 
@@ -228,9 +266,27 @@ class MenuManager {
 
 				Separator,
 
+				{
+					label: 'Test payments', type: 'checkbox', checked: config.testPayment,
+					click: () => {
+						Api.setConfig(this.win, { testPayment: !config.testPayment });
+						this.win.reload();
+					}
+				},
+
+				{
+					label: 'Test crypto payments', type: 'checkbox', checked: config.testCryptoPayment,
+					click: () => {
+						Api.setConfig(this.win, { testCryptoPayment: !config.testCryptoPayment });
+						this.win.reload();
+					}
+				},
+
+				Separator,
+
 				{ label: 'Export templates', click: () => Util.send(this.win, 'commandGlobal', 'exportTemplates') },
 				{ label: 'Export objects', click: () => Util.send(this.win, 'commandGlobal', 'exportObjects') },
-				{ label: 'Export localstore', click: () => { Util.send(this.win, 'commandGlobal', 'exportLocalstore'); } },
+				{ label: 'Export localstore', click: () => Util.send(this.win, 'commandGlobal', 'exportLocalstore') },
 
 				Separator,
 
@@ -277,20 +333,22 @@ class MenuManager {
 
 		// Force on top and focus because in some case Electron fail with this.winShow()
 		this.tray.on('double-click', () => {
-			this.win.setAlwaysOnTop(true);
-			this.winShow();
-			this.win.setAlwaysOnTop(false);
+			if (this.win && !this.win.isDestroyed()) {
+				this.win.setAlwaysOnTop(true);
+				this.winShow();
+				this.win.setAlwaysOnTop(false);
+			};
 		});
 	};
 
 	winShow () {
-		if (this.win) {
+		if (this.win && !this.win.isDestroyed()) {
 			this.win.show();
 		};
 	};
 
 	winHide () {
-		if (this.win) {
+		if (this.win && !this.win.isDestroyed()) {
 			this.win.hide();
 		};
 	};
@@ -319,7 +377,7 @@ class MenuManager {
 
 			(is.windows || is.linux) ? { 
 				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: !config.hideMenuBar, click: () => { 
-					Api.setConfig(this.win, { hideMenuBar: !config.hideMenuBar });
+					Api.setMenuBarVisibility(this.win, !config.hideMenuBar);
 					this.initTray();
 				} 
 			} : null,
@@ -358,7 +416,7 @@ class MenuManager {
 			{ 
 				label: Util.translate('commonNewObject'), accelerator: 'CmdOrCtrl+N', click: () => { 
 					this.winShow();
-					Util.send(this.win, 'commandGlobal', 'create'); 
+					Util.send(this.win, 'commandGlobal', 'createObject'); 
 				} 
 			},
 		].filter(it => it);
@@ -398,7 +456,7 @@ class MenuManager {
 	};
 
 	destroy () {
-		if (this.tray) {
+		if (this.tray && !this.tray.isDestroyed()) {
 			this.tray.destroy();
 			this.tray = null;
 		};

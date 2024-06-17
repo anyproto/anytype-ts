@@ -1,14 +1,32 @@
 import $ from 'jquery';
-import { I, Preview, Renderer, translate } from 'Lib';
+import { I, C, Preview, Renderer, translate, UtilSpace, Mark } from 'Lib';
 import { popupStore } from 'Store';
-import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
-import Text from 'json/text.json';
+const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
+const Text = require('json/text.json');
 import DOMPurify from 'dompurify';
 
 const TEST_HTML = /<[^>]*>/;
 
 class UtilCommon {
+
+	getElectron () {
+		return window.Electron || {};
+	};
+
+	getCurrentElectronWindowId (): string {
+		const electron = this.getElectron();
+
+		if (!electron) {
+			return '0';
+		};
+
+		return String(electron.currentWindow().windowId || '');
+	};
+
+	getGlobalConfig () {
+		return window.AnytypeGlobalConfig || {};
+	};
 
 	sprintf (...args: any[]) {
 		const regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
@@ -306,9 +324,9 @@ class UtilCommon {
 		document.execCommand('copy');
 	};
 
-	copyToast (label: string, text: string) {
+	copyToast (label: string, text: string, toast?: string) {
 		this.clipboardCopy({ text });
-		Preview.toastShow({ text: this.sprintf(translate('toastCopy'), label) });
+		Preview.toastShow({ text: this.sprintf(toast || translate('toastCopy'), label) });
 	};
 	
 	cacheImages (images: string[], callBack?: () => void) {
@@ -445,8 +463,12 @@ class UtilCommon {
 		Renderer.send('pathOpen', path);
 	};
 	
-	emailCheck (v: string) {
-		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
+	checkEmail (v: string) {
+		v = String(v || '');
+
+		const uc = '\\P{Script_Extensions=Latin}';
+		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,12}$`, 'gu');
+		return reg.test(v);
 	};
 
 	getSelectionRange (): Range {
@@ -493,23 +515,23 @@ class UtilCommon {
 		return cnt.substr(-1) == '1' ? single : multiple;
 	};
 
-	getPlatform () {
-		return Constant.platforms[window.Electron.platform];
+	getPlatform (): I.Platform {
+		return Constant.platforms[this.getElectron().platform] || I.Platform.None;
 	};
 
-	isPlatformMac () {
+	isPlatformMac (): boolean {
 		return this.getPlatform() == I.Platform.Mac;
 	};
 
-	isPlatformWindows () {
+	isPlatformWindows (): boolean {
 		return this.getPlatform() == I.Platform.Windows;
 	};
 
-	isPlatformLinux () {
+	isPlatformLinux (): boolean {
 		return this.getPlatform() == I.Platform.Linux;
 	};
 
-	checkError (code: number): boolean {
+	checkErrorCommon (code: number): boolean {
 		if (!code) {
 			return true;
 		};
@@ -530,19 +552,78 @@ class UtilCommon {
 		return true;
 	};
 
+	checkErrorOnOpen (rootId: string, code: number, context: any): boolean {
+		if (!rootId || !code) {
+			return true;
+		};
+
+		if (context) {
+			context.setState({ isLoading: false });
+		};
+
+		if (!this.checkErrorCommon(code)) {
+			return false;
+		};
+
+		if ([ Errors.Code.NOT_FOUND, Errors.Code.OBJECT_DELETED ].includes(code)) {
+			if (context) {
+				context.setState({ isDeleted: true });
+			};
+		} else {
+			const logPath = this.getElectron().logPath();
+
+			popupStore.open('confirm', {
+				data: {
+					icon: 'error',
+					bgColor: 'red',
+					title: translate('commonError'),
+					text: translate('popupConfirmObjectOpenErrorText'),
+					textConfirm: translate('popupConfirmObjectOpenErrorButton'),
+					onConfirm: () => {
+						C.DebugTree(rootId, logPath, (message: any) => {
+							if (!message.error.code) {
+								Renderer.send('pathOpen', logPath);
+							};
+						});
+
+						UtilSpace.openDashboard('route', { replace: true });
+					}
+				},
+			});
+		};
+
+		return false;
+	};
+
 	onErrorUpdate (onConfirm?: () => void) {
 		popupStore.open('confirm', {
 			data: {
 				icon: 'update',
-				title: translate('confirmUpdateTitle'),
-				text: translate('confirmUpdateText'),
-				textConfirm: translate('confirmUpdateConfirm'),
-				canCancel: false,
+				bgColor: 'green',
+				title: translate('popupConfirmUpdateNeedTitle'),
+				text: translate('popupConfirmUpdateNeedText'),
+				textConfirm: translate('commonUpdate'),
+				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('update');
+
 					if (onConfirm) {
 						onConfirm();
 					};
+				},
+			},
+		});
+	};
+
+	onInviteRequest () {
+		popupStore.open('confirm', {
+			data: {
+				title: translate('popupInviteInviteConfirmTitle'),
+				text: translate('popupInviteInviteConfirmText'),
+				textConfirm: translate('commonDone'),
+				textCancel: translate('popupInviteInviteConfirmCancel'),
+				onCancel: () => {
+					window.setTimeout(() => { popupStore.open('settings', { data: { page: 'spaceList' } }); }, popupStore.getTimeout());
 				},
 			},
 		});
@@ -565,23 +646,6 @@ class UtilCommon {
 		return $(isPopup ? '#popupPage-innerWrap' : '#page.isFull');
 	};
 
-	getBodyContainer (type: string) {
-		switch (type) {
-			default:
-			case 'page':
-				return 'body';
-
-			case 'popup':
-				return '#popupPage-innerWrap';
-			
-			case 'menuBlockAdd':
-				return `#${type} .content`;
-
-			case 'menuBlockRelationView':
-				return `#${type} .scrollWrap`;
-		};
-	};
-
 	getCellContainer (type: string) {
 		switch (type) {
 			default:
@@ -593,7 +657,10 @@ class UtilCommon {
 
 			case 'menuBlockAdd':
 			case 'menuBlockRelationView':
-				return '#' + type;
+				return `#${type}`;
+
+			case 'popupRelation':
+				return `#${type}-innerWrap`;
 		};
 	};
 
@@ -640,7 +707,7 @@ class UtilCommon {
 	};
 
 	matchUrl (s: string): string {
-		const m = String(s || '').match(/^((?:[a-z]+:(?:\/\/)?)|\/\/)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
+		const m = String(s || '').match(/^(?:[a-z]+:(?:\/\/)?)([^\s\/\?#]+)([^\s\?#]+)(?:\?([^#\s]*))?(?:#([^\s]*))?$/gi);
 		return (m && m.length) ? m[0] : '';
 	};
 
@@ -739,7 +806,7 @@ class UtilCommon {
 				reader.onload = () => {
 					ret.push({ 
 						name: item.name, 
-						path: window.Electron.fileWrite(item.name, reader.result, { encoding: 'binary' }),
+						path: this.getElectron().fileWrite(item.name, reader.result, { encoding: 'binary' }),
 					});
 					cb();
 				};
@@ -807,24 +874,48 @@ class UtilCommon {
 			return s;
 		};
 
+		const tags = [ 'b', 'br', 'a', 'ul', 'li', 'h1', 'span', 'p', 'name', 'smile', 'img' ];
+
+		for (const i in I.MarkType) {
+			if (isNaN(I.MarkType[i] as any)) {
+				continue;
+			};
+			tags.push(Mark.getTag(I.MarkType[i] as any));
+		};
+
 		return DOMPurify.sanitize(s, { 
-			ADD_TAGS: [ 
-				'b', 'br', 'a', 'ul', 'li', 'h1', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 'markupUnderline', 'markupLink', 'markupColor',
-				'markupBgcolor', 'markupMention', 'markupEmoji', 'markupObject', 'span', 'p', 'name', 'smile', 'img', 'search'
-			],
-			ADD_ATTR: [
-				'contenteditable'
-			],
-			ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|xxx|file):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+			ADD_TAGS: tags,
+			ADD_ATTR: [ 'contenteditable' ],
+			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 		});
+	};
+
+	fixAsarPath (path: string): string {
+		const electron = this.getElectron();
+
+		if (!electron.dirname || !electron.isPackaged) {
+			return path;
+		};
+
+		let href = electron.dirname(location.href);
+		href = href.replace('/app.asar/', '/app.asar.unpacked/');
+		return href + path.replace(/^\.\//, '/');
 	};
 
 	injectCss (id: string, css: string) {
 		const head = $('head');
 		const element = $(`<style id="${id}" type="text/css">${css}</style>`);
 
-		head.find(`#${id}`).remove();
+		head.find(`style#${id}`).remove();
 		head.append(element);
+	};
+
+	addScript (id: string, src: string) {
+		const body = $('body');
+		const element = $(`<script id="${id}" type="text/javascript" src="${src}"></script>`);
+
+		body.find(`script#${id}`).remove();
+		body.append(element);
 	};
 
 	uint8ToString (u8a: Uint8Array): string {
@@ -835,6 +926,25 @@ class UtilCommon {
 			c.push(String.fromCharCode.apply(null, u8a.subarray(i, i + CHUNK)));
 		};
 		return c.join('');
+	};
+
+	enumKey (e: any, v: any) {
+		let k = '';
+		for (const key in e) {
+			if (v === e[key]) {
+				k = key;
+				break;
+			};
+		};
+		return k;
+	};
+
+	stripTags (s: string): string {
+		return String(s || '').replace(/<[^>]+>/g, '');
+	};
+
+	normalizeLineEndings (s: string) {
+		return String(s || '').replace(/\r\n?/g, '\n');
 	};
 
 };

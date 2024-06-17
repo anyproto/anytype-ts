@@ -5,8 +5,8 @@ import { Icon, Drag, Cover, Loader, Label } from 'Component';
 import { I, C, UtilCommon, UtilData, UtilObject, focus, translate, keyboard, Action } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
+const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 
 interface State {
 	isEditing: boolean;
@@ -175,57 +175,31 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 
 	onIcon (e: any) {
-		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
-		
-		focus.clear(true);
-		root.isObjectHuman() ? this.onIconUser() : this.onIconPage();
-	};
-	
-	onIconPage () {
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
 		const object = detailStore.get(rootId, rootId, []);
-		const { iconEmoji, iconImage } = object;
-		
+		const cb = () => menuStore.update('smile', { element: `#block-icon-${rootId}` });
+
+		focus.clear(true);
+
 		menuStore.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => {
-				elements.addClass('hover');
-			},
-			onClose: () => {
-				elements.removeClass('hover');
-			},
+			onOpen: () => elements.addClass('hover'),
+			onClose: () => elements.removeClass('hover'),
 			data: {
-				noRemove: !(iconEmoji || iconImage),
+				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => {
-					UtilObject.setIcon(rootId, icon, '', () => {
-						menuStore.update('smile', { element: `#block-icon-${rootId}` });
-					});
+					UtilObject.setIcon(rootId, icon, '', cb);
 				},
-				onUpload (hash: string) {
-					UtilObject.setIcon(rootId, '', hash, () => {
-						menuStore.update('smile', { element: `#block-icon-${rootId}` });
-					});
+				onUpload (objectId: string) {
+					UtilObject.setIcon(rootId, '', objectId, cb);
 				},
 			}
 		});
 	};
 	
-	onIconUser () {
-		const { rootId } = this.props;
-
-		Action.openFile(Constant.extension.cover, paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
-				if (!message.error.code) {
-					UtilObject.setIcon(rootId, '', message.hash);
-				};
-			});
-		});
-	};
-
 	onLayout (e: any) {
 		const { rootId, block } = this.props;
 		const node = $(this.node);
@@ -302,14 +276,14 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.setLoading(true);
 	};
 	
-	onUpload (type: I.CoverType, hash: string) {
+	onUpload (type: I.CoverType, objectId: string) {
 		const { rootId } = this.props;
 
 		this.coords.x = 0;
 		this.coords.y = -0.25;
 		this.scale = 0;
 
-		UtilObject.setCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
+		UtilObject.setCover(rootId, type, objectId, this.coords.x, this.coords.y, this.scale, () => {
 			this.loaded = false;
 			this.setLoading(false);
 		});
@@ -407,8 +381,8 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		node.addClass('isDragging');
 		
 		win.off('mousemove.cover mouseup.cover');
-		win.on('mousemove.cover', (e: any) => { this.onDragMove(e); });
-		win.on('mouseup.cover', (e: any) => { this.onDragEnd(e); });
+		win.on('mousemove.cover', e => this.onDragMove(e));
+		win.on('mouseup.cover', e => this.onDragEnd(e));
 	};
 	
 	onDragMove (e: any) {
@@ -497,30 +471,30 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 	
 	onDrop (e: any) {
-		const { rootId, dataset, readonly } = this.props;
+		const { rootId, readonly } = this.props;
 
 		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
 			return;
 		};
 		
-		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(this.node);
 		
 		node.removeClass('isDraggingOver');
-		preventCommonDrop(true);
+		keyboard.disableCommonDrop(true);
 		this.setLoading(true);
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setLoading(false);
-			preventCommonDrop(false);
+			keyboard.disableCommonDrop(false);
 			
-			if (message.error.code) {
-				return;
+			if (!message.error.code) {
+				this.loaded = false;
+				UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
 			};
 			
 			this.loaded = false;
-			UtilObject.setCover(rootId, I.CoverType.Upload, message.hash);
+			UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
 		});
 	};
 	

@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .header { 
 	position: fixed; top: 0px; width: 100%; z-index: 20; user-select: none; display: flex; flex-direction: row; align-items: center; 
@@ -52,10 +52,10 @@
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
-	.icon:hover, .icon.hover { background-color: var(--color-shape-tertiary); }
+	.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
 
-	.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
-	.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
+	.icon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }
+	.icon.toggle:hover { background-image: url('~img/icon/widget/toggle1.svg'); }
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
@@ -67,39 +67,21 @@
 }
 
 .header.authIndex { height: 38px; }
-.header.authIndex {
-	.logo {
-		width: 90px; height: 13px; background: url('~img/logo/capital.svg') no-repeat; display: inline-block; vertical-align: middle;
-		background-position: center center; background-size: 100% 100%; transition: none;
+
+html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
+	.header.authIndex {
+		.icon.settings { display: none; }
 	}
 }
 
-.header.mainHistory { height: 38px; width: calc(100% - 254px); background: var(--color-bg-primary); }
+.header.mainHistory { height: 38px; width: calc(100% - 336px); background: var(--color-bg-primary); }
 .header.mainHistory {
-	.side.left, .side.right { width: unset; }
-
 	.side.center { overflow: hidden; }
 	.side.center {
 		.txt { @include text-overflow-nw; }
 	}
-
-	.item { 
-		color: var(--color-text-secondary); transition: $transitionAllCommon; height: 20px; line-height: 20px; 
-		display: inline-block; vertical-align: middle; white-space: nowrap; -webkit-app-region: no-drag;
-	}
-	.item {
-		.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/history0.svg'); margin: 0px; vertical-align: top; }
-	}
-	.item.orange { color: var(--color-system-accent-100) !important; font-weight: 500; }
-	
-	.item.grey:hover { color: var(--color-text-primary); }
-	.item.orange:hover { color: var(--color-system-accent-100) !important; }
-
-	.item:hover {
-		.icon.arrow { background-image: url('~img/arrow/history1.svg'); }
-	}
 }
-.header.mainHistory.snapLeft { right: 254px; }
+.header.mainHistory.snapLeft { right: 336px; }
 
 .header.isCommon { background: var(--color-bg-primary); height: 38px; }
 .header.isCommon {
@@ -126,6 +108,33 @@
 	.icon.btn-search { background-image: url('~img/icon/header/search.svg'); }
 	.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
+}
+
+.header.mainStore.withBanner { flex-direction: column; height: auto !important; }
+.header.mainStore.withBanner {
+	.sides { display: flex; flex-direction: row; align-items: center; justify-content: stretch; height: 52px; }
+
+	.bannerWrapper { width: 100%; padding: 16px 80px; }
+	.bannerWrapper {
+		.banner { 
+			background-image: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%); display: flex; align-items: center;
+			color: var(--color-control-accent); height: 116px; border-radius: 11px; position: relative; justify-content: space-evenly;
+			padding: 0px 116px; overflow: hidden;
+		}
+		.banner {
+			.side { width: calc(50% - 46px); }
+			.side.left { display: flex; flex-direction: column; padding: 0px; align-items: flex-start; justify-content: center; gap: 8px 0px; }
+			.side.right { min-width: 424px; }
+
+			.icon.close { position: absolute; width: 20px; height: 20px; background-image: url('~img/icon/header/banner/close.svg'); right: 10px; top: 10px; }
+			.title { @include text-header3; @include text-overflow-nw; width: 100%; }
+			.pic { 
+				width: 100%; height: 100%; background: url('~img/icon/header/banner/pic.png') no-repeat; background-size: contain; 
+				background-position: bottom right; 
+			}
+			.button { @include text-small; height: 24px; line-height: 24px; }
+		}
+	}
 }
 
 .popup {

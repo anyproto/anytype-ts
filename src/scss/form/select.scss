@@ -1,11 +1,11 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .select { 
 	border-radius: 4px; border: solid 1px var(--color-shape-primary); display: inline-block; vertical-align: middle;
 	transition: $transitionAllCommon; position: relative; font-family: 'Inter';
 	white-space: nowrap; padding: 3px 20px 3px 6px; line-height: 20px !important;
 }
-.select:hover, .select.active { background: var(--color-shape-tertiary); }
+.select:hover, .select.isFocused { background: var(--color-shape-tertiary); }
 
 .select {
 	.icon { transition: none; }
@@ -22,6 +22,8 @@
 		.caption { display: none; }
 	}
 	.item::before { display: none; }
+
+	.clickable { display: flex; width: 100%; }
 }
 
 .select.big { padding: 9px 26px 9px 12px; border-radius: 10px; }

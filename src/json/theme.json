@@ -19,13 +19,13 @@
 
 		"qr": {
 			"foreground": "#000",
-			"bg": "#f2f2f2"
+			"bg": "#fff"
 		},
 
 		"icon": {
-			"text": "#b6b6b6",
+			"text": "#fff",
 			"bg": {
-				"grey": "#f2f2f2",
+				"grey": "#bfbfbf",
 				"black": "#252525",
 				"brown": "#b6b6b6",
 				"orange": "#ffb522",
@@ -47,7 +47,7 @@
 			"link": "#3f3f3f",
 			"arrow": "#555",
 			"node": "#9a9a9a",
-			"text": "#8d8d8d",
+			"text": "#9a9a9a",
 			"highlight": "#ffb522",
 			"selected": "#2aa7ee",
 			"iconBg": "#252525"
@@ -56,19 +56,23 @@
 		"mermaid": {
 			"fontFamily": "Helvetica, Arial, sans-serif",
 			"fontSize": "14px",
-			"background": "#171717",
-			"lineColor": "#ffb522"
+			"primaryColor": "#bb2528",
+			"primaryTextColor": "#fff",
+			"primaryBorderColor": "#7c0000",
+			"lineColor": "#F8b229",
+			"secondaryColor": "#006100",
+			"tertiaryColor": "#fff"
 		},
 
 		"qr": {
-			"foreground": "#d4d4d4",
-			"bg": "#252525"
+			"foreground": "#000",
+			"bg": "#fff"
 		},
 
 		"icon": {
-			"text": "#dfddd3",
+			"text": "#fff",
 			"bg": {
-				"grey": "#484843",
+				"grey": "#606060",
 				"black": "#252525",
 				"brown": "#b6b6b6",
 				"orange": "#ffb522",

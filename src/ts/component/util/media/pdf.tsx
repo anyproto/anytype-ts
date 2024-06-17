@@ -3,7 +3,6 @@ import $ from 'jquery';
 import raf from 'raf';
 import { Loader } from 'Component';
 import { Document, Page } from 'react-pdf';
-import { throttle } from 'lodash';
 
 interface Props {
 	id: string;
@@ -29,7 +28,7 @@ class MediaPdf extends React.Component<Props, State> {
 
 	render () {
 		const { width } = this.state;
-		const { src, page, onDocumentLoad, onPageRender, onClick } = this.props;
+		const { src, page, onDocumentLoad, onClick } = this.props;
 
 		return (
 			<div ref={ref => this.node = ref}>
@@ -39,12 +38,13 @@ class MediaPdf extends React.Component<Props, State> {
 					renderMode="canvas"
 					loading={<Loader />}
 					onClick={onClick}
+					options={{ isEvalSupported: false }}
 				>
 					<Page 
 						pageNumber={page} 
 						loading={<Loader />}
 						width={width}
-						onRenderSuccess={onPageRender}
+						onRenderSuccess={this.onPageRender}
 					/>
 				</Document>
 			</div>
@@ -54,13 +54,14 @@ class MediaPdf extends React.Component<Props, State> {
 	componentDidMount(): void {
 		this._isMounted = true;
 		this.rebind();
-
-		raf(() => this.resize());
+		this.resize();
 	};
 
 	componentWillUnmount(): void {
 		this._isMounted = false;
 		this.unbind();
+
+		raf.cancel(this.frame);
 	};
 
 	unbind () {
@@ -68,7 +69,7 @@ class MediaPdf extends React.Component<Props, State> {
 	};
 
 	rebind () {
-		$(window).on(`resize.pdf-${this.props.id}`, throttle(() => this.resize(), 40));
+		$(window).on(`resize.pdf-${this.props.id}`, () => this.resize());
 	};
 
 	resize () {
@@ -81,6 +82,11 @@ class MediaPdf extends React.Component<Props, State> {
 				this.setState({ width: $(this.node).width() });
 			};
 		});
+	};
+
+	onPageRender = () => {
+		this.props.onPageRender();
+		this.resize();
 	};
 
 };

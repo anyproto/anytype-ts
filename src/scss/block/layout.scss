@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	
@@ -6,7 +6,7 @@
 		> .wrapMenu { display: none; }
 		> .wrapContent {
 			> .dropTarget { display: none; }
-			> .selectable {
+			> .selectionTarget {
 				> .dropTarget { display: none; }
 			}
 		}
@@ -15,6 +15,7 @@
 	.block.blockLayout:not(.blockLayout.layoutDiv):not(.blockLayout.layoutHeader) {
 		> .wrapContent {
 			> .children {
+				> .block.first { padding-top: 0px !important; }
 				> .block.first {
 					.colResize {
 						.inner { top: 0px; height: calc(100% + 15px); }
@@ -81,27 +82,20 @@
 			> .block.first.blockText.textHeader3 { padding-top: 0px; }
 			> .block.last.blockText.textHeader3 { padding-bottom: 0px; }
 
-			> .block.first.blockFile > .wrapContent > .selectable > .dropTarget { padding-top: 0px; }
-			> .block.last.blockFile > .wrapContent > .selectable > .dropTarget { padding-bottom: 0px; }
+			> .block.first.blockFile > .wrapContent > .selectionTarget > .dropTarget { padding-top: 0px; }
+			> .block.last.blockFile > .wrapContent > .selectionTarget > .dropTarget { padding-bottom: 0px; }
 
-			> .block.first.blockMedia > .wrapContent > .selectable > .dropTarget { padding-top: 0px; }
-			> .block.last.blockMedia > .wrapContent > .selectable > .dropTarget { padding-bottom: 0px; }
+			> .block.first.blockMedia > .wrapContent > .selectionTarget > .dropTarget { padding-top: 0px; }
+			> .block.last.blockMedia > .wrapContent > .selectionTarget > .dropTarget { padding-bottom: 0px; }
 		}
 	}
 
-	/* Div */
-	.block.blockLayout.layoutDiv {
-		> .wrapContent { width: 100%; overflow: visible; }
-	}
-
-	/* Header */
-	.block.blockLayout.layoutHeader { margin: 0px !important; }
-	.block.blockLayout.layoutHeader {
-		> .wrapContent { width: 100%; overflow: visible; }
-	}
-
-	/* Footer */
+	.block.blockLayout.layoutDiv, 
+	.block.blockLayout.layoutHeader, 
 	.block.blockLayout.layoutFooter { margin: 0px !important; }
+
+	.block.blockLayout.layoutDiv, 
+	.block.blockLayout.layoutHeader, 
 	.block.blockLayout.layoutFooter {
 		> .wrapContent { width: 100%; overflow: visible; }
 	}

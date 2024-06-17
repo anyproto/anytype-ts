@@ -1,43 +1,50 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .listObject {
-	table { width: 100%; border-collapse: collapse; border-bottom: 1px solid var(--color-shape-secondary); table-layout: fixed; border-top: 1px solid var(--color-shape-secondary); }
-	table {
-		.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
-
-		.cellHead { 
-			text-align: left; color: var(--color-text-secondary); padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
-			@include text-overflow-nw; width: 25%;
+	.table { display: grid; border-color: var(--color-shape-secondary); border-style: solid; border-top-width: 1px; margin: 0px 0px 10px 0px; }
+	.table {
+		.selectionTarget { display: grid; grid-template-columns: minmax(0, 1fr) 20% 20%; }
+		
+		.row.isHead { 
+			display: grid; grid-template-columns: minmax(0, 1fr) 20% 20%; color: var(--color-text-secondary);
 		}
-		.cellHead {
-			.name { 
-				display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
-				@include text-overflow-nw; border-right: 1px solid var(--color-shape-secondary);
+		.row.isHead {
+			.cell { 
+				text-align: left; padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
+				@include text-overflow-nw;
+			}
+			.cell {
+				.name { 
+					display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; @include text-overflow-nw; 
+					border-right: 1px solid var(--color-shape-secondary);
+				}
+			}
+			.cell:last-child {
+				.name { border: 0px; }
 			}
 		}
-		.cellHead:first-child { width: 50%; }
-		.cellHead:last-child {
-			.name { border: 0px; }
-		}
 
-		tbody { border-top: 1px solid var(--color-shape-secondary); }
+		.row { border-bottom: 1px solid var(--color-shape-secondary); }
 
-		.cell { 
-			padding: 14px; border-bottom: 1px solid var(--color-shape-secondary); vertical-align: top; position: relative; word-break: break-word; 
-		}
+		.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: var(--color-control-active); }
+		.row.isSelectionSelected::after { display: none; }
+		.row.isSelectionSelected { background-color: var(--color-system-selection); }
 
-		.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
-		.cellContent {
-			.more { vertical-align: top; }
-		}
+		.row {
+			.cell { padding: 14px; vertical-align: top; position: relative; word-break: break-word; }
 
-		.cellContent.c-object {
-			.wrap { white-space: nowrap; }
-		}
-		.cellContent.c-select {
-			.tagItem { margin-bottom: 0px; }
+			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
+			.cellContent {
+				.more { vertical-align: top; }
+				.empty { display: block; }
+			}
+
+			.cellContent.c-object {
+				.wrap { white-space: nowrap; }
+			}
+			.cellContent.c-select {
+				.tagItem { margin-bottom: 0px; }
+			}
 		}
 	}
-
-	.pager { margin-top: 10px; }
 }

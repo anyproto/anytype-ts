@@ -1,4 +1,4 @@
-import { I, Onboarding, keyboard, translate } from 'Lib';
+import { I, Onboarding, keyboard, translate, UtilSpace } from 'Lib';
 
 export default {
     mainGraph: () => ({
@@ -14,7 +14,7 @@ export default {
 		param: {
 			element: '#page.isFull #footer #button-help',
 			classNameWrap: 'fixed',
-			className: 'wizard',
+			className: 'isWizard',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			noArrow: true,
@@ -50,7 +50,7 @@ export default {
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
-            className: 'wizard',
+            className: 'isWizard',
             vertical: I.MenuDirection.Top,
             horizontal: I.MenuDirection.Right,
             noArrow: true,
@@ -81,7 +81,7 @@ export default {
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
-            className: 'wizard',
+            className: 'isWizard',
             vertical: I.MenuDirection.Top,
             horizontal: I.MenuDirection.Right,
             noArrow: true,
@@ -111,7 +111,7 @@ export default {
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
-            className: 'wizard',
+            className: 'isWizard',
             vertical: I.MenuDirection.Top,
             horizontal: I.MenuDirection.Right,
             noArrow: true,
@@ -141,7 +141,7 @@ export default {
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
-            className: 'wizard',
+            className: 'isWizard',
             vertical: I.MenuDirection.Top,
             horizontal: I.MenuDirection.Right,
             noArrow: true,
@@ -165,7 +165,7 @@ export default {
         param: {
             element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
-            className: 'wizard',
+            className: 'isWizard',
             vertical: I.MenuDirection.Top,
             horizontal: I.MenuDirection.Right,
             noArrow: true,
@@ -175,54 +175,79 @@ export default {
         },
     }),
 
-    dashboard: () => ({
-        category: translate('onboardingDashboard'),
-        showConfetti: true,
-		onComplete: (force: boolean) => {
-			if (!$('#navigationPanel').hasClass('hide')) {
-				Onboarding.start('space', keyboard.isPopup(), force);
-			};
-		},
-        items: [
-            {
-                description: `
-					<p>${translate('onboardingDashboard11')}</p>
-					<p>${translate('onboardingDashboard12')}</p>
-					<p>${translate('onboardingDashboard13')}</p>
-				`,
-                video: './img/help/onboarding/homepage.mp4',
-            },
-            {
-                description: `
-					<p>${translate('onboardingDashboard41')}</p>
-					<p>${translate('onboardingDashboard42')}</p>
-                `,
-                video: './img/help/onboarding/sidebar.mp4',
-            },
-            {
-                description: `
-					<p>${translate('onboardingDashboard51')}</p>
-					<p>${translate('onboardingDashboard52')}</p>
-					<p>${translate('onboardingDashboard53')}</p>
-                `,
-                buttons: [
-                    { text: translate('commonImport'), action: 'import' }
-                ]
-            }
-        ],
+    dashboard: () => {
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
-		param: {
-			element: '#page.isFull #footer #button-help',
-			classNameWrap: 'fixed',
-			className: 'wizard',
-			vertical: I.MenuDirection.Top,
-			horizontal: I.MenuDirection.Right,
-            noArrow: true,
-			noClose: true,
-			passThrough: true,
-			offsetY: -4,
-		},
-    }),
+		return {
+			category: translate('onboardingDashboard'),
+			showConfetti: true,
+			items: [
+				{
+					name: translate('onboardingDashboard1Title'),
+					description: translate('onboardingDashboard1Text'),
+					param: {
+						element: '#page.isFull #footer #button-help',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Right,
+						offsetY: () => -($('#notifications').height() + 12),
+					}
+				},
+				{
+					name: translate('onboardingSpaceSelectTitle'),
+					description: translate('onboardingSpaceSelectDescription'),
+					video: './img/help/onboarding/space-s.mp4',
+					param: {
+						element: '#navigationPanel #button-navigation-profile',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Center,
+						offsetY: -24,
+					}
+				},
+				{
+					name: translate('onboardingQuickCaptureTitle'),
+					description: translate('onboardingQuickCaptureDescription'),
+					param: {
+						element: '#navigationPanel #button-navigation-plus',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Center,
+						offsetY: -24,
+					}
+				},
+				{
+					name: translate('onboardingDashboard2Title'),
+					description: translate('onboardingDashboard2Text'),
+					video: './img/help/onboarding/sidebar.mp4',
+					param: {
+						element: '#widget-space',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Center,
+						horizontal: I.MenuDirection.Right,
+						width: 288,
+						offsetX: -298,
+					}
+				},
+				{
+					description: `
+						<p>${translate('onboardingDashboard31')}</p>
+						<p>${translate('onboardingDashboard32')}</p>
+					`,
+					buttons: [
+						canWrite ? { text: translate('commonImport'), action: 'import' } : null
+					],
+					param: {
+						element: '#page.isFull #footer #button-help',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Right,
+						offsetY: () => -($('#notifications').height() + 12),
+					},
+				}
+			],
+		};
+	},
 
     editor: () => ({
         category: translate('onboardingEditor'),
@@ -271,11 +296,11 @@ export default {
 			{
 				name: translate('onboardingTypeDeleted1Title'),
 				description: translate('onboardingTypeDeleted1Description'),
+				noButton: true,
 				param: {
 					element: '#block-featuredRelations',
 					offsetY: 10,
 				},
-				noButton: true,
                 buttons: [
                     { text: translate('blockFeaturedTypeMenuChangeType'), action: 'changeType' },
                 ],
@@ -310,7 +335,7 @@ export default {
 				name: translate('onboardingInlineSet2Title'),
 				description: translate('onboardingInlineSet2Description'),
 				param: {
-					element: '#dataviewControls #sideLeft',
+					element: '#dataviewControls #dataviewControlsSideLeft',
 					offsetY: 10,
 				}
 			},
@@ -331,7 +356,7 @@ export default {
 				name: translate('onboardingInlineCollection2Title'),
 				description: translate('onboardingInlineCollection2Description'),
 				param: {
-					element: '#dataviewControls #sideLeft',
+					element: '#dataviewControls #dataviewControlsSideLeft',
 					offsetY: 10,
 				}
 			},
@@ -372,6 +397,7 @@ export default {
 				{
 					name: translate('onboardingTemplateSelectTitle'),
 					description: translate('onboardingTemplateSelectDescription'),
+					noButton: true,
 				},
 			],
 
@@ -379,59 +405,31 @@ export default {
 				element: '#headerBanner',
 				horizontal: I.MenuDirection.Center,
 				offsetY: 12,
-				noButton: true,
 			},
 		}
 	),
 
-	space: () => (
-		{
-			onComplete: (force: boolean) => {
-				if (!$('#navigationPanel').hasClass('hide')) {
-					Onboarding.start('quickCapture', keyboard.isPopup(), force);
-				};
-			},
-
+	space: () => {
+		const width = 505;
+		return {
 			items: [
 				{
-					name: translate('onboardingSpaceSelectTitle'),
-					description: translate('onboardingSpaceSelectDescription'),
+					name: translate('onboardingShareSpaceTitle'),
+					description: translate('onboardingShareSpaceDescription'),
+					video: './img/help/onboarding/share-space.mp4',
+					noButton: true,
 					param: {
-						element: '#navigationPanel #button-navigation-profile',
+						element: '#widget-space',
+						className: 'isSpace',
+						classNameWrap: 'fixed',
+						vertical: I.MenuDirection.Center,
+						horizontal: I.MenuDirection.Right,
+						width,
+						offsetX: -(width + 10),
 					}
 				},
 			],
-
-			param: {
-				classNameWrap: 'fixed',
-				vertical: I.MenuDirection.Top,
-				horizontal: I.MenuDirection.Center,
-				offsetY: -24,
-				noButton: true,
-			},
-		}
-	),
-
-	quickCapture: () => (
-		{
-			items: [
-				{
-					name: translate('onboardingQuickCaptureTitle'),
-					description: translate('onboardingQuickCaptureDescription'),
-					param: {
-						element: '#navigationPanel #button-navigation-plus',
-					}
-				},
-			],
-
-			param: {
-				classNameWrap: 'fixed',
-				vertical: I.MenuDirection.Top,
-				horizontal: I.MenuDirection.Center,
-				offsetY: -24,
-				noButton: true,
-			},
-		}
-	),
+		};
+	},
 
 };

@@ -1,5 +1,5 @@
 import { I, UtilCommon, translate } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class UtilDate {
 
@@ -79,7 +79,7 @@ class UtilDate {
 	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
 
-		const d = new Date((timestamp) * 1000);
+		const d = new Date(timestamp * 1000);
 
 		const pad = (n: number, c: number) => {
 			let s = String(n);
@@ -106,7 +106,7 @@ class UtilDate {
 			},
 			// Month
 			F: () => {
-				return translate('month' + f.n());
+				return translate(`month${f.n()}`);
 			},
 			m: () => {
 				return pad(f.n(), 2);
@@ -175,6 +175,16 @@ class UtilDate {
 			case I.DateFormat.Short:				 f = 'd.m.Y'; break;
 			case I.DateFormat.ShortUS:				 f = 'm.d.Y'; break;
 			case I.DateFormat.ISO:					 f = 'Y-m-d'; break;
+		};
+		return f;
+	};
+
+	timeFormat (v: I.TimeFormat): string {
+		let f = '';
+		switch (v) {
+			default:
+			case I.TimeFormat.H12:	 f = 'g:i A'; break;
+			case I.TimeFormat.H24:	 f = 'H:i'; break;
 		};
 		return f;
 	};
@@ -343,6 +353,30 @@ class UtilDate {
 			return false;
 		};
 		return true;
+	};
+
+	getWeekDays (): { id: number, name: string }[] {
+		const ret = [];
+		for (let i = 1; i <= 7; ++i) {
+			ret.push({ id: i, name: translate(`day${i}`) });
+		};
+		return ret;
+	};
+
+	getMonths (): { id: number, name: string }[] {
+		const ret = [];
+		for (let i = 1; i <= 12; ++i) {
+			ret.push({ id: i, name: translate(`month${i}`) });
+		};
+		return ret;
+	};
+
+	getYears (start: number, end: number): { id: number, name: string }[] {
+		const ret = [];
+		for (let i = start; i <= end; ++i) {
+			ret.push({ id: i, name: i });
+		};
+		return ret;
 	};
 
 };

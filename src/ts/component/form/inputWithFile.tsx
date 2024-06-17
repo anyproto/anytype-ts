@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
 import { I, keyboard, focus, translate, Action } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	icon?: string;
@@ -80,7 +80,7 @@ class InputWithFile extends React.Component<Props, State> {
 		
 		if (isIcon) {
 			cn.push('isIcon');
-			onClick = (e: MouseEvent) => { this.onClickFile(e); };
+			onClick = e => this.onClickFile(e);
 		};
 		
 		if (focused) {
@@ -260,7 +260,7 @@ class InputWithFile extends React.Component<Props, State> {
 		if (readonly) {
 			return;
 		};
-		
+
 		Action.openFile(accept, paths => {
 			if (onChangeFile) {
 				onChangeFile(e, paths[0]);	

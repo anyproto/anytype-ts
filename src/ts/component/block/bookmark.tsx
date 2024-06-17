@@ -30,7 +30,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		const object = detailStore.get(rootId, targetObjectId, [ 'picture' ]);
 		const { iconImage, picture, isArchived, isDeleted } = object;
 		const url = this.getUrl();
-		const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
+		const cn = [ 'focusable', `c${block.id}`, 'resizable' ];
 
 		let element = null;
 
@@ -82,7 +82,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 					};
 
 					if (block.bgColor) {
-						cnl.push('bgColor bgColor-' + block.bgColor);
+						cnl.push(`bgColor bgColor-${block.bgColor}`);
 					};
 
 					if (isArchived) {
@@ -198,9 +198,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			return;
 		};
 
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-		const ids = selection ? selection.get(I.SelectType.Block) : [];
+		const selection = commonStore.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (!(keyboard.withCommand(e) && ids.length)) {
 			this.open();
@@ -225,6 +224,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			object,
 			target: targetObjectId, 
 			noUnlink: true,
+			noEdit: true,
 			passThrough: true,
 		});
 	};

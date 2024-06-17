@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { I } from 'Lib';
 
 const Duration = {
-	Normal: 0.2,
+	Normal: 0.1,
 	Word: 0.01,
 };
 
@@ -120,21 +120,31 @@ class Animation {
 
 					el.html('');
 
-					const processWord = (word) => {
+					let html = [];
+
+					const processWord = (word, space) => {
 						const w = $('<span></span>').html(word).addClass('animationWord');
 
 						el.append(w);
-						el.append(' ');
+
+						if (space && (word != ' ')) {
+							el.append(' ');
+						};
 
 						this.applyCss(w, css, Duration.Word, delay);
 						delay += Duration.Word;
 					};
 
-					$(`<div>${el.attr('data-content')}</div>`).contents().toArray().forEach(child => {
+					$(`<div>${el.attr('data-content')}</div>`).contents().toArray().forEach((child: any) => {
+						if (child.tagName == 'BR') {
+							el.append(child);
+							return;
+						};
+
 						if (child.nodeType == 3) {
-							child.textContent.trim().split(' ').forEach(processWord);
+							child.textContent.trim().split(' ').forEach(it => processWord(it, true));
 						} else {
-							processWord(child);
+							processWord(child, false);
 						};
 					});
 					break;

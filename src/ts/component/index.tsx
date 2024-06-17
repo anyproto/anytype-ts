@@ -9,6 +9,7 @@ import DragBox from './drag/box';
 import DropTarget from './drag/target';
 
 import SelectionProvider from './selection/provider';
+import SelectionTarget from './selection/target';
 
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
@@ -79,6 +80,7 @@ import Cell from './block/dataview/cell';
 import ObjectName from './util/object/name';
 import ObjectDescription from './util/object/description';
 import ObjectType from './util/object/type';
+import ObjectCover from './util/object/cover';
 
 import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
@@ -95,6 +97,9 @@ export {
 	DragProvider,
 	DragBox,
 	DropTarget,
+
+	SelectionProvider,
+	SelectionTarget,
 
 	ListPopup,
 	ListMenu,
@@ -131,7 +136,6 @@ export {
 	DotIndicator,
 	Phrase,
 	EmptySearch,
-	SelectionProvider,
 	Popup,
 	Frame,
 	Cover,
@@ -159,6 +163,7 @@ export {
 	ObjectName,
 	ObjectDescription,
 	ObjectType,
+	ObjectCover,
 
 	Menu,
 	MenuItemVertical,

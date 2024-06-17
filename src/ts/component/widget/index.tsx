@@ -1,14 +1,16 @@
 import * as React from 'react';
+import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview } from 'Lib';
+import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace, keyboard } from 'Lib';
 import { blockStore, detailStore, menuStore, dbStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
 
 import WidgetSpace from './space';
-import WidgetList from './list';
+import WidgetView from './view';
 import WidgetTree from './tree';
+
+const Constant = require('json/constant.json');
 
 interface Props extends I.WidgetComponent {
 	name?: string;
@@ -24,6 +26,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	node = null;
 	ref = null;
 	timeout = 0;
+	subId = '';
 
 	constructor (props: Props) {
 		super(props);
@@ -31,15 +34,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.onSetPreview = this.onSetPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onClick = this.onClick.bind(this);
-		this.onCreate = this.onCreate.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
-		this.isCollection = this.isCollection.bind(this);
+		this.onContext = this.onContext.bind(this);
+		this.onCreateClick = this.onCreateClick.bind(this);
+		this.onCreate = this.onCreate.bind(this);
+		this.isSystemTarget = this.isSystemTarget.bind(this);
 		this.getData = this.getData.bind(this);
 		this.getLimit = this.getLimit.bind(this);
 		this.sortFavorite = this.sortFavorite.bind(this);
-		this.isPlusAllowed = this.isPlusAllowed.bind(this);
+		this.canCreate = this.canCreate.bind(this);
 	};
 
 	render () {
@@ -54,20 +59,29 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		const { targetBlockId } = child?.content || {};
-		const cn = [ 'widget', UtilCommon.toCamelCase(`widget-${I.WidgetLayout[layout]}`) ];
+		const cn = [ 'widget' ];
 		const object = this.getObject();
-		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !UtilCommon.isPlatformMac());
+
+		const withSelect = !this.isSystemTarget() && (!isPreview || !UtilCommon.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
-		const withPlus = this.isPlusAllowed();
+		const canCreate = this.canCreate();
+		const canDrop = object && !this.isSystemTarget() && !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+		const isFavorite = targetBlockId == Constant.widgetId.favorite;
 
 		const props = {
 			...this.props,
+			ref: ref => this.ref = ref,
+			key: childKey,
 			parent: block,
 			block: child,
-			isCollection: this.isCollection,
+			canCreate,
+			isSystemTarget: this.isSystemTarget,
 			getData: this.getData,
 			getLimit: this.getLimit,
 			sortFavorite: this.sortFavorite,
+			addGroupLabels: this.addGroupLabels,
+			onContext: this.onContext,
+			onCreate: this.onCreate,
 		};
 
 		if (className) {
@@ -107,9 +121,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 							<Icon className="options" tooltip={translate('widgetOptions')} onClick={this.onOptions} />
 						</div>
 					) : ''}
-					{withPlus ? (
+					{canCreate ? (
 						<div className="iconWrap create">
-							<Icon className="plus" tooltip={translate('widgetCreate')} onClick={this.onCreate} />
+							<Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={this.onCreateClick} />
 						</div>
 					) : ''}
 					<div className="iconWrap collapse">
@@ -120,17 +134,34 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (layout != I.WidgetLayout.Space) {
-			const onClick = this.isCollection(targetBlockId) ? this.onSetPreview : this.onClick;
+			const onClick = this.isSystemTarget() ? this.onSetPreview : this.onClick;
 
 			head = (
 				<div className="head">
 					{back}
 					<div className="clickable" onClick={onClick}>
 						<ObjectName object={object} />
+						{isFavorite ? <span className="count">{this.getFavoriteIds().length}</span> : ''}
 					</div>
 					{buttons}
 				</div>
 			);
+
+			if (canDrop) {
+				head = (
+					<DropTarget
+						cacheKey={[ block.id, object.id ].join('-')}
+						id={object.id}
+						rootId={targetBlockId}
+						targetContextId={object.id}
+						dropType={I.DropType.Menu}
+						canDropMiddle={true}
+						className="targetHead"
+					>
+						{head}
+					</DropTarget>
+				);
+			};
 
 			targetTop = (
 				<DropTarget 
@@ -158,18 +189,22 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		switch (layout) {
 
 			case I.WidgetLayout.Space: {
-				content = <WidgetSpace key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} />;
+				cn.push('widgetSpace');
+				content = <WidgetSpace {...props} />;
 				break;
 			};
 
 			case I.WidgetLayout.Tree: {
-				content = <WidgetTree key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} />;
+				cn.push('widgetTree');
+				content = <WidgetTree {...props} />;
 				break;
 			};
 
 			case I.WidgetLayout.List:
-			case I.WidgetLayout.Compact: {
-				content = <WidgetList key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} isCompact={layout == I.WidgetLayout.Compact} />;
+			case I.WidgetLayout.Compact:
+			case I.WidgetLayout.View: {
+				cn.push('widgetView');
+				content = <WidgetView {...props} />;
 				break;
 			};
 
@@ -281,13 +316,19 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	onClick (e: React.MouseEvent): void {
 		if (!e.button) {
-			UtilObject.openEvent(e, this.getObject());
+			UtilObject.openEvent(e, { ...this.getObject(), _routeParam_: { viewId: this.props.block.content.viewId } });
 		};
 	};
 
-	onCreate (e: React.MouseEvent): void {
+	onCreateClick (e: React.MouseEvent): void {
 		e.preventDefault();
 		e.stopPropagation();
+
+		this.onCreate();
+	};
+
+	onCreate (param?: any): void {
+		param = param || {};
 
 		const { block } = this.props;
 		const { viewId, layout } = block.content;
@@ -304,11 +345,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		const { targetBlockId } = child.content;
 		const isSetOrCollection = UtilObject.isSetLayout(object.layout);
+		const isFavorite = targetBlockId == Constant.widgetId.favorite;
 
-		let details: any = {};
+		let details: any = Object.assign({}, param.details || {});
 		let flags: I.ObjectFlag[] = [];
-		let typeKey: string = '';
-		let templateId: string = '';
+		let typeKey = '';
+		let templateId = '';
 		let createWithLink: boolean = false;
 		let isCollection = false;
 
@@ -317,7 +359,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (isSetOrCollection) {
-			const rootId = this.ref?.getRootId();
+			const rootId = this.getRootId();
 			if (!rootId) {
 				return;
 			};
@@ -330,7 +372,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				return;
 			};
 
-			details = Dataview.getDetails(rootId, Constant.blockId.dataview, object.id, viewId);
+			details = Object.assign(details, Dataview.getDetails(rootId, Constant.blockId.dataview, object.id, viewId));
 			flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 			typeKey = type.uniqueKey;
 			templateId = view.defaultTemplateId || type.defaultTemplateId;
@@ -350,7 +392,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					typeKey = type.uniqueKey;
 					templateId = type.defaultTemplateId;
 
-					if (!this.isCollection(targetBlockId)) {
+					if (!this.isSystemTarget()) {
 						details.type = type.id;
 						createWithLink = true;
 					};
@@ -375,29 +417,37 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
-		const callBack = (message) => {
+		const callBack = (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			const created = message.details || { id: message.targetId };
+			const object = message.details;
 
-			if (targetBlockId == Constant.widgetId.favorite) {
-				Action.setIsFavorite([ created.id ], true, 'widget');
+			if (isFavorite) {
+				Action.setIsFavorite([ object.id ], true, analytics.route.widget);
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(object.id, [ created.id ]);
+				C.ObjectCollectionAdd(object.id, [ object.id ]);
 			};
 
-			UtilObject.openAuto(created);
-			analytics.event('CreateObject', { objectType: typeKey, route: 'Widget' });
+			UtilObject.openAuto(object);
 		};
 
 		if (createWithLink) {
-			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, {}, flags, callBack);
+			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, flags, analytics.route.widget, callBack);
 		} else {
-			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, callBack);
+			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				const object = message.details;
+
+				analytics.createObject(object.type, object.layout, analytics.route.widget, message.middleTime);
+				callBack(message);
+			});
 		};
 	};
 
@@ -405,24 +455,27 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
+		if (!UtilSpace.canMyParticipantWrite()) {
+			return;
+		};
+
 		const { block, setEditing } = this.props;
 		const object = this.getObject();
 		const node = $(this.node);
-		const element = `#widget-${block.id}`;
 
 		if (!object || object._empty_) {
 			return;
 		};
 
+		const { x, y } = keyboard.mouse.page;
+
 		menuStore.open('widget', {
-			element,
+			rect: { width: 0, height: 0, x: x + 4, y },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			subIds: Constant.menuIds.widget,
-			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Right,
-			onOpen: () => { node.addClass('active'); },
-			onClose: () => { node.removeClass('active'); },
+			onOpen: () => node.addClass('active'),
+			onClose: () => node.removeClass('active'),
 			data: {
 				...block.content,
 				target: object,
@@ -436,12 +489,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	initToggle () {
 		const { block, isPreview } = this.props;
 		const node = $(this.node);
+		const wrapper = node.find('#wrapper');
 		const icon = node.find('.icon.collapse');
 		const isClosed = Storage.checkToggle('widget', block.id);
 
 		if (!isPreview) {
 			isClosed ? node.addClass('isClosed') : node.removeClass('isClosed');
 			isClosed ? icon.addClass('isClosed') : node.removeClass('isClosed');
+			isClosed ? wrapper.hide() : wrapper.show();
 		};
 	};
 
@@ -457,12 +512,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block } = this.props;
 		const node = $(this.node);
 		const icon = node.find('.icon.collapse');
+		const innerWrap = node.find('#innerWrap');
 		const wrapper = node.find('#wrapper').css({ height: 'auto' });
 		const height = wrapper.outerHeight();
+		const minHeight = this.getMinHeight();
 
 		node.addClass('isClosed');
 		icon.removeClass('isClosed');
-		wrapper.css({ height: 0 });
+		wrapper.css({ height: minHeight }).show();
+		innerWrap.css({ opacity: 1 });
 
 		raf(() => { wrapper.css({ height }); });
 
@@ -481,14 +539,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block } = this.props;
 		const node = $(this.node);
 		const icon = node.find('.icon.collapse');
+		const innerWrap = node.find('#innerWrap');
 		const wrapper = node.find('#wrapper');
+		const minHeight = this.getMinHeight();
 
 		wrapper.css({ height: wrapper.outerHeight() });
 		icon.addClass('isClosed');
+		innerWrap.css({ opacity: 0 });
 
 		raf(() => { 
 			node.addClass('isClosed'); 
-			wrapper.css({ height: 0 });
+			wrapper.css({ height: minHeight });
 		});
 
 		window.clearTimeout(this.timeout);
@@ -496,28 +557,34 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const isClosed = Storage.checkToggle('widget', block.id);
 
 			if (isClosed) {
-				wrapper.css({ height: '' });
+				wrapper.css({ height: '' }).hide();
 			};
 		}, 450);
 	};
 
+	getMinHeight () {
+		return [ I.WidgetLayout.List,  I.WidgetLayout.Compact ].includes(this.props.block.content.layout) ? 8 : 0;
+	};
+
 	getData (subId: string, callBack?: () => void) {
-		const { block, isPreview } = this.props;
+		const { block } = this.props;
 		const child = this.getTargetBlock();
 
 		if (!child) {
 			return;
 		};
 
+		this.subId = subId;
+
 		const { targetBlockId } = child.content;
-		const space = UtilObject.getSpaceview();
+		const space = UtilSpace.getSpaceview();
 		const templateType = dbStore.getTemplateType();
 		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 		];
-		const limit = this.getLimit(block.content);
+		let limit = this.getLimit(block.content);
 
 		if (targetBlockId != Constant.widgetId.recentOpen) {
 			sorts.push({ relationKey: 'lastModifiedDate', type: I.SortType.Desc });
@@ -526,6 +593,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		switch (targetBlockId) {
 			case Constant.widgetId.favorite: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
+				limit = 0;
 				break;
 			};
 
@@ -558,27 +626,25 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			limit,
 			keys: Constant.sidebarRelationKeys,
 		}, () => {
-			if (targetBlockId == Constant.widgetId.favorite) {
-				let records = this.sortFavorite(dbStore.getRecords(subId, ''));
-
-				if (!isPreview) {
-					records = records.slice(0, this.getLimit(block.content));
-				};
-
-				dbStore.recordsSet(subId, '', records);
-			};
-
 			if (callBack) {
 				callBack();
 			};
 		});
 	};
 
-	sortFavorite (records: string[]): string[] {
+	getFavoriteIds (): string[] {
 		const { root } = blockStore;
 		const ids = blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
+		const items = ids.map(id => detailStore.get(root, id)).filter(it => !it.isArchived).map(it => it.id);
 
-		return UtilCommon.objectCopy(records || []).sort((c1: string, c2: string) => {
+		return items;
+	};
+
+	sortFavorite (records: string[]): string[] {
+		const { block, isPreview } = this.props;
+		const ids = this.getFavoriteIds();
+
+		let sorted = UtilCommon.objectCopy(records || []).sort((c1: string, c2: string) => {
 			const i1 = ids.indexOf(c1);
 			const i2 = ids.indexOf(c2);
 
@@ -586,6 +652,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			if (i1 < i2) return -1;
 			return 0;
 		});
+
+		if (!isPreview) {
+			sorted = sorted.slice(0, this.getLimit(block.content));
+		};
+
+		return sorted;
 	};
 
 	onSetPreview () {
@@ -597,16 +669,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
-		const { targetBlockId } = child.content;
+		const data: any = { view: 'Widget' };
 
 		let blockId = '';
 		let event = 'ScreenHome';
-		const data: any = { view: 'Widget' };
 
 		if (!isPreview) {
 			blockId = block.id;
 			event = 'SelectHomeTab';
-			data.tab = this.isCollection(targetBlockId) ? object.name : analytics.typeMapper(object.type);
+			data.tab = this.isSystemTarget() ? object.name : analytics.typeMapper(object.type);
 		};
 
 		setPreview(blockId);
@@ -614,49 +685,65 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	onDragEnd () {
-		const target = this.getObject();
+		const { block } = this.props;
+		const { layout } = block.content;
 
-		analytics.event('ReorderWidget', { target });
+		analytics.event('ReorderWidget', {
+			layout,
+			params: { target: this.getObject() }
+		});
 	};
 
-	isCollection (blockId: string) {
-		return Object.values(Constant.widgetId).includes(blockId);
+	isSystemTarget (): boolean {
+		const target = this.getTargetBlock();
+		if (!target) {
+			return false;
+		};
+
+		return Object.values(Constant.widgetId).includes(target.getTargetObjectId());
 	};
 
-	isPlusAllowed (): boolean {
+	canCreate (): boolean {
 		const object = this.getObject();
 		const { block, isEditing } = this.props;
 
-		if (!object || isEditing) {
+		if (!object || isEditing || !UtilSpace.canMyParticipantWrite()) {
 			return false;
 		};
 
 		const { layout } = block.content;
-		const child = this.getTargetBlock();
-		const { targetBlockId } = child?.content || {};
-		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
-		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact ].includes(layout);
-
-		let allowed = true;
+		const target = this.getTargetBlock();
+		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(layout);
+		const isRecent = target ? [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(target.getTargetObjectId()) : null;
 
 		if (isRecent || !layoutWithPlus) {
-			allowed = false;
+			return false;
 		};
 
-		if (UtilObject.isSetLayout(object.layout) && this.ref) {
-			const rootId = this.ref?.getRootId();
+		if (UtilObject.isSetLayout(object.layout)) {
+			const rootId = this.getRootId();
 			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id);
 			const type = dbStore.getTypeById(typeId);
 
-			if (type && UtilObject.getFileLayouts().includes(type.recommendedLayout)) {
-				allowed = false;
+			if (type && UtilObject.isFileLayout(type.recommendedLayout)) {
+				return false;
 			};
 		} else
 		if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
-			allowed = false;
+			return false;
 		};
 
-		return allowed;
+		return true;
+	};
+
+	getRootId = (): string => {
+		const child = this.getTargetBlock();
+		if (!child) {
+			return '';
+		};
+
+		const { targetBlockId } = child.content;
+		return [ targetBlockId, 'widget', child.id ].join('-');
 	};
 
 	getLimit ({ limit, layout }): number {
@@ -666,7 +753,91 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];
 		};
-		return isPreview ? 0 : limit;
+		return isPreview ? Constant.limit.menuRecords : limit;
+	};
+
+	addGroupLabels (records: any[], widgetId: string) {
+		const now = UtilDate.now();
+		const { d, m, y } = UtilDate.getCalendarDateParam(now);
+		const today = now - UtilDate.timestamp(y, m, d);
+		const yesterday = now - UtilDate.timestamp(y, m, d - 1);
+		const lastWeek = now - UtilDate.timestamp(y, m, d - 7);
+		const lastMonth = now - UtilDate.timestamp(y, m - 1, d);
+
+		const groups = {
+			today: [],
+			yesterday: [],
+			lastWeek: [],
+			lastMonth: [],
+			older: []
+		};
+
+		let groupedRecords: I.WidgetTreeDetails[] = [];
+		let relationKey;
+
+		if (widgetId == Constant.widgetId.recentOpen) {
+			relationKey = 'lastOpenedDate';
+		};
+		if (widgetId == Constant.widgetId.recentEdit) {
+			relationKey = 'lastModifiedDate';
+		};
+
+		records.forEach((record) => {
+			const diff = now - record[relationKey];
+
+			if (diff < today) {
+				groups.today.push(record);
+			} else
+			if (diff < yesterday) {
+				groups.yesterday.push(record);
+			} else
+			if (diff < lastWeek) {
+				groups.lastWeek.push(record);
+			} else
+			if (diff < lastMonth) {
+				groups.lastMonth.push(record);
+			} else {
+				groups.older.push(record);
+			};
+		});
+
+		Object.keys(groups).forEach((key) => {
+			if (groups[key].length) {
+				groupedRecords.push({ id: key, type: '', links: [], isSection: true });
+				groupedRecords = groupedRecords.concat(groups[key]);
+			};
+		});
+
+		return groupedRecords;
+	};
+
+	onContext (param: any) {
+		const { node, element, withElement, subId, objectId, data } = param;
+
+		const menuParam: any = {
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			onOpen: () => node.addClass('active'),
+			onClose: () => node.removeClass('active'),
+			data: {
+				route: analytics.route.widget,
+				objectIds: [ objectId ],
+				subId,
+			},
+		};
+
+		menuParam.data = Object.assign(menuParam.data, data || {});
+
+		if (withElement) {
+			menuParam.element = element;
+			menuParam.vertical = I.MenuDirection.Center;
+			menuParam.offsetX = 32;
+		} else {
+			const { x, y } = keyboard.mouse.page;
+			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
+		};
+
+		menuStore.open('dataviewContext', menuParam);
 	};
 
 });

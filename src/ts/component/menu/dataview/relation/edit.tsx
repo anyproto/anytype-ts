@@ -5,7 +5,7 @@ import { observable } from 'mobx';
 import { I, C, UtilObject, UtilMenu, Relation, translate, Dataview, keyboard, analytics, Preview, UtilData, UtilCommon } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 import { blockStore, dbStore, menuStore, detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<I.Menu> {
 
@@ -34,13 +34,13 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const isObject = this.format == I.RelationType.Object;
 		const isReadonly = this.isReadonly();
 		const sections = this.getSections();
-
-		let opts = null;
 		const ccn = [ 'item' ];
 		
 		if (relation) {
 			ccn.push('disabled');
 		};
+
+		let opts = null;
 
 		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
 			const length = this.objectTypes.length;
@@ -78,6 +78,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						icon="clock" 
 						name={translate('menuDataviewRelationEditIncludeTime')}
 						onMouseEnter={this.menuClose}
+						readonly={isReadonly}
 						withSwitch={true}
 						switchValue={viewRelation?.includeTime}
 						onSwitch={(e: any, v: boolean) => { this.onChangeTime(v); }}
@@ -149,7 +150,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 							<MenuItemVertical 
 								key={c}
 								{...action}
-								onClick={(e: any) => { this.onClick(e, action); }} 
+								onClick={e => this.onClick(e, action)} 
 								onMouseEnter={this.menuClose} 
 							/>
 						))}
@@ -211,21 +212,26 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, extendedOptions } = data;
+		const { rootId, blockId, extendedOptions, readonly } = data;
 		const relation = this.getRelation();
 		const isFile = relation && (relation.format == I.RelationType.File);
 		const canFilter = !isFile;
 		const canSort = !isFile;
 		const canHide = relation && (relation.relationKey != 'name');
 
-		let canDuplicate = false;
+		let canDuplicate = true;
+		let canDelete = true;
+
 		if (relation) {
-			canDuplicate = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionObject.Relation ]);
+			canDuplicate = canDelete = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionObject.Relation ]);
 		};
 		if (relation && Relation.isSystem(relation.relationKey)) {
-			canDuplicate = false;
+			canDelete = false;
 		};
-		const canDelete = canDuplicate;
+		if (readonly) {
+			canDuplicate = false;
+			canDelete = false
+		};
 
 		let sections: any[] = [
 			{
@@ -237,7 +243,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			}
 		];
 
-		if (extendedOptions) {
+		if (extendedOptions && !readonly) {
 			sections.push({
 				children: [
 					canFilter ? { id: 'filter', icon: 'relation-filter', name: translate('menuDataviewRelationEditAddFilter') } : null,
@@ -278,12 +284,13 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { rootId, blockId, getView, loadData } = data;
 		const view = getView();
 		const relation = this.getRelation();
-		const relations = Dataview.viewGetRelations(rootId, blockId, view);
-		const idx = view.relations.findIndex(it => it.relationKey == relation.relationKey);
 
 		if (!relation) {
 			return;
 		};
+
+		const relations = Dataview.viewGetRelations(rootId, blockId, view);
+		const idx = view.relations.findIndex(it => it && (it.relationKey == relation.relationKey));
 
 		let close = true;
 
@@ -304,6 +311,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			case 'remove': {
+				this.props.close();
 				C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ]);
 				break;
 			};
@@ -423,7 +431,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		const { param, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId } = data;
 
 		if (this.isReadonly()) {
 			return;
@@ -442,7 +450,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			width: getSize().width,
 			data: {
 				rootId,
-				blockId,
 				nameAdd: translate('menuDataviewRelationEditAddObjectType'),
 				placeholderFocus: translate('menuDataviewRelationEditFilterObjectTypes'),
 				value: this.objectTypes, 
@@ -472,6 +479,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	onDateSettings (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
+
+		const isReadonly = this.isReadonly();
+		if (isReadonly) {
+			return;
+		};
 
 		const { param, getId } = this.props;
 		const { data } = param;
@@ -634,7 +646,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			details.push({ key: k, value: item[k] });
 		};
 
-		C.ObjectSetDetails(relationId, details);
+		C.ObjectListSetDetails([ relationId ], details);
 	};
 
 	getRelation (): any {

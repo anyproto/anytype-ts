@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { MenuItemVertical, Button } from 'Component';
 import { C, I, keyboard, UtilMenu, translate, Action, UtilObject, analytics } from 'Lib';
 import { blockStore, menuStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
@@ -217,15 +217,18 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		if (this.target) {
 			if (!isCollection) {
+				const isSet = UtilObject.isSetLayout(this.target.layout);
 				const setLayouts = UtilObject.getSetLayouts();
-				const treeSkipLayouts = setLayouts.concat(UtilObject.getSystemLayouts()).concat(UtilObject.getFileLayouts());
+				const treeSkipLayouts = setLayouts.concat(UtilObject.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
 
 				// Sets can only become Link and List layouts, non-sets can't become List
 				if (treeSkipLayouts.includes(this.target.layout)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				};
-				if (!setLayouts.includes(this.target.layout)) {
+				if (!isSet) {
 					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it) );
+				} else {
+					options = [ I.WidgetLayout.View, I.WidgetLayout.Link ];
 				};
 			};
 
@@ -283,7 +286,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			case 'source': {
 				const templateType = dbStore.getTemplateType();
 				const filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 				];
 
@@ -313,8 +316,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						};
 
 						analytics.event('ChangeWidgetSource', {
+							layout: this.layout,
 							route: isEditing ? 'Inner' : 'AddWidget',
-							target: target
+							params: { target },
 						});
 					},
 				});
@@ -328,7 +332,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					options: this.getLayoutOptions(),
 					value: this.layout,
 					onSelect: (e, option) => {
-						this.layout = option.id;
+						this.layout = Number(option.id);
 						this.checkState();
 						this.forceUpdate();
 						
@@ -339,7 +343,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						analytics.event('ChangeWidgetLayout', {
 							layout: this.layout,
 							route: isEditing ? 'Inner' : 'AddWidget',
-							target: this.target
+							params: { target: this.target },
 						});
 					},
 				});
@@ -362,8 +366,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 						analytics.event('ChangeWidgetLimit', {
 							limit: this.limit,
+							layout: this.layout,
 							route: isEditing ? 'Inner' : 'AddWidget',
-							target: this.target
+							params: { target: this.target },
 						});
 					},
 				});

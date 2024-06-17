@@ -1,12 +1,14 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockFile { padding: 6px 0px; white-space: nowrap; }
 	.block.blockFile.withContent { padding: 0px; }
 	.block.blockFile {
 		.loaderWrapper { border-radius: 4px; border: solid 1px var(--color-shape-primary); height: 48px; width: 100%; }
-		.error { margin: 0px; font-size: 12px; line-height: 24px; height: 24px; }
+		.error { margin: 0px; font-size: var(--font-size-small); line-height: 24px; height: 24px; }
 		
+		.inner { display: flex; flex-direction: row; align-items: center; }
+
 		.name {
 			min-width: 40px; height: 24px; line-height: 24px; display: inline-block; font-weight: 500;
 			vertical-align: top; @include text-overflow-nw; margin: 0px 8px 0px 4px;
@@ -22,9 +24,9 @@
 		.download { opacity: 1; }
 	}
 	
-	.block.blockFile > .wrapContent > .selectable > .dropTarget { @include text-overflow-nw;  }
-	.block.blockFile > .wrapContent > .selectable.isSelectionSelected .download { display: none; }
-	.block.blockFile.withContent > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
+	.block.blockFile > .wrapContent > .selectionTarget > .dropTarget { @include text-overflow-nw;  }
+	.block.blockFile > .wrapContent > .selectionTarget.isSelectionSelected .download { display: none; }
+	.block.blockFile.withContent > .wrapContent > .selectionTarget > .dropTarget { padding: 3px 0px; }
 
-	.block.blockFile:not(.withContent) > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 4px; }
+	.block.blockFile:not(.withContent) > .wrapContent > .selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
 }

@@ -1,23 +1,24 @@
 [
 	"electron.js",
-	"electron/js/*",
+	"electron/js/**/*",
 	"electron/json/*",
 	"electron/env.json",
 	"electron/img/*",
-	"electron/about/*",
 	"build",
 	"!dist/*",
 	"dist/index.html",
-	"dist/main.js",
-	"dist/main.js.map",
-	"dist/run.js",
 	"dist/embed/**/*",
+	"dist/challenge/**/*",
 	"dist/lib/**/*",
 	"dist/img/**/*",
 	"dist/css/**/*",
 	"dist/js/**/*",
+	"dist/*.js",
+	"!dist/js/main.js.map",
 	"dist/anytypeHelper.exe",
 	"dist/anytypeHelper",
+	"dist/nativeMessagingHost.exe",
+	"dist/nativeMessagingHost",
 	"dist/*.node",
 	"dist/font/**/*",
 	"dist/workers/**/*",
@@ -61,5 +62,17 @@
     {
 		"from": "node_modules/file-type",
 		"to": "node_modules/file-type"
+    },
+    {
+		"from": "node_modules/regedit",
+		"to": "node_modules/regedit"
+    },
+    {
+		"from": "node_modules/stream-slicer",
+		"to": "node_modules/stream-slicer"
+    },
+    {
+		"from": "node_modules/util",
+		"to": "node_modules/util"
     }
 ]

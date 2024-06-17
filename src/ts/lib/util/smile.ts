@@ -1,6 +1,6 @@
 import { UtilCommon, translate } from 'Lib';
 import { init } from 'emoji-mart';
-import data from 'json/emoji.json';
+const data = require('json/emoji.json');
 
 const DIV = 65039;
 const CAP = 8419;
@@ -73,6 +73,7 @@ class UtilSmile {
 
 		const parts = String(colons || '').split('::');
 		const id = String(parts[0] || '').replace(/:/g, '');
+		const prefix = UtilCommon.getGlobalConfig().emojiUrl || './img/emoji/';
 		const item = this.data.emojis[id];
 
 		if (!item) {
@@ -93,7 +94,7 @@ class UtilSmile {
 			};
 		};
 
-		return `./img/emoji/${code}.png`;
+		return `${prefix}${code}.png`;
 	};
 
 	getCode (icon: string) {

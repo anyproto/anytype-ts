@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, C, UtilObject, translate } from 'Lib';
+import { I, C, UtilSpace, UtilCommon, translate, Onboarding, keyboard } from 'Lib';
 import { popupStore, commonStore } from 'Store';
 	
 const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
@@ -9,46 +9,78 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	constructor (props: I.WidgetComponent) {
 		super(props);
 
-		this.onOpenSettings = this.onOpenSettings.bind(this);
+		this.onSettings = this.onSettings.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.onRequest = this.onRequest.bind(this);
 	};
 
 	render (): React.ReactNode {
-		const space = UtilObject.getSpaceview();
+		const space = UtilSpace.getSpaceview();
+		const canWrite = UtilSpace.canMyParticipantWrite();
+		const participants = UtilSpace.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
+		const memberCnt = participants.filter(it => it.isActive).length;
+		const requestCnt = participants.filter(it => it.isJoining || it.isRemoving).length;
+		const isSpaceOwner = UtilSpace.isMyOwner();
+		const showCnt = isSpaceOwner && requestCnt;
+
+		let status = '';
+		if (space && !space._empty_) {
+			if (space.isShared) {
+				status = UtilCommon.sprintf('%d %s', memberCnt, UtilCommon.plural(memberCnt, translate('pluralMember')));
+			} else {
+				status = translate(`spaceAccessType${space.spaceAccessType}`);
+			};
+		};
 
 		return (
-			<div className="body" onClick={this.onOpenSettings}>
-				<IconObject 
-					id="widget-space-icon" 
-					object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
-					forceLetter={true} 
-					size={36}
-					canEdit={true} 
-					onSelect={this.onSelect}
-					onUpload={this.onUpload}
-					menuParam={{ className: 'fixed' }}
-				/>
-				<div className="txt">
-					<ObjectName object={space} />
-					{space && !space._empty_ ? <div className="type">{translate(`spaceType${space.spaceType}`)}</div> : ''}
+			<div 
+				className={[ 'body', (showCnt ? 'withCnt': '') ].join(' ')} 
+				onClick={this.onSettings}
+			>
+				<div className="side left">
+					<IconObject 
+						id="widget-space-icon" 
+						object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
+						forceLetter={true} 
+						size={36}
+						canEdit={canWrite} 
+						onSelect={this.onSelect}
+						onUpload={this.onUpload}
+						menuParam={{ className: 'fixed' }}
+					/>
+					<div className="txt">
+						<ObjectName object={space} />
+						{status ? <div className="type">{status}</div> : ''}
+					</div>
+				</div>
+				<div className="side right">
+					{showCnt ? <div className="cnt" onClick={this.onRequest}>{requestCnt}</div> : ''}
 				</div>
 			</div>
 		);
 	};
 
-	onOpenSettings (e: React.MouseEvent) {
+	onSettings (e: React.MouseEvent) {
 		e.stopPropagation();
-
-		popupStore.open('settings', { data: { page: 'spaceIndex', isSpace: true }, className: 'isSpace' });
+		this.openSettings('spaceIndex');
 	};
 
 	onSelect () {
 		C.WorkspaceSetInfo(commonStore.space, { iconImage: '' });
 	};
 
-	onUpload (hash: string) {
-		C.WorkspaceSetInfo(commonStore.space, { iconImage: hash });
+	onUpload (objectId: string) {
+		C.WorkspaceSetInfo(commonStore.space, { iconImage: objectId });
+	};
+
+	onRequest (e: any) {
+		e.stopPropagation();
+		this.openSettings('spaceShare');
+	};
+
+	openSettings (page: string) {
+		popupStore.open('settings', { data: { page, isSpace: true }, className: 'isSpace' });
 	};
 
 });

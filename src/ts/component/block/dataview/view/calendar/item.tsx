@@ -22,9 +22,6 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		this.onOpen = this.onOpen.bind(this);
 		this.onMore = this.onMore.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
@@ -54,16 +51,7 @@ const Item = observer(class Item extends React.Component<Props> {
 
 			let icon = null;
 			if (!hideIcon) {
-				icon = (
-					<IconObject 
-						object={item} 
-						size={16} 
-						canEdit={canEdit} 
-						onSelect={icon => this.onSelect(item, icon)} 
-						onUpload={hash => this.onUpload(item, hash)} 
-						onCheckbox={() => this.onCheckbox(item)} 
-					/>
-				);
+				icon = <IconObject object={item} size={16} canEdit={canEdit} />;
 			};
 
 			return (
@@ -101,24 +89,14 @@ const Item = observer(class Item extends React.Component<Props> {
 		return items.filter(it => UtilDate.date('j-n-Y', it[view.groupRelationKey]) == current);
 	};
 
-	onOpen (item: any) {
-		UtilObject.openPopup(item);
-	};
-
-	onSelect (item: any, icon: string) {
-		UtilObject.setIcon(item.id, icon, '');
-	};
-
-	onUpload (item: any, hash: string) {
-		UtilObject.setIcon(item.id, '', hash);
-	};
-
-	onCheckbox (item: any) {
-		UtilObject.setDone(item.id, !item.done);
+	onOpen (record: any) {
+		UtilObject.openConfig(record);
 	};
 
 	onMore () {
+		const { block, getView, readonly } = this.props;
 		const node = $(this.node);
+		const view = getView();
 
 		menuStore.closeAll([ 'dataviewCalendarDay' ], () => {
 			menuStore.open('dataviewCalendarDay', {
@@ -126,9 +104,14 @@ const Item = observer(class Item extends React.Component<Props> {
 				horizontal: I.MenuDirection.Center,
 				width: node.outerWidth() + 8,
 				offsetY: -(node.outerHeight() + 4),
+				className: 'fromBlock',
 				noFlipX: true,
 				data: {
 					...this.props,
+					blockId: block.id,
+					relationKey: view.groupRelationKey,
+					hideIcon: view.hideIcon,
+					readonly,
 				}
 			});
 		});

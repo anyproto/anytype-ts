@@ -7,18 +7,15 @@ import { Icon } from 'Component';
 import { I, keyboard, Preview, sidebar, translate } from 'Lib';
 import { commonStore } from 'Store';
 import ListWidget from 'Component/list/widget';
-import Constant from 'json/constant.json';
 
-interface Props {
-	dataset?: any;
-};
-
+const Constant = require('json/constant.json');
 const THROTTLE = 20;
 	
-const Sidebar = observer(class Sidebar extends React.Component<Props> {
+const Sidebar = observer(class Sidebar extends React.Component {
 	
 	private _isMounted = false;
-	node: any = null;
+	node = null;
+	refBody = null;
     ox = 0;
 	oy = 0;
 	sx = 0;
@@ -27,7 +24,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	width = 0;
 	movedX = false;
 
-	constructor (props: Props) {
+	constructor (props) {
 		super(props);
 
 		this.onDragStart = this.onDragStart.bind(this);
@@ -60,7 +57,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 						/>
 					</div>
 
-					<div className="body">
+					<div 
+						ref={ref => this.refBody = ref}
+						className="body"
+					>
 						<ListWidget ref={ref => this.refList = ref} {...this.props} />
 					</div>
 				</div>
@@ -234,7 +234,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		$('body').removeClass('rowResize colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
 
-		window.setTimeout(() => { this.movedX = false; }, 15);
+		window.setTimeout(() => this.movedX = false, 15);
 	};
 
 	onHandleClick () {

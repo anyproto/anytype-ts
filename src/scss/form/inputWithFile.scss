@@ -1,7 +1,7 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .inputWithFile {
-	padding: 11px 13px; border-radius: 4px; border: solid 1px var(--color-shape-secondary); color: var(--color-control-active); @include text-common; 
+	padding: 11px 13px; border-radius: 8px; border: solid 1px var(--color-shape-secondary); color: var(--color-control-active); @include text-common; 
 	transition: background 0.05s ease-in-out, border $transitionCommon; white-space: nowrap; overflow: hidden; line-height: 20px; text-align: left;
 }
 .inputWithFile:hover { border-color: var(--color-shape-primary); }

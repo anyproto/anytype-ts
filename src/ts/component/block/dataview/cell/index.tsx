@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { I, C, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate, UtilDate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 import CellText from './text';
 import CellSelect from './select';
@@ -40,17 +40,21 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	render () {
-		const { elementId, relationKey, recordId, onClick, idPrefix, getRecord } = this.props;
-		const relation = this.getRelation();
+		const { elementId, relationKey, recordId, getRecord, getView, onClick, idPrefix } = this.props;
 		const record = getRecord(recordId);
+		const relation = this.getRelation();
+		const view = getView ? getView() : null;
 
 		if (!relation || !record) {
 			return null;
 		};
 
-		const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
-		const canEdit = this.canEdit();
+		if (view) {
+			const { hideIcon } = view;
+		};
 
+		const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
+		const canEdit = this.canCellEdit(relation, record);
 		const cn = [ 
 			'cellContent', 
 			'c-' + relation.relationKey,
@@ -125,19 +129,32 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	checkIcon () {
-		const relation = this.getRelation();
-		if (relation && (relation.format == I.RelationType.ShortText)) {
-			const node = $(this.node);
-			const icon = node.find('.iconObject');
+		const { getView } = this.props;
+		const view = getView ? getView() : null;
+		const node = $(this.node);
 
-			icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');
+		node.removeClass('withIcon');
+
+		if (view && view.hideIcon) {
+			return;
+		};
+
+		const relation = this.getRelation();
+		if (!relation || (relation.relationKey != 'name')) {
+			return;
+		};
+
+		const icon = node.find('.iconObject');
+
+		if (icon.length) {
+			node.addClass('withIcon');
 		};
 	};
 
 	checkValue (): boolean {
 		const { recordId, getRecord } = this.props;
-		const relation = this.getRelation();
 		const record = getRecord(recordId);
+		const relation = this.getRelation();
 
 		if (relation.relationKey == 'name') {
 			return true;
@@ -149,35 +166,45 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, block, recordId, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, cellPosition, placeholder } = this.props;
-		const relation = this.getRelation();
+		const { rootId, subId, recordId, getRecord, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder, isInline } = this.props;
 		const record = getRecord(recordId);
+		const relation = this.getRelation();
 
 		if (!relation || !record) {
 			return;
 		};
 
-		const { config } = commonStore;
-		const cellId = Relation.cellId(idPrefix, relation.relationKey, recordId);
 		const value = record[relation.relationKey] || '';
+		const canEdit = this.canCellEdit(relation, record);
 
-		if (!this.canEdit()) {
+		if (!canEdit) {
 			if (Relation.isUrl(relation.format) && value) {
 				Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, value) + value);
 			};
 			return;
 		};
 
+		const { config } = commonStore;
+		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const win = $(window);
 		const cell = $(`#${cellId}`);
+		const className = [];
+
+		if (menuClassName) {
+			className.push(menuClassName);
+		};
+
+		if (isInline) {
+			className.push('isInline');
+		};
 
 		let width = cell.outerWidth();
+		let closeIfOpen = true;
+		let menuId = '';
+
 		if (undefined !== maxWidth) {
 			width = Math.max(width, maxWidth);
 		};
-
-		let closeIfOpen = true;
-		let menuId = '';
 
 		const setOn = () => {
 			cell.addClass('isEditing');
@@ -190,14 +217,11 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				keyboard.disableBlur(true);
 			};
 
-			if (this.ref) {
-				if (this.ref.setEditing) {
-					this.ref.setEditing(true);
-				};
-
-				if (this.ref.onClick) {
-					this.ref.onClick();
-				};
+			if (this.ref && this.ref.setEditing) {
+				this.ref.setEditing(true);
+			};
+			if (this.ref && this.ref.onClick) {
+				this.ref.onClick();
 			};
 
 			win.trigger('resize');
@@ -206,13 +230,11 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const setOff = () => {
 			keyboard.disableBlur(false);
 
-			if (this.ref) {
-				if (this.ref.onBlur) {
-					this.ref.onBlur();
-				};
-				if (this.ref.setEditing) {
-					this.ref.setEditing(false);
-				};
+			if (this.ref && this.ref.onBlur) {
+				this.ref.onBlur();
+			};
+			if (this.ref && this.ref.setEditing) {
+				this.ref.setEditing(false);
 			};
 
 			$(`#${cellId}`).removeClass('isEditing');
@@ -226,10 +248,10 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			offsetY: 2,
 			noAnimation: true,
 			passThrough: true,
-			className: menuClassName,
+			className: className.join(' '),
 			classNameWrap: menuClassNameWrap,
-			onOpen: setOn,
-			onClose: setOff,
+			onOpen: () => setOn(),
+			onClose: () => setOff(),
 			data: { 
 				cellId,
 				cellRef: this.ref,
@@ -263,7 +285,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 			case I.RelationType.File: {
 				param = Object.assign(param, {
-					width: width,
+					width,
 				});
 				param.data = Object.assign(param.data, {
 					value: value || [],
@@ -276,7 +298,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			case I.RelationType.Select: 
 			case I.RelationType.MultiSelect: {
 				param = Object.assign(param, {
-					width: width,
+					width,
 					commonFilter: true,
 				});
 				param.data = Object.assign(param.data, {
@@ -295,7 +317,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					
 			case I.RelationType.Object: {
 				param = Object.assign(param, {
-					width: width,
+					width,
 					commonFilter: true,
 				});
 				param.data = Object.assign(param.data, {
@@ -324,7 +346,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					element: cell,
 					horizontal: I.MenuDirection.Left,
 					offsetY: -height,
-					width: width,
+					width,
 					height: height,
 				});
 
@@ -351,7 +373,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 				const options = [
 					{ id: 'go', icon: 'browse', name: translate(`menuDataviewUrlActionGo${relation.format}`) },
-					{ id: 'copy', icon: 'copy', name: translate('menuDataviewUrlActionGoCopy') },
+					{ id: 'copy', icon: 'copy', name: translate('commonCopyLink') },
 				];
 				if (relation.relationKey == 'source') {
 					options.push({ id: 'reload', icon: 'reload', name: translate('menuDataviewUrlActionGoReload') });
@@ -362,28 +384,30 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					noFilter: true,
 					options,
 					onSelect: (event: any, item: any) => {
-						let value = '';
-						if (this.ref && this.ref.ref) {
-							value = this.ref.ref.getValue();
+						const value = this.ref?.ref?.getValue();
+						if (!value) {
+							return;
 						};
 
 						const scheme = Relation.getUrlScheme(relation.format, value);
-						
-						if (item.id == 'go') {
-							Renderer.send('urlOpen', scheme + value);
-							analytics.event('RelationUrlOpen');
-						};
 
-						if (item.id == 'copy') {
-							UtilCommon.clipboardCopy({ text: value, html: value });
-							analytics.event('RelationUrlCopy');
-						};
+						switch (item.id) {
+							case 'go': {
+								Renderer.send('urlOpen', scheme + value);
+								analytics.event('RelationUrlOpen');
+								break;
+							};
 
-						if (item.id == 'reload') {
-							UtilCommon.clipboardCopy({ text: value, html: value });
-							C.ObjectBookmarkFetch(rootId, value, () => {
-								analytics.event('ReloadSourceData');
-							});
+							case 'copy': {
+								UtilCommon.clipboardCopy({ text: value, html: value });
+								analytics.event('RelationUrlCopy');
+								break;
+							};
+
+							case 'reload': {
+								C.ObjectBookmarkFetch(rootId, value, () => analytics.event('ReloadSourceData'));
+								break;
+							};
 						};
 					},
 				});
@@ -427,7 +451,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				});
 
 				if (!config.debug.ui) {
-					win.off('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					win.off('blur.cell').on('blur.cell', () => menuStore.closeAll(Constant.menuIds.cell));
 				};
 			} else 
 			if (closeIfOpen) {
@@ -441,7 +465,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	onChange (value: any, callBack?: (message: any) => void) {
-		const { onCellChange, recordId } = this.props;
+		const { onCellChange, recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
 		const relation = this.getRelation();
 
 		if (!relation) {
@@ -450,14 +475,15 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 		value = Relation.formatValue(relation, value, true);
 		if (onCellChange) {
-			onCellChange(recordId, relation.relationKey, value, callBack);
+			onCellChange(record.id, relation.relationKey, value, callBack);
 		};
 	};
 
 	onMouseEnter (e: any) {
-		const { onMouseEnter, showTooltip, tooltipX, tooltipY, idPrefix, recordId, withName } = this.props;
+		const { onMouseEnter, showTooltip, tooltipX, tooltipY, idPrefix, recordId, withName, getRecord } = this.props;
+		const record = getRecord(recordId);
 		const relation = this.getRelation();
-		const cell = $(`#${Relation.cellId(idPrefix, relation.relationKey, recordId)}`);
+		const cell = $(`#${Relation.cellId(idPrefix, relation.relationKey, record.id)}`);
 
 		if (onMouseEnter) {
 			onMouseEnter(e);
@@ -484,12 +510,13 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		return dbStore.getRelationByKey(this.props.relationKey);
 	};
 
-	canEdit () {
-		const { readonly, getRecord, recordId } = this.props;
-		const relation = this.getRelation();
-		const record = getRecord(recordId);
+	canCellEdit (relation: any, record: any): boolean {
+		const { readonly } = this.props;
+		if (readonly) {
+			return false;
+		};
 
-		if (!relation || !record || readonly || relation.isReadonlyValue || record.isReadonly) {
+		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
 		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
@@ -497,7 +524,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		};
 		return true;
 	};
-	
+
 });
 
 export default Cell;

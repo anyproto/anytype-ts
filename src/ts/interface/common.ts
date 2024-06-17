@@ -2,6 +2,7 @@ import { RouteComponentProps } from 'react-router';
 import { I } from 'Lib';
 
 export enum Platform {
+	None	 = '',
 	Windows	 = 'Windows',
 	Mac		 = 'Mac',
 	Linux	 = 'Linux',
@@ -17,6 +18,7 @@ export enum DropType {
 };
 
 export enum SelectType {
+	None	 = '',
 	Block	 = 'block',
 	Record	 = 'record',
 };
@@ -72,7 +74,6 @@ export interface HistoryVersion {
 	id: string;
 	previousIds: string[];
 	authorId: string;
-	authorName: string;
 	groupId: number;
 	time: number;
 };
@@ -137,25 +138,27 @@ export enum HomePredefinedId {
 export interface HeaderComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
-	dataset?: I.Dataset;
 	tabs?: any[];
 	tab?: string;
 	text?: string;
 	layout?: I.ObjectLayout;
+	withBanner?: boolean;
+	renderLeftIcons?: (onOpen?: () => void) => any;
+	renderTabs?: () => any;
 	onTab?: (id: string) => void;
 	onSearch?: () => void;
-	onNavigation?: () => void;
-	onGraph?: () => void;
 	onTooltipShow?: (e: any, text: string, caption?: string) => void;
 	onTooltipHide?: () => void;
 	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;
+	onBanner?: (e: any) => void;
+	onBannerClose?: (e: any) => void;
+	onRelation?: (param?: Partial<I.MenuParam>, data?: any) => void;
 };
 
 export interface PageComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
 	matchPopup?: any;
-	dataset?: I.Dataset;
 	storageGet?(): any;
 	storageSet?(data: any): void;
 };
@@ -187,37 +190,20 @@ export interface ButtonComponent {
 };
 
 export enum SurveyType {
-	Register 	= 0,
-	Delete 		= 1,
-	Pmf 		= 2,
-	Object 		= 3,
+	Register	 = 0,
+	Delete		 = 1,
+	Pmf			 = 2,
+	Object		 = 3,
+	Shared		 = 4,
+	Multiplayer	 = 5,
 };
 
 export enum SliceOperation {
-	None	 = 0,
-	Add		 = 1,
-    Move	 = 2,
-	Remove	 = 3,
-    Replace	 = 4,
-};
-
-export interface Dataset {
-	selection: {
-		isSelecting: boolean;
-		checkSelected: (type: I.SelectType) => boolean;
-		renderSelection: () => void;
-		scrollToElement: (id: string, dir: number) => void;
-		set: (type: I.SelectType, ids: string[]) => void;
-		get: (type: I.SelectType, withChildren?: boolean) => string[];
-		clear: () => void;
-		hide: () => void;
-		setIsSelecting: (v: boolean) => void;
-	};
-	dragProvider: {
-		onScroll: () => void;
-	};
-	onDragStart: (e: React.DragEvent, dropType: I.DropType, ids: string[], component: unknown) => void;
-	preventCommonDrop: (value: boolean) => void;
+	None		 = 0,
+	Add			 = 1,
+    Move		 = 2,
+	Remove		 = 3,
+    Replace		 = 4,
 };
 
 export enum FileSyncStatus {
@@ -227,27 +213,40 @@ export enum FileSyncStatus {
 };
 
 export enum StoreTab {
-	Type = 'type',
+	Type	 = 'type',
 	Relation = 'relation',
 };
 
 export enum BannerType {
-	IsArchived		 = 0,
-	IsTemplate		 = 1,
-	TemplateSelect	 = 2,
+	None			 = 0,
+	IsArchived		 = 1,
+	IsTemplate		 = 2,
+	TemplateSelect	 = 3,
 };
 
 export enum ObjectManagerItemInfo {
-	Description 	= 0,
-	FileSize 		= 1,
+	Description	 = 0,
+	FileSize	 = 1,
 };
 
 export enum ObjectManagerPopup {
-	Favorites 	= 0,
+	Favorites	 = 0,
 };
 
 export enum NetworkMode {
 	Default		 = 0,
 	Local		 = 1,
 	Custom		 = 2,
+};
+
+export enum NavigationMenuMode {
+	None		 = 0,
+	Context		 = 1,
+	Click		 = 2,
+	Hover		 = 3,
+};
+
+export enum InterfaceStatus {
+	Ok		 = 'ok',
+	Error	 = 'error',
 };

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, C, UtilCommon, UtilData, keyboard, focus, Storage } from 'Lib';
-import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
-import { menuStore, blockStore, detailStore } from 'Store';
+import { I, C, UtilCommon, UtilData, keyboard, focus, Storage, UtilSpace } from 'Lib';
+import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject} from 'Component';
+import { menuStore, blockStore, detailStore, commonStore } from 'Store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -27,7 +27,7 @@ import BlockPdf from './media/pdf';
 
 import BlockEmbed from './embed';
 
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
 	css?: any;
@@ -79,10 +79,16 @@ const Block = observer(class Block extends React.Component<Props> {
 		const index = Number(this.props.index) || 0;
 		const { style, checked } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const cn: string[] = [ 'block', UtilData.blockClass(block), 'align' + hAlign, 'index' + index ];
+		const cn: string[] = [ 'block', UtilData.blockClass(block), `align${hAlign}`, `index${index}` ];
 		const cd: string[] = [ 'wrapContent' ];
 		const setRef = ref => this.ref = ref;
 		const key = [ 'block', block.id, 'component' ].join(' ');
+		const participantId = blockStore.getParticipant(rootId, block.id);
+
+		let participant = null;
+		if (participantId) {
+			participant = UtilSpace.getParticipant(participantId);
+		};
 
 		let canSelect = !isInsideTable && !isSelectionDisabled;
 		let canDrop = !readonly && !isInsideTable;
@@ -324,20 +330,13 @@ const Block = observer(class Block extends React.Component<Props> {
 		
 		if (canSelect) {
 			object = (
-				<div 
-					id={`selectable-${id}`} 
-					className={[ 'selectable', `type-${I.SelectType.Block}` ].join(' ')} 
-					{...UtilCommon.dataProps({ id, type: I.SelectType.Block })}
-				>
+				<SelectionTarget id={id} type={I.SelectType.Block}>
 					{object}
-				</div>
+				</SelectionTarget>
 			);
 		} else {
 			object = (
-				<div 
-					id={`selectable-${id}`} 
-					className="selectable"
-				>
+				<div id={`selectionTarget-${id}`} className="selectionTarget">
 					{object}
 				</div>
 			);
@@ -362,6 +361,7 @@ const Block = observer(class Block extends React.Component<Props> {
 						onMouseDown={this.onMenuDown} 
 						onClick={this.onMenuClick} 
 					/>
+					{participant ? <IconObject object={participant} size={24} iconSize={18} /> : ''}
 				</div>
 				
 				<div className={cd.join(' ')}>
@@ -433,12 +433,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection, onDragStart } = dataset || {};
-		
-		if (!onDragStart) {
-			return;
-		};
+		const { block } = this.props;
+		const dragProvider = commonStore.getRef('dragProvider');
+		const selection = commonStore.getRef('selectionProvider');
 		
 		if (!block.isDraggable()) {
 			e.preventDefault();
@@ -450,20 +447,20 @@ const Block = observer(class Block extends React.Component<Props> {
 			selection.setIsSelecting(false);
 		};
 
-		this.ids = UtilData.selectionGet(block.id, false, true, this.props);
-		onDragStart(e, I.DropType.Block, this.ids, this);
+		this.ids = UtilData.selectionGet(block.id, false, true);
+		dragProvider?.onDragStart(e, I.DropType.Block, this.ids, this);
 	};
 	
 	onMenuDown (e: any) {
 		e.stopPropagation();
 
 		focus.clear(true);
-		this.ids = UtilData.selectionGet(this.props.block.id, false, false, this.props);
+		this.ids = UtilData.selectionGet(this.props.block.id, false, false);
 	};
 	
 	onMenuClick () {
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const element = $(`#button-block-menu-${block.id}`);
 
 		if (!element.length) {
@@ -484,10 +481,15 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	onContextMenu (e: any) {
 		const { focused } = focus.state;
-		const { rootId, block, readonly } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const { rootId, block, readonly, isContextMenuDisabled } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 
-		if (readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
+		if (isContextMenuDisabled || readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
+			return;
+		};
+
+		const root = blockStore.getLeaf(rootId, rootId);
+		if (!root) {
 			return;
 		};
 
@@ -500,7 +502,9 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		focus.clear(true);
 		menuStore.closeAll([], () => {
-			this.ids = UtilData.selectionGet(block.id, false, false, this.props);
+			this.ids = UtilData.selectionGet(block.id, false, false);
+			selection?.set(I.SelectType.Block, this.ids);
+
 			this.menuOpen({
 				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
 			});
@@ -508,8 +512,8 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	menuOpen (param?: Partial<I.MenuParam>) {
-		const { dataset, rootId, block, blockRemove, onCopy } = this.props;
-		const { selection } = dataset || {};
+		const { rootId, block, blockRemove, onCopy } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 
 		// Hide block menus and plus button
 		$('#button-block-add').removeClass('show');
@@ -517,16 +521,16 @@ const Block = observer(class Block extends React.Component<Props> {
 		$('.block.isAdding').removeClass('isAdding top bottom');
 
 		const menuParam: Partial<I.MenuParam> = Object.assign({
+			noFlipX: true,
 			subIds: Constant.menuIds.action,
 			onClose: () => {
-				selection.clear();
+				selection?.clear();
 				focus.apply();
 			},
 			data: {
 				blockId: block.id,
 				blockIds: this.ids,
 				rootId,
-				dataset,
 				blockRemove,
 				onCopy,
 			}
@@ -538,7 +542,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	onResizeStart (e: any, index: number) {
 		e.stopPropagation();
 
-		const { dataset, rootId, block, readonly } = this.props;
+		const { rootId, block, readonly } = this.props;
 
 		if (!this._isMounted || readonly) {
 			return;
@@ -546,16 +550,14 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
 		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + Constant.size.blockMenu ;
 		const add = $('#button-block-add');
 		
-		if (selection) {
-			selection.clear();
-		};
+		selection?.clear();
 
 		this.unbind();
 		node.addClass('isResizing');
@@ -568,8 +570,8 @@ const Block = observer(class Block extends React.Component<Props> {
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');
 		
-		win.on('mousemove.block', (e: any) => { this.onResize(e, index, offset); });
-		win.on('mouseup.block', (e: any) => { this.onResizeEnd(e, index, offset); });
+		win.on('mousemove.block', e => this.onResize(e, index, offset));
+		win.on('mouseup.block', e => this.onResizeEnd(e, index, offset));
 		
 		node.find('.resizable').trigger('resizeStart', [ e ]);
 	};

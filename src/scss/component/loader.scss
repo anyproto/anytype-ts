@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .loaderWrapper { width: 24px; height: 24px; margin: 0px auto; position: relative; }
 .loaderWrapper {
@@ -11,6 +11,12 @@
 		0% { background-color: var(--color-text-primary); }
 		32% { background-color: var(--color-text-primary); }
 		100% { background-color: rgba(0,0,0,0); }
+	}
+
+	@keyframes dots-dark {
+		0% { background-color: #171717; }
+		32% { background-color: #171717; }
+		100% { background-color: #fff; }
 	}
 
 	.loader {

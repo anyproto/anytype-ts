@@ -1,6 +1,6 @@
-import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
+import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
+const Constant = require('json/constant.json');
 import * as Sentry from '@sentry/browser';
 
 type SearchSubscribeParams = Partial<{
@@ -22,18 +22,26 @@ type SearchSubscribeParams = Partial<{
 	noDeps: boolean;
 }>;
 
+const SYSTEM_DATE_RELATION_KEYS = [
+	'lastModifiedDate', 
+	'lastOpenedDate', 
+	'createdDate',
+	'addedDate',
+	'lastUsedDate',
+];
+
 class UtilData {
 
 	blockTextClass (v: I.TextStyle): string {
-		return UtilCommon.toCamelCase('text-' + String(I.TextStyle[v] || 'paragraph'));
+		return `text${String(I.TextStyle[v] || 'Paragraph')}`;
 	};
 	
 	blockDivClass (v: I.DivStyle): string {
-		return UtilCommon.toCamelCase('div-' + String(I.DivStyle[v]));
+		return `div${String(I.DivStyle[v])}`;
 	};
 
 	blockLayoutClass (v: I.LayoutStyle): string {
-		return UtilCommon.toCamelCase('layout-' + String(I.LayoutStyle[v]));
+		return `layout${String(I.LayoutStyle[v])}`;
 	};
 
 	blockEmbedClass (v: I.EmbedProcessor): string {
@@ -50,12 +58,8 @@ class UtilData {
 				};
 				break;
 
-			case I.BlockType.Div:
-				switch (v) {
-					default:
-					case I.DivStyle.Line:		 icon = 'div-line'; break;
-					case I.DivStyle.Dot:		 icon = 'dot'; break;
-				};
+			case I.BlockType.Div: 
+				icon = this.blockDivClass(v);
 				break;
 		};
 		return icon;
@@ -72,21 +76,13 @@ class UtilData {
 				if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
 					c.push(dc);
 				} else {
-					c.push('blockMedia');
-
-					switch (type) {
-						case I.FileType.Image:	 c.push('isImage'); break;
-						case I.FileType.Video:	 c.push('isVideo'); break;
-						case I.FileType.Audio:	 c.push('isAudio'); break;
-						case I.FileType.Pdf:	 c.push('isPdf'); break;
-					};
+					c.push(`blockMedia is${I.FileType[type]}`);
 				};
 				break;
 			};
 
 			case I.BlockType.Embed: {
-				c.push('blockEmbed');
-				c.push(this.blockEmbedClass(processor));
+				c.push(`blockEmbed ${this.blockEmbedClass(processor)}`);
 				break;
 			};
 
@@ -106,57 +102,20 @@ class UtilData {
 	layoutClass (id: string, layout: I.ObjectLayout) {
 		let c = '';
 		switch (layout) {
-			default: c = UtilCommon.toCamelCase('is-' + I.ObjectLayout[layout]); break;
+			default: c = UtilCommon.toCamelCase(`is-${I.ObjectLayout[layout]}`); break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 		};
 		return c;
 	};
 
 	linkCardClass (v: I.LinkCardStyle): string {
-		return String(I.LinkCardStyle[v] || 'text').toLowerCase();
+		v = v || I.LinkCardStyle.Text;
+		return String(I.LinkCardStyle[v]).toLowerCase();
 	};
 
 	cardSizeClass (v: I.CardSize) {
-		return String(I.CardSize[v] || 'small').toLowerCase();
-	};
-
-	dateFormat (v: I.DateFormat): string {
-		let f = '';
-		switch (v) {
-			default:
-			case I.DateFormat.MonthAbbrBeforeDay:	 f = 'M d, Y'; break;
-			case I.DateFormat.MonthAbbrAfterDay:	 f = 'd M, Y'; break;
-			case I.DateFormat.Short:				 f = 'd.m.Y'; break;
-			case I.DateFormat.ShortUS:				 f = 'm.d.Y'; break;
-			case I.DateFormat.ISO:					 f = 'Y-m-d'; break;
-		};
-		return f;
-	};
-
-	timeFormat (v: I.TimeFormat): string {
-		let f = '';
-		switch (v) {
-			default:
-			case I.TimeFormat.H12:	 f = 'g:i A'; break;
-			case I.TimeFormat.H24:	 f = 'H:i'; break;
-		};
-		return f;
-	};
-
-	coverColors () {
-		return [ 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'green', 'lightgrey', 'darkgrey', 'black' ].map(id => ({
-			id,
-			type: I.CoverType.Color,
-			name: translate(`textColor-${id}`),
-		}));
-	};
-
-	coverGradients () {
-		return [ 'pinkOrange', 'bluePink', 'greenOrange', 'sky', 'yellow', 'red', 'blue', 'teal' ].map(id => ({
-			id,
-			type: I.CoverType.Gradient,
-			name: translate(`gradientColor-${id}`),
-		}));
+		v = v || I.CardSize.Small;
+		return String(I.CardSize[v]).toLowerCase();
 	};
 
 	threadColor (s: I.ThreadStatus) {
@@ -170,14 +129,33 @@ class UtilData {
 		};
 		return c;
 	};
-	
-	alignIcon (v: I.BlockHAlign): string {
-		return String(I.BlockHAlign[v] || 'left').toLowerCase();
+
+	diffClass (t: I.DiffType): string {
+		let c = '';
+		switch (t) {
+			case I.DiffType.None: c = 'diffNone'; break;
+			case I.DiffType.Add: c = 'diffAdd'; break;
+			case I.DiffType.Change: c = 'diffChange'; break;
+			case I.DiffType.Remove: c = 'diffRemove'; break;
+		};
+		return c;
 	};
 	
-	selectionGet (id: string, withChildren: boolean, save: boolean, props: any): string[] {
-		const { dataset } = props;
-		const { selection } = dataset || {};
+	alignHIcon (v: I.BlockHAlign): string {
+		v = v || I.BlockHAlign.Left;
+		return `align ${String(I.BlockHAlign[v]).toLowerCase()}`;
+	};
+
+	alignVIcon (v: I.BlockVAlign): string {
+		v = v || I.BlockVAlign.Top;
+		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
+	};
+	
+	/*
+	Used to click and set selection automatically in block menu for example
+	*/
+	selectionGet (id: string, withChildren: boolean, save: boolean): string[] {
+		const selection = commonStore.getRef('selectionProvider');
 		
 		if (!selection) {
 			return [];
@@ -204,61 +182,50 @@ class UtilData {
 
 		commonStore.gatewaySet(info.gatewayUrl);
 		commonStore.spaceSet(info.accountSpaceId);
-		commonStore.techSpaceSet(info.techSpaceId);
 
 		analytics.profile(info.analyticsId, info.networkId);
-
 		Sentry.setUser({ id: info.analyticsId });
 	};
 	
 	onAuth (param?: any, callBack?: () => void) {
-		const pin = Storage.get('pin');
-		const { profile, widgets } = blockStore;
+		param = param || {};
+		param.routeParam = param.routeParam || {};
+
+		const pin = Storage.getPin();
+		const { root, widgets } = blockStore;
 		const { redirect, space } = commonStore;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
-		const routeParam = Object.assign({ replace: true }, (param || {}).routeParam || {});
-
-		if (!profile) {
-			console.error('[onAuth] No profile defined');
-			return;
-		};
+		const routeParam = Object.assign({ replace: true }, param.routeParam);
+		const route = param.route || redirect;
 
 		if (!widgets) {
-			console.error('[onAuth] No widgets defined');
+			console.error('[UtilData].onAuth No widgets defined');
 			return;
 		};
 
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
 
-		C.ObjectOpen(blockStore.rootId, '', space, (message: any) => {
-			if (!UtilCommon.checkError(message.error.code)) {
+		C.ObjectOpen(root, '', space, (message: any) => {
+			if (!UtilCommon.checkErrorOnOpen(root, message.error.code, null)) {
 				return;
 			};
 
-			C.ObjectOpen(widgets, '', space, () => {
-				this.createsSubscriptions(() => {
-					C.NotificationList(false, Constant.limit.notification, (message: any) => {
-						if (!message.error.code) {
-							notificationStore.set(message.list);
-						};
-					});
+			C.ObjectOpen(widgets, '', space, (message: any) => {
+				if (!UtilCommon.checkErrorOnOpen(widgets, message.error.code, null)) {
+					return;
+				};
 
-					C.FileNodeUsage((message: any) => {
-						if (!message.error.code) {
-							commonStore.spaceStorageSet(message);
-						};
-					});
-
+				this.createSubscriptions(() => {
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
 					} else {
-						if (redirect) {
-							UtilRouter.go(redirect, routeParam);
+						if (route) {
+							UtilRouter.go(route, routeParam);
 						} else {
-							UtilObject.openHome('route', routeParam);
+							UtilSpace.openDashboard('route', routeParam);
 						};
 
 						commonStore.redirectSet('');
@@ -271,6 +238,21 @@ class UtilData {
 						Storage.set('bgColor', 'orange');
 					};
 
+					[ 
+						I.SurveyType.Register, 
+						I.SurveyType.Object, 
+						I.SurveyType.Multiplayer,
+						I.SurveyType.Shared, 
+					].forEach(it => Survey.check(it));
+
+					const space = UtilSpace.getSpaceview();
+
+					if (!space.isPersonal) {
+						Onboarding.start('space', keyboard.isPopup(), false);
+					};
+
+					Storage.clearDeletedSpaces();
+
 					if (callBack) {
 						callBack();
 					};
@@ -279,15 +261,35 @@ class UtilData {
 		});
 	};
 
-	createsSubscriptions (callBack?: () => void): void {
-		const list = [
+	onAuthOnce (noTierCache: boolean) {
+		C.NotificationList(false, Constant.limit.notification, (message: any) => {
+			if (!message.error.code) {
+				notificationStore.set(message.list);
+			};
+		});
+
+		C.FileNodeUsage((message: any) => {
+			if (!message.error.code) {
+				commonStore.spaceStorageSet(message);
+			};
+		});
+
+		this.getMembershipTiers(noTierCache);
+		this.getMembershipStatus();
+	};
+
+	createSubscriptions (callBack?: () => void): void {
+		const { space } = commonStore;
+		const { account } = authStore;
+		const list: any[] = [
 			{
 				subId: Constant.subId.profile,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: UtilObject.getIdentityId() },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: blockStore.profile },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
+				ignoreHidden: false,
 			},
 			{
 				subId: Constant.subId.deleted,
@@ -295,13 +297,14 @@ class UtilData {
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
 				],
+				ignoreDeleted: false,
 				noDeps: true,
 			},
 			{
 				subId: Constant.subId.type,
 				keys: this.typeRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, space ] },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
@@ -321,7 +324,7 @@ class UtilData {
 				subId: Constant.subId.relation,
 				keys: Constant.relationRelationKeys,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, space ] },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
@@ -339,7 +342,6 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				sorts: [
-					{ relationKey: 'createdDate', type: I.SortType.Asc },
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
@@ -356,8 +358,36 @@ class UtilData {
 				],
 				ignoreWorkspace: true,
 				ignoreHidden: false,
-			}
+			},
+			{
+				subId: Constant.subId.participant,
+				keys: this.participantRelationKeys(),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				ignoreDeleted: true,
+				ignoreHidden: false,
+				noDeps: true,
+			},
 		];
+
+		if (account) {
+			list.push({
+				subId: Constant.subId.myParticipant,
+				keys: this.participantRelationKeys(),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+					{ operator: I.FilterOperator.And, relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
+				],
+				ignoreWorkspace: true,
+				ignoreDeleted: true,
+				ignoreHidden: false,
+				noDeps: true,
+			});
+		};
 
 		let cnt = 0;
 		const cb = (item: any) => {
@@ -377,18 +407,30 @@ class UtilData {
 		};
 	};
 
+	destroySubscriptions (callBack?: () => void): void {
+		C.ObjectSearchUnsubscribe(Object.values(Constant.subId), callBack);
+	};
+
 	spaceRelationKeys () {
-		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys);
+		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys).concat(Constant.participantRelationKeys);
 	};
 
 	typeRelationKeys () {
 		return Constant.defaultRelationKeys.concat(Constant.typeRelationKeys);
 	};
 
-	createSession (callBack?: (message: any) => void) {
-		C.WalletCreateSession(authStore.phrase, (message: any) => {
-			authStore.tokenSet(message.token);
-			dispatcher.listenEvents();
+	participantRelationKeys () {
+		return Constant.defaultRelationKeys.concat(Constant.participantRelationKeys);
+	};
+
+	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
+		C.WalletCreateSession(phrase, key, (message: any) => {
+
+			if (!message.error.code) {
+				authStore.tokenSet(message.token);
+				authStore.appTokenSet(message.appToken);
+				dispatcher.listenEvents();
+			};
 
 			if (callBack) {
 				callBack(message);
@@ -426,14 +468,10 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withBookmark, withCollection, limit } = param || {};
+		const { withSet, withCollection, limit } = param || {};
 		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
 		const skipLayouts = UtilObject.getSetLayouts();
-
-		if (!withBookmark) {
-			skipLayouts.push(I.ObjectLayout.Bookmark);
-		};
 
 		let items: any[] = [];
 
@@ -455,7 +493,7 @@ class UtilData {
 
 		items = items.filter(it => it);
 
-		if (!config.debug.ho) {
+		if (!config.debug.hiddenObject) {
 			items = items.filter(it => !it.isHidden);
 		};
 
@@ -487,10 +525,16 @@ class UtilData {
 		const object = detailStore.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
-		const ret: any = {
-			withCover: Boolean((coverType != I.CoverType.None) && coverId),
+		const ret = {
+			withCover: false,
 			withIcon: false,
-			className: [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ],
+			className: '',
+		};
+
+		let className = [];
+		if (!object._empty_) {
+			ret.withCover = Boolean((coverType != I.CoverType.None) && coverId);
+			className = [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ];
 		};
 
 		switch (object.layout) {
@@ -504,37 +548,39 @@ class UtilData {
 			};
 
 			case I.ObjectLayout.Human:
-			case I.ObjectLayout.Relation:
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image: {
+			case I.ObjectLayout.Relation: {
 				ret.withIcon = true;
 				break;
 			};
 		};
 
+		if (UtilObject.isFileLayout(object.layout)) {
+			ret.withIcon = true;
+		};
+
 		if (checkType) {
-			ret.className.push('noSystemBlocks');
+			className.push('noSystemBlocks');
 		};
 
 		if ((object.featuredRelations || []).includes('description')) {
-			ret.className.push('withDescription');
+			className.push('withDescription');
 		};
 
 		if (object.templateIsBundled) {
-			ret.className.push('isBundled');
+			className.push('isBundled');
 		};
 
 		if (ret.withIcon && ret.withCover) {
-			ret.className.push('withIconAndCover');
+			className.push('withIconAndCover');
 		} else
 		if (ret.withIcon) {
-			ret.className.push('withIcon');
+			className.push('withIcon');
 		} else
 		if (ret.withCover) {
-			ret.className.push('withCover');
+			className.push('withCover');
 		};
 
-		ret.className = ret.className.join(' ');
+		ret.className = className.join(' ');
 		return ret;
 	};
 
@@ -573,6 +619,12 @@ class UtilData {
 		return 0;
 	};
 
+	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
+		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
+		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
+		return this.sortByName(c1, c2);
+	};
+
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
@@ -602,7 +654,7 @@ class UtilData {
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
-			cardStyle: I.LinkCardStyle.Text,
+			cardStyle: commonStore.linkStyle,
 			description: I.LinkDescription.None,
 			relations: [],
 		};
@@ -644,12 +696,12 @@ class UtilData {
 			dbStore.metaSet(subId, '', { total: message.counters.total, keys });
 		};
 
-		let details = [];
 		const mapper = (it: any) => { 
-			keys.forEach((k: string) => { it[k] = it[k] || ''; });
+			keys.forEach(k => it[k] = it[k] || '');
 			return { id: it[idField], details: it }; 
 		};
 
+		let details = [];
 		details = details.concat(message.dependencies.map(mapper));
 		details = details.concat(message.records.map(mapper));
 
@@ -658,7 +710,7 @@ class UtilData {
 	};
 
 	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
-		const { config, space, techSpace } = commonStore;
+		const { config, space } = commonStore;
 
 		param = Object.assign({
 			subId: '',
@@ -689,11 +741,12 @@ class UtilData {
 		};
 
 		if (!ignoreWorkspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
-		if (ignoreHidden && !config.debug.ho) {
+		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (ignoreDeleted) {
@@ -723,9 +776,10 @@ class UtilData {
 			ids: [],
 			keys: Constant.defaultRelationKeys,
 			noDeps: false,
+			idField: 'id',
 		}, param);
 
-		const { subId, keys, noDeps } = param;
+		const { subId, keys, noDeps, idField } = param;
 		const ids = UtilCommon.arrayUnique(param.ids.filter(it => it));
 
 		if (!subId) {
@@ -735,6 +789,10 @@ class UtilData {
 		if (!ids.length) {
 			console.error('[UtilData].subscribeIds: ids list is empty');
 			return;
+		};
+
+		if (!keys.includes(idField)) {
+			keys.push(idField);
 		};
 
 		C.ObjectSubscribeIds(subId, ids, keys, true, noDeps, (message: any) => {
@@ -755,7 +813,7 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, space, techSpace } = commonStore;
+		const { config, space } = commonStore;
 
 		param = Object.assign({
 			idField: 'id',
@@ -775,11 +833,12 @@ class UtilData {
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		if (!ignoreWorkspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
-		if (ignoreHidden && !config.debug.ho) {
+		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (ignoreDeleted) {
@@ -806,8 +865,8 @@ class UtilData {
 	};
 
 	sortMapper (it: any) {
-		if ([ 'lastModifiedDate', 'lastOpenedDate', 'createdDate' ].includes(it.relationKey)) {
-			it.includeTime = true;
+		if (undefined === it.includeTime) {
+			it.includeTime = SYSTEM_DATE_RELATION_KEYS.includes(it.relationKey);
 		};
 		return it;
 	};
@@ -817,7 +876,7 @@ class UtilData {
 	};
 
 	setWindowTitleText (name: string) {
-		const space = UtilObject.getSpaceview();
+		const space = UtilSpace.getSpaceview();
 		const title = [];
 
 		if (name) {
@@ -833,16 +892,16 @@ class UtilData {
 	};
 
 	graphFilters () {
-		const { space, techSpace } = commonStore;
-
+		const { space } = commonStore;
 		const templateType = dbStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
+			{ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space, techSpace ] },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] },
 		];
 
 		if (templateType) {
@@ -851,21 +910,16 @@ class UtilData {
 		return filters;
 	};
 
-	moveToPage (rootId: string, blockId: string, typeId: string, route: string, props: any) {
-		const { dataset } = props;
-		const { selection } = dataset || {};
+	moveToPage (rootId: string, ids: string[], typeId: string, route: string) {
 		const type = dbStore.getTypeById(typeId);
+		if (!type) {
+			return;
+		};
 		
-		let ids = [];
-		if (selection) {
-			ids = selection.get(I.SelectType.Block);
-		};
-		if (!ids.length) {
-			ids = [ blockId ];
-		};
-
-		C.BlockListConvertToObjects(rootId, ids, type?.uniqueKey, () => {
-			analytics.event('CreateObject', { route, objectType: typeId });
+		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, (message: any) => {
+			if (!message.error.code) {
+				analytics.createObject(type.id, type.recommendedLayout, route, message.middleTime);
+			};
 		});
 	};
 
@@ -914,6 +968,109 @@ class UtilData {
 				break;
 		};
 		return ret;
+	}
+
+	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
+		if (!this.isAnytypeNetwork()) {
+			return;
+		};
+
+		C.MembershipGetStatus(true, (message: any) => {
+			const { membership } = message;
+
+			if (membership) {
+				const { status, tier } = membership;
+
+				authStore.membershipSet(membership);
+				analytics.setTier(tier);
+				
+				if (status && (status == I.MembershipStatus.Finalization)) {
+					popupStore.open('membershipFinalization', { data: { tier } });
+				};
+			};
+
+			if (callBack) {
+				callBack(membership);
+			};
+		});
+	};
+
+	getMembershipTiers (noCache: boolean) {
+		const { config, interfaceLang, isOnline } = commonStore;
+		const { testPayment } = config;
+
+		if (!isOnline || !this.isAnytypeNetwork()) {
+			return;
+		};
+
+		C.MembershipGetTiers(noCache, interfaceLang, (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
+			commonStore.membershipTiersListSet(tiers);
+		});
+	};
+
+	getMembershipTier (id: I.TierType): I.MembershipTier {
+		return commonStore.membershipTiers.find(it => it.id == id) || new M.MembershipTier({ id: I.TierType.None });
+	};
+
+	isAnytypeNetwork (): boolean {
+		return Object.values(Constant.networkId).includes(authStore.account?.info?.networkId);
+	};
+
+	isLocalNetwork (): boolean {
+		return !authStore.account?.info?.networkId;
+	};
+
+	isLocalOnly (): boolean {
+		return authStore.account?.info?.networkId == '';
+	};
+
+	accountCreate (onError?: (text: string) => void, callBack?: () => void) {
+		onError = onError || (() => {});
+
+		const { networkConfig } = authStore;
+		const { mode, path } = networkConfig;
+		const { dataPath } = commonStore;
+
+		let phrase = '';
+
+		C.WalletCreate(dataPath, (message) => {
+			if (message.error.code) {
+				onError(message.error.description);
+				return;
+			};
+
+			phrase = message.mnemonic;
+
+			this.createSession(phrase, '', (message) => {
+				if (message.error.code) {
+					onError(message.error.description);
+					return;
+				};
+
+				C.AccountCreate('', '', dataPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
+					if (message.error.code) {
+						onError(message.error.description);
+						return;
+					};
+
+					authStore.accountSet(message.account);
+					commonStore.configSet(message.account.config, false);
+					commonStore.isSidebarFixedSet(true);
+
+					this.onInfo(message.account.info);
+					Renderer.send('keytarSet', message.account.id, phrase);
+					Action.importUsecase(commonStore.space, I.Usecase.GetStarted, callBack);
+
+					analytics.event('CreateAccount', { middleTime: message.middleTime });
+					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
+				});
+			});
+		});
 	};
 
 };

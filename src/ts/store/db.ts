@@ -1,7 +1,8 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, M, UtilCommon, UtilData, Dataview } from 'Lib';
-import { detailStore, commonStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, M, UtilCommon, Dataview } from 'Lib';
+import { detailStore, commonStore } from 'Store';
+
+const Constant = require('json/constant.json');
 
 enum KeyMapType {
 	Relation = 'relation',
@@ -216,14 +217,14 @@ class DbStore {
 	};
 
 	recordAdd (rootId: string, blockId: string, id: string, index: number) {
-		const records = this.getRecords(rootId, blockId);
+		const records = this.getRecordIds(rootId, blockId);
 		
 		records.splice(index, 0, id);
 		this.recordsSet(rootId, blockId, records);
 	};
 
 	recordDelete (rootId: string, blockId: string, id: string) {
-		this.recordMap.set(this.getId(rootId, blockId), this.getRecords(rootId, blockId).filter(it => it != id));
+		this.recordMap.set(this.getId(rootId, blockId), this.getRecordIds(rootId, blockId).filter(it => it != id));
 	};
 
 	groupsSet (rootId: string, blockId: string, groups: any[]) {
@@ -293,30 +294,13 @@ class DbStore {
 	};
 
 	getTypes () {
-		return this.getRecords(Constant.subId.type, '').map(id => this.getTypeById(id)).
+		return this.getRecordIds(Constant.subId.type, '').map(id => this.getTypeById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
 	getRelations () {
-		return this.getRecords(Constant.subId.relation, '').map(id => this.getRelationById(id)).
+		return this.getRecordIds(Constant.subId.relation, '').map(id => this.getRelationById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
-	};
-
-	getSpaces () {
-		const subId = Constant.subId.space;
-		const { spaceview } = blockStore;
-
-		let items = this.getRecords(subId, '').map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
-		items = items.filter(it => (it.spaceAccountStatus != I.SpaceStatus.Deleted) && (it.spaceLocalStatus == I.SpaceStatus.Ok));
-		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));
-
-		items.sort((c1, c2) => {
-			if (c1.isActive && !c2.isActive) return -1;
-			if (!c1.isActive && c2.isActive) return 1;
-			return 0;
-		});
-
-		return items;
 	};
 
 	getObjectRelationKeys (rootId: string, blockId: string): any[] {
@@ -365,8 +349,12 @@ class DbStore {
 		};
 	};
 
-	getRecords (rootId: string, blockId: string) {
+	getRecordIds (rootId: string, blockId: string) {
 		return this.recordMap.get(this.getId(rootId, blockId)) || [];
+	};
+
+	getRecords (subId: string, keys?: string[], forceKeys?: boolean): any[] {
+		return this.getRecordIds(subId, '').map(id => detailStore.get(subId, id, keys));
 	};
 
 	getGroups (rootId: string, blockId: string) {

@@ -1,4 +1,3 @@
-const { exec } = require('child_process');
 const { app, shell, nativeTheme } = require('electron');
 const { is } = require('electron-util');
 const log = require('electron-log');
@@ -79,26 +78,28 @@ class Util {
 	};
 
 	logPath () {
-		return path.join(this.userPath(), 'logs');
+		const dir = path.join(this.userPath(), 'logs');
+		this.createPath(dir);
+		return dir;
+	};
+
+	createPath (dir) {
+		try { fs.mkdirSync(dir); } catch (e) {};
 	};
 
 	dataPath () {
 		const { channel } = ConfigManager.config;
+		const envPath = process.env.DATA_PATH;
 		const dataPath = [];
 
-		if (process.env.DATA_PATH) {
-			this.mkDir(process.env.DATA_PATH);
-			dataPath.push(process.env.DATA_PATH);
+		if (envPath) {
+			this.mkDir(envPath);
+			dataPath.push(envPath);
 		} else {
 			dataPath.push(this.userPath());
-
-			if (is.development) {
-				dataPath.push('dev');
-			} else 
-			if ([ 'alpha', 'beta' ].includes(channel)) {
+			if (!is.development && [ 'alpha', 'beta' ].includes(channel)) {
 				dataPath.push(channel);
 			};
-
 			dataPath.push('data');
 		};
 
@@ -109,7 +110,7 @@ class Util {
 		const args = [ ...arguments ];
 		const win = args[0];
 
-		if (win && win.webContents) {
+		if (win && !win.isDestroyed() && win.webContents) {
 			args.shift();
 			win.webContents.send.apply(win.webContents, args);
 		};
@@ -129,8 +130,8 @@ class Util {
 			try {
 				content = content.replace(/'(file:\/\/[^']+)'/g, function (s, p, o) {
 					const a = p.split('app.asar/dist/');
-					let name = a[1].split('/');
 
+					let name = a[1].split('/');
 					name = name[name.length - 1];
 
 					const src = p.replace('file://', '').replace(/\?.*/, '').replace(/\/app.asar\//g, '/app.asar.unpacked/');
@@ -176,8 +177,8 @@ class Util {
 			fs.writeFileSync(exportName, content);
 
 			try {
-				fs.unlinkSync(path.join(filesPath, 'main.js'));
-				fs.unlinkSync(path.join(filesPath, 'run.js'));
+				fs.unlinkSync(path.join(filesPath, 'js/main.js'));
+				fs.unlinkSync(path.join(filesPath, 'js/run.js'));
 			} catch (e) {
 				this.log('info', e);
 			};
@@ -220,16 +221,16 @@ class Util {
 
 	enabledLangs () {
 		return [
-			"da-DK", "de-DE", "en-US",
-			"es-ES", "fr-FR", "hi-IN",
-			"id-ID", "it-IT", "ja-JP",
-			"nl-NL", "no-NO", "pl-PL",
-			"pt-BR", "ro-RO", "ru-RU",
-			"tr-TR", "uk-UA", "vi-VN",
-			"zh-CN", "zh-TW"
+			"be-BY", "cs-CZ", "da-DK",
+			"de-DE", "en-US", "es-ES",
+			"fr-FR", "hi-IN", "id-ID",
+			"it-IT", "lt-LT", "ja-JP",
+			"ko-KR", "nl-NL", "no-NO",
+			"pl-PL", "pt-BR", "ro-RO",
+			"ru-RU", "tr-TR", "uk-UA",
+			"vi-VN", "zh-CN", "zh-TW" 
 		];
 	};
-
 
 	translate (key) {
 		const lang = this.getLang();
@@ -239,6 +240,10 @@ class Util {
 		try { data = require(`../../dist/lib/json/lang/${lang}.json`); } catch(e) {};
 
 		return data[key] || defaultData[key] || `⚠️${key}⚠️`;
+	};
+
+	defaultUserDataPath () {
+		return path.join(app.getPath('appData'), app.getName());
 	};
 
 };

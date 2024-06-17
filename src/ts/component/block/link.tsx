@@ -1,17 +1,16 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
 import { I, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
-import { detailStore, blockStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+import { detailStore, blockStore, dbStore, commonStore } from 'Store';
+
+const Constant = require('json/constant.json');
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
 	
 	_isMounted = false;
 	node: any = null;
-	frame = 0;
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -19,9 +18,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onClick = this.onClick.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
@@ -58,7 +54,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 					className="loading" 
 					{...UtilCommon.dataProps({ 'target-block-id': object.id })}
 				>
-					<Loader />
+					<Loader type="loader" />
 					<div className="name">{translate('blockLinkSyncing')}</div>
 				</div>
 			);
@@ -88,6 +84,8 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			let archive = null;
 			let icon = null;
 			let div = null;
+			let onCardClick = null;
+			let onNameClick = null;
 
 			if (canDescription) {
 				if (description == I.LinkDescription.Added) {
@@ -108,6 +106,9 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 						<div className="inner" />
 					</div>
 				);
+				onNameClick = this.onClick;
+			} else {
+				onCardClick = this.onClick;
 			};
 
 			if (withIcon) {
@@ -118,9 +119,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 						iconSize={iconSize}
 						object={object} 
 						canEdit={!readonly && !isArchived} 
-						onSelect={this.onSelect} 
-						onUpload={this.onUpload} 
-						onCheckbox={this.onCheckbox} 
+						noClick={true}
 					/>
 				);
 			};
@@ -132,10 +131,10 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			cnc.push('c' + n);
 
 			element = (
-				<div className={cnc.join(' ')}>
+				<div className={cnc.join(' ')} onClick={onCardClick}>
 					<div id="sides" className={cns.join(' ')}>
 						<div key="sideLeft" className={cnl.join(' ')}>
-							<div className="relationItem cardName" onClick={this.onClick}>
+							<div className="relationItem cardName" onClick={onNameClick}>
 								{icon}
 								<ObjectName object={object} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} />
 								{archive}
@@ -249,42 +248,19 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const { rootId, block, dataset } = this.props;
-		const { selection } = dataset || {};
+		const { rootId, block } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
-		const { _empty_ } = object;
-		const ids = selection ? selection.get(I.SelectType.Block) : [];
+		const ids = selection?.get(I.SelectType.Block) || [];
 
-		if (_empty_ || (targetBlockId == rootId)) {
+		if (object._empty_ || (targetBlockId == rootId) || (keyboard.withCommand(e) && ids.length)) {
 			return;
 		};
-		
-		if (!(keyboard.withCommand(e) && ids.length)) {
-			UtilObject.openEvent(e, object);
-		};
+
+		UtilObject.openEvent(e, object);
 	};
 	
-	onSelect (icon: string) {
-		const { block } = this.props;
-
-		UtilObject.setIcon(block.content.targetBlockId, icon, '');
-	};
-
-	onUpload (hash: string) {
-		const { block } = this.props;
-
-		UtilObject.setIcon(block.content.targetBlockId, '', hash);
-	};
-
-	onCheckbox () {
-		const { rootId, block } = this.props;
-		const { targetBlockId } = block.content;
-		const object = detailStore.get(rootId, targetBlockId, []);
-
-		UtilObject.setDone(targetBlockId, !object.done);
-	};
-
 	onMouseEnter (e: React.MouseEvent) {
 		if (!this._isMounted) {
 			return;
@@ -310,6 +286,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			object,
 			target: targetBlockId, 
 			noUnlink: true,
+			noEdit: true,
 			passThrough: true,
 		});
 	};
@@ -343,11 +320,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	};
 
 	resize () {
-		if (this.frame) {
-			raf.cancel(this.frame);
-		};
-
-		this.frame = raf(() => {
+		window.setTimeout(() => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -356,12 +329,10 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			const node = $(this.node);
 			const card = node.find('.linkCard');
 			const icon = node.find('.iconObject');
-			const rect = (node.get(0) as Element).getBoundingClientRect();
 			const mw = getWrapperWidth();
-			const name = node.find('.cardName');
 
 			icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
-			rect.width <= mw / 2 ? card.addClass('isVertical') : card.removeClass('isVertical');
+			node.width() <= mw / 2 ? card.addClass('isVertical') : card.removeClass('isVertical');
 		});
 	};
 

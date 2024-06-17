@@ -1,9 +1,13 @@
 .block.blockCover {
     .loaderWrapper { background: rgba(0,0,0,0.3); }
 
+	.author, .author a { color: var(--color-text-primary); }
+
     .elements {
 		.btn.white { background: var(--color-shape-secondary); color: var(--color-text-primary); }
-        .btn.white:hover { background: var(--color-bg-primary); color: var(--color-text-primary); }
+        .btn.white:hover { background: var(--color-shape-primary); color: var(--color-text-primary); }
+
+		.btn.black { color: var(--color-text-primary); }
 
         .btn {
 			.icon.icon { background-image: url('#{$themePath}/icon/add/icon1.svg'); }
@@ -112,16 +116,26 @@
         }
     }
 
+	/* BlockEmbed */
+
+	.block.blockEmbed {
+		.empty { color: var(--color-text-secondary); }
+		.wrap.isEditing { background: var(--color-shape-highlight-medium); }
+	}
+	.block.blockEmbed:not(.isLatex) {
+		#value svg { background: none; }
+	}
+
     /* BlockText */
 
-    .block.blockText.textCallout > .wrapContent { background: rgba(140, 158, 165, 0.25); }
-    .block.blockText.textCode > .wrapContent { background: rgba(140, 158, 165, 0.25); }
+    .block.blockText.textCallout > .wrapContent { background: var(--color-shape-highlight-medium); }
+    .block.blockText.textCode > .wrapContent { background: var(--color-shape-highlight-medium); }
 
     /* BlockBookmark */
 
     .block.blockBookmark {
 		.loaderWrapper { border: 0px; }
-        .inner { border-color: transparent; }
+        .inner { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
     }
 
 	/* BlockTable */
@@ -134,5 +148,11 @@
 				.inner { box-shadow: 0px 0px; }
 			}
 		}
+	}
+
+	/* BlockIconPage */
+
+	.block.blockIconPage {
+		.iconObject { background-color: var(--color-bg-tertiary) !important; box-shadow: 0px 0px 0px 4px var(--color-bg-tertiary); }
 	}
 }

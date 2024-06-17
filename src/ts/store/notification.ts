@@ -23,13 +23,24 @@ class NotificationStore {
 		this.setBadge();
 	};
 
+	get (id: string): I.Notification {
+		return this.itemList.find(it => it.id == id);
+	};
+
 	add (item: I.Notification): void {
-		this.itemList.unshift(item);
+		const current = this.get(item.id);
+
+		if (current) {
+			set(current, item);
+		} else {
+			this.itemList.unshift(item);
+		};
+
 		this.setBadge();
 	};
 
 	update (item: I.Notification): void {
-		const current = this.itemList.find(it => it.id == item.id);
+		const current = this.get(item.id);
 
 		if (current) {
 			set(current, item);
@@ -43,10 +54,13 @@ class NotificationStore {
 
 	clear () {
 		this.itemList = [];
+		this.setBadge();
 	};
 
 	setBadge () {
-		Renderer.send('setBadge', String(this.list.length || ''));
+		const length = this.list.filter(it => it.status != I.NotificationStatus.Replied).length;
+
+		Renderer.send('setBadge', String(length || ''));
 	};
 
 };

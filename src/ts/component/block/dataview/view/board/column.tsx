@@ -64,7 +64,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		return (
 			<div 
 				ref={node => this.node = node} 
-				id={'column-' + id} 
+				id={`column-${id}`} 
 				className={cn.join(' ')}
 				{...UtilCommon.dataProps({ id })}
 			>
@@ -77,14 +77,13 @@ const Column = observer(class Column extends React.Component<Props> {
 							onClick={this.onMore}
 						>
 							<Cell 
-								id={'board-head-' + id} 
+								id={`board-head-${id}`} 
 								rootId={rootId}
 								subId={subId}
 								block={block}
 								relationKey={view.groupRelationKey} 
 								viewType={I.ViewType.Board}
 								getRecord={() => head}
-								recordId=""
 								readonly={true} 
 								arrayLimit={4}
 								withName={true}
@@ -109,7 +108,7 @@ const Column = observer(class Column extends React.Component<Props> {
 								{...this.props}
 								id={item.id}
 								groupId={id}
-								recordId={item.id}
+								getRecord={() => item}
 							/>
 						))}
 
@@ -137,12 +136,15 @@ const Column = observer(class Column extends React.Component<Props> {
 	};
 
 	load (clear: boolean) {
-		const { id, block, isCollection, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget, getSearchIds } = this.props;
+		const { id, block, isCollection, value, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget, getSearchIds } = this.props;
 		const object = getTarget();
 		const view = getView();
+		if (!view) {
+			return;
+		};
+
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
-		
-		if (!relation || !view) {
+		if (!relation) {
 			return;
 		};
 
@@ -152,6 +154,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		const limit = getLimit() + this.offset;
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+			Dataview.getGroupFilter(relation, value),
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
@@ -160,28 +163,6 @@ const Column = observer(class Column extends React.Component<Props> {
 			sorts.unshift({ relationKey: '', type: I.SortType.Custom, customOrder: objectIds });
 		};
 
-		const filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
-
-		let value = this.props.value;
-		switch (relation.format) {
-			default:
-				filter.condition = I.FilterCondition.Equal;
-				filter.value = value;
-				break;
-
-			case I.RelationType.Select:
-				filter.condition = value ? I.FilterCondition.Equal : I.FilterCondition.Empty;
-				filter.value = value ? value : null;
-				break;
-
-			case I.RelationType.MultiSelect:
-				value = Relation.getArrayValue(value);
-				filter.condition = value.length ? I.FilterCondition.ExactIn : I.FilterCondition.Empty;
-				filter.value = value.length ? value : null;
-				break;
-		};
-
-		filters.push(filter);
 		if (searchIds) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
@@ -202,7 +183,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		}, () => {
-			dbStore.recordsSet(subId, '', applyObjectOrder(id, dbStore.getRecords(subId, '')));
+			dbStore.recordsSet(subId, '', applyObjectOrder(id, dbStore.getRecordIds(subId, '')));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -218,7 +199,7 @@ const Column = observer(class Column extends React.Component<Props> {
 	getItems () {
 		const { id, getSubId, applyObjectOrder } = this.props;
 
-		return applyObjectOrder(id, UtilCommon.objectCopy(dbStore.getRecords(getSubId(), ''))).map(id => ({ id }));
+		return applyObjectOrder(id, UtilCommon.objectCopy(dbStore.getRecordIds(getSubId(), ''))).map(id => ({ id }));
 	};
 
 	onLoadMore () {
@@ -241,13 +222,14 @@ const Column = observer(class Column extends React.Component<Props> {
 
 		const { rootId, block, id, getView } = this.props;
 		const node = $(this.node);
-
-		node.addClass('active');
+		const element = `#button-${id}-more`;
 
 		menuStore.open('dataviewGroupEdit', {
-			element: `#column-${id}-head`,
+			element,
 			horizontal: I.MenuDirection.Center,
-			onClose: () => { node.removeClass('active'); },
+			offsetY: 4,
+			onOpen: () => node.addClass('active'),
+			onClose: () => node.removeClass('active'),
 			data: {
 				rootId,
 				blockId: block.id,

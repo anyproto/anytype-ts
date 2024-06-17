@@ -7,7 +7,7 @@ import { DragBox } from 'Component';
 import { I, Relation, UtilObject, translate, UtilCommon, keyboard, analytics } from 'Lib';
 import { menuStore, detailStore, dbStore } from 'Store';
 import ItemObject from './item/object';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State { 
 	isEditing: boolean; 
@@ -40,7 +40,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 	render () {
 		const { isEditing } = this.state;
-		const { getRecord, recordId, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
+		const { id, recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
 		const record = getRecord(recordId);
 		const cn = [ 'wrap' ];
 
@@ -67,7 +67,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 					<div id="placeholder" className="placeholder">{placeholder}</div>
 
 					<span id="list">
-						<DragBox onDragEnd={this.onDragEnd} onClick={this.onClick}>
+						<DragBox onDragEnd={this.onDragEnd}>
 							{value.map((item: any, i: number) => (
 								<span 
 									key={i}
@@ -78,12 +78,14 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 								>
 									<ItemObject 
 										key={item.id} 
-										object={item} 
+										cellId={id}
+										getObject={() => item}
 										iconSize={iconSize} 
 										relation={relation} 
 										elementMapper={elementMapper}
 										canEdit={true}
-										onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
+										onClick={(e, item) => this.onClick(e, item.id)}
+										onRemove={(e: any, id: string) => this.onValueRemove(id)}
 									/>
 								</span>
 							))}
@@ -100,6 +102,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 						onKeyPress={this.onKeyPress}
 						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
+						onCompositionStart={() => keyboard.setComposition(true)}
+						onCompositionEnd={() => keyboard.setComposition(false)}
 						onClick={e => e.stopPropagation()}
 					>
 						{'\n'}
@@ -115,7 +119,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 						{value.map((item: any, i: number) => (
 							<ItemObject 
 								key={item.id} 
-								object={item} 
+								cellId={id}
+								getObject={() => item}
 								iconSize={iconSize} 
 								relation={relation} 
 								elementMapper={elementMapper} 
@@ -171,7 +176,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			this.setState({ isEditing: v });
 
 			if (v) {
-				window.setTimeout(() => { this.focus(); }, 15);
+				window.setTimeout(() => this.focus(), 15);
 			};
 		};
 	};
@@ -202,32 +207,21 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
 
-		if (value.existing.length) {
-			list.show();
-		} else {
-			list.hide();
-		};
-
-		if (value.new || value.existing.length) {
-			placeholder.hide();
-		} else {
-			placeholder.show();
-		};
+		value.existing.length ? list.show() : list.hide();
+		value.new || value.existing.length ? placeholder.hide() : placeholder.show();
 	};
 
 	getItems (): any[] {
-		const { relation, getRecord, recordId, subId } = this.props;
+		const { relation, recordId, getRecord, subId } = this.props;
 		const record = getRecord(recordId);
 
 		if (!relation || !record) {
 			return [];
 		};
 
-		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
-		value = value.map(id => detailStore.get(subId, id, []));
-		value = value.filter(it => !it._empty_);
-
-		return value;
+		return Relation.getArrayValue(record[relation.relationKey]).
+			map(id => detailStore.get(subId, id, [])).
+			filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
 	};
 
 	getItemIds (): string[] {
@@ -257,22 +251,27 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	setValue (value: string[]) {
-		const { onChange, relation } = this.props;
-		const { maxCount } = relation;
-		
 		value = UtilCommon.arrayUnique(value);
 
-		if (maxCount && value.length > maxCount) {
-			value = value.slice(value.length - maxCount, value.length);
+		const { onChange, relation } = this.props;
+		const { maxCount } = relation;
+		const length = value.length;
+
+		if (maxCount && (length > maxCount)) {
+			value = value.slice(length - maxCount, length);
+		};
+
+		const cb = () => {
+			this.clear();
+
+			menuStore.updateData('dataviewObjectValues', { value });
+			menuStore.updateData('dataviewObjectList', { value });
 		};
 
 		if (onChange) {
-			onChange(value, () => {
-				this.clear();
-
-				menuStore.updateData('dataviewObjectValues', { value });
-				menuStore.updateData('dataviewObjectList', { value });
-			});
+			onChange(value, cb);
+		} else {
+			cb();
 		};
 	};
 
@@ -295,7 +294,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	onKeyPress (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || keyboard.isComposition) {
 			return;
 		};
 
@@ -308,7 +307,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
+		if (!this._isMounted || keyboard.isComposition) {
 			return;
 		};
 
@@ -341,6 +340,10 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	onKeyUp (e: any) {
+		if (!this._isMounted || keyboard.isComposition) {
+			return;
+		};
+
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			menuStore.updateData('dataviewObjectList', { filter: this.getValue().new });
@@ -375,18 +378,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const { relation } = this.props;
 		const { details, flags } = Relation.getParamForNewObject(text, relation);
 
-		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
-			if (!message.error.code) {
-				this.onValueAdd(message.targetId);
-			};
-
-			analytics.event('CreateObject', {
-				route: 'Relation',
-				objectType: details.type,
-				layout: details.layout,
-				template: '',
-			});
-		});
+		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', message => this.onValueAdd(message.targetId));
 	};
 
 	onFocus () {

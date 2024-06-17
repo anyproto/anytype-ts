@@ -2,41 +2,36 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
-import { C, I, M, keyboard, UtilObject, analytics, translate } from 'Lib';
-import { blockStore, menuStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+import { C, I, M, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
+import { blockStore, menuStore, detailStore, commonStore } from 'Store';
 
-interface Props {
-	dataset?: any;
-};
+const Constant = require('json/constant.json');
 
 type State = {
 	isEditing: boolean;
 	previewId: string;
 };
 
-const ListWidget = observer(class ListWidget extends React.Component<Props, State> {
+const ListWidget = observer(class ListWidget extends React.Component<{}, State> {
 		
 	state: State = {
 		isEditing: false,
 		previewId: '',
 	};
 
-	node: any = null;
-	top = 0;
+	node = null;
 	dropTargetId = '';
 	position: I.BlockPosition = null;
 	isDragging = false;
 	frame = 0;
 
-	constructor (props: Props) {
+	constructor (props) {
 		super(props);
 
 		this.onEdit = this.onEdit.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.onScroll = this.onScroll.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onLibrary = this.onLibrary.bind(this);
 		this.onArchive = this.onArchive.bind(this);
@@ -45,10 +40,11 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.setPreview = this.setPreview.bind(this);
 	};
 
-	render(): React.ReactNode {
+	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = blockStore;
 		const cn = [ 'listWidget' ];
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		let content = null;
 
@@ -113,7 +109,8 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				};
 
 				buttons.push({ id: 'widget-list-done', text: translate('commonDone'), onMouseDown: this.onEdit });
-			} else {
+			} else 
+			if (canWrite) {
 				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: translate('widgetEdit'), onMouseDown: this.onEdit });
 			};
 
@@ -130,7 +127,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						cacheKey="firstTarget"
 					>
 						<Widget 
-							block={new M.Block({ id: 'widget-space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })} 
+							block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })} 
 							disableContextMenu={true} 
 							onDragStart={this.onDragStart}
 							onDragOver={this.onDragOver}
@@ -169,12 +166,12 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 							icon="store" 
 							onClick={this.onLibrary} 
 						/>
-						<Button 
+						<Button
 							text={translate('widgetBin')}
-							color="" 
-							className="widget" 
-							icon="bin" 
-							onClick={this.onArchive} 
+							color=""
+							className="widget"
+							icon="bin"
+							onClick={this.onArchive}
 						/>
 					</DropTarget>
 
@@ -194,16 +191,11 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				className={cn.join(' ')}
 				onDrop={this.onDrop}
 				onDragOver={e => e.preventDefault()}
-				onScroll={this.onScroll}
 				onContextMenu={this.onContextMenu}
 			>
 				{content}
 			</div>
 		);
-	};
-
-	componentDidUpdate (): void {
-		$(this.node).scrollTop(this.top);
 	};
 
 	onEdit (e: any): void {
@@ -231,8 +223,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	onDragStart (e: React.DragEvent, blockId: string): void {
 		e.stopPropagation();
 
-		const { dataset } = this.props;
-		const { selection, preventCommonDrop } = dataset;
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		const obj = node.find(`#widget-${blockId}`);
@@ -246,11 +237,12 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 		clone.append(obj.find('.head').clone());
 		node.append(clone);
+		selection?.clear();
 
-		preventCommonDrop(true);
-		selection.clear();
+		keyboard.disableCommonDrop(true);
 		keyboard.disableSelection(true);
 		keyboard.setDragging(true);
+
 		this.isDragging = true;
 
 		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
@@ -294,8 +286,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 		e.stopPropagation();
 
-		const { dataset } = this.props;
-		const { preventCommonDrop } = dataset;
 		const { widgets } = blockStore;
 		const blockId = e.dataTransfer.getData('text');
 
@@ -303,15 +293,12 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			C.BlockListMoveToExistingObject(widgets, widgets, this.dropTargetId, [ blockId ], this.position);
 		};
 
-		preventCommonDrop(false);
+		keyboard.disableCommonDrop(false);
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
+
 		this.isDragging = false;
 		this.clear();
-	};
-
-	onScroll () {
-		this.top = $(this.node).scrollTop();
 	};
 
 	onLibrary (e: any) {
@@ -332,7 +319,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onContextMenu () {
 		const { previewId } = this.state;
-		if (previewId) {
+		if (previewId || !UtilSpace.canMyParticipantWrite()) {
 			return;
 		};
 
@@ -451,7 +438,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			win.on('keydown.sidebar', e => {
 				keyboard.shortcut('escape', e, () => close(e));
 			});
-		}, Constant.delay.menu);
+		}, menuStore.getTimeout());
 	};
 
 });

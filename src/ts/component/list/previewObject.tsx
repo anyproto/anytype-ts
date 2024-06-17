@@ -87,7 +87,7 @@ class ListObjectPreview extends React.Component<Props> {
 						size={I.PreviewSize.Large}
 						rootId={item.id}
 						onClick={e => this.onClick(e, item)}
-						onMore={e => onMenu(e, item)}
+						onMore={onMenu ? e => onMenu(e, item) : null}
 					/>
 				);
 			};

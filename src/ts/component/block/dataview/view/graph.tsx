@@ -1,10 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, UtilData, keyboard, Dataview } from 'Lib';
+import { I, C, UtilCommon, UtilData, keyboard, Dataview, Relation } from 'Lib';
 import { Graph } from 'Component';
 import { detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PADDING = 46;
 
@@ -21,11 +21,6 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	loading = false;
 	timeoutLoading = 0;
 	rootId = '';
-
-	constructor (props: I.ViewComponent) {
-		super(props);
-
-	};
 
 	render () {
 		const { block, className } = this.props;
@@ -44,6 +39,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 						id={block.id}
 						rootId="" 
 						data={this.data}
+						storageKey={Constant.graphId.dataview}
 					/>
 				</div>
 			</div>
@@ -89,10 +85,15 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	load () {
-		const { getView, getSearchIds } = this.props;
+		const { getView, getSearchIds, getTarget, isCollection } = this.props;
 		const view = getView();
+		if (!view) {
+			return;
+		};
+
 		const searchIds = getSearchIds();
 		const filters = [].concat(view.filters).concat(UtilData.graphFilters()).map(it => Dataview.filterMapper(view, it));
+		const target = getTarget();
 
 		if (searchIds) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
@@ -100,7 +101,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 
 		this.setLoading(true);
 
-		C.ObjectGraph(commonStore.space, filters, 0, [], Constant.graphRelationKeys, (message: any) => {
+		C.ObjectGraph(commonStore.space, filters, 0, [], Constant.graphRelationKeys, (isCollection ? target.id : ''), target.setOf, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

@@ -1,6 +1,6 @@
-import { I, UtilCommon, UtilObject, translate } from 'Lib';
+import { I, UtilCommon, translate } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
-import Errors from 'json/error.json';
+const Errors = require('json/error.json');
 
 class Notification implements I.Notification {
 
@@ -31,19 +31,15 @@ class Notification implements I.Notification {
 	};
 
 	fillContent () {
-		const { importType, errorCode, name, spaceId } = this.payload;
-		const space = UtilObject.getSpaceviewBySpaceId(spaceId);
+		const { importType, errorCode, name } = this.payload;
 		const lang = errorCode ? 'error' : 'success';
+		const et = UtilCommon.enumKey(I.NotificationType, this.type);
+		const identityName = UtilCommon.shorten(String(this.payload.identityName || translate('defaultNamePage')), 32);
+		const spaceName = UtilCommon.shorten(String(this.payload.spaceName || translate('defaultNamePage')), 32);
+		const permissions = translate(`participantPermissions${this.payload.permissions}`);
 
-		this.title = translate(UtilCommon.toCamelCase(`notification-${this.type}-${lang}-title`));
-		this.text = translate(UtilCommon.toCamelCase(`notification-${this.type}-${lang}-text`));
-
-		if ((this.type == I.NotificationType.Import)) {
-			if ((importType == I.ImportType.Notion) && (errorCode == Errors.Code.NO_OBJECTS_TO_IMPORT)) {
-				this.title = translate('notificationNotionErrorNoObjectsTitle');
-				this.text = translate('notificationNotionErrorNoObjectsText');
-			};
-		};
+		this.title = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-title`));
+		this.text = translate(UtilCommon.toCamelCase(`notification-${et}-${lang}-text`));
 
 		switch (this.type) {
 			case I.NotificationType.Import: {
@@ -59,10 +55,37 @@ class Notification implements I.Notification {
 					this.text = UtilCommon.sprintf(this.text, name);
 				} else {
 					this.title = UtilCommon.sprintf(this.title, name);
-					this.text = UtilCommon.sprintf(this.text, space.name);
+					this.text = UtilCommon.sprintf(this.text, spaceName);
 				};
 				break;
 			};
+
+			case I.NotificationType.Join: 
+			case I.NotificationType.Leave: {
+				this.title = '';
+				this.text = UtilCommon.sprintf(this.text, identityName, spaceName);
+				break;
+			};
+
+			case I.NotificationType.Approve: {
+				this.title = '';
+				this.text = UtilCommon.sprintf(this.text, spaceName, permissions);
+				break;
+			};
+
+			case I.NotificationType.Decline:
+			case I.NotificationType.Remove: {
+				this.title = '';
+				this.text = UtilCommon.sprintf(this.text, spaceName);
+				break;
+			};
+
+			case I.NotificationType.Permission: {
+				this.title = '';
+				this.text = UtilCommon.sprintf(this.text, permissions, spaceName);
+				break;
+			};
+
 		};
 	};
 

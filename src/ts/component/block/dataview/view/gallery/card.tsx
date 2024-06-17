@@ -1,13 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Cell, Cover, Icon, MediaAudio, MediaVideo, DropTarget } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
-import { commonStore, detailStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+import { Cell, Cover, MediaAudio, MediaVideo, DropTarget, SelectionTarget, ObjectCover } from 'Component';
+import { I, UtilData, UtilObject, Relation, keyboard } from 'Lib';
+import { commonStore, dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
-	recordId: string;
 	style?: any;
 };
 
@@ -24,15 +22,15 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, recordId, getView, getRecord, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
+		const { rootId, block, recordId, getRecord, getView, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection, getCoverObject } = this.props;
+		const record = getRecord(recordId);
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
-		const record = getRecord(recordId);
 		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout), UtilData.cardSizeClass(cardSize) ];
 		const subId = dbStore.getSubId(rootId, block.id);
-		const cover = this.getCover();
+		const cover = getCoverObject(recordId);
 
 		if (coverFit) {
 			cn.push('coverFit');
@@ -44,16 +42,17 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		let content = (
 			<div className="itemContent">
-				{cover}
+				<ObjectCover object={cover} />
 
 				<div className="inner">
 					{relations.map(relation => {
-						const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
+						const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
 						return (
 							<Cell
 								elementId={id}
 								key={'list-cell-' + view.id + relation.relationKey}
 								{...this.props}
+								getRecord={() => record}
 								subId={subId}
 								ref={ref => onRef(ref, id)}
 								relationKey={relation.relationKey}
@@ -75,13 +74,9 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		if (!isInline) {
 			content = (
-				<div
-					id={'selectable-' + record.id}
-					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
-				>
+				<SelectionTarget id={record.id} type={I.SelectType.Record}>
 					{content}
-				</div>
+				</SelectionTarget>
 			);
 
 			if (isCollection) {
@@ -137,27 +132,28 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onDragStart (e: any) {
-		const { isCollection, recordId, onDragRecordStart } = this.props;
+		const { isCollection, recordId, getRecord, onDragRecordStart } = this.props;
+		const record = getRecord(recordId);
 
 		if (isCollection) {
-			onDragRecordStart(e, recordId);
+			onDragRecordStart(e, record.id);
 		};
 	};
 
 	onClick (e: any) {
 		e.preventDefault();
 
-		const { recordId, getRecord, onContext, dataset } = this.props;
-		const { selection } = dataset || {};
+		const { recordId, getRecord, onContext } = this.props;
 		const record = getRecord(recordId);
+		const selection = commonStore.getRef('selectionProvider');
 		const cb = {
 			0: () => { 
-				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openPopup(record); 
+				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openConfig(record); 
 			},
-			2: () => { onContext(e, record.id); }
+			2: () => onContext(e, record.id)
 		};
 
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		const ids = selection?.get(I.SelectType.Record) || [];
 		if ((keyboard.withCommand(e) && ids.length) || keyboard.isSelectionClearDisabled) {
 			return;
 		};
@@ -168,7 +164,8 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { onCellClick, recordId } = this.props;
+		const { onCellClick, recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
 		const relation = dbStore.getRelationByKey(vr.relationKey);
 
 		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
@@ -178,57 +175,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		onCellClick(e, relation.relationKey, recordId);
-	};
-
-	getCover (): any {
-		const { recordId, getCoverObject } = this.props;
-		const cover = getCoverObject(recordId);
-
-		return cover ? this.mediaCover(cover) : null;
-	};
-
-	mediaCover (item: any) {
-		const { layout, coverType, coverId, coverX, coverY, coverScale } = item;
-		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
-		
-		let mc = null;
-		if (coverId && coverType) {
-			mc = (
-				<Cover
-					type={coverType}
-					id={coverId}
-					image={coverId}
-					className={coverId}
-					x={coverX}
-					y={coverY}
-					scale={coverScale}
-					withScale={false}
-				/>
-			);
-		} else {
-			switch (layout) {
-				case I.ObjectLayout.Image: {
-					cn.push('coverImage');
-					mc = <img src={commonStore.imageUrl(item.id, 600)}/>;
-					break;
-				};
-
-				case I.ObjectLayout.Audio: {
-					cn.push('coverAudio');
-					mc = <MediaAudio playlist={[ { name: item.name, src: commonStore.fileUrl(item.id) } ]}/>;
-					break;
-				};
-
-				case I.ObjectLayout.Video: {
-					cn.push('coverVideo');
-					mc = <MediaVideo src={commonStore.fileUrl(item.id)}/>;
-					break;
-				};
-			};
-		};
-
-		return mc ? <div className={cn.join(' ')}>{mc}</div> : null;
+		onCellClick(e, relation.relationKey, record.id);
 	};
 
 });

@@ -3,9 +3,9 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate, Storage } from 'Lib';
+import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate, UtilSpace } from 'Lib';
 import { commonStore, detailStore, menuStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -60,8 +60,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 					<div 
 						id="item-add" 
 						className="item add" 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }} 
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
+						onClick={e => this.onClick(e, item)} 
 						style={param.style}
 					>
 						<Icon className="plus" />
@@ -84,8 +84,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 						{...item}
 						className={item.isHidden ? 'isHidden' : ''}
 						style={param.style}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }}
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
+						onClick={e => this.onClick(e, item)}
 					/>
 				);
 			};
@@ -107,7 +107,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			<div className="wrap">
 				{!noFilter ? (
 					<Filter 
-						ref={ref => this.refFilter = ref} 
+						ref={ref => this.refFilter = ref}
+						className="outlined"
 						placeholderFocus={translate('menuTypeSuggestFilterTypes')}
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -192,7 +193,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -264,7 +265,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				this.items = [];
 			};
 
-			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -282,26 +283,29 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.spaceId == space));
 		const librarySources = library.map(it => it.sourceObject);
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		let sections: any[] = [
 			{ id: 'library', name: translate('menuTypeSuggestMyTypes'), children: library },
 		];
 
-		if (filter) {
-			const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+		if (canWrite) {
+			if (filter) {
+				const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 
-			sections = sections.concat([
-				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
-				{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), filter) } ] }
-			]);
-		} else {
-			sections = sections.concat([
-				{ 
-					children: [
-						{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
-					] 
-				},
-			]);
+				sections = sections.concat([
+					{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
+					{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), filter) } ] }
+				]);
+			} else {
+				sections = sections.concat([
+					{ 
+						children: [
+							{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
+						] 
+					},
+				]);
+			};
 		};
 
 		sections = sections.filter((section: any) => {
@@ -449,7 +453,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			if (item.isInstalled || noInstall) {
 				cb(item);
 			} else {
-				Action.install(item, true, (message: any) => { cb(message.details); });
+				Action.install(item, true, message => cb(message.details));
 			};
 		};
 	};
@@ -468,7 +472,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.min(376, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (!noFilter ? 44 : 0)));
+		const height = Math.min(376, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (!noFilter ? 42 : 0)));
 
 		obj.css({ height });
 		position();

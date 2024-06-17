@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate, Storage } from 'Lib';
 import { popupStore, detailStore, blockStore, menuStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const BlockType = observer(class BlockType extends React.Component<I.BlockComponent> {
 
@@ -32,8 +32,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 				<div 
 					id={'item-' + item.id} 
 					className="item" 
-					onClick={(e: any) => { this.onClick(e, item); }} 
-					onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+					onClick={e => this.onClick(e, item)} 
+					onMouseEnter={e => this.onOver(e, item)} 
 					onMouseLeave={this.onOut}
 				>
 					{item.icon ? <Icon className={item.icon} /> : ''}
@@ -186,7 +186,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 		menuStore.open('typeSuggest', {
 			element: `#block-${block.id} #item-menu`,
-			onOpen: () => { obj.addClass('active'); },
+			onOpen: () => obj.addClass('active'),
 			onClose: () => { 
 				obj.removeClass('active'); 
 				focus.apply();
@@ -222,7 +222,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	onObjectTo (layout: I.ObjectLayout) {
-		const { rootId, isPopup, setLoading } = this.props;
+		const { rootId, isPopup } = this.props;
 
 		let typeId = '';
 
@@ -237,8 +237,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 			analytics.event('SelectObjectType', { objectType: typeId, layout });
 		};
-
-		setLoading(true);
 
 		switch (layout) {
 			case I.ObjectLayout.Set: {

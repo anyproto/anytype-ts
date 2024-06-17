@@ -1,7 +1,7 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, Relation, UtilObject, translate } from 'Lib';
+import { I, Relation, UtilObject, translate, UtilFile } from 'Lib';
 import { dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Detail {
 	relationKey: string;
@@ -150,21 +150,21 @@ class DetailStore {
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, Constant.defaultRelationKeys are included */
     public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean): any {
-		let list = this.getDetailList(rootId, id);		
+		let list = this.map.get(rootId)?.get(id) || [];
 		if (!list.length) {
 			return { id, _empty_: true };
 		};
 		
+		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? Constant.defaultRelationKeys : []) ] : []);
+		const object = { id };
+
 		if (withKeys) {
-			let keys = [ 'id', ...withKeys ];
-			if (!forceKeys) {
-				keys = keys.concat(Constant.defaultRelationKeys);
-			};
-			list = list.filter(it => keys.includes(it.relationKey));
+			list = list.filter(it => keys.has(it.relationKey));
 		};
 
-		const object = { id };
-		list.forEach(it => object[it.relationKey] = it.value);
+		for (let i = 0; i < list.length; i++) {
+			object[list[i].relationKey] = list[i].value;
+		};
 
 		return this.mapper(object);
 	};
@@ -174,62 +174,20 @@ class DetailStore {
 	public mapper (object: any): any {
 		object = this.mapCommon(object || {});
 
-		if (object.layout == I.ObjectLayout.Note) {
-			object.coverType = I.CoverType.None;
-			object.coverId = '';
-			object.iconEmoji = '';
-			object.iconImage = '';
-			object.name = object.snippet;
+		const fn = `map${I.ObjectLayout[object.layout]}`;
+		if (this[fn]) {
+			object = this[fn](object);
 		};
 
-		if (object.id == UtilObject.getIdentityId()) {
-			const type = dbStore.getTypeByKey(Constant.typeKey.profile);
-			object.type = type ? type.id : object.type;
-		};
-
-		if (object.isDeleted) {
-			object.name = translate('commonDeletedObject');
-		};
-
-		switch (object.layout) {
-			case I.ObjectLayout.Type: {
-				object = this.mapType(object);
-				break;
-			};
-
-			case I.ObjectLayout.Relation: {
-				object = this.mapRelation(object);
-				break;
-			};
-
-			case I.ObjectLayout.Option: {
-				object = this.mapOption(object);
-				break;
-			};
-
-			case I.ObjectLayout.Date:
-			case I.ObjectLayout.Set: {
-				object = this.mapSet(object);
-				break;
-			};
-
-			case I.ObjectLayout.SpaceView: {
-				object = this.mapSpace(object);
-				break;
-			};
-
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image: {
-				object = this.mapFile(object);
-				break;
-			};
+		if (UtilObject.isFileLayout(object.layout)) {
+			object = this.mapFile(object);
 		};
 
 		return object;
 	};
 
 	private mapCommon (object: any) {
-		object.name = Relation.getStringValue(object.name) || UtilObject.defaultName('Page');
+		object.name = Relation.getStringValue(object.name) || translate('defaultNamePage');
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 		object.type = Relation.getStringValue(object.type);
 		object.layout = Number(object.layout) || I.ObjectLayout.Page;
@@ -246,6 +204,25 @@ class DetailStore {
 		object.isHidden = Boolean(object.isHidden);
 		object.isReadonly = Boolean(object.isReadonly);
 		object.isDeleted = Boolean(object.isDeleted);
+
+		if (object.isDeleted) {
+			object.name = translate('commonDeletedObject');
+		};
+
+		return object;
+	};
+
+	private mapNote (object: any) {
+		object.coverType = I.CoverType.None;
+		object.coverId = '';
+		object.iconEmoji = '';
+		object.iconImage = '';
+		object.name = object.snippet;
+
+		if (object.isDeleted) {
+			object.name = translate('commonDeletedObject');
+		};
+
 		return object;
 	};
 
@@ -267,10 +244,10 @@ class DetailStore {
 	private mapRelation (object: any) {
 		object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
 		object.format = object.relationFormat;
-		object.maxCount = Number(object.relationMaxCount) || 0;
-		object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
-		object.isReadonlyRelation = Boolean(object.isReadonly);
-		object.isReadonlyValue = Boolean(object.relationReadonlyValue);
+		object.maxCount = Number(object.maxCount  || object.relationMaxCount) || 0;
+		object.objectTypes = Relation.getArrayValue(object.objectTypes || object.relationFormatObjectTypes);
+		object.isReadonlyRelation = Boolean(object.isReadonlyRelation || object.isReadonly);
+		object.isReadonlyValue = Boolean(object.isReadonlyValue || object.relationReadonlyValue);
 		object.isInstalled = object.spaceId != Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 
@@ -278,16 +255,17 @@ class DetailStore {
 			object.name = translate('commonDeletedRelation');
 		};
 
-		delete(object.relationMaxCount);
 		delete(object.isReadonly);
+		delete(object.relationMaxCount);
 		delete(object.relationReadonlyValue);
+		delete(object.relationFormatObjectTypes);
 
 		return object;
 	};
 
 	private mapOption (object: any) {
-		object.text = Relation.getStringValue(object.name);
-		object.color = Relation.getStringValue(object.relationOptionColor);
+		object.text = object.name;
+		object.color = Relation.getStringValue(object.color || object.relationOptionColor);
 
 		delete(object.relationOptionColor);
 
@@ -299,27 +277,66 @@ class DetailStore {
 		return object;
 	};
 
-	private mapSpace (object: any) {
-		object.spaceType = Number(object.spaceAccessibility) || I.SpaceType.Private;
+	private mapDate (object: any) {
+		return this.mapSet(object);
+	};
+
+	private mapSpaceView (object: any) {
+		object.spaceAccessType = Number(object.spaceAccessType) || I.SpaceType.Private;
 		object.spaceAccountStatus = Number(object.spaceAccountStatus) || I.SpaceStatus.Unknown;
 		object.spaceLocalStatus = Number(object.spaceLocalStatus) || I.SpaceStatus.Unknown;
+		object.readersLimit = Number(object.readersLimit) || 0;
+		object.writersLimit = Number(object.writersLimit) || 0;
+		object.sharedSpacesLimit = Number(object.sharedSpacesLimit) || 0;
 		object.spaceId = Relation.getStringValue(object.spaceId);
 		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
 
-		delete(object.spaceAccessibility);
+		// Access type
+		object.isPersonal = object.spaceAccessType == I.SpaceType.Personal;
+		object.isPrivate = object.spaceAccessType == I.SpaceType.Private;
+		object.isShared = object.spaceAccessType == I.SpaceType.Shared;
+
+		// Account status
+		object.isAccountActive = [ I.SpaceStatus.Unknown, I.SpaceStatus.Active ].includes(object.spaceAccountStatus);
+		object.isAccountJoining = object.spaceAccountStatus == I.SpaceStatus.Joining;
+		object.isAccountRemoving = object.spaceAccountStatus == I.SpaceStatus.Removing;
+		object.isAccountDeleted = object.spaceAccountStatus == I.SpaceStatus.Deleted;
+
+		// Local status
+		object.isLocalOk = [ I.SpaceStatus.Unknown, I.SpaceStatus.Ok ].includes(object.spaceLocalStatus);
 
 		return object;
 	};
 
 	private mapFile (object) {
 		object.sizeInBytes = Number(object.sizeInBytes) || 0;
+		object.name = UtilFile.name(object);
 		return object;
 	};
 
-	/** return detail list by rootId and id. returns empty if none found */
-	private getDetailList (rootId: string, id: string): Detail[] {
-		return this.map.get(rootId)?.get(id) || [];
+	private mapParticipant (object) {
+		object.permissions = Number(object.permissions || object.participantPermissions) || I.ParticipantPermissions.Reader;
+		object.status = Number(object.status || object.participantStatus) || I.ParticipantStatus.Joining;
+		object.globalName = Relation.getStringValue(object.globalName);
+
+		delete(object.participantPermissions);
+		delete(object.participantStatus);
+
+		// Permission flags
+		object.isOwner = object.permissions == I.ParticipantPermissions.Owner;
+		object.isWriter = object.permissions == I.ParticipantPermissions.Writer;
+		object.isReader = object.permissions == I.ParticipantPermissions.Reader;
+
+		// Status flags
+		object.isJoining = object.status == I.ParticipantStatus.Joining;
+		object.isActive = object.status == I.ParticipantStatus.Active;
+		object.isRemoving = object.status == I.ParticipantStatus.Removing;
+		object.isRemoved = object.status == I.ParticipantStatus.Removed;
+		object.isDeclined = object.status == I.ParticipantStatus.Declined;
+		object.isCanceled = object.status == I.ParticipantStatus.Canceled;
+
+		return object;
 	};
 
 };

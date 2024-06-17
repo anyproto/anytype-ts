@@ -3,9 +3,9 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate } from 'Lib';
+import { I, C, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate, UtilSpace } from 'Lib';
 import { commonStore, dbStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -140,7 +140,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			<div className={cn.join(' ')}>
 				{!noFilter ? (
 					<Filter 
-						ref={ref => this.refFilter = ref} 
+						ref={ref => this.refFilter = ref}
+						className="outlined"
 						placeholder={placeholder} 
 						placeholderFocus={placeholderFocus} 
 						value={filter}
@@ -215,7 +216,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		});
 
 		this.resize();
-		this.props.setActive();
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
@@ -225,7 +226,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -239,12 +240,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { filter, label, canAdd, addParam } = data;
 		const length = this.items.length;
 		const items = [].concat(this.items);
+		const canWrite = UtilSpace.canMyParticipantWrite();
 		
 		if (label && length) {
 			items.unshift({ isSection: true, name: label });
 		};
 
-		if (canAdd) {
+		if (canAdd && canWrite) {
 			if (length && (addParam || filter)) {
 				items.push({ isDiv: true });
 			};
@@ -253,7 +255,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				items.push({ id: 'add', icon: 'plus', name: addParam.name, isAdd: true });
 			} else
 			if (filter) {
-				items.push({ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), isAdd: true });
+				items.push({ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObjectWithName'), filter), isAdd: true });
 			};
 		};
 
@@ -290,14 +292,17 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const templateType = dbStore.getTemplateType();
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Option ] },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
 		].concat(data.filters || []);
 
-		const sorts = [].concat(data.sorts || []);
+		let sorts = [].concat(data.sorts || []);
 
 		if (!sorts.length) {
-			sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
-			sorts.push({ relationKey: 'type', type: I.SortType.Asc });
+			sorts = sorts.concat([
+				{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+				{ relationKey: 'type', type: I.SortType.Asc }
+			]);
 		};
 
 		if (skipIds && skipIds.length) {
@@ -389,6 +394,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const addParam: any = data.addParam || {};
 		const object = detailStore.get(rootId, blockId);
 
+		let details = data.details || {};
+
 		if (!noClose) {
 			close();
 		};
@@ -412,7 +419,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Link:
-					C.BlockCreate(rootId, blockId, position, this.getBlockParam(target.id, item.type), (message: any) => {
+					C.BlockCreate(rootId, blockId, position, this.getBlockParam(target.id, item.layout), (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -447,13 +454,19 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 		};
 
+
+
 		if (item.isAdd) {
+			details = { name: filter, ...details };
+
 			if (addParam.onClick) {
-				addParam.onClick();
+				addParam.onClick(details);
 				close();
 			} else {
-				UtilObject.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
-					UtilObject.getById(message.targetId, (object: any) => { process(object, true); });
+				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
+
+				UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Search', (message: any) => {
+					process(message.details, true);
 					close();
 				});
 			};
@@ -464,6 +477,18 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	getBlockParam (id: string, layout: I.ObjectLayout) {
 		const param: Partial<I.Block> = {};
+
+		if (UtilObject.isFileLayout(layout)) {
+			return {
+				type: I.BlockType.File,
+				content: {
+					targetObjectId: id,
+					style: I.FileStyle.Embed,
+					state: I.FileState.Done,
+					type: UtilObject.getFileTypeByLayout(layout),
+				},
+			};
+		};
 
 		switch (layout) {
 			case I.ObjectLayout.Bookmark: {
@@ -529,7 +554,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const items = this.getItems().slice(0, LIMIT);
 		const obj = $(`#${getId()} .content`);
 
-		let height = 16 + (noFilter ? 0 : 44);
+		let height = 16 + (noFilter ? 0 : 42);
 		if (!items.length) {
 			height = isLoading ? height + 40 : 160;
 		} else {

@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockDataview {
@@ -34,10 +34,7 @@
 				.cellContent.isName { @include text-paragraph; color: var(--color-text-primary); display: flex; gap: 0px 6px; position: relative; }
 				.cellContent.isName {
 					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; cursor: default; }
-					.name {
-						line-height: 20px; font-size: 14px; font-weight: 500; letter-spacing: -0.12px;
-						vertical-align: top; white-space: normal; overflow: hidden; @include clamp2;
-					}
+					.name { @include text-common; line-height: 20px; font-weight: 500; vertical-align: top; white-space: normal; @include clamp2; }
 				}
 
 				.cellContent.isName.withIcon {
@@ -50,11 +47,6 @@
 					.over { height: 18px; }
 				}
 
-				.cellContent.c-object, .cellContent.c-file {
-					.element { margin: 0px 6px 0px 0px; }
-					.element:last-child { margin-right: 0px; }
-				}
-
 				.cellContent.c-url, 
 				.cellContent.c-phone, 
 				.cellContent.c-email {
@@ -64,6 +56,11 @@
 				.cellContent.c-object, 
 				.cellContent.c-file {
 					.over { display: flex; height: 20px; }
+				}
+
+				.cellContent.isEditing.isName {
+					.iconObject { position: relative; }
+					.input.name { text-indent: 0px; padding: 0px; height: unset; }
 				}
 			}
 		}

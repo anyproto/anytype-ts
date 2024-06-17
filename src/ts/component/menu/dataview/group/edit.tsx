@@ -7,7 +7,7 @@ import { dbStore } from 'Store';
 
 const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Menu> {
 	
-	color: string = null;
+	color = '';
 	isHidden = false;
 	timeout = 0;
 	n = -1;
@@ -29,8 +29,8 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 							<MenuItemVertical 
 								key={i} 
 								{...action} 
-								onClick={(e: any) => { this.onClick(e, action); }}
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
+								onClick={e => this.onClick(e, action)}
+								onMouseEnter={e => this.onMouseEnter(e, action)}
 							/>
 						);
 					})}
@@ -73,7 +73,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -151,7 +151,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 
 		if (!view.groupBackgroundColors && this.color) {
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, groupBackgroundColors: true });
+			Dataview.viewUpdate(rootId, blockId, view.id, { groupBackgroundColors: true  });
 		};
 
 		if ([ I.RelationType.MultiSelect, I.RelationType.Select ].includes(relation.format)) {
@@ -159,7 +159,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 			const value = Relation.getArrayValue(group.value);
 
 			if (value.length) {
-				C.ObjectSetDetails(value[0], [ 
+				C.ObjectListSetDetails([ value[0] ], [ 
 					{ key: 'relationOptionColor', value: this.color },
 				]);
 			};

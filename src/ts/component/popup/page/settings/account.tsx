@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { IconObject, Input, Title, Loader, Icon } from 'Component';
-import { I, C, translate, UtilCommon, Action, UtilObject, UtilRouter } from 'Lib';
-import { authStore, detailStore, blockStore, menuStore, commonStore } from 'Store';
+import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
+import { I, C, translate, UtilCommon, Action, UtilObject, UtilSpace } from 'Lib';
+import { authStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props extends I.PopupSettings {
 	setPinConfirmed: (v: boolean) => void;
@@ -28,27 +28,24 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	constructor (props: Props) {
 		super(props);
 
-		this.onMenu = this.onMenu.bind(this);
-		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 		this.onDescription = this.onDescription.bind(this);
-		this.onLocationMove = this.onLocationMove.bind(this);
 	};
 
 	render () {
 		const { error, loading } = this.state;
 		const { account } = authStore;
-		const profile = UtilObject.getProfile();
+		const profile = UtilSpace.getProfile();
 	
 		let name = profile.name;
-		if (name == UtilObject.defaultName('Page')) {
+		if (name == translate('defaultNamePage')) {
 			name = '';
 		};
 
 		return (
 			<div className="sections">
 				<div className="section top">
-					{error ? <div className="message">{error}</div> : ''}
+					<Error text={error} />
 
 					<div className="iconWrapper">
 						{loading ? <Loader /> : ''}
@@ -56,7 +53,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 							id="userpic"
 							object={profile}
 							size={108}
-							onClick={this.onMenu}
+							canEdit={true}
 						/>
 					</div>
 				</div>
@@ -95,103 +92,12 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		);
 	};
 
-	onLocationMove () {
-		const { setLoading } = this.props;
-		const { account } = authStore;
-		const { info } = account;
-		const localStoragePath = String(info.localStoragePath || '');
-
-		if (!localStoragePath) {
-			return;
-		};
-
-		const accountPath = localStoragePath.replace(new RegExp(account.id + '\/?$'), '');
-		const options = { 
-			defaultPath: accountPath,
-			properties: [ 'openDirectory' ],
-		};
-
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
-			};
-
-			setLoading(true);
-			C.AccountMove(files[0], (message: any) => {
-				if (message.error.code) {
-					this.setState({ error: message.error.description });
-				} else {
-					UtilRouter.go('/auth/setup/init', {}); 
-				};
-				setLoading(false);
-			});
-		});
-	};
-
-	onMenu () {
-		const { getId } = this.props;
-        const object = this.getObject();
-
-        if (!object.iconImage) {
-            this.onUpload();
-            return;
-        };
-
-        const options = [
-            { id: 'upload', name: translate('commonChange') },
-            { id: 'remove', name: translate('commonRemove') },
-        ];
-
-        menuStore.open('select', {
-            element: `#${getId()} #userpic`,
-            horizontal: I.MenuDirection.Center,
-            data: {
-                value: '',
-                options,
-                onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'upload': {
-							this.onUpload();
-							break;
-						};
-
-						case 'remove': {
-							UtilObject.setIcon(blockStore.profile, '', '');
-							break;
-						};
-					};
-                },
-            }
-        });
-    };
-
-    onUpload () {
-		Action.openFile(Constant.extension.cover, paths => {
-			this.setState({ loading: true });
-
-            C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
-                if (message.error.code) {
-                    return;
-                };
-
-                UtilObject.setIcon(blockStore.profile, '', message.hash, () => {
-                    this.setState({ loading: false });
-                });
-            });
-		});
-    };
-
     onName () {
         UtilObject.setName(blockStore.profile, this.refName.getValue());
     };
 
 	onDescription (e) {
 		UtilObject.setDescription(blockStore.profile, this.refDescription.getValue());
-	};
-
-	getObject () {
-		return detailStore.get(Constant.subId.profile, blockStore.profile);
 	};
 
 });

@@ -4,7 +4,7 @@ import { MenuItemVertical } from 'Component';
 import { blockStore } from 'Store';
 import { I, keyboard, analytics, UtilData, UtilObject, UtilMenu, UtilCommon, translate } from 'Lib';
 import { detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class MenuBlockLayout extends React.Component<I.Menu> {
 	
@@ -34,8 +34,8 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 							{...action} 
 							icon={action.icon || action.id}
 							checkbox={action.id == value}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-							onClick={(e: any) => { this.onClick(e, action); }} 
+							onMouseEnter={e => this.onMouseEnter(e, action)} 
+							onClick={e => this.onClick(e, action)} 
 						/>
 					))}
 				</div>
@@ -61,7 +61,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -77,7 +77,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		
-		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
 
 		if (!allowedDetails || (object.layout == I.ObjectLayout.Task)) {

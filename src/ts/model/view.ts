@@ -1,4 +1,4 @@
-import { I, M, UtilCommon, UtilData } from 'Lib';
+import { I, M, UtilCommon } from 'Lib';
 import { dbStore } from 'Store';
 import { observable, intercept, makeObservable } from 'mobx';
 
@@ -34,9 +34,14 @@ class View implements I.View {
 		this.defaultTemplateId = String(props.defaultTemplateId || '');
 		this.defaultTypeId = String(props.defaultTypeId || '');
 		
-		this.relations = (props.relations || []).map(it => new M.ViewRelation(it));
-		this.filters = (props.filters || []).map(it => new M.Filter(it));
-		this.sorts = (props.sorts || []).map(it => new M.Sort(it));
+		this.relations = Array.isArray(props.relations) ? props.relations : [];
+		this.relations = this.relations.map(it => new M.ViewRelation(it));
+
+		this.filters = Array.isArray(props.filters) ? props.filters : [];
+		this.filters = this.filters.map(it => new M.Filter(it));
+
+		this.sorts = Array.isArray(props.sorts) ? props.sorts : [];
+		this.sorts = this.sorts.map(it => new M.Sort(it));
 
 		makeObservable(this, {
 			id: observable,
@@ -75,12 +80,16 @@ class View implements I.View {
 		return this.type == I.ViewType.Board;
 	};
 
+	getRelations () {
+		return this.relations.filter(it => it);
+	};
+
 	getVisibleRelations () {
-		return this.relations.filter(it => it && it.isVisible && dbStore.getRelationByKey(it.relationKey));
+		return this.getRelations().filter(it => it.isVisible && dbStore.getRelationByKey(it.relationKey));
 	};
 
 	getRelation (relationKey: string) {
-		return this.relations.find(it => it && (it.relationKey == relationKey));
+		return this.getRelations().find(it => it.relationKey == relationKey);
 	};
 
 	getFilter (id: string) {

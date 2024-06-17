@@ -28,10 +28,15 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		const textCancel = data.textCancel || translate('commonCancel');
 		const colorConfirm = data.colorConfirm || 'black';
 		const colorCancel = data.colorCancel || 'blank';
+		const bgColor = data.bgColor || '';
 		
 		return (
 			<React.Fragment>
-				{icon ? <Icon className={icon} /> : ''}
+				{icon ? (
+					<div className={[ 'iconWrapper', bgColor ].join(' ')}>
+						<Icon className={icon} />
+					</div>
+				) : ''}
 				<Title text={title} />
 				<Label text={text} />
 
@@ -80,8 +85,8 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 			this.onCancel(e);
 		});
 
-		keyboard.shortcut('arrowup, arrowdown', e, (arrow) => {
-			const dir = arrow == 'arrowdown' ? 1 : -1;
+		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (arrow) => {
+			const dir = [ 'arrowup', 'arrowleft' ].includes(arrow) ? 1 : -1;
 			const buttons = $(this.refButtons).find('.button');
 
 			if (buttons.length < 2) {

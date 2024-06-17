@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, UtilCommon, UtilRouter, UtilObject, keyboard, translate } from 'Lib';
+import { I, C, UtilCommon, UtilRouter, UtilSpace, translate } from 'Lib';
 import { popupStore } from 'Store';
 
 interface State {
@@ -23,16 +23,19 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 				className="wrapper"
 			>
 				<Frame>
-					<Title text="Downloading manifest" />
-					<Loader />
-
+					<Title text={error ? translate('commonError') : translate('pageMainImportTitle')} />
 					<Error text={error} />
 
 					{error ? (
 						<div className="buttons">
-							<Button text={translate('commonBack')} className="c28" onClick={() => keyboard.onBack()} />
+							<Button 
+								text={translate('commonBack')} 
+								color="blank" 
+								className="c36" 
+								onClick={() => UtilSpace.openDashboard('route')} 
+							/>
 						</div>
-					) : ''}
+					) : <Loader />}
 				</Frame>
 			</div>
 		);
@@ -41,18 +44,22 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 	componentDidMount (): void {
 		const search = this.getSearch();
 
-		C.DownloadManifest(search.source, (message: any) => {
+		C.GalleryDownloadManifest(search.source, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {
-				UtilObject.openHome('route');
-				popupStore.open('usecase', { data: { object: message.info } });
+				UtilSpace.openDashboard('route');
+				window.setTimeout(() => {
+					popupStore.open('usecase', { data: { page: 'item', object: message.info } });
+				}, popupStore.getTimeout());
 			};
 		});
+
+		this.resize();
 	};
 
 	componentDidUpdate (): void {
-		$(window).trigger('resize');
+		this.resize();
 	};
 
 	getSearch () {

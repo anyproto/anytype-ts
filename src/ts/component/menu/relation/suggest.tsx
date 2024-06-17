@@ -3,9 +3,9 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, analytics, keyboard, UtilData, Relation, Action, UtilCommon, translate } from 'Lib';
+import { I, analytics, keyboard, UtilData, Relation, Action, UtilCommon, UtilSpace, translate } from 'Lib';
 import { commonStore, menuStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -60,8 +60,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					<div 
 						id="item-add" 
 						className="item add" 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }} 
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
+						onClick={e => this.onClick(e, item)} 
 						style={param.style}
 					>
 						<Icon className="plus" />
@@ -84,8 +84,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						{...item}
 						className={item.isHidden ? 'isHidden' : ''}
 						style={param.style}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }}
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
+						onClick={e => this.onClick(e, item)}
 					/>
 				);
 			};
@@ -107,7 +107,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			<div className="wrap">
 				{!noFilter ? (
 					<Filter 
-						ref={ref => this.refFilter = ref} 
+						ref={ref => this.refFilter = ref}
+						className="outlined"
 						placeholderFocus={translate('menuRelationSuggestFilterOrCreateRelation')}
 						value={filter}
 						onChange={this.onFilterChange}
@@ -253,7 +254,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				this.items = [];
 			};
 
-			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -272,26 +273,29 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const library = items.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey));
 		const system = items.filter(it => it.isInstalled && systemKeys.includes(it.relationKey));
 		const librarySources = library.map(it => it.sourceObject);
+		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		let sections: any[] = [
 			{ id: 'library', name: translate('menuRelationSuggestMyRelations'), children: library },
 			{ id: 'system', name: translate('menuRelationSuggestSystem'), children: system },
 		];
 
-		if (filter) {
-			const store = items.filter(it => !it.isInstalled && !librarySources.includes(it.id) && !systemKeys.includes(it.relationKey));
-			sections = sections.concat([
-				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
-				{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
-			]);
-		} else {
-			sections = sections.concat([
-				{ 
-					children: [
-						{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
-					] 
-				},
-			]);
+		if (canWrite) {
+			if (filter) {
+				const store = items.filter(it => !it.isInstalled && !librarySources.includes(it.id) && !systemKeys.includes(it.relationKey));
+				sections = sections.concat([
+					{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
+					{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
+				]);
+			} else {
+				sections = sections.concat([
+					{ 
+						children: [
+							{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
+						] 
+					},
+				]);
+			};
 		};
 
 		sections = sections.filter((section: any) => {
@@ -404,6 +408,14 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 	
 	onClick (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (!item) {
+			this.props.close();
+			return;
+		};
+
 		if (item.arrow) {
 			return;
 		};
@@ -412,14 +424,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { data, classNameWrap } = param;
 		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall } = data;
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
-
-		e.preventDefault();
-		e.stopPropagation();
-
-		if (!item) {
-			close();
-			return;
-		};
 
 		if (item.id == 'add') {
 			menuStore.open(menuIdEdit, { 
@@ -450,7 +454,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type });
 				};
 			} else {
-				Action.install(item, true, (message: any) => { cb(message.details); });
+				Action.install(item, true, message => cb(message.details));
 			};
 		};
 	};
@@ -469,7 +473,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.min(376, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (!noFilter ? 44 : 0)));
+		const height = Math.min(376, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (!noFilter ? 42 : 0)));
 
 		obj.css({ height });
 		position();

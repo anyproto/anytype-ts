@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
-import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilObject, translate } from 'Lib';
+import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilSpace, translate } from 'Lib';
 import { popupStore, blockStore } from 'Store';
-import Url from 'json/url.json';
+const Url = require('json/url.json');
 
 class MenuHelp extends React.Component<I.Menu> {
 
@@ -33,8 +33,8 @@ class MenuHelp extends React.Component<I.Menu> {
 							<MenuItemVertical
 								key={i}
 								{...item}
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
-								onClick={(e: any) => { this.onClick(e, item); }}
+								onMouseEnter={e => this.onMouseEnter(e, item)}
+								onClick={e => this.onClick(e, item)}
 							/>
 						);
 					};
@@ -65,7 +65,7 @@ class MenuHelp extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const btn = <Button className="c16" text={window.Electron.version.app} />;
+		const btn = <Button className="c16" text={UtilCommon.getElectron().version.app} />;
 
 		return [
 			{ id: 'whatsNew', document: 'whatsNew', caption: btn },
@@ -96,10 +96,10 @@ class MenuHelp extends React.Component<I.Menu> {
 		const storeTab = Storage.get('tabStore');
 		const isStoreType = isStore && (storeTab == I.StoreTab.Type);
 		const isStoreRelation = isStore && (storeTab == I.StoreTab.Relation);
-		const home = UtilObject.getSpaceDashboard();
+		const home = UtilSpace.getDashboard();
 
 		close();
-		analytics.event(UtilCommon.toUpperCamelCase([ getId(), item.id ].join('-')));
+		analytics.event(UtilCommon.toUpperCamelCase([ getId(), item.id ].join('-')), { route: analytics.route.menuHelp });
 
 		Highlight.hide(item.id);
 

@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .block.blockCover { position: absolute; left: 16px; height: 312px; width: calc(100% - 32px); border-radius: 4px; overflow: hidden; }
 .block.blockCover {
@@ -30,7 +30,7 @@
 	.cover { position: absolute; left: 0px; top: 0px; transform-origin: 0px 0px; }
 	img.cover { background-color: transparent; height: auto; }
 
-	.elements { width: 704px; height: 100%; position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 1; opacity: 0; }
+	.elements { width: 704px; height: 100%; position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 5; opacity: 0; }
 	.elements:hover, .elements.hover, .elements.active { opacity: 1; }
 	
 	.author { @include text-small; color: var(--color-bg-primary); position: absolute; right: 16px; bottom: 16px; z-index: 3; text-shadow: 1px 1px 1px rgba(0,0,0,0.5);  }
@@ -53,7 +53,7 @@
 		}
 	
 		.btn { 
-			font-weight: 500; font-size: 14px; height: 28px; line-height: 28px; display: inline-block;
+			font-weight: 500; font-size: var(--font-size-common); height: 28px; line-height: 28px; display: inline-block;
 			padding: 0px 8px; border-radius: 6px; margin-right: 8px; white-space: nowrap; transition: background $transitionCommon;
 		}
 		.btn:last-child { margin: 0px; }
@@ -81,4 +81,4 @@
 	}
 }
 
-.block.blockCover > .wrapContent > .selectable { height: 100%; }
+.block.blockCover > .wrapContent > .selectionTarget { height: 100%; }

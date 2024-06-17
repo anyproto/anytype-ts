@@ -4,8 +4,8 @@ import { Title, Label, Button } from 'Component';
 import { analytics, I, Onboarding, translate, UtilCommon } from 'Lib';
 import { commonStore } from 'Store';
 import QRCode from 'qrcode.react';
-import Theme from 'json/theme.json';
-import Url from 'json/url.json';
+const Theme = require('json/theme.json');
+const Url = require('json/url.json');
 
 interface State {
 	step: number;
@@ -41,7 +41,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 						<Label text={translate('popupMigrationOnboardingText3')} />
 
 						<div className="buttons">
-							<Button text={translate('commonDone')} className="c36" onClick={close} />
+							<Button text={translate('commonDone')} className="c36" onClick={() => close()} />
 						</div>
 					</React.Fragment>
 				);
@@ -62,7 +62,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 						<Label text={UtilCommon.sprintf(translate('popupMigrationImportText3'), Url.community)} />
 
 						<div className="buttons">
-							<Button text={translate('commonDone')} className="c36" onClick={close} />
+							<Button text={translate('commonDone')} className="c36" onClick={() => close()} />
 						</div>
 					</React.Fragment>
 				);
@@ -108,12 +108,12 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 
 		switch (type) {
 			case 'onboarding': {
-				eventData.route = 'MigrationImportBackupOffer';
+				eventData.route = analytics.route.migrationOffer;
 				Onboarding.start('dashboard', false, true);
 				break;
 			};
 			case 'import': {
-				eventData.route = 'MigrationImportBackup';
+				eventData.route = analytics.route.migrationImport;
 				break;
 			};
 		};

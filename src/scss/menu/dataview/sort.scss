@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .menus {
 	.menu.menuDataviewSort { width: 360px; }
@@ -12,7 +12,7 @@
 			.iconObject { margin-right: 10px; }
 			
 			.select { border: 0px; padding: 0px; display: block; }
-			.select:hover, .select.active { background: none; }
+			.select:hover, .select.isFocused { background: none; }
 			.select.grey { color: var(--color-control-active); }
 			.select {
 				.icon.relation { display: none; }
@@ -27,10 +27,15 @@
 			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; display: flex; flex-direction: column; }
 		}
 		.item.empty { margin: 8px 0px; padding: 14px 16px; }
+		.item.isReadonly {
+			.txt { width: calc(100% - 50px); }
+		}
 
-		.item:hover, .item.hover {
+		.item:not(.isReadonly):hover, 
+		.item:not(.isReadonly).hover
+		{
 			.buttons { opacity: 1; }
-			.txt { width: calc(100% - 116px); }
+			.txt { width: calc(100% - 118px); }
 		}
 
 		.bottom { padding: 0px 0px 8px 0px; flex-shrink: 0; }

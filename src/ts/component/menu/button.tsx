@@ -26,7 +26,7 @@ const MenuButton = observer(class MenuButton extends React.Component<I.Menu> {
 						key={i}
 						{...item} 
 						className={disabled ? 'disabled' : ''}
-						onClick={(e: any) => { this.onSelect(e, item); }} 
+						onClick={e => this.onSelect(e, item)} 
 					/>
 				))}
 			</div>

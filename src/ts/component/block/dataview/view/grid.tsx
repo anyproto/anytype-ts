@@ -5,10 +5,10 @@ import arrayMove from 'array-move';
 import $ from 'jquery';
 import { Icon, LoadMore } from 'Component';
 import { I, C, UtilCommon, translate, keyboard, Relation } from 'Lib';
-import { dbStore, menuStore, blockStore } from 'Store';
+import { dbStore, menuStore, blockStore, detailStore } from 'Store';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PADDING = 46;
 
@@ -54,8 +54,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 						<BodyRow 
 							key={'grid-row-' + view.id + index} 
 							{...this.props} 
-							readonly={!isAllowedObject}
-							recordId={id}
+							recordId={records[index]}
 							cellPosition={this.cellPosition}
 							getColumnWidths={this.getColumnWidths}
 						/>
@@ -86,9 +85,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 												onRowsRendered={onRowsRendered}
 												rowRenderer={({ key, index, style }) => (
 													<BodyRow 
-														key={'grid-row-' + view.id + index} 
+														key={`grid-row-${view.id + index}`} 
 														{...this.props} 
-														readonly={!isAllowedObject}
 														recordId={records[index]}
 														style={{ ...style, top: style.top + 2 }}
 														cellPosition={this.cellPosition}
@@ -168,7 +166,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const node = $(this.node);
 
 		this.unbind();
-		node.find('#scroll').on('scroll', () => { this.onScroll(); });
+		node.find('#scroll').on('scroll', () => this.onScroll());
 	};
 
 	unbind () {
@@ -198,7 +196,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		});
 
 		node.find('.rowHead').css({ gridTemplateColumns: str });
-		node.find('.row .selectable').css({ gridTemplateColumns: str });
+		node.find('.row .selectionTarget').css({ gridTemplateColumns: str });
 	};
 
 	getColumnWidths (relationKey: string, width: number): any {
@@ -234,7 +232,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const width = content.outerWidth();
 		const sx = scroll.scrollLeft();
 		const sw = scroll.width();
-		const container = $(UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page'));
+		const container = $(isPopup ? '#popupPage-innerWrap' : 'body');
 		const ww = container.width();
 		const rx = x - sx + width;
 
@@ -258,8 +256,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 		$('body').addClass('colResize');
 		win.off('mousemove.cell mouseup.cell');
-		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, relationKey); });
-		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e, relationKey); });
+		win.on('mousemove.cell', e => this.onResizeMove(e, relationKey));
+		win.on('mouseup.cell', e => this.onResizeEnd(e, relationKey));
 
 		el.addClass('isResizing');
 		keyboard.setResize(true);
@@ -296,7 +294,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 			width: this.checkWidth(e.pageX - this.ox),
 		});
 
-		window.setTimeout(() => { keyboard.setResize(false); }, 50);
+		window.setTimeout(() => keyboard.setResize(false), 50);
 	};
 
 	checkWidth (width: number): number {
@@ -319,7 +317,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 				isInline,
 				isCollection,
 				blockId: block.id,
-				onAdd: () => { menuStore.closeAll(Constant.menuIds.cellAdd); }
+				onAdd: () => menuStore.closeAll(Constant.menuIds.cellAdd)
 			}
 		});
 	};
@@ -357,20 +355,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 	resize () {
 		const { rootId, block, isPopup, isInline, getVisibleRelations } = this.props;
-		const element = blockStore.getMapElement(rootId, block.id);
-		
-		if (!element) {
-			return;
-		};
-
-		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const parent = blockStore.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = UtilCommon.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
-		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
+		const length = dbStore.getRecordIds(dbStore.getSubId(rootId, block.id), '').length;
 		const cw = container.width();
 		const rh = this.getRowHeight();
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Title, Label, Button, Phrase } from 'Component';
 import { I, C, translate, analytics, UtilCommon, UtilRouter, Renderer } from 'Lib';
-import { authStore } from 'Store';
+import { authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -23,6 +23,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 
 		this.onCopy = this.onCopy.bind(this);
 		this.onLogout = this.onLogout.bind(this);
+		this.onToggle = this.onToggle.bind(this);
 	};
 
 	render () {
@@ -36,7 +37,6 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 				<div className="inputs" onClick={this.onCopy}>
 					<Phrase
 						ref={ref => this.refPhrase = ref}
-						value={authStore.phrase}
 						readonly={true}
 						isHidden={true}
 						checkPin={true}
@@ -53,20 +53,27 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	};
 
 	componentDidMount () {
-		const { phrase } = authStore;
+		const { account } = authStore;
 
-		if (phrase) {
-			C.WalletConvert(phrase, '', (message: any) => {
-				this.setState({ entropy: message.entropy });
-			});
+		if (!account) {
+			return;
 		};
+
+		Renderer.send('keytarGet', account.id).then((value: string) => {
+			C.WalletConvert(value, '', (message: any) => {
+				if (!message.error.code) {
+					this.refPhrase?.setValue(value);
+					this.setState({ entropy: message.entropy });
+				};
+			});
+		});
 
 		analytics.event('ScreenKeychain', { type: 'BeforeLogout' });
 	};
 
 	onToggle (isHidden: boolean): void {
 		if (!isHidden) {
-			UtilCommon.copyToast(translate('commonPhrase'), authStore.phrase);
+			UtilCommon.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
 			analytics.event('KeychainCopy', { type: 'BeforeLogout' });
 		};
 	};
@@ -76,14 +83,13 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	};
 
 	onLogout () {
-		const { setPinConfirmed } = this.props;
+		this.props.setPinConfirmed(false);
 
 		UtilRouter.go('/', { 
 			replace: true, 
 			animate: true,
-			onFadeIn: () => {
+			onRouteChange: () => {
 				authStore.logout(true, false);
-				setPinConfirmed(false);
 			},
 		});
 	};

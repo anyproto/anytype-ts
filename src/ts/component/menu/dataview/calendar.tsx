@@ -1,18 +1,12 @@
 import * as React from 'react';
-import { I, UtilCommon, UtilDate, translate } from 'Lib';
+import { I, UtilDate, translate } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore } from 'Store';
 
-interface State {
-	value: number;
-};
-
-const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu, State> {
+const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu> {
 	
-	state = {
-		value: 0,
-	};
+	originalValue = 0;
 	refMonth: any = null;
 	refYear: any = null;
 	
@@ -21,10 +15,11 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { data, classNameWrap } = param;
 		const { value, isEmpty } = data;
 		const items = this.getData();
-		const { d, m, y } = UtilDate.getCalendarDateParam(value);
+		const { m, y } = UtilDate.getCalendarDateParam(value);
+		const todayParam = UtilDate.getCalendarDateParam(this.originalValue);
 
-		const today = UtilDate.now();
-		const tomorrow = today + 86400;
+		const now = UtilDate.now();
+		const tomorrow = now + 86400;
 		const dayToday = UtilDate.today();
 		const days = [];
 		const months = [];
@@ -94,7 +89,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 						if (dayToday == UtilDate.timestamp(item.y, item.m, item.d)) {
 							cn.push('today');
 						};
-						if (((d == item.d) && (m == item.m) && (y == item.y)) && !isEmpty) {
+						if (!isEmpty && (todayParam.d == item.d) && (todayParam.m == item.m) && (todayParam.y == item.y)) {
 							cn.push('active');
 						};
 						return (
@@ -115,7 +110,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 				<div className="foot">
 					<div className="sides">
 						<div className="side left">
-							<div className="btn" onClick={() => this.setValue(UtilDate.mergeTimeWithDate(today, value), true, true)}>{translate('commonToday')}</div>
+							<div className="btn" onClick={() => this.setValue(UtilDate.mergeTimeWithDate(now, value), true, true)}>{translate('commonToday')}</div>
 							<div className="btn" onClick={() => this.setValue(UtilDate.mergeTimeWithDate(tomorrow, value), true, true)}>{translate('commonTomorrow')}</div>
 						</div>
 						<div className="side right">
@@ -125,6 +120,15 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount(): void {
+		const { param } = this.props;
+		const { data } = param;
+		const { value } = data;
+
+		this.originalValue = value;
+		this.forceUpdate();
 	};
 
 	componentDidUpdate () {

@@ -5,9 +5,7 @@ import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
 import { I, keyboard, UtilCommon, analytics, Storage } from 'Lib';
 import { menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
-
-import MenuAccountPath from './account/path';
+const Constant = require('json/constant.json');
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -34,7 +32,6 @@ import MenuBlockColor from './block/color';
 import MenuBlockBackground from './block/background';
 import MenuBlockCover from './block/cover';
 import MenuBlockAction from './block/action';
-import MenuBlockMore from './block/more';
 import MenuBlockHAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
@@ -51,6 +48,7 @@ import MenuTypeSuggest from './type/suggest';
 import MenuGraphSettings from './graph/settings';
 import MenuWidget from './widget';
 import MenuSpace from './space';
+import MenuObject from './object';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
@@ -84,13 +82,10 @@ interface State {
 	tab: string;
 };
 
-const BORDER = 10;
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
 
 const Components: any = {
-
-	accountPath:			 MenuAccountPath,
 
 	help:					 MenuHelp,
 	onboarding:				 MenuOnboarding,
@@ -116,7 +111,6 @@ const Components: any = {
 	blockAdd:				 MenuBlockAdd,
 	blockColor:				 MenuBlockColor,
 	blockBackground:		 MenuBlockBackground,
-	blockMore:				 MenuBlockMore,
 	blockAlign:				 MenuBlockHAlign,
 	blockLink:				 MenuBlockLink,
 	blockCover:				 MenuBlockCover,
@@ -134,6 +128,7 @@ const Components: any = {
 	graphSettings:			 MenuGraphSettings,
 	widget:					 MenuWidget,
 	space:					 MenuSpace,
+	object:					 MenuObject,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
@@ -248,11 +243,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		if (passThrough) {
-			cd.push('through');
+			cd.push('passThrough');
 		};
 
 		const Tab = (item: any) => (
-			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
+			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={e => this.onTab(item.id)}>
 				{item.name}
 			</div>
 		);
@@ -298,7 +293,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 							getSize={this.getSize}
 							getPosition={this.getPosition}
 							position={this.position} 
-							close={this.close} 
+							close={this.close}
 						/>
 					</div>
 				</div>
@@ -362,8 +357,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	componentWillUnmount () {
 		const { param } = this.props;
-		const { isSub, data } = param;
-		const { rebind } = data;
+		const { isSub } = param;
 		const el = this.getElement();
 
 		this._isMounted = false;
@@ -377,6 +371,14 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			this.poly.hide();
 			window.clearTimeout(this.timeoutPoly);
 		};
+
+		this.rebindPrevious();
+	};
+
+	rebindPrevious () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rebind } = data;
 
 		if (this.ref && this.ref.unbind) {
 			this.ref.unbind();
@@ -440,14 +442,32 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				window.setTimeout(() => { 
 					menu.css({ transform: 'none' }); 
 					this.isAnimating = false;
-				}, Constant.delay.menu);
+				}, menuStore.getTimeout());
 			});
 		};
 	};
+
+	getBorderTop () {
+		return Number(window.AnytypeGlobalConfig?.menuBorderTop) || UtilCommon.sizeHeader();
+	};
 	
+	getBorderBottom () {
+		const { id } = this.props;
+		
+		let ret = Number(window.AnytypeGlobalConfig?.menuBorderBottom) || 80;
+		if ([ 'help', 'onboarding' ].includes(id)) {
+			ret = 16;
+		};
+
+		return ret;
+	};
+
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
+		const { border } = Constant.size.menu;
+		const borderTop = this.getBorderTop();
+		const borderBottom = this.getBorderBottom();
 
 		if (this.ref && this.ref.beforePosition) {
 			this.ref.beforePosition();
@@ -471,7 +491,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
 			const offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
 			const offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
-			const minY = UtilCommon.sizeHeader();
 
 			let ew = 0;
 			let eh = 0;
@@ -514,7 +533,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					y = oy - height + offsetY;
 					
 					// Switch
-					if (!noFlipY && (y <= BORDER)) {
+					if (!noFlipY && (y <= borderTop)) {
 						y = oy + eh - offsetY;
 					};
 					break;
@@ -527,7 +546,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					y = oy + eh + offsetY;
 
 					// Switch
-					if (!noFlipY && (y >= wh - height - 80)) {
+					if (!noFlipY && (y >= wh - height - borderBottom)) {
 						y = oy - height - offsetY;
 					};
 					break;
@@ -538,7 +557,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					x += offsetX;
 
 					// Switch
-					if (!noFlipX && (x >= ww - width - BORDER)) {
+					if (!noFlipX && (x >= ww - width - border)) {
 						x = ox - width;
 						flipX = true;
 					};
@@ -552,7 +571,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					x -= width + offsetX - ew;
 
 					// Switch
-					if (!noFlipX && (x <= BORDER)) {
+					if (!noFlipX && (x <= border)) {
 						x = ox + ew;
 						flipX = true;
 					};
@@ -564,11 +583,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				y -= scrollTop;
 			};
 
-			x = Math.max(BORDER, x);
-			x = Math.min(ww - width - BORDER, x);
+			x = Math.max(border, x);
+			x = Math.min(ww - width - border, x);
 
-			y = Math.max(minY, y);
-			y = Math.min(wh - height - 80, y);
+			y = Math.max(borderTop, y);
+			y = Math.min(wh - height - borderBottom, y);
 
 			if (undefined !== fixedX) x = fixedX;
 			if (undefined !== fixedY) y = fixedY;
@@ -579,32 +598,52 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			};
 			menu.css(css);
 
-			if (isSub && (type == I.MenuType.Vertical)) {
+			if (isSub) {
 				const coords = UtilCommon.objectCopy(keyboard.mouse.page);
 				const offset = 8;
 
-				let w = Math.abs(x - coords.x) - offset;
-				let t = '';
-				let l = coords.x + offset;
+				let w = 0;
+				let h = 0;
+				let left = 0;
+				let top = 0;
+				let transform = '';
+				let clipPath = '';
 
-				if (flipX) {
-					w -= width;
-					l -= w + offset * 2;
-					t = 'scaleX(-1)';
+				if (type == I.MenuType.Vertical) {
+					h = height;
+					top = y;
+					w = Math.abs(x - coords.x) - offset;
+					left = coords.x + offset;
+
+					if (flipX) {
+						w -= width;
+						left -= w + offset * 2;
+						transform = 'scaleX(-1)';
+					};
+
+					clipPath = `polygon(0px ${oy - y}px, 0px ${oy - y + eh}px, 100% 100%, 100% 0%)`;
+				};
+
+				if (type == I.MenuType.Horizontal) {
+					w = width;
+					left = x;
+					h = Math.abs(y - coords.y) - offset;
+					top = y;
+					clipPath = `polygon(0 ${height}px, 100% ${height}px, ${ox - x + ew}px 100%, ${ox - x}px 100%)`;
 				};
 
 				this.poly.show().css({
 					width: w,
-					height: height,
-					left: l,
-					top: y,
-					clipPath: `polygon(0px ${oy - y}px, 0px ${oy - y + eh}px, 100% 100%, 100% 0%)`,
-					transform: t,
+					height: h,
+					left,
+					top,
+					clipPath,
+					transform,
 					position: (isFixed ? 'fixed' : 'absolute'),
 				});
 
 				window.clearTimeout(this.timeoutPoly);
-				this.timeoutPoly = window.setTimeout(() => { this.poly.hide(); }, 500);
+				this.timeoutPoly = window.setTimeout(() => this.poly.hide(), 500);
 			};
 
 			// Arrow positioning
@@ -662,12 +701,14 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		});
 	};
 
-	close () {
-		if (this.ref && this.ref.unbind) {
-			this.ref.unbind();
-		};
+	close (callBack?: () => void) {
+		menuStore.close(this.props.id, () => {
+			window.setTimeout(() => this.rebindPrevious(), Constant.delay.menu);
 
-		menuStore.close(this.props.id);
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	onDimmerClick () {
@@ -684,12 +725,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { isSub } = param;
 		
 		if (isSub) {
-			//this.poly.hide();
+			this.poly.hide();
 		};
 	};
 
 	onKeyDown (e: any) {
-		if (!this.ref || !this.ref.getItems) {
+		if (!this.ref || !this.ref.getItems || keyboard.isComposition) {
 			return;
 		};
 
@@ -707,7 +748,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		if (refInput) {
 			if (refInput.isFocused && (this.ref.n < 0)) {
-				keyboard.shortcut('arrowleft, arrowright', e, () => { ret = true; });
+				keyboard.shortcut('arrowleft, arrowright', e, () => ret = true);
 
 				keyboard.shortcut('arrowdown', e, () => {
 					refInput.blur();
@@ -759,7 +800,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		if (!commonFilter) {
+		if (!commonFilter && !keyboard.isFocused) {
 			shortcutClose.push('arrowleft');
 			shortcutSelect.push('arrowright');
 		};
@@ -902,7 +943,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		const items = this.ref.getItems();
-		if (item) {
+		if (item && (undefined !== item.id)) {
 			this.ref.n = items.findIndex(it => it.id == item.id);
 		};
 
@@ -915,10 +956,15 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		const next = items[this.ref.n];
+		if (!next) {
+			return;
+		};
 
-		if (next && (next.isDiv || next.isSection)) {
+		if (next.isDiv || next.isSection) {
 			this.ref.n++;
-			this.setActive(items[this.ref.n], scroll);
+			if (items[this.ref.n]) {
+				this.setActive(items[this.ref.n], scroll);
+			};
 		} else {
 			this.setHover(next, scroll);
 		};
@@ -931,6 +977,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		const node = $(this.node);
 		const menu = node.find('.menu');
+		const { border } = Constant.size.menu;
 		
 		menu.find('.item.hover').removeClass('hover');
 
@@ -959,7 +1006,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const pt = el.position().top;
 			const eh = el.outerHeight();
 			const ch = scrollWrap.height();
-			const top = Math.max(0, st + pt + eh - BORDER - ch);
+			const top = Math.max(0, st + pt + eh - border - ch);
 			
 			scrollWrap.scrollTop(top);
 		};

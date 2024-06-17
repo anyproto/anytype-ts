@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { Title, Label, Input, IconObject, Button, Select, Loader, Error } from 'Component';
 import { UtilObject, UtilCommon, I, C, translate, keyboard, Preview, analytics } from 'Lib';
 import { menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	error: string;
@@ -66,16 +66,22 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								ref={ref => this.refName = ref}
 								value=""
 								onKeyDown={this.onKeyDown}
-								placeholder={UtilObject.defaultName('Page')}
+								placeholder={translate('defaultNamePage')}
 							/>
 						</div>
-
-						<Label
-							className="spaceType"
-							text={translate(`spaceType${I.SpaceType.Private}`)}
-							onMouseEnter={onSpaceTypeTooltip}
-							onMouseLeave={e => Preview.tooltipHide(false)}
-						/>
+						<div className="info">
+							<Label
+								className="infoLabel spaceAccessType"
+								text={translate(`spaceAccessType${I.SpaceType.Private}`)}
+							/>
+							<div className="bullet" />
+							<Label 
+								className="infoLabel withTooltip"
+								text={translate('popupSettingsSpaceIndexInfoLabel')} 
+								onMouseEnter={onSpaceTypeTooltip}
+								onMouseLeave={e => Preview.tooltipHide(false)}
+							/>
+						</div>
 					</div>
 				</div>
 
@@ -136,7 +142,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	checkName (v: string): string {
-		if ([ UtilObject.defaultName('Space'), UtilObject.defaultName('Page') ].includes(v)) {
+		if ([
+			translate('defaultNameSpace'), 
+			translate('defaultNamePage'),
+		].includes(v)) {
 			v = '';
 		};
 		return v;
@@ -203,18 +212,17 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		C.WorkspaceCreate({ name, iconOption }, usecase, (message: any) => {
 			this.setState({ isLoading: false });
 
-			if (!message.error.code) {
-				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime });
-				analytics.event('SelectUsecase', { type: usecase });
-
-				if (onCreate) {
-					onCreate(message.objectId);
-				};
-
-				close();
-			} else {
+			if (message.error.code) {
 				this.setState({ error: message.error.description });
+				return;
 			};
+
+			if (onCreate) {
+				onCreate(message.objectId);
+			};
+
+			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route: analytics.route.navigation });
+			analytics.event('SelectUsecase', { type: usecase });
 		});
 	};
 

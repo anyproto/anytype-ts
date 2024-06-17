@@ -1,12 +1,14 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'Component';
-import { I, M, C, UtilCommon, Action, Renderer, UtilObject, translate, UtilRouter } from 'Lib';
+import { Header, Footer, Loader, Block, Button, IconObject, Deleted } from 'Component';
+import { I, C, UtilCommon, Action, Renderer, UtilSpace, translate, UtilRouter } from 'Lib';
 import { blockStore, detailStore } from 'Store';
-import Errors from 'json/error.json';
+import HeadSimple from 'Component/page/elements/head/simple';
+const Errors = require('json/error.json');
 
 interface State {
+	isLoading: boolean;
 	isDeleted: boolean;
 };
 
@@ -15,12 +17,13 @@ const MAX_HEIGHT = 396;
 const PageMainMedia = observer(class PageMainMedia extends React.Component<I.PageComponent, State> {
 
 	_isMounted = false;
-	node: any = null;
+	node = null;
+	refHeader = null;
+	refHead = null;
 	id = '';
-	refHeader: any = null;
-	loading = false;
 
 	state = {
+		isLoading: false,
 		isDeleted: false,
 	};
 
@@ -32,19 +35,19 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	render () {
-		const { isDeleted } = this.state;
+		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId, [ 'heightInPixels' ]);
+		const object = detailStore.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
+		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		if (isDeleted || object.isDeleted) {
+		if (isDeleted) {
 			return <Deleted {...this.props} />;
 		};
 
-		if (this.loading) {
+		if (isLoading) {
 			return <Loader id="loader" />;
 		};
 
-		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const blocks = blockStore.getBlocks(rootId);
 		const file = blocks.find(it => it.isFile());
 		const relations = blocks.filter(it => it.isRelation());
@@ -99,27 +102,30 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 		return (
 			<div ref={node => this.node = node}>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header 
+					{...this.props} 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					rootId={rootId} 
+				/>
 
 				<div id="blocks" className={cn.join(' ')}>
 					{file ? (
 						<React.Fragment>
 							<div className="side left">
-								{content}
+								<div id="inner" className="inner">
+									{content}
+								</div>
 							</div>
 
 							<div className="side right">
 								<div className="head">
-									<ObjectName className="title" object={object} />
-									<div className="descr">{object.description}</div>
-
-									<Block 
+									<HeadSimple 
 										{...this.props} 
-										key={featured.id} 
+										ref={ref => this.refHead = ref} 
+										placeholder={translate('defaultNamePage')} 
 										rootId={rootId} 
-										iconSize={20} 
-										block={featured} 
-										isSelectionDisabled={true} 
+										isContextMenuDisabled={true}
 									/>
 
 									<div className="buttons">
@@ -135,17 +141,16 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 											key={item.id} 
 											rootId={rootId} 
 											block={item} 
-											readonly={true} 
+											readonly={!allowed} 
 											isSelectionDisabled={true} 
+											isContextMenuDisabled={true}
 										/>
 									))}
 								</div>
 							</div>
 						</React.Fragment>
 					) : (
-						<div id="empty" className="empty">
-							File not found
-						</div>
+						<div id="empty" className="empty">{translate('pageMainMediaNotFound')}</div>
 					)}
 				</div>
 
@@ -180,25 +185,22 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 		this.close();
 		this.id = rootId;
-		this.loading = true;
-		this.forceUpdate();
+		this.setState({ isLoading: true});
 
 		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true });
-				} else {
-					UtilObject.openHome('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
-			this.loading = false;
-			this.forceUpdate();
-
-			if (this.refHeader) {
-				this.refHeader.forceUpdate();
+			const object = detailStore.get(rootId, rootId, []);
+			if (object.isDeleted) {
+				this.setState({ isDeleted: true, isLoading: false });
+				return;
 			};
+
+			this.refHeader?.forceUpdate();
+			this.refHead?.forceUpdate();
+			this.setState({ isLoading: false });
 		});
 	};
 
@@ -253,9 +255,12 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const rootId = this.getRootId();
 		const blocks = blockStore.getBlocks(rootId);
 		const block = blocks.find(it => it.isFile());
-		const { content } = block;
 
-		C.FileDownload(content.hash, window.Electron.tmpPath, (message: any) => {
+		if (!block) {
+			return;
+		};
+
+		C.FileDownload(block.content.targetObjectId, UtilCommon.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
 			};
@@ -280,11 +285,12 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const node = $(this.node);
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
+		const inner = node.find('.side.left #inner');
 		const container = UtilCommon.getScrollContainer(isPopup);
-		const wh = container.height() - 60;
+		const wh = container.height() - 182;
 
 		if (blocks.hasClass('vertical')) {
-			blocks.css({ minHeight: wh });
+			inner.css({ minHeight: wh });
 		};
 
 		if (empty.length) {

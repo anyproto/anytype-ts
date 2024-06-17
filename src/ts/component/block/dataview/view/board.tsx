@@ -7,7 +7,8 @@ import { I, C, UtilCommon, Dataview, keyboard, Relation, translate } from 'Lib';
 import { dbStore, detailStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
-import Constant from 'json/constant.json';
+
+const Constant = require('json/constant.json');
 
 const PADDING = 46;
 
@@ -16,7 +17,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	node: any = null;
 	cache: any = {};
 	frame = 0;
-	groupRelationKey = '';
 	newIndex = -1;
 	newGroupId = '';
 	columnRefs: any = {};
@@ -108,7 +108,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.unbind();
 
 		const node = $(this.node);
-		node.find('#scroll').on('scroll', (e: any) => { this.onScrollView(); });
+		node.find('#scroll').on('scroll', () => this.onScrollView());
 	};
 
 	unbind () {
@@ -117,74 +117,28 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	loadGroupList () {
-		const { rootId, block, getView, getTarget, isCollection } = this.props;
+		const { rootId, block, getView, getTarget } = this.props;
 		const object = getTarget();
 		const view = getView();
-		const subId = dbStore.getGroupSubId(rootId, block.id, 'groups');
 
 		dbStore.groupsClear(rootId, block.id);
-		this.groupRelationKey = view.groupRelationKey;
 
 		if (!view.groupRelationKey) {
 			this.forceUpdate();
 			return;
 		};
 
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
-		if (!relation) {
-			return;
-		};
-
-		const groupOrder: any = {};
-		const el = block.content.groupOrder.find(it => it.viewId == view.id);
-
-		if (el) {
-			el.groups.forEach(it => groupOrder[it.groupId] = it);
-		};
-
-		C.ObjectGroupsSubscribe(commonStore.space, subId, view.groupRelationKey, view.filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const groups = (message.groups || []).map((it: any) => {
-				let bgColor = 'grey';
-				let value: any = it.value;
-				let option: any = null;
-
-				switch (relation.format) {
-					case I.RelationType.MultiSelect:
-						value = Relation.getArrayValue(value);
-						if (value.length) {
-							option = detailStore.get(Constant.subId.option, value[0]);
-							bgColor = option?.color;
-						};
-						break;
-
-					case I.RelationType.Select:
-						option = detailStore.get(Constant.subId.option, value);
-						bgColor = option?.color;
-						break;
-				};
-
-				it.isHidden = groupOrder[it.id]?.isHidden;
-				it.bgColor = groupOrder[it.id]?.bgColor || bgColor;
-				return it;
-			});
-
-			dbStore.groupsSet(rootId, block.id, this.applyGroupOrder(groups));
-		});
+		Dataview.loadGroupList(rootId, block.id, view.id, object);
 	};
 
 	getGroups (withHidden: boolean) {
-		const { rootId, block } = this.props;
-		let groups = this.applyGroupOrder(UtilCommon.objectCopy(dbStore.getGroups(rootId, block.id)));
-
-		if (!withHidden) {
-			groups = groups.filter(it => !it.isHidden);
+		const { rootId, block, getView } = this.props;
+		const view = getView();
+		if (!view) {
+			return [];
 		};
 
-		return groups;
+		return Dataview.getGroups(rootId, block.id, view.id, withHidden);
 	};
 
 	initCacheColumn () {
@@ -255,8 +209,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	onDragStartCommon (e: any, target: any) {
 		e.stopPropagation();
 
-		const { dataset } = this.props;
-		const { selection, preventCommonDrop } = dataset || {};
+		const selection = commonStore.getRef('selectionProvider');
 		const node = $(this.node);
 		const view = node.find('.viewContent');
 		const clone = target.clone();
@@ -267,7 +220,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		clone.attr({ id: '' }).addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
 		view.append(clone);
 
-		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
+		$(document).off('dragover').on('dragover', e => e.preventDefault());
 		$(window).off('dragend.board drag.board');
 		$('body').addClass('grab');
 
@@ -275,15 +228,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		keyboard.setDragging(true);
 		keyboard.disableSelection(true);
+		keyboard.disableCommonDrop(true);
+
 		selection.clear();
-		preventCommonDrop(true);
 	};
 
 	onDragEndCommon (e: any) {
 		e.preventDefault();
 
-		const { dataset } = this.props;
-		const { preventCommonDrop } = dataset || {};
 		const node = $(this.node);
 
 		$('body').removeClass('grab');
@@ -294,7 +246,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		node.find('.isOver').removeClass('isOver left right top bottom');
 
 		keyboard.disableSelection(false);
-		preventCommonDrop(false);
+		keyboard.disableCommonDrop(false);
 		keyboard.setDragging(false);
 
 		if (this.frame) {
@@ -310,8 +262,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.initCacheColumn();
 		this.isDraggingColumn = true;
 
-		win.on('drag.board', (e: any) => { this.onDragMoveColumn(e, groupId); });
-		win.on('dragend.board', (e: any) => { this.onDragEndColumn(e, groupId); });
+		win.on('drag.board', e => this.onDragMoveColumn(e, groupId));
+		win.on('dragend.board', e => this.onDragEndColumn(e, groupId));
 	};
 
 	onDragMoveColumn (e: any, groupId: any) {
@@ -468,10 +420,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			dbStore.recordDelete(oldSubId, '', record.id);
 			dbStore.recordAdd(newSubId, '', record.id, this.newIndex);
 
-			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], () => {
+			C.ObjectListSetDetails([ record.id ], [ { key: view.groupRelationKey, value: newGroup.value } ], () => {
 				orders = [
-					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') },
-					{ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecords(newSubId, '') }
+					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecordIds(oldSubId, '') },
+					{ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecordIds(newSubId, '') }
 				];
 
 				objectOrderUpdate(orders, records);
@@ -485,39 +437,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				this.newIndex -= 1;
 			};
 
-			records = arrayMove(dbStore.getRecords(oldSubId, ''), current.index, this.newIndex);
+			records = arrayMove(dbStore.getRecordIds(oldSubId, ''), current.index, this.newIndex);
 			orders = [ { viewId: view.id, groupId: current.groupId, objectIds: records } ];
 
-			objectOrderUpdate(orders, records, (message) => {
-				dbStore.recordsSet(oldSubId, '', records);
-			});
+			objectOrderUpdate(orders, records, () => dbStore.recordsSet(oldSubId, '', records));
 		};
-	};
-
-	applyGroupOrder (groups: any[]) {
-		const { block, getView } = this.props;
-		const view = getView();
-		
-		if (!view) {
-			return [];
-		};
-
-		const el = block.content.groupOrder.find(it => it.viewId == view.id);
-		const groupOrder: any = {};
-
-		if (el) {
-			el.groups.forEach(it => groupOrder[it.groupId] = it);
-		};
-
-		groups.sort((c1: any, c2: any) => {
-			const idx1 = groupOrder[c1.id]?.index;
-			const idx2 = groupOrder[c2.id]?.index;
-			if (idx1 > idx2) return 1;
-			if (idx1 < idx2) return -1;
-			return 0;
-		});
-
-		return groups;
 	};
 
 	onScrollView () {
@@ -565,8 +489,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	resize () {
 		const { rootId, block, isPopup, isInline } = this.props;
-		const element = blockStore.getMapElement(rootId, block.id);
-		const parent = blockStore.getLeaf(rootId, element.parentId);
+		const parent = blockStore.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const view = node.find('.viewContent');
@@ -578,10 +501,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		if (!isInline) {
 			const maxWidth = cw - PADDING * 2;
-			const margin = width >= maxWidth ? (cw - maxWidth) / 2 : 0;
+			const margin = width >= maxWidth ? PADDING : 0;
 
-			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 });
-			view.css({ width: width < maxWidth ? maxWidth : width + margin / 2 + size.margin + 4 });
+			scroll.css({ width: `calc(100% + ${PADDING * 2}px)`, marginLeft: -margin, paddingLeft: margin / 2 });
+
+			if (width > maxWidth) {
+				view.css({ width: width + size.margin });
+			};
 		} else 
 		if (parent && (parent.isPage() || parent.isLayoutDiv())) {
 			const wrapper = $('#editorWrapper');

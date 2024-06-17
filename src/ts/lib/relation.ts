@@ -1,6 +1,9 @@
-import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject } from 'Lib';
+import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject, UtilMenu } from 'Lib';
 import { dbStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
+
+const DICTIONARY = [ 'layout', 'origin', 'importType' ];
+const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];
 
 class Relation {
 
@@ -9,15 +12,17 @@ class Relation {
 	};
 
 	public className (v: I.RelationType): string {
-		let c = this.typeName(v);
-		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].indexOf(v) >= 0) {
-			c = 'select ' + this.selectClassName(v);
+		let c = '';
+		if ([ I.RelationType.Select, I.RelationType.MultiSelect ].includes(v)) {
+			c = `select ${this.selectClassName(v)}`;
+		} else {
+			c = this.typeName(v);
 		};
-		return 'c-' + c;
+		return `c-${c}`;
 	};
 
 	public selectClassName (v: I.RelationType): string {
-		return UtilCommon.toCamelCase('is-' + I.RelationType[v]);
+		return `is${I.RelationType[v]}`;
 	};
 
 	public cellId (prefix: string, relationKey: string, id: string|number) {
@@ -26,7 +31,7 @@ class Relation {
 
 	public width (width: number, format: I.RelationType): number {
 		const size = Constant.size.dataview.cell;
-		return Number(width || size['format' + format]) || size.default;
+		return Number(width || size[`format${format}`]) || size.default;
 	};
 
 	public filterConditionsByType (type: I.RelationType): { id: I.FilterCondition, name: string}[] {
@@ -39,7 +44,7 @@ class Relation {
 			case I.RelationType.LongText: 
 			case I.RelationType.Url: 
 			case I.RelationType.Email: 
-			case I.RelationType.Phone: 
+			case I.RelationType.Phone: {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
 					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
@@ -49,10 +54,12 @@ class Relation {
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				]);
 				break;
+			};
 
+			case I.RelationType.File: 
 			case I.RelationType.Object: 
 			case I.RelationType.Select: 
-			case I.RelationType.MultiSelect: 
+			case I.RelationType.MultiSelect: {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
 					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
@@ -61,8 +68,9 @@ class Relation {
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				]);
 				break;
+			};
 			
-			case I.RelationType.Number:
+			case I.RelationType.Number: {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.Equal,			 name: '=' }, 
 					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
@@ -74,8 +82,9 @@ class Relation {
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				]);
 				break;
+			};
 
-			case I.RelationType.Date:
+			case I.RelationType.Date: {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
 					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreaterDate') }, 
@@ -87,14 +96,17 @@ class Relation {
 					{ id: I.FilterCondition.NotEmpty,		 name: translate('filterConditionNotEmpty') },
 				]);
 				break;
+			};
 			
 			case I.RelationType.Checkbox:
-			default:
+			default: {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
 					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') },
 				]);
 				break;
+			};
+
 		};
 		return ret;
 	};
@@ -179,21 +191,12 @@ class Relation {
 	public formatValue (relation: any, value: any, maxCount: boolean) {
 		switch (relation.format) {
 			default: {
-				value = String(value || '');
+				value = this.getStringValue(value);
 				break;
 			};
 
 			case I.RelationType.Number: {
-				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+-]*/gi, '');
-				if ((value === '') || (value === undefined)) {
-					value = null;
-				};
-				if (value !== null) {
-					value = Number(value);
-				};
-				if (isNaN(value)) {
-					value = null;
-				};
+				value = this.getNumberValue(value);
 				break;
 			};
 
@@ -275,6 +278,12 @@ class Relation {
 				value = Number(value) || I.ObjectOrigin.None;
 				return (value == I.ObjectOrigin.None) ? null : translate(`origin${value}`);
 			};
+
+			case 'importType': {
+				const names = UtilMenu.getImportNames();
+				return undefined === value ? null : names[Number(value)];
+			};
+
 		};
 		return null;
 	};
@@ -284,11 +293,10 @@ class Relation {
 	};
 
 	public getFilterOptions (rootId: string, blockId: string, view: I.View) {
-		const formats = [ I.RelationType.File ];
 		const ret: any[] = [];
 		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelationByKey(it.relationKey);
-			return relation && !formats.includes(relation.format) && (it.relationKey != 'done');
+			return relation && (it.relationKey != 'done');
 		});
 		const idxName = relations.findIndex(it => it.relationKey == 'name');
 
@@ -309,6 +317,7 @@ class Relation {
 				maxCount: relation.maxCount,
 			});
 		});
+
 		return ret;
 	};
 
@@ -396,29 +405,57 @@ class Relation {
 	};
 
 	public getDictionaryOptions (relationKey: string) {
-		const options = [];
+		const names = UtilMenu.getImportNames();
 		const dictionary = {
 			layout: I.ObjectLayout,
 			origin: I.ObjectOrigin,
+			importType: I.ImportType,
 		};
 
 		const item = dictionary[relationKey];
-		if (item) {
-			const keys = Object.keys(item).filter(v => !isNaN(Number(v)));
-			keys.forEach((key, index) => {
-				options.push({ id: index, name: translate(`${relationKey}${index}`) });
-			});
+
+		if (!item) {
+			return [];
 		};
+
+		const options = [];
+		const keys = Object.keys(item).filter(v => !isNaN(Number(v)));
+
+		keys.forEach((key, index) => {
+			let name = '';
+			if (relationKey == 'importType') {
+				name = names[index];
+			} else {
+				name = translate(`${relationKey}${index}`);
+			};
+
+			if (name) {
+				options.push({ id: index, name });
+			};
+		});
 
 		return options;
 	};
 
-	public getStringValue (value: any) {
-		if ((typeof value === 'object') && value && UtilCommon.hasProperty(value, 'length')) {
-			return String(value.length ? value[0] : '');
-		} else {
-			return String(value || '');
+	public getNumberValue (value: any): number {
+		value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+-]*/gi, '');
+		if ((value === '') || (value === undefined)) {
+			value = null;
 		};
+		if (value !== null) {
+			value = Number(value);
+		};
+		if (isNaN(value)) {
+			value = null;
+		};
+		return value;
+	};
+
+	public getStringValue (value: any): string {
+		if ((typeof value === 'object') && value && UtilCommon.hasProperty(value, 'length')) {
+			value = value.length ? value[0] : '';
+		};
+		return String(value || '');
 	};
 
 	public getArrayValue (value: any): any[] {
@@ -575,20 +612,27 @@ class Relation {
 	};
 
 	systemKeysWithoutUser () {
-		const skipKeys = [ 'tag', 'description' ];
-		return this.systemKeys().filter(it => !skipKeys.includes(it));
+		return this.systemKeys().filter(it => !SKIP_SYSTEM_KEYS.includes(it));
 	};
 
 	isSystem (relationKey: string): boolean {
 		return this.systemKeys().includes(relationKey);
 	};
 
-	dictionaryKeys () {
-		return [ 'layout', 'origin' ];
+	isSystemWithoutUser (relationKey: string): boolean {
+		return this.systemKeysWithoutUser().includes(relationKey);
 	};
 
 	isDictionary (relationKey: string): boolean {
-		return this.dictionaryKeys().includes(relationKey);
+		return DICTIONARY.includes(relationKey);
+	};
+
+	arrayTypes () {
+		return [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.File, I.RelationType.Object, I.RelationType.Relations ];
+	};
+
+	isArrayType (format: I.RelationType): boolean {
+		return this.arrayTypes().includes(format);
 	};
 	
 };

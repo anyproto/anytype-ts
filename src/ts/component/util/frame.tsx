@@ -38,7 +38,7 @@ class Frame extends React.Component<Props> {
 		this.resize();
 		this.unbind();
 		
-		$(window).on('resize.frame', () => { this.resize(); });
+		$(window).on('resize.frame', () => this.resize());
 	};
 	
 	componentWillUnmount () {

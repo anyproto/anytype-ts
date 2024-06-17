@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, ListObjectManager } from 'Component';
 import { I, translate, Action } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 import Head from '../head';
 
 const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageManager extends React.Component<I.PopupSettings, {}> {

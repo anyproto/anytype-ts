@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, UtilData, UtilObject, UtilCommon, analytics, keyboard } from 'Lib';
+import { I, M, C, UtilData, UtilCommon, keyboard } from 'Lib';
 import { Block, Drag } from 'Component';
 import { blockStore, detailStore } from 'Store';
 
@@ -21,7 +21,6 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 		this.onScaleStart = this.onScaleStart.bind(this);
 		this.onScaleMove = this.onScaleMove.bind(this);
 		this.onScaleEnd = this.onScaleEnd.bind(this);
-		this.onClone = this.onClone.bind(this);
 	};
 
 	render (): any {
@@ -38,7 +37,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 
-		if (root.isObjectHuman()) {
+		if (root.isObjectHuman() || root.isObjectParticipant()) {
 			icon.type = I.BlockType.IconUser;
 		};
 
@@ -48,7 +47,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 					<Drag 
 						ref={ref => this.refDrag = ref} 
 						value={root.fields.width}
-						snap={0.5}
+						snaps={[ 0.25, 0.5, 0.75 ]}
 						onStart={this.onScaleStart} 
 						onMove={this.onScaleMove} 
 						onEnd={this.onScaleEnd} 
@@ -127,19 +126,6 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 		const value = node.find('#dragValue');
 
 		value.text(Math.ceil(v * 100) + '%');
-	};
-
-	onClone (e: any) {
-		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
-
-		C.TemplateClone(rootId, (message: any) => {
-			if (message.id) {
-				UtilObject.openRoute({ id: message.id });
-			};
-
-			analytics.event('CreateTemplate', { objectType: object.targetObjectType });
-		});
 	};
 
 });

@@ -1,8 +1,8 @@
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
+import { I, M, Storage, UtilCommon, UtilObject, Renderer, UtilRouter } from 'Lib';
 import { dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Filter {
 	from: number;
@@ -11,11 +11,13 @@ interface Filter {
 
 interface Graph {
 	icon: boolean;
+	preview: boolean;
 	orphan: boolean;
 	marker: boolean;
 	label: boolean;
 	relation: boolean;
 	link: boolean;
+	files: boolean;
 	local: boolean;
 	filter: string;
 };
@@ -31,6 +33,7 @@ interface SpaceStorage {
 
 class CommonStore {
 
+	public dataPathValue = '';
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl = '';
@@ -41,15 +44,25 @@ class CommonStore {
 	public nativeThemeIsDark = false;
 	public defaultType = '';
 	public pinTimeId = 0;
+	public emailConfirmationTimeId = 0;
 	public isFullScreen = false;
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
-	public techSpaceId = '';
 	public notionToken = '';
 	public autoSidebarValue = null;
 	public isSidebarFixedValue = null;
 	public showRelativeDatesValue = null;
+	public fullscreenObjectValue = null;
+	public navigationMenuValue = null;
+	public linkStyleValue = null;
+	public isOnlineValue = false;
+	public gallery = {
+		categories: [],
+		list: [],
+	};
+	public diffValue: I.Diff[] = [];
+	public refs: Map<string, any> = new Map();
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -59,12 +72,14 @@ class CommonStore {
 		marks: [],
 	};
 
-	public graphObj: Graph = { 
+	private graphObj: Graph = { 
 		icon: true,
+		preview: true,
 		orphan: true,
 		marker: true,
 		label: true,
 		relation: true,
+		files: false,
 		link: true,
 		local: false,
 		filter: '',
@@ -75,6 +90,8 @@ class CommonStore {
 		localUsage: 0,
 		spaces: [],
 	};
+
+	public membershipTiersList: I.MembershipTier[] = [];
 
     constructor() {
         makeObservable(this, {
@@ -91,8 +108,12 @@ class CommonStore {
 			isFullScreen: observable,
 			autoSidebarValue: observable,
 			isSidebarFixedValue: observable,
+			fullscreenObjectValue: observable,
+			navigationMenuValue: observable,
+			linkStyleValue: observable,
+			isOnlineValue: observable,
 			spaceId: observable,
-			techSpaceId: observable,
+			membershipTiersList: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -101,8 +122,9 @@ class CommonStore {
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
+			membershipTiers: computed,
 			space: computed,
-			techSpace: computed,
+			isOnline: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -115,15 +137,23 @@ class CommonStore {
 			themeSet: action,
 			nativeThemeSet: action,
 			spaceSet: action,
-			techSpaceSet: action,
 			spaceStorageSet: action,
+			navigationMenuSet: action,
+			linkStyleSet: action,
+			isOnlineSet: action,
+			membershipTiersListSet: action,
 		});
 
 		intercept(this.configObj as any, change => UtilCommon.intercept(this.configObj, change));
     };
 
     get config(): any {
-		return window.Anytype?.Config || { ...this.configObj, debug: this.configObj.debug || {} };
+		const config = window.AnytypeGlobalConfig || this.configObj || {};
+
+		config.debug = config.debug || {};
+		config.flagsMw = config.flagsMw || {};
+
+		return config;
 	};
 
     get progress(): I.Progress {
@@ -165,12 +195,20 @@ class CommonStore {
 		return (Number(this.pinTimeId) || Storage.get('pinTime') || Constant.default.pinTime) * 1000;
 	};
 
+	get emailConfirmationTime(): number {
+		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
+	};
+
 	get autoSidebar(): boolean {
 		return this.boolGet('autoSidebar');
 	};
 
 	get isSidebarFixed(): boolean {
 		return this.boolGet('isSidebarFixed');
+	};
+
+	get fullscreenObject(): boolean {
+		return this.boolGet('fullscreenObject');
 	};
 
 	get theme(): string {
@@ -183,14 +221,6 @@ class CommonStore {
 
 	get space(): string {
 		return String(this.spaceId || '');
-	};
-
-	get techSpace(): string {
-		return String(this.techSpaceId || '');
-	};
-
-	get graph(): Graph {
-		return Object.assign(this.graphObj, Storage.get('graph') || {});
 	};
 
 	get spaceStorage (): SpaceStorage {
@@ -206,21 +236,51 @@ class CommonStore {
 		return this.boolGet('showRelativeDates');
 	};
 
+	get navigationMenu (): I.NavigationMenuMode {
+		let ret = this.navigationMenuValue;
+		if (ret === null) {
+			ret = Storage.get('navigationMenu');
+		};
+		return Number(ret) || I.NavigationMenuMode.Hover;
+	};
+
+	get linkStyle (): I.LinkCardStyle {
+		let ret = this.linkStyleValue;
+		if (ret === null) {
+			ret = Storage.get('linkStyle');
+		};
+		if (undefined === ret) {
+			ret = I.LinkCardStyle.Card;
+		};
+		return Number(ret) || I.LinkCardStyle.Text;
+	};
+
+	get dataPath (): string {
+		return String(this.dataPathValue || '');
+	};
+
+	get isOnline (): boolean {
+		return Boolean(this.isOnlineValue);
+	};
+
+	get membershipTiers (): I.MembershipTier[] {
+		return this.membershipTiersList || [];
+	};
+
+	get diff (): I.Diff[] {
+		return this.diffValue || [];
+	};
+
     gatewaySet (v: string) {
 		this.gatewayUrl = v;
 	};
 
-    fileUrl (hash: string) {
-		hash = String(hash || '');
-
-		return this.gateway + '/file/' + hash;
+    fileUrl (id: string) {
+		return [ this.gateway, 'file', String(id || '') ].join('/');
 	};
 
-    imageUrl (hash: string, width: number) {
-		hash = String(hash || '');
-		width = Number(width) || 0;
-
-		return `${this.gateway}/image/${hash}?width=${width}`;
+    imageUrl (id: string, width: number) {
+		return [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${Number(width) || 0}`;
 	};
 
     progressSet (v: I.Progress) {
@@ -248,10 +308,8 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
-	graphSet (graph: Partial<Graph>) {
-		this.graphObj = Object.assign(this.graphObj, graph);
-
-		Storage.set('graph', this.graphObj);
+	graphSet (key: string, param: Partial<Graph>) {
+		Storage.set(key, Object.assign(this.getGraph(key), param));
 		$(window).trigger('updateGraphSettings');
 	};
 
@@ -286,10 +344,6 @@ class CommonStore {
 		this.spaceId = String(id || '');
 	};
 
-	techSpaceSet (id: string) {
-		this.techSpaceId = String(id || '');
-	};
-
 	previewClear () {
 		this.previewObj = { type: null, target: null, element: null, range: { from: 0, to: 0 }, marks: [] };
 	};
@@ -310,6 +364,12 @@ class CommonStore {
 		Storage.set('pinTime', this.pinTimeId);
 	};
 
+	emailConfirmationTimeSet (t: number) {
+		this.emailConfirmationTimeId = t;
+
+		Storage.set('emailConfirmationTime', this.emailConfirmationTimeId);
+	};
+
 	autoSidebarSet (v: boolean) {
 		this.boolSet('autoSidebar', v);
 	};
@@ -320,6 +380,10 @@ class CommonStore {
 
 	showRelativeDatesSet (v: boolean) {
 		this.boolSet('showRelativeDates', v);
+	};
+
+	fullscreenObjectSet (v: boolean) {
+		this.boolSet('fullscreenObject', v);
 	};
 
 	fullscreenSet (v: boolean) {
@@ -337,11 +401,21 @@ class CommonStore {
 	};
 
 	redirectSet (v: string) {
+		const param = UtilRouter.getParam(v);
+
+		if ((param.page == 'auth') && (param.action == 'pin-check')) {
+			return;
+		};
+
 		this.redirect = v;
 	};
 
 	notionTokenSet (v: string) {
 		this.notionToken = v;
+	};
+
+	refSet (id: string, ref: any) {
+		this.refs.set(id, ref);
 	};
 
 	boolGet (k: string) {
@@ -379,11 +453,16 @@ class CommonStore {
 		Renderer.send('setBackground', c);
 
 		head.find('#link-prism').remove();
-		if (c == 'dark') {
+		if (c) {
 			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${c}/prism.css" />`);
 		};
 
 		$(window).trigger('updateTheme');
+	};
+
+	getThemePath () {
+		const c = this.getThemeClass();
+		return c ? `theme/${c}/` : '';
 	};
 
 	nativeThemeSet (isDark: boolean) {
@@ -392,6 +471,23 @@ class CommonStore {
 
 	languagesSet (v: string[]) {
 		this.languages = v;
+	};
+
+	navigationMenuSet (v: I.NavigationMenuMode) {
+		v = Number(v);
+		this.navigationMenuValue = v;
+		Storage.set('navigationMenu', v);
+	};
+
+	linkStyleSet (v: I.NavigationMenuMode) {
+		v = Number(v);
+		this.linkStyleValue = v;
+		Storage.set('linkStyle', v);
+	};
+
+	isOnlineSet (v: boolean) {
+		this.isOnlineValue = Boolean(v);
+		console.log('[Online status]:', v);
 	};
 
 	configSet (config: any, force: boolean) {
@@ -416,6 +512,29 @@ class CommonStore {
 
 	spaceStorageSet (value: Partial<SpaceStorage>) {
 		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, value));
+	};
+
+	dataPathSet (v: string) {
+		this.dataPathValue = String(v || '');
+	};
+
+	membershipTiersListSet (list: I.MembershipTier[]) {
+		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
+	};
+
+	diffSet (diff: I.Diff[]) {
+		this.diffValue = diff || [];
+	};
+
+	getGraph (key: string): Graph {
+		const stored = Storage.get(key);
+		const def = UtilCommon.objectCopy(this.graphObj);
+
+		return Object.assign(def, stored);
+	};
+
+	getRef (id: string) {
+		return this.refs.get(id);
 	};
 
 };

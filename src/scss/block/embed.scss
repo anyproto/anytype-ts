@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockEmbed { padding: 6px 0px; }
@@ -8,10 +8,15 @@
 	}
 
 	.block.blockEmbed { 
+		> .wrapContent { border-radius: 8px; }
+		> .wrapContent {
+			.selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
+		}
+
 		.wrap { padding: 2px 0px; display: flex; flex-direction: column; }
-		.wrap.isEditing { padding: 8px; background-color: var(--color-shape-highlight-light); border-radius: 4px; }
+		.wrap.isEditing { padding: 8px; background-color: var(--color-shape-highlight-light); border-radius: 8px; }
 		.wrap.isEditing {
-			.empty { padding-bottom: 18px; }
+			.empty { padding: 0px 0px 16px 0px; }
 			.preview { display: none; }
 			.editableWrap, .icon.source { display: block; }
 			.select { display: inline-block; }
@@ -23,6 +28,8 @@
 			.preview, .icon.source { display: none; }
 			.editableWrap { margin: 0px; }
 		}
+
+		.empty { padding: 6px 8px; }
 
 		.selectWrap { text-align: left; }
 		.selectWrap {
@@ -41,9 +48,8 @@
 		.dimmer { position: absolute; z-index: 1; width: 100%; height: 100%; left: 0px; top: 0px; display: none; }
 		.preview { display: none; position: relative; aspect-ratio: 16/9; background-color: var(--color-shape-highlight-light); border-radius: 4px; }
 		
-		#value { font-size: 20px; line-height: 20px; width: 100%; }
+		#value { font-size: 20px; line-height: 20px; width: 100%; min-height: 20px; }
 		#value:empty { display: none; }
-		#value svg { max-width: 100% !important; }
 
 		.editableWrap { display: none; margin: 8px 0px 0px 0px; width: 100%; text-align: left; }
 		.editableWrap {
@@ -65,13 +71,10 @@
 		}
 
 		iframe { width: 100%; aspect-ratio: 16/9; border: 0px; display: block; }
+	}
 
-		.excalidraw { position: static; }
-		.excalidraw {
-			.scroll-back-to-content { position: absolute; }
-			.ToolIcon__icon { width: 20px; height: 20px; }
-			.Stack_horizontal { white-space: nowrap; @include text-small; }
-		}
+	.block.blockEmbed:not(.isLatex) {
+		#value svg { max-width: 100% !important; background: #fff; }
 	}
 
 	.block.blockEmbed.isGraphviz {
@@ -84,7 +87,7 @@
 	}
 
 	.block.blockEmbed.isReadonly {
-		.icon.resize { display: none; }
+		.icon.resize, .icon.source { display: none; }
 	}
 
 	.block.blockEmbed.align1 { 
@@ -100,6 +103,11 @@
 	}
 
 	.block.blockEmbed.isLatex {
+		> .wrapContent { border-radius: 0px; }
+		> .wrapContent {
+			.selectionTarget.isSelectionSelected::after { border-radius: 0px; }
+		}
+
 		.katex-display { margin: 0px; text-align: inherit; }
 		.katex { line-height: 1.5em; text-align: inherit; }
 		.katex > .katex-html { white-space: normal; }

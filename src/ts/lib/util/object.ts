@@ -1,102 +1,26 @@
-import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilRouter } from 'Lib';
+import { I, C, keyboard, history as historyPopup, Renderer, UtilData, translate, UtilRouter, analytics } from 'Lib';
 import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class UtilObject {
 
-	openHome (type: string, param?: any) {
-		const fn = UtilCommon.toCamelCase(`open-${type}`);
-		
-		let home = this.getSpaceDashboard();
-		if (home && (home.id == I.HomePredefinedId.Last)) {
-			home = Storage.get('lastOpened');
-			if (home && !home.spaceId) {
-				home.spaceId = commonStore.space;
-			};
-		};
-
-		if (!home) {
-			this.openRoute({ layout: I.ObjectLayout.Empty }, param);
-			return;
-		};
-
-		if (this[fn]) {
-			this[fn](home, param);
-		};
-	};
-
-	getSpaceview (id?: string) {
-		return detailStore.get(Constant.subId.space, id || blockStore.spaceview);
-	};
-
-	getSpaceviewBySpaceId (id: string) {
-		const subId = Constant.subId.space;
-		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id)).find(it => it.targetSpaceId == id);
-	};
-
-	getSpaceDashboard () {
-		const space = this.getSpaceview();
-		const id = space.spaceDashboardId;
-
-		if (!id) {
-			return null;
-		};
-
-		let home = null;
-		if (id == I.HomePredefinedId.Graph) {
-			home = this.getGraph();
-		} else
-		if (id == I.HomePredefinedId.Last) {
-			home = this.getLastOpened();
-		} else {
-			home = detailStore.get(Constant.subId.space, id);
-		};
-
-		if (!home || home._empty_ || home.isDeleted) {
-			return null;
-		};
-		return home;
-	};
-
-	getIdentityId () {
-		const { account } = authStore;
-		return account ? `_id_${account.id}` : '';
-	};
-
-	getProfile () {
-		const id = this.getIdentityId();
-		return id ? detailStore.get(Constant.subId.profile, this.getIdentityId()) : null;
-	};
-
-	getGraph () {
-		return { 
-			id: I.HomePredefinedId.Graph, 
-			name: translate('commonGraph'), 
-			iconEmoji: ':earth_americas:',
-			layout: I.ObjectLayout.Graph,
-		};
-	};
-
-	getLastOpened () {
-		return { 
-			id: I.HomePredefinedId.Last,
-			name: translate('spaceLast'),
-		};
-	};
-
 	actionByLayout (v: I.ObjectLayout): string {
 		v = v || I.ObjectLayout.Page;
+
+		if (this.isFileLayout(v)) {
+			return 'media';
+		};
+
+		if (this.isSetLayout(v)) {
+			return 'set';
+		};
 
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
 			case I.ObjectLayout.Date:
-			case I.ObjectLayout.Set:
-			case I.ObjectLayout.Collection:	 r = 'set'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image:		 r = 'media'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
 			case I.ObjectLayout.Store:		 r = 'store'; break;
@@ -113,22 +37,24 @@ class UtilObject {
 			return '';
 		};
 
-		const { layout, identityProfileLink } = object;
-		const { accountSpaceId } = authStore;
-		const action = this.actionByLayout(layout);
+		const id = String(object.id || '');
+		const spaceId = object.spaceId || commonStore.space;
+		const action = this.actionByLayout(object.layout);
 
 		if (!action) {
 			return '';
 		};
 
-		let { id, spaceId } = object;
-
-		if (identityProfileLink) {
-			id = identityProfileLink;
-			spaceId = accountSpaceId;
+		let param = { page: 'main', action, id, spaceId };
+		if (object._routeParam_) {
+			param = Object.assign(param, object._routeParam_);
 		};
 
-		return UtilRouter.build({ page: 'main', action, id, spaceId });
+		return UtilRouter.build(param);
+	};
+
+	universalRoute (object: any): string {
+		return object ? `object?objectId=${object.id}&spaceId=${object.spaceId}` : '';
 	};
 
 	openEvent (e: any, object: any, param?: any) {
@@ -145,7 +71,7 @@ class UtilObject {
 		if ((e.metaKey || e.ctrlKey)) {
 			this.openWindow(object);
 		} else {
-			this.openRoute(object);
+			this.openRoute(object, param);
 		};
 	};
 
@@ -167,13 +93,13 @@ class UtilObject {
 		};
 
 		keyboard.setSource(null);
-		UtilRouter.go('/' + route, param || {});
+		UtilRouter.go(`/${route}`, param || {});
 	};
 
 	openWindow (object: any) {
 		const route = this.route(object);
 		if (route) {
-			Renderer.send('windowOpen', '/' + route);
+			Renderer.send('windowOpen', `/${route}`);
 		};
 	};
 
@@ -189,18 +115,15 @@ class UtilObject {
 		};
 
 		const action = this.actionByLayout(object.layout);
+		const params = {
+			page: 'main',
+			action: action,
+			id: object.id,
+		};
 
 		param = param || {};
 		param.preventResize = true;
-		param.data = Object.assign(param.data || {}, { 
-			matchPopup: { 
-				params: {
-					page: 'main',
-					action: action,
-					id: object.id,
-				},
-			},
-		});
+		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
 			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
@@ -208,10 +131,14 @@ class UtilObject {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		window.setTimeout(() => { popupStore.open('page', param); }, Constant.delay.popup);
+		window.setTimeout(() => popupStore.open('page', param), popupStore.getTimeout());
 	};
 
-	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) {
+	openConfig (object: any) {
+		commonStore.fullscreenObject ? this.openAuto(object) : this.openPopup(object);
+	};
+
+	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {
 		let typeKey = '';
 
 		details = details || {};
@@ -230,31 +157,37 @@ class UtilObject {
 				};
 			};
 		};
+
+		const block = {
+			type: I.BlockType.Link,
+			content: UtilData.defaultLinkSettings(),
+		};
 		
-		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, typeKey, commonStore.space, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-			
-			if (callBack) {
-				callBack(message);
+		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, block, flags, typeKey, commonStore.space, (message: any) => {
+			if (!message.error.code) {
+				if (callBack) {
+					callBack(message);
+				};
+
+				const object = message.details;
+				analytics.createObject(object.type, object.layout, route, message.middleTime);
 			};
 		});
 	};
 	
 	setIcon (rootId: string, emoji: string, image: string, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ 
+		C.ObjectListSetDetails([ rootId ], [ 
 			{ key: 'iconEmoji', value: String(emoji || '') },
 			{ key: 'iconImage', value: String(image || '') },
 		], callBack);
 	};
 	
 	setName (rootId: string, name: string, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ { key: 'name', value: String(name || '') } ], callBack);
+		C.ObjectListSetDetails([ rootId ], [ { key: 'name', value: String(name || '') } ], callBack);
 	};
 
 	setDescription (rootId: string, description: string, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ { key: 'description', value: String(description || '') } ], callBack);
+		C.ObjectListSetDetails([ rootId ], [ { key: 'description', value: String(description || '') } ], callBack);
 	};
 	
 	setCover (rootId: string, type: I.CoverType, id: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
@@ -269,11 +202,11 @@ class UtilObject {
 			{ key: 'coverY', value: y },
 			{ key: 'coverScale', value: scale },
 		];
-		C.ObjectSetDetails(rootId, details, callBack);
+		C.ObjectListSetDetails([ rootId ], details, callBack);
 	};
 
 	setDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ { key: 'done', value: Boolean(done) } ], callBack);
+		C.ObjectListSetDetails([ rootId ], [ { key: 'done', value: Boolean(done) } ], callBack);
 	};
 
 	setLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
@@ -286,24 +219,17 @@ class UtilObject {
 	};
 
 	setDefaultTemplateId (rootId: string, id: string, callBack?: (message: any) => void) {
-		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: id } ], callBack);
-	};
-
-	defaultName (key: string) {
-		return translate(`defaultName${key}`);
+		C.ObjectListSetDetails([ rootId ], [ { key: 'defaultTemplateId', value: id } ], callBack);
 	};
 
 	name (object: any) {
-		const { isDeleted, layout, snippet } = object;
+		const { layout, snippet } = object;
 
 		let name = '';
-		if (!isDeleted && this.isFileLayout(layout)) {
-			name = UtilFile.name(object);
-		} else
 		if (layout == I.ObjectLayout.Note) {
 			name = snippet || translate('commonEmpty');
 		} else {
-			name = object.name || this.defaultName('Page');
+			name = object.name || translate('defaultNamePage');
 		};
 
 		return name;
@@ -370,6 +296,10 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
+	isParticipantLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Participant;
+	};
+
 	getPageLayouts (): I.ObjectLayout[] {
 		return [ 
 			I.ObjectLayout.Page, 
@@ -388,7 +318,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [ I.ObjectLayout.Bookmark ].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
+		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
@@ -412,7 +342,18 @@ class UtilObject {
 			I.ObjectLayout.Image,
 			I.ObjectLayout.Audio,
 			I.ObjectLayout.Video,
+			I.ObjectLayout.Pdf,
 		];
+	};
+
+	getFileTypeByLayout (layout: I.ObjectLayout): I.FileType {
+		switch (layout) {
+			default: return I.FileType.File;
+			case I.ObjectLayout.Image: return I.FileType.Image;
+			case I.ObjectLayout.Audio: return I.FileType.Audio;
+			case I.ObjectLayout.Video: return I.FileType.Video;
+			case I.ObjectLayout.Pdf: return I.FileType.Pdf;
+		};
 	};
 
 	excludeFromSet (): I.ObjectLayout[] {

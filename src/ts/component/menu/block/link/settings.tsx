@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I, C, UtilCommon, UtilData, UtilMenu, keyboard, Relation, translate } from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<I.Menu> {
 	
@@ -28,8 +28,8 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 						<MenuItemVertical 
 							key={i}
 							{...action}
-							onClick={(e: any) => { this.onClick(e, action); }}
-							onMouseEnter={(e: any) => { this.onOver(e, action); }} 
+							onClick={e => this.onClick(e, action)}
+							onMouseEnter={e => this.onOver(e, action)} 
 						/>
 					))}
 				</div>
@@ -60,7 +60,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -130,7 +130,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		menuParam.data = Object.assign(menuParam.data, { options });
 
 		if (!menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.more, () => {
+			menuStore.closeAll(Constant.menuIds.object, () => {
 				menuStore.open(menuId, menuParam);
 			});
 		};
@@ -277,6 +277,11 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { data } = param;
         const { rootId, blockId, blockIds } = data;
         const block = blockStore.getLeaf(rootId, blockId);
+		
+		if (!block) {
+			return;
+		};
+
         const content = UtilCommon.objectCopy(block.content || {});
 
         content[id] = v;

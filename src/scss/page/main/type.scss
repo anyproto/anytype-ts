@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .pageMainType {
 	.wrapper { width: 704px; margin: 0px auto; padding: 52px 0px 80px 0px; user-select: none; }
@@ -75,7 +75,7 @@
 			.title { margin-bottom: 10px; }
 			.content { line-height: 20px; color: var(--color-text-secondary); }
 			.select { border: 0px; padding: 3px 20px 3px 4px; cursor: default; }
-			.select:hover, .select.active { background: var(--color-shape-highlight-light); }
+			.select:hover, .select.isFocused { background: var(--color-shape-highlight-light); }
 
 			.icon { width: 20px; height: 20px; margin-right: 6px; }
 			.name { display: inline-block; vertical-align: middle; }

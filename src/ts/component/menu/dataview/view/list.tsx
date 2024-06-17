@@ -7,7 +7,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { Icon } from 'Component';
 import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject, translate, UtilMenu, Dataview } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -32,7 +32,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	};
 	
 	render () {
-		const { param, getId } = this.props;
+		const { param, getId, setHover } = this.props;
 		const { data } = param;
 		const { loadData, rootId, blockId } = data;
 		const items = this.getItems();
@@ -46,16 +46,16 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			<div 
 				id={'item-' + item.id} 
 				className="item" 
-				onClick={(e: any) => { this.onClick(e, item); }}
-				onMouseEnter={(e: any) => { this.onOver(e, item); }}
+				onClick={e => this.onClick(e, item)}
+				onMouseEnter={e => this.onOver(e, item)}
 				style={item.style}
 			>
 				{allowed ? <Handle /> : ''}
-				<div className="clickable" onClick={(e: any) => { loadData(item.id, 0); }}>
+				<div className="clickable" onClick={() => loadData(item.id, 0)}>
 					<div className="name">{item.name}</div>
 				</div>
 				<div className="buttons">
-					<Icon className="more" onClick={(e: any) => { this.onViewContext(e, item); }} />
+					<Icon className="more" onClick={e => this.onViewContext(e, item)} />
 				</div>
 			</div>
 		));
@@ -145,8 +145,8 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 							id="item-add" 
 							className="item add" 
 							onClick={this.onAdd}
-							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
-							onMouseLeave={() => { this.props.setHover(); }}
+							onMouseEnter={() => setHover({ id: 'add' })} 
+							onMouseLeave={() => setHover()}
 						>
 							<Icon className="plus" />
 							<div className="name">{translate('menuDataviewViewListAddView')}</div>
@@ -189,7 +189,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -202,7 +202,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const items: any[] = UtilCommon.objectCopy(dbStore.getViews(rootId, blockId)).map(it => ({ 
-			...it, name: it.name || UtilObject.defaultName('Page'),
+			...it, name: it.name || translate('defaultNamePage'),
 		}));
 
 		items.unshift({ id: 'label', name: translate('menuDataviewViewListViews'), isSection: true });
@@ -241,12 +241,12 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			const view = dbStore.getView(rootId, blockId, message.viewId);
 
 			close();
-			window.setTimeout(() => onViewSwitch(view), Constant.delay.menu);
+			window.setTimeout(() => onViewSwitch(view), menuStore.getTimeout());
 
 			analytics.event('AddView', {
 				type: view.type,
 				objectType: object.type,
-				embedType: analytics.embedType(isInline)
+				embedType: analytics.embedType(isInline),
 			});
 		});
 	};
@@ -284,6 +284,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const object = getTarget();
 
 		dbStore.metaSet(subId, '', { viewId: item.id });
+		C.BlockDataviewViewSetActive(rootId, blockId, item.id);
 
 		analytics.event('SwitchView', {
 			type: item.type,

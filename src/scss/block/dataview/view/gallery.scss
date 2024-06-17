@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockDataview {
@@ -8,14 +8,13 @@
 
 			.card { 
 				width: 100%; border: 1px solid var(--color-shape-highlight-medium); transition-property: border-color, background; transition-duration: 0.1s; 
-				transition-timing-function: $easeInQuint; border-radius: 12px; display: inline-block; background: var(--color-bg-primary);
-				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); min-height: 72px; position: relative;
+				transition-timing-function: $easeInQuint; border-radius: 8px; display: inline-block; background: var(--color-bg-primary);
+				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); min-height: 72px; position: relative; overflow: hidden;
 			}
 
 			.card.add { box-shadow: 0px 0px; }
 			.card.add::after {
-				content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg');
-				margin: -10px 0px 0px -10px;
+				content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); margin: -10px 0px 0px -10px;
 			}
 
 			.card {
@@ -25,24 +24,18 @@
 				.dropTarget.isOver.top::before { left: -10px; }
 				.dropTarget.isOver.bottom::before { right: -10px; }
 
-				.selectable.isSelectionSelected::after { border-radius: 12px; }
+				.selectionTarget.isSelectionSelected::after { border-radius: 8px; }
 
-				.selectable { height: 100%; }
+				.selectionTarget { height: 100%; }
 				.itemContent > .inner { padding: 16px; }
 
 				.cover { 
 					position: relative; aspect-ratio: 7/3; background-position: top center; display: flex; align-items: center;
-					background-color: var(--color-shape-highlight-medium); width: 100%; justify-content: center; border-radius: 12px 12px 0px 0px; overflow: hidden;
+					background-color: var(--color-shape-highlight-medium); width: 100%; justify-content: center; border-radius: 8px 8px 0px 0px; overflow: hidden;
 				}
 
 				.cover {
 					img { width: 100%; height: 100%; object-fit: cover; }
-
-					.inner { 
-						position: relative; color: var(--color-text-tertiary); transition: $transitionAllCommon; width: 100%; height: 100%; 
-						background-image: url('~img/icon/dataview/gallery-image-preview.svg'); background-repeat: no-repeat;
-						background-position: center center;
-					}
 
 					.mediaVideo { height: 100%; }
 					.mediaVideo {
@@ -95,10 +88,6 @@
 			.cellContent.c-longText {
 				.name { overflow: hidden; @include clamp2; }
 			}
-
-			.cellContent.isName {
-				.input.name { padding: 0; height: unset; }
-			}
 		}
 	}
 
@@ -113,6 +102,14 @@
 			.card { width: auto; }
 
 			.loadMore { padding: 0px 2px 10px;}
+		}
+	}
+
+	.block.blockDataview.isInline.isVertical {
+		.viewContent.viewGallery {
+			.galleryWrap.small { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+			.galleryWrap.medium { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+			.galleryWrap.large { grid-template-columns: repeat(1, minmax(0, 1fr)); }
 		}
 	}
 }

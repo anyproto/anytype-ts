@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
-import { I, C, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate } from 'Lib';
+import { I, C, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate, UtilSpace } from 'Lib';
 import { detailStore, dbStore, commonStore } from 'Store';
-import Errors from 'json/error.json';
+const Errors = require('json/error.json');
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -60,17 +60,33 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		return (
 			<div>
-				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header 
+					{...this.props} 
+					component="mainObject" 
+					ref={ref => this.refHeader = ref} 
+					rootId={rootId} 
+				/>
 
 				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div className="blocks wrapper">
-					<HeadSimple ref={ref => this.refHead = ref} type="Relation" rootId={rootId} onCreate={this.onCreate} />
+					<HeadSimple 
+						{...this.props} 
+						ref={ref => this.refHead = ref} 
+						placeholder={translate('defaultNameRelation')} 
+						rootId={rootId} onCreate={this.onCreate} 
+					/>
 
 					<div className="section set">
-						<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralType'))}</div>
+						<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralObjectType'))}</div>
 						<div className="content">
-							<ListObject subId={subIdType} rootId={rootId} columns={[]} filters={filtersType} />
+							<ListObject 
+								{...this.props}
+								subId={subIdType} 
+								rootId={rootId} 
+								columns={[]} 
+								filters={filtersType} 
+							/>
 						</div>
 					</div>
 
@@ -78,7 +94,14 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						<div className="section set">
 							<div className="title">{totalObject} {UtilCommon.sprintf(translate('pageMainRelationObjectsCreated'), UtilCommon.plural(totalObject, translate('pluralObject')))}</div>
 							<div className="content">
-								<ListObject sources={[ rootId ]} subId={subIdObject} rootId={rootId} columns={columnsObject} filters={filtersObject} />
+								<ListObject 
+									{...this.props} 
+									sources={[ rootId ]} 
+									subId={subIdObject} 
+									rootId={rootId} 
+									columns={columnsObject} 
+									filters={filtersObject} 
+								/>
 							</div>
 						</div>
 					) : ''}
@@ -113,12 +136,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		this.setState({ isLoading: true });
 		
 		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true, isLoading: false });
-				} else {
-					UtilObject.openHome('route');
-				};
+			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -128,14 +146,9 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				return;
 			};
 
+			this.refHeader?.forceUpdate();
+			this.refHead?.forceUpdate();
 			this.setState({ isLoading: false });
-
-			if (this.refHeader) {
-				this.refHeader.forceUpdate();
-			};
-			if (this.refHead) {
-				this.refHead.forceUpdate();
-			};
 		});
 	};
 

@@ -4,37 +4,30 @@ const childProcess = require('child_process');
 const fs = require('fs');
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const { app, dialog, shell } = require('electron');
-
 const Util = require('./util.js');
-const { sign } = require('crypto');
 
 let maxStdErrChunksBuffer = 10;
 
 class Server {
 
 	start (binPath, workingDir) {
+		console.log('[Server] start', binPath, workingDir);
+
+		const logPath = Util.logPath();
+		const env = process.env;
+
 		return new Promise((resolve, reject) => {
 
 			// stop will resolve immediately in case child process is not running
 			this.stop().then(() => {
-				
 				this.isRunning = false;
-				const logsDir = path.join(workingDir, 'logs');
-
-				try { fs.mkdirSync(logsDir); } catch (e) {};
 
 				try {
-					const env = process.env;
-					
 					if (!process.stdout.isTTY) {
-						env['GOLOG_FILE'] = path.join(logsDir, `anytype_${Util.dateForFile()}.log`);
+						env['GOLOG_FILE'] = path.join(logPath, `anytype_${Util.dateForFile()}.log`);
 					};
 					
-					const args = [ '127.0.0.1:0', '127.0.0.1:0' ];
-					this.cp = childProcess.spawn(binPath, args, { 
-						windowsHide: false,
-						env,
-					});
+					this.cp = childProcess.spawn(binPath, [ '127.0.0.1:0', '127.0.0.1:0' ], { windowsHide: false, env });
 				} catch (err) {
 					console.error('[Server] Process start error: ', err.toString());
 					reject(err);
@@ -51,11 +44,14 @@ class Server {
 
 					if (!this.isRunning && str && (str.indexOf(stdoutWebProxyPrefix) >= 0)) {
 						const regex = new RegExp(stdoutWebProxyPrefix + '([^\n^\s]+)');
+
 						this.address = 'http://' + regex.exec(str)[1];
 						this.isRunning = true;
+
 						resolve(true);
 					};
 
+					// Do not delete
 					console.log(str);
 				});
 
@@ -88,15 +84,15 @@ class Server {
 					
 					this.isRunning = false;
 					
-					const crashReport = path.join(logsDir, `crash_${Util.dateForFile()}.log`);
+					const log = path.join(logPath, `crash_${Util.dateForFile()}.log`);
 					try {
-						fs.writeFileSync(crashReport, this.lastErrors.join('\n'), 'utf-8');
+						fs.writeFileSync(log, this.lastErrors.join('\n'), 'utf-8');
 					} catch(e) {
-						console.log('failed to save a file');
+						console.log('[Server] Failed to save log file', log);
 					};
 					
-					dialog.showErrorBox('Anytype helper crashed', 'You will be redirected to the crash log file. You can send it to Anytype developers by creating issue at community.anytype.io');
-					shell.showItemInFolder(crashReport);
+					dialog.showErrorBox('Anytype helper crashed', 'You will be redirected to the crash log file. You can send it to Anytype developers by creating issue at https://community.anytype.io');
+					shell.showItemInFolder(log);
 					
 					app.exit(0);
 				});

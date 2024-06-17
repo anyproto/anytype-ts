@@ -8,7 +8,7 @@ import { Icon, Switch } from 'Component';
 import Cell from 'Component/block/dataview/cell';
 import { I, C, Dataview, keyboard, translate } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -61,7 +61,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 					ref={node => this.node = node}
 					id={'item-' + item.id} 
 					className={cn.join(' ')} 
-					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
+					onMouseEnter={e => this.onMouseEnter(e, item)}
 					style={item.style}
 				>
 					{allowedView ? <Handle /> : ''}
@@ -74,7 +74,6 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 							relationKey={view.groupRelationKey} 
 							viewType={I.ViewType.Board}
 							getRecord={() => head}
-							recordId=""
 							readonly={true} 
 							arrayLimit={4}
 							withName={true}

@@ -6,7 +6,7 @@
 
 		<script type="text/javascript">
 			window.isWebVersion = true;
-			window.serverAddress = 'http://127.0.0.1:64809';
+			window.serverAddress = 'http://127.0.0.1:57527';
 
 			window.Electron = {
 				platform: 'Windows',
@@ -17,11 +17,11 @@
 			};
 		</script>
 
-		<script src="./polyfill.js" type="text/javascript"></script>
+		<script src="./js/polyfill.js" type="text/javascript"></script>
 	</head>
 	<body onload="onload();">
 		<div id="root"></div>
-		<script src="./run.js" type="text/javascript"></script>
+		<script src="./js/run.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			function onload () {
 				RendererEvents.init(null, {

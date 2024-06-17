@@ -96,15 +96,11 @@ class Block implements I.Block {
 	};
 
 	canHaveBackground (): boolean {
-		return !this.isFilePdf() && !this.isDataview();
+		return !this.isFilePdf();
 	};
 
 	canHaveMarks () {
 		return this.isText() && !this.isTextTitle() && !this.isTextDescription() && !this.isTextCode();
-	};
-
-	canHaveHistory (): boolean {
-		return this.isObjectPage() || this.isObjectHuman() || this.isObjectTask() || this.isObjectNote();
 	};
 
 	canTurn (): boolean {
@@ -171,6 +167,10 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Human);
 	};
 
+	isObjectParticipant (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Participant);
+	};
+
 	isObjectTask (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Task);
 	};
@@ -192,7 +192,7 @@ class Block implements I.Block {
 	};
 
 	isObjectFileKind (): boolean { 
-		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo() || this.isObjectAudio());
+		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo() || this.isObjectAudio() || this.isObjectPdf());
 	};
 
 	isObjectFile (): boolean { 
@@ -209,6 +209,10 @@ class Block implements I.Block {
 
 	isObjectAudio (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Audio);
+	};
+
+	isObjectPdf (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Pdf);
 	};
 
 	isObjectType (): boolean { 
@@ -390,6 +394,10 @@ class Block implements I.Block {
 	isEmbedSketchfab (): boolean {
 		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Sketchfab);
 	};
+
+	isEmbedBilibili (): boolean {
+		return this.isEmbed() && (this.content.processor == I.EmbedProcessor.Bilibili);
+	};
 	
 	isText (): boolean {
 		return this.type == I.BlockType.Text;
@@ -455,6 +463,13 @@ class Block implements I.Block {
 		return this.isText() && (this.content.style == I.TextStyle.Callout);
 	};
 
+	getText (): string {
+		if (this.isText() || this.isEmbed()) {
+			return String(this.content.text || '');
+		};
+		return '';
+	};
+
 	getLength (): number {
 		let l = 0;
 		if (this.isText()) {
@@ -471,18 +486,22 @@ class Block implements I.Block {
 		return l;
 	};
 
-	getTargetObjectId () {
+	getTargetObjectId (): string {
+		let ret = '';
+
 		switch (this.type) {
-			case I.BlockType.File: {
-				return this.content.hash;
-			};
 			case I.BlockType.Link: {
-				return this.content.targetBlockId;
+				ret = this.content.targetBlockId;
+				break;
 			};
+
 			default: {
-				return this.content.targetObjectId;
+				ret = this.content.targetObjectId;
+				break;
 			};
 		};
+
+		return String(ret || '');
 	};
 
 };

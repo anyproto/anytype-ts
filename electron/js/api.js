@@ -17,7 +17,6 @@ const KEYTAR_SERVICE = 'Anytype';
 class Api {
 
 	account = null;
-	phrase = '';
 	isPinChecked = false;
 
 	appOnLoad (win) {
@@ -35,12 +34,10 @@ class Api {
 			isChild: win.isChild,
 			route: win.route,
 			account: this.account,
-			phrase: this.phrase,
 			isPinChecked: this.isPinChecked,
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 			css: String(css || ''),
 		});
-
 		win.route = '';
 	};
 
@@ -91,13 +88,11 @@ class Api {
 	};
 
 	setMenuBarVisibility (win, show) {
-		const hide = !show;
-
-		ConfigManager.set({ hideMenuBar: hide }, () => {
+		ConfigManager.set({ hideMenuBar: !show }, () => {
 			Util.send(win, 'config', ConfigManager.config);
 
 			win.setMenuBarVisibility(show);
-			win.setAutoHideMenuBar(hide);
+			win.setAutoHideMenuBar(!show);
 		});
 	};
 
@@ -107,16 +102,12 @@ class Api {
 
 	keytarSet (win, key, value) {
 		if (key && value) {
-			this.phrase = value;
 			keytar.setPassword(KEYTAR_SERVICE, key, value);
 		};
 	};
 
-	keytarGet (win, key) {
-		keytar.getPassword(KEYTAR_SERVICE, key).then(value => { 
-			this.phrase = value;
-			Util.send(win, 'keytarGet', key, value); 
-		});
+	async keytarGet (win, key) {
+		return await keytar.getPassword(KEYTAR_SERVICE, key);
 	};
 
 	keytarDelete (win, key) {
@@ -124,7 +115,7 @@ class Api {
 	};
 
 	updateCheck (win) {
-		if (this.isPinChecked) {
+		if (this.isPinChecked || !this.account) {
 			UpdateManager.checkUpdate(false);
 		};
 	};
@@ -141,8 +132,8 @@ class Api {
 		UpdateManager.cancel();
 	};
 
-	async download (win, url) {
-		await download(win, url, { saveAs: true });
+	async download (win, url, options) {
+		await download(win, url, options);
 	};
 
 	winCommand (win, cmd, param) {
@@ -176,14 +167,14 @@ class Api {
 			return;
 		};
 
-		if (win) {
+		if (win && !win.isDestroyed()) {
 			win.hide();
 		};
 
 		Util.log('info', '[Api].exit, relaunch: ' + relaunch);
 		Util.send(win, 'shutdownStart');
 
-		Server.stop(signal).then(() => { this.shutdown(win, relaunch); });
+		Server.stop(signal).then(() => this.shutdown(win, relaunch));
 	};
 
 	setInterfaceLang (win, lang) {
@@ -207,6 +198,21 @@ class Api {
 		if (is.macos) {
 			app.dock.setBadge(t);
 		};
+	};
+
+	setUserDataPath (win, p) {
+		this.setConfig(win, { userDataPath: p });
+		app.setPath('userData', p);
+		WindowManager.sendToAll('data-path', Util.dataPath());
+	};
+
+	showChallenge (win, param) {
+		WindowManager.createChallenge(param);
+	};
+
+	reload (win, route) {
+		win.route = route;
+		win.webContents.reload();
 	};
 
 };

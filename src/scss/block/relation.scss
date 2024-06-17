@@ -1,8 +1,8 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockRelation { @include text-common; }
-	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 0px; }
+	.block.blockRelation > .wrapContent > .selectionTarget > .dropTarget { padding: 0px; }
 
 	.block.blockRelation {
 		.icon.edit { display: none; }
@@ -11,10 +11,10 @@
 
 		.input { @include text-common; line-height: 22px; vertical-align: top; display: inline-block; height: 22px; padding: 0px; }
 
-		.sides { display: flex; }
+		.sides { display: flex; width: 100%; }
 
 		.info { 
-			padding: 6px 2px 6px 0px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; 
+			padding: 6px 2px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; 
 			display: flex; align-items: flex-start; gap: 0px 6px;
 		}
 		.info.noValue { width: 100%; color: var(--color-text-tertiary); }
@@ -39,9 +39,9 @@
 		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background $transitionCommon; }
 		.cell.canEdit:hover { background: var(--color-shape-highlight-light); }
 		
-		.cell.c-select { padding: 8px; line-height: 18px; }
+		.cell.c-select { padding: 6px 8px; line-height: 18px; }
 		.cell.c-select {
-			.empty { line-height: 24px; }
+			.empty { line-height: 18px; }
 		}
 
 		.cell.c-select, 
@@ -60,8 +60,7 @@
 		}
 
 		.cell.isEditing.c-select {
-			.cellContent, .placeholder  { padding: 6px 8px; }
-			#entry { margin-top: 2px; }
+			.cellContent, .placeholder  { padding: 6px 8px 4px 8px; }
 		}
 		.cell.isEditing.c-select.isSelect {
 			.over { width: calc(100% - 26px); }

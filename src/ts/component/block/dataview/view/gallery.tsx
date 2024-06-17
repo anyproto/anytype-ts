@@ -2,11 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
-import { I, Relation, UtilData, UtilCommon, UtilObject } from 'Lib';
+import { I, Relation, UtilData, UtilCommon, UtilObject, Dataview } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewComponent> {
 
@@ -43,15 +43,15 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
 		const limit = getLimit();
-		const length = records.length;
 		const cn = [ 'viewContent', className ];
 		const cardHeight = this.getCardHeight();
 
-		if (!length) {
+		if (!records.length) {
 			return getEmpty('view');
 		};
 
 		const items = this.getItems();
+		const length = items.length;
 
 		// Subscriptions on dependent objects
 		for (const id of records) {
@@ -81,9 +81,16 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 		const row = (id: string) => {
 			if (id == 'add-record') {
-				return <CardAdd key={'gallery-card-' + view.id + id} />;
+				return <CardAdd key={`gallery-card-${view.id + id}`} />;
 			} else {
-				return <Card key={'gallery-card-' + view.id + id} {...this.props} recordId={id} getCoverObject={this.getCoverObject} />;
+				return (
+					<Card 
+						key={`gallery-card-${view.id + id}`}
+						{...this.props} 
+						getCoverObject={this.getCoverObject}
+						recordId={id}
+					/>
+				);
 			};
 		};
 
@@ -100,7 +107,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 					rowIndex={param.index}
 				>
 					{({ measure }) => (
-						<div key={'gallery-card-' + view.id + param.index} className="row" style={style}>
+						<div key={`gallery-row-${view.id + param.index}`} className="row" style={style}>
 							{item.children.map(id => row(id))}
 						</div>
 					)}
@@ -126,13 +133,13 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 								<List
 									autoHeight={true}
 									ref={ref => this.refList = ref}
-									width={width}
-									height={height}
+									width={Number(width) || 0}
+									height={Number(height) || 0}
 									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
+									rowCount={length}
 									rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}
 									rowRenderer={rowRenderer}
-									overscanRowCount={20}
+									overscanRowCount={length}
 									scrollToAlignment="start"
 								/>
 							)}
@@ -305,7 +312,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	getCoverObject (id: string): any {
-		const { rootId, block, getView, getRecord } = this.props;
+		const { rootId, block, getView, getKeys } = this.props;
 		const view = getView();
 
 		if (!view.coverRelationKey) {
@@ -313,34 +320,9 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		};
 
 		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(id);
-		const value = Relation.getArrayValue(record[view.coverRelationKey]);
-		const fileLayouts = UtilObject.getFileLayouts();
+		const record = detailStore.get(subId, id, getKeys(view.id));
 
-		let object = null;
-		if (view.coverRelationKey == Constant.pageCoverRelationKey) {
-			object = record;
-		} else {
-			for (const id of value) {
-				const file = detailStore.get(subId, id, []);
-				if (file._empty_ || !fileLayouts.includes(file.layout)) {
-					continue;
-				};
-
-				object = file;
-				break;
-			};
-		};
-
-		if (!object || object._empty_) {
-			return null;
-		};
-
-		if (!object.coverId && !object.coverType && !fileLayouts.includes(object.layout)) {
-			return null;
-		};
-
-		return object;
+		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
 	};
 
 });

@@ -59,36 +59,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			buttons = item.forceButtons;
 		};
 
-		const Steps = () => (
-			<div className="steps">
-				{l > 1 ? (
-					<React.Fragment>
-						{[ ...Array(l) ].map((e: number, i: number) => {
-							const cn = [ 'step' ];
-							if (i == current) {
-								cn.push('active');
-							};
-
-							return <div key={i} className={cn.join(' ')} onClick={e => this.onClick(e, i)} />;
-						})}
-					</React.Fragment>
-				) : ''}
-			</div>
-		);
-
-		const Buttons = () => (
-			<div className="buttons">
-				{buttons.map((button, i) => (
-					<Button
-						key={i}
-						text={button.text}
-						color={(i == buttons.length - 1) ? 'black' : 'blank'}
-						className="c28"
-						onClick={e => this.onButton(e, button.action)}
-					/>
-				))}
-			</div>
-		);
+		buttons = buttons.filter(it => it);
 
 		return (
 			<div 
@@ -103,8 +74,32 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 				{item.video ? <video ref={node => this.video = node} src={item.video} onClick={(e: any) => this.onVideoClick(e, item.video)} controls={false} autoPlay={true} loop={true} /> : ''}
 
 				<div className="bottom">
-					<Steps />
-					<Buttons />
+					{l > 1 ? (
+						<div className="steps">
+							{[ ...Array(l) ].map((e: number, i: number) => {
+								const cn = [ 'step' ];
+								if (i == current) {
+									cn.push('active');
+								};
+
+								return <div key={i} className={cn.join(' ')} onClick={e => this.onClick(e, i)} />;
+							})}
+						</div>
+					) : ''}
+					
+					{buttons.length ? (
+						<div className="buttons">
+							{buttons.map((button, i) => (
+								<Button
+									key={i}
+									text={button.text}
+									color={(i == buttons.length - 1) ? 'black' : 'blank'}
+									className="c28"
+									onClick={e => this.onButton(e, button.action)}
+								/>
+							))}
+						</div>
+					) : ''}
 				</div>
 
 				{showConfetti ? <ReactCanvasConfetti refConfetti={ins => this.confetti = ins} className="confettiCanvas" /> : ''}
@@ -191,7 +186,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const hh = UtilCommon.sizeHeader();
 
 		let containerOffset = { top: 0, left: 0 };
-		if (isPopup) {
+
+		if (isPopup && container.length) {
 			containerOffset = container.offset();
 		};
 
@@ -245,7 +241,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 								UtilObject.openAuto({ id: rootId, layout: item.recommendedLayout });
 							});
 
-							analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: 'MenuOnboarding' });
+							analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: analytics.route.menuOnboarding });
 							
 							close();
 						},
@@ -336,8 +332,9 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onImport () {
-		popupStore.open('settings', { data: { page: 'importIndex' } });
-		this.props.close();
+		this.props.close(() => {
+			popupStore.open('settings', { data: { page: 'importIndex' } });
+		});
 	};
 
 	setError (error: { description: string, code: number}) {

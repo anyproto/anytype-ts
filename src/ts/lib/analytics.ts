@@ -1,14 +1,13 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, UtilCommon, Storage } from 'Lib';
+import { I, C, UtilCommon, Storage, UtilSpace, Relation } from 'Lib';
 import { commonStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
-import { OnboardStage } from 'Component/page/auth/animation/constants';
+const Constant = require('json/constant.json');
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
-	'processor',
+	'processor', 'emptyType',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -18,39 +17,65 @@ class Analytics {
 	
 	instance: any = null;
 
+	public route = {
+		navigation: 'Navigation',
+		onboarding: 'Onboarding',
+		collection: 'Collection',
+		set: 'Set',
+		gallery: 'Gallery',
+		settings: 'Settings',
+		featured: 'FeaturedRelations',
+		notification: 'Notification',
+		deleted: 'Deleted',
+		banner: 'Banner',
+		widget: 'Widget',
+		graph: 'Graph',
+		store: 'Library',
+		type: 'Type',
+		bookmark: 'Bookmark',
+		webclipper: 'Webclipper',
+		clipboard: 'Clipboard',
+		shortcut: 'Shortcut',
+		turn: 'TurnInto',
+		powertool: 'Powertool',
+
+		menuOnboarding: 'MenuOnboarding',
+		menuObject: 'MenuObject',
+		menuSystem: 'MenuSystem',
+		menuHelp: 'MenuHelp',
+		menuContext: 'MenuContext',
+
+		migrationOffer: 'MigrationImportBackupOffer',
+		migrationImport: 'MigrationImportBackupOffer',
+
+		settingsSpaceIndex: 'ScreenSettingsSpaceIndex',
+		settingsSpaceShare: 'ScreenSettingsSpaceShare',
+		settingsMembership: 'ScreenSettingsMembership',
+
+		inviteConfirm: 'ScreenInviteConfirm',
+	};
+
 	debug () {
 		const { config } = commonStore;
-		return config.debug.an;
+		return config.debug.analytics;
 	};
 
 	isAllowed (): boolean {
 		const { config } = commonStore;
-		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !window.Electron.isPackaged) || this.debug();
+		return !(config.sudo || [ 'alpha' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
 	};
 	
-	init () {
+	init (options?: any) {
 		if (this.instance) {
 			return;
 		};
 
-		const { config, interfaceLang } = commonStore;
+		const { interfaceLang } = commonStore;
+		const electron = UtilCommon.getElectron();
 		const platform = UtilCommon.getPlatform();
 
-		let version = String(window.Electron.version.app || '').split('-');
-		if (version.length) {
-			version = [ version[0] ];
-		};
-		if (config.sudo || !window.Electron.isPackaged || [ 'alpha' ].includes(config.channel)) {
-			version.push('dev');
-		} else
-		if ([ 'beta' ].includes(config.channel)) {
-			version.push(config.channel);
-		};
-
-		C.MetricsSetParameters(platform, version.join('-'));
-
 		this.instance = amplitude.getInstance();
-		this.instance.init(Constant.amplitude, null, {
+		this.instance.init(Constant.amplitude, null, Object.assign({
 			apiEndpoint: URL,
 			batchEvents: true,
 			saveEvents: true,
@@ -60,18 +85,49 @@ class Analytics {
 			trackingOptions: {
 				ipAddress: false,
 			},
-		});
+		}, options || {}));
 
-		this.instance.setVersionName(window.Electron.version.app);
-		this.instance.setUserProperties({ 
+		const props: any = { 
 			deviceType: 'Desktop',
 			platform,
-			osVersion: window.Electron.version.os,
 			interfaceLang,
-		});
+		};
 
+		if (electron.version) {
+			props.osVersion = electron.version.os;
+			this.instance.setVersionName(electron.version.app);
+		};
+
+		this.instance.setUserProperties(props);
 		this.removeContext();
+		this.setVersion();
+
 		this.log('[Analytics].init');
+	};
+
+	setVersion () {
+		const { config } = commonStore;
+		const platform = UtilCommon.getPlatform();
+		const electron = UtilCommon.getElectron();
+		const { version, isPackaged } = electron;
+
+		if (!version) {
+			return;
+		};
+
+		let ret = String(version.app || '').split('-')
+		if (ret.length) {
+			ret = [ ret[0] ];
+		};
+
+		if (config.sudo || !isPackaged || [ 'alpha' ].includes(config.channel)) {
+			ret.push('dev');
+		} else
+		if ([ 'beta' ].includes(config.channel)) {
+			ret.push(config.channel);
+		};
+
+		C.MetricsSetParameters(platform, ret.join('-'));
 	};
 
 	profile (id: string, networkId: string) {
@@ -99,6 +155,13 @@ class Analytics {
 		Storage.delete(KEY_ORIGINAL_ID);
 	};
 
+	setTier (tier: I.TierType) {
+		const t = I.TierType[tier] || 'Custom';
+
+		this.instance.setUserProperties({ tier: t });
+		this.log(`[Analytics].setTier: ${t}`);
+	};
+
 	event (code: string, data?: any) {
 		data = data || {};
 
@@ -107,8 +170,19 @@ class Analytics {
 		};
 
 		const converted: any = {};
+		const space = UtilSpace.getSpaceview();
+		const participant = UtilSpace.getMyParticipant();
 
 		let param: any = {};
+
+		if (space) {
+			param.spaceType = Number(space.spaceAccessType) || 0;
+			param.spaceType = I.SpaceType[param.spaceType];
+		};
+		if (participant) {
+			param.permissions = Number(participant.permissions) || 0;
+			param.permissions = I.ParticipantPermissions[param.permissions];
+		};
 
 		// Code mappers for common events
 		switch (code) {
@@ -242,8 +316,8 @@ class Analytics {
 			};
 
 			case 'ChangeSortValue': {
-				data.type = Number(data.type) || 0;
-				data.type = I.SortType[data.type];
+				data.type = I.SortType[(Number(data.type) || 0)];
+				data.emptyType = I.EmptyType[(Number(data.emptyType) || 0)];
 				break;
 			};
 
@@ -313,9 +387,10 @@ class Analytics {
 			case 'ChangeWidgetLimit':
 			case 'ReorderWidget':
 			case 'DeleteWidget': {
-				if (data.target) {
-					data.type = Constant.widgetId[data.target.id] ? data.target.name : this.typeMapper(data.target.type);
-					delete data.target;
+				const target = data.params.target;
+
+				if (target) {
+					data.type = Constant.widgetId[target.id] ? target.name : this.typeMapper(target.type);
 				};
 
 				data.layout = I.WidgetLayout[data.layout];
@@ -351,15 +426,28 @@ class Analytics {
 				break;
 			};
 
-			case 'ClickOnboarding':
-			case 'ScreenOnboarding': {
-				data.step = OnboardStage[data.step];
-				break;
-			};
-
 			case 'DeleteSpace': {
 				data.type = Number(data.type) || 0;
 				data.type = I.SpaceType[data.type];
+				break;
+			};
+
+			case 'ApproveInviteRequest':
+			case 'ChangeSpaceMemberPermissions': {
+				data.type = Number(data.type) || 0;
+				data.type = I.ParticipantPermissions[data.type];
+				break;
+			};
+
+			case 'ChangePlan':
+			case 'ScreenMembership': {
+				data.name = I.TierType[data.params.tier];
+				break;
+			};
+
+			case 'ClickMembership': {
+				data.name = data.name || I.TierType[data.params.tier];
+				data.type = data.type || I.PaymentMethod[data.params.method];
 				break;
 			};
 
@@ -397,7 +485,25 @@ class Analytics {
 		this.instance.logEvent(code, param);
 		this.log(`[Analytics].event: ${code}`, param);
 	};
-	
+
+	createObject (objectType: string, layout: I.ObjectLayout, route: string, time: number) {
+		this.event('CreateObject', { objectType, layout, route, middleTime: time });
+	};
+
+	changeRelationValue (relation: any, value: any, type: string) {
+		if (!relation) {
+			return;
+		};
+
+		let key = '';
+		if (relation.relationKey == 'name') {
+			key = 'SetObjectTitle';
+		} else {
+			key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';
+		};
+		this.event(key, { type });
+	};
+
 	pageMapper (params: any): string {
 		const { page, action } = params;
 		const key = [ page, action ].join('/');
@@ -408,7 +514,6 @@ class Analytics {
 			'main/navigation':	 'ScreenNavigation',
 			'main/type':		 'ScreenType',
 			'main/relation':	 'ScreenRelation',
-			'main/space':		 'ScreenSpace',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
 		};
@@ -418,7 +523,9 @@ class Analytics {
 
 	popupMapper (params: any): string {
 		const { id } = params;
-		const map = {};
+		const map = {
+			inviteRequest:		 'ScreenInviteRequest',
+		};
 
 		return map[id] || '';
 	};
@@ -451,7 +558,11 @@ class Analytics {
 	};
 
 	typeMapper (id: string): string {
-		const object = dbStore.getTypeById(id);
+		let object = dbStore.getTypeById(id);
+		if (!object) {
+			object = dbStore.getTypeByKey(id);
+		};
+
 		if (!object) {
 			return '';
 		};

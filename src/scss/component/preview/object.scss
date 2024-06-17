@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .previewObject { width: 344px; height: 216px; border-radius: 8px; overflow: hidden; position: relative; }
 .previewObject {
@@ -141,8 +141,8 @@
 .previewObject.align2 {
 	.heading { text-align: right; }
 }
-.previewObject.isHuman { text-align: center; }
-.previewObject.isHuman {
+.previewObject.isHuman, .previewObject.isParticipant { text-align: center; }
+.previewObject.isHuman, .previewObject.isParticipant {
 	.heading { text-align: center; }
 	.featured { margin: 0 auto; }
 	.blocks {

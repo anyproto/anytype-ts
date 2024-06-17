@@ -5,7 +5,7 @@ import { MenuItemVertical, Loader, ObjectName } from 'Component';
 import { I, keyboard, UtilCommon, UtilData, UtilObject, UtilMenu, Mark, analytics, translate } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -72,8 +72,8 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						object={item.id == 'add' ? undefined : item}
 						icon={item.icon}
 						name={<ObjectName object={item} />}
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }}
+						onMouseEnter={e => this.onOver(e, item)} 
+						onClick={e => this.onClick(e, item)}
 						caption={type ? type.name : undefined}
 						style={param.style}
 						className={cn.join(' ')}
@@ -162,7 +162,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
@@ -185,7 +185,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		if (filter) {
 			sections.push({ 
 				children: [
-					{ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObject'), filter) }
+					{ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObjectWithName'), filter) }
 				]
 			});
 		};
@@ -214,6 +214,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
 		];
 
@@ -283,7 +284,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { from } = commonStore.filter;
 
 		const cb = (id: string, name: string) => {
-			name = String(name || UtilObject.defaultName('Page'));
+			name = String(name || translate('defaultNamePage'));
 			name = UtilCommon.shorten(name, 30);
 
 			const to = from + name.length;
@@ -300,22 +301,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (item.id == 'add') {
-			const type = dbStore.getTypeById(commonStore.type);
 			const name = this.getFilter();
 
-			UtilObject.create('', '', { name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
+			UtilObject.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], 'Mention', (message: any) => {
 				cb(message.targetId, name);
-
-				analytics.event('CreateObject', {
-					route: 'Mention',
-					objectType: type.id,
-					layout: type.layout,
-					template: '',
-				});
 			});
 		} else {
 			cb(item.id, item.name);

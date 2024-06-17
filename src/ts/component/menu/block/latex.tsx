@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { I, keyboard, UtilData, UtilMenu, UtilCommon } from 'Lib';
 import { commonStore, menuStore } from 'Store';
-import Sections from 'json/latex.json';
+const Sections = require('json/latex.json');
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -178,7 +178,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 

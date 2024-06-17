@@ -2,8 +2,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
 import { I, C, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
-import { menuStore, detailStore, commonStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+import { menuStore, detailStore, commonStore } from 'Store';
+const Constant = require('json/constant.json');
 
 interface State {
 	isEditing: boolean;
@@ -30,7 +30,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		this.onBlur = this.onBlur.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
-		this.onFullscreen = this.onFullscreen.bind(this);
 		this.onTitle = this.onTitle.bind(this);
 		this.onTitleOver = this.onTitleOver.bind(this);
 		this.onTitleSelect = this.onTitleSelect.bind(this);
@@ -43,6 +42,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { targetObjectId } = block.content;
 		const object = getTarget();
 		const cn = [ 'dataviewHead' ];
+		const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
 
 		if (className) {
 			cn.push(className);
@@ -69,7 +69,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 					ref={ref => this.ref = ref}
 					id="value"
 					readonly={readonly || !isEditing}
-					placeholder={UtilObject.defaultName(isCollection ? 'Collection' : 'Set')}
+					placeholder={placeholder}
 					onFocus={this.onFocus}
 					onMouseDown={this.onTitle}
 					onBlur={this.onBlur}
@@ -93,7 +93,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		if (this.state.isEditing && this.ref) {
 			window.setTimeout(() => { 
 				const l = this.getValue().length;
-				this.ref.setRange(this.range || { from: l, to: l });
+				this.setRange(this.range || { from: l, to: l });
 			}, 15);
 		};
 	};
@@ -185,8 +185,8 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
-			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, (message: any) => { 
+			addParam.onClick = (details: any) => {
+				C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => onCreate(message, true));
 				});
 			};
@@ -197,8 +197,8 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewSet');
-			addParam.onClick = () => {
-				C.ObjectCreateSet([], {}, '', commonStore.space, (message: any) => {
+			addParam.onClick = (details: any) => {
+				C.ObjectCreateSet([], details, '', commonStore.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
 						$(this.node).find('#head-source-select').trigger('click');
 						onCreate(message, true);
@@ -301,7 +301,11 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const object = getTarget();
 
 		let name = String(object.name || '');
-		if ((name == UtilObject.defaultName('Page')) || (name == UtilObject.defaultName('Set'))) {
+		if ([ 
+			translate('defaultNamePage'), 
+			translate('defaultNameSet'), 
+			translate('defaultNameCollection'),
+		].includes(name)) {
 			name = '';
 		};
 
@@ -337,7 +341,11 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			return;
 		};
 
-		if ((value == UtilObject.defaultName('Page')) || (value == UtilObject.defaultName('Set'))) {
+		if ([ 
+			translate('defaultNamePage'), 
+			translate('defaultNameSet'), 
+			translate('defaultNameCollection'),
+		].includes(value)) {
 			value = '';
 		};
 
@@ -349,28 +357,15 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	};
 
 	onIconSelect (icon: string) {
-		const { block } = this.props;
-		const { targetObjectId } = block.content;
-
-		if (targetObjectId) {
-			UtilObject.setIcon(targetObjectId, icon, '');
-		};
+		UtilObject.setIcon(this.props.block.content.targetObjectId, icon, '');
 	};
 
-	onIconUpload (hash: string) {
-		const { block } = this.props;
-		const { targetObjectId } = block.content;
-
-		if (targetObjectId) {
-			UtilObject.setIcon(targetObjectId, '', hash);
-		};
+	onIconUpload (objectId: string) {
+		UtilObject.setIcon(this.props.block.content.targetObjectId, '', objectId);
 	};
 
-	onFullscreen () {
-		const { rootId, block } = this.props;
-
-		UtilObject.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId: block.id } });
-		analytics.event('InlineSetOpenFullscreen');
+	setRange (range: I.TextRange) {
+		this.ref?.setRange(range);
 	};
 
 	setEditing (v: boolean) {

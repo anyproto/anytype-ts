@@ -1,23 +1,19 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import Prism from 'prismjs';
 import raf from 'raf';
-import mermaid from 'mermaid';
 import { instance as viz } from '@viz-js/viz';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
-import Excalidraw from 'excalidraw';
 import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
-import Theme from 'json/theme.json';
-
-import 'excalidraw/dist/excalidraw.min.css';
+const Constant = require('json/constant.json');
+const Theme = require('json/theme.json');
 
 const katex = require('katex');
 const pako = require('pako');
+const mermaid = require('mermaid').default;
 
 require('katex/dist/contrib/mhchem');
 
@@ -32,6 +28,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	_isMounted = false;
 	text = '';
 	timeoutChange = 0;
+	timeoutScroll = 0;
 	node = null;
 	refEditable = null;
 	refType = null;
@@ -174,12 +171,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this._isMounted = true;
 		this.resize();
 		this.init();
-		this.onScroll();
 	};
 
 	componentDidUpdate () {
 		this.init();
-		this.rebind();
 	};
 	
 	componentWillUnmount () {
@@ -189,6 +184,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		$(`#d${this.getContainerId()}`).remove();
 
 		window.clearTimeout(this.timeoutChange);
+		window.clearTimeout(this.timeoutScroll);
 	};
 
 	init () {
@@ -198,10 +194,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setValue(this.text);
 		this.setContent(this.text);
 		this.rebind();
+		this.onScroll();
 	};
 
 	rebind () {
-		const { block } = this.props;
+		const { block, isPopup } = this.props;
 		const { processor } = block.content;
 		const { isEditing, isShowing } = this.state;
 		const win = $(window);
@@ -232,14 +229,15 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		win.on(`online.${block.id} offline.${block.id}`, () => {
-			if (isShowing && navigator.onLine) {
+			if ((isShowing || UtilEmbed.allowAutoRender(processor)) && navigator.onLine) {
 				node.find('#receiver').remove('');
 				this.setContent(this.text);
 			};
 		});
 
 		if (!UtilEmbed.allowAutoRender(processor)) {
-			win.on(`scroll.${block.id}`, () => this.onScroll());
+			const container = UtilCommon.getScrollContainer(isPopup);
+			container.on(`scroll.${block.id}`, () => this.onScroll());
 		};
 
 		win.on(`resize.${block.id}`, () => this.resize());
@@ -249,27 +247,39 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	unbind () {
-		const { block } = this.props;
-		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'scroll', 'resize' ];
+		const { block, isPopup } = this.props;
+		const container = UtilCommon.getScrollContainer(isPopup);
+		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
+		container.off(`scroll.${block.id}`);
 	};
 
 	onScroll () {
-		if (!this._isMounted) {
+		const { block, isPopup } = this.props;
+		const { processor } = block.content;
+
+		if (UtilEmbed.allowAutoRender(processor)) {
 			return;
 		};
 
-		const node = $(this.node);
-		const win = $(window);
-		const { wh } = UtilCommon.getWindowDimensions();
-		const st = win.scrollTop();
-		const { top } = node.offset();
-		const bot = top + node.height();
+		window.clearTimeout(this.timeoutScroll);
+		this.timeoutScroll = window.setTimeout(() => {
+			if (!this._isMounted) {
+				return;
+			};
 
-		if ((bot > st) && (top < st + wh)) {
-			this.setShowing(true);
-		};
+			const container = UtilCommon.getScrollContainer(isPopup);
+			const node = $(this.node);
+			const ch = container.height();
+			const st = container.scrollTop();
+			const rect = node.get(0).getBoundingClientRect() as DOMRect;
+			const top = rect.top - (isPopup ? container.offset().top : 0);
+
+			if (top <= st + ch) {
+				this.setShowing(true);
+			};
+		}, 50);
 	};
 
 	getContainerId () {
@@ -411,8 +421,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { block } = this.props;
 		const { fields } = block;
 		const data = e.clipboardData || e.originalEvent.clipboardData;
-		const text = data.getData('text/plain');
-		const to = range.end + text.length;
+		const text = String(data.getData('text/plain') || '');
+		const to = range.to + text.length;
 		const value = UtilCommon.stringInsert(this.getValue(), text, range.from, range.to);
 
 		const cb = () => {
@@ -597,7 +607,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const allowIframeResize = UtilEmbed.allowIframeResize(processor);
 
 				let iframe = node.find('#receiver');
-				let text = this.text;
 				let allowScript = false;
 
 				if (UtilEmbed.allowPresentation(processor)) {
@@ -618,7 +627,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 
 					const data: any = { 
-						...UtilEmbed.getEnvironmentContent(processor), 
 						allowIframeResize, 
 						insertBeforeLoad: UtilEmbed.insertBeforeLoad(processor),
 						useRootHeight: UtilEmbed.useRootHeight(processor),
@@ -628,6 +636,18 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						blockId: block.id,
 					};
 
+					// Fix Bilibili schemeless urls and autoplay
+					if (block.isEmbedBilibili()) {
+						if (text.match(/src="\/\/player[^"]+"/)) {
+							text = text.replace(/src="(\/\/player[^"]+)"/, 'src="https:$1"');
+						};
+
+						if (!/autoplay=/.test(text)) {
+							text = text.replace(/(src="[^"]+)"/, `$1&autoplay=0"`);
+						};
+					};
+
+					// If content is Kroki code pack the code into SVG url
 					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
 						const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
@@ -637,22 +657,21 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						this.refType?.setValue(type);
 					};
 
-					if (block.isEmbedTelegram()) {
-						const m = text.match(/post="([^"]+)"/);
-
-						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
-					};
-
-					if (block.isEmbedGithubGist()) {
-						allowScript = !!text.match(/(?:src=")?(https:\/\/gist.github.com(?:[^"]+))"?/);
+					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
+						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
 					};
 
 					if (block.isEmbedSketchfab() && text.match(/<(iframe|script)/)) {
 						text = text.match(/<iframe.*?<\/iframe>/)?.[0] || '';
 					};
 
-					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
-						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
+					if (block.isEmbedGithubGist()) {
+						allowScript = !!text.match(/(?:src=")?(https:\/\/gist.github.com(?:[^"]+))"?/);
+					};
+
+					if (block.isEmbedTelegram()) {
+						const m = text.match(/post="([^"]+)"/);
+						allowScript = !!(m && m.length && text.match(/src="https:\/\/telegram.org([^"]+)"/));
 					};
 
 					if (allowScript) {
@@ -663,7 +682,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					if (UtilEmbed.allowJs(processor)) {
 						data.js = text;
 					} else {
-						data.html = DOMPurify.sanitize(text, sanitizeParam);
+						data.html = this.sanitize(text, allowScript);
 					};
 
 					iw.postMessage(data, '*');
@@ -683,7 +702,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: this.fixAsarPath(`./embed/iframe.html?theme=${commonStore.getThemeClass()}`),
+						src: UtilCommon.fixAsarPath(`./embed/iframe.html?theme=${commonStore.getThemeClass()}`),
 						frameborder: 0,
 						scrolling: 'no',
 						sandbox: sandbox.join(' '),
@@ -699,8 +718,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Latex: {
-				value.html(katex.renderToString(this.text, { 
+				value.html(katex.renderToString(text, { 
 					displayMode: true, 
+					strict: false,
 					throwOnError: false,
 					output: 'html',
 					fleqn: true,
@@ -741,6 +761,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 				}).catch(e => {
 					const error = $(`#d${this.getContainerId()}`).hide();
+
 					if (error.length) {
 						value.html(error.html());
 					};
@@ -749,38 +770,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Excalidraw: {
-				let data = [];
-				try {
-					data = JSON.parse(this.text);
-				} catch (e) { 
-					console.error(e);
-				};
-
-				const w = width * (fields.width || 1);
-				const component = (
-					<Excalidraw 
-						initialData={data} 
-						width={w} 
-						height={w}
-						onChange={(elements) => {
-							window.clearTimeout(this.timeoutChange);
-							this.timeoutChange = window.setTimeout(() => {
-								this.text = JSON.stringify(elements);
-								this.setValue(this.text);
-								this.save();
-							}, 50);
-						}}
-					/>
-				);
-
-				ReactDOM.render(component, node.find('#value').get(0));
 				break;
 			};
 
 			case I.EmbedProcessor.Graphviz: {
 				viz().then(res => {
 					try {
-						value.html(res.renderSVGElement(this.text));
+						value.html(res.renderSVGElement(text));
 					} catch (e) {
 						console.error(e);
 						error.text(e.toString()).show();
@@ -824,7 +820,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
-	getRange () {
+	getRange (): I.TextRange {
 		return UtilCommon.objectCopy(this.refEditable.getRange());
 	};
 
@@ -856,21 +852,19 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		
-		if (selection) {
-			selection.hide();
-		};
+		selection?.hide();
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 
-		$(`#block-${block.id}`).addClass('isResizing');
+		$(`.block.blockEmbed`).addClass('isResizing');
 		win.on(`mousemove.${block.id}`, e => this.onResizeMove(e, checkMax));
 		win.on(`mouseup.${block.id}`, e => this.onResizeEnd(e, checkMax));
 	};
@@ -922,7 +916,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		keyboard.disableSelection(false);
 
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		$(`#block-${block.id}`).removeClass('isResizing');
+		$(`.block.blockEmbed`).removeClass('isResizing');
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { ...fields, width: w } },
@@ -933,7 +927,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { block } = this.props;
 		const { id, fields } = block;
 		const width = Number(fields.width) || 1;
-		const el = $(`#selectable-${id}`);
+		const el = $(`#selectionTarget-${id}`);
 
 		if (!el.length) {
 			return width;
@@ -945,20 +939,20 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		return Math.min(1, Math.max(0, w / rect.width));
 	};
 
-	fixAsarPath (path: string): string {
-		const origin = location.origin;
-		
-		let href = location.href;
-		if (origin == 'file://') {
-			href = href.replace('/app.asar/', '/app.asar.unpacked/');
-			href = href.replace('/index.html', '/');
-			path = href + path.replace(/^\.\//, '');
+	sanitize (text: string, allowScript: boolean): string {
+		const param: any = { 
+			ADD_TAGS: [ 'iframe' ],
+			ADD_ATTR: [
+				'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy',
+			],
 		};
-		return path;
-	};
 
-	onResizeInit () {
-		console.log('onResizeInit');
+		if (allowScript) {
+			param.FORCE_BODY = true;
+			param.ADD_TAGS.push('script');
+		};
+
+		return DOMPurify.sanitize(text, param);
 	};
 
 	resize () {
@@ -969,10 +963,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			const node = $(this.node);
 			const value = node.find('#value');
 
-			console.log(value.width());
-
 			this.setState({ width: value.width() });
 		};
+
+		this.onScroll();
 	};
 
 });

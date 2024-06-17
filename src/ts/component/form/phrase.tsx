@@ -2,19 +2,22 @@ import * as React from 'react';
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
-import { keyboard, translate, Storage } from 'Lib';
+import { keyboard, Storage } from 'Lib';
 import { popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	value: string;
+	className?: string;
 	readonly?: boolean;
 	isHidden?: boolean;
 	checkPin?: boolean;
+	placeholder?: string;
 	onKeyDown?: (e: React.KeyboardEvent) => void;
 	onChange?: (phrase: string) => void;
 	onToggle?: (isHidden: boolean) => void;
 	onCopy?: () => void;
+	onClick?: (e: any) => void;
 };
 
 interface State {
@@ -37,6 +40,7 @@ class Phrase extends React.Component<Props, State> {
 
 	public static defaultProps: Props = {
 		value: '',
+		className: '',
 	};
 
 	state: State = {
@@ -46,8 +50,8 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	node = null;
-	placeholder = null;
-	entry = null;
+	refEntry = null;
+	refPlaceholder = null;
 	range = null;
 
 	constructor (props: Props) {
@@ -64,9 +68,9 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { readonly, onCopy } = this.props;
+		const { readonly, className, onCopy, placeholder } = this.props;
 		const { isHidden, hasError, phrase } = this.state;
-		const cn = [ 'phraseWrapper' ];
+		const cn = [ 'phraseWrapper', className ];
 
 		if (isHidden) {
 			cn.push('isHidden');
@@ -87,6 +91,19 @@ class Phrase extends React.Component<Props, State> {
 			return <span className={[ 'word', cn ].join(' ')} key={index}>{word}</span>;
 		};
 
+		let placeholderEl = null;
+		if (placeholder) {
+			placeholderEl = (
+				<div 
+					ref={ref => this.refPlaceholder = ref} 
+					id="placeholder"
+					className="placeholder"
+				>
+					{placeholder}
+				</div>
+			);
+		};
+
 		return (
 			<div 
 				ref={ref => this.node = ref}
@@ -97,7 +114,8 @@ class Phrase extends React.Component<Props, State> {
 					{!phrase.length ? <span className="word" /> : ''}
 					{phrase.map(renderWord)}
 					<span 
-						id="entry" 
+						ref={ref => this.refEntry = ref}
+						id="entry"
 						contentEditable={true}
 						suppressContentEditableWarning={true} 
 						onKeyDown={this.onKeyDown}
@@ -111,7 +129,7 @@ class Phrase extends React.Component<Props, State> {
 					</span>
 				</div>
 
-				<div id="placeholder" className="placeholder">{translate('phrasePlaceholder')}</div>
+				{placeholderEl}
 				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.onToggle} />
 				<Icon className="copy" onClick={onCopy} />
 			</div>
@@ -121,39 +139,36 @@ class Phrase extends React.Component<Props, State> {
 	componentDidMount () {
 		const { value, isHidden } = this.props;
 
-		const text = this.normalizeWhiteSpace(value);
-		const phrase = text.length ? text.split(' '): [];
-
-		this.init();
-		this.setState({ isHidden, phrase });
+		this.setState({ isHidden });
+		this.setValue(value);
 		this.focus();
 	};
 
 	componentDidUpdate () {
-		this.init();
 		this.placeholderCheck();
 	};
 
-	init () {
-		const node = $(this.node);
-
-		this.placeholder = node.find('#placeholder');
-		this.entry = node.find('#entry');
-	};
-
-	onClick () {
+	onClick (e: any) {
 		this.focus();
+
+		if (this.props.onClick) {
+			this.props.onClick(e);
+		};
 	};
 
 	onKeyDown (e: React.KeyboardEvent) {
 		const { onKeyDown } = this.props;
+		const entry = $(this.refEntry);
 
-		keyboard.shortcut('space, enter', e, () => e.preventDefault());
+		keyboard.shortcut('space, enter', e, () => {
+			e.preventDefault();
+			this.updateValue();
+		});
 
 		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
 
-			const range = getRange(this.entry.get(0));
+			const range = getRange(entry.get(0));
 			if (range.start || range.end) {
 				return;
 			};
@@ -174,11 +189,6 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: React.KeyboardEvent) {
-		keyboard.shortcut('space, enter', e, () => {
-			e.preventDefault();
-			this.updateValue();
-		});
-
 		this.placeholderCheck();
 	};
 
@@ -190,7 +200,9 @@ class Phrase extends React.Component<Props, State> {
 		};
 
 		this.clear();
-		this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat([ value ])) }));
+
+		this.state.phrase = this.checkValue(this.state.phrase.concat([ value ]));
+		this.setState({ phrase: this.state.phrase });
 	};
 
 	onPaste (e) {
@@ -223,7 +235,7 @@ class Phrase extends React.Component<Props, State> {
 	onToggle () {
 		const { checkPin, onToggle } = this.props;
 		const { isHidden } = this.state;
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const onSuccess = () => {
 			this.setState({ isHidden: !isHidden });
 
@@ -248,20 +260,29 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	focus () {
-		this.entry.trigger('focus');
-		setRange(this.entry.get(0), this.range || { start: 0, end: 0 });
+		const entry = $(this.refEntry);
+
+		entry.trigger('focus');
+		setRange(entry.get(0), this.range || { start: 0, end: 0 });
 	};
 
 	clear () {
-		this.entry.text('');
+		$(this.refEntry).text('');
 	};
 
 	getEntryValue () {
-		return this.normalizeWhiteSpace(this.entry.text()).toLowerCase();
+		return this.normalizeWhiteSpace($(this.refEntry).text()).toLowerCase();
 	};
 
 	normalizeWhiteSpace = (val: string) => {
 		return String(val || '').replace(/\s\s+/g, ' ').trim() || '';
+	};
+
+	setValue (value: string) {
+		const text = this.normalizeWhiteSpace(value);
+		const phrase = text.length ? text.split(' '): [];
+
+		this.setState({ phrase });
 	};
 
 	getValue () {
@@ -273,11 +294,11 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	placeholderHide () {
-		this.placeholder.hide();
+		$(this.refPlaceholder).hide();
 	};
 
 	placeholderShow () {
-		this.placeholder.show();
+		$(this.refPlaceholder).show();
 	};
 
 };

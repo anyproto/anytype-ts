@@ -2,16 +2,14 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilObject, translate, UtilRouter } from 'Lib';
-import { Sidebar, Label, Frame } from 'Component';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
+import { Label, Frame } from 'Component';
 import { authStore, commonStore, menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
 import PageAuthPinCheck from './auth/pinCheck';
 import PageAuthSetup from './auth/setup';
-import PageAuthAccountSelect from './auth/accountSelect';
 import PageAuthOnboard from './auth/onboard';
 import PageAuthDeleted from './auth/deleted';
 
@@ -28,8 +26,10 @@ import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
-import PageMainBlock from './main/block';
 import PageMainImport from './main/import';
+import PageMainInvite from './main/invite';
+import PageMainMembership from './main/membership';
+import PageMainObject from './main/object';
 
 const Components = {
 	'index/index':			 PageAuthSelect,
@@ -38,7 +38,6 @@ const Components = {
 	'auth/login':			 PageAuthLogin,
 	'auth/pin-check':		 PageAuthPinCheck,
 	'auth/setup':			 PageAuthSetup,
-	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/onboard':			 PageAuthOnboard,
 	'auth/deleted':			 PageAuthDeleted,
 
@@ -55,8 +54,10 @@ const Components = {
 	'main/navigation':		 PageMainNavigation,
 	'main/create':			 PageMainCreate,
 	'main/archive':			 PageMainArchive,
-	'main/block':			 PageMainBlock,
 	'main/import':			 PageMainImport,
+	'main/invite':			 PageMainInvite,
+	'main/membership':		 PageMainMembership,
+	'main/object':			 PageMainObject,
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {
@@ -71,11 +72,16 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = authStore;
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
-		const showSidebar = this.isMain();
+		const isMain = this.isMain();
+		const showSidebar = isMain;
 
 		if (account) {
 			const { status } = account || {};
 			const { type } = status || {};
+		};
+
+		if (isMain && !account) {
+			return null;
 		};
 
 		const Component = Components[path];
@@ -88,7 +94,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		const wrap = (
-			<div id="page" className={'page ' + this.getClass('page')}>
+			<div id="page" className={`page ${this.getClass('page')}`}>
 				<Component ref={ref => this.refChild = ref} {...this.props} />
 			</div>
 		);
@@ -99,7 +105,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		} else {
 			content = (
 				<div className="pageFlex">
-					<Sidebar key="sidebar" {...this.props} />
 					<div id="sidebarDummyLeft" className="sidebarDummy left" />
 					{wrap}
 					<div id="sidebarDummyRight" className="sidebarDummy right" />
@@ -135,7 +140,26 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
-		return (isPopup ? matchPopup : match) || { params: {} };
+		const { history } = this.props;
+		const data = UtilCommon.searchParam(history?.location?.search);
+		const pathname = String(history?.location?.pathname || '');
+		const ret = (isPopup ? matchPopup : match) || { params: {} };
+
+		// Universal object route
+		if (pathname.match('/object')) {
+			ret.params.page = 'main';
+			ret.params.action = 'object';
+			ret.params.id = data.objectId;
+			ret.params.spaceId = data.spaceId;
+		};
+
+		// Invite route
+		if (pathname.match('/invite')) {
+			ret.params.page = 'main';
+			ret.params.action = 'invite';
+		};
+
+		return ret;
 	};
 
 	getMatchParams () {
@@ -150,7 +174,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getRootId () {
 		const { id } = this.getMatchParams();
-		const home = UtilObject.getSpaceDashboard();
+		const home = UtilSpace.getDashboard();
 
 		return id || home?.id;
 	};
@@ -164,7 +188,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
 		const isPinCheck = this.isAuthPinCheck();
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const win = $(window);
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
@@ -172,6 +196,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
+		keyboard.setWindowTitle();
 
 		if (!Component) {
 			return;
@@ -203,47 +228,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
-		this.dashboardOnboardingCheck();
 		Onboarding.start(UtilCommon.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
-		
-		if (!isPopup) {
-			window.setTimeout(() => {
-				if (!isMain) {
-					return;
-				};
-
-				Survey.check(I.SurveyType.Register);
-				Survey.check(I.SurveyType.Object);
-				//Survey.check(I.SurveyType.Pmf);
-			}, Constant.delay.popup);
-		};
-	};
-
-	dashboardOnboardingCheck () {
-		const home = UtilObject.getSpaceDashboard();
-		const { id } = this.getMatchParams();
-		const isPopup = keyboard.isPopup();
-
-		if (!home || !id || (home.id != id) || isPopup) {
-			return;
-		};
-
-		if ([ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(home.id)) {
-			return;
-		};
-
-		if (!Onboarding.isCompleted('dashboard')) {
-			Onboarding.start('dashboard', false, false);
-		} else 
-		if (!$('#navigationPanel').hasClass('hide')) {
-			if (!Onboarding.isCompleted('space')) {
-				Onboarding.start('space', false, false);
-			} else
-			if (!Onboarding.isCompleted('quickCapture')) {
-				Onboarding.start('quickCapture', false, false);
-			};
-		};
 	};
 
 	unbind () {

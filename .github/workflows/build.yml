@@ -2,8 +2,11 @@ name: Release
 
 on:
   push:
-    tags:        
+    tags:
       - v*
+
+permissions:
+  contents: 'write'
 
 jobs:
   release:
@@ -11,14 +14,28 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.16.x ]
-        os: [ macos-latest, ubuntu-latest, windows-latest ] 
+        os:
+          - macos-12
+          - ubuntu-latest
+          - windows-latest
 
     steps:
       - name: Setup
-        run: | 
+        run: |
           git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
           git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@api.github.com/".insteadOf "https://api.github.com/"
+
+      - name: Install Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.22
+
+      - name: Setup GO
+        run: |
+          go version
+          echo GOPATH=$(go env GOPATH) >> $GITHUB_ENV
+          echo GOBIN=$(go env GOPATH)/bin >> $GITHUB_ENV
+          echo $(go env GOPATH)/bin >> $GITHUB_PATH
 
       - name: Install AzureSignTool
         if: matrix.os == 'windows-latest'
@@ -34,7 +51,7 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: 18.18.2
+          node-version: 20.9.0
 
       - name: Install Webpack
         run: npm install --save-dev webpack-cli --legacy-peer-deps
@@ -49,18 +66,30 @@ jobs:
 
       - name: Update Addon Windows
         if: matrix.os == 'windows-latest'
-        shell: bash  
+        shell: bash
         run: ./update-ci.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}}
 
       - name: Update Addon
         if: matrix.os != 'windows-latest'
-        shell: bash  
+        shell: bash
         run: |
           ./update-ci.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
           ./update-ci.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} amd
 
+      - name: Build Native Messaging Host Windows
+        if: matrix.os == 'windows-latest'
+        run: npm run build:nmh-win
+        env:
+          CGO_ENABLED: 0
+
+      - name: Build Native Messaging Host
+        if: matrix.os != 'windows-latest'
+        run: npm run build:nmh
+        env:
+          CGO_ENABLED: 0
+
       - name: Build Front Mac OS
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-12'
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}
@@ -79,7 +108,7 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
 
       - name: Build Front Other
-        if: matrix.os != 'macos-latest'
+        if: matrix.os != 'macos-12'
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{secrets.TOKEN}}
@@ -97,7 +126,7 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
 
       - name: Make artifacts dir
-        run: | 
+        run: |
           mkdir -p artifacts
 
       - name: Cleanup artifacts
@@ -109,6 +138,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           rm dist/anytypeHelper.exe
+          rm dist/nativeMessagingHost.exe
           mv dist/*.exe artifacts
 
       - name: Release

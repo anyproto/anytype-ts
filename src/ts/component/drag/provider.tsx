@@ -4,12 +4,12 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject, UtilMenu, analytics } from 'Lib';
-import { blockStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject } from 'Lib';
+import { blockStore, commonStore } from 'Store';
+
+const Constant = require('json/constant.json');
 
 interface Props {
-	dataset?: I.Dataset;
 	children?: React.ReactNode;
 };
 
@@ -19,7 +19,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	node: any = null;
 	refLayer: any = null;
-	commonDropPrevented = false;
 	position: I.BlockPosition = I.BlockPosition.None;
 	hoverData: any = null;
 	canDrop = false;
@@ -40,11 +39,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		this.onDragEnd = this.onDragEnd.bind(this);
 		this.onDropCommon = this.onDropCommon.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.preventCommonDrop = this.preventCommonDrop.bind(this);
 	};
 
 	render () {
-		const children = this.injectProps(this.props.children);
+		const { children } = this.props;
 
 		return (
 			<div
@@ -66,8 +64,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		const isPopup = keyboard.isPopup();
-		const container = $(isPopup ? '#popupPage-innerWrap' : '.pageFlex');
+		const container = $(isPopup ? '#popupPage-innerWrap' : '#root');
 
+		this.clearState();
 		this.init = true;
 		this.objects = container.find('.dropTarget.isDroppable');
 
@@ -84,11 +83,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			};
 			const offset = item.offset();
 			const rect = el.getBoundingClientRect() as DOMRect;
-
-			const isTargetTop = item.hasClass('targetTop');
-			const isTargetBot = item.hasClass('targetBot');
-			const isTargetCol = item.hasClass('targetCol');
-			const isEmptyToggle = item.hasClass('emptyToggle');
 			const x = offset.left;
 			const width = rect.width;
 
@@ -115,10 +109,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				y,
 				width,
 				height,
-				isTargetTop,
-				isTargetBot,
-				isTargetCol,
-				isEmptyToggle,
+				isTargetTop: item.hasClass('targetTop'),
+				isTargetBot: item.hasClass('targetBot'),
+				isTargetCol: item.hasClass('targetCol'),
+				isEmptyToggle: item.hasClass('emptyToggle'),
 			});
 		});
 	};
@@ -126,7 +120,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	onDropCommon (e: any) {
 		e.preventDefault();
 
-		if (this.commonDropPrevented) {
+		if (keyboard.isCommonDropDisabled) {
 			this.clearState();
 			return;
 		};
@@ -141,7 +135,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const dataTransfer = e.dataTransfer;
 		const items = UtilCommon.getDataTransferItems(dataTransfer.items);
 		const isFileDrop = dataTransfer.files && dataTransfer.files.length;
-		const last = blockStore.getFirstBlock(rootId, -1, it => it.canCreateBlock());
+		const last = blockStore.getFirstBlock(rootId, -1, it => it && it.canCreateBlock());
 
 		let position = this.position;
 		let data: any = null;
@@ -170,7 +164,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		// String items drop
 		if (items && items.length) {
 			UtilCommon.getDataTransferString(items, (html: string) => {
-				C.BlockPaste(rootId, targetId, { from: 0, to: 0 }, [], false, { html });
+				C.BlockPaste(rootId, targetId, { from: 0, to: 0 }, [], false, { html }, '');
 			});
 
 			this.clearState();
@@ -199,10 +193,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	};
 
 	onDragStart (e: any, dropType: I.DropType, ids: string[], component: any) {
-		const { dataset } = this.props;
 		const rootId = keyboard.getRootId();
 		const isPopup = keyboard.isPopup();
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		const container = UtilCommon.getScrollContainer(isPopup);
@@ -235,8 +228,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		keyboard.disableSelection(true);
 		Preview.hideAll();
 
-		win.on('drag.drag', (e: any) => { this.onDrag(e); });
-		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
+		win.on('drag.drag', e => this.onDrag(e));
+		win.on('dragend.drag', e => this.onDragEnd(e));
 
 		container.off('scroll.drag').on('scroll.drag', throttle(() => this.onScroll(), 20));
 		sidebar.off('scroll.drag').on('scroll.drag', throttle(() => this.onScroll(), 20));
@@ -244,16 +237,14 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		$('.colResize.active').removeClass('active');
 		scrollOnMove.onMouseDown(e, isPopup);
 
-		if (selection) {
-			if (dropType == I.DropType.Block) {
-				selection.set(I.SelectType.Block, ids);
-			};
-			selection.hide();
+		if (dropType == I.DropType.Block) {
+			selection?.set(I.SelectType.Block, ids);
 		};
+		selection?.hide();
 	};
 
 	onDragOver (e: any) {
-		if (this.commonDropPrevented) {
+		if (keyboard.isCommonDropDisabled) {
 			return;
 		};
 
@@ -294,8 +285,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	};
 
 	onDrop (e: any, targetType: string, targetId: string, position: I.BlockPosition) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
+		const selection = commonStore.getRef('selectionProvider');
 
 		let data: any = {};
 		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) { /**/ };
@@ -318,9 +308,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 					blockStore.toggle(contextId, targetId, true);
 				};
 
-				if (selection) {
-					selection.renderSelection();
-				};
+				selection?.renderSelection();
+				raf(() => $('.resizable').trigger('resizeInit'));
 			};
 
 			if (withAlt) {
@@ -375,8 +364,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 							return;
 						};
 					} else {
-						const element = blockStore.getMapElement(targetContextId, targetId);
-						const parent = blockStore.getLeaf(targetContextId, element.parentId);
+						const parent = blockStore.getParentLeaf(targetContextId, targetId);
 
 						if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 							targetId = parent.id;
@@ -766,33 +754,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			case I.BlockPosition.InnerFirst: c = 'middle'; break;
 		};
 		return c;
-	};
-
-	injectProps (children: any) {
-		return React.Children.map(children, (child: any) => {
-			if (!child) {
-				return null;
-			};
-
-			const props = child.props || {};
-			const children = props.children;
-			const dataset = props.dataset || {};
-
-			if (children) {
-				child = React.cloneElement(child, { children: this.injectProps(children) });
-			};
-
-			dataset.dragProvider = this;
-			dataset.onDragStart = this.onDragStart;
-			dataset.onDrop = this.onDrop;
-			dataset.preventCommonDrop = this.preventCommonDrop;
-
-			return React.cloneElement(child, { dataset: dataset });
-		});
-	};
-
-	preventCommonDrop (v: boolean) {
-		this.commonDropPrevented = Boolean(v);
 	};
 
 	clearStyle () {

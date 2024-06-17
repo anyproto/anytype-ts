@@ -16,7 +16,7 @@ class PopupSettingsHead extends React.Component<Props> {
 		return (
 			<div className="head">
 				<div className="inner">
-					<div className="element" onClick={() => { onPage(returnTo || prevPage); }}>
+					<div className="element" onClick={() => onPage(returnTo || prevPage)}>
 						<Icon className="back" />
 						{name}
 					</div>

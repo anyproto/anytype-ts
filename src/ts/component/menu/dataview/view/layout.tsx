@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon } from 'Lib';
 import { Label, Icon, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.Menu> {
 	
@@ -22,9 +22,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	};
 
 	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { readonly } = data;
+		const isReadonly = this.isReadonly();
 		const { type } = this.param;
 		const sections = this.getSections();
 		const layouts = UtilMenu.getViews().map((it: any) => {
@@ -33,19 +31,30 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			return it;
 		});
 
-		const Layout = (item: any) => (
-			<div 
-				className={[ 'layout', type == item.id ? 'active' : '' ].join(' ')}
-				onClick={(e: any) => { this.onClick(e, item); }}
-				onMouseEnter={this.menuClose}
-			>
-				<Icon className={item.icon} />
-				<Label text={item.name} />
-			</div>
-		);
+		const Layout = (item: any) => {
+			const cn = [ 'layout' ];
+
+			if (type == item.id) {
+				cn.push('active');
+			};
+			if (isReadonly) {
+				cn.push('isReadonly');
+			};
+
+			return (
+				<div 
+					className={cn.join(' ')}
+					onClick={e => this.onClick(e, item)}
+					onMouseEnter={this.menuClose}
+				>
+					<Icon className={item.icon} />
+					<Label text={item.name} />
+				</div>
+			);
+		};
 
 		const Section = (item: any) => (
-			<div id={'section-' + item.id} className="section">
+			<div id={`section-${item.id}`} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
 					{item.children.map((action: any, i: number) => (
@@ -53,11 +62,10 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 							key={i} 
 							{...action} 
 							icon={action.icon}
-							readonly={readonly}
+							readonly={isReadonly}
 							checkbox={(type == action.id) && (item.id == 'type')}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
-							onMouseLeave={(e: any) => { this.onMouseLeave(e, action); }}
-							onClick={(e: any) => { this.onClick(e, action); }} 
+							onMouseEnter={e => this.onMouseEnter(e, action)}
+							onClick={e => this.onClick(e, action)} 
 						/>
 					))}
 				</div>
@@ -91,6 +99,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 	componentDidUpdate () {
 		this.resize();
+		this.rebind();
 		this.props.setActive();
 	};
 
@@ -106,6 +115,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 	rebind () {
 		this.unbind();
+
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
@@ -115,7 +125,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	};
 	
 	onKeyDown (e: any) {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const view = data.view.get();
 		const item = this.getItems()[this.n];
@@ -141,11 +151,11 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	save (withName?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, readonly } = data;
+		const { rootId, blockId, onSave } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const view = data.view.get();
 
-		if (readonly || !block || !view) {
+		if (!block || !view || this.isReadonly()) {
 			return;
 		};
 	
@@ -173,7 +183,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			view.name = this.param.name;
 		};
 
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, this.param, () => {
+		Dataview.viewUpdate(rootId, blockId, view.id, this.param, () => {
 			if (clearGroups) {
 				Dataview.groupUpdate(rootId, blockId, view.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: [] }, onSave);
@@ -194,6 +204,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const isGallery = type == I.ViewType.Gallery;
 		const isBoard = type == I.ViewType.Board;
 		const isCalendar = type == I.ViewType.Calendar;
+		const isGraph = type == I.ViewType.Graph;
 
 		let settings: any[] = [];
 
@@ -233,10 +244,14 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			});
 		};
 
-		settings.push({
-			id: 'hideIcon', name: translate('menuDataviewViewEditShowIcon'), withSwitch: true, switchValue: !hideIcon,
-			onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
-		});
+		if (!isGraph) {
+			settings.push({
+				id: 'hideIcon', name: translate('menuDataviewViewEditShowIcon'), withSwitch: true, switchValue: !hideIcon,
+				onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
+			});
+		} else {
+			settings.push({ id: 'graphSettings', name: translate('commonSettings'), arrow: true });
+		};
 
 		if (isInline || isBoard) {
 			const options = Relation.getPageLimitOptions(type);
@@ -273,31 +288,29 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		};
 	};
 
-	onMouseLeave (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setHover(null, false);
-		};
-	};
-	
 	onOver (e: any, item: any) {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const isReadonly = this.isReadonly();
 		const { type, groupRelationKey } = this.param;
 		const view = data.view.get();
 
-		if (!item.arrow || !allowedView) {
+		if (!item.arrow || isReadonly) {
 			menuStore.closeAll(Constant.menuIds.viewEdit);
 			return;
 		};
 
+		const element = `#${getId()} #item-${item.id}`;
+
 		const menuParam: I.MenuParam = { 
 			menuKey: item.id,
-			element: `#${getId()} #item-${item.id}`,
+			element,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
+			onOpen: () => $(element).addClass('active'),
+			onClose: () => $(element).removeClass('active'),
 			data: {
 				rebind: this.rebind,
 				value: this.param[item.id],
@@ -343,6 +356,14 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 				});
 				break;
 			};
+
+			case 'graphSettings': {
+				menuId = 'graphSettings';
+				menuParam.data = Object.assign(menuParam.data, {
+					storageKey: Constant.graphId.dataview,
+				});
+				break;
+			};
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
@@ -360,10 +381,10 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onSelect, readonly, isInline, getTarget } = data;
+		const { onSelect, isInline, getTarget } = data;
 		const object = getTarget();
 
-		if (readonly || item.arrow) {
+		if (this.isReadonly() || item.arrow) {
 			return;
 		};
 
@@ -383,7 +404,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			analytics.event('ChangeViewType', {
 				type: item.id,
 				objectType: object.type,
-				embedType: analytics.embedType(isInline)
+				embedType: analytics.embedType(isInline),
 			});
 		}
 
@@ -406,6 +427,15 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 
 		obj.css({ height: 'auto' });
 		position();
+	};
+
+	isReadonly () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, readonly } = data;
+		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+
+		return readonly || !allowedView;
 	};
 	
 });

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Frame, Title, Label, Error, Button, Header, Footer, Icon, Loader } from 'Component';
-import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter } from 'Lib';
+import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter, Renderer } from 'Lib';
 import { authStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
-import Errors from 'json/error.json';
+const Errors = require('json/error.json');
 
 interface State {
 	index: number;
@@ -33,46 +33,29 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		const back = <Icon className="arrow back" onClick={this.onCancel} />;
 
 		let content = null;
+		let loader = null;
+		let title = '';
+		let label = '';
+		let cn = [ 'animation' ];
+		let buttonText = translate('commonBack');
+		let buttonClick = this.onCancel;
 
 		if (error.code) {
 			if (error.code == Errors.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
-				content = (
-					<div className="importBackupWrap">
-						{back}
-
-						<Title className="animation" text={translate('pageAuthSetupCongratulations')} />
-						<Label className="animation" text={translate('pageAuthSetupLongread')} />
-
-						<div className="buttons">
-							<div className="animation">
-								<Button text={translate('pageAuthSetupImportBackup')} onClick={this.onBackup} />
-							</div>
-						</div>
-					</div>
-				);
+				title = translate('pageAuthSetupImportTitle');
+				label = translate('pageAuthSetupImportText');
+				buttonText = translate('pageAuthSetupImportBackup');
+				buttonClick = this.onBackup;
+				cn.push('fromBackup');
 			} else {
-				content = (
-					<React.Fragment>
-						{back}
-
-						<Title className="animation" text={translate('commonError')} />
-						<Error className="animation" text={error.description} />
-
-						<div className="buttons">
-							<div className="animation">
-								<Button text={translate('commonBack')} onClick={() => UtilRouter.go('/', {})} />
-							</div>
-						</div>
-					</React.Fragment>
-				);
+				title = translate('commonError');
+				label = error.description;
+				buttonText = translate('commonBack');
+				buttonClick = this.onCancel;
 			};
 		} else {
-			content = (
-				<React.Fragment>
-					<Title className="animation" text={translate('pageAuthSetupEntering')} />
-					<Loader className="animation" />
-				</React.Fragment>
-			);
+			title = translate('pageAuthSetupEntering');
+			loader = <Loader className="animation" />;
 		};
 		
 		return (
@@ -80,11 +63,20 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				ref={node => this.node = node} 
 				className="wrapper"
 			>
-				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame ref={ref => this.refFrame = ref}>
-					{content}
+					{back}
+
+					{title ? <Title className={cn.join(' ')} text={title} /> : ''}
+					{label ? <Label className={cn.join(' ')} text={label} /> : ''}
+					{loader}
+
+					<div className="buttons">
+						<div className="animation">
+							<Button text={buttonText} className="c28" onClick={buttonClick} />
+						</div>
+					</div>
 				</Frame>
 			</div>
 		);
@@ -92,7 +84,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	componentDidMount () {
 		const { match } = this.props;
-		const { account, walletPath } = authStore;
+		const { account } = authStore;
 
 		switch (match?.params?.id) {
 			case 'init': {
@@ -101,7 +93,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			};
 
 			case 'select': {
-				this.select(account.id, walletPath, true);
+				this.select(account.id, true);
 				break;
 			};
 
@@ -117,39 +109,42 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 	
 	init () {
-		const { walletPath, phrase } = authStore;
+		const { dataPath } = commonStore;  
 		const accountId = Storage.get('accountId');
 
-		if (!phrase) {
+		if (!accountId) {
+			UtilRouter.go('/auth/select', { replace: true });
 			return;
 		};
 
-		C.WalletRecover(walletPath, phrase, (message: any) => {
-			if (this.setError(message.error)) {
-				return;
-			};
-
-			UtilData.createSession((message: any) => {
+		Renderer.send('keytarGet', accountId).then((phrase: string) => {
+			C.WalletRecover(dataPath, phrase, (message: any) => {
 				if (this.setError(message.error)) {
 					return;
 				};
 
-				if (accountId) {
-					authStore.phraseSet(phrase);
-					this.select(accountId, walletPath, false);
+				if (phrase) {
+					UtilData.createSession(phrase, '' ,(message: any) => {
+						if (this.setError(message.error)) {
+							return;
+						};
+
+						this.select(accountId, false);
+					});
 				} else {
-					UtilRouter.go('/auth/account-select', { replace: true });
+					UtilRouter.go('/auth/select', { replace: true });
 				};
 			});
 		});
 	};
 
-	select (accountId: string, walletPath: string, animate: boolean) {
+	select (accountId: string, animate: boolean) {
 		const { networkConfig } = authStore;
+		const { dataPath } = commonStore;
 		const { mode, path } = networkConfig;
 		const spaceId = Storage.get('spaceId');
 
-		C.AccountSelect(accountId, walletPath, mode, path, (message: any) => {
+		C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				return;
 			};
@@ -164,6 +159,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				UtilData.onAuth({ routeParam: { animate } });
 			};
 
+			UtilData.onAuthOnce(false);
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
@@ -174,8 +170,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		};
 
 		this.setState({ error });
-		UtilCommon.checkError(error.code);
-		return true;
+		return UtilCommon.checkErrorCommon(error.code);
 	};
 
 	onBackup () {
@@ -183,9 +178,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	onCancel () {
-		UtilRouter.go('/auth/select', {});
+		authStore.logout(true, false);
+		Animation.from(() => UtilRouter.go('/', { replace: true }));
 	};
-	
+
 });
 
 export default PageAuthSetup;
