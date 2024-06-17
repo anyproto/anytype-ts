@@ -555,7 +555,7 @@ export const Mapper = {
 						payload = Object.assign(payload, {
 							spaceId: field.getSpaceid(),
 							spaceName: field.getSpacename(),
-        					permissions: field.getPermissions(),
+							permissions: field.getPermissions(),
 						});
 						break;
 					};

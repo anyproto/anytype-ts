@@ -432,7 +432,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				onConfirm = () => {
 					C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: Number(v) } ]);
 
-					analytics.event('ChangeSpaceMemberPermissions', { type: v })
+					analytics.event('ChangeSpaceMemberPermissions', { type: v });
 				};
 				break;
 			};
@@ -527,7 +527,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const { position, getId } = this.props;
 		const node = $(this.node);
 		const obj = $(`#${getId()}-innerWrap`);
-		const head = node.find('.head')
+		const head = node.find('.head');
 		const titleWrapper = node.find('#titleWrapper');
 		const sectionInvite = node.find('#sectionInvite');
 		const sectionMember = node.find('#sectionMembers');

@@ -129,7 +129,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 
 			if (object) {
-				icon = <IconObject object={object} size={size}  />;
+				icon = <IconObject object={object} size={size} />;
 			} else {
 				icon = <Icon className={item.icon} />;
 			};
@@ -613,9 +613,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			const reg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
 
 			let itemsImport: any[] = [];
-
 			if (canWrite) {
-				([
+				itemsImport = ([
 					{ id: 'importHtml', icon: 'import-html', name: translate('popupSettingsImportHtmlTitle'), format: I.ImportType.Html },
 					{ id: 'importText', icon: 'import-text', name: translate('popupSettingsImportTextTitle'), format: I.ImportType.Text },
 					{ id: 'importProtobuf', icon: 'import-protobuf', name: translate('popupSettingsImportProtobufTitle'), format: I.ImportType.Protobuf },

@@ -112,7 +112,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 				};
 
 				buttonText = '';
-				verificationForm = <div className="emailVerification">{content}</div>
+				verificationForm = <div className="emailVerification">{content}</div>;
 			};
 		} else {
 			if (paymentMethod != I.PaymentMethod.None) {

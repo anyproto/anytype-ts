@@ -116,7 +116,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		];
 
 		if (allowLocal) {
-			sections.push({ children: [ { id: 'local', name: translate('menuGraphSettingsLocal') } ]  });
+			sections.push({ children: [ { id: 'local', name: translate('menuGraphSettingsLocal') } ] });
 		};
 
 		sections = sections.map(s => {

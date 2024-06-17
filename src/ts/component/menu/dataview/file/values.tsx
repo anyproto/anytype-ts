@@ -227,7 +227,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			},
 			onClose: () => {
 				itemEl.removeClass('active');
-				$(element).removeClass('active')
+				$(element).removeClass('active');
 			},
 			data: {
 				value: '',

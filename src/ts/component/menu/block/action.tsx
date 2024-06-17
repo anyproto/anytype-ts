@@ -272,7 +272,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			const turnText = { 
 				id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
 				caption: (I.TextStyle[style] ? translate(UtilCommon.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
-			}
+			};
 
 			const c1 = hasTitle ? [] : UtilMenu.getActions(actionParam);
 			const c2: any[] = [

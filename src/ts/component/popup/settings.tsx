@@ -288,7 +288,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 			];
 			if (isAnytypeNetwork && isOnline) {
-				settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') })
+				settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') });
 			};
 
 			return [

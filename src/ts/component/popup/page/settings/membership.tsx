@@ -23,7 +23,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		const { membership } = authStore;
 		const { membershipTiers, interfaceLang } = commonStore;
 		const { tier, status } = membership;
-		const length = membershipTiers.length
+		const length = membershipTiers.length;
 		const cnt = [];
 
 		if (interfaceLang == Constant.default.interfaceLang) {
@@ -59,7 +59,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 					period = translate('popupSettingsMembershipPending');
 				} else
 				if (item.period && membership.dateEnds) {
-					period = UtilCommon.sprintf(translate('popupSettingsMembershipValidUntil'), UtilDate.date('d M Y', membership.dateEnds))
+					period = UtilCommon.sprintf(translate('popupSettingsMembershipValidUntil'), UtilDate.date('d M Y', membership.dateEnds));
 				} else {
 					period = translate('popupSettingsMembershipForeverFree');
 				};

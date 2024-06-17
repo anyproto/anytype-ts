@@ -31,12 +31,11 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	render () {
 		const error = this.state.error || {};
 		const back = <Icon className="arrow back" onClick={this.onCancel} />;
+		const cn = [ 'animation' ];
 
-		let content = null;
 		let loader = null;
 		let title = '';
 		let label = '';
-		let cn = [ 'animation' ];
 		let buttonText = translate('commonBack');
 		let buttonClick = this.onCancel;
 

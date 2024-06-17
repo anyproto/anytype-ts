@@ -49,7 +49,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					layout={I.ObjectLayout.History}
 				/>
 
-				{isLoading ?  <Loader id="loader" /> : ''}
+				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div id="body" className="flex">
 					<HistoryLeft 
@@ -370,7 +370,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						const blocks = blockStore.getBlocks(rootId, it => it.isRelation() && (it.content.key == k));
 
 						blocks.forEach(it => {
-							elements = elements.concat(this.getBlockChangeElements(it.id))
+							elements = elements.concat(this.getBlockChangeElements(it.id));
 						});
 					};
 				};

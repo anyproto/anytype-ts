@@ -718,7 +718,7 @@ class UtilMenu {
 	};
 
 	inviteContext (param: any) {
-		const { isOnline } = commonStore
+		const { isOnline } = commonStore;
 		const { containerId, cid, key, onInviteRevoke } = param || {};
 		const isOwner = UtilSpace.isMyOwner();
 		const isLocalNetwork = UtilData.isLocalNetwork();
