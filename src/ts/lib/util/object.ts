@@ -1,6 +1,6 @@
 import { I, C, keyboard, history as historyPopup, Renderer, UtilData, translate, UtilRouter, analytics } from 'Lib';
 import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class UtilObject {
 
@@ -38,24 +38,20 @@ class UtilObject {
 			return '';
 		};
 
-		const { layout, identityProfileLink } = object;
-		const { accountSpaceId } = authStore;
-		const action = this.actionByLayout(layout);
+		const id = String(object.id || '');
+		const spaceId = object.spaceId || commonStore.space;
+		const action = this.actionByLayout(object.layout);
 
 		if (!action) {
 			return '';
 		};
 
-		let { id, spaceId } = object;
-
-		/*
-		if (identityProfileLink) {
-			id = identityProfileLink;
-			spaceId = accountSpaceId;
+		let param = { page: 'main', action, id, spaceId };
+		if (object._routeParam_) {
+			param = Object.assign(param, object._routeParam_);
 		};
-		*/
 
-		return UtilRouter.build({ page: 'main', action, id, spaceId });
+		return UtilRouter.build(param);
 	};
 
 	universalRoute (object: any): string {
@@ -76,7 +72,7 @@ class UtilObject {
 		if ((e.metaKey || e.ctrlKey)) {
 			this.openWindow(object);
 		} else {
-			this.openRoute(object);
+			this.openRoute(object, param);
 		};
 	};
 
@@ -120,18 +116,15 @@ class UtilObject {
 		};
 
 		const action = this.actionByLayout(object.layout);
+		const params = {
+			page: 'main',
+			action: action,
+			id: object.id,
+		};
 
 		param = param || {};
 		param.preventResize = true;
-		param.data = Object.assign(param.data || {}, { 
-			matchPopup: { 
-				params: {
-					page: 'main',
-					action: action,
-					id: object.id,
-				},
-			},
-		});
+		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
 			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);

@@ -7,7 +7,7 @@ import { DragBox } from 'Component';
 import { I, Relation, UtilObject, translate, UtilCommon, keyboard, analytics } from 'Lib';
 import { menuStore, detailStore, dbStore } from 'Store';
 import ItemObject from './item/object';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State { 
 	isEditing: boolean; 
@@ -40,7 +40,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 	render () {
 		const { isEditing } = this.state;
-		const { recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
+		const { id, recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
 		const record = getRecord(recordId);
 		const cn = [ 'wrap' ];
 
@@ -67,7 +67,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 					<div id="placeholder" className="placeholder">{placeholder}</div>
 
 					<span id="list">
-						<DragBox onDragEnd={this.onDragEnd} onClick={this.onClick}>
+						<DragBox onDragEnd={this.onDragEnd}>
 							{value.map((item: any, i: number) => (
 								<span 
 									key={i}
@@ -78,12 +78,14 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 								>
 									<ItemObject 
 										key={item.id} 
-										object={item} 
+										cellId={id}
+										getObject={() => item}
 										iconSize={iconSize} 
 										relation={relation} 
 										elementMapper={elementMapper}
 										canEdit={true}
-										onRemove={(e: any, id: string) => { this.onValueRemove(id); }}
+										onClick={(e, item) => this.onClick(e, item.id)}
+										onRemove={(e: any, id: string) => this.onValueRemove(id)}
 									/>
 								</span>
 							))}
@@ -117,7 +119,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 						{value.map((item: any, i: number) => (
 							<ItemObject 
 								key={item.id} 
-								object={item} 
+								cellId={id}
+								getObject={() => item}
 								iconSize={iconSize} 
 								relation={relation} 
 								elementMapper={elementMapper} 
@@ -204,17 +207,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
 
-		if (value.existing.length) {
-			list.show();
-		} else {
-			list.hide();
-		};
-
-		if (value.new || value.existing.length) {
-			placeholder.hide();
-		} else {
-			placeholder.show();
-		};
+		value.existing.length ? list.show() : list.hide();
+		value.new || value.existing.length ? placeholder.hide() : placeholder.show();
 	};
 
 	getItems (): any[] {
@@ -257,23 +251,27 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	setValue (value: string[]) {
-		const { onChange, relation } = this.props;
-		const { maxCount } = relation;
-		
 		value = UtilCommon.arrayUnique(value);
 
+		const { onChange, relation } = this.props;
+		const { maxCount } = relation;
 		const length = value.length;
+
 		if (maxCount && (length > maxCount)) {
 			value = value.slice(length - maxCount, length);
 		};
 
-		if (onChange) {
-			onChange(value, () => {
-				this.clear();
+		const cb = () => {
+			this.clear();
 
-				menuStore.updateData('dataviewObjectValues', { value });
-				menuStore.updateData('dataviewObjectList', { value });
-			});
+			menuStore.updateData('dataviewObjectValues', { value });
+			menuStore.updateData('dataviewObjectList', { value });
+		};
+
+		if (onChange) {
+			onChange(value, cb);
+		} else {
+			cb();
 		};
 	};
 

@@ -198,9 +198,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			return;
 		};
 
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-		const ids = selection ? selection.get(I.SelectType.Block) : [];
+		const selection = commonStore.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (!(keyboard.withCommand(e) && ids.length)) {
 			this.open();

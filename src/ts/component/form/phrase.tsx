@@ -4,7 +4,7 @@ import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
 import { keyboard, Storage } from 'Lib';
 import { popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	value: string;
@@ -160,7 +160,10 @@ class Phrase extends React.Component<Props, State> {
 		const { onKeyDown } = this.props;
 		const entry = $(this.refEntry);
 
-		keyboard.shortcut('space, enter', e, () => e.preventDefault());
+		keyboard.shortcut('space, enter', e, () => {
+			e.preventDefault();
+			this.updateValue();
+		});
 
 		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
@@ -186,11 +189,6 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: React.KeyboardEvent) {
-		keyboard.shortcut('space, enter', e, () => {
-			e.preventDefault();
-			this.updateValue();
-		});
-
 		this.placeholderCheck();
 	};
 
@@ -202,7 +200,9 @@ class Phrase extends React.Component<Props, State> {
 		};
 
 		this.clear();
-		this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat([ value ])) }));
+
+		this.state.phrase = this.checkValue(this.state.phrase.concat([ value ]));
+		this.setState({ phrase: this.state.phrase });
 	};
 
 	onPaste (e) {
@@ -235,7 +235,7 @@ class Phrase extends React.Component<Props, State> {
 	onToggle () {
 		const { checkPin, onToggle } = this.props;
 		const { isHidden } = this.state;
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const onSuccess = () => {
 			this.setState({ isHidden: !isHidden });
 

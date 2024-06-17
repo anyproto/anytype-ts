@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { MenuItemVertical, Icon, Cell } from 'Component';
 import { I, Mark, keyboard, C, focus, Action, UtilCommon, UtilData, UtilMenu, UtilObject, Storage, translate, analytics, Relation } from 'Lib';
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
@@ -317,7 +317,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			};
 
 			sections = sections.concat([
-				{ id: 'action', icon: 'action', name: translate('menuBlockActionsSectionsActions'), color: '', children: actions },
+				{ id: 'action', icon: 'action', name: translate('commonActions'), color: '', children: actions },
 			]);
 
 			if (block.canHaveAlign()) {
@@ -378,6 +378,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const text = UtilCommon.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
+
+		if (!block) {
+			return;
+		};
 
 		let menuId = '';
 		const menuParam: I.MenuParam = {
@@ -675,8 +679,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
+		const selection = commonStore.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
+
+		if (!ids.length) {
+			ids.push(blockId);
+		};
 		
-		UtilData.moveToPage(rootId, blockId, typeId, 'Powertool', this.props);
+		UtilData.moveToPage(rootId, ids, typeId, analytics.route.powertool);
 	};
 
 	resize () {

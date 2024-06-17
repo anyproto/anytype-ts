@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { detailStore, blockStore, menuStore, commonStore } from 'Store';
 import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	filter: string;
@@ -252,7 +252,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			const turnPage = { id: 'turnPage', icon: '', name: translate('commonTurnIntoObject'), children: UtilMenu.getTurnPage() };
 			const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockActionsSectionsDividerStyle'), children: UtilMenu.getTurnDiv() };
 			const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockActionsSectionsFileStyle'), children: UtilMenu.getTurnFile() };
-			const action = { id: 'action', icon: '', name: translate('menuBlockActionsSectionsActions'), children: UtilMenu.getActions(actionParam) };
+			const action = { id: 'action', icon: '', name: translate('commonActions'), children: UtilMenu.getActions(actionParam) };
 			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: UtilMenu.getHAlign(restrictedAlign) };
 			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: UtilMenu.getBgColors() };
 			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: UtilMenu.getTextColors() };
@@ -272,13 +272,13 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			const turnText = { 
 				id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
 				caption: (I.TextStyle[style] ? translate(UtilCommon.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
-			}
+			};
 
 			const c1 = hasTitle ? [] : UtilMenu.getActions(actionParam);
 			const c2: any[] = [
 				hasLink ? { id: 'linkSettings', icon: `linkStyle${content.cardStyle}`, name: translate('commonPreview'), arrow: true } : null,
 				hasTurnFile ? { id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true } : null,
-				hasTurnFile && config.experimental ? { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true } : null,
+				hasTurnFile ? { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true } : null,
 				hasTurnText ? turnText : null,
 				hasTurnDiv ? { id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
 				hasAlign ? { id: 'align', icon: UtilData.alignHIcon(align), name: translate('commonAlign'), arrow: true } : null,
@@ -357,6 +357,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			offsetX: offsetX,
 			offsetY: node.offset().top - el.offset().top - 36,
 			isSub: true,
+			noFlipX: true,
 			data: {
 				rootId,
 				blockId,
@@ -469,6 +470,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					onChange: (color: string) => {
 						C.BlockTextListSetColor(rootId, blockIds, color, (message: any) => {
 							this.setFocus(blockIds[0]);
+
+							analytics.event('ChangeBlockColor', { color, count: blockIds.length });
 						});
 
 						close();
@@ -478,7 +481,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 				
 			case 'background': {
-				ids = UtilData.selectionGet(blockId, false, false, this.props);
+				ids = UtilData.selectionGet(blockId, false, false);
 				menuId = 'blockBackground';
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -487,7 +490,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 						C.BlockListSetBackgroundColor(rootId, ids, color, (message: any) => {
 							this.setFocus(blockIds[0]);
 
-							analytics.event('ChangeBlockBackground', { color: color, count: blockIds.length });
+							analytics.event('ChangeBlockBackground', { color, count: blockIds.length });
 						});
 
 						close();
@@ -529,7 +532,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.className = 'single';
 
 				const isCollection = Dataview.isCollection(rootId, blockId);
-				const name = translate(isCollection ? 'commonLCCollection' : 'commonLCSet');
+				const name = translate(isCollection ? 'commonCollection' : 'commonSet');
 
 				const addParam: any = {
 					name: UtilCommon.sprintf(translate('menuBlockActionsCreateNew'), name),
@@ -594,7 +597,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const ids = UtilData.selectionGet(blockId, false, false, data);
+		const ids = UtilData.selectionGet(blockId, false, false);
 		const targetObjectId = block.getTargetObjectId();
 
 		switch (item.itemId) {
@@ -612,12 +615,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 
 				analytics.event('OpenAsObject', event);
-				break;
-			};
-
-			case 'openDataviewFullscreen': {
-				UtilObject.openConfig({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
-				analytics.event('InlineSetOpenFullscreen');
 				break;
 			};
 
@@ -687,8 +684,14 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
+		const selection = commonStore.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
+
+		if (!ids.length) {
+			ids.push(blockId);
+		};
 		
-		UtilData.moveToPage(rootId, blockId, typeId, 'TurnInto', this.props);
+		UtilData.moveToPage(rootId, ids, typeId, analytics.route.turn);
 	};
 
 	setFocus (id: string) {

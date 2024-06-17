@@ -8,8 +8,8 @@ import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
 import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
-import Constant from 'json/constant.json';
-import Theme from 'json/theme.json';
+const Constant = require('json/constant.json');
+const Theme = require('json/theme.json');
 
 const katex = require('katex');
 const pako = require('pako');
@@ -419,8 +419,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { block } = this.props;
 		const { fields } = block;
 		const data = e.clipboardData || e.originalEvent.clipboardData;
-		const text = data.getData('text/plain');
-		const to = range.end + text.length;
+		const text = String(data.getData('text/plain') || '');
+		const to = range.to + text.length;
 		const value = UtilCommon.stringInsert(this.getValue(), text, range.from, range.to);
 
 		const cb = () => {
@@ -754,6 +754,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 				}).catch(e => {
 					const error = $(`#d${this.getContainerId()}`).hide();
+
 					if (error.length) {
 						value.html(error.html());
 					};
@@ -812,7 +813,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
-	getRange () {
+	getRange (): I.TextRange {
 		return UtilCommon.objectCopy(this.refEditable.getRange());
 	};
 
@@ -844,16 +845,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = commonStore.getRef('selectionProvider');
 		const win = $(window);
 
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		
-		if (selection) {
-			selection.hide();
-		};
+		selection?.hide();
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);

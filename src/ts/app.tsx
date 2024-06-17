@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar } from 'Component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, notificationStore } from 'Store';
 import { 
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
@@ -40,9 +40,9 @@ import 'scss/notification/common.scss';
 import 'scss/media/print.scss';
 import 'scss/theme/dark/common.scss';
 
-import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
-import Routes from 'json/route.json';
+const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
+const Routes = require('json/route.json');
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -159,19 +159,22 @@ Sentry.setContext('info', {
 });
 
 class RoutePage extends React.Component<RouteComponentProps> {
+
 	render () {
 		return (
-			<SelectionProvider>
-				<DragProvider>
+			<SelectionProvider ref={ref => commonStore.refSet('selectionProvider', ref)}>
+				<DragProvider ref={ref => commonStore.refSet('dragProvider', ref)}>
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
-					<Navigation />
+					<Sidebar key="sidebar" {...this.props} />
+					<Navigation key="navigation" {...this.props} />
 
 					<Page {...this.props} />
 				</DragProvider>
 			</SelectionProvider>
 		);
 	};
+
 };
 
 class App extends React.Component<object, State> {
@@ -249,7 +252,6 @@ class App extends React.Component<object, State> {
 
 		dispatcher.init(getGlobal('serverAddress'));
 		dispatcher.listenEvents();
-
 		keyboard.init();
 
 		this.registerIpcEvents();
@@ -330,6 +332,7 @@ class App extends React.Component<object, State> {
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const route = String(data.route || redirect || '');
+		const spaceId = Storage.get('spaceId');
 
 		commonStore.configSet(config, true);
 		commonStore.nativeThemeSet(isDark);
@@ -377,8 +380,13 @@ class App extends React.Component<object, State> {
 							authStore.accountSet(account);
 							commonStore.configSet(account.config, false);
 
-							UtilData.onInfo(account.info);
-							UtilData.onAuth({}, cb);
+							if (spaceId) {
+								UtilRouter.switchSpace(spaceId, '', cb);
+							} else {
+								UtilData.onInfo(account.info);
+								UtilData.onAuth({}, cb);
+							};
+
 							UtilData.onAuthOnce(false);
 						};
 					});
@@ -407,7 +415,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onWillCloseWindow (e: any, windowId: string) {
-		Storage.deleteLastOpenedByWindowId([windowId]);
+		Storage.deleteLastOpenedByWindowId([ windowId ]);
 	};
 
 	onPopup (e: any, id: string, param: any, close?: boolean) {

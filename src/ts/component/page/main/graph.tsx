@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, C, UtilCommon, UtilMenu, UtilData, UtilObject, keyboard } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
 import { detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
 

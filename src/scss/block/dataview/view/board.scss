@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockDataview {
@@ -27,7 +27,7 @@
 					.cellContent { width: 100%; display: inline; line-height: 1em; }
 					.cellContent {
 						.empty { display: block; line-height: 24px; color: var(--color-text-secondary); }
-						.wrap { display: inline-block; white-space: nowrap; width: 100%; line-height: 1em }
+						.wrap { display: inline-block; white-space: nowrap; width: 100%; line-height: 1em; }
 						.tagItem { max-width: 100%; }
 						.more { vertical-align: top; }
 					}

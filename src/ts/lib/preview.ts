@@ -2,7 +2,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { I, UtilCommon, keyboard } from 'Lib';
 import { commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;

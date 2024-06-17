@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, Windo
 import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
 import { UtilData, I, UtilCommon, translate, UtilObject, UtilFile } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
     subId: string;
@@ -22,6 +22,7 @@ interface Props {
 	collectionId?: string;
 	resize?: () => void;
 	onAfterLoad?: (message: any) => void;
+	isReadonly?: boolean;
 };
 
 interface State {
@@ -60,7 +61,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         };
 
         const { isLoading } = this.state;
-        const { buttons, rowHeight, iconSize, info } = this.props;
+        const { buttons, rowHeight, iconSize, info, isReadonly } = this.props;
         const items = this.getItems();
         const cnControls = [ 'controls' ];
 		const filter = this.getFilterValue();
@@ -80,6 +81,10 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         } else {
             buttonsList.push({ icon: 'checkbox', text: translate('commonSelectAll'), onClick: this.onSelectAll });
         };
+
+		if (isReadonly) {
+			buttonsList = [];
+		};
 
 		const Info = (item: any) => {
 			let itemInfo: any = null;
@@ -109,11 +114,13 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
         const Item = (item: any) => (
             <div className="item">
-				<Checkbox
-					ref={ref => this.refCheckbox.set(item.id, ref)}
-					value={this.selected.includes(item.id)}
-					onChange={e => this.onClick(e, item)}
-				/>
+				{isReadonly ? '' : (
+					<Checkbox
+						ref={ref => this.refCheckbox.set(item.id, ref)}
+						value={this.selected.includes(item.id)}
+						onChange={e => this.onClick(e, item)}
+					/>
+				)}
                 <div className="objectClickArea" onClick={() => UtilObject.openPopup(item)}>
 					<IconObject object={item} size={iconSize} />
 

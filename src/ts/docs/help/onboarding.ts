@@ -335,7 +335,7 @@ export default {
 				name: translate('onboardingInlineSet2Title'),
 				description: translate('onboardingInlineSet2Description'),
 				param: {
-					element: '#dataviewControls #sideLeft',
+					element: '#dataviewControls #dataviewControlsSideLeft',
 					offsetY: 10,
 				}
 			},
@@ -356,7 +356,7 @@ export default {
 				name: translate('onboardingInlineCollection2Title'),
 				description: translate('onboardingInlineCollection2Description'),
 				param: {
-					element: '#dataviewControls #sideLeft',
+					element: '#dataviewControls #dataviewControlsSideLeft',
 					offsetY: 10,
 				}
 			},

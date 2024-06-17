@@ -5,8 +5,8 @@ import { Icon, Drag, Cover, Loader, Label } from 'Component';
 import { I, C, UtilCommon, UtilData, UtilObject, focus, translate, keyboard, Action } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
+const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 
 interface State {
 	isEditing: boolean;
@@ -175,61 +175,31 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 
 	onIcon (e: any) {
-		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
-
-		if (!root) {
-			return;
-		};
-		
-		focus.clear(true);
-		root.isObjectHuman() || root.isObjectParticipant() ? this.onIconUser() : this.onIconPage();
-	};
-	
-	onIconPage () {
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
 		const object = detailStore.get(rootId, rootId, []);
-		const { iconEmoji, iconImage } = object;
-		
+		const cb = () => menuStore.update('smile', { element: `#block-icon-${rootId}` });
+
+		focus.clear(true);
+
 		menuStore.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => {
-				elements.addClass('hover');
-			},
-			onClose: () => {
-				elements.removeClass('hover');
-			},
+			onOpen: () => elements.addClass('hover'),
+			onClose: () => elements.removeClass('hover'),
 			data: {
-				noRemove: !(iconEmoji || iconImage),
+				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => {
-					UtilObject.setIcon(rootId, icon, '', () => {
-						menuStore.update('smile', { element: `#block-icon-${rootId}` });
-					});
+					UtilObject.setIcon(rootId, icon, '', cb);
 				},
 				onUpload (objectId: string) {
-					UtilObject.setIcon(rootId, '', objectId, () => {
-						menuStore.update('smile', { element: `#block-icon-${rootId}` });
-					});
+					UtilObject.setIcon(rootId, '', objectId, cb);
 				},
 			}
 		});
 	};
 	
-	onIconUser () {
-		const { rootId } = this.props;
-
-		Action.openFile(Constant.fileExtension.cover, paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
-				if (!message.error.code) {
-					UtilObject.setIcon(rootId, '', message.objectId);
-				};
-			});
-		});
-	};
-
 	onLayout (e: any) {
 		const { rootId, block } = this.props;
 		const node = $(this.node);
@@ -501,18 +471,22 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			return;
 		};
 
-		const { rootId, dataset } = this.props;		
-		const { preventCommonDrop } = dataset || {};
+		const { rootId, readonly } = this.props;
+
+		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
+			return;
+		};
+
 		const file = e.dataTransfer.files[0].path;
 		const node = $(this.node);
 		
 		node.removeClass('isDraggingOver');
-		preventCommonDrop(true);
+		keyboard.disableCommonDrop(true);
 		this.setLoading(true);
 		
 		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setLoading(false);
-			preventCommonDrop(false);
+			keyboard.disableCommonDrop(false);
 			
 			if (!message.error.code) {
 				this.loaded = false;

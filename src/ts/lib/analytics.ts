@@ -1,14 +1,13 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, UtilCommon, Storage, UtilSpace } from 'Lib';
+import { I, C, UtilCommon, Storage, UtilSpace, Relation } from 'Lib';
 import { commonStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
-import { OnboardStage } from 'Component/page/auth/animation/constants';
+const Constant = require('json/constant.json');
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
-	'processor',
+	'processor', 'emptyType',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -37,11 +36,14 @@ class Analytics {
 		webclipper: 'Webclipper',
 		clipboard: 'Clipboard',
 		shortcut: 'Shortcut',
+		turn: 'TurnInto',
+		powertool: 'Powertool',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
 		menuSystem: 'MenuSystem',
 		menuHelp: 'MenuHelp',
+		menuContext: 'MenuContext',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
@@ -488,6 +490,20 @@ class Analytics {
 		this.event('CreateObject', { objectType, layout, route, middleTime: time });
 	};
 
+	changeRelationValue (relation: any, value: any, type: string) {
+		if (!relation) {
+			return;
+		};
+
+		let key = '';
+		if (relation.relationKey == 'name') {
+			key = 'SetObjectTitle';
+		} else {
+			key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';
+		};
+		this.event(key, { type });
+	};
+
 	pageMapper (params: any): string {
 		const { page, action } = params;
 		const key = [ page, action ].join('/');
@@ -498,7 +514,6 @@ class Analytics {
 			'main/navigation':	 'ScreenNavigation',
 			'main/type':		 'ScreenType',
 			'main/relation':	 'ScreenRelation',
-			'main/space':		 'ScreenSpace',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
 		};
@@ -508,7 +523,9 @@ class Analytics {
 
 	popupMapper (params: any): string {
 		const { id } = params;
-		const map = {};
+		const map = {
+			inviteRequest:		 'ScreenInviteRequest',
+		};
 
 		return map[id] || '';
 	};

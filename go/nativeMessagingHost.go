@@ -13,6 +13,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -126,13 +127,13 @@ func getOpenPortsWindows() (map[string][]string, error) {
 	return result, nil
 }
 
-func isFileGateway(port string) bool {
+func isFileGateway(port string) (bool, error) {
 	client := &http.Client{}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, "GET", "http://127.0.0.1:"+port+"/file", nil)
 	if err != nil {
-		return false
+		return false, err
 	}
 	// disable follow redirect
 	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
@@ -141,7 +142,7 @@ func isFileGateway(port string) bool {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return false
+		return false, err
 	}
 
 	bu := bytes.NewBuffer(nil)
@@ -151,35 +152,35 @@ func isFileGateway(port string) bool {
 	defer resp.Body.Close()
 	// should return 301 redirect Location: /file/
 	if resp.StatusCode == 301 {
-		return true
+		return true, err
 	}
-	return false
+	return false, err
 }
 
-func isGrpcWebServer(port string) bool {
+func isGrpcWebServer(port string) (bool, error) {
 	client := &http.Client{}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	var data = strings.NewReader(`AAAAAAIQFA==`)
 	req, err := http.NewRequestWithContext(ctx, "POST", "http://127.0.0.1:"+port+"/anytype.ClientCommands/AppGetVersion", data)
 	if err != nil {
-		return false
+		return false, err
 
 	}
 	req.Header.Set("Content-Type", "application/grpc-web-text")
 	req.Header.Set("X-Grpc-Web", "1")
 	resp, err := client.Do(req)
 	if err != nil {
-		return false
+		return false, err
 	}
 	defer resp.Body.Close()
 
 	// should has Content-Type: application/grpc-web-text
 	if resp.Header.Get("Content-Type") == "application/grpc-web-text" {
-		return true
+		return true, nil
 	}
 
-	return false
+	return false, fmt.Errorf("unexpected content type: %s", resp.Header.Get("Content-Type"))
 }
 
 // MacOS and Linux: returns a list of all open ports for all instances of anytype found using cli utilities lsof and grep
@@ -247,23 +248,43 @@ func getOpenPorts() (map[string][]string, error) {
 	} else {
 		return nil, errors.New("unsupported platform")
 	}
+	totalPids := len(ports)
 	for pid, pidports := range ports {
 		var gatewayPort, grpcWebPort string
+		var errs []error
 		for _, port := range pidports {
-			if isFileGateway(port) {
-				gatewayPort = port
-			} else if isGrpcWebServer(port) {
-				grpcWebPort = port
+			var (
+				errDetectGateway, errDetectGrpcWeb error
+				serviceDetected                    bool
+			)
+			if gatewayPort == "" {
+				if serviceDetected, errDetectGateway = isFileGateway(port); serviceDetected {
+					gatewayPort = port
+				}
+			}
+			// in case we already detected grpcweb port skip this
+			if !serviceDetected && grpcWebPort == "" {
+				if serviceDetected, errDetectGrpcWeb = isGrpcWebServer(port); serviceDetected {
+					grpcWebPort = port
+				}
+			}
+			if !serviceDetected {
+				// means port failed to detect either gateway or grpcweb
+				errs = append(errs, fmt.Errorf("port: %s; gateway: %v; grpcweb: %v", port, errDetectGateway, errDetectGrpcWeb))
 			}
 		}
 		if gatewayPort != "" && grpcWebPort != "" {
 			ports[pid] = []string{grpcWebPort, gatewayPort}
 		} else {
+			Trace.Printf("can't detect ports. pid: %s; grpc: '%s'; gateway: '%s'; error: %v;", pid, grpcWebPort, gatewayPort, errs)
 			delete(ports, pid)
 		}
 	}
-	Trace.Printf("found ports: %v", ports)
-
+	if len(ports) > 0 {
+		Trace.Printf("found ports: %v", ports)
+	} else {
+		Trace.Printf("ports no able to detect for %d pids", totalPids)
+	}
 	return ports, nil
 }
 

@@ -5,8 +5,8 @@ import { I, translate, UtilCommon, UtilDate, analytics, keyboard } from 'Lib';
 import { popupStore, authStore, commonStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
+const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
 
@@ -22,6 +22,8 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	render () {
 		const { membership } = authStore;
 		const { membershipTiers, interfaceLang } = commonStore;
+		const { tier, status } = membership;
+		const length = membershipTiers.length
 		const cnt = [];
 
 		if (interfaceLang == Constant.default.interfaceLang) {

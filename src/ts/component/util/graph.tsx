@@ -6,8 +6,8 @@ import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
 import { I, UtilCommon, UtilObject, UtilSpace, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
 import { commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
-import Theme from 'json/theme.json';
+const Constant = require('json/constant.json');
+const Theme = require('json/theme.json');
 
 interface Props {
 	id?: string;
@@ -299,6 +299,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onMessage (e) {
+		const { storageKey } = this.props;
+		const settings = commonStore.getGraph(storageKey);
 		const { id, data } = e.data;
 		const node = $(this.node);
 		const { left, top } = node.offset();
@@ -330,7 +332,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case 'onMouseMove': {
-				if (this.isDragging) {
+				if (this.isDragging || !settings.preview) {
 					break;
 				};
 

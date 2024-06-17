@@ -2,10 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
-import { Sidebar, Label, Frame } from 'Component';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
+import { Label, Frame } from 'Component';
 import { authStore, commonStore, menuStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -27,7 +26,6 @@ import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
-import PageMainBlock from './main/block';
 import PageMainImport from './main/import';
 import PageMainInvite from './main/invite';
 import PageMainMembership from './main/membership';
@@ -57,7 +55,6 @@ const Components = {
 	'main/navigation':		 PageMainNavigation,
 	'main/create':			 PageMainCreate,
 	'main/archive':			 PageMainArchive,
-	'main/block':			 PageMainBlock,
 	'main/import':			 PageMainImport,
 	'main/invite':			 PageMainInvite,
 	'main/membership':		 PageMainMembership,
@@ -99,7 +96,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		const wrap = (
-			<div id="page" className={'page ' + this.getClass('page')}>
+			<div id="page" className={`page ${this.getClass('page')}`}>
 				<Component ref={ref => this.refChild = ref} {...this.props} />
 			</div>
 		);
@@ -110,7 +107,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		} else {
 			content = (
 				<div className="pageFlex">
-					<Sidebar key="sidebar" {...this.props} />
 					<div id="sidebarDummyLeft" className="sidebarDummy left" />
 					{wrap}
 					<div id="sidebarDummyRight" className="sidebarDummy right" />
@@ -194,7 +190,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
 		const isPinCheck = this.isAuthPinCheck();
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const win = $(window);
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
@@ -202,6 +198,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
+		keyboard.setWindowTitle();
 
 		if (!Component) {
 			return;

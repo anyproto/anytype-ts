@@ -3,7 +3,7 @@ import { Frame, Title, Label, Error, Button, Header, Footer, Icon, Loader } from
 import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter, Renderer } from 'Lib';
 import { authStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
-import Errors from 'json/error.json';
+const Errors = require('json/error.json');
 
 interface State {
 	index: number;

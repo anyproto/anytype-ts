@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, UtilCommon, UtilData, UtilObject, keyboard, translate, Relation, UtilDate } from 'Lib';
 import { Input, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State { 
 	isEditing: boolean; 
@@ -33,9 +33,6 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onPaste = this.onPaste.bind(this);
-		this.onIconSelect = this.onIconSelect.bind(this);
-		this.onIconUpload = this.onIconUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
@@ -55,14 +52,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		const isDate = relation.format == I.RelationType.Date;
 		const isNumber = relation.format == I.RelationType.Number;
 		const isUrl = relation.format == I.RelationType.Url;
-
-		let view = null;
-		let viewRelation: any = {};
-
-		if (getView) {
-			view = getView();
-			viewRelation = view.getRelation(relation.relationKey);
-		};
+		const view = getView ? getView() : null;
+		const viewRelation = this.getViewRelation();
 
 		let Name = null;
 		let EditorComponent = null;
@@ -202,9 +193,6 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				icon = (
 					<IconObject 
 						id={[ relation.relationKey, record.id ].join('-')} 
-						onSelect={this.onIconSelect} 
-						onUpload={this.onIconUpload}
-						onCheckbox={this.onCheckbox}
 						size={iconSize} 
 						canEdit={canEdit} 
 						offsetY={4} 
@@ -244,21 +232,10 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		const { id, relation, viewType, recordId, getRecord, cellPosition, getView } = this.props;
 		const record = getRecord(recordId);
 		const cell = $(`#${id}`);
+		const viewRelation = this.getViewRelation();
+		const card = viewType == I.ViewType.Grid ? null : $(`#record-${record.id}`);
 
 		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
-
-		let view = null;
-		let viewRelation: any = {};
-		let card = null;
-		
-		if (getView) {
-			view = getView();
-			viewRelation = view.getRelation(relation.relationKey);
-		};
-
-		if (viewType != I.ViewType.Grid) {
-			card = $(`#record-${record.id}`);
-		};
 
 		if (isEditing) {
 			let value = this.value;
@@ -475,38 +452,22 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		return v ? UtilDate.parseDate(v, viewRelation.dateFormat) : null;
 	};
 
-	onIconSelect (icon: string) {
-		const { recordId, getRecord } = this.props;
-		const record = getRecord(recordId);
-
-		UtilObject.setIcon(record.id, icon, '');
-	};
-
-	onIconUpload (objectId: string) {
-		const { recordId, getRecord } = this.props;
-		const record = getRecord(recordId);
-
-		UtilObject.setIcon(record.id, '', objectId);
-	};
-
-	onCheckbox (e: any) {
-		const { recordId, getRecord } = this.props;
-		const record = getRecord(recordId);
-
-		this.onBlur(e);
-		UtilObject.setDone(record.id, !record.done, () => {
-			if (this._isMounted) {
-				this.forceUpdate();
-			};
-		});
-	};
-
 	onCompositionStart () {
 		this.isComposition = true;
 	};
 
 	onCompositionEnd () {
 		this.isComposition = false;
+	};
+
+	getViewRelation (): any {
+		const { relation, getView } = this.props;
+
+		if (!relation || !getView) {
+			return {};
+		};
+
+		return getView().getRelation(relation.relationKey) || {};
 	};
 
 });

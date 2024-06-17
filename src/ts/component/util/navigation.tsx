@@ -35,7 +35,7 @@ const Navigation = observer(class Navigation extends React.Component {
 
 		let buttonPlus: any = null;
 		if (canWrite) {
-			buttonPlus = { id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${cmd} + ${alt} + N` };
+			buttonPlus = { id: 'plus', tooltip: translate('commonCreateNewObject'), caption: `${cmd} + N / ${cmd} + ${alt} + N` };
 
 			switch (navigationMenu) {
 				case I.NavigationMenuMode.Context: {
@@ -100,7 +100,10 @@ const Navigation = observer(class Navigation extends React.Component {
 								key={item.id} 
 								id={`button-navigation-${item.id}`}
 								className={cn.join(' ')}
-								onClick={item.onClick}
+								onClick={e => {
+									window.clearTimeout(this.timeoutPlus);
+									item.onClick(e);
+								}}
 								onContextMenu={item.onContextMenu}
 								onMouseEnter={item.onMouseEnter}
 								onMouseLeave={item.onMouseLeave}
@@ -171,6 +174,8 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	onProfile () {
+		window.clearTimeout(this.timeoutPlus);
+
 		if (menuStore.isOpen('space')) {
 			menuStore.close('space');
 		} else {

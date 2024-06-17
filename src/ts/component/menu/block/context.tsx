@@ -2,12 +2,14 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, Mark, UtilData, focus, keyboard, Storage, translate } from 'Lib';
+import { I, C, Mark, UtilData, focus, keyboard, Storage, translate, UtilObject, analytics } from 'Lib';
 import { blockStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MenuBlockContext = observer(class MenuBlockContext extends React.Component<I.Menu> {
 	
+	menuContext = null;
+
 	constructor (props: I.Menu) {
 		super(props);
 		
@@ -151,6 +153,23 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		);
 	};
 
+	componentDidMount () {
+		const { getId } = this.props;
+		const obj = $(`#${getId()}`);
+
+		obj.off('click mousedown').on('click mousedown', (e: any) => {
+			const target = $(e.target);
+			if (!target.hasClass('icon') && !target.hasClass('inner')) {
+				e.preventDefault();
+				e.stopPropagation();
+			};
+		});
+	};
+
+	componentWillUnmount(): void {
+		menuStore.closeAll(Constant.menuIds.context.concat('selectContext'));
+	};
+
 	onMark (e: any, type: any) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -178,9 +197,9 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
 			data: {
-				rootId: rootId,
-				blockId: blockId,
-				blockIds: blockIds,
+				rootId,
+				blockId,
+				blockIds,
 			} as any,
 		};
 
@@ -197,6 +216,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			};
 				
 			case 'style': {
+				menuId = 'blockStyle';
 
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (item: any) => {
@@ -215,36 +235,66 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							C.BlockListConvertToObjects(rootId, blockIds, '');
+							C.BlockListConvertToObjects(rootId, blockIds, '', '');
 						};
 						
 						close();
 					},
 				});
 
-				menuId = 'blockStyle';
 				focusApply = false;
 				break;
 			};
 				
 			case 'more': {
-				menuId = 'blockMore';
-				menuParam.subIds = Constant.menuIds.more;
+				menuId = 'selectContext';
+
+				menuParam = Object.assign(menuParam, {
+					component: 'select',
+					subIds: Constant.menuIds.selectContext,
+					onOpen: context => this.menuContext = context,
+				});
 
 				menuParam.data = Object.assign(menuParam.data, {
-					onSelect: () => {
-						focus.clear(true);
-						close();
+					options: [
+						{ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true },
+						{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
+						{ id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(block.hAlign) ].join(' '), arrow: true },
+						{ id: 'blockRemove', icon: 'remove', name: translate('commonDelete') }
+					],
+					onOver: (e: any, item: any) => {
+						if (!this.menuContext || menuStore.isAnimating(this.menuContext.props.id)) {
+							return;
+						};
+
+						if (!item.arrow) {
+							menuStore.closeAll(Constant.menuIds.selectContext);
+							return;
+						};
+
+						this.onMoreOver(item);
 					},
-					onMenuSelect: () => {
-						focus.clear(true);
-						close();
+
+					onSelect: (e: any, item: any) => {
+						if (item.arrow) {
+							return;
+						};
+
+						switch (item.id) {
+							case 'blockRemove': {
+								focus.clear(true);
+								C.BlockListDelete(rootId, [ blockId ], () => close());
+								break;
+							};
+						};
 					},
 				});
 				break;
 			};
 				
 			case I.MarkType.Link: {
+				menuId = 'blockLink';
+
 				mark = Mark.getInRange(marks, type, { from, to });
 
 				menuParam = Object.assign(menuParam, {
@@ -267,7 +317,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					}
 				});
 
-				menuId = 'blockLink';
 				closeContext = true;
 				focusApply = false;
 				break;
@@ -322,20 +371,95 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			});
 		};
 	};
-	
-	componentDidMount () {
-		const { getId } = this.props;
-		const obj = $(`#${getId()}`);
 
-		obj.off('click mousedown').on('click mousedown', (e: any) => {
-			const target = $(e.target);
-			if (!target.hasClass('icon') && !target.hasClass('inner')) {
-				e.preventDefault();
-				e.stopPropagation();
+	onMoreOver (item: any) {
+		const { close, param } = this.props;
+		const { data } = param;
+		const { blockId, blockIds, rootId } = data;
+		const block = blockStore.getLeaf(rootId, blockId);
+		const context = this.menuContext;
+		const route = analytics.route.menuContext;
+
+		if (!block) {
+			return;
+		};
+
+		const cb = () => {
+			close();
+			focus.clear(true);
+		};
+
+		let menuId = '';
+		let menuParam: any = {
+			element: `#${context.getId()} #item-${item.id}`,
+			offsetX: context.getSize().width,
+			horizontal: I.MenuDirection.Left,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			data: {
+				rootId,
+				blockId,
+				blockIds,
+			} as any,
+		};
+
+		switch (item.id) {
+			case 'move': {
+				menuId = 'searchObject';
+				menuParam.data = Object.assign(menuParam.data, {
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+					],
+					type: I.NavigationType.Move, 
+					skipIds: [ rootId ],
+					position: I.BlockPosition.Bottom,
+					onSelect: () => {
+						cb();
+					}
+				});
+				break;
 			};
-		});
-	};
 
+			case 'turnObject': {
+				menuId = 'typeSuggest';
+				menuParam.data = Object.assign(menuParam.data, {
+					filter: '',
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+					],
+					onClick: (item: any) => {
+						C.BlockListConvertToObjects(rootId, blockIds, item.uniqueKey, item.defaultTemplateId, (message: any) => {
+							analytics.createObject(item.id, item.recommendedLayout, route, message.middleTime);
+						});
+
+						cb();
+					},
+				});
+				break;
+			};
+
+			case 'align': {
+				menuId = 'blockAlign';
+				menuParam.data = Object.assign(menuParam.data, {
+					value: block.hAlign,
+					onSelect: (align: I.BlockHAlign) => {
+						C.BlockListSetAlign(rootId, blockIds, align, () => {
+							analytics.event('ChangeBlockAlign', { align, count: 1, route });
+						});
+						cb();
+					}
+				});
+				break;
+			};
+		};
+
+		if (menuId && !menuStore.isOpen(menuId)) {
+			menuStore.closeAll(Constant.menuIds.selectContext, () => {
+				menuStore.open(menuId, menuParam);
+			});
+		};
+	};
+	
 });
 
 export default MenuBlockContext;

@@ -2,7 +2,7 @@ import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import { I, M, UtilCommon, UtilObject, UtilFile, Storage, Mark, translate, keyboard, UtilSpace } from 'Lib';
 import { detailStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 class BlockStore {
 
@@ -14,6 +14,7 @@ class BlockStore {
     public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
     public blockMap: Map<string, Map<string, I.Block>> = new Map();
     public restrictionMap: Map<string, Map<string, any>> = new Map();
+	public participantMap: Map<string, Map<string, string>> = new Map();
 
     constructor() {
         makeObservable(this, {
@@ -101,6 +102,8 @@ class BlockStore {
 	clear (rootId: string) {
 		this.blockMap.delete(rootId);
 		this.treeMap.delete(rootId);
+		this.restrictionMap.delete(rootId);
+		this.participantMap.delete(rootId);
 	};
 
     clearAll () {
@@ -111,6 +114,7 @@ class BlockStore {
 		this.blockMap.clear();
 		this.treeMap.clear();
 		this.restrictionMap.clear();
+		this.participantMap.clear();
 	};
 
 	setStructure (rootId: string, list: any[]) {
@@ -177,6 +181,20 @@ class BlockStore {
 		};
 
 		this.restrictionMap.set(rootId, map);
+	};
+
+	participantsSet (rootId: string, participants: I.BlockParticipant[]) {
+		let map = this.participantMap.get(rootId);
+
+		if (!map) {
+			map = new Map();
+		};
+
+		for (const item of participants) {
+			map.set(item.blockId, item.participantId);
+		};
+
+		this.participantMap.set(rootId, map);
 	};
 
     getMap (rootId: string) {
@@ -406,6 +424,15 @@ class BlockStore {
 		};
 
 		return map.get(blockId) || [];
+	};
+
+	getParticipants (rootId: string) {
+		return this.participantMap.get(rootId) || new Map();
+	};
+
+	getParticipant (rootId: string, blockId: string): string {
+		const map = this.getParticipants(rootId);
+		return map ? String(map.get(blockId) || '') : '';
 	};
 
 	checkFlags (rootId: string, blockId: string, flags: any[]): boolean {

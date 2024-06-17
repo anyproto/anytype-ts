@@ -1,0 +1,38 @@
+@import "~scss/_mixins";
+
+.blocks {
+	.block.blockLatex { padding: 6px 0px; }
+	.block.blockLatex { 
+		.wrap { padding: 2px 0px; }
+		.wrap.isEditing { padding: 8px; box-shadow: 0px 0px 0px 1px $colorShapePrimary; border-radius: 6px; }
+		.wrap.isEditing {
+			.empty { padding-bottom: 18px; }
+			#input { display: block; }
+			.select { display: inline-block; }
+		}
+
+		.selectWrap { text-align: left; }
+		.selectWrap {
+			.select { 
+				border: 0px; color: $colorControlActive; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; 
+				display: none; margin-bottom: 8px;
+			}
+			.select {
+				.name { overflow: visible; }
+			}
+			.select:hover, .select.isFocused { background: none; }
+		}
+
+		#value { font-size: 20px; line-height: 20px; width: 100%; }
+		#value:empty { display: none; }
+		#input { 
+			background: $colorShapeTertiary; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
+			-webkit-user-modify: read-write-plaintext-only; display: none; border-radius: 4px; margin-top: 8px;
+		}
+
+		.katex-display { margin: 0px; text-align: inherit; }
+		.katex { line-height: 1.5em; text-align: inherit; }
+		.katex > .katex-html { white-space: normal; }
+		.katex .base { margin-top: 2px; margin-bottom: 2px; }
+	}
+}

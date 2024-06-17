@@ -3,13 +3,14 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace } from 'Lib';
+import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace, keyboard } from 'Lib';
 import { blockStore, detailStore, menuStore, dbStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
 
 import WidgetSpace from './space';
-import WidgetList from './list';
+import WidgetView from './view';
 import WidgetTree from './tree';
+
+const Constant = require('json/constant.json');
 
 interface Props extends I.WidgetComponent {
 	name?: string;
@@ -33,15 +34,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.onSetPreview = this.onSetPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onClick = this.onClick.bind(this);
-		this.onCreate = this.onCreate.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
+		this.onContext = this.onContext.bind(this);
+		this.onCreateClick = this.onCreateClick.bind(this);
+		this.onCreate = this.onCreate.bind(this);
 		this.isSystemTarget = this.isSystemTarget.bind(this);
 		this.getData = this.getData.bind(this);
 		this.getLimit = this.getLimit.bind(this);
 		this.sortFavorite = this.sortFavorite.bind(this);
-		this.isPlusAllowed = this.isPlusAllowed.bind(this);
+		this.canCreate = this.canCreate.bind(this);
 	};
 
 	render () {
@@ -56,23 +59,29 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		const { targetBlockId } = child?.content || {};
-		const cn = [ 'widget', UtilCommon.toCamelCase(`widget-${I.WidgetLayout[layout]}`) ];
+		const cn = [ 'widget' ];
 		const object = this.getObject();
 
 		const withSelect = !this.isSystemTarget() && (!isPreview || !UtilCommon.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
-		const withPlus = this.isPlusAllowed();
+		const canCreate = this.canCreate();
 		const canDrop = object && !this.isSystemTarget() && !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+		const isFavorite = targetBlockId == Constant.widgetId.favorite;
 
 		const props = {
 			...this.props,
+			ref: ref => this.ref = ref,
+			key: childKey,
 			parent: block,
 			block: child,
+			canCreate,
 			isSystemTarget: this.isSystemTarget,
 			getData: this.getData,
 			getLimit: this.getLimit,
 			sortFavorite: this.sortFavorite,
 			addGroupLabels: this.addGroupLabels,
+			onContext: this.onContext,
+			onCreate: this.onCreate,
 		};
 
 		if (className) {
@@ -112,9 +121,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 							<Icon className="options" tooltip={translate('widgetOptions')} onClick={this.onOptions} />
 						</div>
 					) : ''}
-					{withPlus ? (
+					{canCreate ? (
 						<div className="iconWrap create">
-							<Icon className="plus" tooltip={translate('widgetCreate')} onClick={this.onCreate} />
+							<Icon className="plus" tooltip={translate('commonCreateNewObject')} onClick={this.onCreateClick} />
 						</div>
 					) : ''}
 					<div className="iconWrap collapse">
@@ -132,6 +141,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					{back}
 					<div className="clickable" onClick={onClick}>
 						<ObjectName object={object} />
+						{isFavorite ? <span className="count">{this.getFavoriteIds().length}</span> : ''}
 					</div>
 					{buttons}
 				</div>
@@ -179,18 +189,22 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		switch (layout) {
 
 			case I.WidgetLayout.Space: {
-				content = <WidgetSpace key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} />;
+				cn.push('widgetSpace');
+				content = <WidgetSpace {...props} />;
 				break;
 			};
 
 			case I.WidgetLayout.Tree: {
-				content = <WidgetTree key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} />;
+				cn.push('widgetTree');
+				content = <WidgetTree {...props} />;
 				break;
 			};
 
 			case I.WidgetLayout.List:
-			case I.WidgetLayout.Compact: {
-				content = <WidgetList key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} isCompact={layout == I.WidgetLayout.Compact} />;
+			case I.WidgetLayout.Compact:
+			case I.WidgetLayout.View: {
+				cn.push('widgetView');
+				content = <WidgetView {...props} />;
 				break;
 			};
 
@@ -302,13 +316,19 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	onClick (e: React.MouseEvent): void {
 		if (!e.button) {
-			UtilObject.openEvent(e, this.getObject());
+			UtilObject.openEvent(e, { ...this.getObject(), _routeParam_: { viewId: this.props.block.content.viewId } });
 		};
 	};
 
-	onCreate (e: React.MouseEvent): void {
+	onCreateClick (e: React.MouseEvent): void {
 		e.preventDefault();
 		e.stopPropagation();
+
+		this.onCreate();
+	};
+
+	onCreate (param?: any): void {
+		param = param || {};
 
 		const { block } = this.props;
 		const { viewId, layout } = block.content;
@@ -327,7 +347,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const isSetOrCollection = UtilObject.isSetLayout(object.layout);
 		const isFavorite = targetBlockId == Constant.widgetId.favorite;
 
-		let details: any = {};
+		let details: any = Object.assign({}, param.details || {});
 		let flags: I.ObjectFlag[] = [];
 		let typeKey = '';
 		let templateId = '';
@@ -352,7 +372,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				return;
 			};
 
-			details = Dataview.getDetails(rootId, Constant.blockId.dataview, object.id, viewId);
+			details = Object.assign(details, Dataview.getDetails(rootId, Constant.blockId.dataview, object.id, viewId));
 			flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 			typeKey = type.uniqueKey;
 			templateId = view.defaultTemplateId || type.defaultTemplateId;
@@ -405,9 +425,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const object = message.details;
 
 			if (isFavorite) {
-				Action.setIsFavorite([ object.id ], true, analytics.route.widget, () => {
-					window.setTimeout(() => this.sliceFavorite(), 40);
-				});
+				Action.setIsFavorite([ object.id ], true, analytics.route.widget);
 			};
 
 			if (isCollection) {
@@ -420,7 +438,16 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (createWithLink) {
 			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, flags, analytics.route.widget, callBack);
 		} else {
-			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, callBack);
+			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				const object = message.details;
+
+				analytics.createObject(object.type, object.layout, analytics.route.widget, message.middleTime);
+				callBack(message);
+			});
 		};
 	};
 
@@ -435,19 +462,18 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block, setEditing } = this.props;
 		const object = this.getObject();
 		const node = $(this.node);
-		const element = `#widget-${block.id}`;
 
 		if (!object || object._empty_) {
 			return;
 		};
 
+		const { x, y } = keyboard.mouse.page;
+
 		menuStore.open('widget', {
-			element,
+			rect: { width: 0, height: 0, x: x + 4, y },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			subIds: Constant.menuIds.widget,
-			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Right,
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
 			data: {
@@ -463,12 +489,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	initToggle () {
 		const { block, isPreview } = this.props;
 		const node = $(this.node);
+		const wrapper = node.find('#wrapper');
 		const icon = node.find('.icon.collapse');
 		const isClosed = Storage.checkToggle('widget', block.id);
 
 		if (!isPreview) {
 			isClosed ? node.addClass('isClosed') : node.removeClass('isClosed');
 			isClosed ? icon.addClass('isClosed') : node.removeClass('isClosed');
+			isClosed ? wrapper.hide() : wrapper.show();
 		};
 	};
 
@@ -484,12 +512,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block } = this.props;
 		const node = $(this.node);
 		const icon = node.find('.icon.collapse');
+		const innerWrap = node.find('#innerWrap');
 		const wrapper = node.find('#wrapper').css({ height: 'auto' });
 		const height = wrapper.outerHeight();
+		const minHeight = this.getMinHeight();
 
 		node.addClass('isClosed');
 		icon.removeClass('isClosed');
-		wrapper.css({ height: 0 });
+		wrapper.css({ height: minHeight }).show();
+		innerWrap.css({ opacity: 1 });
 
 		raf(() => { wrapper.css({ height }); });
 
@@ -508,14 +539,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block } = this.props;
 		const node = $(this.node);
 		const icon = node.find('.icon.collapse');
+		const innerWrap = node.find('#innerWrap');
 		const wrapper = node.find('#wrapper');
+		const minHeight = this.getMinHeight();
 
 		wrapper.css({ height: wrapper.outerHeight() });
 		icon.addClass('isClosed');
+		innerWrap.css({ opacity: 0 });
 
 		raf(() => { 
 			node.addClass('isClosed'); 
-			wrapper.css({ height: 0 });
+			wrapper.css({ height: minHeight });
 		});
 
 		window.clearTimeout(this.timeout);
@@ -523,13 +557,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const isClosed = Storage.checkToggle('widget', block.id);
 
 			if (isClosed) {
-				wrapper.css({ height: '' });
+				wrapper.css({ height: '' }).hide();
 			};
 		}, 450);
 	};
 
+	getMinHeight () {
+		return [ I.WidgetLayout.List,  I.WidgetLayout.Compact ].includes(this.props.block.content.layout) ? 8 : 0;
+	};
+
 	getData (subId: string, callBack?: () => void) {
-		const { block, isPreview } = this.props;
+		const { block } = this.props;
 		const child = this.getTargetBlock();
 
 		if (!child) {
@@ -588,19 +626,25 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			limit,
 			keys: Constant.sidebarRelationKeys,
 		}, () => {
-			this.sliceFavorite();
-
 			if (callBack) {
 				callBack();
 			};
 		});
 	};
 
-	sortFavorite (records: string[]): string[] {
+	getFavoriteIds (): string[] {
 		const { root } = blockStore;
 		const ids = blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
+		const items = ids.map(id => detailStore.get(root, id)).filter(it => !it.isArchived).map(it => it.id);
 
-		return UtilCommon.objectCopy(records || []).sort((c1: string, c2: string) => {
+		return items;
+	};
+
+	sortFavorite (records: string[]): string[] {
+		const { block, isPreview } = this.props;
+		const ids = this.getFavoriteIds();
+
+		let sorted = UtilCommon.objectCopy(records || []).sort((c1: string, c2: string) => {
 			const i1 = ids.indexOf(c1);
 			const i2 = ids.indexOf(c2);
 
@@ -608,18 +652,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			if (i1 < i2) return -1;
 			return 0;
 		});
-	};
-
-	sliceFavorite () {
-		const { block, isPreview } = this.props;
-
-		let records = this.sortFavorite(dbStore.getRecordIds(this.subId, ''));
 
 		if (!isPreview) {
-			records = records.slice(0, this.getLimit(block.content));
+			sorted = sorted.slice(0, this.getLimit(block.content));
 		};
 
-		dbStore.recordsSet(this.subId, '', records);
+		return sorted;
 	};
 
 	onSetPreview () {
@@ -665,7 +703,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		return Object.values(Constant.widgetId).includes(target.getTargetObjectId());
 	};
 
-	isPlusAllowed (): boolean {
+	canCreate (): boolean {
 		const object = this.getObject();
 		const { block, isEditing } = this.props;
 
@@ -674,10 +712,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		const { layout } = block.content;
-		const child = this.getTargetBlock();
-		const { targetBlockId } = child?.content || {};
-		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
-		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact ].includes(layout);
+		const target = this.getTargetBlock();
+		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(layout);
+		const isRecent = target ? [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(target.getTargetObjectId()) : null;
 
 		if (isRecent || !layoutWithPlus) {
 			return false;
@@ -716,7 +753,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];
 		};
-		return isPreview ? 0 : limit;
+		return isPreview ? Constant.limit.menuRecords : limit;
 	};
 
 	addGroupLabels (records: any[], widgetId: string) {
@@ -772,6 +809,35 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		});
 
 		return groupedRecords;
+	};
+
+	onContext (param: any) {
+		const { node, element, withElement, subId, objectId, data } = param;
+
+		const menuParam: any = {
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			onOpen: () => node.addClass('active'),
+			onClose: () => node.removeClass('active'),
+			data: {
+				route: analytics.route.widget,
+				objectIds: [ objectId ],
+				subId,
+			},
+		};
+
+		menuParam.data = Object.assign(menuParam.data, data || {});
+
+		if (withElement) {
+			menuParam.element = element;
+			menuParam.vertical = I.MenuDirection.Center;
+			menuParam.offsetX = 32;
+		} else {
+			const { x, y } = keyboard.mouse.page;
+			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
+		};
+
+		menuStore.open('dataviewContext', menuParam);
 	};
 
 });

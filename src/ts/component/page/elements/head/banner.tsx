@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
 import { I, Action, translate, UtilObject, UtilCommon, C, analytics, Onboarding } from 'Lib';
 import { dbStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	type: I.BannerType;

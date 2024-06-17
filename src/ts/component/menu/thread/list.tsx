@@ -4,7 +4,7 @@ import { Icon, IconObject } from 'Component';
 import { authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import { I, UtilData, translate, UtilDate } from 'Lib';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 const MENU_ID = 'threadStatus';
 

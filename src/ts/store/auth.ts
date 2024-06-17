@@ -80,7 +80,6 @@ class AuthStore {
 
 	membershipSet (v: I.Membership) {
 		this.membershipData = new M.Membership(v);
-		analytics.setTier(this.membershipData.tier);
 	};
 
 	membershipUpdate (v: I.Membership) {

@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
 import { I, C, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
 import { menuStore, detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isEditing: boolean;
@@ -29,7 +29,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		this.onBlur = this.onBlur.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
-		this.onFullscreen = this.onFullscreen.bind(this);
 		this.onTitle = this.onTitle.bind(this);
 		this.onTitleOver = this.onTitleOver.bind(this);
 		this.onTitleSelect = this.onTitleSelect.bind(this);
@@ -355,13 +354,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 	onIconUpload (objectId: string) {
 		UtilObject.setIcon(this.props.block.content.targetObjectId, '', objectId);
-	};
-
-	onFullscreen () {
-		const { rootId, block } = this.props;
-
-		UtilObject.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId: block.id } });
-		analytics.event('InlineSetOpenFullscreen');
 	};
 
 	setRange (range: I.TextRange) {

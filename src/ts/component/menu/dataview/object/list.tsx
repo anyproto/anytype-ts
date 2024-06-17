@@ -5,7 +5,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
 import { I, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate, analytics } from 'Lib';
 import { menuStore, dbStore } from 'Store';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -257,6 +257,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 		];
 
 		if (types && types.length) {
@@ -313,7 +314,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			if (ret.length || typeNames) {
 				ret.push({ isDiv: true });
 			};
-			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), data.filter) });
+			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObjectWithName'), data.filter) });
 		};
 
 		return ret;

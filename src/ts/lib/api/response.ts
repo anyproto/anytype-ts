@@ -1,5 +1,5 @@
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
-import { Decode, Mapper } from 'Lib';
+import { Decode, Mapper, dispatcher } from 'Lib';
 
 export const AppGetVersion = (response: Rpc.App.GetVersion.Response) => {
 	return {
@@ -205,6 +205,12 @@ export const ObjectSearch = (response: Rpc.Object.Search.Response) => {
 	};
 };
 
+export const ObjectSearchWithMeta = (response: Rpc.Object.SearchWithMeta.Response) => {
+	return {
+		records: (response.getResultsList() || []).map(Mapper.From.ObjectSearchWithMeta),
+	};
+};
+
 export const ObjectGroupsSubscribe = (response: Rpc.Object.GroupsSubscribe.Response) => {
 	return {
 		subId: response.getSubid(),
@@ -371,6 +377,25 @@ export const HistoryGetVersions = (response: Rpc.History.GetVersions.Response) =
 	};
 };
 
+export const HistoryShowVersion = (response: Rpc.History.ShowVersion.Response) => {
+	const version = response.getVersion();
+	return {
+		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
+		objectView: Mapper.From.ObjectView(response.getObjectview()),
+	};
+};
+
+export const HistoryDiffVersions = (response: Rpc.History.DiffVersions.Response) => {
+	return {
+		events: (response.getHistoryeventsList() || []).map(it => {
+			const type = Mapper.Event.Type(it.getValueCase());
+			const data = Mapper.Event[type](Mapper.Event.Data(it));
+
+			return { type, data };
+		}),
+	};
+};
+
 export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObjectInfoWithLinks.Response) => {
 	const object = response.getObject();
 	const links = object.getLinks();
@@ -384,14 +409,6 @@ export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObj
 				outbound: (links.getOutboundList() || []).map(Mapper.From.ObjectInfo),
 			},
 		},
-	};
-};
-
-export const HistoryShowVersion = (response: Rpc.History.ShowVersion.Response) => {
-	const version = response.getVersion();
-	return {
-		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
-		objectView: Mapper.From.ObjectView(response.getObjectview()),
 	};
 };
 
@@ -480,7 +497,7 @@ export const MembershipGetTiers = (response: Rpc.Membership.GetTiers.Response) =
 	};
 };
 
-export const MembershipGetPaymentUrl = (response: Rpc.Membership.GetPaymentUrl.Response) => {
+export const MembershipRegisterPaymentRequest = (response: Rpc.Membership.RegisterPaymentRequest.Response) => {
 	return {
 		url: response.getPaymenturl(),
 	};

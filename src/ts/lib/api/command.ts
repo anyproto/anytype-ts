@@ -2,8 +2,8 @@ import Commands from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import { detailStore } from 'Store';
 import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
-import Constant from 'json/constant.json';
-import { MembershipTier } from 'Interface';
+
+const Constant = require('json/constant.json');
 
 const Rpc = Commands.Rpc;
 
@@ -540,12 +540,13 @@ export const BlockListMoveToExistingObject = (contextId: string, targetContextId
 	dispatcher.request(BlockListMoveToExistingObject.name, request, callBack);
 };
 
-export const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, callBack?: (message: any) => void) => {
+export const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListConvertToObjects.Request();
 
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
 	request.setObjecttypeuniquekey(typeKey);
+	request.setTemplateid(templateId);
 
 	dispatcher.request(BlockListConvertToObjects.name, request, callBack);
 };
@@ -1065,14 +1066,12 @@ export const BlockDataviewViewRelationSort = (contextId: string, blockId: string
 	dispatcher.request(BlockDataviewViewRelationSort.name, request, callBack);
 };
 
-export const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+export const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.View.SetActive.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setViewid(viewId);
-	request.setOffset(offset);
-	request.setLimit(limit);
 
 	dispatcher.request(BlockDataviewViewSetActive.name, request, callBack);
 };
@@ -1161,10 +1160,6 @@ export const HistoryShowVersion = (objectId: string, versionId: string, callBack
 	request.setVersionid(versionId);
 
 	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
-		if (!message.error.code) {
-			dispatcher.onObjectView(objectId, '', message.objectView);
-		};
-
 		if (callBack) {
 			callBack(message);
 		};
@@ -1188,6 +1183,17 @@ export const HistoryGetVersions = (objectId: string, lastVersionId: string, limi
 	request.setLimit(limit);
 
 	dispatcher.request(HistoryGetVersions.name, request, callBack);
+};
+
+export const HistoryDiffVersions = (objectId: string, spaceId: string, current: string, previous: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.History.DiffVersions.Request();
+
+	request.setObjectid(objectId);
+	request.setSpaceid(spaceId);
+	request.setCurrentversion(current);
+	request.setPreviousversion(previous);
+
+	dispatcher.request(HistoryDiffVersions.name, request, callBack);
 };
 
 // ---------------------- OBJECT TYPE ---------------------- //
@@ -1518,6 +1524,19 @@ export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[
 	request.setKeysList(keys);
 
 	dispatcher.request(ObjectSearch.name, request, callBack);
+};
+
+export const ObjectSearchWithMeta = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SearchWithMeta.Request();
+
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setFulltext(fullText);
+	request.setOffset(offset);
+	request.setLimit(limit);
+	request.setKeysList(keys);
+
+	dispatcher.request(ObjectSearchWithMeta.name, request, callBack);
 };
 
 export const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
@@ -1919,15 +1938,15 @@ export const MembershipIsNameValid = (tier: I.TierType, name: string, callBack?:
 	dispatcher.request(MembershipIsNameValid.name, request, callBack);
 };
 
-export const MembershipGetPaymentUrl = (tier: I.TierType, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Membership.GetPaymentUrl.Request();
+export const MembershipRegisterPaymentRequest = (tier: I.TierType, method: I.PaymentMethod, name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Membership.RegisterPaymentRequest.Request();
 
 	request.setRequestedtier(tier as number);
 	request.setPaymentmethod(method as number);
 	request.setNsname(name);
 	request.setNsnametype(I.NameType.Any as number);
 
-	dispatcher.request(MembershipGetPaymentUrl.name, request, callBack);
+	dispatcher.request(MembershipRegisterPaymentRequest.name, request, callBack);
 };
 
 export const MembershipGetPortalLinkUrl = (callBack?: (message: any) => void) => {

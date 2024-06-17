@@ -2,7 +2,7 @@ import * as React from 'react';
 import { commonStore, menuStore } from 'Store';
 import { UtilSmile } from 'Lib';
 import { observer } from 'mobx-react';
-import Constant from 'json/constant.json';
+const Constant = require('json/constant.json');
 
 interface Props {
 	id?: string;

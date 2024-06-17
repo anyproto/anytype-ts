@@ -4,7 +4,7 @@ import QRCode from 'qrcode.react';
 import { Title, Label, Phrase } from 'Component';
 import { I, C, translate, analytics, UtilCommon, Storage, Renderer } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
-import Theme from 'json/theme.json';
+const Theme = require('json/theme.json');
 
 interface State {
 	entropy: string;
@@ -71,7 +71,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		Renderer.send('keytarGet', account.id).then((value: string) => {
 			C.WalletConvert(value, '', (message: any) => {
 				if (!message.error.code) {
-					this.refPhrase.setValue(value);
+					this.refPhrase?.setValue(value);
 					this.setState({ entropy: message.entropy });
 				};
 			});
@@ -93,7 +93,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 	onCode () {
 		const { showCode } = this.state;
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const onSuccess = () => {
 			this.setState({ showCode: !showCode });
 		};

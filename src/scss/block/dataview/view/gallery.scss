@@ -1,4 +1,4 @@
-@import "~scss/_vars";
+@import "~scss/_mixins";
 
 .blocks {
 	.block.blockDataview {
@@ -36,11 +36,6 @@
 
 				.cover {
 					img { width: 100%; height: 100%; object-fit: cover; }
-
-					.inner { 
-						position: relative; color: var(--color-text-tertiary); transition: $transitionAllCommon; width: 100%; height: 100%; 
-						background-image: url('~img/icon/dataview/gallery-image-preview.svg'); background-repeat: no-repeat; background-position: center center;
-					}
 
 					.mediaVideo { height: 100%; }
 					.mediaVideo {
