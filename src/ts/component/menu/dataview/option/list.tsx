@@ -73,8 +73,18 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			if (item.isSection) {
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 			} else {
+				const cn = [ 'item' ];
+				if (active) {
+					cn.push('withCheckbox');
+				};
+
 				content = (
-					<div id={'item-' + item.id} className="item" style={param.style} onMouseEnter={e => this.onOver(e, item)}>
+					<div 
+						id={`item-${item.id}`} 
+						className={cn.join(' ')} 
+						style={param.style} 
+						onMouseEnter={e => this.onOver(e, item)}
+					>
 						<div className="clickable" onClick={e => this.onClick(e, item)}>
 							<Tag text={item.name} color={item.color} className={Relation.selectClassName(relation.format)} />
 						</div>

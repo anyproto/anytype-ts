@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex extends React.Component<I.PopupSettings> {
 
 	render () {
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const pinTime = commonStore.pinTime / 1000;
 		const times = [ 60, 300, 600, 3600 ].map(time => ({ id: time, name: UtilDate.duration(time) }));
 

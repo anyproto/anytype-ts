@@ -93,7 +93,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 	onCode () {
 		const { showCode } = this.state;
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const onSuccess = () => {
 			this.setState({ showCode: !showCode });
 		};

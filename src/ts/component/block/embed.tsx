@@ -421,8 +421,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { block } = this.props;
 		const { fields } = block;
 		const data = e.clipboardData || e.originalEvent.clipboardData;
-		const text = data.getData('text/plain');
-		const to = range.end + text.length;
+		const text = String(data.getData('text/plain') || '');
+		const to = range.to + text.length;
 		const value = UtilCommon.stringInsert(this.getValue(), text, range.from, range.to);
 
 		const cb = () => {
@@ -761,6 +761,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					};
 				}).catch(e => {
 					const error = $(`#d${this.getContainerId()}`).hide();
+
 					if (error.length) {
 						value.html(error.html());
 					};
@@ -819,7 +820,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
-	getRange () {
+	getRange (): I.TextRange {
 		return UtilCommon.objectCopy(this.refEditable.getRange());
 	};
 

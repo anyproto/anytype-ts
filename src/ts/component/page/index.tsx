@@ -188,7 +188,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
 		const isPinCheck = this.isAuthPinCheck();
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const win = $(window);
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
@@ -196,6 +196,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
+		keyboard.setWindowTitle();
 
 		if (!Component) {
 			return;

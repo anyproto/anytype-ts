@@ -1424,6 +1424,7 @@
 	"menuGraphSettingsTitles": "Titles",
 	"menuGraphSettingsArrows": "Arrows",
 	"menuGraphSettingsIcons": "Icons",
+	"menuGraphSettingsPreview": "Preview",
 	"menuGraphSettingsShowOnGraph": "Show on Graph",
 	"menuGraphSettingsLinks": "Links",
 	"menuGraphSettingsRelations": "Relations",
@@ -1693,7 +1694,8 @@
 	"widgetBin": "Bin",
 	"widgetOptions": "Options",
 	"widgetToggle": "Toggle",
-	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
+	"widgetEmptyLabel": "There are no Objects here",
+	"widgetEmptyLabelCreate": "There are no Objects here,<br/>create the first one",
 	"widgetShowAll": "See all Objects",
 
 	"phrasePlaceholder": "Please enter your Key",

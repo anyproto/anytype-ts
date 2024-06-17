@@ -18,7 +18,7 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 	render () {
 		const { onPage, prevPage } = this.props;
 		const { error } = this.state;
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 
 		return (
 			<React.Fragment>
