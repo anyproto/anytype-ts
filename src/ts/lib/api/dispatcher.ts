@@ -966,10 +966,6 @@ class Dispatcher {
 					authStore.syncStatusUpdate(mapped);
 					break;
 				};
-
-				case 'p2pStatusUpdate': {
-					break;
-				};
 			};
 
 			if (needLog) {
