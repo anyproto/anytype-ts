@@ -120,6 +120,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		return (
 			<div 
 				ref={node => this.node = node}
+				id="innerWrap"
 				className={cn.join(' ')}
 			>
 				{viewSelect ? <div id="viewSelect">{viewSelect}</div> : ''}
