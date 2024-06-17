@@ -119,6 +119,10 @@ class Storage {
 		});
 	};
 
+	getPin () {
+		return this.get('pin');
+	};
+
 	setLastOpened (windowId: string, param: any) {
 		const obj = this.get('lastOpenedObject') || {};
 

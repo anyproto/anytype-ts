@@ -31,7 +31,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 					<Title text={translate('authPinCheckTitle')} />
 					<Pin 
 						ref={ref => this.ref = ref}
-						expectedPin={Storage.get('pin')} 
+						expectedPin={Storage.getPin()} 
 						onSuccess={this.onSuccess} 
 						onError={this.onError} 
 					/>

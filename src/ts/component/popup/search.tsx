@@ -527,6 +527,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+			{ relationKey: 'type', type: I.SortType.Asc },
 		];
 
 		let limit = Constant.limit.menuRecords;

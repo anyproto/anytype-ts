@@ -105,7 +105,6 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	init () {
-		keyboard.setWindowTitle();
 		this.updateTemplatesCnt();
 	};
 

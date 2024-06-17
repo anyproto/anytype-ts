@@ -898,6 +898,12 @@ class Keyboard {
 	};
 
 	setWindowTitle () {
+		const pin = Storage.getPin();
+		if (pin && !this.isPinChecked) {
+			document.title = Constant.appName;
+			return;
+		};
+
 		const match = this.getMatch();
 		const action = match?.params?.action;
 		const titles = {
@@ -1007,7 +1013,7 @@ class Keyboard {
 	initPinCheck () {
 		const { account } = authStore;
 		const check = () => {
-			const pin = Storage.get('pin');
+			const pin = Storage.getPin();
 			if (!pin) {
 				this.setPinChecked(true);
 				return false;

@@ -66,6 +66,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const isPopup = keyboard.isPopup();
 		const container = $(isPopup ? '#popupPage-innerWrap' : '#root');
 
+		this.clearState();
 		this.init = true;
 		this.objects = container.find('.dropTarget.isDroppable');
 
@@ -82,11 +83,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			};
 			const offset = item.offset();
 			const rect = el.getBoundingClientRect() as DOMRect;
-
-			const isTargetTop = item.hasClass('targetTop');
-			const isTargetBot = item.hasClass('targetBot');
-			const isTargetCol = item.hasClass('targetCol');
-			const isEmptyToggle = item.hasClass('emptyToggle');
 			const x = offset.left;
 			const width = rect.width;
 
@@ -113,10 +109,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				y,
 				width,
 				height,
-				isTargetTop,
-				isTargetBot,
-				isTargetCol,
-				isEmptyToggle,
+				isTargetTop: item.hasClass('targetTop'),
+				isTargetBot: item.hasClass('targetBot'),
+				isTargetCol: item.hasClass('targetCol'),
+				isEmptyToggle: item.hasClass('emptyToggle'),
 			});
 		});
 	};
