@@ -300,7 +300,6 @@ class MenuContext extends React.Component<I.Menu> {
 					rootId: itemId,
 					blockId: itemId,
 					blockIds: [ itemId ],
-					type: I.NavigationType.LinkTo,
 					skipIds: [ itemId ],
 					position: I.BlockPosition.Bottom,
 					canAdd: true,
