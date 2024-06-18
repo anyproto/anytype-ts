@@ -80,7 +80,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const cd: string[] = [ 'wrapContent' ];
 		const setRef = ref => this.ref = ref;
 		const key = [ 'block', block.id, 'component' ].join(' ');
-		const participantId = S.Block.getParticipant(rootId, block.id);
+		const participantId = S.Block.getParticipantId(rootId, block.id);
 
 		let participant = null;
 		if (participantId) {

@@ -424,12 +424,12 @@ class BlockStore {
 		return map.get(blockId) || [];
 	};
 
-	getParticipants (rootId: string) {
+	getParticipantIds (rootId: string) {
 		return this.participantMap.get(rootId) || new Map();
 	};
 
-	getParticipant (rootId: string, blockId: string): string {
-		const map = this.getParticipants(rootId);
+	getParticipantId (rootId: string, blockId: string): string {
+		const map = this.getParticipantIds(rootId);
 		return map ? String(map.get(blockId) || '') : '';
 	};
 
