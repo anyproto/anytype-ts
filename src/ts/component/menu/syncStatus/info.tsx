@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Title, Label } from 'Component';
-import { I, S, U, keyboard, Renderer } from 'Lib';
+import { I, S, keyboard, Renderer } from 'Lib';
 
 class MenuSyncStatusInfo extends React.Component<I.Menu> {
 
