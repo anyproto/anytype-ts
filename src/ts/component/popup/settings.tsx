@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
-import { I, S, UtilCommon, UtilSpace, analytics, Action, keyboard, translate, Preview, UtilData } from 'Lib';
+import { I, S, U, analytics, Action, keyboard, translate, Preview } from 'Lib';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -102,8 +102,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { membership } = S.Auth;
 		const { membershipTiersList } = S.Common;
 		const sections = this.getSections().filter(it => !it.isHidden);
-		const participant = UtilSpace.getParticipant();
-		const cnr = [ 'side', 'right', UtilCommon.toCamelCase('tab-' + page) ];
+		const participant = U.Space.getParticipant();
+		const cnr = [ 'side', 'right', U.Common.toCamelCase('tab-' + page) ];
 		const length = sections.length;
 
 		if (!length) {
@@ -155,7 +155,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 			if (action.id == 'membership') {
 				if (!membership.isNone) {
-					const tierItem = UtilData.getMembershipTier(membership.tier);
+					const tierItem = U.Data.getMembershipTier(membership.tier);
 					caption = <div className="caption">{tierItem.name}</div>;
 				} else {
 					caption = <div className="caption join">{translate(`commonJoin`)}</div>;
@@ -259,7 +259,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { data } = param;
 		const { isSpace } = data;
 		const { isOnline } = S.Common;
-		const isAnytypeNetwork = UtilData.isAnytypeNetwork();
+		const isAnytypeNetwork = U.Data.isAnytypeNetwork();
 
 		if (isSpace) {
 			return [
@@ -346,7 +346,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut(UtilCommon.isPlatformMac() ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
+		keyboard.shortcut(U.Common.isPlatformMac() ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 	};
 
 	onMouseDown (e: any) {

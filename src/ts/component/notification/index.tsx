@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, Error } from 'Component';
-import { I, C, S, UtilRouter, translate, Action, analytics, UtilSpace } from 'Lib';
+import { I, C, S, U, translate, Action, analytics } from 'Lib';
 
 interface State {
 	error: string;
@@ -32,8 +32,8 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		const { space } = S.Common;
 		const { id, type, payload, title, text } = item;
 		const { errorCode, spaceId } = payload;
-		const spaceview = UtilSpace.getSpaceviewBySpaceId(spaceId);
-		const participant = UtilSpace.getMyParticipant(spaceId);
+		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+		const participant = U.Space.getMyParticipant(spaceId);
 		const spaceCheck = spaceview && (spaceview.isAccountRemoving || spaceview.isAccountDeleted);
 		const participantCheck = participant && (participant.isRemoving || participant.isJoining);
 
@@ -128,7 +128,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 		switch (action) {
 			case 'spaceSwitch': {
-				UtilRouter.switchSpace(payload.spaceId);
+				U.Router.switchSpace(payload.spaceId);
 				analytics.event('SwitchSpace');
 				break;
 			};

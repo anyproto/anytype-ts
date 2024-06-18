@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { C, S, UtilData, Preview, analytics, Storage } from 'Lib';
+import { C, S, U, Preview, analytics, Storage } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -151,8 +151,8 @@ class UtilRouter {
 					S.Common.defaultType = '';
 					Storage.set('spaceId', id);
 
-					UtilData.onInfo(message.info);
-					UtilData.onAuth({ route }, callBack);
+					U.Data.onInfo(message.info);
+					U.Data.onAuth({ route }, callBack);
 				}
 			});
 		});

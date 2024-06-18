@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
-import { I, C, S, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate } from 'Lib';
+import { I, C, S, U, Action, translate } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -42,7 +42,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const columnsObject: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: (v: any) => UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
+				mapper: (v: any) => U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
 			},
 			{ relationKey: object.relationKey, name: object.name, isCell: true }
 		];
@@ -76,7 +76,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 					/>
 
 					<div className="section set">
-						<div className="title">{totalType} {UtilCommon.plural(totalType, translate('pluralObjectType'))}</div>
+						<div className="title">{totalType} {U.Common.plural(totalType, translate('pluralObjectType'))}</div>
 						<div className="content">
 							<ListObject 
 								{...this.props}
@@ -90,7 +90,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 					{object.isInstalled ? (
 						<div className="section set">
-							<div className="title">{totalObject} {UtilCommon.sprintf(translate('pageMainRelationObjectsCreated'), UtilCommon.plural(totalObject, translate('pluralObject')))}</div>
+							<div className="title">{totalObject} {U.Common.sprintf(translate('pageMainRelationObjectsCreated'), U.Common.plural(totalObject, translate('pluralObject')))}</div>
 							<div className="content">
 								<ListObject 
 									{...this.props} 
@@ -133,8 +133,8 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		this.id = rootId;
 		this.setState({ isLoading: true });
 		
-		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
+		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -177,7 +177,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {
-				UtilObject.openPopup(message.details);
+				U.Object.openPopup(message.details);
 			};
 		});
 	};

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, S, UtilCommon, UtilSpace, UtilRouter, keyboard, translate, UtilMenu, analytics, Storage } from 'Lib';
+import { I, S, U, keyboard, translate, analytics, Storage } from 'Lib';
 
 const Constant = require('json/constant.json');
 const ITEM_WIDTH = 112;
@@ -22,7 +22,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	render () {
 		const { setHover } = this.props;
 		const items = this.getItems();
-		const participant = UtilSpace.getParticipant();
+		const participant = U.Space.getParticipant();
 		const { spaceview } = S.Block;
 
 		const Item = (item) => {
@@ -155,7 +155,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	onContextMenu (e: any, item: any) {
 		const { param } = this.props;
 
-		UtilMenu.spaceContext(item, {
+		U.Menu.spaceContext(item, {
 			classNameWrap: param.classNameWrap,
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
@@ -187,7 +187,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 	getItems () {
 		const { config } = S.Common;
-		const items = UtilCommon.objectCopy(UtilSpace.getList());
+		const items = U.Common.objectCopy(U.Space.getList());
 		const length = items.length;
 
 		items.push({ id: 'gallery', name: translate('commonGallery') });
@@ -207,7 +207,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 			if (item.id == 'gallery') {
 				S.Popup.open('usecase', {});
 			} else {
-				UtilRouter.switchSpace(item.targetSpaceId);
+				U.Router.switchSpace(item.targetSpaceId);
 				analytics.event('SwitchSpace');
 			};
 		});
@@ -220,7 +220,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				page: 'spaceCreate', 
 				isSpace: true,
 				onCreate: (id) => {
-					UtilRouter.switchSpace(id, '', () => Storage.initPinnedTypes());
+					U.Router.switchSpace(id, '', () => Storage.initPinnedTypes());
 					analytics.event('SwitchSpace');
 				},
 			}, 
@@ -236,7 +236,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	beforePosition () {
 		const node = $(this.node);
 		const obj = node.find('.items');
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const sidebar = $('#sidebar');
 		const sw = sidebar.outerWidth();
 		const items = this.getItems();

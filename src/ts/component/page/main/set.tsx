@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, S, UtilData, UtilCommon, Action, UtilSpace, keyboard, UtilRouter, translate, UtilObject } from 'Lib';
+import { I, M, C, S, U, Action, keyboard, translate } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -40,7 +40,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	render () {
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
-		const check = UtilData.checkDetails(rootId);
+		const check = U.Data.checkDetails(rootId);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -127,7 +127,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 	unbind () {
 		const { isPopup } = this.props;
-		const namespace = UtilCommon.getEventNamespace(isPopup);
+		const namespace = U.Common.getEventNamespace(isPopup);
 		const events = [ 'keydown', 'scroll' ];
 
 		$(window).off(events.map(it => `${it}.set${namespace}`).join(' '));
@@ -136,8 +136,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	rebind () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const namespace = UtilCommon.getEventNamespace(isPopup);
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const namespace = U.Common.getEventNamespace(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 
 		this.unbind();
 
@@ -170,8 +170,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		this.id = rootId;
 		this.setState({ isDeleted: false, isLoading: true });
 
-		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
+		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -261,12 +261,12 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, () => {
 			e.preventDefault();
-			UtilObject.openAuto({ layout: I.ObjectLayout.History, id: rootId });
+			U.Object.openAuto({ layout: I.ObjectLayout.History, id: rootId });
 		});
 	};
 
 	isReadonly () {
-		return !UtilSpace.canMyParticipantWrite();
+		return !U.Space.canMyParticipantWrite();
 	};
 
 	resize () {
@@ -281,9 +281,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			const win = $(window);
 			const node = $(this.node);
 			const cover = node.find('.block.blockCover');
-			const container = UtilCommon.getPageContainer(isPopup);
+			const container = U.Common.getPageContainer(isPopup);
 			const header = container.find('#header');
-			const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
+			const hh = isPopup ? header.height() : U.Common.sizeHeader();
 
 			if (cover.length) {
 				cover.css({ top: hh });

@@ -1,4 +1,4 @@
-import { I, S, UtilCommon, UtilData, UtilObject, Storage, translate } from 'Lib';
+import { I, S, U, Storage, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -6,12 +6,12 @@ const Url = require('json/url.json');
 class UtilSpace {
 
 	openDashboard (type: string, param?: any) {
-		const fn = UtilCommon.toCamelCase(`open-${type}`);
+		const fn = U.Common.toCamelCase(`open-${type}`);
 		
 		let home = this.getDashboard();
 
 		if (home && (home.id == I.HomePredefinedId.Last)) {
-			home = Storage.getLastOpened(UtilCommon.getCurrentElectronWindowId());
+			home = Storage.getLastOpened(U.Common.getCurrentElectronWindowId());
 
 			// Invalid data protection
 			if (!home || !home.id) {
@@ -24,12 +24,12 @@ class UtilSpace {
 		};
 
 		if (!home) {
-			UtilObject.openRoute({ layout: I.ObjectLayout.Empty }, param);
+			U.Object.openRoute({ layout: I.ObjectLayout.Empty }, param);
 			return;
 		};
 
-		if (UtilObject[fn]) {
-			UtilObject[fn](home, param);
+		if (U.Object[fn]) {
+			U.Object[fn](home, param);
 		};
 	};
 
@@ -77,7 +77,7 @@ class UtilSpace {
 		const subId = Constant.subId.space;
 		const { spaceview } = S.Block;
 
-		let items = S.Record.getRecords(subId, UtilData.spaceRelationKeys());
+		let items = S.Record.getRecords(subId, U.Data.spaceRelationKeys());
 		items = items.filter(it => it.isAccountActive && it.isLocalOk);
 		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));
 
@@ -152,7 +152,7 @@ class UtilSpace {
 	};
 
 	isShareActive () {
-		return S.Common.isOnline && !UtilData.isLocalNetwork();
+		return S.Common.isOnline && !U.Data.isLocalNetwork();
 	};
 
 	getReaderLimit () {
@@ -176,7 +176,7 @@ class UtilSpace {
 	};
 
 	getInviteLink (cid: string, key: string) {
-		return UtilData.isAnytypeNetwork() ? UtilCommon.sprintf(Url.invite, cid, key) : `${Constant.protocol}://invite/?cid=${cid}&key=${key}`;
+		return U.Data.isAnytypeNetwork() ? U.Common.sprintf(Url.invite, cid, key) : `${Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
 };

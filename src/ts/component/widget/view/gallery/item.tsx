@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { ObjectName, IconObject, DropTarget, ObjectCover } from 'Component';
-import { I, S, UtilObject, keyboard, analytics, UtilSpace, Dataview } from 'Lib';
+import { I, S, U, keyboard, analytics, Dataview } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -112,7 +112,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		e.preventDefault();
 		e.stopPropagation();
 
-		UtilObject.openEvent(e, this.getObject());
+		U.Object.openEvent(e, this.getObject());
 		analytics.event('OpenSidebarObject');
 	};
 
@@ -131,7 +131,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 			return;
 		};
 
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 		if (!canWrite) {
 			return;
 		};

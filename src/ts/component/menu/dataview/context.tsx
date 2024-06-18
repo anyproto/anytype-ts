@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, keyboard, analytics, translate, UtilObject, focus, Action, UtilSpace } from 'Lib';
+import { I, C, S, U, keyboard, analytics, translate, focus, Action } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -84,7 +84,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { data } = param;
 		const { subId, objectIds, getObject, isCollection } = data;
 		const length = objectIds.length;
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
@@ -250,7 +250,7 @@ class MenuContext extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						C.ObjectListSetObjectType(objectIds, item.uniqueKey);
@@ -266,7 +266,7 @@ class MenuContext extends React.Component<I.Menu> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					rootId: itemId,
@@ -317,7 +317,7 @@ class MenuContext extends React.Component<I.Menu> {
 		switch (item.id) {
 
 			case 'open': {
-				UtilObject.openPopup(first);
+				U.Object.openPopup(first);
 				break;
 			};
 
@@ -328,7 +328,7 @@ class MenuContext extends React.Component<I.Menu> {
 					};
 
 					if (first) {
-						UtilObject.openPopup({ id: message.ids[0], layout: first.layout });
+						U.Object.openPopup({ id: message.ids[0], layout: first.layout });
 					};
 
 					analytics.event('DuplicateObject', { count, route });

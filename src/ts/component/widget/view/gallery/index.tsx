@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, S, translate, UtilObject } from 'Lib';
+import { I, S, U, translate } from 'Lib';
 import { Icon } from 'Component';
 import Item from './item';
 
@@ -130,7 +130,7 @@ const WidgetViewGallery = observer(class WidgetViewGallery extends React.Compone
 		const { getObject, parent } = this.props;
 		const object = getObject();
 
-		UtilObject.openEvent(e, { ...object, _routeParam_: { viewId: parent.content.viewId } });
+		U.Object.openEvent(e, { ...object, _routeParam_: { viewId: parent.content.viewId } });
 	};
 
 	resize () {

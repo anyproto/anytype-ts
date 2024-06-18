@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, S, translate, UtilCommon, UtilDate, analytics, keyboard } from 'Lib';
+import { I, S, U, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
 
@@ -59,7 +59,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 					period = translate('popupSettingsMembershipPending');
 				} else
 				if (item.period && membership.dateEnds) {
-					period = UtilCommon.sprintf(translate('popupSettingsMembershipValidUntil'), UtilDate.date('d M Y', membership.dateEnds));
+					period = U.Common.sprintf(translate('popupSettingsMembershipValidUntil'), U.Date.date('d M Y', membership.dateEnds));
 				} else {
 					period = translate('popupSettingsMembershipForeverFree');
 				};
@@ -71,7 +71,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 					if (item.period == 1) {
 						period = translate('popupSettingsMembershipPerYear');
 					} else {
-						period = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), item.period, UtilCommon.plural(item.period, translate('pluralYear')));
+						period = U.Common.sprintf(translate('popupSettingsMembershipPerYears'), item.period, U.Common.plural(item.period, translate('pluralYear')));
 					};
 				};
 			};
@@ -158,7 +158,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	onLink (item: any) {
-		UtilCommon.onUrl(item.url);
+		U.Common.onUrl(item.url);
 		analytics.event(item.type, { route: analytics.route.settingsMembership });
 	};
 

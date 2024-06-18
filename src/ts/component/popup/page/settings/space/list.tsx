@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, S, UtilSpace, UtilRouter, translate, UtilMenu, analytics } from 'Lib';
+import { I, S, U, translate, analytics } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -14,7 +14,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 		const Row = (space: any) => {
 			const { targetSpaceId } = space;
-			const participant = UtilSpace.getMyParticipant(targetSpaceId);
+			const participant = U.Space.getMyParticipant(targetSpaceId);
 			const creator = S.Detail.get(Constant.subId.space, space.creator);
 			const hasMenu = targetSpaceId != accountSpaceId;
 
@@ -67,7 +67,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const items = S.Record.getRecords(Constant.subId.space);
 
 		return items.filter(it => !it.isAccountDeleted && it.isLocalOk).map(it => {
-			it.participant = UtilSpace.getMyParticipant(it.targetSpaceId) || {};
+			it.participant = U.Space.getMyParticipant(it.targetSpaceId) || {};
 			return it;
 		}).sort((c1, c2) => {
 			if (c1.isAccountJoining && !c2.isAccountJoining) return -1;
@@ -97,7 +97,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 	onClick (space: any) {
 		if (space.isAccountActive) {
-			UtilRouter.switchSpace(space.targetSpaceId);
+			U.Router.switchSpace(space.targetSpaceId);
 		};
 	};
 
@@ -105,7 +105,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const { getId } = this.props;
 		const element = $(`#${getId()} #icon-more-${space.id}`);
 
-		UtilMenu.spaceContext(space, {
+		U.Menu.spaceContext(space, {
 			element,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,

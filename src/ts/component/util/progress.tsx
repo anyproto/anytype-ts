@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Icon, Label } from 'Component';
-import { S, UtilCommon, C, Storage, keyboard } from 'Lib';
+import { S, U, C, Storage, keyboard } from 'Lib';
 
 const Progress = observer(class Progress extends React.Component {
 	
@@ -29,7 +29,7 @@ const Progress = observer(class Progress extends React.Component {
 			return null;
 		};
 		
-		const text = UtilCommon.sprintf(status, current, total);
+		const text = U.Common.sprintf(status, current, total);
 		const cn = [ 'progress', (isUnlocked ? 'isUnlocked' : '') ];
 		
 		return (
@@ -117,14 +117,14 @@ const Progress = observer(class Progress extends React.Component {
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
-		const { ww, wh } = UtilCommon.getWindowDimensions();
+		const { ww, wh } = U.Common.getWindowDimensions();
 
 		x = Number(x) || 0;
 		x = Math.max(0, x);
 		x = Math.min(ww - this.width, x);
 
 		y = Number(y) || 0;
-		y = Math.max(UtilCommon.sizeHeader(), y);
+		y = Math.max(U.Common.sizeHeader(), y);
 		y = Math.min(wh - this.height, y);
 
 		return { x, y };

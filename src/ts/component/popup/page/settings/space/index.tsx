@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, ObjectName } from 'Component';
-import { I, C, S, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
+import { I, C, S, U, translate, Preview, analytics, Action } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -45,22 +45,22 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { spaceStorage, isOnline } = S.Common;
 		const { localUsage, bytesLimit } = spaceStorage;
 		const { account, accountSpaceId } = S.Auth;
-		const spaces = UtilSpace.getList();
-		const space = UtilSpace.getSpaceview();
+		const spaces = U.Space.getList();
+		const space = U.Space.getSpaceview();
 		const creator = S.Detail.get(Constant.subId.space, space.creator);
-		const home = UtilSpace.getDashboard();
+		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
-		const personalSpace = UtilSpace.getSpaceviewBySpaceId(accountSpaceId);
+		const personalSpace = U.Space.getSpaceviewBySpaceId(accountSpaceId);
 		const usageCn = [ 'item' ];
 
 		const requestCnt = this.getRequestCnt();
 		const sharedCnt = this.getSharedCnt();
 
 		const hasLink = cid && key;
-		const isOwner = UtilSpace.isMyOwner();
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const isOwner = U.Space.isMyOwner();
+		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
-		const isShareActive = UtilSpace.isShareActive();
+		const isShareActive = U.Space.isShareActive();
 
 		let bytesUsed = 0;
 		let buttonUpgrade = null;
@@ -71,14 +71,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const progressSegments = (spaces || []).map(space => {
 			const object: any = S.Common.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
 			const usage = Number(object.bytesUsage) || 0;
-			const isOwner = UtilSpace.isMyOwner(space.targetSpaceId);
+			const isOwner = U.Space.isMyOwner(space.targetSpaceId);
 
 			if (!isOwner) {
 				return null;
 			};
 
 			bytesUsed += usage;
-			return { name: space.name, caption: UtilFile.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
+			return { name: space.name, caption: U.File.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
 		}).filter(it => it);
 		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
 
@@ -93,7 +93,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		};
 
 		if (requestCnt) {
-			requestCaption = <Label text={UtilCommon.sprintf('%d %s', requestCnt, UtilCommon.plural(requestCnt, translate('pluralRequest')))} className="caption" />;
+			requestCaption = <Label text={U.Common.sprintf('%d %s', requestCnt, U.Common.plural(requestCnt, translate('pluralRequest')))} className="caption" />;
 		};
 
 		return (
@@ -193,7 +193,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 									<div className="inviteLinkWrapper">
 										<div className="inputWrapper">
-											<Input ref={ref => this.refInput = ref} readonly={true} value={UtilSpace.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
+											<Input ref={ref => this.refInput = ref} readonly={true} value={U.Space.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
 											<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
 										</div>
 									</div>
@@ -261,7 +261,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 											<div className="side left">
 												<Title text={translate(`popupSettingsSpaceIndexRemoteStorageTitle`)} />
 												<div className="storageLabel">
-													<Label text={UtilCommon.sprintf(translate(`popupSettingsSpaceIndexStorageText`), UtilFile.size(bytesLimit))} />
+													<Label text={U.Common.sprintf(translate(`popupSettingsSpaceIndexStorageText`), U.File.size(bytesLimit))} />
 												</div>
 											</div>
 											<div className="side right">
@@ -276,7 +276,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 											</div>
 										</div>
 
-										<ProgressBar segments={progressSegments} current={UtilFile.size(bytesUsed)} max={UtilFile.size(bytesLimit)} />
+										<ProgressBar segments={progressSegments} current={U.File.size(bytesUsed)} max={U.File.size(bytesLimit)} />
 
 										{buttonUpgrade}
 									</div>
@@ -362,7 +362,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 							<div
 								className="item"
-								onClick={() => UtilCommon.copyToast(translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId)}
+								onClick={() => U.Common.copyToast(translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId)}
 							>
 								<div className="sides">
 									<div className="side left">
@@ -377,7 +377,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 							<div 
 								className="item" 
-								onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
+								onClick={() => U.Common.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
 							>
 								<div className="sides">
 									<div className="side left">
@@ -392,7 +392,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 							<div
 								className="item"
-								onClick={() => UtilCommon.copyToast(translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId)}
+								onClick={() => U.Common.copyToast(translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId)}
 							>
 								<div className="sides">
 									<div className="side left">
@@ -410,7 +410,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									<div className="sides">
 										<div className="side left">
 											<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
-											<Label text={UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), space.createdDate)} />
+											<Label text={U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrBeforeDay), space.createdDate)} />
 										</div>
 									</div>
 								</div>
@@ -445,7 +445,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	init () {
 		const { cid, key } = this.state;
-		const space = UtilSpace.getSpaceview();
+		const space = U.Space.getSpaceview();
 
 		if (space.isShared && !cid && !key) {
 			C.SpaceInviteGetCurrent(S.Common.space, (message: any) => {
@@ -461,7 +461,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onDashboard () {
-		UtilMenu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
+		U.Menu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
 	};
 
 	onType (e: any) {
@@ -473,7 +473,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			data: {
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 				],
 				onClick: (item: any) => {
 					S.Common.typeSet(item.uniqueKey);
@@ -528,7 +528,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			return;
 		};
 
-		UtilCommon.copyToast('', UtilSpace.getInviteLink(cid, key), translate('toastInviteCopy'));
+		U.Common.copyToast('', U.Space.getInviteLink(cid, key), translate('toastInviteCopy'));
 		analytics.event('ClickShareSpaceCopyLink');
 	};
 
@@ -536,7 +536,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { getId } = this.props;
 		const { cid, key } = this.state;
 
-		UtilMenu.inviteContext({
+		U.Menu.inviteContext({
 			containerId: getId(),
 			cid,
 			key,
@@ -555,11 +555,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	getRequestCnt (): number {
-		return UtilSpace.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]).length;
+		return U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]).length;
 	};
 
 	getSharedCnt (): number {
-		return UtilSpace.getList().filter(it => it.isShared && UtilSpace.isMyOwner(it.targetSpaceId)).length;
+		return U.Space.getList().filter(it => it.isShared && U.Space.isMyOwner(it.targetSpaceId)).length;
 	};
 
 });

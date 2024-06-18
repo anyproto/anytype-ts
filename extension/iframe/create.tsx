@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
-import { I, C, M, S, translate, UtilObject, UtilData, UtilSpace } from 'Lib';
+import { I, C, M, S, U, translate } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -90,7 +90,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	componentDidMount (): void {
-		UtilData.createSubscriptions(() => {
+		U.Data.createSubscriptions(() => {
 			this.init();
 		});
 	};
@@ -101,8 +101,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	init () {
-		const spaces = UtilSpace.getList()
-			.filter(it => it && UtilSpace.canMyParticipantWrite(it.targetSpaceId))
+		const spaces = U.Space.getList()
+			.filter(it => it && U.Space.canMyParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, id: it.targetSpaceId, object: it, iconSize: 16 }));
 
 		if (this.refSpace && spaces.length) {
@@ -156,7 +156,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		const node = $(this.node);
 		const templateType = S.Record.getTemplateType();
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 		];
 
@@ -177,7 +177,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	onSpaceChange (id: string): void {
 		S.Common.spaceSet(id);
-		UtilData.createSubscriptions();
+		U.Data.createSubscriptions();
 	};
 
 	getWrapperWidth () {

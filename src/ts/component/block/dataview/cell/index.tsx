@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, S, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate, UtilDate } from 'Lib';
+import { I, C, S, U, analytics, keyboard, Relation, Renderer, Preview, translate } from 'Lib';
 
 import CellText from './text';
 import CellSelect from './select';
@@ -275,7 +275,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 			case I.RelationType.Date: {
 				param.data = Object.assign(param.data, {
-					value: param.data.value || UtilDate.now(),
+					value: param.data.value || U.Date.now(),
 				});
 					
 				menuId = 'dataviewCalendar';
@@ -337,7 +337,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 			case I.RelationType.LongText: {
 				const wh = win.height();
-				const hh = UtilCommon.sizeHeader();
+				const hh = U.Common.sizeHeader();
 				const height = Math.min(wh - hh - 20, cell.outerHeight());
 
 				param = Object.assign(param, {
@@ -399,7 +399,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 							};
 
 							case 'copy': {
-								UtilCommon.clipboardCopy({ text: value, html: value });
+								U.Common.clipboardCopy({ text: value, html: value });
 								analytics.event('RelationUrlCopy');
 								break;
 							};

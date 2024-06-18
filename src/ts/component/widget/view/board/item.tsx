@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, DropTarget } from 'Component';
-import { I, S, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
+import { I, S, U, keyboard, analytics, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -33,7 +33,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
 		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-		const hasMore = UtilSpace.canMyParticipantWrite();
+		const hasMore = U.Space.canMyParticipantWrite();
 		const more = hasMore ? <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} /> : null;
 
 		let icon = null;
@@ -103,7 +103,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		const { subId, id, } = this.props;
 		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
 
-		UtilObject.openEvent(e, object);
+		U.Object.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
 	};
 

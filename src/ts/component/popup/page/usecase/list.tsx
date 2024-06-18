@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Label, EmptySearch, Icon, Filter } from 'Component';
-import { I, C, S, translate, UtilCommon, analytics } from 'Lib';
+import { I, C, S, U, translate, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from 'react-virtualized';
 
 interface State {
@@ -54,10 +54,10 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 		let textEmpty = '';
 		if (filter) {
-			textEmpty = UtilCommon.sprintf(translate('popupUsecaseListEmptyFilter'), filter);
+			textEmpty = U.Common.sprintf(translate('popupUsecaseListEmptyFilter'), filter);
 		} else
 		if (category) {
-			textEmpty = UtilCommon.sprintf(translate('popupUsecaseListEmptyCategory'), category.name);
+			textEmpty = U.Common.sprintf(translate('popupUsecaseListEmptyCategory'), category.name);
 		};
 
 		const Category = (item: any) => {
@@ -250,7 +250,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		};
 
 		if (filter) {
-			const reg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
+			const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
 			items = items.filter(it => reg.test(it.title) || reg.test(it.description));
 		};
 
@@ -281,7 +281,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	};
 
 	categoryName (id: string) {
-		return translate(UtilCommon.toCamelCase(`usecaseCategory-${id}`));
+		return translate(U.Common.toCamelCase(`usecaseCategory-${id}`));
 	};
 
 	calcPages () {

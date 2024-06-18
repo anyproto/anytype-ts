@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
-import { I, C, S, UtilCommon, keyboard, Relation, analytics, translate, UtilMenu, Dataview } from 'Lib';
+import { I, C, S, U, keyboard, Relation, analytics, translate, Dataview } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -199,7 +199,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const items: any[] = UtilCommon.objectCopy(S.Record.getViews(rootId, blockId)).map(it => ({ 
+		const items: any[] = U.Common.objectCopy(S.Record.getViews(rootId, blockId)).map(it => ({ 
 			...it, name: it.name || translate('defaultNamePage'),
 		}));
 
@@ -271,7 +271,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			}
 		};
 
-		UtilMenu.viewContextMenu(contextParam);
+		U.Menu.viewContextMenu(contextParam);
 	};
 
 	onClick (e: any, item: any) {

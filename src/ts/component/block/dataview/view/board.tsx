@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, S, UtilCommon, Dataview, keyboard, translate } from 'Lib';
+import { I, C, S, U, Dataview, keyboard, translate } from 'Lib';
 import Empty from '../empty';
 import Column from './board/column';
 
@@ -84,7 +84,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	componentDidUpdate () {
 		this.resize();
-		UtilCommon.triggerResizeEditor(this.props.isPopup);
+		U.Common.triggerResizeEditor(this.props.isPopup);
 	};
 
 	componentWillUnmount () {
@@ -282,7 +282,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				continue;
 			};
 
-			if (rect && this.cache[groupId] && UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
+			if (rect && this.cache[groupId] && U.Common.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				isLeft = e.pageX <= rect.x + rect.width / 2;
 				hoverId = group.id;
 
@@ -363,7 +363,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				continue;
 			};
 
-			if (UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
+			if (U.Common.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
 				isTop = rect.isAdd || (e.pageY <= rect.y + rect.height / 2);
 				hoverId = rect.id;
 
@@ -491,7 +491,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const view = node.find('.viewContent');
-		const container = UtilCommon.getPageContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);

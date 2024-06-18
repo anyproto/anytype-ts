@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { analytics, C, I, S, keyboard, UtilObject, translate, Action, Preview } from 'Lib';
+import { I, C, S, U, analytics,keyboard, translate, Action, Preview } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -81,7 +81,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 			};
 
 			case 'edit': {
-				UtilObject.openPopup(template, {
+				U.Object.openPopup(template, {
 					onClose: () => $(window).trigger(`updatePreviewObject.${template.id}`)
 				});
 

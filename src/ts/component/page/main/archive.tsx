@@ -3,7 +3,8 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Header, Footer, Icon, ListObjectManager } from 'Component';
-import { I, UtilCommon, analytics, translate, Action, UtilSpace } from 'Lib';
+import { I, U, translate, Action } from 'Lib';
+
 const Constant = require('json/constant.json');
 
 const PageMainArchive = observer(class PageMainArchive extends React.Component<I.PageComponent> {
@@ -59,7 +60,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 						iconSize={48}
 						resize={this.resize}
 						textEmpty={translate('pageMainArchiveEmpty')}
-						isReadonly={!UtilSpace.canMyParticipantWrite()}
+						isReadonly={!U.Space.canMyParticipantWrite()}
 					/>
 				</div>
 
@@ -86,18 +87,18 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 	};
 
 	getRowLength () {
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		return ww <= 940 ? 2 : 3;
 	};
 
 	resize () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const container = UtilCommon.getPageContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const node = $(ReactDOM.findDOMNode(this));
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
-		const hh = UtilCommon.sizeHeader();
+		const hh = U.Common.sizeHeader();
 		const wh = isPopup ? container.height() : win.height();
 		const rowLength = this.getRowLength();
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, S, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter, UtilSpace } from 'Lib';
+import { I, C, S, U, focus, Action, analytics, Relation, translate } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -49,17 +49,17 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		const { config } = S.Common;
 		const rootId = this.getRootId();
-		const check = UtilData.checkDetails(rootId);
+		const check = U.Data.checkDetails(rootId);
 		const object = S.Detail.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
 		const templates = S.Record.getRecordIds(subIdTemplate, '');
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
-		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
-		const showTemplates = !UtilObject.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
+		const layout: any = U.Menu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
+		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
-		const allowedObject = object.isInstalled && UtilObject.getPageLayouts().includes(object.recommendedLayout);
+		const allowedObject = object.isInstalled && U.Object.getPageLayouts().includes(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite;
@@ -86,11 +86,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return config.debug.hiddenObject ? true : !it.isHidden;
 		});
 
-		const isFileType = UtilObject.isFileLayout(object.recommendedLayout);
+		const isFileType = U.Object.isFileLayout(object.recommendedLayout);
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: (v: any) => v ? UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v) : '',
+				mapper: (v: any) => v ? U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v) : '',
 			},
 		];
 
@@ -140,7 +140,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					{showTemplates ? (
 						<div className="section template">
 							<div className="title">
-								{totalTemplate} {UtilCommon.plural(totalTemplate, translate('pluralTemplate'))}
+								{totalTemplate} {U.Common.plural(totalTemplate, translate('pluralTemplate'))}
 
 								{allowedTemplate ? (
 									<div className="btn" onClick={this.onTemplateAdd}>
@@ -185,7 +185,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									<Select 
 										id="recommendedLayout" 
 										value={object.recommendedLayout} 
-										options={UtilMenu.turnLayouts()} 
+										options={U.Menu.turnLayouts()} 
 										arrowClassName="light" 
 										onChange={this.onLayout} 
 									/>
@@ -200,7 +200,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					) : ''}
 
 					<div className="section relation">
-						<div className="title">{relations.length} {UtilCommon.plural(relations.length, translate('pluralRelation'))}</div>
+						<div className="title">{relations.length} {U.Common.plural(relations.length, translate('pluralRelation'))}</div>
 						<div className="content">
 							{relations.map((item: any, i: number) => (
 								<ItemRelation key={i} {...item} />
@@ -211,7 +211,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 					{object.isInstalled ? (
 						<div className="section set">
-							<div className="title">{totalObject} {UtilCommon.plural(totalObject, translate('pluralObject'))}</div>
+							<div className="title">{totalObject} {U.Common.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
 								<ListObject 
 									{...this.props} 
@@ -256,8 +256,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		this.id = rootId;
 		this.setState({ isLoading: true });
 
-		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
+		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -278,7 +278,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	loadTemplates () {
 		const rootId = this.getRootId();
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			subId: this.getSubIdTemplate(),
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
@@ -331,7 +331,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	templateOpen (object: any) {
-		UtilObject.openPopup(object, {
+		U.Object.openPopup(object, {
 			onClose: () => $(window).trigger(`updatePreviewObject.${object.id}`)
 		});
 	};
@@ -343,8 +343,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return;
 		};
 
-		const isSetLayout = UtilObject.isSetLayout(type.recommendedLayout);
-		const allowedObject = UtilObject.getPageLayouts().includes(type.recommendedLayout) || isSetLayout;
+		const isSetLayout = U.Object.isSetLayout(type.recommendedLayout);
+		const allowedObject = U.Object.getPageLayouts().includes(type.recommendedLayout) || isSetLayout;
 		const options = [];
 
 		if (allowedObject) {
@@ -388,7 +388,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		
 		const details: any = {};
 
-		if (UtilObject.isSetLayout(type.recommendedLayout)) {
+		if (U.Object.isSetLayout(type.recommendedLayout)) {
 			details.layout = type.recommendedLayout;
 		};
 
@@ -399,7 +399,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 			const object = message.details;
 
-			UtilObject.openPopup(object);
+			U.Object.openPopup(object);
 			analytics.createObject(object.type, object.layout, analytics.route.type, message.middleTime);
 		});
 	};
@@ -419,14 +419,14 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
 		const details = { 
-			name: UtilCommon.sprintf(translate('commonSetName'), object.name),
+			name: U.Common.sprintf(translate('commonSetName'), object.name),
 			iconEmoji: object.iconEmoji,
 		};
 
 		C.ObjectCreateSet([ rootId ], details, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
-				UtilObject.openPopup(message.details);
+				U.Object.openPopup(message.details);
 			};
 		});
 	};
@@ -532,14 +532,14 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					templateId: defaultTemplateId,
 					route: analytics.route.type,
 					onSetDefault: () => {
-						UtilObject.setDefaultTemplateId(rootId, template.id);
+						U.Object.setDefaultTemplateId(rootId, template.id);
 					},
 					onDuplicate: (object: any) => {
 						this.templateOpen(object);
 					},
 					onArchive: () => {
 						if (template.isDefault) {
-							UtilObject.setDefaultTemplateId(rootId, Constant.templateId.blank);
+							U.Object.setDefaultTemplateId(rootId, Constant.templateId.blank);
 						};
 					}
 				}

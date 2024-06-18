@@ -1,12 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
+import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { Icon, Button, Filter } from 'Component';
-import { C, I, S, UtilCommon, analytics, Relation, keyboard, translate, UtilObject, UtilMenu, Dataview } from 'Lib';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import { Icon, Button, Filter } from 'Component';
+import { C, I, S, U, analytics, Relation, keyboard, translate, Dataview } from 'Lib';
 import Head from './head';
-import arrayMove from 'array-move';
 
 interface Props extends I.ViewComponent {
 	onFilterChange?: (v: string) => void; 
@@ -48,7 +48,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const buttonWrapCn = [ 'buttonWrap' ];
 		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
-		const isAllowedTemplate = UtilObject.isAllowedTemplate(getTypeId()) || (target && UtilObject.isSetLayout(target.layout) && hasSources);
+		const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isSetLayout(target.layout) && hasSources);
 		const cmd = keyboard.cmdSymbol();
 		const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
 
@@ -197,7 +197,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this._isMounted = false;
 
 		const { isPopup } = this.props;
-		const container = UtilCommon.getPageContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const win = $(window);
 
 		container.off('mousedown.filter');
@@ -373,7 +373,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		this.onViewSet(view);
-		UtilMenu.viewContextMenu({
+		U.Menu.viewContextMenu({
 			rootId,
 			blockId: block.id,
 			view,
@@ -422,7 +422,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		const { isPopup, isInline } = this.props;
-		const container = UtilCommon.getPageContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const win = $(window);
 
 		this.refFilter.setActive(true);
@@ -481,7 +481,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const node = $(this.node);
 		const sideLeft = node.find('#dataviewControlsSideLeft');
 		const sideRight = node.find('#dataviewControlsSideRight');
-		const container = UtilCommon.getPageContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const { left } = sideLeft.offset();
 		const sidebar = $('#sidebar');
 		const sw = sidebar.outerWidth();

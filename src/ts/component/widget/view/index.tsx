@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Label, Button } from 'Component';
-import { Dataview, I, C, M, S, UtilCommon, Relation, keyboard, translate, UtilRouter, UtilObject } from 'Lib';
+import { I, C, M, S, U, Dataview, Relation, keyboard, translate } from 'Lib';
 
 import WidgetViewList from './list';
 import WidgetViewGallery from './gallery';
@@ -137,7 +137,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		} else {
 			this.setState({ isLoading: true });
 
-			C.ObjectShow(targetBlockId, this.getTraceId(), UtilRouter.getRouteSpaceId(), () => {
+			C.ObjectShow(targetBlockId, this.getTraceId(), U.Router.getRouteSpaceId(), () => {
 				this.setState({ isLoading: false });
 
 				const view = this.getView();
@@ -190,7 +190,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	updateViews () {
 		const { block } = this.props;
 		const { targetBlockId } = block.content;
-		const views = UtilCommon.objectCopy(S.Record.getViews(targetBlockId, Constant.blockId.dataview)).map(it => new M.View(it));
+		const views = U.Common.objectCopy(S.Record.getViews(targetBlockId, Constant.blockId.dataview)).map(it => new M.View(it));
 		const rootId = this.getRootId();
 
 		if (!views.length || (targetBlockId != keyboard.getRootId())) {
@@ -313,7 +313,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const records = S.Record.getRecordIds(subId, '');
 		const views = S.Record.getViews(rootId, Constant.blockId.dataview);
 		const viewId = parent.content.viewId || (views.length ? views[0].id : '');
-		const ret = Dataview.applyObjectOrder(rootId, Constant.blockId.dataview, viewId, '', UtilCommon.objectCopy(records));
+		const ret = Dataview.applyObjectOrder(rootId, Constant.blockId.dataview, viewId, '', U.Common.objectCopy(records));
 
 		return (targetBlockId == Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
 	};
@@ -338,7 +338,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		};
 
 		const types = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Type);
-		const skipLayouts = [ I.ObjectLayout.Participant ].concat(UtilObject.getFileAndSystemLayouts());
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
 
 		for (const type of types) {
 			if (skipLayouts.includes(type.recommendedLayout)) {

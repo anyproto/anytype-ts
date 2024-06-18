@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, C, S, analytics, UtilMenu, UtilObject, Preview, translate, keyboard, Relation, UtilCommon } from 'Lib';
+import { I, C, S, U, analytics, Preview, translate, keyboard, Relation } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 
 const Constant = require('json/constant.json');
@@ -260,7 +260,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				...data,
 				filter: '',
 				value: this.format,
-				options: UtilMenu.getRelationTypes(),
+				options: U.Menu.getRelationTypes(),
 				noFilter: true,
 				onSelect: (e: any, item: any) => {
 					this.format = item.id;
@@ -302,7 +302,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				types: [ S.Record.getTypeType()?.id ],
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 				],
 				relation: observable.box(relation),
 				valueMapper: it => S.Record.getTypeById(it.id),
@@ -387,7 +387,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 	onOpen (e: any) {
 		this.props.close();
-		UtilObject.openPopup(this.getRelation());
+		U.Object.openPopup(this.getRelation());
 	};
 
 	onCopy (e: any) {
@@ -467,7 +467,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				addCommand(rootId, blockId, details, onChange);
 			};
 
-			Preview.toastShow({ text: UtilCommon.sprintf(translate('menuBlockRelationEditToastOnCreate'), details.name) });
+			Preview.toastShow({ text: U.Common.sprintf(translate('menuBlockRelationEditToastOnCreate'), details.name) });
 			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type });
 		});
 	};

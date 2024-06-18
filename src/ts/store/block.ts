@@ -1,6 +1,6 @@
-import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
-import { I, M, S, UtilCommon, UtilObject, UtilFile, Storage, Mark, translate, keyboard, UtilSpace } from 'Lib';
+import { observable, action, computed, set, makeObservable } from 'mobx';
+import { I, M, S, U, Storage, Mark, translate, keyboard } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -120,7 +120,7 @@ class BlockStore {
 	setStructure (rootId: string, list: any[]) {
 		const map: Map<string, I.BlockStructure> = new Map();
 
-		list = UtilCommon.objectCopy(list || []);
+		list = U.Common.objectCopy(list || []);
 		list.map((item: any) => {
 			map.set(item.id, {
 				parentId: '',
@@ -366,7 +366,7 @@ class BlockStore {
 	};
 
     getTree (rootId: string, list: any[]): any[] {
-		list = UtilCommon.objectCopy(list || []);
+		list = U.Common.objectCopy(list || []);
 		for (const item of list) {
 			item.childBlocks = this.getTree(item.id, this.getChildren(rootId, item.id));
 		};
@@ -444,7 +444,7 @@ class BlockStore {
 	};
 
     isAllowed (restrictions: any[], flags: any[]): boolean {
-		if (!UtilSpace.canMyParticipantWrite()) {
+		if (!U.Space.canMyParticipantWrite()) {
 			return false;
 		};
 
@@ -465,7 +465,7 @@ class BlockStore {
 		v ? element.addClass('isToggled') : element.removeClass('isToggled');
 		Storage.setToggle(rootId, blockId, v);
 		
-		UtilCommon.triggerResizeEditor(keyboard.isPopup());
+		U.Common.triggerResizeEditor(keyboard.isPopup());
 		element.find('.resizable').trigger('resizeInit');
 	};
 
@@ -479,7 +479,7 @@ class BlockStore {
 				continue;
 			};
 
-			marks = UtilCommon.objectCopy(marks);
+			marks = U.Common.objectCopy(marks);
 			marks.sort(Mark.sort);
 
 			let { text } = block.content;
@@ -504,17 +504,17 @@ class BlockStore {
 				if (object.layout == I.ObjectLayout.Note) {
 					name = object.name || translate('commonEmpty');
 				} else
-				if (UtilObject.isFileLayout(object.layout)) {
-					name = UtilFile.name(object);
+				if (U.Object.isFileLayout(object.layout)) {
+					name = U.File.name(object);
 				} else {
 					name = object.name;
 				};
 
-				name = UtilCommon.shorten(object.name.trim(), 30);
+				name = U.Common.shorten(object.name.trim(), 30);
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
-					text = UtilCommon.stringInsert(text, name, mark.range.from, mark.range.to);
+					text = U.Common.stringInsert(text, name, mark.range.from, mark.range.to);
 
 					if (d != 0) {
 						mark.range.to -= d;

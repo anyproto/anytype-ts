@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
-import { I, C, S, Onboarding, UtilCommon, analytics, keyboard, UtilObject, translate } from 'Lib';
+import { I, C, S, U, Onboarding, analytics, keyboard, translate } from 'Lib';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
 interface State {
@@ -110,7 +110,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		this.rebind();
 		this.event();
 
-		UtilCommon.renderLinks($(this.node));
+		U.Common.renderLinks($(this.node));
 	};
 
 	componentDidUpdate () {
@@ -131,7 +131,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		this.scroll();
 		this.event();
 
-		UtilCommon.renderLinks(node);
+		U.Common.renderLinks(node);
 
 		if (showConfetti && (current == l - 1)) {
 			this.confettiShot();
@@ -173,7 +173,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			return;
 		};
 
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 		const element = $(param.element);
 
@@ -182,7 +182,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 
 		const rect = element.get(0).getBoundingClientRect() as DOMRect;
-		const hh = UtilCommon.sizeHeader();
+		const hh = U.Common.sizeHeader();
 
 		let containerOffset = { top: 0, left: 0 };
 
@@ -229,7 +229,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 					data: {
 						filter: '',
 						filters: [
-							{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+							{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 						],
 						onClick: (item: any) => {
 							const rootId = keyboard.getRootId();
@@ -237,7 +237,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 							S.Detail.update(rootId, { id: item.id, details: item }, false);
 
 							C.ObjectSetObjectType(rootId, item.id, () => {
-								UtilObject.openAuto({ id: rootId, layout: item.recommendedLayout });
+								U.Object.openAuto({ id: rootId, layout: item.recommendedLayout });
 							});
 
 							analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: analytics.route.menuOnboarding });
@@ -316,7 +316,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onVideoClick (e: any, src: string) {
-		UtilCommon.pauseMedia();
+		U.Common.pauseMedia();
 
 		S.Popup.open('preview', { data: { src, type: I.FileType.Video },
 			preventMenuClose: true,

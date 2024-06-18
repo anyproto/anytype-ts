@@ -1,14 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import { C, UtilCommon, UtilRouter } from 'Lib'; 
+import { C, U } from 'Lib'; 
 import Popup from './popup';
 import Iframe from './iframe';
 import Util from './lib/util';
-const Extension = require('json/extension.json');
 import * as Store from 'Store';
 
 import './scss/common.scss';
+
+const Extension = require('json/extension.json');
 
 declare global {
 	interface Window {
@@ -33,8 +34,7 @@ window.Anytype = {
 	Store,
 	Lib: {
 		C,
-		UtilCommon,
-		UtilRouter, 
+		U,
 	},
 };
 

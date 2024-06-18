@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Cell, Error, Icon, EmptySearch, Checkbox } from 'Component';
-import { I, M, C, S, UtilCommon, Relation, UtilData, translate, Dataview } from 'Lib';
+import { I, M, C, S, U, Relation, translate, Dataview } from 'Lib';
 
 const Constant = require('json/constant.json');
 const ID_PREFIX = 'popupRelation';
@@ -73,7 +73,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 								menuClassName="fromBlock"
 								onCellChange={this.onCellChange}
 								getView={view ? (() => view): null}
-								pageContainer={UtilCommon.getCellContainer('popupRelation')}
+								pageContainer={U.Common.getCellContainer('popupRelation')}
 							/>
 						</div>
 					</div>
@@ -83,7 +83,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 		return (
 			<div>
-				<Label text={UtilCommon.sprintf(translate(`popupRelationTitle`), length, UtilCommon.plural(length, translate('pluralLCObject')))} />
+				<Label text={U.Common.sprintf(translate(`popupRelationTitle`), length, U.Common.plural(length, translate('pluralLCObject')))} />
 
 				{!relations.length ? <EmptySearch text={translate('popupRelationEmpty')} /> : (
 					<div className="blocks">
@@ -140,7 +140,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const objectIds = this.getObjectIds();
 		const relationKeys = this.getRelationKeys();
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			subId: SUB_ID_OBJECT,
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
@@ -168,7 +168,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			return;
 		};
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			subId: SUB_ID_DEPS,
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: depIds },
@@ -206,7 +206,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	getRelationKeys (): string[] {
-		return UtilCommon.arrayUnique([].concat(this.props.param.data.relationKeys || Constant.defaultRelationKeys));
+		return U.Common.arrayUnique([].concat(this.props.param.data.relationKeys || Constant.defaultRelationKeys));
 	};
 
 	getRelations (): any[] {
@@ -217,7 +217,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		ret = ret.filter(it => {
 			return (config.debug.hiddenObject ? true : !it.isHidden) && !it.isReadonlyValue;
 		});
-		ret = ret.sort(UtilData.sortByName);
+		ret = ret.sort(U.Data.sortByName);
 		return ret;
 	};
 
@@ -293,7 +293,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		S.Popup.open('confirm', {
 			data: {
 				title: 'Are you sure?',
-				text: UtilCommon.sprintf('This will update relation values of %d objects', objectIds.length),
+				text: U.Common.sprintf('This will update relation values of %d objects', objectIds.length),
 				onConfirm: () => {
 					C.ObjectListSetDetails(objectIds, details, (message: any) => {
 						if (message.error.code) {

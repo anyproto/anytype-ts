@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { Icon, LoadMore } from 'Component';
-import { I, S, translate, UtilCommon } from 'Lib';
+import { I, S, U, translate } from 'Lib';
 import Row from './list/row';
 
 const HEIGHT = 34;
@@ -124,7 +124,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	componentDidUpdate () {
-		UtilCommon.triggerResizeEditor(this.props.isPopup);
+		U.Common.triggerResizeEditor(this.props.isPopup);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {

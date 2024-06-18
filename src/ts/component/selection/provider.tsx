@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { I, M, S, focus, keyboard, scrollOnMove, UtilCommon } from 'Lib';
+import { I, M, S, U, focus, keyboard, scrollOnMove } from 'Lib';
 
 interface Props {
 	children?: React.ReactNode;
@@ -78,7 +78,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	rebind () {
 		this.unbind();
-		UtilCommon.getScrollContainer(keyboard.isPopup()).on('scroll.selection', e => this.onScroll(e));
+		U.Common.getScrollContainer(keyboard.isPopup()).on('scroll.selection', e => this.onScroll(e));
 	};
 
 	unbind () {
@@ -94,7 +94,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const isPopup = keyboard.isPopup();
 
 		$(window).off('keydown.selection keyup.selection');
-		UtilCommon.getScrollContainer(isPopup).off('scroll.selection');
+		U.Common.getScrollContainer(isPopup).off('scroll.selection');
 	};
 
 	scrollToElement (id: string, dir: number) {
@@ -108,11 +108,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				return;
 			};
 
-			const container = UtilCommon.getScrollContainer(isPopup);
+			const container = U.Common.getScrollContainer(isPopup);
 			const no = node.offset().top;
 			const nh = node.outerHeight();
 			const st = container.scrollTop();
-			const hh = UtilCommon.sizeHeader();
+			const hh = U.Common.sizeHeader();
 			const y = isPopup ? (no - container.offset().top + st) : no;
 
 			if (y <= st + hh) {
@@ -135,7 +135,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		const { focused } = focus.state;
 		const win = $(window);
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 
 		isPopup ? this.rect.addClass('fromPopup') : this.rect.removeClass('fromPopup');
 		
@@ -218,7 +218,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 		
-		this.top = UtilCommon.getScrollContainer(this.isPopup).scrollTop();
+		this.top = U.Common.getScrollContainer(this.isPopup).scrollTop();
 		this.checkNodes(e);
 		this.drawRect(e.pageX, e.pageY);
 		this.hasMoved = true;
@@ -231,7 +231,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		const container = UtilCommon.getScrollContainer(this.isPopup);
+		const container = U.Common.getScrollContainer(this.isPopup);
 		const top = container.scrollTop();
 		const d = top > this.top ? 1 : -1;
 		const x = keyboard.mouse.page.x;
@@ -331,7 +331,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		if (UtilCommon.getSelectionRange()) {
+		if (U.Common.getSelectionRange()) {
 			this.rect.hide();
 		} else {
 			const x1 = this.x + (this.containerOffset ? this.containerOffset.left : 0);
@@ -373,7 +373,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	
 	checkEachNode (e: any, type: I.SelectType, rect: any, node: any, ids: string[]): string[] {
 		const cache = this.cacheNode(node);
-		if (!cache || !UtilCommon.rectsCollide(rect, cache)) {
+		if (!cache || !U.Common.rectsCollide(rect, cache)) {
 			return ids;
 		};
 
@@ -395,7 +395,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		const { focused, range } = focus.state;
 		const { x, y } = this.recalcCoords(e.pageX, e.pageY);
-		const rect = UtilCommon.objectCopy(this.getRect(this.x, this.y, x, y));
+		const rect = U.Common.objectCopy(this.getRect(this.x, this.y, x, y));
 
 		if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
 			this.initIds();
@@ -489,7 +489,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	set (type: I.SelectType, ids: string[]) {
-		this.ids.set(type, UtilCommon.arrayUnique(ids || []));
+		this.ids.set(type, U.Common.arrayUnique(ids || []));
 		this.renderSelection();
 	};
 	
@@ -554,7 +554,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	getPageContainer () {
-		return $(UtilCommon.getCellContainer(keyboard.isPopup() ? 'popup' : 'page'));
+		return $(U.Common.getCellContainer(keyboard.isPopup() ? 'popup' : 'page'));
 	};
 
 	renderSelection () {
@@ -591,7 +591,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	recalcCoords (x: number, y: number): { x: number, y: number } {
 		if (this.containerOffset) {
-			const top = UtilCommon.getScrollContainer(this.isPopup).scrollTop();
+			const top = U.Common.getScrollContainer(this.isPopup).scrollTop();
 
 			x -= this.containerOffset.left;
 			y -= this.containerOffset.top - top;

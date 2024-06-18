@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable } from 'Component';
-import { I, M, S, Action, UtilData, UtilObject, focus, keyboard, Relation, translate, UtilSpace } from 'Lib';
+import { I, M, S, U, Action, focus, keyboard, Relation, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -37,16 +37,16 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	render (): any {
 		const { rootId, onCreate, isContextMenuDisabled, readonly } = this.props;
-		const check = UtilData.checkDetails(rootId);
+		const check = U.Data.checkDetails(rootId);
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const isTypeOrRelation = UtilObject.isTypeOrRelationLayout(object.layout);
-		const isRelation = UtilObject.isRelationLayout(object.layout);
-		const canEditIcon = allowDetails && !UtilObject.isRelationLayout(object.layout);
+		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
+		const isRelation = U.Object.isRelationLayout(object.layout);
+		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
 		const placeholder = {
 			title: this.props.placeholder,
@@ -213,7 +213,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId } = this.props;
 
 		for (const item of EDITORS) {
-			UtilData.blockSetText(rootId, item.blockId, this.getValue(item.blockId), [], true);
+			U.Data.blockSetText(rootId, item.blockId, this.getValue(item.blockId), [], true);
 		};
 	};
 
@@ -266,7 +266,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId);
 
-		Action.install(object, false, (message: any) => UtilObject.openAuto(message.details));
+		Action.install(object, false, (message: any) => U.Object.openAuto(message.details));
 	};
 
 	isInstalled () {

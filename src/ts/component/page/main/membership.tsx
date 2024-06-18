@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Frame, Title, Error, Button } from 'Component';
-import { I, S, UtilCommon, UtilSpace, UtilData, translate, analytics } from 'Lib';
+import { I, S, U, translate, analytics } from 'Lib';
 
 interface State {
 	error: string;
@@ -33,7 +33,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 								text={translate('commonBack')} 
 								color="blank" 
 								className="c36" 
-								onClick={() => UtilSpace.openDashboard('route')} 
+								onClick={() => U.Space.openDashboard('route')} 
 							/>
 						</div>
 					) : <Loader />}
@@ -43,13 +43,13 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 	};
 
 	componentDidMount (): void {
-		UtilData.getMembershipStatus((membership: I.Membership) => {
+		U.Data.getMembershipStatus((membership: I.Membership) => {
 			if (!membership || membership.isNone) {
 				this.setState({ error: translate('pageMainMembershipError') });
 				return;
 			};
 
-			UtilSpace.openDashboard('route', {
+			U.Space.openDashboard('route', {
 				onRouteChange: () => {
 					S.Popup.closeAll(null, () => {
 						const { status, tier } = membership;
@@ -80,7 +80,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 	resize () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const obj = UtilCommon.getPageContainer(isPopup);
+		const obj = U.Common.getPageContainer(isPopup);
 		const node = $(this.node);
 		const wrapper = obj.find('.wrapper');
 		const oh = obj.height();

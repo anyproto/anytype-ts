@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
-import { I, UtilCommon, keyboard, translate, analytics, Mark } from 'Lib';
+import { I, U, keyboard, translate, analytics, Mark } from 'Lib';
 const Constant = require('json/constant.json');
 
 const SKIP = [ 
@@ -153,7 +153,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		findAndReplaceDOMText(this.container.get(0), {
 			preset: 'prose',
-			find: new RegExp(UtilCommon.regexEscape(value), 'gi'),
+			find: new RegExp(U.Common.regexEscape(value), 'gi'),
 			wrap: tag,
 			portionMode: 'first',
 			filterElements: (el: any) => {
@@ -250,7 +250,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { data } = param;
 		const { isPopup } = data;
 		const scrollContainer = this.getScrollContainer();
-		const offset = Constant.size.lastBlock + UtilCommon.sizeHeader();
+		const offset = Constant.size.lastBlock + U.Common.sizeHeader();
 		const tag = Mark.getTag(I.MarkType.Search);
 
 		this.container.find(`${tag}.active`).removeClass('active');

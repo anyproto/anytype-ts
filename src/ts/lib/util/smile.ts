@@ -1,7 +1,7 @@
-import { UtilCommon, translate } from 'Lib';
+import { U, translate } from 'Lib';
 import { init } from 'emoji-mart';
-const data = require('json/emoji.json');
 
+const data = require('json/emoji.json');
 const DIV = 65039;
 const CAP = 8419;
 
@@ -56,8 +56,8 @@ class UtilSmile {
 
 	randomParam (): { id: string, skin: number } {
 		return { 
-			id: this.icons[UtilCommon.rand(0, this.icons.length - 1)], 
-			skin: UtilCommon.rand(1, 6) 
+			id: this.icons[U.Common.rand(0, this.icons.length - 1)], 
+			skin: U.Common.rand(1, 6) 
 		};
 	};
 	
@@ -73,7 +73,7 @@ class UtilSmile {
 
 		const parts = String(colons || '').split('::');
 		const id = String(parts[0] || '').replace(/:/g, '');
-		const prefix = UtilCommon.getGlobalConfig().emojiUrl || './img/emoji/';
+		const prefix = U.Common.getGlobalConfig().emojiUrl || './img/emoji/';
 		const item = this.data.emojis[id];
 
 		if (!item) {
@@ -140,7 +140,7 @@ class UtilSmile {
 	getCategories () {
 		return this.data.categories.filter(it => it.id != 'frequent').map(it => ({
 			...it,
-			name: translate(UtilCommon.toCamelCase(`emojiCategory-${it.id}`)),
+			name: translate(U.Common.toCamelCase(`emojiCategory-${it.id}`)),
 		}));
 	};
 

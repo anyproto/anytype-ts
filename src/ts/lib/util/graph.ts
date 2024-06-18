@@ -1,4 +1,4 @@
-import { I, S, Relation, UtilCommon, UtilFile, UtilSmile } from 'Lib';
+import { I, S, U, Relation } from 'Lib';
 
 const Colors = require('json/colors.json');
 const Theme = require('json/theme.json');
@@ -23,7 +23,7 @@ class UtilGraph {
 			case I.ObjectLayout.Video:
 			case I.ObjectLayout.Pdf:
 			case I.ObjectLayout.File: {
-				src = UtilFile.iconPath(d);
+				src = U.File.iconPath(d);
 				break;
 			};
 
@@ -31,7 +31,7 @@ class UtilGraph {
 				if (d.id) {
 					src = S.Common.imageUrl(d.id, 100);
 				} else {
-					src = UtilFile.iconPath(d);
+					src = U.File.iconPath(d);
 				};
 				break;
 			};
@@ -60,9 +60,9 @@ class UtilGraph {
 					src = S.Common.imageUrl(d.iconImage, 100);
 				} else
 				if (d.iconEmoji) {
-					const code = UtilSmile.getCode(d.iconEmoji);
+					const code = U.Smile.getCode(d.iconEmoji);
 					if (code) {
-						src = UtilSmile.srcFromColons(code);
+						src = U.Smile.srcFromColons(code);
 					};
 					src = src.replace(/^.\//, '');
 				} else
@@ -91,8 +91,8 @@ class UtilGraph {
 		const fillW = small ? w * 0.7 : w;
 		const fillR = fillW / 2;
 		const steps = option.steps || Colors.gradientIcons.common.steps;
-		const step0 = UtilCommon.getPercentage(fillR, steps.from * 100);
-		const step1 = UtilCommon.getPercentage(fillR, steps.to * 100);
+		const step0 = U.Common.getPercentage(fillR, steps.from * 100);
+		const step1 = U.Common.getPercentage(fillR, steps.to * 100);
 		const grd = ctx.createRadialGradient(r, r, step0, r, r, step1);
 
 		canvas.width = w;

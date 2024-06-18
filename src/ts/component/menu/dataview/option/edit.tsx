@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, C, UtilMenu, Relation, translate, keyboard } from 'Lib';
+import { I, S, C, U, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical, Icon } from 'Component';
 
 const Constant = require('json/constant.json');
@@ -106,7 +106,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	getSections () {
-		const colors = UtilMenu.getBgColors().filter(it => it.id != 'bgColor-default');
+		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
 
 		return [
 			{ children: colors, className: 'colorPicker' },

@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
+import { I, C, S, U, keyboard, translate, Dataview, Action, analytics, Relation } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -21,7 +21,7 @@ class UtilMenu {
 			if (S.Common.interfaceLang != Constant.default.interfaceLang) {
 				it.aliases.push(translate(nameKey, Constant.default.interfaceLang));
 				it.aliases.push(translate(descriptionKey, Constant.default.interfaceLang));
-				it.aliases = UtilCommon.arrayUnique(it.aliases);
+				it.aliases = U.Common.arrayUnique(it.aliases);
 			};
 		};
 		return it;
@@ -37,7 +37,7 @@ class UtilMenu {
 			{ id: I.TextStyle.Callout, lang: 'Callout', aliases: [ 'callout' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = UtilData.blockTextClass(it.id);
+			it.icon = U.Data.blockTextClass(it.id);
 			return this.mapperBlock(it);
 		});
 	};
@@ -50,7 +50,7 @@ class UtilMenu {
 			{ id: I.TextStyle.Toggle, lang: 'Toggle', aliases: [ 'toggle' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = UtilData.blockTextClass(it.id);
+			it.icon = U.Data.blockTextClass(it.id);
 			return this.mapperBlock(it);
 		});
 	};
@@ -102,19 +102,19 @@ class UtilMenu {
 
 		return ret.map(this.mapperBlock).map(it => {
 			it.type = I.BlockType.Embed;
-			it.icon = `embed-${UtilCommon.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
+			it.icon = `embed-${U.Common.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
 			return it;
 		});
 	};
 
 	getBlockObject () {
-		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
+		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
 			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }
 		];
 
-		items.sort((c1, c2) => UtilData.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
+		items.sort((c1, c2) => U.Data.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
 
 		let i = 0;
 		for (const type of items) {
@@ -146,7 +146,7 @@ class UtilMenu {
 
 	getTurnPage () {
 		const ret = [];
-		const types = UtilData.getObjectTypesForNewObject(); 
+		const types = U.Data.getObjectTypesForNewObject(); 
 
 		let i = 0;
 		for (const type of types) {
@@ -211,7 +211,7 @@ class UtilMenu {
 			const isCollection = Dataview.isCollection(rootId, blockId);
 			const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
 
-			items.push({ id: 'dataviewSource', icon: 'source', name: UtilCommon.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
+			items.push({ id: 'dataviewSource', icon: 'source', name: U.Common.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
 		};
 
 		if (hasFile || hasBookmark || hasDataview) {
@@ -254,7 +254,7 @@ class UtilMenu {
 		};
 
 		return ret.map((it: any) => {
-			it.icon = UtilData.alignHIcon(it.id);
+			it.icon = U.Data.alignHIcon(it.id);
 			it.name = translate(`commonHAlign${I.BlockHAlign[it.id]}`);
 			it.isAlign = true;
 			return it;
@@ -267,7 +267,7 @@ class UtilMenu {
 			{ id: I.BlockVAlign.Middle },
 			{ id: I.BlockVAlign.Bottom },
 		].map((it: any) => {
-			it.icon = UtilData.alignVIcon(it.id);
+			it.icon = U.Data.alignVIcon(it.id);
 			it.name = translate(`commonVAlign${I.BlockVAlign[it.id]}`);
 			return it;
 		});
@@ -398,7 +398,7 @@ class UtilMenu {
 	};
 	
 	sectionsFilter (sections: any[], filter: string) {
-		const f = UtilCommon.regexEscape(filter);
+		const f = U.Common.regexEscape(filter);
 		const regS = new RegExp('^' + f, 'gi');
 		const regC = new RegExp(f, 'gi');
 		const getWeight = (s: string) => {
@@ -463,16 +463,16 @@ class UtilMenu {
 				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});
-			s.children = s.children.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
+			s.children = s.children.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
 
-		sections = sections.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
+		sections = sections.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 		return sections;
 	};
 	
 	sectionsMap (sections: any[]) {
-		sections = UtilCommon.objectCopy(sections);
+		sections = U.Common.objectCopy(sections);
 		sections = sections.filter(it => it.children.length > 0);
 		sections = sections.map((s: any, i: number) => {
 			s.id = (undefined !== s.id) ? s.id : i;
@@ -485,11 +485,11 @@ class UtilMenu {
 				c.color = c.color || s.color || '';
 				return c;
 			});
-			s.children = UtilCommon.arrayUniqueObjects(s.children, 'id');
+			s.children = U.Common.arrayUniqueObjects(s.children, 'id');
 			return s;
 		});
 
-		return UtilCommon.arrayUniqueObjects(sections, 'id');
+		return U.Common.arrayUniqueObjects(sections, 'id');
 	};
 
 	dashboardSelect (element: string, openRoute?: boolean) {
@@ -511,7 +511,7 @@ class UtilMenu {
 				};
 
 				if (openRoute) {
-					UtilSpace.openDashboard('route');
+					U.Space.openDashboard('route');
 				};
 			});
 		};
@@ -549,7 +549,7 @@ class UtilMenu {
 								isSub: true,
 								data: {
 									filters: [
-										{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+										{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
 										{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 									],
 									canAdd: true,
@@ -643,8 +643,8 @@ class UtilMenu {
 			return;
 		};
 
-		const isOwner = UtilSpace.isMyOwner(targetSpaceId);
-		const isLocalNetwork = UtilData.isLocalNetwork();
+		const isOwner = U.Space.isMyOwner(targetSpaceId);
+		const isLocalNetwork = U.Data.isLocalNetwork();
 		const { isOnline } = S.Common;
 
 		let options: any[] = [];
@@ -720,8 +720,8 @@ class UtilMenu {
 	inviteContext (param: any) {
 		const { isOnline } = S.Common;
 		const { containerId, cid, key, onInviteRevoke } = param || {};
-		const isOwner = UtilSpace.isMyOwner();
-		const isLocalNetwork = UtilData.isLocalNetwork();
+		const isOwner = U.Space.isMyOwner();
+		const isLocalNetwork = U.Data.isLocalNetwork();
 
 		const options: any[] = [
 			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
@@ -739,7 +739,7 @@ class UtilMenu {
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'qr': {
-							S.Popup.open('inviteQr', { data: { link: UtilSpace.getInviteLink(cid, key) } });
+							S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
 							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
 							break;
 						};

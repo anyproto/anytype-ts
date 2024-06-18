@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell } from 'Component';
-import { I, C, S, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
+import { I, C, S, U, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
@@ -105,7 +105,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								relationKey={relationKey}
 								getRecord={() => object}
 								viewType={I.ViewType.Grid}
-								pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
+								pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
 								iconSize={iconSize}
 								readonly={!canEdit}
 								isInline={true}
@@ -181,7 +181,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		let ret = null;
 
-		if (UtilObject.isTemplate(object.type)) {
+		if (U.Object.isTemplate(object.type)) {
 			ret = (
 				<span className="cell">
 					<div className="cellContent type disabled">
@@ -225,14 +225,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const rl = relations.length;
 
 		if (tl) {
-			setOfString.push(UtilCommon.sprintf('%s: %s', UtilCommon.plural(tl, translate('pluralObjectType')), types.slice(0, SOURCE_LIMIT).join(', ')));
+			setOfString.push(U.Common.sprintf('%s: %s', U.Common.plural(tl, translate('pluralObjectType')), types.slice(0, SOURCE_LIMIT).join(', ')));
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
 			};
 		};
 		if (rl) {
-			setOfString.push(`${UtilCommon.plural(rl, translate('pluralRelation'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
+			setOfString.push(`${U.Common.plural(rl, translate('pluralRelation'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
 
 			if (rl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);
@@ -271,7 +271,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return null;
 		};
 
-		const object = S.Detail.get(rootId, storeId, UtilData.participantRelationKeys());
+		const object = S.Detail.get(rootId, storeId, U.Data.participantRelationKeys());
 		const relationKey = object.globalName ? 'globalName': 'identity';
 
 		return (
@@ -284,7 +284,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					onMouseLeave={this.onMouseLeave}
 				>
 					<div className="name">
-						{UtilCommon.shorten(object[relationKey], 150)}
+						{U.Common.shorten(object[relationKey], 150)}
 					</div>
 				</div>
 			</span>
@@ -307,7 +307,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			<span id={id} className="cell" key={index} onClick={e => this.onLinks(e, relationKey)}>
 				<div className="bullet" />
 				<div className="cellContent">
-					{`${l} ${UtilCommon.plural(l, translate(UtilCommon.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
+					{`${l} ${U.Common.plural(l, translate(U.Common.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
 				</div>
 			</span>
 		);
@@ -470,16 +470,16 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		if (typeIsDeleted) {
 			showMenu();
 		} else {
-			UtilData.checkSetCnt([ object.type ], (message: any) => {
+			U.Data.checkSetCnt([ object.type ], (message: any) => {
 				if (message.records.length == 1) {
 					this.setId = message.records[0].id;
-					options.push({ id: 'setOpen', name: UtilCommon.sprintf(translate('blockFeaturedTypeMenuOpenSetOf'), type.name) });
+					options.push({ id: 'setOpen', name: U.Common.sprintf(translate('blockFeaturedTypeMenuOpenSetOf'), type.name) });
 				} else
 				if (message.records.length == 2) {
 					options.push({ id: 'setOpenMenu', name: translate('blockFeaturedTypeMenuOpenSet'), arrow: true });
 				} else
 				if (type && !type.isDeleted) {
-					options.push({ id: 'setCreate', name: UtilCommon.sprintf(translate('blockFeaturedTypeMenuCreateSetOf'), type.name) });
+					options.push({ id: 'setCreate', name: U.Common.sprintf(translate('blockFeaturedTypeMenuCreateSetOf'), type.name) });
 				};
 
 				showMenu();
@@ -519,15 +519,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
-					keys: UtilData.typeRelationKeys(),
+					keys: U.Data.typeRelationKeys(),
 					skipIds: [ object.type ],
 					onClick: (item: any) => {
 						keyboard.disableClose(true);
 
 						const open = () => {
-							UtilObject.openAuto({ ...object, layout: item.recommendedLayout });
+							U.Object.openAuto({ ...object, layout: item.recommendedLayout });
 							keyboard.disableClose(false);
 						};
 
@@ -555,7 +555,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.In, value: [ object.type ] }
 					],
 					onSelect: (item: any) => {
-						UtilObject.openPopup({ id: item.id, layout: I.ObjectLayout.Set });
+						U.Object.openPopup({ id: item.id, layout: I.ObjectLayout.Set });
 						this.menuContext.close();
 					}
 				});
@@ -585,24 +585,24 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		switch (item.id) {
 			case 'open':
-				UtilObject.openPopup(type);
+				U.Object.openPopup(type);
 				break;
 
 			case 'setOpen':
-				UtilObject.openPopup({ id: this.setId, layout: I.ObjectLayout.Set });
+				U.Object.openPopup({ id: this.setId, layout: I.ObjectLayout.Set });
 				break;
 
 			case 'setCreate':
 				const details: any = {};
 
 				if (type) {
-					details.name = UtilCommon.sprintf(translate('commonSetName'), type.name);
+					details.name = U.Common.sprintf(translate('commonSetName'), type.name);
 					details.iconEmoji = type.iconEmoji;
 				};
 
 				C.ObjectCreateSet([ object.type ], details, '', S.Common.space, (message: any) => {
 					if (!message.error.code) {
-						UtilObject.openPopup(message.details);
+						U.Object.openPopup(message.details);
 					};
 				});
 				break;
@@ -624,8 +624,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					};
 
 					keyboard.disableClose(true);
-					UtilObject.openAuto({ id: rootId, layout: I.ObjectLayout.Collection }, { replace: true });
-					window.setTimeout(() => { Preview.toastShow({ text: UtilCommon.sprintf(translate('toastTurnIntoCollection'), object.name) }); }, 200);
+					U.Object.openAuto({ id: rootId, layout: I.ObjectLayout.Collection }, { replace: true });
+					window.setTimeout(() => { Preview.toastShow({ text: U.Common.sprintf(translate('toastTurnIntoCollection'), object.name) }); }, 200);
 
 					analytics.event('SetTurnIntoCollection');
 				});
@@ -693,7 +693,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				if (object[relationKey]) {
 					value = Number(object[relationKey]);
 				} else {
-					value = Number(UtilDate.now());
+					value = Number(U.Date.now());
 					isEmpty = true;
 				};
 
@@ -771,7 +771,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				};
 
 				if (!isPopup) {
-					param.fixedY = UtilCommon.sizeHeader();
+					param.fixedY = U.Common.sizeHeader();
 					param.classNameWrap = 'fixed fromHeader';
 				};
 
@@ -864,7 +864,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					options,
 					forceLetter: true,
 					onSelect: (e: any, item: any) => {
-						UtilObject.openAuto(item);
+						U.Object.openAuto(item);
 					}
 				}
 			});
@@ -872,17 +872,17 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	elementMapper (relation: any, item: any) {
-		item = UtilCommon.objectCopy(item);
+		item = U.Common.objectCopy(item);
 
 		switch (relation.format) {
 			case I.RelationType.File:
 			case I.RelationType.Object:
-				item.name = UtilCommon.shorten(item.name);
+				item.name = U.Common.shorten(item.name);
 				break;
 
 			case I.RelationType.MultiSelect:
 			case I.RelationType.Select:
-				item.text = UtilCommon.shorten(item.text);
+				item.text = U.Common.shorten(item.text);
 				break;
 		};
 

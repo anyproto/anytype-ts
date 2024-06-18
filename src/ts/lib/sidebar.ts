@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, keyboard, Storage, UtilCommon } from 'Lib';
+import { I, S, U, keyboard, Storage } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -51,7 +51,7 @@ class Sidebar {
 			S.Common.autoSidebarSet(true);
 			S.Common.isSidebarFixedSet(true);
 
-			const { wh } = UtilCommon.getWindowDimensions();
+			const { wh } = U.Common.getWindowDimensions();
 			const y = wh / 2 - this.getMaxHeight() / 2;
 
 			this.set({
@@ -98,7 +98,7 @@ class Sidebar {
 
 		const { x } = keyboard.mouse.page;
 		const { width, snap } = this.data;
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const menuOpen = S.Menu.isOpenList([ 'dataviewContext', 'preview', 'widget' ]);
 		const popupOpen = S.Popup.isOpen();
 
@@ -314,7 +314,7 @@ class Sidebar {
 
 	resize (): void {
 		const { snap, width } = this.data;
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const set: Partial<SidebarData> = {};
 
 		if (snap == I.MenuDirection.Left) {
@@ -324,7 +324,7 @@ class Sidebar {
 			set.x = ww - width;
 		};
 
-		if (UtilCommon.objectLength(set)) {
+		if (U.Common.objectLength(set)) {
 			this.set(set);
 		};
 	};
@@ -344,7 +344,7 @@ class Sidebar {
 			};
 		};
 
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const pageWidth = ww - width;
 		const css: any = { width: '' };
 		const cssLoader: any = { width: pageWidth, left: '', right: '' };
@@ -496,15 +496,15 @@ class Sidebar {
 	 * Get max height allowed
 	 */
 	private getMaxHeight (): number {
-		return UtilCommon.getWindowDimensions().wh - UtilCommon.sizeHeader() * 2;
+		return U.Common.getWindowDimensions().wh - U.Common.sizeHeader() * 2;
 	};
 
 	/**
 	 * Limit the sidebar coordinates to the max and min bounds
 	 */
 	private limitCoords (x: number, y: number, width: number, height: number ): { x: number; y: number } {
-		const { ww, wh } = UtilCommon.getWindowDimensions();
-		const hh = UtilCommon.sizeHeader();
+		const { ww, wh } = U.Common.getWindowDimensions();
+		const hh = U.Common.sizeHeader();
 
 		x = Number(x);
 		x = Math.max(0, x);

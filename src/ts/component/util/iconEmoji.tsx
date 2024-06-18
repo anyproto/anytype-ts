@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { S, UtilSmile } from 'Lib';
+import { S, U } from 'Lib';
 import { observer } from 'mobx-react';
 
 const Constant = require('json/constant.json');
@@ -50,10 +50,10 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 
 		let element = null;
 		if (icon) {
-			const code = icon.match(':') ? icon : UtilSmile.getCode(icon);
+			const code = icon.match(':') ? icon : U.Smile.getCode(icon);
 			if (code) {
 				if (asImage) {
-					element = <img src={UtilSmile.srcFromColons(code)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={e=> e.preventDefault()} />;
+					element = <img src={U.Smile.srcFromColons(code)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={e=> e.preventDefault()} />;
 				} else {
 					element = <em-emoji shortcodes={code}></em-emoji>;
 				};

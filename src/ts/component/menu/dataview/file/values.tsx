@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
-import { I, C, S, UtilCommon, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
+import { I, C, S, U, Relation, Renderer, keyboard, Action, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -65,7 +65,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			return (
 				<div id={'item-' + item.id} className={cn.join(' ')}>
 					<Handle />
-					<div className="clickable" onClick={() => UtilObject.openPopup(item)} onContextMenu={e => this.onMore(e, item)}>
+					<div className="clickable" onClick={() => U.Object.openPopup(item)} onContextMenu={e => this.onMore(e, item)}>
 						{content}
 					</div>
 					<div className="buttons">
@@ -161,7 +161,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				noClose: true,
 				placeholderFocus: translate('menuDataviewFileValuesFindAFile'),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() }
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() }
 				],
 				onChange: (value: string[], callBack?: () => void) => {
 					this.save(value);
@@ -203,7 +203,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { onChange } = data;
 
-		onChange(UtilCommon.arrayUnique(value), () => {
+		onChange(U.Common.arrayUnique(value), () => {
 			S.Menu.updateData(id, { value });
 		});
 	};
@@ -241,7 +241,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 					switch (el.id) {
 						case 'open': {
-							UtilObject.openPopup(item);
+							U.Object.openPopup(item);
 							break;
 						};
 						case 'download': {
@@ -266,7 +266,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 						case 'remove': {
 							value = value.filter(it => it != item.id);
-							value = UtilCommon.arrayUnique(value);
+							value = U.Common.arrayUnique(value);
 
 							onChange(value, () => {
 								S.Menu.updateData(id, { value });

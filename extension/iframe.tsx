@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { S, C, UtilRouter, UtilData } from 'Lib'; 
+import { S, C, U } from 'Lib'; 
 
 import Index from './iframe/index';
 import Create from './iframe/create';
@@ -69,7 +69,7 @@ class Iframe extends React.Component {
 	};
 
 	componentDidMount () {
-		UtilRouter.init(history);
+		U.Router.init(history);
 
 		const win = $(window);
 
@@ -89,7 +89,7 @@ class Iframe extends React.Component {
 					S.Extension.setTabUrl(msg.url);
 					S.Extension.setHtml(msg.html);
 
-					UtilRouter.go('/create', {});
+					U.Router.go('/create', {});
 					sendResponse({});
 					break;
 				};
@@ -103,7 +103,7 @@ class Iframe extends React.Component {
 				return;
 			};
 
-			UtilData.destroySubscriptions(() => {
+			U.Data.destroySubscriptions(() => {
 				C.WalletCloseSession(S.Auth.token, () => S.Auth.tokenSet(''));
 			});
 		});

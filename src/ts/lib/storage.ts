@@ -1,4 +1,4 @@
-import { I, S, UtilCommon, UtilSpace } from 'Lib';
+import { I, S, U } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -112,7 +112,7 @@ class Storage {
 		const keys = Object.keys(this.getSpace());
 
 		keys.forEach(key => {
-			const spaceview = UtilSpace.getSpaceviewBySpaceId(key);
+			const spaceview = U.Space.getSpaceviewBySpaceId(key);
 			if (!spaceview) {
 				this.deleteSpace(key);
 			};
@@ -165,7 +165,7 @@ class Storage {
 
 	setToggle (rootId: string, id: string, value: boolean) {
 		let obj = this.get('toggle');
-		if (!obj || UtilCommon.hasProperty(obj, 'length')) {
+		if (!obj || U.Common.hasProperty(obj, 'length')) {
 			obj = {};
 		};
 		
@@ -319,7 +319,7 @@ class Storage {
 	};
 
 	checkArray (a) {
-		if (('object' != typeof(a)) || !UtilCommon.hasProperty(a, 'length')) {
+		if (('object' != typeof(a)) || !U.Common.hasProperty(a, 'length')) {
 			return [];
 		};
 		return a;

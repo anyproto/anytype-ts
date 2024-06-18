@@ -10,8 +10,8 @@ import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar } from 'Component';
 import { 
-	I, C, S, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
-	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode, UtilSpace, sidebar
+	I, C, S, U, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
+	focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar
 } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
@@ -45,7 +45,7 @@ const Routes = require('json/route.json');
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
-const electron = UtilCommon.getElectron();
+const electron = U.Common.getElectron();
 const isPackaged = electron.isPackaged;
 
 interface RouteElement { path: string; };
@@ -83,15 +83,7 @@ if (!isPackaged) {
 			I,
 			C,
 			S,
-			UtilCommon,
-			UtilData,
-			UtilFile,
-			UtilObject,
-			UtilMenu,
-			UtilRouter,
-			UtilSmile,
-			UtilDate,
-			UtilSpace,
+			U,
 			analytics,
 			dispatcher,
 			keyboard,
@@ -189,7 +181,7 @@ class App extends React.Component<object, State> {
 
 	render () {
 		const { isLoading } = this.state;
-		const platform = UtilCommon.getPlatform();
+		const platform = U.Common.getPlatform();
 
 		let drag = null;
 		if (platform == I.Platform.Mac) {
@@ -236,7 +228,7 @@ class App extends React.Component<object, State> {
 	init () {
 		const { version, arch, getGlobal } = electron;
 
-		UtilRouter.init(history);
+		U.Router.init(history);
 
 		dispatcher.init(getGlobal('serverAddress'));
 		dispatcher.listenEvents();
@@ -253,7 +245,7 @@ class App extends React.Component<object, State> {
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 
 		if (!lastSurveyTime) {
-			Storage.set('lastSurveyTime', UtilDate.now());
+			Storage.set('lastSurveyTime', U.Date.now());
 		};
 
 		Storage.delete('lastSurveyCanceled');
@@ -302,11 +294,11 @@ class App extends React.Component<object, State> {
 
 		Renderer.on('pin-check', () => {
 			keyboard.setPinChecked(false);
-			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
+			U.Router.go('/auth/pin-check', { replace: true, animate: true });
 		});
 
 		Renderer.on('reload', () => {
-			Renderer.send('reload', UtilRouter.getRoute());
+			Renderer.send('reload', U.Router.getRoute());
 		});
 	};
 
@@ -338,7 +330,7 @@ class App extends React.Component<object, State> {
 		raf(() => anim.removeClass('from'));
 
 		if (css) {
-			UtilCommon.injectCss('anytype-custom-css', css);
+			U.Common.injectCss('anytype-custom-css', css);
 		};
 
 		body.addClass('over');
@@ -360,7 +352,7 @@ class App extends React.Component<object, State> {
 		if (accountId) {
 			if (isChild) {
 				Renderer.send('keytarGet', accountId).then((phrase: string) => {
-					UtilData.createSession(phrase, '', () => {
+					U.Data.createSession(phrase, '', () => {
 						keyboard.setPinChecked(isPinChecked);
 						S.Common.redirectSet(route);
 
@@ -369,13 +361,13 @@ class App extends React.Component<object, State> {
 							S.Common.configSet(account.config, false);
 
 							if (spaceId) {
-								UtilRouter.switchSpace(spaceId, '', cb);
+								U.Router.switchSpace(spaceId, '', cb);
 							} else {
-								UtilData.onInfo(account.info);
-								UtilData.onAuth({}, cb);
+								U.Data.onInfo(account.info);
+								U.Data.onAuth({}, cb);
 							};
 
-							UtilData.onAuthOnce(false);
+							U.Data.onAuthOnce(false);
 						};
 					});
 				});
@@ -394,7 +386,7 @@ class App extends React.Component<object, State> {
 				});
 			} else {
 				S.Common.redirectSet(route);
-				UtilRouter.go('/auth/setup/init', { replace: true });
+				U.Router.go('/auth/setup/init', { replace: true });
 				cb();
 			};
 		} else {
@@ -491,7 +483,7 @@ class App extends React.Component<object, State> {
 				icon: 'updated',
 				bgColor: 'green',
 				title: translate('popupConfirmUpdateDoneTitle'),
-				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
+				text: U.Common.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
 				colorConfirm: 'blank',
 				canCancel: false,
@@ -512,7 +504,7 @@ class App extends React.Component<object, State> {
 				icon: 'error',
 				bgColor: 'red',
 				title: translate('popupConfirmUpdateErrorTitle'),
-				text: UtilCommon.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
+				text: U.Common.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
 				textConfirm: translate('commonRetry'),
 				textCancel: translate('commonLater'),
 				onConfirm: () => {
@@ -527,7 +519,7 @@ class App extends React.Component<object, State> {
 
 	onUpdateProgress (e: any, progress: any) {
 		S.Common.progressSet({ 
-			status: UtilCommon.sprintf(translate('commonUpdateProgress'), UtilFile.size(progress.transferred), UtilFile.size(progress.total)), 
+			status: U.Common.sprintf(translate('commonUpdateProgress'), U.File.size(progress.transferred), U.File.size(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
 			isUnlocked: true,
@@ -536,7 +528,7 @@ class App extends React.Component<object, State> {
 
 	onRoute (route: string) {
 		if (keyboard.isMain()) {
-			UtilRouter.go(route, {});
+			U.Router.go(route, {});
 		} else {
 			S.Common.redirectSet(route);
 		};
@@ -579,7 +571,7 @@ class App extends React.Component<object, State> {
 									const value = String(obj.get(0).innerText || '');
 
 									S.Block.updateContent(rootId, focused, { text: value });
-									UtilData.blockInsertText(rootId, focused, item.id, range.from, range.to);
+									U.Data.blockInsertText(rootId, focused, item.id, range.from, range.to);
 
 									focus.set(focused, { from: range.from, to: range.from + item.id.length });
 									focus.apply();

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, UtilCommon } from 'Lib';
+import { I, U } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -35,18 +35,18 @@ class Label extends React.Component<Props> {
 				ref={node => this.node = node}
 				id={id} 
 				className={cn.join(' ')} 
-				dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} 
+				dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} 
 				onClick={onClick}
 				onMouseDown={onMouseDown} 
 				onMouseEnter={onMouseEnter}
 				onMouseLeave={onMouseLeave}
-				{...UtilCommon.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
+				{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 			/>
 		);
 	};
 	
 	componentDidMount () {
-		UtilCommon.renderLinks($(this.node));
+		U.Common.renderLinks($(this.node));
 	};
 	
 };

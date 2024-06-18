@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Loader } from 'Component';
-import { I, S, UtilObject } from 'Lib';
+import { I, S, U } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -42,12 +42,12 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<I.Blo
 
 	onSelect () {
 		this.setLoading(true);
-		UtilObject.setIcon(this.props.rootId, '', '', () => this.setLoading(false));
+		U.Object.setIcon(this.props.rootId, '', '', () => this.setLoading(false));
 	};
 
 	onUpload (objectId: string) {
 		this.setLoading(true);
-		UtilObject.setIcon(this.props.rootId, '', objectId, () => this.setLoading(false));
+		U.Object.setIcon(this.props.rootId, '', objectId, () => this.setLoading(false));
 	};
 
 	setLoading (v: boolean) {

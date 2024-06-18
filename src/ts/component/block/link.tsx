@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
-import { I, S, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
+import { I, S, U, translate, keyboard, focus, Preview } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -26,7 +26,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { rootId, block } = this.props;
 		const object = S.Detail.get(rootId, block.content.targetBlockId, Constant.coverRelationKeys);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
-		const content = UtilData.checkLinkSettings(block.content, layout);
+		const content = U.Data.checkLinkSettings(block.content, layout);
 		const readonly = this.props.readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const { description, cardStyle, relations } = content;
 		const { size, iconSize } = this.getIconSize();
@@ -51,7 +51,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			element = (
 				<div 
 					className="loading" 
-					{...UtilCommon.dataProps({ 'target-block-id': object.id })}
+					{...U.Common.dataProps({ 'target-block-id': object.id })}
 				>
 					<Loader type="loader" />
 					<div className="name">{translate('blockLinkSyncing')}</div>
@@ -66,7 +66,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 				</div>
 			);
 		} else {
-			const cnc = [ 'linkCard', UtilData.layoutClass(object.id, layout), 'c' + size ];
+			const cnc = [ 'linkCard', U.Data.layoutClass(object.id, layout), 'c' + size ];
 			const cns = [ 'sides' ];
 			const cnl = [ 'side', 'left' ];
 			
@@ -257,7 +257,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			return;
 		};
 
-		UtilObject.openEvent(e, object);
+		U.Object.openEvent(e, object);
 	};
 	
 	onMouseEnter (e: React.MouseEvent) {
@@ -304,7 +304,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	getIconSize () {
 		const { rootId, block } = this.props;
 		const object = S.Detail.get(rootId, block.content.targetBlockId, [ 'layout' ], true);
-		const content = UtilData.checkLinkSettings(block.content, object.layout);
+		const content = U.Data.checkLinkSettings(block.content, object.layout);
 		const { cardStyle } = content;
 
 		let size = 20;

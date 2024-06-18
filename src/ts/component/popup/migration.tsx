@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button } from 'Component';
-import { analytics, I, S, Onboarding, translate, UtilCommon } from 'Lib';
+import { I, S, U, Onboarding, translate, analytics } from 'Lib';
 import QRCode from 'qrcode.react';
 
 const Theme = require('json/theme.json');
@@ -59,7 +59,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 							<QRCode value={Url.download} fgColor={Theme[theme].qr.foreground} bgColor={Theme[theme].qr.bg} size={100} />
 						</div>
 
-						<Label text={UtilCommon.sprintf(translate('popupMigrationImportText3'), Url.community)} />
+						<Label text={U.Common.sprintf(translate('popupMigrationImportText3'), Url.community)} />
 
 						<div className="buttons">
 							<Button text={translate('commonDone')} className="c36" onClick={() => close()} />

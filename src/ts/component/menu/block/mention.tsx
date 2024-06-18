@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
-import { I, S, keyboard, UtilCommon, UtilData, UtilObject, Mark, translate } from 'Lib';
+import { I, S, U, keyboard, Mark, translate } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 const Constant = require('json/constant.json');
@@ -185,7 +185,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		if (filter) {
 			sections.push({ 
 				children: [
-					{ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObjectWithName'), filter) }
+					{ id: 'add', icon: 'plus', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter) }
 				]
 			});
 		};
@@ -208,7 +208,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { data } = param;
 		const { skipIds } = data;
 		const filter = this.getFilter();
-		const skipLayouts = UtilObject.getSystemLayouts().filter(it => it != I.ObjectLayout.Date);
+		const skipLayouts = U.Object.getSystemLayouts().filter(it => it != I.ObjectLayout.Date);
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
 		];
@@ -226,7 +226,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			this.setState({ loading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
 			fullText: filter,
@@ -285,11 +285,11 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		const cb = (id: string, name: string) => {
 			name = String(name || translate('defaultNamePage'));
-			name = UtilCommon.shorten(name, 30);
+			name = U.Common.shorten(name, 30);
 
 			const to = from + name.length;
 
-			let marks = UtilCommon.objectCopy(data.marks || []);
+			let marks = U.Common.objectCopy(data.marks || []);
 			marks = Mark.adjust(marks, from, name.length);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
@@ -303,7 +303,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		if (item.id == 'add') {
 			const name = this.getFilter();
 
-			UtilObject.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], 'Mention', (message: any) => {
+			U.Object.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], 'Mention', (message: any) => {
 				cb(message.targetId, name);
 			});
 		} else {

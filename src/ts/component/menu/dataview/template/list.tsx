@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, PreviewObject, IconObject } from 'Component';
-import { C, I, S, UtilObject, translate, UtilData, UtilCommon, keyboard } from 'Lib';
+import { I, C, S, U, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
 const Constant = require('json/constant.json');
@@ -38,7 +38,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const templateId = this.getTemplateId();
 		const items = this.getItems();
 		const type = S.Record.getTypeById(typeId);
-		const isAllowed = UtilObject.isAllowedTemplate(typeId);
+		const isAllowed = U.Object.isAllowedTemplate(typeId);
 
 		const ItemBlank = (item: any) => {
 			const cn = [ 'previewObject', 'blank', I.PreviewSize[previewSize].toLowerCase() ];
@@ -207,7 +207,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		];
 		const keys = Constant.defaultRelationKeys.concat([ 'targetObjectType' ]);
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			subId: this.getSubId(),
 			filters,
 			sorts,
@@ -244,7 +244,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { data } = param;
 		const { noAdd, typeId } = data;
 		const items = S.Record.getRecords(this.getSubId());
-		const isAllowed = UtilObject.isAllowedTemplate(typeId);
+		const isAllowed = U.Object.isAllowedTemplate(typeId);
 
 		items.unshift({ id: Constant.templateId.blank });
 
@@ -259,7 +259,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { param, getId } = this.props;
 		const { data } = param;
 		const { onSetDefault, route, typeId, getView } = data;
-		const item = UtilCommon.objectCopy(template);
+		const item = U.Common.objectCopy(template);
 		const node = $(`#item-${item.id}`);
 		const templateId = this.getTemplateId();
 
@@ -295,7 +295,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					typeId,
 					templateId,
 					route,
-					onDuplicate: object => UtilObject.openPopup(object, {}),
+					onDuplicate: object => U.Object.openPopup(object, {}),
 					onSetDefault,
 				}
 			});
@@ -306,7 +306,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { onSelect, typeId } = data;
-		const item = UtilCommon.objectCopy(template);
+		const item = U.Common.objectCopy(template);
 
 		if (!item.targetObjectType) {
 			item.targetObjectType = typeId;
@@ -333,7 +333,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				rebind: this.rebind,
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
 				],
 				onClick: type => {
 					data.typeId = type.id;
@@ -370,7 +370,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const items = this.getItems();
 		const length = items.length;
 		const isPopup = keyboard.isPopup();
-		const container = UtilCommon.getPageContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const ww = container.width();
 
 		let columns = Math.max(1, Math.floor(ww / TEMPLATE_WIDTH));

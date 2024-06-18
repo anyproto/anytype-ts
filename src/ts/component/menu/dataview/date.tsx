@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, keyboard, UtilDate, UtilMenu, translate } from 'Lib';
+import { I, C, S, U, keyboard, translate } from 'Lib';
 
 const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<I.Menu> {
 
@@ -112,7 +112,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 			},
 		];
 
-		sections = UtilMenu.sectionsMap(sections);
+		sections = U.Menu.sectionsMap(sections);
 		return sections;
 	};
 	
@@ -132,11 +132,11 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		switch (key) {
 			case 'dateFormat':
 				options = [
-					{ id: I.DateFormat.MonthAbbrBeforeDay, name: UtilDate.date('M d, Y', UtilDate.now()) },
-					{ id: I.DateFormat.MonthAbbrAfterDay, name: UtilDate.date('d M, Y', UtilDate.now()) },
-					{ id: I.DateFormat.Short, name: UtilDate.date('d.m.Y', UtilDate.now()) },
-					{ id: I.DateFormat.ShortUS, name: UtilDate.date('m.d.Y', UtilDate.now()) },
-					{ id: I.DateFormat.ISO, name: UtilDate.date('Y-m-d', UtilDate.now()) },
+					{ id: I.DateFormat.MonthAbbrBeforeDay, name: U.Date.date('M d, Y', U.Date.now()) },
+					{ id: I.DateFormat.MonthAbbrAfterDay, name: U.Date.date('d M, Y', U.Date.now()) },
+					{ id: I.DateFormat.Short, name: U.Date.date('d.m.Y', U.Date.now()) },
+					{ id: I.DateFormat.ShortUS, name: U.Date.date('m.d.Y', U.Date.now()) },
+					{ id: I.DateFormat.ISO, name: U.Date.date('Y-m-d', U.Date.now()) },
 				];
 				break;
 

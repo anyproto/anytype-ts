@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
-import { I, S, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate } from 'Lib';
+import { I, S, U, keyboard, Relation, translate } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -252,7 +252,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const types = this.getTypes();
 
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -267,7 +267,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			this.setState({ isLoading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
 			fullText: filter,
@@ -302,7 +302,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { canAdd } = data;
 		const value = Relation.getArrayValue(data.value);
-		const ret = UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
+		const ret = U.Common.objectCopy(this.items).filter(it => !value.includes(it.id));
 		const typeNames = this.getTypeNames();
 
 		if (typeNames) {
@@ -313,7 +313,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			if (ret.length || typeNames) {
 				ret.push({ isDiv: true });
 			};
-			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObjectWithName'), data.filter) });
+			ret.push({ id: 'add', name: U.Common.sprintf(translate('commonCreateObjectWithName'), data.filter) });
 		};
 
 		return ret;
@@ -343,7 +343,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			names.push(`+${more}`);
 		};
 
-		return `${UtilCommon.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
+		return `${U.Common.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -386,7 +386,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return;
 			};
 
-			let value = UtilCommon.arrayUnique(Relation.getArrayValue(data.value).concat([ id ]));
+			let value = U.Common.arrayUnique(Relation.getArrayValue(data.value).concat([ id ]));
 			if (maxCount) {
 				value = value.slice(value.length - maxCount, value.length);
 			};
@@ -402,7 +402,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (item.id == 'add') {
 			const { details, flags } = Relation.getParamForNewObject(filter, relation);
 
-			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', (message: any) => {
+			U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', (message: any) => {
 				cb(message.targetId);
 				close();
 			});

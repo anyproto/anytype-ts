@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, S, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate, UtilSpace } from 'Lib';
+import { I, C, S, U, keyboard, Preview, analytics, Action, focus, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -153,7 +153,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				{isLoading ? <Loader /> : ''}
 
 				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch text={filter ? U.Common.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 
 				{this.cache && items.length && !isLoading ? (
@@ -240,7 +240,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { filter, label, canAdd, addParam } = data;
 		const length = this.items.length;
 		const items = [].concat(this.items);
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 		
 		if (label && length) {
 			items.unshift({ isSection: true, name: label });
@@ -255,7 +255,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				items.push({ id: 'add', icon: 'plus', name: addParam.name, isAdd: true });
 			} else
 			if (filter) {
-				items.push({ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObjectWithName'), filter), isAdd: true });
+				items.push({ id: 'add', icon: 'plus', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter), isAdd: true });
 			};
 		};
 
@@ -292,7 +292,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const templateType = S.Record.getTemplateType();
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(data.filters || []);
 
 		let sorts = [].concat(data.sorts || []);
@@ -312,7 +312,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo, I.NavigationType.Link ].includes(type)) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() });
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id });
 		};
 
@@ -320,7 +320,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			this.setState({ isLoading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
 			keys: keys || Constant.defaultRelationKeys,
@@ -411,7 +411,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			switch (type) {
 				case I.NavigationType.Go:
-					UtilObject.openEvent(e, target);
+					U.Object.openEvent(e, target);
 					break;
 
 				case I.NavigationType.Move:
@@ -465,7 +465,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			} else {
 				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-				UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Search', (message: any) => {
+				U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Search', (message: any) => {
 					process(message.details, true);
 					close();
 				});
@@ -478,14 +478,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	getBlockParam (id: string, layout: I.ObjectLayout) {
 		const param: Partial<I.Block> = {};
 
-		if (UtilObject.isFileLayout(layout)) {
+		if (U.Object.isFileLayout(layout)) {
 			return {
 				type: I.BlockType.File,
 				content: {
 					targetObjectId: id,
 					style: I.FileStyle.Embed,
 					state: I.FileState.Done,
-					type: UtilObject.getFileTypeByLayout(layout),
+					type: U.Object.getFileTypeByLayout(layout),
 				},
 			};
 		};
@@ -503,7 +503,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			default: {
 				param.type = I.BlockType.Link;
 				param.content = {
-					...UtilData.defaultLinkSettings(),
+					...U.Data.defaultLinkSettings(),
 					targetBlockId: id,
 				};
 				break;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button } from 'Component';
-import { I, C, S, UtilCommon } from 'Lib';
+import { I, C, S, U } from 'Lib';
 
 interface State {
 	error: string;
@@ -24,7 +24,7 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 
 		return (
 			<div className="page pageSuccess">
-				<div className="label bold">{UtilCommon.sprintf('"%s" is saved!', UtilCommon.shorten(object.name, 64))}</div>
+				<div className="label bold">{U.Common.sprintf('"%s" is saved!', U.Common.shorten(object.name, 64))}</div>
 				<div className="label">{object.description}</div>
 
 				<div className="buttonsWrapper">

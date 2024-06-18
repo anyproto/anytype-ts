@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import DOMPurify from 'dompurify';
-import { I, C, S, Preview, Renderer, translate, UtilSpace, Mark } from 'Lib';
+import { I, C, S, Preview, Renderer, translate, U, Mark } from 'Lib';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -585,7 +585,7 @@ class UtilCommon {
 							};
 						});
 
-						UtilSpace.openDashboard('route', { replace: true });
+						U.Space.openDashboard('route', { replace: true });
 					}
 				},
 			});

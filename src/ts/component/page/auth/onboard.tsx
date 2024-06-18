@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, S, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage, Action } from 'Lib';
+import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Storage, Action } from 'Lib';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -223,7 +223,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				cb();
 			} else {
 				this.refNext?.setLoading(true);
-				UtilData.accountCreate(this.setError, cb);
+				U.Data.accountCreate(this.setError, cb);
 			};
 		};
 
@@ -257,8 +257,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						},
 					};
 
-					UtilData.onAuth({ routeParam });
-					UtilData.onAuthOnce(true);
+					U.Data.onAuth({ routeParam });
+					U.Data.onAuthOnce(true);
 				});
 			};
 
@@ -281,7 +281,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage } = this.state;
 
 		if (stage == Stage.Vault) {
-			Animation.from(() => UtilRouter.go('/', { replace: true }));
+			Animation.from(() => U.Router.go('/', { replace: true }));
 		} else {
 			this.setState({ stage: stage - 1 });
 		};
@@ -301,14 +301,14 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	accountUpdate = (name: string, callBack?: () => void): void => {
-		UtilObject.setName(S.Block.profile, name, () => {
+		U.Object.setName(S.Block.profile, name, () => {
 			C.WorkspaceSetInfo(S.Common.space, { name }, callBack);
 		});
 	};
 
 	/** Copies key phrase to clipboard and shows a toast */
 	onCopy () {
-		UtilCommon.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
+		U.Common.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
 		analytics.event('KeychainCopy', { type: 'Onboarding' });
 	};
 

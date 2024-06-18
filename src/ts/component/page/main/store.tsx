@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, S, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
+import { I, C, S, U, Storage, Onboarding, analytics, Action, keyboard, translate } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -69,7 +69,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		const { withBanner } = this.state;
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 		const { isPopup } = this.props;
 		const views = this.getViews();
 		const items = this.getItems();
@@ -335,7 +335,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getSortKey (tab: I.StoreTab) {
-		return UtilCommon.toCamelCase(`${KEY_SORT}-${tab}`);
+		return U.Common.toCamelCase(`${KEY_SORT}-${tab}`);
 	};
 
 	onKeyDown (e: any) {
@@ -397,7 +397,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onClick (e: any, item: any) {
-		UtilObject.openAuto(item);
+		U.Object.openAuto(item);
 	};
 
 	onCreateType (e: any) {
@@ -536,7 +536,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			S.Record.recordsSet(Constant.subId.store, '', []);
 		};
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			subId: Constant.subId.store,
 			filters,
 			sorts,
@@ -601,7 +601,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getViews (): any[] {
 		const views: any[] = [];
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
@@ -665,7 +665,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getLimit () {
-		const container = UtilCommon.getPageContainer(this.props.isPopup);
+		const container = U.Common.getPageContainer(this.props.isPopup);
 		const size = Constant.size.store;
 		const maxWidth = container.width() - size.border * 2;
 		const limit = Math.floor(maxWidth / (size.width + size.margin));

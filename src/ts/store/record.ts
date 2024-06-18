@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { S, I, M, UtilCommon, Dataview } from 'Lib';
+import { S, I, M, U, Dataview } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -101,7 +101,7 @@ class RecordStore {
 		const relations = (this.relationMap.get(this.getId(rootId, blockId)) || []).
 			concat(list.map(it => ({ relationKey: it.relationKey, format: it.format })));
 
-		this.relationMap.set(key, UtilCommon.arrayUniqueObjects(relations, 'relationKey'));
+		this.relationMap.set(key, U.Common.arrayUniqueObjects(relations, 'relationKey'));
 	};
 
 	relationListDelete (rootId: string, blockId: string, keys: string[]) {

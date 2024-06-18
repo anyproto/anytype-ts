@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
-import { I, C, S, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
+import { I, C, S, U, keyboard, analytics, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -122,8 +122,8 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		let options: any[] = [
 			{ id: 'editTitle', icon: 'editText', name: translate('blockDataviewHeadMenuEdit') },
-			{ id: 'sourceChange', icon: 'source', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true },
-			{ id: 'sourceOpen', icon: 'expand', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
+			{ id: 'sourceChange', icon: 'source', name: U.Common.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true },
+			{ id: 'sourceOpen', icon: 'expand', name: U.Common.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
 		];
 
 		if (object.isDeleted) {
@@ -250,7 +250,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			};
 
 			case 'sourceOpen': {
-				UtilObject.openAuto(object);
+				U.Object.openAuto(object);
 				analytics.event('InlineSetOpenSource');
 				break;
 			};
@@ -350,18 +350,18 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 
 		if (targetObjectId) {
-			UtilObject.setName(targetObjectId, value);
+			U.Object.setName(targetObjectId, value);
 		};
 		
 		this.ref?.placeholderCheck();
 	};
 
 	onIconSelect (icon: string) {
-		UtilObject.setIcon(this.props.block.content.targetObjectId, icon, '');
+		U.Object.setIcon(this.props.block.content.targetObjectId, icon, '');
 	};
 
 	onIconUpload (objectId: string) {
-		UtilObject.setIcon(this.props.block.content.targetObjectId, '', objectId);
+		U.Object.setIcon(this.props.block.content.targetObjectId, '', objectId);
 	};
 
 	setRange (range: I.TextRange) {

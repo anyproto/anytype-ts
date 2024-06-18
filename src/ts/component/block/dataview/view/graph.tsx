@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, UtilCommon, UtilData, keyboard, Dataview } from 'Lib';
+import { I, C, S, U, keyboard, Dataview } from 'Lib';
 import { Graph } from 'Component';
 
 const Constant = require('json/constant.json');
@@ -92,7 +92,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 		};
 
 		const searchIds = getSearchIds();
-		const filters = [].concat(view.filters).concat(UtilData.graphFilters()).map(it => Dataview.filterMapper(view, it));
+		const filters = [].concat(view.filters).concat(U.Data.graphFilters()).map(it => Dataview.filterMapper(view, it));
 		const target = getTarget();
 
 		if (searchIds) {
@@ -129,7 +129,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 
 			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
 
-			UtilData.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
+			U.Data.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
 				error: {},
 				records: message.nodes,
 				dependencies: [],
@@ -160,7 +160,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 		if (!isInline) {
 			node.css({ width: 0, height: 0, marginLeft: 0 });
 
-			const container = UtilCommon.getPageContainer(isPopup);
+			const container = U.Common.getPageContainer(isPopup);
 			const cw = container.width();
 			const ch = container.height();
 			const mw = cw - PADDING * 2;

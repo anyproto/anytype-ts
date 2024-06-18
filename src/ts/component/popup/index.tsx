@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, UtilCommon, analytics, Storage, Preview, translate } from 'Lib';
+import { I, S, U, analytics, Storage, Preview, translate } from 'Lib';
 import { Dimmer } from 'Component';
 
 import PopupSettings from './settings';
@@ -86,7 +86,7 @@ class Popup extends React.Component<I.Popup> {
 		};
 		
 		if (!Component) {
-			return <div>{UtilCommon.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
+			return <div>{U.Common.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
 		};
 
 		return (
@@ -180,7 +180,7 @@ class Popup extends React.Component<I.Popup> {
 					
 			const node = $(this.node);
 			const inner = node.find('.innerWrap');
-			const { ww } = UtilCommon.getWindowDimensions();
+			const { ww } = U.Common.getWindowDimensions();
 
 			const sidebar = $('#sidebar');
 			const isRight = sidebar.hasClass('right');
@@ -233,7 +233,7 @@ class Popup extends React.Component<I.Popup> {
 	};
 
 	getId (): string {
-		return UtilCommon.toCamelCase('popup-' + this.props.id);
+		return U.Common.toCamelCase('popup-' + this.props.id);
 	};
 
 };

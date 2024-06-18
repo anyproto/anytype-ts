@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, UtilCommon, UtilData, keyboard, focus, Storage, UtilSpace } from 'Lib';
+import { I, C, S, U, keyboard, focus, Storage } from 'Lib';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject} from 'Component';
 
 import BlockDataview from './dataview';
@@ -78,7 +78,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const index = Number(this.props.index) || 0;
 		const { style, checked } = content;
 		const root = S.Block.getLeaf(rootId, rootId);
-		const cn: string[] = [ 'block', UtilData.blockClass(block), `align${hAlign}`, `index${index}` ];
+		const cn: string[] = [ 'block', U.Data.blockClass(block), `align${hAlign}`, `index${index}` ];
 		const cd: string[] = [ 'wrapContent' ];
 		const setRef = ref => this.ref = ref;
 		const key = [ 'block', block.id, 'component' ].join(' ');
@@ -86,7 +86,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		let participant = null;
 		if (participantId) {
-			participant = UtilSpace.getParticipant(participantId);
+			participant = U.Space.getParticipant(participantId);
 		};
 
 		let canSelect = !isInsideTable && !isSelectionDisabled;
@@ -211,7 +211,7 @@ const Block = observer(class Block extends React.Component<Props> {
 					canDropMiddle = canDrop;
 				};
 
-				cn.push(UtilData.linkCardClass(content.cardStyle));
+				cn.push(U.Data.linkCardClass(content.cardStyle));
 
 				blockComponent = <BlockLink key={key} ref={setRef} {...this.props} />;
 				break;
@@ -349,7 +349,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				style={css}
 				onMouseEnter={onMouseEnter} 
 				onMouseLeave={onMouseLeave}
-				{...UtilCommon.dataProps({ id })}
+				{...U.Common.dataProps({ id })}
 			>
 				<div className="wrapMenu">
 					<Icon 
@@ -446,7 +446,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			selection.setIsSelecting(false);
 		};
 
-		this.ids = UtilData.selectionGet(block.id, false, true);
+		this.ids = U.Data.selectionGet(block.id, false, true);
 		dragProvider?.onDragStart(e, I.DropType.Block, this.ids, this);
 	};
 	
@@ -454,7 +454,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		e.stopPropagation();
 
 		focus.clear(true);
-		this.ids = UtilData.selectionGet(this.props.block.id, false, false);
+		this.ids = U.Data.selectionGet(this.props.block.id, false, false);
 	};
 	
 	onMenuClick () {
@@ -501,7 +501,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		focus.clear(true);
 		S.Menu.closeAll([], () => {
-			this.ids = UtilData.selectionGet(block.id, false, false);
+			this.ids = U.Data.selectionGet(block.id, false, false);
 			selection?.set(I.SelectType.Block, this.ids);
 
 			this.menuOpen({

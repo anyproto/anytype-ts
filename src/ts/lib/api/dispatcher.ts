@@ -5,10 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { 
-	S, UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, 
-	UtilRouter, Storage, UtilSpace, UtilData, keyboard,
-} from 'Lib';
+import { I, M, S, U, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Storage, keyboard } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 const Constant = require('json/constant.json');
@@ -100,7 +97,7 @@ class Dispatcher {
 		const { config } = S.Common;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
-		const electron = UtilCommon.getElectron();
+		const electron = U.Common.getElectron();
 		const currentWindow = electron.currentWindow();
 		const { windowId } = currentWindow;
 		const isMainWindow = windowId === 1;
@@ -125,7 +122,7 @@ class Dispatcher {
 			};
 
 			if (data && data.toObject) {
-				const d = UtilCommon.objectClear(data.toObject());
+				const d = U.Common.objectClear(data.toObject());
 				console.log(debugJson ? JSON.stringify(d, null, 3) : d); 
 			};
 		};
@@ -154,7 +151,7 @@ class Dispatcher {
 
 				case 'AccountConfigUpdate': {
 					S.Common.configSet(mapped.config, true);
-					Renderer.send('setConfig', UtilCommon.objectCopy(S.Common.config));
+					Renderer.send('setConfig', U.Common.objectCopy(S.Common.config));
 					break;
 				};
 
@@ -212,7 +209,7 @@ class Dispatcher {
 				case 'FileLimitReached': {
 					const { bytesLimit, localUsage, spaces } = S.Common.spaceStorage;
 					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
-					const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
+					const percentageUsed = Math.floor(U.Common.getPercent(bytesUsed, bytesLimit));
 
 					if (percentageUsed >= 99) {
 						Preview.toastShow({ action: I.ToastAction.StorageFull });
@@ -888,7 +885,7 @@ class Dispatcher {
 					S.Notification.add(item);
 
 					if (isMainWindow && !electron.isFocused()) {
-						new window.Notification(UtilCommon.stripTags(item.title), { body: UtilCommon.stripTags(item.text) }).onclick = () => electron.focus();
+						new window.Notification(U.Common.stripTags(item.title), { body: U.Common.stripTags(item.text) }).onclick = () => electron.focus();
 					};
 					break;
 				};
@@ -910,7 +907,7 @@ class Dispatcher {
 						case 'openObject': {
 							const { object } = payload;
 
-							UtilObject.openAuto(object);
+							U.Object.openAuto(object);
 							window.focus();
 
 							if (electron.focus) {
@@ -926,7 +923,7 @@ class Dispatcher {
 
 				case 'MembershipUpdate':
 					S.Auth.membershipUpdate(mapped.membership);
-					UtilData.getMembershipTiers(true);
+					U.Data.getMembershipTiers(true);
 					break;
 
 				case 'ProcessNew':
@@ -981,7 +978,7 @@ class Dispatcher {
 	};
 
 	getUniqueSubIds (subIds: string[]) {
-		return UtilCommon.arrayUnique((subIds || []).map(it => it.split('/')[0]));
+		return U.Common.arrayUnique((subIds || []).map(it => it.split('/')[0]));
 	};
 
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
@@ -989,10 +986,10 @@ class Dispatcher {
 
 		if ([ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(details.spaceAccountStatus)) {
 			if (id == S.Block.spaceview) {
-				UtilRouter.switchSpace(S.Auth.accountSpaceId, '');
+				U.Router.switchSpace(S.Auth.accountSpaceId, '');
 			};
 
-			const spaceview = UtilSpace.getSpaceview(id);
+			const spaceview = U.Space.getSpaceview(id);
 			if (spaceview && !spaceview._empty_) {
 				Storage.deleteSpace(spaceview.targetSpaceId);
 			};
@@ -1117,7 +1114,7 @@ class Dispatcher {
 		const debugTime = config.flagsMw.time;
 		const debugRequest = config.flagsMw.request;
 		const debugJson = config.flagsMw.json;
-		const ct = UtilCommon.toCamelCase(type);
+		const ct = U.Common.toCamelCase(type);
 		const t0 = performance.now();
 
 		if (!this.service[ct]) {
@@ -1131,7 +1128,7 @@ class Dispatcher {
 
 		if (debugRequest && !SKIP_IDS.includes(type)) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
-			d = UtilCommon.objectClear(data.toObject());
+			d = U.Common.objectClear(data.toObject());
 			console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 		};
 
@@ -1168,12 +1165,12 @@ class Dispatcher {
 						analytics.event('Exception', { method: type, code: message.error.code });
 					};
 
-					message.error.description = UtilCommon.translateError(type, message.error);
+					message.error.description = U.Common.translateError(type, message.error);
 				};
 
 				if (debugRequest && !SKIP_IDS.includes(type)) {
 					console.log(`%cResponse.${type}`, 'font-weight: bold; color: green;');
-					d = UtilCommon.objectClear(response.toObject());
+					d = U.Common.objectClear(response.toObject());
 					console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 				};
 

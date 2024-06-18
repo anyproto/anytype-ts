@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, Preview, UtilData, translate, UtilCommon } from 'Lib';
+import { I, U, Preview, translate } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -30,7 +30,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 	render () {
 		const { id, className } = this.props;
 		const status = this.getStatus();
-		const color = UtilData.threadColor(status);
+		const color = U.Data.threadColor(status);
 		const cn = [ 'sync' ];
 
 		if (className) {
@@ -46,7 +46,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
-				{color ? <Icon className={UtilData.threadColor(status)} /> : ''}
+				{color ? <Icon className={U.Data.threadColor(status)} /> : ''}
 				<div className="name">{translate(`threadStatus${status}`)}</div>
 			</div>
 		);
@@ -57,7 +57,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 		const status = this.getStatus();
 
 		if (status == I.ThreadStatus.Incompatible) {
-			UtilCommon.onErrorUpdate();
+			U.Common.onErrorUpdate();
 		} else
 		if (onClick) {
 			onClick(e);
@@ -78,7 +78,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 	};
 
 	getStatus () {
-		return UtilData.getThreadStatus(this.props.rootId, 'summary');
+		return U.Data.getThreadStatus(this.props.rootId, 'summary');
 	};
 
 });

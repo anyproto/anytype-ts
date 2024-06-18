@@ -1,14 +1,13 @@
-import { I, S, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject, UtilMenu } from 'Lib';
+import { I, S, U, translate, Dataview } from 'Lib';
 
 const Constant = require('json/constant.json');
-
 const DICTIONARY = [ 'layout', 'origin', 'importType' ];
 const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];
 
 class Relation {
 
 	public typeName (v: I.RelationType): string {
-		return UtilCommon.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
+		return U.Common.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
 	};
 
 	public className (v: I.RelationType): string {
@@ -220,7 +219,7 @@ class Relation {
 			case I.RelationType.MultiSelect:
 			case I.RelationType.Object:
 			case I.RelationType.Relations: {
-				value = this.getArrayValue(UtilCommon.objectCopy(value));
+				value = this.getArrayValue(U.Common.objectCopy(value));
 
 				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);
@@ -261,12 +260,12 @@ class Relation {
 	public mapValue (relation: any, value: any) {
 		switch (relation.relationKey) {
 			case 'sizeInBytes': {
-				return UtilFile.size(value);
+				return U.File.size(value);
 			};
 
 			case 'widthInPixels':
 			case 'heightInPixels': {
-				return UtilCommon.formatNumber(value) + 'px';
+				return U.Common.formatNumber(value) + 'px';
 			};
 
 			case 'layout': {
@@ -280,7 +279,7 @@ class Relation {
 			};
 
 			case 'importType': {
-				const names = UtilMenu.getImportNames();
+				const names = U.Menu.getImportNames();
 				return undefined === value ? null : names[Number(value)];
 			};
 
@@ -331,7 +330,7 @@ class Relation {
 
 	public getCoverOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.File ];
-		const options: any[] = UtilCommon.objectCopy(S.Record.getObjectRelations(rootId, blockId)).filter(it => {
+		const options: any[] = U.Common.objectCopy(S.Record.getObjectRelations(rootId, blockId)).filter(it => {
 			if (it.isInstalled && (it.relationKey == 'picture')) {
 				return true;
 			};
@@ -405,7 +404,7 @@ class Relation {
 	};
 
 	public getDictionaryOptions (relationKey: string) {
-		const names = UtilMenu.getImportNames();
+		const names = U.Menu.getImportNames();
 		const dictionary = {
 			layout: I.ObjectLayout,
 			origin: I.ObjectOrigin,
@@ -452,7 +451,7 @@ class Relation {
 	};
 
 	public getStringValue (value: any): string {
-		if ((typeof value === 'object') && value && UtilCommon.hasProperty(value, 'length')) {
+		if ((typeof value === 'object') && value && U.Common.hasProperty(value, 'length')) {
 			value = value.length ? value[0] : '';
 		};
 		return String(value || '');
@@ -465,10 +464,10 @@ class Relation {
 		if (typeof value !== 'object') {
 			return [ value ];
 		};
-		if (!UtilCommon.objectLength(value)) {
+		if (!U.Common.objectLength(value)) {
 			return [];
 		};
-		return UtilCommon.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
+		return U.Common.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
 	};
 
 	public isEmpty (v: any) {
@@ -524,7 +523,7 @@ class Relation {
 	};
 
 	public getTimestampForQuickOption (value: any, option: I.FilterQuickOption) {
-		const time = UtilDate.now();
+		const time = U.Date.now();
 
 		switch (option) {
 			case I.FilterQuickOption.Yesterday: {
@@ -586,7 +585,7 @@ class Relation {
 		let type = null;
 
 		if (objectTypes.length) {
-			const allowedTypes = objectTypes.map(id => S.Record.getTypeById(id)).filter(it => it && !UtilObject.isFileOrSystemLayout(it.recommendedLayout));
+			const allowedTypes = objectTypes.map(id => S.Record.getTypeById(id)).filter(it => it && !U.Object.isFileOrSystemLayout(it.recommendedLayout));
 			const l = allowedTypes.length;
 
 			if (l) {

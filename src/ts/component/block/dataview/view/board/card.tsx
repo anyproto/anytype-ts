@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, S, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
+import { I, S, U, Relation, keyboard } from 'Lib';
 import { Cell, SelectionTarget } from 'Component';
 
 interface Props extends I.ViewComponent {
@@ -21,7 +21,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const idPrefix = getIdPrefix();
 		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
 		const record = S.Detail.get(subId, id);
-		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout) ];
+		const cn = [ 'card', U.Data.layoutClass(record.id, record.layout) ];
 		const { done } = record;
 
 		let content = (
@@ -68,7 +68,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				onDragStart={e => onDragStartCard(e, groupId, record)}
 				onClick={e => this.onClick(e)}
 				onContextMenu={e => onContext(e, record.id)}
-				{...UtilCommon.dataProps({ id: record.id })}
+				{...U.Common.dataProps({ id: record.id })}
 			>
 				{content}
 			</div>
@@ -97,7 +97,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const record = S.Detail.get(subId, id);
 		const cb = {
 			0: () => {
-				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openConfig(record); 
+				keyboard.withCommand(e) ? U.Object.openWindow(record) : U.Object.openConfig(record); 
 			},
 			2: () => onContext(e, record.id)
 		};

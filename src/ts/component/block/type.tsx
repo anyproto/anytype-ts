@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
+import { I, C, S, U, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -71,7 +71,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	getItems () {
 		const { rootId } = this.props;
 		const object = S.Detail.get(rootId, rootId, []);
-		const items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 5 }).filter(it => it.id != object.type);
+		const items = U.Data.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 5 }).filter(it => it.id != object.type);
 
 		items.push({ id: 'menu', icon: 'search', name: translate('blockTypeMyTypes') });
 
@@ -195,7 +195,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 				filter: '',
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: items.map(it => it.id) },
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 				],
 				onClick: (item: any) => {
 					this.onClick(e, item);
@@ -214,7 +214,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		if (UtilObject.getSetLayouts().includes(item.recommendedLayout)) {
+		if (U.Object.getSetLayouts().includes(item.recommendedLayout)) {
 			this.onObjectTo(item.recommendedLayout);
 		} else {
 			this.onChange(item.id);
@@ -232,7 +232,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			};
 
 			keyboard.disableClose(true);
-			UtilObject.openAuto({ id: rootId, layout }, { replace: true });
+			U.Object.openAuto({ id: rootId, layout }, { replace: true });
 			keyboard.disableClose(false);
 
 			analytics.event('SelectObjectType', { objectType: typeId, layout });
@@ -279,7 +279,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			focus.apply();
 		};
 
-		UtilCommon.triggerResizeEditor(isPopup);
+		U.Common.triggerResizeEditor(isPopup);
 	};
 
 	onTemplate () {

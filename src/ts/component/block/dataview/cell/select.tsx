@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';
 import { Tag, Icon, DragBox } from 'Component';
-import { I, S, Relation, translate, keyboard, UtilCommon } from 'Lib';
+import { I, S, U, Relation, translate, keyboard } from 'Lib';
 
 interface State { 
 	isEditing: boolean; 
@@ -82,7 +82,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 									className={cni.join(' ')}
 									draggable={!isSelect}
 									onContextMenu={e => this.onContextMenu(e, item)}
-									{...UtilCommon.dataProps({ id: item.id, index: i })}
+									{...U.Common.dataProps({ id: item.id, index: i })}
 								>
 									<Tag 
 										key={item.id}
@@ -385,7 +385,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		const { onChange, relation } = this.props;
 		const { maxCount } = relation;
 		
-		value = UtilCommon.arrayUnique(value);
+		value = U.Common.arrayUnique(value);
 
 		const length = value.length;
 		if (maxCount && (length > maxCount)) {

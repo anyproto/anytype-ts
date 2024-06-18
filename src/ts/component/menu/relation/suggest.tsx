@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, S, analytics, keyboard, UtilData, Relation, Action, UtilCommon, UtilSpace, translate } from 'Lib';
+import { I, S, U, analytics, keyboard, Relation, Action, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -228,7 +228,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			this.setState({ loading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
 			keys: Constant.relationRelationKeys,
@@ -269,11 +269,11 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { data } = param;
 		const { filter } = data;
 		const systemKeys = Relation.systemKeys();
-		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => it.isInstalled && !systemKeys.includes(it.relationKey));
 		const system = items.filter(it => it.isInstalled && systemKeys.includes(it.relationKey));
 		const librarySources = library.map(it => it.sourceObject);
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
 			{ id: 'library', name: translate('menuRelationSuggestMyRelations'), children: library },
@@ -285,7 +285,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				const store = items.filter(it => !it.isInstalled && !librarySources.includes(it.id) && !systemKeys.includes(it.relationKey));
 				sections = sections.concat([
 					{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
-					{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
+					{ children: [ { id: 'add', name: U.Common.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
 				]);
 			} else {
 				sections = sections.concat([
@@ -385,7 +385,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				];
 
 				menuParam.data = Object.assign(menuParam.data, {
-					keys: UtilData.typeRelationKeys(),
+					keys: U.Data.typeRelationKeys(),
 					filters,
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },

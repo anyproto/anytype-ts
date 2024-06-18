@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
-import { I, C, S, keyboard, focus, UtilCommon, Mark, Action, translate, UtilMenu, UtilData } from 'Lib';
+import { I, C, S, U, keyboard, focus, Mark, Action, translate } from 'Lib';
 import Row from './table/row';
 
 const Constant = require('json/constant.json');
@@ -430,7 +430,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: UtilMenu.getHAlign([]),
+								options: U.Menu.getHAlign([]),
 								value: current.hAlign,
 								onSelect: (e: any, el: any) => {
 									fill(() => C.BlockListSetAlign(rootId, blockIds, el.id));
@@ -444,7 +444,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: UtilMenu.getVAlign(),
+								options: U.Menu.getVAlign(),
 								value: current.vAlign,
 								onSelect: (e: any, el: any) => {
 									fill(() => C.BlockListSetVerticalAlign(rootId, blockIds, el.id));
@@ -957,7 +957,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				continue;
 			};
 
-			if (rect && UtilCommon.rectsCollide({ x: e.pageX, y: 0, width: current.width, height: current.height }, rect)) {
+			if (rect && U.Common.rectsCollide({ x: e.pageX, y: 0, width: current.width, height: current.height }, rect)) {
 				this.hoverId = column.id;
 				this.position = (i < current.index) ? I.BlockPosition.Left : I.BlockPosition.Right;
 				break;
@@ -1049,7 +1049,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				continue;
 			};
 
-			if (rect && UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
+			if (rect && U.Common.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				this.hoverId = row.id;
 				this.position = (i < current.index) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
@@ -1307,8 +1307,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const current = S.Block.getLeaf(rootId, cellId);
 
 		return [
-			{ id: 'horizontal', icon: UtilData.alignHIcon(current?.hAlign), name: translate('blockTableOptionsAlignText'), arrow: true },
-			{ id: 'vertical', icon: UtilData.alignVIcon(current?.vAlign), name: translate('blockTableOptionsAlignVertical'), arrow: true },
+			{ id: 'horizontal', icon: U.Data.alignHIcon(current?.hAlign), name: translate('blockTableOptionsAlignText'), arrow: true },
+			{ id: 'vertical', icon: U.Data.alignVIcon(current?.vAlign), name: translate('blockTableOptionsAlignVertical'), arrow: true },
 		];
 	};
 
@@ -1536,7 +1536,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		obj.css({ width: 'auto' });
 
 		if (parent.isPage() || parent.isLayoutDiv()) {
-			const container = UtilCommon.getPageContainer(isPopup);
+			const container = U.Common.getPageContainer(isPopup);
 
 			maxWidth = container.width() - PADDING;
 			wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;

@@ -1,5 +1,5 @@
 import loadImage from 'blueimp-load-image';
-import { S, UtilCommon, Relation } from 'Lib';
+import { S, U, Relation } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -20,7 +20,7 @@ class UtilFile {
 		let ret = 0;
 		let unit = '';
 
-		for (let i = UtilCommon.objectLength(UNITS); i >= 1; --i) {
+		for (let i = U.Common.objectLength(UNITS); i >= 1; --i) {
 			const n = v / Math.pow(SIZE_UNIT, i - 1);
 			if ((n >= 0.9) || (i == 1)) {
 				ret = n;
@@ -28,7 +28,7 @@ class UtilFile {
 				break;
 			};
 		};
-		return UtilCommon.formatNumber(Number(UtilCommon.sprintf(`%0.2f`, ret))) + unit;
+		return U.Common.formatNumber(Number(U.Common.sprintf(`%0.2f`, ret))) + unit;
 	};
 
 	icon (object: any): string {
@@ -96,7 +96,7 @@ class UtilFile {
 
 		for (const k in Constant.fileExtension) {
 			const el = Constant.fileExtension[k];
-			if (!UtilCommon.hasProperty(el, 'length')) {
+			if (!U.Common.hasProperty(el, 'length')) {
 				continue;
 			};
 
@@ -165,7 +165,7 @@ class UtilFile {
 		const name = String(object.name || '');
 		const fileExt = String(object.fileExt || '');
 
-		if (!fileExt || new RegExp(`\\.${UtilCommon.regexEscape(fileExt)}$`).test(name)) {
+		if (!fileExt || new RegExp(`\\.${U.Common.regexEscape(fileExt)}$`).test(name)) {
 			return name;
 		};
 

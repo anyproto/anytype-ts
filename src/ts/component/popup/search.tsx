@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { C, I, S, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard,focus, translate, analytics, Action, UtilSpace, Relation, Mark } from 'Lib';
+import { C, I, S, U, keyboard,focus, translate, analytics, Action, Relation, Mark } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -75,7 +75,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				const marks = ranges.map(it => ({ type: I.MarkType.Highlight, range: it }));
 				const text = Mark.toHtml(highlight, marks);
 
-				value = <div className="value" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} />;
+				value = <div className="value" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />;
 			} else 
 			if (relationDetails.name) {
 				const { relationOptionColor } = relationDetails;
@@ -117,10 +117,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				object = item;
 			} else 
 			if (item.id == 'account') {
-				object = UtilSpace.getParticipant();
+				object = U.Space.getParticipant();
 			} else 
 			if (item.id == 'spaceIndex') {
-				object = UtilSpace.getSpaceview();
+				object = U.Space.getSpaceview();
 			};
 
 			if ([ 'account', 'spaceIndex' ].includes(item.id)) {
@@ -245,7 +245,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				</div>
 
 				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch text={filter ? U.Common.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 				
 				{this.cache && items.length && !isLoading ? (
@@ -391,14 +391,14 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			if (regScheme.test(filter)) {
 				const route = filter.replace(regScheme, '');
 				if (route) {
-					UtilRouter.go(`/${route}`, {});
+					U.Router.go(`/${route}`, {});
 				};
 				return;
 			};
 
 			if (filter.match(regUrl)) {
 				const [, cid, key] = filter.match(regUrl);
-				UtilRouter.go(`/invite/?cid=${cid}&key=${key}`, {});
+				U.Router.go(`/invite/?cid=${cid}&key=${key}`, {});
 				return;
 			};
 
@@ -519,7 +519,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const filter = this.getFilter();
 		const templateType = S.Record.getTemplateType();
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space }
 		];
@@ -578,11 +578,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
 		const filter = this.getFilter();
 		const lang = Constant.default.interfaceLang;
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		let name = '';
 		if (filter) {
-			name = UtilCommon.sprintf(translate('commonCreateObjectWithName'), filter);
+			name = U.Common.sprintf(translate('commonCreateObjectWithName'), filter);
 		} else {
 			name = translate('commonCreateObject');
 		};
@@ -590,7 +590,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		let items = this.items.filter(it => this.filterMapper(it, config));
 
 		if (backlink) {
-			items.unshift({ name: UtilCommon.sprintf(translate('popupSearchBacklinksFrom'), backlink.name), isSection: true, withClear: true });
+			items.unshift({ name: U.Common.sprintf(translate('popupSearchBacklinksFrom'), backlink.name), isSection: true, withClear: true });
 		} else 
 		if (!filter && items.length) {
 			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
@@ -609,7 +609,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		/* Settings and pages */
 
 		if (filter) {
-			const reg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
+			const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
 
 			let itemsImport: any[] = [];
 			if (canWrite) {
@@ -680,7 +680,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			});
 
 			if (filtered.length) {
-				filtered.sort(UtilData.sortByName);
+				filtered.sort(U.Data.sortByName);
 				filtered.unshift({ name: translate('commonSettings'), isSection: true });
 
 				items = filtered.concat(items);
@@ -733,7 +733,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		close(() => {
 			// Object
 			if (item.isObject) {
-				UtilObject.openEvent(e, { ...item, id: item.id }, {
+				U.Object.openEvent(e, { ...item, id: item.id }, {
 					onRouteChange: () => {
 						if (!meta.blockId) {
 							return;
@@ -771,7 +771,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 					case 'graph':
 					case 'navigation': {
-						UtilObject.openEvent(e, { id: rootId, layout: item.layout });
+						U.Object.openEvent(e, { id: rootId, layout: item.layout });
 						break;
 					};
 				};

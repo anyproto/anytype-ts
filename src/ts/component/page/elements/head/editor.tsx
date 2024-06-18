@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, S, UtilData, UtilCommon, keyboard } from 'Lib';
+import { I, M, C, S, U, keyboard } from 'Lib';
 import { Block, Drag } from 'Component';
 
 interface Props extends I.BlockComponent {
@@ -30,7 +30,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 			return null;
 		};
 
-		const check = UtilData.checkDetails(rootId);
+		const check = U.Data.checkDetails(rootId);
 		const object = S.Detail.get(rootId, rootId, [ 'layoutAlign' ], true);
 		const header = S.Block.getLeaf(rootId, 'header') || {};
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
@@ -91,10 +91,10 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 
 	init () {
 		const { rootId, isPopup } = this.props;
-		const check = UtilData.checkDetails(rootId);
+		const check = U.Data.checkDetails(rootId);
 
 		$('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
-		UtilCommon.triggerResizeEditor(isPopup);
+		U.Common.triggerResizeEditor(isPopup);
 	};
 
 	onScaleStart (e: any, v: number) {

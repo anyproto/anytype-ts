@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, S, UtilCommon, keyboard, UtilData, UtilObject, UtilMenu, focus, translate } from 'Lib';
+import { I, S, U, keyboard, focus, translate } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 const Constant = require('json/constant.json');
@@ -242,8 +242,8 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			return [];
 		};
 
-		const isLocal = filter.match(/^file:/) || UtilCommon.matchLocalPath(filter);
-		const isUrl = UtilCommon.matchUrl(filter) || UtilCommon.matchDomain(filter);
+		const isLocal = filter.match(/^file:/) || U.Common.matchLocalPath(filter);
+		const isUrl = U.Common.matchUrl(filter) || U.Common.matchDomain(filter);
 		const items = [].concat(this.items);
 		const sections: any[] = [];
 
@@ -257,11 +257,11 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		sections.push({ 
 			id: I.MarkType.Link, name: '', children: [
-				{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObjectWithName'), filter), icon: 'plus' },
+				{ id: 'add', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter), icon: 'plus' },
 			] 
 		});
 
-		return UtilMenu.sectionsMap(sections);
+		return U.Menu.sectionsMap(sections);
 	};
 
 	getItems (withSections: boolean) {
@@ -293,7 +293,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const { skipIds, filter } = data;
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
@@ -308,7 +308,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			this.setState({ loading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
 			fullText: filter,
@@ -366,7 +366,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			onChange(I.MarkType.Link, url);
 		} else
 		if (item.itemId == 'add') {
-			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], 'Link', (message: any) => {
+			U.Object.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], 'Link', (message: any) => {
 				onChange(I.MarkType.Object, message.targetId);
 			});
 		} else {

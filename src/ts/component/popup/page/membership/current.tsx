@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Pin } from 'Component';
-import { I, C, S, translate, UtilCommon, UtilDate, analytics, UtilData, Action } from 'Lib';
+import { I, C, S, U, translate, analytics, Action } from 'Lib';
 
 interface Props extends I.Popup {
 	onChangeEmail: () => void;
@@ -48,7 +48,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 		const { verificationStep, countdown, status, statusText } = this.state;
 		const { membership } = S.Auth;
 		const { tier, dateEnds, paymentMethod, userEmail } = membership;
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 
 		let dateText = '';
 		let paidText = '';
@@ -57,7 +57,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 		let verificationForm: any = null;
 
 		if (tierItem.period && membership.dateEnds) {
-			dateText = `${UtilDate.date('d F Y', dateEnds)}`;
+			dateText = `${U.Date.date('d F Y', dateEnds)}`;
 		} else {
 			dateText = translate('popupMembershipForever');
 		};
@@ -103,7 +103,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 
 								<div onClick={this.onResend} className={[ 'resend', (countdown ? 'countdown' : '') ].join(' ')}>
 									{translate('popupMembershipResend')}
-									{countdown ? UtilCommon.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
+									{countdown ? U.Common.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
 								</div>
 							</React.Fragment>
 						);
@@ -116,7 +116,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			};
 		} else {
 			if (paymentMethod != I.PaymentMethod.None) {
-				paidText = UtilCommon.sprintf(translate('popupMembershipPaidBy'), translate(`paymentMethod${paymentMethod}`));
+				paidText = U.Common.sprintf(translate('popupMembershipPaidBy'), translate(`paymentMethod${paymentMethod}`));
 
 				if (paymentMethod == I.PaymentMethod.Crypto) {
 					buttonText = translate('popupMembershipWriteToAnyteam');
@@ -170,7 +170,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			} else {
 				C.MembershipGetPortalLinkUrl((message: any) => {
 					if (message.url) {
-						UtilCommon.onUrl(message.url);
+						U.Common.onUrl(message.url);
 					};
 				});
 			};
@@ -213,7 +213,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 				return;
 			};
 
-			UtilData.getMembershipStatus();
+			U.Data.getMembershipStatus();
 			S.Popup.updateData('membership', { success: true, emailVerified: true });
 			this.props.position();
 		});
@@ -242,7 +242,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			const value = this.refEmail?.getValue();
-			const isValid = UtilCommon.checkEmail(value);
+			const isValid = U.Common.checkEmail(value);
 
 			if (value && !isValid) {
 				this.setStatus('error', translate('errorIncorrectEmail'));
@@ -258,7 +258,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			return;
 		};
 
-		const now = UtilDate.now();
+		const now = U.Date.now();
 
 		if (now - emailConfirmationTime < 60) {
 			this.setState({ verificationStep: 2 });
@@ -269,7 +269,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 		const { emailConfirmationTime } = S.Common;
 
 		if (!emailConfirmationTime) {
-			S.Common.emailConfirmationTimeSet(UtilDate.now());
+			S.Common.emailConfirmationTimeSet(U.Date.now());
 		};
 
 		this.setState({ countdown: seconds });

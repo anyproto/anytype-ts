@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import { I, C, S, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject } from 'Lib';
+import { I, C, S, U, focus, keyboard, scrollOnMove, Action, Preview } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -132,7 +132,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		const dataTransfer = e.dataTransfer;
-		const items = UtilCommon.getDataTransferItems(dataTransfer.items);
+		const items = U.Common.getDataTransferItems(dataTransfer.items);
 		const isFileDrop = dataTransfer.files && dataTransfer.files.length;
 		const last = S.Block.getFirstBlock(rootId, -1, it => it && it.canCreateBlock());
 
@@ -162,7 +162,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		// String items drop
 		if (items && items.length) {
-			UtilCommon.getDataTransferString(items, (html: string) => {
+			U.Common.getDataTransferString(items, (html: string) => {
 				C.BlockPaste(rootId, targetId, { from: 0, to: 0 }, [], false, { html }, '');
 			});
 
@@ -197,7 +197,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 		const sidebar = $('#sidebar');
 		const layer = $('#dragLayer');
 		const body = $('body');
@@ -261,7 +261,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	onDragEnd (e: any) {
 		const isPopup = keyboard.isPopup();
 		const node = $(this.node);
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 		const sidebar = $('#sidebar');
 		const body = $('body');
 
@@ -319,7 +319,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		const processAddRecord = () => {
-			UtilObject.getById(targetContextId, (object) => {
+			U.Object.getById(targetContextId, (object) => {
 				// Add to collection
 				if (object.layout == I.ObjectLayout.Collection) {
 					C.ObjectCollectionAdd(targetContextId, ids);
@@ -328,7 +328,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 						const newBlock = {
 							type: I.BlockType.Link,
 							content: {
-								...UtilData.defaultLinkSettings(),
+								...U.Data.defaultLinkSettings(),
 								targetBlockId: key,
 							}
 						};
@@ -499,7 +499,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	checkNodes (e: any, ex: number, ey: number) {
 		const dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
-		const isItemDrag = UtilCommon.getDataTransferItems(dataTransfer.items).length ? true : false;
+		const isItemDrag = U.Common.getDataTransferItems(dataTransfer.items).length ? true : false;
 		const isFileDrag = dataTransfer.types.includes('Files');
 		let data: any = {};
 

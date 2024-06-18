@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label, Switch } from 'Component';
-import { I, S, UtilCommon, translate, analytics, Renderer } from 'Lib';
+import { I, S, U, translate, analytics, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance extends React.Component<I.PopupSettings> {
@@ -8,7 +8,7 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 	render () {
 		const { autoSidebar, showRelativeDates, config, theme } = S.Common;
 		const { hideTray, hideMenuBar } = config;
-		const canHideMenu = UtilCommon.isPlatformWindows() || UtilCommon.isPlatformLinux();
+		const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
 		const themes: any[] = [
 			{ id: '', class: 'light', name: translate('popupSettingsAppearanceColorModeButtonLight') },
 			{ id: 'dark', class: 'dark', name: translate('popupSettingsAppearanceColorModeButtonDark') },

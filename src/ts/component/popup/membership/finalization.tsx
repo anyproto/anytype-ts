@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader } from 'Component';
-import { C, I, S, translate, UtilData, UtilCommon } from 'Lib';
+import { C, I, S, U, translate } from 'Lib';
 
 interface State {
 	status: string,
@@ -35,7 +35,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 
 		if (!tierItem) {
 			return null;
@@ -50,7 +50,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 			if (period == 1) {
 				labelText = translate('popupMembershipPaidTextPerYear');
 			} else {
-				labelText = UtilCommon.sprintf(translate('popupMembershipPaidTextPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+				labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerYears'), period, U.Common.plural(period, translate('pluralYear')));
 			};
 		};
 
@@ -141,8 +141,8 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 				return;
 			};
 
-			UtilData.getMembershipTiers(true);
-			UtilData.getMembershipStatus((membership) => {
+			U.Data.getMembershipTiers(true);
+			U.Data.getMembershipStatus((membership) => {
 				if (!membership || membership.isNone) {
 					this.setError(translate('pageMainMembershipError'));
 					return;

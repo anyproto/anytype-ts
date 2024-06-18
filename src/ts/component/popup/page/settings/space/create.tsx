@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Title, Label, Input, IconObject, Button, Select, Loader, Error } from 'Component';
-import { UtilCommon, I, C, S, translate, keyboard, Preview, analytics } from 'Lib';
+import { I, C, S, U, translate, keyboard, Preview, analytics } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -20,7 +20,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	state = {
 		error: '',
 		isLoading: false,
-		iconOption: UtilCommon.rand(1, Constant.iconCnt),
+		iconOption: U.Common.rand(1, Constant.iconCnt),
 		usecase: I.Usecase.Empty,
 	};
 

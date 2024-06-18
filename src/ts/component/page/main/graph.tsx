@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, UtilCommon, UtilMenu, UtilData, UtilObject, keyboard } from 'Lib';
+import { I, C, S, U, keyboard } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
 
 const Constant = require('json/constant.json');
@@ -39,7 +39,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 					ref={ref => this.refHeader = ref} 
 					component="mainGraph" 
 					rootId={rootId} 
-					tabs={UtilMenu.getGraphTabs()} 
+					tabs={U.Menu.getGraphTabs()} 
 					tab="graph" 
 					onTab={this.onTab} 
 					layout={I.ObjectLayout.Graph}
@@ -107,7 +107,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	load () {
 		this.setLoading(true);
 
-		C.ObjectGraph(S.Common.space, UtilData.graphFilters(), 0, [], Constant.graphRelationKeys, '', [], (message: any) => {
+		C.ObjectGraph(S.Common.space, U.Data.graphFilters(), 0, [], Constant.graphRelationKeys, '', [], (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -142,7 +142,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
 
-			UtilData.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
+			U.Data.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
 				error: {},
 				records: message.nodes,
 				dependencies: [],
@@ -176,7 +176,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	resize () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const obj = UtilCommon.getPageContainer(isPopup);
+		const obj = U.Common.getPageContainer(isPopup);
 		const node = $(this.node);
 		const wrapper = obj.find('.wrapper');
 		const oh = obj.height();
@@ -209,10 +209,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	onTab (id: string) {
-		const tab = UtilMenu.getGraphTabs().find(it => it.id == id);
+		const tab = U.Menu.getGraphTabs().find(it => it.id == id);
 
 		if (tab) {
-			UtilObject.openAuto({ id: this.getRootId(), layout: tab.layout });
+			U.Object.openAuto({ id: this.getRootId(), layout: tab.layout });
 		};
 	};
 

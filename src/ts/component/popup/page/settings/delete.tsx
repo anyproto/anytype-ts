@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button, Checkbox, Error } from 'Component';
-import { I, C, S, translate, UtilRouter, analytics } from 'Lib';
+import { I, C, S, U, translate, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from './head';
 
@@ -67,7 +67,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 
 			this.props.close();
 
-			UtilRouter.go('/auth/deleted', { replace: true });
+			U.Router.go('/auth/deleted', { replace: true });
 			analytics.event('DeleteAccount');
 		});
 	};

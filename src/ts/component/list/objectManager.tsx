@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
-import { UtilData, I, S, UtilCommon, translate, UtilObject, UtilFile } from 'Lib';
+import { I, S, U, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -97,7 +97,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 				};
 
 				case I.ObjectManagerItemInfo.FileSize: {
-					itemInfo = <Label text={String(UtilFile.size(item.sizeInBytes))} />;
+					itemInfo = <Label text={String(U.File.size(item.sizeInBytes))} />;
 					break;
 				};
 			};
@@ -121,7 +121,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 						onChange={e => this.onClick(e, item)}
 					/>
 				)}
-                <div className="objectClickArea" onClick={() => UtilObject.openPopup(item)}>
+                <div className="objectClickArea" onClick={() => U.Object.openPopup(item)}>
 					<IconObject object={item} size={iconSize} />
 
 					<div className="info">
@@ -183,7 +183,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             if (!filter) {
                 controls = null;
             } else {
-				textEmpty = UtilCommon.sprintf(translate('popupSearchNoObjects'), filter);
+				textEmpty = U.Common.sprintf(translate('popupSearchNoObjects'), filter);
 			};
 
             content = <EmptySearch text={textEmpty} />;
@@ -311,7 +311,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
             if ((idx >= 0) && (this.selected.length > 0)) {
                 const indexes = this.getSelectedIndexes().filter(i => i != idx);
-                const closest = UtilCommon.findClosestElement(indexes, idx);
+                const closest = U.Common.findClosestElement(indexes, idx);
 
                 if (isFinite(closest)) {
                     const [ start, end ] = this.getSelectionRange(closest, idx);
@@ -326,7 +326,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             };
         };
 
-        this.selected = UtilCommon.arrayUnique(this.selected);
+        this.selected = U.Common.arrayUnique(this.selected);
         this.forceUpdate();
     };
 
@@ -391,7 +391,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
         this.setState({ isLoading: true });
 
-        UtilData.searchSubscribe({
+        U.Data.searchSubscribe({
             subId,
             sorts,
             filters,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, S, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
+import { I, S, U, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
 import { Label, Frame } from 'Component';
 
 import PageAuthSelect from './auth/select';
@@ -87,7 +87,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		if (!Component) {
 			return (
 				<Frame>
-					<Label text={UtilCommon.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
+					<Label text={U.Common.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
 				</Frame>
 			);
 		};
@@ -140,7 +140,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
 		const { history } = this.props;
-		const data = UtilCommon.searchParam(history?.location?.search);
+		const data = U.Common.searchParam(history?.location?.search);
 		const pathname = String(history?.location?.pathname || '');
 		const ret = (isPopup ? matchPopup : match) || { params: {} };
 
@@ -173,7 +173,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getRootId () {
 		const { id } = this.getMatchParams();
-		const home = UtilSpace.getDashboard();
+		const home = U.Space.getDashboard();
 
 		return id || home?.id;
 	};
@@ -202,17 +202,17 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		if (isMain && !account) {
-			UtilRouter.go('/', routeParam);
+			U.Router.go('/', routeParam);
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			UtilRouter.go('/auth/pin-check', routeParam);
+			U.Router.go('/auth/pin-check', routeParam);
 			return;
 		};
 
 		if (isMain && (S.Auth.accountIsDeleted() || S.Auth.accountIsPending())) {
-			UtilRouter.go('/auth/deleted', routeParam);
+			U.Router.go('/auth/deleted', routeParam);
 			return;
 		};
 
@@ -227,7 +227,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
-		Onboarding.start(UtilCommon.toCamelCase([ page, action ].join('-')), isPopup);
+		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 	};
 
@@ -289,7 +289,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { page } = this.getMatchParams();
 		
 		return [ 
-			UtilCommon.toCamelCase([ prefix, page ].join('-')),
+			U.Common.toCamelCase([ prefix, page ].join('-')),
 			this.getId(prefix),
 			(isPopup ? 'isPopup' : 'isFull'),
 		].join(' ');
@@ -303,10 +303,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		const { config } = S.Common;
-		const platform = UtilCommon.getPlatform();
+		const platform = U.Common.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
-			UtilCommon.toCamelCase([ 'platform', platform ].join('-')),
+			U.Common.toCamelCase([ 'platform', platform ].join('-')),
 		];
 		const obj = $('html');
 
@@ -323,7 +323,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
 
-		return UtilCommon.toCamelCase([ prefix, page, action ].join('-'));
+		return U.Common.toCamelCase([ prefix, page, action ].join('-'));
 	};
 
 	storageGet () {

@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
-import { I, S, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
+import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
+import { I, S, C, U, Storage, translate, Action, Animation, analytics, Renderer } from 'Lib';
+
 const Errors = require('json/error.json');
 
 interface State {
@@ -111,7 +112,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		const accountId = Storage.get('accountId');
 
 		if (!accountId) {
-			UtilRouter.go('/auth/select', { replace: true });
+			U.Router.go('/auth/select', { replace: true });
 			return;
 		};
 
@@ -122,7 +123,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				};
 
 				if (phrase) {
-					UtilData.createSession(phrase, '' ,(message: any) => {
+					U.Data.createSession(phrase, '' ,(message: any) => {
 						if (this.setError(message.error)) {
 							return;
 						};
@@ -130,7 +131,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 						this.select(accountId, false);
 					});
 				} else {
-					UtilRouter.go('/auth/select', { replace: true });
+					U.Router.go('/auth/select', { replace: true });
 				};
 			});
 		});
@@ -151,13 +152,13 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			S.Common.configSet(message.account.config, false);
 
 			if (spaceId) {
-				UtilRouter.switchSpace(spaceId);
+				U.Router.switchSpace(spaceId);
 			} else {
-				UtilData.onInfo(message.account.info);
-				UtilData.onAuth({ routeParam: { animate } });
+				U.Data.onInfo(message.account.info);
+				U.Data.onAuth({ routeParam: { animate } });
 			};
 
-			UtilData.onAuthOnce(false);
+			U.Data.onAuthOnce(false);
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
@@ -168,7 +169,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		};
 
 		this.setState({ error });
-		return UtilCommon.checkErrorCommon(error.code);
+		return U.Common.checkErrorCommon(error.code);
 	};
 
 	onBackup () {
@@ -177,7 +178,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	onCancel () {
 		S.Auth.logout(true, false);
-		Animation.from(() => UtilRouter.go('/', { replace: true }));
+		Animation.from(() => U.Router.go('/', { replace: true }));
 	};
 
 });

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Cell, DropTarget, SelectionTarget, ObjectCover } from 'Component';
-import { I, S, UtilData, UtilObject, Relation, keyboard } from 'Lib';
+import { I, S, U, Relation, keyboard } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	style?: any;
@@ -27,7 +27,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
-		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout), UtilData.cardSizeClass(cardSize) ];
+		const cn = [ 'card', U.Data.layoutClass(record.id, record.layout), U.Data.cardSizeClass(cardSize) ];
 		const subId = S.Record.getSubId(rootId, block.id);
 		const cover = getCoverObject(recordId);
 
@@ -147,7 +147,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const selection = S.Common.getRef('selectionProvider');
 		const cb = {
 			0: () => { 
-				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openConfig(record); 
+				keyboard.withCommand(e) ? U.Object.openWindow(record) : U.Object.openConfig(record); 
 			},
 			2: () => onContext(e, record.id)
 		};

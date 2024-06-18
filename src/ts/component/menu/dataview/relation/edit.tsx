@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, S, UtilObject, UtilMenu, Relation, translate, Dataview, keyboard, analytics, Preview, UtilCommon } from 'Lib';
+import { I, C, S, U, Relation, translate, Dataview, keyboard, analytics, Preview } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 
 const Constant = require('json/constant.json');
@@ -296,7 +296,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		switch (item.id) {
 			case 'open': {
-				UtilObject.openPopup(relation);
+				U.Object.openPopup(relation);
 				break;
 			};
 
@@ -415,7 +415,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				...data,
 				filter: '',
 				value: this.format,
-				options: UtilMenu.getRelationTypes(),
+				options: U.Menu.getRelationTypes(),
 				noFilter: true,
 				onSelect: (e: any, item: any) => {
 					this.format = item.id;
@@ -456,7 +456,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				types: [ S.Record.getTypeType()?.id ],
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 				],
 				relation: observable.box(relation),
 				valueMapper: it => S.Record.getTypeById(it.id),
@@ -631,7 +631,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				addCommand(rootId, blockId, { ...details, _index_: item._index_ }, onChange);
 			};
 
-			Preview.toastShow({ text: UtilCommon.sprintf(translate('menuDataviewRelationEditToastOnCreate'), details.name) });
+			Preview.toastShow({ text: U.Common.sprintf(translate('menuDataviewRelationEditToastOnCreate'), details.name) });
 			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type });
 		});
 	};

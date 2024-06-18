@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, S, UtilCommon, translate, keyboard, analytics, Relation, UtilDate, UtilObject } from 'Lib';
+import { I, S, U, translate, keyboard, analytics, Relation } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
 
 const Constant = require('json/constant.json');
@@ -210,7 +210,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							<Input 
 								key="filter-value-date-exact-input"
 								ref={ref => this.refInput = ref} 
-								value={item.value !== null ? UtilDate.date('d.m.Y H:i:s', item.value) : ''} 
+								value={item.value !== null ? U.Date.date('d.m.Y H:i:s', item.value) : ''} 
 								placeholder="dd.mm.yyyy hh:mm:ss"
 								maskOptions={{ mask: '99.99.9999 99:99:99' }}
 								onFocus={this.onFocusDate}
@@ -326,7 +326,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			if (this.refInput.setValue) {
 				if (isDate) {
 					if (item.quickOption == I.FilterQuickOption.ExactDate) {
-						this.refInput.setValue(item.value === null ? '' : UtilDate.date('d.m.Y H:i:s', item.value));
+						this.refInput.setValue(item.value === null ? '' : U.Date.date('d.m.Y H:i:s', item.value));
 					} else {
 						this.refInput.setValue(item.value);
 					};
@@ -499,7 +499,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		window.clearTimeout(this.timeoutChange);
 		this.timeoutChange = window.setTimeout(() => {
-			item = UtilCommon.objectCopy(item);
+			item = U.Common.objectCopy(item);
 			item[k] = v;
 
 			// Remove value when we change relation, filter non unique entries
@@ -559,7 +559,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		let value = Relation.getArrayValue(item.value);
 		value = value.filter(it => it != element.id);
-		value = UtilCommon.arrayUnique(value);
+		value = U.Common.arrayUnique(value);
 
 		this.onChange('value', value);
 	};
@@ -578,7 +578,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	onSubmitDate (e: any) {
 		e.preventDefault();
 
-		const value = UtilDate.parseDate(this.refInput.getValue());
+		const value = U.Date.parseDate(this.refInput.getValue());
 		
 		this.onChange('value', value);
 		this.onCalendar(value);
@@ -598,7 +598,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { getView, itemId } = data;
 		const item = getView().getFilter(itemId);
-		const value = item.value || UtilDate.now();
+		const value = item.value || U.Date.now();
 
 		S.Menu.closeAll([ 'select' ], () => {
 			if (S.Menu.isOpen('dataviewCalendar')) {
@@ -677,7 +677,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const filters = [];
 
 		if (relation.format == I.RelationType.File) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() });
 		};
 
 		S.Menu.closeAll([ 'dataviewObjectValues', 'dataviewObjectList', 'select' ], () => {

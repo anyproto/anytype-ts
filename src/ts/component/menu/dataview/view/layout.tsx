@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, analytics, keyboard, translate, Dataview, UtilMenu, Relation, UtilCommon } from 'Lib';
+import { I, C, S, U, analytics, keyboard, translate, Dataview, Relation } from 'Lib';
 import { Label, Icon, MenuItemVertical } from 'Component';
 
 const Constant = require('json/constant.json');
@@ -25,7 +25,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const isReadonly = this.isReadonly();
 		const { type } = this.param;
 		const sections = this.getSections();
-		const layouts = UtilMenu.getViews().map((it: any) => {
+		const layouts = U.Menu.getViews().map((it: any) => {
 			it.sectionId = 'type';
 			it.icon = 'view c' + it.id;
 			return it;
@@ -90,7 +90,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 
-		this.param = UtilCommon.objectCopy(data.view.get());
+		this.param = U.Common.objectCopy(data.view.get());
 		this.forceUpdate();
 		this.rebind();
 

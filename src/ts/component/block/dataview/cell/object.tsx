@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
-import { I, S, Relation, UtilObject, translate, UtilCommon, keyboard } from 'Lib';
+import { I, S, U, Relation, translate, keyboard } from 'Lib';
 import ItemObject from './item/object';
 
 const Constant = require('json/constant.json');
@@ -74,7 +74,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 									id={`item-${item.id}`}
 									className="itemWrap isDraggable"
 									draggable={true}
-									{...UtilCommon.dataProps({ id: item.id, index: i })}
+									{...U.Common.dataProps({ id: item.id, index: i })}
 								>
 									<ItemObject 
 										key={item.id} 
@@ -193,7 +193,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 		if (canOpen) {
 			e.stopPropagation();
-			UtilObject.openPopup(item);
+			U.Object.openPopup(item);
 		};
 	};
 
@@ -251,7 +251,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	setValue (value: string[]) {
-		value = UtilCommon.arrayUnique(value);
+		value = U.Common.arrayUnique(value);
 
 		const { onChange, relation } = this.props;
 		const { maxCount } = relation;
@@ -378,7 +378,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const { relation } = this.props;
 		const { details, flags } = Relation.getParamForNewObject(text, relation);
 
-		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', message => this.onValueAdd(message.targetId));
+		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', message => this.onValueAdd(message.targetId));
 	};
 
 	onFocus () {

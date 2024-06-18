@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
-import { I, C, S, UtilCommon, UtilRouter, UtilSpace, translate } from 'Lib';
+import { I, C, S, U, translate } from 'Lib';
 
 interface State {
 	error: string;
@@ -34,7 +34,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 								text={translate('commonBack')} 
 								color="blank" 
 								className="c36" 
-								onClick={() => UtilSpace.openDashboard('route')} 
+								onClick={() => U.Space.openDashboard('route')} 
 							/>
 						</div>
 					) : <Loader />}
@@ -56,7 +56,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 	};
 
 	init () {
-		const data = UtilCommon.searchParam(UtilRouter.history.location.search);
+		const data = U.Common.searchParam(U.Router.history.location.search);
 
 		if ((this.cid == data.cid) && (this.key == data.key)) {
 			return;
@@ -69,10 +69,10 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 			this.setState({ error: translate('pageMainInviteErrorData') });
 		} else {
 			C.SpaceInviteView(data.cid, data.key, (message: any) => {
-				UtilSpace.openDashboard('route');
+				U.Space.openDashboard('route');
 
 				S.Popup.closeAll(null, () => {
-					const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
+					const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
 
 					if (message.error.code) {
 						S.Popup.open('confirm', {
@@ -88,7 +88,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 					} else 
 					if (space) {
 						if (space.isAccountJoining) {
-							UtilCommon.onInviteRequest();
+							U.Common.onInviteRequest();
 						} else
 						if (!space.isAccountRemoving && !space.isAccountDeleted) {
 							S.Popup.open('confirm', {
@@ -97,7 +97,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 									textConfirm: translate('commonOpenSpace'),
 									textCancel: translate('commonCancel'),
 									onConfirm: () => {
-										UtilRouter.switchSpace(message.spaceId);
+										U.Router.switchSpace(message.spaceId);
 									},
 								},
 							});
@@ -115,7 +115,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 	resize () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const obj = UtilCommon.getPageContainer(isPopup);
+		const obj = U.Common.getPageContainer(isPopup);
 		const node = $(this.node);
 		const oh = obj.height();
 		const header = node.find('#header');

@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
+import { I, C, M, S, keyboard, translate, U, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding } from 'Lib';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -67,7 +67,7 @@ class UtilData {
 	blockClass (block: any) {
 		const { content } = block;
 		const { style, type, processor } = content;
-		const dc = UtilCommon.toCamelCase(`block-${block.type}`);
+		const dc = U.Common.toCamelCase(`block-${block.type}`);
 		const c = [];
 
 		switch (block.type) {
@@ -101,7 +101,7 @@ class UtilData {
 	layoutClass (id: string, layout: I.ObjectLayout) {
 		let c = '';
 		switch (layout) {
-			default: c = UtilCommon.toCamelCase(`is-${I.ObjectLayout[layout]}`); break;
+			default: c = U.Common.toCamelCase(`is-${I.ObjectLayout[layout]}`); break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 		};
 		return c;
@@ -199,7 +199,7 @@ class UtilData {
 		const route = param.route || redirect;
 
 		if (!widgets) {
-			console.error('[UtilData].onAuth No widgets defined');
+			console.error('[U.Data].onAuth No widgets defined');
 			return;
 		};
 
@@ -207,24 +207,24 @@ class UtilData {
 		analytics.event('OpenAccount');
 
 		C.ObjectOpen(root, '', space, (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(root, message.error.code, null)) {
+			if (!U.Common.checkErrorOnOpen(root, message.error.code, null)) {
 				return;
 			};
 
 			C.ObjectOpen(widgets, '', space, (message: any) => {
-				if (!UtilCommon.checkErrorOnOpen(widgets, message.error.code, null)) {
+				if (!U.Common.checkErrorOnOpen(widgets, message.error.code, null)) {
 					return;
 				};
 
 				this.createSubscriptions(() => {
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
-						UtilRouter.go('/auth/pin-check', routeParam);
+						U.Router.go('/auth/pin-check', routeParam);
 					} else {
 						if (route) {
-							UtilRouter.go(route, routeParam);
+							U.Router.go(route, routeParam);
 						} else {
-							UtilSpace.openDashboard('route', routeParam);
+							U.Space.openDashboard('route', routeParam);
 						};
 
 						S.Common.redirectSet('');
@@ -244,7 +244,7 @@ class UtilData {
 						I.SurveyType.Shared, 
 					].forEach(it => Survey.check(it));
 
-					const space = UtilSpace.getSpaceview();
+					const space = U.Space.getSpaceview();
 
 					if (!space.isPersonal) {
 						Onboarding.start('space', keyboard.isPopup(), false);
@@ -460,7 +460,7 @@ class UtilData {
 		};
 
 		const diff = needle.length - (to - from);
-		const text = UtilCommon.stringInsert(block.content.text, needle, from, to);
+		const text = U.Common.stringInsert(block.content.text, needle, from, to);
 		const marks = Mark.adjust(block.content.marks, from, diff);
 
 		this.blockSetText(rootId, blockId, text, marks, true, callBack);
@@ -469,8 +469,8 @@ class UtilData {
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withCollection, limit } = param || {};
 		const { space, config } = S.Common;
-		const pageLayouts = UtilObject.getPageLayouts();
-		const skipLayouts = UtilObject.getSetLayouts();
+		const pageLayouts = U.Object.getPageLayouts();
+		const skipLayouts = U.Object.getSetLayouts();
 
 		let items: any[] = [];
 
@@ -553,7 +553,7 @@ class UtilData {
 			};
 		};
 
-		if (UtilObject.isFileLayout(object.layout)) {
+		if (U.Object.isFileLayout(object.layout)) {
 			ret.withIcon = true;
 		};
 
@@ -662,7 +662,7 @@ class UtilData {
 	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
 		const relationKeys = [ 'type', 'cover', 'tag' ];
 
-		content = UtilCommon.objectCopy(content);
+		content = U.Common.objectCopy(content);
 		content.iconSize = Number(content.iconSize) || I.LinkIconSize.None;
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
 		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
@@ -679,7 +679,7 @@ class UtilData {
 			content.relations = content.relations.filter(it => filter.includes(it)); 
 		};
 
-		content.relations = UtilCommon.arrayUnique(content.relations);
+		content.relations = U.Common.arrayUnique(content.relations);
 		return content;
 	};
 
@@ -735,7 +735,7 @@ class UtilData {
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		if (!subId) {
-			console.error('[UtilData].searchSubscribe: subId is empty');
+			console.error('[U.Data].searchSubscribe: subId is empty');
 			return;
 		};
 
@@ -779,14 +779,14 @@ class UtilData {
 		}, param);
 
 		const { subId, keys, noDeps, idField } = param;
-		const ids = UtilCommon.arrayUnique(param.ids.filter(it => it));
+		const ids = U.Common.arrayUnique(param.ids.filter(it => it));
 
 		if (!subId) {
-			console.error('[UtilData].subscribeIds: subId is empty');
+			console.error('[U.Data].subscribeIds: subId is empty');
 			return;
 		};
 		if (!ids.length) {
-			console.error('[UtilData].subscribeIds: ids list is empty');
+			console.error('[U.Data].subscribeIds: ids list is empty');
 			return;
 		};
 
@@ -871,15 +871,15 @@ class UtilData {
 	};
 
 	setWindowTitle (rootId: string, objectId: string) {
-		this.setWindowTitleText(UtilObject.name(S.Detail.get(rootId, objectId, [])));
+		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, [])));
 	};
 
 	setWindowTitleText (name: string) {
-		const space = UtilSpace.getSpaceview();
+		const space = U.Space.getSpaceview();
 		const title = [];
 
 		if (name) {
-			title.push(UtilCommon.shorten(name, 60));
+			title.push(U.Common.shorten(name, 60));
 		};
 
 		if (!space._empty_) {
@@ -898,7 +898,7 @@ class UtilData {
 			{ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] },
 		];
@@ -1051,7 +1051,7 @@ class UtilData {
 					return;
 				};
 
-				C.AccountCreate('', '', dataPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
+				C.AccountCreate('', '', dataPath, U.Common.rand(1, Constant.iconCnt), mode, path, (message) => {
 					if (message.error.code) {
 						onError(message.error.description);
 						return;

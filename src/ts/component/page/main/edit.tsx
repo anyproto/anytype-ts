@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, S, Onboarding, UtilObject, analytics, UtilSpace } from 'Lib';
+import { I, S, U, Onboarding, analytics } from 'Lib';
 
 class PageMainEdit extends React.Component<I.PageComponent> {
 	
@@ -37,7 +37,7 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 	onOpen () {
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const home = UtilSpace.getDashboard();
+		const home = U.Space.getDashboard();
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
 		if (this.refHeader) {
@@ -46,7 +46,7 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 
 		if (home && (rootId != home.id)) {
 			let key = '';
-			if (UtilObject.isTemplate(object.type)) {
+			if (U.Object.isTemplate(object.type)) {
 				key = 'template';
 			} else 
 			if (!S.Block.checkBlockTypeExists(rootId)) {

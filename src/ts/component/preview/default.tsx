@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ObjectName, ObjectDescription, ObjectType, IconObject, Loader } from 'Component';
-import { S, UtilObject } from 'Lib';
 import { observer } from 'mobx-react';
+import { ObjectName, ObjectDescription, ObjectType, IconObject, Loader } from 'Component';
+import { S, U } from 'Lib';
 
 interface Props {
 	rootId?: string;
@@ -36,7 +36,7 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		const object = this.props.object || this.state.object || {};
 		const type = S.Record.getTypeById(object.type);
 
-		if (UtilObject.isParticipantLayout(object.layout)) {
+		if (U.Object.isParticipantLayout(object.layout)) {
 			object.name = object.globalName || object.name;
 		};
 
@@ -90,7 +90,7 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		this.id = rootId;
 		this.setState({ loading: true });
 
-		UtilObject.getById(rootId, (object) => {
+		U.Object.getById(rootId, (object) => {
 			if (!this._isMounted) {
 				return;
 			};

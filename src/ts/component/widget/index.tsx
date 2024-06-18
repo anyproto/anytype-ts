@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { C, I, S, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace, keyboard } from 'Lib';
+import { C, I, S, U, translate, Storage, Action, analytics, Dataview, keyboard } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -61,7 +61,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const cn = [ 'widget' ];
 		const object = this.getObject();
 
-		const withSelect = !this.isSystemTarget() && (!isPreview || !UtilCommon.isPlatformMac());
+		const withSelect = !this.isSystemTarget() && (!isPreview || !U.Common.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
 		const canCreate = this.canCreate();
 		const canDrop = object && !this.isSystemTarget() && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
@@ -299,7 +299,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			case Constant.widgetId.collection: {
 				object = {
 					id: targetBlockId,
-					name: translate(UtilCommon.toCamelCase(`widget-${targetBlockId}`)),
+					name: translate(U.Common.toCamelCase(`widget-${targetBlockId}`)),
 				};
 				break;
 			};
@@ -315,7 +315,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	onClick (e: React.MouseEvent): void {
 		if (!e.button) {
-			UtilObject.openEvent(e, { ...this.getObject(), _routeParam_: { viewId: this.props.block.content.viewId } });
+			U.Object.openEvent(e, { ...this.getObject(), _routeParam_: { viewId: this.props.block.content.viewId } });
 		};
 	};
 
@@ -343,7 +343,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		const { targetBlockId } = child.content;
-		const isSetOrCollection = UtilObject.isSetLayout(object.layout);
+		const isSetOrCollection = U.Object.isSetLayout(object.layout);
 		const isFavorite = targetBlockId == Constant.widgetId.favorite;
 
 		let details: any = Object.assign({}, param.details || {});
@@ -431,11 +431,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				C.ObjectCollectionAdd(object.id, [ object.id ]);
 			};
 
-			UtilObject.openAuto(object);
+			U.Object.openAuto(object);
 		};
 
 		if (createWithLink) {
-			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, flags, analytics.route.widget, callBack);
+			U.Object.create(object.id, '', details, I.BlockPosition.Bottom, templateId, flags, analytics.route.widget, callBack);
 		} else {
 			C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
 				if (message.error.code) {
@@ -454,7 +454,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!UtilSpace.canMyParticipantWrite()) {
+		if (!U.Space.canMyParticipantWrite()) {
 			return;
 		};
 
@@ -576,11 +576,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.subId = subId;
 
 		const { targetBlockId } = child.content;
-		const space = UtilSpace.getSpaceview();
+		const space = U.Space.getSpaceview();
 		const templateType = S.Record.getTemplateType();
 		const sorts = [];
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 		];
 		let limit = this.getLimit(block.content);
@@ -618,7 +618,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 		};
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			subId,
 			filters,
 			sorts,
@@ -643,7 +643,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block, isPreview } = this.props;
 		const ids = this.getFavoriteIds();
 
-		let sorted = UtilCommon.objectCopy(records || []).sort((c1: string, c2: string) => {
+		let sorted = U.Common.objectCopy(records || []).sort((c1: string, c2: string) => {
 			const i1 = ids.indexOf(c1);
 			const i2 = ids.indexOf(c2);
 
@@ -706,7 +706,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const object = this.getObject();
 		const { block, isEditing } = this.props;
 
-		if (!object || isEditing || !UtilSpace.canMyParticipantWrite()) {
+		if (!object || isEditing || !U.Space.canMyParticipantWrite()) {
 			return false;
 		};
 
@@ -719,12 +719,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return false;
 		};
 
-		if (UtilObject.isSetLayout(object.layout)) {
+		if (U.Object.isSetLayout(object.layout)) {
 			const rootId = this.getRootId();
 			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id);
 			const type = S.Record.getTypeById(typeId);
 
-			if (type && UtilObject.isFileLayout(type.recommendedLayout)) {
+			if (type && U.Object.isFileLayout(type.recommendedLayout)) {
 				return false;
 			};
 		} else
@@ -747,7 +747,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	getLimit ({ limit, layout }): number {
 		const { isPreview } = this.props;
-		const options = UtilMenu.getWidgetLimits(layout).map(it => Number(it.id));
+		const options = U.Menu.getWidgetLimits(layout).map(it => Number(it.id));
 
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];
@@ -756,12 +756,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	addGroupLabels (records: any[], widgetId: string) {
-		const now = UtilDate.now();
-		const { d, m, y } = UtilDate.getCalendarDateParam(now);
-		const today = now - UtilDate.timestamp(y, m, d);
-		const yesterday = now - UtilDate.timestamp(y, m, d - 1);
-		const lastWeek = now - UtilDate.timestamp(y, m, d - 7);
-		const lastMonth = now - UtilDate.timestamp(y, m - 1, d);
+		const now = U.Date.now();
+		const { d, m, y } = U.Date.getCalendarDateParam(now);
+		const today = now - U.Date.timestamp(y, m, d);
+		const yesterday = now - U.Date.timestamp(y, m, d - 1);
+		const lastWeek = now - U.Date.timestamp(y, m, d - 7);
+		const lastMonth = now - U.Date.timestamp(y, m - 1, d);
 
 		const groups = {
 			today: [],

@@ -1,7 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, UtilCommon, focus, Preview } from 'Lib';
+import { I, S, U, focus, Preview } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -152,7 +152,7 @@ class PopupStore {
 				callBack();
 			};
 		} else {
-			const el = $(`#${UtilCommon.toCamelCase(`popup-${id}`)}`);
+			const el = $(`#${U.Common.toCamelCase(`popup-${id}`)}`);
 
 			if (el.length) {
 				raf(() => { el.css({ transform: '' }).removeClass('show'); });

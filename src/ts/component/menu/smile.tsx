@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
-import { I, C, S, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action, UtilData } from 'Lib';
+import { I, C, S, U, keyboard, translate, analytics, Preview, Action } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -105,7 +105,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 						>
 							<div 
 								className="iconObject c32" 
-								{...UtilCommon.dataProps({ code: str })}
+								{...U.Common.dataProps({ code: str })}
 							>
 								<IconEmoji className="c32" size={28} icon={str} />
 							</div>
@@ -186,7 +186,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 							</InfiniteLoader>
 
 							{!sections.length ? (
-								<EmptySearch text={UtilCommon.sprintf(translate('menuSmileEmpty'), filter)} />
+								<EmptySearch text={U.Common.sprintf(translate('menuSmileEmpty'), filter)} />
 							): ''}
 						</div>
 
@@ -285,7 +285,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 							</InfiniteLoader>
 
 							{!items.length ? (
-								<EmptySearch text={UtilCommon.sprintf(translate('menuSmileEmpty'), filter)} />
+								<EmptySearch text={U.Common.sprintf(translate('menuSmileEmpty'), filter)} />
 							): ''}
 						</div>
 
@@ -425,7 +425,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 				this.setLoading(true);
 
-				UtilData.search({
+				U.Data.search({
 					filters,
 					sorts,
 					fullText: filter,
@@ -460,7 +460,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	getGroups () {
-		return this.checkRecent(UtilSmile.getCategories().map(it => ({ id: it.id, name: it.name })));
+		return this.checkRecent(U.Smile.getCategories().map(it => ({ id: it.id, name: it.name })));
 	};
 	
 	getSmileSections () {
@@ -469,11 +469,11 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 		let sections: any[] = [];
 
-		UtilSmile.getCategories().forEach(it => {
+		U.Smile.getCategories().forEach(it => {
 			sections.push({
 				...it,
 				children: it.emojis.map(id => {
-					const item = UtilSmile.data.emojis[id] || {};
+					const item = U.Smile.data.emojis[id] || {};
 					return { 
 						id, 
 						skin: this.skin, 
@@ -502,7 +502,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		};
 
 		sections = this.checkRecent(sections);
-		sections = UtilMenu.sectionsMap(sections);
+		sections = U.Menu.sectionsMap(sections);
 		
 		return sections;
 	};
@@ -631,7 +631,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ page: 0, filter: UtilCommon.regexEscape(this.refFilter.getValue()) }, () => this.load());
+			this.setState({ page: 0, filter: U.Common.regexEscape(this.refFilter.getValue()) }, () => this.load());
 		}, force ? 0 : 50);
 	};
 
@@ -694,7 +694,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 			switch (tab) {
 				case Tab.Smile: {
-					const item = UtilSmile.data.emojis[this.active.itemId];
+					const item = U.Smile.data.emojis[this.active.itemId];
 					if (item.skins && (item.skins.length > 1)) {
 						this.onSkin(e, this.active);
 					} else {
@@ -803,7 +803,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		const { param, storageSet } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
-		const value = id ? UtilSmile.nativeById(id, this.skin) : '';
+		const value = id ? U.Smile.nativeById(id, this.skin) : '';
 
 		data.value = value;
 		
@@ -895,7 +895,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onSkin (e: any, item: any) {
-		const el = UtilSmile.data.emojis[item.itemId];
+		const el = U.Smile.data.emojis[item.itemId];
 		if (el.skins.length <= 1) {
 			return;
 		};
@@ -938,7 +938,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		
 		ids.unshift({ id, skin, key: [ id, skin ].join(',') });
 		
-		ids = UtilCommon.arrayUniqueObjects(ids, 'key');
+		ids = U.Common.arrayUniqueObjects(ids, 'key');
 		ids = ids.slice(0, LIMIT_RECENT);
 		ids = ids.map((it: any) => {
 			delete(it.key);
@@ -1107,7 +1107,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onRandom () {
-		const param = UtilSmile.randomParam();
+		const param = U.Smile.randomParam();
 
 		this.onSmileSelect(param.id, param.skin);
 		this.forceUpdate();
@@ -1116,7 +1116,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	getTooltip (item) {
 		switch (this.state.tab) {
 			case Tab.Smile: {
-				return UtilSmile.aliases[item.itemId] || item.itemId;
+				return U.Smile.aliases[item.itemId] || item.itemId;
 			};
 		};
 	};

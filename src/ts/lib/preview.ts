@@ -1,9 +1,8 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, UtilCommon, keyboard } from 'Lib';
+import { I, S, U, keyboard } from 'Lib';
 
 const Constant = require('json/constant.json');
-
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
 const DELAY_PREVIEW = 300;
@@ -63,7 +62,7 @@ class Preview {
 			const st = win.scrollTop(); 
 			const ew = element.outerWidth();
 			const eh = element.outerHeight();
-			const { ww } = UtilCommon.getWindowDimensions();
+			const { ww } = U.Common.getWindowDimensions();
 			const node = $('<div class="tooltip anim"><div class="txt"></div></div>');
 
 			if (param.className) {
@@ -75,7 +74,7 @@ class Preview {
 				node.find('.title').html(param.title);
 			};
 
-			node.find('.txt').html(UtilCommon.lbBr(text));
+			node.find('.txt').html(U.Common.lbBr(text));
 			obj.html('').append(node);
 			
 			const ow = node.outerWidth();
@@ -268,7 +267,7 @@ class Preview {
 		const obj = $('#toast');
 		const sidebar = $('#sidebar');
 		const isRight = sidebar.hasClass('right');
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const y = 32;
 
 		let sw = 0;

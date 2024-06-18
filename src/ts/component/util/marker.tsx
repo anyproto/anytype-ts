@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, S, UtilCommon } from 'Lib';
+import { I, S, U } from 'Lib';
 import { observer } from 'mobx-react';
 
 const Constant = require('json/constant.json');
@@ -142,7 +142,7 @@ const Marker = observer(class Marker extends React.Component<Props> {
 
 	onCheckboxEnter () {
 		const { active, readonly } = this.props;
-		const fn = UtilCommon.toCamelCase(`get-${this.getIconKey()}`);
+		const fn = U.Common.toCamelCase(`get-${this.getIconKey()}`);
 
 		if (!active && this[fn] && !readonly) {
 			$(this.node).find('img').attr({ src: this[fn](1) });
@@ -151,7 +151,7 @@ const Marker = observer(class Marker extends React.Component<Props> {
 
 	onCheckboxLeave () {
 		const { active, readonly } = this.props;
-		const fn = UtilCommon.toCamelCase(`get-${this.getIconKey()}`);
+		const fn = U.Common.toCamelCase(`get-${this.getIconKey()}`);
 
 		if (!active && this[fn] && !readonly) {
 			$(this.node).find('img').attr({ src: this[fn](0) });

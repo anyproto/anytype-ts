@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error, ObjectName } from 'Component';
-import { I, S, UtilObject, UtilFile, focus, translate, Action } from 'Lib';
+import { I, S, U, focus, translate, Action } from 'Lib';
 import { observer } from 'mobx-react';
 
 const BlockFile = observer(class BlockFile extends React.Component<I.BlockComponent> {
@@ -53,7 +53,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 					<div className="inner" onMouseDown={this.onOpen}>
 						<IconObject object={object} size={24} />
 						<ObjectName object={object} />
-						<span className="size">{UtilFile.size(object.sizeInBytes)}</span>
+						<span className="size">{U.File.size(object.sizeInBytes)}</span>
 					</div>
 				);
 				break;
@@ -112,7 +112,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 	
 	onOpen (e: any) {
 		if (!e.button) {
-			UtilObject.openPopup({ id: this.props.block.content.targetObjectId, layout: I.ObjectLayout.File });
+			U.Object.openPopup({ id: this.props.block.content.targetObjectId, layout: I.ObjectLayout.File });
 		};
 	};
 	

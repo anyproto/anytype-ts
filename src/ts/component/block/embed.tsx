@@ -1,12 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
-import Prism from 'prismjs';
 import raf from 'raf';
-import { instance as viz } from '@viz-js/viz';
 import DOMPurify from 'dompurify';
+import Prism from 'prismjs';
+import { instance as viz } from '@viz-js/viz';
 import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
-import { I, C, S, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
+import { I, C, S, U, keyboard, focus, Renderer, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 const Theme = require('json/theme.json');
@@ -65,7 +65,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { processor } = content;
 		const { width, type } = fields || {};
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
-		const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
+		const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
 		const text = String(content.text || '');
 		const css: any = {};
 
@@ -87,7 +87,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		let empty = '';
 		let placeholder = '';
 
-		if (UtilEmbed.allowBlockResize(processor) && text) {
+		if (U.Embed.allowBlockResize(processor) && text) {
 			resize = <Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />;
 		};
 
@@ -97,7 +97,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					id={`block-${block.id}-select`} 
 					ref={ref => this.refType = ref}
 					value={type} 
-					options={UtilEmbed.getKrokiOptions()} 
+					options={U.Embed.getKrokiOptions()} 
 					arrowClassName="light" 
 					onChange={this.onKrokiTypeChange}
 					showOn="mouseDown"
@@ -116,10 +116,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			);
 		} else {
 			source = <Icon className="source" onMouseDown={this.onEdit} />;
-			placeholder = UtilCommon.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
-			empty = !text ? UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
+			placeholder = U.Common.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
+			empty = !text ? U.Common.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 
-			if (!isShowing && text && !UtilEmbed.allowAutoRender(processor)) {
+			if (!isShowing && text && !U.Embed.allowAutoRender(processor)) {
 				cn.push('withPreview');
 			};
 		};
@@ -229,14 +229,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		win.on(`online.${block.id} offline.${block.id}`, () => {
-			if ((isShowing || UtilEmbed.allowAutoRender(processor)) && navigator.onLine) {
+			if ((isShowing || U.Embed.allowAutoRender(processor)) && navigator.onLine) {
 				node.find('#receiver').remove('');
 				this.setContent(this.text);
 			};
 		});
 
-		if (!UtilEmbed.allowAutoRender(processor)) {
-			const container = UtilCommon.getScrollContainer(isPopup);
+		if (!U.Embed.allowAutoRender(processor)) {
+			const container = U.Common.getScrollContainer(isPopup);
 			container.on(`scroll.${block.id}`, () => this.onScroll());
 		};
 
@@ -248,7 +248,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	unbind () {
 		const { block, isPopup } = this.props;
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
@@ -259,7 +259,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { block, isPopup } = this.props;
 		const { processor } = block.content;
 
-		if (UtilEmbed.allowAutoRender(processor)) {
+		if (U.Embed.allowAutoRender(processor)) {
 			return;
 		};
 
@@ -269,7 +269,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				return;
 			};
 
-			const container = UtilCommon.getScrollContainer(isPopup);
+			const container = U.Common.getScrollContainer(isPopup);
 			const node = $(this.node);
 			const ch = container.height();
 			const st = container.scrollTop();
@@ -423,7 +423,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const data = e.clipboardData || e.originalEvent.clipboardData;
 		const text = String(data.getData('text/plain') || '');
 		const to = range.to + text.length;
-		const value = UtilCommon.stringInsert(this.getValue(), text, range.from, range.to);
+		const value = U.Common.stringInsert(this.getValue(), text, range.from, range.to);
 
 		const cb = () => {
 			this.setValue(value);
@@ -432,7 +432,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		if (block.isEmbedKroki()) {
-			const type = UtilEmbed.getKrokiType(value);
+			const type = U.Embed.getKrokiType(value);
 			if (type && (type != fields.type)) {
 				this.onKrokiTypeChange(type, cb);
 			} else {
@@ -489,7 +489,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const recalcRect = () => {
 			let rect = null;
 			if (element == 'input') {
-				rect = UtilCommon.getSelectionRect();
+				rect = U.Common.getSelectionRect();
 			};
 			return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 		};
@@ -519,7 +519,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						text = ' ' + text;
 					};
 
-					const value = UtilCommon.stringInsert(this.getValue(), text, from, to);
+					const value = U.Common.stringInsert(this.getValue(), text, from, to);
 
 					this.setValue(value);
 					this.setRange({ from: to, to });
@@ -542,7 +542,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		const { block } = this.props;
 		const { processor } = block.content;
-		const lang = UtilEmbed.getLang(processor);
+		const lang = U.Embed.getLang(processor);
 		const range = this.getRange();
 
 		if (value && lang) {
@@ -562,7 +562,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	updateRect () {
-		const rect = UtilCommon.getSelectionRect();
+		const rect = U.Common.getSelectionRect();
 		if (!rect || !S.Menu.isOpen('blockLatex')) {
 			return;
 		};
@@ -587,7 +587,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		error.text('').hide();
 
-		if (!isShowing && !UtilEmbed.allowAutoRender(processor)) {
+		if (!isShowing && !U.Embed.allowAutoRender(processor)) {
 			value.html('');
 			return;
 		};
@@ -604,16 +604,16 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		switch (processor) {
 			default: {
 				const sandbox = [ 'allow-scripts', 'allow-same-origin' ];
-				const allowIframeResize = UtilEmbed.allowIframeResize(processor);
+				const allowIframeResize = U.Embed.allowIframeResize(processor);
 
 				let iframe = node.find('#receiver');
 				let allowScript = false;
 
-				if (UtilEmbed.allowPresentation(processor)) {
+				if (U.Embed.allowPresentation(processor)) {
 					sandbox.push('allow-presentation');
 				};
 
-				if (UtilEmbed.allowPopup(processor)) {
+				if (U.Embed.allowPopup(processor)) {
 					sandbox.push('allow-popups');
 				};
 
@@ -628,11 +628,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					const data: any = { 
 						allowIframeResize, 
-						insertBeforeLoad: UtilEmbed.insertBeforeLoad(processor),
-						useRootHeight: UtilEmbed.useRootHeight(processor),
+						insertBeforeLoad: U.Embed.insertBeforeLoad(processor),
+						useRootHeight: U.Embed.useRootHeight(processor),
 						align: block.hAlign,
 						processor,
-						className: UtilData.blockEmbedClass(processor),
+						className: U.Data.blockEmbedClass(processor),
 						blockId: block.id,
 					};
 
@@ -650,15 +650,15 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					// If content is Kroki code pack the code into SVG url
 					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
-						const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
-						const type = fields.type || UtilEmbed.getKrokiOptions()[0].id;
+						const result = btoa(U.Common.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
+						const type = fields.type || U.Embed.getKrokiOptions()[0].id;
 
 						text = `https://kroki.io/${type}/svg/${result}`;
 						this.refType?.setValue(type);
 					};
 
-					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
-						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
+					if (U.Embed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
+						text = U.Embed.getHtml(processor, U.Embed.getParsedUrl(text));
 					};
 
 					if (block.isEmbedSketchfab() && text.match(/<(iframe|script)/)) {
@@ -679,7 +679,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						sanitizeParam.ADD_TAGS.push('script');
 					};
 
-					if (UtilEmbed.allowJs(processor)) {
+					if (U.Embed.allowJs(processor)) {
 						data.js = text;
 					} else {
 						data.html = this.sanitize(text, allowScript);
@@ -702,7 +702,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: UtilCommon.fixAsarPath(`./embed/iframe.html?theme=${S.Common.getThemeClass()}`),
+						src: U.Common.fixAsarPath(`./embed/iframe.html?theme=${S.Common.getThemeClass()}`),
 						frameborder: 0,
 						scrolling: 'no',
 						sandbox: sandbox.join(' '),
@@ -821,7 +821,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	getRange (): I.TextRange {
-		return UtilCommon.objectCopy(this.refEditable.getRange());
+		return U.Common.objectCopy(this.refEditable.getRange());
 	};
 
 	setRange (range: I.TextRange) {

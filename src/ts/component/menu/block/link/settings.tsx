@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, UtilCommon, UtilData, UtilMenu, keyboard, Relation, translate } from 'Lib';
+import { I, C, S, U, keyboard, Relation, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -143,7 +143,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const block = S.Block.getLeaf(rootId, blockId);
         const object = S.Detail.get(rootId, block.content.targetBlockId);
 
-        return UtilData.checkLinkSettings(block.content, object.layout);
+        return U.Data.checkLinkSettings(block.content, object.layout);
 	};
 
 	getStyles () {
@@ -234,7 +234,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			s.children = s.children.filter(it => it);
 			return s;
 		});
-		sections = UtilMenu.sectionsMap(sections);
+		sections = U.Menu.sectionsMap(sections);
 
 		sections = sections.map((s: any) => {
 			s.children = s.children.map((child: any) => {
@@ -282,7 +282,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			return;
 		};
 
-        const content = UtilCommon.objectCopy(block.content || {});
+        const content = U.Common.objectCopy(block.content || {});
 
         content[id] = v;
 		C.BlockLinkListSetAppearance(rootId, blockIds, content.iconSize, content.cardStyle, content.description, content.relations);

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
-import { I, C, S, UtilCommon, focus, analytics, Relation, keyboard, translate } from 'Lib';
+import { I, C, S, U, focus, analytics, Relation, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 const Constant = require('json/constant.json');
@@ -78,7 +78,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 							idPrefix={idPrefix}
 							menuClassName="fromBlock"
 							onCellChange={this.onCellChange}
-							pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
+							pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
 						/>
 					</div>
 				</div>

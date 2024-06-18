@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, S, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
+import { I, S, U, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -109,7 +109,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			};
 
 			S.Auth.accountListClear();
-			UtilData.createSession(phrase, '', () => {
+			U.Data.createSession(phrase, '', () => {
 				C.AccountRecover(message => this.setError(message.error));
 			});
 		});
@@ -138,10 +138,10 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			S.Auth.accountSet(message.account);
 			S.Common.configSet(message.account.config, false);
 
-			UtilData.onInfo(message.account.info);
+			U.Data.onInfo(message.account.info);
 			Animation.from(() => {
-				UtilData.onAuth();
-				UtilData.onAuthOnce(true);
+				U.Data.onAuth();
+				U.Data.onAuthOnce(true);
 
 				this.isSelecting = false;
 			});
@@ -155,7 +155,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		};
 
 		if (error.code == Errors.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
-			UtilRouter.go('/auth/setup/select', {});
+			U.Router.go('/auth/setup/select', {});
 			return;
 		};
 
@@ -165,7 +165,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		S.Auth.accountListClear();
 
-		return UtilCommon.checkErrorCommon(error.code);
+		return U.Common.checkErrorCommon(error.code);
 	};
 
 	checkButton () {
@@ -189,7 +189,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	
 	onCancel () {
 		S.Auth.logout(true, false);
-		Animation.from(() => UtilRouter.go('/', { replace: true }));
+		Animation.from(() => U.Router.go('/', { replace: true }));
 	};
 
 	onChange () {
@@ -197,7 +197,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	onForgot () {
-		const platform = UtilCommon.getPlatform();
+		const platform = U.Common.getPlatform();
 
 		S.Popup.open('confirm', {
 			className: 'lostPhrase isLeft',

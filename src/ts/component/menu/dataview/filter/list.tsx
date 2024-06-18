@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer } from 'react-sortable-hoc';
 import { Icon } from 'Component';
-import { I, C, S, UtilCommon, keyboard, analytics, Relation, translate } from 'Lib';
+import { I, C, S, U, keyboard, analytics, Relation, translate } from 'Lib';
 import Item from 'Component/menu/item/filter';
 
 const Constant = require('json/constant.json');
@@ -305,7 +305,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			return [];
 		};
 
-		return UtilCommon.objectCopy(view.filters || []).map((it: any) => {
+		return U.Common.objectCopy(view.filters || []).map((it: any) => {
 			return { 
 				...it, 
 				relation: S.Record.getRelationByKey(it.relationKey),

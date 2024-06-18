@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Cover, Icon } from 'Component';
-import { I, C, S, UtilData, UtilRouter, Action, translate } from 'Lib';
+import { I, C, S, U, Action, translate } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -51,7 +51,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const { rootId, className, onClick, onMore } = this.props;
 		const previewSize = this.props.size;
 		const contextId = this.getRootId();
-		const check = UtilData.checkDetails(contextId, rootId);
+		const check = U.Data.checkDetails(contextId, rootId);
 		const object = S.Detail.get(contextId, rootId);
 		const { name, description, coverType, coverId, coverX, coverY, coverScale, iconImage } = object;
 		const childBlocks = S.Block.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
@@ -105,7 +105,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			const { text, style, checked, targetObjectId } = content;
 			const childBlocks = S.Block.getChildren(contextId, item.id);
 			const length = childBlocks.length;
-			const cn = [ 'element', UtilData.blockClass(item), item.className ];
+			const cn = [ 'element', U.Data.blockClass(item), item.className ];
 
 			let bullet = null;
 			let inner = null;
@@ -452,7 +452,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		this.id = rootId;
 		this.setState({ loading: true });
 
-		C.ObjectShow(rootId, 'preview', UtilRouter.getRouteSpaceId(), () => {
+		C.ObjectShow(rootId, 'preview', U.Router.getRouteSpaceId(), () => {
 			if (!this._isMounted) {
 				return;
 			};

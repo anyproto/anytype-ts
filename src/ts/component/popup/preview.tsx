@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader } from 'Component';
-import { I, S, keyboard, UtilCommon } from 'Lib';
+import { I, S, keyboard, U } from 'Lib';
 
 const BORDER = 16;
 const WIDTH_DEFAULT = 450;
@@ -81,7 +81,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		const obj = $(`#${getId()}-innerWrap`);
 		const wrap = obj.find('#wrap');
 		const loader = obj.find('#loader');
-		const { ww, wh } = UtilCommon.getWindowDimensions();
+		const { ww, wh } = U.Common.getWindowDimensions();
 		const mh = wh - BORDER * 2;
 		const sidebar = $('#sidebar');
 

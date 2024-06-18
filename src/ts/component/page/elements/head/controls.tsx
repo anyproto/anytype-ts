@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, C, S, focus, UtilObject, keyboard } from 'Lib';
+import { I, C, S, U, focus, keyboard } from 'Lib';
 import ControlButtons from './controlButtons';
 
 const Constant = require('json/constant.json');
@@ -111,10 +111,10 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			data: {
 				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => {
-					UtilObject.setIcon(rootId, icon, '', cb);
+					U.Object.setIcon(rootId, icon, '', cb);
 				},
 				onUpload (objectId: string) {
-					UtilObject.setIcon(rootId, '', objectId, cb);
+					U.Object.setIcon(rootId, '', objectId, cb);
 				},
 			}
 		});
@@ -135,7 +135,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onCoverSelect (item: any) {
 		const { rootId } = this.props;
 
-		UtilObject.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+		U.Object.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 
 	onLayout (e: any) {
@@ -206,7 +206,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 	
 	onUpload (type: I.CoverType, objectId: string) {
-		UtilObject.setCover(this.props.rootId, type, objectId, 0, -0.25, 0, () => this.setState({ loading: false }));
+		U.Object.setCover(this.props.rootId, type, objectId, 0, -0.25, 0, () => this.setState({ loading: false }));
 	};
 
 });

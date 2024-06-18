@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Error, Pin } from 'Component';
-import { I, S, UtilRouter, Storage, translate, keyboard, UtilSpace } from 'Lib';
+import { I, S, U, Storage, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -70,9 +70,9 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 		keyboard.setPinChecked(true);
 
 		if (account) {
-			redirect ? UtilRouter.go(redirect, routeParam) : UtilSpace.openDashboard('route', routeParam);
+			redirect ? U.Router.go(redirect, routeParam) : U.Space.openDashboard('route', routeParam);
 		} else {
-			UtilRouter.go('/', routeParam);
+			U.Router.go('/', routeParam);
 		};
 	};
 	

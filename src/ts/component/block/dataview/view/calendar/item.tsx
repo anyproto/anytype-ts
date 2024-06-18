@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, S, UtilCommon, UtilObject, translate, UtilDate } from 'Lib';
+import { I, S, U, translate } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -40,7 +40,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		if (length > LIMIT) {
 			more = (
 				<div className="item more" onClick={this.onMore}>
-					+{length - LIMIT} {translate('commonMore')} {UtilCommon.plural(length, translate('pluralObject')).toLowerCase()}
+					+{length - LIMIT} {translate('commonMore')} {U.Common.plural(length, translate('pluralObject')).toLowerCase()}
 				</div>
 			);
 		};
@@ -85,11 +85,11 @@ const Item = observer(class Item extends React.Component<Props> {
 		const view = getView();
 		const current = [ d, m, y ].join('-');
 
-		return items.filter(it => UtilDate.date('j-n-Y', it[view.groupRelationKey]) == current);
+		return items.filter(it => U.Date.date('j-n-Y', it[view.groupRelationKey]) == current);
 	};
 
 	onOpen (record: any) {
-		UtilObject.openConfig(record);
+		U.Object.openConfig(record);
 	};
 
 	onMore () {

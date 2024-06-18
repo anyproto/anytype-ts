@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore } from 'Component';
-import { I, S, UtilData, UtilObject, UtilCommon, translate, Dataview } from 'Lib';
+import { I, S, U, translate, Dataview } from 'Lib';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
 
@@ -65,7 +65,7 @@ const Column = observer(class Column extends React.Component<Props> {
 				ref={node => this.node = node} 
 				id={`column-${id}`} 
 				className={cn.join(' ')}
-				{...UtilCommon.dataProps({ id })}
+				{...U.Common.dataProps({ id })}
 			>
 				<div id={`column-${id}-head`} className="head">
 					<div className="sides">
@@ -152,7 +152,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		const subId = getSubId();
 		const limit = getLimit() + this.offset;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
@@ -171,7 +171,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			this.setState({ loading: true });
 		};
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			subId,
 			filters: filters.map(it => Dataview.filterMapper(view, it)),
 			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
@@ -198,7 +198,7 @@ const Column = observer(class Column extends React.Component<Props> {
 	getItems () {
 		const { id, getSubId, applyObjectOrder } = this.props;
 
-		return applyObjectOrder(id, UtilCommon.objectCopy(S.Record.getRecordIds(getSubId(), ''))).map(id => ({ id }));
+		return applyObjectOrder(id, U.Common.objectCopy(S.Record.getRecordIds(getSubId(), ''))).map(id => ({ id }));
 	};
 
 	onLoadMore () {

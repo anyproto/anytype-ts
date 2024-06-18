@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
-import { observer } from 'mobx-react';
-import arrayMove from 'array-move';
 import $ from 'jquery';
+import arrayMove from 'array-move';
+import { observer } from 'mobx-react';
+import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { Icon, LoadMore } from 'Component';
-import { I, C, S, UtilCommon, translate, keyboard, Relation } from 'Lib';
+import { I, C, S, U, translate, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 
@@ -154,7 +154,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		this.resize();
 		this.onScroll();
 
-		UtilCommon.triggerResizeEditor(this.props.isPopup);
+		U.Common.triggerResizeEditor(this.props.isPopup);
 	};
 
 	componentWillUnmount () {
@@ -359,7 +359,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
-		const container = UtilCommon.getPageContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
 		const length = S.Record.getRecordIds(S.Record.getSubId(rootId, block.id), '').length;
 		const cw = container.width();

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader } from 'Component';
-import { I, S, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate } from 'Lib';
+import { I, S, U, keyboard, Action, focus } from 'Lib';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
 
@@ -93,7 +93,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	unbind () {
 		const { isPopup } = this.props;
-		const namespace = UtilCommon.getEventNamespace(isPopup);
+		const namespace = U.Common.getEventNamespace(isPopup);
 		const events = [ 'keydown' ];
 
 		$(window).off(events.map(it => `${it}.history${namespace}`).join(' '));
@@ -102,7 +102,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	rebind () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const namespace = UtilCommon.getEventNamespace(isPopup);
+		const namespace = U.Common.getEventNamespace(isPopup);
 
 		this.unbind();
 		win.on('keydown.history' + namespace, e => this.onKeyDown(e));
@@ -117,7 +117,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	onClose () {
 		const rootId = this.getRootId();
 
-		UtilObject.openAuto(S.Detail.get(rootId, rootId, []));
+		U.Object.openAuto(S.Detail.get(rootId, rootId, []));
 	};
 
 	onCopy () {
@@ -157,7 +157,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		if (elements.length) {
 			elements.forEach(it => {
-				it.element.addClass(UtilData.diffClass(it.type));
+				it.element.addClass(U.Data.diffClass(it.type));
 			});
 
 			this.scrollToElement(elements[0].element);
@@ -235,7 +235,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					const added = diff.filter(it => it.added).length;
 
 					if (added) {
-						const marks = UtilCommon.objectCopy(block.content.marks || []);
+						const marks = U.Common.objectCopy(block.content.marks || []);
 
 						let from = 0;
 						for (const item of diff) {
@@ -395,11 +395,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const sideRight = node.find('#historySideRight');
 		const editorWrapper = node.find('#editorWrapper');
 		const cover = node.find('.block.blockCover');
-		const container = UtilCommon.getPageContainer(isPopup);
-		const sc = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
+		const sc = U.Common.getScrollContainer(isPopup);
 		const header = container.find('#header');
 		const height = sc.height();
-		const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
+		const hh = isPopup ? header.height() : U.Common.sizeHeader();
 		const cssl: any = { height };
 
 		sideRight.css({ height });
@@ -448,7 +448,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	getGroupId (time: number) {
-		return UtilDate.date('M d, Y', time);
+		return U.Date.date('M d, Y', time);
 	};
 
 	getRootId () {

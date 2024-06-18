@@ -1,4 +1,4 @@
-import { I, C, S, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
+import { I, C, S, U, focus, analytics, Onboarding, Renderer, Preview, Storage, translate, Mapper, keyboard } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -189,7 +189,7 @@ class Action {
 			];
 		};
 		
-		UtilCommon.getElectron().showOpenDialog(options).then(({ filePaths }) => {
+		U.Common.getElectron().showOpenDialog(options).then(({ filePaths }) => {
 			if ((typeof filePaths === 'undefined') || !filePaths.length) {
 				return;
 			};
@@ -207,7 +207,7 @@ class Action {
 			properties: [ 'openDirectory' ],
 		});
 
-		UtilCommon.getElectron().showOpenDialog(options).then(({ filePaths }) => {
+		U.Common.getElectron().showOpenDialog(options).then(({ filePaths }) => {
 			if ((filePaths == undefined) || !filePaths.length) {
 				return;
 			};
@@ -232,7 +232,7 @@ class Action {
 
 			switch (object.layout) {
 				case I.ObjectLayout.Type: {
-					toast = UtilCommon.sprintf(translate('toastObjectTypeAdded'), object.name);
+					toast = U.Common.sprintf(translate('toastObjectTypeAdded'), object.name);
 					subId = Constant.subId.type;
 
 					eventParam.objectType = object.id;
@@ -240,7 +240,7 @@ class Action {
 				};
 
 				case I.ObjectLayout.Relation: {
-					toast = UtilCommon.sprintf(translate('toastRelationAdded'), object.name);
+					toast = U.Common.sprintf(translate('toastRelationAdded'), object.name);
 					subId = Constant.subId.relation;
 
 					eventParam.relationKey = object.relationKey;
@@ -274,18 +274,18 @@ class Action {
 		
 		switch (object.layout) {
 			case I.ObjectLayout.Type: {
-				title = UtilCommon.sprintf(translate('libActionUninstallTypeTitle'), object.name);
+				title = U.Common.sprintf(translate('libActionUninstallTypeTitle'), object.name);
 				text = translate('libActionUninstallTypeText');
-				toast = UtilCommon.sprintf(translate('toastObjectTypeRemoved'), object.name);
+				toast = U.Common.sprintf(translate('toastObjectTypeRemoved'), object.name);
 
 				eventParam.objectType = object.id;
 				break;
 			};
 
 			case I.ObjectLayout.Relation: {
-				title = UtilCommon.sprintf(translate('libActionUninstallRelationTitle'), object.name);
+				title = U.Common.sprintf(translate('libActionUninstallRelationTitle'), object.name);
 				text = translate('libActionUninstallRelationText');
-				toast = UtilCommon.sprintf(translate('toastRelationRemoved'), object.name);
+				toast = U.Common.sprintf(translate('toastRelationRemoved'), object.name);
 
 				eventParam.relationKey = object.relationKey;
 				break;
@@ -321,7 +321,7 @@ class Action {
 	delete (ids: string[], route: string, callBack?: () => void): void {
 		const count = ids.length;
 
-		if (!UtilSpace.canMyParticipantWrite()) {
+		if (!U.Space.canMyParticipantWrite()) {
 			S.Popup.open('confirm', {
 				data: {
 					title: translate('popupConfirmActionRestrictedTitle'),
@@ -337,7 +337,7 @@ class Action {
 
 		S.Popup.open('confirm', {
 			data: {
-				title: UtilCommon.sprintf(translate('popupConfirmDeleteWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
+				title: U.Common.sprintf(translate('popupConfirmDeleteWarningTitle'), count, U.Common.plural(count, translate('pluralObject'))),
 				text: translate('popupConfirmDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
@@ -367,7 +367,7 @@ class Action {
 		const { mode, path } = networkConfig;
 
 		this.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], dataPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
+			C.AccountRecoverFromLegacyExport(paths[0], dataPath, U.Common.rand(1, Constant.iconCnt), (message: any) => {
 				if (onError(message.error)) {
 					return;
 				};
@@ -387,7 +387,7 @@ class Action {
 						S.Auth.accountSet(message.account);
 						S.Common.configSet(message.account.config, false);
 
-						UtilData.onInfo(message.account.info);
+						U.Data.onInfo(message.account.info);
 
 						const routeParam = {
 							replace: true,
@@ -398,8 +398,8 @@ class Action {
 							},
 						};
 
-						UtilData.onAuth({ routeParam });
-						UtilData.onAuthOnce(true);
+						U.Data.onAuth({ routeParam });
+						U.Data.onAuthOnce(true);
 					});
 				});
 			});
@@ -443,13 +443,13 @@ class Action {
 			],
 		};
 
-		if (UtilCommon.isPlatformMac()) {
+		if (U.Common.isPlatformMac()) {
 			fileOptions.properties.push('openDirectory');
 		};
 
 		analytics.event('ClickImport', { type });
 
-		UtilCommon.getElectron().showOpenDialog(fileOptions).then((result: any) => {
+		U.Common.getElectron().showOpenDialog(fileOptions).then((result: any) => {
 			const paths = result.filePaths;
 			if ((paths == undefined) || !paths.length) {
 				return;
@@ -519,7 +519,7 @@ class Action {
 			return;
 		};
 
-		const range = UtilCommon.objectCopy(focus.state.range);
+		const range = U.Common.objectCopy(focus.state.range);
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
 		const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
 
@@ -532,7 +532,7 @@ class Action {
 			};
 		});
 
-		blocks = UtilCommon.arrayUniqueObjects(blocks, 'id');
+		blocks = U.Common.arrayUniqueObjects(blocks, 'id');
 		blocks = blocks.map((it: I.Block) => {
 			const element = S.Block.getMapElement(rootId, it.id);
 
@@ -545,7 +545,7 @@ class Action {
 		});
 
 		C[cmd](rootId, blocks, range, (message: any) => {
-			UtilCommon.clipboardCopy({
+			U.Common.clipboardCopy({
 				text: message.textSlot,
 				html: message.htmlSlot,
 				anytype: {
@@ -566,7 +566,7 @@ class Action {
 	};
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
-		const deleted = UtilSpace.getSpaceviewBySpaceId(id);
+		const deleted = U.Space.getSpaceviewBySpaceId(id);
 
 		if (!deleted) {
 			return;
@@ -574,12 +574,12 @@ class Action {
 
 		const { accountSpaceId } = S.Auth;
 		const { space } = S.Common;
-		const isOwner = UtilSpace.isMyOwner(id);
-		const name = UtilCommon.shorten(deleted.name, 32);
+		const isOwner = U.Space.isMyOwner(id);
+		const name = U.Common.shorten(deleted.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
-		const title = UtilCommon.sprintf(translate(`space${suffix}WarningTitle`), name);
-		const text = UtilCommon.sprintf(translate(`space${suffix}WarningText`), name);
-		const toast = UtilCommon.sprintf(translate(`space${suffix}Toast`), name);
+		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
+		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
+		const toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
 		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
 
 		analytics.event(`Click${suffix}Space`, { route });
@@ -606,7 +606,7 @@ class Action {
 					};
 
 					if (space == id) {
-						UtilRouter.switchSpace(accountSpaceId, '', cb);
+						U.Router.switchSpace(accountSpaceId, '', cb);
 					} else {
 						cb();
 					};
@@ -621,7 +621,7 @@ class Action {
 	leaveApprove (spaceId: string, identities: string[], name: string, route: string, callBack?: (message: any) => void) {
 		C.SpaceLeaveApprove(spaceId, identities, (message: any) => {
 			if (!message.error.code) {
-				Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
+				Preview.toastShow({ text: U.Common.sprintf(translate('toastApproveLeaveRequest'), name) });
 				analytics.event('ApproveLeaveRequest', { route });
 			};
 
@@ -671,18 +671,18 @@ class Action {
 		let layout = I.WidgetLayout.Link;
 
 		if (object && !object._empty_) {
-			if (UtilObject.isFileOrSystemLayout(object.layout)) {
+			if (U.Object.isFileOrSystemLayout(object.layout)) {
 				layout = I.WidgetLayout.Link;
 			} else 
-			if (UtilObject.isSetLayout(object.layout)) {
+			if (U.Object.isSetLayout(object.layout)) {
 				layout = I.WidgetLayout.Compact;
 			} else
-			if (UtilObject.isPageLayout(object.layout)) {
+			if (U.Object.isPageLayout(object.layout)) {
 				layout = I.WidgetLayout.Tree;
 			};
 		};
 
-		const limit = Number(UtilMenu.getWidgetLimits(layout)[0]?.id) || 0;
+		const limit = Number(U.Menu.getWidgetLimits(layout)[0]?.id) || 0;
 		const newBlock = { 
 			type: I.BlockType.Link,
 			content: { 

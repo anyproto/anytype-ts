@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, S, keyboard, Storage, translate, UtilCommon, UtilSpace } from 'Lib';
+import { I, S, U, keyboard, Storage, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -41,7 +41,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 6;
-		const hasMore = UtilSpace.canMyParticipantWrite();
+		const hasMore = U.Space.canMyParticipantWrite();
 
 		let arrow = null;
 		let onArrowClick = null;
@@ -58,7 +58,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 					className={cn.join(' ')}
 				>
 					<div className="inner">
-						<Label text={translate(UtilCommon.toCamelCase([ 'common', id ].join('-')))} />
+						<Label text={translate(U.Common.toCamelCase([ 'common', id ].join('-')))} />
 					</div>
 				</div>
 			);

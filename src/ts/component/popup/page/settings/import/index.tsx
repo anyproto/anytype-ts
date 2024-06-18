@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, UtilCommon, translate, Action, UtilMenu } from 'Lib';
+import { I, U, translate, Action } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
 
@@ -50,12 +50,12 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 			Action.import(item.format, Constant.fileExtension.import[item.format]);
 			close();
 		} else {
-			onPage(UtilCommon.toCamelCase('import-' + item.id));
+			onPage(U.Common.toCamelCase('import-' + item.id));
 		};
 	};
 
 	getItems () {
-		return UtilMenu.getImportFormats();
+		return U.Menu.getImportFormats();
 	};
 
 });

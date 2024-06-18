@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted } from 'Component';
-import { I, C, S, UtilCommon, Action, Renderer, translate, UtilRouter } from 'Lib';
+import { I, C, S, U, Action, Renderer, translate } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -185,8 +185,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		this.id = rootId;
 		this.setState({ isLoading: true});
 
-		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
+		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -258,7 +258,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			return;
 		};
 
-		C.FileDownload(block.content.targetObjectId, UtilCommon.getElectron().tmpPath, (message: any) => {
+		C.FileDownload(block.content.targetObjectId, U.Common.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
 			};
@@ -284,7 +284,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
 		const inner = node.find('.side.left #inner');
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 		const wh = container.height() - 182;
 
 		if (blocks.hasClass('vertical')) {

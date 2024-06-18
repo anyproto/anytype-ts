@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch } from 'Component';
-import { I, S, translate, UtilMenu, Action } from 'Lib';
+import { I, S, U, translate, Action } from 'Lib';
 
 const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<I.PopupSettings> {
 
@@ -12,8 +12,8 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	render () {
 		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject } = S.Common;
 		const { languages } = config;
-		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
-		const spellingLanguages = UtilMenu.getSpellingLanguages();
+		const interfaceLanguages = U.Menu.getInterfaceLanguages();
+		const spellingLanguages = U.Menu.getSpellingLanguages();
 		const navigationMenuModes: I.Option[] = [
 			{ id: I.NavigationMenuMode.Click, name: translate('popupSettingsPersonalNavigationMenuClick') },
 			{ id: I.NavigationMenuMode.Hover, name: translate('popupSettingsPersonalNavigationMenuHover') },

@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
-import { I, UtilCommon, Preview } from 'Lib';
+import { I, U, Preview } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -127,7 +127,7 @@ class MenuStore {
 		const { param } = item;
 		const { noAnimation, subIds, onClose } = param;
 		const t = noAnimation ? 0 : Constant.delay.menu;
-		const el = $(`#${UtilCommon.toCamelCase(`menu-${id}`)}`);
+		const el = $(`#${U.Common.toCamelCase(`menu-${id}`)}`);
 
 		if (subIds && subIds.length) {
 			this.closeAll(subIds);
@@ -224,7 +224,7 @@ class MenuStore {
 
 	resizeAll () {
 		const win = $(window);
-		this.list.forEach(it => win.trigger(`resize.${UtilCommon.toCamelCase(`menu-${it.id}`)}`));
+		this.list.forEach(it => win.trigger(`resize.${U.Common.toCamelCase(`menu-${it.id}`)}`));
 	};
 
 };

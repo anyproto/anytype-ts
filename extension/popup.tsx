@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { S, UtilRouter, C, UtilData } from 'Lib'; 
+import { S, U, C } from 'Lib'; 
 
 const Extension = require('json/extension.json');
 
@@ -71,7 +71,7 @@ class Popup extends React.Component {
 	};
 
 	componentDidMount () {
-		UtilRouter.init(history);
+		U.Router.init(history);
 
 		const win = $(window);
 
@@ -90,7 +90,7 @@ class Popup extends React.Component {
 				return;
 			};
 
-			UtilData.destroySubscriptions(() => {
+			U.Data.destroySubscriptions(() => {
 				C.WalletCloseSession(S.Auth.token, () => S.Auth.tokenSet(''));
 			});
 		});

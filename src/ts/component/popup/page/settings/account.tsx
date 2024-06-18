@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
-import { I, S, translate, UtilCommon, UtilObject, UtilSpace } from 'Lib';
+import { I, S, U, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PopupSettings {
@@ -33,7 +33,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	render () {
 		const { error, loading } = this.state;
 		const { account } = S.Auth;
-		const profile = UtilSpace.getProfile();
+		const profile = U.Space.getProfile();
 	
 		let name = profile.name;
 		if (name == translate('defaultNamePage')) {
@@ -81,7 +81,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						<Input
 							value={account.id}
 							readonly={true}
-							onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
+							onClick={() => U.Common.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
 						/>
 						<Icon className="copy" />
 					</div>
@@ -91,11 +91,11 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	};
 
     onName () {
-        UtilObject.setName(S.Block.profile, this.refName.getValue());
+        U.Object.setName(S.Block.profile, this.refName.getValue());
     };
 
 	onDescription (e) {
-		UtilObject.setDescription(S.Block.profile, this.refDescription.getValue());
+		U.Object.setDescription(S.Block.profile, this.refDescription.getValue());
 	};
 
 });

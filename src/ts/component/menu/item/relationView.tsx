@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Cell, Icon } from 'Component';
-import { I, S, UtilCommon, Relation, keyboard, translate, UtilData } from 'Lib';
 import { observer } from 'mobx-react';
+import { Cell, Icon } from 'Component';
+import { I, S, U, Relation, keyboard, translate } from 'Lib';
 
 interface Props {
 	id: string;
@@ -74,7 +74,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 			ccn.push('canEdit');
 		};
 		if (diffType != I.DiffType.None) {
-			cn.push(UtilData.diffClass(diffType));
+			cn.push(U.Data.diffClass(diffType));
 		};
 
 		return (
@@ -99,7 +99,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 						idPrefix={PREFIX}
 						menuClassName="fromBlock"
 						menuClassNameWrap={classNameWrap}
-						pageContainer={UtilCommon.getCellContainer('menuBlockRelationView')}
+						pageContainer={U.Common.getCellContainer('menuBlockRelationView')}
 						readonly={readonly}
 						onClick={e => onCellClick(e, relationKey, object.id)}
 						onCellChange={onCellChange}

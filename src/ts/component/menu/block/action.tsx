@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { I, C, S, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
+import { I, C, S, U, keyboard, focus, Action, translate, analytics, Dataview } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -247,15 +247,15 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: translate('menuBlockActionsSectionsTextStyle'), children: UtilMenu.getBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: translate('menuBlockActionsSectionsListStyle'), children: UtilMenu.getBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: translate('commonTurnIntoObject'), children: UtilMenu.getTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockActionsSectionsDividerStyle'), children: UtilMenu.getTurnDiv() };
-			const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockActionsSectionsFileStyle'), children: UtilMenu.getTurnFile() };
-			const action = { id: 'action', icon: '', name: translate('commonActions'), children: UtilMenu.getActions(actionParam) };
-			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: UtilMenu.getHAlign(restrictedAlign) };
-			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: UtilMenu.getBgColors() };
-			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: UtilMenu.getTextColors() };
+			const turnText = { id: 'turnText', icon: '', name: translate('menuBlockActionsSectionsTextStyle'), children: U.Menu.getBlockText() };
+			const turnList = { id: 'turnList', icon: '', name: translate('menuBlockActionsSectionsListStyle'), children: U.Menu.getBlockList() };
+			const turnPage = { id: 'turnPage', icon: '', name: translate('commonTurnIntoObject'), children: U.Menu.getTurnPage() };
+			const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockActionsSectionsDividerStyle'), children: U.Menu.getTurnDiv() };
+			const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockActionsSectionsFileStyle'), children: U.Menu.getTurnFile() };
+			const action = { id: 'action', icon: '', name: translate('commonActions'), children: U.Menu.getActions(actionParam) };
+			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: U.Menu.getHAlign(restrictedAlign) };
+			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: U.Menu.getBgColors() };
+			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: U.Menu.getTextColors() };
 
 			if (hasTurnText)	 sections.push(turnText);
 			if (hasTurnList)	 sections.push(turnList);
@@ -267,21 +267,21 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			if (hasAlign)		 sections.push(align);
 			if (hasAction)		 sections.push(action);
 
-			sections = UtilMenu.sectionsFilter(sections, filter);
+			sections = U.Menu.sectionsFilter(sections, filter);
 		} else {
 			const turnText = { 
-				id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
-				caption: (I.TextStyle[style] ? translate(UtilCommon.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
+				id: 'turnStyle', icon: U.Data.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
+				caption: (I.TextStyle[style] ? translate(U.Common.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
 			};
 
-			const c1 = hasTitle ? [] : UtilMenu.getActions(actionParam);
+			const c1 = hasTitle ? [] : U.Menu.getActions(actionParam);
 			const c2: any[] = [
 				hasLink ? { id: 'linkSettings', icon: `linkStyle${content.cardStyle}`, name: translate('commonPreview'), arrow: true } : null,
 				hasTurnFile ? { id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true } : null,
 				hasTurnFile ? { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true } : null,
 				hasTurnText ? turnText : null,
-				hasTurnDiv ? { id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
-				hasAlign ? { id: 'align', icon: UtilData.alignHIcon(align), name: translate('commonAlign'), arrow: true } : null,
+				hasTurnDiv ? { id: 'turnStyle', icon: U.Data.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
+				hasAlign ? { id: 'align', icon: U.Data.alignHIcon(align), name: translate('commonAlign'), arrow: true } : null,
 				hasColor ? { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, isTextColor: true, value: (color || 'default') } : null,
 				hasBg ? { id: 'background', icon: 'color', name: translate('commonBackground'), arrow: true, isBgColor: true, value: (bgColor || 'default') } : null,
 			].filter(it => it);
@@ -289,7 +289,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			sections = [ { children: c1 }, { children: c2 } ];
 		};
 
-		return UtilMenu.sectionsMap(sections);
+		return U.Menu.sectionsMap(sections);
 	};
 
 	checkFlagByObject (id: string): boolean {
@@ -414,7 +414,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						this.moveToPage(item.id);
@@ -428,7 +428,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 					],
 					onSelect: (item: any) => {
 						C.BlockFileSetTargetObjectId(rootId, blockId, item.id);
@@ -454,7 +454,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					position: I.BlockPosition.Bottom,
 					skipIds,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					canAdd: true,
 					onSelect: () => close()
@@ -481,7 +481,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 				
 			case 'background': {
-				ids = UtilData.selectionGet(blockId, false, false);
+				ids = U.Data.selectionGet(blockId, false, false);
 				menuId = 'blockBackground';
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -535,7 +535,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				const name = translate(isCollection ? 'commonCollection' : 'commonSet');
 
 				const addParam: any = {
-					name: UtilCommon.sprintf(translate('menuBlockActionsCreateNew'), name),
+					name: U.Common.sprintf(translate('menuBlockActionsCreateNew'), name),
 				};
 				if (isCollection) {
 					addParam.onClick = (details: any) => {
@@ -597,7 +597,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const ids = UtilData.selectionGet(blockId, false, false);
+		const ids = U.Data.selectionGet(blockId, false, false);
 		const targetObjectId = block.getTargetObjectId();
 
 		switch (item.itemId) {
@@ -607,7 +607,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			case 'openAsObject': {
-				UtilObject.openConfig(S.Detail.get(rootId, targetObjectId));
+				U.Object.openConfig(S.Detail.get(rootId, targetObjectId));
 
 				const event: any = { type: block.type };
 				if (block.isFile()) {
@@ -691,7 +691,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			ids.push(blockId);
 		};
 		
-		UtilData.moveToPage(rootId, ids, typeId, analytics.route.turn);
+		U.Data.moveToPage(rootId, ids, typeId, analytics.route.turn);
 	};
 
 	setFocus (id: string) {

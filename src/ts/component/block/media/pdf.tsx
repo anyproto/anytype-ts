@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
-import { I, C, S, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Renderer, keyboard } from 'Lib';
+import { I, C, S, U, translate, focus, Action, Renderer, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { pdfjs } from 'react-pdf';
 
@@ -103,7 +103,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
 						<div className="info" onMouseDown={this.onOpen}>
 							<ObjectName object={object} />
-							<span className="size">{UtilFile.size(object.sizeInBytes)}</span>
+							<span className="size">{U.File.size(object.sizeInBytes)}</span>
 						</div>
 
 						<MediaPdf 
@@ -213,7 +213,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	};
 
 	onOpen (e: any) {
-		C.FileDownload(this.props.block.getTargetObjectId(), UtilCommon.getElectron().tmpPath, (message: any) => {
+		C.FileDownload(this.props.block.getTargetObjectId(), U.Common.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
 			};
@@ -233,7 +233,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 
 	onClick (e: any) {
 		if (!keyboard.withCommand(e)) {
-			UtilObject.openConfig({ id: this.props.block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
+			U.Object.openConfig({ id: this.props.block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
 		};
 	};
 

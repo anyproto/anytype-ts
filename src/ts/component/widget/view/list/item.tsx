@@ -3,7 +3,7 @@ import raf from 'raf';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } from 'Component';
-import { I, S, UtilCommon, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
+import { I, S, U, keyboard, analytics, translate } from 'Lib';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
 
 const Constant = require('json/constant.json');
@@ -40,7 +40,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const iconKey = `widget-icon-${block.id}-${id}`;
 		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const canDrag = isPreview && (block.content.targetBlockId == Constant.widgetId.favorite);
-		const hasMore = UtilSpace.canMyParticipantWrite();
+		const hasMore = U.Space.canMyParticipantWrite();
 
 		if (isSection) {
 			return (
@@ -50,7 +50,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					className={[ 'item', 'isSection' ].join(' ')}
 				>
 					<div className="inner">
-						<Label text={translate(UtilCommon.toCamelCase([ 'common', id ].join('-')))} />
+						<Label text={translate(U.Common.toCamelCase([ 'common', id ].join('-')))} />
 					</div>
 				</div>
 			);
@@ -65,7 +65,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 
 		if (!isCompact) {
 			if (object.layout == I.ObjectLayout.Bookmark) {
-				descr = <div className="descr">{UtilCommon.shortUrl(source)}</div>;
+				descr = <div className="descr">{U.Common.shortUrl(source)}</div>;
 			} else {
 				descr = <ObjectDescription object={object} />;
 			};
@@ -164,7 +164,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const { subId, id, } = this.props;
 		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
 
-		UtilObject.openEvent(e, object);
+		U.Object.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
 	};
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
-import { I, C, S, translate, UtilCommon, UtilData, analytics } from 'Lib';
+import { I, C, S, U, translate, analytics } from 'Lib';
 import FooterAuthDisclaimer from '../../../footer/auth/disclaimer';
 
 const Constant = require('json/constant.json');
@@ -38,7 +38,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { status, statusText } = this.state;
 		const { config } = S.Common;
 		const { testCryptoPayment } = config;
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 
 		if (!tierItem) {
 			return null;
@@ -61,8 +61,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				periodText = translate('popupSettingsMembershipPerYear');
 				labelText = translate('popupMembershipPaidTextPerYear');
 			} else {
-				periodText = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
-				labelText = UtilCommon.sprintf(translate('popupMembershipPaidTextPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+				periodText = U.Common.sprintf(translate('popupSettingsMembershipPerYears'), period, U.Common.plural(period, translate('pluralYear')));
+				labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerYears'), period, U.Common.plural(period, translate('pluralYear')));
 			};
 		};
 
@@ -115,7 +115,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 		const globalName = this.getGlobalName();
 
 		if (!globalName && tierItem.namesCount) {
@@ -150,7 +150,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const globalName = this.getGlobalName();
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 		const name = globalName || !tierItem.namesCount ? '' : this.getName();
 		const refButton = method == I.PaymentMethod.Stripe ? this.refButtonCard : this.refButtonCrypto;
 
@@ -166,7 +166,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				};
 
 				if (message.url) {
-					UtilCommon.onUrl(message.url);
+					U.Common.onUrl(message.url);
 				};
 
 				analytics.event('ClickMembership', { params: { tier, method }});

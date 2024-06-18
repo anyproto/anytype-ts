@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, S, Relation, UtilObject, translate, UtilFile } from 'Lib';
+import { I, S, U, Relation, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -179,7 +179,7 @@ class DetailStore {
 			object = this[fn](object);
 		};
 
-		if (UtilObject.isFileLayout(object.layout)) {
+		if (U.Object.isFileLayout(object.layout)) {
 			object = this.mapFile(object);
 		};
 
@@ -311,7 +311,7 @@ class DetailStore {
 
 	private mapFile (object) {
 		object.sizeInBytes = Number(object.sizeInBytes) || 0;
-		object.name = UtilFile.name(object);
+		object.name = U.File.name(object);
 		return object;
 	};
 

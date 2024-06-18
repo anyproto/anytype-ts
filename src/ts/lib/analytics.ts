@@ -1,5 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, S, UtilCommon, Storage, UtilSpace, Relation } from 'Lib';
+import { I, C, S, U, Storage, Relation } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -62,7 +62,7 @@ class Analytics {
 
 	isAllowed (): boolean {
 		const { config } = S.Common;
-		return !(config.sudo || [ 'alpha' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
+		return !(config.sudo || [ 'alpha' ].includes(config.channel) || !U.Common.getElectron().isPackaged) || this.debug();
 	};
 	
 	init (options?: any) {
@@ -71,8 +71,8 @@ class Analytics {
 		};
 
 		const { interfaceLang } = S.Common;
-		const electron = UtilCommon.getElectron();
-		const platform = UtilCommon.getPlatform();
+		const electron = U.Common.getElectron();
+		const platform = U.Common.getPlatform();
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, Object.assign({
@@ -107,8 +107,8 @@ class Analytics {
 
 	setVersion () {
 		const { config } = S.Common;
-		const platform = UtilCommon.getPlatform();
-		const electron = UtilCommon.getElectron();
+		const platform = U.Common.getPlatform();
+		const electron = U.Common.getElectron();
 		const { version, isPackaged } = electron;
 
 		if (!version) {
@@ -170,8 +170,8 @@ class Analytics {
 		};
 
 		const converted: any = {};
-		const space = UtilSpace.getSpaceview();
-		const participant = UtilSpace.getMyParticipant();
+		const space = U.Space.getSpaceview();
+		const participant = U.Space.getMyParticipant();
 
 		let param: any = {};
 
@@ -421,8 +421,8 @@ class Analytics {
 
 			case 'OnboardingTooltip':
 			case 'ClickOnboardingTooltip': {
-				data.id = data.id ? UtilCommon.toUpperCamelCase(`-${data.id}`) : '';
-				data.type = data.type ? UtilCommon.toUpperCamelCase(`-${data.type}`) : '';
+				data.id = data.id ? U.Common.toUpperCamelCase(`-${data.id}`) : '';
+				data.type = data.type ? U.Common.toUpperCamelCase(`-${data.type}`) : '';
 				break;
 			};
 
@@ -554,7 +554,7 @@ class Analytics {
 		};
 
 		const code = (undefined !== map[id]) ? map[id] : id;
-		return code ? UtilCommon.toUpperCamelCase([ prefix, code ].join('-')) : '';
+		return code ? U.Common.toUpperCamelCase([ prefix, code ].join('-')) : '';
 	};
 
 	typeMapper (id: string): string {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
-import { I, S, Relation, UtilData, UtilCommon, Dataview } from 'Lib';
+import { I, S, U, Relation, Dataview } from 'Lib';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
 
@@ -152,7 +152,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		return (
 			<div className="wrap">
 				<div className={cn.join(' ')}>
-					<div className={[ 'galleryWrap', UtilData.cardSizeClass(cardSize) ].join(' ')}>
+					<div className={[ 'galleryWrap', U.Data.cardSizeClass(cardSize) ].join(' ')}>
 						{content}
 					</div>
 
@@ -232,7 +232,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	getRecords () {
 		const { getRecords, isAllowedObject } = this.props;
-		const records = UtilCommon.objectCopy(getRecords());
+		const records = U.Common.objectCopy(getRecords());
 		
 		if (isAllowedObject()) {
 			records.push('add-record');

@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
-import { C, I, M, S, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
+import { C, I, M, S, U, keyboard, analytics, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -43,7 +43,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
 		const cn = [ 'listWidget' ];
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		let content = null;
 
@@ -304,7 +304,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 		const { isEditing } = this.state;
 
 		if (!isEditing && !e.button) {
-			UtilObject.openEvent(e, { layout: I.ObjectLayout.Store });
+			U.Object.openEvent(e, { layout: I.ObjectLayout.Store });
 		};
 	};
 
@@ -312,13 +312,13 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 		const { isEditing } = this.state;
 
 		if (!isEditing && !e.button) {
-			UtilObject.openEvent(e, { layout: I.ObjectLayout.Archive });
+			U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
 		};
 	};
 
 	onContextMenu () {
 		const { previewId } = this.state;
-		if (previewId || !UtilSpace.canMyParticipantWrite()) {
+		if (previewId || !U.Space.canMyParticipantWrite()) {
 			return;
 		};
 

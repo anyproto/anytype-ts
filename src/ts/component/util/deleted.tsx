@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Label, Button } from 'Component';
-import { S, UtilSpace, translate } from 'Lib';
+import { S, U, translate } from 'Lib';
 
 interface Props {
 	className?: string;
@@ -26,7 +26,7 @@ class Deleted extends React.Component<Props> {
 			onClick = () => S.Popup.close('page');
 		} else {
 			textButton = translate('utilDeletedBackToDashboard');
-			onClick = () => UtilSpace.openDashboard('route');
+			onClick = () => U.Space.openDashboard('route');
 		};
 
 		return (

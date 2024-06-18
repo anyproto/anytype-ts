@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, S, UtilData, translate } from 'Lib';
+import { I, S, U, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -45,7 +45,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				rootId: this.rootId,
 				blockId: this.rootId,
 				blockIds: [ this.rootId ],
-				filters: UtilData.graphFilters(),
+				filters: U.Data.graphFilters(),
 				filter: S.Common.getGraph(Constant.graphId.global).filter,
 				canAdd: true,
 				onSelect: (item: any) => {

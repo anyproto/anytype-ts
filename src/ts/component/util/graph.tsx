@@ -4,7 +4,7 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, S, UtilCommon, UtilObject, UtilSpace, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
+import { I, S, U, translate, analytics, keyboard, Action } from 'Lib';
 
 const Constant = require('json/constant.json');
 const Theme = require('json/theme.json');
@@ -72,7 +72,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		win.on('updateGraphSettings.graph', () => this.updateSettings());
 		win.on('updateGraphRoot.graph', (e: any, data: any) => this.setRootId(data.id));
 		win.on('updateTheme.graph', () => this.send('updateTheme', { theme: S.Common.getThemeClass() }));
-		win.on('removeGraphNode.graph', (e: any, data: any) => this.send('onRemoveNode', { ids: UtilCommon.objectCopy(data.ids) }));
+		win.on('removeGraphNode.graph', (e: any, data: any) => this.send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
 		win.on(`keydown.graph`, e => this.onKeyDown(e));
 	};
 
@@ -171,7 +171,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	nodeMapper (d: any) {
 		d.layout = Number(d.layout) || 0;
 		d.radius = 4;
-		d.src = UtilGraph.imageSrc(d);
+		d.src = U.Graph.imageSrc(d);
 
 		if (d.layout == I.ObjectLayout.Note) {
 			d.name = d.snippet || translate('commonEmpty');
@@ -179,8 +179,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			d.name = d.name || translate('defaultNamePage');
 		};
 
-		d.name = UtilSmile.strip(d.name);
-		d.shortName = UtilCommon.shorten(d.name, 24);
+		d.name = U.Smile.strip(d.name);
+		d.shortName = U.Common.shorten(d.name, 24);
 		d.description = String(d.description || '');
 		d.snippet = String(d.snippet || '');
 
@@ -454,7 +454,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onContextSpaceClick (param: any, data: any) {
-		if (!UtilSpace.canMyParticipantWrite()) {
+		if (!U.Space.canMyParticipantWrite()) {
 			return;
 		};
 
@@ -469,8 +469,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						case 'newObject': {
 							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', flags, 'Graph', (message: any) => {
-								UtilObject.openPopup(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
+							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', flags, 'Graph', (message: any) => {
+								U.Object.openPopup(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
 							});
 							break;
 						};
@@ -509,11 +509,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.ids = [];
 		this.send('onSetSelected', { ids: [] });
 		
-		UtilObject.openAuto(this.nodes.find(d => d.id == id));
+		U.Object.openAuto(this.nodes.find(d => d.id == id));
 	};
 
 	addNewNode (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) {
-		UtilObject.getById(id, (object: any) => {
+		U.Object.getById(id, (object: any) => {
 			object = this.nodeMapper(object);
 
 			if (param) {

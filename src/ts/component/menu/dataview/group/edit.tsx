@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, Dataview, UtilMenu, keyboard, Relation, translate } from 'Lib';
+import { I, C, S, U, Dataview, keyboard, Relation, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
 
 const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Menu> {
@@ -81,7 +81,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 	};
 
 	getSections () {
-		const colors = UtilMenu.getBgColors().filter(it => it.id != 'bgColor-default');
+		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
 
 		return [
 			{ 

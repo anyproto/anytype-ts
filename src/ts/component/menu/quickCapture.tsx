@@ -3,7 +3,7 @@ import $ from 'jquery';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
-import { analytics, C, I, S, keyboard, UtilObject, UtilMenu, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
+import { I, C, S, U, analytics, keyboard, translate, Action, Storage, Preview } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -223,17 +223,17 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, S.Common.space ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
-			{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
+			{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
 		];
 		const sorts = [
 			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
-			keys: UtilData.typeRelationKeys(),
+			keys: U.Data.typeRelationKeys(),
 			fullText: filter,
 			offset: this.offset,
 			ignoreWorkspace: true,
@@ -270,7 +270,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		let items: any[] = [];
 
 		if (isExpanded) {
-			const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+			const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 			const library = items.filter(it => (it.spaceId == space)).map((it, i) => {
 				if (isExpanded && (it.id == type)) {
 					it.tooltip = translate('commonDefaultType');
@@ -278,15 +278,15 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				return it;
 			});
 
-			const pinned = items.filter(it => pinnedIds.includes(it.id)).sort((c1: any, c2: any) => UtilData.sortByPinnedTypes(c1, c2, pinnedIds));
+			const pinned = items.filter(it => pinnedIds.includes(it.id)).sort((c1: any, c2: any) => U.Data.sortByPinnedTypes(c1, c2, pinnedIds));
 			const librarySources = library.map(it => it.sourceObject);
-			const groups = library.filter(it => UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
-			const objects = library.filter(it => !UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
+			const groups = library.filter(it => U.Object.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
+			const objects = library.filter(it => !U.Object.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
 
 			if (this.filter) {
 				objects.push({ 
 					id: SystemIds.Add, 
-					name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter),
+					name: U.Common.sprintf(translate('menuTypeSuggestCreateType'), this.filter),
 				});
 			};
 
@@ -308,7 +308,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		} else {
 			const pinned = pinnedIds.map(id => S.Record.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
 
-			items = UtilData.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
+			items = U.Data.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
 			items = items.slice(0, LIMIT_PINNED - pinned.length);
 			items.push(S.Record.getSetType());
 			items.push(S.Record.getCollectionType());
@@ -341,7 +341,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			sections.push({ id: 'collapsed', children: items });
 		};
 
-		return UtilMenu.sectionsMap(sections.filter((section: any) => {
+		return U.Menu.sectionsMap(sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
 			return section.children.length > 0;
 		}));
@@ -443,7 +443,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			};
 
 			let flags: I.ObjectFlag[] = [];
-			if (!UtilObject.isSetLayout(type.recommendedLayout)) {
+			if (!U.Object.isSetLayout(type.recommendedLayout)) {
 				flags = flags.concat([ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 			};
 
@@ -454,7 +454,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 				const object = message.details;
 
-				UtilObject.openAuto(object);
+				U.Object.openAuto(object);
 				analytics.createObject(object.type, object.layout, analytics.route.navigation, message.middleTime);
 			});
 		};
@@ -494,7 +494,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const type = S.Record.getTypeById(item.itemId);
 		const isPinned = Storage.getPinnedTypes().includes(item.itemId);
 		const canPin = type.isInstalled;
-		const canDefault = type.isInstalled && !UtilObject.getSetLayouts().includes(item.recommendedLayout) && (type.id != S.Common.type);
+		const canDefault = type.isInstalled && !U.Object.getSetLayouts().includes(item.recommendedLayout) && (type.id != S.Common.type);
 		const canDelete = type.isInstalled && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 		const route = analytics.route.navigation;
 
@@ -523,7 +523,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 					switch (element.id) {
 
 						case 'open': {
-							UtilObject.openAuto({ ...item, id: item.itemId });
+							U.Object.openAuto({ ...item, id: item.itemId });
 							break;
 						};
 
@@ -623,11 +623,11 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			const url = UtilCommon.matchUrl(text);
+			const url = U.Common.matchUrl(text);
 
 			if (url) {
 				C.ObjectCreateBookmark({ source: url }, S.Common.space, (message: any) => {
-					UtilObject.openAuto(message.details);
+					U.Object.openAuto(message.details);
 				});
 			} else {
 				C.ObjectCreate({}, [], type?.defaultTemplateId, type?.uniqueKey, S.Common.space, (message: any) => {
@@ -638,7 +638,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 					const object = message.details;
 
 					C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html, text }, '', () => {
-						UtilObject.openAuto(object);
+						U.Object.openAuto(object);
 					});
 
 					analytics.createObject(object.type, object.layout, analytics.route.clipboard, message.middleTime);
@@ -656,7 +656,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	beforePosition () {
 		const { getId } = this.props;
 		const obj = $(`#${getId()}`);
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const sidebar = $('#sidebar');
 		const sw = sidebar.outerWidth();
 		

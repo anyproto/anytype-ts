@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, UtilCommon, keyboard, translate, Relation, UtilDate } from 'Lib';
+import { I, S, U, keyboard, translate, Relation } from 'Lib';
 import { Input, IconObject } from 'Component';
 
 const Constant = require('json/constant.json');
@@ -142,7 +142,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 				if (name) {
 					if (textLimit) {
-						name = UtilCommon.shorten(name, textLimit);
+						name = U.Common.shorten(name, textLimit);
 					};
 					content = <div className="name">{name}</div>;
 				} else {
@@ -163,9 +163,9 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				if (value !== null) {
 					value = Number(value) || 0;
 
-					const day = showRelativeDates ? UtilDate.dayString(value) : null;
-					const date = day ? day : UtilDate.date(UtilDate.dateFormat(viewRelation.dateFormat), value);
-					const time = UtilDate.date(UtilDate.timeFormat(viewRelation.timeFormat), value);
+					const day = showRelativeDates ? U.Date.dayString(value) : null;
+					const date = day ? day : U.Date.date(U.Date.dateFormat(viewRelation.dateFormat), value);
+					const time = U.Date.date(U.Date.timeFormat(viewRelation.timeFormat), value);
 					
 					value = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 				} else {
@@ -174,13 +174,13 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			};
 
 			if (isUrl && shortUrl) {
-				value = value !== null ? UtilCommon.shortUrl(value) : '';
+				value = value !== null ? U.Common.shortUrl(value) : '';
 			};
 
 			if (isNumber) {
 				if (value !== null) {
 					const mapped = Relation.mapValue(relation, value);
-					value = mapped !== null ? mapped : UtilCommon.formatNumber(value);
+					value = mapped !== null ? mapped : U.Common.formatNumber(value);
 				} else {
 					value = '';
 				};
@@ -253,7 +253,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					format.push('H:i');
 				};
 
-				value = this.value !== null ? UtilDate.date(format.join(' ').trim(), this.value) : '';
+				value = this.value !== null ? U.Date.date(format.join(' ').trim(), this.value) : '';
 			} else
 			if (relation.format == I.RelationType.Number) {
 				value = Relation.formatValue(relation, this.value, true);
@@ -449,7 +449,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		};
 
 		v = String(v || '').replace(/_/g, '');
-		return v ? UtilDate.parseDate(v, viewRelation.dateFormat) : null;
+		return v ? U.Date.parseDate(v, viewRelation.dateFormat) : null;
 	};
 
 	onCompositionStart () {

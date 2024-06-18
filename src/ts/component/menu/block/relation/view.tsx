@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard, translate } from 'Lib';
+import { I, C, S, U, Relation, analytics, keyboard, translate } from 'Lib';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -150,7 +150,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { config } = S.Common;
 
 		const object = S.Detail.get(rootId, rootId);
-		const isTemplate = UtilObject.isTemplate(object.type);
+		const isTemplate = U.Object.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 		const featured = Relation.getArrayValue(object.featuredRelations);
 		const relations = S.Record.getObjectRelations(rootId, rootId);
@@ -163,7 +163,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
 		items = items.concat(typeRelations);
-		items = items.sort(UtilData.sortByName).sort(UtilData.sortByHidden).filter((it: any) => {
+		items = items.sort(U.Data.sortByName).sort(U.Data.sortByHidden).filter((it: any) => {
 			if (!it) {
 				return false;
 			};
@@ -188,7 +188,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		if (type) {
 			sections.push({ 
-				id: 'type', name: UtilCommon.sprintf(translate('menuBlockRelationViewFromType'), type.name),
+				id: 'type', name: U.Common.sprintf(translate('menuBlockRelationViewFromType'), type.name),
 				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Type)),
 			});
 		};
@@ -215,7 +215,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const items = this.getItems();
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
-		const featured = UtilCommon.objectCopy(object.featuredRelations || []);
+		const featured = U.Common.objectCopy(object.featuredRelations || []);
 		const idx = featured.findIndex(it => it == relationKey);
 
 		if (idx < 0) {
@@ -356,13 +356,13 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { isPopup } = data;
 		const obj = $(`#${getId()} .content`);
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 		const offset = isPopup ? 16 : 120;
 		const min = isPopup ? 480 : 640;
 		const maxOffset = isPopup ? 16 : 80;
 
 		obj.css({ 
-			height: container.height() - UtilCommon.sizeHeader() - maxOffset,
+			height: container.height() - U.Common.sizeHeader() - maxOffset,
 			width: Math.max(min, container.width() / 2 - offset),
 		});
 

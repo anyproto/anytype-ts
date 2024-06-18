@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
-import { I, C, S, UtilRouter, Storage } from 'Lib';
+import { I, C, S, U, Storage } from 'Lib';
+import Util from '../lib/util';
 
 const Url = require('json/url.json');
-
-import Util from '../lib/util';
 
 interface State {
 	error: string;
@@ -76,7 +75,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 				Util.sendMessage({ type: 'initIframe', appKey, serverPort, gatewayPort }, () => {});
 				Util.sendMessage({ type: 'initMenu' }, () => {});
 
-				UtilRouter.go('/create', {});
+				U.Router.go('/create', {});
 			}, () => {
 				Storage.delete('appKey');
 				this.login();
@@ -92,7 +91,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 				};
 
 				S.Extension.challengeId = message.challengeId;
-				UtilRouter.go('/challenge', {});
+				U.Router.go('/challenge', {});
 			});
 		};
 	};

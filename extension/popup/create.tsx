@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon } from 'Component';
-import { I, C, S, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage, UtilSpace } from 'Lib';
+import { I, C, S, U, Relation, keyboard, Storage } from 'Lib';
 import Util from '../lib/util';
 
 interface State {
@@ -121,7 +121,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 													id={`item-${item.id}`}
 													className="itemWrap isDraggable"
 													draggable={true}
-													{...UtilCommon.dataProps({ id: item.id, index: i })}
+													{...U.Common.dataProps({ id: item.id, index: i })}
 												>
 													<Tag 
 														key={item.id}
@@ -166,7 +166,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	componentDidMount(): void {
-		UtilData.createSubscriptions(() => {
+		U.Data.createSubscriptions(() => {
 			this.initSpace();
 			this.initName();
 			this.initType();
@@ -240,18 +240,18 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getSpaces () {
-		return UtilSpace.getList()
-			.filter(it => it && UtilSpace.canMyParticipantWrite(it.targetSpaceId))
+		return U.Space.getList()
+			.filter(it => it && U.Space.canMyParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, id: it.targetSpaceId, object: it }));
 	};
 
 	getTypes () {
-		const layouts = UtilObject.getPageLayouts();
+		const layouts = U.Object.getPageLayouts();
 		return this.getObjects(Constant.subId.type).
 			map(Util.optionMapper).
 			filter(this.filter).
 			filter(it => layouts.includes(it.recommendedLayout) && (it.spaceId == S.Common.space)).
-			sort(UtilData.sortByName);
+			sort(U.Data.sortByName);
 	};
 
 	filter (it: any) {
@@ -265,7 +265,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	onSpaceChange (id: string): void {
 		S.Common.spaceSet(id);
-		UtilData.createSubscriptions(() => this.forceUpdate());
+		U.Data.createSubscriptions(() => this.forceUpdate());
 
 		Storage.set('lastSpaceId', id);
 	};
@@ -397,7 +397,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	setValue (value: string[]) {
 		const relation = S.Record.getRelationByKey('tag');
 		
-		value = UtilCommon.arrayUnique(value);
+		value = U.Common.arrayUnique(value);
 
 		const length = value.length;
 		if (relation.maxCount && (length > relation.maxCount)) {
@@ -437,7 +437,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			const object = message.details;
 
 			S.Extension.createdObject = object;
-			UtilRouter.go('/success', {});
+			U.Router.go('/success', {});
 
 			this.isCreating = false;
 		});

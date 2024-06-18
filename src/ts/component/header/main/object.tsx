@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, S, UtilObject, UtilData, keyboard, translate, UtilSpace } from 'Lib';
+import { I, S, U, keyboard, translate } from 'Lib';
 import HeaderBanner from 'Component/page/elements/head/banner';
 
 const Constant = require('json/constant.json');
@@ -37,7 +37,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 		const object = S.Detail.get(rootId, rootId, Constant.templateRelationKeys);
 		const isLocked = root ? root.isLocked() : false;
-		const showMenu = !UtilObject.isTypeOrRelationLayout(object.layout);
+		const showMenu = !U.Object.isTypeOrRelationLayout(object.layout);
 		const canSync = showMenu && !object.templateIsBundled && !root.isObjectParticipant();
 		const cmd = keyboard.cmdSymbol();
 		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
@@ -46,10 +46,10 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		let center = null;
 		let banner = I.BannerType.None;
 
-		if (object.isArchived && UtilSpace.canMyParticipantWrite()) {
+		if (object.isArchived && U.Space.canMyParticipantWrite()) {
 			banner = I.BannerType.IsArchived;
 		} else
-		if (UtilObject.isTemplate(object.type)) {
+		if (U.Object.isTemplate(object.type)) {
 			banner = I.BannerType.IsTemplate;
 		} else
 		if (allowedTemplateSelect && templatesCnt) {
@@ -113,7 +113,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const object = S.Detail.get(rootId, rootId, []);
 
 		keyboard.disableClose(true);
-		S.Popup.closeAll(null, () => UtilObject.openRoute(object));
+		S.Popup.closeAll(null, () => U.Object.openRoute(object));
 	};
 	
 	onMore () {
@@ -160,7 +160,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			return;
 		};
 
-		UtilData.getTemplatesByTypeId(object.type, (message: any) => {
+		U.Data.getTemplatesByTypeId(object.type, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

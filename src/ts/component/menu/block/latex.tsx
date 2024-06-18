@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, S, keyboard, UtilData, UtilMenu, UtilCommon } from 'Lib';
+import { I, S, U, keyboard } from 'Lib';
 
 const Sections = require('json/latex.json');
 const katex = require('katex');
@@ -67,7 +67,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 					>
 						{isTemplate ? (
 							<div className="inner">
-								<div className="math" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(math) }} />
+								<div className="math" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(math) }} />
 							</div>
 						) : (
 							<div className="name">{name}</div>
@@ -242,9 +242,9 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { isTemplate } = data;
-		const filter = UtilCommon.regexEscape(S.Common.filter.text);
+		const filter = U.Common.regexEscape(S.Common.filter.text);
 
-		let sections = UtilMenu.sectionsMap(Sections);
+		let sections = U.Menu.sectionsMap(Sections);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);
 
 		sections = sections.map((it: any) => {
@@ -257,7 +257,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		});
 
 		if (filter) {
-			sections = UtilMenu.sectionsFilter(sections, filter);
+			sections = U.Menu.sectionsFilter(sections, filter);
 
 			const regS = new RegExp('/^' + filter + '/', 'gi');
 
@@ -276,10 +276,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 					s._sortWeight_ += w;
 					return c;
 				});
-				s.children.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
+				s.children.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 				return s;
 			});
-			sections.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
+			sections.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 		};
 
 		return sections;

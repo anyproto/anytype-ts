@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Error, Pin } from 'Component';
-import { I, C, S, Storage, UtilRouter } from 'Lib';
+import { I, C, S, U, Storage } from 'Lib';
 import Util from '../lib/util';
 
 interface State {
@@ -58,7 +58,7 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 				Util.sendMessage({ type: 'initIframe', appKey, serverPort, gatewayPort }, () => {});
 				Util.sendMessage({ type: 'initMenu' }, () => {});
 
-				UtilRouter.go('/create', {});
+				U.Router.go('/create', {});
 			});
 		});
 	};

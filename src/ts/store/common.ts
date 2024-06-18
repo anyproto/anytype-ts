@@ -1,6 +1,6 @@
-import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { I, M, S, Storage, UtilCommon, UtilObject, Renderer, UtilRouter } from 'Lib';
+import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
+import { I, M, S, U, Storage, Renderer } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -144,7 +144,7 @@ class CommonStore {
 			membershipTiersListSet: action,
 		});
 
-		intercept(this.configObj as any, change => UtilCommon.intercept(this.configObj, change));
+		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
     };
 
     get config(): any {
@@ -180,7 +180,7 @@ class CommonStore {
 		const key = String(this.defaultType || Storage.get('defaultType') || Constant.default.typeKey);
 
 		let type = S.Record.getTypeByKey(key);
-		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
+		if (!type || !type.isInstalled || !U.Object.getPageLayouts().includes(type.recommendedLayout)) {
 			type = S.Record.getTypeByKey(Constant.default.typeKey);
 		};
 
@@ -318,8 +318,8 @@ class CommonStore {
 		const ids = [ objectId, targetId, originId ].filter(it => it);
 
 		if (ids.length) {
-			UtilObject.getByIds(ids, (objects: any[]) => {
-				const map = UtilCommon.mapToObject(objects, 'id');
+			U.Object.getByIds(ids, (objects: any[]) => {
+				const map = U.Common.mapToObject(objects, 'id');
 
 				if (targetId && map[targetId]) {
 					toast.target = map[targetId];
@@ -401,7 +401,7 @@ class CommonStore {
 	};
 
 	redirectSet (v: string) {
-		const param = UtilRouter.getParam(v);
+		const param = U.Router.getParam(v);
 
 		if ((param.page == 'auth') && (param.action == 'pin-check')) {
 			return;
@@ -449,7 +449,7 @@ class CommonStore {
 		const head = $('head');
 		const c = this.getThemeClass();
 
-		UtilCommon.addBodyClass('theme', c);
+		U.Common.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
 
 		head.find('#link-prism').remove();
@@ -528,7 +528,7 @@ class CommonStore {
 
 	getGraph (key: string): Graph {
 		const stored = Storage.get(key);
-		const def = UtilCommon.objectCopy(this.graphObj);
+		const def = U.Common.objectCopy(this.graphObj);
 
 		return Object.assign(def, stored);
 	};

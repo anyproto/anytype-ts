@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Loader, EmptySearch } from 'Component';
-import { I, S, UtilCommon, Relation, keyboard, UtilData, UtilObject, translate, Action, C } from 'Lib';
+import { I, S, U, Relation, keyboard, translate, Action, C } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -108,7 +108,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				{isLoading ? <Loader /> : ''}
 
 				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch text={filter ? U.Common.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 
 				{this.cache && items.length && !isLoading ? (
@@ -217,7 +217,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const value = Relation.getArrayValue(data.value);
 
-		return UtilCommon.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
+		return U.Common.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
 	};
 
 	reload () {
@@ -231,7 +231,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const { filter } = data;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() }
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() }
 		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
@@ -241,7 +241,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			this.setState({ isLoading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
 			fullText: filter,
@@ -319,7 +319,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const { onChange, maxCount } = data;
 
-		let value = UtilCommon.arrayUnique(Relation.getArrayValue(data.value).concat(id));
+		let value = U.Common.arrayUnique(Relation.getArrayValue(data.value).concat(id));
 		if (maxCount) {
 			value = value.slice(value.length - maxCount, value.length);
 		};

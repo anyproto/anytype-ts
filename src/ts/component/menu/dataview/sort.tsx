@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'Component';
-import { I, C, S, Relation, UtilCommon, keyboard, analytics, translate } from 'Lib';
+import { I, C, S, U, Relation, keyboard, analytics, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -230,7 +230,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { getView } = data;
 		const view = getView();
 
-		return view ? UtilCommon.objectCopy(view.sorts || []) : [];
+		return view ? U.Common.objectCopy(view.sorts || []) : [];
 	};
 
 	getRelationOptions () {

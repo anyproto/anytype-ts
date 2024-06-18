@@ -1,5 +1,5 @@
 import * as Docs from 'Docs';
-import { I, S, Storage, UtilCommon } from 'Lib';
+import { I, S, U, Storage } from 'Lib';
 
 class Onboarding {
 
@@ -101,7 +101,7 @@ class Onboarding {
 			param.containerHorizontal = Number(param.containerHorizontal) || I.MenuDirection.Left;
 
 			const recalcRect = () => {
-				const container = UtilCommon.getScrollContainer(isPopup);
+				const container = U.Common.getScrollContainer(isPopup);
 				const height = container.height();
 				const width = container.width();
 				const scrollTop = $(window).scrollTop();

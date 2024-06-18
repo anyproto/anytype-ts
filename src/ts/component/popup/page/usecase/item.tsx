@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
-import { I, C, S, UtilCommon, UtilFile, UtilDate, translate, UtilSpace, analytics } from 'Lib';
+import { I, C, S, U, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Mousewheel } from 'swiper/modules';
 
@@ -53,7 +53,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 				<div className="titleWrap">
 					<div className="side left">
 						<Title text={object.title} />
-						<Label text={UtilCommon.sprintf(translate('popupUsecaseAuthor'), author)} onClick={() => onAuthor(object.author)} />
+						<Label text={U.Common.sprintf(translate('popupUsecaseAuthor'), author)} onClick={() => onAuthor(object.author)} />
 					</div>
 					<div className="side right">
 						<Button ref={ref => this.refButton = ref} id="button-install" text={translate('popupUsecaseInstall')} arrow={true} onClick={this.onMenu} />
@@ -99,8 +99,8 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 								<Tag key={i} text={name} />
 							))}
 						</div>
-						<Label text={UtilCommon.sprintf(translate('popupUsecaseUpdated'), UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), UtilDate.now()))} />
-						<Label text={UtilFile.size(object.size)} />
+						<Label text={U.Common.sprintf(translate('popupUsecaseUpdated'), U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrBeforeDay), U.Date.now()))} />
+						<Label text={U.File.size(object.size)} />
 					</div>
 				</div>
 			</div>
@@ -166,7 +166,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 					analytics.event('ClickGalleryInstallSpace', { type: isNew ? 'New' : 'Existing' });
 
 					if (isNew) {
-						C.WorkspaceCreate({ name: object.title, iconOption: UtilCommon.rand(1, Constant.iconCnt) }, I.Usecase.None, (message: any) => {
+						C.WorkspaceCreate({ name: object.title, iconOption: U.Common.rand(1, Constant.iconCnt) }, I.Usecase.None, (message: any) => {
 							if (!message.error.code) {
 								cb(message.objectId, true);
 
@@ -194,8 +194,8 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 			list.push({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate') });
 		};
 
-		list = list.concat(UtilSpace.getList()
-			.filter(it => UtilSpace.canMyParticipantWrite(it.targetSpaceId))
+		list = list.concat(U.Space.getList()
+			.filter(it => U.Space.canMyParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, iconSize: 48, object: it })));
 		
 		return list;

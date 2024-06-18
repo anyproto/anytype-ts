@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Button } from 'Component';
-import { C, I, S, keyboard, UtilMenu, translate, Action, UtilObject, analytics } from 'Lib';
+import { I, C, S, U, keyboard, translate, Action, analytics } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -135,7 +135,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		let layoutName = translate('menuWidgetWidgetType');
 
 		if (this.target) {
-			sourceName = UtilObject.name(this.target);
+			sourceName = U.Object.name(this.target);
 		};
 
 		if (this.layout !== null) {
@@ -165,11 +165,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			});
 		};
 
-		return UtilMenu.sectionsMap(sections);
+		return U.Menu.sectionsMap(sections);
 	};
 
 	checkState () {
-		const setLayouts = UtilObject.getSetLayouts();
+		const setLayouts = U.Object.getSetLayouts();
 		const layoutOptions = this.getLayoutOptions().map(it => it.id);
 
 		if (this.isCollection()) {
@@ -188,7 +188,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		this.layout = layoutOptions.includes(this.layout) ? this.layout : (layoutOptions.length ? layoutOptions[0] : null);
 
-		const limitOptions = UtilMenu.getWidgetLimits(this.layout).map(it => Number(it.id));
+		const limitOptions = U.Menu.getWidgetLimits(this.layout).map(it => Number(it.id));
 
 		this.limit = limitOptions.includes(this.limit) ? this.limit : (limitOptions.length ? limitOptions[0] : null);
 	};
@@ -217,9 +217,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		if (this.target) {
 			if (!isCollection) {
-				const isSet = UtilObject.isSetLayout(this.target.layout);
-				const setLayouts = UtilObject.getSetLayouts();
-				const treeSkipLayouts = setLayouts.concat(UtilObject.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
+				const isSet = U.Object.isSetLayout(this.target.layout);
+				const setLayouts = U.Object.getSetLayouts();
+				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
 
 				// Sets can only become Link and List layouts, non-sets can't become List
 				if (treeSkipLayouts.includes(this.target.layout)) {
@@ -286,7 +286,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			case 'source': {
 				const templateType = S.Record.getTemplateType();
 				const filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 				];
 
@@ -353,7 +353,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			case 'limit':
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
-					options: UtilMenu.getWidgetLimits(this.layout),
+					options: U.Menu.getWidgetLimits(this.layout),
 					value: String(this.limit || ''),
 					onSelect: (e, option) => {
 						this.limit = Number(option.id);

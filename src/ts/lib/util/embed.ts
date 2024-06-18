@@ -1,7 +1,8 @@
-import { I, UtilCommon } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, U } from 'Lib';
 
+const Constant = require('json/constant.json');
 const DOMAINS: any = {};
+
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
 DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.[^\/]+/maps' ];
@@ -20,7 +21,7 @@ const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 class UtilEmbed {
 
 	getHtml (processor: I.EmbedProcessor, content: any): string {
-		const fn = UtilCommon.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
+		const fn = U.Common.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
 		return this[fn] ? this[fn](content) : content;
 	};
 

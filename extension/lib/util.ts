@@ -1,7 +1,6 @@
-import { S, UtilData, dispatcher } from 'Lib';
+import { S, U, dispatcher } from 'Lib';
 
 const Extension = require('json/extension.json');
-
 const INDEX_POPUP = '/popup/index.html';
 const INDEX_IFRAME = '/iframe/index.html'
 
@@ -50,7 +49,7 @@ class Util {
 
 	authorize (appKey: string, onSuccess?: () => void, onError?: (error) => void) {
 		S.Auth.appKeySet(appKey);
-		UtilData.createSession('', appKey, (message: any) => {
+		U.Data.createSession('', appKey, (message: any) => {
 			if (message.error.code) {
 				if (onError) {
 					onError(message.error);

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
 import { Title, Label, Phrase } from 'Component';
-import { I, C, S, translate, analytics, UtilCommon, Storage, Renderer } from 'Lib';
+import { I, C, S, U, translate, analytics, Storage, Renderer } from 'Lib';
 
 const Theme = require('json/theme.json');
 
@@ -82,7 +82,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 	onToggle (isHidden: boolean): void {
 		if (!isHidden) {
-			UtilCommon.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
+			U.Common.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
 			analytics.event('KeychainCopy', { type: 'ScreenSettings' });
 		};
 	};

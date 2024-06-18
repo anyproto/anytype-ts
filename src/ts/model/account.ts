@@ -1,4 +1,4 @@
-import { I, UtilCommon } from 'Lib';
+import { I, U } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class AccountInfo implements I.AccountInfo {
@@ -39,7 +39,7 @@ class AccountInfo implements I.AccountInfo {
 			networkId: observable,
 		});
 
-		intercept(this as any, change => UtilCommon.intercept(this, change));
+		intercept(this as any, change => U.Common.intercept(this, change));
 		return this;
 	};
 
@@ -67,7 +67,7 @@ class AccountStatus implements I.AccountStatus {
 			date: observable,
 		});
 
-		intercept(this as any, change => UtilCommon.intercept(this, change));
+		intercept(this as any, change => U.Common.intercept(this, change));
 		return this;
 	};
 
@@ -91,7 +91,7 @@ class Account implements I.Account {
 			status: observable,
 		});
 
-		intercept(this as any, change => UtilCommon.intercept(this, change));
+		intercept(this as any, change => U.Common.intercept(this, change));
 		return this;
 	};
 

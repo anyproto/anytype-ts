@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, Mark, UtilData, focus, keyboard, Storage, translate, UtilObject, analytics } from 'Lib';
+import { I, C, S, U, Mark, focus, keyboard, Storage, translate, analytics } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -29,7 +29,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		const { type, content } = block;
 		const { style } = content;
-		const styleIcon = UtilData.styleIcon(type, style);
+		const styleIcon = U.Data.styleIcon(type, style);
 		const colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
 		const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 		const canTurn = block.canTurn() && !isInsideTable;
@@ -259,7 +259,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					options: [
 						{ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true },
 						{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
-						{ id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(block.hAlign) ].join(' '), arrow: true },
+						{ id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(block.hAlign) ].join(' '), arrow: true },
 						{ id: 'blockRemove', icon: 'remove', name: translate('commonDelete') }
 					],
 					onOver: (e: any, item: any) => {
@@ -409,7 +409,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					type: I.NavigationType.Move, 
 					skipIds: [ rootId ],
@@ -426,7 +426,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, blockIds, item.uniqueKey, item.defaultTemplateId, (message: any) => {

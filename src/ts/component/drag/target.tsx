@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, UtilCommon } from 'Lib';
+import { I, U } from 'Lib';
 
 interface Props {
 	id: string;
@@ -64,7 +64,7 @@ class DropTarget extends React.Component<Props> {
 				className={cn.join(' ')} 
 				onClick={this.onClick} 
 				onContextMenu={onContextMenu}
-				{...UtilCommon.dataProps({
+				{...U.Common.dataProps({
 					id,
 					type,
 					style: Number(style) || 0,

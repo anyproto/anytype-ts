@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, S, translate, UtilDate } from 'Lib';
+import { I, S, U, translate } from 'Lib';
 
 class MenuThreadStatus extends React.Component<I.Menu> {
 
@@ -39,12 +39,12 @@ class MenuThreadStatus extends React.Component<I.Menu> {
 		if (cafe.lastPushSucceed) {
 			cafeStatus = [
 				{ key: translate('menuThreadStatusObjectBackedUp'), collapse: true },
-				{ key: translate('menuThreadStatusUpdatesRequested'), value: cafe.lastPulled ? UtilDate.timeAgo(cafe.lastPulled) : translate('menuThreadStatusNoInteraction') }
+				{ key: translate('menuThreadStatusUpdatesRequested'), value: cafe.lastPulled ? U.Date.timeAgo(cafe.lastPulled) : translate('menuThreadStatusNoInteraction') }
 			];
 		} else {
 			cafeStatus = [
 				{ key: translate('menuThreadStatusSomeChangesNotBackedUp'), collapse: true },
-				{ key: translate('menuThreadStatusUpdatesRequested'), value: cafe.lastPulled ? UtilDate.timeAgo(cafe.lastPulled) : translate('menuThreadStatusNoInteraction') }
+				{ key: translate('menuThreadStatusUpdatesRequested'), value: cafe.lastPulled ? U.Date.timeAgo(cafe.lastPulled) : translate('menuThreadStatusNoInteraction') }
 			];
 		};
 
@@ -68,11 +68,11 @@ class MenuThreadStatus extends React.Component<I.Menu> {
 							const fields = [
 								{
 									key: translate('menuThreadStatusUpdatesRequested'),
-									value: (item.lastPulled ? UtilDate.timeAgo(item.lastPulled) : translate('menuThreadStatusNoInteraction')),
+									value: (item.lastPulled ? U.Date.timeAgo(item.lastPulled) : translate('menuThreadStatusNoInteraction')),
 								},
 								{
 									key: translate('menuThreadStatusLastEditsReceived'),
-									value: (item.lastEdited ? UtilDate.timeAgo(item.lastEdited) : translate('menuThreadStatusNoChanges')),
+									value: (item.lastEdited ? U.Date.timeAgo(item.lastEdited) : translate('menuThreadStatusNoChanges')),
 								},
 							];
 							return <Item key={i} {...item} fields={fields} />;

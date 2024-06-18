@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, S, UtilObject, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
+import { I, S, U, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
 
 import HeaderAuthIndex from './auth';
@@ -128,7 +128,7 @@ class Header extends React.Component<Props> {
 	onExpand () {
 		const { rootId, layout } = this.props;
 
-		S.Popup.closeAll(null, () => UtilObject.openRoute({ id: rootId, layout }));
+		S.Popup.closeAll(null, () => U.Object.openRoute({ id: rootId, layout }));
 	};
 
 	onSearch () {

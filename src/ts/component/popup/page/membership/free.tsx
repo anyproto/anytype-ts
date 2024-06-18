@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label, Input, Button, Checkbox, Pin } from 'Component';
-import { I, C, S, translate, UtilCommon, UtilRouter, analytics, UtilDate } from 'Lib';
+import { I, C, S, U, translate, analytics } from 'Lib';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -86,7 +87,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 						<div onClick={this.onResend} className={[ 'resend', (countdown ? 'countdown' : '') ].join(' ')}>
 							{translate('popupMembershipResend')}
-							{countdown ? UtilCommon.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
+							{countdown ? U.Common.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
 						</div>
 					</React.Fragment>
 				);
@@ -120,7 +121,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 			return;
 		};
 
-		const now = UtilDate.now();
+		const now = U.Date.now();
 
 		this.setState({ verificationStep: 2 });
 		this.startCountdown(60 - (now - emailConfirmationTime));
@@ -164,7 +165,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 				return;
 			};
 
-			UtilRouter.go('/main/membership', {});
+			U.Router.go('/main/membership', {});
 		});
 	};
 
@@ -191,7 +192,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			const value = this.refEmail?.getValue();
-			const isValid = UtilCommon.checkEmail(value);
+			const isValid = U.Common.checkEmail(value);
 
 			if (value && !isValid) {
 				this.setStatus('error', translate('errorIncorrectEmail'));
@@ -207,7 +208,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 			return;
 		};
 
-		const now = UtilDate.now();
+		const now = U.Date.now();
 		const hasCountdown = now - emailConfirmationTime < 60;
 
 		this.setState({ hasCountdown });
@@ -217,7 +218,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		const { emailConfirmationTime } = S.Common;
 
 		if (!emailConfirmationTime) {
-			S.Common.emailConfirmationTimeSet(UtilDate.now());
+			S.Common.emailConfirmationTimeSet(U.Date.now());
 		};
 
 		this.setState({ countdown: seconds, hasCountdown: true });

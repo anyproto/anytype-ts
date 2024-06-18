@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Select, Button } from 'Component';
-import { I, S, UtilMenu, UtilCommon, translate, Action, analytics, Renderer, Preview } from 'Lib';
+import { I, S, U, translate, Action, analytics, Renderer, Preview } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends React.Component<I.Popup> {
@@ -24,8 +24,8 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	render () {
 		const { mode, path, userPath } = this.config;
 		const { interfaceLang } = S.Common;
-		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
-		const isDefault = path == UtilCommon.getElectron().defaultPath();
+		const interfaceLanguages = U.Menu.getInterfaceLanguages();
+		const isDefault = path == U.Common.getElectron().defaultPath();
 		const networkModes: any[] = ([
 			{ id: I.NetworkMode.Default },
 			{ id: I.NetworkMode.Local },
@@ -81,7 +81,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 							<div className="item" onMouseEnter={e => this.onTooltipShow(e, path)} onMouseLeave={this.onTooltipHide}>
 								<div onClick={() => this.onPathClick(path)}>
 									<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
-									{path ? <Label className="small" text={UtilCommon.shorten(path, 32)} /> : ''}
+									{path ? <Label className="small" text={U.Common.shorten(path, 32)} /> : ''}
 								</div>
 								<Button className="c28" text={translate('commonUpload')} onClick={this.onUpload} />
 							</div>
@@ -90,7 +90,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 						<div className="item" onMouseEnter={e => this.onTooltipShow(e, userPath)} onMouseLeave={this.onTooltipHide}>
 							<div onClick={() => this.onPathClick(userPath)}>
 								<Label text={translate('popupSettingsOnboardingStoragePath')} />
-								<Label className="small" text={UtilCommon.shorten(userPath, 32)} />
+								<Label className="small" text={U.Common.shorten(userPath, 32)} />
 							</div>
 							<div className="buttons">
 								<Button className="c28" text={translate('commonChange')} onClick={this.onChangeStorage} />
@@ -110,7 +110,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	componentDidMount(): void {
 		const { networkConfig } = S.Auth;
 		const { mode, path } = networkConfig;
-		const userPath = UtilCommon.getElectron().userPath();
+		const userPath = U.Common.getElectron().userPath();
 
 		this.config = {
 			userPath,
@@ -132,7 +132,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	onSave () {
 		const { networkConfig } = S.Auth;
-		const userPath = UtilCommon.getElectron().userPath();
+		const userPath = U.Common.getElectron().userPath();
 
 		if (this.config.mode !== networkConfig.mode) {
 			analytics.event('SelectNetwork', { route: analytics.route.onboarding, type: this.config.mode });
@@ -154,7 +154,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	onPathClick (path: string) {
 		if (path) {
-			Renderer.send('pathOpen', UtilCommon.getElectron().dirname(path));
+			Renderer.send('pathOpen', U.Common.getElectron().dirname(path));
 		};
 	};
 
@@ -172,7 +172,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	onResetStorage () {
 		const onConfirm = () => {
-			this.onChange('userPath', UtilCommon.getElectron().defaultPath());
+			this.onChange('userPath', U.Common.getElectron().defaultPath());
 		};
 
 		if (this.config.mode == I.NetworkMode.Local) {

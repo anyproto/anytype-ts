@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
-import { I, S, UtilData, translate, UtilDate } from 'Lib';
+import { I, S, U, translate } from 'Lib';
 
 const MENU_ID = 'threadStatus';
 
@@ -26,8 +26,8 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 		const { info } = account;
 		const thread = S.Auth.threadGet(rootId);
 		const accounts = thread.accounts || [];
-		const status = UtilData.getThreadStatus(rootId, 'cafe');
-		const networkName = UtilData.getNetworkName();
+		const status = U.Data.getThreadStatus(rootId, 'cafe');
+		const networkName = U.Data.getNetworkName();
 
 		const Item = (item: any) => (
 			<div 
@@ -41,7 +41,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 					<div className="description">
 						<div className="side left">{translate('menuThreadListLastSync')}</div>
 						<div className="side right">
-							{UtilDate.timeAgo(Math.max(item.lastPulled, item.lastEdited))}
+							{U.Date.timeAgo(Math.max(item.lastPulled, item.lastEdited))}
 						</div>
 					</div>
 				</div>
@@ -62,7 +62,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 					<div className="info">
 						<div className="name">{networkName}</div>
 						{info.networkId ? (
-							<div className={[ 'description', UtilData.threadColor(status) ].join(' ')}>
+							<div className={[ 'description', U.Data.threadColor(status) ].join(' ')}>
 								{translate(`threadStatus${status}`)}
 							</div>
 						) : ''}

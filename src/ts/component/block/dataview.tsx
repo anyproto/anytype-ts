@@ -4,7 +4,7 @@ import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { I, C, S, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action } from 'Lib';
+import { I, C, S, U, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action } from 'Lib';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
@@ -112,7 +112,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const cn = [ 'focusable', `c${block.id}` ];
 
 		const { groupRelationKey, pageLimit, defaultTemplateId } = view;
-		const className = [ UtilCommon.toCamelCase(`view-${I.ViewType[view.type]}`) ];
+		const className = [ U.Common.toCamelCase(`view-${I.ViewType[view.type]}`) ];
 
 		let ViewComponent: any = null;
 		let body = null;
@@ -199,7 +199,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onRef={(ref: any, id: string) => this.refCells.set(id, ref)} 
 						{...this.props}
 						{...dataviewProps}
-						pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
+						pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
 						onContext={this.onContext}
@@ -295,7 +295,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	unbind () {
 		const { isPopup, block } = this.props;
 		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear' ];
-		const ns = block.id + UtilCommon.getEventNamespace(isPopup);
+		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 	};
@@ -303,7 +303,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	rebind () {
 		const { isPopup, block } = this.props;
 		const win = $(window);
-		const ns = block.id + UtilCommon.getEventNamespace(isPopup);
+		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		this.unbind();
 
@@ -445,7 +445,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 
-		return UtilCommon.arrayUnique(keys);
+		return U.Common.arrayUnique(keys);
 	};
 
 	getLimit (type: I.ViewType): number {
@@ -479,7 +479,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = this.getSubId(groupId);
 		const records = S.Record.getRecordIds(subId, '');
 
-		return this.applyObjectOrder('', UtilCommon.objectCopy(records));
+		return this.applyObjectOrder('', U.Common.objectCopy(records));
 	};
 
 	getRecord (id: string) {
@@ -565,7 +565,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		} else {
 			menuParam.horizontal = I.MenuDirection.Center;
 			menuParam.recalcRect = () => {
-				const { ww, wh } = UtilCommon.getWindowDimensions();
+				const { ww, wh } = U.Common.getWindowDimensions();
 				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
 			};
 		};
@@ -672,7 +672,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			if ([ I.ViewType.Calendar ].includes(view.type)) {
-				UtilObject.openPopup(object);
+				U.Object.openPopup(object);
 			} else {
 				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
 				const ref = this.refCells.get(id);
@@ -830,7 +830,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: typeId, route: this.analyticsRoute() });
 
-			UtilObject.openPopup(object);
+			U.Object.openPopup(object);
 		});
 	};
 
@@ -875,10 +875,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			if (keyboard.withCommand(e)) {
 				if (!ids.length) {
-					UtilObject.openWindow(record);
+					U.Object.openWindow(record);
 				};
 			} else {
-				UtilObject.openConfig(record);
+				U.Object.openConfig(record);
 			};
 		} else {
 			ref.onClick(e);
@@ -1131,7 +1131,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const name = translate(isCollection ? 'blockDataviewEmptyTargetCollections' : 'blockDataviewEmptyTargetSets');
 				emptyProps = {
 					title: translate('blockDataviewEmptyTargetTitle'),
-					description: UtilCommon.sprintf(translate('blockDataviewEmptyTargetDescription'), name),
+					description: U.Common.sprintf(translate('blockDataviewEmptyTargetDescription'), name),
 					button: translate('blockDataviewEmptyTargetButton'),
 					onClick: () => this.onSourceSelect(`#block-${block.id} .dataviewEmpty .button`, {}),
 				};
@@ -1191,7 +1191,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
-		const skipLayouts = [ I.ObjectLayout.Participant ].concat(UtilObject.getFileAndSystemLayouts());
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
 
 		for (const type of types) {
 			if (skipLayouts.includes(type.recommendedLayout)) {
@@ -1310,7 +1310,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			this.filter = v;
 
 			if (v) {
-				UtilData.search({
+				U.Data.search({
 					filters: [],
 					sorts: [],
 					fullText: v,

@@ -1,4 +1,5 @@
-import { I, UtilCommon, translate } from 'Lib';
+import { I, U, translate } from 'Lib';
+
 const Constant = require('json/constant.json');
 
 class UtilDate {
@@ -227,16 +228,16 @@ class UtilDate {
 
 		let ret = '';
 		if (d > 0) {
-			ret = UtilCommon.sprintf('%d days ago', d);
+			ret = U.Common.sprintf('%d days ago', d);
 		} else
 		if (h > 0) {
-			ret = UtilCommon.sprintf('%d hours ago', h);
+			ret = U.Common.sprintf('%d hours ago', h);
 		} else
 		if (m > 0) {
-			ret = UtilCommon.sprintf('%d minutes ago', m);
+			ret = U.Common.sprintf('%d minutes ago', m);
 		} else
 		if (s > 0) {
-			ret = UtilCommon.sprintf('%d seconds ago', s);
+			ret = U.Common.sprintf('%d seconds ago', s);
 		};
 		return ret;
 	};
@@ -259,16 +260,16 @@ class UtilDate {
 
 		let ret = '';
 		if (d > 0) {
-			ret = UtilCommon.sprintf('%dd', d);
+			ret = U.Common.sprintf('%dd', d);
 		} else
 		if (h > 0) {
-			ret = UtilCommon.sprintf('%dh', h);
+			ret = U.Common.sprintf('%dh', h);
 		} else
 		if (m > 0) {
-			ret = UtilCommon.sprintf('%dmin', m);
+			ret = U.Common.sprintf('%dmin', m);
 		} else
 		if (s > 0) {
-			ret = UtilCommon.sprintf('%ds', s);
+			ret = U.Common.sprintf('%ds', s);
 		};
 		return ret;
 	};

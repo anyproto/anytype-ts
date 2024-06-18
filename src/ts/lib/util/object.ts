@@ -1,4 +1,4 @@
-import { I, C, S, keyboard, history as historyPopup, Renderer, UtilData, translate, UtilRouter, analytics } from 'Lib';
+import { I, C, S, U, keyboard, history as historyPopup, Renderer, translate, analytics } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -50,7 +50,7 @@ class UtilObject {
 			param = Object.assign(param, object._routeParam_);
 		};
 
-		return UtilRouter.build(param);
+		return U.Router.build(param);
 	};
 
 	universalRoute (object: any): string {
@@ -93,7 +93,7 @@ class UtilObject {
 		};
 
 		keyboard.setSource(null);
-		UtilRouter.go(`/${route}`, param || {});
+		U.Router.go(`/${route}`, param || {});
 	};
 
 	openWindow (object: any) {
@@ -160,7 +160,7 @@ class UtilObject {
 
 		const block = {
 			type: I.BlockType.Link,
-			content: UtilData.defaultLinkSettings(),
+			content: U.Data.defaultLinkSettings(),
 		};
 		
 		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, block, flags, typeKey, S.Common.space, (message: any) => {

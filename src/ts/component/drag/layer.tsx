@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import { I, M, S, UtilCommon, keyboard } from 'Lib';
+import { I, M, S, U, keyboard } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -87,14 +87,14 @@ class DragLayer extends React.Component<object, State> {
 		const { rootId, type, ids } = this.state;
 		const node = $(this.node);
 		const inner = node.find('#inner').html('');
-		const container = UtilCommon.getPageContainer(keyboard.isPopup());
+		const container = U.Common.getPageContainer(keyboard.isPopup());
 		const wrap = $('<div></div>');
 
 		switch (type) {
 			case I.DropType.Block: {
 				wrap.addClass('blocks');
 
-				const items = ids.map(id => S.Block.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(UtilCommon.objectCopy(it)));
+				const items = ids.map(id => S.Block.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(U.Common.objectCopy(it)));
 
 				items.forEach(block => {
 					const clone = container.find(`#block-${block.id}`).clone();

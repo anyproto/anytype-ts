@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, S, keyboard, UtilMenu } from 'Lib';
+import { I, S, U, keyboard } from 'Lib';
 
 class MenuBlockHAlign extends React.Component<I.Menu> {
 	
@@ -69,7 +69,7 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 			};
 		};
 
-		return UtilMenu.getHAlign(restricted);
+		return U.Menu.getHAlign(restricted);
 	};
 	
 	onOver (e: any, item: any) {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, UtilData, UtilObject, UtilCommon, translate, analytics, focus } from 'Lib';
+import { I, S, U, translate, analytics, focus } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -138,7 +138,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const options: any[] = [
 			{ id: 'change', icon: 'coverChange', name: translate('pageHeadControlButtonsChangeCover') },
 		];
-		if (UtilData.coverIsImage(object.coverType)) {
+		if (U.Data.coverIsImage(object.coverType)) {
 			options.push({ id: 'position', icon: 'coverPosition', name: translate('pageHeadControlButtonsReposition') });
 		};
 		if (hasCover) {
@@ -171,7 +171,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 							break;
 
 						case 'remove':
-							UtilObject.setCover(rootId, I.CoverType.None, '');
+							U.Object.setCover(rootId, I.CoverType.None, '');
 							analytics.event('RemoveCover');
 							break;
 					};
@@ -202,7 +202,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 	};
 
 	resize () {
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const node = $(this.node);
 
 		ww <= 900 ? node.addClass('small') : node.removeClass('small');

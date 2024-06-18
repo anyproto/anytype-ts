@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label } from 'Component';
-import { I, S, translate, UtilData, analytics } from 'Lib';
+import { I, S, U, translate, analytics } from 'Lib';
 
 import PageFree from './page/membership/free';
 import PagePaid from './page/membership/paid';
@@ -30,7 +30,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 		const { param } = this.props;
 		const { data } = param;
 		const { tier, success } = data;
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 		const cn = [ 'sides', `tier${tier}`, tierItem.color ];
 
 		let content: any = null;

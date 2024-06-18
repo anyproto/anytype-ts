@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
-import { I, S, keyboard, UtilCommon, analytics, Storage } from 'Lib';
+import { I, S, U, keyboard, analytics, Storage } from 'Lib';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -216,7 +216,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		};
 
 		if (component) {
-			cn.push(UtilCommon.toCamelCase('menu-' + component));
+			cn.push(U.Common.toCamelCase('menu-' + component));
 		} else {
 			cn.push(menuId);
 		};
@@ -447,7 +447,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	getBorderTop () {
-		return Number(window.AnytypeGlobalConfig?.menuBorderTop) || UtilCommon.sizeHeader();
+		return Number(window.AnytypeGlobalConfig?.menuBorderTop) || U.Common.sizeHeader();
 	};
 	
 	getBorderBottom () {
@@ -481,7 +481,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const node = $(this.node);
 			const menu = node.find('.menu');
 			const arrow = menu.find('#arrowDirection');
-			const winSize = UtilCommon.getWindowDimensions();
+			const winSize = U.Common.getWindowDimensions();
 			const ww = winSize.ww;
 			const wh = win.scrollTop() + winSize.wh;
 			const width = param.width ? param.width : menu.outerWidth();
@@ -598,7 +598,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			menu.css(css);
 
 			if (isSub) {
-				const coords = UtilCommon.objectCopy(keyboard.mouse.page);
+				const coords = U.Common.objectCopy(keyboard.mouse.page);
 				const offset = 8;
 
 				let w = 0;
@@ -1040,7 +1040,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			id = this.props.id;
 		};
 
-		return UtilCommon.toCamelCase('menu-' + id);
+		return U.Common.toCamelCase('menu-' + id);
 	};
 
 	getElement () {

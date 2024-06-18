@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, S, analytics, keyboard, UtilData, Action, UtilCommon, translate, UtilSpace } from 'Lib';
+import { I, C, S, U, analytics, keyboard, Action, translate } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -239,10 +239,10 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			this.setState({ loading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
-			keys: UtilData.typeRelationKeys(),
+			keys: U.Data.typeRelationKeys(),
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limit.menuRecords,
@@ -280,10 +280,10 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.spaceId == space));
 		const librarySources = library.map(it => it.sourceObject);
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
 			{ id: 'library', name: translate('menuTypeSuggestMyTypes'), children: library },
@@ -295,7 +295,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 				sections = sections.concat([
 					{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
-					{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), filter) } ] }
+					{ children: [ { id: 'add', name: U.Common.sprintf(translate('menuTypeSuggestCreateType'), filter) } ] }
 				]);
 			} else {
 				sections = sections.concat([
@@ -405,7 +405,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 				menuParam.data = Object.assign(menuParam.data, {
 					ignoreWorkspace: true,
-					keys: UtilData.typeRelationKeys(),
+					keys: U.Data.typeRelationKeys(),
 					filters,
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },

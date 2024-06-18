@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, S, UtilObject, translate, Relation } from 'Lib';
+import { I, S, U, translate, Relation } from 'Lib';
 
 interface State { 
 	isEditing: boolean; 
@@ -97,7 +97,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 
 		if (canOpen && !canEdit) {
 			e.stopPropagation();
-			UtilObject.openPopup(item);
+			U.Object.openPopup(item);
 		};
 	};
 
