@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Label, Button } from 'Component';
-import { blockStore } from 'Store';
 import { Dataview, I, C, M, S, UtilCommon, Relation, keyboard, translate, UtilRouter, UtilObject } from 'Lib';
 
 import WidgetViewList from './list';
@@ -167,11 +166,11 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const { block, isSystemTarget, getData } = this.props;
 		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
-		const srcBlock = blockStore.getLeaf(targetBlockId, Constant.blockId.dataview);
+		const srcBlock = S.Block.getLeaf(targetBlockId, Constant.blockId.dataview);
 
 		// Update block in widget with source block if object is open
 		if (srcBlock) {
-			let dstBlock = blockStore.getLeaf(rootId, Constant.blockId.dataview);
+			let dstBlock = S.Block.getLeaf(rootId, Constant.blockId.dataview);
 
 			if (dstBlock) {
 				dstBlock = Object.assign(dstBlock, srcBlock);
@@ -283,7 +282,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	getObject () {
-		return S.Detail.get(blockStore.widgets, this.props.block.getTargetObjectId());
+		return S.Detail.get(S.Block.widgets, this.props.block.getTargetObjectId());
 	};
 
 	getLimit (): number {
@@ -303,7 +302,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	onChangeView (viewId: string) {
-		C.BlockWidgetSetViewId(blockStore.widgets, this.props.parent.id, viewId);
+		C.BlockWidgetSetViewId(S.Block.widgets, this.props.parent.id, viewId);
 	};
 
 	getRecordIds () {
@@ -324,7 +323,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const object = this.getObject();
 		const isCollection = object.layout == I.ObjectLayout.Collection;
 
-		let isAllowed = blockStore.checkFlags(rootId, Constant.blockId.dataview, [ I.RestrictionDataview.Object ]);
+		let isAllowed = S.Block.checkFlags(rootId, Constant.blockId.dataview, [ I.RestrictionDataview.Object ]);
 		if (!isAllowed) {
 			return false;
 		};

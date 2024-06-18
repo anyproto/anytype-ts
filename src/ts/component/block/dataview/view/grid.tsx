@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import $ from 'jquery';
 import { Icon, LoadMore } from 'Component';
 import { I, C, S, UtilCommon, translate, keyboard, Relation } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 const Constant = require('json/constant.json');
@@ -355,7 +355,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 	resize () {
 		const { rootId, block, isPopup, isInline, getVisibleRelations } = this.props;
-		const parent = blockStore.getParentLeaf(rootId, block.id);
+		const parent = S.Block.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');

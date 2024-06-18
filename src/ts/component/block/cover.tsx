@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Drag, Cover, Loader, Label } from 'Component';
 import { I, C, S, UtilCommon, UtilData, UtilObject, focus, translate, keyboard } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
 
 const Constant = require('json/constant.json');
@@ -65,7 +65,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const object = S.Detail.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
 		const isImage = UtilData.coverIsImage(coverType);
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		const cn = [ 'elements', 'editorControlElements' ];
 
 		if (!root) {

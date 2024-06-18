@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted } from 'Component';
 import { I, C, S, UtilCommon, Action, Renderer, translate, UtilRouter } from 'Lib';
-import { blockStore } from 'Store';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -37,7 +36,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -47,7 +46,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			return <Loader id="loader" />;
 		};
 
-		const blocks = blockStore.getBlocks(rootId);
+		const blocks = S.Block.getBlocks(rootId);
 		const file = blocks.find(it => it.isFile());
 		const relations = blocks.filter(it => it.isRelation());
 
@@ -252,7 +251,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 	onOpen (e: any) {
 		const rootId = this.getRootId();
-		const blocks = blockStore.getBlocks(rootId);
+		const blocks = S.Block.getBlocks(rootId);
 		const block = blocks.find(it => it.isFile());
 
 		if (!block) {
@@ -268,7 +267,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 	onDownload (e: any) {
 		const rootId = this.getRootId();
-		const blocks = blockStore.getBlocks(rootId);
+		const blocks = S.Block.getBlocks(rootId);
 		const block = blocks.find(it => it.isFile());
 		
 		Action.download(block, 'media');

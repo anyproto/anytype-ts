@@ -3,7 +3,6 @@ import raf from 'raf';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } from 'Component';
-import { blockStore } from 'Store';
 import { I, S, UtilCommon, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
 
@@ -37,9 +36,9 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const rootId = keyboard.getRootId();
 		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions, source } = object;
-		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
+		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
-		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const canDrag = isPreview && (block.content.targetBlockId == Constant.widgetId.favorite);
 		const hasMore = UtilSpace.canMyParticipantWrite();
 

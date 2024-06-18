@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
 import { I, S, UtilObject, UtilData, keyboard, translate, UtilSpace } from 'Lib';
-import { blockStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 import HeaderBanner from 'Component/page/elements/head/banner';
 
 const Constant = require('json/constant.json');
@@ -30,7 +30,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	render () {
 		const { rootId, onSearch, onTooltipShow, onTooltipHide, isPopup, renderLeftIcons } = this.props;
 		const { templatesCnt } = this.state;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;

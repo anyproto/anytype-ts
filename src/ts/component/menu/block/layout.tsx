@@ -1,7 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { blockStore } from 'Store';
 import { I, S, keyboard, analytics, UtilData, UtilObject, UtilMenu, UtilCommon, translate } from 'Lib';
 import { menuStore } from 'Store';
 const Constant = require('json/constant.json');
@@ -73,8 +72,8 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const allowedLayout = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Layout ]);
-		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLayout = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = S.Detail.get(rootId, rootId, [ 'layoutAlign' ]);
 		
 		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };

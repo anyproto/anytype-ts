@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
 import { C, I, S, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace, keyboard } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -51,7 +51,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block, isPreview, isEditing, className, onDragStart, onDragOver, setPreview } = this.props;
 		const child = this.getTargetBlock();
 		const root = '';
-		const childrenIds = blockStore.getChildrenIds(root, root);
+		const childrenIds = S.Block.getChildrenIds(root, root);
 		const { layout, limit, viewId } = block.content;
 
 		if (!child && (layout != I.WidgetLayout.Space)) {
@@ -65,7 +65,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const withSelect = !this.isSystemTarget() && (!isPreview || !UtilCommon.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
 		const canCreate = this.canCreate();
-		const canDrop = object && !this.isSystemTarget() && !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+		const canDrop = object && !this.isSystemTarget() && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 		const isFavorite = targetBlockId == Constant.widgetId.favorite;
 
 		const props = {
@@ -167,7 +167,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				<DropTarget 
 					{...this.props} 
 					isTargetTop={true} 
-					rootId={blockStore.widgets} 
+					rootId={S.Block.widgets} 
 					id={block.id} 
 					dropType={I.DropType.Widget} 
 					canDropMiddle={false} 
@@ -178,7 +178,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				<DropTarget 
 					{...this.props} 
 					isTargetBottom={true} 
-					rootId={blockStore.widgets} 
+					rootId={S.Block.widgets} 
 					id={block.id} 
 					dropType={I.DropType.Widget} 
 					canDropMiddle={false} 
@@ -269,15 +269,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	getTargetBlock (): I.Block {
-		const { widgets } = blockStore;
+		const { widgets } = S.Block;
 		const { block } = this.props;
-		const childrenIds = blockStore.getChildrenIds(widgets, block.id);
+		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
 
-		return childrenIds.length ? blockStore.getLeaf(widgets, childrenIds[0]) : null;
+		return childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
 	};
 
 	getObject () {
-		const { widgets } = blockStore;
+		const { widgets } = S.Block;
 		const child = this.getTargetBlock();
 
 		if (!child) {
@@ -633,8 +633,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	getFavoriteIds (): string[] {
-		const { root } = blockStore;
-		const ids = blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
+		const { root } = S.Block;
+		const ids = S.Block.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
 		const items = ids.map(id => S.Detail.get(root, id)).filter(it => !it.isArchived).map(it => it.id);
 
 		return items;
@@ -729,7 +729,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				return false;
 			};
 		} else
-		if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
+		if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 			return false;
 		};
 

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Block } from 'Component';
-import { blockStore } from 'Store';
 import { I, M, S, UtilData, translate, UtilCommon } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -25,13 +24,13 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 
 	render () {
 		const { rootId, onCopy } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
 		};
 
-		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
+		const childrenIds = S.Block.getChildrenIds(rootId, rootId);
 		const check = UtilData.checkDetails(rootId);
 		const object = S.Detail.get(rootId, rootId, [ 'layoutAlign' ]);
 		const icon = new M.Block({ id: `${rootId}-icon`, type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
@@ -43,7 +42,7 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 		const isParticipant = root.isObjectParticipant();
 
 		let head = null;
-		let children = blockStore.getChildren(rootId, rootId);
+		let children = S.Block.getChildren(rootId, rootId);
 
 		if (isSet || isCollection) {
 			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
@@ -95,7 +94,7 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 	};
 	
 	componentDidUpdate () {
-		blockStore.updateNumbers(this.props.rootId);
+		S.Block.updateNumbers(this.props.rootId);
 		$(this.node).scrollTop(this.top);
 	};
 

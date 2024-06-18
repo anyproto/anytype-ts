@@ -1,5 +1,4 @@
 import arrayMove from 'array-move';
-import { blockStore } from 'Store';
 import { I, M, C, S, UtilCommon, UtilData, UtilObject, Relation, translate, UtilDate } from 'Lib';
 
 const Constant = require('json/constant.json');
@@ -113,7 +112,7 @@ class Dataview {
 		}, param);
 
 		const { rootId, blockId, newViewId, keys, offset, limit, clear, collectionId } = param;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		const view = S.Record.getView(rootId, blockId, newViewId);
 		
 		if (!view) {
@@ -204,7 +203,7 @@ class Dataview {
 			return object.layout == I.ObjectLayout.Collection;
 		};
 
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return false;
 		};
@@ -217,7 +216,7 @@ class Dataview {
 
 	loadGroupList (rootId: string, blockId: string, viewId: string, object: any) {
 		const view = this.getView(rootId, blockId, viewId);
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!view || !block) {
 			return;
@@ -308,7 +307,7 @@ class Dataview {
 	};
 
 	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
@@ -318,11 +317,11 @@ class Dataview {
 			el.groups = groups;
 		};
 
-		blockStore.updateContent(rootId, blockId, block.content);
+		S.Block.updateContent(rootId, blockId, block.content);
 	};
 
 	groupOrderUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
@@ -336,7 +335,7 @@ class Dataview {
 			groupOrder.push({ viewId, groups });
 		};
 
-		blockStore.updateContent(rootId, blockId, { groupOrder });
+		S.Block.updateContent(rootId, blockId, { groupOrder });
 	};
 
 	applyGroupOrder (rootId: string, blockId: string, viewId: string, groups: any[]) {
@@ -344,7 +343,7 @@ class Dataview {
 			return groups;
 		};
 
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return groups;
 		};
@@ -374,7 +373,7 @@ class Dataview {
 			return records;
 		};
 
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return records;
 		};

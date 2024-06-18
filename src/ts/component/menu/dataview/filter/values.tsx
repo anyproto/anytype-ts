@@ -4,9 +4,9 @@ import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { I, S, UtilCommon, translate, keyboard, analytics, Relation, UtilDate, UtilObject } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
-import { menuStore, blockStore } from 'Store';
-const Constant = require('json/constant.json');
+import { menuStore } from 'Store';
 
+const Constant = require('json/constant.json');
 const TIMEOUT = 1000;
 
 const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<I.Menu> {
@@ -753,7 +753,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		return readonly || !allowedView;
 	};

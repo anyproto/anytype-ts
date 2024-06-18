@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { C, S, UtilData, Preview, analytics, Storage } from 'Lib';
-import { blockStore, menuStore, popupStore } from 'Store';
+import { menuStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -148,7 +148,7 @@ class UtilRouter {
 				animate: true,
 				onFadeOut: () => {
 					analytics.removeContext();
-					blockStore.clear(blockStore.widgets);
+					S.Block.clear(S.Block.widgets);
 					S.Common.defaultType = '';
 					Storage.set('spaceId', id);
 

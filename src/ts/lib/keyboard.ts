@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, C, S, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate, UtilSpace } from 'Lib';
-import { blockStore, menuStore, popupStore } from 'Store';
+import { menuStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -874,7 +874,7 @@ class Keyboard {
 	};
 
 	onLock (rootId: string, v: boolean, route?: string) {
-		const block = blockStore.getLeaf(rootId, rootId);
+		const block = S.Block.getLeaf(rootId, rootId);
 		if (!block) {
 			return;
 		};
@@ -891,7 +891,7 @@ class Keyboard {
 
 	onToggleLock () {
 		const rootId = this.getRootId();
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		
 		if (root) {
 			this.onLock(rootId, !root.isLocked(), analytics.route.shortcut);

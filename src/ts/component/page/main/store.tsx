@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
 import { I, C, S, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
-import { blockStore, menuStore, popupStore } from 'Store';
+import { menuStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -154,7 +154,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		);
 
 		const Item = (item: any) => {
-			const allowedDelete = canWrite && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+			const allowedDelete = canWrite && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 			const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
 			const icons: any[] = [];
 			const buttons: any[] = [];
@@ -647,7 +647,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
+		if (S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
 			Action.uninstall(item, true);
 			analytics.event('ObjectUninstall', { route: analytics.route.store });
 		};

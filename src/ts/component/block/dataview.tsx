@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { I, C, S, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -1176,7 +1176,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	isAllowedObject () {
 		const { rootId, block, readonly } = this.props;
 
-		let isAllowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		let isAllowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		if (!isAllowed) {
 			return false;
 		};

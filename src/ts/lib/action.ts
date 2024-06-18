@@ -1,12 +1,12 @@
 import { I, C, S, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
-import { blockStore, popupStore, menuStore } from 'Store';
+import { popupStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
 class Action {
 
 	pageClose (rootId: string, withCommand: boolean) {
-		const { root, widgets } = blockStore;
+		const { root, widgets } = S.Block;
 		const { space } = S.Common;
 
 		// Prevent closing of system objects
@@ -15,7 +15,7 @@ class Action {
 		};
 
 		const onClose = () => {
-			const blocks = blockStore.getBlocks(rootId, it => it.isDataview());
+			const blocks = S.Block.getBlocks(rootId, it => it.isDataview());
 
 			for (const block of blocks) {
 				this.dbClearBlock(rootId, block.id);
@@ -23,7 +23,7 @@ class Action {
 
 			this.dbClearRoot(rootId);
 
-			blockStore.clear(rootId);
+			S.Block.clear(rootId);
 			S.Auth.threadRemove(rootId);
 		};
 
@@ -129,7 +129,7 @@ class Action {
 	};
 
 	remove (rootId: string, blockId: string, blockIds: string[]) {
-		const next = blockStore.getNextBlock(rootId, blockId, -1, (it: any) => {
+		const next = S.Block.getNextBlock(rootId, blockId, -1, (it: any) => {
 			return it.type == I.BlockType.Text;
 		});
 		
@@ -147,8 +147,8 @@ class Action {
 	};
 
 	removeWidget (id: string, target: any) {
-		const { widgets } = blockStore;
-		const block = blockStore.getLeaf(widgets, id);
+		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, id);
 
 		if (!block) {
 			return;
@@ -160,7 +160,7 @@ class Action {
 		Storage.setToggle('widget', id, false);
 		Storage.deleteToggle(`widget${id}`);
 
-		const childrenIds = blockStore.getChildrenIds(widgets, id);
+		const childrenIds = S.Block.getChildrenIds(widgets, id);
 		if (childrenIds.length) {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
@@ -169,7 +169,7 @@ class Action {
 	};
 
 	focusToEnd (rootId: string, id: string) {
-		const block = blockStore.getLeaf(rootId, id);
+		const block = S.Block.getLeaf(rootId, id);
 		if (!block) {
 			return;
 		};
@@ -395,7 +395,7 @@ class Action {
 							animate: true,
 							onFadeIn: () => {
 								popupStore.open('migration', { data: { type: 'import' } });
-								blockStore.closeRecentWidgets();
+								S.Block.closeRecentWidgets();
 							},
 						};
 
@@ -509,7 +509,7 @@ class Action {
 	};
 
 	copyBlocks (rootId: string, ids: string[], isCut: boolean) {
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		if (!root) {
 			return;
 		};
@@ -522,20 +522,20 @@ class Action {
 
 		const range = UtilCommon.objectCopy(focus.state.range);
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
-		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
+		const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
 
-		let blocks = blockStore.unwrapTree(tree).filter(it => ids.includes(it.id));
+		let blocks = S.Block.unwrapTree(tree).filter(it => ids.includes(it.id));
 
 		ids.forEach((id: string) => {
-			const block = blockStore.getLeaf(rootId, id);
+			const block = S.Block.getLeaf(rootId, id);
 			if (block && block.isTable()) {
-				blocks = blocks.concat(blockStore.unwrapTree([ blockStore.wrapTree(rootId, block.id) ]));
+				blocks = blocks.concat(S.Block.unwrapTree([ S.Block.wrapTree(rootId, block.id) ]));
 			};
 		});
 
 		blocks = UtilCommon.arrayUniqueObjects(blocks, 'id');
 		blocks = blocks.map((it: I.Block) => {
-			const element = blockStore.getMapElement(rootId, it.id);
+			const element = S.Block.getMapElement(rootId, it.id);
 
 			if (it.type == I.BlockType.Dataview) {
 				it.content.views = S.Record.getViews(rootId, it.id);
@@ -644,7 +644,7 @@ class Action {
 
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {
 		C.ObjectImportUseCase(spaceId, id, (message: any) => {
-			blockStore.closeRecentWidgets();
+			S.Block.closeRecentWidgets();
 
 			if (callBack) {
 				callBack();
@@ -691,7 +691,7 @@ class Action {
 			},
 		};
 
-		C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, layout, limit, () => {
+		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, () => {
 			analytics.event('AddWidget', { type: layout });
 		});
 	};

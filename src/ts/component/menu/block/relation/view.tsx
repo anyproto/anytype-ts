@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, S, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard, translate } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -28,7 +28,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
@@ -39,9 +39,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const readonly = data.readonly || isLocked;
 		const diffKeys = this.getDiffKeys();
 
-		let allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
-		let allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		let allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		let allowedBlock = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
+		let allowedRelation = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		let allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (readonly) {
 			allowedBlock = false;
@@ -268,8 +268,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			return;
 		};
 
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const root = blockStore.getLeaf(rootId, rootId);
+		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const root = S.Block.getLeaf(rootId, rootId);
 		const element = `#${getId()} #item-${item.id} .info`;
 
 		menuStore.open('blockRelationEdit', { 
@@ -342,13 +342,13 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, readonly } = data;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return false;
 		};
 
-		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		return Boolean(readonly || root.isLocked() || !allowedValue);
 	};
 

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
 import { I, S, keyboard, Storage, translate, UtilCommon, UtilSpace } from 'Lib';
-import { blockStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -39,8 +38,8 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const { isReadonly, isArchived, type, restrictions, done, layout } = object;
 		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
 		const rootId = keyboard.getRootId();
-		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
+		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 6;
 		const hasMore = UtilSpace.canMyParticipantWrite();
 

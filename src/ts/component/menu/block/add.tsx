@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
 import { I, S, Mark, keyboard, C, focus, Action, UtilCommon, UtilData, UtilMenu, UtilObject, Storage, translate, analytics, Relation } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import {menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -38,7 +38,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { rootId, blockId } = data;
 		const { filter } = S.Common;
 		const items = this.getItems(true);
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		const idPrefix = 'menuBlockAdd';
 
 		const rowRenderer = (param: any) => {
@@ -291,7 +291,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { filter } = S.Common;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		
 		if (!block) {
 			return [];
@@ -375,7 +375,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const { filter } = S.Common;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		const text = UtilCommon.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
@@ -479,7 +479,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onSelect, blockCreate } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;
@@ -492,7 +492,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const text = String(data.text || '');
 		const length = text.length;
 		const onCommand = (blockId: string) => {
-			const block = blockStore.getLeaf(rootId, blockId);
+			const block = S.Block.getLeaf(rootId, blockId);
 
 			if (block && block.isText()) {
 				focus.set(blockId, { from: length, to: length });
@@ -595,7 +595,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							return;
 						};
 
-						const { rows, columns } = blockStore.getTableData(rootId, message.blockId);
+						const { rows, columns } = S.Block.getTableData(rootId, message.blockId);
 						if (!rows.length || !columns.length) {
 							return;
 						};

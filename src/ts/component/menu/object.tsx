@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, keyboard, analytics, UtilObject, UtilCommon, Preview, focus, Action, translate, UtilSpace } from 'Lib';
-import { blockStore, menuStore, popupStore } from 'Store';
+import { menuStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -22,10 +22,10 @@ class MenuObject extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		const { config } = S.Common;
 		const sections = this.getSections();
-		const restrictions = blockStore.getRestrictions(rootId, rootId).map(it => I.RestrictionObject[it]);
+		const restrictions = S.Block.getRestrictions(rootId, rootId).map(it => I.RestrictionObject[it]);
 
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
@@ -94,7 +94,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return [];
@@ -106,7 +106,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const print = { id: 'print', name: translate('menuObjectPrint'), caption: `${cmd} + P` };
 		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		const canWrite = UtilSpace.canMyParticipantWrite();
-		const canDelete = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
+		const canDelete = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
 		let archive = null;
 		let remove = null;
@@ -164,14 +164,14 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedSearch = !UtilObject.isSetLayout(object.layout);
 		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
 		const allowedFav = canWrite && !object.isArchived && !UtilObject.isFileOrSystemLayout(object.layout) && !object.templateIsBundled;
-		const allowedLock = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLock = canWrite && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite;
 		const allowedPageLink = true;
-		const allowedCopy = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
+		const allowedCopy = canWrite && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = canWrite && object.source && block.isObjectBookmark();
 		const allowedInstall = canWrite && !object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout);
 		const allowedUninstall = canWrite && object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout) && canDelete;
-		const allowedTemplate = canWrite && !UtilObject.getLayoutsWithoutTemplates().includes(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
+		const allowedTemplate = canWrite && !UtilObject.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedWidget = canWrite;
 		const hasShortMenu = (
 			block.isObjectType() || 
@@ -273,7 +273,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;
@@ -324,7 +324,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId, onSelect } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		const object = S.Detail.get(rootId, rootId);
 		const route = analytics.route.menuObject;
 		
@@ -472,7 +472,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'createWidget': {
-				const first = blockStore.getFirstBlock(blockStore.widgets, 1, it => it.isWidget());
+				const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
 
 				Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top);
 				break;

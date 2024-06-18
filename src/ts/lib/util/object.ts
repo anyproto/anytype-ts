@@ -1,5 +1,5 @@
 import { I, C, S, keyboard, history as historyPopup, Renderer, UtilData, translate, UtilRouter, analytics } from 'Lib';
-import { blockStore, popupStore } from 'Store';
+import {popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -211,7 +211,7 @@ class UtilObject {
 	};
 
 	setLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
-		blockStore.update(rootId, rootId, { layout });
+		S.Block.update(rootId, rootId, { layout });
 		C.ObjectSetLayout(rootId, layout, callBack);
 	};
 

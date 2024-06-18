@@ -1,5 +1,5 @@
 import { I, C, M, S, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
-import { blockStore, notificationStore, popupStore } from 'Store';
+import { notificationStore, popupStore } from 'Store';
 import * as Sentry from '@sentry/browser';
 
 type SearchSubscribeParams = Partial<{
@@ -175,10 +175,10 @@ class UtilData {
 	};
 
 	onInfo (info: I.AccountInfo) {
-		blockStore.rootSet(info.homeObjectId);
-		blockStore.widgetsSet(info.widgetsId);
-		blockStore.profileSet(info.profileObjectId);
-		blockStore.spaceviewSet(info.spaceViewId);
+		S.Block.rootSet(info.homeObjectId);
+		S.Block.widgetsSet(info.widgetsId);
+		S.Block.profileSet(info.profileObjectId);
+		S.Block.spaceviewSet(info.spaceViewId);
 
 		S.Common.gatewaySet(info.gatewayUrl);
 		S.Common.spaceSet(info.accountSpaceId);
@@ -192,7 +192,7 @@ class UtilData {
 		param.routeParam = param.routeParam || {};
 
 		const pin = Storage.getPin();
-		const { root, widgets } = blockStore;
+		const { root, widgets } = S.Block;
 		const { redirect, space } = S.Common;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
@@ -285,7 +285,7 @@ class UtilData {
 			{
 				subId: Constant.subId.profile,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: blockStore.profile },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -439,7 +439,7 @@ class UtilData {
 	};
 
 	blockSetText (rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
@@ -448,14 +448,14 @@ class UtilData {
 		marks = marks || [];
 
 		if (update) {
-			blockStore.updateContent(rootId, blockId, { text, marks });
+			S.Block.updateContent(rootId, blockId, { text, marks });
 		};
 
 		C.BlockTextSetText(rootId, blockId, text, marks, focus.state.range, callBack);
 	};
 
 	blockInsertText (rootId: string, blockId: string, needle: string, from: number, to: number, callBack?: (message: any) => void) {
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
@@ -523,7 +523,7 @@ class UtilData {
 		blockId = blockId || rootId;
 
 		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
-		const checkType = blockStore.checkBlockTypeExists(rootId);
+		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret = {
 			withCover: false,

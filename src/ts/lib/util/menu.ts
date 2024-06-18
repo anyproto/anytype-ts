@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, C, S, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
-import { blockStore, menuStore, popupStore } from 'Store';
+import { menuStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -495,7 +495,7 @@ class UtilMenu {
 
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = S.Common;
-		const { spaceview } = blockStore;
+		const { spaceview } = S.Block;
 		const templateType = S.Record.getTemplateType();
 		const subIds = [ 'searchObject' ];
 

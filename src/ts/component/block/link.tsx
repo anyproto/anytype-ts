@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
 import { I, S, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
-import { blockStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -28,7 +27,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const object = S.Detail.get(rootId, block.content.targetBlockId, Constant.coverRelationKeys);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
 		const content = UtilData.checkLinkSettings(block.content, layout);
-		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+		const readonly = this.props.readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const { description, cardStyle, relations } = content;
 		const { size, iconSize } = this.getIconSize();
 		const type = S.Record.getTypeById(object.type);

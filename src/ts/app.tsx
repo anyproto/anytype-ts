@@ -9,7 +9,7 @@ import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar } from 'Component';
-import { blockStore, menuStore, popupStore } from 'Store';
+import { menuStore, popupStore } from 'Store';
 import { 
 	I, C, S, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
 	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode, UtilSpace, sidebar
@@ -573,13 +573,13 @@ class App extends React.Component<object, State> {
 						switch (item.id) {
 							default: {
 								const rootId = keyboard.getRootId();
-								const block = blockStore.getLeaf(rootId, focused);
+								const block = S.Block.getLeaf(rootId, focused);
 
 								if (block && block.isText()) {
 									const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
 									const value = String(obj.get(0).innerText || '');
 
-									blockStore.updateContent(rootId, focused, { text: value });
+									S.Block.updateContent(rootId, focused, { text: value });
 									UtilData.blockInsertText(rootId, focused, item.id, range.from, range.to);
 
 									focus.set(focused, { from: range.from, to: range.from + item.id.length });

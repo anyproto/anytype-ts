@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
-import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilSpace, translate } from 'Lib';
-import { popupStore, blockStore } from 'Store';
+import { I, S, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilSpace, translate } from 'Lib';
+import { popupStore } from 'Store';
+
 const Url = require('json/url.json');
 
 class MenuHelp extends React.Component<I.Menu> {
@@ -148,7 +149,7 @@ class MenuHelp extends React.Component<I.Menu> {
 					key = 'mainSet';
 				} else
 				if (isEditor) {
-					key = blockStore.checkBlockTypeExists(rootId) ? 'objectCreationStart' : 'editor';
+					key = S.Block.checkBlockTypeExists(rootId) ? 'objectCreationStart' : 'editor';
 				} else
 				if (isGraph) {
 					key = 'mainGraph';

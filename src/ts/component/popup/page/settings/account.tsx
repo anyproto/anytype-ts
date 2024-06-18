@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
 import { I, S, translate, UtilCommon, UtilObject, UtilSpace } from 'Lib';
-import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.PopupSettings {
@@ -92,11 +91,11 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	};
 
     onName () {
-        UtilObject.setName(blockStore.profile, this.refName.getValue());
+        UtilObject.setName(S.Block.profile, this.refName.getValue());
     };
 
 	onDescription (e) {
-		UtilObject.setDescription(blockStore.profile, this.refDescription.getValue());
+		UtilObject.setDescription(S.Block.profile, this.refDescription.getValue());
 	};
 
 });

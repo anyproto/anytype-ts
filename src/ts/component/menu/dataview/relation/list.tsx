@@ -6,7 +6,8 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'Component';
 import { I, C, S, Relation, keyboard, Dataview, translate } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
@@ -345,7 +346,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		return readonly || !allowedView;
 	};

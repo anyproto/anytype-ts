@@ -6,7 +6,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'Component';
 import { I, C, S, Relation, UtilCommon, keyboard, analytics, translate } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -404,7 +404,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		return readonly || !allowedView;
 	};

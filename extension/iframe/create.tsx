@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
 import { I, C, M, S, translate, UtilObject, UtilData, UtilSpace } from 'Lib';
-import { blockStore, extensionStore, menuStore } from 'Store';
+import { extensionStore, menuStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
@@ -37,7 +37,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		const { isLoading, error, object } = this.state;
 		const { html } = extensionStore;
 		const { space } = S.Common;
-		const children = blockStore.getChildren(ROOT_ID, ROOT_ID, it => !it.isFile());
+		const children = S.Block.getChildren(ROOT_ID, ROOT_ID, it => !it.isFile());
 
 		return (
 			<div ref={ref => this.node = ref} className="page pageCreate">
@@ -123,7 +123,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		};
 
 		this.html = html;
-		blockStore.clear(ROOT_ID);
+		S.Block.clear(ROOT_ID);
 
 		if (!html) {
 			this.forceUpdate();
@@ -142,11 +142,11 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 				structure.push({ id: block.id, childrenIds: block.childrenIds });
 			});
 
-			blockStore.set(ROOT_ID, blocks);
-			blockStore.setStructure(ROOT_ID, structure);
-			blockStore.updateStructureParents(ROOT_ID);
-			blockStore.updateNumbers(ROOT_ID); 
-			blockStore.updateMarkup(ROOT_ID);
+			S.Block.set(ROOT_ID, blocks);
+			S.Block.setStructure(ROOT_ID, structure);
+			S.Block.updateStructureParents(ROOT_ID);
+			S.Block.updateNumbers(ROOT_ID); 
+			S.Block.updateMarkup(ROOT_ID);
 
 			this.forceUpdate();
 		});

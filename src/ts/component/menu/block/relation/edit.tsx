@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { I, C, S, analytics, UtilMenu, UtilObject, Preview, translate, keyboard, Relation, UtilCommon } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -36,7 +36,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { rootId, ref, readonly, noDelete } = data;
 
 		const relation = this.getRelation();
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const isReadonly = this.isReadonly();
@@ -51,7 +51,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			canDuplicate = canDelete = false;
 		} else
 		if (root) {
-			if (root.isLocked() || !blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ])) {
+			if (root.isLocked() || !S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ])) {
 				canDuplicate = canDelete = false;
 			};
 		};
@@ -498,12 +498,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		const relation = this.getRelation();
 
-		let ret = relation ? blockStore.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) : true;
+		let ret = relation ? S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) : true;
 		if (ret && root) {
-			ret = !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+			ret = !root.isLocked() && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		};
 		return ret;
 	};

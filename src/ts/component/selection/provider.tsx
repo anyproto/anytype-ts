@@ -3,8 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { I, M, focus, keyboard, scrollOnMove, UtilCommon } from 'Lib';
-import { blockStore, menuStore, popupStore } from 'Store';
+import { I, M, S, focus, keyboard, scrollOnMove, UtilCommon } from 'Lib';
+import { menuStore, popupStore } from 'Store';
 
 interface Props {
 	children?: React.ReactNode;
@@ -291,8 +291,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 				if (target.length && e.shiftKey && ids.length && (type == I.SelectType.Block)) {
 					const first = ids.length ? ids[0] : this.focused;
-					const tree = blockStore.getTree(this.rootId, blockStore.getBlocks(this.rootId));
-					const list = blockStore.unwrapTree(tree);
+					const tree = S.Block.getTree(this.rootId, S.Block.getBlocks(this.rootId));
+					const list = S.Block.unwrapTree(tree);
 					const idxStart = list.findIndex(it => it.id == first);
 					const idxEnd = list.findIndex(it => it.id == id);
 					const start = idxStart < idxEnd ? idxStart : idxEnd;
@@ -530,7 +530,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	cacheChildrenIds (id: string): string[] {
-		const block = blockStore.getLeaf(this.rootId, id);
+		const block = S.Block.getLeaf(this.rootId, id);
 		if (!block) {
 			return [];
 		};
@@ -538,7 +538,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		let ids = [];
 
 		if (!block.isTable()) {
-			const childrenIds = blockStore.getChildrenIds(this.rootId, id);
+			const childrenIds = S.Block.getChildrenIds(this.rootId, id);
 
 			for (const childId of childrenIds) {
 				ids.push(childId);

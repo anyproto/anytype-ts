@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { SortableContainer } from 'react-sortable-hoc';
 import $ from 'jquery';
 import { Icon } from 'Component';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
 import { I, C, S, UtilCommon, keyboard, analytics, Relation, translate } from 'Lib';
 import Item from 'Component/menu/item/filter';
 
@@ -343,7 +343,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		return readonly || !allowedView;
 	};

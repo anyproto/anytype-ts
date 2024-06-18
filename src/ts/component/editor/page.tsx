@@ -8,7 +8,7 @@ import {
 	I, C, S, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, 
 	Renderer, sidebar 
 } from 'Lib';
-import { blockStore, menuStore, popupStore } from 'Store';
+import { menuStore, popupStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
@@ -80,7 +80,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	render () {
 		const { rootId } = this.props;
 		const { isLoading, isDeleted } = this.state;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -172,7 +172,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.rebind();
 
 		focus.apply();
-		blockStore.updateNumbers(rootId);
+		S.Block.updateNumbers(rootId);
 		sidebar.resizePage();
 
 		if (resizable.length) {
@@ -207,7 +207,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	getWrapperWidth (): number {
 		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		return this.getWidth(root?.fields?.width);
 	};
@@ -241,7 +241,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		window.clearTimeout(this.timeoutLoading);
 		this.timeoutLoading = window.setTimeout(() => this.setLoading(true), 50);
 
-		blockStore.clear(this.props.rootId);
+		S.Block.clear(this.props.rootId);
 
 		C.ObjectOpen(this.id, '', UtilRouter.getRouteSpaceId(), (message: any) => {
 			window.clearTimeout(this.timeoutLoading);
@@ -306,7 +306,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		let length = 0;
 		if (focused) {
-			const block = blockStore.getLeaf(rootId, focused);
+			const block = S.Block.getLeaf(rootId, focused);
 			if (block) {
 				length = block.getLength();
 			};
@@ -330,7 +330,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	focusTitle () {
 		const { rootId } = this.props;
-		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
+		const block = S.Block.getFirstBlock(rootId, 1, it => it.isText());
 
 		if (!block) {
 			return;
@@ -439,7 +439,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const { pageX, pageY } = e;
-		const blocks = blockStore.getBlocks(rootId, it => it.canCreateBlock());
+		const blocks = S.Block.getBlocks(rootId, it => it.canCreateBlock());
 
 		let offset = 140;
 		let hovered: any = null;
@@ -530,7 +530,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const selection = S.Common.getRef('selectionProvider');
 		const menuOpen = this.menuCheck();
 		const popupOpen = popupStore.isOpenKeyboard();
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (keyboard.isFocused || !selection || !root) {
 			return;
@@ -723,7 +723,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isInsideTable } = props;
 		const { focused } = focus.state;
 		const selection = S.Common.getRef('selectionProvider');
-		const block = blockStore.getLeaf(rootId, focused);
+		const block = S.Block.getLeaf(rootId, focused);
 
 		if (!block) {
 			return;
@@ -790,7 +790,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			if (block.isTextToggle()) {
 				keyboard.shortcut(`${cmd}+shift+t`, e, () => {
-					blockStore.toggle(rootId, block.id, !Storage.checkToggle(rootId, block.id));
+					S.Block.toggle(rootId, block.id, !Storage.checkToggle(rootId, block.id));
 				});
 			};
 
@@ -881,7 +881,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			keyboard.shortcut('alt+arrowdown, alt+arrowup', e, (pressed: string) => {
 				if (block.isTextToggle()) {
 					e.preventDefault();
-					blockStore.toggle(rootId, block.id, pressed.match('arrowdown') ? true : false);
+					S.Block.toggle(rootId, block.id, pressed.match('arrowdown') ? true : false);
 				};
 			});
 
@@ -977,31 +977,31 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const shift = pressed.match('shift');
-		const first = blockStore.getLeaf(rootId, ids[0]);
+		const first = S.Block.getLeaf(rootId, ids[0]);
 		if (!first) {
 			return;
 		};
 
-		const parent = blockStore.getParentLeaf(rootId, first.id);
+		const parent = S.Block.getParentLeaf(rootId, first.id);
 		if (!parent) {
 			return;
 		};
 
-		const parentElement = blockStore.getParentMapElement(rootId, first.id);
+		const parentElement = S.Block.getParentMapElement(rootId, first.id);
 		if (!parentElement) {
 			return;
 		};
 
 		const idx = parentElement.childrenIds.indexOf(first.id);
 		const nextId = parentElement.childrenIds[idx - 1];
-		const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, first.id, -1);
+		const next = nextId ? S.Block.getLeaf(rootId, nextId) : S.Block.getNextBlock(rootId, first.id, -1);
 		const obj = shift ? parent : next;
 		const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
 		
 		if (canTab) {
 			Action.move(rootId, rootId, obj.id, ids, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
 				if (next && next.isTextToggle()) {
-					blockStore.toggle(rootId, next.id, true);
+					S.Block.toggle(rootId, next.id, true);
 				};
 			});
 		};
@@ -1020,12 +1020,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const block = blockStore.getLeaf(rootId, dir > 0 ? ids[ids.length - 1] : ids[0]);
+		const block = S.Block.getLeaf(rootId, dir > 0 ? ids[ids.length - 1] : ids[0]);
 		if (!block) {
 			return;
 		};
 
-		const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
+		const next = S.Block.getNextBlock(rootId, block.id, dir, (it: any) => {
 			return !it.isIcon() && !it.isTextTitle() && !it.isTextDescription() && !it.isFeatured() && !it.isSystem();
 		});
 
@@ -1033,11 +1033,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const element = blockStore.getMapElement(rootId, block.id);
-		const parentElement = blockStore.getParentMapElement(rootId, block.id);
-		const nextElement = blockStore.getMapElement(rootId, next.id);
-		const nextParent = blockStore.getParentLeaf(rootId, next.id);
-		const nextParentElement = blockStore.getParentMapElement(rootId, next.id);
+		const element = S.Block.getMapElement(rootId, block.id);
+		const parentElement = S.Block.getParentMapElement(rootId, block.id);
+		const nextElement = S.Block.getMapElement(rootId, next.id);
+		const nextParent = S.Block.getParentLeaf(rootId, next.id);
+		const nextParentElement = S.Block.getParentMapElement(rootId, next.id);
 
 		if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
 			return;
@@ -1060,11 +1060,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		Action.move(rootId, rootId, next.id, ids, position, () => { 
 			if (nextParent && nextParent.isTextToggle()) {
-				blockStore.toggle(rootId, nextParent.id, true);
+				S.Block.toggle(rootId, nextParent.id, true);
 			};
 
 			if (next && next.isTextToggle()) {
-				blockStore.toggle(rootId, next.id, true);
+				S.Block.toggle(rootId, next.id, true);
 			};
 
 			selection.renderSelection(); 
@@ -1078,7 +1078,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const { rootId, isPopup } = this.props;
 		const { focused } = focus.state;
-		const block = blockStore.getLeaf(rootId, focused);
+		const block = S.Block.getLeaf(rootId, focused);
 
 		if (!block) {
 			return;
@@ -1086,7 +1086,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
-		let next = blockStore.getNextBlock(rootId, block.id, dir, it => (
+		let next = S.Block.getNextBlock(rootId, block.id, dir, it => (
 			!it.isIcon() && 
 			!it.isTextTitle() && 
 			!it.isTextDescription() && 
@@ -1095,13 +1095,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			!it.isTable() &&
 			!it.isTableColumn() &&
 			!it.isTableRow() &&
-			!blockStore.checkIsChild(rootId, block.id, it.id)
+			!S.Block.checkIsChild(rootId, block.id, it.id)
 		));
 
-		if (next && blockStore.checkIsInsideTable(rootId, next.id)) {
-			next = blockStore.getNextBlock(rootId, block.id, dir, it => (
+		if (next && S.Block.checkIsInsideTable(rootId, next.id)) {
+			next = S.Block.getNextBlock(rootId, block.id, dir, it => (
 				it.isTable() && 
-				!blockStore.checkIsChild(rootId, block.id, it.id)
+				!S.Block.checkIsChild(rootId, block.id, it.id)
 			));
 		};
 
@@ -1109,11 +1109,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const element = blockStore.getMapElement(rootId, block.id);
-		const parentElement = blockStore.getParentMapElement(rootId, block.id);
-		const nextElement = blockStore.getMapElement(rootId, next.id);
-		const nextParent = blockStore.getParentLeaf(rootId, next.id);
-		const nextParentElement = blockStore.getParentMapElement(rootId, next.id);
+		const element = S.Block.getMapElement(rootId, block.id);
+		const parentElement = S.Block.getParentMapElement(rootId, block.id);
+		const nextElement = S.Block.getMapElement(rootId, next.id);
+		const nextParent = S.Block.getParentLeaf(rootId, next.id);
+		const nextParentElement = S.Block.getParentMapElement(rootId, next.id);
 
 		if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
 			return;
@@ -1136,11 +1136,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		Action.move(rootId, rootId, next.id, [ block.id ], position, () => {
 			if (nextParent && nextParent.isTextToggle()) {
-				blockStore.toggle(rootId, nextParent.id, true);
+				S.Block.toggle(rootId, nextParent.id, true);
 			};
 
 			if (next && next.isTextToggle()) {
-				blockStore.toggle(rootId, next.id, true);
+				S.Block.toggle(rootId, next.id, true);
 			};
 
 			focus.apply(); 
@@ -1154,7 +1154,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const { rootId } = this.props;
 		const dir = pressed.match(Key.up) ? -1 : 1;
-		const next = blockStore.getFirstBlock(rootId, -dir, it => it.isFocusable());
+		const next = S.Block.getFirstBlock(rootId, -dir, it => it.isFocusable());
 		
 		this.focusNextBlock(next, dir);
 	};
@@ -1177,7 +1177,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			ids[method]();
 		} else {
 			const idx = (dir < 0) ? 0 : idsWithChildren.length - 1;
-			const next = blockStore.getNextBlock(rootId, idsWithChildren[idx], dir, it => !it.isSystem());
+			const next = S.Block.getNextBlock(rootId, idsWithChildren[idx], dir, it => !it.isSystem());
 
 			method = dir < 0 ? 'unshift' : 'push';
 			if (next) {
@@ -1195,7 +1195,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const selection = S.Common.getRef('selectionProvider');
 		const { focused } = focus.state;
 		const dir = pressed.match(Key.up) ? -1 : 1;
-		const block = blockStore.getLeaf(rootId, focused);
+		const block = S.Block.getLeaf(rootId, focused);
 
 		if (!block || this.menuCheck()) {
 			return;
@@ -1246,7 +1246,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const { rootId } = this.props;
 		const { focused } = focus.state;
-		const block = blockStore.getLeaf(rootId, focused);
+		const block = S.Block.getLeaf(rootId, focused);
 		const rect = UtilCommon.getSelectionRect();
 
 		if (!block) {
@@ -1290,7 +1290,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isInsideTable } = props;
 		const selection = S.Common.getRef('selectionProvider');
 		const { focused } = focus.state;
-		const block = blockStore.getLeaf(rootId, focused);
+		const block = S.Block.getLeaf(rootId, focused);
 
 		if (!block || isInsideTable) {
 			return;
@@ -1323,14 +1323,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			
 		const { rootId } = this.props;
 		const { focused } = focus.state;
-		const block = blockStore.getLeaf(rootId, focused);
+		const block = S.Block.getLeaf(rootId, focused);
 
 		if (!block) {
 			return;
 		};
 
-		const parent = blockStore.getParentLeaf(rootId, block.id);
-		const parentElement = blockStore.getParentMapElement(rootId, block.id);
+		const parent = S.Block.getParentLeaf(rootId, block.id);
+		const parentElement = S.Block.getParentMapElement(rootId, block.id);
 
 		if (!parent || !parentElement) {
 			return;
@@ -1338,7 +1338,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const idx = parentElement.childrenIds.indexOf(block.id);
 		const nextId = parentElement.childrenIds[idx - 1];
-		const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
+		const next = nextId ? S.Block.getLeaf(rootId, nextId) : S.Block.getNextBlock(rootId, block.id, -1);
 		const obj = isShift ? parent : next;
 		
 		let canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
@@ -1354,7 +1354,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			window.setTimeout(() => this.focus(block.id, range.from, range.to, false), 50);
 
 			if (next && next.isTextToggle()) {
-				blockStore.toggle(rootId, next.id, true);
+				S.Block.toggle(rootId, next.id, true);
 			};
 		});
 	};
@@ -1363,7 +1363,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onEnterBlock (e: any, range: I.TextRange, pressed: string) {
 		const { rootId } = this.props;
 		const { focused } = focus.state;
-		const block = blockStore.getLeaf(rootId, focused);
+		const block = S.Block.getLeaf(rootId, focused);
 
 		if (!block) {
 			return;
@@ -1408,9 +1408,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	getNextTableRow (id: string, dir: number) {
 		const { rootId } = this.props;
-		const element = blockStore.getMapElement(rootId, id);
+		const element = S.Block.getMapElement(rootId, id);
 
-		return element ? blockStore.getNextBlock(rootId, element.parentId, dir, it => it.isTableRow()) : null;
+		return element ? S.Block.getNextBlock(rootId, element.parentId, dir, it => it.isTableRow()) : null;
 	};
 
 	onArrowVertical (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
@@ -1421,7 +1421,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { focused } = focus.state;
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
-		const block = blockStore.getLeaf(rootId, focused);
+		const block = S.Block.getLeaf(rootId, focused);
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
 		if ((dir < 0) && range.to) {
@@ -1438,9 +1438,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (!next) {
 				// If block is closed toggle - find next block on the same level
 				if (block && block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
-					next = blockStore.getNextBlock(rootId, focused, dir, it => (it.parentId != block.id) && it.isFocusable());
+					next = S.Block.getNextBlock(rootId, focused, dir, it => (it.parentId != block.id) && it.isFocusable());
 				} else {
-					next = blockStore.getNextBlock(rootId, focused, dir, it => it.isFocusable());
+					next = S.Block.getNextBlock(rootId, focused, dir, it => it.isFocusable());
 				};
 			};
 
@@ -1450,7 +1450,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			e.preventDefault();
 
-			const parent = blockStore.getHighestParent(rootId, next.id);
+			const parent = S.Block.getHighestParent(rootId, next.id);
 
 			// If highest parent is closed toggle, next is parent
 			if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
@@ -1461,15 +1461,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (isInsideTable) {
-			const rowElement = blockStore.getParentMapElement(rootId, block.id);
+			const rowElement = S.Block.getParentMapElement(rootId, block.id);
 			const idx = rowElement.childrenIds.indexOf(block.id);
 			const nextRow = this.getNextTableRow(block.id, dir);
 
 			if ((idx >= 0) && nextRow) {
-				const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
+				const nextRowElement = S.Block.getMapElement(rootId, nextRow.id);
 				C.BlockTableRowListFill(rootId, [ nextRow.id ], () => {
 					if (nextRowElement) {
-						next = blockStore.getLeaf(rootId, nextRowElement.childrenIds[idx]);
+						next = S.Block.getLeaf(rootId, nextRowElement.childrenIds[idx]);
 					};
 					cb();
 				});
@@ -1483,7 +1483,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { focused } = focus.state;
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
-		const block = blockStore.getLeaf(rootId, focused);
+		const block = S.Block.getLeaf(rootId, focused);
 		const withTab = pressed.match(Key.tab);
 		const dir = pressed.match([ Key.left, Key.shift ].join('|')) ? -1 : 1;
 
@@ -1502,8 +1502,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (isInsideTable) {
-			const element = blockStore.getMapElement(rootId, block.id);
-			const rowElement = blockStore.getParentMapElement(rootId, block.id);
+			const element = S.Block.getMapElement(rootId, block.id);
+			const rowElement = S.Block.getParentMapElement(rootId, block.id);
 
 			if (!rowElement) {
 				return;
@@ -1529,15 +1529,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				if (!nextCellId) {
 					const nextRow = this.getNextTableRow(block.id, dir);
 					if (nextRow) {
-						const nextRowElement = blockStore.getMapElement(rootId, nextRow.id);
+						const nextRowElement = S.Block.getMapElement(rootId, nextRow.id);
 						fill(nextRow.id, () => {
 							nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
-							this.focusNextBlock(blockStore.getLeaf(rootId, nextCellId), dir);
+							this.focusNextBlock(S.Block.getLeaf(rootId, nextCellId), dir);
 						});
 					};
 				};
 
-				this.focusNextBlock(blockStore.getLeaf(rootId, nextCellId), dir);
+				this.focusNextBlock(S.Block.getLeaf(rootId, nextCellId), dir);
 			};
 
 			if (rowElement.childrenIds.length - 1 <= idx) {
@@ -1548,10 +1548,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		} else {
 			if (block.isTextToggle()) {
 				if ((dir < 0) && (range.to == 0)) {
-					blockStore.toggle(rootId, block.id, false);
+					S.Block.toggle(rootId, block.id, false);
 				};
 				if ((dir > 0) && (range.to == length)) {
-					blockStore.toggle(rootId, block.id, true);
+					S.Block.toggle(rootId, block.id, true);
 				};
 			};
 
@@ -1567,7 +1567,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 		
-		selection.set(I.SelectType.Block, blockStore.getBlocks(rootId, it => it.isSelectable()).map(it => it.id));
+		selection.set(I.SelectType.Block, S.Block.getBlocks(rootId, it => it.isSelectable()).map(it => it.id));
 		focus.clear(true);
 		menuStore.close('blockContext');
 	};
@@ -1578,7 +1578,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 		
 		const { rootId } = this.props;
-		const block = blockStore.getLeaf(rootId, this.hoverId);
+		const block = S.Block.getLeaf(rootId, this.hoverId);
 		
 		if (!block || (block.isTextTitle() && (this.hoverPosition != I.BlockPosition.Bottom)) || block.isLayoutColumn() || block.isIcon()) {
 			return;
@@ -1595,7 +1595,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	onMenuAdd (blockId: string, text: string, range: I.TextRange, marks: I.Mark[]) {
 		const { rootId } = this.props;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		const win = $(window);
 
 		if (!block) {
@@ -1647,7 +1647,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const readonly = this.isReadonly();
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		const { focused } = focus.state;
 
 		if (!root || (readonly && isCut)) {
@@ -1665,7 +1665,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!ids.length) {
 			ids = [ focused ];
 		} else {
-			ids = ids.concat(blockStore.getLayoutIds(rootId, ids));
+			ids = ids.concat(S.Block.getLayoutIds(rootId, ids));
 		};
 
 		Action.copyBlocks(rootId, ids, isCut);
@@ -1700,7 +1700,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		e.preventDefault();
 
-		const block = blockStore.getLeaf(rootId, focused);
+		const block = S.Block.getLeaf(rootId, focused);
 		
 		let url = UtilCommon.matchUrl(data.text);
 		let isLocal = false;
@@ -1733,7 +1733,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				count = message.blockIds.length;
 
 				const lastId = message.blockIds[count - 1];
-				const block = blockStore.getLeaf(rootId, lastId);
+				const block = S.Block.getLeaf(rootId, lastId);
 				
 				if (!block) {
 					return;
@@ -1760,14 +1760,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { focused, range } = focus.state;
 		const currentFrom = range.from;
 		const currentTo = range.to;
-		const block = blockStore.getLeaf(rootId, focused);
+		const block = S.Block.getLeaf(rootId, focused);
 
 		if (!block) {
 			return;
 		};
 
 		const win = $(window);
-		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
+		const first = S.Block.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
 		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 		const length = block.getLength();
@@ -1937,7 +1937,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	blockMerge (focused: I.Block, dir: number, length: number) {
 		const { rootId } = this.props;
-		const next = blockStore.getNextBlock(rootId, focused.id, dir, it => it.isFocusable());
+		const next = S.Block.getNextBlock(rootId, focused.id, dir, it => it.isFocusable());
 		if (!next) {
 			return;
 		};
@@ -1981,7 +1981,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 
 				if (dir < 0) {
-					const next = blockStore.getNextBlock(rootId, focused.id, -1, it => it.isFocusable());
+					const next = S.Block.getNextBlock(rootId, focused.id, -1, it => it.isFocusable());
 					if (next) {
 						const nl = dir < 0 ? next.getLength() : 0;
 						this.focus(next.id, nl, nl, false);
@@ -2000,7 +2000,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const isList = focused.isTextList();
 		const isCode = focused.isTextCode();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
-		const childrenIds = blockStore.getChildrenIds(rootId, focused.id);
+		const childrenIds = S.Block.getChildrenIds(rootId, focused.id);
 		const length = focused.getLength();
 
 		let style = I.TextStyle.Paragraph;
@@ -2036,7 +2036,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			this.focus(focusId, 0, 0, true);
 
 			if (isToggle && isOpen) {
-				blockStore.toggle(rootId, message.blockId, true);
+				S.Block.toggle(rootId, message.blockId, true);
 			};
 
 			analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Text, style });
@@ -2060,7 +2060,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		blockIds = blockIds.filter(id => {  
-			const block = blockStore.getLeaf(rootId, id);
+			const block = S.Block.getLeaf(rootId, id);
 			return block && block.isDeletable();
 		});
 
@@ -2070,14 +2070,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.clear(true);
 
-		let next = blockStore.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable());
+		let next = S.Block.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable());
 
 		C.BlockListDelete(rootId, blockIds, (message: any) => {
 			if (message.error.code || !next) {
 				return;
 			};
 
-			const parent = blockStore.getHighestParent(rootId, next.id);
+			const parent = S.Block.getHighestParent(rootId, next.id);
 
 			// If highest parent is closed toggle, next is parent
 			if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
@@ -2099,12 +2099,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		let last = blockStore.getFirstBlock(rootId, -1, it => it.canCreateBlock());
+		let last = S.Block.getFirstBlock(rootId, -1, it => it.canCreateBlock());
 		let create = false;
 		let length = 0;
 
 		if (last) {
-			const parent = blockStore.getParentLeaf(rootId, last.id);
+			const parent = S.Block.getParentLeaf(rootId, last.id);
 
 			if (parent && !parent.isLayoutDiv() && !parent.isPage()) {
 				last = null;
@@ -2152,7 +2152,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const cover = node.find('.block.blockCover');
 			const pageContainer = UtilCommon.getPageContainer(this.props.isPopup);
 			const header = pageContainer.find('#header');
-			const root = blockStore.getLeaf(rootId, rootId);
+			const root = S.Block.getLeaf(rootId, rootId);
 			const scrollContainer = UtilCommon.getScrollContainer(isPopup);
 			const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
 
@@ -2225,7 +2225,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const { isPopup, rootId } = this.props;
 		const container = UtilCommon.getPageContainer(isPopup);
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		const isSet = root?.isObjectSet();
 		const isCollection = root?.isObjectCollection();
 
@@ -2252,12 +2252,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const { rootId } = this.props;
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		if (!allowed) {
 			return true;
 		};
 
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		if (!root || root.isLocked()) {
 			return true;
 		};

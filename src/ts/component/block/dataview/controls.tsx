@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button, Filter } from 'Component';
 import { C, I, S, UtilCommon, analytics, Relation, keyboard, translate, UtilObject, UtilMenu, Dataview } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import Head from './head';
 import arrayMove from 'array-move';
@@ -44,7 +44,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => S.Record.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
-		const allowedView = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
 		const buttonWrapCn = [ 'buttonWrap' ];
 		const hasSources = (isCollection || getSources().length);

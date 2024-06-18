@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Header, Footer, EditorPage } from 'Component';
 import { I, S, Onboarding, UtilObject, analytics, UtilSpace } from 'Lib';
-import { blockStore } from 'Store';
 
 class PageMainEdit extends React.Component<I.PageComponent> {
 	
@@ -50,7 +49,7 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 			if (UtilObject.isTemplate(object.type)) {
 				key = 'template';
 			} else 
-			if (!blockStore.checkBlockTypeExists(rootId)) {
+			if (!S.Block.checkBlockTypeExists(rootId)) {
 				key = 'editor';
 			};
 			if (key) {

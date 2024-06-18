@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
 import { I, M, C, S, UtilData, UtilCommon, Action, UtilSpace, keyboard, UtilRouter, translate, UtilObject } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -54,7 +54,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		} else {
 			const object = S.Detail.get(rootId, rootId, []);
 			const isCollection = object.layout == I.ObjectLayout.Collection;
-			const children = blockStore.getChildren(rootId, rootId, it => it.isDataview());
+			const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
 

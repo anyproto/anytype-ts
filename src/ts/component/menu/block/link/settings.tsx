@@ -3,7 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, UtilCommon, UtilData, UtilMenu, keyboard, Relation, translate } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<I.Menu> {
@@ -140,7 +141,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		const { param } = this.props;
         const { data } = param;
         const { rootId, blockId } = data;
-        const block = blockStore.getLeaf(rootId, blockId);
+        const block = S.Block.getLeaf(rootId, blockId);
         const object = S.Detail.get(rootId, block.content.targetBlockId);
 
         return UtilData.checkLinkSettings(block.content, object.layout);
@@ -180,7 +181,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		const { param } = this.props;
         const { data } = param;
         const { rootId, blockId } = data;
-        const block = blockStore.getLeaf(rootId, blockId);
+        const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return [];
@@ -276,7 +277,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { param } = this.props;
         const { data } = param;
         const { rootId, blockId, blockIds } = data;
-        const block = blockStore.getLeaf(rootId, blockId);
+        const block = S.Block.getLeaf(rootId, blockId);
 		
 		if (!block) {
 			return;

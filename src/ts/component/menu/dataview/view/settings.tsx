@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, analytics, keyboard, Key, translate, Dataview, UtilCommon } from 'Lib';
 import { InputWithLabel, MenuItemVertical } from 'Component';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -204,7 +204,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onSave, readonly } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		const view = data.view.get();
 
 		if (readonly || !block || !view) {
@@ -400,7 +400,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		return readonly || !allowedView;
 	};

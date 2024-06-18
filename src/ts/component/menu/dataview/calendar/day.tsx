@@ -1,8 +1,7 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { I, S, UtilObject, keyboard, UtilDate, translate } from 'Lib';
-import { blockStore } from 'Store';
-import { observer } from 'mobx-react';
 
 const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I.Menu> {
 	
@@ -30,7 +29,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		};
 
 		const Item = (item) => {
-			const canEdit = !item.isReadonly && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
+			const canEdit = !item.isReadonly && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
 
 			let icon = null;
 			if (item.icon) {

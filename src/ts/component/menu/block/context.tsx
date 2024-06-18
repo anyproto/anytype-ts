@@ -2,8 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, Mark, UtilData, focus, keyboard, Storage, translate, UtilObject, analytics } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { I, C, S, Mark, UtilData, focus, keyboard, Storage, translate, UtilObject, analytics } from 'Lib';
+import { menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const MenuBlockContext = observer(class MenuBlockContext extends React.Component<I.Menu> {
@@ -21,7 +22,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { data } = param;
 		const { range } = focus.state;
 		const { blockId, rootId, marks, isInsideTable } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return null;
@@ -177,7 +178,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { param, close, getId, getSize } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, onChange, range } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;
@@ -376,7 +377,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { close, param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		const context = this.menuContext;
 		const route = analytics.route.menuContext;
 

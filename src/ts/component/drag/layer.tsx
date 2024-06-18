@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { I, M, S, UtilCommon, keyboard } from 'Lib';
-import { blockStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -95,7 +94,7 @@ class DragLayer extends React.Component<object, State> {
 			case I.DropType.Block: {
 				wrap.addClass('blocks');
 
-				const items = ids.map(id => blockStore.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(UtilCommon.objectCopy(it)));
+				const items = ids.map(id => S.Block.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(UtilCommon.objectCopy(it)));
 
 				items.forEach(block => {
 					const clone = container.find(`#block-${block.id}`).clone();

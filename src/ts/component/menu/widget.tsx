@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Button } from 'Component';
 import { C, I, S, keyboard, UtilMenu, translate, Action, UtilObject, analytics } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -267,7 +267,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { getId, getSize, param, close } = this.props;
 		const { data, className, classNameWrap } = param;
 		const { blockId, isEditing } = data;
-		const { widgets } = blockStore;
+		const { widgets } = S.Block;
 		const menuParam: Partial<I.MenuParam> = {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
@@ -410,7 +410,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { close, param } = this.props;
 		const { data } = param;
 		const { isEditing, onSave } = data;
-		const { widgets } = blockStore;
+		const { widgets } = S.Block;
 
         if (!this.target || (this.layout === null)) {
 			return;
@@ -449,7 +449,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			targetId = blockId;
 		} else  
 		if (coords) {
-			const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
+			const widgetIds = S.Block.getChildrenIds(S.Block.widgets, S.Block.widgets);
 
 			if (!widgetIds.length) {
 				return '';

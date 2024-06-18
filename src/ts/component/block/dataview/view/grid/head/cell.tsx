@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { I, S, keyboard, Relation, Dataview } from 'Lib';
-import { SortableElement } from 'react-sortable-hoc';
-import { menuStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
+import { SortableElement } from 'react-sortable-hoc';
+import { I, S, keyboard, Relation, Dataview } from 'Lib';
+import { menuStore } from 'Store';
 import Handle from './handle';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
@@ -32,7 +32,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 
 		const { format, name } = relation;
 		const readonly = relation.isReadonlyValue;
-		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'cellHead', `cell-key-${this.props.relationKey}`, Relation.className(format) ];
 
 		if (allowedView) {

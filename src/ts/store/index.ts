@@ -2,8 +2,8 @@ import { Common } from './common';
 import { Record } from './record';
 import { Auth } from './auth';
 import { Detail } from './detail';
+import { Block } from './block';
 
-import { blockStore } from './block';
 import { menuStore } from './menu';
 import { popupStore } from './popup';
 import { extensionStore } from './extension';
@@ -14,8 +14,8 @@ export {
 	Record,
 	Auth,
 	Detail,
+	Block,
 
-	blockStore,
 	menuStore,
 	popupStore,
 	extensionStore,

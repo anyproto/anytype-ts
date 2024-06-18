@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
 import { I, C, S, keyboard, focus, UtilCommon, Mark, Action, translate, UtilMenu, UtilData } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
 import Row from './table/row';
 
 const Constant = require('json/constant.json');
@@ -175,7 +175,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	getData () {
 		const { rootId, block } = this.props;
-		return blockStore.getTableData(rootId, block.id);
+		return S.Block.getTableData(rootId, block.id);
 	};
 
 	onHandleColumn (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
@@ -256,7 +256,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		e.stopPropagation();
 
 		const { rootId } = this.props;
-		const current: any = blockStore.getLeaf(rootId, cellId) || {};
+		const current: any = S.Block.getLeaf(rootId, cellId) || {};
 		const node = $(this.node);
 		const options: any[] = this.getOptions(type, rowId, columnId, cellId);
 		
@@ -689,7 +689,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			return;
 		};
 
-		const cell = blockStore.getLeaf(rootId, cellId);
+		const cell = S.Block.getLeaf(rootId, cellId);
 		const cb = () => {
 			this.setEditing(cellId);
 			keyboard.disableSelection(true);
@@ -1215,7 +1215,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	optionsRow (id: string, isInner?: boolean) {
 		const { rootId } = this.props;
 		const { rows } = this.getData();
-		const row = blockStore.getLeaf(rootId, id);
+		const row = S.Block.getLeaf(rootId, id);
 		const isHeader = row.content.isHeader;
 		const idx = rows.findIndex(it => it.id == id);
 		const length = rows.length;
@@ -1290,7 +1290,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	optionsColor (cellId: string) {
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, cellId);
+		const current = S.Block.getLeaf(rootId, cellId);
 		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current?.content.color || 'default') ].join(' ')} />;
 		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current?.bgColor || 'default') ].join(' ')} />;
 
@@ -1305,7 +1305,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	optionsAlign (cellId: string) {
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, cellId);
+		const current = S.Block.getLeaf(rootId, cellId);
 
 		return [
 			{ id: 'horizontal', icon: UtilData.alignHIcon(current?.hAlign), name: translate('blockTableOptionsAlignText'), arrow: true },
@@ -1315,7 +1315,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	optionsStyle (cellId: string) {
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, cellId);
+		const current = S.Block.getLeaf(rootId, cellId);
 		const ret: any[] = [
 			{ id: I.MarkType.Bold, icon: 'bold', name: translate('commonBold') },
 			{ id: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic') },
@@ -1517,7 +1517,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		};
 
 		const { isPopup, rootId, block, getWrapperWidth } = this.props;
-		const parent = blockStore.getParentLeaf(rootId, block.id);
+		const parent = S.Block.getParentLeaf(rootId, block.id);
 
 		if (!parent) {
 			return;

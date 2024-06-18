@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
 import { I, C, S, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter, UtilSpace } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -61,8 +61,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
 		const allowedObject = object.isInstalled && UtilObject.getPageLayouts().includes(object.recommendedLayout);
-		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowedDetails = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedRelation = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite;
 		const allowedLayout = object.recommendedLayout != I.ObjectLayout.Bookmark;
 		
@@ -463,7 +463,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onRelationEdit (e: any, id: string) {
 		const rootId = this.getRootId();
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const relation = S.Record.getRelationById(id);
 		
 		menuStore.open('blockRelationEdit', { 

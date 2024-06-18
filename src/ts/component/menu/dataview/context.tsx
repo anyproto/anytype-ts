@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, keyboard, analytics, translate, UtilObject, focus, Action, UtilSpace } from 'Lib';
-import { menuStore, blockStore, popupStore } from 'Store';
+import { menuStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -127,19 +127,19 @@ class MenuContext extends React.Component<I.Menu> {
 			if (object.isFavorite) favCnt++;
 			if (object.isArchived) archiveCnt++;
 
-			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
+			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
 				allowedArchive = false;
 			};
-			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) || object.isArchived) {
+			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) || object.isArchived) {
 				allowedFav = false;
 			};
-			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {
+			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {
 				allowedCopy = false;
 			};
-			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Type ])) {
+			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Type ])) {
 				allowedType = false;
 			};
-			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ])) {
+			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ])) {
 				allowedRelation = false;
 			};
 		});
@@ -377,7 +377,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'createWidget': {
-				const firstBlock = blockStore.getFirstBlock(blockStore.widgets, 1, it => it.isWidget());
+				const firstBlock = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
 
 				Action.createWidgetFromObject(first.id, first.id, firstBlock?.id, I.BlockPosition.Top);
 				break;

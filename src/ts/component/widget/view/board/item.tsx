@@ -2,7 +2,6 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, DropTarget } from 'Component';
-import { blockStore } from 'Store';
 import { I, S, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
 
 const Constant = require('json/constant.json');
@@ -31,9 +30,9 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		const rootId = keyboard.getRootId();
 		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions } = object;
-		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
+		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
-		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const hasMore = UtilSpace.canMyParticipantWrite();
 		const more = hasMore ? <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} /> : null;
 

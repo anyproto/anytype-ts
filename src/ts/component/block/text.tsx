@@ -6,7 +6,7 @@ import raf from 'raf';
 import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
 import { I, C, S, keyboard, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, Storage, translate, analytics, Renderer, UtilRouter } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -74,7 +74,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
 		const { theme } = S.Common;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		const cv: string[] = [ 'value', 'focusable', 'c' + id ];
 
 		let marker: any = null;
@@ -1033,7 +1033,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					});
 
 					if (newStyle == I.TextStyle.Toggle) {
-						blockStore.toggle(rootId, id, true);
+						S.Block.toggle(rootId, id, true);
 					};
 
 					if ((newStyle == I.TextStyle.Code) && match[2]) {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Cell, Icon } from 'Component';
 import { I, C, S, UtilCommon, focus, analytics, Relation, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -33,7 +33,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 			relation = S.Record.getRelations().find(it => it.relationKey == relationKey);
 		};
 
-		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
+		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
 		const isDeleted = !relation;
 
 		if (isDeleted) {

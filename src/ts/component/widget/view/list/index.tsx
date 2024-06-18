@@ -2,7 +2,6 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
-import { blockStore } from 'Store';
 import { I, S, keyboard, Action } from 'Lib';
 import { SortableContainer } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
@@ -182,19 +181,19 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 			return;
 		};
 
-		const { root } = blockStore;
+		const { root } = S.Block;
 		const records = getRecordIds();
-		const children = blockStore.getChildren(root, root, it => it.isLink());
+		const children = S.Block.getChildren(root, root, it => it.isLink());
 		const ro = records[oldIndex];
 		const rn = records[newIndex];
 		const oidx = children.findIndex(it => it.content.targetBlockId == ro);
 		const nidx = children.findIndex(it => it.content.targetBlockId == rn);
 		const current = children[oidx];
 		const target = children[nidx];
-		const childrenIds = blockStore.getChildrenIds(root, root);
+		const childrenIds = S.Block.getChildrenIds(root, root);
 		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
-		blockStore.updateStructure(root, root, arrayMove(childrenIds, oidx, nidx));
+		S.Block.updateStructure(root, root, arrayMove(childrenIds, oidx, nidx));
 		Action.move(root, root, target.id, [ current.id ], position);
 	};
 

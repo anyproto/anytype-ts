@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, S, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
-import { popupStore, blockStore, menuStore } from 'Store';
+import { popupStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -271,7 +271,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 	onBlock () {
 		const { rootId, isPopup } = this.props;
-		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
+		const block = S.Block.getFirstBlock(rootId, 1, it => it.isText());
 
 		if (block) {
 			const l = block.getLength();
@@ -285,7 +285,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 	onTemplate () {
 		const { rootId } = this.props;
-		const first = blockStore.getFirstBlock(rootId, 1, it => it.isText());
+		const first = S.Block.getFirstBlock(rootId, 1, it => it.isText());
 
 		if (!first) {
 			C.BlockCreate(rootId, '', I.BlockPosition.Bottom, { type: I.BlockType.Text, style: I.TextStyle.Paragraph }, () => this.onBlock());

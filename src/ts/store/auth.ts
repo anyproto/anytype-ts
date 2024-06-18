@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, C, S, Storage, analytics, Renderer, keyboard } from 'Lib';
-import { blockStore, menuStore, notificationStore } from 'Store';
+import { menuStore, notificationStore } from 'Store';
 
 interface NetworkConfig {
 	mode: I.NetworkMode;
@@ -179,7 +179,7 @@ class AuthStore {
 		S.Common.spaceSet('');
 		S.Common.typeSet('');
 
-		blockStore.clearAll();
+		S.Block.clearAll();
 		S.Detail.clearAll();
 		S.Record.clearAll();
 		menuStore.closeAllForced();

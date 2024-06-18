@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { I, C, S, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -179,7 +179,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		
 		if (!block) {
 			return [];
@@ -211,7 +211,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let hasQuote = false;
 		
 		for (const id of blockIds) {
-			const block = blockStore.getLeaf(rootId, id);
+			const block = S.Block.getLeaf(rootId, id);
 			if (!block) {
 				continue;
 			};
@@ -333,7 +333,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const { param, close, getId, setActive } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;
@@ -387,7 +387,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 								this.setFocus(blockIds[0]);
 
 								if (item.itemId == I.TextStyle.Toggle) {
-									blockIds.forEach(id => blockStore.toggle(rootId, id, true));
+									blockIds.forEach(id => S.Block.toggle(rootId, id, true));
 								};
 							});
 						};
@@ -444,7 +444,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 				const skipIds = [ rootId ];
 				blockIds.forEach((id: string) => {
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 					if (block && block.isLink()) {
 						skipIds.push(block.getTargetObjectId());
 					};
@@ -592,7 +592,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;
@@ -704,7 +704,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const block = blockStore.getLeaf(rootId, id);
+		const block = S.Block.getLeaf(rootId, id);
 		if (!block) {
 			return;
 		};

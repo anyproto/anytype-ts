@@ -4,7 +4,6 @@ import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
 import { I, C, S, UtilCommon, Dataview, keyboard, translate } from 'Lib';
-import { blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
 
@@ -488,7 +487,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	resize () {
 		const { rootId, block, isPopup, isInline } = this.props;
-		const parent = blockStore.getParentLeaf(rootId, block.id);
+		const parent = S.Block.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const view = node.find('.viewContent');

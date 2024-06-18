@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Icon } from 'Component';
 import { I, S, UtilData, UtilObject, UtilCommon, translate, analytics, focus } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const Constant = require('json/constant.json');
@@ -35,14 +35,14 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 
 	render (): any {
 		const { rootId, readonly } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
 		};
 
-		const checkType = blockStore.checkBlockTypeExists(rootId);
-		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const checkType = S.Block.checkBlockTypeExists(rootId);
+		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		let allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && !root.isObjectCollection();
 		let allowedIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote() && !root.isObjectBookmark();

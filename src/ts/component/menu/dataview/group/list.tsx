@@ -7,7 +7,7 @@ import $ from 'jquery';
 import { Icon, Switch } from 'Component';
 import Cell from 'Component/block/dataview/cell';
 import { I, C, S, Dataview, keyboard, translate } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -37,8 +37,8 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		const { readonly, rootId, blockId, getView } = data;
 		const items = this.getItems();
 		const view = getView();
-		const block = blockStore.getLeaf(rootId, blockId);
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const block = S.Block.getLeaf(rootId, blockId);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />

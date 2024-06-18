@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
 import { analytics, C, I, S, keyboard, UtilObject, UtilMenu, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -496,7 +496,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const isPinned = Storage.getPinnedTypes().includes(item.itemId);
 		const canPin = type.isInstalled;
 		const canDefault = type.isInstalled && !UtilObject.getSetLayouts().includes(item.recommendedLayout) && (type.id != S.Common.type);
-		const canDelete = type.isInstalled && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+		const canDelete = type.isInstalled && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 		const route = analytics.route.navigation;
 
 		let options: any[] = [
@@ -543,7 +543,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 						};
 
 						case 'remove': {
-							if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
+							if (S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
 								Action.uninstall({ ...item, id: item.itemId }, true, route);
 							};
 							break;

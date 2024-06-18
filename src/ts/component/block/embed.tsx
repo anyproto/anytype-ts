@@ -7,7 +7,7 @@ import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
 import { I, C, S, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Theme = require('json/theme.json');
@@ -817,7 +817,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		const value = this.getValue();
 
-		blockStore.updateContent(rootId, block.id, { text: value });
+		S.Block.updateContent(rootId, block.id, { text: value });
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 

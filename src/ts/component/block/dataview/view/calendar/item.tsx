@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilCommon, UtilObject, translate, UtilDate } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { I, S, UtilCommon, UtilObject, translate, UtilDate } from 'Lib';
+import { menuStore } from 'Store';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -47,7 +47,7 @@ const Item = observer(class Item extends React.Component<Props> {
 		};
 
 		const Item = (item: any) => {
-			const canEdit = !item.isReadonly && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
+			const canEdit = !item.isReadonly && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
 
 			let icon = null;
 			if (!hideIcon) {

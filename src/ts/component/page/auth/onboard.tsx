@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
 import { I, S, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage, Action } from 'Lib';
-import { popupStore, blockStore } from 'Store';
+import { popupStore } from 'Store';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -302,7 +302,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	accountUpdate = (name: string, callBack?: () => void): void => {
-		UtilObject.setName(blockStore.profile, name, () => {
+		UtilObject.setName(S.Block.profile, name, () => {
 			C.WorkspaceSetInfo(S.Common.space, { name }, callBack);
 		});
 	};

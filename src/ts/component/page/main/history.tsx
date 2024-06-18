@@ -2,7 +2,6 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader } from 'Component';
-import { blockStore } from 'Store';
 import { I, S, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate } from 'Lib';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
@@ -88,7 +87,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	componentWillUnmount(): void {
 		this.unbind();
 
-		blockStore.clear(this.getRootId());
+		S.Block.clear(this.getRootId());
 		S.Common.diffSet([]);
 	};
 
@@ -130,7 +129,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		if (!ids.length) {
 			ids = [ focused ];
 		};
-		ids = ids.concat(blockStore.getLayoutIds(rootId, ids));
+		ids = ids.concat(S.Block.getLayoutIds(rootId, ids));
 
 		Action.copyBlocks(rootId, ids, false);
 	};
@@ -200,7 +199,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockSetChildrenIds': {
 				const newChildrenIds = data.childrenIds;
 				const nl = newChildrenIds.length;
-				const oldChildrenIds = blockStore.getChildrenIds(oldContextId, data.id);
+				const oldChildrenIds = S.Block.getChildrenIds(oldContextId, data.id);
 				const ol = oldChildrenIds.length;
 
 				if (nl >= ol) {
@@ -222,8 +221,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			};
 
 			case 'BlockSetText': {
-				const block = blockStore.getLeaf(rootId, data.id);
-				const oldBlock = blockStore.getLeaf(oldContextId, data.id);
+				const block = S.Block.getLeaf(rootId, data.id);
+				const oldBlock = S.Block.getLeaf(oldContextId, data.id);
 
 				if (!block || !oldBlock) {
 					break;
@@ -251,7 +250,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 							from = to;
 						};
 
-						blockStore.updateContent(rootId, data.id, { marks });
+						S.Block.updateContent(rootId, data.id, { marks });
 					} else {
 						type = I.DiffType.Change;
 					};
@@ -367,7 +366,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 				if (type == 'ObjectDetailsAmend') {
 					for (const k in data.details) {
-						const blocks = blockStore.getBlocks(rootId, it => it.isRelation() && (it.content.key == k));
+						const blocks = S.Block.getBlocks(rootId, it => it.isRelation() && (it.content.key == k));
 
 						blocks.forEach(it => {
 							elements = elements.concat(this.getBlockChangeElements(it.id));
@@ -420,7 +419,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	getWrapperWidth (): number {
 		const rootId = this.getRootId();
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		return this.getWidth(root?.fields?.width);
 	};
@@ -459,7 +458,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	isSetOrCollection (): boolean {
 		const rootId = this.getRootId();
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		return root?.isObjectSet() || root?.isObjectCollection();
 	};

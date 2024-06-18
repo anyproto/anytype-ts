@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell } from 'Component';
 import { I, C, S, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -50,7 +50,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const short = S.Detail.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
 		const object = S.Detail.get(rootId, storeId, featuredRelations);
-		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();
 
 		return (
@@ -432,7 +432,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const object = S.Detail.get(rootId, rootId, [ 'setOf' ]);
 		const type = S.Detail.get(rootId, object.type, []);
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
+		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const typeIsDeleted = type._empty_ || type.isDeleted;
 		const options: any[] = [];
 

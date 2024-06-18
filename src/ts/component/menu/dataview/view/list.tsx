@@ -6,7 +6,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
 import { I, C, S, UtilCommon, keyboard, Relation, analytics, translate, UtilMenu, Dataview } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { menuStore } from 'Store';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -35,7 +35,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { data } = param;
 		const { loadData, rootId, blockId } = data;
 		const items = this.getItems();
-		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowed = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />

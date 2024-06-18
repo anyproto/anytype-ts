@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { I, C, S, UtilObject, UtilMenu, Relation, translate, Dataview, keyboard, analytics, Preview, UtilCommon } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -224,7 +224,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		let canDelete = true;
 
 		if (relation) {
-			canDuplicate = canDelete = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionObject.Relation ]);
+			canDuplicate = canDelete = relation && S.Block.checkFlags(rootId, blockId, [ I.RestrictionObject.Relation ]);
 		};
 		if (relation && Relation.isSystem(relation.relationKey)) {
 			canDelete = false;
@@ -578,9 +578,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { rootId, blockId } = data;
 		const relation = this.getRelation();
 
-		let ret = relation ? blockStore.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) : true;
+		let ret = relation ? S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) : true;
 		if (ret) {
-			ret = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
+			ret = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 		};
 
 		return ret;

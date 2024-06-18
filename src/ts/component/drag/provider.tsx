@@ -5,7 +5,6 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
 import { I, C, S, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject } from 'Lib';
-import { blockStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -126,7 +125,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		const rootId = keyboard.getRootId();
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!root || root.isLocked()) {
 			return;
@@ -135,7 +134,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const dataTransfer = e.dataTransfer;
 		const items = UtilCommon.getDataTransferItems(dataTransfer.items);
 		const isFileDrop = dataTransfer.files && dataTransfer.files.length;
-		const last = blockStore.getFirstBlock(rootId, -1, it => it && it.canCreateBlock());
+		const last = S.Block.getFirstBlock(rootId, -1, it => it && it.canCreateBlock());
 
 		let position = this.position;
 		let data: any = null;
@@ -152,7 +151,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		if (data) {
 			targetId = String(data.id || '');
-			target = blockStore.getLeaf(rootId, targetId);
+			target = S.Block.getLeaf(rootId, targetId);
 		};
 
 		// Last drop zone
@@ -181,7 +180,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 			C.FileDrop(rootId, targetId, position, paths, () => {
 				if (target && target.isTextToggle() && (position == I.BlockPosition.InnerFirst)) {
-					blockStore.toggle(rootId, targetId, true);
+					S.Block.toggle(rootId, targetId, true);
 				};
 			});
 		} else
@@ -305,7 +304,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const processSourceBlock = () => {
 			const cb = () => {
 				if (isToggle && (position == I.BlockPosition.InnerFirst)) {
-					blockStore.toggle(contextId, targetId, true);
+					S.Block.toggle(contextId, targetId, true);
 				};
 
 				selection?.renderSelection();
@@ -345,12 +344,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 				// Drop into column is targeting last block
 				if (this.hoverData.isTargetCol) {
-					const childrenIds = blockStore.getChildrenIds(targetContextId, targetId);
+					const childrenIds = S.Block.getChildrenIds(targetContextId, targetId);
 				
 					targetId = childrenIds.length ? childrenIds[childrenIds.length - 1] : '';
 				};
 
-				const target = blockStore.getLeaf(targetContextId, targetId);
+				const target = S.Block.getLeaf(targetContextId, targetId);
 				
 				if (target) {
 					isToggle = target.isTextToggle();
@@ -364,7 +363,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 							return;
 						};
 					} else {
-						const parent = blockStore.getParentLeaf(targetContextId, targetId);
+						const parent = S.Block.getParentLeaf(targetContextId, targetId);
 
 						if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 							targetId = parent.id;
@@ -447,7 +446,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				// Source type
 				switch (dropType) {
 					case I.DropType.Block: {
-						const blocks = blockStore.getBlocks(contextId, it => ids.includes(it.id) && it.canBecomeWidget());
+						const blocks = S.Block.getBlocks(contextId, it => ids.includes(it.id) && it.canBecomeWidget());
 						if (!blocks.length) {
 							break;
 						};
@@ -732,7 +731,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	getParentIds (blockId: string, parentIds: string[]) {
 		const rootId = keyboard.getRootId();
-		const item = blockStore.getMapElement(rootId, blockId);
+		const item = S.Block.getMapElement(rootId, blockId);
 
 		if (!item || (item.parentId == rootId)) {
 			return;

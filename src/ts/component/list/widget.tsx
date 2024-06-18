@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
 import { C, I, M, S, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -42,14 +42,14 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
-		const { widgets } = blockStore;
+		const { widgets } = S.Block;
 		const cn = [ 'listWidget' ];
 		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		let content = null;
 
 		if (previewId) {
-			const block = blockStore.getLeaf(widgets, previewId);
+			const block = S.Block.getLeaf(widgets, previewId);
 
 			if (block) {
 				cn.push('isListPreview');
@@ -66,13 +66,13 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			};
 		} else {
 			const buttons: I.ButtonComponent[] = [];
-			const blocks = blockStore.getChildren(widgets, widgets, (block: I.Block) => {
-				const childrenIds = blockStore.getChildrenIds(widgets, block.id);
+			const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
+				const childrenIds = S.Block.getChildrenIds(widgets, block.id);
 				if (!childrenIds.length) {
 					return false;
 				};
 
-				const child = blockStore.getLeaf(widgets, childrenIds[0]);
+				const child = S.Block.getLeaf(widgets, childrenIds[0]);
 				if (!child) {
 					return false;
 				};
@@ -119,7 +119,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 					<DropTarget 
 						{...this.props} 
 						isTargetTop={true}
-						rootId={blockStore.widgets} 
+						rootId={S.Block.widgets} 
 						id={first?.id}
 						dropType={I.DropType.Widget} 
 						canDropMiddle={false}
@@ -152,7 +152,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 					<DropTarget 
 						{...this.props} 
 						isTargetBottom={true}
-						rootId={blockStore.widgets} 
+						rootId={S.Block.widgets} 
 						id={last?.id}
 						dropType={I.DropType.Widget} 
 						canDropMiddle={false}
@@ -286,7 +286,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 		e.stopPropagation();
 
-		const { widgets } = blockStore;
+		const { widgets } = S.Block;
 		const blockId = e.dataTransfer.getData('text');
 
 		if (blockId != this.dropTargetId) {
@@ -324,7 +324,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 		};
 
 		const win = $(window);
-		const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
+		const widgetIds = S.Block.getChildrenIds(S.Block.widgets, S.Block.widgets);
 		const options: any[] = [
 			{ id: 'edit', name: translate('widgetEdit') },
 		];

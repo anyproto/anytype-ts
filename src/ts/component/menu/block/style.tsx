@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I, S, keyboard, UtilMenu, analytics, translate } from 'Lib';
-import { blockStore } from 'Store';
 
 const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.Menu> {
 	
@@ -64,7 +63,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return 0;
@@ -96,7 +95,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		const sections: any[] = [];
 
 		for (const id of blockIds) {
-			const block = blockStore.getLeaf(rootId, id);
+			const block = S.Block.getLeaf(rootId, id);
 			if (!block) {
 				continue;
 			};
