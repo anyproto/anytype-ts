@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Error, MediaAudio } from 'Component';
 import { I, S, translate, focus, keyboard, Action } from 'Lib';
-import { detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -29,7 +28,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { state, targetObjectId } = content;
-		const object = detailStore.get(rootId, targetObjectId, [ 'name' ], true);
+		const object = S.Detail.get(rootId, targetObjectId, [ 'name' ], true);
 		
 		let element = null;
 		

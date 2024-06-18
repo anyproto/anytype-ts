@@ -1,6 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { S, I, M, UtilCommon, Dataview } from 'Lib';
-import { detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -260,7 +259,7 @@ class RecordStore {
 	};
 
 	getTypeById (id: string) {
-		const object = detailStore.get(Constant.subId.type, id, Constant.typeRelationKeys);
+		const object = S.Detail.get(Constant.subId.type, id, Constant.typeRelationKeys);
 		return object._empty_ ? null : object;
 	};
 
@@ -321,12 +320,12 @@ class RecordStore {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.relation, id, Constant.relationRelationKeys, true);
+		const object = S.Detail.get(Constant.subId.relation, id, Constant.relationRelationKeys, true);
 		return object._empty_ ? null : object;
 	};
 
 	getOption (id: string) {
-		const object = detailStore.get(Constant.subId.option, id, Constant.optionRelationKeys, true);
+		const object = S.Detail.get(Constant.subId.option, id, Constant.optionRelationKeys, true);
 		return object._empty_ ? null : object;
 	};
 
@@ -354,7 +353,7 @@ class RecordStore {
 	};
 
 	getRecords (subId: string, keys?: string[], forceKeys?: boolean): any[] {
-		return this.getRecordIds(subId, '').map(id => detailStore.get(subId, id, keys));
+		return this.getRecordIds(subId, '').map(id => S.Detail.get(subId, id, keys));
 	};
 
 	getGroups (rootId: string, blockId: string) {

@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, C, S, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate, UtilSpace } from 'Lib';
-import { blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { blockStore, menuStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -775,7 +775,7 @@ class Keyboard {
 
 	onSaveAsHTML () {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		this.printApply('save', false);
 		Renderer.send('winCommand', 'printHtml', { name: object.name });
@@ -783,7 +783,7 @@ class Keyboard {
 
 	onPrintToPDF (options: any) {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		this.printApply('print', true);
 		Renderer.send('winCommand', 'printPdf', { name: object.name, options });

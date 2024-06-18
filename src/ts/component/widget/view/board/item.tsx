@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, DropTarget } from 'Component';
-import { blockStore, menuStore, detailStore } from 'Store';
-import { I, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
+import { blockStore } from 'Store';
+import { I, S, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -29,7 +29,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 	render () {
 		const { subId, id, block, isEditing, hideIcon } = this.props;
 		const rootId = keyboard.getRootId();
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions } = object;
 		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
@@ -102,7 +102,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		e.stopPropagation();
 
 		const { subId, id, } = this.props;
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
 
 		UtilObject.openEvent(e, object);
 		analytics.event('OpenSidebarObject');

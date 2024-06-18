@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
 import { I, C, S, focus, UtilCommon, translate, analytics, Renderer, keyboard, Preview } from 'Lib';
-import { detailStore } from 'Store';
 
 const BlockBookmark = observer(class BlockBookmark extends React.Component<I.BlockComponent> {
 
@@ -26,7 +25,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const { state, targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId, [ 'picture' ]);
+		const object = S.Detail.get(rootId, targetObjectId, [ 'picture' ]);
 		const { iconImage, picture, isArchived, isDeleted } = object;
 		const url = this.getUrl();
 		const cn = [ 'focusable', `c${block.id}`, 'resizable' ];
@@ -187,7 +186,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	getUrl () {
 		const { rootId, block } = this.props;
 		const { url, targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId, [ 'source' ], true);
+		const object = S.Detail.get(rootId, targetObjectId, [ 'source' ], true);
 
 		return object.source || url;
 	};
@@ -213,7 +212,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			return;
 		};
 
-		const object = detailStore.get(rootId, targetObjectId, []);
+		const object = S.Detail.get(rootId, targetObjectId, []);
 		if (object._empty_ || object.isArchived || object.isDeleted) {
 			return;
 		};

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
 import { I, S, Mark, keyboard, C, focus, Action, UtilCommon, UtilData, UtilMenu, UtilObject, Storage, translate, analytics, Relation } from 'Lib';
-import { blockStore, menuStore, detailStore } from 'Store';
+import { blockStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -84,7 +84,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								subId={rootId}
 								block={block}
 								relationKey={item.relationKey}
-								getRecord={() => detailStore.get(rootId, rootId, [ item.relationKey ])}
+								getRecord={() => S.Detail.get(rootId, rootId, [ item.relationKey ])}
 								viewType={I.ViewType.Grid}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
@@ -269,7 +269,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { data } = param;
 		const { rootId } = data;
 		const { config } = S.Common;
-		const object = detailStore.get(rootId, rootId, [ 'targetObjectType' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'targetObjectType' ]);
 		const isTemplate = UtilObject.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 

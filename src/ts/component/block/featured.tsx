@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell } from 'Component';
 import { I, C, S, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { blockStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -47,9 +47,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	render () {
 		const { rootId, block, iconSize, isPopup } = this.props;
 		const storeId = this.getStoreId();
-		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const short = S.Detail.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
-		const object = detailStore.get(rootId, storeId, featuredRelations);
+		const object = S.Detail.get(rootId, storeId, featuredRelations);
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();
 
@@ -152,7 +152,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	init () {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
-		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const short = S.Detail.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const featuredRelations = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
 		const node = $(this.node);
 		const obj = $(`#block-${block.id}`);
@@ -174,7 +174,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const object = this.getObject();
-		const type = detailStore.get(rootId, object.type, [ 'name', 'isDeleted' ]);
+		const type = S.Detail.get(rootId, object.type, [ 'name', 'isDeleted' ]);
 		const name = (
 			<div className="name">
 				<ObjectType object={type} />
@@ -268,12 +268,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	renderIdentity () {
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
-		const short = detailStore.get(rootId, storeId, [ 'layout' ], true);
+		const short = S.Detail.get(rootId, storeId, [ 'layout' ], true);
 		if (short.layout != I.ObjectLayout.Participant) {
 			return null;
 		};
 
-		const object = detailStore.get(rootId, storeId, UtilData.participantRelationKeys());
+		const object = S.Detail.get(rootId, storeId, UtilData.participantRelationKeys());
 		const relationKey = object.globalName ? 'globalName': 'identity';
 
 		return (
@@ -298,7 +298,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = this.getObject();
 		const id = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 		const value = object[relationKey];
-		const options = Relation.getArrayValue(value).map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
+		const options = Relation.getArrayValue(value).map(it => S.Detail.get(rootId, it, [])).filter(it => !it._empty_);
 		const l = options.length;
 
 		if (!l) {
@@ -316,19 +316,19 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	getRelationList () {
-		const object = detailStore.get(this.props.rootId, this.getStoreId(), [ 'featuredRelations' ], true);
+		const object = S.Detail.get(this.props.rootId, this.getStoreId(), [ 'featuredRelations' ], true);
 		return Relation.getArrayValue(object.featuredRelations);
 	};
 
 	getObject () {
-		return detailStore.get(this.props.rootId, this.getStoreId(), this.getRelationList());
+		return S.Detail.get(this.props.rootId, this.getStoreId(), this.getRelationList());
 	};
 
 	checkType () {
 		const { rootId, isPopup } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ 'type' ], true);
-		const type = detailStore.get(rootId, object.type, [ 'isDeleted' ], true);
+		const object = S.Detail.get(rootId, storeId, [ 'type' ], true);
+		const type = S.Detail.get(rootId, object.type, [ 'isDeleted' ], true);
 
 		if (type.isDeleted) {
 			Onboarding.start('typeDeleted', isPopup);
@@ -338,7 +338,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	checkSource () {
 		const { rootId, isPopup } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ 'layout', 'setOf' ]);
+		const object = S.Detail.get(rootId, storeId, [ 'layout', 'setOf' ]);
 
 		if (!object || object._empty_ || (object.layout != I.ObjectLayout.Set)) {
 			return;
@@ -359,7 +359,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	getItems () {
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const object = S.Detail.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const skipIds = [
 			'type',
 			'description',
@@ -430,8 +430,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		e.stopPropagation();
 
 		const { rootId, block, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
-		const type = detailStore.get(rootId, object.type, []);
+		const object = S.Detail.get(rootId, rootId, [ 'setOf' ]);
+		const type = S.Detail.get(rootId, object.type, []);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const typeIsDeleted = type._empty_ || type.isDeleted;
 		const options: any[] = [];
@@ -497,7 +497,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		const object = detailStore.get(rootId, rootId, [ 'setOf', 'internalFlags' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'setOf', 'internalFlags' ]);
 
 		const menuParam = {
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
@@ -533,7 +533,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							keyboard.disableClose(false);
 						};
 
-						detailStore.update(rootId, { id: item.id, details: item }, false);
+						S.Detail.update(rootId, { id: item.id, details: item }, false);
 
 						C.ObjectSetObjectType(rootId, item.uniqueKey, () => {
 							if (object.internalFlags && object.internalFlags.includes(I.ObjectFlag.SelectTemplate)) {
@@ -580,7 +580,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const { rootId, isPopup } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'setOf', 'collectionOf' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'setOf', 'collectionOf' ]);
 		const type = S.Record.getTypeById(object.type);
 
 		this.menuContext.close();
@@ -613,7 +613,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				// Add Collection type to details since middleware adds details async
 				const collectionType = S.Record.getCollectionType();
 				if (collectionType) {
-					detailStore.update(rootId, { id: collectionType.id, details: collectionType }, true);
+					S.Detail.update(rootId, { id: collectionType.id, details: collectionType }, true);
 				};
 
 				C.ObjectToCollection(rootId, (message: any) => {
@@ -665,7 +665,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const { isPopup, rootId, readonly } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ relationKey ]);
+		const object = S.Detail.get(rootId, storeId, [ relationKey ]);
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (readonly || !relation || relation.isReadonlyValue) {
@@ -742,7 +742,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 
 			case I.RelationType.Checkbox: {
-				const object = detailStore.get(rootId, rootId, [ relationKey ]);
+				const object = S.Detail.get(rootId, rootId, [ relationKey ]);
 				const details = [
 					{ key: relationKey, value: Relation.formatValue(relation, !object[relationKey], true) },
 				];
@@ -790,7 +790,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onCellMenu (relationKey: string, menuId: string, param: any, data: any) {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ relationKey ]);
+		const object = S.Detail.get(rootId, storeId, [ relationKey ]);
 		const relation = S.Record.getRelationByKey(relationKey);
 		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 
@@ -843,10 +843,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		const object = detailStore.get(rootId, storeId);
+		const object = S.Detail.get(rootId, storeId);
 		const value = Relation.getArrayValue(object[relationKey]);
 		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
-		const options = value.map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_).map(it => ({
+		const options = value.map(it => S.Detail.get(rootId, it, [])).filter(it => !it._empty_).map(it => ({
 			...it,
 			withDescription: true,
 			iconSize: 40,

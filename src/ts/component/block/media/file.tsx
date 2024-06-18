@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error, ObjectName } from 'Component';
-import { I, UtilObject, UtilFile, focus, translate, Action } from 'Lib';
-import { detailStore } from 'Store';
+import { I, S, UtilObject, UtilFile, focus, translate, Action } from 'Lib';
 import { observer } from 'mobx-react';
 
 const BlockFile = observer(class BlockFile extends React.Component<I.BlockComponent> {
@@ -23,7 +22,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { state, style, targetObjectId } = content;
-		const object = detailStore.get(rootId, targetObjectId, []);
+		const object = S.Detail.get(rootId, targetObjectId, []);
 
 		let element = null;
 		switch (state) {

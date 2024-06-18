@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, S, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard, translate } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { blockStore, menuStore } from 'Store';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -150,7 +150,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const { config } = S.Common;
 
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const isTemplate = UtilObject.isTemplate(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 		const featured = Relation.getArrayValue(object.featuredRelations);
@@ -215,7 +215,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { rootId } = data;
 		const items = this.getItems();
-		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
 		const featured = UtilCommon.objectCopy(object.featuredRelations || []);
 		const idx = featured.findIndex(it => it == relationKey);
 

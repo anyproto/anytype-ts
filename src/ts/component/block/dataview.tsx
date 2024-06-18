@@ -4,8 +4,8 @@ import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { I, C, S, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action, UtilDate, Storage } from 'Lib';
-import { blockStore, menuStore, detailStore } from 'Store';
+import { I, C, S, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action } from 'Lib';
+import { blockStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -491,7 +491,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const keys = this.getKeys(view.id);
 		const subId = this.getSubId();
-		const item = detailStore.get(subId, id, keys);
+		const item = S.Detail.get(subId, id, keys);
 		const { layout, isReadonly, isDeleted, snippet } = item;
 
 		if (item.name == translate('defaultNamePage')) {
@@ -527,7 +527,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, isInline } = this.props;
 		const { targetObjectId } = block.content;
 
-		return detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
+		return S.Detail.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
 	};
 
 	getTypeId (): string {
@@ -626,7 +626,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const templateObject = detailStore.get(rootId, templateId);
+		const templateObject = S.Detail.get(rootId, templateId);
 		if (templateObject.isArchived || templateObject.isDeleted) {
 			templateId = '';
 		};
@@ -649,7 +649,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				C.ObjectCollectionAdd(objectId, [ object.id ]);
 			};
 
-			detailStore.update(subId, { id: object.id, details: object }, true);
+			S.Detail.update(subId, { id: object.id, details: object }, true);
 
 			if (oldIndex < 0) {
 				dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
@@ -898,7 +898,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const details: any = {};
 		details[relationKey] = value;
-		detailStore.update(subId, { id, details }, false);
+		S.Detail.update(subId, { id, details }, false);
 
 		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], callBack);
 

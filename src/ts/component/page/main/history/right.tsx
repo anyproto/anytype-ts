@@ -3,7 +3,6 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Button } from 'Component';
-import { detailStore } from 'Store';
 import { I, C, S, UtilCommon, UtilObject, UtilDate, UtilSpace, translate, analytics, dispatcher } from 'Lib';
 
 interface Props {
@@ -182,7 +181,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 	onClose () {
 		const { rootId } = this.props;
 
-		UtilObject.openAuto(detailStore.get(rootId, rootId, []));
+		UtilObject.openAuto(S.Detail.get(rootId, rootId, []));
 	};
 
 	onRestore (e: any) {
@@ -195,7 +194,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 		const { version } = this.state;
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 
 		if (!version) {
 			return;
@@ -325,7 +324,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 	loadList (lastId: string) { 
 		const { versions, version, isLoading } = this.state;
 		const { rootId, setLoading } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		
 		if (isLoading || (this.lastId && (lastId == this.lastId))) {
 			return;

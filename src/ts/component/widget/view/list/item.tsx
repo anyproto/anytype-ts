@@ -3,8 +3,8 @@ import raf from 'raf';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } from 'Component';
-import { blockStore, menuStore, detailStore } from 'Store';
-import { I, UtilCommon, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
+import { blockStore } from 'Store';
+import { I, S, UtilCommon, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
 
 const Constant = require('json/constant.json');
@@ -35,7 +35,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	render () {
 		const { subId, id, block, style, isCompact, isEditing, index, isPreview, isSection } = this.props;
 		const rootId = keyboard.getRootId();
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions, source } = object;
 		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
@@ -163,7 +163,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		e.stopPropagation();
 
 		const { subId, id, } = this.props;
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
 
 		UtilObject.openEvent(e, object);
 		analytics.event('OpenSidebarObject');

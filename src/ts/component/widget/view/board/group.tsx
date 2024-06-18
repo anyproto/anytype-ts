@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, S, UtilCommon, translate, Dataview, UtilObject, UtilData, Storage } from 'Lib';
-import { detailStore } from 'Store';
 import Cell from 'Component/block/dataview/cell';
 import Item from './item';
 
@@ -39,7 +38,7 @@ const Group = observer(class Group extends React.Component<Props> {
 
 		// Subscriptions
 		items.forEach((item: any) => {
-			const object = detailStore.get(subId, item.id, [ view.groupRelationKey ]);
+			const object = S.Detail.get(subId, item.id, [ view.groupRelationKey ]);
 		});
 
 		return (

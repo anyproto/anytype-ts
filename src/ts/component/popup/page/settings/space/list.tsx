@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
 import { I, S, UtilSpace, UtilRouter, translate, UtilMenu, analytics } from 'Lib';
-import { detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -16,7 +15,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const Row = (space: any) => {
 			const { targetSpaceId } = space;
 			const participant = UtilSpace.getMyParticipant(targetSpaceId);
-			const creator = detailStore.get(Constant.subId.space, space.creator);
+			const creator = S.Detail.get(Constant.subId.space, space.creator);
 			const hasMenu = targetSpaceId != accountSpaceId;
 
 			let creatorElement = null;

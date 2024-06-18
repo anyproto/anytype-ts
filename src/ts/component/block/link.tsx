@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
 import { I, S, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
-import { detailStore, blockStore } from 'Store';
+import { blockStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -25,7 +25,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 	render() {
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, block.content.targetBlockId, Constant.coverRelationKeys);
+		const object = S.Detail.get(rootId, block.content.targetBlockId, Constant.coverRelationKeys);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
 		const content = UtilData.checkLinkSettings(block.content, layout);
 		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
@@ -251,7 +251,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { rootId, block } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const { targetBlockId } = block.content;
-		const object = detailStore.get(rootId, targetBlockId, []);
+		const object = S.Detail.get(rootId, targetBlockId, []);
 		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (object._empty_ || (targetBlockId == rootId) || (keyboard.withCommand(e) && ids.length)) {
@@ -273,7 +273,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const object = detailStore.get(rootId, targetBlockId, []);
+		const object = S.Detail.get(rootId, targetBlockId, []);
 		if (object._empty_ || object.isDeleted) {
 			return;
 		};
@@ -304,7 +304,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 	getIconSize () {
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, block.content.targetBlockId, [ 'layout' ], true);
+		const object = S.Detail.get(rootId, block.content.targetBlockId, [ 'layout' ], true);
 		const content = UtilData.checkLinkSettings(block.content, object.layout);
 		const { cardStyle } = content;
 

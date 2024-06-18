@@ -4,7 +4,8 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
 import { I, S, analytics, keyboard, UtilData, Relation, Action, UtilCommon, UtilSpace, translate } from 'Lib';
-import { menuStore, detailStore } from 'Store';
+import { menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -391,10 +392,10 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
 					onSelect: (item: any) => {
-						this.onClick(e, detailStore.mapper(item));
+						this.onClick(e, S.Detail.mapper(item));
 						close();
 					},
-					dataMapper: it => detailStore.mapper(it),
+					dataMapper: it => S.Detail.mapper(it),
 				});
 				break;
 			};
@@ -423,7 +424,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { close, param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall } = data;
-		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
 		if (item.id == 'add') {
 			menuStore.open(menuIdEdit, { 

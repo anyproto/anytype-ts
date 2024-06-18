@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Loader } from 'Component';
-import { I, UtilObject } from 'Lib';
-import { detailStore } from 'Store';
+import { I, S, UtilObject } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -30,7 +29,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<I.Blo
 				{isLoading ? <Loader /> : ''}
 				<IconObject
 					id={`block-icon-${rootId}`} 
-					getObject={() => detailStore.get(rootId, rootId, [])}
+					getObject={() => S.Detail.get(rootId, rootId, [])}
 					className={readonly ? 'isReadonly' : ''}
 					canEdit={!readonly}
 					onSelect={this.onSelect}

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
 import { I, C, S, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate, UtilSpace } from 'Lib';
-import { detailStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -392,7 +392,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { data } = param;
 		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
 		const addParam: any = data.addParam || {};
-		const object = detailStore.get(rootId, blockId);
+		const object = S.Detail.get(rootId, blockId);
 
 		let details = data.details || {};
 

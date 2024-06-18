@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, UtilCommon, UtilMenu, UtilData, UtilObject, keyboard } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
-import { detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -141,7 +140,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				};
 			};
 
-			this.data.nodes = message.nodes.map(it => detailStore.mapper(it));
+			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
 
 			UtilData.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
 				error: {},

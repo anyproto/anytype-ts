@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon } from 'Component';
 import { I, C, S, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage, UtilSpace } from 'Lib';
-import { detailStore, menuStore, extensionStore } from 'Store';
+import { menuStore, extensionStore } from 'Store';
 import Util from '../lib/util';
 
 interface State {
@@ -274,7 +274,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	getTagsValue () {
 		return S.Record.getRecordIds(Constant.subId.option, '').
 			filter(id => this.details.tag.includes(id)).
-			map(id => detailStore.get(Constant.subId.option, id)).
+			map(id => S.Detail.get(Constant.subId.option, id)).
 			filter(it => it && !it._empty_);
 	};
 

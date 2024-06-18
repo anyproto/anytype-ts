@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore } from 'Component';
 import { I, S, UtilData, UtilObject, UtilCommon, translate, Dataview } from 'Lib';
-import { detailStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
 
@@ -58,7 +58,7 @@ const Column = observer(class Column extends React.Component<Props> {
 
 		// Subscriptions
 		items.forEach((item: any) => {
-			const object = detailStore.get(subId, item.id, [ view.groupRelationKey ]);
+			const object = S.Detail.get(subId, item.id, [ view.groupRelationKey ]);
 		});
 
 		return (

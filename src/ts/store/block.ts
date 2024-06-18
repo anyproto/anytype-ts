@@ -1,7 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
-import { I, M, UtilCommon, UtilObject, UtilFile, Storage, Mark, translate, keyboard, UtilSpace } from 'Lib';
-import { detailStore } from 'Store';
+import { I, M, S, UtilCommon, UtilObject, UtilFile, Storage, Mark, translate, keyboard, UtilSpace } from 'Lib';
+
 const Constant = require('json/constant.json');
 
 class BlockStore {
@@ -492,7 +492,7 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = detailStore.get(rootId, mark.param, [ 'name', 'layout', 'snippet', 'fileExt' ], true);
+				const object = S.Detail.get(rootId, mark.param, [ 'name', 'layout', 'snippet', 'fileExt' ], true);
 
 				if (object._empty_) {
 					continue;
@@ -547,7 +547,7 @@ class BlockStore {
 			return;
 		};
 
-		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
 		const check = (object.internalFlags || []).includes(I.ObjectFlag.SelectType);
 		const exists = this.checkBlockTypeExists(rootId);
 		const change = (check && !exists) || (!check && exists);

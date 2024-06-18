@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
 import { I, C, S, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
-import { menuStore, detailStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -109,7 +109,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { targetObjectId } = block.content;
 		const { isEditing } = this.state;
 		const element = `#block-head-${block.id}`;
-		const object = detailStore.get(rootId, targetObjectId);
+		const object = S.Detail.get(rootId, targetObjectId);
 		const sourceName = isCollection ? 'collection' : 'set';
 
 		if (isEditing) {

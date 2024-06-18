@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable } from 'Component';
 import { I, M, S, Action, UtilData, UtilObject, focus, keyboard, Relation, translate, UtilSpace } from 'Lib';
-import { blockStore, detailStore } from 'Store';
+import { blockStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -39,7 +39,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	render (): any {
 		const { rootId, onCreate, isContextMenuDisabled, readonly } = this.props;
 		const check = UtilData.checkDetails(rootId);
-		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = !readonly && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const canWrite = UtilSpace.canMyParticipantWrite();
@@ -167,7 +167,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	init () {
 		const { focused } = focus.state;
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		this.setValue();
 
@@ -228,7 +228,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	setValue () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		for (const item of EDITORS) {
 			if (!this.refEditable[item.blockId]) {
@@ -265,14 +265,14 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	onInstall () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		Action.install(object, false, (message: any) => UtilObject.openAuto(message.details));
 	};
 
 	isInstalled () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		let sources: string[] = [];
 

@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, UtilCommon, UtilData, keyboard, Dataview } from 'Lib';
 import { Graph } from 'Component';
-import { detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -128,7 +127,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 				};
 			};
 
-			this.data.nodes = message.nodes.map(it => detailStore.mapper(it));
+			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
 
 			UtilData.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
 				error: {},

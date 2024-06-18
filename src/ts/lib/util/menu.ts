@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, C, S, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
-import { blockStore, menuStore, detailStore, popupStore } from 'Store';
+import { blockStore, menuStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -505,10 +505,10 @@ class UtilMenu {
 					return;
 				};
 
-				detailStore.update(Constant.subId.space, { id: spaceview, details: { spaceDashboardId: object.id } }, false);
+				S.Detail.update(Constant.subId.space, { id: spaceview, details: { spaceDashboardId: object.id } }, false);
 
 				if (update) {
-					detailStore.update(Constant.subId.space, { id: object.id, details: object }, false);
+					S.Detail.update(Constant.subId.space, { id: object.id, details: object }, false);
 				};
 
 				if (openRoute) {

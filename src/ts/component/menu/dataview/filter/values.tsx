@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { I, S, UtilCommon, translate, keyboard, analytics, Relation, UtilDate, UtilObject } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
-import { menuStore, detailStore, blockStore } from 'Store';
+import { menuStore, blockStore } from 'Store';
 const Constant = require('json/constant.json');
 
 const TIMEOUT = 1000;
@@ -157,7 +157,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = Relation.getArrayValue(item.value).map(it => detailStore.get(subId, it, []));
+				list = Relation.getArrayValue(item.value).map(it => S.Detail.get(subId, it, []));
 				list = list.filter(it => !it._empty_);
 
 				value = (

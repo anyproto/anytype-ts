@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
 import { I, C, S, analytics, keyboard, UtilData, Action, UtilCommon, translate, UtilSpace } from 'Lib';
-import { detailStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -412,7 +412,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
 					onSelect: item => this.onClick(e, item),
-					dataMapper: it => detailStore.mapper(it),
+					dataMapper: it => S.Detail.mapper(it),
 				});
 				break;
 			};
@@ -439,7 +439,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			close();
 
 			if (onClick) {
-				onClick(detailStore.mapper(item));
+				onClick(S.Detail.mapper(item));
 			};
 		};
 

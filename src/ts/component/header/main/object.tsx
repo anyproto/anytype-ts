@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, UtilObject, UtilData, keyboard, translate, UtilSpace } from 'Lib';
-import { blockStore, detailStore, popupStore } from 'Store';
+import { I, S, UtilObject, UtilData, keyboard, translate, UtilSpace } from 'Lib';
+import { blockStore, popupStore } from 'Store';
 import HeaderBanner from 'Component/page/elements/head/banner';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -35,7 +36,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			return null;
 		};
 
-		const object = detailStore.get(rootId, rootId, Constant.templateRelationKeys);
+		const object = S.Detail.get(rootId, rootId, Constant.templateRelationKeys);
 		const isLocked = root ? root.isLocked() : false;
 		const showMenu = !UtilObject.isTypeOrRelationLayout(object.layout);
 		const canSync = showMenu && !object.templateIsBundled && !root.isObjectParticipant();
@@ -110,7 +111,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 	onOpen () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 
 		keyboard.disableClose(true);
 		popupStore.closeAll(null, () => UtilObject.openRoute(object));
@@ -145,7 +146,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 	onRelation () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'isArchived' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'isArchived' ]);
 
 		this.props.onRelation({}, { readonly: object.isArchived });
 	};
@@ -153,7 +154,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	updateTemplatesCnt () {
 		const { rootId } = this.props;
 		const { templatesCnt } = this.state;
-		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
 		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 
 		if (!allowedTemplateSelect || !object.type) {

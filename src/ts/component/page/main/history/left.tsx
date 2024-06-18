@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Block } from 'Component';
-import { blockStore, detailStore } from 'Store';
-import { I, M, UtilData, translate, UtilCommon } from 'Lib';
+import { blockStore } from 'Store';
+import { I, M, S, UtilData, translate, UtilCommon } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface Props extends I.PageComponent {
@@ -33,7 +33,7 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const check = UtilData.checkDetails(rootId);
-		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'layoutAlign' ]);
 		const icon = new M.Block({ id: `${rootId}-icon`, type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cover = new M.Block({ id: `${rootId}-cover`, type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cn = [ 'editorWrapper', check.className ];

@@ -1,5 +1,5 @@
 import { I, C, M, S, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
-import { blockStore, detailStore, notificationStore, popupStore } from 'Store';
+import { blockStore, notificationStore, popupStore } from 'Store';
 import * as Sentry from '@sentry/browser';
 
 type SearchSubscribeParams = Partial<{
@@ -522,7 +522,7 @@ class UtilData {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
+		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret = {
@@ -705,7 +705,7 @@ class UtilData {
 		details = details.concat(message.dependencies.map(mapper));
 		details = details.concat(message.records.map(mapper));
 
-		detailStore.set(subId, details);
+		S.Detail.set(subId, details);
 		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
@@ -855,7 +855,7 @@ class UtilData {
 
 		C.ObjectSearch(filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, (message: any) => {
 			if (message.records) {
-				message.records = message.records.map(it => detailStore.mapper(it));
+				message.records = message.records.map(it => S.Detail.mapper(it));
 			};
 
 			if (callBack) {
@@ -872,7 +872,7 @@ class UtilData {
 	};
 
 	setWindowTitle (rootId: string, objectId: string) {
-		this.setWindowTitleText(UtilObject.name(detailStore.get(rootId, objectId, [])));
+		this.setWindowTitleText(UtilObject.name(S.Detail.get(rootId, objectId, [])));
 	};
 
 	setWindowTitleText (name: string) {

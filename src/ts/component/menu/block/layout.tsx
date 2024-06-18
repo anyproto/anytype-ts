@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { blockStore } from 'Store';
-import { I, keyboard, analytics, UtilData, UtilObject, UtilMenu, UtilCommon, translate } from 'Lib';
-import { detailStore, menuStore } from 'Store';
+import { I, S, keyboard, analytics, UtilData, UtilObject, UtilMenu, UtilCommon, translate } from 'Lib';
+import { menuStore } from 'Store';
 const Constant = require('json/constant.json');
 
 class MenuBlockLayout extends React.Component<I.Menu> {
@@ -75,7 +75,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const { rootId } = data;
 		const allowedLayout = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Layout ]);
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'layoutAlign' ]);
 		
 		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
@@ -134,7 +134,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		let menuId = '';
 		const menuParam: I.MenuParam = {
@@ -178,7 +178,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, onLayoutSelect } = data;
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 
 		if (item.arrow) {
 			return;

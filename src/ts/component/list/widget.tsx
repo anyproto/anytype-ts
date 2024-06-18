@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
 import { C, I, M, S, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
-import { blockStore, menuStore, detailStore } from 'Store';
+import { blockStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -83,7 +83,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 					return true;
 				};
 
-				const object = detailStore.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
+				const object = S.Detail.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
 				if (object._empty_ || object.isArchived || object.isDeleted) {
 					return false;
 				};

@@ -6,7 +6,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName, EmptySearch } from 'Component';
 import { I, S, UtilObject, keyboard, Relation, translate } from 'Lib';
-import { detailStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 28;
@@ -195,7 +195,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { rootId, valueMapper, nameAdd } = data;
 
 		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map(it => detailStore.get(rootId, it, []));
+		value = value.map(it => S.Detail.get(rootId, it, []));
 		
 		if (valueMapper) {
 			value = value.map(valueMapper);

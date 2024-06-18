@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader } from 'Component';
-import { blockStore, detailStore } from 'Store';
+import { blockStore } from 'Store';
 import { I, S, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate } from 'Lib';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
@@ -118,7 +118,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	onClose () {
 		const rootId = this.getRootId();
 
-		UtilObject.openAuto(detailStore.get(rootId, rootId, []));
+		UtilObject.openAuto(S.Detail.get(rootId, rootId, []));
 	};
 
 	onCopy () {

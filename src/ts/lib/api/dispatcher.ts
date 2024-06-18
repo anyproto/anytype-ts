@@ -5,7 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { blockStore, detailStore, notificationStore } from 'Store';
+import { blockStore, notificationStore } from 'Store';
 import { 
 	S, UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage, UtilSpace, UtilData, keyboard 
 } from 'Lib';
@@ -827,9 +827,9 @@ class Dispatcher {
 					const { id, subIds, keys } = mapped;
 
 					// Subscriptions
-					this.getUniqueSubIds(subIds).forEach(subId => detailStore.delete(subId, id, keys));
+					this.getUniqueSubIds(subIds).forEach(subId => S.Detail.delete(subId, id, keys));
 
-					detailStore.delete(rootId, id, keys);
+					S.Detail.delete(rootId, id, keys);
 					blockStore.checkTypeSelect(rootId);
 					break;
 				};
@@ -847,7 +847,7 @@ class Dispatcher {
 
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
-						detailStore.delete(subId, id);
+						S.Detail.delete(subId, id);
 					};
 					break;
 				};
@@ -985,7 +985,7 @@ class Dispatcher {
 	};
 
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
-		this.getUniqueSubIds(subIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
+		this.getUniqueSubIds(subIds).forEach(subId => S.Detail.update(subId, { id, details }, clear));
 
 		if ([ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(details.spaceAccountStatus)) {
 			if (id == blockStore.spaceview) {
@@ -1002,7 +1002,7 @@ class Dispatcher {
 			return;
 		};
 
-		detailStore.update(rootId, { id, details }, clear);
+		S.Detail.update(rootId, { id, details }, clear);
 
 		const root = blockStore.getLeaf(rootId, id);
 		if ((id == rootId) && root) {
@@ -1069,12 +1069,12 @@ class Dispatcher {
 		};
 
 		S.Record.relationsSet(contextId, rootId, relationLinks);
-		detailStore.set(contextId, details);
+		S.Detail.set(contextId, details);
 		blockStore.restrictionsSet(contextId, restrictions);
 		blockStore.participantsSet(contextId, participants);
 
 		if (root) {
-			const object = detailStore.get(contextId, rootId, [ 'layout' ], true);
+			const object = S.Detail.get(contextId, rootId, [ 'layout' ], true);
 
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;

@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
-import { I, C, Onboarding, UtilCommon, analytics, keyboard, UtilObject, translate } from 'Lib';
-import { menuStore, popupStore, detailStore } from 'Store';
+import { I, C, S, Onboarding, UtilCommon, analytics, keyboard, UtilObject, translate } from 'Lib';
+import { menuStore, popupStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
 interface State {
@@ -235,7 +235,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 						onClick: (item: any) => {
 							const rootId = keyboard.getRootId();
 
-							detailStore.update(rootId, { id: item.id, details: item }, false);
+							S.Detail.update(rootId, { id: item.id, details: item }, false);
 
 							C.ObjectSetObjectType(rootId, item.id, () => {
 								UtilObject.openAuto({ id: rootId, layout: item.recommendedLayout });

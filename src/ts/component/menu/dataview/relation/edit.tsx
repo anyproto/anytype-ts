@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { I, C, S, UtilObject, UtilMenu, Relation, translate, Dataview, keyboard, analytics, Preview, UtilCommon } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
-import { blockStore, menuStore, detailStore } from 'Store';
+import { blockStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -616,7 +616,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, addCommand, onChange, ref } = data;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		C.ObjectCreateRelation(item, S.Common.space, (message: any) => {
 			if (message.error.code) {
@@ -626,7 +626,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			const { details } = message;
 			
 			data.relationId = details.id;
-			detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
+			S.Detail.update(Constant.subId.relation, { id: details.id, details }, false);
 
 			if (addCommand) {
 				addCommand(rootId, blockId, { ...details, _index_: item._index_ }, onChange);

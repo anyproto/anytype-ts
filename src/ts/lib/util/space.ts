@@ -1,5 +1,5 @@
 import { I, S, UtilCommon, UtilData, UtilObject, Storage, translate } from 'Lib';
-import { blockStore, detailStore } from 'Store';
+import { blockStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -49,7 +49,7 @@ class UtilSpace {
 		if (id == I.HomePredefinedId.Last) {
 			ret = this.getLastOpened();
 		} else {
-			ret = detailStore.get(Constant.subId.space, id);
+			ret = S.Detail.get(Constant.subId.space, id);
 		};
 
 		if (!ret || ret._empty_ || ret.isDeleted) {
@@ -92,7 +92,7 @@ class UtilSpace {
 	};
 
 	getSpaceview (id?: string) {
-		return detailStore.get(Constant.subId.space, id || blockStore.spaceview);
+		return S.Detail.get(Constant.subId.space, id || blockStore.spaceview);
 	};
 
 	getSpaceviewBySpaceId (id: string) {
@@ -115,7 +115,7 @@ class UtilSpace {
 	};
 
 	getProfile () {
-		return detailStore.get(Constant.subId.profile, blockStore.profile);
+		return S.Detail.get(Constant.subId.profile, blockStore.profile);
 	};
 
 	getParticipant (id?: string) {
@@ -126,7 +126,7 @@ class UtilSpace {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.participant, id || this.getParticipantId(space, account.id));
+		const object = S.Detail.get(Constant.subId.participant, id || this.getParticipantId(space, account.id));
 		return object._empty_ ? null : object;
 	};
 
@@ -138,7 +138,7 @@ class UtilSpace {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.myParticipant, this.getParticipantId(spaceId || space, account.id));
+		const object = S.Detail.get(Constant.subId.myParticipant, this.getParticipantId(spaceId || space, account.id));
 		return object._empty_ ? null : object;
 	};
 

@@ -1,7 +1,6 @@
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
-import { detailStore } from 'Store';
-import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
+import { I, S, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -1323,7 +1322,7 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 		};
 
 		// Save last opened object
-		const object = detailStore.get(objectId, objectId, []);
+		const object = S.Detail.get(objectId, objectId, []);
 		const windowId = UtilCommon.getCurrentElectronWindowId();
 
 		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {

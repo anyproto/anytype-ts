@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button } from 'Component';
-import { I, C, UtilCommon } from 'Lib';
-import { extensionStore, detailStore } from 'Store';
+import { I, C, S, UtilCommon } from 'Lib';
+import { extensionStore } from 'Store';
 
 interface State {
 	error: string;
@@ -17,7 +17,7 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 	};
 
 	render () {
-		const object = detailStore.mapper(extensionStore.createdObject);
+		const object = S.Detail.mapper(extensionStore.createdObject);
 
 		if (!object) {
 			return null;

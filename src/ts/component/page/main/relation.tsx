@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
 import { I, C, S, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate } from 'Lib';
-import { detailStore } from 'Store';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -35,7 +34,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const subIdType = S.Record.getSubId(rootId, 'type');
 		const totalType = S.Record.getMeta(subIdType, '').total;
 		const subIdObject = S.Record.getSubId(rootId, 'object');
@@ -139,7 +138,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				return;
 			};
 
-			const object = detailStore.get(rootId, rootId, []);
+			const object = S.Detail.get(rootId, rootId, []);
 			if (object.isDeleted) {
 				this.setState({ isDeleted: true, isLoading: false });
 				return;
@@ -174,7 +173,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 	onCreate () {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {

@@ -1,5 +1,4 @@
 import { I, S, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject, UtilMenu } from 'Lib';
-import { detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -497,7 +496,7 @@ class Relation {
 	};
 
 	public getSetOfObjects (rootId: string, objectId: string, layout: I.ObjectLayout): any[] {
-		const object = detailStore.get(rootId, objectId, [ 'setOf' ]);
+		const object = S.Detail.get(rootId, objectId, [ 'setOf' ]);
 		const setOf = this.getArrayValue(object.setOf);
 		const ret = [];
 

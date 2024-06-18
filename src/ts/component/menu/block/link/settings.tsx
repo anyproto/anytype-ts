@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, UtilCommon, UtilData, UtilMenu, keyboard, Relation, translate } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { I, C, S, UtilCommon, UtilData, UtilMenu, keyboard, Relation, translate } from 'Lib';
+import { blockStore, menuStore } from 'Store';
 const Constant = require('json/constant.json');
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<I.Menu> {
@@ -141,7 +141,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { data } = param;
         const { rootId, blockId } = data;
         const block = blockStore.getLeaf(rootId, blockId);
-        const object = detailStore.get(rootId, block.content.targetBlockId);
+        const object = S.Detail.get(rootId, block.content.targetBlockId);
 
         return UtilData.checkLinkSettings(block.content, object.layout);
 	};
@@ -186,7 +186,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			return [];
 		};
 
-        const object = detailStore.get(rootId, block.content.targetBlockId);
+        const object = S.Detail.get(rootId, block.content.targetBlockId);
         const content = this.getContent();
 
         const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(object.layout);

@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
 import { I, S, Relation, UtilObject, translate, UtilCommon, keyboard } from 'Lib';
-import { menuStore, detailStore } from 'Store';
+import { menuStore } from 'Store';
 import ItemObject from './item/object';
 
 const Constant = require('json/constant.json');
@@ -221,7 +221,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 
 		return Relation.getArrayValue(record[relation.relationKey]).
-			map(id => detailStore.get(subId, id, [])).
+			map(id => S.Detail.get(subId, id, [])).
 			filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
 	};
 

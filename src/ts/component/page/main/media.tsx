@@ -2,10 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted } from 'Component';
-import { I, C, UtilCommon, Action, Renderer, UtilSpace, translate, UtilRouter } from 'Lib';
-import { blockStore, detailStore } from 'Store';
+import { I, C, S, UtilCommon, Action, Renderer, translate, UtilRouter } from 'Lib';
+import { blockStore } from 'Store';
 import HeadSimple from 'Component/page/elements/head/simple';
-const Errors = require('json/error.json');
 
 interface State {
 	isLoading: boolean;
@@ -37,7 +36,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	render () {
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (isDeleted) {
@@ -192,7 +191,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 				return;
 			};
 
-			const object = detailStore.get(rootId, rootId, []);
+			const object = S.Detail.get(rootId, rootId, []);
 			if (object.isDeleted) {
 				this.setState({ isDeleted: true, isLoading: false });
 				return;

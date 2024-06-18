@@ -6,7 +6,7 @@ import raf from 'raf';
 import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
 import { I, C, S, keyboard, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, Storage, translate, analytics, Renderer, UtilRouter } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { blockStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -89,7 +89,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		// Subscriptions
 		for (const mark of marks) {
 			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
-				const object = detailStore.get(rootId, mark.param, []);
+				const object = S.Detail.get(rootId, mark.param, []);
 			};
 		};
 
@@ -351,7 +351,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				route = '/' + url.split('://')[1];
 
 				const routeParam = UtilRouter.getParam(route);
-				const object = detailStore.get(rootId, routeParam.id, []);
+				const object = S.Detail.get(rootId, routeParam.id, []);
 
 				target = object.id;
 			} else {
@@ -405,7 +405,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			const object = detailStore.get(rootId, data.param, []);
+			const object = S.Detail.get(rootId, data.param, []);
 			const { _empty_, isDeleted } = object;
 
 			if (_empty_ || isDeleted) {
@@ -424,7 +424,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const param = String(element.attr('data-param') || '');
-			const object = detailStore.get(rootId, param, []);
+			const object = S.Detail.get(rootId, param, []);
 			
 			let tt = '';
 			if (object.isDeleted) {
@@ -491,7 +491,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			const object = detailStore.get(rootId, data.param, []);
+			const object = S.Detail.get(rootId, data.param, []);
 			const { _empty_, layout, done, isDeleted, isArchived } = object;
 
 			let icon = null;
@@ -539,7 +539,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					return;
 				};
 
-				const object = detailStore.get(rootId, param, []);
+				const object = S.Detail.get(rootId, param, []);
 
 				name.off('click.mention').on('click.mention', e => {
 					e.preventDefault();

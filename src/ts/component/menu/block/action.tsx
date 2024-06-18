@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { detailStore, blockStore, menuStore } from 'Store';
 import { I, C, S, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
+import { blockStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -300,7 +300,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 		let flag = false;
 		if (id) {
-			const object = detailStore.get(rootId, id, [ 'isArchived', 'isDeleted' ], true);
+			const object = S.Detail.get(rootId, id, [ 'isArchived', 'isDeleted' ], true);
 			if (!object.isDeleted) {
 				flag = true;
 			};
@@ -608,7 +608,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			case 'openAsObject': {
-				UtilObject.openConfig(detailStore.get(rootId, targetObjectId));
+				UtilObject.openConfig(S.Detail.get(rootId, targetObjectId));
 
 				const event: any = { type: block.type };
 				if (block.isFile()) {

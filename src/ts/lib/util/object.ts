@@ -1,5 +1,5 @@
 import { I, C, S, keyboard, history as historyPopup, Renderer, UtilData, translate, UtilRouter, analytics } from 'Lib';
-import { blockStore, popupStore, detailStore } from 'Store';
+import { blockStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -255,7 +255,7 @@ class UtilObject {
 			};
 
 			if (callBack) {
-				callBack(message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_));
+				callBack(message.records.map(it => S.Detail.mapper(it)).filter(it => !it._empty_));
 			};
 		});
 	};

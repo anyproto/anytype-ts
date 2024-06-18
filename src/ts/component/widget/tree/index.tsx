@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Label } from 'Component';
 import { S, analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon, translate } from 'Lib';
-import { blockStore, detailStore } from 'Store';
+import { blockStore } from 'Store';
 import Item from './item';
 
 interface State {
@@ -220,7 +220,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const { block, isSystemTarget, isPreview, sortFavorite, addGroupLabels } = this.props;
 		const { targetBlockId } = block.content;
 		const { widgets } = blockStore;
-		const object = detailStore.get(widgets, targetBlockId, [ 'links' ]);
+		const object = S.Detail.get(widgets, targetBlockId, [ 'links' ]);
 		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
 
 		this.branches = [];
@@ -234,7 +234,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 				records = sortFavorite(records);
 			};
 
-			children = records.map(id => this.mapper(detailStore.get(subId, id, Constant.sidebarRelationKeys)));
+			children = records.map(id => this.mapper(S.Detail.get(subId, id, Constant.sidebarRelationKeys)));
 		} else {
 			children = this.getChildNodesDetails(object.id);
 			this.subscribeToChildNodes(object.id, Relation.getArrayValue(object.links));

@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
 import { C, I, S, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace, keyboard } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { blockStore, menuStore } from 'Store';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -289,7 +289,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		let object = null;
 		switch (targetBlockId) {
 			default: {
-				object = detailStore.get(widgets, targetBlockId);
+				object = S.Detail.get(widgets, targetBlockId);
 				break;
 			};
 
@@ -635,7 +635,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	getFavoriteIds (): string[] {
 		const { root } = blockStore;
 		const ids = blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
-		const items = ids.map(id => detailStore.get(root, id)).filter(it => !it.isArchived).map(it => it.id);
+		const items = ids.map(id => S.Detail.get(root, id)).filter(it => !it.isArchived).map(it => it.id);
 
 		return items;
 	};

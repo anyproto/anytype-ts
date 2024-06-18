@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
 import { I, C, S, UtilCommon, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
-import { detailStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -288,7 +288,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { subId } = data;
 
 		return Relation.getArrayValue(data.value).
-			map(it => detailStore.get(subId, it, [])).
+			map(it => S.Detail.get(subId, it, [])).
 			filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 	};
 

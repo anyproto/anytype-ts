@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Cell, Icon } from 'Component';
 import { I, C, S, UtilCommon, focus, analytics, Relation, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, detailStore, blockStore } from 'Store';
+import { menuStore, blockStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -73,7 +73,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 							subId={rootId}
 							block={block}
 							relationKey={relation.relationKey}
-							getRecord={() => detailStore.get(rootId, rootId, [ relation.relationKey ], true)}
+							getRecord={() => S.Detail.get(rootId, rootId, [ relation.relationKey ], true)}
 							viewType={I.ViewType.Grid}
 							readonly={readonly || !allowedValue}
 							idPrefix={idPrefix}

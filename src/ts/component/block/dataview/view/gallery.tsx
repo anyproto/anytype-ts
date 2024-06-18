@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { I, S, Relation, UtilData, UtilCommon, Dataview } from 'Lib';
-import { detailStore } from 'Store';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
 
@@ -56,7 +55,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 		// Subscriptions on dependent objects
 		for (const id of records) {
-			const item = detailStore.get(subId, id, getKeys(view.id));
+			const item = S.Detail.get(subId, id, getKeys(view.id));
 			if (item._empty_) {
 				continue;
 			};
@@ -70,7 +69,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 				const v = Relation.getArrayValue(item[k]);
 				if (v && v.length) {
 					v.forEach((it: string) => {
-						const object = detailStore.get(rootId, it, []);
+						const object = S.Detail.get(rootId, it, []);
 					});
 				};
 			};
@@ -321,7 +320,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		};
 
 		const subId = S.Record.getSubId(rootId, block.id);
-		const record = detailStore.get(subId, id, getKeys(view.id));
+		const record = S.Detail.get(subId, id, getKeys(view.id));
 
 		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
 	};

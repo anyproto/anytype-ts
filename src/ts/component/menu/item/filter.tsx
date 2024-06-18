@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { I, Relation, UtilCommon, translate, UtilDate } from 'Lib';
+import { I, S, Relation, UtilCommon, translate, UtilDate } from 'Lib';
 import { Icon, Tag, IconObject } from 'Component';
-import { detailStore } from 'Store';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
 
@@ -119,7 +118,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 					);
 				};
 
-				list = Relation.getArrayValue(value).map(it => detailStore.get(subId, it, []));
+				list = Relation.getArrayValue(value).map(it => S.Detail.get(subId, it, []));
 				list = list.filter(it => !it._empty_);
 
 				v = (

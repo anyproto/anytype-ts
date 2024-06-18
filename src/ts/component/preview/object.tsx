@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Cover, Icon } from 'Component';
-import { detailStore, blockStore } from 'Store';
+import { blockStore } from 'Store';
 import { I, C, S, UtilData, UtilRouter, Action, translate } from 'Lib';
 
 interface Props {
@@ -53,7 +53,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const previewSize = this.props.size;
 		const contextId = this.getRootId();
 		const check = UtilData.checkDetails(contextId, rootId);
-		const object = detailStore.get(contextId, rootId);
+		const object = S.Detail.get(contextId, rootId);
 		const { name, description, coverType, coverId, coverX, coverY, coverScale, iconImage } = object;
 		const childBlocks = blockStore.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
@@ -461,7 +461,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			this.setState({ loading: false });
 
 			if (setObject) {
-				setObject(detailStore.get(contextId, rootId, []));
+				setObject(S.Detail.get(contextId, rootId, []));
 			};
 		});
 	};

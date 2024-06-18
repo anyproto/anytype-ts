@@ -4,11 +4,11 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon, Loader, Deleted, DropTarget } from 'Component';
-import { blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { 
 	I, C, S, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, 
 	Renderer, sidebar 
 } from 'Lib';
+import { blockStore, menuStore, popupStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
@@ -220,7 +220,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 
 		if (object.isDeleted) {
 			this.setState({ isDeleted: true });
@@ -251,7 +251,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			const object = detailStore.get(rootId, rootId, []);
+			const object = S.Detail.get(rootId, rootId, []);
 			if (object.isDeleted) {
 				this.setState({ isDeleted: true });
 				return;
@@ -1768,7 +1768,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const win = $(window);
 		const first = blockStore.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
-		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
 		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 		const length = block.getLength();
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
@@ -2262,7 +2262,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return true;
 		};
 
-		const object = detailStore.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
 		if (object.isArchived || object.isDeleted) {
 			return true;
 		};

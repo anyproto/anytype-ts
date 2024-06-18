@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, UtilData, UtilCommon, keyboard } from 'Lib';
+import { I, M, C, S, UtilData, UtilCommon, keyboard } from 'Lib';
 import { Block, Drag } from 'Component';
-import { blockStore, detailStore } from 'Store';
+import { blockStore } from 'Store';
 
 interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
@@ -32,7 +32,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 		};
 
 		const check = UtilData.checkDetails(rootId);
-		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'layoutAlign' ], true);
 		const header = blockStore.getLeaf(rootId, 'header') || {};
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });

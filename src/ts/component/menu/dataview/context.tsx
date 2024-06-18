@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, translate, UtilObject, focus, Action, UtilSpace } from 'Lib';
-import { detailStore, menuStore, blockStore, popupStore } from 'Store';
+import { I, C, S, keyboard, analytics, translate, UtilObject, focus, Action, UtilSpace } from 'Lib';
+import { menuStore, blockStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -117,7 +117,7 @@ class MenuContext extends React.Component<I.Menu> {
 				object = getObject(it);
 			} else
 			if (subId) {
-				object = detailStore.get(subId, it);
+				object = S.Detail.get(subId, it);
 			};
 
 			if (!object || object._empty_) {
@@ -306,7 +306,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { subId, objectIds, onSelect, targetId, isCollection, route, relationKeys, view, blockId } = data;
 		const win = $(window);
 		const count = objectIds.length;
-		const first = count == 1 ? detailStore.get(subId, objectIds[0], []) : null;
+		const first = count == 1 ? S.Detail.get(subId, objectIds[0], []) : null;
 		const cb = () => {
 			if (onSelect) {
 				onSelect(item.id);

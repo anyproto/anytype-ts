@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
-import { blockStore, detailStore } from 'Store';
+import { blockStore } from 'Store';
 import { I, S, keyboard, Action } from 'Lib';
 import { SortableContainer } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
@@ -203,7 +203,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 		const { targetBlockId } = block.content;
 		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
 
-		let items = getRecordIds().map(id => detailStore.get(subId, id, Constant.sidebarRelationKeys));
+		let items = getRecordIds().map(id => S.Detail.get(subId, id, Constant.sidebarRelationKeys));
 
 		if (isPreview && isRecent) {
 			// add group labels

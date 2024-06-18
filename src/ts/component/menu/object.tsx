@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, keyboard, analytics, UtilObject, UtilCommon, Preview, focus, Action, translate, UtilSpace } from 'Lib';
-import { blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { blockStore, menuStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -100,7 +100,7 @@ class MenuObject extends React.Component<I.Menu> {
 			return [];
 		};
 		
-		const object = detailStore.get(rootId, blockId);
+		const object = S.Detail.get(rootId, blockId);
 		const cmd = keyboard.cmdSymbol();
 		const isTemplate = UtilObject.isTemplate(object.type);
 		const print = { id: 'print', name: translate('menuObjectPrint'), caption: `${cmd} + P` };
@@ -325,7 +325,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const { data } = param;
 		const { blockId, rootId, onSelect } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const route = analytics.route.menuObject;
 		
 		if (!block || item.arrow) {

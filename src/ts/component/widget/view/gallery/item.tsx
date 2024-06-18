@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { ObjectName, IconObject, DropTarget, ObjectCover } from 'Component';
-import { blockStore, menuStore, detailStore } from 'Store';
+import { blockStore, menuStore } from 'Store';
 import { I, S, UtilObject, keyboard, analytics, UtilSpace, Dataview } from 'Lib';
 
 const Constant = require('json/constant.json');
@@ -30,7 +30,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 	render () {
 		const { subId, id, block, isEditing, hideIcon } = this.props;
 		const rootId = keyboard.getRootId();
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions } = object;
 		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
@@ -119,7 +119,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 
 	getObject () {
 		const { subId, id, } = this.props;
-		return detailStore.get(subId, id);
+		return S.Detail.get(subId, id);
 	};
 
 	onContext (e: React.MouseEvent) {

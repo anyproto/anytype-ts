@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, UtilCommon, UtilData, keyboard, focus, Storage, UtilSpace } from 'Lib';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject} from 'Component';
-import { menuStore, blockStore, detailStore } from 'Store';
+import { menuStore, blockStore } from 'Store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -206,7 +206,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.Link: {
-				const object = detailStore.get(rootId, content.targetBlockId, [ 'restrictions' ]);
+				const object = S.Detail.get(rootId, content.targetBlockId, [ 'restrictions' ]);
 				
 				if (blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;
@@ -219,7 +219,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Bookmark: {
-				const object = detailStore.get(rootId, content.targetObjectId, [ 'restrictions' ]);
+				const object = S.Detail.get(rootId, content.targetObjectId, [ 'restrictions' ]);
 				
 				if (blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;

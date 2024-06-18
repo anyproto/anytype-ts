@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, keyboard, Storage, translate, UtilCommon, UtilSpace, analytics } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { I, S, keyboard, Storage, translate, UtilCommon, UtilSpace } from 'Lib';
+import { blockStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface Props extends I.WidgetTreeItem {
@@ -34,7 +35,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const subKey = getSubKey();
 		const subId = getSubId(parentId);
 		const isOpen = Storage.checkToggle(subKey, treeKey);
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, type, restrictions, done, layout } = object;
 		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
 		const rootId = keyboard.getRootId();
@@ -158,7 +159,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { id, parentId, onToggle, getSubId } = this.props;
-		const object = detailStore.get(getSubId(parentId), id, Constant.sidebarRelationKeys, true);
+		const object = S.Detail.get(getSubId(parentId), id, Constant.sidebarRelationKeys, true);
 
 		onToggle(e, { ...this.props, details: object });
 		this.forceUpdate();

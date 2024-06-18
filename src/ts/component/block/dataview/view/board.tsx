@@ -4,12 +4,11 @@ import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
 import { I, C, S, UtilCommon, Dataview, keyboard, translate } from 'Lib';
-import { detailStore, blockStore } from 'Store';
+import { blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
 
 const Constant = require('json/constant.json');
-
 const PADDING = 46;
 
 const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewComponent> {
@@ -414,8 +413,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		let orders: any[] = [];
 
 		if (change) {
-			detailStore.update(newSubId, { id: record.id, details: record }, true);
-			detailStore.delete(oldSubId, record.id, Object.keys(record));
+			S.Detail.update(newSubId, { id: record.id, details: record }, true);
+			S.Detail.delete(oldSubId, record.id, Object.keys(record));
 
 			S.Record.recordDelete(oldSubId, '', record.id);
 			S.Record.recordAdd(newSubId, '', record.id, this.newIndex);

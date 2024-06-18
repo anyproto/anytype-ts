@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { I, UtilObject, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
-import { popupStore, menuStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+import { popupStore, menuStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -17,6 +16,7 @@ interface Props extends I.HeaderComponent {
 	className?: string;
 };
 
+const Constant = require('json/constant.json');
 const Components = {
 	authIndex:			 HeaderAuthIndex,
 	mainObject:			 HeaderMainObject,

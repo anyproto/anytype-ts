@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Label, Button } from 'Component';
-import { blockStore, detailStore } from 'Store';
+import { blockStore } from 'Store';
 import { Dataview, I, C, M, S, UtilCommon, Relation, keyboard, translate, UtilRouter, UtilObject } from 'Lib';
 
 import WidgetViewList from './list';
@@ -283,7 +283,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	getObject () {
-		return detailStore.get(blockStore.widgets, this.props.block.getTargetObjectId());
+		return S.Detail.get(blockStore.widgets, this.props.block.getTargetObjectId());
 	};
 
 	getLimit (): number {

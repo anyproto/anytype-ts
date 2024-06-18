@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I, C, S, UtilData, Relation, UtilObject, translate, keyboard } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
-import { detailStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -98,7 +98,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 
 						if (value) {
 							if (column.isObject) {
-								const object = detailStore.get(subId, value, []);
+								const object = S.Detail.get(subId, value, []);
 								if (!object._empty_) {
 									onClick = () => UtilObject.openPopup(object);
 									content = (

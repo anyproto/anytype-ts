@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
 import { I, C, S, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter, UtilSpace } from 'Lib';
-import { detailStore, menuStore, blockStore } from 'Store';
+import { menuStore, blockStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -51,7 +51,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const { config } = S.Common;
 		const rootId = this.getRootId();
 		const check = UtilData.checkDetails(rootId);
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
 		const templates = S.Record.getRecordIds(subIdTemplate, '');
 		const canWrite = UtilSpace.canMyParticipantWrite();
@@ -262,7 +262,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				return;
 			};
 
-			const object = detailStore.get(rootId, rootId, []);
+			const object = S.Detail.get(rootId, rootId, []);
 			if (object.isDeleted) {
 				this.setState({ isDeleted: true, isLoading: false });
 				return;
@@ -313,7 +313,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onTemplateAdd () {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const details: any = { 
 			targetObjectType: rootId,
 			layout: object.recommendedLayout,
@@ -418,7 +418,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onSetAdd () {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const details = { 
 			name: UtilCommon.sprintf(translate('commonSetName'), object.name),
 			iconEmoji: object.iconEmoji,
@@ -434,7 +434,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const skipSystemKeys = [ 'tag', 'description', 'source' ];
 		const recommendedKeys = object.recommendedRelations.map(id => S.Record.getRelationById(id)).map(it => it && it.relationKey);
 		const systemKeys = Relation.systemKeys().filter(it => !skipSystemKeys.includes(it));
@@ -504,7 +504,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const { defaultTemplateId } = object;
 		const template: any = { id: item.id, typeId: rootId };
 
@@ -555,7 +555,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	getSpaceId () {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId, [ 'spaceId' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'spaceId' ], true);
 
 		return object.spaceId;
 	};

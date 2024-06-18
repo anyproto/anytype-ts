@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
 import { I, C, S, focus, UtilObject, keyboard } from 'Lib';
-import { menuStore, detailStore } from 'Store';
+import { menuStore } from 'Store';
 import ControlButtons from './controlButtons';
 
 const Constant = require('json/constant.json');
@@ -46,7 +46,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	render (): any {
 		const { rootId, readonly } = this.props;
 		const { loading } = this.state;
-		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys);
+		const object = S.Detail.get(rootId, rootId, Constant.coverRelationKeys);
 		const cn = [ 'editorControls', 'editorControlElements' ];
 		
 		if ((object.coverType != I.CoverType.None) && object.coverId) {
@@ -99,7 +99,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onIcon (e: any) {
 		const { rootId } = this.props;
 		const node = $(this.node);
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 		const cb = () => menuStore.update('smile', { element: `#block-icon-${rootId}` });
 
 		focus.clear(true);
@@ -142,7 +142,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onLayout (e: any) {
 		const { rootId, onLayoutSelect } = this.props;
 		const node = $(this.node);
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 		
 		menuStore.open('blockLayout', { 
 			element: '.editorControls #button-layout',

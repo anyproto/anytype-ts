@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
 import { I, C, S, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Renderer, keyboard } from 'Lib';
-import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { pdfjs } from 'react-pdf';
+
 const Constant = require('json/constant.json');
 
 import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
@@ -46,7 +46,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		const { id, fields, content } = block;
 		const { state, targetObjectId } = content;		
 		const { page, pages } = this.state;
-		const object = detailStore.get(rootId, targetObjectId, []);
+		const object = S.Detail.get(rootId, targetObjectId, []);
 		const width = Number(fields.width) || 0;
 		const css: any = {};
 

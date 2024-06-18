@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I, S, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
-import { detailStore } from 'Store';
 import { Cell, SelectionTarget } from 'Component';
 
 interface Props extends I.ViewComponent {
@@ -21,7 +20,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
 		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
-		const record = detailStore.get(subId, id);
+		const record = S.Detail.get(subId, id);
 		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout) ];
 		const { done } = record;
 
@@ -95,7 +94,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const { rootId, block, groupId, id, onContext } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
-		const record = detailStore.get(subId, id);
+		const record = S.Detail.get(subId, id);
 		const cb = {
 			0: () => {
 				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openConfig(record); 

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Drag, Cover, Loader, Label } from 'Component';
 import { I, C, S, UtilCommon, UtilData, UtilObject, focus, translate, keyboard } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { blockStore, menuStore } from 'Store';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
 
 const Constant = require('json/constant.json');
@@ -62,7 +62,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	render () {
 		const { isEditing } = this.state;
 		const { rootId, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
+		const object = S.Detail.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
 		const isImage = UtilData.coverIsImage(coverType);
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -78,7 +78,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		let content = null;
 
 		if (coverType == I.CoverType.Source) {
-			image = detailStore.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
+			image = S.Detail.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
 			author = (
 				<Label className="author" text={UtilCommon.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>`)} />
 			);
@@ -179,7 +179,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 		const cb = () => menuStore.update('smile', { element: `#block-icon-${rootId}` });
 
 		focus.clear(true);
@@ -205,7 +205,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 		
 		menuStore.open('blockLayout', { 
 			element: `#block-${block.id} #button-layout`,
@@ -253,7 +253,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	
 	onEdit (e: any) {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		this.coords.x = object.coverX;
 		this.coords.y = object.coverY;
@@ -295,7 +295,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		e.stopPropagation();
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		UtilObject.setCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
 			this.setState({ isEditing: false });
@@ -315,7 +315,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, Constant.coverRelationKeys, true);
 		const { coverId, coverType } = object;
 		const node = $(this.node);
 		const isImage = UtilData.coverIsImage(coverType);
@@ -334,7 +334,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.setLoading(true);
 
 		const cb = () => {
-			const object = detailStore.get(rootId, rootId, [ 'coverScale' ], true);
+			const object = S.Detail.get(rootId, rootId, [ 'coverScale' ], true);
 			const { coverScale } = object;
 
 			if (this.refDrag) {
@@ -425,7 +425,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 
 		const node = $(this.node);
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverX', 'coverY' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'coverX', 'coverY' ], true);
 		const { coverX, coverY } = object;
 		const value = node.find('#dragValue');
 

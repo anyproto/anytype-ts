@@ -28,7 +28,7 @@ class DetailStore {
 	/** Idempotent. adds details to the detail store. */
     public set (rootId: string, items: Item[]) {
 		if (!rootId) {
-			console.log('[detailStore].set: rootId is not defined');
+			console.log('[S.Detail].set: rootId is not defined');
 			return;
 		};
 
@@ -58,12 +58,12 @@ class DetailStore {
 	/** Idempotent. updates details in the detail store. if clear is set, map wil delete details by item id. */
     public update (rootId: string, item: Item, clear: boolean): void {
 		if (!rootId) {
-			console.log('[detailStore].update: rootId is not defined');
+			console.log('[S.Detail].update: rootId is not defined');
 			return;
 		};
 
 		if (!item.details) {
-			console.log('[detailStore].update: details are not defined');
+			console.log('[S.Detail].update: details are not defined');
 			return;
 		};
 
@@ -341,4 +341,4 @@ class DetailStore {
 
 };
 
-export const detailStore: DetailStore = new DetailStore();
+export const Detail: DetailStore = new DetailStore();

@@ -1,5 +1,5 @@
 import arrayMove from 'array-move';
-import { blockStore, detailStore } from 'Store';
+import { blockStore } from 'Store';
 import { I, M, C, S, UtilCommon, UtilData, UtilObject, Relation, translate, UtilDate } from 'Lib';
 
 const Constant = require('json/constant.json');
@@ -197,7 +197,7 @@ class Dataview {
 	};
 
 	isCollection (rootId: string, blockId: string): boolean {
-		const object = detailStore.get(rootId, rootId, [ 'layout' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
 		const isInline = !UtilObject.getSystemLayouts().includes(object.layout);
 
 		if (!isInline) {
@@ -210,7 +210,7 @@ class Dataview {
 		};
 
 		const { targetObjectId, isCollection } = block.content;
-		const target = targetObjectId ? detailStore.get(rootId, targetObjectId, [ 'layout' ], true) : null;
+		const target = targetObjectId ? S.Detail.get(rootId, targetObjectId, [ 'layout' ], true) : null;
 
 		return target ? target.layout == I.ObjectLayout.Collection : isCollection;
 	};
@@ -254,13 +254,13 @@ class Dataview {
 					case I.RelationType.MultiSelect:
 						value = Relation.getArrayValue(value);
 						if (value.length) {
-							option = detailStore.get(Constant.subId.option, value[0]);
+							option = S.Detail.get(Constant.subId.option, value[0]);
 							bgColor = option?.color;
 						};
 						break;
 
 					case I.RelationType.Select:
-						option = detailStore.get(Constant.subId.option, value);
+						option = S.Detail.get(Constant.subId.option, value);
 						bgColor = option?.color;
 						break;
 				};
@@ -524,7 +524,7 @@ class Dataview {
 			ret = object;
 		} else {
 			for (const id of value) {
-				const file = detailStore.get(subId, id, []);
+				const file = S.Detail.get(subId, id, []);
 				if (file._empty_ || !layouts.includes(file.layout)) {
 					continue;
 				};

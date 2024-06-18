@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, Onboarding, UtilObject, analytics, UtilSpace } from 'Lib';
-import { detailStore, blockStore } from 'Store';
+import { I, S, Onboarding, UtilObject, analytics, UtilSpace } from 'Lib';
+import { blockStore } from 'Store';
 
 class PageMainEdit extends React.Component<I.PageComponent> {
 	
@@ -39,7 +39,7 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const home = UtilSpace.getDashboard();
-		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
 		if (this.refHeader) {
 			this.refHeader.forceUpdate();

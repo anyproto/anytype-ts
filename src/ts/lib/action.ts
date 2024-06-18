@@ -1,5 +1,5 @@
 import { I, C, S, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
-import { blockStore, detailStore, popupStore, menuStore } from 'Store';
+import { blockStore, popupStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -41,7 +41,7 @@ class Action {
 
 		S.Record.metaClear(rootId, '');
 		S.Record.recordsClear(rootId, '');
-		detailStore.clear(rootId);
+		S.Detail.clear(rootId);
 
 		C.ObjectSearchUnsubscribe([ rootId ]);
 	};
@@ -58,7 +58,7 @@ class Action {
 		S.Record.recordsClear(subId + '/dep', '');
 		S.Record.viewsClear(rootId, blockId);
 
-		detailStore.clear(subId);
+		S.Detail.clear(subId);
 
 		C.ObjectSearchUnsubscribe([ subId ]);
 	};
@@ -253,7 +253,7 @@ class Action {
 				Preview.toastShow({ text: toast });
 			};
 
-			detailStore.update(subId, { id: details.id, details }, false);
+			S.Detail.update(subId, { id: details.id, details }, false);
 			analytics.event('ObjectInstall', eventParam);
 
 			if (callBack) {
@@ -667,7 +667,7 @@ class Action {
 	};
 
 	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition) {
-		const object = detailStore.get(rootId, objectId);
+		const object = S.Detail.get(rootId, objectId);
 
 		let layout = I.WidgetLayout.Link;
 

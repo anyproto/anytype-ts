@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { I, C, S, UtilData, analytics, UtilCommon, translate, UtilObject, keyboard, Action, UtilMenu } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
-import { detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -296,7 +295,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, onSelect, onUpload, onUploadStart } = data;
-		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		if (!object.coverId) {
 			close();
