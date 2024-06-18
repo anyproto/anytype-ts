@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { MenuItemVertical, Button, Title, Label } from 'Component';
-import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilSpace, translate } from 'Lib';
-import { popupStore, blockStore, menuStore } from 'Store';
-const Url = require('json/url.json');
+import { MenuItemVertical, Title, Label } from 'Component';
+import { I, S, keyboard, Renderer } from 'Lib';
 
 class MenuSyncStatusInfo extends React.Component<I.Menu> {
 
@@ -64,14 +62,14 @@ class MenuSyncStatusInfo extends React.Component<I.Menu> {
 	};
 
 	onClick (e, item) {
-		menuStore.closeAll();
+		S.Menu.closeAll();
 		switch (item.id) {
 			case 'updateApp': {
 				Renderer.send('updateCheck');
 				break;
 			};
 			case 'upgradeMembership': {
-				popupStore.open('settings', { data: { page: 'membership' } });
+				S.Popup.open('settings', { data: { page: 'membership' } });
 				break;
 			};
 		};

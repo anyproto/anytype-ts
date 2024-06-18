@@ -1013,12 +1013,12 @@ class UtilData {
 	};
 
 	groupDateSections (records: any[], key: string, sectionTemplate?: any) {
-		const now = UtilDate.now();
-		const { d, m, y } = UtilDate.getCalendarDateParam(now);
-		const today = now - UtilDate.timestamp(y, m, d);
-		const yesterday = now - UtilDate.timestamp(y, m, d - 1);
-		const lastWeek = now - UtilDate.timestamp(y, m, d - 7);
-		const lastMonth = now - UtilDate.timestamp(y, m - 1, d);
+		const now = U.Date.now();
+		const { d, m, y } = U.Date.getCalendarDateParam(now);
+		const today = now - U.Date.timestamp(y, m, d);
+		const yesterday = now - U.Date.timestamp(y, m, d - 1);
+		const lastWeek = now - U.Date.timestamp(y, m, d - 7);
+		const lastMonth = now - U.Date.timestamp(y, m - 1, d);
 		const groups = {
 			today: [],
 			yesterday: [],

@@ -959,7 +959,7 @@ class Dispatcher {
 				};
 
 				case 'SpaceSyncStatusUpdate': {
-					authStore.syncStatusUpdate(mapped);
+					S.Auth.syncStatusUpdate(mapped);
 					break;
 				};
 			};
