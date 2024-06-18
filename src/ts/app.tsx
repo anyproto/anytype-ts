@@ -9,7 +9,7 @@ import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar } from 'Component';
-import { authStore, blockStore, menuStore, popupStore } from 'Store';
+import { blockStore, menuStore, popupStore } from 'Store';
 import { 
 	I, C, S, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
 	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode, UtilSpace, sidebar
@@ -143,7 +143,7 @@ Sentry.init({
 });
 
 Sentry.setContext('info', {
-	network: I.NetworkMode[authStore.networkConfig?.mode],
+	network: I.NetworkMode[S.Auth.networkConfig?.mode],
 	isPackaged: isPackaged,
 });
 
@@ -277,7 +277,7 @@ class App extends React.Component<object, State> {
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
 		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
-		Renderer.on('logout', () => authStore.logout(false, false));
+		Renderer.on('logout', () => S.Auth.logout(false, false));
 		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
 		Renderer.on('will-close-window', this.onWillCloseWindow);
 
@@ -366,7 +366,7 @@ class App extends React.Component<object, State> {
 						S.Common.redirectSet(route);
 
 						if (account) {
-							authStore.accountSet(account);
+							S.Auth.accountSet(account);
 							S.Common.configSet(account.config, false);
 
 							if (spaceId) {
@@ -382,13 +382,13 @@ class App extends React.Component<object, State> {
 				});
 
 				win.off('unload').on('unload', (e: any) => {
-					if (!authStore.token) {
+					if (!S.Auth.token) {
 						return;
 					};
 
 					e.preventDefault();
-					C.WalletCloseSession(authStore.token, () => {
-						authStore.tokenSet('');
+					C.WalletCloseSession(S.Auth.token, () => {
+						S.Auth.tokenSet('');
 						window.close();
 					});
 					return false;

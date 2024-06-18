@@ -1,5 +1,5 @@
-import { I, Storage, UtilCommon, analytics, Renderer, translate, UtilObject, UtilSpace, UtilData, UtilDate } from 'Lib';
-import { popupStore, authStore } from 'Store';
+import { I, S, Storage, UtilCommon, analytics, Renderer, translate, UtilObject, UtilSpace, UtilData, UtilDate } from 'Lib';
+import { popupStore } from 'Store';
 
 const Surveys = require('json/survey.json');
 
@@ -33,7 +33,7 @@ class Survey {
 	};
 
 	onConfirm (type: I.SurveyType) {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const t = I.SurveyType[type].toLowerCase();
 		const survey = Surveys[t];
 		const param: any = {};
@@ -149,7 +149,7 @@ class Survey {
 			return;
 		};
 
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const check = UtilSpace.getList().filter(it => it.isShared && (it.creator == UtilSpace.getParticipantId(it.targetSpaceId, account.id)));
 		if (!check.length) {
 			return;

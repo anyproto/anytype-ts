@@ -3,14 +3,14 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
 import { I, S, UtilSpace, UtilRouter, translate, UtilMenu, analytics } from 'Lib';
-import { detailStore, authStore } from 'Store';
+import { detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<I.PopupSettings> {
 
 	render () {
-		const { accountSpaceId } = authStore;
+		const { accountSpaceId } = S.Auth;
 		const spaces = this.getItems();
 
 		const Row = (space: any) => {

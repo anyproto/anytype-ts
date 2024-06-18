@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Title, Label, Select, Button } from 'Component';
 import { I, S, UtilMenu, UtilCommon, translate, Action, analytics, Renderer, Preview } from 'Lib';
-import { authStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends React.Component<I.Popup> {
@@ -109,7 +109,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	componentDidMount(): void {
-		const { networkConfig } = authStore;
+		const { networkConfig } = S.Auth;
 		const { mode, path } = networkConfig;
 		const userPath = UtilCommon.getElectron().userPath();
 
@@ -132,7 +132,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onSave () {
-		const { networkConfig } = authStore;
+		const { networkConfig } = S.Auth;
 		const userPath = UtilCommon.getElectron().userPath();
 
 		if (this.config.mode !== networkConfig.mode) {
@@ -149,7 +149,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 			delete this.config.userPath;
 		};
 
-		authStore.networkConfigSet(this.config);
+		S.Auth.networkConfigSet(this.config);
 		this.props.close();
 	};
 

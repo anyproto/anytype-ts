@@ -2,7 +2,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
 import { I, S, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
-import { authStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
+
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 
@@ -34,7 +35,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	
 	render () {
 		const { error } = this.state;
-		const { accounts } = authStore;
+		const { accounts } = S.Auth;
 		const length = accounts.length;
 		
         return (
@@ -108,7 +109,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 				return;
 			};
 
-			authStore.accountListClear();
+			S.Auth.accountListClear();
 			UtilData.createSession(phrase, '', () => {
 				C.AccountRecover(message => this.setError(message.error));
 			});
@@ -116,7 +117,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	select () {
-		const { accounts, networkConfig } = authStore;
+		const { accounts, networkConfig } = S.Auth;
 		if (this.isSelecting || !accounts.length) {
 			return;
 		};
@@ -126,7 +127,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const { mode, path } = networkConfig;
 		const account = accounts[0];
 
-		authStore.accountSet(account);
+		S.Auth.accountSet(account);
 		Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
 
 		C.AccountSelect(account.id, S.Common.dataPath, mode, path, (message: any) => {
@@ -135,7 +136,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 				return;
 			};
 
-			authStore.accountSet(message.account);
+			S.Auth.accountSet(message.account);
 			S.Common.configSet(message.account.config, false);
 
 			UtilData.onInfo(message.account.info);
@@ -163,7 +164,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.refPhrase?.setError(true);
 		this.refSubmit?.setLoading(false);
 
-		authStore.accountListClear();
+		S.Auth.accountListClear();
 
 		return UtilCommon.checkErrorCommon(error.code);
 	};
@@ -188,7 +189,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	onCancel () {
-		authStore.logout(true, false);
+		S.Auth.logout(true, false);
 		Animation.from(() => UtilRouter.go('/', { replace: true }));
 	};
 

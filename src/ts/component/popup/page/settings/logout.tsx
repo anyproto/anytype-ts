@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Button, Phrase } from 'Component';
-import { I, C, translate, analytics, UtilCommon, UtilRouter, Renderer } from 'Lib';
-import { authStore, menuStore } from 'Store';
+import { I, C, S, translate, analytics, UtilCommon, UtilRouter, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -53,7 +52,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	};
 
 	componentDidMount () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		if (!account) {
 			return;
@@ -89,7 +88,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 			replace: true, 
 			animate: true,
 			onRouteChange: () => {
-				authStore.logout(true, false);
+				S.Auth.logout(true, false);
 			},
 		});
 	};

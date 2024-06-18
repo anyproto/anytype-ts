@@ -1,6 +1,6 @@
 import { Common } from './common';
 import { Record } from './record';
-import { authStore } from './auth';
+import { Auth } from './auth';
 import { blockStore } from './block';
 import { detailStore } from './detail';
 import { menuStore } from './menu';
@@ -11,8 +11,8 @@ import { notificationStore } from './notification';
 export {
 	Common,
 	Record,
+	Auth,
 
-	authStore,
 	blockStore,
 	detailStore,
 	menuStore,

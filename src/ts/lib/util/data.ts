@@ -1,5 +1,5 @@
 import { I, C, M, S, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
-import { blockStore, detailStore, authStore, notificationStore, popupStore } from 'Store';
+import { blockStore, detailStore, notificationStore, popupStore } from 'Store';
 import * as Sentry from '@sentry/browser';
 
 type SearchSubscribeParams = Partial<{
@@ -280,7 +280,7 @@ class UtilData {
 
 	createSubscriptions (callBack?: () => void): void {
 		const { space } = S.Common;
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const list: any[] = [
 			{
 				subId: Constant.subId.profile,
@@ -427,8 +427,8 @@ class UtilData {
 		C.WalletCreateSession(phrase, key, (message: any) => {
 
 			if (!message.error.code) {
-				authStore.tokenSet(message.token);
-				authStore.appTokenSet(message.appToken);
+				S.Auth.tokenSet(message.token);
+				S.Auth.appTokenSet(message.appToken);
 				dispatcher.listenEvents();
 			};
 
@@ -924,14 +924,14 @@ class UtilData {
 	};
 
 	getThreadStatus (rootId: string, key: string) {
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		if (!account) {
 			return I.ThreadStatus.Unknown;
 		};
 
 		const { info } = account || {};
-		const thread = authStore.threadGet(rootId);
+		const thread = S.Auth.threadGet(rootId);
 		const { summary } = thread;
 
 		if (!info.networkId) {
@@ -946,7 +946,7 @@ class UtilData {
 	};
 
 	getNetworkName (): string {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const { info } = account;
 
 		let ret = '';
@@ -981,7 +981,7 @@ class UtilData {
 			if (membership) {
 				const { status, tier } = membership;
 
-				authStore.membershipSet(membership);
+				S.Auth.membershipSet(membership);
 				analytics.setTier(tier);
 				
 				if (status && (status == I.MembershipStatus.Finalization)) {
@@ -1018,21 +1018,21 @@ class UtilData {
 	};
 
 	isAnytypeNetwork (): boolean {
-		return Object.values(Constant.networkId).includes(authStore.account?.info?.networkId);
+		return Object.values(Constant.networkId).includes(S.Auth.account?.info?.networkId);
 	};
 
 	isLocalNetwork (): boolean {
-		return !authStore.account?.info?.networkId;
+		return !S.Auth.account?.info?.networkId;
 	};
 
 	isLocalOnly (): boolean {
-		return authStore.account?.info?.networkId == '';
+		return S.Auth.account?.info?.networkId == '';
 	};
 
 	accountCreate (onError?: (text: string) => void, callBack?: () => void) {
 		onError = onError || (() => {});
 
-		const { networkConfig } = authStore;
+		const { networkConfig } = S.Auth;
 		const { mode, path } = networkConfig;
 		const { dataPath } = S.Common;
 
@@ -1058,7 +1058,7 @@ class UtilData {
 						return;
 					};
 
-					authStore.accountSet(message.account);
+					S.Auth.accountSet(message.account);
 					S.Common.configSet(message.account.config, false);
 					S.Common.isSidebarFixedSet(true);
 

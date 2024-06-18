@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, Preview, UtilData, translate, UtilCommon } from 'Lib';
-import { authStore } from 'Store';
 
 interface Props {
 	id?: string;

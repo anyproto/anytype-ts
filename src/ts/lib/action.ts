@@ -1,5 +1,5 @@
 import { I, C, S, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
-import { authStore, blockStore, detailStore, popupStore, menuStore } from 'Store';
+import { blockStore, detailStore, popupStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -24,7 +24,7 @@ class Action {
 			this.dbClearRoot(rootId);
 
 			blockStore.clear(rootId);
-			authStore.threadRemove(rootId);
+			S.Auth.threadRemove(rootId);
 		};
 
 		onClose();
@@ -363,7 +363,7 @@ class Action {
 	};
 
 	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
-		const { networkConfig } = authStore;
+		const { networkConfig } = S.Auth;
 		const { dataPath } = S.Common;
 		const { mode, path } = networkConfig;
 
@@ -385,7 +385,7 @@ class Action {
 							return;
 						};
 
-						authStore.accountSet(message.account);
+						S.Auth.accountSet(message.account);
 						S.Common.configSet(message.account.config, false);
 
 						UtilData.onInfo(message.account.info);
@@ -573,7 +573,7 @@ class Action {
 			return;
 		};
 
-		const { accountSpaceId } = authStore;
+		const { accountSpaceId } = S.Auth;
 		const { space } = S.Common;
 		const isOwner = UtilSpace.isMyOwner(id);
 		const name = UtilCommon.shorten(deleted.name, 32);

@@ -5,7 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { authStore, blockStore, detailStore, notificationStore } from 'Store';
+import { blockStore, detailStore, notificationStore } from 'Store';
 import { 
 	S, UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage, UtilSpace, UtilData, keyboard 
 } from 'Lib';
@@ -47,14 +47,14 @@ class Dispatcher {
 	};
 
 	listenEvents () {
-		if (!authStore.token) {
+		if (!S.Auth.token) {
 			return;
 		};
 
 		window.clearTimeout(this.timeoutStream);
 
 		const request = new Commands.StreamRequest();
-		request.setToken(authStore.token);
+		request.setToken(S.Auth.token);
 
 		this.stream = this.service.listenSessionEvents(request, null);
 
@@ -143,12 +143,12 @@ class Dispatcher {
 			switch (type) {
 
 				case 'AccountShow': {
-					authStore.accountAdd(mapped.account);
+					S.Auth.accountAdd(mapped.account);
 					break;
 				};
 
 				case 'AccountUpdate': {
-					authStore.accountSetStatus(mapped.status);
+					S.Auth.accountSetStatus(mapped.status);
 					break;	
 				};
 
@@ -172,7 +172,7 @@ class Dispatcher {
 				};
 
 				case 'ThreadStatus': {
-					authStore.threadSet(rootId, mapped);
+					S.Auth.threadSet(rootId, mapped);
 					break;
 				};
 
@@ -925,7 +925,7 @@ class Dispatcher {
 				};
 
 				case 'MembershipUpdate':
-					authStore.membershipUpdate(mapped.membership);
+					S.Auth.membershipUpdate(mapped.membership);
 					UtilData.getMembershipTiers(true);
 					break;
 
@@ -989,7 +989,7 @@ class Dispatcher {
 
 		if ([ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(details.spaceAccountStatus)) {
 			if (id == blockStore.spaceview) {
-				UtilRouter.switchSpace(authStore.accountSpaceId, '');
+				UtilRouter.switchSpace(S.Auth.accountSpaceId, '');
 			};
 
 			const spaceview = UtilSpace.getSpaceview(id);
@@ -1136,7 +1136,7 @@ class Dispatcher {
 		};
 
 		try {
-			this.service[ct](data, { token: authStore.token }, (error: any, response: any) => {
+			this.service[ct](data, { token: S.Auth.token }, (error: any, response: any) => {
 				if (!response) {
 					return;
 				};

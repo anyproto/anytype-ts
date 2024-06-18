@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
 import { I, S, UtilCommon, UtilSpace, analytics, Action, keyboard, translate, Preview, UtilData } from 'Lib';
-import { popupStore, authStore } from 'Store';
+import { popupStore } from 'Store';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -100,7 +100,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { data } = param;
 		const { page } = data;
 		const { loading } = this.state;
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 		const { membershipTiersList } = S.Common;
 		const sections = this.getSections().filter(it => !it.isHidden);
 		const participant = UtilSpace.getParticipant();

@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { C, S, UtilData, Preview, analytics, Storage } from 'Lib';
-import { authStore, blockStore, menuStore, popupStore } from 'Store';
+import { blockStore, menuStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -129,7 +129,7 @@ class UtilRouter {
 
 	switchSpace (id: string, route?: string, callBack?: () => void) {
 		const { space } = S.Common;
-		const { accountSpaceId } = authStore;
+		const { accountSpaceId } = S.Auth;
 
 		if (!id || (space == id)) {
 			return;

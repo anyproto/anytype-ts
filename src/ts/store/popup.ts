@@ -1,8 +1,9 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, UtilCommon, focus, Preview } from 'Lib';
-import { menuStore, authStore } from 'Store';
+import { I, S, UtilCommon, focus, Preview } from 'Lib';
+import { menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const AUTH_IDS = [ 'settings' ];
@@ -45,7 +46,7 @@ class PopupStore {
 	};
 
     open (id: string, param: I.PopupParam) {
-		if (AUTH_IDS.includes(id) && !authStore.account) {
+		if (AUTH_IDS.includes(id) && !S.Auth.account) {
 			return;
 		};
 

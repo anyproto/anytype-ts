@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Pin } from 'Component';
 import { I, C, S, translate, UtilCommon, UtilDate, analytics, UtilData, Action } from 'Lib';
-import { authStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -47,7 +47,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 
 	render() {
 		const { verificationStep, countdown, status, statusText } = this.state;
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 		const { tier, dateEnds, paymentMethod, userEmail } = membership;
 		const tierItem = UtilData.getMembershipTier(tier);
 
@@ -160,7 +160,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	};
 
 	onButton () {
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 		const { onChangeEmail } = this.props;
 
 		if (membership.isExplorer) {

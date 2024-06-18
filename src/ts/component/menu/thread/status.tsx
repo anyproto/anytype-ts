@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { authStore } from 'Store';
-import { I, translate, UtilDate } from 'Lib';
+import { I, S, translate, UtilDate } from 'Lib';
 
 class MenuThreadStatus extends React.Component<I.Menu> {
 
@@ -8,7 +7,7 @@ class MenuThreadStatus extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, isCafe, accountId } = data;
-		const thread = authStore.threadGet(rootId);
+		const thread = S.Auth.threadGet(rootId);
 		const cafe = thread.cafe || {};
 		const status = cafe.status || {};
 		const files = cafe.files || {};

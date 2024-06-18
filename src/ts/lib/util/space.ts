@@ -1,5 +1,5 @@
 import { I, S, UtilCommon, UtilData, UtilObject, Storage, translate } from 'Lib';
-import { authStore, blockStore, detailStore } from 'Store';
+import { blockStore, detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -120,7 +120,7 @@ class UtilSpace {
 
 	getParticipant (id?: string) {
 		const { space } = S.Common;
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		if (!account) {
 			return null;
@@ -131,7 +131,7 @@ class UtilSpace {
 	};
 
 	getMyParticipant (spaceId?: string) {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const { space } = S.Common;
 
 		if (!account) {

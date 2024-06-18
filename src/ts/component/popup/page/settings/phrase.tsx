@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
 import { Title, Label, Phrase } from 'Component';
 import { I, C, S, translate, analytics, UtilCommon, Storage, Renderer } from 'Lib';
-import { authStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 
 const Theme = require('json/theme.json');
 
@@ -63,7 +63,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	};
 
 	componentDidMount () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		if (!account) {
 			return;

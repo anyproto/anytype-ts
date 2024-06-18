@@ -6,7 +6,6 @@ import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
 import { S, UtilRouter, C, UtilData } from 'Lib'; 
-import { authStore } from 'Store';
 
 const Extension = require('json/extension.json');
 
@@ -87,12 +86,12 @@ class Popup extends React.Component {
 		});
 
 		win.off('beforeunload').on('beforeunload', (e: any) => {
-			if (!authStore.token) {
+			if (!S.Auth.token) {
 				return;
 			};
 
 			UtilData.destroySubscriptions(() => {
-				C.WalletCloseSession(authStore.token, () => authStore.tokenSet(''));
+				C.WalletCloseSession(S.Auth.token, () => S.Auth.tokenSet(''));
 			});
 		});
 	};

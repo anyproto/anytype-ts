@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
-import { I, C, translate, UtilCommon, Action, UtilObject, UtilSpace } from 'Lib';
-import { authStore, blockStore, menuStore } from 'Store';
+import { I, S, translate, UtilCommon, UtilObject, UtilSpace } from 'Lib';
+import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
-const Constant = require('json/constant.json');
 
 interface Props extends I.PopupSettings {
 	setPinConfirmed: (v: boolean) => void;
@@ -34,7 +33,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 	render () {
 		const { error, loading } = this.state;
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const profile = UtilSpace.getProfile();
 	
 		let name = profile.name;

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Error, Pin } from 'Component';
 import { I, S, UtilRouter, Storage, translate, keyboard, UtilSpace } from 'Lib';
-import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -64,7 +63,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 	};
 
 	onSuccess () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const { redirect } = S.Common;
 		const routeParam = { replace: true, animate: true };
 

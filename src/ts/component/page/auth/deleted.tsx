@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Frame, Title, Label, Error, Header, Button } from 'Component';
-import { I, UtilCommon, UtilRouter, C, Action, Survey, UtilSpace, analytics, translate, UtilDate } from 'Lib';
-import { authStore, popupStore } from 'Store';
+import { Frame, Title, Label, Error, Button } from 'Component';
+import { I, S, UtilCommon, UtilRouter, C, Action, Survey, UtilSpace, analytics, translate, UtilDate } from 'Lib';
+import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
@@ -29,7 +29,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	};
 	
 	render () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		if (!account) {
 			return null;
 		};
@@ -115,7 +115,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 				text: translate('authDeleteRemovePopupText'),
 				textConfirm: translate('authDeleteRemovePopupConfirm'),
 				onConfirm: () => { 
-					authStore.logout(true, true);
+					S.Auth.logout(true, true);
 					UtilRouter.go('/', { replace: true });
 				},
 			},
@@ -135,7 +135,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 
 	onCancel () {
 		C.AccountRevertDeletion((message) => {
-			authStore.accountSetStatus(message.status);	
+			S.Auth.accountSetStatus(message.status);	
 			UtilSpace.openDashboard('route');
 			analytics.event('CancelDeletion');
 		});
@@ -145,7 +145,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		UtilRouter.go('/', { 
 			replace: true, 
 			animate: true,
-			onFadeIn: () => authStore.logout(true, false),
+			onFadeIn: () => S.Auth.logout(true, false),
 		});
 	};
 	

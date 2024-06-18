@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, C, S, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate, UtilSpace } from 'Lib';
-import { authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { blockStore, detailStore, menuStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -254,7 +254,7 @@ class Keyboard {
 
 			// Go to dashboard
 			this.shortcut('alt+h', e, () => {
-				if (authStore.account && !popupStore.isOpen('search')) {
+				if (S.Auth.account && !popupStore.isOpen('search')) {
 					UtilSpace.openDashboard('route');
 				};
 			});
@@ -349,10 +349,10 @@ class Keyboard {
 	};
 
 	onBack () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const isPopup = this.isPopup();
 
-		if (authStore.accountIsDeleted() || authStore.accountIsPending() || !this.checkBack()) {
+		if (S.Auth.accountIsDeleted() || S.Auth.accountIsPending() || !this.checkBack()) {
 			return;
 		};
 
@@ -414,7 +414,7 @@ class Keyboard {
 	};
 
 	checkBack (): boolean {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const isPopup = this.isPopup();
 		const history = UtilRouter.history;
 
@@ -633,7 +633,7 @@ class Keyboard {
 	};
 
 	onContactUrl () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		if (!account) {
 			return;
 		};
@@ -654,14 +654,14 @@ class Keyboard {
 	};
 
 	onMembershipUpgrade () {
-		const { account, membership } = authStore;
+		const { account, membership } = S.Auth;
 		const name = membership.name ? membership.name : account.id;
 
 		Renderer.send('urlOpen', Url.membershipUpgrade.replace(/\%25name\%25/g, name));
 	};
 
 	onTechInfo () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		C.AppGetVersion((message: any) => {
 			let data = [
@@ -696,7 +696,7 @@ class Keyboard {
 	};
 
 	onUndo (rootId: string, route?: string, callBack?: (message: any) => void) {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		if (!account) {
 			return;
 		};
@@ -716,7 +716,7 @@ class Keyboard {
 	};
 
 	onRedo (rootId: string, route?: string, callBack?: (message: any) => void) {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		if (!account) {
 			return;
 		};
@@ -1012,7 +1012,7 @@ class Keyboard {
 	};
 
 	initPinCheck () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const check = () => {
 			const pin = Storage.getPin();
 			if (!pin) {

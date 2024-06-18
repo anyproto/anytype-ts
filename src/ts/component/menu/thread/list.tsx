@@ -1,10 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, IconObject } from 'Component';
-import { authStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I, UtilData, translate, UtilDate } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, S, UtilData, translate, UtilDate } from 'Lib';
 
 const MENU_ID = 'threadStatus';
 
@@ -24,9 +23,9 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const { info } = account;
-		const thread = authStore.threadGet(rootId);
+		const thread = S.Auth.threadGet(rootId);
 		const accounts = thread.accounts || [];
 		const status = UtilData.getThreadStatus(rootId, 'cafe');
 		const networkName = UtilData.getNetworkName();
@@ -79,7 +78,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 
 	componentDidMount () {
 		const { getId } = this.props;
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const { info } = account;
 
 		if (!info.networkId) {
@@ -127,7 +126,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 			return;
 		};
 
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const { info } = account;
 
 		if (!info.networkId) {

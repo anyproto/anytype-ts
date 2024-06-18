@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Title, Icon, Label, Button, Error } from 'Component';
-import { I, C, translate, UtilCommon, analytics } from 'Lib';
+import { I, C, S, translate, UtilCommon, analytics } from 'Lib';
 import { observer } from 'mobx-react';
-import { popupStore, authStore } from 'Store';
 
 interface State {
 	error: string;
@@ -53,7 +52,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 
 	onRequest () {
 		const { param, close } = this.props;
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const { data } = param;
 		const { invite, cid, key } = data;
 

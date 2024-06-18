@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { I, S, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
 import { Label, Frame } from 'Component';
-import { authStore, menuStore, popupStore } from 'Store';
+import { menuStore, popupStore } from 'Store';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -69,7 +69,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	render () {
 		const { isPopup } = this.props;
 		const { config, theme } = S.Common;
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
 		const isMain = this.isMain();
@@ -180,7 +180,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	init () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const { isPopup } = this.props;
 		const match = this.getMatch();
 		const { page, action } = this.getMatchParams();
@@ -212,7 +212,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		if (isMain && (authStore.accountIsDeleted() || authStore.accountIsPending())) {
+		if (isMain && (S.Auth.accountIsDeleted() || S.Auth.accountIsPending())) {
 			UtilRouter.go('/auth/deleted', routeParam);
 			return;
 		};

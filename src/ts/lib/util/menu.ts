@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, C, S, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
-import { blockStore, menuStore, detailStore, authStore, popupStore } from 'Store';
+import { blockStore, menuStore, detailStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -637,7 +637,7 @@ class UtilMenu {
 	};
 
 	spaceContext (space: any, param: any) {
-		const { accountSpaceId } = authStore;
+		const { accountSpaceId } = S.Auth;
 		const { targetSpaceId } = space;
 
 		if ((targetSpaceId == accountSpaceId)) {

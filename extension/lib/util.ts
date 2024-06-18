@@ -1,5 +1,5 @@
 import { S, UtilData, dispatcher } from 'Lib';
-import { authStore, extensionStore } from 'Store';
+import { extensionStore } from 'Store';
 
 const Extension = require('json/extension.json');
 
@@ -50,7 +50,7 @@ class Util {
 	};
 
 	authorize (appKey: string, onSuccess?: () => void, onError?: (error) => void) {
-		authStore.appKeySet(appKey);
+		S.Auth.appKeySet(appKey);
 		UtilData.createSession('', appKey, (message: any) => {
 			if (message.error.code) {
 				if (onError) {
@@ -60,7 +60,7 @@ class Util {
 			};
 
 			if (message.accountId) {
-				authStore.accountSet({ id: message.accountId });
+				S.Auth.accountSet({ id: message.accountId });
 			};
 			
 			if (onSuccess) {

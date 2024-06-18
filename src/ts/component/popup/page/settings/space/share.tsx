@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
 import { I, C, S, translate, UtilCommon, UtilSpace, Preview, Action, analytics, UtilObject, UtilMenu } from 'Lib';
-import { authStore, popupStore, menuStore } from 'Store';
+import { popupStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 
@@ -55,7 +55,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			return <Loader id="loader" />;
 		};
 
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 		const hasLink = cid && key;
 		const space = UtilSpace.getSpaceview();
 		const participant = UtilSpace.getParticipant();
@@ -280,7 +280,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onUpgrade (type: string) {
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 
 		if (membership.tier >= I.TierType.Builder) {
 			Action.membershipUpgrade();
@@ -362,7 +362,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	getParticipantOptions () {
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 
 		let items: any[] = [] as any[];
 

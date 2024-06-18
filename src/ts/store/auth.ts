@@ -191,4 +191,4 @@ class AuthStore {
 
 };
 
- export const authStore: AuthStore = new AuthStore();
+ export const Auth: AuthStore = new AuthStore();

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
 import { I, S, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter, Renderer } from 'Lib';
-import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 const Errors = require('json/error.json');
 
@@ -83,7 +82,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	componentDidMount () {
 		const { match } = this.props;
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		switch (match?.params?.id) {
 			case 'init': {
@@ -138,7 +137,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	select (accountId: string, animate: boolean) {
-		const { networkConfig } = authStore;
+		const { networkConfig } = S.Auth;
 		const { dataPath } = S.Common;
 		const { mode, path } = networkConfig;
 		const spaceId = Storage.get('spaceId');
@@ -148,7 +147,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				return;
 			};
 
-			authStore.accountSet(message.account);
+			S.Auth.accountSet(message.account);
 			S.Common.configSet(message.account.config, false);
 
 			if (spaceId) {
@@ -177,7 +176,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	onCancel () {
-		authStore.logout(true, false);
+		S.Auth.logout(true, false);
 		Animation.from(() => UtilRouter.go('/', { replace: true }));
 	};
 

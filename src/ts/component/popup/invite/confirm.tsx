@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Button, Error, IconObject } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace, UtilData, analytics } from 'Lib';
-import { authStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, translate, UtilCommon, UtilSpace, UtilData, analytics } from 'Lib';
+import { popupStore } from 'Store';
 
 interface State {
 	error: string;
@@ -30,7 +29,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		const { param } = this.props;
 		const { data } = param;
 		const { icon } = data;
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 		const space = UtilSpace.getSpaceviewBySpaceId(this.getSpaceId());
 		const name = UtilCommon.shorten(String(data.name || translate('defaultNamePage')), 32);
 

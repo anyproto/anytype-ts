@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader } from 'Component';
-import { C, I, translate, UtilData, UtilCommon } from 'Lib';
-import { authStore, popupStore } from 'Store';
+import { C, I, S, translate, UtilData, UtilCommon } from 'Lib';
+import { popupStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -41,7 +42,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 			return null;
 		};
 
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 		const { period } = tierItem;
 		const { name, nameType } = membership;
 
@@ -154,7 +155,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 	};
 
 	getName () {
-		return String(authStore.membership?.name || '');
+		return String(S.Auth.membership?.name || '');
 	};
 
 	setOk (t: string) {

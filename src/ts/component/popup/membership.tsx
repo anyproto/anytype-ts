@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label } from 'Component';
-import { analytics, I, translate, UtilData } from 'Lib';
-import { authStore } from 'Store';
+import { I, S, translate, UtilData, analytics } from 'Lib';
 
 import PageFree from './page/membership/free';
 import PagePaid from './page/membership/paid';
@@ -26,7 +25,7 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 	};
 
 	render () {
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 		const { isEditing } = this.state;
 		const { param } = this.props;
 		const { data } = param;

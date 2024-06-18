@@ -2,8 +2,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
 import { I, C, S, translate, UtilCommon, UtilData, analytics } from 'Lib';
-import { authStore } from 'Store';
 import FooterAuthDisclaimer from '../../../footer/auth/disclaimer';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -45,7 +45,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		};
 
 		const { period } = tierItem;
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 		const { name, nameType, paymentMethod } = membership;
 
 		let periodText = '';
@@ -230,7 +230,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	getGlobalName () {
-		return String(authStore.membership?.name || '');
+		return String(S.Auth.membership?.name || '');
 	};
 
 	disableButtons (v: boolean) {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
 import { I, S, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage, Action } from 'Lib';
-import { authStore, popupStore, blockStore } from 'Store';
+import { popupStore, blockStore } from 'Store';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -156,7 +156,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	componentDidUpdate (_, prevState): void {
 		const { stage } = this.state;
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		if (prevState.stage != stage) {
 			Animation.to();
@@ -210,7 +210,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		const { stage } = this.state;
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		if (stage == Stage.Vault) {
 			const cb = () => {
