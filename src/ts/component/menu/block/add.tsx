@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
 import { I, S, Mark, keyboard, C, focus, Action, UtilCommon, UtilData, UtilMenu, UtilObject, Storage, translate, analytics, Relation } from 'Lib';
-import {menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -244,7 +243,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		menuStore.closeAll(Constant.menuIds.add);
+		S.Menu.closeAll(Constant.menuIds.add);
 	};
 
 	checkFilter () {
@@ -367,7 +366,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			menuStore.closeAll(Constant.menuIds.add);
+			S.Menu.closeAll(Constant.menuIds.add);
 			return;
 		};
 
@@ -462,9 +461,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.itemId)) {
-			menuStore.closeAll(Constant.menuIds.add, () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
+			S.Menu.closeAll(Constant.menuIds.add, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};
@@ -653,7 +652,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							if (param.type == I.BlockType.Dataview) {
 								win.trigger(`setDataviewSource.${newBlockId}`);
 							};
-						}, menuStore.getTimeout());
+						}, S.Menu.getTimeout());
 					});
 				};
 			};

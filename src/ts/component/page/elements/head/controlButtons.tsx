@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, S, UtilData, UtilObject, UtilCommon, translate, analytics, focus } from 'Lib';
-import { menuStore } from 'Store';
-import { observer } from 'mobx-react';
 
 const Constant = require('json/constant.json');
 
@@ -146,13 +145,13 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			options.push({ id: 'remove', icon: 'remove', name: translate('commonRemove') });
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element,
 			horizontal: I.MenuDirection.Center,
 			onOpen: onCoverOpen,
 			onClose: () => {
 				window.clearTimeout(this.timeout);
-				this.timeout = window.setTimeout(() => onCoverClose(), menuStore.getTimeout());
+				this.timeout = window.setTimeout(() => onCoverClose(), S.Menu.getTimeout());
 			},
 			data: {
 				options: options,
@@ -162,7 +161,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 							window.setTimeout(() => {
 								window.clearTimeout(this.timeout);
 								this.onChange(element);
-							}, menuStore.getTimeout());
+							}, S.Menu.getTimeout());
 							break;
 						
 						case 'position':
@@ -184,7 +183,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 	onChange (element: any) {
 		const { rootId, onEdit, onUploadStart, onUpload, onCoverOpen, onCoverClose, onCoverSelect } = this.props;
 
-		menuStore.open('blockCover', {
+		S.Menu.open('blockCover', {
 			element,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {

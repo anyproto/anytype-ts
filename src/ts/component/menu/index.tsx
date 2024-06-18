@@ -3,9 +3,8 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
-import { I, keyboard, UtilCommon, analytics, Storage } from 'Lib';
-import { menuStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, keyboard, UtilCommon, analytics, Storage } from 'Lib';
+import { popupStore } from 'Store';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -82,6 +81,7 @@ interface State {
 	tab: string;
 };
 
+const Constant = require('json/constant.json');
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
 
@@ -442,7 +442,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				window.setTimeout(() => { 
 					menu.css({ transform: 'none' }); 
 					this.isAnimating = false;
-				}, menuStore.getTimeout());
+				}, S.Menu.getTimeout());
 			});
 		};
 	};
@@ -702,7 +702,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	close (callBack?: () => void) {
-		menuStore.close(this.props.id, () => {
+		S.Menu.close(this.props.id, () => {
 			window.setTimeout(() => this.rebindPrevious(), Constant.delay.menu);
 
 			if (callBack) {

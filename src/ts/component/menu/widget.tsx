@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Button } from 'Component';
 import { C, I, S, keyboard, UtilMenu, translate, Action, UtilObject, analytics } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -73,7 +72,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 							className="c28"
 							text={translate('menuWidgetAddWidget')}
 							onClick={this.save} 
-							onMouseEnter={() => menuStore.closeAll(Constant.menuIds.widget)} 
+							onMouseEnter={() => S.Menu.closeAll(Constant.menuIds.widget)} 
 						/>
 					</div>
 				) : ''}
@@ -102,7 +101,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this._isMounted = false;
 		this.unbind();
 
-		menuStore.closeAll(Constant.menuIds.widget);
+		S.Menu.closeAll(Constant.menuIds.widget);
 		$(window).trigger(`updateWidgetData.${blockId}`);
 	};
 
@@ -260,7 +259,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 	onOver (e: React.MouseEvent, item) {
 		if (!item.arrow) {
-			menuStore.closeAll(Constant.menuIds.widget);
+			S.Menu.closeAll(Constant.menuIds.widget);
 			return;
 		};
 
@@ -376,9 +375,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				break;
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.itemId)) {
-			menuStore.closeAll(Constant.menuIds.widget, () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
+			S.Menu.closeAll(Constant.menuIds.widget, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};

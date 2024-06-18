@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
 import { UtilData, I, S, UtilCommon, translate, UtilObject, UtilFile } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -297,7 +296,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         const node = $(ReactDOM.findDOMNode(this));
         const wrapper = node.find('#filterWrapper');
 
-        menuStore.closeAll(Constant.menuIds.store);
+        S.Menu.closeAll(Constant.menuIds.store);
         wrapper.removeClass('active');
     };
 

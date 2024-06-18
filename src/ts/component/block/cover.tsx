@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Drag, Cover, Loader, Label } from 'Component';
 import { I, C, S, UtilCommon, UtilData, UtilObject, focus, translate, keyboard } from 'Lib';
-import { menuStore } from 'Store';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
 
 const Constant = require('json/constant.json');
@@ -180,11 +179,11 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const node = $(this.node);
 		const elements = node.find('#elements');
 		const object = S.Detail.get(rootId, rootId, []);
-		const cb = () => menuStore.update('smile', { element: `#block-icon-${rootId}` });
+		const cb = () => S.Menu.update('smile', { element: `#block-icon-${rootId}` });
 
 		focus.clear(true);
 
-		menuStore.open('smile', { 
+		S.Menu.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => elements.addClass('hover'),
@@ -207,7 +206,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const elements = node.find('#elements');
 		const object = S.Detail.get(rootId, rootId, []);
 		
-		menuStore.open('blockLayout', { 
+		S.Menu.open('blockLayout', { 
 			element: `#block-${block.id} #button-layout`,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {

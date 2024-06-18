@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
 import { I, C, S, focus, UtilObject, keyboard } from 'Lib';
-import { menuStore } from 'Store';
 import ControlButtons from './controlButtons';
 
 const Constant = require('json/constant.json');
@@ -100,11 +99,11 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const node = $(this.node);
 		const object = S.Detail.get(rootId, rootId, []);
-		const cb = () => menuStore.update('smile', { element: `#block-icon-${rootId}` });
+		const cb = () => S.Menu.update('smile', { element: `#block-icon-${rootId}` });
 
 		focus.clear(true);
 
-		menuStore.open('smile', { 
+		S.Menu.open('smile', { 
 			element: node.find('#button-icon'),
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => node.addClass('hover'),
@@ -144,7 +143,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const node = $(this.node);
 		const object = S.Detail.get(rootId, rootId, []);
 		
-		menuStore.open('blockLayout', { 
+		S.Menu.open('blockLayout', { 
 			element: '.editorControls #button-layout',
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {

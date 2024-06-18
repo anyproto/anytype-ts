@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I, UtilObject, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
+import { I, S, UtilObject, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
-import { popupStore, menuStore } from 'Store';
+import { popupStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -165,7 +165,7 @@ class Header extends React.Component<Props> {
 			menuParam.classNameWrap = 'fixed fromHeader';
 		};
 
-		menuStore.closeAllForced(null, () => menuStore.open(id, menuParam));
+		S.Menu.closeAllForced(null, () => S.Menu.open(id, menuParam));
 	};
 
 	onRelation (param?: Partial<I.MenuParam>, data?: any) {

@@ -2,7 +2,6 @@ import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import raf from 'raf';
 import { I, S, UtilCommon, focus, Preview } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -61,7 +60,7 @@ class PopupStore {
 		};
 
 		if (!param.preventMenuClose) {
-			menuStore.closeAll();
+			S.Menu.closeAll();
 		};
 		focus.clear(true);
 

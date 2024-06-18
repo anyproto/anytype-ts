@@ -6,7 +6,6 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
 import { I, C, S, UtilCommon, keyboard, Relation, analytics, translate, UtilMenu, Dataview } from 'Lib';
-import { menuStore } from 'Store';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -183,7 +182,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		menuStore.closeAll([ 'select' ]);
+		S.Menu.closeAll([ 'select' ]);
 	};
 
 	rebind () {
@@ -240,7 +239,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			const view = S.Record.getView(rootId, blockId, message.viewId);
 
 			close();
-			window.setTimeout(() => onViewSwitch(view), menuStore.getTimeout());
+			window.setTimeout(() => onViewSwitch(view), S.Menu.getTimeout());
 
 			analytics.event('AddView', {
 				type: view.type,

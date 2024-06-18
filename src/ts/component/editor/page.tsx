@@ -8,7 +8,7 @@ import {
 	I, C, S, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, 
 	Renderer, sidebar 
 } from 'Lib';
-import { menuStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
@@ -608,7 +608,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				e.preventDefault();
 
 				if (type == I.MarkType.Link) {
-					menuStore.open('blockLink', {
+					S.Menu.open('blockLink', {
 						element: `#block-${ids[0]}`,
 						horizontal: I.MenuDirection.Center,
 						data: {
@@ -651,8 +651,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			// Open action menu
 			keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, () => {
-				menuStore.closeAll([ 'blockContext', 'blockAdd' ], () => {
-					menuStore.open('blockAction', { 
+				S.Menu.closeAll([ 'blockContext', 'blockAdd' ], () => {
+					S.Menu.open('blockAction', { 
 						element: `#block-${ids[0]}`,
 						offsetX: Constant.size.blockMenu,
 						data: {
@@ -817,8 +817,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Open action menu
 		keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, () => {
-			menuStore.close('blockContext', () => {
-				menuStore.open('blockAction', { 
+			S.Menu.close('blockContext', () => {
+				S.Menu.open('blockAction', { 
 					element: `#block-${block.id}`,
 					offsetX: Constant.size.blockMenu,
 					data: {
@@ -1228,7 +1228,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			focus.clear(true);
 			selection.set(I.SelectType.Block, [ block.id ]);
-			menuStore.closeAll([ 'blockContext', 'blockAction' ]);
+			S.Menu.closeAll([ 'blockContext', 'blockAction' ]);
 		};
 
 		if ((dir < 0) && (sy - 4 <= vy) && (range.from == 0)) {
@@ -1263,8 +1263,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (type == I.MarkType.Link) {
-			menuStore.close('blockContext', () => {
-				menuStore.open('blockLink', {
+			S.Menu.close('blockContext', () => {
+				S.Menu.open('blockLink', {
 					rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 					horizontal: I.MenuDirection.Center,
 					offsetY: 4,
@@ -1403,7 +1403,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	menuCheck () {
-		return menuStore.isOpen('', '', [ 'blockContext', 'searchText', 'onboarding' ]);
+		return S.Menu.isOpen('', '', [ 'blockContext', 'searchText', 'onboarding' ]);
 	};
 
 	getNextTableRow (id: string, dir: number) {
@@ -1569,7 +1569,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		
 		selection.set(I.SelectType.Block, S.Block.getBlocks(rootId, it => it.isSelectable()).map(it => it.id));
 		focus.clear(true);
-		menuStore.close('blockContext');
+		S.Menu.close('blockContext');
 	};
 	
 	onAdd (e: any) {
@@ -1604,7 +1604,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		S.Common.filterSet(range.from, '');
 
-		menuStore.open('blockAdd', { 
+		S.Menu.open('blockAdd', { 
 			element: $(`#block-${blockId}`),
 			subIds: Constant.menuIds.add,
 			recalcRect: () => {
@@ -1681,7 +1681,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { focused, range } = focus.state;
 		const files = UtilCommon.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
 
-		menuStore.closeAll([ 'blockAdd' ]);
+		S.Menu.closeAll([ 'blockAdd' ]);
 
 		if (this.isReadonly()) {
 			return;
@@ -1879,8 +1879,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			}
 		};
 
-		menuStore.closeAll([ 'blockContext', 'blockAdd', 'blockAction' ], () => {
-			menuStore.open('selectPasteUrl', menuParam);
+		S.Menu.closeAll([ 'blockContext', 'blockAdd', 'blockAction' ], () => {
+			S.Menu.open('selectPasteUrl', menuParam);
 		});
 	};
 
@@ -2048,7 +2048,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
 
-		menuStore.closeAll();
+		S.Menu.closeAll();
 		popupStore.closeAll([ 'preview' ]);
 
 		let blockIds = [];

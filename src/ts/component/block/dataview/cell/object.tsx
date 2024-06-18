@@ -5,7 +5,6 @@ import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
 import { I, S, Relation, UtilObject, translate, UtilCommon, keyboard } from 'Lib';
-import { menuStore } from 'Store';
 import ItemObject from './item/object';
 
 const Constant = require('json/constant.json');
@@ -265,8 +264,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const cb = () => {
 			this.clear();
 
-			menuStore.updateData('dataviewObjectValues', { value });
-			menuStore.updateData('dataviewObjectList', { value });
+			S.Menu.updateData('dataviewObjectValues', { value });
+			S.Menu.updateData('dataviewObjectList', { value });
 		};
 
 		if (onChange) {
@@ -347,7 +346,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			menuStore.updateData('dataviewObjectList', { filter: this.getValue().new });
+			S.Menu.updateData('dataviewObjectList', { filter: this.getValue().new });
 		}, Constant.delay.keyboard);
 
 		this.placeholderCheck();
@@ -398,7 +397,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const node = $(this.node);
 		node.find('#entry').text(' ');
 
-		menuStore.updateData('dataviewObjectList', { filter: '' });
+		S.Menu.updateData('dataviewObjectList', { filter: '' });
 		this.focus();
 	};
 

@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button, Filter } from 'Component';
 import { C, I, S, UtilCommon, analytics, Relation, keyboard, translate, UtilObject, UtilMenu, Dataview } from 'Lib';
-import { menuStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import Head from './head';
 import arrayMove from 'array-move';
@@ -279,8 +278,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				this.toggleHoverArea(false);
 			},
 			onBack: (id) => {
-				menuStore.replace(id, component, { ...param, noAnimation: true });
-				window.setTimeout(() => menuStore.update(component, { noAnimation: false }), 50);
+				S.Menu.replace(id, component, { ...param, noAnimation: true });
+				window.setTimeout(() => S.Menu.update(component, { noAnimation: false }), 50);
 			},
 			data: {
 				readonly,
@@ -308,7 +307,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			param.title = translate('menuDataviewViewSettings');
 		};
 
-		menuStore.open(component, param);
+		S.Menu.open(component, param);
 	};
 
 	onViewAdd (e: any) {
@@ -513,7 +512,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		if (close) {
-			menuStore.closeAll([ 'dataviewViewList' ]);
+			S.Menu.closeAll([ 'dataviewViewList' ]);
 		};
 	};
 

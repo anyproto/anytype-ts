@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { I, M, S, focus, keyboard, scrollOnMove, UtilCommon } from 'Lib';
-import { menuStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 
 interface Props {
 	children?: React.ReactNode;
@@ -125,7 +125,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	onMouseDown (e: any) {
 		const isPopup = keyboard.isPopup();
 
-		if (e.button || !this._isMounted || menuStore.isOpen('', '', [ 'onboarding' ]) || popupStore.isOpen('', [ 'page' ])) {
+		if (e.button || !this._isMounted || S.Menu.isOpen('', '', [ 'onboarding' ]) || popupStore.isOpen('', [ 'page' ])) {
 			return;
 		};
 		
@@ -315,7 +315,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		if (ids.length) {
 			focus.clear(true);
-			menuStore.close('blockContext');
+			S.Menu.close('blockContext');
 		};
 
 		this.clearState();

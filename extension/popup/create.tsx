@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon } from 'Component';
 import { I, C, S, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage, UtilSpace } from 'Lib';
-import { menuStore, extensionStore } from 'Store';
+import { extensionStore } from 'Store';
 import Util from '../lib/util';
 
 interface State {
@@ -339,7 +339,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onKeyUp (e: any) {
-		menuStore.updateData('dataviewOptionList', { filter: this.getValue() });
+		S.Menu.updateData('dataviewOptionList', { filter: this.getValue() });
 
 		this.placeholderCheck();
 		this.resize();
@@ -354,7 +354,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		const relation = S.Record.getRelationByKey('tag');
 		const element = '#select-tag';
 
-		menuStore.open('dataviewOptionList', {
+		S.Menu.open('dataviewOptionList', {
 			element,
 			horizontal: I.MenuDirection.Center,
 			commonFilter: true,

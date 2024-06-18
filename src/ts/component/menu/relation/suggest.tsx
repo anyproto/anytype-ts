@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
 import { I, S, analytics, keyboard, UtilData, Relation, Action, UtilCommon, UtilSpace, translate } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -186,7 +185,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	componentWillUnmount () {
 		this._isMounted = false;
 
-		menuStore.closeAll([ 'searchObject' ]);
+		S.Menu.closeAll([ 'searchObject' ]);
 		window.clearTimeout(this.timeoutFilter);
 	};
 
@@ -336,7 +335,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	onMouseEnter (e: any, item: any) {
 		e.persist();
 
-		if (!keyboard.isMouseDisabled && !menuStore.isAnimating(this.props.id)) {
+		if (!keyboard.isMouseDisabled && !S.Menu.isAnimating(this.props.id)) {
 			this.props.setActive(item, false);
 			this.onOver(e, item);
 		};
@@ -348,7 +347,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		if (!item.arrow) {
-			menuStore.closeAll([ 'searchObject' ]);
+			S.Menu.closeAll([ 'searchObject' ]);
 			return;
 		};
 
@@ -401,9 +400,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			};
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll([ 'searchObject' ], () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll([ 'searchObject' ], () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};
@@ -427,7 +426,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
 		if (item.id == 'add') {
-			menuStore.open(menuIdEdit, { 
+			S.Menu.open(menuIdEdit, { 
 				element: `#${getId()} #item-${item.id}`,
 				offsetX: getSize().width,
 				offsetY: -80,

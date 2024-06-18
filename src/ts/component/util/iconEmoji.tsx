@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { menuStore } from 'Store';
 import { S, UtilSmile } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -45,7 +44,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 		if (canEdit) {
 			cn.push('canEdit');
 		};
-		if (menuId && menuStore.isOpen(menuId)) {
+		if (menuId && S.Menu.isOpen(menuId)) {
 			cn.push('active');
 		};
 

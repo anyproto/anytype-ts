@@ -1,10 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
-import { I, C, UtilCommon, UtilFile, UtilDate, translate, UtilSpace, analytics } from 'Lib';
-import { menuStore } from 'Store';
+import { I, C, S, UtilCommon, UtilFile, UtilDate, translate, UtilSpace, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Mousewheel } from 'swiper/modules';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -150,7 +150,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 			close();
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#${getId()} #button-install`,
 			offsetY: 2,
 			noFlipX: true,

@@ -5,7 +5,6 @@ import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
 import { I, S, UtilCommon, UtilObject, UtilSpace, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Theme = require('json/theme.json');
@@ -397,7 +396,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onContextMenu (id: string, param: any) {
 		const ids = this.ids.length ? this.ids : [ id ];
 
-		menuStore.open('dataviewContext', {
+		S.Menu.open('dataviewContext', {
 			...param,
 			data: {
 				route: analytics.route.graph,
@@ -459,7 +458,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			return;
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			...param,
 			data: {
 				options: [

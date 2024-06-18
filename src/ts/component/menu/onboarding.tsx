@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
 import { I, C, S, Onboarding, UtilCommon, analytics, keyboard, UtilObject, translate } from 'Lib';
-import { menuStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
 interface State {
@@ -223,7 +223,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			};
 
 			case 'changeType':
-				menuStore.open('typeSuggest', {
+				S.Menu.open('typeSuggest', {
 					element: `#${getId()}`,
 					offsetX: getSize().width,
 					vertical: I.MenuDirection.Center,
@@ -290,7 +290,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			menuParam = options.parseParam(menuParam);
 		};
 
-		menuStore.open('onboarding', {
+		S.Menu.open('onboarding', {
 			...menuParam,
 			onOpen: () => {
 				if (onOpen) {

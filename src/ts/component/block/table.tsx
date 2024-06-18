@@ -5,7 +5,6 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
 import { I, C, S, keyboard, focus, UtilCommon, Mark, Action, translate, UtilMenu, UtilData } from 'Lib';
-import { menuStore } from 'Store';
 import Row from './table/row';
 
 const Constant = require('json/constant.json');
@@ -269,7 +268,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				raf(() => this.onOptionsOpen(type, rowId, columnId, cellId)); 
 			},
 			onClose: () => {
-				menuStore.closeAll(Constant.menuIds.table);
+				S.Menu.closeAll(Constant.menuIds.table);
 				this.onOptionsClose();
 			},
 			subIds: Constant.menuIds.table,
@@ -350,12 +349,12 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 						return;
 					};
 
-					if (menuStore.isAnimating(menuContext.props.id)) {
+					if (S.Menu.isAnimating(menuContext.props.id)) {
 						return;
 					};
 
 					if (!item.arrow) {
-						menuStore.closeAll(Constant.menuIds.table);
+						S.Menu.closeAll(Constant.menuIds.table);
 						return;
 					};
 
@@ -491,8 +490,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 						};
 					};
 
-					menuStore.closeAll(Constant.menuIds.table, () => {
-						menuStore.open(menuId, menuParam);
+					S.Menu.closeAll(Constant.menuIds.table, () => {
+						S.Menu.open(menuId, menuParam);
 					});
 				},
 				onSelect: (e: any, item: any) => {
@@ -504,7 +503,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			},
 		});
 
-		menuStore.open('select1', menuParam);
+		S.Menu.open('select1', menuParam);
 	};
 
 	onSelect (e: any, item: any, rowId: string, columnId: string, blockIds: string[]) {
@@ -520,7 +519,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		let idx = -1;
 		let nextIdx = -1;
 
-		menuStore.closeAll(Constant.menuIds.table);
+		S.Menu.closeAll(Constant.menuIds.table);
 
 		switch (item.id) {
 			case 'columnBefore':

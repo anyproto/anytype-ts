@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
 import { I, C, S, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action, UtilData } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -395,7 +394,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		window.clearTimeout(this.timeoutFilter);
 
 		keyboard.setFocus(false);
-		menuStore.close('smileSkin');
+		S.Menu.close('smileSkin');
 
 		this.unbind();
 	};
@@ -637,7 +636,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onKeyDown (e: any) {
-		if (menuStore.isOpen('smileSkin')) {
+		if (S.Menu.isOpen('smileSkin')) {
 			return;
 		};
 
@@ -873,7 +872,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 				};
 
 				win.off('mouseup.smile').on('mouseup.smile', () => {
-					if (menuStore.isOpen('smileSkin')) {
+					if (S.Menu.isOpen('smileSkin')) {
 						return;
 					};
 
@@ -903,7 +902,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 		const { getId, close, param } = this.props;
 
-		menuStore.open('smileSkin', {
+		S.Menu.open('smileSkin', {
 			...param,
 			type: I.MenuType.Horizontal,
 			element: `#${getId()} #item-${$.escapeSelector(item.id)}`,

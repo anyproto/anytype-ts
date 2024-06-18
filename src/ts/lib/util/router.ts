@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { C, S, UtilData, Preview, analytics, Storage } from 'Lib';
-import { menuStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -66,12 +66,12 @@ class UtilRouter {
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;
 
-		let timeout = menuStore.getTimeout();
+		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
 			timeout = popupStore.getTimeout();
 		};
 
-		menuStore.closeAll();
+		S.Menu.closeAll();
 		popupStore.closeAll();
 
 		if (routeParam.spaceId && ![ Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {

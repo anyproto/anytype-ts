@@ -4,8 +4,7 @@ import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';
 import { Tag, Icon, DragBox } from 'Component';
-import { I, Relation, translate, keyboard, UtilCommon } from 'Lib';
-import { menuStore } from 'Store';
+import { I, S, Relation, translate, keyboard, UtilCommon } from 'Lib';
 
 interface State { 
 	isEditing: boolean; 
@@ -232,7 +231,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			return;
 		};
 
-		menuStore.updateData('dataviewOptionList', { filter: this.getValue().new });
+		S.Menu.updateData('dataviewOptionList', { filter: this.getValue().new });
 
 		this.placeholderCheck();
 		this.resize();
@@ -338,7 +337,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		e.preventDefault();
 		e.stopPropagation();
 
-		menuStore.open('dataviewOptionEdit', { 
+		S.Menu.open('dataviewOptionEdit', { 
 			element: `#${id} #item-${item.id}`,
 			className: menuClassName,
 			classNameWrap: menuClassNameWrap,
@@ -397,7 +396,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			onChange(value, () => {
 				this.clear();
 
-				menuStore.updateData('dataviewOptionList', { value });
+				S.Menu.updateData('dataviewOptionList', { value });
 			});
 		};
 	};

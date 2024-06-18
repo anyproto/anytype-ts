@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I, C, S, UtilData, Relation, UtilObject, translate, keyboard } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -227,7 +226,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			objectIds = [ id ];
 		};
 		
-		menuStore.open('dataviewContext', {
+		S.Menu.open('dataviewContext', {
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };

@@ -4,7 +4,6 @@ import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { I, C, S, analytics, UtilMenu, UtilObject, Preview, translate, keyboard, Relation, UtilCommon } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -338,7 +337,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		this.menuOpen('dataviewDate', { 
 			element: `#${getId()} #item-date-settings`,
 			onClose: () => {
-				menuStore.close('select');
+				S.Menu.close('select');
 			},
 			data,
 		});
@@ -375,15 +374,15 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			rebind: this.rebind,
 		});
 
-		if (!menuStore.isOpen(id)) {
-			menuStore.closeAll(Constant.menuIds.relationEdit, () => {
-				menuStore.open(id, options);
+		if (!S.Menu.isOpen(id)) {
+			S.Menu.closeAll(Constant.menuIds.relationEdit, () => {
+				S.Menu.open(id, options);
 			});
 		};
 	};
 
 	menuClose () {
-		menuStore.closeAll(Constant.menuIds.relationEdit);
+		S.Menu.closeAll(Constant.menuIds.relationEdit);
 	};
 
 	onOpen (e: any) {

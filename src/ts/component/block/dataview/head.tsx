@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
 import { I, C, S, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -131,7 +130,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			options = options.filter(it => it.id == 'sourceChange');
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element,
 			offsetY: 4,
 			width: 240,
@@ -151,7 +150,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { targetObjectId } = block.content;
 
 		if (!item.arrow) {
-			menuStore.closeAll([ 'searchObject' ]);
+			S.Menu.closeAll([ 'searchObject' ]);
 			return;
 		};
 
@@ -229,9 +228,9 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 				break;
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll([ 'searchObject' ], () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll([ 'searchObject' ], () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import { I, S, UtilData, UtilCommon, UtilDate, UtilObject, translate, Dataview } from 'Lib';
-import { menuStore } from 'Store';
 import Item from './calendar/item';
 
 interface State {
@@ -279,13 +278,13 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const margin = (cw - mw) / 2;
 		const { top } = node.offset();
 		const day = node.find('.day').first();
-		const menu = menuStore.get('dataviewCalendarDay');
+		const menu = S.Menu.get('dataviewCalendarDay');
 
 		wrap.css({ width: cw, height: Math.max(600, ch - top - 130), marginLeft: -margin - 2 });
 		win.trigger('resize.menuDataviewCalendarDay');
 
 		if (menu && !menu.param.data.fromWidget && day.length) {
-			menuStore.update('dataviewCalendarDay', { width: day.outerWidth() + 8 });
+			S.Menu.update('dataviewCalendarDay', { width: day.outerWidth() + 8 });
 		};
 	};
 

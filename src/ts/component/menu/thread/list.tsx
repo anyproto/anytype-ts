@@ -1,8 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, IconObject } from 'Component';
-import { menuStore } from 'Store';
 import { observer } from 'mobx-react';
+import { Icon, IconObject } from 'Component';
 import { I, S, UtilData, translate, UtilDate } from 'Lib';
 
 const MENU_ID = 'threadStatus';
@@ -96,8 +95,8 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 			clear();
 			this.timeoutClose = window.setTimeout(() => {
 				clear();
-				menuStore.close(this.props.id);
-				menuStore.close('threadStatus');
+				S.Menu.close(this.props.id);
+				S.Menu.close('threadStatus');
 			}, 1000);
 		};
 
@@ -118,7 +117,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 		window.clearTimeout(this.timeoutClose);
 		window.clearTimeout(this.timeoutMenu);
 
-		menuStore.close(MENU_ID);
+		S.Menu.close(MENU_ID);
 	};
 
 	onMouseEnter (id: string, isCafe: boolean) {
@@ -149,9 +148,9 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 			cnw.push(classNameWrap);
 		};
 
-		if (!menuStore.isOpen(MENU_ID, id)) {
-			menuStore.close(MENU_ID, () => {
-				menuStore.open(MENU_ID, {
+		if (!S.Menu.isOpen(MENU_ID, id)) {
+			S.Menu.close(MENU_ID, () => {
+				S.Menu.open(MENU_ID, {
 					menuKey: id,
 					element: `#${getId()} #item-${id}`,
 					offsetX: getSize().width,

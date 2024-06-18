@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, C, S, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate, UtilSpace } from 'Lib';
-import { menuStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -72,7 +72,7 @@ class Keyboard {
 				sidebar.hide();
 			};
 
-			menuStore.closeAll([ 'blockContext' ]);
+			S.Menu.closeAll([ 'blockContext' ]);
 
 			$('.dropTarget.isOver').removeClass('isOver');
 		});
@@ -168,8 +168,8 @@ class Keyboard {
 		this.shortcut('escape', e, () => {
 			e.preventDefault();
 
-			if (menuStore.isOpen()) {
-				menuStore.closeLast();
+			if (S.Menu.isOpen()) {
+				S.Menu.closeLast();
 			} else 
 			if (popupStore.isOpen()) {
 				let canClose = true;
@@ -389,7 +389,7 @@ class Keyboard {
 			};
 		};
 
-		menuStore.closeAll();
+		S.Menu.closeAll();
 		this.restoreSource();
 		analytics.event('HistoryBack');
 	};
@@ -409,7 +409,7 @@ class Keyboard {
 			UtilRouter.history.goForward();
 		};
 
-		menuStore.closeAll();
+		S.Menu.closeAll();
 		analytics.event('HistoryForward');
 	};
 
@@ -804,8 +804,8 @@ class Keyboard {
 			return;
 		};
 
-		menuStore.closeAll([ 'blockContext' ], () => {
-			menuStore.open('searchText', {
+		S.Menu.closeAll([ 'blockContext' ], () => {
+			S.Menu.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
@@ -841,12 +841,12 @@ class Keyboard {
 			data,
 		}, param);
 
-		if (menuStore.isOpen(id)) {
-			menuStore.open(id, menuParam);
+		if (S.Menu.isOpen(id)) {
+			S.Menu.open(id, menuParam);
 		} else {
 			popupStore.close('search', () => {
-				menuStore.closeAll(Constant.menuIds.navigation, () => {
-					menuStore.open(id, menuParam);
+				S.Menu.closeAll(Constant.menuIds.navigation, () => {
+					S.Menu.open(id, menuParam);
 				});
 			});
 		};
@@ -859,8 +859,8 @@ class Keyboard {
 	onQuickCapture (shortcut: boolean, param?: Partial<I.MenuParam>) {
 		param = param || {};
 
-		if ((S.Common.navigationMenu != I.NavigationMenuMode.Hover) && menuStore.isOpen('quickCapture')) {
-			menuStore.close('quickCapture');
+		if ((S.Common.navigationMenu != I.NavigationMenuMode.Hover) && S.Menu.isOpen('quickCapture')) {
+			S.Menu.close('quickCapture');
 			return;
 		};
 
@@ -879,7 +879,7 @@ class Keyboard {
 			return;
 		};
 
-		menuStore.closeAll([ 'blockContext' ]);
+		S.Menu.closeAll([ 'blockContext' ]);
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { ...block.fields, isLocked: v } },

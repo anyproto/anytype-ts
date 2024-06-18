@@ -2,7 +2,6 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, PreviewObject, IconObject } from 'Component';
 import { C, I, S, UtilObject, translate, UtilData, UtilCommon, keyboard } from 'Lib';
-import { menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const Constant = require('json/constant.json');
@@ -271,13 +270,13 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			item.targetObjectType = typeId;
 		};
 
-		if (menuStore.isOpen('dataviewTemplateContext', item.id)) {
-			menuStore.close('dataviewTemplateContext');
+		if (S.Menu.isOpen('dataviewTemplateContext', item.id)) {
+			S.Menu.close('dataviewTemplateContext');
 			return;
 		};
 
-		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
-			menuStore.open('dataviewTemplateContext', {
+		S.Menu.closeAll(Constant.menuIds.dataviewTemplate, () => {
+			S.Menu.open('dataviewTemplateContext', {
 				menuKey: item.id,
 				element: `#${getId()} #item-more-${item.id}`,
 				vertical: I.MenuDirection.Bottom,
@@ -327,7 +326,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { data } = param;
 		const { onTypeChange } = data;
 
-		menuStore.open('typeSuggest', {
+		S.Menu.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
 			horizontal: I.MenuDirection.Right,
 			data: {

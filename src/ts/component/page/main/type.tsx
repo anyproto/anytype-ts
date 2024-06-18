@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
 import { I, C, S, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter, UtilSpace } from 'Lib';
-import { menuStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -354,7 +353,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		options.push({ id: 'set', name: translate('pageMainTypeNewSetOfObjects') });
 
-		menuStore.open('select', { 
+		S.Menu.open('select', { 
 			element: `#button-create`,
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
@@ -406,7 +405,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	onBookmarkAdd () {
-		menuStore.open('dataviewCreateBookmark', {
+		S.Menu.open('dataviewCreateBookmark', {
 			type: I.MenuType.Horizontal,
 			element: `#button-create`,
 			horizontal: I.MenuDirection.Right,
@@ -439,7 +438,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const recommendedKeys = object.recommendedRelations.map(id => S.Record.getRelationById(id)).map(it => it && it.relationKey);
 		const systemKeys = Relation.systemKeys().filter(it => !skipSystemKeys.includes(it));
 
-		menuStore.open('relationSuggest', { 
+		S.Menu.open('relationSuggest', { 
 			element: '#page .section.relation #item-add',
 			offsetX: 32,
 			data: {
@@ -450,7 +449,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				skipKeys: recommendedKeys.concat(systemKeys),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], (message: any) => { 
-						menuStore.close('relationSuggest'); 
+						S.Menu.close('relationSuggest'); 
 
 						if (onChange) {
 							onChange(message);
@@ -466,7 +465,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const relation = S.Record.getRelationById(id);
 		
-		menuStore.open('blockRelationEdit', { 
+		S.Menu.open('blockRelationEdit', { 
 			element: `#page .section.relation #item-${id}`,
 			offsetX: 32,
 			data: {
@@ -498,8 +497,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	onMenu (item: any) {
-		if (menuStore.isOpen('dataviewTemplateContext', item.id)) {
-			menuStore.close('dataviewTemplateContext');
+		if (S.Menu.isOpen('dataviewTemplateContext', item.id)) {
+			S.Menu.close('dataviewTemplateContext');
 			return;
 		};
 
@@ -519,8 +518,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			template.isDefault = true;
 		};
 
-		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
-			menuStore.open('dataviewTemplateContext', {
+		S.Menu.closeAll(Constant.menuIds.dataviewTemplate, () => {
+			S.Menu.open('dataviewTemplateContext', {
 				menuKey: item.id,
 				element: `#item-more-${item.id}`,
 				vertical: I.MenuDirection.Bottom,

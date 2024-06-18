@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Title, Button, Checkbox, Error } from 'Component';
 import { I, C, S, translate, UtilRouter, analytics } from 'Lib';
-import { menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Head from './head';
 
@@ -64,7 +63,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 			};
 
 			S.Auth.accountSetStatus(message.status);
-			menuStore.closeAllForced();
+			S.Menu.closeAllForced();
 
 			this.props.close();
 

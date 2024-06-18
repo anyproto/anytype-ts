@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, S, Mark, UtilData, focus, keyboard, Storage, translate, UtilObject, analytics } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -168,7 +167,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 	};
 
 	componentWillUnmount(): void {
-		menuStore.closeAll(Constant.menuIds.context.concat('selectContext'));
+		S.Menu.closeAll(Constant.menuIds.context.concat('selectContext'));
 	};
 
 	onMark (e: any, type: any) {
@@ -211,7 +210,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			
 			default: {
 				marks = Mark.toggle(marks, { type, param: '', range: { from, to } });
-				menuStore.updateData(this.props.id, { marks });
+				S.Menu.updateData(this.props.id, { marks });
 				onChange(marks);
 				break;
 			};
@@ -264,12 +263,12 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						{ id: 'blockRemove', icon: 'remove', name: translate('commonDelete') }
 					],
 					onOver: (e: any, item: any) => {
-						if (!this.menuContext || menuStore.isAnimating(this.menuContext.props.id)) {
+						if (!this.menuContext || S.Menu.isAnimating(this.menuContext.props.id)) {
 							return;
 						};
 
 						if (!item.arrow) {
-							menuStore.closeAll(Constant.menuIds.selectContext);
+							S.Menu.closeAll(Constant.menuIds.selectContext);
 							return;
 						};
 
@@ -311,7 +310,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					skipIds: [ rootId ],
 					onChange: (newType: I.MarkType, param: string) => {
 						marks = Mark.toggleLink({ type: newType, param, range: { from, to } }, marks);
-						menuStore.updateData(this.props.id, { marks });
+						S.Menu.updateData(this.props.id, { marks });
 						onChange(marks);
 
 						window.setTimeout(() => focus.apply(), 15);
@@ -350,7 +349,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						};
 
 						marks = Mark.toggle(marks, { type, param, range: { from, to } });
-						menuStore.updateData(this.props.id, { marks });
+						S.Menu.updateData(this.props.id, { marks });
 						onChange(marks);
 					},
 				});
@@ -360,15 +359,15 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 		focusApply ? focus.apply() : focus.clear(false);
 
-		if (menuId && !menuStore.isOpen(menuId)) {
+		if (menuId && !S.Menu.isOpen(menuId)) {
 			const menuIds = [].concat(Constant.menuIds.context);
 			
 			if (closeContext) {
 				menuIds.push(this.props.id);
 			};
 
-			menuStore.closeAll(menuIds, () => {
-				menuStore.open(menuId, menuParam);
+			S.Menu.closeAll(menuIds, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};
@@ -455,9 +454,9 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			};
 		};
 
-		if (menuId && !menuStore.isOpen(menuId)) {
-			menuStore.closeAll(Constant.menuIds.selectContext, () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId)) {
+			S.Menu.closeAll(Constant.menuIds.selectContext, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};

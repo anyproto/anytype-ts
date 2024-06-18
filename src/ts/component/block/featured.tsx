@@ -4,14 +4,12 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell } from 'Component';
 import { I, C, S, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
-import { menuStore } from 'Store';
-
-const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
 };
 
+const Constant = require('json/constant.json');
 const PREFIX = 'blockFeatured';
 const SOURCE_LIMIT = 1;
 
@@ -135,7 +133,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			window.setTimeout(() => {
 				this.checkType();
 				this.checkSource();
-			}, menuStore.getTimeout());
+			}, S.Menu.getTimeout());
 		};
 
 		this.init();
@@ -451,7 +449,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const showMenu = () => {
-			menuStore.open('select', {
+			S.Menu.open('select', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
 				offsetY: 8,
 				subIds: Constant.menuIds.featuredType,
@@ -493,7 +491,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block } = this.props;
 
 		if (!item.arrow) {
-			menuStore.closeAll(Constant.menuIds.featuredType);
+			S.Menu.closeAll(Constant.menuIds.featuredType);
 			return;
 		};
 
@@ -563,12 +561,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				});
 		};
 
-		if (menuId && !menuStore.isOpen(menuId)) {
-			if (menuStore.isOpen(menuId)) {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId)) {
+			if (S.Menu.isOpen(menuId)) {
+				S.Menu.open(menuId, menuParam);
 			} else {
-				menuStore.closeAll(Constant.menuIds.featuredType, () => {
-					menuStore.open(menuId, menuParam);
+				S.Menu.closeAll(Constant.menuIds.featuredType, () => {
+					S.Menu.open(menuId, menuParam);
 				});
 			};
 		};
@@ -638,12 +636,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onSource () {
 		const { rootId, block, readonly } = this.props;
 
-		if (readonly || menuStore.isOpen('dataviewSource')) {
+		if (readonly || S.Menu.isOpen('dataviewSource')) {
 			return;
 		};
 
-		menuStore.closeAll(null, () => {
-			menuStore.open('dataviewSource', {
+		S.Menu.closeAll(null, () => {
+			S.Menu.open('dataviewSource', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', rootId)}`,
 				horizontal: I.MenuDirection.Center,
 				data: {
@@ -658,8 +656,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onRelation (e: any, relationKey: string) {
 		e.stopPropagation();
 
-		if (menuStore.isOpen()) {
-			menuStore.closeAll();
+		if (S.Menu.isOpen()) {
+			S.Menu.closeAll();
 			return;
 		};
 
@@ -764,7 +762,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						};
 					},
 					onClose: () => {
-						menuStore.closeAll();
+						S.Menu.closeAll();
 					},
 					data: {
 						relationKey,
@@ -777,7 +775,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					param.classNameWrap = 'fixed fromHeader';
 				};
 
-				menuStore.closeAll(null, () => menuStore.open('blockRelationView', param));
+				S.Menu.closeAll(null, () => S.Menu.open('blockRelationView', param));
 				break;
 			};
 		};
@@ -806,7 +804,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			noFlipX: true,
 			title: relation.name,
 			onClose: () => {
-				menuStore.closeAll();
+				S.Menu.closeAll();
 			},
 			data: {
 				rootId,
@@ -829,8 +827,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		menuParam = Object.assign(menuParam, param);
 		menuParam.data = Object.assign(menuParam.data, data);
 
-		menuStore.closeAll(Constant.menuIds.cell, () => {
-			menuStore.open(menuId, menuParam);
+		S.Menu.closeAll(Constant.menuIds.cell, () => {
+			S.Menu.open(menuId, menuParam);
 		});
 	};
 
@@ -853,8 +851,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			object: it,
 		}));
 
-		menuStore.closeAll([ 'select' ], () => {
-			menuStore.open('select', {
+		S.Menu.closeAll([ 'select' ], () => {
+			S.Menu.open('select', {
 				element: `#${elementId}`,
 				className: 'featuredLinks',
 				title: relation.name,

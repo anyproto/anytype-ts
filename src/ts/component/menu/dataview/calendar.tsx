@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { I, UtilDate, translate } from 'Lib';
+import { I, S, UtilDate, translate } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
-import { menuStore } from 'Store';
 
 const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu> {
 	
@@ -148,7 +147,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 		const { data } = param;
 		const { onChange } = data;
 
-		menuStore.updateData(id, { value });
+		S.Menu.updateData(id, { value });
 
 		if (save) {
 			onChange(value);

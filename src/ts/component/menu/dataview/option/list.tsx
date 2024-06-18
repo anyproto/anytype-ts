@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Tag, Filter } from 'Component';
 import { I, C, S, UtilCommon, UtilMenu, keyboard, Relation, translate } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -196,7 +195,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		$(`#${this.props.getId()}`).on('click', () => menuStore.close('dataviewOptionEdit'));
+		$(`#${this.props.getId()}`).on('click', () => S.Menu.close('dataviewOptionEdit'));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 
@@ -279,7 +278,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			};
 		};
 
-		menuStore.updateData(this.props.id, { value });
+		S.Menu.updateData(this.props.id, { value });
 		onChange(value);
 	};
 
@@ -291,7 +290,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const idx = value.indexOf(id);
 
 		value.splice(idx, 1);
-		menuStore.updateData(this.props.id, { value });
+		S.Menu.updateData(this.props.id, { value });
 		onChange(value);
 	};
 
@@ -344,7 +343,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 
-		menuStore.open('dataviewOptionEdit', { 
+		S.Menu.open('dataviewOptionEdit', { 
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,

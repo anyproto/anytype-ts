@@ -6,7 +6,6 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'Component';
 import { I, C, S, Relation, keyboard, Dataview, translate } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -189,7 +188,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 
 	componentWillUnmount () {
 		this.unbind();
-		menuStore.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(Constant.menuIds.cell);
 	};
 
 	rebind () {
@@ -231,7 +230,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 
-		menuStore.open('relationSuggest', { 
+		S.Menu.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Top,
@@ -275,7 +274,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			return;
 		};
 		
-		menuStore.open('dataviewRelationEdit', { 
+		S.Menu.open('dataviewRelationEdit', { 
 			element: `#${getId()} #item-${item.relationKey}`,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,

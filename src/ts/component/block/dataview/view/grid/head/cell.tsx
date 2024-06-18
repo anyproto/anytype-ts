@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { SortableElement } from 'react-sortable-hoc';
 import { I, S, keyboard, Relation, Dataview } from 'Lib';
-import { menuStore } from 'Store';
 import Handle from './handle';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
@@ -85,7 +84,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		const obj = $(element);
 
 		window.setTimeout(() => {
-			menuStore.open('dataviewRelationEdit', { 
+			S.Menu.open('dataviewRelationEdit', { 
 				element,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
@@ -107,7 +106,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 					},
 				}
 			});
-		}, menuStore.getTimeout());
+		}, S.Menu.getTimeout());
 	};
 
 });

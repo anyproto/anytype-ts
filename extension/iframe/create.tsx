@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
 import { I, C, M, S, translate, UtilObject, UtilData, UtilSpace } from 'Lib';
-import { extensionStore, menuStore } from 'Store';
+import { extensionStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
@@ -161,7 +161,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 		];
 
-		menuStore.open('searchObject', {
+		S.Menu.open('searchObject', {
 			element: node.find('#select'),
 			data: {
 				value: object ? [ object.id ] : [],

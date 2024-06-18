@@ -3,7 +3,6 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
 import { C, I, M, S, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -207,7 +206,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	onAdd (e: any): void {
 		e.stopPropagation();
 
-		menuStore.open('widget', {
+		S.Menu.open('widget', {
 			element: '#widget-list-add',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -335,7 +334,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 		let menuContext = null;
 
-		menuStore.open('selectList', {
+		S.Menu.open('selectList', {
 			component: 'select',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -355,13 +354,13 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 					};
 
 					if (!item.arrow) {
-						menuStore.close('widget');
+						S.Menu.close('widget');
 						return;
 					};
 
 					const { x, y } = keyboard.mouse.page;
 
-					menuStore.open('widget', {
+					S.Menu.open('widget', {
 						element: `#${menuContext.getId()} #item-${item.id}`,
 						offsetX: menuContext.getSize().width,
 						isSub: true,
@@ -438,7 +437,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			win.on('keydown.sidebar', e => {
 				keyboard.shortcut('escape', e, () => close(e));
 			});
-		}, menuStore.getTimeout());
+		}, S.Menu.getTimeout());
 	};
 
 });

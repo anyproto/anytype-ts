@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { I, S, UtilCommon, analytics, Storage, Preview, translate } from 'Lib';
 import { Dimmer } from 'Component';
-import { menuStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 
 import PopupSettings from './settings';
 import PopupSettingsOnboarding from './settings/onboarding';
@@ -213,7 +213,7 @@ class Popup extends React.Component<I.Popup> {
 		Preview.tooltipHide(true);
 
 		if (!preventMenuClose) {
-			menuStore.closeAll();
+			S.Menu.closeAll();
 		};
 
 		popupStore.close(id, callBack);

@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
 import { I, C, S, analytics, keyboard, UtilData, Action, UtilCommon, translate, UtilSpace } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -186,8 +185,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	componentWillUnmount () {
 		this._isMounted = false;
 
-		if (menuStore.isOpen('searchObject', 'store')) {
-			menuStore.closeAll([ 'searchObject' ]);
+		if (S.Menu.isOpen('searchObject', 'store')) {
+			S.Menu.closeAll([ 'searchObject' ]);
 		};
 		window.clearTimeout(this.timeoutFilter);
 	};
@@ -358,7 +357,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		};
 
 		if (!item.arrow) {
-			menuStore.closeAll([ 'searchObject' ]);
+			S.Menu.closeAll([ 'searchObject' ]);
 			return;
 		};
 
@@ -418,8 +417,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			};
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll([ 'searchObject' ], () => menuStore.open(menuId, menuParam));
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll([ 'searchObject' ], () => S.Menu.open(menuId, menuParam));
 		};
 	};
 	

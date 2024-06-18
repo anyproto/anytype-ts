@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { I, S, keyboard, UtilData, UtilMenu, UtilCommon } from 'Lib';
-import { menuStore } from 'Store';
 
 const Sections = require('json/latex.json');
 const katex = require('katex');
@@ -170,7 +169,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		this.props.setActive();
 		this.onOver(null, items[this.n]);
 
-		menuStore.close('previewLatex');
+		S.Menu.close('previewLatex');
 	};
 
 	componentWillUnmount () {
@@ -200,7 +199,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 			return;
 		};
 
-		menuStore.open('previewLatex', {
+		S.Menu.open('previewLatex', {
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width - (isTemplate ? 14 : 0),
 			vertical: I.MenuDirection.Center,

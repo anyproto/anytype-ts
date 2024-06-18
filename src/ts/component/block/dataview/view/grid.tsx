@@ -5,11 +5,10 @@ import arrayMove from 'array-move';
 import $ from 'jquery';
 import { Icon, LoadMore } from 'Component';
 import { I, C, S, UtilCommon, translate, keyboard, Relation } from 'Lib';
-import { menuStore } from 'Store';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
-const Constant = require('json/constant.json');
 
+const Constant = require('json/constant.json');
 const PADDING = 46;
 
 const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent> {
@@ -176,7 +175,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	onScroll () {
-		menuStore.resizeAll();
+		S.Menu.resizeAll();
 		this.resizeColumns('', 0);
 	};
 
@@ -305,7 +304,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	onCellAdd (e: any) {
 		const { rootId, block, readonly, loadData, getView, isInline, isCollection } = this.props;
 
-		menuStore.open('dataviewRelationList', { 
+		S.Menu.open('dataviewRelationList', { 
 			element: `#block-${block.id} #cell-add`,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
@@ -317,7 +316,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 				isInline,
 				isCollection,
 				blockId: block.id,
-				onAdd: () => menuStore.closeAll(Constant.menuIds.cellAdd)
+				onAdd: () => S.Menu.closeAll(Constant.menuIds.cellAdd)
 			}
 		});
 	};

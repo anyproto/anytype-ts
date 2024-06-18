@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
 import { I, C, S, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
-import { menuStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -322,7 +322,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this._isMounted = false;
 		this.unbind();
 
-		menuStore.closeAll(Constant.menuIds.store);
+		S.Menu.closeAll(Constant.menuIds.store);
 		window.clearTimeout(this.timeoutFilter);
 	};
 
@@ -391,7 +391,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.view = id;
 		this.load(true);
 
-		menuStore.closeAll(Constant.menuIds.store);
+		S.Menu.closeAll(Constant.menuIds.store);
 		analytics.event('LibraryView', { view: id, type: this.tab, route: (isInner ? 'inner' : 'outer') });
 
 		Storage.set('viewStore', id);
@@ -423,12 +423,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			this.filter = v;
-			menuStore.updateData(this.getMenuId(), { filter: v });
+			S.Menu.updateData(this.getMenuId(), { filter: v });
 		}, 500);
 	};
 
 	onFilterClear () {	
-		menuStore.closeAll(Constant.menuIds.store);
+		S.Menu.closeAll(Constant.menuIds.store);
 	};
 
 	onFilterFocus (e: any) {
@@ -467,7 +467,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				break;
 		};
 
-		menuStore.open(this.getMenuId(), menuParam);
+		S.Menu.open(this.getMenuId(), menuParam);
 	};
 
 	onFilterBlur () {
@@ -662,7 +662,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.refFilter.forceUpdate();
 		};
 
-		menuStore.resizeAll();
+		S.Menu.resizeAll();
 	};
 
 	getLimit () {
@@ -695,7 +695,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	onSort (e: any) {
 		const options = this.getSortOptions();
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: '#button-store-sort',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
@@ -754,13 +754,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.frame = raf(() => this.forceUpdate());
 		};
 
-		if (menuStore.isOpen(this.getMenuId())) {
+		if (S.Menu.isOpen(this.getMenuId())) {
 			if (this.refFilter && this.filter.length) {
 				this.refFilter.setValue(this.filter);
 				this.refFilter.focus();
 			};
 
-			menuStore.update(this.getMenuId(), { width: filter.outerWidth() });
+			S.Menu.update(this.getMenuId(), { width: filter.outerWidth() });
 		};
 	};
 

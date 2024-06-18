@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, analytics, keyboard, Key, translate, Dataview, UtilCommon } from 'Lib';
 import { InputWithLabel, MenuItemVertical } from 'Component';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -98,7 +97,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			this.save(true);
 		};
 
-		menuStore.closeAll(Constant.menuIds.viewEdit);
+		S.Menu.closeAll(Constant.menuIds.viewEdit);
 	};
 
 	focus () {
@@ -178,7 +177,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		this.isFocused = true;
 		this.props.setActive();
 
-		menuStore.closeAll(Constant.menuIds.viewEdit);
+		S.Menu.closeAll(Constant.menuIds.viewEdit);
 	};
 	
 	onNameBlur () {
@@ -190,7 +189,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		if (!keyboard.isMouseDisabled) {
 			this.n = -1;
 			this.props.setHover(null, false);
-			menuStore.closeAll(Constant.menuIds.viewEdit);
+			S.Menu.closeAll(Constant.menuIds.viewEdit);
 		};
 	};
 
@@ -326,7 +325,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				param.data = Object.assign(addParam.data, item.data);
 			};
 
-			menuStore.replace(id, item.subComponent, Object.assign(param, addParam));
+			S.Menu.replace(id, item.subComponent, Object.assign(param, addParam));
 			return;
 		};
 

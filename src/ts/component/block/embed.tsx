@@ -7,7 +7,6 @@ import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
 import { I, C, S, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Theme = require('json/theme.json');
@@ -209,7 +208,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		if (isEditing) {
 			win.on(`mousedown.${block.id}`, (e: any) => {
-				if (!this._isMounted || menuStore.isOpenList([ 'blockLatex', 'select' ])) {
+				if (!this._isMounted || S.Menu.isOpenList([ 'blockLatex', 'select' ])) {
 					return;
 				};
 
@@ -219,12 +218,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 				e.stopPropagation();
 
-				menuStore.close('blockLatex');
+				S.Menu.close('blockLatex');
 
 				this.placeholderCheck();
 				this.save(() => { 
 					this.setEditing(false);
-					menuStore.close('previewLatex');
+					S.Menu.close('previewLatex');
 				});
 			});
 		};
@@ -365,7 +364,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		keyboard.shortcut('backspace', e, () => {
 			if (range && (range.from == filter.from)) {
-				menuStore.close('blockLatex');
+				S.Menu.close('blockLatex');
 			};
 		});
 	};
@@ -382,7 +381,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		if (block.isEmbedLatex()) {
 			const { filter } = S.Common;
 			const symbolBefore = value[range?.from - 1];
-			const menuOpen = menuStore.isOpen('blockLatex');
+			const menuOpen = S.Menu.isOpen('blockLatex');
 
 			if ((symbolBefore == '\\') && !keyboard.isSpecial(e)) {
 				S.Common.filterSet(range.from, '');
@@ -529,7 +528,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			},
 		};
 
-		raf(() => menuStore.open('blockLatex', menuParam));
+		raf(() => S.Menu.open('blockLatex', menuParam));
 	};
 
 	setText (text: string) {
@@ -564,11 +563,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	updateRect () {
 		const rect = UtilCommon.getSelectionRect();
-		if (!rect || !menuStore.isOpen('blockLatex')) {
+		if (!rect || !S.Menu.isOpen('blockLatex')) {
 			return;
 		};
 
-		menuStore.update('blockLatex', { 
+		S.Menu.update('blockLatex', { 
 			rect: { ...rect, y: rect.y + $(window).scrollTop() }
 		});
 	};

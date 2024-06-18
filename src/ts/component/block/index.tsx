@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, UtilCommon, UtilData, keyboard, focus, Storage, UtilSpace } from 'Lib';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject} from 'Component';
-import { menuStore } from 'Store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -501,7 +500,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		e.stopPropagation();
 
 		focus.clear(true);
-		menuStore.closeAll([], () => {
+		S.Menu.closeAll([], () => {
 			this.ids = UtilData.selectionGet(block.id, false, false);
 			selection?.set(I.SelectType.Block, this.ids);
 
@@ -536,7 +535,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			}
 		}, param || {});
 
-		menuStore.open('blockAction', menuParam);
+		S.Menu.open('blockAction', menuParam);
 	};
 	
 	onResizeStart (e: any, index: number) {

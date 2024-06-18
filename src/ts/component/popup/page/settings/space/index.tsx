@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, ObjectName } from 'Component';
 import { I, C, S, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
-import { observer } from 'mobx-react';
-import { menuStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -441,7 +441,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	componentWillUnmount(): void {
-		menuStore.closeAll([ 'select', 'searchObject' ]);
+		S.Menu.closeAll([ 'select', 'searchObject' ]);
 	};
 
 	init () {
@@ -468,7 +468,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	onType (e: any) {
 		const { getId } = this.props;
 
-		menuStore.open('typeSuggest', {
+		S.Menu.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
 			horizontal: I.MenuDirection.Right,
 			data: {

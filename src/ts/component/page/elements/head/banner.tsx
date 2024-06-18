@@ -2,7 +2,6 @@ import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
 import { I, S, Action, translate, UtilObject, UtilCommon, C, analytics, Onboarding } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -101,13 +100,13 @@ class HeaderBanner extends React.Component<Props> {
 		const templateId = sourceObject || Constant.templateId.blank;
 		const node = $(this.node);
 
-		if (!type || menuStore.isOpen('dataviewTemplateList')) {
+		if (!type || S.Menu.isOpen('dataviewTemplateList')) {
 			return;
 		};
 
 		let menuContext = null;
 
-		menuStore.open('dataviewTemplateList', {
+		S.Menu.open('dataviewTemplateList', {
 			element: node,
 			className: 'fromBanner',
 			offsetY: isPopup ? 10 : 0,

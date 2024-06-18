@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Cell, Error, Icon, EmptySearch, Checkbox } from 'Component';
 import { I, M, C, S, UtilCommon, Relation, UtilData, translate, Dataview } from 'Lib';
-import { popupStore, menuStore } from 'Store';
+import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -134,7 +134,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	componentWillUnmount(): void {
-		menuStore.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(Constant.menuIds.cell);
 		C.ObjectSearchUnsubscribe([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
 	};
 
@@ -253,7 +253,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const { getId } = this.props;
 		const element = `#${getId()} #item-add`;
 
-		menuStore.open('relationSuggest', { 
+		S.Menu.open('relationSuggest', { 
 			element,
 			offsetX: Constant.size.blockMenu,
 			horizontal: I.MenuDirection.Right,
@@ -270,7 +270,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 					this.addRelationKeys.push(relation.relationKey);
 					this.loadObjects();
 
-					menuStore.close('relationSuggest');
+					S.Menu.close('relationSuggest');
 				},
 			}
 		});

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, keyboard, analytics, UtilObject, UtilCommon, Preview, focus, Action, translate, UtilSpace } from 'Lib';
-import { menuStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -77,7 +77,7 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		menuStore.closeAll(Constant.menuIds.object);
+		S.Menu.closeAll(Constant.menuIds.object);
 	};
 
 	rebind () {
@@ -266,7 +266,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			menuStore.closeAll(Constant.menuIds.object);
+			S.Menu.closeAll(Constant.menuIds.object);
 			return;
 		};
 
@@ -313,9 +313,9 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.object, () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll(Constant.menuIds.object, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};

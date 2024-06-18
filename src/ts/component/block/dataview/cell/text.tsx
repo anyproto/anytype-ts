@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, UtilCommon, keyboard, translate, Relation, UtilDate } from 'Lib';
 import { Input, IconObject } from 'Component';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -341,7 +340,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		};
 
 		if ([ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email ].includes(relation.format)) {
-			menuStore.updateData('select', { disabled: !value });
+			S.Menu.updateData('select', { disabled: !value });
 		};
 
 		this.setValue(value);
@@ -356,7 +355,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			e.preventDefault();
 
 			this.save(value, () => {
-				menuStore.closeAll(Constant.menuIds.cell);
+				S.Menu.closeAll(Constant.menuIds.cell);
 
 				this.range = null;
 				this.setEditing(false);
@@ -377,7 +376,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.setValue(this.fixDateValue(value));
 
 		if (this.value) {
-			menuStore.updateData(MENU_ID, { value: this.value });
+			S.Menu.updateData(MENU_ID, { value: this.value });
 		};
 
 		if (this.isComposition) {
@@ -388,7 +387,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
-			this.save(this.value, () => menuStore.close(MENU_ID));
+			this.save(this.value, () => S.Menu.close(MENU_ID));
 
 			ret = true;
 		});
@@ -420,7 +419,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		};
 
 		this.save(this.value, () => {
-			if (!menuStore.isOpen(MENU_ID)) {
+			if (!S.Menu.isOpen(MENU_ID)) {
 				this.setEditing(false);
 			};
 		});

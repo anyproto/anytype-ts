@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore } from 'Component';
 import { I, S, UtilData, UtilObject, UtilCommon, translate, Dataview } from 'Lib';
-import { menuStore } from 'Store';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
 
@@ -224,7 +223,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		const node = $(this.node);
 		const element = `#button-${id}-more`;
 
-		menuStore.open('dataviewGroupEdit', {
+		S.Menu.open('dataviewGroupEdit', {
 			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,

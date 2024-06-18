@@ -4,7 +4,6 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
 import { C, I, S, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace, keyboard } from 'Lib';
-import { menuStore } from 'Store';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -469,7 +468,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		const { x, y } = keyboard.mouse.page;
 
-		menuStore.open('widget', {
+		S.Menu.open('widget', {
 			rect: { width: 0, height: 0, x: x + 4, y },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -837,7 +836,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
 		};
 
-		menuStore.open('dataviewContext', menuParam);
+		S.Menu.open('dataviewContext', menuParam);
 	};
 
 });

@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Loader, EmptySearch } from 'Component';
 import { I, S, UtilCommon, Relation, keyboard, UtilData, UtilObject, translate, Action, C } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -326,8 +325,8 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		};
 
 		onChange(value, () => {
-			menuStore.updateData(this.props.id, { value });
-			menuStore.updateData(MENU_ID, { value });
+			S.Menu.updateData(this.props.id, { value });
+			S.Menu.updateData(MENU_ID, { value });
 			position();
 		});
 	};

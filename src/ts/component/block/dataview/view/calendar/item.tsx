@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
 import { I, S, UtilCommon, UtilObject, translate, UtilDate } from 'Lib';
-import { menuStore } from 'Store';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -98,8 +97,8 @@ const Item = observer(class Item extends React.Component<Props> {
 		const node = $(this.node);
 		const view = getView();
 
-		menuStore.closeAll([ 'dataviewCalendarDay' ], () => {
-			menuStore.open('dataviewCalendarDay', {
+		S.Menu.closeAll([ 'dataviewCalendarDay' ], () => {
+			S.Menu.open('dataviewCalendarDay', {
 				element: node,
 				horizontal: I.MenuDirection.Center,
 				width: node.outerWidth() + 8,

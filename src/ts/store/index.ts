@@ -3,8 +3,8 @@ import { Record } from './record';
 import { Auth } from './auth';
 import { Detail } from './detail';
 import { Block } from './block';
+import { Menu } from './menu';
 
-import { menuStore } from './menu';
 import { popupStore } from './popup';
 import { extensionStore } from './extension';
 import { notificationStore } from './notification';
@@ -15,8 +15,8 @@ export {
 	Auth,
 	Detail,
 	Block,
+	Menu,
 
-	menuStore,
 	popupStore,
 	extensionStore,
 	notificationStore,

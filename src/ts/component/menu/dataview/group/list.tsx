@@ -1,16 +1,13 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import $ from 'jquery';
-import { Icon, Switch } from 'Component';
-import Cell from 'Component/block/dataview/cell';
+import { Icon, Switch, Cell } from 'Component';
 import { I, C, S, Dataview, keyboard, translate } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
-
 const HEIGHT = 28;
 const LIMIT = 20;
 
@@ -183,7 +180,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 
 	componentWillUnmount () {
 		this.unbind();
-		menuStore.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(Constant.menuIds.cell);
 	};
 
 	rebind () {

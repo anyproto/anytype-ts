@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, analytics, keyboard, translate, Dataview, UtilMenu, Relation, UtilCommon } from 'Lib';
 import { Label, Icon, MenuItemVertical } from 'Component';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -298,7 +297,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const view = data.view.get();
 
 		if (!item.arrow || isReadonly) {
-			menuStore.closeAll(Constant.menuIds.viewEdit);
+			S.Menu.closeAll(Constant.menuIds.viewEdit);
 			return;
 		};
 
@@ -367,9 +366,9 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			};
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.viewEdit, () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll(Constant.menuIds.viewEdit, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};
@@ -419,7 +418,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	};
 
 	menuClose () {
-		menuStore.closeAll(Constant.menuIds.viewEdit);
+		S.Menu.closeAll(Constant.menuIds.viewEdit);
 	};
 
 	resize () {

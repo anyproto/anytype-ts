@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
 import { I, S, Preview, UtilSmile, UtilData, UtilFile, UtilObject, UtilCommon, translate } from 'Lib';
-import { menuStore } from 'Store';
+
 const Colors = require('json/colors.json');
 const Theme = require('json/theme.json');
 
@@ -410,7 +410,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const noGallery = this.props.noGallery || [ I.ObjectLayout.SpaceView, I.ObjectLayout.Human ].includes(object.layout);
 		const noUpload = this.props.noUpload || [ I.ObjectLayout.Type ].includes(object.layout);
 
-		menuStore.open('smile', { 
+		S.Menu.open('smile', { 
 			element: `#${id}`,
 			offsetX,
 			offsetY,

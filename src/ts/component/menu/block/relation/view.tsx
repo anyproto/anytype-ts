@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, S, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard, translate } from 'Lib';
-import { menuStore } from 'Store';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -141,7 +140,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	onScroll () {
-		menuStore.resizeAll();
+		S.Menu.resizeAll();
 	};
 
 	getSections () {
@@ -240,7 +239,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
 
-		menuStore.open('relationSuggest', { 
+		S.Menu.open('relationSuggest', { 
 			element: `#${getId()} #item-add .info`,
 			classNameWrap: classNameWrap,
 			offsetY: -8,
@@ -272,7 +271,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const root = S.Block.getLeaf(rootId, rootId);
 		const element = `#${getId()} #item-${item.id} .info`;
 
-		menuStore.open('blockRelationEdit', { 
+		S.Menu.open('blockRelationEdit', { 
 			element,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap,

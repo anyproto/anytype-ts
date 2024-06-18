@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, keyboard, UtilDate, UtilMenu, translate } from 'Lib';
-import { menuStore } from 'Store';
 
 const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<I.Menu> {
 
@@ -169,7 +168,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		const options = this.getOptions(item.itemId);
 		const value = options.find(it => it.id == relation[item.itemId]) || options[0];
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			offsetY: -38,

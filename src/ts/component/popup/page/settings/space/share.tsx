@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
 import { I, C, S, translate, UtilCommon, UtilSpace, Preview, Action, analytics, UtilObject, UtilMenu } from 'Lib';
-import { popupStore, menuStore } from 'Store';
+import { popupStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 
@@ -388,7 +388,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onPermissionsSelect (item: any) {
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#item-${item.id}-select`,
 			horizontal: I.MenuDirection.Right,
 			data: {
@@ -485,7 +485,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			{ id: 'stop-sharing', color: 'red', name: translate('popupSettingsSpaceShareStopSharing') },
 		];
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#${getId()} #button-more-space`,
 			horizontal: I.MenuDirection.Right,
 			data: {

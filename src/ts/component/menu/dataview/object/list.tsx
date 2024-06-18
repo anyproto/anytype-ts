@@ -4,13 +4,12 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
 import { I, S, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate } from 'Lib';
-import { menuStore } from 'Store';
-const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
 };
 
+const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewObjectValues';
 const LIMIT_HEIGHT = 20;
 const LIMIT_TYPE = 2;
@@ -393,8 +392,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			};
 
 			onChange(value, () => {
-				menuStore.updateData(this.props.id, { value });
-				menuStore.updateData(MENU_ID, { value });
+				S.Menu.updateData(this.props.id, { value });
+				S.Menu.updateData(MENU_ID, { value });
 
 				position();
 			});

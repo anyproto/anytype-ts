@@ -4,7 +4,6 @@ import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { I, S, UtilCommon, translate, keyboard, analytics, Relation, UtilDate, UtilObject } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const TIMEOUT = 1000;
@@ -83,7 +82,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				className="item add" 
 				onClick={item.onClick} 
 				onMouseEnter={() => { 
-					menuStore.close('select', () => {
+					S.Menu.close('select', () => {
 						window.setTimeout(() => setHover({ id: 'add' }), 35);
 					});
 				}}
@@ -103,7 +102,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							id={`item-tag-${element.id}`} 
 							className={[ 'item', (isReadonly ? 'isReadonly' : '') ].join(' ')}
 							onMouseEnter={() => {
-								menuStore.close('select'); 
+								S.Menu.close('select'); 
 								setHover({ id: `tag-${element.id}` }); 
 							}}
 						>
@@ -346,7 +345,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this._isMounted = false;
 		this.unbind();
 
-		menuStore.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(Constant.menuIds.cell);
     };
 
 	rebind () {
@@ -454,8 +453,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			};
 		};
 
-		menuStore.closeAll([ 'select' ], () => {
-			menuStore.open('select', {
+		S.Menu.closeAll([ 'select' ], () => {
+			S.Menu.open('select', {
 				element: `#${getId()} #item-${item.id}`,
 				offsetX: getSize().width,
 				vertical: I.MenuDirection.Center,
@@ -586,7 +585,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	};
 
 	onFocusText () {
-		menuStore.close('select');
+		S.Menu.close('select');
 	};
 
 	onFocusDate (e: any) {
@@ -601,9 +600,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const item = getView().getFilter(itemId);
 		const value = item.value || UtilDate.now();
 
-		menuStore.closeAll([ 'select' ], () => {
-			if (menuStore.isOpen('dataviewCalendar')) {
-				menuStore.updateData('dataviewCalendar', { value });
+		S.Menu.closeAll([ 'select' ], () => {
+			if (S.Menu.isOpen('dataviewCalendar')) {
+				S.Menu.updateData('dataviewCalendar', { value });
 			} else {
 				this.onCalendar(value);
 			};
@@ -620,7 +619,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	onCalendar (value: number) {
 		const { getId } = this.props;
 
-		menuStore.open('dataviewCalendar', {
+		S.Menu.open('dataviewCalendar', {
 			element: `#${getId()} #value`,
 			horizontal: I.MenuDirection.Center,
 			data: { 
@@ -645,8 +644,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const item = getView().getFilter(itemId);
 		const relation = S.Record.getRelationByKey(item.relationKey);
 
-		menuStore.closeAll([ 'dataviewOptionList', 'select' ], () => {
-			menuStore.open('dataviewOptionList', { 
+		S.Menu.closeAll([ 'dataviewOptionList', 'select' ], () => {
+			S.Menu.open('dataviewOptionList', { 
 				element: `#${getId()} #value`,
 				className: 'fromFilter',
 				width: getSize().width,
@@ -681,8 +680,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() });
 		};
 
-		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList', 'select' ], () => {
-			menuStore.open('dataviewObjectList', { 
+		S.Menu.closeAll([ 'dataviewObjectValues', 'dataviewObjectList', 'select' ], () => {
+			S.Menu.open('dataviewObjectList', { 
 				element: `#${getId()}`,
 				className: 'fromFilter',
 				width: getSize().width,
@@ -738,7 +737,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	onValueHover (e: React.MouseEvent) {
 		e.persist();
 
-		menuStore.closeAll([ 'select' ], () => {
+		S.Menu.closeAll([ 'select' ], () => {
 			this.refSelect?.show(e);
 
 			window.setTimeout(() => this.props.setHover({ id: 'value' }), 35);

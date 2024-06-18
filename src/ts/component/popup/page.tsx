@@ -3,9 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { I, history as historyPopup, UtilCommon, keyboard } from 'Lib';
+import { I, S, history as historyPopup, UtilCommon, keyboard } from 'Lib';
 import { Page } from 'Component';
-import { menuStore } from 'Store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -64,7 +63,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 		const obj = $(`#${getId()}`);
 
 		win.on('resize.popupPage', () => this.resize());
-		obj.find('.innerWrap').on('scroll.common', () => menuStore.resizeAll());
+		obj.find('.innerWrap').on('scroll.common', () => S.Menu.resizeAll());
 	};
 
 	unbind () {

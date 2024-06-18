@@ -2,8 +2,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Title, Label, Input, IconObject, Button, Select, Loader, Error } from 'Component';
-import { UtilObject, UtilCommon, I, C, translate, keyboard, Preview, analytics } from 'Lib';
-import { menuStore } from 'Store';
+import { UtilCommon, I, C, S, translate, keyboard, Preview, analytics } from 'Lib';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -130,7 +130,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	componentWillUnmount(): void {
-		menuStore.closeAll([ 'select', 'searchObject' ]);	
+		S.Menu.closeAll([ 'select', 'searchObject' ]);	
 	};
 
 	onKeyDown (e: any, v: string) {

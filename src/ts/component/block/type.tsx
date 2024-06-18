@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, S, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
-import { popupStore, menuStore } from 'Store';
+import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -80,7 +80,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	onKeyDown (e: any) {
-		if (menuStore.isOpen() || popupStore.isOpenKeyboard()) {
+		if (S.Menu.isOpen() || popupStore.isOpenKeyboard()) {
 			return;
 		};
 
@@ -185,7 +185,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		const obj = $(element);
 		const items = this.getItems();
 
-		menuStore.open('typeSuggest', {
+		S.Menu.open('typeSuggest', {
 			element: `#block-${block.id} #item-menu`,
 			onOpen: () => obj.addClass('active'),
 			onClose: () => { 

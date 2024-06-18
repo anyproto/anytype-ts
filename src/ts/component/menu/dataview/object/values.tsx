@@ -6,7 +6,6 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName, EmptySearch } from 'Component';
 import { I, S, UtilObject, keyboard, Relation, translate } from 'Lib';
-import { menuStore } from 'Store';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 28;
@@ -237,7 +236,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { data, className, classNameWrap } = param;
 		const { width } = getSize();
 
-		menuStore.open('dataviewObjectList', {
+		S.Menu.open('dataviewObjectList', {
 			element: `#${getId()}`,
 			vertical: I.MenuDirection.Center,
 			offsetX: width,
@@ -270,8 +269,8 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		this.n = -1;
 
 		onChange(value, () => {
-			menuStore.updateData(id, { value });
-			menuStore.updateData('dataviewObjectList', { value });
+			S.Menu.updateData(id, { value });
+			S.Menu.updateData('dataviewObjectList', { value });
 		});
 	};
 
@@ -290,7 +289,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		value = arrayMove(value, oldIndex, newIndex);
 		value = Relation.formatValue(relation, value, true);
 
-		onChange(value, () => menuStore.updateData(id, { value }));
+		onChange(value, () => S.Menu.updateData(id, { value }));
 		keyboard.disableSelection(false);
 	};
 

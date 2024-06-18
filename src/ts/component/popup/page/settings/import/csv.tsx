@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Button, Icon, Select, Switch, Error } from 'Component';
 import { I, S, translate, keyboard, Action } from 'Lib';
-import { menuStore } from 'Store';
 import Head from '../head';
 
 interface State {
@@ -154,7 +153,7 @@ class PopupSettingsPageImportCsv extends React.Component<I.PopupSettings, State>
 			this.refDelimiter.setOptions(delimiters);
 			this.refDelimiter.setValue(delimiter?.id);
 
-			menuStore.close('select');
+			S.Menu.close('select');
 		});
 	};
 

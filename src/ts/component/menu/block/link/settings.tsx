@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, UtilCommon, UtilData, UtilMenu, keyboard, Relation, translate } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -84,7 +83,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		};
 
 		if (!item.arrow) {
-			menuStore.close('select');
+			S.Menu.close('select');
 			return;
 		};
 
@@ -130,9 +129,9 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 		menuParam.data = Object.assign(menuParam.data, { options });
 
-		if (!menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.object, () => {
-				menuStore.open(menuId, menuParam);
+		if (!S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll(Constant.menuIds.object, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};

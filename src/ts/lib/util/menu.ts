@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, C, S, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
-import { menuStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -324,12 +324,12 @@ class UtilMenu {
 			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			...menuParam,
 			data: {
 				options,
 				onSelect: (e, option) => {
-					menuStore.closeAll([ 'select' ]);
+					S.Menu.closeAll([ 'select' ]);
 					if (close) {
 						close();
 					};
@@ -340,7 +340,7 @@ class UtilMenu {
 							case 'copy': onCopy(view); break;
 							case 'remove': onRemove(view); break;
 						};
-					}, menuStore.getTimeout());
+					}, S.Menu.getTimeout());
 				}
 			}
 		});
@@ -519,12 +519,12 @@ class UtilMenu {
 
 		let menuContext = null;
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element,
 			horizontal: I.MenuDirection.Right,
 			subIds,
 			onOpen: context => menuContext = context,
-			onClose: () => menuStore.closeAll(subIds),
+			onClose: () => S.Menu.closeAll(subIds),
 			data: {
 				options: [
 					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
@@ -537,13 +537,13 @@ class UtilMenu {
 					};
 
 					if (!item.arrow) {
-						menuStore.closeAll(subIds);
+						S.Menu.closeAll(subIds);
 						return;
 					};
 
 					switch (item.id) {
 						case I.HomePredefinedId.Existing: {
-							menuStore.open('searchObject', {
+							S.Menu.open('searchObject', {
 								element: `#${menuContext.getId()} #item-${item.id}`,
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
@@ -666,7 +666,7 @@ class UtilMenu {
 			options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			...param,
 			data: {
 				options,
@@ -712,7 +712,7 @@ class UtilMenu {
 							};
 						};
 
-					}, menuStore.getTimeout());
+					}, S.Menu.getTimeout());
 				},
 			},
 		});
@@ -732,7 +732,7 @@ class UtilMenu {
 			options.push({ id: 'revoke', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#${containerId} #button-more-link`,
 			horizontal: I.MenuDirection.Center,
 			data: {

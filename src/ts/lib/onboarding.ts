@@ -1,6 +1,6 @@
-import { I, Storage, UtilCommon, UtilRouter, keyboard } from 'Lib';
+import { I, S, Storage, UtilCommon } from 'Lib';
 import * as Docs from 'Docs';
-import { menuStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 
 class Onboarding {
 
@@ -19,7 +19,7 @@ class Onboarding {
 		const { items } = section;
 		const t = isPopup ? popupStore.getTimeout() : 0;
 
-		menuStore.close('onboarding', () => {
+		S.Menu.close('onboarding', () => {
 			window.setTimeout(() => {
 				let param = this.getParam(section, items[0], isPopup, force);
 
@@ -27,7 +27,7 @@ class Onboarding {
 					param = options.parseParam(param);
 				};
 
-				menuStore.open('onboarding', {
+				S.Menu.open('onboarding', {
 					...param,
 					noAnimation: true,
 					noFlipY: true,

@@ -1,11 +1,10 @@
 import * as React from 'react';
+import $ from 'jquery';
+import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
-import arrayMove from 'array-move';
 import { SortableContainer } from 'react-sortable-hoc';
-import $ from 'jquery';
 import { Icon } from 'Component';
-import { menuStore } from 'Store';
 import { I, C, S, UtilCommon, keyboard, analytics, Relation, translate } from 'Lib';
 import Item from 'Component/menu/item/filter';
 
@@ -175,14 +174,14 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 
 	componentWillUnmount () {
 		this.unbind();
-		menuStore.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(Constant.menuIds.cell);
 	};
 
 	rebind () {
 		const { getId } = this.props;
 		const obj = $(`#${getId()} .content`);
 
-		obj.off('click').on('click', () => menuStore.closeAll(Constant.menuIds.cell));
+		obj.off('click').on('click', () => S.Menu.closeAll(Constant.menuIds.cell));
 
 		this.unbind();
 		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
@@ -238,7 +237,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			loadData(view.id, 0);
 		});
 
-		menuStore.close('select');
+		S.Menu.close('select');
 		analytics.event('RemoveFilter', {
 			objectType: object.type,
 			embedType: analytics.embedType(isInline)
@@ -257,7 +256,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		const { rootId, blockId, loadData, getView } = data;
 		const view = getView();
 
-		menuStore.open('dataviewFilterValues', {
+		S.Menu.open('dataviewFilterValues', {
 			element: `#${getId()} #item-${item.id}`,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,

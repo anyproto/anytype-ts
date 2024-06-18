@@ -1,5 +1,5 @@
 import { I, C, S, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
-import { popupStore, menuStore } from 'Store';
+import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -556,7 +556,7 @@ class Action {
 			});
 
 			if (isCut) {
-				menuStore.closeAll([ 'blockContext', 'blockAction' ]);
+				S.Menu.closeAll([ 'blockContext', 'blockAction' ]);
 
 				focus.set(focused, { from: range.from, to: range.from });
 				focus.apply();

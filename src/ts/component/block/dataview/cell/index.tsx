@@ -3,9 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { I, C, S, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate, UtilDate } from 'Lib';
-import { menuStore } from 'Store';
-
-const Constant = require('json/constant.json');
 
 import CellText from './text';
 import CellSelect from './select';
@@ -20,6 +17,8 @@ interface Props extends I.Cell {
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	maxWidth?: number;
 };
+
+const Constant = require('json/constant.json');
 
 const Cell = observer(class Cell extends React.Component<Props> {
 
@@ -436,9 +435,9 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			if (S.Common.cellId != cellId) {
 				S.Common.cellId = cellId;
 				
-				const isOpen = menuStore.isOpen(menuId);
+				const isOpen = S.Menu.isOpen(menuId);
 
-				menuStore.open(menuId, param);
+				S.Menu.open(menuId, param);
 
 				// If menu was already open OnOpen callback won't be called
 				if (isOpen) {
@@ -447,17 +446,17 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 				$(pageContainer).off('mousedown.cell').on('mousedown.cell', (e: any) => { 
 					if (!$(e.target).parents(`#${cellId}`).length) {
-						menuStore.closeAll(Constant.menuIds.cell); 
+						S.Menu.closeAll(Constant.menuIds.cell); 
 					};
 				});
 
 				if (!config.debug.ui) {
-					win.off('blur.cell').on('blur.cell', () => menuStore.closeAll(Constant.menuIds.cell));
+					win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(Constant.menuIds.cell));
 				};
 			} else 
 			if (closeIfOpen) {
 				setOff();
-				menuStore.closeAll(Constant.menuIds.cell);
+				S.Menu.closeAll(Constant.menuIds.cell);
 				window.clearTimeout(this.timeout);
 			};
 		} else {

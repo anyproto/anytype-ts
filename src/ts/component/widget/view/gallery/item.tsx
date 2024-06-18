@@ -3,7 +3,6 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { ObjectName, IconObject, DropTarget, ObjectCover } from 'Component';
-import { menuStore } from 'Store';
 import { I, S, UtilObject, keyboard, analytics, UtilSpace, Dataview } from 'Lib';
 
 const Constant = require('json/constant.json');
@@ -153,7 +152,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 			},
 		};
 
-		menuStore.open('dataviewContext', menuParam);
+		S.Menu.open('dataviewContext', menuParam);
 	};
 
 	getCoverObject (): any {

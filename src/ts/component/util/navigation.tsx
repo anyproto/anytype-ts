@@ -2,7 +2,6 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
-import { menuStore } from 'Store';
 import { I, S, UtilObject, keyboard, UtilCommon, Preview, translate, UtilSpace, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
@@ -176,8 +175,8 @@ const Navigation = observer(class Navigation extends React.Component {
 	onProfile () {
 		window.clearTimeout(this.timeoutPlus);
 
-		if (menuStore.isOpen('space')) {
-			menuStore.close('space');
+		if (S.Menu.isOpen('space')) {
+			S.Menu.close('space');
 		} else {
 			keyboard.onSpaceMenu(false);
 		};

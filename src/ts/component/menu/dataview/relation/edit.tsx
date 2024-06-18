@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { I, C, S, UtilObject, UtilMenu, Relation, translate, Dataview, keyboard, analytics, Preview, UtilCommon } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -328,7 +327,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				};
 
 				C.BlockDataviewFilterAdd(rootId, blockId, view.id, filter, () => {
-					menuStore.open('dataviewFilterList', { 
+					S.Menu.open('dataviewFilterList', { 
 						element: `#button-dataview-filter`,
 						horizontal: I.MenuDirection.Center,
 						offsetY: 10,
@@ -354,7 +353,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 			case 'insert-left':
 			case 'insert-right': {
-				menuStore.open('relationSuggest', { 
+				S.Menu.open('relationSuggest', { 
 					element: `#${getId()} #item-${item.id}`,
 					offsetX: getSize().width,
 					vertical: I.MenuDirection.Center,
@@ -368,7 +367,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						skipKeys: relations.map(it => it.relationKey),
 						addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 							Dataview.relationAdd(rootId, blockId, relation.relationKey, Math.max(0, idx + item.dir), view, (message: any) => {
-								menuStore.closeAll([ this.props.id, 'relationSuggest' ]);
+								S.Menu.closeAll([ this.props.id, 'relationSuggest' ]);
 								loadData(view.id, 0);
 
 								if (onChange) {
@@ -493,7 +492,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		this.menuOpen('dataviewDate', { 
 			element: `#${getId()} #item-date-settings`,
 			onClose: () => {
-				menuStore.close('select');
+				S.Menu.close('select');
 			},
 			data: {
 				...data,
@@ -518,15 +517,15 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			rebind: this.rebind,
 		});
 
-		if (!menuStore.isOpen(id)) {
-			menuStore.closeAll(Constant.menuIds.relationEdit, () => {
-				menuStore.open(id, options);
+		if (!S.Menu.isOpen(id)) {
+			S.Menu.closeAll(Constant.menuIds.relationEdit, () => {
+				S.Menu.open(id, options);
 			});
 		};
 	};
 
 	menuClose () {
-		menuStore.closeAll(Constant.menuIds.relationEdit);
+		S.Menu.closeAll(Constant.menuIds.relationEdit);
 	};
 
 	onChangeTime (v: boolean) {

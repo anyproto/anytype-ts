@@ -4,7 +4,6 @@ import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
 import { analytics, C, I, S, keyboard, UtilObject, UtilMenu, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -512,7 +511,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			]);
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#${getId()} #item-${item.id}`,
 			vertical: I.MenuDirection.Top,
 			offsetY: -4,

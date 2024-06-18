@@ -5,9 +5,6 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { I, C, S, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action } from 'Lib';
-import { menuStore } from 'Store';
-
-const Constant = require('json/constant.json');
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
@@ -27,6 +24,8 @@ interface Props extends I.BlockComponent {
 interface State {
 	loading: boolean;
 };
+
+const Constant = require('json/constant.json');
 
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
 
@@ -722,7 +721,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const details = this.getDetails(groupId);
 		const menuParam = this.getMenuParam(e, dir);
 
-		menuStore.open('dataviewCreateBookmark', {
+		S.Menu.open('dataviewCreateBookmark', {
 			...menuParam,
 			type: I.MenuType.Horizontal,
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
@@ -761,7 +760,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		let menuContext = null;
 
-		menuStore.open('dataviewTemplateList', {
+		S.Menu.open('dataviewTemplateList', {
 			...menuParam,
 			offsetY: 10,
 			noAnimation: true,
@@ -924,7 +923,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			objectIds = [ id ];
 		};
 
-		menuStore.open('dataviewContext', {
+		S.Menu.open('dataviewContext', {
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
@@ -1009,7 +1008,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			analytics.event('InlineSetSetSource', { type: isNew ? 'newObject': 'externalObject' });
 		};
 
-		menuStore.open('searchObject', Object.assign({
+		S.Menu.open('searchObject', Object.assign({
 			element: $(element),
 			className: 'single',
 			data: {
@@ -1030,8 +1029,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const objectId = this.getObjectId();
 		const element = $(obj);
 
-		menuStore.closeAll(null, () => {
-			menuStore.open('dataviewSource', {
+		S.Menu.closeAll(null, () => {
+			S.Menu.open('dataviewSource', {
 				element,
 				horizontal: I.MenuDirection.Center,
 				onOpen: () => { 

@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
-import { observable } from 'mobx';
 import $ from 'jquery';
-import { I, C, UtilMenu, Relation, translate, keyboard, analytics } from 'Lib';
+import { observer } from 'mobx-react';
+import { I, S, C, UtilMenu, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical, Icon } from 'Component';
-import { menuStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
@@ -190,8 +190,8 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 		C.RelationListRemoveOption([ option.id ], false);
 
-		menuStore.updateData(id, { value });
-		menuStore.updateData('dataviewOptionList', { value });
+		S.Menu.updateData(id, { value });
+		S.Menu.updateData('dataviewOptionList', { value });
 
 		if (onChange) {
 			onChange(value);

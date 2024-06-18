@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import { I, S, UtilDate } from 'Lib';
-import { menuStore } from 'Store';
 
 interface State {
 	value: number;
@@ -145,8 +144,8 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 		const view = getView();
 		const element = `#day-${d}-${m}-${y}`;
 
-		menuStore.closeAll([ 'dataviewCalendarDay' ], () => {
-			menuStore.open('dataviewCalendarDay', {
+		S.Menu.closeAll([ 'dataviewCalendarDay' ], () => {
+			S.Menu.open('dataviewCalendarDay', {
 				element,
 				className: 'fixed fromWidget',
 				classNameWrap: 'fromSidebar',

@@ -1,11 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
+import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
 import { I, C, S, UtilCommon, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -124,7 +123,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	componentWillUnmount () {
 		this._isMounted = false;
 
-		menuStore.closeAll([ 'dataviewFileList' ]);
+		S.Menu.closeAll([ 'dataviewFileList' ]);
     };
 
 	onSortStart () {
@@ -137,7 +136,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const value = arrayMove(Relation.getArrayValue(data.value), oldIndex, newIndex);
 
-		menuStore.updateData(id, { value });
+		S.Menu.updateData(id, { value });
 		this.save(value);
 
 		keyboard.disableSelection(false);
@@ -148,7 +147,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { classNameWrap } = param;
 
-		menuStore.open('dataviewFileList', {
+		S.Menu.open('dataviewFileList', {
 			element: `#${getId()}`,
 			className: 'single',
 			offsetX: param.width,
@@ -205,7 +204,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { onChange } = data;
 
 		onChange(UtilCommon.arrayUnique(value), () => {
-			menuStore.updateData(id, { value });
+			S.Menu.updateData(id, { value });
 		});
 	};
 
@@ -218,7 +217,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 		let value = Relation.getArrayValue(data.value);
 
-		menuStore.open('select', { 
+		S.Menu.open('select', { 
 			element,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap: classNameWrap,
@@ -270,8 +269,8 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							value = UtilCommon.arrayUnique(value);
 
 							onChange(value, () => {
-								menuStore.updateData(id, { value });
-								menuStore.updateData(MENU_ID, { value });
+								S.Menu.updateData(id, { value });
+								S.Menu.updateData(MENU_ID, { value });
 								position();
 							});
 							break;

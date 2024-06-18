@@ -2,7 +2,6 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { I, C, S, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -100,7 +99,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		this._isMounted = true;
 		this.rebind();
 
-		menu.off('mouseleave').on('mouseleave', () => menuStore.clearTimeout());
+		menu.off('mouseleave').on('mouseleave', () => S.Menu.clearTimeout());
 	};
 
 	componentDidUpdate () {
@@ -112,12 +111,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		this._isMounted = false;
 
 		keyboard.setFocus(false);
-		menuStore.closeAll(Constant.menuIds.action);
-		menuStore.clearTimeout();
+		S.Menu.closeAll(Constant.menuIds.action);
+		S.Menu.clearTimeout();
 	};
 
 	onFilterFocus (e: any) {
-		menuStore.closeAll(Constant.menuIds.action);
+		S.Menu.closeAll(Constant.menuIds.action);
 		this.props.setActive();
 	};
 	
@@ -345,7 +344,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		setActive(item, false);
 
 		if (!item.arrow) {
-			menuStore.closeAll(Constant.menuIds.action);
+			S.Menu.closeAll(Constant.menuIds.action);
 			return;
 		};
 
@@ -577,9 +576,9 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.itemId)) {
-			menuStore.closeAll(Constant.menuIds.action, () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
+			S.Menu.closeAll(Constant.menuIds.action, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};

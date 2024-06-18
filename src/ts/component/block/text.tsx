@@ -6,7 +6,6 @@ import raf from 'raf';
 import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
 import { I, C, S, keyboard, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, Storage, translate, analytics, Renderer, UtilRouter } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -644,7 +643,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { onKeyDown, rootId, block, isInsideTable } = this.props;
 		const { id } = block;
 
-		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'object' ])) {
+		if (S.Menu.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'object' ])) {
 			e.preventDefault();
 			return;
 		};
@@ -662,10 +661,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.cmdKey();
 
-		const menuOpen = menuStore.isOpen('', '', [ 'onboarding' ]);
-		const menuOpenAdd = menuStore.isOpen('blockAdd');
-		const menuOpenMention = menuStore.isOpen('blockMention');
-		const menuOpenSmile = menuStore.isOpen('smile');
+		const menuOpen = S.Menu.isOpen('', '', [ 'onboarding' ]);
+		const menuOpenAdd = S.Menu.isOpen('blockAdd');
+		const menuOpenMention = S.Menu.isOpen('blockMention');
+		const menuOpenSmile = S.Menu.isOpen('smile');
 		const saveKeys: any[] = [
 			{ key: `${cmd}+shift+arrowup`, preventDefault: true },
 			{ key: `${cmd}+shift+arrowdown`, preventDefault: true },
@@ -823,11 +822,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			if (menuOpenAdd && (symbolBefore == '/')) {
-				menuStore.close('blockAdd');
+				S.Menu.close('blockAdd');
 			};
 
 			if (menuOpenMention && (symbolBefore == '@')) {
-				menuStore.close('blockMention');
+				S.Menu.close('blockMention');
 			};
 		});
 
@@ -877,8 +876,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (!keyboard.isSpecial(e)) {
 			this.placeholderHide();
 
-			if (menuStore.isOpen('selectPasteUrl')) {
-				menuStore.close('selectPasteUrl');
+			if (S.Menu.isOpen('selectPasteUrl')) {
+				S.Menu.close('selectPasteUrl');
 			};
 		};
 
@@ -919,8 +918,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let cmdParsed = false;
 		let isAllowedMenu = !this.preventMenu && !keyboard.isSpecial(e) && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 
-		const menuOpenAdd = menuStore.isOpen('blockAdd');
-		const menuOpenMention = menuStore.isOpen('blockMention');
+		const menuOpenAdd = S.Menu.isOpen('blockAdd');
+		const menuOpenMention = S.Menu.isOpen('blockMention');
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
 
@@ -1049,7 +1048,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 		
 		if (cmdParsed) {
-			menuStore.close('blockAdd');
+			S.Menu.close('blockAdd');
 			return;
 		};
 
@@ -1057,7 +1056,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let diff = 0;
 
 		keyboard.shortcut('backspace, delete', e, () => { 
-			menuStore.close('blockContext'); 
+			S.Menu.close('blockContext'); 
 			ret = true;
 		});
 
@@ -1102,7 +1101,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		S.Common.filterSet(range.from - 1, '');
 
 		raf(() => {
-			menuStore.open('blockMention', {
+			S.Menu.open('blockMention', {
 				element,
 				recalcRect: () => {
 					const rect = UtilCommon.getSelectionRect();
@@ -1148,7 +1147,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		let value = this.getValue();
 
-		menuStore.open('smile', {
+		S.Menu.open('smile', {
 			element: `#block-${block.id}`,
 			recalcRect: () => {
 				const rect = UtilCommon.getSelectionRect();
@@ -1201,7 +1200,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.text = value;
 
-		if (menuStore.isOpen('', '', [ 'onboarding', 'smile', 'select', 'searchText' ])) {
+		if (S.Menu.isOpen('', '', [ 'onboarding', 'smile', 'select', 'searchText' ])) {
 			return;
 		};
 
@@ -1346,7 +1345,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		focus.set(block.id, range);
 
-		if (readonly || menuStore.isOpen('selectPasteUrl')) {
+		if (readonly || S.Menu.isOpen('selectPasteUrl')) {
 			return;
 		};
 
@@ -1359,7 +1358,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (!currentTo || (currentFrom == currentTo) || !block.canHaveMarks() || ids.length) {
 			if (!keyboard.isContextCloseDisabled) {
-				menuStore.close('blockContext');
+				S.Menu.close('blockContext');
 			};
 			return;
 		};
@@ -1367,7 +1366,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const win = $(window);
 		const el = $('#block-' + block.id);
 
-		menuStore.closeAll([ 'blockAdd', 'blockMention' ]);
+		S.Menu.closeAll([ 'blockAdd', 'blockMention' ]);
 
 		this.timeoutContext = window.setTimeout(() => {
 			const onChange = (marks: I.Mark[]) => {
@@ -1380,8 +1379,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				});
 			};
 
-			if (menuStore.isOpen('blockContext')) {
-				menuStore.updateData('blockContext', { 
+			if (S.Menu.isOpen('blockContext')) {
+				S.Menu.updateData('blockContext', { 
 					range: { from: currentFrom, to: currentTo },
 					marks: this.marks,
 					onChange,
@@ -1394,7 +1393,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			this.setText(this.marks, true, () => {
-				menuStore.open('blockContext', {
+				S.Menu.open('blockContext', {
 					element: el,
 					recalcRect: () => { 
 						const rect = UtilCommon.getSelectionRect();
@@ -1424,9 +1423,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 					pageContainer.off('mousedown.context').on('mousedown.context', () => { 
 						pageContainer.off('mousedown.context');
-						menuStore.close('blockContext'); 
+						S.Menu.close('blockContext'); 
 					});
-				}, menuStore.getTimeout());
+				}, S.Menu.getTimeout());
 			});
 		}, 150);
 	};
@@ -1442,7 +1441,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			e.preventDefault();
 			e.stopPropagation();
 
-			menuStore.closeAll([ 'blockContext' ], () => {
+			S.Menu.closeAll([ 'blockContext' ], () => {
 				this.clicks = 0;
 
 				focus.set(block.id, { from: 0, to: block.getLength() });

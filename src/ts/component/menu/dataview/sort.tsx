@@ -6,7 +6,6 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'Component';
 import { I, C, S, Relation, UtilCommon, keyboard, analytics, translate } from 'Lib';
-import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -212,7 +211,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 	componentWillUnmount () {
 		this.unbind();
-		menuStore.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(Constant.menuIds.cell);
 	};
 
 	rebind () {
@@ -252,7 +251,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { param, getId } = this.props;
 		const { data } = param;
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#${getId()} #item-${item.id}`,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
@@ -277,7 +276,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			{ id: I.EmptyType.End, name: translate('menuDataviewSortShowEmptyBottom') },
 		];
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#${getId()} #item-${item.id} .more`,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
@@ -353,7 +352,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 		C.BlockDataviewSortRemove(rootId, blockId, view.id, [ item.id ]);
 
-		menuStore.close('select');
+		S.Menu.close('select');
 		analytics.event('RemoveSort', {
 			objectType: object.type,
 			embedType: analytics.embedType(isInline)

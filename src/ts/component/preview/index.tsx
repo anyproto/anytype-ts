@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject, PreviewDefault } from 'Component';
 import { I, S, UtilCommon, UtilObject, Preview, Mark, translate, Renderer } from 'Lib';
-import { menuStore } from 'Store';
 
 const OFFSET_Y = 8;
 const BORDER = 12;
@@ -138,7 +137,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const win = $(window);
 		const rect = UtilCommon.objectCopy($('#preview').get(0).getBoundingClientRect());
 
-		menuStore.open('blockLink', {
+		S.Menu.open('blockLink', {
 			rect: rect ? { ...rect, height: 0, y: rect.y + win.scrollTop() } : null, 
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => Preview.previewHide(true),
