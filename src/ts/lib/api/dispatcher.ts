@@ -5,9 +5,9 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { notificationStore } from 'Store';
 import { 
-	S, UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage, UtilSpace, UtilData, keyboard 
+	S, UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, 
+	UtilRouter, Storage, UtilSpace, UtilData, keyboard,
 } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
@@ -885,7 +885,7 @@ class Dispatcher {
 				case 'NotificationSend': {
 					const item = new M.Notification(mapped.notification);
 
-					notificationStore.add(item);
+					S.Notification.add(item);
 
 					if (isMainWindow && !electron.isFocused()) {
 						new window.Notification(UtilCommon.stripTags(item.title), { body: UtilCommon.stripTags(item.text) }).onclick = () => electron.focus();
@@ -894,7 +894,7 @@ class Dispatcher {
 				};
 
 				case 'NotificationUpdate': {
-					notificationStore.update(mapped.notification);
+					S.Notification.update(mapped.notification);
 					break;
 				};
 

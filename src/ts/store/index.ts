@@ -5,9 +5,9 @@ import { Detail } from './detail';
 import { Block } from './block';
 import { Menu } from './menu';
 import { Popup } from './popup';
+import { Notification } from './notification';
 
 import { extensionStore } from './extension';
-import { notificationStore } from './notification';
 
 export {
 	Common,
@@ -17,7 +17,7 @@ export {
 	Block,
 	Menu,
 	Popup,
+	Notification,
 
 	extensionStore,
-	notificationStore,
 };

@@ -1,6 +1,5 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, C, S, Storage, analytics, Renderer, keyboard } from 'Lib';
-import { notificationStore } from 'Store';
 
 interface NetworkConfig {
 	mode: I.NetworkMode;
@@ -183,7 +182,7 @@ class AuthStore {
 		S.Detail.clearAll();
 		S.Record.clearAll();
 		S.Menu.closeAllForced();
-		notificationStore.clear();
+		S.Notification.clear();
 
 		this.clearAll();
 		Storage.logout();

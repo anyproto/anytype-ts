@@ -1,6 +1,5 @@
 import * as Sentry from '@sentry/browser';
 import { I, C, M, S, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
-import { notificationStore } from 'Store';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -264,7 +263,7 @@ class UtilData {
 	onAuthOnce (noTierCache: boolean) {
 		C.NotificationList(false, Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
-				notificationStore.set(message.list);
+				S.Notification.set(message.list);
 			};
 		});
 
