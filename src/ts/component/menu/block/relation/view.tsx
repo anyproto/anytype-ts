@@ -2,8 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard, translate } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
+import { I, C, S, U, Relation, analytics, keyboard, translate } from 'Lib';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -28,7 +27,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
@@ -39,9 +38,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const readonly = data.readonly || isLocked;
 		const diffKeys = this.getDiffKeys();
 
-		let allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
-		let allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		let allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		let allowedBlock = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
+		let allowedRelation = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		let allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (readonly) {
 			allowedBlock = false;
@@ -121,9 +120,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	componentDidUpdate () {
 		this.resize();
 
-		const id = commonStore.cellId;		
+		const id = S.Common.cellId;		
 		if (id) {
-			commonStore.cellId = '';
+			S.Common.cellId = '';
 			
 			const ref = this.cellRefs.get(id);
 			if (ref) {
@@ -141,30 +140,30 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	onScroll () {
-		menuStore.resizeAll();
+		S.Menu.resizeAll();
 	};
 
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { config } = commonStore;
+		const { config } = S.Common;
 
-		const object = detailStore.get(rootId, rootId);
-		const isTemplate = UtilObject.isTemplate(object.type);
-		const type = dbStore.getTypeById(isTemplate ? object.targetObjectType : object.type);
+		const object = S.Detail.get(rootId, rootId);
+		const isTemplate = U.Object.isTemplate(object.type);
+		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 		const featured = Relation.getArrayValue(object.featuredRelations);
-		const relations = dbStore.getObjectRelations(rootId, rootId);
+		const relations = S.Record.getObjectRelations(rootId, rootId);
 		const relationKeys = relations.map(it => it.relationKey);
 		const readonly = this.isReadonly();
 		const typeRelations = (type ? type.recommendedRelations || [] : []).map(it => ({ 
-			...dbStore.getRelationById(it), 
+			...S.Record.getRelationById(it), 
 			scope: I.RelationScope.Type,
 		})).filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
 		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
 		items = items.concat(typeRelations);
-		items = items.sort(UtilData.sortByName).sort(UtilData.sortByHidden).filter((it: any) => {
+		items = items.sort(U.Data.sortByName).sort(U.Data.sortByHidden).filter((it: any) => {
 			if (!it) {
 				return false;
 			};
@@ -189,7 +188,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		if (type) {
 			sections.push({ 
-				id: 'type', name: UtilCommon.sprintf(translate('menuBlockRelationViewFromType'), type.name),
+				id: 'type', name: U.Common.sprintf(translate('menuBlockRelationViewFromType'), type.name),
 				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Type)),
 			});
 		};
@@ -215,8 +214,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { rootId } = data;
 		const items = this.getItems();
-		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ], true);
-		const featured = UtilCommon.objectCopy(object.featuredRelations || []);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
+		const featured = U.Common.objectCopy(object.featuredRelations || []);
 		const idx = featured.findIndex(it => it == relationKey);
 
 		if (idx < 0) {
@@ -240,7 +239,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
 
-		menuStore.open('relationSuggest', { 
+		S.Menu.open('relationSuggest', { 
 			element: `#${getId()} #item-add .info`,
 			classNameWrap: classNameWrap,
 			offsetY: -8,
@@ -250,7 +249,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: dbStore.getObjectRelationKeys(rootId, rootId),
+				skipKeys: S.Record.getObjectRelationKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
@@ -262,17 +261,17 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId, readonly } = data;
-		const relation = dbStore.getRelationById(item.id);
+		const relation = S.Record.getRelationById(item.id);
 
 		if (!relation) {
 			return;
 		};
 
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const root = blockStore.getLeaf(rootId, rootId);
+		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const root = S.Block.getLeaf(rootId, rootId);
 		const element = `#${getId()} #item-${item.id} .info`;
 
-		menuStore.open('blockRelationEdit', { 
+		S.Menu.open('blockRelationEdit', { 
 			element,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap,
@@ -298,7 +297,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { readonly, rootId } = data;
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation || readonly || relation.isReadonlyValue) {
 			return;
@@ -316,7 +315,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
@@ -342,13 +341,13 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, readonly } = data;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return false;
 		};
 
-		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		return Boolean(readonly || root.isLocked() || !allowedValue);
 	};
 
@@ -357,13 +356,13 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { isPopup } = data;
 		const obj = $(`#${getId()} .content`);
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 		const offset = isPopup ? 16 : 120;
 		const min = isPopup ? 480 : 640;
 		const maxOffset = isPopup ? 16 : 80;
 
 		obj.css({ 
-			height: container.height() - UtilCommon.sizeHeader() - maxOffset,
+			height: container.height() - U.Common.sizeHeader() - maxOffset,
 			width: Math.max(min, container.width() / 2 - offset),
 		});
 
@@ -371,7 +370,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	getDiffKeys (): string[] {
-		const { diff } = commonStore;
+		const { diff } = S.Common;
 		const types = [ 'ObjectDetailsSet', 'ObjectDetailsAmend', 'ObjectRelationsAmend' ];
 		const events = diff.filter(it => types.includes(it.type));
 

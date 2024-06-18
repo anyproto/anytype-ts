@@ -3,8 +3,7 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Button } from 'Component';
-import { detailStore, commonStore } from 'Store';
-import { I, C, UtilCommon, UtilObject, UtilDate, UtilSpace, translate, analytics, dispatcher } from 'Lib';
+import { I, C, S, U, translate, analytics, dispatcher } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -45,16 +44,16 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 	render () {
 		const groups = this.groupData();
-		const year = UtilDate.date('Y', UtilDate.now());
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const year = U.Date.date('Y', U.Date.now());
+		const canWrite = U.Space.canMyParticipantWrite();
 		const showButtons = this.showButtons();
 
 		const Section = (item: any) => {
-			const y = UtilDate.date('Y', item.time);
+			const y = U.Date.date('Y', item.time);
 			const format = y == year ? 'M d' : 'M d, Y';
-			const day = UtilDate.dayString(item.time);
-			const date = day ? day : UtilDate.date(format, item.time);
-			const authors = UtilCommon.arrayUnique(item.list.map(it => it.authorId)).slice(0, LIMIT_AUTHORS);
+			const day = U.Date.dayString(item.time);
+			const date = day ? day : U.Date.date(format, item.time);
+			const authors = U.Common.arrayUnique(item.list.map(it => it.authorId)).slice(0, LIMIT_AUTHORS);
 
 			return (
 				<div id={`section-${item.hash}`} className="section">
@@ -64,7 +63,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 							{authors.map((id: string, i: number) => (
 								<IconObject 
 									key={id} 
-									object={UtilSpace.getParticipant(id)} 
+									object={U.Space.getParticipant(id)} 
 									size={18} 
 									style={{ zIndex: (LIMIT_AUTHORS - i) }} 
 								/>
@@ -95,7 +94,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 				<div id={`item-${item.id}`} className="child">
 					<div className="info" onClick={e => this.loadVersion(item.id)}>
 						{icon}
-						<div className="date">{UtilDate.date('g:i A', item.time)}</div>
+						<div className="date">{U.Date.date('g:i A', item.time)}</div>
 					</div>
 
 					{withChildren ? (
@@ -109,7 +108,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 		const Item = (item: any) => {
 			const withChildren = item.list && item.list.length;
-			const author = UtilSpace.getParticipant(item.authorId);
+			const author = U.Space.getParticipant(item.authorId);
 
 			return (
 				<div 
@@ -117,7 +116,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 					className="item" 
 				>
 					<div className="info" onClick={e => this.loadVersion(item.id)}>
-						<div className="date">{UtilDate.date('g:i A', item.time)}</div>
+						<div className="date">{U.Date.date('g:i A', item.time)}</div>
 
 						{author ? (
 							<div className="author">
@@ -182,27 +181,27 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 	onClose () {
 		const { rootId } = this.props;
 
-		UtilObject.openAuto(detailStore.get(rootId, rootId, []));
+		U.Object.openAuto(S.Detail.get(rootId, rootId, []));
 	};
 
 	onRestore (e: any) {
 		e.persist();
 
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 		if (!canWrite) {
 			return;
 		};
 
 		const { version } = this.state;
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 
 		if (!version) {
 			return;
 		};
 
 		C.HistorySetVersion(rootId, version.id, () => {
-			UtilObject.openEvent(e, object);
+			U.Object.openEvent(e, object);
 			analytics.event('RestoreFromHistory');
 		});
 	};
@@ -325,7 +324,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 	loadList (lastId: string) { 
 		const { versions, version, isLoading } = this.state;
 		const { rootId, setLoading } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		
 		if (isLoading || (this.lastId && (lastId == this.lastId))) {
 			return;
@@ -341,11 +340,11 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 			setLoading(false);
 
 			if (message.error.code) {
-				UtilObject.openRoute({ id: rootId, layout: object.layout });
+				U.Object.openRoute({ id: rootId, layout: object.layout });
 				return;
 			};
 
-			const list = UtilCommon.arrayUniqueObjects(versions.concat(message.versions || []), 'id');
+			const list = U.Common.arrayUniqueObjects(versions.concat(message.versions || []), 'id');
 
 			this.setState({ versions: list });
 
@@ -359,7 +358,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		const { rootId, setVersion } = this.props;
 
 		C.HistoryShowVersion(rootId, id, (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
@@ -382,7 +381,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		const { rootId, renderDiff } = this.props;
 		const previousId = this.getPreviousVersionId(id);
 
-		C.HistoryDiffVersions(rootId, commonStore.space, id, previousId, (message: any) => {
+		C.HistoryDiffVersions(rootId, S.Common.space, id, previousId, (message: any) => {
 			const { events } = message;
 
 			C.HistoryShowVersion(rootId, previousId, (message: any) => {
@@ -391,7 +390,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 				};
 
 				renderDiff(previousId, events);
-				commonStore.diffSet(events);
+				S.Common.diffSet(events);
 			});
 		});
 	};
@@ -452,7 +451,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 
 			for (let i = 0; i < list.length; i++) {
 				const current = list[i] as any;
-				const timeGroupId = UtilDate.date(timeFormat, current.time);
+				const timeGroupId = U.Date.date(timeFormat, current.time);
 				const group = out.find(it => it.timeGroupId == timeGroupId);
 
 				if (group) {
@@ -497,7 +496,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 	};
 
 	getGroupId (time: number) {
-		return UtilDate.date('M d, Y', time);
+		return U.Date.date('M d, Y', time);
 	};
 
 	showButtons (): boolean {

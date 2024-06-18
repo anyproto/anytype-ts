@@ -2,10 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted } from 'Component';
-import { I, C, UtilCommon, Action, Renderer, UtilSpace, translate, UtilRouter } from 'Lib';
-import { blockStore, detailStore } from 'Store';
+import { I, C, S, U, Action, Renderer, translate } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
-const Errors = require('json/error.json');
 
 interface State {
 	isLoading: boolean;
@@ -37,8 +35,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	render () {
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const object = S.Detail.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
+		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -48,7 +46,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			return <Loader id="loader" />;
 		};
 
-		const blocks = blockStore.getBlocks(rootId);
+		const blocks = S.Block.getBlocks(rootId);
 		const file = blocks.find(it => it.isFile());
 		const relations = blocks.filter(it => it.isRelation());
 
@@ -187,12 +185,12 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		this.id = rootId;
 		this.setState({ isLoading: true});
 
-		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
+		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
-			const object = detailStore.get(rootId, rootId, []);
+			const object = S.Detail.get(rootId, rootId, []);
 			if (object.isDeleted) {
 				this.setState({ isDeleted: true, isLoading: false });
 				return;
@@ -253,14 +251,14 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 	onOpen (e: any) {
 		const rootId = this.getRootId();
-		const blocks = blockStore.getBlocks(rootId);
+		const blocks = S.Block.getBlocks(rootId);
 		const block = blocks.find(it => it.isFile());
 
 		if (!block) {
 			return;
 		};
 
-		C.FileDownload(block.content.targetObjectId, UtilCommon.getElectron().tmpPath, (message: any) => {
+		C.FileDownload(block.content.targetObjectId, U.Common.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
 			};
@@ -269,7 +267,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 	onDownload (e: any) {
 		const rootId = this.getRootId();
-		const blocks = blockStore.getBlocks(rootId);
+		const blocks = S.Block.getBlocks(rootId);
 		const block = blocks.find(it => it.isFile());
 		
 		Action.download(block, 'media');
@@ -286,7 +284,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
 		const inner = node.find('.side.left #inner');
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 		const wh = container.height() - 182;
 
 		if (blocks.hasClass('vertical')) {

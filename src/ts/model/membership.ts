@@ -1,4 +1,4 @@
-import { I, UtilCommon } from 'Lib';
+import { I, U } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class Membership implements I.Membership {
@@ -45,7 +45,7 @@ class Membership implements I.Membership {
 			subscribeToNewsletter: observable,
 		});
 
-		intercept(this as any, change => UtilCommon.intercept(this, change));
+		intercept(this as any, change => U.Common.intercept(this, change));
 	};
 
 	get isNone (): boolean {

@@ -1,9 +1,7 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, translate } from 'Lib';
-import { authStore } from 'Store';
+import { I, S } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -60,23 +58,15 @@ const Sync = observer(class Sync extends React.Component<Props> {
 	};
 
 	getStatus (): any {
-		const syncData = authStore.syncStatus;
-		const { status, network, error } = syncData;
+		const { status, network, error } = S.Auth.syncStatus;
 
-		let icon: string;
+		let icon = '';
 		let name = '';
 
 		if (network == I.SyncStatusNetwork.LocalOnly) {
 			icon = String(I.SyncStatusSpace.Offline).toLowerCase()
 		} else {
 			icon = I.SyncStatusSpace[status].toLowerCase()
-		};
-
-		if ((status == I.SyncStatusSpace.Error) && error) {
-			name = translate(`syncButtonNameError${error}`);
-		} else
-		if (status == I.SyncStatusSpace.Offline) {
-			name = translate(`syncButtonNameOffline`);
 		};
 
 		return { icon, name, error };

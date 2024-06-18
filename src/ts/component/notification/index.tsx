@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, Error } from 'Component';
-import { I, C, UtilRouter, translate, Action, analytics, UtilSpace } from 'Lib';
-import { notificationStore, popupStore, commonStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, translate, Action, analytics } from 'Lib';
 
 interface State {
 	error: string;
@@ -29,11 +27,11 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 	render () {
 		const { error } = this.state;
 		const { item, style } = this.props;
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const { id, type, payload, title, text } = item;
 		const { errorCode, spaceId } = payload;
-		const spaceview = UtilSpace.getSpaceviewBySpaceId(spaceId);
-		const participant = UtilSpace.getMyParticipant(spaceId);
+		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+		const participant = U.Space.getMyParticipant(spaceId);
 		const spaceCheck = spaceview && (spaceview.isAccountRemoving || spaceview.isAccountDeleted);
 		const participantCheck = participant && (participant.isRemoving || participant.isJoining);
 
@@ -112,7 +110,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		node.addClass('from');
 		this.timeout = window.setTimeout(() => {
 			node.removeClass('from');
-			window.setTimeout(() => resize(), Constant.delay.notification);
+			window.setTimeout(() => resize(), J.Constant.delay.notification);
 		}, 40);
 	};
 
@@ -128,7 +126,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 		switch (action) {
 			case 'spaceSwitch': {
-				UtilRouter.switchSpace(payload.spaceId);
+				U.Router.switchSpace(payload.spaceId);
 				analytics.event('SwitchSpace');
 				break;
 			};
@@ -151,7 +149,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			};
 
 			case 'request': {
-				popupStore.open('inviteConfirm', { 
+				S.Popup.open('inviteConfirm', { 
 					data: {
 						name: payload.identityName,
 						icon: payload.identityIcon,
@@ -187,9 +185,9 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		this.timeout = window.setTimeout(() => {
 			C.NotificationReply([ item.id ], I.NotificationAction.Close);
 
-			notificationStore.delete(item.id);
+			S.Notification.delete(item.id);
 			resize();
-		}, Constant.delay.notification);
+		}, J.Constant.delay.notification);
 	};
 	
 });

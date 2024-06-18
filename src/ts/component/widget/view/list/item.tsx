@@ -3,11 +3,8 @@ import raf from 'raf';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } from 'Component';
-import { blockStore, menuStore, detailStore } from 'Store';
-import { I, UtilCommon, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
+import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
-
-const Constant = require('json/constant.json');
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;
@@ -35,13 +32,13 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	render () {
 		const { subId, id, block, style, isCompact, isEditing, index, isPreview, isSection } = this.props;
 		const rootId = keyboard.getRootId();
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions, source } = object;
-		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
+		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
-		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-		const canDrag = isPreview && (block.content.targetBlockId == Constant.widgetId.favorite);
-		const hasMore = UtilSpace.canMyParticipantWrite();
+		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+		const canDrag = isPreview && (block.content.targetBlockId == J.Constant.widgetId.favorite);
+		const hasMore = U.Space.canMyParticipantWrite();
 
 		if (isSection) {
 			return (
@@ -51,7 +48,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					className={[ 'item', 'isSection' ].join(' ')}
 				>
 					<div className="inner">
-						<Label text={translate(UtilCommon.toCamelCase([ 'common', id ].join('-')))} />
+						<Label text={translate(U.Common.toCamelCase([ 'common', id ].join('-')))} />
 					</div>
 				</div>
 			);
@@ -66,7 +63,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 
 		if (!isCompact) {
 			if (object.layout == I.ObjectLayout.Bookmark) {
-				descr = <div className="descr">{UtilCommon.shortUrl(source)}</div>;
+				descr = <div className="descr">{U.Common.shortUrl(source)}</div>;
 			} else {
 				descr = <ObjectDescription object={object} />;
 			};
@@ -163,9 +160,9 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		e.stopPropagation();
 
 		const { subId, id, } = this.props;
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
 
-		UtilObject.openEvent(e, object);
+		U.Object.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
 	};
 

@@ -6,8 +6,7 @@ import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { C, UtilRouter, UtilData } from 'Lib'; 
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, extensionStore } from 'Store';
+import { S, C, U } from 'Lib'; 
 
 import Index from './iframe/index';
 import Create from './iframe/create';
@@ -29,17 +28,6 @@ const Components = {
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
-
-const rootStore = {
-	commonStore,
-	authStore,
-	blockStore,
-	detailStore,
-	dbStore,
-	menuStore,
-	popupStore,
-	extensionStore,
-};
 
 class RoutePage extends React.Component<RouteComponentProps> {
 	
@@ -67,7 +55,7 @@ class Iframe extends React.Component {
 	render () {
 		return (
 			<Router history={history}>
-				<Provider {...rootStore}>
+				<Provider {...S}>
 					<div ref={node => this.node = node}>
 						<Switch>
 							{Routes.map((item: any, i: number) => (
@@ -81,7 +69,7 @@ class Iframe extends React.Component {
 	};
 
 	componentDidMount () {
-		UtilRouter.init(history);
+		U.Router.init(history);
 
 		const win = $(window);
 
@@ -98,10 +86,10 @@ class Iframe extends React.Component {
 					break;
 
 				case 'clickMenu': {
-					extensionStore.setTabUrl(msg.url);
-					extensionStore.setHtml(msg.html);
+					S.Extension.setTabUrl(msg.url);
+					S.Extension.setHtml(msg.html);
 
-					UtilRouter.go('/create', {});
+					U.Router.go('/create', {});
 					sendResponse({});
 					break;
 				};
@@ -111,12 +99,12 @@ class Iframe extends React.Component {
 		});
 
 		win.off('beforeunload').on('beforeunload', (e: any) => {
-			if (!authStore.token) {
+			if (!S.Auth.token) {
 				return;
 			};
 
-			UtilData.destroySubscriptions(() => {
-				C.WalletCloseSession(authStore.token, () => authStore.tokenSet(''));
+			U.Data.destroySubscriptions(() => {
+				C.WalletCloseSession(S.Auth.token, () => S.Auth.tokenSet(''));
 			});
 		});
 	};

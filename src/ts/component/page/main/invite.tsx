@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button, Footer } from 'Component';
-import { I, C, UtilCommon, UtilRouter, UtilSpace, translate } from 'Lib';
-import { popupStore } from 'Store';
+import { I, C, S, U, translate } from 'Lib';
 
 interface State {
 	error: string;
@@ -35,7 +34,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 								text={translate('commonBack')} 
 								color="blank" 
 								className="c36" 
-								onClick={() => UtilSpace.openDashboard('route')} 
+								onClick={() => U.Space.openDashboard('route')} 
 							/>
 						</div>
 					) : <Loader />}
@@ -57,7 +56,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 	};
 
 	init () {
-		const data = UtilCommon.searchParam(UtilRouter.history.location.search);
+		const data = U.Common.searchParam(U.Router.history.location.search);
 
 		if ((this.cid == data.cid) && (this.key == data.key)) {
 			return;
@@ -70,13 +69,13 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 			this.setState({ error: translate('pageMainInviteErrorData') });
 		} else {
 			C.SpaceInviteView(data.cid, data.key, (message: any) => {
-				UtilSpace.openDashboard('route');
+				U.Space.openDashboard('route');
 
-				popupStore.closeAll(null, () => {
-					const space = UtilSpace.getSpaceviewBySpaceId(message.spaceId);
+				S.Popup.closeAll(null, () => {
+					const space = U.Space.getSpaceviewBySpaceId(message.spaceId);
 
 					if (message.error.code) {
-						popupStore.open('confirm', {
+						S.Popup.open('confirm', {
 							data: {
 								icon: 'sad',
 								bgColor: 'red',
@@ -89,24 +88,24 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 					} else 
 					if (space) {
 						if (space.isAccountJoining) {
-							UtilCommon.onInviteRequest();
+							U.Common.onInviteRequest();
 						} else
 						if (!space.isAccountRemoving && !space.isAccountDeleted) {
-							popupStore.open('confirm', {
+							S.Popup.open('confirm', {
 								data: {
 									title: translate('popupConfirmDuplicateSpace'),
 									textConfirm: translate('commonOpenSpace'),
 									textCancel: translate('commonCancel'),
 									onConfirm: () => {
-										UtilRouter.switchSpace(message.spaceId);
+										U.Router.switchSpace(message.spaceId);
 									},
 								},
 							});
 						} else {
-							popupStore.open('inviteRequest', { data: { invite: message, ...data } });
+							S.Popup.open('inviteRequest', { data: { invite: message, ...data } });
 						};
 					} else {
-						popupStore.open('inviteRequest', { data: { invite: message, ...data } });
+						S.Popup.open('inviteRequest', { data: { invite: message, ...data } });
 					};
 				});
 			});
@@ -116,7 +115,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 	resize () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const obj = UtilCommon.getPageContainer(isPopup);
+		const obj = U.Common.getPageContainer(isPopup);
 		const node = $(this.node);
 		const oh = obj.height();
 		const header = node.find('#header');

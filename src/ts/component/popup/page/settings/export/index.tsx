@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, UtilCommon, translate } from 'Lib';
+import { I, U, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
 
@@ -43,12 +43,12 @@ const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex
 		const { onPage } = this.props;
 		const items = this.getItems();
 		const item = items.find(it => it.id == id);
-		const fn = UtilCommon.toCamelCase('onExport-' + item.id);
+		const fn = U.Common.toCamelCase('onExport-' + item.id);
 
 		if (item.skipPage && this[fn]) {
 			this[fn]();
 		} else {
-			onPage(UtilCommon.toCamelCase('export-' + item.id));
+			onPage(U.Common.toCamelCase('export-' + item.id));
 		};
 	};
 

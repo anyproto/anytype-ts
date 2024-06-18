@@ -5,13 +5,9 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore } from 'Store';
-import { 
-	UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage, UtilSpace, UtilData, keyboard 
-} from 'Lib';
+import { I, M, S, U, J, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Storage, keyboard } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
-const Constant = require('json/constant.json');
 
 const SORT_IDS = [ 
 	'BlockAdd', 
@@ -47,14 +43,14 @@ class Dispatcher {
 	};
 
 	listenEvents () {
-		if (!authStore.token) {
+		if (!S.Auth.token) {
 			return;
 		};
 
 		window.clearTimeout(this.timeoutStream);
 
 		const request = new Commands.StreamRequest();
-		request.setToken(authStore.token);
+		request.setToken(S.Auth.token);
 
 		this.stream = this.service.listenSessionEvents(request, null);
 
@@ -97,10 +93,10 @@ class Dispatcher {
 	};
 
 	event (event: Events.Event, skipDebug?: boolean) {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
-		const electron = UtilCommon.getElectron();
+		const electron = U.Common.getElectron();
 		const currentWindow = electron.currentWindow();
 		const { windowId } = currentWindow;
 		const isMainWindow = windowId === 1;
@@ -120,7 +116,7 @@ class Dispatcher {
 			};
 
 			if (data && data.toObject) {
-				const d = UtilCommon.objectClear(data.toObject());
+				const d = U.Common.objectClear(data.toObject());
 				console.log(debugJson ? JSON.stringify(d, null, 3) : d); 
 			};
 		};
@@ -138,18 +134,18 @@ class Dispatcher {
 			switch (type) {
 
 				case 'AccountShow': {
-					authStore.accountAdd(mapped.account);
+					S.Auth.accountAdd(mapped.account);
 					break;
 				};
 
 				case 'AccountUpdate': {
-					authStore.accountSetStatus(mapped.status);
+					S.Auth.accountSetStatus(mapped.status);
 					break;	
 				};
 
 				case 'AccountConfigUpdate': {
-					commonStore.configSet(mapped.config, true);
-					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
+					S.Common.configSet(mapped.config, true);
+					Renderer.send('setConfig', U.Common.objectCopy(S.Common.config));
 					break;
 				};
 
@@ -160,34 +156,34 @@ class Dispatcher {
 
 					Renderer.send('showChallenge', {
 						challenge: mapped.challenge,
-						theme: commonStore.getThemeClass(),
-						lang: commonStore.interfaceLang,
+						theme: S.Common.getThemeClass(),
+						lang: S.Common.interfaceLang,
 					});
 					break;
 				};
 
 				case 'ThreadStatus': {
-					authStore.threadSet(rootId, mapped);
+					S.Auth.threadSet(rootId, mapped);
 					break;
 				};
 
 				case 'ObjectRelationsAmend': {
-					dbStore.relationsSet(rootId, mapped.id, mapped.relations);
+					S.Record.relationsSet(rootId, mapped.id, mapped.relations);
 					break;
 				};
 
 				case 'ObjectRelationsRemove': {
-					dbStore.relationListDelete(rootId, mapped.id, mapped.relationKeys);
+					S.Record.relationListDelete(rootId, mapped.id, mapped.relationKeys);
 					break;
 				};
 
 				case 'ObjectRestrictionsSet': {
-					blockStore.restrictionsSet(rootId, mapped.restrictions);
+					S.Block.restrictionsSet(rootId, mapped.restrictions);
 					break;
 				};
 
 				case 'FileSpaceUsage': {
-					const { spaces } = commonStore.spaceStorage;
+					const { spaces } = S.Common.spaceStorage;
 					const space = spaces.find(it => it.spaceId == mapped.spaceId);
 
 					if (space) {
@@ -200,14 +196,14 @@ class Dispatcher {
 
 				case 'FileLimitUpdated':
 				case 'FileLocalUsage': {
-					commonStore.spaceStorageSet(mapped);
+					S.Common.spaceStorageSet(mapped);
 					break;
 				};
 
 				case 'FileLimitReached': {
-					const { bytesLimit, localUsage, spaces } = commonStore.spaceStorage;
+					const { bytesLimit, localUsage, spaces } = S.Common.spaceStorage;
 					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
-					const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
+					const percentageUsed = Math.floor(U.Common.getPercent(bytesUsed, bytesLimit));
 
 					if (percentageUsed >= 99) {
 						Preview.toastShow({ action: I.ToastAction.StorageFull });
@@ -223,12 +219,12 @@ class Dispatcher {
 
 					for (const block of blocks) {
 						if (block.type == I.BlockType.Dataview) {
-							dbStore.relationsSet(rootId, block.id, block.content.relationLinks);
-							dbStore.viewsSet(rootId, block.id, block.content.views);
+							S.Record.relationsSet(rootId, block.id, block.content.relationLinks);
+							S.Record.viewsSet(rootId, block.id, block.content.views);
 						};
 
-						blockStore.add(rootId, new M.Block(block));
-						blockStore.updateStructure(rootId, block.id, block.childrenIds);
+						S.Block.add(rootId, new M.Block(block));
+						S.Block.updateStructure(rootId, block.id, block.childrenIds);
 					};
 
 					updateParents = true;
@@ -239,7 +235,7 @@ class Dispatcher {
 					const { blockIds } = mapped;
 
 					for (const blockId of blockIds) {
-						const block = blockStore.getLeaf(rootId, blockId);
+						const block = S.Block.getLeaf(rootId, blockId);
 						if (!block) {
 							continue;
 						};
@@ -248,7 +244,7 @@ class Dispatcher {
 							Action.dbClearBlock(rootId, blockId);
 						};
 
-						blockStore.delete(rootId, blockId);
+						S.Block.delete(rootId, blockId);
 					};
 
 					updateParents = true;
@@ -258,10 +254,10 @@ class Dispatcher {
 				case 'BlockSetChildrenIds': {
 					const { id, childrenIds } = mapped;
 
-					blockStore.updateStructure(rootId, id, childrenIds);
+					S.Block.updateStructure(rootId, id, childrenIds);
 
 					if (id == rootId) {
-						blockStore.checkTypeSelect(rootId);
+						S.Block.checkTypeSelect(rootId);
 					};
 
 					updateParents = true;
@@ -270,19 +266,19 @@ class Dispatcher {
 
 				case 'BlockSetFields': {
 					const { id, fields } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
 					};
 
-					blockStore.update(rootId, id, { fields });
+					S.Block.update(rootId, id, { fields });
 					break;
 				};
 
 				case 'BlockSetLink': {
 					const { id, cardStyle, iconSize, description, targetBlockId, relations, fields } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
@@ -314,13 +310,13 @@ class Dispatcher {
 						content.fields = fields;
 					};
 
-					blockStore.updateContent(rootId, id, content);
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
 				case 'BlockSetText': {
 					const { id, text, marks, style, checked, color, iconEmoji, iconImage } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
@@ -356,13 +352,13 @@ class Dispatcher {
 						content.iconImage = iconImage;
 					};
 
-					blockStore.updateContent(rootId, id, content);
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
 				case 'BlockSetDiv': {
 					const { id, style } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
@@ -372,37 +368,37 @@ class Dispatcher {
 						block.content.style = style;
 					};
 
-					blockStore.updateContent(rootId, id, block.content);
+					S.Block.updateContent(rootId, id, block.content);
 					break;
 				};
 
 				case 'BlockDataviewTargetObjectIdSet': {
 					const { id, targetObjectId } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
 					};
 
-					blockStore.updateContent(rootId, id, { targetObjectId });
+					S.Block.updateContent(rootId, id, { targetObjectId });
 					break;
 				};
 
 				case 'BlockDataviewIsCollectionSet': {
 					const { id, isCollection } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
 					};
 
-					blockStore.updateContent(rootId, id, { isCollection });
+					S.Block.updateContent(rootId, id, { isCollection });
 					break;
 				};
 
 				case 'BlockSetWidget': {
 					const { id, layout, limit, viewId } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
@@ -422,13 +418,13 @@ class Dispatcher {
 						content.viewId = viewId;
 					};
 
-					blockStore.updateContent(rootId, id, content);
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
 				case 'BlockSetFile': {
 					const { id, targetObjectId, type, style, state } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
@@ -452,13 +448,13 @@ class Dispatcher {
 						content.state = state;
 					};
 
-					blockStore.updateContent(rootId, id, content);
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
 				case 'BlockSetBookmark': {
 					const { id, targetObjectId, state } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
@@ -474,49 +470,49 @@ class Dispatcher {
 						content.state = state;
 					};
 
-					blockStore.updateContent(rootId, id, content);
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
 				case 'BlockSetBackgroundColor': {
 					const { id, bgColor } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
 					};
 
-					blockStore.update(rootId, id, { bgColor });
+					S.Block.update(rootId, id, { bgColor });
 					break;
 				};
 
 				case 'BlockSetAlign': {
 					const { id, align } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
 					};
 
-					blockStore.update(rootId, id, { hAlign: align });
+					S.Block.update(rootId, id, { hAlign: align });
 					break;
 				};
 
 				case 'BlockSetVerticalAlign': {
 					const { id, align } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
 					};
 
-					blockStore.update(rootId, id, { vAlign: align });
+					S.Block.update(rootId, id, { vAlign: align });
 					break;
 				};
 
 				case 'BlockSetRelation': {
 					const { id, key } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
@@ -528,13 +524,13 @@ class Dispatcher {
 						content.key = key;
 					};
 
-					blockStore.updateContent(rootId, id, content);
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
 				case 'BlockSetLatex': {
 					const { id, text } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
@@ -546,13 +542,13 @@ class Dispatcher {
 						content.key = text;
 					};
 
-					blockStore.updateContent(rootId, id, content);
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
 				case 'BlockSetTableRow': {
 					const { id, isHeader } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
@@ -564,32 +560,32 @@ class Dispatcher {
 						content.isHeader = isHeader;
 					};
 
-					blockStore.updateContent(rootId, id, content);
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
 				case 'BlockDataviewViewSet': {
 					const { id, view } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
 					};
 
-					dbStore.viewAdd(rootId, id, view);
-					blockStore.updateWidgetViews(rootId);
+					S.Record.viewAdd(rootId, id, view);
+					S.Block.updateWidgetViews(rootId);
 					break;
 				};
 
 				case 'BlockDataviewViewUpdate': {
 					const { id, viewId, fields } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
 					};
 
-					let view = dbStore.getView(rootId, id, viewId);
+					let view = S.Record.getView(rootId, id, viewId);
 					let updateData = false;
 
 					if (fields !== null) {
@@ -686,73 +682,73 @@ class Dispatcher {
 						view[key.field] = list;
 					});
 
-					dbStore.viewUpdate(rootId, id, view);
-					blockStore.updateWidgetViews(rootId);
+					S.Record.viewUpdate(rootId, id, view);
+					S.Block.updateWidgetViews(rootId);
 
 					if (updateData) {
 						win.trigger(`updateDataviewData.${id}`);
-						blockStore.updateWidgetData(rootId);
+						S.Block.updateWidgetData(rootId);
 					};
 					break;
 				};
 
 				case 'BlockDataviewViewDelete': {
 					const { id, viewId } = mapped;
-					const subId = dbStore.getSubId(rootId, id);
+					const subId = S.Record.getSubId(rootId, id);
 
-					let current = dbStore.getMeta(subId, '').viewId;
+					let current = S.Record.getMeta(subId, '').viewId;
 					
-					dbStore.viewDelete(rootId, id, viewId);
+					S.Record.viewDelete(rootId, id, viewId);
 
 					if (viewId == current) {
-						const views = dbStore.getViews(rootId, id);
+						const views = S.Record.getViews(rootId, id);
 
 						current = views.length ? views[views.length - 1].id : '';
-						dbStore.metaSet(subId, '', { viewId: current });
+						S.Record.metaSet(subId, '', { viewId: current });
 					};
 
-					blockStore.updateWidgetViews(rootId);
+					S.Block.updateWidgetViews(rootId);
 					break;
 				};
 
 				case 'BlockDataviewViewOrder': {
 					const { id, viewIds } = mapped;
 
-					dbStore.viewsSort(rootId, id, viewIds);
-					blockStore.updateWidgetViews(rootId);
+					S.Record.viewsSort(rootId, id, viewIds);
+					S.Block.updateWidgetViews(rootId);
 					break; 
 				};
 
 				case 'BlockDataviewRelationDelete': {
 					const { id, relationKeys } = mapped;
 
-					dbStore.relationListDelete(rootId, id, relationKeys);
+					S.Record.relationListDelete(rootId, id, relationKeys);
 					break;
 				};
 
 				case 'BlockDataviewRelationSet': {
 					const { id, relations } = mapped;
 
-					dbStore.relationsSet(rootId, id, relations);
+					S.Record.relationsSet(rootId, id, relations);
 					break;
 				};
 
 				case 'BlockDataviewGroupOrderUpdate': {
 					const { id, groupOrder } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block || (groupOrder === null)) {
 						break;
 					};
 
 					Dataview.groupOrderUpdate(rootId, id, groupOrder.viewId, groupOrder.groups);
-					blockStore.updateWidgetData(rootId);
+					S.Block.updateWidgetData(rootId);
 					break;
 				};
 
 				case 'BlockDataviewObjectOrderUpdate': {
 					const { id, viewId, groupId, changes } = mapped;
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 
 					if (!block) {
 						break;
@@ -799,8 +795,8 @@ class Dispatcher {
 					});
 
 					block.content.objectOrder[index] = el;
-					blockStore.updateContent(rootId, id, { objectOrder: block.content.objectOrder });
-					blockStore.updateWidgetData(rootId);
+					S.Block.updateContent(rootId, id, { objectOrder: block.content.objectOrder });
+					S.Block.updateWidgetData(rootId);
 					break;
 				};
 
@@ -822,10 +818,10 @@ class Dispatcher {
 					const { id, subIds, keys } = mapped;
 
 					// Subscriptions
-					this.getUniqueSubIds(subIds).forEach(subId => detailStore.delete(subId, id, keys));
+					this.getUniqueSubIds(subIds).forEach(subId => S.Detail.delete(subId, id, keys));
 
-					detailStore.delete(rootId, id, keys);
-					blockStore.checkTypeSelect(rootId);
+					S.Detail.delete(rootId, id, keys);
+					S.Block.checkTypeSelect(rootId);
 					break;
 				};
 
@@ -841,8 +837,8 @@ class Dispatcher {
 					const [ subId, dep ] = mapped.subId.split('/');
 
 					if (!dep) {
-						dbStore.recordDelete(subId, '', id);
-						detailStore.delete(subId, id);
+						S.Record.recordDelete(subId, '', id);
+						S.Detail.delete(subId, id);
 					};
 					break;
 				};
@@ -858,7 +854,7 @@ class Dispatcher {
 					const [ subId, dep ] = mapped.subId.split('/');
 					
 					if (!dep) {
-						dbStore.metaSet(subId, '', { total: mapped.total });
+						S.Record.metaSet(subId, '', { total: mapped.total });
 					};
 					break;
 				};
@@ -868,28 +864,28 @@ class Dispatcher {
 					const [ rootId, blockId ] = mapped.subId.split('-');
 
 					if (remove) {
-						dbStore.groupsRemove(rootId, blockId, [ group.id ]);
+						S.Record.groupsRemove(rootId, blockId, [ group.id ]);
 					} else {
-						dbStore.groupsAdd(rootId, blockId, [ group ]);
+						S.Record.groupsAdd(rootId, blockId, [ group ]);
 					};
 
-					blockStore.updateWidgetData(rootId);
+					S.Block.updateWidgetData(rootId);
 					break;
 				};
 
 				case 'NotificationSend': {
 					const item = new M.Notification(mapped.notification);
 
-					notificationStore.add(item);
+					S.Notification.add(item);
 
 					if (isMainWindow && !electron.isFocused()) {
-						new window.Notification(UtilCommon.stripTags(item.title), { body: UtilCommon.stripTags(item.text) }).onclick = () => electron.focus();
+						new window.Notification(U.Common.stripTags(item.title), { body: U.Common.stripTags(item.text) }).onclick = () => electron.focus();
 					};
 					break;
 				};
 
 				case 'NotificationUpdate': {
-					notificationStore.update(mapped.notification);
+					S.Notification.update(mapped.notification);
 					break;
 				};
 
@@ -905,7 +901,7 @@ class Dispatcher {
 						case 'openObject': {
 							const { object } = payload;
 
-							UtilObject.openAuto(object);
+							U.Object.openAuto(object);
 							window.focus();
 
 							if (electron.focus) {
@@ -920,8 +916,8 @@ class Dispatcher {
 				};
 
 				case 'MembershipUpdate': {
-					authStore.membershipUpdate(mapped.membership);
-					UtilData.getMembershipTiers(true);
+					S.Auth.membershipUpdate(mapped.membership);
+					U.Data.getMembershipTiers(true);
 					break;
 				};
 
@@ -941,7 +937,7 @@ class Dispatcher {
 								isUnlocked = false;
 							};
 
-							commonStore.progressSet({
+							S.Common.progressSet({
 								id,
 								status: translate(`progress${type}`),
 								current: progress.done,
@@ -955,7 +951,7 @@ class Dispatcher {
 						case I.ProgressState.Error:
 						case I.ProgressState.Done:
 						case I.ProgressState.Canceled: {
-							commonStore.progressClear();
+							S.Common.progressClear();
 							break;
 						};
 					};
@@ -963,7 +959,7 @@ class Dispatcher {
 				};
 
 				case 'SpaceSyncStatusUpdate': {
-					authStore.syncStatusUpdate(mapped);
+					S.Auth.syncStatusUpdate(mapped);
 					break;
 				};
 			};
@@ -974,26 +970,26 @@ class Dispatcher {
 		};
 
 		if (updateParents) {
-			blockStore.updateStructureParents(rootId);
+			S.Block.updateStructureParents(rootId);
 		};
 		
-		blockStore.updateNumbers(rootId); 
-		blockStore.updateMarkup(rootId);
+		S.Block.updateNumbers(rootId); 
+		S.Block.updateMarkup(rootId);
 	};
 
 	getUniqueSubIds (subIds: string[]) {
-		return UtilCommon.arrayUnique((subIds || []).map(it => it.split('/')[0]));
+		return U.Common.arrayUnique((subIds || []).map(it => it.split('/')[0]));
 	};
 
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
-		this.getUniqueSubIds(subIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
+		this.getUniqueSubIds(subIds).forEach(subId => S.Detail.update(subId, { id, details }, clear));
 
 		if ([ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(details.spaceAccountStatus)) {
-			if (id == blockStore.spaceview) {
-				UtilRouter.switchSpace(authStore.accountSpaceId, '');
+			if (id == S.Block.spaceview) {
+				U.Router.switchSpace(S.Auth.accountSpaceId, '');
 			};
 
-			const spaceview = UtilSpace.getSpaceview(id);
+			const spaceview = U.Space.getSpaceview(id);
 			if (spaceview && !spaceview._empty_) {
 				Storage.deleteSpace(spaceview.targetSpaceId);
 			};
@@ -1003,20 +999,20 @@ class Dispatcher {
 			return;
 		};
 
-		detailStore.update(rootId, { id, details }, clear);
+		S.Detail.update(rootId, { id, details }, clear);
 
-		const root = blockStore.getLeaf(rootId, id);
+		const root = S.Block.getLeaf(rootId, id);
 		if ((id == rootId) && root) {
 			if ((undefined !== details.layout) && (root.layout != details.layout)) {
-				blockStore.update(rootId, rootId, { layout: details.layout });
+				S.Block.update(rootId, rootId, { layout: details.layout });
 			};
 
 			if (undefined !== details.setOf) {
-				blockStore.updateWidgetData(rootId);
+				S.Block.updateWidgetData(rootId);
 				$(window).trigger(`updateDataviewData.dataview`);
 			};
 
-			blockStore.checkTypeSelect(rootId);
+			S.Block.checkTypeSelect(rootId);
 		};
 	};
 
@@ -1027,7 +1023,7 @@ class Dispatcher {
 			return;
 		};
 
-		const records = dbStore.getRecordIds(sid, '');
+		const records = S.Record.getRecordIds(sid, '');
 		const newIndex = afterId ? records.indexOf(afterId) + 1 : 0;
 
 		let oldIndex = records.indexOf(id);
@@ -1042,7 +1038,7 @@ class Dispatcher {
 		};
 
 		if (oldIndex !== newIndex) {
-			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
+			S.Record.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
 		};
 	};
 
@@ -1069,13 +1065,13 @@ class Dispatcher {
 			analytics.removeContext();
 		};
 
-		dbStore.relationsSet(contextId, rootId, relationLinks);
-		detailStore.set(contextId, details);
-		blockStore.restrictionsSet(contextId, restrictions);
-		blockStore.participantsSet(contextId, participants);
+		S.Record.relationsSet(contextId, rootId, relationLinks);
+		S.Detail.set(contextId, details);
+		S.Block.restrictionsSet(contextId, restrictions);
+		S.Block.participantsSet(contextId, participants);
 
 		if (root) {
-			const object = detailStore.get(contextId, rootId, [ 'layout' ], true);
+			const object = S.Detail.get(contextId, rootId, [ 'layout' ], true);
 
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
@@ -1083,8 +1079,8 @@ class Dispatcher {
 
 		const blocks = objectView.blocks.map(it => {
 			if (it.type == I.BlockType.Dataview) {
-				dbStore.relationsSet(contextId, it.id, it.content.relationLinks);
-				dbStore.viewsSet(contextId, it.id, it.content.views);
+				S.Record.relationsSet(contextId, it.id, it.content.relationLinks);
+				S.Record.viewsSet(contextId, it.id, it.content.views);
 			};
 
 			structure.push({ id: it.id, childrenIds: it.childrenIds });
@@ -1093,20 +1089,20 @@ class Dispatcher {
 
 		// BlockType
 		blocks.push(new M.Block({
-			id: Constant.blockId.type,
-			parentId: Constant.blockId.header,
+			id: J.Constant.blockId.type,
+			parentId: J.Constant.blockId.header,
 			type: I.BlockType.Type,
 			fields: {},
 			childrenIds: [],
 			content: {}
 		}));
 
-		blockStore.set(contextId, blocks);
-		blockStore.setStructure(contextId, structure);
-		blockStore.updateStructureParents(contextId);
-		blockStore.updateNumbers(contextId); 
-		blockStore.updateMarkup(contextId);
-		blockStore.checkTypeSelect(contextId);
+		S.Block.set(contextId, blocks);
+		S.Block.setStructure(contextId, structure);
+		S.Block.updateStructureParents(contextId);
+		S.Block.updateNumbers(contextId); 
+		S.Block.updateMarkup(contextId);
+		S.Block.checkTypeSelect(contextId);
 
 		keyboard.setWindowTitle();
 	};
@@ -1114,11 +1110,11 @@ class Dispatcher {
 	public request (type: string, data: any, callBack?: (message: any) => void) {
 		type = type.replace(/^command_/, '');
 
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const debugTime = config.flagsMw.time;
 		const debugRequest = config.flagsMw.request;
 		const debugJson = config.flagsMw.json;
-		const ct = UtilCommon.toCamelCase(type);
+		const ct = U.Common.toCamelCase(type);
 		const t0 = performance.now();
 
 		if (!this.service[ct]) {
@@ -1132,12 +1128,12 @@ class Dispatcher {
 
 		if (debugRequest && !SKIP_IDS.includes(type)) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
-			d = UtilCommon.objectClear(data.toObject());
+			d = U.Common.objectClear(data.toObject());
 			console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 		};
 
 		try {
-			this.service[ct](data, { token: authStore.token }, (error: any, response: any) => {
+			this.service[ct](data, { token: S.Auth.token }, (error: any, response: any) => {
 				if (!response) {
 					return;
 				};
@@ -1169,12 +1165,12 @@ class Dispatcher {
 						analytics.event('Exception', { method: type, code: message.error.code });
 					};
 
-					message.error.description = UtilCommon.translateError(type, message.error);
+					message.error.description = U.Common.translateError(type, message.error);
 				};
 
 				if (debugRequest && !SKIP_IDS.includes(type)) {
 					console.log(`%cResponse.${type}`, 'font-weight: bold; color: green;');
-					d = UtilCommon.objectClear(response.toObject());
+					d = U.Common.objectClear(response.toObject());
 					console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 				};
 
@@ -1209,7 +1205,7 @@ class Dispatcher {
 	};
 
 	checkLog (type: string) {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { event, sync, file } = config.flagsMw;
 		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
 		const syncEvents = [ 'SpaceSyncStatusUpdate' ];

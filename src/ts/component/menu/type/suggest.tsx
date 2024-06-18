@@ -3,9 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate, UtilSpace } from 'Lib';
-import { commonStore, detailStore, menuStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, analytics, keyboard, Action, translate } from 'Lib';
 
 interface State {
 	loading: boolean;
@@ -185,8 +183,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	componentWillUnmount () {
 		this._isMounted = false;
 
-		if (menuStore.isOpen('searchObject', 'store')) {
-			menuStore.closeAll([ 'searchObject' ]);
+		if (S.Menu.isOpen('searchObject', 'store')) {
+			S.Menu.closeAll([ 'searchObject' ]);
 		};
 		window.clearTimeout(this.timeoutFilter);
 	};
@@ -203,7 +201,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -224,7 +222,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		];
 
 		let filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, S.Common.space ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 		];
 		if (data.filters) {
@@ -239,13 +237,13 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			this.setState({ loading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
-			keys: UtilData.typeRelationKeys(),
+			keys: U.Data.typeRelationKeys(),
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 			ignoreWorkspace: true,
 		}, (message: any) => {
 			if (!this._isMounted) {
@@ -276,14 +274,14 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 
 	getSections () {
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+		const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.spaceId == space));
 		const librarySources = library.map(it => it.sourceObject);
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		let sections: any[] = [
 			{ id: 'library', name: translate('menuTypeSuggestMyTypes'), children: library },
@@ -291,11 +289,11 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 		if (canWrite) {
 			if (filter) {
-				const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+				const store = items.filter(it => (it.spaceId == J.Constant.storeSpaceId) && !librarySources.includes(it.id));
 
 				sections = sections.concat([
 					{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
-					{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), filter) } ] }
+					{ children: [ { id: 'add', name: U.Common.sprintf(translate('menuTypeSuggestCreateType'), filter) } ] }
 				]);
 			} else {
 				sections = sections.concat([
@@ -339,7 +337,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			this.props.param.data.filter = this.refFilter.getValue();
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 	};
 
 	onMouseEnter (e: any, item: any) {
@@ -357,7 +355,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		};
 
 		if (!item.arrow) {
-			menuStore.closeAll([ 'searchObject' ]);
+			S.Menu.closeAll([ 'searchObject' ]);
 			return;
 		};
 
@@ -395,7 +393,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				menuParam.className = className.join(' ');
 
 				let filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: J.Constant.storeSpaceId },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
 				];
@@ -405,20 +403,20 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 				menuParam.data = Object.assign(menuParam.data, {
 					ignoreWorkspace: true,
-					keys: UtilData.typeRelationKeys(),
+					keys: U.Data.typeRelationKeys(),
 					filters,
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
 					onSelect: item => this.onClick(e, item),
-					dataMapper: it => detailStore.mapper(it),
+					dataMapper: it => S.Detail.mapper(it),
 				});
 				break;
 			};
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll([ 'searchObject' ], () => menuStore.open(menuId, menuParam));
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll([ 'searchObject' ], () => S.Menu.open(menuId, menuParam));
 		};
 	};
 	
@@ -438,12 +436,12 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			close();
 
 			if (onClick) {
-				onClick(detailStore.mapper(item));
+				onClick(S.Detail.mapper(item));
 			};
 		};
 
 		if (item.id == 'add') {
-			C.ObjectCreateObjectType({ name: filter }, [], commonStore.space, (message: any) => {
+			C.ObjectCreateObjectType({ name: filter }, [], S.Common.space, (message: any) => {
 				if (!message.error.code) {
 					cb(message.details);
 					analytics.event('CreateType');
@@ -463,7 +461,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 
 	getLibrarySources () {
-		return dbStore.getTypes().filter(it => (it.spaceId == commonStore.space)).map(it => it.sourceObject).filter(it => it);
+		return S.Record.getTypes().filter(it => (it.spaceId == S.Common.space)).map(it => it.sourceObject).filter(it => it);
 	};
 
 	resize () {

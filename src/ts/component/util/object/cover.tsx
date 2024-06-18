@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Cover, MediaAudio, MediaVideo } from 'Component';
-import { I } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S } from 'Lib';
 
 interface Props {
 	object: any;
@@ -37,19 +36,19 @@ class ObjectCover extends React.Component<Props> {
 			switch (layout) {
 				case I.ObjectLayout.Image: {
 					cn.push('coverImage');
-					content = <img src={commonStore.imageUrl(id, 600)} onDragStart={e => e.preventDefault()} />;
+					content = <img src={S.Common.imageUrl(id, 600)} onDragStart={e => e.preventDefault()} />;
 					break;
 				};
 
 				case I.ObjectLayout.Audio: {
 					cn.push('coverAudio');
-					content = <MediaAudio playlist={[ { name, src: commonStore.fileUrl(id) } ]}/>;
+					content = <MediaAudio playlist={[ { name, src: S.Common.fileUrl(id) } ]}/>;
 					break;
 				};
 
 				case I.ObjectLayout.Video: {
 					cn.push('coverVideo');
-					content = <MediaVideo src={commonStore.fileUrl(id)}/>;
+					content = <MediaVideo src={S.Common.fileUrl(id)}/>;
 					break;
 				};
 			};

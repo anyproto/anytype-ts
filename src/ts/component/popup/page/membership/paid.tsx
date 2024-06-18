@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
-import { I, C, translate, UtilCommon, UtilData, analytics } from 'Lib';
-import { commonStore, authStore } from 'Store';
+import { I, C, S, U, J, translate, analytics } from 'Lib';
 import FooterAuthDisclaimer from '../../../footer/auth/disclaimer';
-const Constant = require('json/constant.json');
 
 interface State {
 	status: string;
@@ -36,16 +34,16 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const { status, statusText } = this.state;
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { testCryptoPayment } = config;
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 
 		if (!tierItem) {
 			return null;
 		};
 
 		const { period } = tierItem;
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 		const { name, nameType, paymentMethod } = membership;
 
 		let periodText = '';
@@ -61,8 +59,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				periodText = translate('popupSettingsMembershipPerYear');
 				labelText = translate('popupMembershipPaidTextPerYear');
 			} else {
-				periodText = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
-				labelText = UtilCommon.sprintf(translate('popupMembershipPaidTextPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+				periodText = U.Common.sprintf(translate('popupSettingsMembershipPerYears'), period, U.Common.plural(period, translate('pluralYear')));
+				labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerYears'), period, U.Common.plural(period, translate('pluralYear')));
 			};
 		};
 
@@ -82,7 +80,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 								className={name ? 'disabled' : ''}
 								placeholder={translate(`popupMembershipPaidPlaceholder`)}
 							/>
-							<div className="ns">{Constant.namespace[nameType]}</div>
+							<div className="ns">{J.Constant.namespace[nameType]}</div>
 						</div>
 
 						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
@@ -115,7 +113,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 		const globalName = this.getGlobalName();
 
 		if (!globalName && tierItem.namesCount) {
@@ -134,7 +132,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		this.setState({ statusText: '', status: '' });
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.validateName(), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => this.validateName(), J.Constant.delay.keyboard);
 	};
 
 	onSubmit (e: any) {
@@ -150,7 +148,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const globalName = this.getGlobalName();
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 		const name = globalName || !tierItem.namesCount ? '' : this.getName();
 		const refButton = method == I.PaymentMethod.Stripe ? this.refButtonCard : this.refButtonCrypto;
 
@@ -166,7 +164,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				};
 
 				if (message.url) {
-					UtilCommon.onUrl(message.url);
+					U.Common.onUrl(message.url);
 				};
 
 				analytics.event('ClickMembership', { params: { tier, method }});
@@ -230,7 +228,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	getGlobalName () {
-		return String(authStore.membership?.name || '');
+		return String(S.Auth.membership?.name || '');
 	};
 
 	disableButtons (v: boolean) {

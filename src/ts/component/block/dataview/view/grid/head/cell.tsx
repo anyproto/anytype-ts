@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { I, keyboard, Relation, Dataview } from 'Lib';
-import { SortableElement } from 'react-sortable-hoc';
-import { menuStore, dbStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
+import { SortableElement } from 'react-sortable-hoc';
+import { I, S, keyboard, Relation, Dataview } from 'Lib';
 import Handle from './handle';
-const Constant = require('json/constant.json');
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId: string;
@@ -25,7 +23,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 
 	render () {
 		const { rootId, block, relationKey, index, onResizeStart } = this.props;
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 		
 		if (!relation) {
 			return;
@@ -33,7 +31,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 
 		const { format, name } = relation;
 		const readonly = relation.isReadonlyValue;
-		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'cellHead', `cell-key-${this.props.relationKey}`, Relation.className(format) ];
 
 		if (allowedView) {
@@ -76,7 +74,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { rootId, block, readonly, loadData, getView, getTarget, relationKey, isInline, isCollection } = this.props;
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation || keyboard.isResizing) {
 			return;
@@ -86,7 +84,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		const obj = $(element);
 
 		window.setTimeout(() => {
-			menuStore.open('dataviewRelationEdit', { 
+			S.Menu.open('dataviewRelationEdit', { 
 				element,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
@@ -108,7 +106,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 					},
 				}
 			});
-		}, menuStore.getTimeout());
+		}, S.Menu.getTimeout());
 	};
 
 });

@@ -1,4 +1,4 @@
-import { I, UtilCommon } from 'Lib';
+import { I, U } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentWidget implements I.ContentWidget {
@@ -18,7 +18,7 @@ class BlockContentWidget implements I.ContentWidget {
 			viewId: observable,
 		});
 
-		intercept(this as any, change => UtilCommon.intercept(this, change));
+		intercept(this as any, change => U.Common.intercept(this, change));
 	};
 
 };

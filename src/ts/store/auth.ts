@@ -1,7 +1,5 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, C, Storage, analytics, Renderer } from 'Lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore, notificationStore } from 'Store';
-import { keyboard } from 'Lib';
+import { I, M, C, S, Storage, analytics, Renderer, keyboard } from 'Lib';
 
 interface NetworkConfig {
 	mode: I.NetworkMode;
@@ -187,14 +185,14 @@ class AuthStore {
 
 		keyboard.setPinChecked(false);
 
-		commonStore.spaceSet('');
-		commonStore.typeSet('');
+		S.Common.spaceSet('');
+		S.Common.typeSet('');
 
-		blockStore.clearAll();
-		detailStore.clearAll();
-		dbStore.clearAll();
-		menuStore.closeAllForced();
-		notificationStore.clear();
+		S.Block.clearAll();
+		S.Detail.clearAll();
+		S.Record.clearAll();
+		S.Menu.closeAllForced();
+		S.Notification.clear();
 
 		this.clearAll();
 		Storage.logout();
@@ -202,4 +200,4 @@ class AuthStore {
 
 };
 
- export const authStore: AuthStore = new AuthStore();
+ export const Auth: AuthStore = new AuthStore();
