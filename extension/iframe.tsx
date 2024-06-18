@@ -7,7 +7,6 @@ import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
 import { S, C, UtilRouter, UtilData } from 'Lib'; 
-import { extensionStore } from 'Store';
 
 import Index from './iframe/index';
 import Create from './iframe/create';
@@ -87,8 +86,8 @@ class Iframe extends React.Component {
 					break;
 
 				case 'clickMenu': {
-					extensionStore.setTabUrl(msg.url);
-					extensionStore.setHtml(msg.html);
+					S.Extension.setTabUrl(msg.url);
+					S.Extension.setHtml(msg.html);
 
 					UtilRouter.go('/create', {});
 					sendResponse({});

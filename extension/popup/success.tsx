@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button } from 'Component';
 import { I, C, S, UtilCommon } from 'Lib';
-import { extensionStore } from 'Store';
 
 interface State {
 	error: string;
@@ -17,7 +16,7 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 	};
 
 	render () {
-		const object = S.Detail.mapper(extensionStore.createdObject);
+		const object = S.Detail.mapper(S.Extension.createdObject);
 
 		if (!object) {
 			return null;
@@ -36,7 +35,7 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 	};
 
 	onOpen () {
-		C.BroadcastPayloadEvent({ type: 'openObject', object: extensionStore.createdObject }, () => {
+		C.BroadcastPayloadEvent({ type: 'openObject', object: S.Extension.createdObject }, () => {
 			window.close();
 		});
 	};

@@ -5,7 +5,6 @@ import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon } from 'Component';
 import { I, C, S, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage, UtilSpace } from 'Lib';
-import { extensionStore } from 'Store';
 import Util from '../lib/util';
 
 interface State {
@@ -437,7 +436,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 			const object = message.details;
 
-			extensionStore.createdObject = object;
+			S.Extension.createdObject = object;
 			UtilRouter.go('/success', {});
 
 			this.isCreating = false;

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
-import { I, C, UtilRouter, Storage } from 'Lib';
-import { extensionStore } from 'Store';
+import { I, C, S, UtilRouter, Storage } from 'Lib';
+
 const Url = require('json/url.json');
 
 import Util from '../lib/util';
@@ -71,7 +71,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 
 		if (appKey) {
 			Util.authorize(appKey, () => {
-				const { serverPort, gatewayPort } = extensionStore;
+				const { serverPort, gatewayPort } = S.Extension;
 
 				Util.sendMessage({ type: 'initIframe', appKey, serverPort, gatewayPort }, () => {});
 				Util.sendMessage({ type: 'initMenu' }, () => {});
@@ -91,14 +91,14 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 					return;
 				};
 
-				extensionStore.challengeId = message.challengeId;
+				S.Extension.challengeId = message.challengeId;
 				UtilRouter.go('/challenge', {});
 			});
 		};
 	};
 
 	onOpen () {
-		const { serverPort, gatewayPort } = extensionStore;
+		const { serverPort, gatewayPort } = S.Extension;
 
 		if (serverPort && gatewayPort) {
 			this.login();

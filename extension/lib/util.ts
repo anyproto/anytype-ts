@@ -1,5 +1,4 @@
 import { S, UtilData, dispatcher } from 'Lib';
-import { extensionStore } from 'Store';
 
 const Extension = require('json/extension.json');
 
@@ -42,8 +41,8 @@ class Util {
 	};
 
 	init (serverPort: string, gatewayPort: string) {
-		extensionStore.serverPort = serverPort;
-		extensionStore.gatewayPort = gatewayPort;
+		S.Extension.serverPort = serverPort;
+		S.Extension.gatewayPort = gatewayPort;
 
 		dispatcher.init(`http://127.0.0.1:${serverPort}`);
 		S.Common.gatewaySet(`http://127.0.0.1:${gatewayPort}`);

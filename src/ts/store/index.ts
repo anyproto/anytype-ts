@@ -6,8 +6,7 @@ import { Block } from './block';
 import { Menu } from './menu';
 import { Popup } from './popup';
 import { Notification } from './notification';
-
-import { extensionStore } from './extension';
+import { Extension } from './extension';
 
 export {
 	Common,
@@ -18,6 +17,5 @@ export {
 	Menu,
 	Popup,
 	Notification,
-
-	extensionStore,
+	Extension,
 };

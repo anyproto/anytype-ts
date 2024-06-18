@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
 import { I, C, M, S, translate, UtilObject, UtilData, UtilSpace } from 'Lib';
-import { extensionStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
@@ -35,7 +34,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	render () {
 		const { isLoading, error, object } = this.state;
-		const { html } = extensionStore;
+		const { html } = S.Extension;
 		const { space } = S.Common;
 		const children = S.Block.getChildren(ROOT_ID, ROOT_ID, it => !it.isFile());
 
@@ -116,7 +115,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	initBlocks () {
-		const { html, tabUrl } = extensionStore;
+		const { html, tabUrl } = S.Extension;
 
 		if (html == this.html) {
 			return;
@@ -187,7 +186,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onSave () {
-		const { html, tabUrl } = extensionStore;
+		const { html, tabUrl } = S.Extension;
 		const { object } = this.state;
 
 		if (!object) {
