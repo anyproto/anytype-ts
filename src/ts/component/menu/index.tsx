@@ -22,9 +22,6 @@ import MenuSearchObject from './search/object';
 import MenuPreviewObject from './preview/object';
 import MenuPreviewLatex from './preview/latex';
 
-import MenuThreadList from './thread/list';
-import MenuThreadStatus from './thread/status';
-
 import MenuBlockContext from './block/context';
 import MenuBlockStyle from './block/style';
 import MenuBlockAdd from './block/add';
@@ -78,6 +75,9 @@ import MenuDataviewTemplateList from './dataview/template/list';
 
 import MenuQuickCapture from './quickCapture';
 
+import MenuSyncStatus from './syncStatus';
+import MenuSyncStatusInfo from './syncStatus/info';
+
 interface State {
 	tab: string;
 };
@@ -101,9 +101,6 @@ const Components: any = {
 
 	previewObject:			 MenuPreviewObject,
 	previewLatex:			 MenuPreviewLatex,
-
-	threadList:				 MenuThreadList,
-	threadStatus:			 MenuThreadStatus,
 	
 	blockContext:			 MenuBlockContext,
 	blockAction:			 MenuBlockAction,
@@ -157,6 +154,9 @@ const Components: any = {
 	dataviewTemplateList:	 MenuDataviewTemplateList,
 
 	quickCapture: 			 MenuQuickCapture,
+
+	syncStatus:				 MenuSyncStatus,
+	syncStatusInfo:			 MenuSyncStatusInfo,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {

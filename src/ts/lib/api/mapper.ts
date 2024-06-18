@@ -1069,6 +1069,8 @@ export const Mapper = {
 			if (v == V.PROCESSUPDATE)				 t = 'ProcessUpdate';
 			if (v == V.PROCESSDONE)					 t = 'ProcessDone';
 
+			if (v == V.SPACESYNCSTATUSUPDATE)		 t = 'SpaceSyncStatusUpdate';
+
 			return t;
 		},
 
@@ -1515,6 +1517,14 @@ export const Mapper = {
 			};
 		},
 
+		SpaceSyncStatusUpdate: (obj: Events.Event.Space.SyncStatus.Update) => {
+			return {
+				error: obj.getError(),
+				network: obj.getNetwork(),
+				status: obj.getStatus(),
+				syncingCounter: obj.getSyncingobjectscounter()
+			};
+		},
 	},
 
 };
