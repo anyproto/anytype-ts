@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Cell, DropTarget, SelectionTarget, ObjectCover } from 'Component';
 import { I, S, UtilData, UtilObject, Relation, keyboard } from 'Lib';
-import { recordStore } from 'Store';
 
 interface Props extends I.ViewComponent {
 	style?: any;
@@ -29,7 +28,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
 		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout), UtilData.cardSizeClass(cardSize) ];
-		const subId = recordStore.getSubId(rootId, block.id);
+		const subId = S.Record.getSubId(rootId, block.id);
 		const cover = getCoverObject(recordId);
 
 		if (coverFit) {
@@ -166,7 +165,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
 		const { onCellClick, recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
-		const relation = recordStore.getRelationByKey(vr.relationKey);
+		const relation = S.Record.getRelationByKey(vr.relationKey);
 
 		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
 			return;

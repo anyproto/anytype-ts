@@ -2,9 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
-import { recordStore, detailStore } from 'Store';
 import { Icon, LoadMore } from 'Component';
-import { I, translate, UtilCommon } from 'Lib';
+import { I, S, translate, UtilCommon } from 'Lib';
 import Row from './list/row';
 
 const HEIGHT = 34;
@@ -24,8 +23,8 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		const { rootId, block, className, isPopup, isInline, getView, getKeys, onRecordAdd, getLimit, getEmpty, getRecords } = this.props;
 		const view = getView();
 		const records = getRecords();
-		const subId = recordStore.getSubId(rootId, block.id);
-		const { offset, total } = recordStore.getMeta(subId, '');
+		const subId = S.Record.getSubId(rootId, block.id);
+		const { offset, total } = S.Record.getMeta(subId, '');
 		const limit = getLimit();
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
@@ -130,14 +129,14 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 
 	loadMoreRows ({ startIndex, stopIndex }) {
 		const { rootId, block, loadData, getView, getLimit } = this.props;
-		const subId = recordStore.getSubId(rootId, block.id);
-		let { offset } = recordStore.getMeta(subId, '');
+		const subId = S.Record.getSubId(rootId, block.id);
+		let { offset } = S.Record.getMeta(subId, '');
 		const view = getView();
 
         return new Promise((resolve, reject) => {
 			offset += getLimit();
 			loadData(view.id, offset, false, resolve);
-			recordStore.metaSet(subId, '', { offset });
+			S.Record.metaSet(subId, '', { offset });
 		});
 	};
 

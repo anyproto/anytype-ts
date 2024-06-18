@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
-import { I, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate, analytics } from 'Lib';
-import { menuStore, recordStore } from 'Store';
+import { I, S, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate } from 'Lib';
+import { menuStore } from 'Store';
 const Constant = require('json/constant.json');
 
 interface State {
@@ -59,7 +59,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return null;
 			};
 
-			const type = recordStore.getTypeById(item.type);
+			const type = S.Record.getTypeById(item.type);
 			const name = <ObjectName object={item} />;
 
 			let content = null;
@@ -324,7 +324,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { data } = param;
 
-		return (data.types || []).map(id => recordStore.getTypeById(id)).filter(it => it);
+		return (data.types || []).map(id => S.Record.getTypeById(id)).filter(it => it);
 	};
 
 	getTypeNames (): string {

@@ -1,7 +1,7 @@
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { I, M, Storage, UtilCommon, UtilObject, Renderer, UtilRouter } from 'Lib';
-import { recordStore } from 'Store';
+import { I, M, S, Storage, UtilCommon, UtilObject, Renderer, UtilRouter } from 'Lib';
+
 const Constant = require('json/constant.json');
 
 interface Filter {
@@ -179,9 +179,9 @@ class CommonStore {
 	get type(): string {
 		const key = String(this.defaultType || Storage.get('defaultType') || Constant.default.typeKey);
 
-		let type = recordStore.getTypeByKey(key);
+		let type = S.Record.getTypeByKey(key);
 		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
-			type = recordStore.getTypeByKey(Constant.default.typeKey);
+			type = S.Record.getTypeByKey(Constant.default.typeKey);
 		};
 
 		return type ? type.id : '';

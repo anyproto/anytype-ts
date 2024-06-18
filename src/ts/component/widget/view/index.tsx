@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Label, Button } from 'Component';
-import { blockStore, recordStore, detailStore } from 'Store';
-import { Dataview, I, C, M, UtilCommon, Relation, keyboard, translate, UtilRouter, UtilObject } from 'Lib';
+import { blockStore, detailStore } from 'Store';
+import { Dataview, I, C, M, S, UtilCommon, Relation, keyboard, translate, UtilRouter, UtilObject } from 'Lib';
 
 import WidgetViewList from './list';
 import WidgetViewGallery from './gallery';
@@ -46,7 +46,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const subId = this.getSubId();
 		const records = this.getRecordIds();
 		const length = records.length;
-		const views = recordStore.getViews(rootId, Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
+		const views = S.Record.getViews(rootId, Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
 		const viewType = this.getViewType();
 		const cn = [ 'innerWrap' ];
 		const showEmpty = ![ I.ViewType.Calendar, I.ViewType.Board ].includes(viewType);
@@ -191,15 +191,15 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	updateViews () {
 		const { block } = this.props;
 		const { targetBlockId } = block.content;
-		const views = UtilCommon.objectCopy(recordStore.getViews(targetBlockId, Constant.blockId.dataview)).map(it => new M.View(it));
+		const views = UtilCommon.objectCopy(S.Record.getViews(targetBlockId, Constant.blockId.dataview)).map(it => new M.View(it));
 		const rootId = this.getRootId();
 
 		if (!views.length || (targetBlockId != keyboard.getRootId())) {
 			return;
 		};
 
-		recordStore.viewsClear(rootId, Constant.blockId.dataview);
-		recordStore.viewsSet(rootId, Constant.blockId.dataview, views);
+		S.Record.viewsClear(rootId, Constant.blockId.dataview);
+		S.Record.viewsSet(rootId, Constant.blockId.dataview, views);
 
 		if (this.refSelect) {
 			this.refSelect.setOptions(views);
@@ -207,7 +207,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	getSubId () {
-		return recordStore.getSubId(this.getRootId(), Constant.blockId.dataview);
+		return S.Record.getSubId(this.getRootId(), Constant.blockId.dataview);
 	};
 
 	getTraceId = (): string => {
@@ -224,7 +224,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	load (viewId: string) {
 		if (this.refChild && this.refChild.load) {
 			this.refChild.load();
-			recordStore.metaSet(this.getSubId(), '', { viewId });
+			S.Record.metaSet(this.getSubId(), '', { viewId });
 			return;
 		};
 
@@ -311,8 +311,8 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
-		const records = recordStore.getRecordIds(subId, '');
-		const views = recordStore.getViews(rootId, Constant.blockId.dataview);
+		const records = S.Record.getRecordIds(subId, '');
+		const views = S.Record.getViews(rootId, Constant.blockId.dataview);
 		const viewId = parent.content.viewId || (views.length ? views[0].id : '');
 		const ret = Dataview.applyObjectOrder(rootId, Constant.blockId.dataview, viewId, '', UtilCommon.objectCopy(records));
 

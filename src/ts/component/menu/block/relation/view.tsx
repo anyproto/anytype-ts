@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, S, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard, translate } from 'Lib';
-import { blockStore, detailStore, recordStore, menuStore } from 'Store';
+import { blockStore, detailStore, menuStore } from 'Store';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -152,13 +152,13 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		const object = detailStore.get(rootId, rootId);
 		const isTemplate = UtilObject.isTemplate(object.type);
-		const type = recordStore.getTypeById(isTemplate ? object.targetObjectType : object.type);
+		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 		const featured = Relation.getArrayValue(object.featuredRelations);
-		const relations = recordStore.getObjectRelations(rootId, rootId);
+		const relations = S.Record.getObjectRelations(rootId, rootId);
 		const relationKeys = relations.map(it => it.relationKey);
 		const readonly = this.isReadonly();
 		const typeRelations = (type ? type.recommendedRelations || [] : []).map(it => ({ 
-			...recordStore.getRelationById(it), 
+			...S.Record.getRelationById(it), 
 			scope: I.RelationScope.Type,
 		})).filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
@@ -250,7 +250,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: recordStore.getObjectRelationKeys(rootId, rootId),
+				skipKeys: S.Record.getObjectRelationKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
@@ -262,7 +262,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId, readonly } = data;
-		const relation = recordStore.getRelationById(item.id);
+		const relation = S.Record.getRelationById(item.id);
 
 		if (!relation) {
 			return;
@@ -298,7 +298,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { readonly, rootId } = data;
-		const relation = recordStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation || readonly || relation.isReadonlyValue) {
 			return;
@@ -316,7 +316,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const relation = recordStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 

@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
 import { C, I, S, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace, keyboard } from 'Lib';
-import { blockStore, detailStore, menuStore, recordStore } from 'Store';
+import { blockStore, detailStore, menuStore } from 'Store';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -366,7 +366,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 			const view = Dataview.getView(rootId, Constant.blockId.dataview, viewId);
 			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id, viewId);
-			const type = recordStore.getTypeById(typeId);
+			const type = S.Record.getTypeById(typeId);
 
 			if (!view || !type) {
 				return;
@@ -381,7 +381,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			switch (targetBlockId) {
 				default:
 				case Constant.widgetId.favorite: {
-					const type = recordStore.getTypeById(S.Common.type);
+					const type = S.Record.getTypeById(S.Common.type);
 
 					if (!type) {
 						return;
@@ -578,7 +578,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		const { targetBlockId } = child.content;
 		const space = UtilSpace.getSpaceview();
-		const templateType = recordStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
@@ -723,7 +723,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (UtilObject.isSetLayout(object.layout)) {
 			const rootId = this.getRootId();
 			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id);
-			const type = recordStore.getTypeById(typeId);
+			const type = S.Record.getTypeById(typeId);
 
 			if (type && UtilObject.isFileLayout(type.recommendedLayout)) {
 				return false;

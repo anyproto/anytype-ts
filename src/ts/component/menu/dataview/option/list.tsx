@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Tag, Filter } from 'Component';
 import { I, C, S, UtilCommon, UtilMenu, keyboard, Relation, translate } from 'Lib';
-import { menuStore, recordStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -369,7 +369,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const value = Relation.getArrayValue(data.value);
 		const ret = [];
 
-		let items = Relation.getOptions(recordStore.getRecordIds(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
+		let items = Relation.getOptions(S.Record.getRecordIds(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
 		let check = [];
 
 		items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);

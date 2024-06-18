@@ -1,5 +1,5 @@
 import { I, C, S, keyboard, history as historyPopup, Renderer, UtilData, translate, UtilRouter, analytics } from 'Lib';
-import { blockStore, popupStore, detailStore, recordStore } from 'Store';
+import { blockStore, popupStore, detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -149,7 +149,7 @@ class UtilObject {
 		};
 
 		if (details.type) {
-			const type = recordStore.getTypeById(details.type);
+			const type = S.Record.getTypeById(details.type);
 			if (type) {
 				typeKey = type.uniqueKey;
 
@@ -277,7 +277,7 @@ class UtilObject {
 	};
 
 	isTemplate (type: string): boolean {
-		const templateType = recordStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 		return templateType ? type == templateType.id : false;
 	};
 
@@ -366,7 +366,7 @@ class UtilObject {
 	};
 
 	isAllowedTemplate (typeId): boolean {
-		const type = recordStore.getTypeById(typeId);
+		const type = S.Record.getTypeById(typeId);
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
 	};
 

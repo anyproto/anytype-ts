@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable } from 'Component';
-import { I, M, Action, UtilData, UtilObject, focus, keyboard, Relation, translate, UtilSpace } from 'Lib';
-import { blockStore, detailStore, recordStore } from 'Store';
+import { I, M, S, Action, UtilData, UtilObject, focus, keyboard, Relation, translate, UtilSpace } from 'Lib';
+import { blockStore, detailStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface Props {
@@ -277,12 +278,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		switch (object.layout) {
 			case I.ObjectLayout.Type: {
-				sources = recordStore.getTypes().map(it => it.sourceObject);
+				sources = S.Record.getTypes().map(it => it.sourceObject);
 				break;
 			};
 
 			case I.ObjectLayout.Relation: {
-				sources = recordStore.getRelations().map(it => it.sourceObject);
+				sources = S.Record.getRelations().map(it => it.sourceObject);
 				break;
 			};
 		};

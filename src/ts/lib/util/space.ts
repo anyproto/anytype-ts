@@ -1,5 +1,5 @@
 import { I, S, UtilCommon, UtilData, UtilObject, Storage, translate } from 'Lib';
-import { authStore, blockStore, detailStore, recordStore } from 'Store';
+import { authStore, blockStore, detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -78,7 +78,7 @@ class UtilSpace {
 		const subId = Constant.subId.space;
 		const { spaceview } = blockStore;
 
-		let items = recordStore.getRecords(subId, UtilData.spaceRelationKeys());
+		let items = S.Record.getRecords(subId, UtilData.spaceRelationKeys());
 		items = items.filter(it => it.isAccountActive && it.isLocalOk);
 		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));
 
@@ -96,11 +96,11 @@ class UtilSpace {
 	};
 
 	getSpaceviewBySpaceId (id: string) {
-		return recordStore.getRecords(Constant.subId.space).find(it => it.targetSpaceId == id);
+		return S.Record.getRecords(Constant.subId.space).find(it => it.targetSpaceId == id);
 	};
 
 	getParticipantsList (statuses?: I.ParticipantStatus[]) {
-		const ret = recordStore.getRecords(Constant.subId.participant);
+		const ret = S.Record.getRecords(Constant.subId.participant);
 		return statuses ? ret.filter(it => statuses.includes(it.status)) : ret;
 	};
 

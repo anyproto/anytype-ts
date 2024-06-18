@@ -2,8 +2,8 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
-import { blockStore, recordStore, detailStore } from 'Store';
-import { I, keyboard, Action } from 'Lib';
+import { blockStore, detailStore } from 'Store';
+import { I, S, keyboard, Action } from 'Lib';
 import { SortableContainer } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import WidgetListItem from './item';
@@ -31,7 +31,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 
 	render (): React.ReactNode {
 		const { parent, block, isPreview, subId } = this.props;
-		const { total } = recordStore.getMeta(subId, '');
+		const { total } = S.Record.getMeta(subId, '');
 		const items = this.getItems();
 		const length = items.length;
 		const isCompact = this.isCompact();

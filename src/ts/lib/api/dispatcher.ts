@@ -5,7 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { authStore, blockStore, detailStore, recordStore, notificationStore } from 'Store';
+import { authStore, blockStore, detailStore, notificationStore } from 'Store';
 import { 
 	S, UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage, UtilSpace, UtilData, keyboard 
 } from 'Lib';
@@ -177,12 +177,12 @@ class Dispatcher {
 				};
 
 				case 'ObjectRelationsAmend': {
-					recordStore.relationsSet(rootId, mapped.id, mapped.relations);
+					S.Record.relationsSet(rootId, mapped.id, mapped.relations);
 					break;
 				};
 
 				case 'ObjectRelationsRemove': {
-					recordStore.relationListDelete(rootId, mapped.id, mapped.relationKeys);
+					S.Record.relationListDelete(rootId, mapped.id, mapped.relationKeys);
 					break;
 				};
 
@@ -228,8 +228,8 @@ class Dispatcher {
 
 					for (const block of blocks) {
 						if (block.type == I.BlockType.Dataview) {
-							recordStore.relationsSet(rootId, block.id, block.content.relationLinks);
-							recordStore.viewsSet(rootId, block.id, block.content.views);
+							S.Record.relationsSet(rootId, block.id, block.content.relationLinks);
+							S.Record.viewsSet(rootId, block.id, block.content.views);
 						};
 
 						blockStore.add(rootId, new M.Block(block));
@@ -581,7 +581,7 @@ class Dispatcher {
 						break;
 					};
 
-					recordStore.viewAdd(rootId, id, view);
+					S.Record.viewAdd(rootId, id, view);
 					blockStore.updateWidgetViews(rootId);
 					break;
 				};
@@ -594,7 +594,7 @@ class Dispatcher {
 						break;
 					};
 
-					let view = recordStore.getView(rootId, id, viewId);
+					let view = S.Record.getView(rootId, id, viewId);
 					let updateData = false;
 
 					if (fields !== null) {
@@ -691,7 +691,7 @@ class Dispatcher {
 						view[key.field] = list;
 					});
 
-					recordStore.viewUpdate(rootId, id, view);
+					S.Record.viewUpdate(rootId, id, view);
 					blockStore.updateWidgetViews(rootId);
 
 					if (updateData) {
@@ -703,17 +703,17 @@ class Dispatcher {
 
 				case 'BlockDataviewViewDelete': {
 					const { id, viewId } = mapped;
-					const subId = recordStore.getSubId(rootId, id);
+					const subId = S.Record.getSubId(rootId, id);
 
-					let current = recordStore.getMeta(subId, '').viewId;
+					let current = S.Record.getMeta(subId, '').viewId;
 					
-					recordStore.viewDelete(rootId, id, viewId);
+					S.Record.viewDelete(rootId, id, viewId);
 
 					if (viewId == current) {
-						const views = recordStore.getViews(rootId, id);
+						const views = S.Record.getViews(rootId, id);
 
 						current = views.length ? views[views.length - 1].id : '';
-						recordStore.metaSet(subId, '', { viewId: current });
+						S.Record.metaSet(subId, '', { viewId: current });
 					};
 
 					blockStore.updateWidgetViews(rootId);
@@ -723,7 +723,7 @@ class Dispatcher {
 				case 'BlockDataviewViewOrder': {
 					const { id, viewIds } = mapped;
 
-					recordStore.viewsSort(rootId, id, viewIds);
+					S.Record.viewsSort(rootId, id, viewIds);
 					blockStore.updateWidgetViews(rootId);
 					break; 
 				};
@@ -731,14 +731,14 @@ class Dispatcher {
 				case 'BlockDataviewRelationDelete': {
 					const { id, relationKeys } = mapped;
 
-					recordStore.relationListDelete(rootId, id, relationKeys);
+					S.Record.relationListDelete(rootId, id, relationKeys);
 					break;
 				};
 
 				case 'BlockDataviewRelationSet': {
 					const { id, relations } = mapped;
 
-					recordStore.relationsSet(rootId, id, relations);
+					S.Record.relationsSet(rootId, id, relations);
 					break;
 				};
 
@@ -846,7 +846,7 @@ class Dispatcher {
 					const [ subId, dep ] = mapped.subId.split('/');
 
 					if (!dep) {
-						recordStore.recordDelete(subId, '', id);
+						S.Record.recordDelete(subId, '', id);
 						detailStore.delete(subId, id);
 					};
 					break;
@@ -863,7 +863,7 @@ class Dispatcher {
 					const [ subId, dep ] = mapped.subId.split('/');
 					
 					if (!dep) {
-						recordStore.metaSet(subId, '', { total: mapped.total });
+						S.Record.metaSet(subId, '', { total: mapped.total });
 					};
 					break;
 				};
@@ -873,9 +873,9 @@ class Dispatcher {
 					const [ rootId, blockId ] = mapped.subId.split('-');
 
 					if (remove) {
-						recordStore.groupsRemove(rootId, blockId, [ group.id ]);
+						S.Record.groupsRemove(rootId, blockId, [ group.id ]);
 					} else {
-						recordStore.groupsAdd(rootId, blockId, [ group ]);
+						S.Record.groupsAdd(rootId, blockId, [ group ]);
 					};
 
 					blockStore.updateWidgetData(rootId);
@@ -1026,7 +1026,7 @@ class Dispatcher {
 			return;
 		};
 
-		const records = recordStore.getRecordIds(sid, '');
+		const records = S.Record.getRecordIds(sid, '');
 		const newIndex = afterId ? records.indexOf(afterId) + 1 : 0;
 
 		let oldIndex = records.indexOf(id);
@@ -1041,7 +1041,7 @@ class Dispatcher {
 		};
 
 		if (oldIndex !== newIndex) {
-			recordStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
+			S.Record.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
 		};
 	};
 
@@ -1068,7 +1068,7 @@ class Dispatcher {
 			analytics.removeContext();
 		};
 
-		recordStore.relationsSet(contextId, rootId, relationLinks);
+		S.Record.relationsSet(contextId, rootId, relationLinks);
 		detailStore.set(contextId, details);
 		blockStore.restrictionsSet(contextId, restrictions);
 		blockStore.participantsSet(contextId, participants);
@@ -1082,8 +1082,8 @@ class Dispatcher {
 
 		const blocks = objectView.blocks.map(it => {
 			if (it.type == I.BlockType.Dataview) {
-				recordStore.relationsSet(contextId, it.id, it.content.relationLinks);
-				recordStore.viewsSet(contextId, it.id, it.content.views);
+				S.Record.relationsSet(contextId, it.id, it.content.relationLinks);
+				S.Record.viewsSet(contextId, it.id, it.content.views);
 			};
 
 			structure.push({ id: it.id, childrenIds: it.childrenIds });

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
 import { I, C, S, analytics, keyboard, UtilData, Action, UtilCommon, translate, UtilSpace } from 'Lib';
-import { detailStore, menuStore, recordStore } from 'Store';
+import { detailStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -464,7 +464,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 
 	getLibrarySources () {
-		return recordStore.getTypes().filter(it => (it.spaceId == S.Common.space)).map(it => it.sourceObject).filter(it => it);
+		return S.Record.getTypes().filter(it => (it.spaceId == S.Common.space)).map(it => it.sourceObject).filter(it => it);
 	};
 
 	resize () {

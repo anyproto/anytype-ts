@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
 import { C, I, S, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard,focus, translate, analytics, Action, UtilSpace, Relation, Mark } from 'Lib';
-import { recordStore, popupStore, menuStore, detailStore } from 'Store';
+import { popupStore, menuStore, detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -67,7 +67,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				if ([ 'name', 'type' ].includes(relationKey)) {
 					return '';
 				} else {
-					const relation = recordStore.getRelationByKey(relationKey);
+					const relation = S.Record.getRelationByKey(relationKey);
 					key = relation ? <div className="key">{relation.name}:</div> : '';
 				};
 			};
@@ -518,7 +518,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { space } = S.Common;
 		const { backlink } = this.state;
 		const filter = this.getFilter();
-		const templateType = recordStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
@@ -598,7 +598,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		items = items.map(it => {
-			const type = recordStore.getTypeById(it.type);
+			const type = S.Record.getTypeById(it.type);
 
 			return { 
 				...it,

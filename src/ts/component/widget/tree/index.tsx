@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Label } from 'Component';
 import { S, analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon, translate } from 'Lib';
-import { blockStore, recordStore, detailStore } from 'Store';
+import { blockStore, detailStore } from 'Store';
 import Item from './item';
 
 interface State {
@@ -189,7 +189,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	getDeleted () {
-		const deleted = recordStore.getRecordIds(Constant.subId.deleted, '');
+		const deleted = S.Record.getRecordIds(Constant.subId.deleted, '');
 		const length = deleted.length;
 
 		this.deletedIds = new Set(deleted);
@@ -229,7 +229,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		if (isSystemTarget()) {
 			const subId = this.getSubId(targetBlockId);
 			
-			let records = recordStore.getRecordIds(subId, '');
+			let records = S.Record.getRecordIds(subId, '');
 			if (targetBlockId == Constant.widgetId.favorite) {
 				records = sortFavorite(records);
 			};
@@ -299,7 +299,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 	// return the child nodes details for the given subId
 	getChildNodesDetails (nodeId: string): I.WidgetTreeDetails[] {
-		return recordStore.getRecords(this.getSubId(nodeId), [ 'id', 'layout', 'links' ], true).map(it => this.mapper(it));
+		return S.Record.getRecords(this.getSubId(nodeId), [ 'id', 'layout', 'links' ], true).map(it => this.mapper(it));
 	};
 
 	mapper (item) {
@@ -345,7 +345,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const { block } = this.props;
 		const { targetBlockId } = block.content;
 
-		return recordStore.getSubId(this.getSubKey(), nodeId || targetBlockId);
+		return S.Record.getSubId(this.getSubKey(), nodeId || targetBlockId);
 	};
 
 	// a composite key for the tree node in the form rootId-parentId-Id-depth

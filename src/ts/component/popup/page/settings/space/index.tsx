@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, ObjectName } from 'Component';
 import { I, C, S, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, authStore, recordStore, detailStore, popupStore } from 'Store';
+import { menuStore, authStore, detailStore, popupStore } from 'Store';
 const Constant = require('json/constant.json');
 
 interface State {
@@ -49,7 +49,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const space = UtilSpace.getSpaceview();
 		const creator = detailStore.get(Constant.subId.space, space.creator);
 		const home = UtilSpace.getDashboard();
-		const type = recordStore.getTypeById(S.Common.type);
+		const type = S.Record.getTypeById(S.Common.type);
 		const personalSpace = UtilSpace.getSpaceviewBySpaceId(accountSpaceId);
 		const usageCn = [ 'item' ];
 

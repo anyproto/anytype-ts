@@ -2,8 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, UtilSpace, UtilRouter, translate, UtilMenu, analytics } from 'Lib';
-import { recordStore, detailStore, authStore } from 'Store';
+import { I, S, UtilSpace, UtilRouter, translate, UtilMenu, analytics } from 'Lib';
+import { detailStore, authStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<I.PopupSettings> {
@@ -64,7 +65,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	};
 
 	getItems () {
-		const items = recordStore.getRecords(Constant.subId.space);
+		const items = S.Record.getRecords(Constant.subId.space);
 
 		return items.filter(it => !it.isAccountDeleted && it.isLocalOk).map(it => {
 			it.participant = UtilSpace.getMyParticipant(it.targetSpaceId) || {};

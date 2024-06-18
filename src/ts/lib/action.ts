@@ -1,5 +1,5 @@
 import { I, C, S, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
-import { authStore, blockStore, detailStore, recordStore, popupStore, menuStore } from 'Store';
+import { authStore, blockStore, detailStore, popupStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -39,8 +39,8 @@ class Action {
 			return;
 		};
 
-		recordStore.metaClear(rootId, '');
-		recordStore.recordsClear(rootId, '');
+		S.Record.metaClear(rootId, '');
+		S.Record.recordsClear(rootId, '');
 		detailStore.clear(rootId);
 
 		C.ObjectSearchUnsubscribe([ rootId ]);
@@ -51,12 +51,12 @@ class Action {
 			return;
 		};
 
-		const subId = recordStore.getSubId(rootId, blockId);
+		const subId = S.Record.getSubId(rootId, blockId);
 
-		recordStore.metaClear(subId, '');
-		recordStore.recordsClear(subId, '');
-		recordStore.recordsClear(subId + '/dep', '');
-		recordStore.viewsClear(rootId, blockId);
+		S.Record.metaClear(subId, '');
+		S.Record.recordsClear(subId, '');
+		S.Record.recordsClear(subId + '/dep', '');
+		S.Record.viewsClear(rootId, blockId);
 
 		detailStore.clear(subId);
 
@@ -538,7 +538,7 @@ class Action {
 			const element = blockStore.getMapElement(rootId, it.id);
 
 			if (it.type == I.BlockType.Dataview) {
-				it.content.views = recordStore.getViews(rootId, it.id);
+				it.content.views = S.Record.getViews(rootId, it.id);
 			};
 
 			it.childrenIds = element.childrenIds;

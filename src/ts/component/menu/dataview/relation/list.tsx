@@ -6,7 +6,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'Component';
 import { I, C, S, Relation, keyboard, Dataview, translate } from 'Lib';
-import { menuStore, recordStore, blockStore } from 'Store';
+import { menuStore, blockStore } from 'Store';
 const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
@@ -268,7 +268,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { param, getId } = this.props;
 		const { data } = param;
 		const { readonly } = data;
-		const relation = recordStore.getRelationByKey(item.relationKey);
+		const relation = S.Record.getRelationByKey(item.relationKey);
 
 		if (!relation || readonly) {
 			return;
@@ -326,7 +326,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		return Dataview.viewGetRelations(rootId, blockId, view).map((it: any) => ({ 
 			...it,
 			id: it.relationKey,
-			relation: recordStore.getRelationByKey(it.relationKey) || {},
+			relation: S.Record.getRelationByKey(it.relationKey) || {},
 		}));
 	};
 

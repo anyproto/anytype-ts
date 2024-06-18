@@ -1,9 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon, UtilData, UtilObject } from 'Lib';
+import { I, C, S, analytics, keyboard, Key, translate, Dataview, UtilCommon } from 'Lib';
 import { InputWithLabel, MenuItemVertical } from 'Component';
-import { blockStore, recordStore, detailStore, menuStore } from 'Store';
+import { blockStore, menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const MenuViewSettings = observer(class MenuViewSettings extends React.Component<I.Menu> {
@@ -222,16 +223,16 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const { id, type } = this.param;
-		const views = recordStore.getViews(rootId, blockId);
+		const views = S.Record.getViews(rootId, blockId);
 		const view = data.view.get();
 		const isReadonly = this.isReadonly();
 		const isBoard = type == I.ViewType.Board;
 		const sortCnt = view.sorts.length;
-		const filters = view.filters.filter(it => recordStore.getRelationByKey(it.relationKey));
+		const filters = view.filters.filter(it => S.Record.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
 
 		const relations = view.getVisibleRelations().map((it) => {
-			const relation = recordStore.getRelationByKey(it.relationKey) || {};
+			const relation = S.Record.getRelationByKey(it.relationKey) || {};
 			return relation ? UtilCommon.shorten(relation.name || '', 16) : '';
 		}).filter(it => it);
 
@@ -352,7 +353,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				};
 
 				case 'remove': {
-					const views = recordStore.getViews(rootId, blockId);
+					const views = S.Record.getViews(rootId, blockId);
 					const idx = views.findIndex(it => it.id == view.id);
 					const filtered = views.filter(it => it.id != view.id);
 					

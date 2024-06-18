@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
 import { I, C, S, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate } from 'Lib';
-import { detailStore, recordStore } from 'Store';
+import { detailStore } from 'Store';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -36,10 +36,10 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
-		const subIdType = recordStore.getSubId(rootId, 'type');
-		const totalType = recordStore.getMeta(subIdType, '').total;
-		const subIdObject = recordStore.getSubId(rootId, 'object');
-		const totalObject = recordStore.getMeta(subIdObject, '').total;
+		const subIdType = S.Record.getSubId(rootId, 'type');
+		const totalType = S.Record.getMeta(subIdType, '').total;
+		const subIdObject = S.Record.getSubId(rootId, 'object');
+		const totalObject = S.Record.getMeta(subIdObject, '').total;
 		const columnsObject: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),

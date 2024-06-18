@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
 import { I, S, keyboard, UtilCommon, UtilData, UtilObject, Mark, translate } from 'Lib';
-import { recordStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 const Constant = require('json/constant.json');
@@ -49,7 +48,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				return null;
 			};			
 
-			const type = recordStore.getTypeById(item.type);
+			const type = S.Record.getTypeById(item.type);
 			const cn = [];
 
 			let content = null;

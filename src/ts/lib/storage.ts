@@ -1,5 +1,4 @@
 import { I, S, UtilCommon, UtilSpace } from 'Lib';
-import { recordStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -277,7 +276,7 @@ class Storage {
 		];
 
 		for (const key of keys) {
-			const type = recordStore.getTypeByKey(key);
+			const type = S.Record.getTypeByKey(key);
 			if (type) {
 				list.push(type.id);
 			};

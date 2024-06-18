@@ -9,7 +9,7 @@ enum KeyMapType {
 	Type = 'type',
 };
 
-class DbStore {
+class RecordStore {
 
     public relationMap: Map<string, any[]> = observable(new Map());
 	public relationKeyMap: Map<string, Map<string, string>> = new Map();
@@ -379,4 +379,4 @@ class DbStore {
 
 };
 
- export const recordStore: DbStore = new DbStore();
+ export const Record: RecordStore = new RecordStore();

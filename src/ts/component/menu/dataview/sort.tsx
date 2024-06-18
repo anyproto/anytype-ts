@@ -6,7 +6,8 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'Component';
 import { I, C, S, Relation, UtilCommon, keyboard, analytics, translate } from 'Lib';
-import { menuStore, recordStore, blockStore } from 'Store';
+import { menuStore, blockStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const HEIGHT = 48;
@@ -57,7 +58,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation: any = recordStore.getRelationByKey(item.relationKey) || {};
+			const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
 			return (
 				<div 
 					id={'item-' + item.id} 

@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
 import { I, M, C, S, UtilData, UtilCommon, Action, UtilSpace, keyboard, UtilRouter, translate, UtilObject } from 'Lib';
-import { blockStore, detailStore, recordStore, menuStore } from 'Store';
+import { blockStore, detailStore, menuStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -246,7 +246,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			keyboard.shortcut(`${cmd}+a`, e, () => {
 				e.preventDefault();
 
-				const records = recordStore.getRecordIds(recordStore.getSubId(rootId, Constant.blockId.dataview), '');
+				const records = S.Record.getRecordIds(S.Record.getSubId(rootId, Constant.blockId.dataview), '');
 				selection.set(I.SelectType.Record, records);
 			});
 

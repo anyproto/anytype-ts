@@ -1,6 +1,5 @@
 import * as amplitude from 'amplitude-js';
 import { I, C, S, UtilCommon, Storage, UtilSpace, Relation } from 'Lib';
-import { recordStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -559,9 +558,9 @@ class Analytics {
 	};
 
 	typeMapper (id: string): string {
-		let object = recordStore.getTypeById(id);
+		let object = S.Record.getTypeById(id);
 		if (!object) {
-			object = recordStore.getTypeByKey(id);
+			object = S.Record.getTypeByKey(id);
 		};
 
 		if (!object) {
@@ -576,7 +575,7 @@ class Analytics {
 	};
 
 	relationMapper (key: string) {
-		const object = recordStore.getRelationByKey(key);
+		const object = S.Record.getRelationByKey(key);
 		if (!object) {
 			return '';
 		};

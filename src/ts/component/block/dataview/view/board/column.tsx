@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore } from 'Component';
-import { I, Relation, UtilData, UtilObject, UtilCommon, translate, Dataview } from 'Lib';
-import { recordStore, detailStore, menuStore } from 'Store';
+import { I, S, UtilData, UtilObject, UtilCommon, translate, Dataview } from 'Lib';
+import { detailStore, menuStore } from 'Store';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
 
@@ -38,12 +38,12 @@ const Column = observer(class Column extends React.Component<Props> {
 		const target = getTarget();
 		const subId = getSubId();
 		const items = this.getItems();
-		const { total } = recordStore.getMeta(subId, '');
+		const { total } = S.Record.getMeta(subId, '');
 		const limit = getLimit();
 		const head = {};
 		const cn = [ 'column' ];
 		const cnbg = [];
-		const group = recordStore.getGroup(rootId, block.id, id);
+		const group = S.Record.getGroup(rootId, block.id, id);
 		const order = (block.content.groupOrder || []).find(it => it.viewId == view.id);
 		const orderGroup = (order?.groups || []).find(it => it.groupId == id) || {};
 		const isAllowedObject = this.props.isAllowedObject();
@@ -143,7 +143,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			return;
 		};
 
-		const relation = recordStore.getRelationByKey(view.groupRelationKey);
+		const relation = S.Record.getRelationByKey(view.groupRelationKey);
 		if (!relation) {
 			return;
 		};
@@ -183,7 +183,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		}, () => {
-			recordStore.recordsSet(subId, '', applyObjectOrder(id, recordStore.getRecordIds(subId, '')));
+			S.Record.recordsSet(subId, '', applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -193,13 +193,13 @@ const Column = observer(class Column extends React.Component<Props> {
 
 	clear () {
 		const { getSubId } = this.props;
-		recordStore.recordsClear(getSubId(), '');
+		S.Record.recordsClear(getSubId(), '');
 	};
 
 	getItems () {
 		const { id, getSubId, applyObjectOrder } = this.props;
 
-		return applyObjectOrder(id, UtilCommon.objectCopy(recordStore.getRecordIds(getSubId(), ''))).map(id => ({ id }));
+		return applyObjectOrder(id, UtilCommon.objectCopy(S.Record.getRecordIds(getSubId(), ''))).map(id => ({ id }));
 	};
 
 	onLoadMore () {

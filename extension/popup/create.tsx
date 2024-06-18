@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon } from 'Component';
 import { I, C, S, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage, UtilSpace } from 'Lib';
-import { recordStore, detailStore, menuStore, extensionStore } from 'Store';
+import { detailStore, menuStore, extensionStore } from 'Store';
 import Util from '../lib/util';
 
 interface State {
@@ -237,7 +237,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getObjects (subId: string) {
-		return recordStore.getRecords(subId);
+		return S.Record.getRecords(subId);
 	};
 
 	getSpaces () {
@@ -272,7 +272,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getTagsValue () {
-		return recordStore.getRecordIds(Constant.subId.option, '').
+		return S.Record.getRecordIds(Constant.subId.option, '').
 			filter(id => this.details.tag.includes(id)).
 			map(id => detailStore.get(Constant.subId.option, id)).
 			filter(it => it && !it._empty_);
@@ -351,7 +351,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onFocus () {
-		const relation = recordStore.getRelationByKey('tag');
+		const relation = S.Record.getRelationByKey('tag');
 		const element = '#select-tag';
 
 		menuStore.open('dataviewOptionList', {
@@ -396,7 +396,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	setValue (value: string[]) {
-		const relation = recordStore.getRelationByKey('tag');
+		const relation = S.Record.getRelationByKey('tag');
 		
 		value = UtilCommon.arrayUnique(value);
 

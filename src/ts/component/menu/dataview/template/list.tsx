@@ -1,11 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, PreviewObject, IconObject } from 'Component';
-import { C, I, UtilObject, translate, UtilData, UtilCommon, keyboard } from 'Lib';
-import { recordStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
+import { C, I, S, UtilObject, translate, UtilData, UtilCommon, keyboard } from 'Lib';
+import { menuStore } from 'Store';
 import { observer } from 'mobx-react';
 
+const Constant = require('json/constant.json');
 const TEMPLATE_WIDTH = 230;
 
 const MenuTemplateList = observer(class MenuTemplateList extends React.Component<I.Menu> {
@@ -38,7 +38,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const templateId = this.getTemplateId();
 		const items = this.getItems();
-		const type = recordStore.getTypeById(typeId);
+		const type = S.Record.getTypeById(typeId);
 		const isAllowed = UtilObject.isAllowedTemplate(typeId);
 
 		const ItemBlank = (item: any) => {
@@ -197,7 +197,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { typeId } = data;
-		const templateType = recordStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
@@ -244,7 +244,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { noAdd, typeId } = data;
-		const items = recordStore.getRecords(this.getSubId());
+		const items = S.Record.getRecords(this.getSubId());
 		const isAllowed = UtilObject.isAllowedTemplate(typeId);
 
 		items.unshift({ id: Constant.templateId.blank });

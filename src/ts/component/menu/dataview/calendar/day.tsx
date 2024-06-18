@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, UtilObject, keyboard, UtilDate, translate } from 'Lib';
-import { blockStore, recordStore } from 'Store';
+import { I, S, UtilObject, keyboard, UtilDate, translate } from 'Lib';
+import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I.Menu> {
@@ -125,7 +125,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, d, m, y, relationKey, readonly, onCreate } = data;
-		const items = recordStore.getRecords(recordStore.getSubId(rootId, blockId), [ relationKey ]);
+		const items = S.Record.getRecords(S.Record.getSubId(rootId, blockId), [ relationKey ]);
 		const current = [ d, m, y ].join('-');
 		const ret = items.filter(it => UtilDate.date('j-n-Y', it[relationKey]) == current);
 

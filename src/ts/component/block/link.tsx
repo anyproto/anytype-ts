@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
 import { I, S, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
-import { detailStore, blockStore, recordStore } from 'Store';
+import { detailStore, blockStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -31,7 +31,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const { description, cardStyle, relations } = content;
 		const { size, iconSize } = this.getIconSize();
-		const type = recordStore.getTypeById(object.type);
+		const type = S.Record.getTypeById(object.type);
 		const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
 
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);

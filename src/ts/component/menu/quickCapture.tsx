@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
 import { analytics, C, I, S, keyboard, UtilObject, UtilMenu, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
-import { recordStore, menuStore, blockStore } from 'Store';
+import { menuStore, blockStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -307,12 +307,12 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				});
 			};
 		} else {
-			const pinned = pinnedIds.map(id => recordStore.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
+			const pinned = pinnedIds.map(id => S.Record.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
 
 			items = UtilData.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
 			items = items.slice(0, LIMIT_PINNED - pinned.length);
-			items.push(recordStore.getSetType());
-			items.push(recordStore.getCollectionType());
+			items.push(S.Record.getSetType());
+			items.push(S.Record.getCollectionType());
 			items = [].concat(pinned, items);
 			items = items.filter(it => it);
 			
@@ -492,7 +492,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 		const { getId, param } = this.props;
 		const { className, classNameWrap } = param;
-		const type = recordStore.getTypeById(item.itemId);
+		const type = S.Record.getTypeById(item.itemId);
 		const isPinned = Storage.getPinnedTypes().includes(item.itemId);
 		const canPin = type.isInstalled;
 		const canDefault = type.isInstalled && !UtilObject.getSetLayouts().includes(item.recommendedLayout) && (type.id != S.Common.type);
@@ -597,7 +597,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	};
 
 	async onPaste () {
-		const type = recordStore.getTypeById(S.Common.type);
+		const type = S.Record.getTypeById(S.Common.type);
 		const data = await this.getClipboardData();
 
 		data.forEach(async item => {

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { I, C, S, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate, UtilDate } from 'Lib';
-import { menuStore, recordStore } from 'Store';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -508,7 +508,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	getRelation () {
-		return recordStore.getRelationByKey(this.props.relationKey);
+		return S.Record.getRelationByKey(this.props.relationKey);
 	};
 
 	canCellEdit (relation: any, record: any): boolean {

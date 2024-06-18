@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { I, C, S, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
-import { blockStore, menuStore, detailStore, recordStore, authStore, popupStore } from 'Store';
+import { blockStore, menuStore, detailStore, authStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -313,7 +313,7 @@ class UtilMenu {
 
 	viewContextMenu (param: any) {
 		const { rootId, blockId, view, onCopy, onRemove, menuParam, close } = param;
-		const views = recordStore.getViews(rootId, blockId);
+		const views = S.Record.getViews(rootId, blockId);
 
 		const options: any[] = [
 			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
@@ -496,7 +496,7 @@ class UtilMenu {
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = S.Common;
 		const { spaceview } = blockStore;
-		const templateType = recordStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {

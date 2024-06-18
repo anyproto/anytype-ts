@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, UtilData, UtilCommon, UtilDate, UtilObject, translate, Dataview } from 'Lib';
-import { recordStore, menuStore } from 'Store';
+import { I, S, UtilData, UtilCommon, UtilDate, UtilObject, translate, Dataview } from 'Lib';
+import { menuStore } from 'Store';
 import Item from './calendar/item';
 
 interface State {
@@ -141,7 +141,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 	getSubId () {
 		const { rootId, block } = this.props;
-		return recordStore.getSubId(rootId, block.id);
+		return S.Record.getSubId(rootId, block.id);
 	};
 
 	load () {
@@ -152,7 +152,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 			return;
 		};
 
-		const relation = recordStore.getRelationByKey(view.groupRelationKey);
+		const relation = S.Record.getRelationByKey(view.groupRelationKey);
 		if (!relation) {
 			return;
 		};
@@ -256,7 +256,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const { getView } = this.props;
 		const view = getView();
 
-		return recordStore.getRecords(this.getSubId(), [ view.groupRelationKey ]);
+		return S.Record.getRecords(this.getSubId(), [ view.groupRelationKey ]);
 	};
 
 	resize () {

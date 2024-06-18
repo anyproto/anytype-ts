@@ -2,8 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate, Storage } from 'Lib';
-import { popupStore, detailStore, blockStore, menuStore, recordStore } from 'Store';
+import { I, C, S, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
+import { popupStore, detailStore, blockStore, menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const BlockType = observer(class BlockType extends React.Component<I.BlockComponent> {
@@ -240,13 +241,13 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 		switch (layout) {
 			case I.ObjectLayout.Set: {
-				typeId = recordStore.getSetType()?.id;
+				typeId = S.Record.getSetType()?.id;
 				C.ObjectToSet(rootId, [], cb);
 				break;
 			};
 
 			case I.ObjectLayout.Collection: {
-				typeId = recordStore.getCollectionType()?.id;
+				typeId = S.Record.getCollectionType()?.id;
 				C.ObjectToCollection(rootId, cb);
 				break;
 			};
@@ -255,7 +256,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 	onChange (typeId: any) {
 		const { rootId, isPopup } = this.props;
-		const type = recordStore.getTypeById(typeId);
+		const type = S.Record.getTypeById(typeId);
 		if (!type) {
 			return;
 		};

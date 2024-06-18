@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ObjectName, ObjectDescription, ObjectType, IconObject, Loader } from 'Component';
-import { recordStore } from 'Store';
-import { UtilObject } from 'Lib';
+import { S, UtilObject } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -35,7 +34,7 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		const { loading } = this.state;
 		const cn = [ 'previewDefault', className ];
 		const object = this.props.object || this.state.object || {};
-		const type = recordStore.getTypeById(object.type);
+		const type = S.Record.getTypeById(object.type);
 
 		if (UtilObject.isParticipantLayout(object.layout)) {
 			object.name = object.globalName || object.name;

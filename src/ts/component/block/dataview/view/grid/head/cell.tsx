@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { I, keyboard, Relation, Dataview } from 'Lib';
+import { I, S, keyboard, Relation, Dataview } from 'Lib';
 import { SortableElement } from 'react-sortable-hoc';
-import { menuStore, recordStore, blockStore } from 'Store';
+import { menuStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import Handle from './handle';
-const Constant = require('json/constant.json');
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId: string;
@@ -25,7 +24,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 
 	render () {
 		const { rootId, block, relationKey, index, onResizeStart } = this.props;
-		const relation = recordStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 		
 		if (!relation) {
 			return;
@@ -76,7 +75,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { rootId, block, readonly, loadData, getView, getTarget, relationKey, isInline, isCollection } = this.props;
-		const relation = recordStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation || keyboard.isResizing) {
 			return;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I, C, S, UtilData, Relation, UtilObject, translate, keyboard } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
-import { detailStore, recordStore, menuStore } from 'Store';
+import { detailStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -39,7 +39,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	render () {
 		const { subId, rootId, columns } = this.props;
 		const items = this.getItems();
-		const { offset, total } = recordStore.getMeta(subId, '');
+		const { offset, total } = S.Record.getMeta(subId, '');
 
 		let pager = null;
 		if (total && items.length) {
@@ -183,7 +183,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	getItems () {
-		return recordStore.getRecords(this.props.subId, this.getKeys());
+		return S.Record.getRecords(this.props.subId, this.getKeys());
 	};
 
 	getKeys () {
@@ -197,7 +197,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
 		].concat(this.props.filters || []);
 
-		recordStore.metaSet(subId, '', { offset });
+		S.Record.metaSet(subId, '', { offset });
 
 		UtilData.searchSubscribe({
 			subId,

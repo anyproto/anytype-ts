@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { I, C, S, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action, UtilDate, Storage } from 'Lib';
-import { blockStore, menuStore, recordStore, detailStore } from 'Store';
+import { blockStore, menuStore, detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -96,7 +96,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	render () {
 		const { rootId, block, isPopup, isInline, readonly } = this.props;
 		const { loading } = this.state;
-		const views = recordStore.getViews(rootId, block.id);
+		const views = S.Record.getViews(rootId, block.id);
 
 		if (!views.length) {
 			return null;
@@ -250,7 +250,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = this.getSubId();
 
 		if (match.params.viewId || viewId) {
-			recordStore.metaSet(subId, '', { viewId: match.params.viewId || viewId });
+			S.Record.metaSet(subId, '', { viewId: match.params.viewId || viewId });
 		};
 
 		this.reloadData();
@@ -269,7 +269,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidUpdate () {
-		const { viewId } = recordStore.getMeta(this.getSubId(), '');
+		const { viewId } = S.Record.getMeta(this.getSubId(), '');
 
 		if (viewId && (viewId != this.viewId)) {
 			this.loadData(viewId, 0, true);
@@ -364,10 +364,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (clear) {
-			recordStore.recordsSet(subId, '', []);
+			S.Record.recordsSet(subId, '', []);
 		};
 
-		recordStore.metaSet(subId, '', { offset, viewId });
+		S.Record.metaSet(subId, '', { offset, viewId });
 
 		if (view.type == I.ViewType.Board) {
 			if (this.refView && this.refView.loadGroupList) {
@@ -420,7 +420,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const view = this.getView();
 
 		if (view) {
-			recordStore.metaSet(this.getSubId(), '', { viewId: view.id, offset: 0, total: 0 });
+			S.Record.metaSet(this.getSubId(), '', { viewId: view.id, offset: 0, total: 0 });
 			this.loadData(view.id, 0, true);
 		};
 	};
@@ -473,12 +473,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getSubId (groupId?: string): string {
 		const { rootId, block } = this.props;
 
-		return groupId ? recordStore.getGroupSubId(rootId, block.id, groupId) : recordStore.getSubId(rootId, block.id);
+		return groupId ? S.Record.getGroupSubId(rootId, block.id, groupId) : S.Record.getSubId(rootId, block.id);
 	};
 
 	getRecords (groupId?: string): string[] {
 		const subId = this.getSubId(groupId);
-		const records = recordStore.getRecordIds(subId, '');
+		const records = S.Record.getRecordIds(subId, '');
 
 		return this.applyObjectOrder('', UtilCommon.objectCopy(records));
 	};
@@ -576,7 +576,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getDefaultTemplateId (typeId?: string): string {
 		const view = this.getView();
-		const type = recordStore.getTypeById(typeId || this.getTypeId());
+		const type = S.Record.getTypeById(typeId || this.getTypeId());
 
 		if (view && view.defaultTemplateId) {
 			return view.defaultTemplateId;
@@ -621,7 +621,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			templateId = this.getDefaultTemplateId(typeId);
 		};
 
-		const type = recordStore.getTypeById(typeId);
+		const type = S.Record.getTypeById(typeId);
 		if (!type) {
 			return;
 		};
@@ -658,9 +658,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			if (groupId) {
-				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => recordStore.recordsSet(subId, '', records));
+				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => S.Record.recordsSet(subId, '', records));
 			} else {
-				recordStore.recordsSet(subId, '', records);
+				S.Record.recordsSet(subId, '', records);
 			};
 
 			if ([ I.ViewType.Graph ].includes(view.type)) {
@@ -706,7 +706,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const typeId = this.getTypeId();
-		const type = recordStore.getTypeById(typeId);
+		const type = S.Record.getTypeById(typeId);
 
 		if (type && (type.uniqueKey == Constant.typeKey.bookmark)) {
 			this.onBookmarkMenu(e, dir, groupId, menuParam);
@@ -793,7 +793,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					};
 
 					const typeId = this.getTypeId();
-					const type = recordStore.getTypeById(typeId);
+					const type = S.Record.getTypeById(typeId);
 
 					if (type && (type.uniqueKey == Constant.typeKey.bookmark)) {
 						menuContext.close();
@@ -815,7 +815,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onTemplateAdd (id?: string) {
 		const typeId = id || this.getTypeId();
-		const type = recordStore.getTypeById(typeId);
+		const type = S.Record.getTypeById(typeId);
 		const details: any = {
 			targetObjectType: typeId,
 			layout: type.recommendedLayout,
@@ -856,7 +856,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const selection = S.Common.getRef('selectionProvider');
-		const relation = recordStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 		const id = Relation.cellId(this.getIdPrefix(), relationKey, recordId);
 		const ref = this.refCells.get(id);
 		const record = this.getRecord(recordId);
@@ -888,7 +888,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const subId = this.getSubId();
-		const relation = recordStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation) {
 			return;
@@ -949,7 +949,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, isPopup, isInline } = this.props;
 		const { targetObjectId } = block.content;
 		const isCollection = this.isCollection();
-		const collectionType = recordStore.getCollectionType();
+		const collectionType = S.Record.getCollectionType();
 		const addParam: any = {};
 
 		let filters: I.Filter[] = [];
@@ -1096,7 +1096,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			records = arrayMove(records, oldIndex, targetIndex);
 		});
 
-		recordStore.recordsSet(subId, '', records);
+		S.Record.recordsSet(subId, '', records);
 		this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
 	};
 
@@ -1112,7 +1112,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return [];
 		};
 
-		const keys = recordStore.getObjectRelationKeys(rootId, block.id);
+		const keys = S.Record.getObjectRelationKeys(rootId, block.id);
 		return view.getVisibleRelations().filter(it => keys.includes(it.relationKey));
 	};
 

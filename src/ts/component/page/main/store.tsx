@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
 import { I, C, S, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
-import { recordStore, blockStore, menuStore, popupStore } from 'Store';
+import { blockStore, menuStore, popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -534,7 +534,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		if (clear) {
 			this.setState({ isLoading: true });
-			recordStore.recordsSet(Constant.subId.store, '', []);
+			S.Record.recordsSet(Constant.subId.store, '', []);
 		};
 
 		UtilData.searchSubscribe({
@@ -567,7 +567,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getItems () {
 		const { isLoading } = this.state;
-		const records = recordStore.getRecords(Constant.subId.store);
+		const records = S.Record.getRecords(Constant.subId.store);
 		const limit = this.getLimit();
 
 		let ret: any[] = [
@@ -625,11 +625,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
-				sources = recordStore.getTypes();
+				sources = S.Record.getTypes();
 				break;
 
 			case I.StoreTab.Relation:
-				sources = recordStore.getRelations();
+				sources = S.Record.getRelations();
 				break;
 		};
 

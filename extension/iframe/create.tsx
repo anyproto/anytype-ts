@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
 import { I, C, M, S, translate, UtilObject, UtilData, UtilSpace } from 'Lib';
-import { blockStore, extensionStore, menuStore, recordStore } from 'Store';
+import { blockStore, extensionStore, menuStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
@@ -155,7 +155,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	onSelect () {
 		const { object } = this.state;
 		const node = $(this.node);
-		const templateType = recordStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },

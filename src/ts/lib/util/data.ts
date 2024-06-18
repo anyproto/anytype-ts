@@ -1,5 +1,5 @@
 import { I, C, M, S, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
-import { blockStore, detailStore, recordStore, authStore, notificationStore, popupStore } from 'Store';
+import { blockStore, detailStore, authStore, notificationStore, popupStore } from 'Store';
 import * as Sentry from '@sentry/browser';
 
 type SearchSubscribeParams = Partial<{
@@ -317,7 +317,7 @@ class UtilData {
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				onSubscribe: () => {
-					recordStore.getTypes().forEach(it => recordStore.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
+					S.Record.getTypes().forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
 			},
 			{
@@ -332,7 +332,7 @@ class UtilData {
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				onSubscribe: () => {
-					recordStore.getRelations().forEach(it => recordStore.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
+					S.Record.getRelations().forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
 			},
 			{
@@ -475,7 +475,7 @@ class UtilData {
 
 		let items: any[] = [];
 
-		items = items.concat(recordStore.getTypes().filter(it => {
+		items = items.concat(S.Record.getTypes().filter(it => {
 			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
 		}));
 
@@ -484,11 +484,11 @@ class UtilData {
 		};
 
 		if (withSet) {
-			items.push(recordStore.getSetType());
+			items.push(S.Record.getSetType());
 		};
 
 		if (withCollection) {
-			items.push(recordStore.getCollectionType());
+			items.push(S.Record.getCollectionType());
 		};
 
 		items = items.filter(it => it);
@@ -501,7 +501,7 @@ class UtilData {
 	};
 
 	getTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
-		const templateType = recordStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
 			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
@@ -647,7 +647,7 @@ class UtilData {
 
 	// Check if there is at least 1 set for object types
 	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		const setType = recordStore.getTypeByKey(Constant.typeKey.set);
+		const setType = S.Record.getTypeByKey(Constant.typeKey.set);
 		this.checkObjectWithRelationCnt('setOf', setType?.id, ids, 2, callBack);
 	};
 
@@ -693,7 +693,7 @@ class UtilData {
 			return;
 		};
 		if (message.counters) {
-			recordStore.metaSet(subId, '', { total: message.counters.total, keys });
+			S.Record.metaSet(subId, '', { total: message.counters.total, keys });
 		};
 
 		const mapper = (it: any) => { 
@@ -706,7 +706,7 @@ class UtilData {
 		details = details.concat(message.records.map(mapper));
 
 		detailStore.set(subId, details);
-		recordStore.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
+		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
 	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
@@ -893,7 +893,7 @@ class UtilData {
 
 	graphFilters () {
 		const { space } = S.Common;
-		const templateType = recordStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
@@ -911,7 +911,7 @@ class UtilData {
 	};
 
 	moveToPage (rootId: string, ids: string[], typeId: string, route: string) {
-		const type = recordStore.getTypeById(typeId);
+		const type = S.Record.getTypeById(typeId);
 		if (!type) {
 			return;
 		};

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { I, C, S, UtilObject, UtilMenu, Relation, translate, Dataview, keyboard, analytics, Preview, UtilCommon } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
-import { blockStore, recordStore, menuStore, detailStore } from 'Store';
+import { blockStore, menuStore, detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -46,7 +46,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
 			const length = this.objectTypes.length;
 			const typeId = length ? this.objectTypes[0] : '';
-			const type = recordStore.getTypeById(typeId);
+			const type = S.Record.getTypeById(typeId);
 			const typeProps: any = { 
 				name: translate('menuDataviewRelationEditSelectObjectType'),
 				caption: (length > 1 ? '+' + (length - 1) : ''),
@@ -454,13 +454,13 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				nameAdd: translate('menuDataviewRelationEditAddObjectType'),
 				placeholderFocus: translate('menuDataviewRelationEditFilterObjectTypes'),
 				value: this.objectTypes, 
-				types: [ recordStore.getTypeType()?.id ],
+				types: [ S.Record.getTypeType()?.id ],
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
 				],
 				relation: observable.box(relation),
-				valueMapper: it => recordStore.getTypeById(it.id),
+				valueMapper: it => S.Record.getTypeById(it.id),
 				onChange: (value: any, callBack?: () => void) => {
 					this.objectTypes = value;
 					this.forceUpdate();
@@ -655,7 +655,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { data } = param;
 		const { relationId } = data;
 
-		return recordStore.getRelationById(relationId);
+		return S.Record.getRelationById(relationId);
 	};
 
 	getViewRelation (): I.ViewRelation {

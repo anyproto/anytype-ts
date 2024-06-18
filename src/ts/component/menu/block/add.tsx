@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
 import { I, S, Mark, keyboard, C, focus, Action, UtilCommon, UtilData, UtilMenu, UtilObject, Storage, translate, analytics, Relation } from 'Lib';
-import { blockStore, recordStore, menuStore, detailStore } from 'Store';
+import { blockStore, menuStore, detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -271,12 +271,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { config } = S.Common;
 		const object = detailStore.get(rootId, rootId, [ 'targetObjectType' ]);
 		const isTemplate = UtilObject.isTemplate(object.type);
-		const type = recordStore.getTypeById(isTemplate ? object.targetObjectType : object.type);
+		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type);
 
-		const relations = recordStore.getObjectRelations(rootId, rootId);
+		const relations = S.Record.getObjectRelations(rootId, rootId);
 		const relationKeys = relations.map(it => it.relationKey);
 		const typeRelations = (type ? type.recommendedRelations || [] : []).
-			map(it => recordStore.getRelationById(it)).
+			map(it => S.Record.getRelationById(it)).
 			filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
 		const ret = relations.concat(typeRelations).filter(it => !config.debug.hiddenObject && it.isHidden ? false : it.isInstalled).sort(UtilData.sortByName);
@@ -622,7 +622,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					});
 				} else 
 				if (item.isObject) {
-					const type = recordStore.getTypeById(item.objectTypeId) || {};
+					const type = S.Record.getTypeById(item.objectTypeId) || {};
 					const details: any = { type: type.id };
 
 					if (UtilObject.isSetLayout(type.recommendedLayout)) {
