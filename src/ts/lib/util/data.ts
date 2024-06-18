@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, keyboard, translate, U, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding } from 'Lib';
+import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding } from 'Lib';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -407,6 +407,10 @@ class UtilData {
 
 	participantRelationKeys () {
 		return J.Constant.defaultRelationKeys.concat(J.Constant.participantRelationKeys);
+	};
+
+	syncStatusRelationKeys () {
+		return J.Constant.defaultRelationKeys.concat(J.Constant.syncStatusRelationKeys);
 	};
 
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
@@ -1013,12 +1017,12 @@ class UtilData {
 	};
 
 	groupDateSections (records: any[], key: string, sectionTemplate?: any) {
-		const now = UtilDate.now();
-		const { d, m, y } = UtilDate.getCalendarDateParam(now);
-		const today = now - UtilDate.timestamp(y, m, d);
-		const yesterday = now - UtilDate.timestamp(y, m, d - 1);
-		const lastWeek = now - UtilDate.timestamp(y, m, d - 7);
-		const lastMonth = now - UtilDate.timestamp(y, m - 1, d);
+		const now = U.Date.now();
+		const { d, m, y } = U.Date.getCalendarDateParam(now);
+		const today = now - U.Date.timestamp(y, m, d);
+		const yesterday = now - U.Date.timestamp(y, m, d - 1);
+		const lastWeek = now - U.Date.timestamp(y, m, d - 7);
+		const lastMonth = now - U.Date.timestamp(y, m - 1, d);
 		const groups = {
 			today: [],
 			yesterday: [],
