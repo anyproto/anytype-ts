@@ -89,6 +89,7 @@
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
 	"commonAddToFavorites": "Add to Favorites",
+	"commonAddToCollection": "Add to Collection",
 	"commonRestore": "Restore",
 	"commonRestoreFromBin": "Restore from Bin",
 	"commonMoveToBin": "Move to Bin",

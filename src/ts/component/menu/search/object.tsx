@@ -452,8 +452,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 		};
 
-
-
 		if (item.isAdd) {
 			details = { name: filter, ...details };
 
