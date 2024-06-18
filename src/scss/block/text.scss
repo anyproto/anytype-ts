@@ -27,6 +27,8 @@
 		}
 		markuplink.disabled, markupobject.disabled { border-width: 0px; }
 
+		markuplatex { user-select: all !important; }
+
 		markupmention { display: inline; user-select: all !important; position: relative; cursor: default; white-space: nowrap; }
 		markupmention * { user-select: text !important; }
 		markupmention {
