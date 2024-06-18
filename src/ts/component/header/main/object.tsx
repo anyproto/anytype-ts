@@ -133,7 +133,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	onSync () {
 		const { rootId, menuOpen } = this.props;
 
-		menuOpen('threadList', '#button-header-sync', {
+		menuOpen('syncStatus', '#button-header-sync', {
 			horizontal: I.MenuDirection.Left,
 			data: {
 				rootId,

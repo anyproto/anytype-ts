@@ -116,18 +116,6 @@ class UtilData {
 		return String(I.CardSize[v]).toLowerCase();
 	};
 
-	threadColor (s: I.ThreadStatus) {
-		let c = '';
-		switch (s) {
-			default: c = ''; break;
-			case I.ThreadStatus.Syncing: c = 'orange'; break;
-			case I.ThreadStatus.Failed: 
-			case I.ThreadStatus.Incompatible: c = 'red'; break;
-			case I.ThreadStatus.Synced: c = 'green'; break;
-		};
-		return c;
-	};
-
 	diffClass (t: I.DiffType): string {
 		let c = '';
 		switch (t) {
@@ -921,53 +909,6 @@ class UtilData {
 		});
 	};
 
-	getThreadStatus (rootId: string, key: string) {
-		const { account } = S.Auth;
-
-		if (!account) {
-			return I.ThreadStatus.Unknown;
-		};
-
-		const { info } = account || {};
-		const thread = S.Auth.threadGet(rootId);
-		const { summary } = thread;
-
-		if (!info.networkId) {
-			return I.ThreadStatus.Local;
-		};
-
-		if (!summary) {
-			return I.ThreadStatus.Unknown;
-		};
-
-		return (thread[key] || {}).status || I.ThreadStatus.Unknown;
-	};
-
-	getNetworkName (): string {
-		const { account } = S.Auth;
-		const { info } = account;
-
-		let ret = '';
-		switch (info.networkId) {
-			default:
-				ret = translate('menuThreadListSelf');
-				break;
-
-			case J.Constant.networkId.production:
-				ret = translate('menuThreadListProduction');
-				break;
-
-			case J.Constant.networkId.development:
-				ret = translate('menuThreadListDevelopment');
-				break;
-
-			case '':
-				ret = translate('menuThreadListLocal');
-				break;
-		};
-		return ret;
-	}
-
 	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
 		if (!this.isAnytypeNetwork()) {
 			return;
@@ -1069,6 +1010,57 @@ class UtilData {
 				});
 			});
 		});
+	};
+
+	groupDateSections (records: any[], key: string, sectionTemplate?: any) {
+		const now = UtilDate.now();
+		const { d, m, y } = UtilDate.getCalendarDateParam(now);
+		const today = now - UtilDate.timestamp(y, m, d);
+		const yesterday = now - UtilDate.timestamp(y, m, d - 1);
+		const lastWeek = now - UtilDate.timestamp(y, m, d - 7);
+		const lastMonth = now - UtilDate.timestamp(y, m - 1, d);
+		const groups = {
+			today: [],
+			yesterday: [],
+			lastWeek: [],
+			lastMonth: [],
+			older: []
+		};
+
+		let groupedRecords = [];
+
+		if (!sectionTemplate) {
+			sectionTemplate = {};
+		};
+
+
+		records.forEach((record) => {
+			const diff = now - record[key];
+
+			if (diff < today) {
+				groups.today.push(record);
+			} else
+			if (diff < yesterday) {
+				groups.yesterday.push(record);
+			} else
+			if (diff < lastWeek) {
+				groups.lastWeek.push(record);
+			} else
+			if (diff < lastMonth) {
+				groups.lastMonth.push(record);
+			} else {
+				groups.older.push(record);
+			};
+		});
+
+		Object.keys(groups).forEach((key) => {
+			if (groups[key].length) {
+				groupedRecords.push(Object.assign({ id: key, isSection: true }, sectionTemplate));
+				groupedRecords = groupedRecords.concat(groups[key]);
+			};
+		});
+
+		return groupedRecords;
 	};
 
 };

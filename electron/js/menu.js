@@ -180,7 +180,7 @@ class MenuManager {
 		const flagsMw = {
 			request: Util.translate('electronMenuFlagMwRequest'),
 			event: Util.translate('electronMenuFlagMwEvent'),
-			thread: Util.translate('electronMenuFlagMwThread'),
+			sync: Util.translate('electronMenuFlagMwSync'),
 			file: Util.translate('electronMenuFlagMwFile'),
 			time: Util.translate('electronMenuFlagMwTime'),
 			json: Util.translate('electronMenuFlagMwJson'),

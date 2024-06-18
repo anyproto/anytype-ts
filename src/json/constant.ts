@@ -289,6 +289,11 @@ export default {
 		"participantStatus",
 		"globalName"
 	],
+	"syncStatusRelationKeys": [
+		"syncStatus",
+		"syncDate",
+		"syncError"
+	],
 
 	"pageCoverRelationKey": "pageCover",
 

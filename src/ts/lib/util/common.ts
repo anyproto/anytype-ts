@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import DOMPurify from 'dompurify';
-import { I, C, S, J, Preview, Renderer, translate, U, Mark } from 'Lib';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark } from 'Lib';
 
 const TEST_HTML = /<[^>]*>/;
 

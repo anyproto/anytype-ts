@@ -754,58 +754,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	addGroupLabels (records: any[], widgetId: string) {
-		const now = U.Date.now();
-		const { d, m, y } = U.Date.getCalendarDateParam(now);
-		const today = now - U.Date.timestamp(y, m, d);
-		const yesterday = now - U.Date.timestamp(y, m, d - 1);
-		const lastWeek = now - U.Date.timestamp(y, m, d - 7);
-		const lastMonth = now - U.Date.timestamp(y, m - 1, d);
-
-		const groups = {
-			today: [],
-			yesterday: [],
-			lastWeek: [],
-			lastMonth: [],
-			older: []
-		};
-
-		let groupedRecords: I.WidgetTreeDetails[] = [];
 		let relationKey;
-
 		if (widgetId == J.Constant.widgetId.recentOpen) {
 			relationKey = 'lastOpenedDate';
 		};
 		if (widgetId == J.Constant.widgetId.recentEdit) {
 			relationKey = 'lastModifiedDate';
 		};
-
-		records.forEach((record) => {
-			const diff = now - record[relationKey];
-
-			if (diff < today) {
-				groups.today.push(record);
-			} else
-			if (diff < yesterday) {
-				groups.yesterday.push(record);
-			} else
-			if (diff < lastWeek) {
-				groups.lastWeek.push(record);
-			} else
-			if (diff < lastMonth) {
-				groups.lastMonth.push(record);
-			} else {
-				groups.older.push(record);
-			};
-		});
-
-		Object.keys(groups).forEach((key) => {
-			if (groups[key].length) {
-				groupedRecords.push({ id: key, type: '', links: [], isSection: true });
-				groupedRecords = groupedRecords.concat(groups[key]);
-			};
-		});
-
-		return groupedRecords;
+		return U.Data.groupDateSections(records, relationKey, { type: '', links: [] });
 	};
 
 	onContext (param: any) {

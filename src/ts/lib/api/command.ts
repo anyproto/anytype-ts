@@ -2102,3 +2102,9 @@ export const BroadcastPayloadEvent = (payload: any, callBack?: (message: any) =>
 
 	dispatcher.request(BroadcastPayloadEvent.name, request, callBack);
 };
+
+// ---------------------- DEVICES ---------------------- //
+
+export const DeviceList = (callBack?: (message: any) => void) => {
+	dispatcher.request(DeviceList.name, new Commands.Empty(), callBack);
+};

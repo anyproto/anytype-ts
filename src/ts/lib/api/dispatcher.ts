@@ -100,7 +100,6 @@ class Dispatcher {
 		const currentWindow = electron.currentWindow();
 		const { windowId } = currentWindow;
 		const isMainWindow = windowId === 1;
-		const debugEvent = config.flagsMw.event;
 		const debugJson = config.flagsMw.json;
 		const win = $(window);
 		
@@ -110,11 +109,7 @@ class Dispatcher {
 
 		const rootId = ctx.join('-');
 		const messages = event.getMessagesList() || [];
-		const log = (rootId: string, type: string, data: any, valueCase: any) => { 
-			if (!debugEvent) {
-				return;
-			};
-
+		const log = (rootId: string, type: string, data: any, valueCase: any) => {
 			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', rootId);
 			if (!type) {
 				console.error('Event not found for valueCase', valueCase);
@@ -920,10 +915,11 @@ class Dispatcher {
 					break;
 				};
 
-				case 'MembershipUpdate':
+				case 'MembershipUpdate': {
 					S.Auth.membershipUpdate(mapped.membership);
 					U.Data.getMembershipTiers(true);
 					break;
+				};
 
 				case 'ProcessNew':
 				case 'ProcessUpdate':
@@ -959,6 +955,11 @@ class Dispatcher {
 							break;
 						};
 					};
+					break;
+				};
+
+				case 'SpaceSyncStatusUpdate': {
+					authStore.syncStatusUpdate(mapped);
 					break;
 				};
 			};
@@ -1205,15 +1206,15 @@ class Dispatcher {
 
 	checkLog (type: string) {
 		const { config } = S.Common;
-		const { event, thread, file } = config.flagsMw;
+		const { event, sync, file } = config.flagsMw;
 		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
-		const threadEvents = [ 'ThreadStatus' ];
+		const syncEvents = [ 'SpaceSyncStatusUpdate' ];
 
 		let check = false;
-		if (event && !threadEvents.concat(fileEvents).includes(type)) {
+		if (event && !syncEvents.concat(fileEvents).includes(type)) {
 			check = true;
 		};
-		if (thread && threadEvents.includes(type)) {
+		if (sync && syncEvents.includes(type)) {
 			check = true;
 		};
 		if (file && fileEvents.includes(type)) {
