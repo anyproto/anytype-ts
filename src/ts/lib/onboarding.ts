@@ -1,6 +1,5 @@
-import { I, S, Storage, UtilCommon } from 'Lib';
 import * as Docs from 'Docs';
-import { popupStore } from 'Store';
+import { I, S, Storage, UtilCommon } from 'Lib';
 
 class Onboarding {
 
@@ -17,7 +16,7 @@ class Onboarding {
 		};
 
 		const { items } = section;
-		const t = isPopup ? popupStore.getTimeout() : 0;
+		const t = isPopup ? S.Popup.getTimeout() : 0;
 
 		S.Menu.close('onboarding', () => {
 			window.setTimeout(() => {

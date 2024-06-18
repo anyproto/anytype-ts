@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
 import { C, I, S, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard,focus, translate, analytics, Action, UtilSpace, Relation, Mark } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -749,7 +748,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			// Settings item
 			if (item.isSettings) {
-				popupStore.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
+				S.Popup.open('settings', { data: { page: item.id, isSpace: item.isSpace }, className: item.className });
 			} else 
 
 			// Import action

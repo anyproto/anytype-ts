@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
 import { I, S, keyboard, Storage, UtilCommon } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -101,7 +100,7 @@ class Sidebar {
 		const { width, snap } = this.data;
 		const { ww } = UtilCommon.getWindowDimensions();
 		const menuOpen = S.Menu.isOpenList([ 'dataviewContext', 'preview', 'widget' ]);
-		const popupOpen = popupStore.isOpen();
+		const popupOpen = S.Popup.isOpen();
 
 		let show = false;
 		let hide = false;

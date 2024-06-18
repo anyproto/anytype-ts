@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
 import { I, S, UtilCommon, UtilSpace, UtilRouter, keyboard, translate, UtilMenu, analytics, Storage } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const ITEM_WIDTH = 112;
@@ -206,7 +205,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				this.onAdd();
 			} else
 			if (item.id == 'gallery') {
-				popupStore.open('usecase', {});
+				S.Popup.open('usecase', {});
 			} else {
 				UtilRouter.switchSpace(item.targetSpaceId);
 				analytics.event('SwitchSpace');
@@ -215,7 +214,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	onAdd () {
-		popupStore.open('settings', { 
+		S.Popup.open('settings', { 
 			className: 'isSpaceCreate',
 			data: { 
 				page: 'spaceCreate', 
@@ -230,7 +229,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 	onSettings () {
 		this.props.close(() => {
-			popupStore.open('settings', {});
+			S.Popup.open('settings', {});
 		});
 	};
 

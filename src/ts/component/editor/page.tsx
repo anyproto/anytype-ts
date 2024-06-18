@@ -8,7 +8,6 @@ import {
 	I, C, S, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, 
 	Renderer, sidebar 
 } from 'Lib';
-import { popupStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
@@ -301,7 +300,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const { rootId } = this.props;
 		const { focused, range } = focus.state;
-		const popupOpen = popupStore.isOpen('', [ 'page' ]);
+		const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 		const menuOpen = this.menuCheck();
 
 		let length = 0;
@@ -378,7 +377,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		win.on(`focus.editor${namespace}`, () => {
-			const popupOpen = popupStore.isOpen('', [ 'page' ]);
+			const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 			const menuOpen = this.menuCheck();
 			const ids = selection?.get(I.SelectType.Block, true) || [];
 			
@@ -410,7 +409,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const readonly = this.isReadonly();
 		const node = $(this.node);
 		const menuOpen = this.menuCheck();
-		const popupOpen = popupStore.isOpen('', [ 'page' ]);
+		const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 
 		const clear = () => {
 			node.find('.block.showMenu').removeClass('showMenu');
@@ -529,7 +528,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const selection = S.Common.getRef('selectionProvider');
 		const menuOpen = this.menuCheck();
-		const popupOpen = popupStore.isOpenKeyboard();
+		const popupOpen = S.Popup.isOpenKeyboard();
 		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (keyboard.isFocused || !selection || !root) {
@@ -2049,7 +2048,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const ids = selection?.get(I.SelectType.Block) || [];
 
 		S.Menu.closeAll();
-		popupStore.closeAll([ 'preview' ]);
+		S.Popup.closeAll([ 'preview' ]);
 
 		let blockIds = [];
 		if (ids.length) {

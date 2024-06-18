@@ -227,4 +227,4 @@ class PopupStore {
 
 };
 
- export const popupStore: PopupStore = new PopupStore();
+export const Popup: PopupStore = new PopupStore();

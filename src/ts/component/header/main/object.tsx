@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
 import { I, S, UtilObject, UtilData, keyboard, translate, UtilSpace } from 'Lib';
-import { popupStore } from 'Store';
 import HeaderBanner from 'Component/page/elements/head/banner';
 
 const Constant = require('json/constant.json');
@@ -114,7 +113,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const object = S.Detail.get(rootId, rootId, []);
 
 		keyboard.disableClose(true);
-		popupStore.closeAll(null, () => UtilObject.openRoute(object));
+		S.Popup.closeAll(null, () => UtilObject.openRoute(object));
 	};
 	
 	onMore () {

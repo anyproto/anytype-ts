@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, ObjectName } from 'Component';
 import { I, C, S, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -516,7 +515,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			Action.membershipUpgrade();
 		} else {
 			this.props.close(() => {
-				popupStore.open('settings', { data: { page: 'membership' } });
+				S.Popup.open('settings', { data: { page: 'membership' } });
 			});
 		};
 

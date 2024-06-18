@@ -4,9 +4,6 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
 import { I, C, S, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
-import { popupStore } from 'Store';
-
-const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -17,6 +14,8 @@ enum View {
 	Marketplace = 'marketplace',
 	Library = 'library',
 };
+
+const Constant = require('json/constant.json');
 
 const KEY_SORT = 'sortStore';
 const KEY_TAB = 'tabStore';
@@ -675,8 +674,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onBanner () {
-		popupStore.closeAll(null, () => {
-			popupStore.open('usecase', {});
+		S.Popup.closeAll(null, () => {
+			S.Popup.open('usecase', {});
 		});
 
 		analytics.event('ClickOnboardingTooltip', { type: 'explore', id: 'gallery' });

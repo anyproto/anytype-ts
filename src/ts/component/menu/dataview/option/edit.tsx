@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, C, UtilMenu, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical, Icon } from 'Component';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -161,7 +160,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			this.forceUpdate();
 		} else
 		if (item.id == 'remove') {
-			popupStore.open('confirm', {
+			S.Popup.open('confirm', {
 				data: {
 					icon: 'confirm',
 					bgColor: 'red',

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Select, Button } from 'Component';
 import { I, S, UtilMenu, UtilCommon, translate, Action, analytics, Renderer, Preview } from 'Lib';
-import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends React.Component<I.Popup> {
@@ -184,7 +183,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onConfirmStorage (onConfirm: () => void) {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate('commonAreYouSure'),
 				text: translate('popupSettingsOnboardingLocalOnlyWarningText'),

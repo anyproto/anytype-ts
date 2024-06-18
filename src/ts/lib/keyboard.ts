@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import { I, C, S, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate, UtilSpace } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -171,7 +170,7 @@ class Keyboard {
 			if (S.Menu.isOpen()) {
 				S.Menu.closeLast();
 			} else 
-			if (popupStore.isOpen()) {
+			if (S.Popup.isOpen()) {
 				let canClose = true;
 
 				if (this.isPopup()) {
@@ -188,9 +187,9 @@ class Keyboard {
 				};
 
 				if (canClose) {
-					const last = popupStore.getLast();
+					const last = S.Popup.getLast();
 					if (last && !last.param.preventCloseByEscape) {
-						popupStore.close(last.id);
+						S.Popup.close(last.id);
 					};
 				};
 			};
@@ -202,7 +201,7 @@ class Keyboard {
 
 			// Shortcuts
 			this.shortcut('ctrl+space', e, () => {
-				popupStore.open('shortcut', { preventResize: true });
+				S.Popup.open('shortcut', { preventResize: true });
 			});
 
 			// Spaces
@@ -218,7 +217,7 @@ class Keyboard {
 
 			// Navigation search
 			this.shortcut(`${cmd}+s, ${cmd}+k`, e, (pressed: string) => {
-				if (popupStore.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
+				if (S.Popup.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
 					return;
 				};
 
@@ -226,7 +225,7 @@ class Keyboard {
 			});
 
 			this.shortcut(`${cmd}+l`, e, () => {
-				if (popupStore.isOpen('search') || !this.isPinChecked || this.checkSelection()) {
+				if (S.Popup.isOpen('search') || !this.isPinChecked || this.checkSelection()) {
 					return;
 				};
 
@@ -254,15 +253,15 @@ class Keyboard {
 
 			// Go to dashboard
 			this.shortcut('alt+h', e, () => {
-				if (S.Auth.account && !popupStore.isOpen('search')) {
+				if (S.Auth.account && !S.Popup.isOpen('search')) {
 					UtilSpace.openDashboard('route');
 				};
 			});
 
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
-				if (!popupStore.isOpen('settings')) {
-					popupStore.open('settings', {});
+				if (!S.Popup.isOpen('settings')) {
+					S.Popup.open('settings', {});
 				};
 			});
 
@@ -278,7 +277,7 @@ class Keyboard {
 
 			// Object id
 			this.shortcut(`${cmd}+shift+\\`, e, () => {
-				popupStore.open('confirm', {
+				S.Popup.open('confirm', {
 					className: 'isWide isLeft',
 					data: {
 						text: `ID: ${this.getRootId()}`,
@@ -334,7 +333,7 @@ class Keyboard {
 	};
 
 	isPopup () {
-		return popupStore.isOpen('page');
+		return S.Popup.isOpen('page');
 	};
 
 	getRootId (): string {
@@ -358,10 +357,10 @@ class Keyboard {
 
 		if (isPopup) {
 			if (!historyPopup.checkBack()) {
-				popupStore.close('page');
+				S.Popup.close('page');
 			} else {
 				historyPopup.goBack((match: any) => { 
-					popupStore.updateData('page', { matchPopup: match }); 
+					S.Popup.updateData('page', { matchPopup: match }); 
 				});
 			};
 		} else {
@@ -403,7 +402,7 @@ class Keyboard {
 
 		if (isPopup) {
 			historyPopup.goForward((match: any) => { 
-				popupStore.updateData('page', { matchPopup: match }); 
+				S.Popup.updateData('page', { matchPopup: match }); 
 			});
 		} else {
 			UtilRouter.history.goForward();
@@ -527,7 +526,7 @@ class Keyboard {
 					break;
 				};
 
-				popupStore.open('settings', { 
+				S.Popup.open('settings', { 
 					className: 'isSpaceCreate',
 					data: { 
 						page: 'spaceCreate', 
@@ -548,12 +547,12 @@ class Keyboard {
 
 			case 'saveAsHTMLSuccess': {
 				this.printRemove();
-				popupStore.close('export');
+				S.Popup.close('export');
 				break;
 			};
 
 			case 'save': {
-				popupStore.open('export', { data: { objectIds: [ rootId ], route: analytics.route.menuSystem, allowHtml: true } });
+				S.Popup.open('export', { data: { objectIds: [ rootId ], route: analytics.route.menuSystem, allowHtml: true } });
 				break;
 			};
 
@@ -679,7 +678,7 @@ class Keyboard {
 				]);
 			};
 
-			popupStore.open('confirm', {
+			S.Popup.open('confirm', {
 				className: 'isWide techInfo',
 				data: {
 					title: translate('menuHelpTech'),
@@ -822,7 +821,7 @@ class Keyboard {
 	};
 
 	onSearchPopup (route: string) {
-		popupStore.open('search', {
+		S.Popup.open('search', {
 			preventCloseByEscape: true,
 			data: { isPopup: this.isPopup(), route },
 		});
@@ -844,7 +843,7 @@ class Keyboard {
 		if (S.Menu.isOpen(id)) {
 			S.Menu.open(id, menuParam);
 		} else {
-			popupStore.close('search', () => {
+			S.Popup.close('search', () => {
 				S.Menu.closeAll(Constant.menuIds.navigation, () => {
 					S.Menu.open(id, menuParam);
 				});
@@ -924,7 +923,7 @@ class Keyboard {
 	};
 
 	getPopupMatch () {
-		const popup = popupStore.get('page');
+		const popup = S.Popup.get('page');
 		return popup && popup?.param.data.matchPopup || {};
 	};
 
@@ -1052,7 +1051,7 @@ class Keyboard {
 
 		switch (type) {
 			case I.Source.Popup:
-				window.setTimeout(() => popupStore.open(data.id, data.param), popupStore.getTimeout());
+				window.setTimeout(() => S.Popup.open(data.id, data.param), S.Popup.getTimeout());
 				break;
 		};
 

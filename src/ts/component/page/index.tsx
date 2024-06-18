@@ -4,7 +4,6 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { I, S, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
 import { Label, Frame } from 'Component';
-import { popupStore } from 'Store';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -130,7 +129,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		this.unbind();
 
 		if (!isPopup) {
-			popupStore.closeAll();
+			S.Popup.closeAll();
 		};
 
 		S.Menu.closeAll();

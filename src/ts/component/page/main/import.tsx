@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, UtilCommon, UtilRouter, UtilSpace, translate } from 'Lib';
-import { popupStore } from 'Store';
+import { I, C, S, UtilCommon, UtilRouter, UtilSpace, translate } from 'Lib';
 
 interface State {
 	error: string;
@@ -50,8 +49,8 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 			} else {
 				UtilSpace.openDashboard('route');
 				window.setTimeout(() => {
-					popupStore.open('usecase', { data: { page: 'item', object: message.info } });
-				}, popupStore.getTimeout());
+					S.Popup.open('usecase', { data: { page: 'item', object: message.info } });
+				}, S.Popup.getTimeout());
 			};
 		});
 

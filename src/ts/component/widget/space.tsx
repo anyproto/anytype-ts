@@ -2,8 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
 import { I, C, S, UtilSpace, UtilCommon, translate } from 'Lib';
-import { popupStore } from 'Store';
-	
+
 const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
 
 	constructor (props: I.WidgetComponent) {
@@ -80,7 +79,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	};
 
 	openSettings (page: string) {
-		popupStore.open('settings', { data: { page, isSpace: true }, className: 'isSpace' });
+		S.Popup.open('settings', { data: { page, isSpace: true }, className: 'isSpace' });
 	};
 
 });

@@ -1,5 +1,4 @@
 import { I, C, S, keyboard, history as historyPopup, Renderer, UtilData, translate, UtilRouter, analytics } from 'Lib';
-import {popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -132,7 +131,7 @@ class UtilObject {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		window.setTimeout(() => popupStore.open('page', param), popupStore.getTimeout());
+		window.setTimeout(() => S.Popup.open('page', param), S.Popup.getTimeout());
 	};
 
 	openConfig (object: any) {

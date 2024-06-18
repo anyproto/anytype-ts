@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { I, S, UtilObject, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
-import { popupStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -129,7 +128,7 @@ class Header extends React.Component<Props> {
 	onExpand () {
 		const { rootId, layout } = this.props;
 
-		popupStore.closeAll(null, () => UtilObject.openRoute({ id: rootId, layout }));
+		S.Popup.closeAll(null, () => UtilObject.openRoute({ id: rootId, layout }));
 	};
 
 	onSearch () {

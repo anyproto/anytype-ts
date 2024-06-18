@@ -3,12 +3,13 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, Error } from 'Component';
 import { I, C, S, UtilRouter, translate, Action, analytics, UtilSpace } from 'Lib';
-import { notificationStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { notificationStore } from 'Store';
 
 interface State {
 	error: string;
 };
+
+const Constant = require('json/constant.json');
 
 const Notification = observer(class Notification extends React.Component<I.NotificationComponent, State> {
 
@@ -151,7 +152,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			};
 
 			case 'request': {
-				popupStore.open('inviteConfirm', { 
+				S.Popup.open('inviteConfirm', { 
 					data: {
 						name: payload.identityName,
 						icon: payload.identityIcon,

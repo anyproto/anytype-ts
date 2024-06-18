@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Title, Label, IconObject, Button } from 'Component';
-import { analytics, C, S, UtilFile, I, translate, UtilCommon, UtilData, Renderer } from 'Lib';
+import { I, C, S, UtilFile, translate, UtilCommon, UtilData, Renderer, analytics } from 'Lib';
 import { observer } from 'mobx-react';
-import { popupStore } from 'Store';
 
 interface Props extends I.PopupSettings {
     onPage: (id: string) => void;
@@ -73,7 +72,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
         analytics.event('ScreenFileOffloadWarning');
 
-        popupStore.open('confirm',{
+        S.Popup.open('confirm',{
             data: {
                 title: translate('commonAreYouSure'),
                 text: translate(`popupSettingsDataOffloadWarningText${suffix}`),
@@ -91,7 +90,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                             return;
                         };
 
-                        popupStore.open('confirm',{
+                        S.Popup.open('confirm',{
                             data: {
                                 title: translate('popupSettingsDataFilesOffloaded'),
                                 //text: UtilCommon.sprintf('Files: %s, Size: %s', message.files, UtilFile.size(message.bytes)),

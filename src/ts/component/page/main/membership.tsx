@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Loader, Frame, Title, Error, Button } from 'Component';
-import { I, UtilCommon, UtilSpace, UtilData, translate, analytics } from 'Lib';
-import { popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, UtilCommon, UtilSpace, UtilData, translate, analytics } from 'Lib';
 
 interface State {
 	error: string;
 };
+
+const Constant = require('json/constant.json');
 
 class PageMainMembership extends React.Component<I.PageComponent, State> {
 
@@ -51,15 +51,15 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 
 			UtilSpace.openDashboard('route', {
 				onRouteChange: () => {
-					popupStore.closeAll(null, () => {
+					S.Popup.closeAll(null, () => {
 						const { status, tier } = membership;
 
 						if (status && (status == I.MembershipStatus.Finalization)) {
-							popupStore.open('membershipFinalization', { data: { tier } });
+							S.Popup.open('membershipFinalization', { data: { tier } });
 						} else {
-							popupStore.open('membership', {
+							S.Popup.open('membership', {
 								onClose: () => {
-									window.setTimeout(() => popupStore.open('settings', { data: { page: 'membership' } }), Constant.delay.popup * 2);
+									window.setTimeout(() => S.Popup.open('settings', { data: { page: 'membership' } }), Constant.delay.popup * 2);
 								},
 								data: {
 									tier: membership.tier,

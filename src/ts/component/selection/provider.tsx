@@ -4,7 +4,6 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { I, M, S, focus, keyboard, scrollOnMove, UtilCommon } from 'Lib';
-import { popupStore } from 'Store';
 
 interface Props {
 	children?: React.ReactNode;
@@ -46,7 +45,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	render () {
-		const { list } = popupStore;
+		const { list } = S.Popup;
 		const { children } = this.props;
 		const length = list.length;
 
@@ -125,7 +124,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	onMouseDown (e: any) {
 		const isPopup = keyboard.isPopup();
 
-		if (e.button || !this._isMounted || S.Menu.isOpen('', '', [ 'onboarding' ]) || popupStore.isOpen('', [ 'page' ])) {
+		if (e.button || !this._isMounted || S.Menu.isOpen('', '', [ 'onboarding' ]) || S.Popup.isOpen('', [ 'page' ])) {
 			return;
 		};
 		

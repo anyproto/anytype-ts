@@ -1,11 +1,10 @@
 import $ from 'jquery';
-import { I, C, Preview, Renderer, translate, UtilSpace, Mark } from 'Lib';
-import { popupStore } from 'Store';
+import DOMPurify from 'dompurify';
+import { I, C, S, Preview, Renderer, translate, UtilSpace, Mark } from 'Lib';
+
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const Text = require('json/text.json');
-import DOMPurify from 'dompurify';
-
 const TEST_HTML = /<[^>]*>/;
 
 class UtilCommon {
@@ -572,7 +571,7 @@ class UtilCommon {
 		} else {
 			const logPath = this.getElectron().logPath();
 
-			popupStore.open('confirm', {
+			S.Popup.open('confirm', {
 				data: {
 					icon: 'error',
 					bgColor: 'red',
@@ -596,7 +595,7 @@ class UtilCommon {
 	};
 
 	onErrorUpdate (onConfirm?: () => void) {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
@@ -616,14 +615,14 @@ class UtilCommon {
 	};
 
 	onInviteRequest () {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupInviteInviteConfirmTitle'),
 				text: translate('popupInviteInviteConfirmText'),
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					window.setTimeout(() => { popupStore.open('settings', { data: { page: 'spaceList' } }); }, popupStore.getTimeout());
+					window.setTimeout(() => { S.Popup.open('settings', { data: { page: 'spaceList' } }); }, S.Popup.getTimeout());
 				},
 			},
 		});

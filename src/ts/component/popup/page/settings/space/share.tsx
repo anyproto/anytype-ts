@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
 import { I, C, S, translate, UtilCommon, UtilSpace, Preview, Action, analytics, UtilObject, UtilMenu } from 'Lib';
-import { popupStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 
@@ -286,7 +285,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			Action.membershipUpgrade();
 		} else {
 			this.props.close(() => {
-				popupStore.open('settings', { data: { page: 'membership' } });
+				S.Popup.open('settings', { data: { page: 'membership' } });
 			});
 		};
 
@@ -343,7 +342,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onStopSharing () {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupConfirmStopSharingSpaceTitle'),
 				text: translate('popupConfirmStopSharingSpaceText'),
@@ -438,7 +437,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			};
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title,
 				text,
@@ -450,7 +449,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onInfo () {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			className: 'isLeft shareMoreInfo',
 			data: {
 				title: translate('popupConfirmSpaceShareMoreInfoTitle'),
@@ -464,7 +463,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onJoinRequest (item: any) {
-		popupStore.open('inviteConfirm', { 
+		S.Popup.open('inviteConfirm', { 
 			data: {
 				name: item.name,
 				icon: item.iconImage,

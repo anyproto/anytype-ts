@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Icon, Error } from 'Component';
 import { I, C, S, translate, focus, Action, keyboard } from 'Lib';
-import { popupStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const BlockImage = observer(class BlockImage extends React.Component<I.BlockComponent> {
@@ -223,7 +223,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 		if (!keyboard.withCommand(e)) {
 			const src = S.Common.imageUrl(this.props.block.content.targetObjectId, Constant.size.image);
 
-			popupStore.open('preview', { data: { src, type: I.FileType.Image } });
+			S.Popup.open('preview', { data: { src, type: I.FileType.Image } });
 		};
 	};
 

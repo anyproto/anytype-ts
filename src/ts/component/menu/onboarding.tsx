@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
 import { I, C, S, Onboarding, UtilCommon, analytics, keyboard, UtilObject, translate } from 'Lib';
-import { popupStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
 interface State {
@@ -319,7 +318,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	onVideoClick (e: any, src: string) {
 		UtilCommon.pauseMedia();
 
-		popupStore.open('preview', { data: { src, type: I.FileType.Video },
+		S.Popup.open('preview', { data: { src, type: I.FileType.Video },
 			preventMenuClose: true,
 			onClose: () => {
 				if (this.video) {
@@ -333,7 +332,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	onImport () {
 		this.props.close(() => {
-			popupStore.open('settings', { data: { page: 'importIndex' } });
+			S.Popup.open('settings', { data: { page: 'importIndex' } });
 		});
 	};
 
@@ -342,7 +341,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			return false;
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate('commonError'),
 				text: error.description,

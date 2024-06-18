@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import { C, S, UtilData, Preview, analytics, Storage } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -68,11 +67,11 @@ class UtilRouter {
 
 		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
-			timeout = popupStore.getTimeout();
+			timeout = S.Popup.getTimeout();
 		};
 
 		S.Menu.closeAll();
-		popupStore.closeAll();
+		S.Popup.closeAll();
 
 		if (routeParam.spaceId && ![ Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route);

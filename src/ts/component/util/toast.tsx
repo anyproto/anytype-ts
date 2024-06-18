@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
-import { popupStore } from 'Store';
 import { I, S, UtilCommon, UtilObject, Preview, Action, translate, keyboard } from 'Lib';
 
 interface State {
@@ -187,7 +186,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 			};
 
             case 'manageStorage': {
-                popupStore.open('settings', { data: { page: 'storageManager' }});
+                S.Popup.open('settings', { data: { page: 'storageManager' }});
                 S.Common.toastClear();
             };
         };

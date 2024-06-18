@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
 import { I, S, UtilCommon, UtilSpace, analytics, Action, keyboard, translate, Preview, UtilData } from 'Lib';
-import { popupStore } from 'Store';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -337,7 +336,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 		this.prevPage = page;
 
-		popupStore.updateData(this.props.id, { page: id, ...additional });
+		S.Popup.updateData(this.props.id, { page: id, ...additional });
 		analytics.event('settings', { params: { id } });
 	};
 

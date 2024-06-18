@@ -2,7 +2,6 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, keyboard, analytics, UtilObject, UtilCommon, Preview, focus, Action, translate, UtilSpace } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
@@ -385,7 +384,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageExport': {
-				popupStore.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route } });
+				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route } });
 				break;
 			};
 				

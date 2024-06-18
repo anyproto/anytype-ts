@@ -2,7 +2,6 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, C, S, keyboard, analytics, translate, UtilObject, focus, Action, UtilSpace } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -384,12 +383,12 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'export': {
-				popupStore.open('export', { data: { objectIds, route } });
+				S.Popup.open('export', { data: { objectIds, route } });
 				break;
 			};
 
 			case 'relation': {
-				popupStore.open('relation', { data: { objectIds, relationKeys, route, view, targetId, blockId } });
+				S.Popup.open('relation', { data: { objectIds, relationKeys, route, view, targetId, blockId } });
 				break;
 			};
 

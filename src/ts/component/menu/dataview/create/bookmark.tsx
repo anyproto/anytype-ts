@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Input, Button, Loader } from 'Component';
 import { I, C, S, keyboard, translate, analytics } from 'Lib';
-import { popupStore } from 'Store';
 
 interface State { 
 	loading: boolean;
@@ -69,7 +68,7 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 			this.setState({ loading: false });
 
 			if (message.error.code) {
-				popupStore.open('confirm', {
+				S.Popup.open('confirm', {
 					data: {
 						title: translate('menuDataviewCreateSomethingWentWrong'),
 						text: translate('menuDataviewContextTryAgain'),

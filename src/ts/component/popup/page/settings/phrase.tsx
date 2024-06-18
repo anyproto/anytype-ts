@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
 import { Title, Label, Phrase } from 'Component';
 import { I, C, S, translate, analytics, UtilCommon, Storage, Renderer } from 'Lib';
-import { popupStore } from 'Store';
 
 const Theme = require('json/theme.json');
 
@@ -99,7 +98,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 			this.setState({ showCode: !showCode });
 		};
 
-		pin && !showCode ? popupStore.open('pin', { data: { onSuccess } }) : onSuccess();
+		pin && !showCode ? S.Popup.open('pin', { data: { onSuccess } }) : onSuccess();
 	};
 
 });

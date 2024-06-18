@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
 import { I, S, translate, UtilCommon, UtilDate, analytics, keyboard } from 'Lib';
-import { popupStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
 
@@ -80,7 +79,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			return (
 				<div 
 					className={[ 'tier', `c${item.id}`, item.color, (isCurrent ? 'isCurrent' : '') ].join(' ')}
-					onClick={() => popupStore.open('membership', { data: { tier: item.id } })}
+					onClick={() => S.Popup.open('membership', { data: { tier: item.id } })}
 				>
 					<div className="top">
 						<div className="iconWrapper">

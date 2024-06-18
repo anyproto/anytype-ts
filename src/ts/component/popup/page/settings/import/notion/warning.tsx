@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Title, Button } from 'Component';
 import { I, C, S, translate, analytics, UtilCommon } from 'Lib';
-import { popupStore } from 'Store';
 import Head from '../../head';
 
 class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettings> {
@@ -43,7 +42,7 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 				const { collectionId, count } = message;
 
 				if (collectionId) {
-					popupStore.replace(id, 'objectManager', { 
+					S.Popup.replace(id, 'objectManager', { 
 						data: { 
 							collectionId, 
 							type: I.ObjectManagerPopup.Favorites,

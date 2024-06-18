@@ -2,9 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Pin } from 'Component';
 import { I, C, S, translate, UtilCommon, UtilDate, analytics, UtilData, Action } from 'Lib';
-import { popupStore } from 'Store';
-
-const Constant = require('json/constant.json');
 
 interface Props extends I.Popup {
 	onChangeEmail: () => void;
@@ -17,6 +14,8 @@ interface State {
 	status: string;
 	statusText: string;
 };
+
+const Constant = require('json/constant.json');
 
 const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent extends React.Component<Props, State> {
 
@@ -215,7 +214,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			};
 
 			UtilData.getMembershipStatus();
-			popupStore.updateData('membership', { success: true, emailVerified: true });
+			S.Popup.updateData('membership', { success: true, emailVerified: true });
 			this.props.position();
 		});
 	};

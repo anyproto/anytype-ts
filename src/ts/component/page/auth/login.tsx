@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
 import { I, S, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -200,7 +199,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	onForgot () {
 		const platform = UtilCommon.getPlatform();
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			className: 'lostPhrase isLeft',
             data: {
 				title: translate('popupConfirmLostPhraseTitle'),

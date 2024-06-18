@@ -9,7 +9,6 @@ import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar } from 'Component';
-import { popupStore } from 'Store';
 import { 
 	I, C, S, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
 	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode, UtilSpace, sidebar
@@ -417,10 +416,10 @@ class App extends React.Component<object, State> {
 		param.data.rootId = keyboard.getRootId();
 
 		if (close) {
-			popupStore.closeAll();
+			S.Popup.closeAll();
 		};
 
-		window.setTimeout(() => popupStore.open(id, param), popupStore.getTimeout());
+		window.setTimeout(() => S.Popup.open(id, param), S.Popup.getTimeout());
 	};
 
 	onUpdateCheck (e: any, auto: boolean) {
@@ -437,7 +436,7 @@ class App extends React.Component<object, State> {
 			return;
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
@@ -462,7 +461,7 @@ class App extends React.Component<object, State> {
 			return;
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
@@ -487,7 +486,7 @@ class App extends React.Component<object, State> {
 			return;
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				icon: 'updated',
 				bgColor: 'green',
@@ -508,7 +507,7 @@ class App extends React.Component<object, State> {
 			return;
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				icon: 'error',
 				bgColor: 'red',

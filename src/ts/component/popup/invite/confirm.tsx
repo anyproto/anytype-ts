@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Button, Error, IconObject } from 'Component';
 import { I, C, S, translate, UtilCommon, UtilSpace, UtilData, analytics } from 'Lib';
-import { popupStore } from 'Store';
 
 interface State {
 	error: string;
@@ -84,8 +83,8 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	onMembership (type: string) {
-		popupStore.closeAll(null, () => {
-			popupStore.open('settings', { data: { page: 'membership' } });
+		S.Popup.closeAll(null, () => {
+			S.Popup.open('settings', { data: { page: 'membership' } });
 		});
 
 		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.inviteConfirm });

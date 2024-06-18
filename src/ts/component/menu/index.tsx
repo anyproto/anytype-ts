@@ -4,7 +4,6 @@ import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
 import { I, S, keyboard, UtilCommon, analytics, Storage } from 'Lib';
-import { popupStore } from 'Store';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -403,7 +402,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			cn.push(classNameWrap);	
 		};
 
-		if (popupStore.isOpen()) {
+		if (S.Popup.isOpen()) {
 			cn.push('fromPopup');
 		};
 

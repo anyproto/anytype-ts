@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, S, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -80,7 +79,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	onKeyDown (e: any) {
-		if (S.Menu.isOpen() || popupStore.isOpenKeyboard()) {
+		if (S.Menu.isOpen() || S.Popup.isOpenKeyboard()) {
 			return;
 		};
 

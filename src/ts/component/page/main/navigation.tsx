@@ -5,7 +5,6 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
 import { I, C, S, UtilObject, UtilCommon, UtilMenu, keyboard, focus, translate, UtilSpace } from 'Lib';
-import { popupStore } from 'Store';
 
 interface State {
 	loading: boolean;
@@ -117,7 +116,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				
 					<div className="buttons">
 						<Button text={translate('popupNavigationOpen')} className="c36" onClick={e => this.onConfirm(e, item)} />
-						{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={() => popupStore.close('page')} /> : ''}
+						{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={() => S.Popup.close('page')} /> : ''}
 					</div>
 				</div>
 			);

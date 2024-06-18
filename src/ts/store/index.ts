@@ -4,8 +4,8 @@ import { Auth } from './auth';
 import { Detail } from './detail';
 import { Block } from './block';
 import { Menu } from './menu';
+import { Popup } from './popup';
 
-import { popupStore } from './popup';
 import { extensionStore } from './extension';
 import { notificationStore } from './notification';
 
@@ -16,8 +16,8 @@ export {
 	Detail,
 	Block,
 	Menu,
+	Popup,
 
-	popupStore,
 	extensionStore,
 	notificationStore,
 };

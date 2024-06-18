@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
 import { I, S, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage, Action } from 'Lib';
-import { popupStore } from 'Store';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -315,7 +314,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	onPhraseTooltip () {
-		popupStore.open('phrase', {});
+		S.Popup.open('phrase', {});
 		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: Stage[this.state.stage] });
 	};
 

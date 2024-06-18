@@ -2,10 +2,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Cell, Error, Icon, EmptySearch, Checkbox } from 'Component';
 import { I, M, C, S, UtilCommon, Relation, UtilData, translate, Dataview } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
-
 const ID_PREFIX = 'popupRelation';
 const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;
 const SUB_ID_DEPS = `${ID_PREFIX}-deps`;
@@ -292,7 +290,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			};
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: 'Are you sure?',
 				text: UtilCommon.sprintf('This will update relation values of %d objects', objectIds.length),

@@ -1,5 +1,4 @@
 import { I, S, Storage, UtilCommon, analytics, Renderer, translate, UtilObject, UtilSpace, UtilData, UtilDate } from 'Lib';
-import { popupStore } from 'Store';
 
 const Surveys = require('json/survey.json');
 
@@ -16,7 +15,7 @@ class Survey {
 	show (type: I.SurveyType) {
 		const prefix = `survey${type}`;
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate(`${prefix}Title`),
 				text: translate(`${prefix}Text`),
@@ -99,7 +98,7 @@ class Survey {
 			return;
 		};
 
-		if (!popupStore.isOpen() && (cancelTime || !lastCompleted) && !completeTime) {
+		if (!S.Popup.isOpen() && (cancelTime || !lastCompleted) && !completeTime) {
 			this.show(type);
 		};
 	};
@@ -109,7 +108,7 @@ class Survey {
 		const isComplete = this.isComplete(type);
 		const surveyTime = timeRegister && ((UtilDate.now() - 86400 * 7 - timeRegister) > 0);
 
-		if (!isComplete && surveyTime && !popupStore.isOpen()) {
+		if (!isComplete && surveyTime && !S.Popup.isOpen()) {
 			this.show(type);
 		};
 	};

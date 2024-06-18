@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
 import { I, S, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilSpace, translate } from 'Lib';
-import { popupStore } from 'Store';
 
 const Url = require('json/url.json');
 
@@ -106,12 +105,12 @@ class MenuHelp extends React.Component<I.Menu> {
 
 		switch (item.id) {
 			case 'whatsNew': {
-				popupStore.open('help', { preventResize: true, data: { document: item.document } });
+				S.Popup.open('help', { preventResize: true, data: { document: item.document } });
 				break;
 			};
 
 			case 'shortcut': {
-				popupStore.open('shortcut', { preventResize: true });
+				S.Popup.open('shortcut', { preventResize: true });
 				break;
 			};
 

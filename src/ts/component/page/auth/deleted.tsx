@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Frame, Title, Label, Error, Button } from 'Component';
-import { I, S, UtilCommon, UtilRouter, C, Action, Survey, UtilSpace, analytics, translate, UtilDate } from 'Lib';
-import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
+import { Frame, Title, Label, Error, Button } from 'Component';
+import { I, S, UtilCommon, UtilRouter, C, Action, Survey, UtilSpace, analytics, translate, UtilDate } from 'Lib';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 import { OnboardStage } from './animation/constants';
 
@@ -105,11 +104,11 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	};
 
 	componentDidMount() {
-		window.setTimeout(() => Survey.check(I.SurveyType.Delete), popupStore.getTimeout());
+		window.setTimeout(() => Survey.check(I.SurveyType.Delete), S.Popup.getTimeout());
 	};
 
 	onRemove () {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate('authDeleteRemovePopupTitle'),
 				text: translate('authDeleteRemovePopupText'),

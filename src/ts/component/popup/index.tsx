@@ -3,7 +3,6 @@ import $ from 'jquery';
 import raf from 'raf';
 import { I, S, UtilCommon, analytics, Storage, Preview, translate } from 'Lib';
 import { Dimmer } from 'Component';
-import { popupStore } from 'Store';
 
 import PopupSettings from './settings';
 import PopupSettingsOnboarding from './settings/onboarding';
@@ -82,7 +81,7 @@ class Popup extends React.Component<I.Popup> {
 			cn.push(className);
 		};
 
-		if (popupStore.showDimmerIds().includes(id)) {
+		if (S.Popup.showDimmerIds().includes(id)) {
 			cn.push('showDimmer');
 		};
 		
@@ -167,7 +166,7 @@ class Popup extends React.Component<I.Popup> {
 			window.setTimeout(() => { 
 				wrap.css({ transform: 'none' }); 
 				this.isAnimating = false;
-			}, popupStore.getTimeout());
+			}, S.Popup.getTimeout());
 		});
 	};
 	
@@ -189,7 +188,7 @@ class Popup extends React.Component<I.Popup> {
 			const height = inner.outerHeight();
 
 			let sw = 0;
-			if (S.Common.isSidebarFixed && sidebar.hasClass('active') && !popupStore.showDimmerIds().includes(id)) {
+			if (S.Common.isSidebarFixed && sidebar.hasClass('active') && !S.Popup.showDimmerIds().includes(id)) {
 				sw = sidebar.outerWidth();
 			};
 
@@ -216,7 +215,7 @@ class Popup extends React.Component<I.Popup> {
 			S.Menu.closeAll();
 		};
 
-		popupStore.close(id, callBack);
+		S.Popup.close(id, callBack);
 	};
 
 	onDimmer () {

@@ -1,5 +1,4 @@
 import { I, C, S, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -293,7 +292,7 @@ class Action {
 			};
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title,
 				text,
@@ -323,7 +322,7 @@ class Action {
 		const count = ids.length;
 
 		if (!UtilSpace.canMyParticipantWrite()) {
-			popupStore.open('confirm', {
+			S.Popup.open('confirm', {
 				data: {
 					title: translate('popupConfirmActionRestrictedTitle'),
 					text: translate('popupConfirmActionRestrictedText'),
@@ -336,7 +335,7 @@ class Action {
 
 		analytics.event('ShowDeletionWarning');
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: UtilCommon.sprintf(translate('popupConfirmDeleteWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
 				text: translate('popupConfirmDeleteWarningText'),
@@ -394,7 +393,7 @@ class Action {
 							replace: true,
 							animate: true,
 							onFadeIn: () => {
-								popupStore.open('migration', { data: { type: 'import' } });
+								S.Popup.open('migration', { data: { type: 'import' } });
 								S.Block.closeRecentWidgets();
 							},
 						};
@@ -467,13 +466,13 @@ class Action {
 
 				if (collectionId) {
 					window.setTimeout(() => {
-						popupStore.open('objectManager', { 
+						S.Popup.open('objectManager', { 
 							data: { 
 								collectionId, 
 								type: I.ObjectManagerPopup.Favorites,
 							} 
 						});
-					}, popupStore.getTimeout() + 10);
+					}, S.Popup.getTimeout() + 10);
 				};
 
 				analytics.event('Import', { middleTime: message.middleTime, type, count });
@@ -585,7 +584,7 @@ class Action {
 
 		analytics.event(`Click${suffix}Space`, { route });
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title,
 				text,
@@ -697,7 +696,7 @@ class Action {
 	};
 
 	membershipUpgrade () {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupConfirmMembershipUpgradeTitle'),
 				text: translate('popupConfirmMembershipUpgradeText'),
@@ -709,7 +708,7 @@ class Action {
 	};
 
 	inviteRevoke (spaceId: string, callBack?: () => void) {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupConfirmRevokeLinkTitle'),
 				text: translate('popupConfirmRevokeLinkText'),
@@ -732,7 +731,7 @@ class Action {
 	};
 
 	welcome () {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			className: 'welcome',
 			preventCloseByClick: true,
 			preventCloseByEscape: true,
@@ -743,7 +742,7 @@ class Action {
 				textConfirm: translate('popupConfirmWelcomeButton'),
 				canCancel: false,
 				onConfirm: () => {
-					popupStore.replace('confirm', 'usecase', {
+					S.Popup.replace('confirm', 'usecase', {
 						onClose: () => {
 							Onboarding.start('dashboard', false, false);
 						}

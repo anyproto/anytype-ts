@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import { I, C, S, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
-import { popupStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -694,13 +693,13 @@ class UtilMenu {
 								C.SpaceJoinCancel(targetSpaceId, (message: any) => {
 									if (message.error.code) {
 										window.setTimeout(() => {
-											popupStore.open('confirm', { 
+											S.Popup.open('confirm', { 
 												data: {
 													title: translate('commonError'),
 													text: message.error.description,
 												}
 											});
-										}, popupStore.getTimeout());
+										}, S.Popup.getTimeout());
 									};
 								});
 								break;
@@ -740,7 +739,7 @@ class UtilMenu {
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'qr': {
-							popupStore.open('inviteQr', { data: { link: UtilSpace.getInviteLink(cid, key) } });
+							S.Popup.open('inviteQr', { data: { link: UtilSpace.getInviteLink(cid, key) } });
 							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
 							break;
 						};

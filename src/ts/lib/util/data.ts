@@ -1,6 +1,6 @@
-import { I, C, M, S, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
-import { notificationStore, popupStore } from 'Store';
 import * as Sentry from '@sentry/browser';
+import { I, C, M, S, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
+import { notificationStore } from 'Store';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -985,7 +985,7 @@ class UtilData {
 				analytics.setTier(tier);
 				
 				if (status && (status == I.MembershipStatus.Finalization)) {
-					popupStore.open('membershipFinalization', { data: { tier } });
+					S.Popup.open('membershipFinalization', { data: { tier } });
 				};
 			};
 

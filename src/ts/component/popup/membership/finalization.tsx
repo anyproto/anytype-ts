@@ -2,15 +2,14 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader } from 'Component';
 import { C, I, S, translate, UtilData, UtilCommon } from 'Lib';
-import { popupStore } from 'Store';
-
-const Constant = require('json/constant.json');
 
 interface State {
 	status: string,
 	statusText: string,
 	isLoading: boolean,
 };
+
+const Constant = require('json/constant.json');
 
 const PopupMembershipFinalization = observer(class PopupMembershipFinalization extends React.Component<I.Popup, State> {
 
@@ -149,7 +148,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 					return;
 				};
 
-				popupStore.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
+				S.Popup.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
 			});
 		});
 	};
