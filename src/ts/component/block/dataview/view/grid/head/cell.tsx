@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, keyboard, Relation, Dataview } from 'Lib';
 import { SortableElement } from 'react-sortable-hoc';
-import { menuStore, dbStore, blockStore } from 'Store';
+import { menuStore, recordStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import Handle from './handle';
 const Constant = require('json/constant.json');
@@ -25,7 +25,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 
 	render () {
 		const { rootId, block, relationKey, index, onResizeStart } = this.props;
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = recordStore.getRelationByKey(relationKey);
 		
 		if (!relation) {
 			return;
@@ -76,7 +76,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { rootId, block, readonly, loadData, getView, getTarget, relationKey, isInline, isCollection } = this.props;
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = recordStore.getRelationByKey(relationKey);
 
 		if (!relation || keyboard.isResizing) {
 			return;

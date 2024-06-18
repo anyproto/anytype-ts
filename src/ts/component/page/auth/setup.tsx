@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Frame, Title, Label, Error, Button, Header, Footer, Icon, Loader } from 'Component';
-import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter, Renderer } from 'Lib';
-import { authStore, commonStore } from 'Store';
+import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
+import { I, S, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter, Renderer } from 'Lib';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 const Errors = require('json/error.json');
 
@@ -108,7 +108,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 	
 	init () {
-		const { dataPath } = commonStore;  
+		const { dataPath } = S.Common;  
 		const accountId = Storage.get('accountId');
 
 		if (!accountId) {
@@ -139,7 +139,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	select (accountId: string, animate: boolean) {
 		const { networkConfig } = authStore;
-		const { dataPath } = commonStore;
+		const { dataPath } = S.Common;
 		const { mode, path } = networkConfig;
 		const spaceId = Storage.get('spaceId');
 
@@ -149,7 +149,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			};
 
 			authStore.accountSet(message.account);
-			commonStore.configSet(message.account.config, false);
+			S.Common.configSet(message.account.config, false);
 
 			if (spaceId) {
 				UtilRouter.switchSpace(spaceId);

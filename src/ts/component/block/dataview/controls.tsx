@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button, Filter } from 'Component';
 import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject, UtilMenu, Dataview } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
+import { menuStore, recordStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import Head from './head';
 import arrayMove from 'array-move';
@@ -39,10 +39,10 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	render () {
 		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange, getTarget, getTypeId, readonly } = this.props;
 		const target = getTarget();
-		const views = dbStore.getViews(rootId, block.id);
+		const views = recordStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
-		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
+		const filters = view.filters.filter(it => recordStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
 		const allowedView = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
@@ -228,7 +228,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 	onViewRemove (view) {
 		const { rootId, block, getView, isInline, getTarget } = this.props;
-		const views = dbStore.getViews(rootId, block.id);
+		const views = recordStore.getViews(rootId, block.id);
 		const object = getTarget();
 		const idx = views.findIndex(it => it.id == view.id);
 		const filtered = views.filter(it => it.id != view.id);
@@ -334,7 +334,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				return;
 			};
 
-			const view = dbStore.getView(rootId, block.id, message.viewId);
+			const view = recordStore.getView(rootId, block.id, message.viewId);
 			if (!view) {
 				return;
 			};
@@ -352,10 +352,10 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 	onViewSet (view: any) {
 		const { rootId, block, isInline, getTarget } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = recordStore.getSubId(rootId, block.id);
 		const object = getTarget();
 
-		dbStore.metaSet(subId, '', { viewId: view.id });
+		recordStore.metaSet(subId, '', { viewId: view.id });
 		C.BlockDataviewViewSetActive(rootId, block.id, view.id);
 
 		analytics.event('SwitchView', {
@@ -401,11 +401,11 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const { oldIndex, newIndex } = result;
 		const { rootId, block, isInline, getTarget } = this.props;
 		const object = getTarget();
-		const views = dbStore.getViews(rootId, block.id);
+		const views = recordStore.getViews(rootId, block.id);
 		const view = views[oldIndex];
 		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
 
-		dbStore.viewsSort(rootId, block.id, ids);
+		recordStore.viewsSort(rootId, block.id, ids);
 
 		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex, () => {
 			analytics.event('RepositionView', {

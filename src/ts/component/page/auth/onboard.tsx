@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage, Action } from 'Lib';
-import { authStore, commonStore, popupStore, blockStore } from 'Store';
+import { I, S, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage, Action } from 'Lib';
+import { authStore, popupStore, blockStore } from 'Store';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -240,7 +240,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage == Stage.Soul) {
 			const name = this.refName.getValue();
-			const { redirect } = commonStore;
+			const { redirect } = S.Common;
 
 			const cb = () => {
 				Animation.from(() => {
@@ -303,7 +303,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	accountUpdate = (name: string, callBack?: () => void): void => {
 		UtilObject.setName(blockStore.profile, name, () => {
-			C.WorkspaceSetInfo(commonStore.space, { name }, callBack);
+			C.WorkspaceSetInfo(S.Common.space, { name }, callBack);
 		});
 	};
 

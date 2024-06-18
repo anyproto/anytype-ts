@@ -2,9 +2,10 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
-import { I, keyboard, UtilCommon, UtilData, UtilObject, UtilMenu, Mark, analytics, translate } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { I, S, keyboard, UtilCommon, UtilData, UtilObject, Mark, translate } from 'Lib';
+import { recordStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -48,7 +49,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				return null;
 			};			
 
-			const type = dbStore.getTypeById(item.type);
+			const type = recordStore.getTypeById(item.type);
 			const cn = [];
 
 			let content = null;
@@ -171,7 +172,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	getFilter () {
-		return String(commonStore.filter.text || '').replace(/^@/, '');
+		return String(S.Common.filter.text || '').replace(/^@/, '');
 	};
 
 	getSections () {
@@ -281,7 +282,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onChange } = data;
-		const { from } = commonStore.filter;
+		const { from } = S.Common.filter;
 
 		const cb = (id: string, name: string) => {
 			name = String(name || translate('defaultNamePage'));

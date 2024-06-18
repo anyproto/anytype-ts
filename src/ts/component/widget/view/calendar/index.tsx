@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import { I, UtilDate } from 'Lib';
-import { menuStore, dbStore } from 'Store';
+import { menuStore, recordStore } from 'Store';
 
 interface State {
 	value: number;
@@ -179,7 +179,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	getFilters (): I.Filter[] {
 		const { getView } = this.props;
 		const view = getView();
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+		const relation = recordStore.getRelationByKey(view.groupRelationKey);
 
 		if (!relation) {
 			return [];

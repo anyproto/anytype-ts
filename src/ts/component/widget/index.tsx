@@ -3,8 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { C, I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace, keyboard } from 'Lib';
-import { blockStore, detailStore, menuStore, dbStore, commonStore } from 'Store';
+import { C, I, S, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics, Dataview, UtilDate, UtilSpace, keyboard } from 'Lib';
+import { blockStore, detailStore, menuStore, recordStore } from 'Store';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -366,7 +366,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 			const view = Dataview.getView(rootId, Constant.blockId.dataview, viewId);
 			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id, viewId);
-			const type = dbStore.getTypeById(typeId);
+			const type = recordStore.getTypeById(typeId);
 
 			if (!view || !type) {
 				return;
@@ -381,7 +381,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			switch (targetBlockId) {
 				default:
 				case Constant.widgetId.favorite: {
-					const type = dbStore.getTypeById(commonStore.type);
+					const type = recordStore.getTypeById(S.Common.type);
 
 					if (!type) {
 						return;
@@ -438,7 +438,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (createWithLink) {
 			UtilObject.create(object.id, '', details, I.BlockPosition.Bottom, templateId, flags, analytics.route.widget, callBack);
 		} else {
-			C.ObjectCreate(details, flags, templateId, typeKey, commonStore.space, (message: any) => {
+			C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -578,7 +578,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		const { targetBlockId } = child.content;
 		const space = UtilSpace.getSpaceview();
-		const templateType = dbStore.getTemplateType();
+		const templateType = recordStore.getTemplateType();
 		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
@@ -723,7 +723,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (UtilObject.isSetLayout(object.layout)) {
 			const rootId = this.getRootId();
 			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id);
-			const type = dbStore.getTypeById(typeId);
+			const type = recordStore.getTypeById(typeId);
 
 			if (type && UtilObject.isFileLayout(type.recommendedLayout)) {
 				return false;

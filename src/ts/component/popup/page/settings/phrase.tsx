@@ -2,8 +2,9 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
 import { Title, Label, Phrase } from 'Component';
-import { I, C, translate, analytics, UtilCommon, Storage, Renderer } from 'Lib';
-import { commonStore, authStore, popupStore } from 'Store';
+import { I, C, S, translate, analytics, UtilCommon, Storage, Renderer } from 'Lib';
+import { authStore, popupStore } from 'Store';
+
 const Theme = require('json/theme.json');
 
 interface State {
@@ -30,7 +31,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 	render () {
 		const { entropy, showCode } = this.state;
-		const theme = commonStore.getThemeClass();
+		const theme = S.Common.getThemeClass();
 
 		return (
 			<div

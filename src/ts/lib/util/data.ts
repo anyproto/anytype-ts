@@ -1,6 +1,5 @@
-import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, M, S, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
+import { blockStore, detailStore, recordStore, authStore, notificationStore, popupStore } from 'Store';
 import * as Sentry from '@sentry/browser';
 
 type SearchSubscribeParams = Partial<{
@@ -22,6 +21,7 @@ type SearchSubscribeParams = Partial<{
 	noDeps: boolean;
 }>;
 
+const Constant = require('json/constant.json');
 const SYSTEM_DATE_RELATION_KEYS = [
 	'lastModifiedDate', 
 	'lastOpenedDate', 
@@ -155,7 +155,7 @@ class UtilData {
 	Used to click and set selection automatically in block menu for example
 	*/
 	selectionGet (id: string, withChildren: boolean, save: boolean): string[] {
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		
 		if (!selection) {
 			return [];
@@ -180,8 +180,8 @@ class UtilData {
 		blockStore.profileSet(info.profileObjectId);
 		blockStore.spaceviewSet(info.spaceViewId);
 
-		commonStore.gatewaySet(info.gatewayUrl);
-		commonStore.spaceSet(info.accountSpaceId);
+		S.Common.gatewaySet(info.gatewayUrl);
+		S.Common.spaceSet(info.accountSpaceId);
 
 		analytics.profile(info.analyticsId, info.networkId);
 		Sentry.setUser({ id: info.analyticsId });
@@ -193,7 +193,7 @@ class UtilData {
 
 		const pin = Storage.getPin();
 		const { root, widgets } = blockStore;
-		const { redirect, space } = commonStore;
+		const { redirect, space } = S.Common;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
 		const routeParam = Object.assign({ replace: true }, param.routeParam);
@@ -228,7 +228,7 @@ class UtilData {
 							UtilSpace.openDashboard('route', routeParam);
 						};
 
-						commonStore.redirectSet('');
+						S.Common.redirectSet('');
 					};
 
 					if (!color) {
@@ -270,7 +270,7 @@ class UtilData {
 
 		C.FileNodeUsage((message: any) => {
 			if (!message.error.code) {
-				commonStore.spaceStorageSet(message);
+				S.Common.spaceStorageSet(message);
 			};
 		});
 
@@ -279,7 +279,7 @@ class UtilData {
 	};
 
 	createSubscriptions (callBack?: () => void): void {
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const { account } = authStore;
 		const list: any[] = [
 			{
@@ -317,7 +317,7 @@ class UtilData {
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				onSubscribe: () => {
-					dbStore.getTypes().forEach(it => dbStore.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
+					recordStore.getTypes().forEach(it => recordStore.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
 			},
 			{
@@ -332,7 +332,7 @@ class UtilData {
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				onSubscribe: () => {
-					dbStore.getRelations().forEach(it => dbStore.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
+					recordStore.getRelations().forEach(it => recordStore.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
 			},
 			{
@@ -469,13 +469,13 @@ class UtilData {
 
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withCollection, limit } = param || {};
-		const { space, config } = commonStore;
+		const { space, config } = S.Common;
 		const pageLayouts = UtilObject.getPageLayouts();
 		const skipLayouts = UtilObject.getSetLayouts();
 
 		let items: any[] = [];
 
-		items = items.concat(dbStore.getTypes().filter(it => {
+		items = items.concat(recordStore.getTypes().filter(it => {
 			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
 		}));
 
@@ -484,11 +484,11 @@ class UtilData {
 		};
 
 		if (withSet) {
-			items.push(dbStore.getSetType());
+			items.push(recordStore.getSetType());
 		};
 
 		if (withCollection) {
-			items.push(dbStore.getCollectionType());
+			items.push(recordStore.getCollectionType());
 		};
 
 		items = items.filter(it => it);
@@ -501,7 +501,7 @@ class UtilData {
 	};
 
 	getTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
-		const templateType = dbStore.getTemplateType();
+		const templateType = recordStore.getTemplateType();
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
 			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
@@ -647,14 +647,14 @@ class UtilData {
 
 	// Check if there is at least 1 set for object types
 	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		const setType = dbStore.getTypeByKey(Constant.typeKey.set);
+		const setType = recordStore.getTypeByKey(Constant.typeKey.set);
 		this.checkObjectWithRelationCnt('setOf', setType?.id, ids, 2, callBack);
 	};
 
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
-			cardStyle: commonStore.linkStyle,
+			cardStyle: S.Common.linkStyle,
 			description: I.LinkDescription.None,
 			relations: [],
 		};
@@ -693,7 +693,7 @@ class UtilData {
 			return;
 		};
 		if (message.counters) {
-			dbStore.metaSet(subId, '', { total: message.counters.total, keys });
+			recordStore.metaSet(subId, '', { total: message.counters.total, keys });
 		};
 
 		const mapper = (it: any) => { 
@@ -706,11 +706,11 @@ class UtilData {
 		details = details.concat(message.records.map(mapper));
 
 		detailStore.set(subId, details);
-		dbStore.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
+		recordStore.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
 	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
-		const { config, space } = commonStore;
+		const { config, space } = S.Common;
 
 		param = Object.assign({
 			subId: '',
@@ -813,7 +813,7 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, space } = commonStore;
+		const { config, space } = S.Common;
 
 		param = Object.assign({
 			idField: 'id',
@@ -892,8 +892,8 @@ class UtilData {
 	};
 
 	graphFilters () {
-		const { space } = commonStore;
-		const templateType = dbStore.getTemplateType();
+		const { space } = S.Common;
+		const templateType = recordStore.getTemplateType();
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
@@ -911,7 +911,7 @@ class UtilData {
 	};
 
 	moveToPage (rootId: string, ids: string[], typeId: string, route: string) {
-		const type = dbStore.getTypeById(typeId);
+		const type = recordStore.getTypeById(typeId);
 		if (!type) {
 			return;
 		};
@@ -996,7 +996,7 @@ class UtilData {
 	};
 
 	getMembershipTiers (noCache: boolean) {
-		const { config, interfaceLang, isOnline } = commonStore;
+		const { config, interfaceLang, isOnline } = S.Common;
 		const { testPayment } = config;
 
 		if (!isOnline || !this.isAnytypeNetwork()) {
@@ -1009,12 +1009,12 @@ class UtilData {
 			};
 
 			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
-			commonStore.membershipTiersListSet(tiers);
+			S.Common.membershipTiersListSet(tiers);
 		});
 	};
 
 	getMembershipTier (id: I.TierType): I.MembershipTier {
-		return commonStore.membershipTiers.find(it => it.id == id) || new M.MembershipTier({ id: I.TierType.None });
+		return S.Common.membershipTiers.find(it => it.id == id) || new M.MembershipTier({ id: I.TierType.None });
 	};
 
 	isAnytypeNetwork (): boolean {
@@ -1034,7 +1034,7 @@ class UtilData {
 
 		const { networkConfig } = authStore;
 		const { mode, path } = networkConfig;
-		const { dataPath } = commonStore;
+		const { dataPath } = S.Common;
 
 		let phrase = '';
 
@@ -1059,12 +1059,12 @@ class UtilData {
 					};
 
 					authStore.accountSet(message.account);
-					commonStore.configSet(message.account.config, false);
-					commonStore.isSidebarFixedSet(true);
+					S.Common.configSet(message.account.config, false);
+					S.Common.isSidebarFixedSet(true);
 
 					this.onInfo(message.account.info);
 					Renderer.send('keytarSet', message.account.id, phrase);
-					Action.importUsecase(commonStore.space, I.Usecase.GetStarted, callBack);
+					Action.importUsecase(S.Common.space, I.Usecase.GetStarted, callBack);
 
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
 					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });

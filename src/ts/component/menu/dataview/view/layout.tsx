@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon } from 'Lib';
 import { Label, Icon, MenuItemVertical } from 'Component';
-import { blockStore, dbStore, menuStore } from 'Store';
+import { blockStore, recordStore, menuStore } from 'Store';
 const Constant = require('json/constant.json');
 
 const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.Menu> {

@@ -1,7 +1,8 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, keyboard, Storage, UtilCommon } from 'Lib';
-import { commonStore, menuStore, popupStore } from 'Store';
+import { I, S, keyboard, Storage, UtilCommon } from 'Lib';
+import { menuStore, popupStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface SidebarData {
@@ -48,8 +49,8 @@ class Sidebar {
 
 			this.set(stored);
 		} else {
-			commonStore.autoSidebarSet(true);
-			commonStore.isSidebarFixedSet(true);
+			S.Common.autoSidebarSet(true);
+			S.Common.isSidebarFixedSet(true);
 
 			const { wh } = UtilCommon.getWindowDimensions();
 			const y = wh / 2 - this.getMaxHeight() / 2;
@@ -90,8 +91,8 @@ class Sidebar {
 
 		if (
 			this.isAnimating ||
-			commonStore.isSidebarFixed ||
-			!commonStore.autoSidebar
+			S.Common.isSidebarFixed ||
+			!S.Common.autoSidebar
 		) {
 			return;
 		};
@@ -146,7 +147,7 @@ class Sidebar {
 			return;
 		};
 
-		const { autoSidebar } = commonStore;
+		const { autoSidebar } = S.Common;
 		const { x, y, width, snap } = this.data;
 		const css: any = { top: 0, height: '100%' };
 		const mouse = keyboard.mouse.page;
@@ -200,7 +201,7 @@ class Sidebar {
 			return;
 		};
 
-		const { autoSidebar } = commonStore;
+		const { autoSidebar } = S.Common;
 		const { snap } = this.data;
 		const mh = this.getMaxHeight();
 		const css: any = { top: 0, transform: 'translate3d(0px,0px,0px)' };
@@ -293,7 +294,7 @@ class Sidebar {
 			$(window).trigger('resize');
 		};
 
-		commonStore.isSidebarFixed ? this.collapse() : this.expand();
+		S.Common.isSidebarFixed ? this.collapse() : this.expand();
 	};
 
 	private removeAnimation (callBack?: () => void): void {
@@ -332,7 +333,7 @@ class Sidebar {
 	resizePage () {
 		this.initObjects();
 
-		const { isSidebarFixed } = commonStore;
+		const { isSidebarFixed } = S.Common;
 		const { snap } = this.data;
 
 		let width = 0;
@@ -439,7 +440,7 @@ class Sidebar {
 		const css: any = { left: '', right: '', width };
 		const cn = [];
 
-		if (commonStore.isSidebarFixed) {
+		if (S.Common.isSidebarFixed) {
 			cn.push('fixed active');
 		} else {
 			css.top = y;
@@ -469,7 +470,7 @@ class Sidebar {
 	};
 
 	private setFixed (v: boolean): void {
-		commonStore.isSidebarFixedSet(v);
+		S.Common.isSidebarFixedSet(v);
 
 		this.data.snap = this.getSnap(this.data.x, this.data.width);
 		this.resizePage();
@@ -485,7 +486,7 @@ class Sidebar {
 		if (x <= SNAP_THRESHOLD) {
 			return I.MenuDirection.Left;
 		} else 
-		if (commonStore.isSidebarFixed) {
+		if (S.Common.isSidebarFixed) {
 			return I.MenuDirection.Left;
 		} else {
 			return null;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, UtilData, translate } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S, UtilData, translate } from 'Lib';
+
 const Constant = require('json/constant.json');
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
@@ -46,13 +46,13 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				blockId: this.rootId,
 				blockIds: [ this.rootId ],
 				filters: UtilData.graphFilters(),
-				filter: commonStore.getGraph(Constant.graphId.global).filter,
+				filter: S.Common.getGraph(Constant.graphId.global).filter,
 				canAdd: true,
 				onSelect: (item: any) => {
 					$(window).trigger('updateGraphRoot', { id: item.id });
 				},
 				onFilterChange: (v: string) => {
-					commonStore.graphSet(Constant.graphId.global, { filter: v });
+					S.Common.graphSet(Constant.graphId.global, { filter: v });
 				},
 			}
 		});

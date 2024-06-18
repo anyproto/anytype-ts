@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate, UtilSpace } from 'Lib';
-import { commonStore, dbStore, detailStore } from 'Store';
+import { I, C, S, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate, UtilSpace } from 'Lib';
+import { recordStore, detailStore } from 'Store';
 const Constant = require('json/constant.json');
 
 interface State {
@@ -64,7 +64,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				return null;
 			};
 
-			const type = dbStore.getTypeById(item.type);
+			const type = recordStore.getTypeById(item.type);
 			const checkbox = value && value.length && value.includes(item.id);
 			const cn = [];
 
@@ -289,7 +289,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { data } = param;
 		const { type, dataMapper, dataSort, dataChange, skipIds, keys, ignoreWorkspace } = data;
 		const filter = String(data.filter || '');
-		const templateType = dbStore.getTemplateType();
+		const templateType = recordStore.getTemplateType();
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
-import { I, C, translate, UtilCommon, UtilData, analytics } from 'Lib';
-import { commonStore, authStore } from 'Store';
+import { I, C, S, translate, UtilCommon, UtilData, analytics } from 'Lib';
+import { authStore } from 'Store';
 import FooterAuthDisclaimer from '../../../footer/auth/disclaimer';
 const Constant = require('json/constant.json');
 
@@ -36,7 +36,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const { status, statusText } = this.state;
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { testCryptoPayment } = config;
 		const tierItem = UtilData.getMembershipTier(tier);
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Title, Label, Button, Icon, Select, Switch, Error } from 'Component';
-import { I, translate, keyboard, Action } from 'Lib';
-import { commonStore, menuStore } from 'Store';
+import { I, S, translate, keyboard, Action } from 'Lib';
+import { menuStore } from 'Store';
 import Head from '../head';
 
 interface State {
@@ -27,7 +27,7 @@ class PopupSettingsPageImportCsv extends React.Component<I.PopupSettings, State>
 	render () {
 		this.init();
 
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { error } = this.state;
 		const { delimiter, delimiters } = this.delimiterOptions();
 

@@ -5,8 +5,9 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
-import { I, C, keyboard, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, Storage, translate, analytics, Renderer, UtilRouter } from 'Lib';
-import { commonStore, blockStore, detailStore, menuStore } from 'Store';
+import { I, C, S, keyboard, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, Storage, translate, analytics, Renderer, UtilRouter } from 'Lib';
+import { blockStore, detailStore, menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
@@ -72,7 +73,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { rootId, block, readonly } = this.props;
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
-		const { theme } = commonStore;
+		const { theme } = S.Common;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cv: string[] = [ 'value', 'focusable', 'c' + id ];
 
@@ -888,7 +889,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		e.persist();
 
 		const { rootId, block, onMenuAdd, isInsideTable, onKeyUp } = this.props;
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const { id, content } = block;
 		const range = this.getRange();
 		const Markdown = {
@@ -956,7 +957,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 				if (d >= 0) {
 					const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
-					commonStore.filterSetText(part);
+					S.Common.filterSetText(part);
 				};
 			}, 30);
 			return;
@@ -1098,7 +1099,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		value = UtilCommon.stringCut(value, range.from - 1, range.from);
 
 		this.preventSaveOnBlur = true;
-		commonStore.filterSet(range.from - 1, '');
+		S.Common.filterSet(range.from - 1, '');
 
 		raf(() => {
 			menuStore.open('blockMention', {
@@ -1432,7 +1433,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onMouseDown (e: any) {
 		const { block } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
 		window.clearTimeout(this.timeoutClick);
 

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, C, UtilData, analytics, UtilCommon, translate, UtilObject, keyboard, Action, UtilMenu } from 'Lib';
+import { I, C, S, UtilData, analytics, UtilCommon, translate, UtilObject, keyboard, Action, UtilMenu } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
-import { detailStore, commonStore } from 'Store';
+import { detailStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 enum Tab {
@@ -246,7 +247,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 						this.items.push({
 							id: item.id,
 							type: I.CoverType.Upload,
-							src: commonStore.imageUrl(item.id, 150),
+							src: S.Common.imageUrl(item.id, 150),
 							artist: item.name,
 							coverY: -0.25,
 						});
@@ -277,7 +278,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -306,7 +307,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.UnsplashDownload(commonStore.space, item.id, (message: any) => {
+			C.UnsplashDownload(S.Common.space, item.id, (message: any) => {
 				if (!message.error.code) {
 					onUpload(item.type, message.objectId);
 				};
@@ -386,7 +387,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		keyboard.disableCommonDrop(true);
 		this.setState({ isLoading: true });
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setState({ isLoading: false });
 			keyboard.disableCommonDrop(false);
 			
@@ -416,7 +417,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				return;
 			};
 
-			C.FileUpload(commonStore.space, '', data.files[0].path, I.FileType.Image, {}, (message: any) => {
+			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, (message: any) => {
 				if (!message.error.code) {
 					UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
 				};

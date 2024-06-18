@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
-import { I, C, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Renderer, keyboard } from 'Lib';
-import { commonStore, detailStore } from 'Store';
+import { I, C, S, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Renderer, keyboard } from 'Lib';
+import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { pdfjs } from 'react-pdf';
 const Constant = require('json/constant.json');
@@ -109,7 +109,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 						<MediaPdf 
 							id={`pdf-block-${id}`}
 							ref={ref => this.refMedia = ref}
-							src={commonStore.fileUrl(targetObjectId)}
+							src={S.Common.fileUrl(targetObjectId)}
 							page={page}
 							onDocumentLoad={this.onDocumentLoad}
 							onPageRender={this.onPageRender}
@@ -261,7 +261,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		};
 		
 		const { block } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		
 		focus.set(block.id, { from: 0, to: 0 });

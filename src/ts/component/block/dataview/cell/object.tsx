@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
 import { I, Relation, UtilObject, translate, UtilCommon, keyboard, analytics } from 'Lib';
-import { menuStore, detailStore, dbStore } from 'Store';
+import { menuStore, detailStore, recordStore } from 'Store';
 import ItemObject from './item/object';
 const Constant = require('json/constant.json');
 
@@ -188,7 +188,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 
 		// Template type is disabled for opening
-		const templateType = dbStore.getTemplateType();
+		const templateType = recordStore.getTemplateType();
 		const canOpen = this.props.canOpen && (item.id != templateType.id);
 
 		if (canOpen) {

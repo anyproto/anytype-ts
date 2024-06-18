@@ -1,5 +1,6 @@
-import { I, UtilCommon, UtilSpace } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { I, S, UtilCommon, UtilSpace } from 'Lib';
+import { recordStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const SPACE_KEYS = [
@@ -63,7 +64,7 @@ class Storage {
 		if (this.isSpaceKey(key)) {
 			const obj = this.getSpace();
 
-			delete(obj[commonStore.space][key]);
+			delete(obj[S.Common.space][key]);
 
 			this.setSpace(obj);
 		} else {
@@ -78,20 +79,20 @@ class Storage {
 	setSpaceKey (key: string, value: any) {
 		const obj = this.getSpace();
 
-		obj[commonStore.space][key] = value;
+		obj[S.Common.space][key] = value;
 
 		this.setSpace(obj);
 	};
 
 	getSpaceKey (key: string) {
 		const obj = this.getSpace();
-		return obj[commonStore.space][key];
+		return obj[S.Common.space][key];
 	};
 
 	getSpace () {
 		const obj = this.get('space') || {};
 
-		obj[commonStore.space] = obj[commonStore.space] || {};
+		obj[S.Common.space] = obj[S.Common.space] || {};
 
 		return obj;
 	};
@@ -276,7 +277,7 @@ class Storage {
 		];
 
 		for (const key of keys) {
-			const type = dbStore.getTypeByKey(key);
+			const type = recordStore.getTypeByKey(key);
 			if (type) {
 				list.push(type.id);
 			};

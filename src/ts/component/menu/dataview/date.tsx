@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, UtilDate, UtilMenu, translate } from 'Lib';
-import { menuStore, dbStore } from 'Store';
+import { menuStore, recordStore } from 'Store';
 
 const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<I.Menu> {
 
@@ -71,7 +71,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { getView, relationId } = data;
-		const relation = dbStore.getRelationById(relationId);
+		const relation = recordStore.getRelationById(relationId);
 		const dateOptions = this.getOptions('dateFormat');
 		const timeOptions = this.getOptions('timeFormat');
 
@@ -163,7 +163,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 			view = getView();
 			relation = view.getRelation(relationKey);
 		} else {
-			relation = dbStore.getRelationByKey(relationKey);
+			relation = recordStore.getRelationByKey(relationKey);
 		};
 
 		const options = this.getOptions(item.itemId);

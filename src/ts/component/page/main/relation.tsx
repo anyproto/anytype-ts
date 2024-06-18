@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
-import { I, C, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate, UtilSpace } from 'Lib';
-import { detailStore, dbStore, commonStore } from 'Store';
-const Errors = require('json/error.json');
+import { I, C, S, Action, UtilCommon, UtilObject, UtilRouter, translate, UtilDate } from 'Lib';
+import { detailStore, recordStore } from 'Store';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -37,10 +36,10 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
-		const subIdType = dbStore.getSubId(rootId, 'type');
-		const totalType = dbStore.getMeta(subIdType, '').total;
-		const subIdObject = dbStore.getSubId(rootId, 'object');
-		const totalObject = dbStore.getMeta(subIdObject, '').total;
+		const subIdType = recordStore.getSubId(rootId, 'type');
+		const totalType = recordStore.getMeta(subIdType, '').total;
+		const subIdObject = recordStore.getSubId(rootId, 'object');
+		const totalObject = recordStore.getMeta(subIdObject, '').total;
 		const columnsObject: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
@@ -177,7 +176,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
-		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', commonStore.space, (message: any) => {
+		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				UtilObject.openPopup(message.details);
 			};

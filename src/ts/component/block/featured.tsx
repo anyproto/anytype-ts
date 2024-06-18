@@ -3,8 +3,9 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell } from 'Component';
-import { I, C, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
-import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
+import { I, C, S, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
+import { blockStore, detailStore, recordStore, menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
@@ -68,7 +69,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 				{items.map((relationKey: any, i: any) => {
 					const id = Relation.cellId(PREFIX + block.id, relationKey, object.id);
-					const relation = dbStore.getRelationByKey(relationKey);
+					const relation = recordStore.getRelationByKey(relationKey);
 					const value = object[relationKey];
 					const canEdit = allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
@@ -365,7 +366,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			'setOf',
 		];
 
-		return (object.featuredRelations || []).filter(it => dbStore.getRelationByKey(it) && !skipIds.includes(it));
+		return (object.featuredRelations || []).filter(it => recordStore.getRelationByKey(it) && !skipIds.includes(it));
 	};
 
 	onFocus () {
@@ -389,7 +390,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onCellClick (e: any, relationKey: string, recordId: string) {
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = recordStore.getRelationByKey(relationKey);
 
 		if (!relation || relation.isReadonlyValue) {
 			return;
@@ -406,7 +407,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onMouseEnter (e: any, relationKey: string, text?: string) {
 		const { rootId } = this.props;
 		const cell = $(`#${Relation.cellId(PREFIX, relationKey, rootId)}`);
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = recordStore.getRelationByKey(relationKey);
 		const show = (text: string) => {
 			Preview.tooltipShow({ text, element: cell });
 		};
@@ -580,7 +581,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const { rootId, isPopup } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf', 'collectionOf' ]);
-		const type = dbStore.getTypeById(object.type);
+		const type = recordStore.getTypeById(object.type);
 
 		this.menuContext.close();
 
@@ -601,7 +602,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					details.iconEmoji = type.iconEmoji;
 				};
 
-				C.ObjectCreateSet([ object.type ], details, '', commonStore.space, (message: any) => {
+				C.ObjectCreateSet([ object.type ], details, '', S.Common.space, (message: any) => {
 					if (!message.error.code) {
 						UtilObject.openPopup(message.details);
 					};
@@ -610,7 +611,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 			case 'turnCollection':
 				// Add Collection type to details since middleware adds details async
-				const collectionType = dbStore.getCollectionType();
+				const collectionType = recordStore.getCollectionType();
 				if (collectionType) {
 					detailStore.update(rootId, { id: collectionType.id, details: collectionType }, true);
 				};
@@ -665,7 +666,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { isPopup, rootId, readonly } = this.props;
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId, [ relationKey ]);
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = recordStore.getRelationByKey(relationKey);
 
 		if (readonly || !relation || relation.isReadonlyValue) {
 			return;
@@ -790,7 +791,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
 		const object = detailStore.get(rootId, storeId, [ relationKey ]);
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = recordStore.getRelationByKey(relationKey);
 		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 
 		if (!relation) {
@@ -836,7 +837,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onLinks (e: React.MouseEvent, relationKey: string) {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = recordStore.getRelationByKey(relationKey);
 
 		if (!relation) {
 			return;

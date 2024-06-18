@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
-import { dbStore, detailStore, commonStore } from 'Store';
+import { I, S, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
+import { recordStore, detailStore } from 'Store';
 import { Cell, SelectionTarget } from 'Component';
 
 interface Props extends I.ViewComponent {
@@ -20,7 +20,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const view = getView();
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
-		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
+		const subId = recordStore.getGroupSubId(rootId, block.id, groupId);
 		const record = detailStore.get(subId, id);
 		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout) ];
 		const { done } = record;
@@ -93,8 +93,8 @@ const Card = observer(class Card extends React.Component<Props> {
 		e.preventDefault();
 
 		const { rootId, block, groupId, id, onContext } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
-		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
+		const selection = S.Common.getRef('selectionProvider');
+		const subId = recordStore.getGroupSubId(rootId, block.id, groupId);
 		const record = detailStore.get(subId, id);
 		const cb = {
 			0: () => {
@@ -116,7 +116,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
 		const { recordId, getRecord, onCellClick } = this.props;
 		const record = getRecord(recordId);
-		const relation = dbStore.getRelationByKey(vr.relationKey);
+		const relation = recordStore.getRelationByKey(vr.relationKey);
 
 		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
 			return;

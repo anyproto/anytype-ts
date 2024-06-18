@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Label, Button } from 'Component';
-import { blockStore, dbStore, detailStore } from 'Store';
+import { blockStore, recordStore, detailStore } from 'Store';
 import { Dataview, I, C, M, UtilCommon, Relation, keyboard, translate, UtilRouter, UtilObject } from 'Lib';
 
 import WidgetViewList from './list';
@@ -46,7 +46,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const subId = this.getSubId();
 		const records = this.getRecordIds();
 		const length = records.length;
-		const views = dbStore.getViews(rootId, Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
+		const views = recordStore.getViews(rootId, Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
 		const viewType = this.getViewType();
 		const cn = [ 'innerWrap' ];
 		const showEmpty = ![ I.ViewType.Calendar, I.ViewType.Board ].includes(viewType);
@@ -191,15 +191,15 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	updateViews () {
 		const { block } = this.props;
 		const { targetBlockId } = block.content;
-		const views = UtilCommon.objectCopy(dbStore.getViews(targetBlockId, Constant.blockId.dataview)).map(it => new M.View(it));
+		const views = UtilCommon.objectCopy(recordStore.getViews(targetBlockId, Constant.blockId.dataview)).map(it => new M.View(it));
 		const rootId = this.getRootId();
 
 		if (!views.length || (targetBlockId != keyboard.getRootId())) {
 			return;
 		};
 
-		dbStore.viewsClear(rootId, Constant.blockId.dataview);
-		dbStore.viewsSet(rootId, Constant.blockId.dataview, views);
+		recordStore.viewsClear(rootId, Constant.blockId.dataview);
+		recordStore.viewsSet(rootId, Constant.blockId.dataview, views);
 
 		if (this.refSelect) {
 			this.refSelect.setOptions(views);
@@ -207,7 +207,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	getSubId () {
-		return dbStore.getSubId(this.getRootId(), Constant.blockId.dataview);
+		return recordStore.getSubId(this.getRootId(), Constant.blockId.dataview);
 	};
 
 	getTraceId = (): string => {
@@ -224,7 +224,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	load (viewId: string) {
 		if (this.refChild && this.refChild.load) {
 			this.refChild.load();
-			dbStore.metaSet(this.getSubId(), '', { viewId });
+			recordStore.metaSet(this.getSubId(), '', { viewId });
 			return;
 		};
 
@@ -311,8 +311,8 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
-		const records = dbStore.getRecordIds(subId, '');
-		const views = dbStore.getViews(rootId, Constant.blockId.dataview);
+		const records = recordStore.getRecordIds(subId, '');
+		const views = recordStore.getViews(rootId, Constant.blockId.dataview);
 		const viewId = parent.content.viewId || (views.length ? views[0].id : '');
 		const ret = Dataview.applyObjectOrder(rootId, Constant.blockId.dataview, viewId, '', UtilCommon.objectCopy(records));
 

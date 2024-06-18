@@ -4,8 +4,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
-import { I, C, keyboard, focus, UtilCommon, Mark, Action, translate, UtilMenu, UtilData } from 'Lib';
-import { menuStore, blockStore, commonStore } from 'Store';
+import { I, C, S, keyboard, focus, UtilCommon, Mark, Action, translate, UtilMenu, UtilData } from 'Lib';
+import { menuStore, blockStore } from 'Store';
 import Row from './table/row';
 
 const Constant = require('json/constant.json');
@@ -683,7 +683,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	onCellFocus (e: any, rowId: string, columnId: string, cellId: string) {
 		const { rootId, readonly } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
 		if (readonly) {
 			return;

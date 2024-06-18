@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, ObjectName } from 'Component';
-import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
+import { I, C, S, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, commonStore, authStore, dbStore, detailStore, popupStore } from 'Store';
+import { menuStore, authStore, recordStore, detailStore, popupStore } from 'Store';
 const Constant = require('json/constant.json');
 
 interface State {
@@ -42,14 +42,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { error, cid, key } = this.state;
-		const { spaceStorage, isOnline } = commonStore;
+		const { spaceStorage, isOnline } = S.Common;
 		const { localUsage, bytesLimit } = spaceStorage;
 		const { account, accountSpaceId } = authStore;
 		const spaces = UtilSpace.getList();
 		const space = UtilSpace.getSpaceview();
 		const creator = detailStore.get(Constant.subId.space, space.creator);
 		const home = UtilSpace.getDashboard();
-		const type = dbStore.getTypeById(commonStore.type);
+		const type = recordStore.getTypeById(S.Common.type);
 		const personalSpace = UtilSpace.getSpaceviewBySpaceId(accountSpaceId);
 		const usageCn = [ 'item' ];
 
@@ -69,7 +69,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		let canMembers = !isOwner && space.isShared;
 
 		const progressSegments = (spaces || []).map(space => {
-			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
+			const object: any = S.Common.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
 			const usage = Number(object.bytesUsage) || 0;
 			const isOwner = UtilSpace.isMyOwner(space.targetSpaceId);
 
@@ -448,7 +448,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const space = UtilSpace.getSpaceview();
 
 		if (space.isShared && !cid && !key) {
-			C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
+			C.SpaceInviteGetCurrent(S.Common.space, (message: any) => {
 				if (!message.error.code) {
 					this.setInvite(message.inviteCid, message.inviteKey);
 				};
@@ -476,7 +476,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 				],
 				onClick: (item: any) => {
-					commonStore.typeSet(item.uniqueKey);
+					S.Common.typeSet(item.uniqueKey);
 					analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: analytics.route.settings });
 					this.forceUpdate();
 				},
@@ -485,22 +485,22 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onName (e: any, v: string) {
-		C.WorkspaceSetInfo(commonStore.space, { name: this.checkName(v) });
+		C.WorkspaceSetInfo(S.Common.space, { name: this.checkName(v) });
 	};
 
 	onSelect (icon: string) {
 		if (!icon) {
-			C.WorkspaceSetInfo(commonStore.space, { iconImage: '' });
+			C.WorkspaceSetInfo(S.Common.space, { iconImage: '' });
 		};
 	};
 
 	onUpload (objectId: string) {
-		C.WorkspaceSetInfo(commonStore.space, { iconImage: objectId });
+		C.WorkspaceSetInfo(S.Common.space, { iconImage: objectId });
 	};
 
 	onDelete () {
 		this.props.close(() => {
-			Action.removeSpace(commonStore.space, 'Settings', (message: any) => {
+			Action.removeSpace(S.Common.space, 'Settings', (message: any) => {
 				if (message.error.code) {
 					this.setState({ error: message.error.description });
 				};

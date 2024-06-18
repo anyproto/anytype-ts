@@ -1,5 +1,6 @@
-import { UtilData, dispatcher } from 'Lib';
-import { authStore, commonStore, extensionStore } from 'Store';
+import { S, UtilData, dispatcher } from 'Lib';
+import { authStore, extensionStore } from 'Store';
+
 const Extension = require('json/extension.json');
 
 const INDEX_POPUP = '/popup/index.html';
@@ -45,7 +46,7 @@ class Util {
 		extensionStore.gatewayPort = gatewayPort;
 
 		dispatcher.init(`http://127.0.0.1:${serverPort}`);
-		commonStore.gatewaySet(`http://127.0.0.1:${gatewayPort}`);
+		S.Common.gatewaySet(`http://127.0.0.1:${gatewayPort}`);
 	};
 
 	authorize (appKey: string, onSuccess?: () => void, onError?: (error) => void) {

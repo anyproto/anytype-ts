@@ -1,9 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, UtilCommon, UtilData, UtilObject, keyboard, translate, Relation, UtilDate } from 'Lib';
+import { I, S, UtilCommon, keyboard, translate, Relation, UtilDate } from 'Lib';
 import { Input, IconObject } from 'Component';
-import { commonStore, menuStore } from 'Store';
+import { menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface State { 
@@ -39,7 +40,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	render () {
 		const { isEditing } = this.state;
-		const { showRelativeDates } = commonStore;
+		const { showRelativeDates } = S.Common;
 		const { recordId, relation, textLimit, isInline, iconSize, placeholder, shortUrl, canEdit, getView, getRecord } = this.props;
 		const record = getRecord(recordId);
 		
@@ -286,8 +287,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			};
 		};
 
-		if (commonStore.cellId) {
-			$(`#${commonStore.cellId}`).addClass('isEditing');
+		if (S.Common.cellId) {
+			$(`#${S.Common.cellId}`).addClass('isEditing');
 		};
 	};
 

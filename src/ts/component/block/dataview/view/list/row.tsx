@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, keyboard, Relation, UtilObject } from 'Lib';
+import { I, S, keyboard, Relation, UtilObject } from 'Lib';
 import { Cell, DropTarget, Icon, SelectionTarget } from 'Component';
-import { dbStore, commonStore } from 'Store';
+import { recordStore } from 'Store';
 
 interface Props extends I.ViewComponent {
 	style?: any;
@@ -19,7 +19,7 @@ const Row = observer(class Row extends React.Component<Props> {
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = recordStore.getSubId(rootId, block.id);
 		const record = getRecord(recordId);
 		const cn = [ 'row' ];
 
@@ -116,7 +116,7 @@ const Row = observer(class Row extends React.Component<Props> {
 
 		const { onContext, recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const cb = {
 			0: () => {
 				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openConfig(record); 
@@ -137,7 +137,7 @@ const Row = observer(class Row extends React.Component<Props> {
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
 		const { onCellClick, recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
-		const relation = dbStore.getRelationByKey(vr.relationKey);
+		const relation = recordStore.getRelationByKey(vr.relationKey);
 
 		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
 			return;

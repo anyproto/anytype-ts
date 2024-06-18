@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, UtilCommon, keyboard } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S, UtilCommon, keyboard } from 'Lib';
+
 const Constant = require('json/constant.json');
 
 const BORDER = 12;
@@ -187,9 +187,9 @@ class Preview {
 
 		if (param.delay) {
 			window.clearTimeout(this.timeout.preview);
-			this.timeout.preview = window.setTimeout(() => commonStore.previewSet(param), param.delay);
+			this.timeout.preview = window.setTimeout(() => S.Common.previewSet(param), param.delay);
 		} else {
-			commonStore.previewSet(param);
+			S.Common.previewSet(param);
 		};
 
 		this.isPreviewOpen = true;
@@ -209,7 +209,7 @@ class Preview {
 			obj.hide();
 			obj.removeClass('anim top bottom withImage').css({ transform: '' });
 
-			commonStore.previewClear();
+			S.Common.previewClear();
 			$('#graphPreview').remove();
 		};
 
@@ -235,7 +235,7 @@ class Preview {
 			this.timeout.toast = window.setTimeout(() => this.toastHide(false), Constant.delay.toast);
 		};
 
-		commonStore.toastSet(param);
+		S.Common.toastSet(param);
 
 		const obj = $('#toast');
 
@@ -257,7 +257,7 @@ class Preview {
 		window.clearTimeout(this.timeout.toast);
 		this.timeout.toast = window.setTimeout(() => {
 			obj.hide();
-			commonStore.toastClear();
+			S.Common.toastClear();
 		}, force ? 0 : 250);
 	};
 
@@ -272,7 +272,7 @@ class Preview {
 		const y = 32;
 
 		let sw = 0;
-		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+		if (S.Common.isSidebarFixed && sidebar.hasClass('active')) {
 			sw = sidebar.outerWidth();
 		};
 

@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
-import { I, C, M, translate, UtilObject, UtilData, UtilSpace } from 'Lib';
-import { blockStore, extensionStore, menuStore, dbStore, commonStore } from 'Store';
+import { I, C, M, S, translate, UtilObject, UtilData, UtilSpace } from 'Lib';
+import { blockStore, extensionStore, menuStore, recordStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
@@ -36,7 +36,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	render () {
 		const { isLoading, error, object } = this.state;
 		const { html } = extensionStore;
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const children = blockStore.getChildren(ROOT_ID, ROOT_ID, it => !it.isFile());
 
 		return (
@@ -107,7 +107,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			.map(it => ({ ...it, id: it.targetSpaceId, object: it, iconSize: 16 }));
 
 		if (this.refSpace && spaces.length) {
-			const space = commonStore.space || spaces[0].targetSpaceId;
+			const space = S.Common.space || spaces[0].targetSpaceId;
 
 			this.refSpace?.setOptions(spaces);
 			this.refSpace?.setValue(space);
@@ -155,7 +155,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	onSelect () {
 		const { object } = this.state;
 		const node = $(this.node);
-		const templateType = dbStore.getTemplateType();
+		const templateType = recordStore.getTemplateType();
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
@@ -177,7 +177,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onSpaceChange (id: string): void {
-		commonStore.spaceSet(id);
+		S.Common.spaceSet(id);
 		UtilData.createSubscriptions();
 	};
 

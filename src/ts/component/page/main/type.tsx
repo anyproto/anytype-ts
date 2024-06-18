@@ -2,12 +2,12 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter, UtilSpace } from 'Lib';
-import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
+import { I, C, S, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter, UtilSpace } from 'Lib';
+import { detailStore, recordStore, menuStore, blockStore } from 'Store';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
+
 const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
 
 interface State {
 	isLoading: boolean;
@@ -48,12 +48,12 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return <Deleted {...this.props} />;
 		};
 
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const rootId = this.getRootId();
 		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
-		const templates = dbStore.getRecordIds(subIdTemplate, '');
+		const templates = recordStore.getRecordIds(subIdTemplate, '');
 		const canWrite = UtilSpace.canMyParticipantWrite();
 
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
@@ -67,7 +67,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedLayout = object.recommendedLayout != I.ObjectLayout.Bookmark;
 		
 		const subIdObject = this.getSubIdObject();
-		const totalObject = dbStore.getMeta(subIdObject, '').total;
+		const totalObject = recordStore.getMeta(subIdObject, '').total;
 		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
 		const filtersObject: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
@@ -77,7 +77,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			recommendedRelations.push('rel-description');
 		};
 
-		const relations = recommendedRelations.map(id => dbStore.getRelationById(id)).filter(it => {
+		const relations = recommendedRelations.map(id => recordStore.getRelationById(id)).filter(it => {
 			if (!it) {
 				return false;
 			};
@@ -155,7 +155,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									<ListObjectPreview 
 										key="listTemplate"
 										ref={ref => this.refListPreview = ref}
-										getItems={() => dbStore.getRecords(subIdTemplate, [])}
+										getItems={() => recordStore.getRecords(subIdTemplate, [])}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
 										onMenu={allowedTemplate ? (e: any, item: any) => this.onMenu(item) : null}
@@ -319,7 +319,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			layout: object.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', Constant.typeKey.template, commonStore.space, (message) => {
+		C.ObjectCreate(details, [], '', Constant.typeKey.template, S.Common.space, (message) => {
 			if (message.error.code) {
 				return;
 			};
@@ -339,7 +339,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onCreate () {
 		const rootId = this.getRootId();
-		const type = dbStore.getTypeById(rootId);
+		const type = recordStore.getTypeById(rootId);
 		if (!type) {
 			return;
 		};
@@ -381,7 +381,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onObjectAdd () {
 		const rootId = this.getRootId();
-		const type = dbStore.getTypeById(rootId);
+		const type = recordStore.getTypeById(rootId);
 
 		if (!type) {
 			return;
@@ -393,7 +393,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			details.layout = type.recommendedLayout;
 		};
 
-		C.ObjectCreate(details, [ I.ObjectFlag.SelectTemplate ], type.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
+		C.ObjectCreate(details, [ I.ObjectFlag.SelectTemplate ], type.defaultTemplateId, type.uniqueKey, S.Common.space, (message: any) => {
 			if (message.error.code || !message.details) {
 				return;
 			};
@@ -424,7 +424,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			iconEmoji: object.iconEmoji,
 		};
 
-		C.ObjectCreateSet([ rootId ], details, '', commonStore.space, (message: any) => {
+		C.ObjectCreateSet([ rootId ], details, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
 				UtilObject.openPopup(message.details);
@@ -436,7 +436,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 		const skipSystemKeys = [ 'tag', 'description', 'source' ];
-		const recommendedKeys = object.recommendedRelations.map(id => dbStore.getRelationById(id)).map(it => it && it.relationKey);
+		const recommendedKeys = object.recommendedRelations.map(id => recordStore.getRelationById(id)).map(it => it && it.relationKey);
 		const systemKeys = Relation.systemKeys().filter(it => !skipSystemKeys.includes(it));
 
 		menuStore.open('relationSuggest', { 
@@ -464,7 +464,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onRelationEdit (e: any, id: string) {
 		const rootId = this.getRootId();
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const relation = dbStore.getRelationById(id);
+		const relation = recordStore.getRelationById(id);
 		
 		menuStore.open('blockRelationEdit', { 
 			element: `#page .section.relation #item-${id}`,
@@ -561,11 +561,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	getSubIdTemplate () {
-		return dbStore.getSubId(this.getRootId(), 'templates');
+		return recordStore.getSubId(this.getRootId(), 'templates');
 	};
 
 	getSubIdObject () {
-		return dbStore.getSubId(this.getRootId(), 'data');
+		return recordStore.getSubId(this.getRootId(), 'data');
 	};
 
 });

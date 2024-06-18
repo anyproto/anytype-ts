@@ -1,10 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
-import { I, C, focus, UtilCommon, translate, analytics, Renderer, keyboard, Preview } from 'Lib';
-import { commonStore, detailStore } from 'Store';
+import { I, C, S, focus, UtilCommon, translate, analytics, Renderer, keyboard, Preview } from 'Lib';
+import { detailStore } from 'Store';
 
 const BlockBookmark = observer(class BlockBookmark extends React.Component<I.BlockComponent> {
 
@@ -100,14 +99,14 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 								<ObjectName object={object} />
 								<ObjectDescription object={object} />
 								<div className="link">
-									{iconImage ? <img src={commonStore.imageUrl(iconImage, 16)} className="fav" /> : ''}
+									{iconImage ? <img src={S.Common.imageUrl(iconImage, 16)} className="fav" /> : ''}
 									{UtilCommon.shortUrl(url)}
 								</div>
 
 								{archive}
 							</div>
 							<div className="side right">
-								{picture ? <img src={commonStore.imageUrl(picture, 500)} className="img" /> : ''}
+								{picture ? <img src={S.Common.imageUrl(picture, 500)} className="img" /> : ''}
 							</div>
 						</div>
 					);
@@ -198,7 +197,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			return;
 		};
 
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (!(keyboard.withCommand(e) && ids.length)) {

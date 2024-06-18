@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard, translate } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
+import { I, C, S, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard, translate } from 'Lib';
+import { blockStore, detailStore, recordStore, menuStore } from 'Store';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -121,9 +121,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	componentDidUpdate () {
 		this.resize();
 
-		const id = commonStore.cellId;		
+		const id = S.Common.cellId;		
 		if (id) {
-			commonStore.cellId = '';
+			S.Common.cellId = '';
 			
 			const ref = this.cellRefs.get(id);
 			if (ref) {
@@ -148,17 +148,17 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { config } = commonStore;
+		const { config } = S.Common;
 
 		const object = detailStore.get(rootId, rootId);
 		const isTemplate = UtilObject.isTemplate(object.type);
-		const type = dbStore.getTypeById(isTemplate ? object.targetObjectType : object.type);
+		const type = recordStore.getTypeById(isTemplate ? object.targetObjectType : object.type);
 		const featured = Relation.getArrayValue(object.featuredRelations);
-		const relations = dbStore.getObjectRelations(rootId, rootId);
+		const relations = recordStore.getObjectRelations(rootId, rootId);
 		const relationKeys = relations.map(it => it.relationKey);
 		const readonly = this.isReadonly();
 		const typeRelations = (type ? type.recommendedRelations || [] : []).map(it => ({ 
-			...dbStore.getRelationById(it), 
+			...recordStore.getRelationById(it), 
 			scope: I.RelationScope.Type,
 		})).filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
@@ -250,7 +250,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: dbStore.getObjectRelationKeys(rootId, rootId),
+				skipKeys: recordStore.getObjectRelationKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
@@ -262,7 +262,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId, readonly } = data;
-		const relation = dbStore.getRelationById(item.id);
+		const relation = recordStore.getRelationById(item.id);
 
 		if (!relation) {
 			return;
@@ -298,7 +298,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { readonly, rootId } = data;
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = recordStore.getRelationByKey(relationKey);
 
 		if (!relation || readonly || relation.isReadonlyValue) {
 			return;
@@ -316,7 +316,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = recordStore.getRelationByKey(relationKey);
 
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
@@ -371,7 +371,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	getDiffKeys (): string[] {
-		const { diff } = commonStore;
+		const { diff } = S.Common;
 		const types = [ 'ObjectDetailsSet', 'ObjectDetailsAmend', 'ObjectRelationsAmend' ];
 		const events = diff.filter(it => types.includes(it.type));
 

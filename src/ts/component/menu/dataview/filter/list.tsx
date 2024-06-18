@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { SortableContainer } from 'react-sortable-hoc';
 import $ from 'jquery';
 import { Icon } from 'Component';
-import { dbStore, menuStore, blockStore } from 'Store';
+import { recordStore, menuStore, blockStore } from 'Store';
 import { I, C, UtilCommon, keyboard, analytics, Relation, translate } from 'Lib';
 import Item from 'Component/menu/item/filter';
 const Constant = require('json/constant.json');
@@ -41,7 +41,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			return null;
 		};
 
-		const subId = dbStore.getSubId(rootId, blockId);
+		const subId = recordStore.getSubId(rootId, blockId);
 		const isReadonly = this.isReadonly();
 		const filterCnt = view.filters.length;
 		const items = this.getItems();
@@ -309,7 +309,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		return UtilCommon.objectCopy(view.filters || []).map((it: any) => {
 			return { 
 				...it, 
-				relation: dbStore.getRelationByKey(it.relationKey),
+				relation: recordStore.getRelationByKey(it.relationKey),
 			};
 		}).filter(it => it.relation);
 	};

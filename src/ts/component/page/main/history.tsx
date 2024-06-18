@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader } from 'Component';
-import { blockStore, detailStore, commonStore } from 'Store';
-import { I, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate } from 'Lib';
+import { blockStore, detailStore } from 'Store';
+import { I, S, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate } from 'Lib';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
 
@@ -89,7 +89,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		this.unbind();
 
 		blockStore.clear(this.getRootId());
-		commonStore.diffSet([]);
+		S.Common.diffSet([]);
 	};
 
 	unbind () {
@@ -122,7 +122,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	onCopy () {
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const rootId = this.getRootId();
 		const { focused } = focus.state;
 

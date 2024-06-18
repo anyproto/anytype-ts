@@ -4,8 +4,7 @@ import raf from 'raf';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard, Preview, sidebar, translate } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S, keyboard, Preview, sidebar, translate } from 'Lib';
 import ListWidget from 'Component/list/widget';
 
 const Constant = require('json/constant.json');
@@ -206,7 +205,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			};
 
 			if (d < 0) {
-				if (commonStore.isSidebarFixed && (w <= Constant.size.sidebar.width.close)) {
+				if (S.Common.isSidebarFixed && (w <= Constant.size.sidebar.width.close)) {
 					sidebar.close();
 				} else {
 					sidebar.set({ width: w, isClosed: false });
@@ -238,7 +237,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	};
 
 	onHandleClick () {
-		if (!this.movedX && commonStore.isSidebarFixed) {
+		if (!this.movedX && S.Common.isSidebarFixed) {
 			sidebar.toggleOpenClose();
 		};
 	};

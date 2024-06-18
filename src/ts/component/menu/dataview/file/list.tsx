@@ -2,9 +2,10 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Icon, Loader, EmptySearch } from 'Component';
-import { I, UtilCommon, Relation, keyboard, UtilData, UtilObject, UtilFile, translate, Action, C } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
+import { Filter, MenuItemVertical, Loader, EmptySearch } from 'Component';
+import { I, S, UtilCommon, Relation, keyboard, UtilData, UtilObject, translate, Action, C } from 'Lib';
+import { menuStore, recordStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -58,7 +59,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				return null;
 			};
 
-			const type = dbStore.getTypeById(item.type);
+			const type = recordStore.getTypeById(item.type);
 
 			let content = null;
 			if (item.isDiv) {
@@ -305,7 +306,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	onUpload () {
 		Action.openFile([], paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.None, {}, (message: any) => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, (message: any) => {
 				if (!message.error.code) {
 					this.onChange(message.objectId);
 					this.reload();

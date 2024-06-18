@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button } from 'Component';
-import { analytics, I, Onboarding, translate, UtilCommon } from 'Lib';
-import { commonStore } from 'Store';
+import { analytics, I, S, Onboarding, translate, UtilCommon } from 'Lib';
 import QRCode from 'qrcode.react';
+
 const Theme = require('json/theme.json');
 const Url = require('json/url.json');
 
@@ -22,7 +22,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 		const { param, close } = this.props;
 		const { data } = param;
 		const { type } = data;
-		const theme = commonStore.getThemeClass();
+		const theme = S.Common.getThemeClass();
 
 		let content = null;
 

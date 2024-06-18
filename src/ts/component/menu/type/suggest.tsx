@@ -3,8 +3,9 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate, UtilSpace } from 'Lib';
-import { commonStore, detailStore, menuStore, dbStore } from 'Store';
+import { I, C, S, analytics, keyboard, UtilData, Action, UtilCommon, translate, UtilSpace } from 'Lib';
+import { detailStore, menuStore, recordStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -224,7 +225,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		];
 
 		let filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, S.Common.space ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 		];
 		if (data.filters) {
@@ -276,7 +277,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 
 	getSections () {
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
@@ -443,7 +444,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		};
 
 		if (item.id == 'add') {
-			C.ObjectCreateObjectType({ name: filter }, [], commonStore.space, (message: any) => {
+			C.ObjectCreateObjectType({ name: filter }, [], S.Common.space, (message: any) => {
 				if (!message.error.code) {
 					cb(message.details);
 					analytics.event('CreateType');
@@ -463,7 +464,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 
 	getLibrarySources () {
-		return dbStore.getTypes().filter(it => (it.spaceId == commonStore.space)).map(it => it.sourceObject).filter(it => it);
+		return recordStore.getTypes().filter(it => (it.spaceId == S.Common.space)).map(it => it.sourceObject).filter(it => it);
 	};
 
 	resize () {

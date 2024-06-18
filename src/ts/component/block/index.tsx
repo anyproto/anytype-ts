@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, UtilData, keyboard, focus, Storage, UtilSpace } from 'Lib';
+import { I, C, S, UtilCommon, UtilData, keyboard, focus, Storage, UtilSpace } from 'Lib';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject} from 'Component';
-import { menuStore, blockStore, detailStore, commonStore } from 'Store';
+import { menuStore, blockStore, detailStore } from 'Store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -434,8 +434,8 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 		
 		const { block } = this.props;
-		const dragProvider = commonStore.getRef('dragProvider');
-		const selection = commonStore.getRef('selectionProvider');
+		const dragProvider = S.Common.getRef('dragProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		
 		if (!block.isDraggable()) {
 			e.preventDefault();
@@ -460,7 +460,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	
 	onMenuClick () {
 		const { block } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const element = $(`#button-block-menu-${block.id}`);
 
 		if (!element.length) {
@@ -482,7 +482,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	onContextMenu (e: any) {
 		const { focused } = focus.state;
 		const { rootId, block, readonly, isContextMenuDisabled } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
 		if (isContextMenuDisabled || readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
 			return;
@@ -513,7 +513,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	menuOpen (param?: Partial<I.MenuParam>) {
 		const { rootId, block, blockRemove, onCopy } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
 		// Hide block menus and plus button
 		$('#button-block-add').removeClass('show');
@@ -550,7 +550,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];

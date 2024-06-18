@@ -5,8 +5,8 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName, EmptySearch } from 'Component';
-import { I, UtilObject, keyboard, Relation, translate } from 'Lib';
-import { commonStore, detailStore, menuStore } from 'Store';
+import { I, S, UtilObject, keyboard, Relation, translate } from 'Lib';
+import { detailStore, menuStore } from 'Store';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 28;
@@ -189,7 +189,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 
 	getItems () {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, valueMapper, nameAdd } = data;

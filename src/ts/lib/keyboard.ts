@@ -1,6 +1,7 @@
 import $ from 'jquery';
-import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate, UtilSpace } from 'Lib';
-import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
+import { I, C, S, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate, UtilSpace } from 'Lib';
+import { authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
 const KeyCode = require('json/key.json');
@@ -43,7 +44,7 @@ class Keyboard {
 		const win = $(window);
 		const doc = $(document);
 
-		commonStore.isOnlineSet(navigator.onLine);
+		S.Common.isOnlineSet(navigator.onLine);
 
 		win.on('keydown.common', e => this.onKeyDown(e));
 		win.on('keyup.common', e => this.onKeyUp(e));
@@ -54,9 +55,9 @@ class Keyboard {
 		win.on('online.common offline.common', () => {
 			const { onLine } = navigator;
 
-			commonStore.isOnlineSet(onLine);
+			S.Common.isOnlineSet(onLine);
 
-			if (!commonStore.membershipTiers.length) {
+			if (!S.Common.membershipTiers.length) {
 				UtilData.getMembershipTiers(false);
 			};
 		});
@@ -67,7 +68,7 @@ class Keyboard {
 
 			this.pressed = [];
 
-			if (!commonStore.isSidebarFixed) {
+			if (!S.Common.isSidebarFixed) {
 				sidebar.hide();
 			};
 
@@ -77,7 +78,7 @@ class Keyboard {
 		});
 
 		doc.off('mouseleave.common').on('mouseleave.common', () => {
-			if (!commonStore.isSidebarFixed) {
+			if (!S.Common.isSidebarFixed) {
 				sidebar.hide();
 			};
 		});
@@ -138,7 +139,7 @@ class Keyboard {
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
 		const canWrite = UtilSpace.canMyParticipantWrite();
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
 		this.pressed.push(key);
 
@@ -149,7 +150,7 @@ class Keyboard {
 				return;
 			};
 
-			commonStore.isSidebarFixed ? sidebar.toggleOpenClose() : sidebar.toggleExpandCollapse();
+			S.Common.isSidebarFixed ? sidebar.toggleOpenClose() : sidebar.toggleExpandCollapse();
 		});
 
 		// Navigation
@@ -316,7 +317,7 @@ class Keyboard {
 	// Check if smth is selected
 	checkSelection () {
 		const range = UtilCommon.getSelectionRange();
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
 		if ((range && !range.collapsed) || (selection && selection.get(I.SelectType.Block).length)) {
 			return true;
@@ -581,7 +582,7 @@ class Keyboard {
 			};
 
 			case 'debugSpace': {
-				C.DebugSpaceSummary(commonStore.space, (message: any) => {
+				C.DebugSpaceSummary(S.Common.space, (message: any) => {
 					if (!message.error.code) {
 						UtilCommon.getElectron().fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
 						Renderer.send('pathOpen', tmpPath);
@@ -759,7 +760,7 @@ class Keyboard {
 
 	printRemove () {
 		$('html').removeClass('withPopup printMedia print save');
-		commonStore.setThemeClass();
+		S.Common.setThemeClass();
 		$(window).trigger('resize');
 	};
 
@@ -858,7 +859,7 @@ class Keyboard {
 	onQuickCapture (shortcut: boolean, param?: Partial<I.MenuParam>) {
 		param = param || {};
 
-		if ((commonStore.navigationMenu != I.NavigationMenuMode.Hover) && menuStore.isOpen('quickCapture')) {
+		if ((S.Common.navigationMenu != I.NavigationMenuMode.Hover) && menuStore.isOpen('quickCapture')) {
 			menuStore.close('quickCapture');
 			return;
 		};
@@ -1034,12 +1035,12 @@ class Keyboard {
 			this.setPinChecked(false);
 
 			if (this.isMain()) {
-				commonStore.redirectSet(UtilRouter.getRoute());
+				S.Common.redirectSet(UtilRouter.getRoute());
 			};
 
 			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
 			Renderer.send('pin-check');
-		}, commonStore.pinTime);
+		}, S.Common.pinTime);
 	};
 
 	restoreSource () {

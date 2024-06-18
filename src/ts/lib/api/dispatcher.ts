@@ -5,9 +5,9 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore } from 'Store';
+import { authStore, blockStore, detailStore, recordStore, notificationStore } from 'Store';
 import { 
-	UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage, UtilSpace, UtilData, keyboard 
+	S, UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage, UtilSpace, UtilData, keyboard 
 } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
@@ -97,7 +97,7 @@ class Dispatcher {
 	};
 
 	event (event: Events.Event, skipDebug?: boolean) {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
 		const electron = UtilCommon.getElectron();
@@ -153,8 +153,8 @@ class Dispatcher {
 				};
 
 				case 'AccountConfigUpdate': {
-					commonStore.configSet(mapped.config, true);
-					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
+					S.Common.configSet(mapped.config, true);
+					Renderer.send('setConfig', UtilCommon.objectCopy(S.Common.config));
 					break;
 				};
 
@@ -165,8 +165,8 @@ class Dispatcher {
 
 					Renderer.send('showChallenge', {
 						challenge: mapped.challenge,
-						theme: commonStore.getThemeClass(),
-						lang: commonStore.interfaceLang,
+						theme: S.Common.getThemeClass(),
+						lang: S.Common.interfaceLang,
 					});
 					break;
 				};
@@ -177,12 +177,12 @@ class Dispatcher {
 				};
 
 				case 'ObjectRelationsAmend': {
-					dbStore.relationsSet(rootId, mapped.id, mapped.relations);
+					recordStore.relationsSet(rootId, mapped.id, mapped.relations);
 					break;
 				};
 
 				case 'ObjectRelationsRemove': {
-					dbStore.relationListDelete(rootId, mapped.id, mapped.relationKeys);
+					recordStore.relationListDelete(rootId, mapped.id, mapped.relationKeys);
 					break;
 				};
 
@@ -192,7 +192,7 @@ class Dispatcher {
 				};
 
 				case 'FileSpaceUsage': {
-					const { spaces } = commonStore.spaceStorage;
+					const { spaces } = S.Common.spaceStorage;
 					const space = spaces.find(it => it.spaceId == mapped.spaceId);
 
 					if (space) {
@@ -205,12 +205,12 @@ class Dispatcher {
 
 				case 'FileLimitUpdated':
 				case 'FileLocalUsage': {
-					commonStore.spaceStorageSet(mapped);
+					S.Common.spaceStorageSet(mapped);
 					break;
 				};
 
 				case 'FileLimitReached': {
-					const { bytesLimit, localUsage, spaces } = commonStore.spaceStorage;
+					const { bytesLimit, localUsage, spaces } = S.Common.spaceStorage;
 					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
 					const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
 
@@ -228,8 +228,8 @@ class Dispatcher {
 
 					for (const block of blocks) {
 						if (block.type == I.BlockType.Dataview) {
-							dbStore.relationsSet(rootId, block.id, block.content.relationLinks);
-							dbStore.viewsSet(rootId, block.id, block.content.views);
+							recordStore.relationsSet(rootId, block.id, block.content.relationLinks);
+							recordStore.viewsSet(rootId, block.id, block.content.views);
 						};
 
 						blockStore.add(rootId, new M.Block(block));
@@ -581,7 +581,7 @@ class Dispatcher {
 						break;
 					};
 
-					dbStore.viewAdd(rootId, id, view);
+					recordStore.viewAdd(rootId, id, view);
 					blockStore.updateWidgetViews(rootId);
 					break;
 				};
@@ -594,7 +594,7 @@ class Dispatcher {
 						break;
 					};
 
-					let view = dbStore.getView(rootId, id, viewId);
+					let view = recordStore.getView(rootId, id, viewId);
 					let updateData = false;
 
 					if (fields !== null) {
@@ -691,7 +691,7 @@ class Dispatcher {
 						view[key.field] = list;
 					});
 
-					dbStore.viewUpdate(rootId, id, view);
+					recordStore.viewUpdate(rootId, id, view);
 					blockStore.updateWidgetViews(rootId);
 
 					if (updateData) {
@@ -703,17 +703,17 @@ class Dispatcher {
 
 				case 'BlockDataviewViewDelete': {
 					const { id, viewId } = mapped;
-					const subId = dbStore.getSubId(rootId, id);
+					const subId = recordStore.getSubId(rootId, id);
 
-					let current = dbStore.getMeta(subId, '').viewId;
+					let current = recordStore.getMeta(subId, '').viewId;
 					
-					dbStore.viewDelete(rootId, id, viewId);
+					recordStore.viewDelete(rootId, id, viewId);
 
 					if (viewId == current) {
-						const views = dbStore.getViews(rootId, id);
+						const views = recordStore.getViews(rootId, id);
 
 						current = views.length ? views[views.length - 1].id : '';
-						dbStore.metaSet(subId, '', { viewId: current });
+						recordStore.metaSet(subId, '', { viewId: current });
 					};
 
 					blockStore.updateWidgetViews(rootId);
@@ -723,7 +723,7 @@ class Dispatcher {
 				case 'BlockDataviewViewOrder': {
 					const { id, viewIds } = mapped;
 
-					dbStore.viewsSort(rootId, id, viewIds);
+					recordStore.viewsSort(rootId, id, viewIds);
 					blockStore.updateWidgetViews(rootId);
 					break; 
 				};
@@ -731,14 +731,14 @@ class Dispatcher {
 				case 'BlockDataviewRelationDelete': {
 					const { id, relationKeys } = mapped;
 
-					dbStore.relationListDelete(rootId, id, relationKeys);
+					recordStore.relationListDelete(rootId, id, relationKeys);
 					break;
 				};
 
 				case 'BlockDataviewRelationSet': {
 					const { id, relations } = mapped;
 
-					dbStore.relationsSet(rootId, id, relations);
+					recordStore.relationsSet(rootId, id, relations);
 					break;
 				};
 
@@ -846,7 +846,7 @@ class Dispatcher {
 					const [ subId, dep ] = mapped.subId.split('/');
 
 					if (!dep) {
-						dbStore.recordDelete(subId, '', id);
+						recordStore.recordDelete(subId, '', id);
 						detailStore.delete(subId, id);
 					};
 					break;
@@ -863,7 +863,7 @@ class Dispatcher {
 					const [ subId, dep ] = mapped.subId.split('/');
 					
 					if (!dep) {
-						dbStore.metaSet(subId, '', { total: mapped.total });
+						recordStore.metaSet(subId, '', { total: mapped.total });
 					};
 					break;
 				};
@@ -873,9 +873,9 @@ class Dispatcher {
 					const [ rootId, blockId ] = mapped.subId.split('-');
 
 					if (remove) {
-						dbStore.groupsRemove(rootId, blockId, [ group.id ]);
+						recordStore.groupsRemove(rootId, blockId, [ group.id ]);
 					} else {
-						dbStore.groupsAdd(rootId, blockId, [ group ]);
+						recordStore.groupsAdd(rootId, blockId, [ group ]);
 					};
 
 					blockStore.updateWidgetData(rootId);
@@ -945,7 +945,7 @@ class Dispatcher {
 								isUnlocked = false;
 							};
 
-							commonStore.progressSet({
+							S.Common.progressSet({
 								id,
 								status: translate(`progress${type}`),
 								current: progress.done,
@@ -959,7 +959,7 @@ class Dispatcher {
 						case I.ProgressState.Error:
 						case I.ProgressState.Done:
 						case I.ProgressState.Canceled: {
-							commonStore.progressClear();
+							S.Common.progressClear();
 							break;
 						};
 					};
@@ -1026,7 +1026,7 @@ class Dispatcher {
 			return;
 		};
 
-		const records = dbStore.getRecordIds(sid, '');
+		const records = recordStore.getRecordIds(sid, '');
 		const newIndex = afterId ? records.indexOf(afterId) + 1 : 0;
 
 		let oldIndex = records.indexOf(id);
@@ -1041,7 +1041,7 @@ class Dispatcher {
 		};
 
 		if (oldIndex !== newIndex) {
-			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
+			recordStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
 		};
 	};
 
@@ -1068,7 +1068,7 @@ class Dispatcher {
 			analytics.removeContext();
 		};
 
-		dbStore.relationsSet(contextId, rootId, relationLinks);
+		recordStore.relationsSet(contextId, rootId, relationLinks);
 		detailStore.set(contextId, details);
 		blockStore.restrictionsSet(contextId, restrictions);
 		blockStore.participantsSet(contextId, participants);
@@ -1082,8 +1082,8 @@ class Dispatcher {
 
 		const blocks = objectView.blocks.map(it => {
 			if (it.type == I.BlockType.Dataview) {
-				dbStore.relationsSet(contextId, it.id, it.content.relationLinks);
-				dbStore.viewsSet(contextId, it.id, it.content.views);
+				recordStore.relationsSet(contextId, it.id, it.content.relationLinks);
+				recordStore.viewsSet(contextId, it.id, it.content.views);
 			};
 
 			structure.push({ id: it.id, childrenIds: it.childrenIds });
@@ -1113,7 +1113,7 @@ class Dispatcher {
 	public request (type: string, data: any, callBack?: (message: any) => void) {
 		type = type.replace(/^command_/, '');
 
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const debugTime = config.flagsMw.time;
 		const debugRequest = config.flagsMw.request;
 		const debugJson = config.flagsMw.json;
@@ -1208,7 +1208,7 @@ class Dispatcher {
 	};
 
 	checkLog (type: string) {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { event, thread, file } = config.flagsMw;
 		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
 		const threadEvents = [ 'ThreadStatus' ];

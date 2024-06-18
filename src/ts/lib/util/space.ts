@@ -1,5 +1,6 @@
-import { I, UtilCommon, UtilData, UtilObject, Storage, translate } from 'Lib';
-import { commonStore, authStore, blockStore, detailStore, dbStore } from 'Store';
+import { I, S, UtilCommon, UtilData, UtilObject, Storage, translate } from 'Lib';
+import { authStore, blockStore, detailStore, recordStore } from 'Store';
+
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
 
@@ -19,7 +20,7 @@ class UtilSpace {
 			};
 
 			if (home && !home.spaceId) {
-				home.spaceId = commonStore.space;
+				home.spaceId = S.Common.space;
 			};
 		};
 
@@ -77,7 +78,7 @@ class UtilSpace {
 		const subId = Constant.subId.space;
 		const { spaceview } = blockStore;
 
-		let items = dbStore.getRecords(subId, UtilData.spaceRelationKeys());
+		let items = recordStore.getRecords(subId, UtilData.spaceRelationKeys());
 		items = items.filter(it => it.isAccountActive && it.isLocalOk);
 		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));
 
@@ -95,11 +96,11 @@ class UtilSpace {
 	};
 
 	getSpaceviewBySpaceId (id: string) {
-		return dbStore.getRecords(Constant.subId.space).find(it => it.targetSpaceId == id);
+		return recordStore.getRecords(Constant.subId.space).find(it => it.targetSpaceId == id);
 	};
 
 	getParticipantsList (statuses?: I.ParticipantStatus[]) {
-		const ret = dbStore.getRecords(Constant.subId.participant);
+		const ret = recordStore.getRecords(Constant.subId.participant);
 		return statuses ? ret.filter(it => statuses.includes(it.status)) : ret;
 	};
 
@@ -118,7 +119,7 @@ class UtilSpace {
 	};
 
 	getParticipant (id?: string) {
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const { account } = authStore;
 
 		if (!account) {
@@ -131,7 +132,7 @@ class UtilSpace {
 
 	getMyParticipant (spaceId?: string) {
 		const { account } = authStore;
-		const { space } = commonStore;
+		const { space } = S.Common;
 
 		if (!account) {
 			return null;
@@ -147,12 +148,12 @@ class UtilSpace {
 	};
 
 	isMyOwner (spaceId?: string): boolean {
-		const participant = this.getMyParticipant(spaceId || commonStore.space);
+		const participant = this.getMyParticipant(spaceId || S.Common.space);
 		return participant ? participant.isOwner : false;
 	};
 
 	isShareActive () {
-		return commonStore.isOnline && !UtilData.isLocalNetwork();
+		return S.Common.isOnline && !UtilData.isLocalNetwork();
 	};
 
 	getReaderLimit () {

@@ -2,9 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
-import { I, UtilCommon, UtilSpace, analytics, Action, keyboard, translate, Preview, UtilData } from 'Lib';
-import { popupStore, commonStore, authStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, UtilCommon, UtilSpace, analytics, Action, keyboard, translate, Preview, UtilData } from 'Lib';
+import { popupStore, authStore } from 'Store';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -102,7 +101,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { page } = data;
 		const { loading } = this.state;
 		const { membership } = authStore;
-		const { membershipTiersList } = commonStore;
+		const { membershipTiersList } = S.Common;
 		const sections = this.getSections().filter(it => !it.isHidden);
 		const participant = UtilSpace.getParticipant();
 		const cnr = [ 'side', 'right', UtilCommon.toCamelCase('tab-' + page) ];
@@ -260,7 +259,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { param } = this.props;
 		const { data } = param;
 		const { isSpace } = data;
-		const { isOnline } = commonStore;
+		const { isOnline } = S.Common;
 		const isAnytypeNetwork = UtilData.isAnytypeNetwork();
 
 		if (isSpace) {
@@ -344,7 +343,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 	onExport (type: I.ExportType, param: any) {
 		analytics.event('ClickExport', { type, route: analytics.route.settings });
-		Action.export(commonStore.space, [], type, { ...param, route: analytics.route.settings }, () => this.props.close());
+		Action.export(S.Common.space, [], type, { ...param, route: analytics.route.settings }, () => this.props.close());
 	};
 
 	onKeyDown (e: any) {

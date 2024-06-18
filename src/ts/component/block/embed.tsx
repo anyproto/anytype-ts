@@ -6,8 +6,9 @@ import { instance as viz } from '@viz-js/viz';
 import DOMPurify from 'dompurify';
 import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
-import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
-import { menuStore, commonStore, blockStore } from 'Store';
+import { I, C, S, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
+import { menuStore, blockStore } from 'Store';
+
 const Constant = require('json/constant.json');
 const Theme = require('json/theme.json');
 
@@ -359,7 +360,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const range = this.getRange();
 
 		keyboard.shortcut('backspace', e, () => {
@@ -379,12 +380,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const range = this.getRange();
 
 		if (block.isEmbedLatex()) {
-			const { filter } = commonStore;
+			const { filter } = S.Common;
 			const symbolBefore = value[range?.from - 1];
 			const menuOpen = menuStore.isOpen('blockLatex');
 
 			if ((symbolBefore == '\\') && !keyboard.isSpecial(e)) {
-				commonStore.filterSet(range.from, '');
+				S.Common.filterSet(range.from, '');
 				this.onLatexMenu(e, 'input', false);
 			};
 
@@ -392,7 +393,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const d = range.from - filter.from;
 				if (d >= 0) {
 					const part = value.substring(filter.from, filter.from + d).replace(/^\\/, '');
-					commonStore.filterSetText(part);
+					S.Common.filterSetText(part);
 				};
 			};
 		};
@@ -474,7 +475,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		commonStore.filterSet(range.from, '');
+		S.Common.filterSet(range.from, '');
 		this.onLatexMenu(e, 'select', true);
 	};
 
@@ -506,7 +507,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			className: (isTemplate ? 'isTemplate' : ''),
 			subIds: Constant.menuIds.latex,
 			onClose: () => {
-				commonStore.filterSet(0, '');
+				S.Common.filterSet(0, '');
 			},
 			data: {
 				isTemplate: isTemplate,
@@ -702,7 +703,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: UtilCommon.fixAsarPath(`./embed/iframe.html?theme=${commonStore.getThemeClass()}`),
+						src: UtilCommon.fixAsarPath(`./embed/iframe.html?theme=${S.Common.getThemeClass()}`),
 						frameborder: 0,
 						scrolling: 'no',
 						sandbox: sandbox.join(' '),
@@ -741,7 +742,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				const theme = (Theme[commonStore.getThemeClass()] || {}).mermaid;
+				const theme = (Theme[S.Common.getThemeClass()] || {}).mermaid;
 
 				if (theme) {
 					for (const k in theme) {
@@ -853,7 +854,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 		
 		const { block } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 
 		focus.set(block.id, { from: 0, to: 0 });

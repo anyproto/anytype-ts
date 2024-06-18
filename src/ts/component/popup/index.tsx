@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, UtilCommon, analytics, Storage, Preview, translate } from 'Lib';
+import { I, S, UtilCommon, analytics, Storage, Preview, translate } from 'Lib';
 import { Dimmer } from 'Component';
-import { menuStore, popupStore, commonStore } from 'Store';
+import { menuStore, popupStore } from 'Store';
 
 import PopupSettings from './settings';
 import PopupSettingsOnboarding from './settings/onboarding';
@@ -189,7 +189,7 @@ class Popup extends React.Component<I.Popup> {
 			const height = inner.outerHeight();
 
 			let sw = 0;
-			if (commonStore.isSidebarFixed && sidebar.hasClass('active') && !popupStore.showDimmerIds().includes(id)) {
+			if (S.Common.isSidebarFixed && sidebar.hasClass('active') && !popupStore.showDimmerIds().includes(id)) {
 				sw = sidebar.outerWidth();
 			};
 

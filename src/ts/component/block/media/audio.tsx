@@ -2,8 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Error, MediaAudio } from 'Component';
-import { I, translate, focus, keyboard, Action } from 'Lib';
-import { commonStore, detailStore } from 'Store';
+import { I, S, translate, focus, keyboard, Action } from 'Lib';
+import { detailStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
@@ -58,7 +59,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 				
 			case I.FileState.Done:
 				const playlist = [ 
-					{ name: object.name, src: commonStore.fileUrl(targetObjectId) },
+					{ name: object.name, src: S.Common.fileUrl(targetObjectId) },
 				];
 
 				element = (

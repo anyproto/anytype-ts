@@ -5,8 +5,9 @@ import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { UtilRouter, C, UtilData } from 'Lib'; 
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, extensionStore } from 'Store';
+import { S, UtilRouter, C, UtilData } from 'Lib'; 
+import { authStore } from 'Store';
+
 const Extension = require('json/extension.json');
 
 import Index from './popup/index';
@@ -33,17 +34,6 @@ const Components = {
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 
-const rootStore = {
-	commonStore,
-	authStore,
-	blockStore,
-	detailStore,
-	dbStore,
-	menuStore,
-	popupStore,
-	extensionStore,
-};
-
 class RoutePage extends React.Component<RouteComponentProps> {
 	render () {
 		const { match } = this.props;
@@ -68,7 +58,7 @@ class Popup extends React.Component {
 	render () {
 		return (
 			<Router history={history}>
-				<Provider {...rootStore}>
+				<Provider {...S}>
 					<div ref={node => this.node = node}>
 						<Switch>
 							{Routes.map((item: any, i: number) => (

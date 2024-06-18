@@ -2,9 +2,10 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Drag, Cover, Loader, Label } from 'Component';
-import { I, C, UtilCommon, UtilData, UtilObject, focus, translate, keyboard, Action } from 'Lib';
-import { commonStore, blockStore, detailStore, menuStore } from 'Store';
+import { I, C, S, UtilCommon, UtilData, UtilObject, focus, translate, keyboard } from 'Lib';
+import { blockStore, detailStore, menuStore } from 'Store';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
+
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
 
@@ -357,7 +358,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType)) {
-			el.src = commonStore.imageUrl(coverId, Constant.size.cover);
+			el.src = S.Common.imageUrl(coverId, Constant.size.cover);
 		};
 	};
 	
@@ -484,7 +485,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		keyboard.disableCommonDrop(true);
 		this.setLoading(true);
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setLoading(false);
 			keyboard.disableCommonDrop(false);
 			

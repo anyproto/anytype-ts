@@ -1,8 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Button } from 'Component';
-import { I, translate, Renderer, analytics } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S, translate, Renderer, analytics } from 'Lib';
 import QRCode from 'qrcode.react';
 const Theme = require('json/theme.json');
 
@@ -20,7 +19,7 @@ class PopupInviteQr extends React.Component<I.Popup> {
 		const { param } = this.props;
 		const { data } = param;
 		const { link } = data;
-		const theme = commonStore.getThemeClass();
+		const theme = S.Common.getThemeClass();
 
 		return (
 			<div ref={ref => this.node = ref}>

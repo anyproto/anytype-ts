@@ -1,4 +1,5 @@
-import { commonStore } from 'Store';
+import { S } from 'Lib';
+
 const Constant = require('json/constant.json');
 
 /**
@@ -8,7 +9,7 @@ const Constant = require('json/constant.json');
  * Defaults to the default lang set in constant.json (english)
  */
 export const translate = (key: string, force?: string): string => {
-	const lang = force || commonStore.interfaceLang;
+	const lang = force || S.Common.interfaceLang;
 	const defaultData = require('json/text.json');
 
 	let data = defaultData;

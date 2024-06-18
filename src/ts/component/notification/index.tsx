@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, Error } from 'Component';
-import { I, C, UtilRouter, translate, Action, analytics, UtilSpace } from 'Lib';
-import { notificationStore, popupStore, commonStore } from 'Store';
+import { I, C, S, UtilRouter, translate, Action, analytics, UtilSpace } from 'Lib';
+import { notificationStore, popupStore } from 'Store';
 const Constant = require('json/constant.json');
 
 interface State {
@@ -29,7 +29,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 	render () {
 		const { error } = this.state;
 		const { item, style } = this.props;
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const { id, type, payload, title, text } = item;
 		const { errorCode, spaceId } = payload;
 		const spaceview = UtilSpace.getSpaceviewBySpaceId(spaceId);

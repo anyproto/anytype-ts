@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Title, Label, IconObject, ObjectName, Button } from 'Component';
-import { analytics, C, UtilFile, I, translate, UtilCommon, UtilData, Renderer } from 'Lib';
+import { Title, Label, IconObject, Button } from 'Component';
+import { analytics, C, S, UtilFile, I, translate, UtilCommon, UtilData, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore, popupStore } from 'Store';
+import { popupStore } from 'Store';
 
 interface Props extends I.PopupSettings {
     onPage: (id: string) => void;
@@ -19,7 +19,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
     render () {
         const { onPage } = this.props;
-		const { dataPath, spaceStorage } = commonStore;
+		const { dataPath, spaceStorage } = S.Common;
         const { localUsage } = spaceStorage;
 		const suffix = this.getSuffix();
 
@@ -108,7 +108,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
     };
 
 	onOpenDataLocation () {
-		Renderer.send('pathOpen', commonStore.dataPath);
+		Renderer.send('pathOpen', S.Common.dataPath);
 	};
 
 	getSuffix () {

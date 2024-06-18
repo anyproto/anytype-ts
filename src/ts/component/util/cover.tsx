@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { I } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S } from 'Lib';
 
 const Constant = require('json/constant.json');
 
@@ -39,7 +38,7 @@ class Cover extends React.Component<Props> {
 		};
 
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(type) && image) {
-			style.backgroundImage = `url("${commonStore.imageUrl(image, Constant.size.cover)}")`;
+			style.backgroundImage = `url("${S.Common.imageUrl(image, Constant.size.cover)}")`;
 		};
 
 		if (src) {

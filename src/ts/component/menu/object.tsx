@@ -1,8 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate, UtilSpace } from 'Lib';
-import { blockStore, detailStore, commonStore, menuStore, popupStore } from 'Store';
+import { I, C, S, keyboard, analytics, UtilObject, UtilCommon, Preview, focus, Action, translate, UtilSpace } from 'Lib';
+import { blockStore, detailStore, menuStore, popupStore } from 'Store';
+
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
 
@@ -22,7 +23,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const sections = this.getSections();
 		const restrictions = blockStore.getRestrictions(rootId, rootId).map(it => I.RestrictionObject[it]);
 

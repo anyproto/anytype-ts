@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { C, I, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard,focus, translate, analytics, Action, UtilSpace, Relation, Mark } from 'Lib';
-import { commonStore, dbStore, popupStore, menuStore, detailStore } from 'Store';
+import { C, I, S, UtilCommon, UtilData, UtilObject, UtilRouter, keyboard,focus, translate, analytics, Action, UtilSpace, Relation, Mark } from 'Lib';
+import { recordStore, popupStore, menuStore, detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -67,7 +67,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				if ([ 'name', 'type' ].includes(relationKey)) {
 					return '';
 				} else {
-					const relation = dbStore.getRelationByKey(relationKey);
+					const relation = recordStore.getRelationByKey(relationKey);
 					key = relation ? <div className="key">{relation.name}:</div> : '';
 				};
 			};
@@ -515,10 +515,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	load (clear: boolean, callBack?: () => void) {
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const { backlink } = this.state;
 		const filter = this.getFilter();
-		const templateType = dbStore.getTemplateType();
+		const templateType = recordStore.getTemplateType();
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
@@ -572,7 +572,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	getItems () {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { backlink } = this.state;
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
@@ -598,7 +598,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		items = items.map(it => {
-			const type = dbStore.getTypeById(it.type);
+			const type = recordStore.getTypeById(it.type);
 
 			return { 
 				...it,

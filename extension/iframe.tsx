@@ -6,8 +6,8 @@ import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { C, UtilRouter, UtilData } from 'Lib'; 
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, extensionStore } from 'Store';
+import { S, C, UtilRouter, UtilData } from 'Lib'; 
+import { authStore, extensionStore } from 'Store';
 
 import Index from './iframe/index';
 import Create from './iframe/create';
@@ -29,17 +29,6 @@ const Components = {
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
-
-const rootStore = {
-	commonStore,
-	authStore,
-	blockStore,
-	detailStore,
-	dbStore,
-	menuStore,
-	popupStore,
-	extensionStore,
-};
 
 class RoutePage extends React.Component<RouteComponentProps> {
 	
@@ -67,7 +56,7 @@ class Iframe extends React.Component {
 	render () {
 		return (
 			<Router history={history}>
-				<Provider {...rootStore}>
+				<Provider {...S}>
 					<div ref={node => this.node = node}>
 						<Switch>
 							{Routes.map((item: any, i: number) => (

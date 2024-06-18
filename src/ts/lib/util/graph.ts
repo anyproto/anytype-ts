@@ -1,5 +1,5 @@
-import { I, Relation, UtilCommon, UtilObject, UtilFile, UtilSmile } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S, Relation, UtilCommon, UtilFile, UtilSmile } from 'Lib';
+
 const Colors = require('json/colors.json');
 const Theme = require('json/theme.json');
 
@@ -29,7 +29,7 @@ class UtilGraph {
 
 			case I.ObjectLayout.Image: {
 				if (d.id) {
-					src = commonStore.imageUrl(d.id, 100);
+					src = S.Common.imageUrl(d.id, 100);
 				} else {
 					src = UtilFile.iconPath(d);
 				};
@@ -39,7 +39,7 @@ class UtilGraph {
 			case I.ObjectLayout.Human:
 			case I.ObjectLayout.Participant: {
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 100);
+					src = S.Common.imageUrl(d.iconImage, 100);
 				};
 				break;
 			};
@@ -50,14 +50,14 @@ class UtilGraph {
 
 			case I.ObjectLayout.Bookmark: {
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 100);
+					src = S.Common.imageUrl(d.iconImage, 100);
 				};
 				break;
 			};
 				
 			default: {
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 100);
+					src = S.Common.imageUrl(d.iconImage, 100);
 				} else
 				if (d.iconEmoji) {
 					const code = UtilSmile.getCode(d.iconEmoji);
@@ -82,7 +82,7 @@ class UtilGraph {
 			return;
 		};
 
-		const theme = commonStore.getThemeClass();
+		const theme = S.Common.getThemeClass();
 		const { from, to } = option.colors;
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');

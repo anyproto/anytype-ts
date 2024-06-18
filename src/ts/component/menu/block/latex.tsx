@@ -2,11 +2,12 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, keyboard, UtilData, UtilMenu, UtilCommon } from 'Lib';
-import { commonStore, menuStore } from 'Store';
-const Sections = require('json/latex.json');
+import { I, S, keyboard, UtilData, UtilMenu, UtilCommon } from 'Lib';
+import { menuStore } from 'Store';
 
+const Sections = require('json/latex.json');
 const katex = require('katex');
+
 require('katex/dist/contrib/mhchem');
 
 const HEIGHT_SECTION = 28;
@@ -33,7 +34,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { isTemplate } = data;
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const items = this.getItems(true);
 
 		if (!this.cache) {
@@ -146,7 +147,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 	};
 
 	componentDidUpdate () {
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const items = this.getItems(false);
 
 		if (filter.text != this.filter) {
@@ -221,7 +222,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect, isTemplate } = data;
@@ -242,7 +243,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { isTemplate } = data;
-		const filter = UtilCommon.regexEscape(commonStore.filter.text);
+		const filter = UtilCommon.regexEscape(S.Common.filter.text);
 
 		let sections = UtilMenu.sectionsMap(Sections);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);

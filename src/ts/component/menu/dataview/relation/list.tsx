@@ -5,8 +5,8 @@ import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'Component';
-import { I, C, Relation, keyboard, Dataview, translate } from 'Lib';
-import { menuStore, dbStore, blockStore, commonStore } from 'Store';
+import { I, C, S, Relation, keyboard, Dataview, translate } from 'Lib';
+import { menuStore, recordStore, blockStore } from 'Store';
 const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
@@ -268,7 +268,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { param, getId } = this.props;
 		const { data } = param;
 		const { readonly } = data;
-		const relation = dbStore.getRelationByKey(item.relationKey);
+		const relation = recordStore.getRelationByKey(item.relationKey);
 
 		if (!relation || readonly) {
 			return;
@@ -290,7 +290,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 
 	onSortEnd (result: any) {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { oldIndex, newIndex } = result;
 		const { param } = this.props;
 		const { data } = param;
@@ -326,7 +326,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		return Dataview.viewGetRelations(rootId, blockId, view).map((it: any) => ({ 
 			...it,
 			id: it.relationKey,
-			relation: dbStore.getRelationByKey(it.relationKey) || {},
+			relation: recordStore.getRelationByKey(it.relationKey) || {},
 		}));
 	};
 

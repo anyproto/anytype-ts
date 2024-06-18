@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
-import { commonStore, menuStore } from 'Store';
-import { I, UtilObject, keyboard, UtilCommon, Preview, translate, UtilSpace, analytics } from 'Lib';
+import { menuStore } from 'Store';
+import { I, S, UtilObject, keyboard, UtilCommon, Preview, translate, UtilSpace, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
 
@@ -23,7 +23,7 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	render () {
-		const { navigationMenu } = commonStore;
+		const { navigationMenu } = S.Common;
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
 		const participant = UtilSpace.getParticipant();
@@ -196,7 +196,7 @@ const Navigation = observer(class Navigation extends React.Component {
 		const isRight = sidebar.hasClass('right');
 
 		let sw = 0;
-		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+		if (S.Common.isSidebarFixed && sidebar.hasClass('active')) {
 			sw = sidebar.outerWidth();
 		};
 

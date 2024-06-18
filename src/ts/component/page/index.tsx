@@ -2,9 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
+import { I, S, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
 import { Label, Frame } from 'Component';
-import { authStore, commonStore, menuStore, popupStore } from 'Store';
+import { authStore, menuStore, popupStore } from 'Store';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -68,7 +68,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	render () {
 		const { isPopup } = this.props;
-		const { config, theme } = commonStore;
+		const { config, theme } = S.Common;
 		const { account } = authStore;
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
@@ -303,7 +303,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const platform = UtilCommon.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
@@ -316,7 +316,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		obj.attr({ class: cn.join(' ') });
-		commonStore.setThemeClass();
+		S.Common.setThemeClass();
 	};
 
 	getId (prefix: string) {

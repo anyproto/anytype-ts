@@ -4,8 +4,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
-import { I, C, UtilObject, UtilCommon, UtilMenu, keyboard, focus, translate, UtilSpace } from 'Lib';
-import { popupStore, commonStore } from 'Store';
+import { I, C, S, UtilObject, UtilCommon, UtilMenu, keyboard, focus, translate, UtilSpace } from 'Lib';
+import { popupStore } from 'Store';
 
 interface State {
 	loading: boolean;
@@ -436,7 +436,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	filterMapper (it: any) {
-		const { config } = commonStore;
+		const { config } = S.Common;
 
 		if (!it.id) {
 			return false;

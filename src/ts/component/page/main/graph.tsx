@@ -1,9 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, UtilMenu, UtilData, UtilObject, keyboard } from 'Lib';
+import { I, C, S, UtilCommon, UtilMenu, UtilData, UtilObject, keyboard } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
-import { detailStore, commonStore } from 'Store';
+import { detailStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
@@ -107,7 +108,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	load () {
 		this.setLoading(true);
 
-		C.ObjectGraph(commonStore.space, UtilData.graphFilters(), 0, [], Constant.graphRelationKeys, '', [], (message: any) => {
+		C.ObjectGraph(S.Common.space, UtilData.graphFilters(), 0, [], Constant.graphRelationKeys, '', [], (message: any) => {
 			if (message.error.code) {
 				return;
 			};

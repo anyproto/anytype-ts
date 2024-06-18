@@ -1,5 +1,5 @@
 import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject, UtilMenu } from 'Lib';
-import { dbStore, detailStore } from 'Store';
+import { recordStore, detailStore } from 'Store';
 const Constant = require('json/constant.json');
 
 const DICTIONARY = [ 'layout', 'origin', 'importType' ];
@@ -289,13 +289,13 @@ class Relation {
 	};
 
 	public getOptions (value: any[]) {
-		return this.getArrayValue(value).map(id => dbStore.getOption(id)).filter(it => it && !it._empty_);
+		return this.getArrayValue(value).map(id => recordStore.getOption(id)).filter(it => it && !it._empty_);
 	};
 
 	public getFilterOptions (rootId: string, blockId: string, view: I.View) {
 		const ret: any[] = [];
 		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelationByKey(it.relationKey);
+			const relation = recordStore.getRelationByKey(it.relationKey);
 			return relation && (it.relationKey != 'done');
 		});
 		const idxName = relations.findIndex(it => it.relationKey == 'name');
@@ -303,7 +303,7 @@ class Relation {
 		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, { relationKey: 'done' });
 
 		relations.forEach((it: I.ViewRelation) => {
-			const relation: any = dbStore.getRelationByKey(it.relationKey);
+			const relation: any = recordStore.getRelationByKey(it.relationKey);
 			if (!relation) {
 				return;
 			};
@@ -331,7 +331,7 @@ class Relation {
 
 	public getCoverOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.File ];
-		const options: any[] = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter(it => {
+		const options: any[] = UtilCommon.objectCopy(recordStore.getObjectRelations(rootId, blockId)).filter(it => {
 			if (it.isInstalled && (it.relationKey == 'picture')) {
 				return true;
 			};
@@ -363,7 +363,7 @@ class Relation {
 			};
 		};
 		
-		let options: any[] = dbStore.getObjectRelations(rootId, blockId).filter((it: any) => {
+		let options: any[] = recordStore.getObjectRelations(rootId, blockId).filter((it: any) => {
 			return it.isInstalled && formats.includes(it.format) && (!it.isHidden || [ 'done' ].includes(it.relationKey));
 		});
 
@@ -505,12 +505,12 @@ class Relation {
 
 			switch (layout) {
 				case I.ObjectLayout.Type: {
-					el = dbStore.getTypeById(id);
+					el = recordStore.getTypeById(id);
 					break;
 				};
 
 				case I.ObjectLayout.Relation: {
-					el = dbStore.getRelationById(id);
+					el = recordStore.getRelationById(id);
 					break;
 				};
 			};
@@ -586,7 +586,7 @@ class Relation {
 		let type = null;
 
 		if (objectTypes.length) {
-			const allowedTypes = objectTypes.map(id => dbStore.getTypeById(id)).filter(it => it && !UtilObject.isFileOrSystemLayout(it.recommendedLayout));
+			const allowedTypes = objectTypes.map(id => recordStore.getTypeById(id)).filter(it => it && !UtilObject.isFileOrSystemLayout(it.recommendedLayout));
 			const l = allowedTypes.length;
 
 			if (l) {

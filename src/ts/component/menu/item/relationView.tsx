@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
-import { I, UtilCommon, Relation, keyboard, translate, UtilData } from 'Lib';
-import { detailStore, commonStore } from 'Store';
+import { I, S, UtilCommon, Relation, keyboard, translate, UtilData } from 'Lib';
+import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -129,8 +129,8 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		};
 		
 		const { relationKey } = this.props;
-		const dragProvider = commonStore.getRef('dragProvider');
-		const selection = commonStore.getRef('selectionProvider');
+		const dragProvider = S.Common.getRef('dragProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
 		keyboard.disableSelection(true);
 		selection?.clear();

@@ -7,7 +7,7 @@ import $ from 'jquery';
 import { Icon, Switch } from 'Component';
 import Cell from 'Component/block/dataview/cell';
 import { I, C, Dataview, keyboard, translate } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
+import { menuStore, recordStore, blockStore } from 'Store';
 const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
@@ -46,7 +46,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		const Item = SortableElement((item: any) => {
 			const canHide = allowedView;
 			const canEdit = !readonly && allowedView;
-			const subId = dbStore.getSubId(rootId, [ blockId, item.id ].join(':'));
+			const subId = recordStore.getSubId(rootId, [ blockId, item.id ].join(':'));
 			const cn = [ 'item' ];
 			const head = {};
 
@@ -230,7 +230,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		const { data } = param;
 		const { rootId, blockId } = data;
 			
-		dbStore.groupsSet(rootId, blockId, arrayMove(this.getItems(), oldIndex, newIndex));
+		recordStore.groupsSet(rootId, blockId, arrayMove(this.getItems(), oldIndex, newIndex));
 		this.save();
 
 		keyboard.disableSelection(false);
@@ -256,7 +256,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 			update.push({ ...it, groupId: it.id, index: i });
 		});
 
-		dbStore.groupsSet(rootId, blockId, groups);
+		recordStore.groupsSet(rootId, blockId, groups);
 		Dataview.groupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 	};
@@ -272,7 +272,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		const { data } = param;
 		const { rootId, blockId } = data;
 
-		return dbStore.getGroups(rootId, blockId);
+		return recordStore.getGroups(rootId, blockId);
 	};
 
 	resize () {

@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { I, UtilCommon, translate, keyboard, analytics, Relation, UtilDate, UtilObject } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
-import { menuStore, dbStore, detailStore, blockStore } from 'Store';
+import { menuStore, recordStore, detailStore, blockStore } from 'Store';
 const Constant = require('json/constant.json');
 
 const TIMEOUT = 1000;
@@ -52,8 +52,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const isReadonly = this.isReadonly();
-		const subId = dbStore.getSubId(rootId, blockId);
-		const relation: any = dbStore.getRelationByKey(item.relationKey) || {};
+		const subId = recordStore.getSubId(rootId, blockId);
+		const relation: any = recordStore.getRelationByKey(item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const conditionOptions = Relation.filterConditionsByType(relation.format);
 		const checkboxOptions: I.Option[] = [
@@ -135,7 +135,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			case I.RelationType.File:
 			case I.RelationType.Object: {
 				Item = (element: any) => {	
-					const type = dbStore.getTypeById(element.type);
+					const type = recordStore.getTypeById(element.type);
 
 					return (
 						<div 
@@ -319,7 +319,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this.props.setActive();
 
 		const item = view.getFilter(itemId);
-		const relation = dbStore.getRelationByKey(item.relationKey);
+		const relation = recordStore.getRelationByKey(item.relationKey);
 
 		if (relation && this.refInput) {
 			const isDate = relation.format == I.RelationType.Date;
@@ -385,7 +385,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const item = view.getFilter(itemId);
-		const relation: any = dbStore.getRelationByKey(item.relationKey) || {};
+		const relation: any = recordStore.getRelationByKey(item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
 		
@@ -491,7 +491,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return;
 		};
 
-		const relation = dbStore.getRelationByKey(item.relationKey);
+		const relation = recordStore.getRelationByKey(item.relationKey);
 		if (!relation) {
 			return;
 		};
@@ -505,7 +505,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 			// Remove value when we change relation, filter non unique entries
 			if (k == 'relationKey') {
-				const relation = dbStore.getRelationByKey(v);
+				const relation = recordStore.getRelationByKey(v);
 				const conditions = Relation.filterConditionsByType(relation.format);
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
@@ -643,7 +643,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
 		const item = getView().getFilter(itemId);
-		const relation = dbStore.getRelationByKey(item.relationKey);
+		const relation = recordStore.getRelationByKey(item.relationKey);
 
 		menuStore.closeAll([ 'dataviewOptionList', 'select' ], () => {
 			menuStore.open('dataviewOptionList', { 
@@ -674,7 +674,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const relation = dbStore.getRelationByKey(item.relationKey);
+		const relation = recordStore.getRelationByKey(item.relationKey);
 		const filters = [];
 
 		if (relation.format == I.RelationType.File) {

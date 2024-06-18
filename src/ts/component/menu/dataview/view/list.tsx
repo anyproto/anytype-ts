@@ -6,7 +6,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
 import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject, translate, UtilMenu, Dataview } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
+import { menuStore, recordStore, blockStore } from 'Store';
 const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
@@ -201,7 +201,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const items: any[] = UtilCommon.objectCopy(dbStore.getViews(rootId, blockId)).map(it => ({ 
+		const items: any[] = UtilCommon.objectCopy(recordStore.getViews(rootId, blockId)).map(it => ({ 
 			...it, name: it.name || translate('defaultNamePage'),
 		}));
 
@@ -238,7 +238,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 				return;
 			};
 
-			const view = dbStore.getView(rootId, blockId, message.viewId);
+			const view = recordStore.getView(rootId, blockId, message.viewId);
 
 			close();
 			window.setTimeout(() => onViewSwitch(view), menuStore.getTimeout());
@@ -280,10 +280,10 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { close, param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, isInline, getTarget } = data;
-		const subId = dbStore.getSubId(rootId, blockId);
+		const subId = recordStore.getSubId(rootId, blockId);
 		const object = getTarget();
 
-		dbStore.metaSet(subId, '', { viewId: item.id });
+		recordStore.metaSet(subId, '', { viewId: item.id });
 		C.BlockDataviewViewSetActive(rootId, blockId, item.id);
 
 		analytics.event('SwitchView', {
@@ -303,7 +303,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const views = dbStore.getViews(rootId, blockId);
+		const views = recordStore.getViews(rootId, blockId);
 		const oldIndex = result.oldIndex - 1;
 		const newIndex = result.newIndex - 1;
 		const view = views[oldIndex];
@@ -313,7 +313,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 
 		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
 
-		dbStore.viewsSort(rootId, blockId, ids);
+		recordStore.viewsSort(rootId, blockId, ids);
 		C.BlockDataviewViewSetPosition(rootId, blockId, view.id, newIndex);
 		keyboard.disableSelection(false);
 	};

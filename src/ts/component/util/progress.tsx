@@ -2,8 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Icon, Label } from 'Component';
-import { UtilCommon, C, Storage, keyboard } from 'Lib';
-import { commonStore } from 'Store';
+import { S, UtilCommon, C, Storage, keyboard } from 'Lib';
 
 const Progress = observer(class Progress extends React.Component {
 	
@@ -23,7 +22,7 @@ const Progress = observer(class Progress extends React.Component {
 	};
 	
 	render () {
-		const { progress } = commonStore;
+		const { progress } = S.Common;
 		const { status, current, total, isUnlocked, canCancel } = progress || {};
 
 		if (!status) {
@@ -54,7 +53,7 @@ const Progress = observer(class Progress extends React.Component {
 	};
 
 	componentDidUpdate () {
-		const { progress } = commonStore;
+		const { progress } = S.Common;
 		if (!progress) {
 			return;
 		};
@@ -72,7 +71,7 @@ const Progress = observer(class Progress extends React.Component {
 			node.addClass('hide');
 			win.off('resize.progress');
 
-			window.setTimeout(() => commonStore.progressClear(), 200);
+			window.setTimeout(() => S.Common.progressClear(), 200);
 		};
 	};
 
@@ -81,7 +80,7 @@ const Progress = observer(class Progress extends React.Component {
 	};
 
 	onCancel (e: any) {
-		const { progress } = commonStore;
+		const { progress } = S.Common;
 		const { id } = progress;
 		
 		C.ProcessCancel(id);

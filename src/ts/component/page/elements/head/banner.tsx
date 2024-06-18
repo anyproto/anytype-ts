@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
 import { I, Action, translate, UtilObject, UtilCommon, C, analytics, Onboarding } from 'Lib';
-import { dbStore, menuStore } from 'Store';
+import { recordStore, menuStore } from 'Store';
 const Constant = require('json/constant.json');
 
 interface Props {
@@ -39,7 +39,7 @@ class HeaderBanner extends React.Component<Props> {
 			};
 
 			case I.BannerType.IsTemplate: {
-				const targetObjectType = dbStore.getTypeById(object.targetObjectType);
+				const targetObjectType = recordStore.getTypeById(object.targetObjectType);
 
 				label = translate('templateBannner');
 				if (targetObjectType) {
@@ -96,7 +96,7 @@ class HeaderBanner extends React.Component<Props> {
 	onTemplateMenu () {
 		const { object, isPopup } = this.props;
 		const { sourceObject } = object;
-		const type = dbStore.getTypeById(object.type);
+		const type = recordStore.getTypeById(object.type);
 		const templateId = sourceObject || Constant.templateId.blank;
 		const node = $(this.node);
 

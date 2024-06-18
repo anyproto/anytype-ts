@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
-import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action, UtilData } from 'Lib';
-import { menuStore, commonStore } from 'Store';
+import { I, C, S, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action, UtilData } from 'Lib';
+import { menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -224,7 +224,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 						onMouseLeave={() => this.onMouseLeave()} 
 						onMouseDown={e => this.onMouseDown(e, item)}
 					>
-						<div className="img" style={{ backgroundImage: `url("${commonStore.imageUrl(item.id, 72)}")` }} />
+						<div className="img" style={{ backgroundImage: `url("${S.Common.imageUrl(item.id, 72)}")` }} />
 						<div className="name">{item.name}</div>
 					</div>
 				);
@@ -1045,7 +1045,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 		this.setLoading(true);
 		keyboard.disableCommonDrop(true);
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setLoading(false);
 			keyboard.disableCommonDrop(false);
 			
@@ -1065,7 +1065,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 			this.setLoading(true);
 
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
 				this.setLoading(false);
 
 				if (!message.error.code) {

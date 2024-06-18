@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Cell, Icon } from 'Component';
 import { I, C, UtilCommon, focus, analytics, Relation, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, detailStore, dbStore, blockStore } from 'Store';
+import { menuStore, detailStore, recordStore, blockStore } from 'Store';
 const Constant = require('json/constant.json');
 
 const BlockRelation = observer(class BlockRelation extends React.Component<I.BlockComponent> {
@@ -27,9 +27,9 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 		const id = Relation.cellId(idPrefix, relationKey, rootId);
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 
-		let relation = dbStore.getRelationByKey(relationKey);
+		let relation = recordStore.getRelationByKey(relationKey);
 		if (!relation) {
-			relation = dbStore.getRelations().find(it => it.relationKey == relationKey);
+			relation = recordStore.getRelations().find(it => it.relationKey == relationKey);
 		};
 
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
@@ -156,7 +156,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId } = this.props;
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = recordStore.getRelationByKey(relationKey);
 		
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 

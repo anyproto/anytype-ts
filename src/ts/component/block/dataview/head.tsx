@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
-import { I, C, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
-import { menuStore, detailStore, commonStore } from 'Store';
+import { I, C, S, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
+import { menuStore, detailStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -186,7 +187,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.onClick = (details: any) => {
-				C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, (message: any) => { 
+				C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, S.Common.space, (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => onCreate(message, true));
 				});
 			};
@@ -198,7 +199,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 			addParam.name = translate('blockDataviewCreateNewSet');
 			addParam.onClick = (details: any) => {
-				C.ObjectCreateSet([], details, '', commonStore.space, (message: any) => {
+				C.ObjectCreateSet([], details, '', S.Common.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
 						$(this.node).find('#head-source-select').trigger('click');
 						onCreate(message, true);

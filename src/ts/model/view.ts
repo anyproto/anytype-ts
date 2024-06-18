@@ -1,5 +1,5 @@
 import { I, M, UtilCommon } from 'Lib';
-import { dbStore } from 'Store';
+import { recordStore } from 'Store';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class View implements I.View {
@@ -85,7 +85,7 @@ class View implements I.View {
 	};
 
 	getVisibleRelations () {
-		return this.getRelations().filter(it => it.isVisible && dbStore.getRelationByKey(it.relationKey));
+		return this.getRelations().filter(it => it.isVisible && recordStore.getRelationByKey(it.relationKey));
 	};
 
 	getRelation (relationKey: string) {

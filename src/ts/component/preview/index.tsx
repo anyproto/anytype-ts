@@ -1,10 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
-import { PreviewLink, PreviewObject, PreviewDefault, Loader } from 'Component';
-import { I, UtilCommon, UtilObject, Preview, Mark, translate, Renderer } from 'Lib';
-import { commonStore, menuStore } from 'Store';
+import { PreviewLink, PreviewObject, PreviewDefault } from 'Component';
+import { I, S, UtilCommon, UtilObject, Preview, Mark, translate, Renderer } from 'Lib';
+import { menuStore } from 'Store';
 
 const OFFSET_Y = 8;
 const BORDER = 12;
@@ -32,7 +31,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	};
 	
 	render () {
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { type, target, object, noUnlink, noEdit } = preview;
 		const cn = [ 'previewWrapper' ];
 
@@ -103,7 +102,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 			return;
 		};
 
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { type, target } = preview;
 		const object = this.state.object || preview.object;
 
@@ -122,7 +121,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	};
 	
 	onCopy () {
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { target } = preview;
 		
 		UtilCommon.clipboardCopy({ text: target });
@@ -133,7 +132,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { marks, range, onChange } = preview;
 		const mark = Mark.getInRange(marks, I.MarkType.Link, range);
 		const win = $(window);
@@ -154,7 +153,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	};
 	
 	onUnlink () {
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { range, onChange } = preview;
 
 		onChange(Mark.toggleLink({ type: this.getMarkType(), param: '', range }, preview.marks));
@@ -162,7 +161,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	};
 
 	getMarkType () {
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { type } = preview;
 
 		switch (type) {
@@ -182,7 +181,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	};
 
 	position () {
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { element, rect } = preview;
 
 		if (!element && !rect) {

@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, C, Storage, analytics, Renderer } from 'Lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore, notificationStore } from 'Store';
+import { I, M, C, S, Storage, analytics, Renderer } from 'Lib';
+import { blockStore, detailStore, recordStore, menuStore, notificationStore } from 'Store';
 import { keyboard } from 'Lib';
 
 interface NetworkConfig {
@@ -177,12 +177,12 @@ class AuthStore {
 
 		keyboard.setPinChecked(false);
 
-		commonStore.spaceSet('');
-		commonStore.typeSet('');
+		S.Common.spaceSet('');
+		S.Common.typeSet('');
 
 		blockStore.clearAll();
 		detailStore.clearAll();
-		dbStore.clearAll();
+		recordStore.clearAll();
 		menuStore.closeAllForced();
 		notificationStore.clear();
 

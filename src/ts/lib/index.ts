@@ -37,6 +37,8 @@ import Highlight from './highlight';
 import Animation from './animation';
 import { translate } from './translate';
 
+import * as S from 'Store';
+
 export {
 	keyboard,
 	sidebar,
@@ -49,6 +51,7 @@ export {
 	I,
 	C,
 	M,
+	S,
 	translate,
 	dispatcher,
 	Mapper,

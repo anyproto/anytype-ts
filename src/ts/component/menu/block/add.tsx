@@ -3,8 +3,9 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
-import { I, Mark, keyboard, C, focus, Action, UtilCommon, UtilData, UtilMenu, UtilObject, Storage, translate, analytics, Relation } from 'Lib';
-import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'Store';
+import { I, S, Mark, keyboard, C, focus, Action, UtilCommon, UtilData, UtilMenu, UtilObject, Storage, translate, analytics, Relation } from 'Lib';
+import { blockStore, recordStore, menuStore, detailStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const HEIGHT_ITEM = 32;
@@ -35,7 +36,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const items = this.getItems(true);
 		const block = blockStore.getLeaf(rootId, blockId);
 		const idPrefix = 'menuBlockAdd';
@@ -209,7 +210,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	};
 	
 	componentDidUpdate () {
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const items = this.getItems(true);
 		const itemsWithoutSections = this.getItems(false);
 
@@ -247,7 +248,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	};
 
 	checkFilter () {
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const obj = $('#menuBlockAdd');
 		
 		filter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
@@ -267,15 +268,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const object = detailStore.get(rootId, rootId, [ 'targetObjectType' ]);
 		const isTemplate = UtilObject.isTemplate(object.type);
-		const type = dbStore.getTypeById(isTemplate ? object.targetObjectType : object.type);
+		const type = recordStore.getTypeById(isTemplate ? object.targetObjectType : object.type);
 
-		const relations = dbStore.getObjectRelations(rootId, rootId);
+		const relations = recordStore.getObjectRelations(rootId, rootId);
 		const relationKeys = relations.map(it => it.relationKey);
 		const typeRelations = (type ? type.recommendedRelations || [] : []).
-			map(it => dbStore.getRelationById(it)).
+			map(it => recordStore.getRelationById(it)).
 			filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
 		const ret = relations.concat(typeRelations).filter(it => !config.debug.hiddenObject && it.isHidden ? false : it.isInstalled).sort(UtilData.sortByName);
@@ -287,7 +288,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	
 	getSections () {
 		const { param } = this.props;
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -373,7 +374,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const text = UtilCommon.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
 		const length = text.length;
@@ -487,7 +488,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		keyboard.setFocus(false);
 
 		const win = $(window);
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const text = String(data.text || '');
 		const length = text.length;
 		const onCommand = (blockId: string) => {
@@ -621,7 +622,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					});
 				} else 
 				if (item.isObject) {
-					const type = dbStore.getTypeById(item.objectTypeId) || {};
+					const type = recordStore.getTypeById(item.objectTypeId) || {};
 					const details: any = { type: type.id };
 
 					if (UtilObject.isSetLayout(type.recommendedLayout)) {
@@ -675,7 +676,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (!ids.length) {

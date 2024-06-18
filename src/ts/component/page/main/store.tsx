@@ -3,8 +3,9 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
-import { dbStore, blockStore, commonStore, menuStore, popupStore } from 'Store';
+import { I, C, S, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
+import { recordStore, blockStore, menuStore, popupStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -401,7 +402,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onCreateType (e: any) {
-		C.ObjectCreateObjectType({}, [ I.ObjectFlag.DeleteEmpty ], commonStore.space, (message: any) => {
+		C.ObjectCreateObjectType({}, [ I.ObjectFlag.DeleteEmpty ], S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				this.onClick(e, message.details);
 				analytics.event('CreateType');
@@ -492,7 +493,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: this.getTabLayout() },
 		];
@@ -533,7 +534,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		if (clear) {
 			this.setState({ isLoading: true });
-			dbStore.recordsSet(Constant.subId.store, '', []);
+			recordStore.recordsSet(Constant.subId.store, '', []);
 		};
 
 		UtilData.searchSubscribe({
@@ -566,7 +567,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getItems () {
 		const { isLoading } = this.state;
-		const records = dbStore.getRecords(Constant.subId.store);
+		const records = recordStore.getRecords(Constant.subId.store);
 		const limit = this.getLimit();
 
 		let ret: any[] = [
@@ -624,11 +625,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
-				sources = dbStore.getTypes();
+				sources = recordStore.getTypes();
 				break;
 
 			case I.StoreTab.Relation:
-				sources = dbStore.getRelations();
+				sources = recordStore.getRelations();
 				break;
 		};
 

@@ -1,6 +1,7 @@
 import $ from 'jquery';
-import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
-import { blockStore, menuStore, detailStore, commonStore, dbStore, authStore, popupStore } from 'Store';
+import { I, C, S, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
+import { blockStore, menuStore, detailStore, recordStore, authStore, popupStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 class UtilMenu {
@@ -18,7 +19,7 @@ class UtilMenu {
 			it.name = translate(nameKey);
 			it.description = translate(descriptionKey);
 
-			if (commonStore.interfaceLang != Constant.default.interfaceLang) {
+			if (S.Common.interfaceLang != Constant.default.interfaceLang) {
 				it.aliases.push(translate(nameKey, Constant.default.interfaceLang));
 				it.aliases.push(translate(descriptionKey, Constant.default.interfaceLang));
 				it.aliases = UtilCommon.arrayUnique(it.aliases);
@@ -68,7 +69,7 @@ class UtilMenu {
 	};
 
 	getBlockEmbed () {
-		const { config } = commonStore;
+		const { config } = S.Common;
 
 		let ret = [
 			{ id: I.EmbedProcessor.Latex, name: 'LaTeX' },
@@ -312,7 +313,7 @@ class UtilMenu {
 
 	viewContextMenu (param: any) {
 		const { rootId, blockId, view, onCopy, onRemove, menuParam, close } = param;
-		const views = dbStore.getViews(rootId, blockId);
+		const views = recordStore.getViews(rootId, blockId);
 
 		const options: any[] = [
 			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
@@ -493,9 +494,9 @@ class UtilMenu {
 	};
 
 	dashboardSelect (element: string, openRoute?: boolean) {
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const { spaceview } = blockStore;
-		const templateType = dbStore.getTemplateType();
+		const templateType = recordStore.getTemplateType();
 		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
@@ -601,7 +602,7 @@ class UtilMenu {
 	getSpellingLanguages () {
 		let ret: any[] = [];
 
-		ret = ret.concat(commonStore.languages || []);
+		ret = ret.concat(S.Common.languages || []);
 		ret = ret.map(id => ({ id, name: Constant.spellingLang[id] }));
 		ret.unshift({ id: '', name: translate('commonDisabled') });
 
@@ -645,7 +646,7 @@ class UtilMenu {
 
 		const isOwner = UtilSpace.isMyOwner(targetSpaceId);
 		const isLocalNetwork = UtilData.isLocalNetwork();
-		const { isOnline } = commonStore;
+		const { isOnline } = S.Common;
 
 		let options: any[] = [];
 
@@ -718,7 +719,7 @@ class UtilMenu {
 	};
 
 	inviteContext (param: any) {
-		const { isOnline } = commonStore;
+		const { isOnline } = S.Common;
 		const { containerId, cid, key, onInviteRevoke } = param || {};
 		const isOwner = UtilSpace.isMyOwner();
 		const isLocalNetwork = UtilData.isLocalNetwork();
@@ -745,7 +746,7 @@ class UtilMenu {
 						};
 
 						case 'revoke': {
-							Action.inviteRevoke(commonStore.space, onInviteRevoke);
+							Action.inviteRevoke(S.Common.space, onInviteRevoke);
 							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
 							break;
 						};

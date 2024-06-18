@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Title, Label, Select, Button, Icon } from 'Component';
-import { I, UtilDate, Storage, translate, analytics } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S, UtilDate, Storage, translate, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex extends React.Component<I.PopupSettings> {
 
 	render () {
 		const pin = Storage.getPin();
-		const pinTime = commonStore.pinTime / 1000;
+		const pinTime = S.Common.pinTime / 1000;
 		const times = [ 60, 300, 600, 3600 ].map(time => ({ id: time, name: UtilDate.duration(time) }));
 
 		return (
@@ -26,7 +25,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 								arrowClassName="light"
 								options={times}
 								value={String(pinTime || '')}
-								onChange={v => commonStore.pinTimeSet(v)}
+								onChange={v => S.Common.pinTimeSet(v)}
 								menuParam={{ horizontal: I.MenuDirection.Right }}
 							/>
 						</div>

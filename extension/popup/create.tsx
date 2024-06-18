@@ -4,9 +4,8 @@ import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon } from 'Component';
-import { I, C, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage, UtilSpace } from 'Lib';
-import { dbStore, detailStore, commonStore, menuStore, extensionStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, UtilCommon, UtilData, Relation, keyboard, UtilObject, UtilRouter, Storage, UtilSpace } from 'Lib';
+import { recordStore, detailStore, menuStore, extensionStore } from 'Store';
 import Util from '../lib/util';
 
 interface State {
@@ -15,6 +14,7 @@ interface State {
 	withContent: boolean;
 };
 
+const Constant = require('json/constant.json');
 const MAX_LENGTH = 320;
 
 const Create = observer(class Create extends React.Component<I.PageComponent, State> {
@@ -56,7 +56,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	render () {
 		const { error, isLoading, withContent } = this.state;
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const tags = this.getTagsValue();
 
 		return (
@@ -189,7 +189,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		};
 
 		let check = null;
-		let spaceId = commonStore.space || Storage.get('lastSpaceId');
+		let spaceId = S.Common.space || Storage.get('lastSpaceId');
 
 		if (!spaceId) {
 			spaceId = spaces.find(it => it.isPersonal)?.id;
@@ -237,7 +237,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getObjects (subId: string) {
-		return dbStore.getRecords(subId);
+		return recordStore.getRecords(subId);
 	};
 
 	getSpaces () {
@@ -251,7 +251,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		return this.getObjects(Constant.subId.type).
 			map(Util.optionMapper).
 			filter(this.filter).
-			filter(it => layouts.includes(it.recommendedLayout) && (it.spaceId == commonStore.space)).
+			filter(it => layouts.includes(it.recommendedLayout) && (it.spaceId == S.Common.space)).
 			sort(UtilData.sortByName);
 	};
 
@@ -265,14 +265,14 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onSpaceChange (id: string): void {
-		commonStore.spaceSet(id);
+		S.Common.spaceSet(id);
 		UtilData.createSubscriptions(() => this.forceUpdate());
 
 		Storage.set('lastSpaceId', id);
 	};
 
 	getTagsValue () {
-		return dbStore.getRecordIds(Constant.subId.option, '').
+		return recordStore.getRecordIds(Constant.subId.option, '').
 			filter(id => this.details.tag.includes(id)).
 			map(id => detailStore.get(Constant.subId.option, id)).
 			filter(it => it && !it._empty_);
@@ -351,7 +351,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onFocus () {
-		const relation = dbStore.getRelationByKey('tag');
+		const relation = recordStore.getRelationByKey('tag');
 		const element = '#select-tag';
 
 		menuStore.open('dataviewOptionList', {
@@ -396,7 +396,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	setValue (value: string[]) {
-		const relation = dbStore.getRelationByKey('tag');
+		const relation = recordStore.getRelationByKey('tag');
 		
 		value = UtilCommon.arrayUnique(value);
 
@@ -427,7 +427,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 		delete(details.type);
 
-		C.ObjectCreateFromUrl(details, commonStore.space, type, this.url, withContent, (message: any) => {
+		C.ObjectCreateFromUrl(details, S.Common.space, type, this.url, withContent, (message: any) => {
 			this.setState({ isLoading: false });
 
 			if (message.error.code) {

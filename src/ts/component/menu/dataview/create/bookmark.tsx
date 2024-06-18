@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Input, Button, Loader } from 'Component';
-import { I, C, keyboard, translate, analytics } from 'Lib';
-import { popupStore, commonStore } from 'Store';
+import { I, C, S, keyboard, translate, analytics } from 'Lib';
+import { popupStore } from 'Store';
 
 interface State { 
 	loading: boolean;
@@ -65,7 +65,7 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 
 		this.setState({ loading: true });
 
-		C.ObjectCreateBookmark({ ...details, source: value }, commonStore.space, (message: any) => {
+		C.ObjectCreateBookmark({ ...details, source: value }, S.Common.space, (message: any) => {
 			this.setState({ loading: false });
 
 			if (message.error.code) {

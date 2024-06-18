@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { I, M, UtilCommon, keyboard } from 'Lib';
-import { blockStore, dbStore } from 'Store';
+import { blockStore, recordStore } from 'Store';
 const Constant = require('json/constant.json');
 
 interface State {
@@ -123,7 +123,7 @@ class DragLayer extends React.Component<object, State> {
 
 				wrap.addClass('menus').append(add);
 
-				const items = ids.map(relationKey => dbStore.getRelationByKey(relationKey)).filter(it => it);
+				const items = ids.map(relationKey => recordStore.getRelationByKey(relationKey)).filter(it => it);
 
 				items.forEach(item => {
 					const el = $(`#menuBlockRelationView #item-${item.id}`);

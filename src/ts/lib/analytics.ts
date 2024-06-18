@@ -1,6 +1,7 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, UtilCommon, Storage, UtilSpace, Relation } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { I, C, S, UtilCommon, Storage, UtilSpace, Relation } from 'Lib';
+import { recordStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const KEYS = [ 
@@ -56,12 +57,12 @@ class Analytics {
 	};
 
 	debug () {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		return config.debug.analytics;
 	};
 
 	isAllowed (): boolean {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		return !(config.sudo || [ 'alpha' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
 	};
 	
@@ -70,7 +71,7 @@ class Analytics {
 			return;
 		};
 
-		const { interfaceLang } = commonStore;
+		const { interfaceLang } = S.Common;
 		const electron = UtilCommon.getElectron();
 		const platform = UtilCommon.getPlatform();
 
@@ -106,7 +107,7 @@ class Analytics {
 	};
 
 	setVersion () {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const platform = UtilCommon.getPlatform();
 		const electron = UtilCommon.getElectron();
 		const { version, isPackaged } = electron;
@@ -558,9 +559,9 @@ class Analytics {
 	};
 
 	typeMapper (id: string): string {
-		let object = dbStore.getTypeById(id);
+		let object = recordStore.getTypeById(id);
 		if (!object) {
-			object = dbStore.getTypeByKey(id);
+			object = recordStore.getTypeByKey(id);
 		};
 
 		if (!object) {
@@ -575,7 +576,7 @@ class Analytics {
 	};
 
 	relationMapper (key: string) {
-		const object = dbStore.getRelationByKey(key);
+		const object = recordStore.getRelationByKey(key);
 		if (!object) {
 			return '';
 		};

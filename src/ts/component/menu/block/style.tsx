@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, UtilMenu, analytics, translate } from 'Lib';
-import { blockStore, commonStore } from 'Store';
+import { I, S, keyboard, UtilMenu, analytics, translate } from 'Lib';
+import { blockStore } from 'Store';
 
 const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.Menu> {
 	
@@ -134,7 +134,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		
 		close();
 		onSelect(item);

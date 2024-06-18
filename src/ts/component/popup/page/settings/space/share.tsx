@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, IconObject, ObjectName, Tag, Error, Loader } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace, Preview, Action, analytics, UtilObject, UtilMenu } from 'Lib';
-import { authStore, popupStore, commonStore, menuStore } from 'Store';
+import { I, C, S, translate, UtilCommon, UtilSpace, Preview, Action, analytics, UtilObject, UtilMenu } from 'Lib';
+import { authStore, popupStore, menuStore } from 'Store';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
 
@@ -261,7 +261,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const space = UtilSpace.getSpaceview();
 
 		if (space.isShared && !cid && !key) {
-			C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
+			C.SpaceInviteGetCurrent(S.Common.space, (message: any) => {
 				if (!message.error.code) {
 					this.setInvite(message.inviteCid, message.inviteKey);
 				};
@@ -323,13 +323,13 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	onInitLink () {
 		this.refButton?.setLoading(true);
 
-		C.SpaceMakeShareable(commonStore.space, (message: any) => {
+		C.SpaceMakeShareable(S.Common.space, (message: any) => {
 			if (this.setError(message.error)) {
 				this.refButton?.setLoading(false);
 				return;
 			};
 
-			C.SpaceInviteGenerate(commonStore.space, (message: any) => {
+			C.SpaceInviteGenerate(S.Common.space, (message: any) => {
 				this.refButton?.setLoading(false);
 
 				if (!this.setError(message.error)) {
@@ -350,7 +350,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				textConfirm: translate('popupConfirmStopSharingSpaceConfirm'),
 				colorConfirm: 'red',
 				onConfirm: () => {
-					C.SpaceStopSharing(commonStore.space);
+					C.SpaceStopSharing(S.Common.space);
 					this.setInvite('', '');
 
 					analytics.event('StopSpaceShare');
@@ -402,7 +402,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onChangePermissions (item: any, v: any) {
-		const { space } = commonStore;
+		const { space } = S.Common;
 
 		let title = '';
 		let text = '';
@@ -468,7 +468,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			data: {
 				name: item.name,
 				icon: item.iconImage,
-				spaceId: commonStore.space,
+				spaceId: S.Common.space,
 				identity: item.identity,
 				route: analytics.route.settings,
 			}
@@ -476,7 +476,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 	};
 
 	onLeaveRequest (item: any) {
-		Action.leaveApprove(commonStore.space, [ item.identity ], item.name, analytics.route.settings);
+		Action.leaveApprove(S.Common.space, [ item.identity ], item.name, analytics.route.settings);
 	};
 
 	onMoreSpace () {

@@ -1,6 +1,6 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, Relation, UtilObject, translate, UtilFile } from 'Lib';
-import { dbStore } from 'Store';
+import { recordStore } from 'Store';
 const Constant = require('json/constant.json');
 
 interface Detail {
@@ -107,12 +107,12 @@ class DetailStore {
 			map.set(item.id, list);
 		};
 
-		// Update relationKeyMap and typeKeyMap in dbStore to keep consistency
+		// Update relationKeyMap and typeKeyMap in recordStore to keep consistency
 		if (item.details.layout == I.ObjectLayout.Relation) {
-			dbStore.relationKeyMapSet(item.details.spaceId, item.details.relationKey, item.details.id);
+			recordStore.relationKeyMapSet(item.details.spaceId, item.details.relationKey, item.details.id);
 		};
 		if (item.details.layout == I.ObjectLayout.Type) {
-			dbStore.typeKeyMapSet(item.details.spaceId, item.details.uniqueKey, item.details.id);
+			recordStore.typeKeyMapSet(item.details.spaceId, item.details.uniqueKey, item.details.id);
 		};
 
 		if (createMap) {

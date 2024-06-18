@@ -1,6 +1,6 @@
 import loadImage from 'blueimp-load-image';
-import { UtilCommon, Relation } from 'Lib';
-import { commonStore } from 'Store';
+import { S, UtilCommon, Relation } from 'Lib';
+
 const Constant = require('json/constant.json');
 
 const SIZE_UNIT = 1024;
@@ -110,12 +110,12 @@ class UtilFile {
 	};
 
 	iconPath (object: any) {
-		const tp = commonStore.getThemePath();
+		const tp = S.Common.getThemePath();
 		return `img/${tp}icon/file/${this.icon(object)}.svg`;
 	};
 
 	iconImage (object: any): string {
-		const tp = commonStore.getThemePath();
+		const tp = S.Common.getThemePath();
 		return require(`img/${tp}icon/file/${this.icon(object)}.svg`).default;
 	};
 

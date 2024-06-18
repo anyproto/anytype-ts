@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
-import { commonStore, authStore, popupStore } from 'Store';
+import { I, S, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
+import { authStore, popupStore } from 'Store';
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 
@@ -103,7 +103,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 		this.refSubmit?.setLoading(true);
 		
-		C.WalletRecover(commonStore.dataPath, phrase, (message: any) => {
+		C.WalletRecover(S.Common.dataPath, phrase, (message: any) => {
 			if (this.setError({ ...message.error, description: translate('pageAuthLoginInvalidPhrase')})) {
 				return;
 			};
@@ -129,14 +129,14 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		authStore.accountSet(account);
 		Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
 
-		C.AccountSelect(account.id, commonStore.dataPath, mode, path, (message: any) => {
+		C.AccountSelect(account.id, S.Common.dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				this.isSelecting = false;
 				return;
 			};
 
 			authStore.accountSet(message.account);
-			commonStore.configSet(message.account.config, false);
+			S.Common.configSet(message.account.config, false);
 
 			UtilData.onInfo(message.account.info);
 			Animation.from(() => {

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { detailStore, blockStore, menuStore, commonStore } from 'Store';
-import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
+import { detailStore, blockStore, menuStore } from 'Store';
+import { I, C, S, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -184,7 +185,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return [];
 		};
 		
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { filter } = this.state;
 		const { align, content, bgColor } = block;
 		const { color, style } = content;
@@ -539,7 +540,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 				if (isCollection) {
 					addParam.onClick = (details: any) => {
-						C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, () => onCreate());
+						C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, S.Common.space, () => onCreate());
 					};
 
 					filters = filters.concat([
@@ -547,7 +548,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					]);
 				} else {
 					addParam.onClick = (details: any) => {
-						C.ObjectCreateSet([], details, '', commonStore.space, () => onCreate());
+						C.ObjectCreateSet([], details, '', S.Common.space, () => onCreate());
 					};
 
 					filters = filters.concat([
@@ -684,7 +685,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (!ids.length) {

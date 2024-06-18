@@ -1,12 +1,13 @@
-import { I, C, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
-import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
+import { I, C, S, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
+import { authStore, blockStore, detailStore, recordStore, popupStore, menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 class Action {
 
 	pageClose (rootId: string, withCommand: boolean) {
 		const { root, widgets } = blockStore;
-		const { space } = commonStore;
+		const { space } = S.Common;
 
 		// Prevent closing of system objects
 		if ([ root, widgets ].includes(rootId)) {
@@ -38,8 +39,8 @@ class Action {
 			return;
 		};
 
-		dbStore.metaClear(rootId, '');
-		dbStore.recordsClear(rootId, '');
+		recordStore.metaClear(rootId, '');
+		recordStore.recordsClear(rootId, '');
 		detailStore.clear(rootId);
 
 		C.ObjectSearchUnsubscribe([ rootId ]);
@@ -50,12 +51,12 @@ class Action {
 			return;
 		};
 
-		const subId = dbStore.getSubId(rootId, blockId);
+		const subId = recordStore.getSubId(rootId, blockId);
 
-		dbStore.metaClear(subId, '');
-		dbStore.recordsClear(subId, '');
-		dbStore.recordsClear(subId + '/dep', '');
-		dbStore.viewsClear(rootId, blockId);
+		recordStore.metaClear(subId, '');
+		recordStore.recordsClear(subId, '');
+		recordStore.recordsClear(subId + '/dep', '');
+		recordStore.viewsClear(rootId, blockId);
 
 		detailStore.clear(subId);
 
@@ -84,7 +85,7 @@ class Action {
 			return;
 		};
 		
-		const url = block.isFileImage() ? commonStore.imageUrl(targetObjectId, 1000000) : commonStore.fileUrl(targetObjectId);
+		const url = block.isFileImage() ? S.Common.imageUrl(targetObjectId, 1000000) : S.Common.fileUrl(targetObjectId);
 
 		Renderer.send('download', url, { saveAs: true });
 		analytics.event('DownloadMedia', { type, route });
@@ -219,7 +220,7 @@ class Action {
 	};
 
 	install (object: any, showToast: boolean, callBack?: (message: any) => void) {
-		C.WorkspaceObjectAdd(commonStore.space, object.id, (message: any) => {
+		C.WorkspaceObjectAdd(S.Common.space, object.id, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -363,7 +364,7 @@ class Action {
 
 	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
 		const { networkConfig } = authStore;
-		const { dataPath } = commonStore;
+		const { dataPath } = S.Common;
 		const { mode, path } = networkConfig;
 
 		this.openFile([ 'zip' ], paths => {
@@ -385,7 +386,7 @@ class Action {
 						};
 
 						authStore.accountSet(message.account);
-						commonStore.configSet(message.account.config, false);
+						S.Common.configSet(message.account.config, false);
 
 						UtilData.onInfo(message.account.info);
 
@@ -457,7 +458,7 @@ class Action {
 
 			analytics.event('ClickImportFile', { type });
 
-			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
+			C.ObjectImport(S.Common.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -537,7 +538,7 @@ class Action {
 			const element = blockStore.getMapElement(rootId, it.id);
 
 			if (it.type == I.BlockType.Dataview) {
-				it.content.views = dbStore.getViews(rootId, it.id);
+				it.content.views = recordStore.getViews(rootId, it.id);
 			};
 
 			it.childrenIds = element.childrenIds;
@@ -573,7 +574,7 @@ class Action {
 		};
 
 		const { accountSpaceId } = authStore;
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const isOwner = UtilSpace.isMyOwner(id);
 		const name = UtilCommon.shorten(deleted.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';

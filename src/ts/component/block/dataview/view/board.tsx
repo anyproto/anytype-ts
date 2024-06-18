@@ -3,8 +3,8 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, UtilCommon, Dataview, keyboard, Relation, translate } from 'Lib';
-import { dbStore, detailStore, commonStore, blockStore } from 'Store';
+import { I, C, S, UtilCommon, Dataview, keyboard, translate } from 'Lib';
+import { recordStore, detailStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
 
@@ -36,7 +36,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const { rootId, block, getView, className, onViewSettings } = this.props;
 		const view = getView();
 		const groups = this.getGroups(false);
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+		const relation = recordStore.getRelationByKey(view.groupRelationKey);
 		const cn = [ 'viewContent', className ];
 
 		if (!relation || !relation.isInstalled) {
@@ -69,7 +69,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 									{...group}
 									onDragStartColumn={this.onDragStartColumn}
 									onDragStartCard={this.onDragStartCard}
-									getSubId={() => dbStore.getGroupSubId(rootId, block.id, group.id)}
+									getSubId={() => recordStore.getGroupSubId(rootId, block.id, group.id)}
 								/>
 							))}
 						</div>
@@ -92,14 +92,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	componentWillUnmount () {
 		const { rootId, block } = this.props;
 		const groups = this.getGroups(true);
-		const ids = [ dbStore.getGroupSubId(rootId, block.id, 'groups') ];
+		const ids = [ recordStore.getGroupSubId(rootId, block.id, 'groups') ];
 
 		groups.forEach((it: any) => {
-			ids.push(dbStore.getGroupSubId(rootId, block.id, it.id));
+			ids.push(recordStore.getGroupSubId(rootId, block.id, it.id));
 		});
 
 		C.ObjectSearchUnsubscribe(ids);
-		dbStore.groupsClear(rootId, block.id);
+		recordStore.groupsClear(rootId, block.id);
 
 		this.unbind();
 	};
@@ -121,7 +121,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const object = getTarget();
 		const view = getView();
 
-		dbStore.groupsClear(rootId, block.id);
+		recordStore.groupsClear(rootId, block.id);
 
 		if (!view.groupRelationKey) {
 			this.forceUpdate();
@@ -209,7 +209,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	onDragStartCommon (e: any, target: any) {
 		e.stopPropagation();
 
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const node = $(this.node);
 		const view = node.find('.viewContent');
 		const clone = target.clone();
@@ -322,7 +322,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		let groups = this.getGroups(true);
 		groups = arrayMove(groups, current.index, this.newIndex);
-		dbStore.groupsSet(rootId, block.id, groups);
+		recordStore.groupsSet(rootId, block.id, groups);
 
 		groups.forEach((it: any, i: number) => {
 			update.push({ ...it, groupId: it.id, index: i });
@@ -405,9 +405,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		const { rootId, block, getView, objectOrderUpdate } = this.props;
 		const view = getView();
-		const oldSubId = dbStore.getGroupSubId(rootId, block.id, current.groupId);
-		const newSubId = dbStore.getGroupSubId(rootId, block.id, this.newGroupId);
-		const newGroup = dbStore.getGroup(rootId, block.id, this.newGroupId);
+		const oldSubId = recordStore.getGroupSubId(rootId, block.id, current.groupId);
+		const newSubId = recordStore.getGroupSubId(rootId, block.id, this.newGroupId);
+		const newGroup = recordStore.getGroup(rootId, block.id, this.newGroupId);
 		const change = current.groupId != this.newGroupId;
 
 		let records: any[] = [];
@@ -417,13 +417,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			detailStore.update(newSubId, { id: record.id, details: record }, true);
 			detailStore.delete(oldSubId, record.id, Object.keys(record));
 
-			dbStore.recordDelete(oldSubId, '', record.id);
-			dbStore.recordAdd(newSubId, '', record.id, this.newIndex);
+			recordStore.recordDelete(oldSubId, '', record.id);
+			recordStore.recordAdd(newSubId, '', record.id, this.newIndex);
 
 			C.ObjectListSetDetails([ record.id ], [ { key: view.groupRelationKey, value: newGroup.value } ], () => {
 				orders = [
-					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecordIds(oldSubId, '') },
-					{ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecordIds(newSubId, '') }
+					{ viewId: view.id, groupId: current.groupId, objectIds: recordStore.getRecordIds(oldSubId, '') },
+					{ viewId: view.id, groupId: this.newGroupId, objectIds: recordStore.getRecordIds(newSubId, '') }
 				];
 
 				objectOrderUpdate(orders, records);
@@ -437,10 +437,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				this.newIndex -= 1;
 			};
 
-			records = arrayMove(dbStore.getRecordIds(oldSubId, ''), current.index, this.newIndex);
+			records = arrayMove(recordStore.getRecordIds(oldSubId, ''), current.index, this.newIndex);
 			orders = [ { viewId: view.id, groupId: current.groupId, objectIds: records } ];
 
-			objectOrderUpdate(orders, records, () => dbStore.recordsSet(oldSubId, '', records));
+			objectOrderUpdate(orders, records, () => recordStore.recordsSet(oldSubId, '', records));
 		};
 	};
 

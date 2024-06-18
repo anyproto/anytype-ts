@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I, Relation } from 'Lib';
 import { Cell, Icon } from 'Component';
-import { dbStore } from 'Store';
+import { recordStore } from 'Store';
 const Constant = require('json/constant.json');
 
 interface Props {
@@ -34,13 +34,13 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 	render () {
 		const { rootId, block, className, relationKey, readonly, recordId, getRecord, onRef, onCellClick, onCellChange, getIdPrefix, canCellEdit } = this.props;
 		const record = getRecord(recordId);
-		const relation: any = dbStore.getRelationByKey(relationKey) || {};
+		const relation: any = recordStore.getRelationByKey(relationKey) || {};
 		const cn = [ 'cell', `cell-key-${relationKey}`, Relation.className(relation.format), (!readonly ? 'canEdit' : '') ];
 		const idPrefix = getIdPrefix();
 		const id = Relation.cellId(idPrefix, relationKey, record.id);
 		const width = Relation.width(this.props.width, relation.format);
 		const size = Constant.size.dataview.cell;
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = recordStore.getSubId(rootId, block.id);
 		const canEdit = canCellEdit(relation, record);
 
 		if (relationKey == 'name') {

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, UtilData, keyboard, Dataview, Relation } from 'Lib';
+import { I, C, S, UtilCommon, UtilData, keyboard, Dataview } from 'Lib';
 import { Graph } from 'Component';
-import { detailStore, commonStore } from 'Store';
+import { detailStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const PADDING = 46;
@@ -101,7 +102,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 
 		this.setLoading(true);
 
-		C.ObjectGraph(commonStore.space, filters, 0, [], Constant.graphRelationKeys, (isCollection ? target.id : ''), target.setOf, (message: any) => {
+		C.ObjectGraph(S.Common.space, filters, 0, [], Constant.graphRelationKeys, (isCollection ? target.id : ''), target.setOf, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, C, focus, UtilObject, keyboard } from 'Lib';
-import { menuStore, detailStore, commonStore } from 'Store';
+import { I, C, S, focus, UtilObject, keyboard } from 'Lib';
+import { menuStore, detailStore } from 'Store';
 import ControlButtons from './controlButtons';
 
 const Constant = require('json/constant.json');
@@ -192,7 +192,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		keyboard.disableCommonDrop(true);
 		this.onUploadStart();
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setState({ loading: false });
 			keyboard.disableCommonDrop(false);
 			

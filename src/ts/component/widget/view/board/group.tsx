@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, UtilCommon, translate, Dataview, UtilObject, UtilData, Storage } from 'Lib';
-import { dbStore, detailStore } from 'Store';
+import { recordStore, detailStore } from 'Store';
 import Cell from 'Component/block/dataview/cell';
 import Item from './item';
 
@@ -32,7 +32,7 @@ const Group = observer(class Group extends React.Component<Props> {
 		const subId = this.getSubId();
 		const items = this.getItems();
 		const limit = getViewLimit();
-		const { total } = dbStore.getMeta(subId, '');
+		const { total } = recordStore.getMeta(subId, '');
 		const head = {};
 
 		head[view.groupRelationKey] = value;
@@ -107,7 +107,7 @@ const Group = observer(class Group extends React.Component<Props> {
 			return;
 		};
 
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+		const relation = recordStore.getRelationByKey(view.groupRelationKey);
 		if (!relation) {
 			return;
 		};
@@ -130,24 +130,24 @@ const Group = observer(class Group extends React.Component<Props> {
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		}, () => {
-			dbStore.recordsSet(subId, '', this.applyObjectOrder(id, dbStore.getRecordIds(subId, '')));
+			recordStore.recordsSet(subId, '', this.applyObjectOrder(id, recordStore.getRecordIds(subId, '')));
 		});
 	};
 
 	clear () {
-		dbStore.recordsClear(this.getSubId(), '');
+		recordStore.recordsClear(this.getSubId(), '');
 	};
 
 	getSubId () {
 		const { rootId, id } = this.props;
 
-		return dbStore.getGroupSubId(rootId, Constant.blockId.dataview, id);
+		return recordStore.getGroupSubId(rootId, Constant.blockId.dataview, id);
 	};
 
 	getItems () {
 		const { id } = this.props;
 		const subId = this.getSubId();
-		const records = UtilCommon.objectCopy(dbStore.getRecordIds(subId, ''));
+		const records = UtilCommon.objectCopy(recordStore.getRecordIds(subId, ''));
 
 		return this.applyObjectOrder(id, records).map(id => ({ id }));
 	};

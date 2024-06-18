@@ -1,12 +1,13 @@
 import arrayMove from 'array-move';
-import { dbStore, commonStore, blockStore, detailStore } from 'Store';
-import { I, M, C, UtilCommon, UtilData, UtilObject, Relation, translate, UtilDate } from 'Lib';
+import { recordStore, blockStore, detailStore } from 'Store';
+import { I, M, C, S, UtilCommon, UtilData, UtilObject, Relation, translate, UtilDate } from 'Lib';
+
 const Constant = require('json/constant.json');
 
 class Dataview {
 
 	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
-		const { config } = commonStore;
+		const { config } = S.Common;
 
 		if (!view) {
 			return [];
@@ -14,7 +15,7 @@ class Dataview {
 
 		const order: any = {};
 
-		let relations = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter(it => it);
+		let relations = UtilCommon.objectCopy(recordStore.getObjectRelations(rootId, blockId)).filter(it => it);
 		let o = 0;
 
 		if (!config.debug.hiddenObject) {
@@ -75,7 +76,7 @@ class Dataview {
 
 			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, rel, (message: any) => {
 				if (index >= 0) {
-					const newView = dbStore.getView(rootId, blockId, view.id);
+					const newView = recordStore.getView(rootId, blockId, view.id);
 					const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
 					
 					let keys = newView.relations.map(it => it.relationKey);
@@ -113,14 +114,14 @@ class Dataview {
 
 		const { rootId, blockId, newViewId, keys, offset, limit, clear, collectionId } = param;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const view = dbStore.getView(rootId, blockId, newViewId);
+		const view = recordStore.getView(rootId, blockId, newViewId);
 		
 		if (!view) {
 			return;
 		};
 
-		const subId = dbStore.getSubId(rootId, blockId);
-		const { viewId } = dbStore.getMeta(subId, '');
+		const subId = recordStore.getSubId(rootId, blockId);
+		const { viewId } = recordStore.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
 		const filters = UtilCommon.objectCopy(view.filters).concat(param.filters || []);
@@ -132,10 +133,10 @@ class Dataview {
 			meta.viewId = newViewId;
 		};
 		if (viewChange || clear) {
-			dbStore.recordsSet(subId, '', []);
+			recordStore.recordsSet(subId, '', []);
 		};
 
-		dbStore.metaSet(subId, '', meta);
+		recordStore.metaSet(subId, '', meta);
 
 		if (block) {
 			const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == ''));
@@ -161,7 +162,7 @@ class Dataview {
 	};
 
 	filterMapper (view: any, it: any) {
-		const relation = dbStore.getRelationByKey(it.relationKey);
+		const relation = recordStore.getRelationByKey(it.relationKey);
 		const vr = view.getRelation(it.relationKey);
 
 		if (relation) {
@@ -178,15 +179,15 @@ class Dataview {
 		let view = null;
 
 		if (!viewId) {
-			viewId = dbStore.getMeta(dbStore.getSubId(rootId, blockId), '').viewId;
+			viewId = recordStore.getMeta(recordStore.getSubId(rootId, blockId), '').viewId;
 		};
 
 		if (viewId) {
-			view = dbStore.getView(rootId, blockId, viewId);
+			view = recordStore.getView(rootId, blockId, viewId);
 		};
 
 		if (!view) {
-			const views = dbStore.getViews(rootId, blockId);
+			const views = recordStore.getViews(rootId, blockId);
 			if (views.length) {
 				view = views[0];
 			};
@@ -222,12 +223,12 @@ class Dataview {
 			return;
 		};
 
-		const subId = dbStore.getGroupSubId(rootId, block.id, 'groups');
+		const subId = recordStore.getGroupSubId(rootId, block.id, 'groups');
 		const isCollection = object.layout == I.ObjectLayout.Collection;
 
-		dbStore.groupsClear(rootId, block.id);
+		recordStore.groupsClear(rootId, block.id);
 
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+		const relation = recordStore.getRelationByKey(view.groupRelationKey);
 		if (!relation) {
 			return;
 		};
@@ -239,7 +240,7 @@ class Dataview {
 			el.groups.forEach(it => groupOrder[it.groupId] = it);
 		};
 
-		C.ObjectGroupsSubscribe(commonStore.space, subId, view.groupRelationKey, view.filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
+		C.ObjectGroupsSubscribe(S.Common.space, subId, view.groupRelationKey, view.filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -269,7 +270,7 @@ class Dataview {
 				return it;
 			});
 
-			dbStore.groupsSet(rootId, block.id, this.applyGroupOrder(rootId, block.id, view.id, groups));
+			recordStore.groupsSet(rootId, block.id, this.applyGroupOrder(rootId, block.id, view.id, groups));
 		});
 	};
 
@@ -300,7 +301,7 @@ class Dataview {
 	};
 
 	getGroups (rootId: string, blockId: string, viewId: string, withHidden: boolean) {
-		const groups = UtilCommon.objectCopy(dbStore.getGroups(rootId, blockId));
+		const groups = UtilCommon.objectCopy(recordStore.getGroups(rootId, blockId));
 		const ret = this.applyGroupOrder(rootId, blockId, viewId, groups);
 
 		return !withHidden ? ret.filter(it => !it.isHidden) : ret;
@@ -416,7 +417,7 @@ class Dataview {
 		let group = null;
 
 		if (groupId) {
-			group = dbStore.getGroup(rootId, blockId, groupId);
+			group = recordStore.getGroup(rootId, blockId, groupId);
 			if (group) {
 				details[view.groupRelationKey] = group.value;
 			};
@@ -442,7 +443,7 @@ class Dataview {
 				continue;
 			};
 
-			const relation = dbStore.getRelationByKey(filter.relationKey);
+			const relation = recordStore.getRelationByKey(filter.relationKey);
 			if (relation && !relation.isReadonlyValue) {
 				details[filter.relationKey] = Relation.formatValue(relation, value, true);
 			};
@@ -464,7 +465,7 @@ class Dataview {
 		if (relations.length) {
 			for (const item of relations) {
 				if (item.objectTypes.length) {
-					const first = dbStore.getTypeById(item.objectTypes[0]);
+					const first = recordStore.getTypeById(item.objectTypes[0]);
 
 					if (first && !UtilObject.isFileLayout(first.recommendedLayout) && !UtilObject.isSystemLayout(first.recommendedLayout)) {
 						typeId = first.id;
@@ -477,7 +478,7 @@ class Dataview {
 			typeId = view.defaultTypeId;
 		};
 		if (!typeId) {
-			typeId = commonStore.type;
+			typeId = S.Common.type;
 		};
 
 		return typeId;
@@ -490,7 +491,7 @@ class Dataview {
 			return translate('blockDataviewCreateNewTooltipCollection');
 		} else {
 			const typeId = this.getTypeId(rootId, blockId, objectId, viewId);
-			const type = dbStore.getTypeById(typeId);
+			const type = recordStore.getTypeById(typeId);
 
 			if (type) {
 				return UtilCommon.sprintf(translate('blockDataviewCreateNewTooltipType'), type.name);
@@ -500,7 +501,7 @@ class Dataview {
 	};
 
 	viewUpdate (rootId: string, blockId: string, viewId: string, param: Partial<I.View>, callBack?: (message: any) => void) {
-		const view = UtilCommon.objectCopy(dbStore.getView(rootId, blockId, viewId));
+		const view = UtilCommon.objectCopy(recordStore.getView(rootId, blockId, viewId));
 		if (view) {
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, Object.assign(view, param), callBack);
 		};

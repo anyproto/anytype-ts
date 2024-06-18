@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
 import { UtilData, I, UtilCommon, translate, UtilObject, UtilFile } from 'Lib';
-import { dbStore, detailStore, menuStore } from 'Store';
+import { recordStore, detailStore, menuStore } from 'Store';
 const Constant = require('json/constant.json');
 
 interface Props {
@@ -246,7 +246,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
     componentDidUpdate () {
         const { subId, resize, rowHeight } = this.props;
-        const records = dbStore.getRecordIds(subId, '');
+        const records = recordStore.getRecordIds(subId, '');
         const items = this.getItems();
 
         if (!this.cache) {
@@ -304,7 +304,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         e.stopPropagation();
 
         const { subId } = this.props;
-        const records = dbStore.getRecordIds(subId, '');
+        const records = recordStore.getRecordIds(subId, '');
 
         if (e.shiftKey) {
             const idx = records.findIndex(id => id == item.id);
@@ -332,7 +332,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
     getSelectedIndexes () {
         const { subId } = this.props;
-        const records = dbStore.getRecordIds(subId, '');
+        const records = recordStore.getRecordIds(subId, '');
         const indexes = this.selected.map(id => records.findIndex(it => it == id));
 
         return indexes.filter(idx => idx >= 0);
@@ -345,7 +345,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
 	setSelectedRange (start: number, end: number) {
 		const { subId } = this.props;
-		const records = dbStore.getRecordIds(subId, '');
+		const records = recordStore.getRecordIds(subId, '');
 
 		if (end > records.length) {
 			end = records.length;
@@ -366,7 +366,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
     selectionAll () {
         const { subId } = this.props;
-        this.selected = dbStore.getRecordIds(subId, '');
+        this.selected = recordStore.getRecordIds(subId, '');
         this.forceUpdate();
     };
 
@@ -410,7 +410,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
     getItems () {
         const { subId, rowLength } = this.props;
         const ret: any[] = [];
-        const records = dbStore.getRecords(subId);
+        const records = recordStore.getRecords(subId);
 
         let row = { children: [] };
         let n = 0;

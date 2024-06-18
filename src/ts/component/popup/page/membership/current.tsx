@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Pin } from 'Component';
-import { I, C, translate, UtilCommon, UtilDate, analytics, UtilRouter, UtilData, Action } from 'Lib';
-import { authStore, commonStore, popupStore } from 'Store';
+import { I, C, S, translate, UtilCommon, UtilDate, analytics, UtilData, Action } from 'Lib';
+import { authStore, popupStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface Props extends I.Popup {
@@ -253,7 +254,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	};
 
 	checkCountdown () {
-		const { emailConfirmationTime } = commonStore;
+		const { emailConfirmationTime } = S.Common;
 		if (!emailConfirmationTime) {
 			return;
 		};
@@ -266,10 +267,10 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 	};
 
 	startCountdown (seconds) {
-		const { emailConfirmationTime } = commonStore;
+		const { emailConfirmationTime } = S.Common;
 
 		if (!emailConfirmationTime) {
-			commonStore.emailConfirmationTimeSet(UtilDate.now());
+			S.Common.emailConfirmationTimeSet(UtilDate.now());
 		};
 
 		this.setState({ countdown: seconds });
@@ -280,7 +281,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			this.setState({ countdown });
 
 			if (!countdown) {
-				commonStore.emailConfirmationTimeSet(0);
+				S.Common.emailConfirmationTimeSet(0);
 				window.clearInterval(this.interval);
 				this.interval = null;
 			};

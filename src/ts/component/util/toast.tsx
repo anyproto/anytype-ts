@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
-import { commonStore, popupStore } from 'Store';
-import { I, C, UtilCommon, UtilObject, Preview, Action, translate, keyboard } from 'Lib';
+import { popupStore } from 'Store';
+import { I, S, UtilCommon, UtilObject, Preview, Action, translate, keyboard } from 'Lib';
 
 interface State {
 	object: any;
@@ -25,7 +25,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 	};
 
     render () {
-        const { toast } = commonStore;
+        const { toast } = S.Common;
 		if (!toast) {
 			return null;
 		};
@@ -175,7 +175,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 			};
 
             case 'undo': {
-                keyboard.onUndo(commonStore.toast.originId, 'Toast');
+                keyboard.onUndo(S.Common.toast.originId, 'Toast');
                 break;
 			};
 
@@ -188,7 +188,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 
             case 'manageStorage': {
                 popupStore.open('settings', { data: { page: 'storageManager' }});
-                commonStore.toastClear();
+                S.Common.toastClear();
             };
         };
 
@@ -196,7 +196,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
     };
 
     onOpen (e: any) {
-        UtilObject.openEvent(e, commonStore.toast.target);
+        UtilObject.openEvent(e, S.Common.toast.target);
     };
 
 });

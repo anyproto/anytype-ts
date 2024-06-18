@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { I, Relation, UtilData, UtilCommon, UtilObject, Dataview } from 'Lib';
-import { dbStore, detailStore } from 'Store';
+import { recordStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
 const Constant = require('json/constant.json');
@@ -38,10 +38,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const { rootId, block, isPopup, isInline, className, getView, getKeys, getLimit, getVisibleRelations, onRecordAdd, getEmpty, getRecords } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = recordStore.getSubId(rootId, block.id);
 		const records = getRecords();
 		const { coverRelationKey, cardSize, hideIcon } = view;
-		const { offset, total } = dbStore.getMeta(subId, '');
+		const { offset, total } = recordStore.getMeta(subId, '');
 		const limit = getLimit();
 		const cn = [ 'viewContent', className ];
 		const cardHeight = this.getCardHeight();
@@ -61,7 +61,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			};
 		
 			for (const k in item) {
-				const relation = dbStore.getRelationByKey(k);
+				const relation = recordStore.getRelationByKey(k);
 				if (!relation || ![ I.RelationType.Object, I.RelationType.File ].includes(relation.format)) {
 					continue;
 				};
@@ -219,14 +219,14 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	loadMoreCards ({ startIndex, stopIndex }) {
 		const { rootId, block, loadData, getView, getLimit } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
-		let { offset } = dbStore.getMeta(subId, '');
+		const subId = recordStore.getSubId(rootId, block.id);
+		let { offset } = recordStore.getMeta(subId, '');
 		const view = getView();
 
 		return new Promise((resolve, reject) => {
 			offset += getLimit();
 			loadData(view.id, offset, false, resolve);
-			dbStore.metaSet(subId, '', { offset });
+			recordStore.metaSet(subId, '', { offset });
 		});
 	};
 
@@ -280,7 +280,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		let height = size.padding * 2 + size.margin - 4;
 
 		relations.forEach(it => {
-			const relation = dbStore.getRelationByKey(it.relationKey);
+			const relation = recordStore.getRelationByKey(it.relationKey);
 
 			if (!relation) {
 				return;
@@ -319,7 +319,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return null;
 		};
 
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = recordStore.getSubId(rootId, block.id);
 		const record = detailStore.get(subId, id, getKeys(view.id));
 
 		return Dataview.getCoverObject(subId, record, view.coverRelationKey);

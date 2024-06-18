@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
-import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject, UtilCommon, translate } from 'Lib';
-import { commonStore, menuStore } from 'Store';
+import { I, S, Preview, UtilSmile, UtilData, UtilFile, UtilObject, UtilCommon, translate } from 'Lib';
+import { menuStore } from 'Store';
 const Colors = require('json/colors.json');
 const Theme = require('json/theme.json');
 
@@ -148,13 +148,13 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 	render () {
 		const { className, size, canEdit, forceLetter, style } = this.props;
-		const { theme } = commonStore;
+		const { theme } = S.Common;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const { id, name, iconEmoji, iconImage, iconOption, iconClass, done, relationFormat, isDeleted } = object || {};
 		const cn = [ 'iconObject', 'c' + size, UtilData.layoutClass(object.id, layout) ];
 		const iconSize = this.iconSize();
-		const tc = commonStore.getThemeClass();
+		const tc = S.Common.getThemeClass();
 
 		if (className) {
 			cn.push(className);
@@ -193,7 +193,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				if (iconImage) {
 					cn.push('withImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={this.userSvg()} className={icn.join(' ')} />;
@@ -248,7 +248,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			case I.ObjectLayout.Bookmark: {
 				if (iconImage) {
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 				};
 				break;
 			};
@@ -257,7 +257,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				if (id) {
 					cn.push('withImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
+					icon = <img src={S.Common.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 					icon = <img src={UtilFile.iconImage(object)} className={icn.join(' ')} />;
@@ -278,7 +278,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				if (iconImage) {
 					cn.push('withImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 				} else 
 				if (iconOption) {
 					cn.push('withOption withImage');
@@ -334,7 +334,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 	onMouseEnter (e: any) {
 		const { canEdit, tooltip, tooltipY, onMouseEnter } = this.props;
-		const tc = commonStore.getThemeClass();
+		const tc = S.Common.getThemeClass();
 		const node = $(this.node);
 		const object = this.getObject();
 
@@ -353,7 +353,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	
 	onMouseLeave (e: any) {
 		const { canEdit, onMouseLeave } = this.props;
-		const tc = commonStore.getThemeClass();
+		const tc = S.Common.getThemeClass();
 		const node = $(this.node);
 		const object = this.getObject();
 		
@@ -489,11 +489,11 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	svgBgColor () {
-		return Theme[commonStore.getThemeClass()]?.icon.bg[this.props.color];
+		return Theme[S.Common.getThemeClass()]?.icon.bg[this.props.color];
 	};
 
 	svgColor () {
-		return Theme[commonStore.getThemeClass()]?.icon.text;
+		return Theme[S.Common.getThemeClass()]?.icon.text;
 	};
 
 	userSvg (): string {

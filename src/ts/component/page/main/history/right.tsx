@@ -3,8 +3,8 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Button } from 'Component';
-import { detailStore, commonStore } from 'Store';
-import { I, C, UtilCommon, UtilObject, UtilDate, UtilSpace, translate, analytics, dispatcher } from 'Lib';
+import { detailStore } from 'Store';
+import { I, C, S, UtilCommon, UtilObject, UtilDate, UtilSpace, translate, analytics, dispatcher } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -382,7 +382,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 		const { rootId, renderDiff } = this.props;
 		const previousId = this.getPreviousVersionId(id);
 
-		C.HistoryDiffVersions(rootId, commonStore.space, id, previousId, (message: any) => {
+		C.HistoryDiffVersions(rootId, S.Common.space, id, previousId, (message: any) => {
 			const { events } = message;
 
 			C.HistoryShowVersion(rootId, previousId, (message: any) => {
@@ -391,7 +391,7 @@ const HistoryRight = observer(class HistoryRight extends React.Component<Props, 
 				};
 
 				renderDiff(previousId, events);
-				commonStore.diffSet(events);
+				S.Common.diffSet(events);
 			});
 		});
 	};

@@ -2,8 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate, UtilDate } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
+import { I, C, S, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate, UtilDate } from 'Lib';
+import { menuStore, recordStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 import CellText from './text';
@@ -184,7 +185,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			return;
 		};
 
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const win = $(window);
 		const cell = $(`#${cellId}`);
@@ -238,7 +239,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			};
 
 			$(`#${cellId}`).removeClass('isEditing');
-			commonStore.cellId = '';
+			S.Common.cellId = '';
 		};
 
 		let ret = false;
@@ -432,8 +433,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		};
 
 		if (menuId) {
-			if (commonStore.cellId != cellId) {
-				commonStore.cellId = cellId;
+			if (S.Common.cellId != cellId) {
+				S.Common.cellId = cellId;
 				
 				const isOpen = menuStore.isOpen(menuId);
 
@@ -507,7 +508,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	getRelation () {
-		return dbStore.getRelationByKey(this.props.relationKey);
+		return recordStore.getRelationByKey(this.props.relationKey);
 	};
 
 	canCellEdit (relation: any, record: any): boolean {

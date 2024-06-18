@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
-import { detailStore, blockStore, dbStore, commonStore } from 'Store';
+import { I, S, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
+import { detailStore, blockStore, recordStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -31,7 +31,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const { description, cardStyle, relations } = content;
 		const { size, iconSize } = this.getIconSize();
-		const type = dbStore.getTypeById(object.type);
+		const type = recordStore.getTypeById(object.type);
 		const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
 
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
@@ -249,7 +249,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		};
 
 		const { rootId, block } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
 		const ids = selection?.get(I.SelectType.Block) || [];

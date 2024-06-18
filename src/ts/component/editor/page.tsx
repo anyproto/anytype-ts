@@ -4,9 +4,9 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon, Loader, Deleted, DropTarget } from 'Component';
-import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { blockStore, detailStore, menuStore, popupStore } from 'Store';
 import { 
-	I, C, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, 
+	I, C, S, Key, UtilCommon, UtilData, UtilObject, UtilEmbed, Preview, Mark, focus, keyboard, Storage, UtilRouter, Action, translate, analytics, 
 	Renderer, sidebar 
 } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
@@ -358,7 +358,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	rebind () {
 		const { isPopup } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const namespace = UtilCommon.getEventNamespace(isPopup);
 		const container = UtilCommon.getScrollContainer(isPopup);
@@ -406,7 +406,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		
 		const { isLoading } = this.state;
 		const { rootId } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const readonly = this.isReadonly();
 		const node = $(this.node);
 		const menuOpen = this.menuCheck();
@@ -527,7 +527,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const menuOpen = this.menuCheck();
 		const popupOpen = popupStore.isOpenKeyboard();
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -722,7 +722,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const { focused } = focus.state;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const block = blockStore.getLeaf(rootId, focused);
 
 		if (!block) {
@@ -1012,7 +1012,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		e.preventDefault();
 
 		const { rootId, isPopup } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const dir = pressed.match(Key.up) ? -1 : 1;
 		const ids = selection?.get(I.SelectType.Block, false) || [];
 
@@ -1162,7 +1162,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	// Expand selection up/down
 	onShiftArrowEditor (e: any, pressed: string) {
 		const { rootId } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const dir = pressed.match(Key.up) ? -1 : 1;
 		const ids = selection?.get(I.SelectType.Block, false) || [];
 		const idsWithChildren = selection?.get(I.SelectType.Block, true) || [];
@@ -1192,7 +1192,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	// Expand selection up/down
 	onShiftArrowBlock (e: any, range: I.TextRange, length: number, pressed: string) {
 		const { rootId } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const { focused } = focus.state;
 		const dir = pressed.match(Key.up) ? -1 : 1;
 		const block = blockStore.getLeaf(rootId, focused);
@@ -1288,7 +1288,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onBackspaceBlock (e: any, range: I.TextRange, pressed: string, length: number, props: any) {
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const { focused } = focus.state;
 		const block = blockStore.getLeaf(rootId, focused);
 
@@ -1561,7 +1561,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	onSelectAll () {
 		const { rootId } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
 		if (!selection) {
 			return;
@@ -1584,7 +1584,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 		
-		commonStore.filterSet(0, '');
+		S.Common.filterSet(0, '');
 		focus.clear(true);
 
 		this.blockCreate(block.id, this.hoverPosition, { type: I.BlockType.Text }, (blockId: string) => {
@@ -1602,7 +1602,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		commonStore.filterSet(range.from, '');
+		S.Common.filterSet(range.from, '');
 
 		menuStore.open('blockAdd', { 
 			element: $(`#block-${blockId}`),
@@ -1618,7 +1618,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			commonFilter: true,
 			onClose: () => {
 				focus.apply();
-				commonStore.filterSet(0, '');
+				S.Common.filterSet(0, '');
 				$(`.placeholder.c${blockId}`).text(translate('placeholderBlock'));
 			},
 			data: {
@@ -1645,7 +1645,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	onCopy (e: any, isCut: boolean) {
 		const { rootId } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const readonly = this.isReadonly();
 		const root = blockStore.getLeaf(rootId, rootId);
 		const { focused } = focus.state;
@@ -1677,7 +1677,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const { rootId } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const { focused, range } = focus.state;
 		const files = UtilCommon.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
 
@@ -2045,7 +2045,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	blockRemove (focused?: I.Block) {
 		const { rootId } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
 
 		menuStore.closeAll();

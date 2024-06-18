@@ -2,9 +2,10 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, UtilCommon, keyboard, UtilData, UtilObject, UtilMenu, analytics, focus, translate } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
+import { I, UtilCommon, keyboard, UtilData, UtilObject, UtilMenu, focus, translate } from 'Lib';
+import { menuStore, recordStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -58,7 +59,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 				return null;
 			};
 
-			const type = dbStore.getTypeById(item.type);
+			const type = recordStore.getTypeById(item.type);
 			const cn = [];
 
 			let object = { ...item, id: item.itemId };

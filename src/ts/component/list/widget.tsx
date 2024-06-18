@@ -2,8 +2,8 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
-import { C, I, M, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
-import { blockStore, menuStore, detailStore, commonStore } from 'Store';
+import { C, I, M, S, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
+import { blockStore, menuStore, detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -223,7 +223,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	onDragStart (e: React.DragEvent, blockId: string): void {
 		e.stopPropagation();
 
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		const obj = node.find(`#widget-${blockId}`);

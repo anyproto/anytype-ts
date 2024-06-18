@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
-import { Loader, IconObject, Cover, Icon, ObjectType } from 'Component';
-import { commonStore, detailStore, blockStore } from 'Store';
-import { I, C, UtilData, UtilRouter, Action, translate } from 'Lib';
-const Constant = require('json/constant.json');
 import $ from 'jquery';
+import { observer } from 'mobx-react';
+import { Loader, IconObject, Cover, Icon } from 'Component';
+import { detailStore, blockStore } from 'Store';
+import { I, C, S, UtilData, UtilRouter, Action, translate } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -22,6 +21,7 @@ interface State {
 	loading: boolean;
 };
 
+const Constant = require('json/constant.json');
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 
 const PreviewObject = observer(class PreviewObject extends React.Component<Props, State> {
@@ -236,7 +236,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								css.width = (fields.width * 100) + '%';
 							};
 
-							inner = <img className="media" src={commonStore.imageUrl(targetObjectId, Constant.size.image)} style={css} />;
+							inner = <img className="media" src={S.Common.imageUrl(targetObjectId, Constant.size.image)} style={css} />;
 							break;
 						};
 
@@ -287,7 +287,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 									<div className="line even" />
 								</div>
 							</div>
-							<div className="side right" style={{ backgroundImage: `url("${commonStore.imageUrl(content.imageHash, 170)}")` }} />
+							<div className="side right" style={{ backgroundImage: `url("${S.Common.imageUrl(content.imageHash, 170)}")` }} />
 						</div>
 					);
 					break;

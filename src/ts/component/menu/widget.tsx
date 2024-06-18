@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Button } from 'Component';
 import { C, I, keyboard, UtilMenu, translate, Action, UtilObject, analytics } from 'Lib';
-import { blockStore, menuStore, dbStore } from 'Store';
+import { blockStore, menuStore, recordStore } from 'Store';
 const Constant = require('json/constant.json');
 
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
@@ -284,7 +284,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		switch (item.itemId) {
 			case 'source': {
-				const templateType = dbStore.getTemplateType();
+				const templateType = recordStore.getTemplateType();
 				const filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },

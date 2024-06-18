@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, UtilData, Relation, UtilObject, translate, keyboard } from 'Lib';
+import { I, C, S, UtilData, Relation, UtilObject, translate, keyboard } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
-import { detailStore, dbStore, menuStore, commonStore } from 'Store';
+import { detailStore, recordStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -39,7 +39,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	render () {
 		const { subId, rootId, columns } = this.props;
 		const items = this.getItems();
-		const { offset, total } = dbStore.getMeta(subId, '');
+		const { offset, total } = recordStore.getMeta(subId, '');
 
 		let pager = null;
 		if (total && items.length) {
@@ -183,7 +183,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	getItems () {
-		return dbStore.getRecords(this.props.subId, this.getKeys());
+		return recordStore.getRecords(this.props.subId, this.getKeys());
 	};
 
 	getKeys () {
@@ -197,7 +197,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
 		].concat(this.props.filters || []);
 
-		dbStore.metaSet(subId, '', { offset });
+		recordStore.metaSet(subId, '', { offset });
 
 		UtilData.searchSubscribe({
 			subId,
@@ -220,7 +220,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { subId } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
 		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
 		if (!objectIds.length) {

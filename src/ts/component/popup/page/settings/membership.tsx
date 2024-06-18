@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, translate, UtilCommon, UtilDate, analytics, keyboard } from 'Lib';
-import { popupStore, authStore, commonStore } from 'Store';
+import { I, S, translate, UtilCommon, UtilDate, analytics, keyboard } from 'Lib';
+import { popupStore, authStore } from 'Store';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
+
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
 
@@ -21,7 +22,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 
 	render () {
 		const { membership } = authStore;
-		const { membershipTiers, interfaceLang } = commonStore;
+		const { membershipTiers, interfaceLang } = S.Common;
 		const { tier, status } = membership;
 		const length = membershipTiers.length;
 		const cnt = [];

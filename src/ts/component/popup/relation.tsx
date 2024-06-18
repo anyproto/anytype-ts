@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Cell, Error, Icon, EmptySearch, Checkbox } from 'Component';
-import { I, M, C, UtilCommon, Relation, UtilData, translate, Dataview } from 'Lib';
-import { dbStore, commonStore, popupStore, menuStore } from 'Store';
+import { I, M, C, S, UtilCommon, Relation, UtilData, translate, Dataview } from 'Lib';
+import { recordStore, popupStore, menuStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -122,9 +122,9 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	componentDidUpdate (): void {
-		const id = commonStore.cellId;		
+		const id = S.Common.cellId;		
 		if (id) {
-			commonStore.cellId = '';
+			S.Common.cellId = '';
 			
 			const ref = this.cellRefs.get(id);
 			if (ref) {
@@ -158,7 +158,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		let depIds = [];
 
 		for (const k in this.details) {
-			const relation = dbStore.getRelationByKey(k);
+			const relation = recordStore.getRelationByKey(k);
 
 			if (relation && Relation.isArrayType(relation.format)) {
 				depIds = depIds.concat(Relation.getArrayValue(this.details[k]));
@@ -212,9 +212,9 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	getRelations (): any[] {
-		const { config } = commonStore;
+		const { config } = S.Common;
 
-		let ret = this.getRelationKeys().map(relationKey => dbStore.getRelationByKey(relationKey));
+		let ret = this.getRelationKeys().map(relationKey => recordStore.getRelationByKey(relationKey));
 
 		ret = ret.filter(it => {
 			return (config.debug.hiddenObject ? true : !it.isHidden) && !it.isReadonlyValue;
@@ -228,11 +228,11 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	getObjects () {
-		return dbStore.getRecords(SUB_ID_OBJECT, this.getRelationKeys());
+		return recordStore.getRecords(SUB_ID_OBJECT, this.getRelationKeys());
 	};
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = recordStore.getRelationByKey(relationKey);
 		if (!relation) {
 			return;
 		};
@@ -286,7 +286,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const details: any[] = []; 
 
 		for (const k in this.details) {
-			const relation = dbStore.getRelationByKey(k);
+			const relation = recordStore.getRelationByKey(k);
 			if (relation) {
 				details.push({ key: k, value: Relation.formatValue(relation, this.details[k], true) });
 			};

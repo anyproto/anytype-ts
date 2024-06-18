@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Loader, Title, Label, EmptySearch, Icon, Filter } from 'Component';
-import { I, C, translate, UtilCommon, analytics } from 'Lib';
+import { I, C, S, translate, UtilCommon, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from 'react-virtualized';
-import { commonStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
@@ -46,7 +45,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		const { getAuthor, onAuthor } = this.props;
 		const { isLoading, category } = this.state;
 		const items = this.getItems();
-		const { gallery } = commonStore;
+		const { gallery } = S.Common;
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
 
 		if (isLoading) {
@@ -186,14 +185,14 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	};
 
 	componentDidMount (): void {
-		if (commonStore.gallery.list.length) {
+		if (S.Common.gallery.list.length) {
 			return;
 		};
 
 		this.setState({ isLoading: true });
 
 		C.GalleryDownloadIndex((message: any) => {
-			commonStore.gallery = {
+			S.Common.gallery = {
 				categories: (message.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
 				list: message.list || [],
 			};
@@ -245,7 +244,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		const ret: any[] = [];
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
 		
-		let items = commonStore.gallery.list || [];
+		let items = S.Common.gallery.list || [];
 		if (category) {
 			items = items.filter(it => category.list.includes(it.name));
 		};
@@ -286,7 +285,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	};
 
 	calcPages () {
-		const { categories } = commonStore.gallery;
+		const { categories } = S.Common.gallery;
 		const node = $(this.node);
 		const width = node.width();
 		const items = node.find('#categories .item');
@@ -339,7 +338,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	};
 
 	onBanner () {
-		const { gallery } = commonStore;
+		const { gallery } = S.Common;
 		const category = gallery.categories.find(it => it.id == 'collaboration');
 
 		if (category) {

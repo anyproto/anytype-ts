@@ -9,9 +9,9 @@ import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar } from 'Component';
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, notificationStore } from 'Store';
+import { authStore, blockStore, menuStore, popupStore } from 'Store';
 import { 
-	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
+	I, C, S, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
 	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode, UtilSpace, sidebar
 } from 'Lib';
 
@@ -76,25 +76,14 @@ declare global {
 	}
 };
 
-const rootStore = {
-	commonStore,
-	authStore,
-	blockStore,
-	detailStore,
-	dbStore,
-	menuStore,
-	popupStore,
-	notificationStore,
-};
-
 window.$ = $;
 
 if (!isPackaged) {
 	window.Anytype = {
-		Store: rootStore,
 		Lib: {
 			I,
 			C,
+			S,
 			UtilCommon,
 			UtilData,
 			UtilFile,
@@ -162,8 +151,8 @@ class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
 		return (
-			<SelectionProvider ref={ref => commonStore.refSet('selectionProvider', ref)}>
-				<DragProvider ref={ref => commonStore.refSet('dragProvider', ref)}>
+			<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
+				<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
 					<Sidebar key="sidebar" {...this.props} />
@@ -210,7 +199,7 @@ class App extends React.Component<object, State> {
 		
 		return (
 			<Router history={history}>
-				<Provider {...rootStore}>
+				<Provider {...S}>
 					<div ref={node => this.node = node}>
 						{isLoading ? (
 							<div id="root-loader" className="loaderWrapper">
@@ -279,17 +268,17 @@ class App extends React.Component<object, State> {
 		Renderer.on('update-available', this.onUpdateAvailable);
 		Renderer.on('update-confirm', this.onUpdateConfirm);
 		Renderer.on('update-not-available', this.onUpdateUnavailable);
-		Renderer.on('update-downloaded', () => commonStore.progressClear());
+		Renderer.on('update-downloaded', () => S.Common.progressClear());
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('spellcheck', this.onSpellcheck);
-		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
-		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
-		Renderer.on('config', (e: any, config: any) => commonStore.configSet(config, true));
-		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
-		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
+		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
+		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
+		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
+		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
+		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('logout', () => authStore.logout(false, false));
-		Renderer.on('data-path', (e: any, p: string) => commonStore.dataPathSet(p));
+		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
 		Renderer.on('will-close-window', this.onWillCloseWindow);
 
 		Renderer.on('shutdownStart', () => {
@@ -308,8 +297,8 @@ class App extends React.Component<object, State> {
 		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {
-			commonStore.nativeThemeSet(isDark);
-			commonStore.themeSet(commonStore.theme);
+			S.Common.nativeThemeSet(isDark);
+			S.Common.themeSet(S.Common.theme);
 		});
 
 		Renderer.on('pin-check', () => {
@@ -334,11 +323,11 @@ class App extends React.Component<object, State> {
 		const route = String(data.route || redirect || '');
 		const spaceId = Storage.get('spaceId');
 
-		commonStore.configSet(config, true);
-		commonStore.nativeThemeSet(isDark);
-		commonStore.themeSet(config.theme);
-		commonStore.languagesSet(languages);
-		commonStore.dataPathSet(dataPath);
+		S.Common.configSet(config, true);
+		S.Common.nativeThemeSet(isDark);
+		S.Common.themeSet(config.theme);
+		S.Common.languagesSet(languages);
+		S.Common.dataPathSet(dataPath);
 
 		analytics.init();
 		this.initStorage();
@@ -374,11 +363,11 @@ class App extends React.Component<object, State> {
 				Renderer.send('keytarGet', accountId).then((phrase: string) => {
 					UtilData.createSession(phrase, '', () => {
 						keyboard.setPinChecked(isPinChecked);
-						commonStore.redirectSet(route);
+						S.Common.redirectSet(route);
 
 						if (account) {
 							authStore.accountSet(account);
-							commonStore.configSet(account.config, false);
+							S.Common.configSet(account.config, false);
 
 							if (spaceId) {
 								UtilRouter.switchSpace(spaceId, '', cb);
@@ -405,7 +394,7 @@ class App extends React.Component<object, State> {
 					return false;
 				});
 			} else {
-				commonStore.redirectSet(route);
+				S.Common.redirectSet(route);
 				UtilRouter.go('/auth/setup/init', { replace: true });
 				cb();
 			};
@@ -436,12 +425,12 @@ class App extends React.Component<object, State> {
 
 	onUpdateCheck (e: any, auto: boolean) {
 		if (!auto) {
-			commonStore.progressSet({ status: translate('progressUpdateCheck'), current: 0, total: 1, isUnlocked: true });
+			S.Common.progressSet({ status: translate('progressUpdateCheck'), current: 0, total: 1, isUnlocked: true });
 		};
 	};
 
 	onUpdateConfirm (e: any, auto: boolean) {
-		commonStore.progressClear();
+		S.Common.progressClear();
 		Storage.setHighlight('whatsNew', true);
 
 		if (auto) {
@@ -467,7 +456,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateAvailable (e: any, auto: boolean) {
-		commonStore.progressClear();
+		S.Common.progressClear();
 
 		if (auto) {
 			return;
@@ -492,7 +481,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateUnavailable (e: any, auto: boolean) {
-		commonStore.progressClear();
+		S.Common.progressClear();
 
 		if (auto) {
 			return;
@@ -513,7 +502,7 @@ class App extends React.Component<object, State> {
 
 	onUpdateError (e: any, err: string, auto: boolean) {
 		console.error(err);
-		commonStore.progressClear();
+		S.Common.progressClear();
 
 		if (auto) {
 			return;
@@ -538,7 +527,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateProgress (e: any, progress: any) {
-		commonStore.progressSet({ 
+		S.Common.progressSet({ 
 			status: UtilCommon.sprintf(translate('commonUpdateProgress'), UtilFile.size(progress.transferred), UtilFile.size(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
@@ -550,7 +539,7 @@ class App extends React.Component<object, State> {
 		if (keyboard.isMain()) {
 			UtilRouter.go(route, {});
 		} else {
-			commonStore.redirectSet(route);
+			S.Common.redirectSet(route);
 		};
 	};
 

@@ -4,15 +4,15 @@ import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Label } from 'Component';
-import { analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon, translate } from 'Lib';
-import { blockStore, dbStore, detailStore, commonStore } from 'Store';
+import { S, analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon, translate } from 'Lib';
+import { blockStore, recordStore, detailStore } from 'Store';
 import Item from './item';
-const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
 };
 
+const Constant = require('json/constant.json');
 const MAX_DEPTH = 15; // Maximum depth of the tree
 const LIMIT = 20; // Number of nodes to load at a time
 const HEIGHT = 28; // Height of each row
@@ -189,7 +189,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	getDeleted () {
-		const deleted = dbStore.getRecordIds(Constant.subId.deleted, '');
+		const deleted = recordStore.getRecordIds(Constant.subId.deleted, '');
 		const length = deleted.length;
 
 		this.deletedIds = new Set(deleted);
@@ -229,7 +229,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		if (isSystemTarget()) {
 			const subId = this.getSubId(targetBlockId);
 			
-			let records = dbStore.getRecordIds(subId, '');
+			let records = recordStore.getRecordIds(subId, '');
 			if (targetBlockId == Constant.widgetId.favorite) {
 				records = sortFavorite(records);
 			};
@@ -299,7 +299,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 	// return the child nodes details for the given subId
 	getChildNodesDetails (nodeId: string): I.WidgetTreeDetails[] {
-		return dbStore.getRecords(this.getSubId(nodeId), [ 'id', 'layout', 'links' ], true).map(it => this.mapper(it));
+		return recordStore.getRecords(this.getSubId(nodeId), [ 'id', 'layout', 'links' ], true).map(it => this.mapper(it));
 	};
 
 	mapper (item) {
@@ -345,7 +345,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const { block } = this.props;
 		const { targetBlockId } = block.content;
 
-		return dbStore.getSubId(this.getSubKey(), nodeId || targetBlockId);
+		return recordStore.getSubId(this.getSubKey(), nodeId || targetBlockId);
 	};
 
 	// a composite key for the tree node in the form rootId-parentId-Id-depth
@@ -384,7 +384,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	onScroll ({ scrollTop }): void {
-		const dragProvider = commonStore.getRef('dragProvider');
+		const dragProvider = S.Common.getRef('dragProvider');
 
 		this.top = scrollTop;
 		dragProvider?.onScroll();

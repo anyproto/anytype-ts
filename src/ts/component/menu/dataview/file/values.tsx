@@ -4,8 +4,9 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
-import { I, C, UtilCommon, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
-import { commonStore, detailStore, menuStore } from 'Store';
+import { I, C, S, UtilCommon, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
+import { detailStore, menuStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 const MENU_ID = 'dataviewFileList';
@@ -40,7 +41,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		);
 
 		const Image = (item: any) => (
-			<img src={commonStore.imageUrl(item.id, 208)} className="img" onLoad={() => position()} />
+			<img src={S.Common.imageUrl(item.id, 208)} className="img" onLoad={() => position()} />
 		);
 
         const Item = SortableElement((item: any) => {
@@ -183,7 +184,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	
 	onUpload (e: any) {
 		Action.openFile([], paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.None, {}, (message: any) => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, (message: any) => {
 				if (!message.error.code) {
 					this.add(message.objectId);
 				};
@@ -248,12 +249,12 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							let url = '';
 							switch (item.layout) {
 								default: {
-									url = commonStore.fileUrl(item.id);
+									url = S.Common.fileUrl(item.id);
 									break;
 								};
 
 								case I.ObjectLayout.Image: {
-									url = commonStore.imageUrl(item.id, Constant.size.image);
+									url = S.Common.imageUrl(item.id, Constant.size.image);
 									break;
 								};
 							};

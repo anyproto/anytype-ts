@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Title, Label, Select, Button } from 'Component';
-import { I, UtilMenu, UtilCommon, translate, Action, analytics, Renderer, Preview } from 'Lib';
-import { commonStore, authStore, popupStore } from 'Store';
+import { I, S, UtilMenu, UtilCommon, translate, Action, analytics, Renderer, Preview } from 'Lib';
+import { authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends React.Component<I.Popup> {
@@ -24,7 +24,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	render () {
 		const { mode, path, userPath } = this.config;
-		const { interfaceLang } = commonStore;
+		const { interfaceLang } = S.Common;
 		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
 		const isDefault = path == UtilCommon.getElectron().defaultPath();
 		const networkModes: any[] = ([
@@ -145,7 +145,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 		if (this.config.userPath !== userPath) {
 			Renderer.send('setUserDataPath', this.config.userPath);
-			commonStore.dataPathSet(this.config.userPath);
+			S.Common.dataPathSet(this.config.userPath);
 			delete this.config.userPath;
 		};
 

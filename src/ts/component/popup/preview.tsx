@@ -1,8 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader } from 'Component';
-import { I, keyboard, UtilCommon } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S, keyboard, UtilCommon } from 'Lib';
 
 const BORDER = 16;
 const WIDTH_DEFAULT = 450;
@@ -87,7 +86,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		const sidebar = $('#sidebar');
 
 		let mw = ww - BORDER * 2;
-		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+		if (S.Common.isSidebarFixed && sidebar.hasClass('active')) {
 			mw -= sidebar.outerWidth();
 		};
 

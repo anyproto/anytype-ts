@@ -3,8 +3,9 @@ import $ from 'jquery';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
-import { analytics, C, I, keyboard, UtilObject, UtilMenu, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
-import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
+import { analytics, C, I, S, keyboard, UtilObject, UtilMenu, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
+import { recordStore, menuStore, blockStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 interface State {
@@ -48,7 +49,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const { isExpanded } = this.state;
 		const { getId } = this.props;
 		const sections = this.getSections();
-		const { type } = commonStore;
+		const { type } = S.Common;
 
 		const Items = SortableContainer(({ items }) => (
 			<div className="items">
@@ -204,7 +205,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
 		window.setTimeout(() => setActive(), 15);
 
-		if (commonStore.navigationMenu == I.NavigationMenuMode.Hover) {
+		if (S.Common.navigationMenu == I.NavigationMenuMode.Hover) {
 			$(`#${getId()}`).off(`mouseleave`).on(`mouseleave`, () => {
 				if (!this.state.isExpanded) {
 					close();
@@ -221,7 +222,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const filter = String(this.filter || '');
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, S.Common.space ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 			{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
 		];
@@ -261,7 +262,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 	getSections () {
 		const { isExpanded } = this.state;
-		const { space, type } = commonStore;
+		const { space, type } = S.Common;
 		const pinnedIds = Storage.getPinnedTypes();
 		const hasClipboard = this.clipboardItems && this.clipboardItems.length;
 		const cmd = keyboard.cmdSymbol();
@@ -306,12 +307,12 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				});
 			};
 		} else {
-			const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
+			const pinned = pinnedIds.map(id => recordStore.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
 
 			items = UtilData.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
 			items = items.slice(0, LIMIT_PINNED - pinned.length);
-			items.push(dbStore.getSetType());
-			items.push(dbStore.getCollectionType());
+			items.push(recordStore.getSetType());
+			items.push(recordStore.getCollectionType());
 			items = [].concat(pinned, items);
 			items = items.filter(it => it);
 			
@@ -447,7 +448,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				flags = flags.concat([ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 			};
 
-			C.ObjectCreate({ layout: type.recommendedLayout }, flags, item.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
+			C.ObjectCreate({ layout: type.recommendedLayout }, flags, item.defaultTemplateId, type.uniqueKey, S.Common.space, (message: any) => {
 				if (message.error.code || !message.details) {
 					return;
 				};
@@ -460,7 +461,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		};
 
 		if (item.itemId == SystemIds.Add) {
-			C.ObjectCreateObjectType({ name: this.filter }, [], commonStore.space, (message: any) => {
+			C.ObjectCreateObjectType({ name: this.filter }, [], S.Common.space, (message: any) => {
 				if (!message.error.code) {
 					cb(message.details);
 					analytics.event('CreateType');
@@ -491,10 +492,10 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 		const { getId, param } = this.props;
 		const { className, classNameWrap } = param;
-		const type = dbStore.getTypeById(item.itemId);
+		const type = recordStore.getTypeById(item.itemId);
 		const isPinned = Storage.getPinnedTypes().includes(item.itemId);
 		const canPin = type.isInstalled;
-		const canDefault = type.isInstalled && !UtilObject.getSetLayouts().includes(item.recommendedLayout) && (type.id != commonStore.type);
+		const canDefault = type.isInstalled && !UtilObject.getSetLayouts().includes(item.recommendedLayout) && (type.id != S.Common.type);
 		const canDelete = type.isInstalled && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 		const route = analytics.route.navigation;
 
@@ -535,7 +536,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 						};
 
 						case 'default': {
-							commonStore.typeSet(item.uniqueKey);
+							S.Common.typeSet(item.uniqueKey);
 							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route });
 							this.forceUpdate();
 							break;
@@ -596,7 +597,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	};
 
 	async onPaste () {
-		const type = dbStore.getTypeById(commonStore.type);
+		const type = recordStore.getTypeById(S.Common.type);
 		const data = await this.getClipboardData();
 
 		data.forEach(async item => {
@@ -626,11 +627,11 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			const url = UtilCommon.matchUrl(text);
 
 			if (url) {
-				C.ObjectCreateBookmark({ source: url }, commonStore.space, (message: any) => {
+				C.ObjectCreateBookmark({ source: url }, S.Common.space, (message: any) => {
 					UtilObject.openAuto(message.details);
 				});
 			} else {
-				C.ObjectCreate({}, [], type?.defaultTemplateId, type?.uniqueKey, commonStore.space, (message: any) => {
+				C.ObjectCreate({}, [], type?.defaultTemplateId, type?.uniqueKey, S.Common.space, (message: any) => {
 					if (message.error.code) {
 						return;
 					};

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I, Dataview } from 'Lib';
-import { dbStore } from 'Store';
+import { recordStore } from 'Store';
 import Group from './group';
 
 const Constant = require('json/constant.json');
@@ -46,7 +46,7 @@ const WidgetViewBoard = observer(class WidgetViewBoard extends React.Component<I
 			return;
 		};
 
-		dbStore.groupsClear(rootId, blockId);
+		recordStore.groupsClear(rootId, blockId);
 
 		if (!view.groupRelationKey) {
 			this.forceUpdate();

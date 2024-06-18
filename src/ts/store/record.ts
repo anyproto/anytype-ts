@@ -1,6 +1,6 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, M, UtilCommon, Dataview } from 'Lib';
-import { detailStore, commonStore } from 'Store';
+import { S, I, M, UtilCommon, Dataview } from 'Lib';
+import { detailStore } from 'Store';
 
 const Constant = require('json/constant.json');
 
@@ -68,7 +68,7 @@ class DbStore {
 	};
 
 	relationKeyMapGet (key: string): string {
-		let map = this.keyMapGet(KeyMapType.Relation, commonStore.space);
+		let map = this.keyMapGet(KeyMapType.Relation, S.Common.space);
 		let ret = map.get(key);
 
 		if (!ret) {
@@ -86,7 +86,7 @@ class DbStore {
 	};
 
 	typeKeyMapGet (key: string): string {
-		let map = this.keyMapGet(KeyMapType.Type, commonStore.space);
+		let map = this.keyMapGet(KeyMapType.Type, S.Common.space);
 		let ret = map.get(key);
 
 		if (!ret) {
@@ -379,4 +379,4 @@ class DbStore {
 
 };
 
- export const dbStore: DbStore = new DbStore();
+ export const recordStore: DbStore = new DbStore();

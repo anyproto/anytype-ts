@@ -2,9 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { ObjectName, IconObject, DropTarget, Cover, MediaAudio, MediaVideo, ObjectCover } from 'Component';
-import { blockStore, menuStore, detailStore, commonStore } from 'Store';
-import { I, UtilObject, keyboard, analytics, UtilSpace, Dataview } from 'Lib';
+import { ObjectName, IconObject, DropTarget, ObjectCover } from 'Component';
+import { blockStore, menuStore, detailStore } from 'Store';
+import { I, S, UtilObject, keyboard, analytics, UtilSpace, Dataview } from 'Lib';
 
 const Constant = require('json/constant.json');
 

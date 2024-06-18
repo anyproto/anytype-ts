@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, Dataview, UtilMenu, keyboard, Relation, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
-import { dbStore } from 'Store';
+import { recordStore } from 'Store';
 
 const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Menu> {
 	
@@ -51,7 +51,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, groupId } = data;
-		const group = dbStore.getGroup(rootId, blockId, groupId);
+		const group = recordStore.getGroup(rootId, blockId, groupId);
 
 		if (group) {
 			this.color = group.bgColor;
@@ -133,8 +133,8 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 			return;
 		};
 
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
-		const groups = dbStore.getGroups(rootId, blockId);
+		const relation = recordStore.getRelationByKey(view.groupRelationKey);
+		const groups = recordStore.getGroups(rootId, blockId);
 		const update: any[] = [];
 
 		groups.forEach((it: any, i: number) => {
@@ -146,7 +146,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 			update.push(item);
 		});
 
-		dbStore.groupsSet(rootId, blockId, update);
+		recordStore.groupsSet(rootId, blockId, update);
 		Dataview.groupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 

@@ -1,5 +1,6 @@
-import { I, C, keyboard, history as historyPopup, Renderer, UtilData, translate, UtilRouter, analytics } from 'Lib';
-import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
+import { I, C, S, keyboard, history as historyPopup, Renderer, UtilData, translate, UtilRouter, analytics } from 'Lib';
+import { blockStore, popupStore, detailStore, recordStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 class UtilObject {
@@ -38,7 +39,7 @@ class UtilObject {
 		};
 
 		const id = String(object.id || '');
-		const spaceId = object.spaceId || commonStore.space;
+		const spaceId = object.spaceId || S.Common.space;
 		const action = this.actionByLayout(object.layout);
 
 		if (!action) {
@@ -78,7 +79,7 @@ class UtilObject {
 	openAuto (object: any, param?: any) {
 
 		// Prevent opening object in popup from different space
-		if (object.spaceId && (object.spaceId != commonStore.space)) {
+		if (object.spaceId && (object.spaceId != S.Common.space)) {
 			this.openRoute(object, param);
 			return;
 		};
@@ -109,7 +110,7 @@ class UtilObject {
 		};
 
 		// Prevent opening object in popup from different space
-		if (object.spaceId && (object.spaceId != commonStore.space)) {
+		if (object.spaceId && (object.spaceId != S.Common.space)) {
 			this.openRoute(object, param);
 			return;
 		};
@@ -135,7 +136,7 @@ class UtilObject {
 	};
 
 	openConfig (object: any) {
-		commonStore.fullscreenObject ? this.openAuto(object) : this.openPopup(object);
+		S.Common.fullscreenObject ? this.openAuto(object) : this.openPopup(object);
 	};
 
 	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {
@@ -144,11 +145,11 @@ class UtilObject {
 		details = details || {};
 
 		if (!templateId) {
-			details.type = details.type || commonStore.type;
+			details.type = details.type || S.Common.type;
 		};
 
 		if (details.type) {
-			const type = dbStore.getTypeById(details.type);
+			const type = recordStore.getTypeById(details.type);
 			if (type) {
 				typeKey = type.uniqueKey;
 
@@ -163,7 +164,7 @@ class UtilObject {
 			content: UtilData.defaultLinkSettings(),
 		};
 		
-		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, block, flags, typeKey, commonStore.space, (message: any) => {
+		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, block, flags, typeKey, S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				if (callBack) {
 					callBack(message);
@@ -276,7 +277,7 @@ class UtilObject {
 	};
 
 	isTemplate (type: string): boolean {
-		const templateType = dbStore.getTemplateType();
+		const templateType = recordStore.getTemplateType();
 		return templateType ? type == templateType.id : false;
 	};
 
@@ -365,7 +366,7 @@ class UtilObject {
 	};
 
 	isAllowedTemplate (typeId): boolean {
-		const type = dbStore.getTypeById(typeId);
+		const type = recordStore.getTypeById(typeId);
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
 	};
 

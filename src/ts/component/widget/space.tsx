@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, C, UtilSpace, UtilCommon, translate, Onboarding, keyboard } from 'Lib';
-import { popupStore, commonStore } from 'Store';
+import { I, C, S, UtilSpace, UtilCommon, translate } from 'Lib';
+import { popupStore } from 'Store';
 	
 const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
 
@@ -67,11 +67,11 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	};
 
 	onSelect () {
-		C.WorkspaceSetInfo(commonStore.space, { iconImage: '' });
+		C.WorkspaceSetInfo(S.Common.space, { iconImage: '' });
 	};
 
 	onUpload (objectId: string) {
-		C.WorkspaceSetInfo(commonStore.space, { iconImage: objectId });
+		C.WorkspaceSetInfo(S.Common.space, { iconImage: objectId });
 	};
 
 	onRequest (e: any) {

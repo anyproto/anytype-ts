@@ -1,6 +1,7 @@
 import $ from 'jquery';
-import { C, UtilData, Preview, analytics, Storage, keyboard } from 'Lib';
-import { commonStore, authStore, blockStore, menuStore, popupStore } from 'Store';
+import { C, S, UtilData, Preview, analytics, Storage } from 'Lib';
+import { authStore, blockStore, menuStore, popupStore } from 'Store';
+
 const Constant = require('json/constant.json');
 
 type RouteParam = { 
@@ -63,7 +64,7 @@ class UtilRouter {
 
 		const { replace, animate, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
-		const { space } = commonStore;
+		const { space } = S.Common;
 
 		let timeout = menuStore.getTimeout();
 		if (!timeout) {
@@ -127,7 +128,7 @@ class UtilRouter {
 	};
 
 	switchSpace (id: string, route?: string, callBack?: () => void) {
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const { accountSpaceId } = authStore;
 
 		if (!id || (space == id)) {
@@ -148,7 +149,7 @@ class UtilRouter {
 				onFadeOut: () => {
 					analytics.removeContext();
 					blockStore.clear(blockStore.widgets);
-					commonStore.defaultType = '';
+					S.Common.defaultType = '';
 					Storage.set('spaceId', id);
 
 					UtilData.onInfo(message.info);
@@ -164,7 +165,7 @@ class UtilRouter {
 
 	getRouteSpaceId () {
 		const param = this.getParam(this.getRoute());
-		return param.spaceId || commonStore.space;
+		return param.spaceId || S.Common.space;
 	};
 
 };
