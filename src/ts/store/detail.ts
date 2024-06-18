@@ -244,7 +244,7 @@ class DetailStore {
 	private mapRelation (object: any) {
 		object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
 		object.format = object.relationFormat;
-		object.maxCount = Number(object.maxCount  || object.relationMaxCount) || 0;
+		object.maxCount = Number(object.maxCount || object.relationMaxCount) || 0;
 		object.objectTypes = Relation.getArrayValue(object.objectTypes || object.relationFormatObjectTypes);
 		object.isReadonlyRelation = Boolean(object.isReadonlyRelation || object.isReadonly);
 		object.isReadonlyValue = Boolean(object.isReadonlyValue || object.relationReadonlyValue);

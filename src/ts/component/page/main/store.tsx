@@ -714,14 +714,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	getSortOptions () {
 		let options: any[] = [
 			{ id: 'nameAsc', name: translate('pageMainStoreSortNameAsc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Asc },
-			{ id: 'nameDesc', name: translate('pageMainStoreSortNameDesc'), relationKey: 'name',  icon: 'relation c-shortText', type: I.SortType.Desc },
+			{ id: 'nameDesc', name: translate('pageMainStoreSortNameDesc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Desc },
 		];
 
 		if (this.view == View.Library) {
 			options = options.concat([
 				{ isDiv: true },
 				{ id: 'createdDateDesc', name: translate('pageMainStoreSortCreatedDesc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Desc },
-				{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate',  icon: 'relation c-date', type: I.SortType.Asc },
+				{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Asc },
 			]);
 		};
 

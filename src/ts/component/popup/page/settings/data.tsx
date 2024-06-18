@@ -19,7 +19,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
     render () {
         const { onPage } = this.props;
-		const { dataPath, spaceStorage } = commonStore
+		const { dataPath, spaceStorage } = commonStore;
         const { localUsage } = spaceStorage;
 		const suffix = this.getSuffix();
 

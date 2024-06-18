@@ -704,7 +704,7 @@ class Action {
 				onConfirm: () => keyboard.onMembershipUpgrade(),
 				canCancel: false
 			}
-		})
+		});
 	};
 
 	inviteRevoke (spaceId: string, callBack?: () => void) {

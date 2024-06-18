@@ -389,8 +389,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			focus.clear(true);
 		};
 
-		let menuId = '';
-		let menuParam: any = {
+		const menuParam: any = {
 			element: `#${context.getId()} #item-${item.id}`,
 			offsetX: context.getSize().width,
 			horizontal: I.MenuDirection.Left,
@@ -402,6 +401,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				blockIds,
 			} as any,
 		};
+
+		let menuId = '';
 
 		switch (item.id) {
 			case 'move': {

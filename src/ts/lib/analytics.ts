@@ -115,7 +115,7 @@ class Analytics {
 			return;
 		};
 
-		let ret = String(version.app || '').split('-')
+		let ret = String(version.app || '').split('-');
 		if (ret.length) {
 			ret = [ ret[0] ];
 		};

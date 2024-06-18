@@ -111,7 +111,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 				};
 
 				case I.ViewType.Calendar: {
-					content = <WidgetViewCalendar  {...props} />;
+					content = <WidgetViewCalendar {...props} />;
 					break;
 				};
 			};

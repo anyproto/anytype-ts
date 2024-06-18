@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input, Button, Loader } from 'Component';
-import { I, C, keyboard, translate } from 'Lib';
+import { I, C, keyboard, translate, analytics } from 'Lib';
 import { popupStore, commonStore } from 'Store';
 
 interface State { 
@@ -55,7 +55,7 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 
 		const { close, param } = this.props;
 		const { data } = param;
-		const { onSubmit } = data;
+		const { onSubmit, route } = data;
 		const value = this.ref.getValue();
 		const details = data.details || {};
 
@@ -78,9 +78,13 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 					},
 				});
 			} else {
+				const object = message.details;
+
 				if (onSubmit) {
-					onSubmit(message.details);
+					onSubmit(object);
 				};
+
+				analytics.createObject(object.type, object.layout, route, message.middleTime);
 				close();
 			};
 		});

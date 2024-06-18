@@ -53,7 +53,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		let content = null;
-		let footer = null;
 		let buttons = null;
 		let more = null;
 
@@ -140,8 +139,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<div className="buttons">{buttons}</div>
 					{more}
 				</Frame>
-
-				{footer}
 
 				<CanvasWorkerBridge state={0} />
 			</div>

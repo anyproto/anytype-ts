@@ -730,11 +730,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			offsetX: dir < 0 ? -24 : 0,
 			offsetY: 4 * -dir,
 			data: {
+				route: analytics.route.type,
 				details,
 				onSubmit: (bookmark) => {
 					if (this.isCollection()) {
 						C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
 					};
+
+					
 				}
 			},
 			...param,

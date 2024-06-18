@@ -86,7 +86,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 
 	onMembership (type: string) {
 		popupStore.closeAll(null, () => {
-			popupStore.open('settings', { data: { page: 'membership' } })
+			popupStore.open('settings', { data: { page: 'membership' } });
 		});
 
 		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.inviteConfirm });

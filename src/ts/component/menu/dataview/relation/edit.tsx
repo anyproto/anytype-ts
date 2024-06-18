@@ -230,7 +230,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 		if (readonly) {
 			canDuplicate = false;
-			canDelete = false
+			canDelete = false;
 		};
 
 		let sections: any[] = [
