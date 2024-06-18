@@ -1,7 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { S, I, M, U, Dataview } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { S, I, M, U, J, Dataview } from 'Lib';
 
 enum KeyMapType {
 	Relation = 'relation',
@@ -71,7 +69,7 @@ class RecordStore {
 		let ret = map.get(key);
 
 		if (!ret) {
-			map = this.keyMapGet(KeyMapType.Relation, Constant.storeSpaceId);
+			map = this.keyMapGet(KeyMapType.Relation, J.Constant.storeSpaceId);
 			ret = map.get(key);
 		};
 
@@ -89,7 +87,7 @@ class RecordStore {
 		let ret = map.get(key);
 
 		if (!ret) {
-			map = this.keyMapGet(KeyMapType.Type, Constant.storeSpaceId);
+			map = this.keyMapGet(KeyMapType.Type, J.Constant.storeSpaceId);
 			ret = map.get(key);
 		};
 
@@ -259,7 +257,7 @@ class RecordStore {
 	};
 
 	getTypeById (id: string) {
-		const object = S.Detail.get(Constant.subId.type, id, Constant.typeRelationKeys);
+		const object = S.Detail.get(J.Constant.subId.type, id, J.Constant.typeRelationKeys);
 		return object._empty_ ? null : object;
 	};
 
@@ -269,36 +267,36 @@ class RecordStore {
 	};
 
 	getTemplateType () {
-		return this.getTypeByKey(Constant.typeKey.template);
+		return this.getTypeByKey(J.Constant.typeKey.template);
 	};
 
 	getCollectionType () {
-		return this.getTypeByKey(Constant.typeKey.collection);
+		return this.getTypeByKey(J.Constant.typeKey.collection);
 	};
 
 	getSetType () {
-		return this.getTypeByKey(Constant.typeKey.set);
+		return this.getTypeByKey(J.Constant.typeKey.set);
 	};
 
 	getSpaceType () {
-		return this.getTypeByKey(Constant.typeKey.space);
+		return this.getTypeByKey(J.Constant.typeKey.space);
 	};
 
 	getTypeType () {
-		return this.getTypeByKey(Constant.typeKey.type);
+		return this.getTypeByKey(J.Constant.typeKey.type);
 	};
 
 	getBookmarkType () {
-		return this.getTypeByKey(Constant.typeKey.bookmark);
+		return this.getTypeByKey(J.Constant.typeKey.bookmark);
 	};
 
 	getTypes () {
-		return this.getRecordIds(Constant.subId.type, '').map(id => this.getTypeById(id)).
+		return this.getRecordIds(J.Constant.subId.type, '').map(id => this.getTypeById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
 	getRelations () {
-		return this.getRecordIds(Constant.subId.relation, '').map(id => this.getRelationById(id)).
+		return this.getRecordIds(J.Constant.subId.relation, '').map(id => this.getRelationById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
@@ -320,12 +318,12 @@ class RecordStore {
 			return null;
 		};
 
-		const object = S.Detail.get(Constant.subId.relation, id, Constant.relationRelationKeys, true);
+		const object = S.Detail.get(J.Constant.subId.relation, id, J.Constant.relationRelationKeys, true);
 		return object._empty_ ? null : object;
 	};
 
 	getOption (id: string) {
-		const object = S.Detail.get(Constant.subId.option, id, Constant.optionRelationKeys, true);
+		const object = S.Detail.get(J.Constant.subId.option, id, J.Constant.optionRelationKeys, true);
 		return object._empty_ ? null : object;
 	};
 

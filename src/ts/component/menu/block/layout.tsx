@@ -1,9 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, S, U, keyboard, analytics, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 class MenuBlockLayout extends React.Component<I.Menu> {
 	
@@ -55,7 +53,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 
 	componentWillUnmount (): void {
-		S.Menu.closeAll(Constant.menuIds.layout);
+		S.Menu.closeAll(J.Constant.menuIds.layout);
 	};
 	
 	rebind () {
@@ -126,7 +124,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			S.Menu.closeAll(Constant.menuIds.layout);
+			S.Menu.closeAll(J.Constant.menuIds.layout);
 			return;
 		};
 
@@ -167,7 +165,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
-			S.Menu.closeAll(Constant.menuIds.layout, () => {
+			S.Menu.closeAll(J.Constant.menuIds.layout, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

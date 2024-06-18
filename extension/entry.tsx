@@ -1,15 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import { C, U } from 'Lib'; 
+import { C, U, J, S } from 'Lib'; 
 import Popup from './popup';
 import Iframe from './iframe';
 import Util from './lib/util';
-import * as Store from 'Store';
 
 import './scss/common.scss';
-
-const Extension = require('json/extension.json');
 
 declare global {
 	interface Window {
@@ -31,15 +28,15 @@ window.Electron = {
 };
 
 window.Anytype = {
-	Store,
 	Lib: {
 		C,
 		U,
+		S,
 	},
 };
 
 window.AnytypeGlobalConfig = { 
-	emojiUrl: Extension.clipper.emojiUrl, 
+	emojiUrl: J.Extension.clipper.emojiUrl, 
 	menuBorderTop: 16, 
 	menuBorderBottom: 16, 
 	debug: { mw: false },
@@ -49,11 +46,11 @@ let rootId = '';
 let component: any = null;
 
 if (Util.isPopup()) {
-	rootId = `${Extension.clipper.prefix}-popup`;
+	rootId = `${J.Extension.clipper.prefix}-popup`;
 	component = <Popup />;
 } else 
 if (Util.isIframe()) {
-	rootId = `${Extension.clipper.prefix}-iframe`;
+	rootId = `${J.Extension.clipper.prefix}-iframe`;
 	component = <Iframe />;
 };
 

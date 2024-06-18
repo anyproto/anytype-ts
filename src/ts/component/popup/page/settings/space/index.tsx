@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, ObjectName } from 'Component';
-import { I, C, S, U, translate, Preview, analytics, Action } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, translate, Preview, analytics, Action } from 'Lib';
 
 interface State {
 	error: string;
@@ -47,7 +45,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { account, accountSpaceId } = S.Auth;
 		const spaces = U.Space.getList();
 		const space = U.Space.getSpaceview();
-		const creator = S.Detail.get(Constant.subId.space, space.creator);
+		const creator = S.Detail.get(J.Constant.subId.space, space.creator);
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
 		const personalSpace = U.Space.getSpaceviewBySpaceId(accountSpaceId);

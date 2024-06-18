@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, S, Relation } from 'Lib';
+import { I, S, J, Relation } from 'Lib';
 import { Cell, Icon } from 'Component';
-
-const Constant = require('json/constant.json');
 
 interface Props {
 	rootId?: string;
@@ -39,7 +37,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		const idPrefix = getIdPrefix();
 		const id = Relation.cellId(idPrefix, relationKey, record.id);
 		const width = Relation.width(this.props.width, relation.format);
-		const size = Constant.size.dataview.cell;
+		const size = J.Constant.size.dataview.cell;
 		const subId = S.Record.getSubId(rootId, block.id);
 		const canEdit = canCellEdit(relation, record);
 
@@ -79,7 +77,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 					viewType={I.ViewType.Grid}
 					idPrefix={idPrefix}
 					onCellChange={onCellChange}
-					maxWidth={Constant.size.dataview.cell.edit}
+					maxWidth={J.Constant.size.dataview.cell.edit}
 				/>
 				{iconEdit}
 			</div>

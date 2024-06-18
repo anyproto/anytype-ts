@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, S, U, keyboard, translate, analytics, Storage } from 'Lib';
+import { I, S, U, J, keyboard, translate, analytics, Storage } from 'Lib';
 
-const Constant = require('json/constant.json');
 const ITEM_WIDTH = 112;
 
 const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
@@ -192,7 +191,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 		items.push({ id: 'gallery', name: translate('commonGallery') });
 
-		if (config.sudo || (length < Constant.limit.space)) {
+		if (config.sudo || (length < J.Constant.limit.space)) {
 			items.push({ id: 'add', name: translate('commonCreateNew') });
 		};
 

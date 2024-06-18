@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, analytics, keyboard, Key, translate, Dataview } from 'Lib';
+import { I, C, S, U, J, analytics, keyboard, Key, translate, Dataview } from 'Lib';
 import { InputWithLabel, MenuItemVertical } from 'Component';
-
-const Constant = require('json/constant.json');
 
 const MenuViewSettings = observer(class MenuViewSettings extends React.Component<I.Menu> {
 	
@@ -97,7 +95,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			this.save(true);
 		};
 
-		S.Menu.closeAll(Constant.menuIds.viewEdit);
+		S.Menu.closeAll(J.Constant.menuIds.viewEdit);
 	};
 
 	focus () {
@@ -177,7 +175,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		this.isFocused = true;
 		this.props.setActive();
 
-		S.Menu.closeAll(Constant.menuIds.viewEdit);
+		S.Menu.closeAll(J.Constant.menuIds.viewEdit);
 	};
 	
 	onNameBlur () {
@@ -189,7 +187,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		if (!keyboard.isMouseDisabled) {
 			this.n = -1;
 			this.props.setHover(null, false);
-			S.Menu.closeAll(Constant.menuIds.viewEdit);
+			S.Menu.closeAll(J.Constant.menuIds.viewEdit);
 		};
 	};
 

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, U, keyboard } from 'Lib';
+import { I, U, J, keyboard } from 'Lib';
 import { Icon, Block } from 'Component';
-
-const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponentTable {
 	rowIdx: number;
@@ -148,7 +146,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 						onUpdate={() => onCellUpdate(cellId)}
 						onFocus={e => onCellFocus(e, row.id, column.id, cellId)}
 						onBlur={e => onCellBlur(e, row.id, column.id, cellId)}
-						getWrapperWidth={() => Constant.size.editor} 
+						getWrapperWidth={() => J.Constant.size.editor} 
 					/>
 				) : (
 					<EmptyBlock />

@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, keyboard, Relation, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, Relation, translate } from 'Lib';
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<I.Menu> {
 	
@@ -130,7 +128,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		menuParam.data = Object.assign(menuParam.data, { options });
 
 		if (!S.Menu.isOpen(menuId, item.id)) {
-			S.Menu.closeAll(Constant.menuIds.object, () => {
+			S.Menu.closeAll(J.Constant.menuIds.object, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

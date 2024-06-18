@@ -5,9 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'Component';
-import { I, C, S, U, Relation, keyboard, analytics, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Relation, keyboard, analytics, translate } from 'Lib';
 
 const HEIGHT = 48;
 const LIMIT = 20;
@@ -211,7 +209,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 	componentWillUnmount () {
 		this.unbind();
-		S.Menu.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(J.Constant.menuIds.cell);
 	};
 
 	rebind () {

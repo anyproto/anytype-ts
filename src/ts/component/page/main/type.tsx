@@ -2,11 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, S, U, focus, Action, analytics, Relation, translate } from 'Lib';
+import { I, C, S, U, J, focus, Action, analytics, Relation, translate } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
-
-const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -160,8 +158,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 										onMenu={allowedTemplate ? (e: any, item: any) => this.onMenu(item) : null}
 										onClick={(e: any, item: any) => this.templateOpen(item)}
 										withBlank={true}
-										blankId={Constant.templateId.blank}
-										defaultId={object.defaultTemplateId || Constant.templateId.blank}
+										blankId={J.Constant.templateId.blank}
+										defaultId={object.defaultTemplateId || J.Constant.templateId.blank}
 									/>
 								</div>
 							) : (
@@ -318,7 +316,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			layout: object.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', Constant.typeKey.template, S.Common.space, (message) => {
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
 			if (message.error.code) {
 				return;
 			};
@@ -507,7 +505,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const { defaultTemplateId } = object;
 		const template: any = { id: item.id, typeId: rootId };
 
-		if (template.id == Constant.templateId.blank) {
+		if (template.id == J.Constant.templateId.blank) {
 			template.isBlank = true;
 
 			if (!object.defaultTemplateId) {
@@ -518,7 +516,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			template.isDefault = true;
 		};
 
-		S.Menu.closeAll(Constant.menuIds.dataviewTemplate, () => {
+		S.Menu.closeAll(J.Constant.menuIds.dataviewTemplate, () => {
 			S.Menu.open('dataviewTemplateContext', {
 				menuKey: item.id,
 				element: `#item-more-${item.id}`,
@@ -539,7 +537,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					},
 					onArchive: () => {
 						if (template.isDefault) {
-							U.Object.setDefaultTemplateId(rootId, Constant.templateId.blank);
+							U.Object.setDefaultTemplateId(rootId, J.Constant.templateId.blank);
 						};
 					}
 				}

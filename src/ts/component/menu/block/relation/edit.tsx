@@ -2,10 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, C, S, U, analytics, Preview, translate, keyboard, Relation } from 'Lib';
+import { I, C, S, U, J, analytics, Preview, translate, keyboard, Relation } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
-
-const Constant = require('json/constant.json');
 
 const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<I.Menu> {
 
@@ -375,14 +373,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		});
 
 		if (!S.Menu.isOpen(id)) {
-			S.Menu.closeAll(Constant.menuIds.relationEdit, () => {
+			S.Menu.closeAll(J.Constant.menuIds.relationEdit, () => {
 				S.Menu.open(id, options);
 			});
 		};
 	};
 
 	menuClose () {
-		S.Menu.closeAll(Constant.menuIds.relationEdit);
+		S.Menu.closeAll(J.Constant.menuIds.relationEdit);
 	};
 
 	onOpen (e: any) {
@@ -461,7 +459,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			const { details } = message;
 			
 			data.relationId = details.id;
-			S.Detail.update(Constant.subId.relation, { id: details.id, details }, false);
+			S.Detail.update(J.Constant.subId.relation, { id: details.id, details }, false);
 
 			if (addCommand) {
 				addCommand(rootId, blockId, details, onChange);

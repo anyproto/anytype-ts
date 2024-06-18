@@ -3,9 +3,7 @@ import $ from 'jquery';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
-import { I, C, S, U, analytics, keyboard, translate, Action, Storage, Preview } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, analytics, keyboard, translate, Action, Storage, Preview } from 'Lib';
 
 interface State {
 	isExpanded: boolean;
@@ -221,7 +219,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const filter = String(this.filter || '');
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, S.Common.space ] },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, S.Common.space ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 			{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
 		];
@@ -302,7 +300,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			if (this.filter) {
 				sections.push({ 
 					id: 'store', name: translate('commonAnytypeLibrary'), 
-					children: items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id)),
+					children: items.filter(it => (it.spaceId == J.Constant.storeSpaceId) && !librarySources.includes(it.id)),
 				});
 			};
 		} else {
@@ -363,7 +361,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => this.forceUpdate(), Constant.delay.keyboard);
+		this.timeoutFilter = window.setTimeout(() => this.forceUpdate(), J.Constant.delay.keyboard);
 	};
 
 	onKeyDown (e: any) {
@@ -667,7 +665,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
 		});
 
-		obj.css({ width: Math.min(ww - Constant.size.menu.border * 2 - sw, Math.ceil(obj.outerWidth())) });
+		obj.css({ width: Math.min(ww - J.Constant.size.menu.border * 2 - sw, Math.ceil(obj.outerWidth())) });
 	};
 
 };

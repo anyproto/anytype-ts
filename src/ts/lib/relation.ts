@@ -1,6 +1,5 @@
-import { I, S, U, translate, Dataview } from 'Lib';
+import { I, S, U, J, translate, Dataview } from 'Lib';
 
-const Constant = require('json/constant.json');
 const DICTIONARY = [ 'layout', 'origin', 'importType' ];
 const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];
 
@@ -29,7 +28,7 @@ class Relation {
 	};
 
 	public width (width: number, format: I.RelationType): number {
-		const size = Constant.size.dataview.cell;
+		const size = J.Constant.size.dataview.cell;
 		return Number(width || size[`format${format}`]) || size.default;
 	};
 
@@ -343,7 +342,7 @@ class Relation {
 
 		return [
 			{ id: '', icon: '', name: translate('commonNone') },
-			{ id: Constant.pageCoverRelationKey, icon: 'image', name: translate('libRelationPageCover') },
+			{ id: J.Constant.pageCoverRelationKey, icon: 'image', name: translate('libRelationPageCover') },
 		].concat(options);
 	};
 

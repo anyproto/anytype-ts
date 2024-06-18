@@ -1,8 +1,6 @@
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
-import { I, C, U, keyboard } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, U, J, keyboard } from 'Lib';
 
 interface State {
 	focused: string;
@@ -106,7 +104,7 @@ class Focus {
 		const ch = container.height();
 		const no = node.offset().top;
 		const hh = U.Common.sizeHeader();
-		const o = Constant.size.lastBlock + hh;
+		const o = J.Constant.size.lastBlock + hh;
 		const st = container.scrollTop();
 		const y = isPopup ? (no - container.offset().top + st) : no;
 

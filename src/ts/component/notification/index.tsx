@@ -2,13 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, Error } from 'Component';
-import { I, C, S, U, translate, Action, analytics } from 'Lib';
+import { I, C, S, U, J, translate, Action, analytics } from 'Lib';
 
 interface State {
 	error: string;
 };
-
-const Constant = require('json/constant.json');
 
 const Notification = observer(class Notification extends React.Component<I.NotificationComponent, State> {
 
@@ -112,7 +110,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 		node.addClass('from');
 		this.timeout = window.setTimeout(() => {
 			node.removeClass('from');
-			window.setTimeout(() => resize(), Constant.delay.notification);
+			window.setTimeout(() => resize(), J.Constant.delay.notification);
 		}, 40);
 	};
 
@@ -189,7 +187,7 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 			S.Notification.delete(item.id);
 			resize();
-		}, Constant.delay.notification);
+		}, J.Constant.delay.notification);
 	};
 	
 });

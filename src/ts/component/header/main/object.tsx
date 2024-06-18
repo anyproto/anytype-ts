@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, S, U, keyboard, translate } from 'Lib';
+import { I, S, U, J, keyboard, translate } from 'Lib';
 import HeaderBanner from 'Component/page/elements/head/banner';
-
-const Constant = require('json/constant.json');
 
 interface State {
 	templatesCnt: number;
@@ -35,7 +33,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			return null;
 		};
 
-		const object = S.Detail.get(rootId, rootId, Constant.templateRelationKeys);
+		const object = S.Detail.get(rootId, rootId, J.Constant.templateRelationKeys);
 		const isLocked = root ? root.isLocked() : false;
 		const showMenu = !U.Object.isTypeOrRelationLayout(object.layout);
 		const canSync = showMenu && !object.templateIsBundled && !root.isObjectParticipant();
@@ -121,7 +119,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 		menuOpen('object', '#button-header-more', {
 			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.object,
+			subIds: J.Constant.menuIds.object,
 			data: {
 				rootId,
 				blockId: rootId,

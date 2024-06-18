@@ -5,9 +5,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
-import { I, C, S, keyboard, Key, U, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, Key, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
@@ -124,8 +122,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				
 			case I.TextStyle.Code: {
 				const options: I.Option[] = [];
-				for (const i in Constant.codeLang) {
-					options.push({ id: i, name: Constant.codeLang[i] });
+				for (const i in J.Constant.codeLang) {
+					options.push({ id: i, name: J.Constant.codeLang[i] });
 				};
 
 				spellcheck = false;
@@ -267,7 +265,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			let grammar = Prism.languages[lang];
 
 			if (!grammar && (lang != 'plain')) {
-				lang = Constant.default.codeLang;
+				lang = J.Constant.default.codeLang;
 				grammar = Prism.languages[lang];
 			};
 
@@ -340,7 +338,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			const scheme = U.Common.getScheme(url);
-			const isInside = scheme == Constant.protocol;
+			const isInside = scheme == J.Constant.protocol;
 
 			let route = '';
 			let target;
@@ -1109,7 +1107,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				},
 				offsetX: () => {
 					const rect = U.Common.getSelectionRect();
-					return rect ? 0 : Constant.size.blockMenu;
+					return rect ? 0 : J.Constant.size.blockMenu;
 				},
 				noFlipX: false,
 				noFlipY: false,
@@ -1155,7 +1153,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			},
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
-				return rect ? 0 : Constant.size.blockMenu;
+				return rect ? 0 : J.Constant.size.blockMenu;
 			},
 			data: {
 				noHead: true,

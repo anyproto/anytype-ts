@@ -1,9 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
-const Url = require('json/url.json');
-const KeyCode = require('json/key.json');
+import { I, C, S, U, J, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
 
 class Keyboard {
 	
@@ -491,7 +487,7 @@ class Keyboard {
 			case 'tutorial':
 			case 'privacy':
 			case 'community': {
-				Renderer.send('urlOpen', Url[cmd]);
+				Renderer.send('urlOpen', J.Url[cmd]);
 				break;
 			};
 
@@ -522,7 +518,7 @@ class Keyboard {
 			case 'createSpace': {
 				const items = U.Space.getList();
 
-				if (items.length >= Constant.limit.space) {
+				if (items.length >= J.Constant.limit.space) {
 					break;
 				};
 
@@ -638,7 +634,7 @@ class Keyboard {
 		};
 
 		C.AppGetVersion((message: any) => {
-			let url = Url.contact;
+			let url = J.Url.contact;
 
 			url = url.replace(/\%25os\%25/g, U.Common.getElectron().version.os);
 			url = url.replace(/\%25version\%25/g, U.Common.getElectron().version.app);
@@ -656,7 +652,7 @@ class Keyboard {
 		const { account, membership } = S.Auth;
 		const name = membership.name ? membership.name : account.id;
 
-		Renderer.send('urlOpen', Url.membershipUpgrade.replace(/\%25name\%25/g, name));
+		Renderer.send('urlOpen', J.Url.membershipUpgrade.replace(/\%25name\%25/g, name));
 	};
 
 	onTechInfo () {
@@ -844,7 +840,7 @@ class Keyboard {
 			S.Menu.open(id, menuParam);
 		} else {
 			S.Popup.close('search', () => {
-				S.Menu.closeAll(Constant.menuIds.navigation, () => {
+				S.Menu.closeAll(J.Constant.menuIds.navigation, () => {
 					S.Menu.open(id, menuParam);
 				});
 			});
@@ -900,7 +896,7 @@ class Keyboard {
 	setWindowTitle () {
 		const pin = Storage.getPin();
 		if (pin && !this.isPinChecked) {
-			document.title = Constant.appName;
+			document.title = J.Constant.appName;
 			return;
 		};
 
@@ -931,7 +927,7 @@ class Keyboard {
 		const ret = (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
 
 		for (const k in ret.params) {
-			if (ret.params[k] == Constant.blankRouteId) {
+			if (ret.params[k] == J.Constant.blankRouteId) {
 				ret.params[k] = '';
 			};
 		};
@@ -1147,7 +1143,7 @@ class Keyboard {
 		};
 
 		// Cmd + Alt + N hack
-		if (which == KeyCode.dead) {
+		if (which == J.Key.dead) {
 			pressed.push('n');
 		};
 
@@ -1155,7 +1151,7 @@ class Keyboard {
 			const keys = item.split('+').sort();
 			
 			for (const k of keys) {
-				if (which == KeyCode[k]) {
+				if (which == J.Key[k]) {
 					pressed.push(k);
 				} else
 				if (k == key) {

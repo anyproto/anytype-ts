@@ -4,10 +4,7 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, S, U, translate, analytics, keyboard, Action } from 'Lib';
-
-const Constant = require('json/constant.json');
-const Theme = require('json/theme.json');
+import { I, S, U, J, translate, analytics, keyboard, Action } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -128,7 +125,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			nodes: this.nodes,
 			edges: this.edges,
 			theme: theme,
-			colors: Theme[theme].graph || {},
+			colors: J.Theme[theme].graph || {},
 			settings,
 			rootId,
 		}, [ transfer ]);
@@ -400,7 +397,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			...param,
 			data: {
 				route: analytics.route.graph,
-				subId: Constant.subId.graph,
+				subId: J.Constant.subId.graph,
 				objectIds: ids,
 				getObject: id => this.getNode(id),
 				allowedLink: true,

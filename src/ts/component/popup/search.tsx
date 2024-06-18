@@ -3,9 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { C, I, S, U, keyboard,focus, translate, analytics, Action, Relation, Mark } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, focus, translate, analytics, Action, Relation, Mark } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -385,7 +383,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 
 		keyboard.shortcut(`enter, ${cmd}+enter`, e, (pressed: string) => {
-			const regScheme = new RegExp(`^${Constant.protocol}:\/\/`);
+			const regScheme = new RegExp(`^${J.Constant.protocol}:\/\/`);
 			const regUrl = /invite.any.coop\/([a-zA-Z0-9]+)#([a-zA-Z0-9]+)/;
 
 			if (regScheme.test(filter)) {
@@ -464,7 +462,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.timeout = window.setTimeout(() => {
 			this.forceUpdate();
 			analytics.event('SearchInput');
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 	};
 
 	onFilterClear () {
@@ -490,7 +488,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, () => resolve(null));
 		});
 	};
@@ -529,7 +527,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			{ relationKey: 'type', type: I.SortType.Asc },
 		];
 
-		let limit = Constant.limit.menuRecords;
+		let limit = J.Constant.limit.menuRecords;
 
 		if (!filter && clear && !backlink) {
 			limit = 8;
@@ -543,7 +541,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.setState({ isLoading: true });
 		};
 
-		C.ObjectSearchWithMeta(filters, sorts, Constant.defaultRelationKeys.concat([ 'links', 'backlinks' ]), filter, this.offset, limit, (message) => {
+		C.ObjectSearchWithMeta(filters, sorts, J.Constant.defaultRelationKeys.concat([ 'links', 'backlinks' ]), filter, this.offset, limit, (message) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
 				return;
@@ -577,7 +575,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const alt = keyboard.altSymbol();
 		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
 		const filter = this.getFilter();
-		const lang = Constant.default.interfaceLang;
+		const lang = J.Constant.default.interfaceLang;
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let name = '';
@@ -741,7 +739,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 						window.setTimeout(() => {
 							focus.scroll(keyboard.isPopup(), meta.blockId);
-						}, Constant.delay.route);
+						}, J.Constant.delay.route);
 					}
 				});
 			} else 
@@ -753,7 +751,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			// Import action
 			if (item.isImport) {
-				Action.import(item.format, Constant.fileExtension.import[item.format]);
+				Action.import(item.format, J.Constant.fileExtension.import[item.format]);
 
 			// Buttons
 			} else {

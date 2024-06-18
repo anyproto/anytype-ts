@@ -2,10 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, S, U, keyboard, focus, translate } from 'Lib';
+import { I, S, U, J, keyboard, focus, translate } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-
-const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -218,7 +216,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			S.Menu.updateData(this.props.id, { filter: this.refFilter.getValue() });
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 	};
 
 	onFilterClear () {
@@ -282,7 +280,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -313,7 +311,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });

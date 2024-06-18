@@ -2,11 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, J, translate } from 'Lib';
 import { Icon } from 'Component';
 import Item from './item';
-
-const Constant = require('json/constant.json');
 
 const WidgetViewGallery = observer(class WidgetViewGallery extends React.Component<I.WidgetViewComponent> {
 
@@ -88,7 +86,7 @@ const WidgetViewGallery = observer(class WidgetViewGallery extends React.Compone
 
 	getItems () {
 		const { getRecordIds, subId } = this.props;
-		const items = [].concat(getRecordIds().map(id => S.Detail.get(subId, id, Constant.sidebarRelationKeys)));
+		const items = [].concat(getRecordIds().map(id => S.Detail.get(subId, id, J.Constant.sidebarRelationKeys)));
 
 		items.push({ id: 'blank', name: translate('widgetShowAll') });
 

@@ -1,7 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, keyboard, translate, Dataview, Action, analytics, Relation } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation } from 'Lib';
 
 class UtilMenu {
 
@@ -18,9 +16,9 @@ class UtilMenu {
 			it.name = translate(nameKey);
 			it.description = translate(descriptionKey);
 
-			if (S.Common.interfaceLang != Constant.default.interfaceLang) {
-				it.aliases.push(translate(nameKey, Constant.default.interfaceLang));
-				it.aliases.push(translate(descriptionKey, Constant.default.interfaceLang));
+			if (S.Common.interfaceLang != J.Constant.default.interfaceLang) {
+				it.aliases.push(translate(nameKey, J.Constant.default.interfaceLang));
+				it.aliases.push(translate(descriptionKey, J.Constant.default.interfaceLang));
 				it.aliases = U.Common.arrayUnique(it.aliases);
 			};
 		};
@@ -225,7 +223,7 @@ class UtilMenu {
 		const items: any[] = [
 			{ id: 'color-default', name: translate('commonDefault'), value: '', className: 'default', isTextColor: true }
 		];
-		for (const color of Constant.textColor) {
+		for (const color of J.Constant.textColor) {
 			items.push({ id: `color-${color}`, name: translate(`textColor-${color}`), value: color, className: color, isTextColor: true });
 		};
 		return items;
@@ -235,7 +233,7 @@ class UtilMenu {
 		const items: any[] = [
 			{ id: 'bgColor-default', name: translate('commonDefault'), value: '', className: 'default', isBgColor: true }
 		];
-		for (const color of Constant.textColor) {
+		for (const color of J.Constant.textColor) {
 			items.push({ id: `bgColor-${color}`, name: translate(`textColor-${color}`), value: color, className: color, isBgColor: true });
 		};
 		return items;
@@ -504,10 +502,10 @@ class UtilMenu {
 					return;
 				};
 
-				S.Detail.update(Constant.subId.space, { id: spaceview, details: { spaceDashboardId: object.id } }, false);
+				S.Detail.update(J.Constant.subId.space, { id: spaceview, details: { spaceDashboardId: object.id } }, false);
 
 				if (update) {
-					S.Detail.update(Constant.subId.space, { id: object.id, details: object }, false);
+					S.Detail.update(J.Constant.subId.space, { id: object.id, details: object }, false);
 				};
 
 				if (openRoute) {
@@ -591,7 +589,7 @@ class UtilMenu {
 		const ret: any[] = [];
 		const Locale = require('lib/json/locale.json');
 
-		for (const id of Constant.enabledInterfaceLang) {
+		for (const id of J.Constant.enabledInterfaceLang) {
 			ret.push({ id, name: Locale[id] });
 		};
 
@@ -602,7 +600,7 @@ class UtilMenu {
 		let ret: any[] = [];
 
 		ret = ret.concat(S.Common.languages || []);
-		ret = ret.map(id => ({ id, name: Constant.spellingLang[id] }));
+		ret = ret.map(id => ({ id, name: J.Constant.spellingLang[id] }));
 		ret.unshift({ id: '', name: translate('commonDisabled') });
 
 		return ret;

@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon } from 'Component';
-import { I, C, S, U, Relation, keyboard, Storage } from 'Lib';
+import { I, C, S, U, J, Relation, keyboard, Storage } from 'Lib';
 import Util from '../lib/util';
 
 interface State {
@@ -13,7 +13,6 @@ interface State {
 	withContent: boolean;
 };
 
-const Constant = require('json/constant.json');
 const MAX_LENGTH = 320;
 
 const Create = observer(class Create extends React.Component<I.PageComponent, State> {
@@ -213,7 +212,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 			return;
 		};
 
-		this.details.type = this.details.type || Constant.typeKey.bookmark;
+		this.details.type = this.details.type || J.Constant.typeKey.bookmark;
 		this.refType.setOptions(options);
 		this.refType.setValue(this.details.type);
 	};
@@ -247,7 +246,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	getTypes () {
 		const layouts = U.Object.getPageLayouts();
-		return this.getObjects(Constant.subId.type).
+		return this.getObjects(J.Constant.subId.type).
 			map(Util.optionMapper).
 			filter(this.filter).
 			filter(it => layouts.includes(it.recommendedLayout) && (it.spaceId == S.Common.space)).
@@ -271,9 +270,9 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	getTagsValue () {
-		return S.Record.getRecordIds(Constant.subId.option, '').
+		return S.Record.getRecordIds(J.Constant.subId.option, '').
 			filter(id => this.details.tag.includes(id)).
-			map(id => S.Detail.get(Constant.subId.option, id)).
+			map(id => S.Detail.get(J.Constant.subId.option, id)).
 			filter(it => it && !it._empty_);
 	};
 

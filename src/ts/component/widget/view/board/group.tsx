@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, translate, Dataview, Storage } from 'Lib';
+import { I, S, U, J, translate, Dataview, Storage } from 'Lib';
 import Cell from 'Component/block/dataview/cell';
 import Item from './item';
 
-const Constant = require('json/constant.json');
 const ANIMATION = 200;
 
 interface Props extends I.WidgetViewComponent {
@@ -52,7 +51,7 @@ const Group = observer(class Group extends React.Component<Props> {
 						id={`board-head-${id}`} 
 						rootId={rootId}
 						subId={subId}
-						block={Constant.blockId.dataview}
+						block={S.Block.getLeaf(rootId, J.Constant.blockId.dataview)}
 						relationKey={view.groupRelationKey} 
 						viewType={I.ViewType.Board}
 						getRecord={() => head}
@@ -122,7 +121,7 @@ const Group = observer(class Group extends React.Component<Props> {
 			subId,
 			filters: filters.map(it => Dataview.filterMapper(view, it)),
 			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
-			keys: Constant.sidebarRelationKeys,
+			keys: J.Constant.sidebarRelationKeys,
 			sources: object.setOf || [],
 			limit,
 			ignoreHidden: true,
@@ -140,7 +139,7 @@ const Group = observer(class Group extends React.Component<Props> {
 	getSubId () {
 		const { rootId, id } = this.props;
 
-		return S.Record.getGroupSubId(rootId, Constant.blockId.dataview, id);
+		return S.Record.getGroupSubId(rootId, J.Constant.blockId.dataview, id);
 	};
 
 	getItems () {
@@ -154,7 +153,7 @@ const Group = observer(class Group extends React.Component<Props> {
 	applyObjectOrder (groupId: string, ids: string[]): any[] {
 		const { rootId, parent } = this.props;
 
-		return Dataview.applyObjectOrder(rootId, Constant.blockId.dataview, parent.content.viewId, groupId, ids);
+		return Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, parent.content.viewId, groupId, ids);
 	};
 
 	getToggleKey () {

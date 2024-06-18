@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
-import { I, C, S, U, focus, analytics, Relation, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, focus, analytics, Relation, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
-
-const Constant = require('json/constant.json');
 
 const BlockRelation = observer(class BlockRelation extends React.Component<I.BlockComponent> {
 
@@ -128,7 +126,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 
 		S.Menu.open('relationSuggest', { 
 			element: `#block-${block.id}`,
-			offsetX: Constant.size.blockMenu,
+			offsetX: J.Constant.size.blockMenu,
 			data: {
 				rootId,
 				blockId: block.id,

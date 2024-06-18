@@ -3,9 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, S, U, analytics, keyboard, Action, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, analytics, keyboard, Action, translate } from 'Lib';
 
 interface State {
 	loading: boolean;
@@ -203,7 +201,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -224,7 +222,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		];
 
 		let filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, S.Common.space ] },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, S.Common.space ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 		];
 		if (data.filters) {
@@ -245,7 +243,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			keys: U.Data.typeRelationKeys(),
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 			ignoreWorkspace: true,
 		}, (message: any) => {
 			if (!this._isMounted) {
@@ -291,7 +289,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 		if (canWrite) {
 			if (filter) {
-				const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+				const store = items.filter(it => (it.spaceId == J.Constant.storeSpaceId) && !librarySources.includes(it.id));
 
 				sections = sections.concat([
 					{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
@@ -339,7 +337,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			this.props.param.data.filter = this.refFilter.getValue();
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 	};
 
 	onMouseEnter (e: any, item: any) {
@@ -395,7 +393,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				menuParam.className = className.join(' ');
 
 				let filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: J.Constant.storeSpaceId },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
 				];

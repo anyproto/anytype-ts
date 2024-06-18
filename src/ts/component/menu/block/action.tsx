@@ -1,9 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { I, C, S, U, keyboard, focus, Action, translate, analytics, Dataview } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, focus, Action, translate, analytics, Dataview } from 'Lib';
 
 interface State {
 	filter: string;
@@ -111,12 +109,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		this._isMounted = false;
 
 		keyboard.setFocus(false);
-		S.Menu.closeAll(Constant.menuIds.action);
+		S.Menu.closeAll(J.Constant.menuIds.action);
 		S.Menu.clearTimeout();
 	};
 
 	onFilterFocus (e: any) {
-		S.Menu.closeAll(Constant.menuIds.action);
+		S.Menu.closeAll(J.Constant.menuIds.action);
 		this.props.setActive();
 	};
 	
@@ -344,7 +342,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		setActive(item, false);
 
 		if (!item.arrow) {
-			S.Menu.closeAll(Constant.menuIds.action);
+			S.Menu.closeAll(J.Constant.menuIds.action);
 			return;
 		};
 
@@ -539,7 +537,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 				if (isCollection) {
 					addParam.onClick = (details: any) => {
-						C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, S.Common.space, () => onCreate());
+						C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', J.Constant.typeKey.collection, S.Common.space, () => onCreate());
 					};
 
 					filters = filters.concat([
@@ -577,7 +575,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
-			S.Menu.closeAll(Constant.menuIds.action, () => {
+			S.Menu.closeAll(J.Constant.menuIds.action, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

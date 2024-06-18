@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
-import { I, S, U, keyboard, analytics, Storage } from 'Lib';
+import { I, S, U, J, keyboard, analytics, Storage } from 'Lib';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -80,7 +80,6 @@ interface State {
 	tab: string;
 };
 
-const Constant = require('json/constant.json');
 const ARROW_WIDTH = 17;
 const ARROW_HEIGHT = 8;
 
@@ -464,7 +463,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
-		const { border } = Constant.size.menu;
+		const { border } = J.Constant.size.menu;
 		const borderTop = this.getBorderTop();
 		const borderBottom = this.getBorderBottom();
 
@@ -702,7 +701,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	close (callBack?: () => void) {
 		S.Menu.close(this.props.id, () => {
-			window.setTimeout(() => this.rebindPrevious(), Constant.delay.menu);
+			window.setTimeout(() => this.rebindPrevious(), J.Constant.delay.menu);
 
 			if (callBack) {
 				callBack();
@@ -976,7 +975,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		const node = $(this.node);
 		const menu = node.find('.menu');
-		const { border } = Constant.size.menu;
+		const { border } = J.Constant.size.menu;
 		
 		menu.find('.item.hover').removeClass('hover');
 

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, S, U, Relation, translate, keyboard } from 'Lib';
+import { I, C, S, U, J, Relation, translate, keyboard } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell, SelectionTarget } from 'Component';
-
-const Constant = require('json/constant.json');
 
 interface Column {
 	relationKey: string;
@@ -186,7 +184,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	getKeys () {
-		return Constant.defaultRelationKeys.concat(this.props.columns.map(it => it.relationKey));
+		return J.Constant.defaultRelationKeys.concat(this.props.columns.map(it => it.relationKey));
 	};
 
 	getData (page: number, callBack?: (message: any) => void) {

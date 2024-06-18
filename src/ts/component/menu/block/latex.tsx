@@ -2,9 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, S, U, keyboard } from 'Lib';
+import { I, S, U, J, keyboard } from 'Lib';
 
-const Sections = require('json/latex.json');
 const katex = require('katex');
 
 require('katex/dist/contrib/mhchem');
@@ -244,7 +243,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { isTemplate } = data;
 		const filter = U.Common.regexEscape(S.Common.filter.text);
 
-		let sections = U.Menu.sectionsMap(Sections);
+		let sections = U.Menu.sectionsMap(J.Latex);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);
 
 		sections = sections.map((it: any) => {

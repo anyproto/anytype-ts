@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
-import { I, C, S, U, Storage } from 'Lib';
+import { I, C, S, U, J, Storage } from 'Lib';
 import Util from '../lib/util';
-
-const Url = require('json/url.json');
 
 interface State {
 	error: string;
@@ -122,7 +120,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	};
 
 	onDownload () {
-		window.open(Url.download);
+		window.open(J.Url.download);
 	};
 
 

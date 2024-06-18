@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Input, Button } from 'Component';
-import { I, C, S, U, translate, analytics } from 'Lib';
+import { I, C, S, U, J, translate, analytics } from 'Lib';
 import FooterAuthDisclaimer from '../../../footer/auth/disclaimer';
-
-const Constant = require('json/constant.json');
 
 interface State {
 	status: string;
@@ -82,7 +80,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 								className={name ? 'disabled' : ''}
 								placeholder={translate(`popupMembershipPaidPlaceholder`)}
 							/>
-							<div className="ns">{Constant.namespace[nameType]}</div>
+							<div className="ns">{J.Constant.namespace[nameType]}</div>
 						</div>
 
 						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
@@ -134,7 +132,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		this.setState({ statusText: '', status: '' });
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.validateName(), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => this.validateName(), J.Constant.delay.keyboard);
 	};
 
 	onSubmit (e: any) {

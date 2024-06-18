@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { Loader, Frame, Title, Error, Button } from 'Component';
-import { I, S, U, translate, analytics } from 'Lib';
+import { I, S, U, J, translate, analytics } from 'Lib';
 
 interface State {
 	error: string;
 };
-
-const Constant = require('json/constant.json');
 
 class PageMainMembership extends React.Component<I.PageComponent, State> {
 
@@ -59,7 +57,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 						} else {
 							S.Popup.open('membership', {
 								onClose: () => {
-									window.setTimeout(() => S.Popup.open('settings', { data: { page: 'membership' } }), Constant.delay.popup * 2);
+									window.setTimeout(() => S.Popup.open('settings', { data: { page: 'membership' } }), J.Constant.delay.popup * 2);
 								},
 								data: {
 									tier: membership.tier,

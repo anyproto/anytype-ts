@@ -1,6 +1,4 @@
-import { I, S, U, Storage, analytics, Renderer, translate } from 'Lib';
-
-const Surveys = require('json/survey.json');
+import { I, S, U, J, Storage, analytics, Renderer, translate } from 'Lib';
 
 class Survey {
 
@@ -34,7 +32,6 @@ class Survey {
 	onConfirm (type: I.SurveyType) {
 		const { account } = S.Auth;
 		const t = I.SurveyType[type].toLowerCase();
-		const survey = Surveys[t];
 		const param: any = {};
 
 		switch (type) {
@@ -48,7 +45,7 @@ class Survey {
 		};
 
 		Storage.setSurvey(type, param);
-		Renderer.send('urlOpen', U.Common.sprintf(survey.url, account.id));
+		Renderer.send('urlOpen', U.Common.sprintf(J.Survey[t].url, account.id));
 		analytics.event('SurveyOpen', { type });
 	};
 

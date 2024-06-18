@@ -1,7 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, S, U, Storage, Relation } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Storage, Relation } from 'Lib';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
@@ -75,7 +73,7 @@ class Analytics {
 		const platform = U.Common.getPlatform();
 
 		this.instance = amplitude.getInstance();
-		this.instance.init(Constant.amplitude, null, Object.assign({
+		this.instance.init(J.Constant.amplitude, null, Object.assign({
 			apiEndpoint: URL,
 			batchEvents: true,
 			saveEvents: true,
@@ -390,7 +388,7 @@ class Analytics {
 				const target = data.params.target;
 
 				if (target) {
-					data.type = Constant.widgetId[target.id] ? target.name : this.typeMapper(target.type);
+					data.type = J.Constant.widgetId[target.id] ? target.name : this.typeMapper(target.type);
 				};
 
 				data.layout = I.WidgetLayout[data.layout];

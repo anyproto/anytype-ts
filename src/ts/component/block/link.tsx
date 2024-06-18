@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
-import { I, S, U, translate, keyboard, focus, Preview } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, S, U, J, translate, keyboard, focus, Preview } from 'Lib';
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
 	
@@ -24,7 +22,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 	render() {
 		const { rootId, block } = this.props;
-		const object = S.Detail.get(rootId, block.content.targetBlockId, Constant.coverRelationKeys);
+		const object = S.Detail.get(rootId, block.content.targetBlockId, J.Constant.coverRelationKeys);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
 		const content = U.Data.checkLinkSettings(block.content, layout);
 		const readonly = this.props.readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);

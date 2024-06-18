@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, S, U, analytics, keyboard, Relation, Renderer, Preview, translate } from 'Lib';
+import { I, C, S, U, J, analytics, keyboard, Relation, Renderer, Preview, translate } from 'Lib';
 
 import CellText from './text';
 import CellSelect from './select';
@@ -17,8 +17,6 @@ interface Props extends I.Cell {
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	maxWidth?: number;
 };
-
-const Constant = require('json/constant.json');
 
 const Cell = observer(class Cell extends React.Component<Props> {
 
@@ -446,17 +444,17 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 				$(pageContainer).off('mousedown.cell').on('mousedown.cell', (e: any) => { 
 					if (!$(e.target).parents(`#${cellId}`).length) {
-						S.Menu.closeAll(Constant.menuIds.cell); 
+						S.Menu.closeAll(J.Constant.menuIds.cell); 
 					};
 				});
 
 				if (!config.debug.ui) {
-					win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(Constant.menuIds.cell));
+					win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(J.Constant.menuIds.cell));
 				};
 			} else 
 			if (closeIfOpen) {
 				setOff();
-				S.Menu.closeAll(Constant.menuIds.cell);
+				S.Menu.closeAll(J.Constant.menuIds.cell);
 				window.clearTimeout(this.timeout);
 			};
 		} else {

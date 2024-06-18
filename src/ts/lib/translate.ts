@@ -1,6 +1,4 @@
-import { S } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { S, J } from 'Lib';
 
 /**
  * 
@@ -12,8 +10,8 @@ export const translate = (key: string, force?: string): string => {
 	const lang = force || S.Common.interfaceLang;
 	const defaultData = require('json/text.json');
 
-	let data = defaultData;
-	if (lang != Constant.default.interfaceLang) {
+	let data = require('json/text.json');
+	if (lang != J.Constant.default.interfaceLang) {
 		try { 
 			data = require(`lib/json/lang/${lang}.json`);
 		} catch(e) {

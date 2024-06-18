@@ -1,7 +1,4 @@
-import { I, S, U, Relation } from 'Lib';
-
-const Colors = require('json/colors.json');
-const Theme = require('json/theme.json');
+import { I, S, U, J, Relation } from 'Lib';
 
 class UtilGraph {
 
@@ -77,7 +74,7 @@ class UtilGraph {
 	};
 
 	gradientIcon (iconOption: number, small?: boolean) {
-		const option: any = Colors.gradientIcons.options[iconOption - 1];
+		const option: any = J.Color.gradientIcons.options[iconOption - 1];
 		if (!option) {
 			return;
 		};
@@ -90,7 +87,7 @@ class UtilGraph {
 		const r = w / 2;
 		const fillW = small ? w * 0.7 : w;
 		const fillR = fillW / 2;
-		const steps = option.steps || Colors.gradientIcons.common.steps;
+		const steps = option.steps || J.Color.gradientIcons.common.steps;
 		const step0 = U.Common.getPercentage(fillR, steps.from * 100);
 		const step1 = U.Common.getPercentage(fillR, steps.to * 100);
 		const grd = ctx.createRadialGradient(r, r, step0, r, r, step1);
@@ -101,7 +98,7 @@ class UtilGraph {
 		grd.addColorStop(1, to);
 
 		if (small) {
-			ctx.fillStyle = Theme[theme].graph.iconBg;
+			ctx.fillStyle = J.Theme[theme].graph.iconBg;
 			ctx.fillRect(0, 0, w, w);
 		};
 

@@ -4,9 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import { I, C, S, U, focus, keyboard, scrollOnMove, Action, Preview } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview } from 'Lib';
 
 interface Props {
 	children?: React.ReactNode;
@@ -573,7 +571,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
 				isReversed = Boolean(obj.attr('data-reversed'));
 
-				col1 = x - Constant.size.blockMenu / 4;
+				col1 = x - J.Constant.size.blockMenu / 4;
 				col2 = x + width;
 			};
 

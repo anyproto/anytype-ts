@@ -3,9 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
-import { I, C, S, U, Mark, keyboard, focus, Action, Storage, translate, analytics, Relation } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Mark, keyboard, focus, Action, Storage, translate, analytics, Relation } from 'Lib';
 
 const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
@@ -243,7 +241,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		S.Menu.closeAll(Constant.menuIds.add);
+		S.Menu.closeAll(J.Constant.menuIds.add);
 	};
 
 	checkFilter () {
@@ -366,7 +364,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			S.Menu.closeAll(Constant.menuIds.add);
+			S.Menu.closeAll(J.Constant.menuIds.add);
 			return;
 		};
 
@@ -462,7 +460,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
-			S.Menu.closeAll(Constant.menuIds.add, () => {
+			S.Menu.closeAll(J.Constant.menuIds.add, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};
@@ -555,7 +553,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					if (param.content.style == I.TextStyle.Code) {
 						param.hAlign = I.BlockHAlign.Left;
 						param.fields = { 
-							lang: (Storage.get('codeLang') || Constant.default.codeLang),
+							lang: (Storage.get('codeLang') || J.Constant.default.codeLang),
 						};
 					};
 

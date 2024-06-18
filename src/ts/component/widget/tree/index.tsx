@@ -4,14 +4,13 @@ import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Label } from 'Component';
-import { I, C, S, U, analytics, Relation, Storage, translate } from 'Lib';
+import { I, C, S, U, J, analytics, Relation, Storage, translate } from 'Lib';
 import Item from './item';
 
 interface State {
 	loading: boolean;
 };
 
-const Constant = require('json/constant.json');
 const MAX_DEPTH = 15; // Maximum depth of the tree
 const LIMIT = 20; // Number of nodes to load at a time
 const HEIGHT = 28; // Height of each row
@@ -188,7 +187,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	getDeleted () {
-		const deleted = S.Record.getRecordIds(Constant.subId.deleted, '');
+		const deleted = S.Record.getRecordIds(J.Constant.subId.deleted, '');
 		const length = deleted.length;
 
 		this.deletedIds = new Set(deleted);
@@ -220,7 +219,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const { targetBlockId } = block.content;
 		const { widgets } = S.Block;
 		const object = S.Detail.get(widgets, targetBlockId, [ 'links' ]);
-		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
+		const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
 
 		this.branches = [];
 
@@ -229,11 +228,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			const subId = this.getSubId(targetBlockId);
 			
 			let records = S.Record.getRecordIds(subId, '');
-			if (targetBlockId == Constant.widgetId.favorite) {
+			if (targetBlockId == J.Constant.widgetId.favorite) {
 				records = sortFavorite(records);
 			};
 
-			children = records.map(id => this.mapper(S.Detail.get(subId, id, Constant.sidebarRelationKeys)));
+			children = records.map(id => this.mapper(S.Detail.get(subId, id, J.Constant.sidebarRelationKeys)));
 		} else {
 			children = this.getChildNodesDetails(object.id);
 			this.subscribeToChildNodes(object.id, Relation.getArrayValue(object.links));
@@ -329,7 +328,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		U.Data.subscribeIds({
 			subId,
 			ids: links,
-			keys: Constant.sidebarRelationKeys,
+			keys: J.Constant.sidebarRelationKeys,
 			noDeps: true,
 		});
 	};

@@ -1,7 +1,5 @@
-import { I, U, translate } from 'Lib';
+import { I, U, J, translate } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
-
-const Errors = require('json/error.json');
 
 class Notification implements I.Notification {
 
@@ -44,7 +42,7 @@ class Notification implements I.Notification {
 
 		switch (this.type) {
 			case I.NotificationType.Import: {
-				if ((importType == I.ImportType.Notion) && (errorCode == Errors.Code.NO_OBJECTS_TO_IMPORT)) {
+				if ((importType == I.ImportType.Notion) && (errorCode == J.Error.Code.NO_OBJECTS_TO_IMPORT)) {
 					this.title = translate('notificationNotionErrorNoObjectsTitle');
 					this.text = translate('notificationNotionErrorNoObjectsText');
 				};

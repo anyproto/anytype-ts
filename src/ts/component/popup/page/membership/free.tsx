@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label, Input, Button, Checkbox, Pin } from 'Component';
-import { I, C, S, U, translate, analytics } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, translate, analytics } from 'Lib';
 
 interface State {
 	verificationStep: number;
@@ -199,7 +197,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 			};
 
 			this.refButton?.setDisabled(!isValid);
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 	};
 
 	checkCountdown () {

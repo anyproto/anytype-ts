@@ -1,9 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, analytics,keyboard, translate, Action, Preview } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, analytics,keyboard, translate, Action, Preview } from 'Lib';
 
 class MenuTemplateContext extends React.Component<I.Menu> {
 
@@ -50,7 +48,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { template, isView, onSetDefault, templateId } = data;
-		const isBlank = template.id == Constant.templateId.blank;
+		const isBlank = template.id == J.Constant.templateId.blank;
 		const isDefault = template.id == templateId;
 		const defaultName = isView ? translate('menuDataviewTemplateSetDefaultForView') : translate('commonSetDefault');
 
@@ -90,7 +88,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 			};
 
 			case 'duplicate': {
-				if (template.id == Constant.templateId.blank) {
+				if (template.id == J.Constant.templateId.blank) {
 					const type = S.Record.getTypeById(template.targetObjectType);
 					if (!type) {
 						break;
@@ -101,7 +99,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 						layout: type.recommendedLayout,
 					};
 
-					C.ObjectCreate(details, [], '', Constant.typeKey.template, S.Common.space, (message) => {
+					C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
 						if (message.error.code) {
 							return;
 						};

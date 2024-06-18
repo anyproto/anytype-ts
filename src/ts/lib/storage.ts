@@ -1,6 +1,4 @@
-import { I, S, U } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, S, U, J } from 'Lib';
 
 const SPACE_KEYS = [
 	'toggle',
@@ -270,9 +268,9 @@ class Storage {
 		};
 
 		const keys = [
-			Constant.typeKey.note,
-			Constant.typeKey.page,
-			Constant.typeKey.task,
+			J.Constant.typeKey.note,
+			J.Constant.typeKey.page,
+			J.Constant.typeKey.task,
 		];
 
 		for (const key of keys) {

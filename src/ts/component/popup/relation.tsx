@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Cell, Error, Icon, EmptySearch, Checkbox } from 'Component';
-import { I, M, C, S, U, Relation, translate, Dataview } from 'Lib';
+import { I, M, C, S, U, J, Relation, translate, Dataview } from 'Lib';
 
-const Constant = require('json/constant.json');
 const ID_PREFIX = 'popupRelation';
 const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;
 const SUB_ID_DEPS = `${ID_PREFIX}-deps`;
@@ -132,7 +131,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	componentWillUnmount(): void {
-		S.Menu.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(J.Constant.menuIds.cell);
 		C.ObjectSearchUnsubscribe([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
 	};
 
@@ -145,7 +144,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
 			],
-			keys: Constant.defaultRelationKeys.concat(relationKeys),
+			keys: J.Constant.defaultRelationKeys.concat(relationKeys),
 			noDeps: true,
 		}, callBack);
 	};
@@ -206,7 +205,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	getRelationKeys (): string[] {
-		return U.Common.arrayUnique([].concat(this.props.param.data.relationKeys || Constant.defaultRelationKeys));
+		return U.Common.arrayUnique([].concat(this.props.param.data.relationKeys || J.Constant.defaultRelationKeys));
 	};
 
 	getRelations (): any[] {
@@ -253,7 +252,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 		S.Menu.open('relationSuggest', { 
 			element,
-			offsetX: Constant.size.blockMenu,
+			offsetX: J.Constant.size.blockMenu,
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
 			onOpen: () => $(element).addClass('active'),

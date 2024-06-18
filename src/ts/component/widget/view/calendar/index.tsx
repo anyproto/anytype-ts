@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, S, U } from 'Lib';
+import { I, S, U, J } from 'Lib';
 
 interface State {
 	value: number;
 };
-
-const Constant = require('json/constant.json');
 
 const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Component<I.WidgetViewComponent, State> {
 
@@ -155,7 +153,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 				onClose: () => $(element).removeClass('active'),
 				data: {
 					rootId,
-					blockId: Constant.blockId.dataview,
+					blockId: J.Constant.blockId.dataview,
 					relationKey: view.groupRelationKey,
 					d,
 					m, 

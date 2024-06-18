@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { S, U } from 'Lib';
+import { S, U, J } from 'Lib';
 import { observer } from 'mobx-react';
-
-const Constant = require('json/constant.json');
 
 interface Props {
 	id?: string;
@@ -20,8 +18,7 @@ interface Props {
 	onUpload?(objectId: string): void;
 }
 
-const IconSrc = {
-};
+const IconSrc = {};
 
 const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 	
@@ -60,7 +57,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 			};
 		} else 
 		if (objectId) {
-			element = <img src={S.Common.imageUrl(objectId, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={e => e.preventDefault()} />;
+			element = <img src={S.Common.imageUrl(objectId, J.Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={e => e.preventDefault()} />;
 		} else 
 		if (iconClass) {
 			element = <img src={IconSrc[iconClass]} className={[ 'iconCommon', iconClass, 'c' + size ].join(' ')} />;

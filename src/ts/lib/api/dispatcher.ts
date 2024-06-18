@@ -5,10 +5,9 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { I, M, S, U, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Storage, keyboard } from 'Lib';
+import { I, M, S, U, J, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Storage, keyboard } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
-const Constant = require('json/constant.json');
 
 const SORT_IDS = [ 
 	'BlockAdd', 
@@ -1089,8 +1088,8 @@ class Dispatcher {
 
 		// BlockType
 		blocks.push(new M.Block({
-			id: Constant.blockId.type,
-			parentId: Constant.blockId.header,
+			id: J.Constant.blockId.type,
+			parentId: J.Constant.blockId.header,
 			type: I.BlockType.Type,
 			fields: {},
 			childrenIds: [],

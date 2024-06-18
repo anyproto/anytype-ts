@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Pin } from 'Component';
-import { I, C, S, U, translate, analytics, Action } from 'Lib';
+import { I, C, S, U, J, translate, analytics, Action } from 'Lib';
 
 interface Props extends I.Popup {
 	onChangeEmail: () => void;
@@ -14,8 +14,6 @@ interface State {
 	status: string;
 	statusText: string;
 };
-
-const Constant = require('json/constant.json');
 
 const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent extends React.Component<Props, State> {
 
@@ -249,7 +247,7 @@ const PopupMembershipPageCurrent = observer(class PopupMembershipPageCurrent ext
 			};
 
 			this.refButton?.setDisabled(!isValid);
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 	};
 
 	checkCountdown () {

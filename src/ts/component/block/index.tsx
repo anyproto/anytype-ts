@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, keyboard, focus, Storage } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, Storage } from 'Lib';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject} from 'Component';
 
 import BlockDataview from './dataview';
@@ -25,8 +25,6 @@ import BlockAudio from './media/audio';
 import BlockPdf from './media/pdf'; 
 
 import BlockEmbed from './embed';
-
-const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
 	css?: any;
@@ -521,7 +519,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		const menuParam: Partial<I.MenuParam> = Object.assign({
 			noFlipX: true,
-			subIds: Constant.menuIds.action,
+			subIds: J.Constant.menuIds.action,
 			onClose: () => {
 				selection?.clear();
 				focus.apply();
@@ -553,7 +551,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const win = $(window);
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
-		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + Constant.size.blockMenu ;
+		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + J.Constant.size.blockMenu ;
 		const add = $('#button-block-add');
 		
 		selection?.clear();
@@ -661,7 +659,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const width = getWrapperWidth();
 		const dw = 1 / childrenIds.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
-		const offset = Constant.size.blockMenu * 2;
+		const offset = J.Constant.size.blockMenu * 2;
 		
 		x = Math.max(offset, x);
 		x = Math.min(sum * width - offset, x);
@@ -684,7 +682,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		const sm = Constant.size.blockMenu;
+		const sm = J.Constant.size.blockMenu;
 		const node = $(this.node);
 		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable } from 'Component';
-import { I, M, S, U, Action, focus, keyboard, Relation, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, M, S, U, J, Action, focus, keyboard, Relation, translate } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -198,7 +196,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	onKeyUp () {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.save(), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => this.save(), J.Constant.delay.keyboard);
 	};
 
 	onSelectText (e: any, item: any) {

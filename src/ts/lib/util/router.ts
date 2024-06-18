@@ -1,7 +1,5 @@
 import $ from 'jquery';
-import { C, S, U, Preview, analytics, Storage } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { C, S, U, J, Preview, analytics, Storage } from 'Lib';
 
 type RouteParam = { 
 	replace: boolean;
@@ -46,8 +44,8 @@ class UtilRouter {
 
 	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; viewId: string; }>): string {
 		const { page, action, spaceId } = param;
-		const id = String(param.id || Constant.blankRouteId);
-		const viewId = String(param.viewId || Constant.blankRouteId);
+		const id = String(param.id || J.Constant.blankRouteId);
+		const viewId = String(param.viewId || J.Constant.blankRouteId);
 
 		let route = [ page, action, id ];
 		route = route.concat([ 'spaceId', spaceId ]);
@@ -73,7 +71,7 @@ class UtilRouter {
 		S.Menu.closeAll();
 		S.Popup.closeAll();
 
-		if (routeParam.spaceId && ![ Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
+		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route);
 			return;
 		};
@@ -112,7 +110,7 @@ class UtilRouter {
 				};
 
 				fade.removeClass('show');
-			}, Constant.delay.route);
+			}, J.Constant.delay.route);
 
 			window.setTimeout(() => {
 				if (onFadeIn) {
@@ -120,7 +118,7 @@ class UtilRouter {
 				};
 
 				fade.hide();
-			}, Constant.delay.route * 2);
+			}, J.Constant.delay.route * 2);
 		};
 
 		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, S, Dataview } from 'Lib';
+import { I, S, J, Dataview } from 'Lib';
 import Group from './group';
-
-const Constant = require('json/constant.json');
 
 const WidgetViewBoard = observer(class WidgetViewBoard extends React.Component<I.WidgetViewComponent> {
 
@@ -38,7 +36,7 @@ const WidgetViewBoard = observer(class WidgetViewBoard extends React.Component<I
 	load () {
 		const { rootId, getView, getObject } = this.props;
 		const view = getView();
-		const blockId = Constant.blockId.dataview;
+		const blockId = J.Constant.blockId.dataview;
 		const object = getObject();
 
 		if (!view) {
@@ -63,7 +61,7 @@ const WidgetViewBoard = observer(class WidgetViewBoard extends React.Component<I
 			return [];
 		};
 
-		return Dataview.getGroups(rootId, Constant.blockId.dataview, view.id, withHidden);
+		return Dataview.getGroups(rootId, J.Constant.blockId.dataview, view.id, withHidden);
 	};
 
 });

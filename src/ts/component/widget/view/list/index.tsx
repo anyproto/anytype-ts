@@ -2,12 +2,10 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
-import { I, S, keyboard, Action } from 'Lib';
+import { I, S, J, keyboard, Action } from 'Lib';
 import { SortableContainer } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import WidgetListItem from './item';
-
-const Constant = require('json/constant.json');
 
 const LIMIT = 30;
 const HEIGHT_COMPACT = 28;
@@ -177,7 +175,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 
 		keyboard.disableSelection(false);
 
-		if ((oldIndex == newIndex) || (targetBlockId != Constant.widgetId.favorite)) {
+		if ((oldIndex == newIndex) || (targetBlockId != J.Constant.widgetId.favorite)) {
 			return;
 		};
 
@@ -200,9 +198,9 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 	getItems () {
 		const { block, addGroupLabels, isPreview, getRecordIds, subId } = this.props;
 		const { targetBlockId } = block.content;
-		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
+		const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
 
-		let items = getRecordIds().map(id => S.Detail.get(subId, id, Constant.sidebarRelationKeys));
+		let items = getRecordIds().map(id => S.Detail.get(subId, id, J.Constant.sidebarRelationKeys));
 
 		if (isPreview && isRecent) {
 			// add group labels

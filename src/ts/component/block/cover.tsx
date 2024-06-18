@@ -2,11 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Drag, Cover, Loader, Label } from 'Component';
-import { I, C, S, U, focus, translate, keyboard } from 'Lib';
+import { I, C, S, U, J, focus, translate, keyboard } from 'Lib';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
-
-const Constant = require('json/constant.json');
-const Url = require('json/url.json');
 
 interface State {
 	isEditing: boolean;
@@ -61,7 +58,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	render () {
 		const { isEditing } = this.state;
 		const { rootId, readonly } = this.props;
-		const object = S.Detail.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
+		const object = S.Detail.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(J.Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
 		const isImage = U.Data.coverIsImage(coverType);
 		const root = S.Block.getLeaf(rootId, rootId);
@@ -79,7 +76,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		if (coverType == I.CoverType.Source) {
 			image = S.Detail.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
 			author = (
-				<Label className="author" text={U.Common.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>`)} />
+				<Label className="author" text={U.Common.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + J.Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${J.Url.unsplash.site + J.Url.unsplash.utm}>Unsplash</a>`)} />
 			);
 		};
 
@@ -215,7 +212,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			onClose: () => {
 				elements.removeClass('hover');
 			},
-			subIds: Constant.menuIds.layout,
+			subIds: J.Constant.menuIds.layout,
 			data: {
 				rootId: rootId,
 				value: object.layout,
@@ -252,7 +249,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	
 	onEdit (e: any) {
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
 
 		this.coords.x = object.coverX;
 		this.coords.y = object.coverY;
@@ -294,7 +291,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		e.stopPropagation();
 		
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
 
 		U.Object.setCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
 			this.setState({ isEditing: false });
@@ -314,7 +311,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 		
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
 		const { coverId, coverType } = object;
 		const node = $(this.node);
 		const isImage = U.Data.coverIsImage(coverType);
@@ -357,7 +354,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType)) {
-			el.src = S.Common.imageUrl(coverId, Constant.size.cover);
+			el.src = S.Common.imageUrl(coverId, J.Constant.size.cover);
 		};
 	};
 	

@@ -2,11 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
-import { I, S, U, Relation, Dataview } from 'Lib';
+import { I, S, U, J, Relation, Dataview } from 'Lib';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
-
-const Constant = require('json/constant.json');
 
 const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewComponent> {
 
@@ -22,7 +20,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	constructor (props: I.ViewComponent) {
 		super(props);
 
-		const { height } = Constant.size.dataview.gallery;
+		const { height } = J.Constant.size.dataview.gallery;
 
 		this.cache = new CellMeasurerCache({
 			defaultHeight: height,
@@ -198,7 +196,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return;
 		};
 
-		const { margin } = Constant.size.dataview.gallery;
+		const { margin } = J.Constant.size.dataview.gallery;
 
 		let size = 0;
 		switch (view.cardSize) {
@@ -275,7 +273,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	getCardHeight (): number {
 		const { getVisibleRelations } = this.props;
 		const relations = getVisibleRelations();
-		const size = Constant.size.dataview.gallery;
+		const size = J.Constant.size.dataview.gallery;
 
 		let height = size.padding * 2 + size.margin - 4;
 

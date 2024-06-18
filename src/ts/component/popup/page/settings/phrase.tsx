@@ -2,9 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
 import { Title, Label, Phrase } from 'Component';
-import { I, C, S, U, translate, analytics, Storage, Renderer } from 'Lib';
-
-const Theme = require('json/theme.json');
+import { I, C, S, U, J, translate, analytics, Storage, Renderer } from 'Lib';
 
 interface State {
 	entropy: string;
@@ -54,7 +52,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 				<div className="qrWrap" onClick={this.onCode}>
 					<div className={!showCode ? 'isBlurred' : ''}>
-						<QRCode value={showCode ? entropy : translate('popupSettingsCodeStub')} fgColor={Theme[theme].qr.foreground} bgColor={Theme[theme].qr.bg} size={116} />
+						<QRCode value={showCode ? entropy : translate('popupSettingsCodeStub')} fgColor={J.Theme[theme].qr.foreground} bgColor={J.Theme[theme].qr.bg} size={116} />
 					</div>
 				</div>
 			</div>

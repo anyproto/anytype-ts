@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, keyboard } from 'Lib';
+import { I, C, S, U, J, keyboard } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
-
-const Constant = require('json/constant.json');
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
 
@@ -55,7 +53,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 						id="global"
 						rootId={rootId} 
 						data={this.data}
-						storageKey={Constant.graphId.global}
+						storageKey={J.Constant.graphId.global}
 					/>
 				</div>
 
@@ -107,7 +105,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	load () {
 		this.setLoading(true);
 
-		C.ObjectGraph(S.Common.space, U.Data.graphFilters(), 0, [], Constant.graphRelationKeys, '', [], (message: any) => {
+		C.ObjectGraph(S.Common.space, U.Data.graphFilters(), 0, [], J.Constant.graphRelationKeys, '', [], (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -142,7 +140,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
 
-			U.Data.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
+			U.Data.onSubscribe(J.Constant.subId.graph, 'id', J.Constant.graphRelationKeys, {
 				error: {},
 				records: message.nodes,
 				dependencies: [],

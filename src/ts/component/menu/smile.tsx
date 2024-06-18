@@ -3,9 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader } from 'Component';
-import { I, C, S, U, keyboard, translate, analytics, Preview, Action } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, translate, analytics, Preview, Action } from 'Lib';
 
 enum Tab {
 	None	 = 0,
@@ -473,7 +471,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 			sections.push({
 				...it,
 				children: it.emojis.map(id => {
-					const item = U.Smile.data.emojis[id] || {};
+					const item = J.Emoji.emojis[id] || {};
 					return { 
 						id, 
 						skin: this.skin, 
@@ -694,7 +692,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 
 			switch (tab) {
 				case Tab.Smile: {
-					const item = U.Smile.data.emojis[this.active.itemId];
+					const item = J.Emoji.emojis[this.active.itemId];
 					if (item.skins && (item.skins.length > 1)) {
 						this.onSkin(e, this.active);
 					} else {
@@ -895,7 +893,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onSkin (e: any, item: any) {
-		const el = U.Smile.data.emojis[item.itemId];
+		const el = J.Emoji.emojis[item.itemId];
 		if (el.skins.length <= 1) {
 			return;
 		};
@@ -1057,7 +1055,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onUpload () {
-		Action.openFile(Constant.fileExtension.cover, paths => {
+		Action.openFile(J.Constant.fileExtension.cover, paths => {
 			if (!paths.length) {
 				return;
 			};

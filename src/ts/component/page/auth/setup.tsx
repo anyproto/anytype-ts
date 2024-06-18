@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Footer, Icon, Loader } from 'Component';
-import { I, S, C, U, Storage, translate, Action, Animation, analytics, Renderer } from 'Lib';
-
-const Errors = require('json/error.json');
+import { I, S, C, U, J, Storage, translate, Action, Animation, analytics, Renderer } from 'Lib';
 
 interface State {
 	index: number;
@@ -40,7 +38,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		let buttonClick = this.onCancel;
 
 		if (error.code) {
-			if (error.code == Errors.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
+			if (error.code == J.Error.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
 				title = translate('pageAuthSetupImportTitle');
 				label = translate('pageAuthSetupImportText');
 				buttonText = translate('pageAuthSetupImportBackup');

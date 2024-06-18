@@ -3,9 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { ObjectName, IconObject, DropTarget, ObjectCover } from 'Component';
-import { I, S, U, keyboard, analytics, Dataview } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, S, U, J, keyboard, analytics, Dataview } from 'Lib';
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;
@@ -29,7 +27,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 	render () {
 		const { subId, id, block, isEditing, hideIcon } = this.props;
 		const rootId = keyboard.getRootId();
-		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions } = object;
 		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;

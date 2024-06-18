@@ -5,9 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { S, U, C } from 'Lib'; 
-
-const Extension = require('json/extension.json');
+import { S, U, C, J } from 'Lib'; 
 
 import Index from './popup/index';
 import Challenge from './popup/challenge';
@@ -77,7 +75,7 @@ class Popup extends React.Component {
 
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-			if (!Extension.clipper.ids.includes(sender.id)) {
+			if (!J.Extension.clipper.ids.includes(sender.id)) {
 				return false;
 			};
 

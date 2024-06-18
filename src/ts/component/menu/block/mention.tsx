@@ -2,10 +2,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
-import { I, S, U, keyboard, Mark, translate } from 'Lib';
+import { I, S, U, J, keyboard, Mark, translate } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-
-const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -231,7 +229,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
@@ -258,7 +256,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};

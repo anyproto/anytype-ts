@@ -6,10 +6,7 @@ import Prism from 'prismjs';
 import { instance as viz } from '@viz-js/viz';
 import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
-import { I, C, S, U, keyboard, focus, Renderer, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
-const Theme = require('json/theme.json');
+import { I, C, S, U, J, keyboard, focus, Renderer, translate } from 'Lib';
 
 const katex = require('katex');
 const pako = require('pako');
@@ -500,11 +497,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			offsetY: 4,
 			offsetX: () => {
 				const rect = recalcRect();
-				return rect ? 0 : Constant.size.blockMenu;
+				return rect ? 0 : J.Constant.size.blockMenu;
 			},
 			commonFilter: true,
 			className: (isTemplate ? 'isTemplate' : ''),
-			subIds: Constant.menuIds.latex,
+			subIds: J.Constant.menuIds.latex,
 			onClose: () => {
 				S.Common.filterSet(0, '');
 			},
@@ -741,7 +738,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				const theme = (Theme[S.Common.getThemeClass()] || {}).mermaid;
+				const theme = (J.Theme[S.Common.getThemeClass()] || {}).mermaid;
 
 				if (theme) {
 					for (const k in theme) {

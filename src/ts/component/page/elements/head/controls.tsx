@@ -2,10 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, C, S, U, focus, keyboard } from 'Lib';
+import { I, C, S, U, J, focus, keyboard } from 'Lib';
 import ControlButtons from './controlButtons';
-
-const Constant = require('json/constant.json');
 
 interface Props extends I.PageComponent {
 	readonly?: boolean;
@@ -45,7 +43,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	render (): any {
 		const { rootId, readonly } = this.props;
 		const { loading } = this.state;
-		const object = S.Detail.get(rootId, rootId, Constant.coverRelationKeys);
+		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys);
 		const cn = [ 'editorControls', 'editorControlElements' ];
 		
 		if ((object.coverType != I.CoverType.None) && object.coverId) {
@@ -152,7 +150,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			onClose: () => {
 				node.removeClass('hover');
 			},
-			subIds: Constant.menuIds.layout,
+			subIds: J.Constant.menuIds.layout,
 			data: {
 				rootId,
 				value: object.layout,

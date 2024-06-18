@@ -3,9 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
-import { I, S, U, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, S, U, J, translate } from 'Lib';
 
 interface Props {
     subId: string;
@@ -289,14 +287,14 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
     onFilterChange () {
         window.clearTimeout(this.timeout);
-        this.timeout = window.setTimeout(() => this.load(), Constant.delay.keyboard);
+        this.timeout = window.setTimeout(() => this.load(), J.Constant.delay.keyboard);
     };
 
     onFilterClear () {
         const node = $(ReactDOM.findDOMNode(this));
         const wrapper = node.find('#filterWrapper');
 
-        S.Menu.closeAll(Constant.menuIds.store);
+        S.Menu.closeAll(J.Constant.menuIds.store);
         wrapper.removeClass('active');
     };
 

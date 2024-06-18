@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Button } from 'Component';
-import { I, C, S, U, keyboard, translate, Action, analytics } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, translate, Action, analytics } from 'Lib';
 
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
@@ -72,7 +70,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 							className="c28"
 							text={translate('menuWidgetAddWidget')}
 							onClick={this.save} 
-							onMouseEnter={() => S.Menu.closeAll(Constant.menuIds.widget)} 
+							onMouseEnter={() => S.Menu.closeAll(J.Constant.menuIds.widget)} 
 						/>
 					</div>
 				) : ''}
@@ -101,7 +99,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this._isMounted = false;
 		this.unbind();
 
-		S.Menu.closeAll(Constant.menuIds.widget);
+		S.Menu.closeAll(J.Constant.menuIds.widget);
 		$(window).trigger(`updateWidgetData.${blockId}`);
 	};
 
@@ -174,7 +172,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		if (this.isCollection()) {
 			if ([ null, I.WidgetLayout.Link ].includes(this.layout)) {
-				this.layout = this.target.id == Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
+				this.layout = this.target.id == J.Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
 			};
 		} else 
 		if (this.target) {
@@ -232,7 +230,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				};
 			};
 
-			if ([ Constant.widgetId.set, Constant.widgetId.collection ].includes(this.target.id)) {
+			if ([ J.Constant.widgetId.set, J.Constant.widgetId.collection ].includes(this.target.id)) {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
 			};
 		};
@@ -247,7 +245,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	isCollection () {
-		return this.target && Object.values(Constant.widgetId).includes(this.target.id);
+		return this.target && Object.values(J.Constant.widgetId).includes(this.target.id);
 	};
 
     onMouseEnter (e: React.MouseEvent, item): void {
@@ -259,7 +257,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 	onOver (e: React.MouseEvent, item) {
 		if (!item.arrow) {
-			S.Menu.closeAll(Constant.menuIds.widget);
+			S.Menu.closeAll(J.Constant.menuIds.widget);
 			return;
 		};
 
@@ -296,11 +294,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					value: this.target ? this.target.id : '',
 					dataChange: (items: any[]) => {
 						const fixed: any[] = [
-							{ id: Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
-							{ id: Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: ':mag:' },
-							{ id: Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: ':card_index_dividers:' },
-							{ id: Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: ':memo:' },
-							{ id: Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: ':date:', caption: translate('menuWidgetRecentOpenCaption') },
+							{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
+							{ id: J.Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: ':mag:' },
+							{ id: J.Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: ':card_index_dividers:' },
+							{ id: J.Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: ':memo:' },
+							{ id: J.Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: ':date:', caption: translate('menuWidgetRecentOpenCaption') },
 						];
 						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 					},
@@ -376,7 +374,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
-			S.Menu.closeAll(Constant.menuIds.widget, () => {
+			S.Menu.closeAll(J.Constant.menuIds.widget, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

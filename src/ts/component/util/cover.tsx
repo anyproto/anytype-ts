@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { I, S } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, S, J } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -38,7 +36,7 @@ class Cover extends React.Component<Props> {
 		};
 
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(type) && image) {
-			style.backgroundImage = `url("${S.Common.imageUrl(image, Constant.size.cover)}")`;
+			style.backgroundImage = `url("${S.Common.imageUrl(image, J.Constant.size.cover)}")`;
 		};
 
 		if (src) {

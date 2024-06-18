@@ -1,7 +1,4 @@
-import { I, S, U, Storage, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
-const Url = require('json/url.json');
+import { I, S, U, J, Storage, translate } from 'Lib';
 
 class UtilSpace {
 
@@ -48,7 +45,7 @@ class UtilSpace {
 		if (id == I.HomePredefinedId.Last) {
 			ret = this.getLastOpened();
 		} else {
-			ret = S.Detail.get(Constant.subId.space, id);
+			ret = S.Detail.get(J.Constant.subId.space, id);
 		};
 
 		if (!ret || ret._empty_ || ret.isDeleted) {
@@ -74,7 +71,7 @@ class UtilSpace {
 	};
 
 	getList () {
-		const subId = Constant.subId.space;
+		const subId = J.Constant.subId.space;
 		const { spaceview } = S.Block;
 
 		let items = S.Record.getRecords(subId, U.Data.spaceRelationKeys());
@@ -91,15 +88,15 @@ class UtilSpace {
 	};
 
 	getSpaceview (id?: string) {
-		return S.Detail.get(Constant.subId.space, id || S.Block.spaceview);
+		return S.Detail.get(J.Constant.subId.space, id || S.Block.spaceview);
 	};
 
 	getSpaceviewBySpaceId (id: string) {
-		return S.Record.getRecords(Constant.subId.space).find(it => it.targetSpaceId == id);
+		return S.Record.getRecords(J.Constant.subId.space).find(it => it.targetSpaceId == id);
 	};
 
 	getParticipantsList (statuses?: I.ParticipantStatus[]) {
-		const ret = S.Record.getRecords(Constant.subId.participant);
+		const ret = S.Record.getRecords(J.Constant.subId.participant);
 		return statuses ? ret.filter(it => statuses.includes(it.status)) : ret;
 	};
 
@@ -114,7 +111,7 @@ class UtilSpace {
 	};
 
 	getProfile () {
-		return S.Detail.get(Constant.subId.profile, S.Block.profile);
+		return S.Detail.get(J.Constant.subId.profile, S.Block.profile);
 	};
 
 	getParticipant (id?: string) {
@@ -125,7 +122,7 @@ class UtilSpace {
 			return null;
 		};
 
-		const object = S.Detail.get(Constant.subId.participant, id || this.getParticipantId(space, account.id));
+		const object = S.Detail.get(J.Constant.subId.participant, id || this.getParticipantId(space, account.id));
 		return object._empty_ ? null : object;
 	};
 
@@ -137,7 +134,7 @@ class UtilSpace {
 			return null;
 		};
 
-		const object = S.Detail.get(Constant.subId.myParticipant, this.getParticipantId(spaceId || space, account.id));
+		const object = S.Detail.get(J.Constant.subId.myParticipant, this.getParticipantId(spaceId || space, account.id));
 		return object._empty_ ? null : object;
 	};
 
@@ -176,7 +173,7 @@ class UtilSpace {
 	};
 
 	getInviteLink (cid: string, key: string) {
-		return U.Data.isAnytypeNetwork() ? U.Common.sprintf(Url.invite, cid, key) : `${Constant.protocol}://invite/?cid=${cid}&key=${key}`;
+		return U.Data.isAnytypeNetwork() ? U.Common.sprintf(J.Url.invite, cid, key) : `${J.Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
 };

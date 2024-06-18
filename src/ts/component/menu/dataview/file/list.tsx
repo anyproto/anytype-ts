@@ -3,9 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Loader, EmptySearch } from 'Component';
-import { I, S, U, Relation, keyboard, translate, Action, C } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, S, U, J, Relation, keyboard, translate, Action, C } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -246,7 +244,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
@@ -273,14 +271,14 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => this.props.param.data.filter = v, Constant.delay.keyboard);
+		this.timeoutFilter = window.setTimeout(() => this.props.param.data.filter = v, J.Constant.delay.keyboard);
 	};
 
 	onOver (e: any, item: any) {

@@ -3,9 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Header, Footer, Icon, ListObjectManager } from 'Component';
-import { I, U, translate, Action } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, U, J, translate, Action } from 'Lib';
 
 const PageMainArchive = observer(class PageMainArchive extends React.Component<I.PageComponent> {
 
@@ -51,7 +49,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 
 					<ListObjectManager
 						ref={ref => this.refManager = ref}
-						subId={Constant.subId.archive}
+						subId={J.Constant.subId.archive}
 						filters={filters}
 						sorts={sorts}
 						rowLength={this.getRowLength()}

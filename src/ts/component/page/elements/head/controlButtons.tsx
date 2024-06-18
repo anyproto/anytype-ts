@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, translate, analytics, focus } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, S, U, J, translate, analytics, focus } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -126,7 +124,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		e.stopPropagation();
 
 		const { rootId, onCoverOpen, onCoverClose, onEdit } = this.props;
-		const object = S.Detail.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
 		const element = $(e.currentTarget);
 		const hasCover = object.coverType != I.CoverType.None;
 		

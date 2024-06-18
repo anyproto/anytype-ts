@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader } from 'Component';
-import { C, I, S, U, translate } from 'Lib';
+import { I, C, S, U, J, translate } from 'Lib';
 
 interface State {
 	status: string,
 	statusText: string,
 	isLoading: boolean,
 };
-
-const Constant = require('json/constant.json');
 
 const PopupMembershipFinalization = observer(class PopupMembershipFinalization extends React.Component<I.Popup, State> {
 
@@ -68,7 +66,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 						className={name ? 'disabled' : ''}
 						placeholder={translate(`popupMembershipPaidPlaceholder`)}
 					/>
-					<div className="ns">{Constant.namespace[nameType]}</div>
+					<div className="ns">{J.Constant.namespace[nameType]}</div>
 				</div>
 
 				<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
@@ -126,7 +124,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 					};
 				});
 			});
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 	};
 
 	onConfirm () {

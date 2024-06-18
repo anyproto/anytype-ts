@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Button } from 'Component';
-import { I, S, translate, Renderer, analytics } from 'Lib';
+import { I, S, J, translate, Renderer, analytics } from 'Lib';
 import QRCode from 'qrcode.react';
-const Theme = require('json/theme.json');
 
 class PopupInviteQr extends React.Component<I.Popup> {
 
@@ -26,7 +25,7 @@ class PopupInviteQr extends React.Component<I.Popup> {
 				<Title text={translate('popupInviteQrTitle')} />
 
 				<div className="qrWrap">
-					<QRCode value={link} fgColor={Theme[theme].qr.foreground} bgColor={Theme[theme].qr.bg} size={120} />
+					<QRCode value={link} fgColor={J.Theme[theme].qr.foreground} bgColor={J.Theme[theme].qr.bg} size={120} />
 				</div>
 
 				<div className="buttons">

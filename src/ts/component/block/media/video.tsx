@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Loader, Error, MediaVideo } from 'Component';
-import { I, C, S, translate, focus, Action, keyboard } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, J, translate, focus, Action, keyboard } from 'Lib';
 
 const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComponent> {
 
@@ -53,7 +51,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 							block={block} 
 							icon="video" 
 							textFile={translate('blockVideoUpload')} 
-							accept={Constant.fileExtension.video} 
+							accept={J.Constant.fileExtension.video} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 

@@ -3,11 +3,10 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, S, U, Dataview, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, Dataview, keyboard, translate } from 'Lib';
 import Empty from '../empty';
 import Column from './board/column';
 
-const Constant = require('json/constant.json');
 const PADDING = 46;
 
 const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewComponent> {
@@ -493,7 +492,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const view = node.find('.viewContent');
 		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();
-		const size = Constant.size.dataview.board;
+		const size = J.Constant.size.dataview.board;
 		const groups = this.getGroups(false);
 		const width = groups.length * (size.card + size.margin) - size.margin;
 

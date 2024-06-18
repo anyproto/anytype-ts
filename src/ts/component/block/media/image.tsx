@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Icon, Error } from 'Component';
-import { I, C, S, translate, focus, Action, keyboard } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, J, translate, focus, Action, keyboard } from 'Lib';
 
 const BlockImage = observer(class BlockImage extends React.Component<I.BlockComponent> {
 
@@ -49,7 +47,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 							block={block} 
 							icon="image" 
 							textFile={translate('blockImageUpload')} 
-							accept={Constant.fileExtension.image} 
+							accept={J.Constant.fileExtension.image} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 
@@ -67,7 +65,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 					<div id="wrap" className="wrap" style={css}>
 						<img 
 							className="mediaImage" 
-							src={S.Common.imageUrl(targetObjectId, Constant.size.image)} 
+							src={S.Common.imageUrl(targetObjectId, J.Constant.size.image)} 
 							onDragStart={e => e.preventDefault()} 
 							onClick={this.onClick} 
 							onLoad={this.onLoad} 
@@ -221,7 +219,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	
 	onClick (e: any) {
 		if (!keyboard.withCommand(e)) {
-			const src = S.Common.imageUrl(this.props.block.content.targetObjectId, Constant.size.image);
+			const src = S.Common.imageUrl(this.props.block.content.targetObjectId, J.Constant.size.image);
 
 			S.Popup.open('preview', { data: { src, type: I.FileType.Image } });
 		};

@@ -2,10 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, S, U, translate, keyboard, analytics, Relation } from 'Lib';
+import { I, S, U, J, translate, keyboard, analytics, Relation } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
 
-const Constant = require('json/constant.json');
 const TIMEOUT = 1000;
 
 const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<I.Menu> {
@@ -345,7 +344,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this._isMounted = false;
 		this.unbind();
 
-		S.Menu.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(J.Constant.menuIds.cell);
     };
 
 	rebind () {

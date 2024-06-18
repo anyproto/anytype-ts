@@ -1,8 +1,6 @@
 import $ from 'jquery';
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, S, U, Storage, Mark, translate, keyboard } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, M, S, U, J, Storage, Mark, translate, keyboard } from 'Lib';
 
 class BlockStore {
 
@@ -542,7 +540,7 @@ class BlockStore {
 	};
 
 	checkTypeSelect (rootId: string) {
-		const header = this.getMapElement(rootId, Constant.blockId.header);
+		const header = this.getMapElement(rootId, J.Constant.blockId.header);
 		if (!header) {
 			return;
 		};
@@ -554,17 +552,17 @@ class BlockStore {
 		
 		let childrenIds = header.childrenIds || [];
 		if (change) {
-			childrenIds = exists ? childrenIds.filter(it => it != Constant.blockId.type) : [ Constant.blockId.type ].concat(childrenIds);
+			childrenIds = exists ? childrenIds.filter(it => it != J.Constant.blockId.type) : [ J.Constant.blockId.type ].concat(childrenIds);
 		};
 
 		if (change) {
-			this.updateStructure(rootId, Constant.blockId.header, childrenIds);
+			this.updateStructure(rootId, J.Constant.blockId.header, childrenIds);
 		};
 	};
 
 	checkBlockTypeExists (rootId: string): boolean {
-		const header = this.getMapElement(rootId, Constant.blockId.header);
-		return header ? header.childrenIds.includes(Constant.blockId.type) : false;
+		const header = this.getMapElement(rootId, J.Constant.blockId.header);
+		return header ? header.childrenIds.includes(J.Constant.blockId.type) : false;
 	};
 
 	getLayoutIds (rootId: string, ids: string[]) {
@@ -610,7 +608,7 @@ class BlockStore {
 	};
 
 	closeRecentWidgets () {
-		const { recentEdit, recentOpen } = Constant.widgetId;
+		const { recentEdit, recentOpen } = J.Constant.widgetId;
 		const blocks = this.getBlocks(this.widgets, it => it.isLink() && [ recentEdit, recentOpen ].includes(it.content.targetBlockId));
 
 		if (blocks.length) {

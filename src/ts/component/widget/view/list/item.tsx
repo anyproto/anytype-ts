@@ -3,10 +3,8 @@ import raf from 'raf';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label } from 'Component';
-import { I, S, U, keyboard, analytics, translate } from 'Lib';
+import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
-
-const Constant = require('json/constant.json');
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;
@@ -34,12 +32,12 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	render () {
 		const { subId, id, block, style, isCompact, isEditing, index, isPreview, isSection } = this.props;
 		const rootId = keyboard.getRootId();
-		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions, source } = object;
 		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
 		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-		const canDrag = isPreview && (block.content.targetBlockId == Constant.widgetId.favorite);
+		const canDrag = isPreview && (block.content.targetBlockId == J.Constant.widgetId.favorite);
 		const hasMore = U.Space.canMyParticipantWrite();
 
 		if (isSection) {
@@ -162,7 +160,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		e.stopPropagation();
 
 		const { subId, id, } = this.props;
-		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
 
 		U.Object.openEvent(e, object);
 		analytics.event('OpenSidebarObject');

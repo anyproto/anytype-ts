@@ -1,7 +1,5 @@
 import loadImage from 'blueimp-load-image';
-import { S, U, Relation } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { S, U, J, Relation } from 'Lib';
 
 const SIZE_UNIT = 1024;
 const UNITS = {
@@ -94,8 +92,8 @@ class UtilFile {
 			icon = 'presentation';
 		};
 
-		for (const k in Constant.fileExtension) {
-			const el = Constant.fileExtension[k];
+		for (const k in J.Constant.fileExtension) {
+			const el = J.Constant.fileExtension[k];
 			if (!U.Common.hasProperty(el, 'length')) {
 				continue;
 			};

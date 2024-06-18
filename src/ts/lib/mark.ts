@@ -1,7 +1,6 @@
 import $ from 'jquery';
-import { I, U, analytics } from 'Lib';
+import { I, U, J, analytics } from 'Lib';
 
-const Constant = require('json/constant.json');
 const Tags = {};
 
 for (const i in I.MarkType) {
@@ -389,7 +388,7 @@ class Mark {
 			const html = item.find('span').html();
 			const face = String(item.attr('face') || '').toLowerCase();
 
-			if (face == Constant.fontCode) {
+			if (face == J.Constant.fontCode) {
 				const tag = this.getTag(I.MarkType.Code);
 				item.replaceWith(`<${tag}>${html}</${tag}>`);
 			} else {

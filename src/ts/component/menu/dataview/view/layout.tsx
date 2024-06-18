@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, analytics, keyboard, translate, Dataview, Relation } from 'Lib';
+import { I, C, S, U, J, analytics, keyboard, translate, Dataview, Relation } from 'Lib';
 import { Label, Icon, MenuItemVertical } from 'Component';
-
-const Constant = require('json/constant.json');
 
 const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.Menu> {
 	
@@ -297,7 +295,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const view = data.view.get();
 
 		if (!item.arrow || isReadonly) {
-			S.Menu.closeAll(Constant.menuIds.viewEdit);
+			S.Menu.closeAll(J.Constant.menuIds.viewEdit);
 			return;
 		};
 
@@ -360,14 +358,14 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			case 'graphSettings': {
 				menuId = 'graphSettings';
 				menuParam.data = Object.assign(menuParam.data, {
-					storageKey: Constant.graphId.dataview,
+					storageKey: J.Constant.graphId.dataview,
 				});
 				break;
 			};
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
-			S.Menu.closeAll(Constant.menuIds.viewEdit, () => {
+			S.Menu.closeAll(J.Constant.menuIds.viewEdit, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};
@@ -418,7 +416,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	};
 
 	menuClose () {
-		S.Menu.closeAll(Constant.menuIds.viewEdit);
+		S.Menu.closeAll(J.Constant.menuIds.viewEdit);
 	};
 
 	resize () {

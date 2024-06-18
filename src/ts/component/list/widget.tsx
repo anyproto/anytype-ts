@@ -2,9 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
-import { C, I, M, S, U, keyboard, analytics, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, M, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 type State = {
 	isEditing: boolean;
@@ -78,7 +76,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 				const target = child.content.targetBlockId;
 
-				if (Object.values(Constant.widgetId).includes(target)) {
+				if (Object.values(J.Constant.widgetId).includes(target)) {
 					return true;
 				};
 
@@ -103,7 +101,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			};
 
 			if (isEditing) {
-				if (blocks.length <= Constant.limit.widgets) {
+				if (blocks.length <= J.Constant.limit.widgets) {
 					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onMouseDown: this.onAdd });
 				};
 
@@ -211,7 +209,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			offsetY: -2,
-			subIds: Constant.menuIds.widget,
+			subIds: J.Constant.menuIds.widget,
 			vertical: I.MenuDirection.Top,
 			data: {
 				setEditing: this.setEditing,
@@ -328,7 +326,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			{ id: 'edit', name: translate('widgetEdit') },
 		];
 
-		if (widgetIds.length < Constant.limit.widgets) {
+		if (widgetIds.length < J.Constant.limit.widgets) {
 			options.unshift({ id: 'add', name: translate('widgetAdd'), arrow: true });
 		};
 

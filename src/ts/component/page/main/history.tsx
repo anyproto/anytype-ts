@@ -2,12 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader } from 'Component';
-import { I, S, U, keyboard, Action, focus } from 'Lib';
+import { I, S, U, J, keyboard, Action, focus } from 'Lib';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
 
 const Diff = require('diff');
-const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -347,13 +346,13 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 				if (undefined !== data.details.name) {
 					elements = elements.concat([
-						{ type: I.DiffType.Change, element: `#block-${Constant.blockId.title}` },
-						{ type: I.DiffType.Change, element: `.headSimple #editor-${Constant.blockId.title}` }
+						{ type: I.DiffType.Change, element: `#block-${J.Constant.blockId.title}` },
+						{ type: I.DiffType.Change, element: `.headSimple #editor-${J.Constant.blockId.title}` }
 					]);
 				};
 
 				if (undefined !== data.details.description) {
-					elements.push({ type: I.DiffType.Change, element: `#block-${Constant.blockId.description}` });
+					elements.push({ type: I.DiffType.Change, element: `#block-${J.Constant.blockId.description}` });
 				};
 
 				if ((undefined !== data.details.iconEmoji) || (undefined !== data.details.iconImage)) {
@@ -361,7 +360,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				};
 
 				if (undefined !== data.details.featuredRelations) {
-					elements.push({ type: I.DiffType.Change, element: `#block-${Constant.blockId.featured}` });
+					elements.push({ type: I.DiffType.Change, element: `#block-${J.Constant.blockId.featured}` });
 				};
 
 				if (type == 'ObjectDetailsAmend') {

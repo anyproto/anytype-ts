@@ -2,8 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
-import { I, U, keyboard, translate, analytics, Mark } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, U, J, keyboard, translate, analytics, Mark } from 'Lib';
 
 const SKIP = [ 
 	'span', 'div', 'name', 'markupMention', 'markupColor', 'markupBgcolor', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 
@@ -104,7 +103,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		};
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.search(), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => this.search(), J.Constant.delay.keyboard);
 	};
 
 	onArrow (dir: number) {
@@ -250,7 +249,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { data } = param;
 		const { isPopup } = data;
 		const scrollContainer = this.getScrollContainer();
-		const offset = Constant.size.lastBlock + U.Common.sizeHeader();
+		const offset = J.Constant.size.lastBlock + U.Common.sizeHeader();
 		const tag = Mark.getTag(I.MarkType.Search);
 
 		this.container.find(`${tag}.active`).removeClass('active');

@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, C, S, U, analytics, translate, keyboard, Action } from 'Lib';
+import { I, C, S, U, J, analytics, translate, keyboard, Action } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
-
-const Constant = require('json/constant.json');
 
 enum Tab {
 	Gallery	 = 0,
@@ -270,7 +268,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const { data } = param;
 		const { onUpload, onUploadStart } = data;
 
-		Action.openFile(Constant.fileExtension.cover, paths => {
+		Action.openFile(J.Constant.fileExtension.cover, paths => {
 			close();
 
 			if (onUploadStart) {
@@ -295,7 +293,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, onSelect, onUpload, onUploadStart } = data;
-		const object = S.Detail.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
 
 		if (!object.coverId) {
 			close();
@@ -323,7 +321,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.setState({ filter: v }), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => this.setState({ filter: v }), J.Constant.delay.keyboard);
 	};
 
 	getSections () {

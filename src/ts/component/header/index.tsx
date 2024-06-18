@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, S, U, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
+import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
 
 import HeaderAuthIndex from './auth';
@@ -15,7 +15,6 @@ interface Props extends I.HeaderComponent {
 	className?: string;
 };
 
-const Constant = require('json/constant.json');
 const Components = {
 	authIndex:			 HeaderAuthIndex,
 	mainObject:			 HeaderMainObject,
@@ -182,7 +181,7 @@ class Header extends React.Component<Props> {
 			noFlipX: true,
 			noFlipY: true,
 			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.cell,
+			subIds: J.Constant.menuIds.cell,
 			classNameWrap: cnw.join(' '),
 			...param,
 			data: {

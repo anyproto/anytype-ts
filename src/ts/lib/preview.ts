@@ -1,8 +1,7 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, keyboard } from 'Lib';
+import { I, S, U, J, keyboard } from 'Lib';
 
-const Constant = require('json/constant.json');
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
 const DELAY_PREVIEW = 300;
@@ -231,7 +230,7 @@ class Preview {
 	toastShow (param: I.Toast) {
 		const setTimeout = () => {
 			window.clearTimeout(this.timeout.toast);
-			this.timeout.toast = window.setTimeout(() => this.toastHide(false), Constant.delay.toast);
+			this.timeout.toast = window.setTimeout(() => this.toastHide(false), J.Constant.delay.toast);
 		};
 
 		S.Common.toastSet(param);

@@ -3,9 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import * as Docs from 'Docs';
 import { Label, Icon, Cover, Button } from 'Component';
-import { I, U, translate } from 'Lib';
+import { I, U, J, translate } from 'Lib';
 import Block from 'Component/block/help';
-const Url = require('json/url.json');
 
 interface State {
 	showFull: boolean;
@@ -53,7 +52,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 					</div>
 					<div className="side right">
 						<Label text={translate('popupHelpLabel')} />
-						<Icon onClick={() => U.Common.onUrl(Url.mail)} className="mail" />
+						<Icon onClick={() => U.Common.onUrl(J.Url.mail)} className="mail" />
 					</div>
 				</div>
 				

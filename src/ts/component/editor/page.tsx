@@ -4,12 +4,10 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon, Loader, Deleted, DropTarget } from 'Component';
-import { I, C, S, Key, U, Preview, Mark, focus, keyboard, Storage, Action, translate, analytics, Renderer, sidebar } from 'Lib';
+import { I, C, S, U, J, Key, Preview, Mark, focus, keyboard, Storage, Action, translate, analytics, Renderer, sidebar } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
-
-const Constant = require('json/constant.json');
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
@@ -198,7 +196,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		this.container = node.find('.editor');
 		this.buttonAdd = node.find('#button-block-add');
-		this.blockFeatured = node.find(`#block-${Constant.blockId.featured}`);
+		this.blockFeatured = node.find(`#block-${J.Constant.blockId.featured}`);
 	};
 
 	getWrapperWidth (): number {
@@ -489,7 +487,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			if (
 				(pageX >= x) && 
-				(pageX <= x + Constant.size.blockMenu) && 
+				(pageX <= x + J.Constant.size.blockMenu) && 
 				(pageY >= offset + BUTTON_OFFSET) && 
 				(pageY <= this.winScrollTop + rectContainer.height + offset + BUTTON_OFFSET)
 			) {
@@ -503,7 +501,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			const buttonX = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
+			const buttonX = hoveredRect.x - (rectContainer.x - J.Constant.size.blockMenu) + 2;
 			const buttonY = pageY - rectContainer.y - BUTTON_OFFSET - this.winScrollTop;
 			
 			clear();
@@ -650,7 +648,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				S.Menu.closeAll([ 'blockContext', 'blockAdd' ], () => {
 					S.Menu.open('blockAction', { 
 						element: `#block-${ids[0]}`,
-						offsetX: Constant.size.blockMenu,
+						offsetX: J.Constant.size.blockMenu,
 						data: {
 							blockId: ids[0],
 							blockIds: ids,
@@ -704,7 +702,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			selection.clear();
 			focus.restore();
 
-			const focused = focus.state.focused || Constant.blockId.title;
+			const focused = focus.state.focused || J.Constant.blockId.title;
 			this.blockCreate(focused , I.BlockPosition.Bottom, {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
@@ -816,7 +814,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			S.Menu.close('blockContext', () => {
 				S.Menu.open('blockAction', { 
 					element: `#block-${block.id}`,
-					offsetX: Constant.size.blockMenu,
+					offsetX: J.Constant.size.blockMenu,
 					data: {
 						blockId: block.id,
 						blockIds: U.Data.selectionGet(block.id, true, true),
@@ -1602,14 +1600,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		S.Menu.open('blockAdd', { 
 			element: $(`#block-${blockId}`),
-			subIds: Constant.menuIds.add,
+			subIds: J.Constant.menuIds.add,
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
-				return rect ? 0 : Constant.size.blockMenu;
+				return rect ? 0 : J.Constant.size.blockMenu;
 			},
 			commonFilter: true,
 			onClose: () => {
@@ -1792,7 +1790,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			},
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
-				return rect ? 0 : Constant.size.blockMenu;
+				return rect ? 0 : J.Constant.size.blockMenu;
 			},
 			onOpen: () => {
 				if (block) {
@@ -1835,7 +1833,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							C.ObjectToBookmark(rootId, url, (message: any) => {
 								if (!message.error.code) {
 									U.Object.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
-									analytics.createObject(Constant.typeKey.bookmark, I.ObjectLayout.Bookmark, analytics.route.bookmark, message.middleTime);
+									analytics.createObject(J.Constant.typeKey.bookmark, I.ObjectLayout.Bookmark, analytics.route.bookmark, message.middleTime);
 								};
 							});
 							break;
@@ -2159,7 +2157,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				const ch = scrollContainer.height();
 				const height = Math.max(ch / 2, ch - blocks.outerHeight() - blocks.offset().top - ct - 2);
 
-				last.css({ height: Math.max(Constant.size.lastBlock, height) });
+				last.css({ height: Math.max(J.Constant.size.lastBlock, height) });
 			};
 
 			if (note.length) {

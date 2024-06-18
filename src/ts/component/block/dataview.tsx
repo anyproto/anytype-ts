@@ -4,7 +4,7 @@ import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { I, C, S, U, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action } from 'Lib';
+import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action } from 'Lib';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
@@ -24,8 +24,6 @@ interface Props extends I.BlockComponent {
 interface State {
 	loading: boolean;
 };
-
-const Constant = require('json/constant.json');
 
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
 
@@ -432,11 +430,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getKeys (id: string): string[] {
 		const view = this.getView(id);
 
-		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
+		let keys = J.Constant.defaultRelationKeys.concat(J.Constant.coverRelationKeys);
 		if (view) {
 			keys = keys.concat((view.relations || []).map(it => it && it.relationKey));
 
-			if (view.coverRelationKey && (view.coverRelationKey != Constant.pageCoverRelationKey)) {
+			if (view.coverRelationKey && (view.coverRelationKey != J.Constant.pageCoverRelationKey)) {
 				keys.push(view.coverRelationKey);
 			};
 
@@ -583,7 +581,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (type && type.defaultTemplateId) {
 			return type.defaultTemplateId;
 		};
-		return Constant.templateId.blank;
+		return J.Constant.templateId.blank;
 	};
 
 	recordCreate (e: any, template: any, dir: number, groupId?: string) {
@@ -707,7 +705,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const typeId = this.getTypeId();
 		const type = S.Record.getTypeById(typeId);
 
-		if (type && (type.uniqueKey == Constant.typeKey.bookmark)) {
+		if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
 			this.onBookmarkMenu(e, dir, groupId, menuParam);
 		} else {
 			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId);
@@ -764,7 +762,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			...menuParam,
 			offsetY: 10,
 			noAnimation: true,
-			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
+			subIds: J.Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 			onOpen: context => menuContext = context,
@@ -779,7 +777,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				route,
 				onTypeChange: (id) => {
 					if (id != this.getTypeId()) {
-						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTypeId: id, defaultTemplateId: Constant.templateId.blank });
+						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTypeId: id, defaultTemplateId: J.Constant.templateId.blank });
 						analytics.event('DefaultTypeChange', { route });
 					};
 				},
@@ -794,11 +792,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					const typeId = this.getTypeId();
 					const type = S.Record.getTypeById(typeId);
 
-					if (type && (type.uniqueKey == Constant.typeKey.bookmark)) {
+					if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
 						menuContext.close();
 						this.onBookmarkMenu(e, dir, '', { element: `#button-${block.id}-add-record` });
 					} else
-					if (item.id == Constant.templateId.new) {
+					if (item.id == J.Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);
 					} else {
 						this.recordCreate(e, item, dir);
@@ -820,7 +818,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			layout: type.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', Constant.typeKey.template, S.Common.space, (message) => {
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
 			if (message.error.code) {
 				return;
 			};
@@ -1325,7 +1323,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			analytics.event('ScreenSearchDataview', { route: this.analyticsRoute() });
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 	};
 
 	setSelected (ids: string[]) {

@@ -1,10 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, keyboard, analytics, Preview, focus, Action, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
-const Url = require('json/url.json');
+import { I, C, S, U, J, keyboard, analytics, Preview, focus, Action, translate } from 'Lib';
 
 class MenuObject extends React.Component<I.Menu> {
 	
@@ -76,7 +73,7 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		S.Menu.closeAll(Constant.menuIds.object);
+		S.Menu.closeAll(J.Constant.menuIds.object);
 	};
 
 	rebind () {
@@ -265,7 +262,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			S.Menu.closeAll(Constant.menuIds.object);
+			S.Menu.closeAll(J.Constant.menuIds.object);
 			return;
 		};
 
@@ -313,7 +310,7 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
-			S.Menu.closeAll(Constant.menuIds.object, () => {
+			S.Menu.closeAll(J.Constant.menuIds.object, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};
@@ -419,7 +416,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				U.Common.clipboardCopy({ text: Url.protocol + U.Object.universalRoute(object) });
+				U.Common.clipboardCopy({ text: J.Url.protocol + U.Object.universalRoute(object) });
 				analytics.event('CopyLink', { route });
 				break;
 			};

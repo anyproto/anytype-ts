@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Cover, Icon } from 'Component';
-import { I, C, S, U, Action, translate } from 'Lib';
+import { I, C, S, U, J, Action, translate } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -20,7 +20,6 @@ interface State {
 	loading: boolean;
 };
 
-const Constant = require('json/constant.json');
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 
 const PreviewObject = observer(class PreviewObject extends React.Component<Props, State> {
@@ -235,7 +234,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								css.width = (fields.width * 100) + '%';
 							};
 
-							inner = <img className="media" src={S.Common.imageUrl(targetObjectId, Constant.size.image)} style={css} />;
+							inner = <img className="media" src={S.Common.imageUrl(targetObjectId, J.Constant.size.image)} style={css} />;
 							break;
 						};
 

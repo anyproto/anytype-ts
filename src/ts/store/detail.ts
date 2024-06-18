@@ -1,7 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, S, U, Relation, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, S, U, J, Relation, translate } from 'Lib';
 
 interface Detail {
 	relationKey: string;
@@ -148,14 +146,14 @@ class DetailStore {
 		};
 	};
 
-	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, Constant.defaultRelationKeys are included */
+	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Constant.defaultRelationKeys are included */
     public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean): any {
 		let list = this.map.get(rootId)?.get(id) || [];
 		if (!list.length) {
 			return { id, _empty_: true };
 		};
 		
-		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? Constant.defaultRelationKeys : []) ] : []);
+		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? J.Constant.defaultRelationKeys : []) ] : []);
 		const object = { id };
 
 		if (withKeys) {
@@ -229,7 +227,7 @@ class DetailStore {
 	private mapType (object: any) {
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-		object.isInstalled = object.spaceId != Constant.storeSpaceId;
+		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
@@ -248,7 +246,7 @@ class DetailStore {
 		object.objectTypes = Relation.getArrayValue(object.objectTypes || object.relationFormatObjectTypes);
 		object.isReadonlyRelation = Boolean(object.isReadonlyRelation || object.isReadonly);
 		object.isReadonlyValue = Boolean(object.isReadonlyValue || object.relationReadonlyValue);
-		object.isInstalled = object.spaceId != Constant.storeSpaceId;
+		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 
 		if (object.isDeleted) {

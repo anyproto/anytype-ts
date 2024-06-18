@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, keyboard, translate, U, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding } from 'Lib';
+import { I, C, M, S, J, keyboard, translate, U, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding } from 'Lib';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -20,7 +20,6 @@ type SearchSubscribeParams = Partial<{
 	noDeps: boolean;
 }>;
 
-const Constant = require('json/constant.json');
 const SYSTEM_DATE_RELATION_KEYS = [
 	'lastModifiedDate', 
 	'lastOpenedDate', 
@@ -261,7 +260,7 @@ class UtilData {
 	};
 
 	onAuthOnce (noTierCache: boolean) {
-		C.NotificationList(false, Constant.limit.notification, (message: any) => {
+		C.NotificationList(false, J.Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
 				S.Notification.set(message.list);
 			};
@@ -282,7 +281,7 @@ class UtilData {
 		const { account } = S.Auth;
 		const list: any[] = [
 			{
-				subId: Constant.subId.profile,
+				subId: J.Constant.subId.profile,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
 				],
@@ -291,7 +290,7 @@ class UtilData {
 				ignoreHidden: false,
 			},
 			{
-				subId: Constant.subId.deleted,
+				subId: J.Constant.subId.deleted,
 				keys: [],
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
@@ -300,10 +299,10 @@ class UtilData {
 				noDeps: true,
 			},
 			{
-				subId: Constant.subId.type,
+				subId: J.Constant.subId.type,
 				keys: this.typeRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, space ] },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
@@ -320,10 +319,10 @@ class UtilData {
 				}
 			},
 			{
-				subId: Constant.subId.relation,
-				keys: Constant.relationRelationKeys,
+				subId: J.Constant.subId.relation,
+				keys: J.Constant.relationRelationKeys,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, space ] },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
@@ -335,8 +334,8 @@ class UtilData {
 				},
 			},
 			{
-				subId: Constant.subId.option,
-				keys: Constant.optionRelationKeys,
+				subId: J.Constant.subId.option,
+				keys: J.Constant.optionRelationKeys,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
@@ -347,7 +346,7 @@ class UtilData {
 				ignoreDeleted: true,
 			},
 			{
-				subId: Constant.subId.space,
+				subId: J.Constant.subId.space,
 				keys: this.spaceRelationKeys(),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
@@ -359,7 +358,7 @@ class UtilData {
 				ignoreHidden: false,
 			},
 			{
-				subId: Constant.subId.participant,
+				subId: J.Constant.subId.participant,
 				keys: this.participantRelationKeys(),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
@@ -375,7 +374,7 @@ class UtilData {
 
 		if (account) {
 			list.push({
-				subId: Constant.subId.myParticipant,
+				subId: J.Constant.subId.myParticipant,
 				keys: this.participantRelationKeys(),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
@@ -407,19 +406,19 @@ class UtilData {
 	};
 
 	destroySubscriptions (callBack?: () => void): void {
-		C.ObjectSearchUnsubscribe(Object.values(Constant.subId), callBack);
+		C.ObjectSearchUnsubscribe(Object.values(J.Constant.subId), callBack);
 	};
 
 	spaceRelationKeys () {
-		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys).concat(Constant.participantRelationKeys);
+		return J.Constant.defaultRelationKeys.concat(J.Constant.spaceRelationKeys).concat(J.Constant.participantRelationKeys);
 	};
 
 	typeRelationKeys () {
-		return Constant.defaultRelationKeys.concat(Constant.typeRelationKeys);
+		return J.Constant.defaultRelationKeys.concat(J.Constant.typeRelationKeys);
 	};
 
 	participantRelationKeys () {
-		return Constant.defaultRelationKeys.concat(Constant.participantRelationKeys);
+		return J.Constant.defaultRelationKeys.concat(J.Constant.participantRelationKeys);
 	};
 
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
@@ -508,20 +507,20 @@ class UtilData {
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
-		const keys = Constant.defaultRelationKeys.concat([ 'targetObjectType' ]);
+		const keys = J.Constant.defaultRelationKeys.concat([ 'targetObjectType' ]);
 
 		this.search({
 			filters,
 			sorts,
 			keys,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 		}, callBack);
 	};
 
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
+		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Constant.coverRelationKeys), true);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret = {
@@ -646,7 +645,7 @@ class UtilData {
 
 	// Check if there is at least 1 set for object types
 	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		const setType = S.Record.getTypeByKey(Constant.typeKey.set);
+		const setType = S.Record.getTypeByKey(J.Constant.typeKey.set);
 		this.checkObjectWithRelationCnt('setOf', setType?.id, ids, 2, callBack);
 	};
 
@@ -716,7 +715,7 @@ class UtilData {
 			idField: 'id',
 			filters: [],
 			sorts: [],
-			keys: Constant.defaultRelationKeys,
+			keys: J.Constant.defaultRelationKeys,
 			sources: [],
 			offset: 0,
 			limit: 0,
@@ -773,7 +772,7 @@ class UtilData {
 		param = Object.assign({
 			subId: '',
 			ids: [],
-			keys: Constant.defaultRelationKeys,
+			keys: J.Constant.defaultRelationKeys,
 			noDeps: false,
 			idField: 'id',
 		}, param);
@@ -819,7 +818,7 @@ class UtilData {
 			fullText: '',
 			filters: [],
 			sorts: [],
-			keys: Constant.defaultRelationKeys,
+			keys: J.Constant.defaultRelationKeys,
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
@@ -886,7 +885,7 @@ class UtilData {
 			title.push(space.name);
 		};
 
-		title.push(Constant.appName);
+		title.push(J.Constant.appName);
 		document.title = title.join(' - ');
 	};
 
@@ -954,11 +953,11 @@ class UtilData {
 				ret = translate('menuThreadListSelf');
 				break;
 
-			case Constant.networkId.production:
+			case J.Constant.networkId.production:
 				ret = translate('menuThreadListProduction');
 				break;
 
-			case Constant.networkId.development:
+			case J.Constant.networkId.development:
 				ret = translate('menuThreadListDevelopment');
 				break;
 
@@ -1017,7 +1016,7 @@ class UtilData {
 	};
 
 	isAnytypeNetwork (): boolean {
-		return Object.values(Constant.networkId).includes(S.Auth.account?.info?.networkId);
+		return Object.values(J.Constant.networkId).includes(S.Auth.account?.info?.networkId);
 	};
 
 	isLocalNetwork (): boolean {
@@ -1051,7 +1050,7 @@ class UtilData {
 					return;
 				};
 
-				C.AccountCreate('', '', dataPath, U.Common.rand(1, Constant.iconCnt), mode, path, (message) => {
+				C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.iconCnt), mode, path, (message) => {
 					if (message.error.code) {
 						onError(message.error.description);
 						return;

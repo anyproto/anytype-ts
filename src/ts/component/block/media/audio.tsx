@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Error, MediaAudio } from 'Component';
-import { I, S, translate, focus, keyboard, Action } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, S, J, translate, focus, keyboard, Action } from 'Lib';
 
 const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
 
@@ -43,7 +41,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 							block={block} 
 							icon="audio" 
 							textFile={translate('blockAudioUpload')} 
-							accept={Constant.fileExtension.audio} 
+							accept={J.Constant.fileExtension.audio} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 

@@ -1,6 +1,4 @@
-import { I, U, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, U, J, translate } from 'Lib';
 
 class UtilDate {
 
@@ -65,7 +63,7 @@ class UtilDate {
 
 		m = Math.min(12, Math.max(1, m));
 
-		let maxDays = Constant.monthDays[m];
+		let maxDays = J.Constant.monthDays[m];
 		if ((m == 2) && (this.isLeapYear(y))) {
 			maxDays = 29;
 		};
@@ -297,7 +295,7 @@ class UtilDate {
 
 	getCalendarMonth (value: number) {
 		const { m, y } = this.getCalendarDateParam(value);
-		const md = {...Constant.monthDays};
+		const md = {...J.Constant.monthDays};
 		
 		// February
 		if (this.isLeapYear(y)) {

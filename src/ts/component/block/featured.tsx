@@ -3,13 +3,12 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell } from 'Component';
-import { I, C, S, U, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
 };
 
-const Constant = require('json/constant.json');
 const PREFIX = 'blockFeatured';
 const SOURCE_LIMIT = 1;
 
@@ -452,7 +451,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			S.Menu.open('select', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
 				offsetY: 8,
-				subIds: Constant.menuIds.featuredType,
+				subIds: J.Constant.menuIds.featuredType,
 				onOpen: (context: any) => {
 					this.menuContext = context;
 				},
@@ -491,7 +490,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block } = this.props;
 
 		if (!item.arrow) {
-			S.Menu.closeAll(Constant.menuIds.featuredType);
+			S.Menu.closeAll(J.Constant.menuIds.featuredType);
 			return;
 		};
 
@@ -535,7 +534,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 						C.ObjectSetObjectType(rootId, item.uniqueKey, () => {
 							if (object.internalFlags && object.internalFlags.includes(I.ObjectFlag.SelectTemplate)) {
-								C.ObjectApplyTemplate(rootId, item.defaultTemplateId || Constant.templateId.blank, open);
+								C.ObjectApplyTemplate(rootId, item.defaultTemplateId || J.Constant.templateId.blank, open);
 							} else {
 								open();
 							};
@@ -565,7 +564,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			if (S.Menu.isOpen(menuId)) {
 				S.Menu.open(menuId, menuParam);
 			} else {
-				S.Menu.closeAll(Constant.menuIds.featuredType, () => {
+				S.Menu.closeAll(J.Constant.menuIds.featuredType, () => {
 					S.Menu.open(menuId, menuParam);
 				});
 			};
@@ -647,7 +646,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				data: {
 					rootId,
 					objectId: rootId,
-					blockId: Constant.blockId.dataview,
+					blockId: J.Constant.blockId.dataview,
 				}
 			}); 
 		});
@@ -754,7 +753,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					horizontal: I.MenuDirection.Right,
 					noFlipY: true,
 					noAnimation: true,
-					subIds: Constant.menuIds.cell,
+					subIds: J.Constant.menuIds.cell,
 					onOpen: (component: any) => {
 						if (component && component.ref) {
 							component.ref.onCellClick(e, relationKey);
@@ -827,7 +826,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		menuParam = Object.assign(menuParam, param);
 		menuParam.data = Object.assign(menuParam.data, data);
 
-		S.Menu.closeAll(Constant.menuIds.cell, () => {
+		S.Menu.closeAll(J.Constant.menuIds.cell, () => {
 			S.Menu.open(menuId, menuParam);
 		});
 	};

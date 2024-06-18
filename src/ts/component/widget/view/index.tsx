@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Label, Button } from 'Component';
-import { I, C, M, S, U, Dataview, Relation, keyboard, translate } from 'Lib';
+import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate } from 'Lib';
 
 import WidgetViewList from './list';
 import WidgetViewGallery from './gallery';
 import WidgetViewBoard from './board';
 import WidgetViewCalendar from './calendar';
-
-const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -45,7 +43,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const subId = this.getSubId();
 		const records = this.getRecordIds();
 		const length = records.length;
-		const views = S.Record.getViews(rootId, Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
+		const views = S.Record.getViews(rootId, J.Constant.blockId.dataview).map(it => ({ ...it, name: it.name || translate('defaultNamePage') }));
 		const viewType = this.getViewType();
 		const cn = [ 'innerWrap' ];
 		const showEmpty = ![ I.ViewType.Calendar, I.ViewType.Board ].includes(viewType);
@@ -151,7 +149,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	componentDidUpdate (): void {
 		const { parent, isSystemTarget } = this.props;
 		const { viewId } = parent.content;
-		const view = Dataview.getView(this.getRootId(), Constant.blockId.dataview);
+		const view = Dataview.getView(this.getRootId(), J.Constant.blockId.dataview);
 
 		if (!isSystemTarget() && view && viewId && (viewId != view.id)) {
 			this.load(viewId);
@@ -166,11 +164,11 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const { block, isSystemTarget, getData } = this.props;
 		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
-		const srcBlock = S.Block.getLeaf(targetBlockId, Constant.blockId.dataview);
+		const srcBlock = S.Block.getLeaf(targetBlockId, J.Constant.blockId.dataview);
 
 		// Update block in widget with source block if object is open
 		if (srcBlock) {
-			let dstBlock = S.Block.getLeaf(rootId, Constant.blockId.dataview);
+			let dstBlock = S.Block.getLeaf(rootId, J.Constant.blockId.dataview);
 
 			if (dstBlock) {
 				dstBlock = Object.assign(dstBlock, srcBlock);
@@ -180,7 +178,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		if (isSystemTarget()) {
 			getData(this.getSubId());
 		} else {
-			const view = Dataview.getView(this.getRootId(), Constant.blockId.dataview);
+			const view = Dataview.getView(this.getRootId(), J.Constant.blockId.dataview);
 			if (view) {
 				this.load(view.id);
 			};
@@ -190,15 +188,15 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	updateViews () {
 		const { block } = this.props;
 		const { targetBlockId } = block.content;
-		const views = U.Common.objectCopy(S.Record.getViews(targetBlockId, Constant.blockId.dataview)).map(it => new M.View(it));
+		const views = U.Common.objectCopy(S.Record.getViews(targetBlockId, J.Constant.blockId.dataview)).map(it => new M.View(it));
 		const rootId = this.getRootId();
 
 		if (!views.length || (targetBlockId != keyboard.getRootId())) {
 			return;
 		};
 
-		S.Record.viewsClear(rootId, Constant.blockId.dataview);
-		S.Record.viewsSet(rootId, Constant.blockId.dataview, views);
+		S.Record.viewsClear(rootId, J.Constant.blockId.dataview);
+		S.Record.viewsSet(rootId, J.Constant.blockId.dataview, views);
 
 		if (this.refSelect) {
 			this.refSelect.setOptions(views);
@@ -206,7 +204,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	getSubId () {
-		return S.Record.getSubId(this.getRootId(), Constant.blockId.dataview);
+		return S.Record.getSubId(this.getRootId(), J.Constant.blockId.dataview);
 	};
 
 	getTraceId = (): string => {
@@ -243,13 +241,13 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 
 		Dataview.getData({
 			rootId: this.getRootId(),
-			blockId: Constant.blockId.dataview,
+			blockId: J.Constant.blockId.dataview,
 			newViewId: viewId,
 			sources: setOf,
 			limit,
 			filters: this.getFilters(),
 			collectionId: (isCollection ? object.id : ''),
-			keys: Constant.sidebarRelationKeys.concat(view.groupRelationKey).concat(Constant.coverRelationKeys),
+			keys: J.Constant.sidebarRelationKeys.concat(view.groupRelationKey).concat(J.Constant.coverRelationKeys),
 		});
 	};
 
@@ -273,7 +271,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	getView () {
-		return Dataview.getView(this.getRootId(), Constant.blockId.dataview, this.props.parent.content.viewId);
+		return Dataview.getView(this.getRootId(), J.Constant.blockId.dataview, this.props.parent.content.viewId);
 	};
 
 	getViewType () {
@@ -311,11 +309,11 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const rootId = this.getRootId();
 		const subId = this.getSubId();
 		const records = S.Record.getRecordIds(subId, '');
-		const views = S.Record.getViews(rootId, Constant.blockId.dataview);
+		const views = S.Record.getViews(rootId, J.Constant.blockId.dataview);
 		const viewId = parent.content.viewId || (views.length ? views[0].id : '');
-		const ret = Dataview.applyObjectOrder(rootId, Constant.blockId.dataview, viewId, '', U.Common.objectCopy(records));
+		const ret = Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, viewId, '', U.Common.objectCopy(records));
 
-		return (targetBlockId == Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
+		return (targetBlockId == J.Constant.widgetId.favorite) ? sortFavorite(ret) : ret;
 	};
 
 	isAllowedObject () {
@@ -323,7 +321,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const object = this.getObject();
 		const isCollection = object.layout == I.ObjectLayout.Collection;
 
-		let isAllowed = S.Block.checkFlags(rootId, Constant.blockId.dataview, [ I.RestrictionDataview.Object ]);
+		let isAllowed = S.Block.checkFlags(rootId, J.Constant.blockId.dataview, [ I.RestrictionDataview.Object ]);
 		if (!isAllowed) {
 			return false;
 		};

@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
-import { I, S, U, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, translate } from 'Lib';
-
-const Url = require('json/url.json');
+import { I, S, U, J, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, translate } from 'Lib';
 
 class MenuHelp extends React.Component<I.Menu> {
 
@@ -119,7 +117,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			case 'tutorial':
 			case 'privacy':
 			case 'community': {
-				Renderer.send('urlOpen', Url[item.id]);
+				Renderer.send('urlOpen', J.Url[item.id]);
 				break;
 			};
 

@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, keyboard, Dataview } from 'Lib';
+import { I, C, S, U, J, keyboard, Dataview } from 'Lib';
 import { Graph } from 'Component';
-
-const Constant = require('json/constant.json');
 
 const PADDING = 46;
 
@@ -39,7 +37,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 						id={block.id}
 						rootId="" 
 						data={this.data}
-						storageKey={Constant.graphId.dataview}
+						storageKey={J.Constant.graphId.dataview}
 					/>
 				</div>
 			</div>
@@ -101,7 +99,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 
 		this.setLoading(true);
 
-		C.ObjectGraph(S.Common.space, filters, 0, [], Constant.graphRelationKeys, (isCollection ? target.id : ''), target.setOf, (message: any) => {
+		C.ObjectGraph(S.Common.space, filters, 0, [], J.Constant.graphRelationKeys, (isCollection ? target.id : ''), target.setOf, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -129,7 +127,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 
 			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
 
-			U.Data.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
+			U.Data.onSubscribe(J.Constant.subId.graph, 'id', J.Constant.graphRelationKeys, {
 				error: {},
 				records: message.nodes,
 				dependencies: [],

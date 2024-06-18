@@ -3,13 +3,12 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
-import { I, S, U, keyboard, Relation, translate } from 'Lib';
+import { I, S, U, J, keyboard, Relation, translate } from 'Lib';
 
 interface State {
 	isLoading: boolean;
 };
 
-const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewObjectValues';
 const LIMIT_HEIGHT = 20;
 const LIMIT_TYPE = 2;
@@ -272,7 +271,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
@@ -348,7 +347,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};

@@ -1,8 +1,6 @@
 import $ from 'jquery';
 import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
-import { I, M, S, U, Storage, Renderer } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, M, S, U, J, Storage, Renderer } from 'Lib';
 
 interface Filter {
 	from: number;
@@ -177,11 +175,11 @@ class CommonStore {
 	};
 
 	get type(): string {
-		const key = String(this.defaultType || Storage.get('defaultType') || Constant.default.typeKey);
+		const key = String(this.defaultType || Storage.get('defaultType') || J.Constant.default.typeKey);
 
 		let type = S.Record.getTypeByKey(key);
 		if (!type || !type.isInstalled || !U.Object.getPageLayouts().includes(type.recommendedLayout)) {
-			type = S.Record.getTypeByKey(Constant.default.typeKey);
+			type = S.Record.getTypeByKey(J.Constant.default.typeKey);
 		};
 
 		return type ? type.id : '';
@@ -192,7 +190,7 @@ class CommonStore {
 	};
 
 	get pinTime(): number {
-		return (Number(this.pinTimeId) || Storage.get('pinTime') || Constant.default.pinTime) * 1000;
+		return (Number(this.pinTimeId) || Storage.get('pinTime') || J.Constant.default.pinTime) * 1000;
 	};
 
 	get emailConfirmationTime(): number {
@@ -229,7 +227,7 @@ class CommonStore {
 	};
 
 	get interfaceLang (): string {
-		return this.config.interfaceLang || Constant.default.interfaceLang;
+		return this.config.interfaceLang || J.Constant.default.interfaceLang;
 	};
 
 	get showRelativeDates (): boolean {
@@ -359,7 +357,7 @@ class CommonStore {
 	};
 
 	pinTimeSet (v: string) {
-		this.pinTimeId = Number(v) || Constant.default.pinTime;
+		this.pinTimeId = Number(v) || J.Constant.default.pinTime;
 
 		Storage.set('pinTime', this.pinTimeId);
 	};

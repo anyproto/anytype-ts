@@ -1,9 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
-import { I, C, S, U, Action, translate, analytics, Onboarding } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface Props {
 	type: I.BannerType;
@@ -97,7 +95,7 @@ class HeaderBanner extends React.Component<Props> {
 		const { object, isPopup } = this.props;
 		const { sourceObject } = object;
 		const type = S.Record.getTypeById(object.type);
-		const templateId = sourceObject || Constant.templateId.blank;
+		const templateId = sourceObject || J.Constant.templateId.blank;
 		const node = $(this.node);
 
 		if (!type || S.Menu.isOpen('dataviewTemplateList')) {
@@ -110,7 +108,7 @@ class HeaderBanner extends React.Component<Props> {
 			element: node,
 			className: 'fromBanner',
 			offsetY: isPopup ? 10 : 0,
-			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
+			subIds: J.Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			onOpen: (context) => {

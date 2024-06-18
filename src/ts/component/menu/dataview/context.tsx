@@ -1,9 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, keyboard, analytics, translate, focus, Action } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, analytics, translate, focus, Action } from 'Lib';
 
 class MenuContext extends React.Component<I.Menu> {
 	
@@ -66,7 +64,7 @@ class MenuContext extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		S.Menu.closeAll(Constant.menuIds.dataviewContext);
+		S.Menu.closeAll(J.Constant.menuIds.dataviewContext);
 	};
 
 	rebind () {
@@ -225,7 +223,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (!item.arrow || !objectIds.length) {
-			S.Menu.closeAll(Constant.menuIds.dataviewContext);
+			S.Menu.closeAll(J.Constant.menuIds.dataviewContext);
 			return;
 		};
 
@@ -289,7 +287,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
-			S.Menu.closeAll(Constant.menuIds.dataviewContext, () => {
+			S.Menu.closeAll(J.Constant.menuIds.dataviewContext, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

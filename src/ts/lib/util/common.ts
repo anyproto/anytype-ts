@@ -1,10 +1,7 @@
 import $ from 'jquery';
 import DOMPurify from 'dompurify';
-import { I, C, S, Preview, Renderer, translate, U, Mark } from 'Lib';
+import { I, C, S, J, Preview, Renderer, translate, U, Mark } from 'Lib';
 
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
-const Text = require('json/text.json');
 const TEST_HTML = /<[^>]*>/;
 
 class UtilCommon {
@@ -515,7 +512,7 @@ class UtilCommon {
 	};
 
 	getPlatform (): I.Platform {
-		return Constant.platforms[this.getElectron().platform] || I.Platform.None;
+		return J.Constant.platforms[this.getElectron().platform] || I.Platform.None;
 	};
 
 	isPlatformMac (): boolean {
@@ -536,14 +533,14 @@ class UtilCommon {
 		};
 
 		// App is already working
-		if (code == Errors.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
+		if (code == J.Error.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
 			alert('You have another instance of anytype running on this machine. Closing...');
 			Renderer.send('exit', false);
 			return false;
 		};
 
 		// App needs update
-		if ([ Errors.Code.ANYTYPE_NEEDS_UPGRADE, Errors.Code.PROTOCOL_NEEDS_UPGRADE ].includes(code)) {
+		if ([ J.Error.Code.ANYTYPE_NEEDS_UPGRADE, J.Error.Code.PROTOCOL_NEEDS_UPGRADE ].includes(code)) {
 			this.onErrorUpdate();
 			return false;
 		};
@@ -564,7 +561,7 @@ class UtilCommon {
 			return false;
 		};
 
-		if ([ Errors.Code.NOT_FOUND, Errors.Code.OBJECT_DELETED ].includes(code)) {
+		if ([ J.Error.Code.NOT_FOUND, J.Error.Code.OBJECT_DELETED ].includes(code)) {
 			if (context) {
 				context.setState({ isDeleted: true });
 			};
@@ -862,6 +859,7 @@ class UtilCommon {
 	translateError (command: string, error: any) {
 		const { code, description } = error;
 		const id = this.toCamelCase(`error-${command}${code}`);
+		const Text = require('json/text.json');
 
 		return Text[id] ? translate(id) : description;
 	};

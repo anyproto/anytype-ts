@@ -3,9 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, S, U, keyboard, Preview, analytics, Action, focus, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, Preview, analytics, Action, focus, translate } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -264,7 +262,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -323,10 +321,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		U.Data.search({
 			filters,
 			sorts,
-			keys: keys || Constant.defaultRelationKeys,
+			keys: keys || J.Constant.defaultRelationKeys,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 			ignoreWorkspace: (typeof ignoreWorkspace === 'undefined' ? false : ignoreWorkspace),
 		}, (message: any) => {
 			if (!this._isMounted) {
@@ -527,7 +525,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			if (onFilterChange) {
 				onFilterChange(filter);
 			};
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 	};
 
 	getRowHeight (item: any) {

@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, S, U, translate, analytics, keyboard } from 'Lib';
+import { I, S, U, J, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
-
-const Constant = require('json/constant.json');
-const Url = require('json/url.json');
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
 
@@ -26,14 +23,14 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 		const length = membershipTiers.length;
 		const cnt = [];
 
-		if (interfaceLang == Constant.default.interfaceLang) {
+		if (interfaceLang == J.Constant.default.interfaceLang) {
 			cnt.push('riccione');
 		};
 
 		const links = [
-			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpMembershipDetails' },
-			{ url: Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
-			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
+			{ url: J.Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpMembershipDetails' },
+			{ url: J.Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
+			{ url: J.Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
 		];
 
 		const SlideItem = (slide) => (

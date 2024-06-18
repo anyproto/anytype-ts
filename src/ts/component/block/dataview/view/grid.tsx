@@ -4,11 +4,10 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { Icon, LoadMore } from 'Component';
-import { I, C, S, U, translate, keyboard, Relation } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, Relation } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 
-const Constant = require('json/constant.json');
 const PADDING = 46;
 
 const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent> {
@@ -183,7 +182,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const { getVisibleRelations } = this.props;
 		const node = $(this.node);
 		const relations = getVisibleRelations();
-		const size = Constant.size.dataview.cell;
+		const size = J.Constant.size.dataview.cell;
 		const widths = this.getColumnWidths(relationKey, width);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 
@@ -297,7 +296,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	checkWidth (width: number): number {
-		const { min, max } = Constant.size.dataview.cell;
+		const { min, max } = J.Constant.size.dataview.cell;
 		return Math.min(max, Math.max(min, Math.floor(width)));
 	};
 
@@ -316,7 +315,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 				isInline,
 				isCollection,
 				blockId: block.id,
-				onAdd: () => S.Menu.closeAll(Constant.menuIds.cellAdd)
+				onAdd: () => S.Menu.closeAll(J.Constant.menuIds.cellAdd)
 			}
 		});
 	};
@@ -360,7 +359,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = U.Common.getPageContainer(isPopup);
-		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
+		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, J.Constant.size.blockMenu);
 		const length = S.Record.getRecordIds(S.Record.getSubId(rootId, block.id), '').length;
 		const cw = container.width();
 		const rh = this.getRowHeight();
@@ -378,7 +377,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 					wrap.css({ width: vw + margin - offset, paddingRight: margin - offset });
 				} else {
 					const parentObj = $(`#block-${parent.id}`);
-					const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
+					const vw = parentObj.length ? (parentObj.width() - J.Constant.size.blockMenu) : 0;
 
 					wrap.css({ width: Math.max(vw, width) });
 				};

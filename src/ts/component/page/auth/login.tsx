@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, S, U, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
-
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
+import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics } from 'Lib';
 
 interface State {
 	error: string;
@@ -96,7 +93,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const phrase = this.refPhrase.getValue();
 		const length = phrase.split(' ').length;
 
-		if (length < Constant.limit.phrase.word) {
+		if (length < J.Constant.limit.phrase.word) {
 			this.setError({ code: 1, description: translate('pageAuthLoginInvalidPhrase')});
 			return;
 		};
@@ -154,7 +151,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			return false;
 		};
 
-		if (error.code == Errors.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
+		if (error.code == J.Error.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
 			U.Router.go('/auth/setup/select', {});
 			return;
 		};
@@ -173,7 +170,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	canSubmit (): boolean {
-		return this.refPhrase.getValue().split(' ').length == Constant.limit.phrase.word;
+		return this.refPhrase.getValue().split(' ').length == J.Constant.limit.phrase.word;
 	};
 
 	onKeyDownPhrase (e: React.KeyboardEvent) {

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, S, U } from 'Lib';
+import { I, S, U, J } from 'Lib';
 import { observer } from 'mobx-react';
-
-const Constant = require('json/constant.json');
 
 interface Props {
 	id: string;
@@ -32,7 +30,7 @@ const Icons = {
 	toggle:		 require('img/icon/marker/toggle.svg').default,
 };
 
-for (const c of Constant.textColor) {
+for (const c of J.Constant.textColor) {
 	Icons.bullets[c] = require(`img/icon/bullet/${c}.svg`).default;
 };
 

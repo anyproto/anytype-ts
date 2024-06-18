@@ -1,4 +1,4 @@
-[
+export default [
 	{ "path": "/" },
 
 	{ "path": "/:page/:action/" },
@@ -8,4 +8,4 @@
 
 	{ "path": "/object" },
 	{ "path": "/invite" }
-]
+];

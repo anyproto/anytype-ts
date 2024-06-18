@@ -1,11 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
-import { I, C, S, U, translate, analytics } from 'Lib';
+import { I, C, S, U, J, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Mousewheel } from 'swiper/modules';
-
-const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -166,7 +164,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 					analytics.event('ClickGalleryInstallSpace', { type: isNew ? 'New' : 'Existing' });
 
 					if (isNew) {
-						C.WorkspaceCreate({ name: object.title, iconOption: U.Common.rand(1, Constant.iconCnt) }, I.Usecase.None, (message: any) => {
+						C.WorkspaceCreate({ name: object.title, iconOption: U.Common.rand(1, J.Constant.iconCnt) }, I.Usecase.None, (message: any) => {
 							if (!message.error.code) {
 								cb(message.objectId, true);
 
@@ -190,7 +188,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 			{ name: translate('popupUsecaseMenuLabel'), isSection: true }
 		];
 
-		if (list.length < Constant.limit.space) {
+		if (list.length < J.Constant.limit.space) {
 			list.push({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate') });
 		};
 

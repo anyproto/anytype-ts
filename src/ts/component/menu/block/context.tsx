@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, U, Mark, focus, keyboard, Storage, translate, analytics } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Mark, focus, keyboard, Storage, translate, analytics } from 'Lib';
 
 const MenuBlockContext = observer(class MenuBlockContext extends React.Component<I.Menu> {
 	
@@ -167,7 +165,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 	};
 
 	componentWillUnmount(): void {
-		S.Menu.closeAll(Constant.menuIds.context.concat('selectContext'));
+		S.Menu.closeAll(J.Constant.menuIds.context.concat('selectContext'));
 	};
 
 	onMark (e: any, type: any) {
@@ -251,7 +249,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 				menuParam = Object.assign(menuParam, {
 					component: 'select',
-					subIds: Constant.menuIds.selectContext,
+					subIds: J.Constant.menuIds.selectContext,
 					onOpen: context => this.menuContext = context,
 				});
 
@@ -268,7 +266,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						};
 
 						if (!item.arrow) {
-							S.Menu.closeAll(Constant.menuIds.selectContext);
+							S.Menu.closeAll(J.Constant.menuIds.selectContext);
 							return;
 						};
 
@@ -360,7 +358,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		focusApply ? focus.apply() : focus.clear(false);
 
 		if (menuId && !S.Menu.isOpen(menuId)) {
-			const menuIds = [].concat(Constant.menuIds.context);
+			const menuIds = [].concat(J.Constant.menuIds.context);
 			
 			if (closeContext) {
 				menuIds.push(this.props.id);
@@ -455,7 +453,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId)) {
-			S.Menu.closeAll(Constant.menuIds.selectContext, () => {
+			S.Menu.closeAll(J.Constant.menuIds.selectContext, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

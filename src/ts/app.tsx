@@ -9,10 +9,7 @@ import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar } from 'Component';
-import { 
-	I, C, S, U, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
-	focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar
-} from 'Lib';
+import { I, C, S, U, J, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
 
@@ -38,10 +35,6 @@ import 'scss/notification/common.scss';
 
 import 'scss/media/print.scss';
 import 'scss/theme/dark/common.scss';
-
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
-const Routes = require('json/route.json');
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
@@ -119,7 +112,7 @@ enableLogging({
 Sentry.init({
 	release: electron.version.app,
 	environment: isPackaged ? 'production' : 'development',
-	dsn: Constant.sentry,
+	dsn: J.Constant.sentry,
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
 		e.request.url = '';
@@ -211,7 +204,7 @@ class App extends React.Component<object, State> {
 						<ListNotification key="listNotification" />
 
 						<Switch>
-							{Routes.map((item: RouteElement, i: number) => (
+							{J.Route.map((item: RouteElement, i: number) => (
 								<Route path={item.path} exact={true} key={i} component={RoutePage} />
 							))}
 						</Switch>
@@ -229,6 +222,7 @@ class App extends React.Component<object, State> {
 		const { version, arch, getGlobal } = electron;
 
 		U.Router.init(history);
+		U.Smile.init();
 
 		dispatcher.init(getGlobal('serverAddress'));
 		dispatcher.listenEvents();
@@ -399,7 +393,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onPopup (e: any, id: string, param: any, close?: boolean) {
-		if (Constant.popupPinIds.includes(id) && !keyboard.isPinChecked) {
+		if (J.Constant.popupPinIds.includes(id) && !keyboard.isPinChecked) {
 			return;
 		};
 
@@ -504,7 +498,7 @@ class App extends React.Component<object, State> {
 				icon: 'error',
 				bgColor: 'red',
 				title: translate('popupConfirmUpdateErrorTitle'),
-				text: U.Common.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
+				text: U.Common.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
 				textConfirm: translate('commonRetry'),
 				textCancel: translate('commonLater'),
 				onConfirm: () => {

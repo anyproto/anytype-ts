@@ -3,13 +3,11 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { C, I, S, U, translate, Storage, Action, analytics, Dataview, keyboard } from 'Lib';
+import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
 import WidgetTree from './tree';
-
-const Constant = require('json/constant.json');
 
 interface Props extends I.WidgetComponent {
 	name?: string;
@@ -65,7 +63,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const childKey = `widget-${child?.id}-${layout}`;
 		const canCreate = this.canCreate();
 		const canDrop = object && !this.isSystemTarget() && !isEditing && S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
-		const isFavorite = targetBlockId == Constant.widgetId.favorite;
+		const isFavorite = targetBlockId == J.Constant.widgetId.favorite;
 
 		const props = {
 			...this.props,
@@ -292,11 +290,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				break;
 			};
 
-			case Constant.widgetId.favorite:
-			case Constant.widgetId.recentEdit:
-			case Constant.widgetId.recentOpen:
-			case Constant.widgetId.set:
-			case Constant.widgetId.collection: {
+			case J.Constant.widgetId.favorite:
+			case J.Constant.widgetId.recentEdit:
+			case J.Constant.widgetId.recentOpen:
+			case J.Constant.widgetId.set:
+			case J.Constant.widgetId.collection: {
 				object = {
 					id: targetBlockId,
 					name: translate(U.Common.toCamelCase(`widget-${targetBlockId}`)),
@@ -344,7 +342,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		const { targetBlockId } = child.content;
 		const isSetOrCollection = U.Object.isSetLayout(object.layout);
-		const isFavorite = targetBlockId == Constant.widgetId.favorite;
+		const isFavorite = targetBlockId == J.Constant.widgetId.favorite;
 
 		let details: any = Object.assign({}, param.details || {});
 		let flags: I.ObjectFlag[] = [];
@@ -363,23 +361,23 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				return;
 			};
 
-			const view = Dataview.getView(rootId, Constant.blockId.dataview, viewId);
-			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id, viewId);
+			const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
+			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id, viewId);
 			const type = S.Record.getTypeById(typeId);
 
 			if (!view || !type) {
 				return;
 			};
 
-			details = Object.assign(details, Dataview.getDetails(rootId, Constant.blockId.dataview, object.id, viewId));
+			details = Object.assign(details, Dataview.getDetails(rootId, J.Constant.blockId.dataview, object.id, viewId));
 			flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 			typeKey = type.uniqueKey;
 			templateId = view.defaultTemplateId || type.defaultTemplateId;
-			isCollection = Dataview.isCollection(rootId, Constant.blockId.dataview);
+			isCollection = Dataview.isCollection(rootId, J.Constant.blockId.dataview);
 		} else {
 			switch (targetBlockId) {
 				default:
-				case Constant.widgetId.favorite: {
+				case J.Constant.widgetId.favorite: {
 					const type = S.Record.getTypeById(S.Common.type);
 
 					if (!type) {
@@ -398,15 +396,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					break;
 				};
 
-				case Constant.widgetId.set: {
+				case J.Constant.widgetId.set: {
 					details.layout = I.ObjectLayout.Set;
-					typeKey = Constant.typeKey.set;
+					typeKey = J.Constant.typeKey.set;
 					break;
 				};
 
-				case Constant.widgetId.collection: {
+				case J.Constant.widgetId.collection: {
 					details.layout = I.ObjectLayout.Collection;
-					typeKey = Constant.typeKey.collection;
+					typeKey = J.Constant.typeKey.collection;
 					break;
 				};
 			};
@@ -472,7 +470,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			rect: { width: 0, height: 0, x: x + 4, y },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			subIds: Constant.menuIds.widget,
+			subIds: J.Constant.menuIds.widget,
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
 			data: {
@@ -585,34 +583,34 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		];
 		let limit = this.getLimit(block.content);
 
-		if (targetBlockId != Constant.widgetId.recentOpen) {
+		if (targetBlockId != J.Constant.widgetId.recentOpen) {
 			sorts.push({ relationKey: 'lastModifiedDate', type: I.SortType.Desc });
 		};
 
 		switch (targetBlockId) {
-			case Constant.widgetId.favorite: {
+			case J.Constant.widgetId.favorite: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
 				limit = 0;
 				break;
 			};
 
-			case Constant.widgetId.recentEdit: {
+			case J.Constant.widgetId.recentEdit: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 3 });
 				break;
 			};
 
-			case Constant.widgetId.recentOpen: {
+			case J.Constant.widgetId.recentOpen: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 });
 				sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
 				break;
 			};
 
-			case Constant.widgetId.set: {
+			case J.Constant.widgetId.set: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set });
 				break;
 			};
 
-			case Constant.widgetId.collection: {
+			case J.Constant.widgetId.collection: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection });
 				break;
 			};
@@ -623,7 +621,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			filters,
 			sorts,
 			limit,
-			keys: Constant.sidebarRelationKeys,
+			keys: J.Constant.sidebarRelationKeys,
 		}, () => {
 			if (callBack) {
 				callBack();
@@ -699,7 +697,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return false;
 		};
 
-		return Object.values(Constant.widgetId).includes(target.getTargetObjectId());
+		return Object.values(J.Constant.widgetId).includes(target.getTargetObjectId());
 	};
 
 	canCreate (): boolean {
@@ -713,7 +711,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { layout } = block.content;
 		const target = this.getTargetBlock();
 		const layoutWithPlus = [ I.WidgetLayout.List, I.WidgetLayout.Tree, I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(layout);
-		const isRecent = target ? [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(target.getTargetObjectId()) : null;
+		const isRecent = target ? [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(target.getTargetObjectId()) : null;
 
 		if (isRecent || !layoutWithPlus) {
 			return false;
@@ -721,7 +719,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		if (U.Object.isSetLayout(object.layout)) {
 			const rootId = this.getRootId();
-			const typeId = Dataview.getTypeId(rootId, Constant.blockId.dataview, object.id);
+			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id);
 			const type = S.Record.getTypeById(typeId);
 
 			if (type && U.Object.isFileLayout(type.recommendedLayout)) {
@@ -752,7 +750,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];
 		};
-		return isPreview ? Constant.limit.menuRecords : limit;
+		return isPreview ? J.Constant.limit.menuRecords : limit;
 	};
 
 	addGroupLabels (records: any[], widgetId: string) {
@@ -774,10 +772,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		let groupedRecords: I.WidgetTreeDetails[] = [];
 		let relationKey;
 
-		if (widgetId == Constant.widgetId.recentOpen) {
+		if (widgetId == J.Constant.widgetId.recentOpen) {
 			relationKey = 'lastOpenedDate';
 		};
-		if (widgetId == Constant.widgetId.recentEdit) {
+		if (widgetId == J.Constant.widgetId.recentEdit) {
 			relationKey = 'lastModifiedDate';
 		};
 

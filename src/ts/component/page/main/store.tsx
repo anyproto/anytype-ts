@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, S, U, Storage, Onboarding, analytics, Action, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, Storage, Onboarding, analytics, Action, keyboard, translate } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -14,8 +14,6 @@ enum View {
 	Marketplace = 'marketplace',
 	Library = 'library',
 };
-
-const Constant = require('json/constant.json');
 
 const KEY_SORT = 'sortStore';
 const KEY_TAB = 'tabStore';
@@ -321,7 +319,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this._isMounted = false;
 		this.unbind();
 
-		S.Menu.closeAll(Constant.menuIds.store);
+		S.Menu.closeAll(J.Constant.menuIds.store);
 		window.clearTimeout(this.timeoutFilter);
 	};
 
@@ -390,7 +388,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.view = id;
 		this.load(true);
 
-		S.Menu.closeAll(Constant.menuIds.store);
+		S.Menu.closeAll(J.Constant.menuIds.store);
 		analytics.event('LibraryView', { view: id, type: this.tab, route: (isInner ? 'inner' : 'outer') });
 
 		Storage.set('viewStore', id);
@@ -427,7 +425,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onFilterClear () {	
-		S.Menu.closeAll(Constant.menuIds.store);
+		S.Menu.closeAll(J.Constant.menuIds.store);
 	};
 
 	onFilterFocus (e: any) {
@@ -509,11 +507,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			]);
 		};
 
-		let keys: string[] = Constant.defaultRelationKeys;
+		let keys: string[] = J.Constant.defaultRelationKeys;
 
 		switch (this.view) {
 			case View.Marketplace:
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: J.Constant.storeSpaceId });
 				break;
 
 			case View.Library:
@@ -523,21 +521,21 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
-				keys = keys.concat(Constant.typeRelationKeys);
+				keys = keys.concat(J.Constant.typeRelationKeys);
 				break;
 
 			case I.StoreTab.Relation:
-				keys = keys.concat(Constant.relationRelationKeys);
+				keys = keys.concat(J.Constant.relationRelationKeys);
 				break;
 		};
 
 		if (clear) {
 			this.setState({ isLoading: true });
-			S.Record.recordsSet(Constant.subId.store, '', []);
+			S.Record.recordsSet(J.Constant.subId.store, '', []);
 		};
 
 		U.Data.searchSubscribe({
-			subId: Constant.subId.store,
+			subId: J.Constant.subId.store,
 			filters,
 			sorts,
 			keys,
@@ -566,7 +564,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getItems () {
 		const { isLoading } = this.state;
-		const records = S.Record.getRecords(Constant.subId.store);
+		const records = S.Record.getRecords(J.Constant.subId.store);
 		const limit = this.getLimit();
 
 		let ret: any[] = [
@@ -666,7 +664,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getLimit () {
 		const container = U.Common.getPageContainer(this.props.isPopup);
-		const size = Constant.size.store;
+		const size = J.Constant.size.store;
 		const maxWidth = container.width() - size.border * 2;
 		const limit = Math.floor(maxWidth / (size.width + size.margin));
 

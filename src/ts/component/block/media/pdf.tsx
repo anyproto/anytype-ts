@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
-import { I, C, S, U, translate, focus, Action, Renderer, keyboard } from 'Lib';
+import { I, C, S, U, J, translate, focus, Action, Renderer, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { pdfjs } from 'react-pdf';
-
-const Constant = require('json/constant.json');
 
 import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
 import 'react-pdf/dist/cjs/Page/TextLayer.css';
@@ -72,7 +70,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 							block={block} 
 							icon="pdf" 
 							textFile={translate('blockPdfUpload')}
-							accept={Constant.fileExtension.pdf} 
+							accept={J.Constant.fileExtension.pdf} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 

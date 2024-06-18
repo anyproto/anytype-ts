@@ -2,10 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
-import { I, S, U, Preview, translate } from 'Lib';
-
-const Colors = require('json/colors.json');
-const Theme = require('json/theme.json');
+import { I, S, U, J, Preview, translate } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -489,11 +486,11 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	svgBgColor () {
-		return Theme[S.Common.getThemeClass()]?.icon.bg[this.props.color];
+		return J.Theme[S.Common.getThemeClass()]?.icon.bg[this.props.color];
 	};
 
 	svgColor () {
-		return Theme[S.Common.getThemeClass()]?.icon.text;
+		return J.Theme[S.Common.getThemeClass()]?.icon.text;
 	};
 
 	userSvg (): string {
@@ -518,8 +515,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	gradientSvg (radius: number): string {
 		const object = this.getObject();
 		const iconSize = this.iconSize();
-		const option = Colors.gradientIcons.options[object.iconOption - 1] as any;
-		const steps = option.steps || Colors.gradientIcons.common.steps;
+		const option = J.Color.gradientIcons.options[object.iconOption - 1] as any;
+		const steps = option.steps || J.Color.gradientIcons.common.steps;
 
 		const gradient = `
 			<defs>

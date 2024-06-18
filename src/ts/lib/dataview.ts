@@ -1,7 +1,5 @@
 import arrayMove from 'array-move';
-import { I, M, C, S, U, Relation, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, M, C, S, U, J, Relation, translate } from 'Lib';
 
 class Dataview {
 
@@ -70,7 +68,7 @@ class Dataview {
 			const rel: any = view.getRelation(relationKey) || {};
 
 			rel.relationKey = relationKey;
-			rel.width = rel.width || Constant.size.dataview.cell.default;
+			rel.width = rel.width || J.Constant.size.dataview.cell.default;
 			rel.isVisible = true;
 
 			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, rel, (message: any) => {
@@ -100,7 +98,7 @@ class Dataview {
 			rootId: '',
 			blockId: '',
 			newViewId: '',
-			keys: Constant.defaultRelationKeys,
+			keys: J.Constant.defaultRelationKeys,
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
@@ -253,13 +251,13 @@ class Dataview {
 					case I.RelationType.MultiSelect:
 						value = Relation.getArrayValue(value);
 						if (value.length) {
-							option = S.Detail.get(Constant.subId.option, value[0]);
+							option = S.Detail.get(J.Constant.subId.option, value[0]);
 							bgColor = option?.color;
 						};
 						break;
 
 					case I.RelationType.Select:
-						option = S.Detail.get(Constant.subId.option, value);
+						option = S.Detail.get(J.Constant.subId.option, value);
 						bgColor = option?.color;
 						break;
 				};
@@ -519,7 +517,7 @@ class Dataview {
 		];
 
 		let ret = null;
-		if (relationKey == Constant.pageCoverRelationKey) {
+		if (relationKey == J.Constant.pageCoverRelationKey) {
 			ret = object;
 		} else {
 			for (const id of value) {

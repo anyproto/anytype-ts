@@ -1,6 +1,4 @@
-import { I, C, S, U, focus, analytics, Onboarding, Renderer, Preview, Storage, translate, Mapper, keyboard } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, focus, analytics, Onboarding, Renderer, Preview, Storage, translate, Mapper, keyboard } from 'Lib';
 
 class Action {
 
@@ -233,7 +231,7 @@ class Action {
 			switch (object.layout) {
 				case I.ObjectLayout.Type: {
 					toast = U.Common.sprintf(translate('toastObjectTypeAdded'), object.name);
-					subId = Constant.subId.type;
+					subId = J.Constant.subId.type;
 
 					eventParam.objectType = object.id;
 					break;
@@ -241,7 +239,7 @@ class Action {
 
 				case I.ObjectLayout.Relation: {
 					toast = U.Common.sprintf(translate('toastRelationAdded'), object.name);
-					subId = Constant.subId.relation;
+					subId = J.Constant.subId.relation;
 
 					eventParam.relationKey = object.relationKey;
 					break;
@@ -367,7 +365,7 @@ class Action {
 		const { mode, path } = networkConfig;
 
 		this.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], dataPath, U.Common.rand(1, Constant.iconCnt), (message: any) => {
+			C.AccountRecoverFromLegacyExport(paths[0], dataPath, U.Common.rand(1, J.Constant.iconCnt), (message: any) => {
 				if (onError(message.error)) {
 					return;
 				};

@@ -1,6 +1,4 @@
-import { I, C, S, U, keyboard, history as historyPopup, Renderer, translate, analytics } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics } from 'Lib';
 
 class UtilObject {
 
@@ -153,7 +151,7 @@ class UtilObject {
 				typeKey = type.uniqueKey;
 
 				if (!templateId) {
-					templateId = type.defaultTemplateId || Constant.templateId.blank;
+					templateId = type.defaultTemplateId || J.Constant.templateId.blank;
 				};
 			};
 		};

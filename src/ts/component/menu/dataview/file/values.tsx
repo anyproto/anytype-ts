@@ -4,9 +4,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
-import { I, C, S, U, Relation, Renderer, keyboard, Action, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Relation, Renderer, keyboard, Action, translate } from 'Lib';
 
 const MENU_ID = 'dataviewFileList';
 
@@ -253,7 +251,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 								};
 
 								case I.ObjectLayout.Image: {
-									url = S.Common.imageUrl(item.id, Constant.size.image);
+									url = S.Common.imageUrl(item.id, J.Constant.size.image);
 									break;
 								};
 							};

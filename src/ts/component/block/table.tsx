@@ -4,10 +4,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
-import { I, C, S, U, keyboard, focus, Mark, Action, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, Mark, Action, translate } from 'Lib';
 import Row from './table/row';
-
-const Constant = require('json/constant.json');
 
 const PADDING = 46;
 const SNAP = 10;
@@ -268,10 +266,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				raf(() => this.onOptionsOpen(type, rowId, columnId, cellId)); 
 			},
 			onClose: () => {
-				S.Menu.closeAll(Constant.menuIds.table);
+				S.Menu.closeAll(J.Constant.menuIds.table);
 				this.onOptionsClose();
 			},
-			subIds: Constant.menuIds.table,
+			subIds: J.Constant.menuIds.table,
 		};
 
 		let element: any = null;
@@ -354,7 +352,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 					};
 
 					if (!item.arrow) {
-						S.Menu.closeAll(Constant.menuIds.table);
+						S.Menu.closeAll(J.Constant.menuIds.table);
 						return;
 					};
 
@@ -490,7 +488,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 						};
 					};
 
-					S.Menu.closeAll(Constant.menuIds.table, () => {
+					S.Menu.closeAll(J.Constant.menuIds.table, () => {
 						S.Menu.open(menuId, menuParam);
 					});
 				},
@@ -519,7 +517,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		let idx = -1;
 		let nextIdx = -1;
 
-		S.Menu.closeAll(Constant.menuIds.table);
+		S.Menu.closeAll(J.Constant.menuIds.table);
 
 		switch (item.id) {
 			case 'columnBefore':
@@ -876,7 +874,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const ret = [];
 
 		columns.forEach((it: I.Block) => {
-			ret.push(this.checkWidth(it.fields.width || Constant.size.table.default));
+			ret.push(this.checkWidth(it.fields.width || J.Constant.size.table.default));
 		});
 
 		return ret;
@@ -1192,13 +1190,13 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	initSize () {
 		const { columns } = this.getData();
-		const widths = columns.map(it => this.checkWidth(it.fields.width || Constant.size.table.default));
+		const widths = columns.map(it => this.checkWidth(it.fields.width || J.Constant.size.table.default));
 
 		this.setColumnWidths(widths);
 	};
 
 	checkWidth (w: number) {
-		const { min, max } = Constant.size.table;
+		const { min, max } = J.Constant.size.table;
 		const steps = 5;
 
 		let width = Math.max(min, Math.min(max, w));
@@ -1527,7 +1525,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const row = node.find('.row').first();
 		const obj = $(`#block-${block.id}`);
 
-		let width = Constant.size.blockMenu + 10;
+		let width = J.Constant.size.blockMenu + 10;
 		let maxWidth = 0;
 		let wrapperWidth = 0;
 
@@ -1539,7 +1537,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			const container = U.Common.getPageContainer(isPopup);
 
 			maxWidth = container.width() - PADDING;
-			wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;
+			wrapperWidth = getWrapperWidth() + J.Constant.size.blockMenu;
 
 			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
 			width = Math.max(wrapperWidth, Math.min(maxWidth, width));
@@ -1551,7 +1549,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		} else {
 			const parentObj = $(`#block-${parent.id}`);
 			if (parentObj.length) {
-				maxWidth = parentObj.width() - Constant.size.blockMenu;
+				maxWidth = parentObj.width() - J.Constant.size.blockMenu;
 			};
 
 			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');

@@ -2,10 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, S, U, Relation, translate, Dataview, keyboard, analytics, Preview } from 'Lib';
+import { I, C, S, U, J, Relation, translate, Dataview, keyboard, analytics, Preview } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
-
-const Constant = require('json/constant.json');
 
 const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<I.Menu> {
 
@@ -518,14 +516,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		});
 
 		if (!S.Menu.isOpen(id)) {
-			S.Menu.closeAll(Constant.menuIds.relationEdit, () => {
+			S.Menu.closeAll(J.Constant.menuIds.relationEdit, () => {
 				S.Menu.open(id, options);
 			});
 		};
 	};
 
 	menuClose () {
-		S.Menu.closeAll(Constant.menuIds.relationEdit);
+		S.Menu.closeAll(J.Constant.menuIds.relationEdit);
 	};
 
 	onChangeTime (v: boolean) {
@@ -625,7 +623,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			const { details } = message;
 			
 			data.relationId = details.id;
-			S.Detail.update(Constant.subId.relation, { id: details.id, details }, false);
+			S.Detail.update(J.Constant.subId.relation, { id: details.id, details }, false);
 
 			if (addCommand) {
 				addCommand(rootId, blockId, { ...details, _index_: item._index_ }, onChange);

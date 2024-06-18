@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, DropTarget } from 'Component';
-import { I, S, U, keyboard, analytics, translate } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;
@@ -28,7 +26,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 	render () {
 		const { subId, id, block, isEditing, hideIcon } = this.props;
 		const rootId = keyboard.getRootId();
-		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions } = object;
 		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
@@ -101,7 +99,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		e.stopPropagation();
 
 		const { subId, id, } = this.props;
-		const object = S.Detail.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
 
 		U.Object.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
@@ -127,7 +125,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 			subId, 
 			objectId: id, 
 			data: {
-				relationKeys: Constant.defaultRelationKeys.concat(view.groupRelationKey),
+				relationKeys: J.Constant.defaultRelationKeys.concat(view.groupRelationKey),
 			},
 		});
 	};

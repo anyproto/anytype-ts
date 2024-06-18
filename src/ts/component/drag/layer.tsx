@@ -1,9 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import { I, M, S, U, keyboard } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, M, S, U, J, keyboard } from 'Lib';
 
 interface State {
 	rootId: string;
@@ -74,7 +72,7 @@ class DragLayer extends React.Component<object, State> {
 		const comp = $(ReactDOM.findDOMNode(component));
 		const rect = (comp.get(0) as Element).getBoundingClientRect();
 		
-		this.setState({ rootId, type, width: rect.width - Constant.size.blockMenu, ids });
+		this.setState({ rootId, type, width: rect.width - J.Constant.size.blockMenu, ids });
 	};
 
 	hide () {

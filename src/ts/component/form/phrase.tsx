@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
-import { S, keyboard, Storage } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { J, S, keyboard, Storage } from 'Lib';
 
 interface Props {
 	value: string;
@@ -252,7 +250,7 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	checkValue (v: string[]) {
-		return v.map(it => it.substring(0, Constant.limit.phrase.letter)).filter(it => it).slice(0, Constant.limit.phrase.word);
+		return v.map(it => it.substring(0, J.Constant.limit.phrase.letter)).filter(it => it).slice(0, J.Constant.limit.phrase.word);
 	};
 
 	setError (v: boolean) {

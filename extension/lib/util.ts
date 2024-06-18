@@ -1,6 +1,5 @@
-import { S, U, dispatcher } from 'Lib';
+import { S, U, J, dispatcher } from 'Lib';
 
-const Extension = require('json/extension.json');
 const INDEX_POPUP = '/popup/index.html';
 const INDEX_IFRAME = '/iframe/index.html'
 
@@ -9,7 +8,7 @@ class Util {
 	isExtension () {
 		return (
 			(location.protocol == 'chrome-extension:') && 
-			Extension.clipper.ids.includes(location.hostname)
+			J.Extension.clipper.ids.includes(location.hostname)
 		);
 	};
 

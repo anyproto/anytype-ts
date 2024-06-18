@@ -4,10 +4,8 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
-import { I, S, U, Relation, translate, keyboard } from 'Lib';
+import { I, S, U, J, Relation, translate, keyboard } from 'Lib';
 import ItemObject from './item/object';
-
-const Constant = require('json/constant.json');
 
 interface State { 
 	isEditing: boolean; 
@@ -347,7 +345,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			S.Menu.updateData('dataviewObjectList', { filter: this.getValue().new });
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 
 		this.placeholderCheck();
 		this.resize();

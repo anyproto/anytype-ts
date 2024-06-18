@@ -5,9 +5,8 @@ import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch, Cell } from 'Component';
-import { I, C, S, Dataview, keyboard, translate } from 'Lib';
+import { I, C, S, J, Dataview, keyboard, translate } from 'Lib';
 
-const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 20;
 
@@ -180,7 +179,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 
 	componentWillUnmount () {
 		this.unbind();
-		S.Menu.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(J.Constant.menuIds.cell);
 	};
 
 	rebind () {

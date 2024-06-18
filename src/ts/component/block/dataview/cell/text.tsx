@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, U, keyboard, translate, Relation } from 'Lib';
+import { I, S, U, J, keyboard, translate, Relation } from 'Lib';
 import { Input, IconObject } from 'Component';
-
-const Constant = require('json/constant.json');
 
 interface State { 
 	isEditing: boolean; 
@@ -355,7 +353,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			e.preventDefault();
 
 			this.save(value, () => {
-				S.Menu.closeAll(Constant.menuIds.cell);
+				S.Menu.closeAll(J.Constant.menuIds.cell);
 
 				this.range = null;
 				this.setEditing(false);
@@ -367,7 +365,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		/*
 		if (!ret) {
 			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => this.save(value), Constant.delay.keyboard);
+			this.timeout = window.setTimeout(() => this.save(value), J.Constant.delay.keyboard);
 		};
 		*/
 	};
@@ -394,7 +392,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		if (!ret) {
 			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => this.save(this.value), Constant.delay.keyboard);
+			this.timeout = window.setTimeout(() => this.save(this.value), J.Constant.delay.keyboard);
 		};
 	};
 

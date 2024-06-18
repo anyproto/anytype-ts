@@ -1,8 +1,6 @@
-import { I, U } from 'Lib';
+import { I, U, J } from 'Lib';
 
-const Constant = require('json/constant.json');
 const DOMAINS: any = {};
-
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
 DOMAINS[I.EmbedProcessor.Vimeo] = [ 'vimeo.com' ];
 DOMAINS[I.EmbedProcessor.GoogleMaps] = [ 'google.[^\/]+/maps' ];
@@ -115,7 +113,7 @@ class UtilEmbed {
 				const place = url.match(/place\/([^\/]+)/);
 				const param = url.match(/\/@([^\/\?]+)/);
 				const search: any = {
-					key: Constant.embed.googleMaps.key,
+					key: J.Constant.embed.googleMaps.key,
 				};
 
 				let endpoint = '';

@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, C, U, Relation, translate, keyboard } from 'Lib';
+import { I, S, C, U, J, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical, Icon } from 'Component';
-
-const Constant = require('json/constant.json');
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
 	
@@ -150,7 +148,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 	onKeyUp (e: any, v: string) {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.save(), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => this.save(), J.Constant.delay.keyboard);
 	};
 
 	onClick (e: any, item: any) {

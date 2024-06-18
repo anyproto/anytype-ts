@@ -5,10 +5,9 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer } from 'react-sortable-hoc';
 import { Icon } from 'Component';
-import { I, C, S, U, keyboard, analytics, Relation, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, analytics, Relation, translate } from 'Lib';
 import Item from 'Component/menu/item/filter';
 
-const Constant = require('json/constant.json');
 const HEIGHT = 48;
 const LIMIT = 20;
 
@@ -174,14 +173,14 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 
 	componentWillUnmount () {
 		this.unbind();
-		S.Menu.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(J.Constant.menuIds.cell);
 	};
 
 	rebind () {
 		const { getId } = this.props;
 		const obj = $(`#${getId()} .content`);
 
-		obj.off('click').on('click', () => S.Menu.closeAll(Constant.menuIds.cell));
+		obj.off('click').on('click', () => S.Menu.closeAll(J.Constant.menuIds.cell));
 
 		this.unbind();
 		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
