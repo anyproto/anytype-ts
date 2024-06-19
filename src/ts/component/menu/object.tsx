@@ -416,7 +416,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				U.Common.clipboardCopy({ text: J.Url.protocol + U.Object.universalRoute(object) });
+				U.Common.clipboardCopy({ text: `${J.Constant.protocol}://${U.Object.universalRoute(object)}` });
 				analytics.event('CopyLink', { route });
 				break;
 			};
