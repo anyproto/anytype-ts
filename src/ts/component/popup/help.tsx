@@ -3,9 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import * as Docs from 'Docs';
 import { Label, Icon, Cover, Button } from 'Component';
-import { I, UtilCommon, translate } from 'Lib';
+import { I, U, J, translate } from 'Lib';
 import Block from 'Component/block/help';
-const Url = require('json/url.json');
 
 interface State {
 	showFull: boolean;
@@ -53,7 +52,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 					</div>
 					<div className="side right">
 						<Label text={translate('popupHelpLabel')} />
-						<Icon onClick={() => UtilCommon.onUrl(Url.mail)} className="mail" />
+						<Icon onClick={() => U.Common.onUrl(J.Url.mail)} className="mail" />
 					</div>
 				</div>
 				
@@ -81,13 +80,13 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		this.rebind();
 		this.resize();
 
-		UtilCommon.renderLinks($(this.node));
+		U.Common.renderLinks($(this.node));
 	};
 
 	componentDidUpdate () {
 		this.resize();
 
-		UtilCommon.renderLinks($(this.node));
+		U.Common.renderLinks($(this.node));
 	};
 
 	componentWillUnmount () {
@@ -108,7 +107,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		const { param } = this.props;
 		const { data } = param;
 
-		return UtilCommon.toUpperCamelCase(data.document);
+		return U.Common.toUpperCamelCase(data.document);
 	};
 
 	getBlocks () {
@@ -155,7 +154,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const loader = obj.find('#loader');
-		const hh = UtilCommon.sizeHeader();
+		const hh = U.Common.sizeHeader();
 
 		loader.css({ width: obj.width(), height: obj.height() });
 		position();

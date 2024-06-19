@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Loader, Title, Error, Frame, Button } from 'Component';
-import { I, C, UtilCommon, UtilRouter, UtilSpace, translate } from 'Lib';
-import { popupStore } from 'Store';
+import { I, C, S, U, translate } from 'Lib';
 
 interface State {
 	error: string;
@@ -32,7 +31,7 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 								text={translate('commonBack')} 
 								color="blank" 
 								className="c36" 
-								onClick={() => UtilSpace.openDashboard('route')} 
+								onClick={() => U.Space.openDashboard('route')} 
 							/>
 						</div>
 					) : <Loader />}
@@ -48,10 +47,10 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {
-				UtilSpace.openDashboard('route');
+				U.Space.openDashboard('route');
 				window.setTimeout(() => {
-					popupStore.open('usecase', { data: { page: 'item', object: message.info } });
-				}, popupStore.getTimeout());
+					S.Popup.open('usecase', { data: { page: 'item', object: message.info } });
+				}, S.Popup.getTimeout());
 			};
 		});
 
@@ -63,13 +62,13 @@ class PageMainImport extends React.Component<I.PageComponent, State> {
 	};
 
 	getSearch () {
-		return UtilCommon.searchParam(UtilRouter.history.location.search);
+		return U.Common.searchParam(U.Router.history.location.search);
 	};
 
 	resize () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const obj = UtilCommon.getPageContainer(isPopup);
+		const obj = U.Common.getPageContainer(isPopup);
 		const node = $(this.node);
 		const wrapper = obj.find('.wrapper');
 		const oh = obj.height();

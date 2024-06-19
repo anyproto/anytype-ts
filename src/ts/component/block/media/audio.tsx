@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Error, MediaAudio } from 'Component';
-import { I, translate, focus, keyboard, Action } from 'Lib';
-import { commonStore, detailStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, J, translate, focus, keyboard, Action } from 'Lib';
 
 const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
 
@@ -28,7 +26,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { state, targetObjectId } = content;
-		const object = detailStore.get(rootId, targetObjectId, [ 'name' ], true);
+		const object = S.Detail.get(rootId, targetObjectId, [ 'name' ], true);
 		
 		let element = null;
 		
@@ -43,7 +41,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 							block={block} 
 							icon="audio" 
 							textFile={translate('blockAudioUpload')} 
-							accept={Constant.fileExtension.audio} 
+							accept={J.Constant.fileExtension.audio} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 
@@ -58,7 +56,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 				
 			case I.FileState.Done:
 				const playlist = [ 
-					{ name: object.name, src: commonStore.fileUrl(targetObjectId) },
+					{ name: object.name, src: S.Common.fileUrl(targetObjectId) },
 				];
 
 				element = (

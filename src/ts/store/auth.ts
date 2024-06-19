@@ -1,7 +1,5 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, C, Storage, analytics, Renderer } from 'Lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore, notificationStore } from 'Store';
-import { keyboard } from 'Lib';
+import { I, M, C, S, Storage, analytics, Renderer, keyboard } from 'Lib';
 
 interface NetworkConfig {
 	mode: I.NetworkMode;
@@ -17,6 +15,7 @@ class AuthStore {
 	public appKey = '';
 	public threadMap: Map<string, any> = new Map();
 	public membershipData: I.Membership = { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
+	public syncStatusData: I.SyncStatus = { error: 0, network: 0, status: 3, syncingCounter: 0 };
 	
 	constructor () {
 		makeObservable(this, {
@@ -24,6 +23,7 @@ class AuthStore {
 			accountList: observable,
 			threadMap: observable,
 			membershipData: observable,
+			syncStatusData: observable,
 			membership: computed,
 			accounts: computed,
 			account: computed,
@@ -62,6 +62,10 @@ class AuthStore {
 		return this.membershipData || { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
 	};
 
+	get syncStatus (): I.SyncStatus {
+		return this.syncStatusData || { error: 0, network: 0, status: 3, syncingCounter: 0 };
+	};
+
 	tokenSet (v: string) {
 		this.token = String(v || '');
 	};
@@ -84,6 +88,10 @@ class AuthStore {
 
 	membershipUpdate (v: I.Membership) {
 		set(this.membershipData, v);
+	};
+
+	syncStatusUpdate (v: I.SyncStatus) {
+		set(this.syncStatusData, v);
 	};
 
 	accountAdd (account: any) {
@@ -177,14 +185,14 @@ class AuthStore {
 
 		keyboard.setPinChecked(false);
 
-		commonStore.spaceSet('');
-		commonStore.typeSet('');
+		S.Common.spaceSet('');
+		S.Common.typeSet('');
 
-		blockStore.clearAll();
-		detailStore.clearAll();
-		dbStore.clearAll();
-		menuStore.closeAllForced();
-		notificationStore.clear();
+		S.Block.clearAll();
+		S.Detail.clearAll();
+		S.Record.clearAll();
+		S.Menu.closeAllForced();
+		S.Notification.clear();
 
 		this.clearAll();
 		Storage.logout();
@@ -192,4 +200,4 @@ class AuthStore {
 
 };
 
- export const authStore: AuthStore = new AuthStore();
+ export const Auth: AuthStore = new AuthStore();

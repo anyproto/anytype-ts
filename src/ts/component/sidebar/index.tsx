@@ -4,11 +4,9 @@ import raf from 'raf';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard, Preview, sidebar, translate } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S, J, keyboard, Preview, sidebar, translate } from 'Lib';
 import ListWidget from 'Component/list/widget';
 
-const Constant = require('json/constant.json');
 const THROTTLE = 20;
 	
 const Sidebar = observer(class Sidebar extends React.Component {
@@ -206,7 +204,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			};
 
 			if (d < 0) {
-				if (commonStore.isSidebarFixed && (w <= Constant.size.sidebar.width.close)) {
+				if (S.Common.isSidebarFixed && (w <= J.Constant.size.sidebar.width.close)) {
 					sidebar.close();
 				} else {
 					sidebar.set({ width: w, isClosed: false });
@@ -214,10 +212,10 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			};
 
 			if (d > 0) {
-				if ((w >= 0) && (w <= Constant.size.sidebar.width.close)) {
-					sidebar.open(Constant.size.sidebar.width.min);
+				if ((w >= 0) && (w <= J.Constant.size.sidebar.width.close)) {
+					sidebar.open(J.Constant.size.sidebar.width.min);
 				} else 
-				if (w > Constant.size.sidebar.width.close) {
+				if (w > J.Constant.size.sidebar.width.close) {
 					sidebar.set({ width: w, isClosed: false });
 				};
 			};
@@ -238,7 +236,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	};
 
 	onHandleClick () {
-		if (!this.movedX && commonStore.isSidebarFixed) {
+		if (!this.movedX && S.Common.isSidebarFixed) {
 			sidebar.toggleOpenClose();
 		};
 	};

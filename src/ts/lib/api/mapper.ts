@@ -1,4 +1,4 @@
-import { I, M, UtilCommon, Encode, Decode } from 'Lib';
+import { I, M, U, Encode, Decode } from 'Lib';
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
@@ -259,8 +259,8 @@ export const Mapper = {
 		Block: (obj: Model.Block): I.Block => {
 			const cc = obj.getContentCase();
 			const type = Mapper.BlockType(obj.getContentCase());
-			const fn = `get${UtilCommon.ucFirst(type)}`;
-			const fm = UtilCommon.toUpperCamelCase(`block-${type}`);
+			const fn = `get${U.Common.ucFirst(type)}`;
+			const fm = U.Common.toUpperCamelCase(`block-${type}`);
 			const content = obj[fn] ? obj[fn]() : {};
 			const item: I.Block = {
 				id: obj.getId(),
@@ -452,7 +452,7 @@ export const Mapper = {
 
 		BoardGroup: (obj: any): I.BoardGroup => {
 			const type = Mapper.BoardGroupType(obj.getValueCase());
-			const fn = `get${UtilCommon.ucFirst(type)}`;
+			const fn = `get${U.Common.ucFirst(type)}`;
 			const field = obj[fn] ? obj[fn]() : null;
 
 			let value: any = null;
@@ -502,7 +502,7 @@ export const Mapper = {
 
 		Notification: (obj: Model.Notification): I.Notification => {
 			const type = Mapper.NotificationPayload(obj.getPayloadCase());
-			const fn = `get${UtilCommon.ucFirst(type)}`;
+			const fn = `get${U.Common.ucFirst(type)}`;
 			const field = obj[fn] ? obj[fn]() : null;
 			
 			let payload: any = {};
@@ -555,7 +555,7 @@ export const Mapper = {
 						payload = Object.assign(payload, {
 							spaceId: field.getSpaceid(),
 							spaceName: field.getSpacename(),
-        					permissions: field.getPermissions(),
+							permissions: field.getPermissions(),
 						});
 						break;
 					};
@@ -834,7 +834,7 @@ export const Mapper = {
 		Block: (obj: any) => {
 			obj = obj || {};
 			obj.type = String(obj.type || I.BlockType.Empty);
-			obj.content = UtilCommon.objectCopy(obj.content || {});
+			obj.content = U.Common.objectCopy(obj.content || {});
 	
 			const block = new Model.Block();
 	
@@ -851,8 +851,8 @@ export const Mapper = {
 				block.setFields(Encode.struct(obj.fields || {}));
 			};
 
-			const fb = UtilCommon.toCamelCase(`set-${obj.type.toLowerCase()}`);
-			const fm = UtilCommon.toUpperCamelCase(`block-${obj.type}`);
+			const fb = U.Common.toCamelCase(`set-${obj.type.toLowerCase()}`);
+			const fm = U.Common.toUpperCamelCase(`block-${obj.type}`);
 
 			if (block[fb] && Mapper.To[fm]) {
 				block[fb](Mapper.To[fm](obj.content));
@@ -906,7 +906,7 @@ export const Mapper = {
 		},
 
 		View: (obj: I.View) => {
-			obj = new M.View(UtilCommon.objectCopy(obj));
+			obj = new M.View(U.Common.objectCopy(obj));
 			
 			const item = new Model.Block.Content.Dataview.View();
 
@@ -1069,12 +1069,14 @@ export const Mapper = {
 			if (v == V.PROCESSUPDATE)				 t = 'ProcessUpdate';
 			if (v == V.PROCESSDONE)					 t = 'ProcessDone';
 
+			if (v == V.SPACESYNCSTATUSUPDATE)		 t = 'SpaceSyncStatusUpdate';
+
 			return t;
 		},
 
 		Data (e: any) {
 			const type = Mapper.Event.Type(e.getValueCase());
-			const fn = `get${UtilCommon.ucFirst(type)}`;
+			const fn = `get${U.Common.ucFirst(type)}`;
 
 			return e[fn] ? e[fn]() : {};
 		},
@@ -1312,7 +1314,7 @@ export const Mapper = {
 			];
 
 			keys.forEach(key => {
-				const items = obj[UtilCommon.toCamelCase(`get-${key.id}-list`)]() || [];
+				const items = obj[U.Common.toCamelCase(`get-${key.id}-list`)]() || [];
 
 				ret[key.field] = [];
 
@@ -1515,6 +1517,14 @@ export const Mapper = {
 			};
 		},
 
+		SpaceSyncStatusUpdate: (obj: Events.Event.Space.SyncStatus.Update) => {
+			return {
+				error: obj.getError(),
+				network: obj.getNetwork(),
+				status: obj.getStatus(),
+				syncingCounter: obj.getSyncingobjectscounter()
+			};
+		},
 	},
 
 };

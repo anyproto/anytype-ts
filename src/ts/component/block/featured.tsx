@@ -3,9 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell } from 'Component';
-import { I, C, UtilData, UtilCommon, UtilObject, UtilDate, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
-import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
@@ -46,10 +44,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	render () {
 		const { rootId, block, iconSize, isPopup } = this.props;
 		const storeId = this.getStoreId();
-		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const short = S.Detail.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
-		const object = detailStore.get(rootId, storeId, featuredRelations);
-		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const object = S.Detail.get(rootId, storeId, featuredRelations);
+		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();
 
 		return (
@@ -68,7 +66,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 				{items.map((relationKey: any, i: any) => {
 					const id = Relation.cellId(PREFIX + block.id, relationKey, object.id);
-					const relation = dbStore.getRelationByKey(relationKey);
+					const relation = S.Record.getRelationByKey(relationKey);
 					const value = object[relationKey];
 					const canEdit = allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
@@ -106,7 +104,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								relationKey={relationKey}
 								getRecord={() => object}
 								viewType={I.ViewType.Grid}
-								pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
+								pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
 								iconSize={iconSize}
 								readonly={!canEdit}
 								isInline={true}
@@ -134,7 +132,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			window.setTimeout(() => {
 				this.checkType();
 				this.checkSource();
-			}, menuStore.getTimeout());
+			}, S.Menu.getTimeout());
 		};
 
 		this.init();
@@ -151,7 +149,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	init () {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
-		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const short = S.Detail.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const featuredRelations = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
 		const node = $(this.node);
 		const obj = $(`#block-${block.id}`);
@@ -173,7 +171,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const object = this.getObject();
-		const type = detailStore.get(rootId, object.type, [ 'name', 'isDeleted' ]);
+		const type = S.Detail.get(rootId, object.type, [ 'name', 'isDeleted' ]);
 		const name = (
 			<div className="name">
 				<ObjectType object={type} />
@@ -182,7 +180,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		let ret = null;
 
-		if (UtilObject.isTemplate(object.type)) {
+		if (U.Object.isTemplate(object.type)) {
 			ret = (
 				<span className="cell">
 					<div className="cellContent type disabled">
@@ -226,14 +224,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const rl = relations.length;
 
 		if (tl) {
-			setOfString.push(UtilCommon.sprintf('%s: %s', UtilCommon.plural(tl, translate('pluralObjectType')), types.slice(0, SOURCE_LIMIT).join(', ')));
+			setOfString.push(U.Common.sprintf('%s: %s', U.Common.plural(tl, translate('pluralObjectType')), types.slice(0, SOURCE_LIMIT).join(', ')));
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
 			};
 		};
 		if (rl) {
-			setOfString.push(`${UtilCommon.plural(rl, translate('pluralRelation'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
+			setOfString.push(`${U.Common.plural(rl, translate('pluralRelation'))}: ${relations.slice(0, SOURCE_LIMIT).join(', ')}`);
 
 			if (rl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);
@@ -267,12 +265,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	renderIdentity () {
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
-		const short = detailStore.get(rootId, storeId, [ 'layout' ], true);
+		const short = S.Detail.get(rootId, storeId, [ 'layout' ], true);
 		if (short.layout != I.ObjectLayout.Participant) {
 			return null;
 		};
 
-		const object = detailStore.get(rootId, storeId, UtilData.participantRelationKeys());
+		const object = S.Detail.get(rootId, storeId, U.Data.participantRelationKeys());
 		const relationKey = object.globalName ? 'globalName': 'identity';
 
 		return (
@@ -285,7 +283,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					onMouseLeave={this.onMouseLeave}
 				>
 					<div className="name">
-						{UtilCommon.shorten(object[relationKey], 150)}
+						{U.Common.shorten(object[relationKey], 150)}
 					</div>
 				</div>
 			</span>
@@ -297,7 +295,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = this.getObject();
 		const id = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 		const value = object[relationKey];
-		const options = Relation.getArrayValue(value).map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_);
+		const options = Relation.getArrayValue(value).map(it => S.Detail.get(rootId, it, [])).filter(it => !it._empty_);
 		const l = options.length;
 
 		if (!l) {
@@ -308,26 +306,26 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			<span id={id} className="cell" key={index} onClick={e => this.onLinks(e, relationKey)}>
 				<div className="bullet" />
 				<div className="cellContent">
-					{`${l} ${UtilCommon.plural(l, translate(UtilCommon.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
+					{`${l} ${U.Common.plural(l, translate(U.Common.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
 				</div>
 			</span>
 		);
 	};
 
 	getRelationList () {
-		const object = detailStore.get(this.props.rootId, this.getStoreId(), [ 'featuredRelations' ], true);
+		const object = S.Detail.get(this.props.rootId, this.getStoreId(), [ 'featuredRelations' ], true);
 		return Relation.getArrayValue(object.featuredRelations);
 	};
 
 	getObject () {
-		return detailStore.get(this.props.rootId, this.getStoreId(), this.getRelationList());
+		return S.Detail.get(this.props.rootId, this.getStoreId(), this.getRelationList());
 	};
 
 	checkType () {
 		const { rootId, isPopup } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ 'type' ], true);
-		const type = detailStore.get(rootId, object.type, [ 'isDeleted' ], true);
+		const object = S.Detail.get(rootId, storeId, [ 'type' ], true);
+		const type = S.Detail.get(rootId, object.type, [ 'isDeleted' ], true);
 
 		if (type.isDeleted) {
 			Onboarding.start('typeDeleted', isPopup);
@@ -337,7 +335,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	checkSource () {
 		const { rootId, isPopup } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ 'layout', 'setOf' ]);
+		const object = S.Detail.get(rootId, storeId, [ 'layout', 'setOf' ]);
 
 		if (!object || object._empty_ || (object.layout != I.ObjectLayout.Set)) {
 			return;
@@ -358,14 +356,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	getItems () {
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const object = S.Detail.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const skipIds = [
 			'type',
 			'description',
 			'setOf',
 		];
 
-		return (object.featuredRelations || []).filter(it => dbStore.getRelationByKey(it) && !skipIds.includes(it));
+		return (object.featuredRelations || []).filter(it => S.Record.getRelationByKey(it) && !skipIds.includes(it));
 	};
 
 	onFocus () {
@@ -389,7 +387,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onCellClick (e: any, relationKey: string, recordId: string) {
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation || relation.isReadonlyValue) {
 			return;
@@ -406,7 +404,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onMouseEnter (e: any, relationKey: string, text?: string) {
 		const { rootId } = this.props;
 		const cell = $(`#${Relation.cellId(PREFIX, relationKey, rootId)}`);
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 		const show = (text: string) => {
 			Preview.tooltipShow({ text, element: cell });
 		};
@@ -429,9 +427,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		e.stopPropagation();
 
 		const { rootId, block, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
-		const type = detailStore.get(rootId, object.type, []);
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
+		const object = S.Detail.get(rootId, rootId, [ 'setOf' ]);
+		const type = S.Detail.get(rootId, object.type, []);
+		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const typeIsDeleted = type._empty_ || type.isDeleted;
 		const options: any[] = [];
 
@@ -450,10 +448,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const showMenu = () => {
-			menuStore.open('select', {
+			S.Menu.open('select', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
 				offsetY: 8,
-				subIds: Constant.menuIds.featuredType,
+				subIds: J.Constant.menuIds.featuredType,
 				onOpen: (context: any) => {
 					this.menuContext = context;
 				},
@@ -471,16 +469,16 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		if (typeIsDeleted) {
 			showMenu();
 		} else {
-			UtilData.checkSetCnt([ object.type ], (message: any) => {
+			U.Data.checkSetCnt([ object.type ], (message: any) => {
 				if (message.records.length == 1) {
 					this.setId = message.records[0].id;
-					options.push({ id: 'setOpen', name: UtilCommon.sprintf(translate('blockFeaturedTypeMenuOpenSetOf'), type.name) });
+					options.push({ id: 'setOpen', name: U.Common.sprintf(translate('blockFeaturedTypeMenuOpenSetOf'), type.name) });
 				} else
 				if (message.records.length == 2) {
 					options.push({ id: 'setOpenMenu', name: translate('blockFeaturedTypeMenuOpenSet'), arrow: true });
 				} else
 				if (type && !type.isDeleted) {
-					options.push({ id: 'setCreate', name: UtilCommon.sprintf(translate('blockFeaturedTypeMenuCreateSetOf'), type.name) });
+					options.push({ id: 'setCreate', name: U.Common.sprintf(translate('blockFeaturedTypeMenuCreateSetOf'), type.name) });
 				};
 
 				showMenu();
@@ -492,11 +490,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block } = this.props;
 
 		if (!item.arrow) {
-			menuStore.closeAll(Constant.menuIds.featuredType);
+			S.Menu.closeAll(J.Constant.menuIds.featuredType);
 			return;
 		};
 
-		const object = detailStore.get(rootId, rootId, [ 'setOf', 'internalFlags' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'setOf', 'internalFlags' ]);
 
 		const menuParam = {
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
@@ -520,23 +518,23 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
-					keys: UtilData.typeRelationKeys(),
+					keys: U.Data.typeRelationKeys(),
 					skipIds: [ object.type ],
 					onClick: (item: any) => {
 						keyboard.disableClose(true);
 
 						const open = () => {
-							UtilObject.openAuto({ ...object, layout: item.recommendedLayout });
+							U.Object.openAuto({ ...object, layout: item.recommendedLayout });
 							keyboard.disableClose(false);
 						};
 
-						detailStore.update(rootId, { id: item.id, details: item }, false);
+						S.Detail.update(rootId, { id: item.id, details: item }, false);
 
 						C.ObjectSetObjectType(rootId, item.uniqueKey, () => {
 							if (object.internalFlags && object.internalFlags.includes(I.ObjectFlag.SelectTemplate)) {
-								C.ObjectApplyTemplate(rootId, item.defaultTemplateId || Constant.templateId.blank, open);
+								C.ObjectApplyTemplate(rootId, item.defaultTemplateId || J.Constant.templateId.blank, open);
 							} else {
 								open();
 							};
@@ -556,18 +554,18 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.In, value: [ object.type ] }
 					],
 					onSelect: (item: any) => {
-						UtilObject.openPopup({ id: item.id, layout: I.ObjectLayout.Set });
+						U.Object.openPopup({ id: item.id, layout: I.ObjectLayout.Set });
 						this.menuContext.close();
 					}
 				});
 		};
 
-		if (menuId && !menuStore.isOpen(menuId)) {
-			if (menuStore.isOpen(menuId)) {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId)) {
+			if (S.Menu.isOpen(menuId)) {
+				S.Menu.open(menuId, menuParam);
 			} else {
-				menuStore.closeAll(Constant.menuIds.featuredType, () => {
-					menuStore.open(menuId, menuParam);
+				S.Menu.closeAll(J.Constant.menuIds.featuredType, () => {
+					S.Menu.open(menuId, menuParam);
 				});
 			};
 		};
@@ -579,40 +577,40 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const { rootId, isPopup } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'setOf', 'collectionOf' ]);
-		const type = dbStore.getTypeById(object.type);
+		const object = S.Detail.get(rootId, rootId, [ 'setOf', 'collectionOf' ]);
+		const type = S.Record.getTypeById(object.type);
 
 		this.menuContext.close();
 
 		switch (item.id) {
 			case 'open':
-				UtilObject.openPopup(type);
+				U.Object.openPopup(type);
 				break;
 
 			case 'setOpen':
-				UtilObject.openPopup({ id: this.setId, layout: I.ObjectLayout.Set });
+				U.Object.openPopup({ id: this.setId, layout: I.ObjectLayout.Set });
 				break;
 
 			case 'setCreate':
 				const details: any = {};
 
 				if (type) {
-					details.name = UtilCommon.sprintf(translate('commonSetName'), type.name);
+					details.name = U.Common.sprintf(translate('commonSetName'), type.name);
 					details.iconEmoji = type.iconEmoji;
 				};
 
-				C.ObjectCreateSet([ object.type ], details, '', commonStore.space, (message: any) => {
+				C.ObjectCreateSet([ object.type ], details, '', S.Common.space, (message: any) => {
 					if (!message.error.code) {
-						UtilObject.openPopup(message.details);
+						U.Object.openPopup(message.details);
 					};
 				});
 				break;
 
 			case 'turnCollection':
 				// Add Collection type to details since middleware adds details async
-				const collectionType = dbStore.getCollectionType();
+				const collectionType = S.Record.getCollectionType();
 				if (collectionType) {
-					detailStore.update(rootId, { id: collectionType.id, details: collectionType }, true);
+					S.Detail.update(rootId, { id: collectionType.id, details: collectionType }, true);
 				};
 
 				C.ObjectToCollection(rootId, (message: any) => {
@@ -625,8 +623,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					};
 
 					keyboard.disableClose(true);
-					UtilObject.openAuto({ id: rootId, layout: I.ObjectLayout.Collection }, { replace: true });
-					window.setTimeout(() => { Preview.toastShow({ text: UtilCommon.sprintf(translate('toastTurnIntoCollection'), object.name) }); }, 200);
+					U.Object.openAuto({ id: rootId, layout: I.ObjectLayout.Collection }, { replace: true });
+					window.setTimeout(() => { Preview.toastShow({ text: U.Common.sprintf(translate('toastTurnIntoCollection'), object.name) }); }, 200);
 
 					analytics.event('SetTurnIntoCollection');
 				});
@@ -637,18 +635,18 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onSource () {
 		const { rootId, block, readonly } = this.props;
 
-		if (readonly || menuStore.isOpen('dataviewSource')) {
+		if (readonly || S.Menu.isOpen('dataviewSource')) {
 			return;
 		};
 
-		menuStore.closeAll(null, () => {
-			menuStore.open('dataviewSource', {
+		S.Menu.closeAll(null, () => {
+			S.Menu.open('dataviewSource', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', rootId)}`,
 				horizontal: I.MenuDirection.Center,
 				data: {
 					rootId,
 					objectId: rootId,
-					blockId: Constant.blockId.dataview,
+					blockId: J.Constant.blockId.dataview,
 				}
 			}); 
 		});
@@ -657,15 +655,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onRelation (e: any, relationKey: string) {
 		e.stopPropagation();
 
-		if (menuStore.isOpen()) {
-			menuStore.closeAll();
+		if (S.Menu.isOpen()) {
+			S.Menu.closeAll();
 			return;
 		};
 
 		const { isPopup, rootId, readonly } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ relationKey ]);
-		const relation = dbStore.getRelationByKey(relationKey);
+		const object = S.Detail.get(rootId, storeId, [ relationKey ]);
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (readonly || !relation || relation.isReadonlyValue) {
 			return;
@@ -694,7 +692,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				if (object[relationKey]) {
 					value = Number(object[relationKey]);
 				} else {
-					value = Number(UtilDate.now());
+					value = Number(U.Date.now());
 					isEmpty = true;
 				};
 
@@ -741,7 +739,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 
 			case I.RelationType.Checkbox: {
-				const object = detailStore.get(rootId, rootId, [ relationKey ]);
+				const object = S.Detail.get(rootId, rootId, [ relationKey ]);
 				const details = [
 					{ key: relationKey, value: Relation.formatValue(relation, !object[relationKey], true) },
 				];
@@ -755,7 +753,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					horizontal: I.MenuDirection.Right,
 					noFlipY: true,
 					noAnimation: true,
-					subIds: Constant.menuIds.cell,
+					subIds: J.Constant.menuIds.cell,
 					onOpen: (component: any) => {
 						if (component && component.ref) {
 							component.ref.onCellClick(e, relationKey);
@@ -763,7 +761,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						};
 					},
 					onClose: () => {
-						menuStore.closeAll();
+						S.Menu.closeAll();
 					},
 					data: {
 						relationKey,
@@ -772,11 +770,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				};
 
 				if (!isPopup) {
-					param.fixedY = UtilCommon.sizeHeader();
+					param.fixedY = U.Common.sizeHeader();
 					param.classNameWrap = 'fixed fromHeader';
 				};
 
-				menuStore.closeAll(null, () => menuStore.open('blockRelationView', param));
+				S.Menu.closeAll(null, () => S.Menu.open('blockRelationView', param));
 				break;
 			};
 		};
@@ -789,8 +787,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onCellMenu (relationKey: string, menuId: string, param: any, data: any) {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId, [ relationKey ]);
-		const relation = dbStore.getRelationByKey(relationKey);
+		const object = S.Detail.get(rootId, storeId, [ relationKey ]);
+		const relation = S.Record.getRelationByKey(relationKey);
 		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 
 		if (!relation) {
@@ -805,7 +803,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			noFlipX: true,
 			title: relation.name,
 			onClose: () => {
-				menuStore.closeAll();
+				S.Menu.closeAll();
 			},
 			data: {
 				rootId,
@@ -828,32 +826,32 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		menuParam = Object.assign(menuParam, param);
 		menuParam.data = Object.assign(menuParam.data, data);
 
-		menuStore.closeAll(Constant.menuIds.cell, () => {
-			menuStore.open(menuId, menuParam);
+		S.Menu.closeAll(J.Constant.menuIds.cell, () => {
+			S.Menu.open(menuId, menuParam);
 		});
 	};
 
 	onLinks (e: React.MouseEvent, relationKey: string) {
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation) {
 			return;
 		};
 
-		const object = detailStore.get(rootId, storeId);
+		const object = S.Detail.get(rootId, storeId);
 		const value = Relation.getArrayValue(object[relationKey]);
 		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
-		const options = value.map(it => detailStore.get(rootId, it, [])).filter(it => !it._empty_).map(it => ({
+		const options = value.map(it => S.Detail.get(rootId, it, [])).filter(it => !it._empty_).map(it => ({
 			...it,
 			withDescription: true,
 			iconSize: 40,
 			object: it,
 		}));
 
-		menuStore.closeAll([ 'select' ], () => {
-			menuStore.open('select', {
+		S.Menu.closeAll([ 'select' ], () => {
+			S.Menu.open('select', {
 				element: `#${elementId}`,
 				className: 'featuredLinks',
 				title: relation.name,
@@ -865,7 +863,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					options,
 					forceLetter: true,
 					onSelect: (e: any, item: any) => {
-						UtilObject.openAuto(item);
+						U.Object.openAuto(item);
 					}
 				}
 			});
@@ -873,17 +871,17 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	elementMapper (relation: any, item: any) {
-		item = UtilCommon.objectCopy(item);
+		item = U.Common.objectCopy(item);
 
 		switch (relation.format) {
 			case I.RelationType.File:
 			case I.RelationType.Object:
-				item.name = UtilCommon.shorten(item.name);
+				item.name = U.Common.shorten(item.name);
 				break;
 
 			case I.RelationType.MultiSelect:
 			case I.RelationType.Select:
-				item.text = UtilCommon.shorten(item.text);
+				item.text = U.Common.shorten(item.text);
 				break;
 		};
 

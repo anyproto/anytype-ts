@@ -2,13 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader } from 'Component';
-import { blockStore, detailStore, commonStore } from 'Store';
-import { I, UtilCommon, UtilData, UtilObject, keyboard, Action, focus, UtilDate } from 'Lib';
+import { I, S, U, J, keyboard, Action, focus } from 'Lib';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
 
 const Diff = require('diff');
-const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -49,7 +47,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					layout={I.ObjectLayout.History}
 				/>
 
-				{isLoading ?  <Loader id="loader" /> : ''}
+				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div id="body" className="flex">
 					<HistoryLeft 
@@ -88,13 +86,13 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	componentWillUnmount(): void {
 		this.unbind();
 
-		blockStore.clear(this.getRootId());
-		commonStore.diffSet([]);
+		S.Block.clear(this.getRootId());
+		S.Common.diffSet([]);
 	};
 
 	unbind () {
 		const { isPopup } = this.props;
-		const namespace = UtilCommon.getEventNamespace(isPopup);
+		const namespace = U.Common.getEventNamespace(isPopup);
 		const events = [ 'keydown' ];
 
 		$(window).off(events.map(it => `${it}.history${namespace}`).join(' '));
@@ -103,7 +101,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	rebind () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const namespace = UtilCommon.getEventNamespace(isPopup);
+		const namespace = U.Common.getEventNamespace(isPopup);
 
 		this.unbind();
 		win.on('keydown.history' + namespace, e => this.onKeyDown(e));
@@ -118,11 +116,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	onClose () {
 		const rootId = this.getRootId();
 
-		UtilObject.openAuto(detailStore.get(rootId, rootId, []));
+		U.Object.openAuto(S.Detail.get(rootId, rootId, []));
 	};
 
 	onCopy () {
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const rootId = this.getRootId();
 		const { focused } = focus.state;
 
@@ -130,7 +128,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		if (!ids.length) {
 			ids = [ focused ];
 		};
-		ids = ids.concat(blockStore.getLayoutIds(rootId, ids));
+		ids = ids.concat(S.Block.getLayoutIds(rootId, ids));
 
 		Action.copyBlocks(rootId, ids, false);
 	};
@@ -158,7 +156,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		if (elements.length) {
 			elements.forEach(it => {
-				it.element.addClass(UtilData.diffClass(it.type));
+				it.element.addClass(U.Data.diffClass(it.type));
 			});
 
 			this.scrollToElement(elements[0].element);
@@ -200,7 +198,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			case 'BlockSetChildrenIds': {
 				const newChildrenIds = data.childrenIds;
 				const nl = newChildrenIds.length;
-				const oldChildrenIds = blockStore.getChildrenIds(oldContextId, data.id);
+				const oldChildrenIds = S.Block.getChildrenIds(oldContextId, data.id);
 				const ol = oldChildrenIds.length;
 
 				if (nl >= ol) {
@@ -222,8 +220,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			};
 
 			case 'BlockSetText': {
-				const block = blockStore.getLeaf(rootId, data.id);
-				const oldBlock = blockStore.getLeaf(oldContextId, data.id);
+				const block = S.Block.getLeaf(rootId, data.id);
+				const oldBlock = S.Block.getLeaf(oldContextId, data.id);
 
 				if (!block || !oldBlock) {
 					break;
@@ -236,19 +234,22 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					const added = diff.filter(it => it.added).length;
 
 					if (added) {
-						const marks = UtilCommon.objectCopy(block.content.marks || []);
+						const marks = U.Common.objectCopy(block.content.marks || []);
 
 						let from = 0;
 						for (const item of diff) {
-							const to = from + item.count;
+							if (item.removed) {
+								continue;
+							};
 
+							const to = from + item.count;
 							if (item.added) {
 								marks.push({ type: I.MarkType.Change, param: '', range: { from, to } });
 							};
 							from = to;
 						};
 
-						blockStore.updateContent(rootId, data.id, { marks });
+						S.Block.updateContent(rootId, data.id, { marks });
 					} else {
 						type = I.DiffType.Change;
 					};
@@ -345,13 +346,13 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 				if (undefined !== data.details.name) {
 					elements = elements.concat([
-						{ type: I.DiffType.Change, element: `#block-${Constant.blockId.title}` },
-						{ type: I.DiffType.Change, element: `.headSimple #editor-${Constant.blockId.title}` }
+						{ type: I.DiffType.Change, element: `#block-${J.Constant.blockId.title}` },
+						{ type: I.DiffType.Change, element: `.headSimple #editor-${J.Constant.blockId.title}` }
 					]);
 				};
 
 				if (undefined !== data.details.description) {
-					elements.push({ type: I.DiffType.Change, element: `#block-${Constant.blockId.description}` });
+					elements.push({ type: I.DiffType.Change, element: `#block-${J.Constant.blockId.description}` });
 				};
 
 				if ((undefined !== data.details.iconEmoji) || (undefined !== data.details.iconImage)) {
@@ -359,15 +360,15 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				};
 
 				if (undefined !== data.details.featuredRelations) {
-					elements.push({ type: I.DiffType.Change, element: `#block-${Constant.blockId.featured}` });
+					elements.push({ type: I.DiffType.Change, element: `#block-${J.Constant.blockId.featured}` });
 				};
 
 				if (type == 'ObjectDetailsAmend') {
 					for (const k in data.details) {
-						const blocks = blockStore.getBlocks(rootId, it => it.isRelation() && (it.content.key == k));
+						const blocks = S.Block.getBlocks(rootId, it => it.isRelation() && (it.content.key == k));
 
 						blocks.forEach(it => {
-							elements = elements.concat(this.getBlockChangeElements(it.id))
+							elements = elements.concat(this.getBlockChangeElements(it.id));
 						});
 					};
 				};
@@ -393,11 +394,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const sideRight = node.find('#historySideRight');
 		const editorWrapper = node.find('#editorWrapper');
 		const cover = node.find('.block.blockCover');
-		const container = UtilCommon.getPageContainer(isPopup);
-		const sc = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
+		const sc = U.Common.getScrollContainer(isPopup);
 		const header = container.find('#header');
 		const height = sc.height();
-		const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
+		const hh = isPopup ? header.height() : U.Common.sizeHeader();
 		const cssl: any = { height };
 
 		sideRight.css({ height });
@@ -417,7 +418,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	getWrapperWidth (): number {
 		const rootId = this.getRootId();
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		return this.getWidth(root?.fields?.width);
 	};
@@ -446,7 +447,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	getGroupId (time: number) {
-		return UtilDate.date('M d, Y', time);
+		return U.Date.date('M d, Y', time);
 	};
 
 	getRootId () {
@@ -456,7 +457,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	isSetOrCollection (): boolean {
 		const rootId = this.getRootId();
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		return root?.isObjectSet() || root?.isObjectCollection();
 	};

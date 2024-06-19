@@ -1,7 +1,4 @@
-import { I, Relation, UtilCommon, UtilObject, UtilFile, UtilSmile } from 'Lib';
-import { commonStore } from 'Store';
-const Colors = require('json/colors.json');
-const Theme = require('json/theme.json');
+import { I, S, U, J, Relation } from 'Lib';
 
 class UtilGraph {
 
@@ -23,15 +20,15 @@ class UtilGraph {
 			case I.ObjectLayout.Video:
 			case I.ObjectLayout.Pdf:
 			case I.ObjectLayout.File: {
-				src = UtilFile.iconPath(d);
+				src = U.File.iconPath(d);
 				break;
 			};
 
 			case I.ObjectLayout.Image: {
 				if (d.id) {
-					src = commonStore.imageUrl(d.id, 100);
+					src = S.Common.imageUrl(d.id, 100);
 				} else {
-					src = UtilFile.iconPath(d);
+					src = U.File.iconPath(d);
 				};
 				break;
 			};
@@ -39,7 +36,7 @@ class UtilGraph {
 			case I.ObjectLayout.Human:
 			case I.ObjectLayout.Participant: {
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 100);
+					src = S.Common.imageUrl(d.iconImage, 100);
 				};
 				break;
 			};
@@ -50,19 +47,19 @@ class UtilGraph {
 
 			case I.ObjectLayout.Bookmark: {
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 100);
+					src = S.Common.imageUrl(d.iconImage, 100);
 				};
 				break;
 			};
 				
 			default: {
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 100);
+					src = S.Common.imageUrl(d.iconImage, 100);
 				} else
 				if (d.iconEmoji) {
-					const code = UtilSmile.getCode(d.iconEmoji);
+					const code = U.Smile.getCode(d.iconEmoji);
 					if (code) {
-						src = UtilSmile.srcFromColons(code);
+						src = U.Smile.srcFromColons(code);
 					};
 					src = src.replace(/^.\//, '');
 				} else
@@ -77,12 +74,12 @@ class UtilGraph {
 	};
 
 	gradientIcon (iconOption: number, small?: boolean) {
-		const option: any = Colors.gradientIcons.options[iconOption - 1];
+		const option: any = J.Color.gradientIcons.options[iconOption - 1];
 		if (!option) {
 			return;
 		};
 
-		const theme = commonStore.getThemeClass();
+		const theme = S.Common.getThemeClass();
 		const { from, to } = option.colors;
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
@@ -90,9 +87,9 @@ class UtilGraph {
 		const r = w / 2;
 		const fillW = small ? w * 0.7 : w;
 		const fillR = fillW / 2;
-		const steps = option.steps || Colors.gradientIcons.common.steps;
-		const step0 = UtilCommon.getPercentage(fillR, steps.from * 100);
-		const step1 = UtilCommon.getPercentage(fillR, steps.to * 100);
+		const steps = option.steps || J.Color.gradientIcons.common.steps;
+		const step0 = U.Common.getPercentage(fillR, steps.from * 100);
+		const step1 = U.Common.getPercentage(fillR, steps.to * 100);
 		const grd = ctx.createRadialGradient(r, r, step0, r, r, step1);
 
 		canvas.width = w;
@@ -101,7 +98,7 @@ class UtilGraph {
 		grd.addColorStop(1, to);
 
 		if (small) {
-			ctx.fillStyle = Theme[theme].graph.iconBg;
+			ctx.fillStyle = J.Theme[theme].graph.iconBg;
 			ctx.fillRect(0, 0, w, w);
 		};
 

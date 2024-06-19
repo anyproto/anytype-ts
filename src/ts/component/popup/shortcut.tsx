@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, UtilCommon, keyboard, translate } from 'Lib';
+import { I, U, keyboard, translate } from 'Lib';
 
 interface State {
 	page: string;
@@ -33,7 +33,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 
 	render () {
 		const { page } = this.state;
-		const isMac = UtilCommon.isPlatformMac();
+		const isMac = U.Common.isPlatformMac();
 		const sections = this.getSections();
 		const section = sections.find(it => it.id == page);
 
@@ -69,7 +69,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 
 			return (
 				<div className="item">
-					<div className="key" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(caption) }} />
+					<div className="key" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(caption) }} />
 					<div className="descr">{item.name}</div>
 				</div>
 			);
@@ -255,16 +255,16 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 							{ com: '** or __',			 name: translate('popupShortcutMarkdownWhileTyping2') },
 							{ com: '* or _',			 name: translate('popupShortcutMarkdownWhileTyping3') },
 							{ com: '~~',				 name: translate('popupShortcutMarkdownWhileTyping4') },
-							{ com: '-->',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟶') },
-							{ com: '<--',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟵') },
-							{ com: '<-->',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟷') },
-							{ com: '->',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '→') },
-							{ com: '<-',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '←') },
-							{ com: '--',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '—') },
-							{ com: '(c)',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '©') },
-							{ com: '(r)',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '®') },
-							{ com: '(tm)',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '™') },
-							{ com: '...',				 name: UtilCommon.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '…') },
+							{ com: '-->',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟶') },
+							{ com: '<--',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟵') },
+							{ com: '<-->',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '⟷') },
+							{ com: '->',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '→') },
+							{ com: '<-',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '←') },
+							{ com: '--',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '—') },
+							{ com: '(c)',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '©') },
+							{ com: '(r)',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '®') },
+							{ com: '(tm)',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '™') },
+							{ com: '...',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '…') },
 						]
 					},
 					{
@@ -353,7 +353,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const loader = obj.find('#loader');
-		const hh = UtilCommon.sizeHeader();
+		const hh = U.Common.sizeHeader();
 
 		loader.css({ width: obj.width(), height: obj.height() });
 		position();

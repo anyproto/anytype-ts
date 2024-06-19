@@ -1,4 +1,4 @@
-{
+export default {
 	"Code": {
 		"ANYTYPE_NEEDS_UPGRADE": 10,
 		"NO_ACCOUNTS_FOUND": 101,
@@ -13,4 +13,4 @@
 
 	"Error: net::ERR_TIMED_OUT": "Network time-out",
 	"Error: net::ERR_CONNECTION_CLOSED": "Connection closed"
-}
+};

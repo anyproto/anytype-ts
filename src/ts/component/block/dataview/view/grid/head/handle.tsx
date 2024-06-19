@@ -3,8 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject } from 'Component';
-import { I } from 'Lib';
-import { menuStore } from 'Store';
+import { I, S } from 'Lib';
 
 interface Props {
 	format: I.RelationType;
@@ -42,7 +41,7 @@ const HeadHandle = observer(class HeadHandle extends React.Component<Props> {
 
 	onMouseDown (e: any) {
 		$('.cell.isEditing').removeClass('isEditing');
-		menuStore.closeAll();
+		S.Menu.closeAll();
 	};
 
 });

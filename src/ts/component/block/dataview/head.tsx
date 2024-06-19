@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
-import { I, C, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
-import { menuStore, detailStore, commonStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 interface State {
 	isEditing: boolean;
@@ -108,7 +106,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { targetObjectId } = block.content;
 		const { isEditing } = this.state;
 		const element = `#block-head-${block.id}`;
-		const object = detailStore.get(rootId, targetObjectId);
+		const object = S.Detail.get(rootId, targetObjectId);
 		const sourceName = isCollection ? 'collection' : 'set';
 
 		if (isEditing) {
@@ -122,15 +120,15 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		let options: any[] = [
 			{ id: 'editTitle', icon: 'editText', name: translate('blockDataviewHeadMenuEdit') },
-			{ id: 'sourceChange', icon: 'source', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true },
-			{ id: 'sourceOpen', icon: 'expand', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
+			{ id: 'sourceChange', icon: 'source', name: U.Common.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true },
+			{ id: 'sourceOpen', icon: 'expand', name: U.Common.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
 		];
 
 		if (object.isDeleted) {
 			options = options.filter(it => it.id == 'sourceChange');
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element,
 			offsetY: 4,
 			width: 240,
@@ -150,7 +148,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { targetObjectId } = block.content;
 
 		if (!item.arrow) {
-			menuStore.closeAll([ 'searchObject' ]);
+			S.Menu.closeAll([ 'searchObject' ]);
 			return;
 		};
 
@@ -186,7 +184,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.onClick = (details: any) => {
-				C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, (message: any) => { 
+				C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', J.Constant.typeKey.collection, S.Common.space, (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => onCreate(message, true));
 				});
 			};
@@ -198,7 +196,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 			addParam.name = translate('blockDataviewCreateNewSet');
 			addParam.onClick = (details: any) => {
-				C.ObjectCreateSet([], details, '', commonStore.space, (message: any) => {
+				C.ObjectCreateSet([], details, '', S.Common.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
 						$(this.node).find('#head-source-select').trigger('click');
 						onCreate(message, true);
@@ -228,9 +226,9 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 				break;
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll([ 'searchObject' ], () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll([ 'searchObject' ], () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};
@@ -250,7 +248,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			};
 
 			case 'sourceOpen': {
-				UtilObject.openAuto(object);
+				U.Object.openAuto(object);
 				analytics.event('InlineSetOpenSource');
 				break;
 			};
@@ -350,18 +348,18 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 
 		if (targetObjectId) {
-			UtilObject.setName(targetObjectId, value);
+			U.Object.setName(targetObjectId, value);
 		};
 		
 		this.ref?.placeholderCheck();
 	};
 
 	onIconSelect (icon: string) {
-		UtilObject.setIcon(this.props.block.content.targetObjectId, icon, '');
+		U.Object.setIcon(this.props.block.content.targetObjectId, icon, '');
 	};
 
 	onIconUpload (objectId: string) {
-		UtilObject.setIcon(this.props.block.content.targetObjectId, '', objectId);
+		U.Object.setIcon(this.props.block.content.targetObjectId, '', objectId);
 	};
 
 	setRange (range: I.TextRange) {

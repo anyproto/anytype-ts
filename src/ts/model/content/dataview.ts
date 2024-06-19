@@ -1,5 +1,5 @@
-import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
+import { I, U } from 'Lib';
 import View from '../view';
 
 class BlockContentDataview implements I.ContentDataview {
@@ -37,7 +37,7 @@ class BlockContentDataview implements I.ContentDataview {
 			isCollection: observable,
 		});
 
-		intercept(this as any, change => UtilCommon.intercept(this, change));
+		intercept(this as any, change => U.Common.intercept(this, change));
 	};
 
 };

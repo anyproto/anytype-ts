@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { translate, UtilCommon } from 'Lib';
+import { translate, U } from 'Lib';
 
 interface Props {
 	limit: number;
@@ -27,7 +27,7 @@ class LoadMore extends React.Component<Props> {
 		return (
 			<div className="loadMore" onClick={onClick}>
 				<Icon />
-				<div className="name">{UtilCommon.sprintf(translate('utilLoadMoreText'), number, UtilCommon.plural(number, translate('pluralObject')))}</div>
+				<div className="name">{U.Common.sprintf(translate('utilLoadMoreText'), number, U.Common.plural(number, translate('pluralObject')))}</div>
 			</div>
 		);
 	};

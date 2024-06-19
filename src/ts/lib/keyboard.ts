@@ -1,9 +1,5 @@
 import $ from 'jquery';
-import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate, UtilSpace } from 'Lib';
-import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
-const Url = require('json/url.json');
-const KeyCode = require('json/key.json');
+import { I, C, S, U, J, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, Preview, Action, translate } from 'Lib';
 
 class Keyboard {
 	
@@ -43,7 +39,7 @@ class Keyboard {
 		const win = $(window);
 		const doc = $(document);
 
-		commonStore.isOnlineSet(navigator.onLine);
+		S.Common.isOnlineSet(navigator.onLine);
 
 		win.on('keydown.common', e => this.onKeyDown(e));
 		win.on('keyup.common', e => this.onKeyUp(e));
@@ -54,10 +50,10 @@ class Keyboard {
 		win.on('online.common offline.common', () => {
 			const { onLine } = navigator;
 
-			commonStore.isOnlineSet(onLine);
+			S.Common.isOnlineSet(onLine);
 
-			if (!commonStore.membershipTiers.length) {
-				UtilData.getMembershipTiers(false);
+			if (!S.Common.membershipTiers.length) {
+				U.Data.getMembershipTiers(false);
 			};
 		});
 		
@@ -67,17 +63,17 @@ class Keyboard {
 
 			this.pressed = [];
 
-			if (!commonStore.isSidebarFixed) {
+			if (!S.Common.isSidebarFixed) {
 				sidebar.hide();
 			};
 
-			menuStore.closeAll([ 'blockContext' ]);
+			S.Menu.closeAll([ 'blockContext' ]);
 
 			$('.dropTarget.isOver').removeClass('isOver');
 		});
 
 		doc.off('mouseleave.common').on('mouseleave.common', () => {
-			if (!commonStore.isSidebarFixed) {
+			if (!S.Common.isSidebarFixed) {
 				sidebar.hide();
 			};
 		});
@@ -133,12 +129,12 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const isMac = UtilCommon.isPlatformMac();
+		const isMac = U.Common.isPlatformMac();
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
-		const canWrite = UtilSpace.canMyParticipantWrite();
-		const selection = commonStore.getRef('selectionProvider');
+		const canWrite = U.Space.canMyParticipantWrite();
+		const selection = S.Common.getRef('selectionProvider');
 
 		this.pressed.push(key);
 
@@ -149,7 +145,7 @@ class Keyboard {
 				return;
 			};
 
-			commonStore.isSidebarFixed ? sidebar.toggleOpenClose() : sidebar.toggleExpandCollapse();
+			S.Common.isSidebarFixed ? sidebar.toggleOpenClose() : sidebar.toggleExpandCollapse();
 		});
 
 		// Navigation
@@ -157,7 +153,7 @@ class Keyboard {
 			this.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 			this.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
 
-			if (!UtilCommon.getSelectionRange() && isMac) {
+			if (!U.Common.getSelectionRange() && isMac) {
 				this.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
 				this.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
 			};
@@ -167,15 +163,15 @@ class Keyboard {
 		this.shortcut('escape', e, () => {
 			e.preventDefault();
 
-			if (menuStore.isOpen()) {
-				menuStore.closeLast();
+			if (S.Menu.isOpen()) {
+				S.Menu.closeLast();
 			} else 
-			if (popupStore.isOpen()) {
+			if (S.Popup.isOpen()) {
 				let canClose = true;
 
 				if (this.isPopup()) {
-					if (UtilCommon.getSelectionRange()) {
-						UtilCommon.clearSelection();
+					if (U.Common.getSelectionRange()) {
+						U.Common.clearSelection();
 						canClose = false;
 					} else
 					if (selection) {
@@ -187,9 +183,9 @@ class Keyboard {
 				};
 
 				if (canClose) {
-					const last = popupStore.getLast();
+					const last = S.Popup.getLast();
 					if (last && !last.param.preventCloseByEscape) {
-						popupStore.close(last.id);
+						S.Popup.close(last.id);
 					};
 				};
 			};
@@ -201,7 +197,7 @@ class Keyboard {
 
 			// Shortcuts
 			this.shortcut('ctrl+space', e, () => {
-				popupStore.open('shortcut', { preventResize: true });
+				S.Popup.open('shortcut', { preventResize: true });
 			});
 
 			// Spaces
@@ -217,7 +213,7 @@ class Keyboard {
 
 			// Navigation search
 			this.shortcut(`${cmd}+s, ${cmd}+k`, e, (pressed: string) => {
-				if (popupStore.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
+				if (S.Popup.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
 					return;
 				};
 
@@ -225,11 +221,11 @@ class Keyboard {
 			});
 
 			this.shortcut(`${cmd}+l`, e, () => {
-				if (popupStore.isOpen('search') || !this.isPinChecked || this.checkSelection()) {
+				if (S.Popup.isOpen('search') || !this.isPinChecked || this.checkSelection()) {
 					return;
 				};
 
-				UtilObject.openAuto({ layout: I.ObjectLayout.Store });
+				U.Object.openAuto({ layout: I.ObjectLayout.Store });
 			});
 
 			// Text search
@@ -242,26 +238,26 @@ class Keyboard {
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, () => {
 				e.preventDefault();
-				UtilObject.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
+				U.Object.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
 			});
 
 			// Graph
 			this.shortcut(`${cmd}+alt+o`, e, () => {
 				e.preventDefault();
-				UtilObject.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+				U.Object.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 			});
 
 			// Go to dashboard
 			this.shortcut('alt+h', e, () => {
-				if (authStore.account && !popupStore.isOpen('search')) {
-					UtilSpace.openDashboard('route');
+				if (S.Auth.account && !S.Popup.isOpen('search')) {
+					U.Space.openDashboard('route');
 				};
 			});
 
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
-				if (!popupStore.isOpen('settings')) {
-					popupStore.open('settings', {});
+				if (!S.Popup.isOpen('settings')) {
+					S.Popup.open('settings', {});
 				};
 			});
 
@@ -272,12 +268,12 @@ class Keyboard {
 
 			// Store
 			this.shortcut(`${cmd}+alt+l`, e, () => {
-				UtilObject.openRoute({ layout: I.ObjectLayout.Store });
+				U.Object.openRoute({ layout: I.ObjectLayout.Store });
 			});
 
 			// Object id
 			this.shortcut(`${cmd}+shift+\\`, e, () => {
-				popupStore.open('confirm', {
+				S.Popup.open('confirm', {
 					className: 'isWide isLeft',
 					data: {
 						text: `ID: ${this.getRootId()}`,
@@ -285,7 +281,7 @@ class Keyboard {
 						textCancel: translate('commonClose'),
 						canConfirm: true,
 						canCancel: true,
-						onConfirm: () => UtilCommon.copyToast('ID', this.getRootId()),
+						onConfirm: () => U.Common.copyToast('ID', this.getRootId()),
 					}
 				});
 			});
@@ -315,8 +311,8 @@ class Keyboard {
 
 	// Check if smth is selected
 	checkSelection () {
-		const range = UtilCommon.getSelectionRange();
-		const selection = commonStore.getRef('selectionProvider');
+		const range = U.Common.getSelectionRange();
+		const selection = S.Common.getRef('selectionProvider');
 
 		if ((range && !range.collapsed) || (selection && selection.get(I.SelectType.Block).length)) {
 			return true;
@@ -328,12 +324,12 @@ class Keyboard {
 	pageCreate (details: any, route: string) {
 		if (this.isMain()) {
 			const flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
-			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => UtilObject.openConfig(message.details));
+			U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => U.Object.openConfig(message.details));
 		};
 	};
 
 	isPopup () {
-		return popupStore.isOpen('page');
+		return S.Popup.isOpen('page');
 	};
 
 	getRootId (): string {
@@ -348,38 +344,38 @@ class Keyboard {
 	};
 
 	onBack () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const isPopup = this.isPopup();
 
-		if (authStore.accountIsDeleted() || authStore.accountIsPending() || !this.checkBack()) {
+		if (S.Auth.accountIsDeleted() || S.Auth.accountIsPending() || !this.checkBack()) {
 			return;
 		};
 
 		if (isPopup) {
 			if (!historyPopup.checkBack()) {
-				popupStore.close('page');
+				S.Popup.close('page');
 			} else {
 				historyPopup.goBack((match: any) => { 
-					popupStore.updateData('page', { matchPopup: match }); 
+					S.Popup.updateData('page', { matchPopup: match }); 
 				});
 			};
 		} else {
-			const history = UtilRouter.history;
+			const history = U.Router.history;
 
 			let prev = history.entries[history.index - 1];
 
 			if (account && !prev) {
-				UtilSpace.openDashboard('route');
+				U.Space.openDashboard('route');
 				return;
 			};
 
 			if (prev) {
-				const route = UtilRouter.getParam(prev.pathname);
+				const route = U.Router.getParam(prev.pathname);
 
 				if ((route.page == 'main') && (route.action == 'history')) {
 					prev = history.entries[history.index - 3];
 					if (prev) {
-						UtilRouter.go(prev.pathname, {});
+						U.Router.go(prev.pathname, {});
 					};
 					return;
 				};
@@ -388,7 +384,7 @@ class Keyboard {
 			};
 		};
 
-		menuStore.closeAll();
+		S.Menu.closeAll();
 		this.restoreSource();
 		analytics.event('HistoryBack');
 	};
@@ -402,20 +398,20 @@ class Keyboard {
 
 		if (isPopup) {
 			historyPopup.goForward((match: any) => { 
-				popupStore.updateData('page', { matchPopup: match }); 
+				S.Popup.updateData('page', { matchPopup: match }); 
 			});
 		} else {
-			UtilRouter.history.goForward();
+			U.Router.history.goForward();
 		};
 
-		menuStore.closeAll();
+		S.Menu.closeAll();
 		analytics.event('HistoryForward');
 	};
 
 	checkBack (): boolean {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const isPopup = this.isPopup();
-		const history = UtilRouter.history;
+		const history = U.Router.history;
 
 		if (!history) {
 			return;
@@ -429,7 +425,7 @@ class Keyboard {
 			};
 
 			if (prev) {
-				const route = UtilRouter.getParam(prev.pathname);
+				const route = U.Router.getParam(prev.pathname);
 
 				if ([ 'index', 'auth' ].includes(route.page) && account) {
 					return false;
@@ -446,7 +442,7 @@ class Keyboard {
 
 	checkForward (): boolean {
 		const isPopup = this.isPopup();
-		const history = UtilRouter.history;
+		const history = U.Router.history;
 
 		if (!history) {
 			return;
@@ -467,8 +463,8 @@ class Keyboard {
 		};
 
 		const rootId = this.getRootId();
-		const logPath = UtilCommon.getElectron().logPath();
-		const tmpPath = UtilCommon.getElectron().tmpPath();
+		const logPath = U.Common.getElectron().logPath();
+		const tmpPath = U.Common.getElectron().tmpPath();
 
 		switch (cmd) {
 			case 'search': {
@@ -491,7 +487,7 @@ class Keyboard {
 			case 'tutorial':
 			case 'privacy':
 			case 'community': {
-				Renderer.send('urlOpen', Url[cmd]);
+				Renderer.send('urlOpen', J.Url[cmd]);
 				break;
 			};
 
@@ -520,19 +516,19 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				const items = UtilSpace.getList();
+				const items = U.Space.getList();
 
-				if (items.length >= Constant.limit.space) {
+				if (items.length >= J.Constant.limit.space) {
 					break;
 				};
 
-				popupStore.open('settings', { 
+				S.Popup.open('settings', { 
 					className: 'isSpaceCreate',
 					data: { 
 						page: 'spaceCreate', 
 						isSpace: true,
 						onCreate: (id) => {
-							UtilRouter.switchSpace(id, '', () => Storage.initPinnedTypes());
+							U.Router.switchSpace(id, '', () => Storage.initPinnedTypes());
 							analytics.event('SwitchSpace');
 						},
 					}, 
@@ -547,12 +543,12 @@ class Keyboard {
 
 			case 'saveAsHTMLSuccess': {
 				this.printRemove();
-				popupStore.close('export');
+				S.Popup.close('export');
 				break;
 			};
 
 			case 'save': {
-				popupStore.open('export', { data: { objectIds: [ rootId ], route: analytics.route.menuSystem, allowHtml: true } });
+				S.Popup.open('export', { data: { objectIds: [ rootId ], route: analytics.route.menuSystem, allowHtml: true } });
 				break;
 			};
 
@@ -581,9 +577,9 @@ class Keyboard {
 			};
 
 			case 'debugSpace': {
-				C.DebugSpaceSummary(commonStore.space, (message: any) => {
+				C.DebugSpaceSummary(S.Common.space, (message: any) => {
 					if (!message.error.code) {
-						UtilCommon.getElectron().fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
+						U.Common.getElectron().fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
 						Renderer.send('pathOpen', tmpPath);
 					};
 				});
@@ -593,7 +589,7 @@ class Keyboard {
 			case 'debugStat': {
 				C.DebugStat((message: any) => {
 					if (!message.error.code) {
-						UtilCommon.getElectron().fileWrite('debug-stat.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
+						U.Common.getElectron().fileWrite('debug-stat.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
 						Renderer.send('pathOpen', tmpPath);
 					};
 				});
@@ -632,16 +628,16 @@ class Keyboard {
 	};
 
 	onContactUrl () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		if (!account) {
 			return;
 		};
 
 		C.AppGetVersion((message: any) => {
-			let url = Url.contact;
+			let url = J.Url.contact;
 
-			url = url.replace(/\%25os\%25/g, UtilCommon.getElectron().version.os);
-			url = url.replace(/\%25version\%25/g, UtilCommon.getElectron().version.app);
+			url = url.replace(/\%25os\%25/g, U.Common.getElectron().version.os);
+			url = url.replace(/\%25version\%25/g, U.Common.getElectron().version.app);
 			url = url.replace(/\%25build\%25/g, message.details);
 			url = url.replace(/\%25middleware\%25/g, message.version);
 			url = url.replace(/\%25accountId\%25/g, account.id);
@@ -653,19 +649,19 @@ class Keyboard {
 	};
 
 	onMembershipUpgrade () {
-		const { account, membership } = authStore;
+		const { account, membership } = S.Auth;
 		const name = membership.name ? membership.name : account.id;
 
-		Renderer.send('urlOpen', Url.membershipUpgrade.replace(/\%25name\%25/g, name));
+		Renderer.send('urlOpen', J.Url.membershipUpgrade.replace(/\%25name\%25/g, name));
 	};
 
 	onTechInfo () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		C.AppGetVersion((message: any) => {
 			let data = [
-				[ translate('libKeyboardOSVersion'), UtilCommon.getElectron().version.os ],
-				[ translate('libKeyboardAppVersion'), UtilCommon.getElectron().version.app ],
+				[ translate('libKeyboardOSVersion'), U.Common.getElectron().version.os ],
+				[ translate('libKeyboardAppVersion'), U.Common.getElectron().version.app ],
 				[ translate('libKeyboardBuildNumber'), message.details ],
 				[ translate('libKeyboardLibraryVersion'), message.version ],
 			];
@@ -678,7 +674,7 @@ class Keyboard {
 				]);
 			};
 
-			popupStore.open('confirm', {
+			S.Popup.open('confirm', {
 				className: 'isWide techInfo',
 				data: {
 					title: translate('menuHelpTech'),
@@ -687,7 +683,7 @@ class Keyboard {
 					colorConfirm: 'blank',
 					canCancel: false,
 					onConfirm: () => {
-						UtilCommon.copyToast(translate('libKeyboardTechInformation'), data.map(it => `${it[0]}: ${it[1]}`).join('\n'));
+						U.Common.copyToast(translate('libKeyboardTechInformation'), data.map(it => `${it[0]}: ${it[1]}`).join('\n'));
 					},
 				}
 			});
@@ -695,7 +691,7 @@ class Keyboard {
 	};
 
 	onUndo (rootId: string, route?: string, callBack?: (message: any) => void) {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		if (!account) {
 			return;
 		};
@@ -715,7 +711,7 @@ class Keyboard {
 	};
 
 	onRedo (rootId: string, route?: string, callBack?: (message: any) => void) {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		if (!account) {
 			return;
 		};
@@ -750,7 +746,7 @@ class Keyboard {
 		};
 
 		if (clearTheme) {
-			UtilCommon.addBodyClass('theme', '');
+			U.Common.addBodyClass('theme', '');
 		};
 
 		$('#link-prism').remove();
@@ -759,7 +755,7 @@ class Keyboard {
 
 	printRemove () {
 		$('html').removeClass('withPopup printMedia print save');
-		commonStore.setThemeClass();
+		S.Common.setThemeClass();
 		$(window).trigger('resize');
 	};
 
@@ -774,7 +770,7 @@ class Keyboard {
 
 	onSaveAsHTML () {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		this.printApply('save', false);
 		Renderer.send('winCommand', 'printHtml', { name: object.name });
@@ -782,7 +778,7 @@ class Keyboard {
 
 	onPrintToPDF (options: any) {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		this.printApply('print', true);
 		Renderer.send('winCommand', 'printPdf', { name: object.name, options });
@@ -803,8 +799,8 @@ class Keyboard {
 			return;
 		};
 
-		menuStore.closeAll([ 'blockContext' ], () => {
-			menuStore.open('searchText', {
+		S.Menu.closeAll([ 'blockContext' ], () => {
+			S.Menu.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
@@ -821,7 +817,7 @@ class Keyboard {
 	};
 
 	onSearchPopup (route: string) {
-		popupStore.open('search', {
+		S.Popup.open('search', {
 			preventCloseByEscape: true,
 			data: { isPopup: this.isPopup(), route },
 		});
@@ -840,12 +836,12 @@ class Keyboard {
 			data,
 		}, param);
 
-		if (menuStore.isOpen(id)) {
-			menuStore.open(id, menuParam);
+		if (S.Menu.isOpen(id)) {
+			S.Menu.open(id, menuParam);
 		} else {
-			popupStore.close('search', () => {
-				menuStore.closeAll(Constant.menuIds.navigation, () => {
-					menuStore.open(id, menuParam);
+			S.Popup.close('search', () => {
+				S.Menu.closeAll(J.Constant.menuIds.navigation, () => {
+					S.Menu.open(id, menuParam);
 				});
 			});
 		};
@@ -858,8 +854,8 @@ class Keyboard {
 	onQuickCapture (shortcut: boolean, param?: Partial<I.MenuParam>) {
 		param = param || {};
 
-		if ((commonStore.navigationMenu != I.NavigationMenuMode.Hover) && menuStore.isOpen('quickCapture')) {
-			menuStore.close('quickCapture');
+		if ((S.Common.navigationMenu != I.NavigationMenuMode.Hover) && S.Menu.isOpen('quickCapture')) {
+			S.Menu.close('quickCapture');
 			return;
 		};
 
@@ -873,12 +869,12 @@ class Keyboard {
 	};
 
 	onLock (rootId: string, v: boolean, route?: string) {
-		const block = blockStore.getLeaf(rootId, rootId);
+		const block = S.Block.getLeaf(rootId, rootId);
 		if (!block) {
 			return;
 		};
 
-		menuStore.closeAll([ 'blockContext' ]);
+		S.Menu.closeAll([ 'blockContext' ]);
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { ...block.fields, isLocked: v } },
@@ -890,7 +886,7 @@ class Keyboard {
 
 	onToggleLock () {
 		const rootId = this.getRootId();
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		
 		if (root) {
 			this.onLock(rootId, !root.isLocked(), analytics.route.shortcut);
@@ -898,6 +894,12 @@ class Keyboard {
 	};
 
 	setWindowTitle () {
+		const pin = Storage.getPin();
+		if (pin && !this.isPinChecked) {
+			document.title = J.Constant.appName;
+			return;
+		};
+
 		const match = this.getMatch();
 		const action = match?.params?.action;
 		const titles = {
@@ -909,15 +911,15 @@ class Keyboard {
 		};
 
 		if (titles[action]) {
-			UtilData.setWindowTitleText(titles[action]);
+			U.Data.setWindowTitleText(titles[action]);
 		} else {
 			const rootId = this.getRootId();
-			UtilData.setWindowTitle(rootId, rootId);
+			U.Data.setWindowTitle(rootId, rootId);
 		};
 	};
 
 	getPopupMatch () {
-		const popup = popupStore.get('page');
+		const popup = S.Popup.get('page');
 		return popup && popup?.param.data.matchPopup || {};
 	};
 
@@ -925,7 +927,7 @@ class Keyboard {
 		const ret = (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
 
 		for (const k in ret.params) {
-			if (ret.params[k] == Constant.blankRouteId) {
+			if (ret.params[k] == J.Constant.blankRouteId) {
 				ret.params[k] = '';
 			};
 		};
@@ -993,7 +995,7 @@ class Keyboard {
 	};
 
 	setSource (source: any) {
-		this.source = UtilCommon.objectCopy(source);
+		this.source = U.Common.objectCopy(source);
 	};
 
 	setSelectionClearDisabled (v: boolean) {
@@ -1005,9 +1007,9 @@ class Keyboard {
 	};
 
 	initPinCheck () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const check = () => {
-			const pin = Storage.get('pin');
+			const pin = Storage.getPin();
 			if (!pin) {
 				this.setPinChecked(true);
 				return false;
@@ -1028,12 +1030,12 @@ class Keyboard {
 			this.setPinChecked(false);
 
 			if (this.isMain()) {
-				commonStore.redirectSet(UtilRouter.getRoute());
+				S.Common.redirectSet(U.Router.getRoute());
 			};
 
-			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
+			U.Router.go('/auth/pin-check', { replace: true, animate: true });
 			Renderer.send('pin-check');
-		}, commonStore.pinTime);
+		}, S.Common.pinTime);
 	};
 
 	restoreSource () {
@@ -1045,7 +1047,7 @@ class Keyboard {
 
 		switch (type) {
 			case I.Source.Popup:
-				window.setTimeout(() => popupStore.open(data.id, data.param), popupStore.getTimeout());
+				window.setTimeout(() => S.Popup.open(data.id, data.param), S.Popup.getTimeout());
 				break;
 		};
 
@@ -1141,7 +1143,7 @@ class Keyboard {
 		};
 
 		// Cmd + Alt + N hack
-		if (which == KeyCode.dead) {
+		if (which == J.Key.dead) {
 			pressed.push('n');
 		};
 
@@ -1149,7 +1151,7 @@ class Keyboard {
 			const keys = item.split('+').sort();
 			
 			for (const k of keys) {
-				if (which == KeyCode[k]) {
+				if (which == J.Key[k]) {
 					pressed.push(k);
 				} else
 				if (k == key) {
@@ -1172,15 +1174,15 @@ class Keyboard {
 	};
 
 	cmdSymbol () {
-		return UtilCommon.isPlatformMac() ? '&#8984;' : 'Ctrl';
+		return U.Common.isPlatformMac() ? '&#8984;' : 'Ctrl';
 	};
 
 	altSymbol () {
-		return UtilCommon.isPlatformMac() ? '&#8997;' : 'Alt';
+		return U.Common.isPlatformMac() ? '&#8997;' : 'Alt';
 	};
 
 	cmdKey () {
-		return UtilCommon.isPlatformMac() ? 'cmd' : 'ctrl';
+		return U.Common.isPlatformMac() ? 'cmd' : 'ctrl';
 	};
 
 };

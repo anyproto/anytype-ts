@@ -27,7 +27,7 @@
 		}
 
 		.item {
-			.dropTarget { height: 100%; }
+			.dropTarget { height: 100%; border-radius: 8px; }
 			.inner { display: flex; flex-direction: column; height: 100%; align-items: stretch; }
 
 			.cover { 

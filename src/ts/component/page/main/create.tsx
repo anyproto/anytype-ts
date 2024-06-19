@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, Frame } from 'Component';
-import { I, UtilObject } from 'Lib';
+import { I, U } from 'Lib';
 
 class PageMainCreate extends React.Component<I.PageComponent> {
 
@@ -14,7 +14,7 @@ class PageMainCreate extends React.Component<I.PageComponent> {
 	
 	componentDidMount () {
 		const flags = [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ];
-		UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', flags, '', message => UtilObject.openRoute(message.details));
+		U.Object.create('', '', {}, I.BlockPosition.Bottom, '', flags, '', message => U.Object.openRoute(message.details));
 	};
 
 };

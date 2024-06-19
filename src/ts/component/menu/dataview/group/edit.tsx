@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, Dataview, UtilMenu, keyboard, Relation, translate } from 'Lib';
+import { I, C, S, U, Dataview, keyboard, Relation, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
-import { dbStore } from 'Store';
 
 const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Menu> {
 	
@@ -51,7 +50,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, groupId } = data;
-		const group = dbStore.getGroup(rootId, blockId, groupId);
+		const group = S.Record.getGroup(rootId, blockId, groupId);
 
 		if (group) {
 			this.color = group.bgColor;
@@ -82,7 +81,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 	};
 
 	getSections () {
-		const colors = UtilMenu.getBgColors().filter(it => it.id != 'bgColor-default');
+		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
 
 		return [
 			{ 
@@ -133,8 +132,8 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 			return;
 		};
 
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
-		const groups = dbStore.getGroups(rootId, blockId);
+		const relation = S.Record.getRelationByKey(view.groupRelationKey);
+		const groups = S.Record.getGroups(rootId, blockId);
 		const update: any[] = [];
 
 		groups.forEach((it: any, i: number) => {
@@ -146,12 +145,12 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 			update.push(item);
 		});
 
-		dbStore.groupsSet(rootId, blockId, update);
+		S.Record.groupsSet(rootId, blockId, update);
 		Dataview.groupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 
 		if (!view.groupBackgroundColors && this.color) {
-			Dataview.viewUpdate(rootId, blockId, view.id, { groupBackgroundColors: true  });
+			Dataview.viewUpdate(rootId, blockId, view.id, { groupBackgroundColors: true });
 		};
 
 		if ([ I.RelationType.MultiSelect, I.RelationType.Select ].includes(relation.format)) {

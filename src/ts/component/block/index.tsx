@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, UtilData, keyboard, focus, Storage, UtilSpace } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, Storage } from 'Lib';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject} from 'Component';
-import { menuStore, blockStore, detailStore, commonStore } from 'Store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -26,8 +25,6 @@ import BlockAudio from './media/audio';
 import BlockPdf from './media/pdf'; 
 
 import BlockEmbed from './embed';
-
-const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponent {
 	css?: any;
@@ -78,16 +75,16 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		const index = Number(this.props.index) || 0;
 		const { style, checked } = content;
-		const root = blockStore.getLeaf(rootId, rootId);
-		const cn: string[] = [ 'block', UtilData.blockClass(block), `align${hAlign}`, `index${index}` ];
+		const root = S.Block.getLeaf(rootId, rootId);
+		const cn: string[] = [ 'block', U.Data.blockClass(block), `align${hAlign}`, `index${index}` ];
 		const cd: string[] = [ 'wrapContent' ];
 		const setRef = ref => this.ref = ref;
 		const key = [ 'block', block.id, 'component' ].join(' ');
-		const participantId = blockStore.getParticipant(rootId, block.id);
+		const participantId = S.Block.getParticipantId(rootId, block.id);
 
 		let participant = null;
 		if (participantId) {
-			participant = UtilSpace.getParticipant(participantId);
+			participant = U.Space.getParticipant(participantId);
 		};
 
 		let canSelect = !isInsideTable && !isSelectionDisabled;
@@ -206,22 +203,22 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.Link: {
-				const object = detailStore.get(rootId, content.targetBlockId, [ 'restrictions' ]);
+				const object = S.Detail.get(rootId, content.targetBlockId, [ 'restrictions' ]);
 				
-				if (blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
+				if (S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;
 				};
 
-				cn.push(UtilData.linkCardClass(content.cardStyle));
+				cn.push(U.Data.linkCardClass(content.cardStyle));
 
 				blockComponent = <BlockLink key={key} ref={setRef} {...this.props} />;
 				break;
 			};
 
 			case I.BlockType.Bookmark: {
-				const object = detailStore.get(rootId, content.targetObjectId, [ 'restrictions' ]);
+				const object = S.Detail.get(rootId, content.targetObjectId, [ 'restrictions' ]);
 				
-				if (blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
+				if (S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;
 				};
 
@@ -350,7 +347,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				style={css}
 				onMouseEnter={onMouseEnter} 
 				onMouseLeave={onMouseLeave}
-				{...UtilCommon.dataProps({ id })}
+				{...U.Common.dataProps({ id })}
 			>
 				<div className="wrapMenu">
 					<Icon 
@@ -410,7 +407,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { rootId, block } = this.props;
 
 		if (block.id && block.isTextToggle()) {
-			blockStore.toggle(rootId, block.id, Storage.checkToggle(rootId, block.id));
+			S.Block.toggle(rootId, block.id, Storage.checkToggle(rootId, block.id));
 		};
 	};
 	
@@ -422,7 +419,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		
-		blockStore.toggle(rootId, block.id, !node.hasClass('isToggled'));
+		S.Block.toggle(rootId, block.id, !node.hasClass('isToggled'));
 		focus.apply();
 	};
 	
@@ -434,8 +431,8 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 		
 		const { block } = this.props;
-		const dragProvider = commonStore.getRef('dragProvider');
-		const selection = commonStore.getRef('selectionProvider');
+		const dragProvider = S.Common.getRef('dragProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		
 		if (!block.isDraggable()) {
 			e.preventDefault();
@@ -447,7 +444,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			selection.setIsSelecting(false);
 		};
 
-		this.ids = UtilData.selectionGet(block.id, false, true);
+		this.ids = U.Data.selectionGet(block.id, false, true);
 		dragProvider?.onDragStart(e, I.DropType.Block, this.ids, this);
 	};
 	
@@ -455,12 +452,12 @@ const Block = observer(class Block extends React.Component<Props> {
 		e.stopPropagation();
 
 		focus.clear(true);
-		this.ids = UtilData.selectionGet(this.props.block.id, false, false);
+		this.ids = U.Data.selectionGet(this.props.block.id, false, false);
 	};
 	
 	onMenuClick () {
 		const { block } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const element = $(`#button-block-menu-${block.id}`);
 
 		if (!element.length) {
@@ -482,13 +479,13 @@ const Block = observer(class Block extends React.Component<Props> {
 	onContextMenu (e: any) {
 		const { focused } = focus.state;
 		const { rootId, block, readonly, isContextMenuDisabled } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
 		if (isContextMenuDisabled || readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
 			return;
 		};
 
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		if (!root) {
 			return;
 		};
@@ -501,8 +498,8 @@ const Block = observer(class Block extends React.Component<Props> {
 		e.stopPropagation();
 
 		focus.clear(true);
-		menuStore.closeAll([], () => {
-			this.ids = UtilData.selectionGet(block.id, false, false);
+		S.Menu.closeAll([], () => {
+			this.ids = U.Data.selectionGet(block.id, false, false);
 			selection?.set(I.SelectType.Block, this.ids);
 
 			this.menuOpen({
@@ -513,7 +510,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	menuOpen (param?: Partial<I.MenuParam>) {
 		const { rootId, block, blockRemove, onCopy } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
 		// Hide block menus and plus button
 		$('#button-block-add').removeClass('show');
@@ -522,7 +519,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		const menuParam: Partial<I.MenuParam> = Object.assign({
 			noFlipX: true,
-			subIds: Constant.menuIds.action,
+			subIds: J.Constant.menuIds.action,
 			onClose: () => {
 				selection?.clear();
 				focus.apply();
@@ -536,7 +533,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			}
 		}, param || {});
 
-		menuStore.open('blockAction', menuParam);
+		S.Menu.open('blockAction', menuParam);
 	};
 	
 	onResizeStart (e: any, index: number) {
@@ -549,12 +546,12 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 
 		const { id } = block;
-		const childrenIds = blockStore.getChildrenIds(rootId, id);
-		const selection = commonStore.getRef('selectionProvider');
+		const childrenIds = S.Block.getChildrenIds(rootId, id);
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
-		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + Constant.size.blockMenu ;
+		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + J.Constant.size.blockMenu ;
 		const add = $('#button-block-add');
 		
 		selection?.clear();
@@ -586,7 +583,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		
 		const { rootId, block } = this.props;
 		const { id } = block;
-		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		const childrenIds = S.Block.getChildrenIds(rootId, id);
 		
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
@@ -616,7 +613,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		
 		const { rootId, block } = this.props;
 		const { id } = block;
-		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		const childrenIds = S.Block.getChildrenIds(rootId, id);
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
@@ -646,14 +643,14 @@ const Block = observer(class Block extends React.Component<Props> {
 	calcWidth (x: number, index: number) {
 		const { rootId, block, getWrapperWidth } = this.props;
 		const { id } = block;
-		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		const childrenIds = S.Block.getChildrenIds(rootId, id);
 		const snaps = [ 0.25, 0.5, 0.75 ];
 		
 		const prevBlockId = childrenIds[index - 1];
-		const prevBlock = blockStore.getLeaf(rootId, prevBlockId);
+		const prevBlock = S.Block.getLeaf(rootId, prevBlockId);
 		
 		const currentBlockId = childrenIds[index];
-		const currentBlock = blockStore.getLeaf(rootId, currentBlockId);
+		const currentBlock = S.Block.getLeaf(rootId, currentBlockId);
 
 		if (!prevBlock || !currentBlock) {
 			return;
@@ -662,7 +659,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const width = getWrapperWidth();
 		const dw = 1 / childrenIds.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
-		const offset = Constant.size.blockMenu * 2;
+		const offset = J.Constant.size.blockMenu * 2;
 		
 		x = Math.max(offset, x);
 		x = Math.min(sum * width - offset, x);
@@ -685,11 +682,11 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		const sm = Constant.size.blockMenu;
+		const sm = J.Constant.size.blockMenu;
 		const node = $(this.node);
-		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
+		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;
-		const children = blockStore.getChildren(rootId, block.id);
+		const children = S.Block.getChildren(rootId, block.id);
 		const rect = (node.get(0) as Element).getBoundingClientRect();
 		const { x, width } = rect;
 		const p = e.pageX - x - sm;
@@ -725,7 +722,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	
 	onEmptyColumn () {
 		const { rootId, block } = this.props;
-		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
+		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
 		
 		if (!block.isLayoutColumn() || !childrenIds.length) {
 			return;

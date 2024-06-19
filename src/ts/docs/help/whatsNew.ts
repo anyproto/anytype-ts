@@ -1,5 +1,4 @@
-import { I, keyboard } from 'Lib';
-const Url = require('json/url.json');
+import { I, J, keyboard } from 'Lib';
 
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
@@ -12,8 +11,8 @@ const h3 = (t: string) => block(I.TextStyle.Header3, t);
 const text = (t: string) => block(I.TextStyle.Paragraph, t);
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
-const video = (src: string, c?: string) => text(`<video src="${Url.cdn}/img/help/${src}" controls class="c70 ${c || ''}" />`);
-const img = (src: string, c?: string) => text(`<img src="${Url.cdn}/img/help/${src}" class="c70 ${c || ''}" />`);
+const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}" controls class="c70 ${c || ''}" />`);
+const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}" class="c70 ${c || ''}" />`);
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 export default [
@@ -147,7 +146,7 @@ export default [
 
 	h3(`Webclipper`),
 	video('39/1.mp4'),
-	text(`The wait is over - we’re so relieved to bring you v1 of the Anytype webclipper. For those of you using Chrome browsers, you’ll be able to install the Anytype web clipper using ${link(Url.webclipper, 'this link')}.`),
+	text(`The wait is over - we’re so relieved to bring you v1 of the Anytype webclipper. For those of you using Chrome browsers, you’ll be able to install the Anytype web clipper using ${link(J.Url.webclipper, 'this link')}.`),
 	text(`Once installed, you have two options to save content from the web:`),
 	bullet(`Click the web clipper extension icon in your toolbar to save web pages as new objects in Anytype.`),
 	bullet(`Select a text snippet, right click, and add the text to any previously-created object in your space.`),

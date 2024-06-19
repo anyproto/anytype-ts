@@ -1,8 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, UtilCommon, keyboard } from 'Lib';
-import { commonStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, keyboard } from 'Lib';
 
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
@@ -63,7 +61,7 @@ class Preview {
 			const st = win.scrollTop(); 
 			const ew = element.outerWidth();
 			const eh = element.outerHeight();
-			const { ww } = UtilCommon.getWindowDimensions();
+			const { ww } = U.Common.getWindowDimensions();
 			const node = $('<div class="tooltip anim"><div class="txt"></div></div>');
 
 			if (param.className) {
@@ -75,7 +73,7 @@ class Preview {
 				node.find('.title').html(param.title);
 			};
 
-			node.find('.txt').html(UtilCommon.lbBr(text));
+			node.find('.txt').html(U.Common.lbBr(text));
 			obj.html('').append(node);
 			
 			const ow = node.outerWidth();
@@ -187,9 +185,9 @@ class Preview {
 
 		if (param.delay) {
 			window.clearTimeout(this.timeout.preview);
-			this.timeout.preview = window.setTimeout(() => commonStore.previewSet(param), param.delay);
+			this.timeout.preview = window.setTimeout(() => S.Common.previewSet(param), param.delay);
 		} else {
-			commonStore.previewSet(param);
+			S.Common.previewSet(param);
 		};
 
 		this.isPreviewOpen = true;
@@ -209,7 +207,7 @@ class Preview {
 			obj.hide();
 			obj.removeClass('anim top bottom withImage').css({ transform: '' });
 
-			commonStore.previewClear();
+			S.Common.previewClear();
 			$('#graphPreview').remove();
 		};
 
@@ -232,10 +230,10 @@ class Preview {
 	toastShow (param: I.Toast) {
 		const setTimeout = () => {
 			window.clearTimeout(this.timeout.toast);
-			this.timeout.toast = window.setTimeout(() => this.toastHide(false), Constant.delay.toast);
+			this.timeout.toast = window.setTimeout(() => this.toastHide(false), J.Constant.delay.toast);
 		};
 
-		commonStore.toastSet(param);
+		S.Common.toastSet(param);
 
 		const obj = $('#toast');
 
@@ -257,7 +255,7 @@ class Preview {
 		window.clearTimeout(this.timeout.toast);
 		this.timeout.toast = window.setTimeout(() => {
 			obj.hide();
-			commonStore.toastClear();
+			S.Common.toastClear();
 		}, force ? 0 : 250);
 	};
 
@@ -268,11 +266,11 @@ class Preview {
 		const obj = $('#toast');
 		const sidebar = $('#sidebar');
 		const isRight = sidebar.hasClass('right');
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const y = 32;
 
 		let sw = 0;
-		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+		if (S.Common.isSidebarFixed && sidebar.hasClass('active')) {
 			sw = sidebar.outerWidth();
 		};
 

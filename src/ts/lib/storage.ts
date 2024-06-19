@@ -1,6 +1,4 @@
-import { I, UtilCommon, UtilSpace } from 'Lib';
-import { commonStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J } from 'Lib';
 
 const SPACE_KEYS = [
 	'toggle',
@@ -63,7 +61,7 @@ class Storage {
 		if (this.isSpaceKey(key)) {
 			const obj = this.getSpace();
 
-			delete(obj[commonStore.space][key]);
+			delete(obj[S.Common.space][key]);
 
 			this.setSpace(obj);
 		} else {
@@ -78,20 +76,20 @@ class Storage {
 	setSpaceKey (key: string, value: any) {
 		const obj = this.getSpace();
 
-		obj[commonStore.space][key] = value;
+		obj[S.Common.space][key] = value;
 
 		this.setSpace(obj);
 	};
 
 	getSpaceKey (key: string) {
 		const obj = this.getSpace();
-		return obj[commonStore.space][key];
+		return obj[S.Common.space][key];
 	};
 
 	getSpace () {
 		const obj = this.get('space') || {};
 
-		obj[commonStore.space] = obj[commonStore.space] || {};
+		obj[S.Common.space] = obj[S.Common.space] || {};
 
 		return obj;
 	};
@@ -112,11 +110,15 @@ class Storage {
 		const keys = Object.keys(this.getSpace());
 
 		keys.forEach(key => {
-			const spaceview = UtilSpace.getSpaceviewBySpaceId(key);
+			const spaceview = U.Space.getSpaceviewBySpaceId(key);
 			if (!spaceview) {
 				this.deleteSpace(key);
 			};
 		});
+	};
+
+	getPin () {
+		return this.get('pin');
 	};
 
 	setLastOpened (windowId: string, param: any) {
@@ -161,7 +163,7 @@ class Storage {
 
 	setToggle (rootId: string, id: string, value: boolean) {
 		let obj = this.get('toggle');
-		if (!obj || UtilCommon.hasProperty(obj, 'length')) {
+		if (!obj || U.Common.hasProperty(obj, 'length')) {
 			obj = {};
 		};
 		
@@ -266,13 +268,13 @@ class Storage {
 		};
 
 		const keys = [
-			Constant.typeKey.note,
-			Constant.typeKey.page,
-			Constant.typeKey.task,
+			J.Constant.typeKey.note,
+			J.Constant.typeKey.page,
+			J.Constant.typeKey.task,
 		];
 
 		for (const key of keys) {
-			const type = dbStore.getTypeByKey(key);
+			const type = S.Record.getTypeByKey(key);
 			if (type) {
 				list.push(type.id);
 			};
@@ -315,7 +317,7 @@ class Storage {
 	};
 
 	checkArray (a) {
-		if (('object' != typeof(a)) || !UtilCommon.hasProperty(a, 'length')) {
+		if (('object' != typeof(a)) || !U.Common.hasProperty(a, 'length')) {
 			return [];
 		};
 		return a;
