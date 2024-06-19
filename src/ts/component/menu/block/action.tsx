@@ -109,12 +109,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		this._isMounted = false;
 
 		keyboard.setFocus(false);
-		S.Menu.closeAll(J.Constant.menuIds.action);
+		S.Menu.closeAll(J.Menu.action);
 		S.Menu.clearTimeout();
 	};
 
 	onFilterFocus (e: any) {
-		S.Menu.closeAll(J.Constant.menuIds.action);
+		S.Menu.closeAll(J.Menu.action);
 		this.props.setActive();
 	};
 	
@@ -342,7 +342,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		setActive(item, false);
 
 		if (!item.arrow) {
-			S.Menu.closeAll(J.Constant.menuIds.action);
+			S.Menu.closeAll(J.Menu.action);
 			return;
 		};
 
@@ -575,7 +575,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
-			S.Menu.closeAll(J.Constant.menuIds.action, () => {
+			S.Menu.closeAll(J.Menu.action, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

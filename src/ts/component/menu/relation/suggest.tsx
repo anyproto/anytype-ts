@@ -229,7 +229,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		U.Data.search({
 			filters,
 			sorts,
-			keys: J.Constant.relationRelationKeys,
+			keys: J.Relation.relation,
 			fullText: filter,
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,

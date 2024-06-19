@@ -353,7 +353,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			e.preventDefault();
 
 			this.save(value, () => {
-				S.Menu.closeAll(J.Constant.menuIds.cell);
+				S.Menu.closeAll(J.Menu.cell);
 
 				this.range = null;
 				this.setEditing(false);

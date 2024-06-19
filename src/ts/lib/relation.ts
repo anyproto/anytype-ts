@@ -28,7 +28,7 @@ class Relation {
 	};
 
 	public width (width: number, format: I.RelationType): number {
-		const size = J.Constant.size.dataview.cell;
+		const size = J.Size.dataview.cell;
 		return Number(width || size[`format${format}`]) || size.default;
 	};
 
@@ -342,7 +342,7 @@ class Relation {
 
 		return [
 			{ id: '', icon: '', name: translate('commonNone') },
-			{ id: J.Constant.pageCoverRelationKey, icon: 'image', name: translate('libRelationPageCover') },
+			{ id: J.Relation.pageCover, icon: 'image', name: translate('libRelationPageCover') },
 		].concat(options);
 	};
 

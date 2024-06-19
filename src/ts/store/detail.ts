@@ -146,14 +146,14 @@ class DetailStore {
 		};
 	};
 
-	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Constant.defaultRelationKeys are included */
+	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Relation.default are included */
     public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean): any {
 		let list = this.map.get(rootId)?.get(id) || [];
 		if (!list.length) {
 			return { id, _empty_: true };
 		};
 		
-		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? J.Constant.defaultRelationKeys : []) ] : []);
+		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? J.Relation.default : []) ] : []);
 		const object = { id };
 
 		if (withKeys) {

@@ -186,7 +186,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 
 	componentWillUnmount () {
 		this.unbind();
-		S.Menu.closeAll(J.Constant.menuIds.cell);
+		S.Menu.closeAll(J.Menu.cell);
 	};
 
 	rebind () {

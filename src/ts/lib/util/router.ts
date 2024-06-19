@@ -76,6 +76,13 @@ class UtilRouter {
 			return;
 		};
 
+		const change = () => {
+			this.history.push(route); 
+			if (onRouteChange) {
+				onRouteChange();
+			};
+		};
+
 		const onTimeout = () => {
 			Preview.hideAll();
 
@@ -85,11 +92,7 @@ class UtilRouter {
 			};
 
 			if (!animate) {
-				this.history.push(route); 
-
-				if (onRouteChange) {
-					onRouteChange();
-				};
+				change();
 				return;
 			};
 
@@ -103,12 +106,7 @@ class UtilRouter {
 					onFadeOut();
 				};
 
-				this.history.push(route);
-
-				if (onRouteChange) {
-					onRouteChange();
-				};
-
+				change();
 				fade.removeClass('show');
 			}, J.Constant.delay.route);
 

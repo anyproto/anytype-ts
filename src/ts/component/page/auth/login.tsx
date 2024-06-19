@@ -93,7 +93,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const phrase = this.refPhrase.getValue();
 		const length = phrase.split(' ').length;
 
-		if (length < J.Constant.limit.phrase.word) {
+		if (length < J.Constant.count.phrase.word) {
 			this.setError({ code: 1, description: translate('pageAuthLoginInvalidPhrase')});
 			return;
 		};
@@ -170,7 +170,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	canSubmit (): boolean {
-		return this.refPhrase.getValue().split(' ').length == J.Constant.limit.phrase.word;
+		return this.refPhrase.getValue().split(' ').length == J.Constant.count.phrase.word;
 	};
 
 	onKeyDownPhrase (e: React.KeyboardEvent) {

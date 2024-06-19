@@ -497,11 +497,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			offsetY: 4,
 			offsetX: () => {
 				const rect = recalcRect();
-				return rect ? 0 : J.Constant.size.blockMenu;
+				return rect ? 0 : J.Size.blockMenu;
 			},
 			commonFilter: true,
 			className: (isTemplate ? 'isTemplate' : ''),
-			subIds: J.Constant.menuIds.latex,
+			subIds: J.Menu.latex,
 			onClose: () => {
 				S.Common.filterSet(0, '');
 			},

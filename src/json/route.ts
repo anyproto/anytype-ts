@@ -1,11 +1,9 @@
 export default [
-	{ "path": "/" },
-
-	{ "path": "/:page/:action/" },
-	{ "path": "/:page/:action/:id?" },
-	{ "path": "/:page/:action/:id?/spaceId/:spaceId?" },
-	{ "path": "/:page/:action/:id?/spaceId/:spaceId?/viewId/:viewId?" },
-
-	{ "path": "/object" },
-	{ "path": "/invite" }
+	'/',
+	'/:page/:action/',
+	'/:page/:action/:id?',
+	'/:page/:action/:id?/spaceId/:spaceId?',
+	'/:page/:action/:id?/spaceId/:spaceId?/viewId/:viewId?',
+	'/object',
+	'/invite',
 ];

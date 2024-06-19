@@ -146,7 +146,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 						onUpdate={() => onCellUpdate(cellId)}
 						onFocus={e => onCellFocus(e, row.id, column.id, cellId)}
 						onBlur={e => onCellBlur(e, row.id, column.id, cellId)}
-						getWrapperWidth={() => J.Constant.size.editor} 
+						getWrapperWidth={() => J.Size.editor} 
 					/>
 				) : (
 					<EmptyBlock />

@@ -247,7 +247,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			limit,
 			filters: this.getFilters(),
 			collectionId: (isCollection ? object.id : ''),
-			keys: J.Constant.sidebarRelationKeys.concat(view.groupRelationKey).concat(J.Constant.coverRelationKeys),
+			keys: J.Relation.sidebar.concat(view.groupRelationKey).concat(J.Relation.cover),
 		});
 	};
 

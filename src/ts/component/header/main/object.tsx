@@ -33,7 +33,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			return null;
 		};
 
-		const object = S.Detail.get(rootId, rootId, J.Constant.templateRelationKeys);
+		const object = S.Detail.get(rootId, rootId, J.Relation.template);
 		const isLocked = root ? root.isLocked() : false;
 		const showMenu = !U.Object.isTypeOrRelationLayout(object.layout);
 		const canSync = showMenu && !object.templateIsBundled && !root.isObjectParticipant();
@@ -119,7 +119,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 		menuOpen('object', '#button-header-more', {
 			horizontal: I.MenuDirection.Right,
-			subIds: J.Constant.menuIds.object,
+			subIds: J.Menu.object,
 			data: {
 				rootId,
 				blockId: rootId,

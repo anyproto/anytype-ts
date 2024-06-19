@@ -319,7 +319,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this._isMounted = false;
 		this.unbind();
 
-		S.Menu.closeAll(J.Constant.menuIds.store);
+		S.Menu.closeAll(J.Menu.store);
 		window.clearTimeout(this.timeoutFilter);
 	};
 
@@ -388,7 +388,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.view = id;
 		this.load(true);
 
-		S.Menu.closeAll(J.Constant.menuIds.store);
+		S.Menu.closeAll(J.Menu.store);
 		analytics.event('LibraryView', { view: id, type: this.tab, route: (isInner ? 'inner' : 'outer') });
 
 		Storage.set('viewStore', id);
@@ -425,7 +425,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onFilterClear () {	
-		S.Menu.closeAll(J.Constant.menuIds.store);
+		S.Menu.closeAll(J.Menu.store);
 	};
 
 	onFilterFocus (e: any) {
@@ -507,7 +507,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			]);
 		};
 
-		let keys: string[] = J.Constant.defaultRelationKeys;
+		let keys: string[] = J.Relation.default;
 
 		switch (this.view) {
 			case View.Marketplace:
@@ -521,11 +521,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
-				keys = keys.concat(J.Constant.typeRelationKeys);
+				keys = keys.concat(J.Relation.type);
 				break;
 
 			case I.StoreTab.Relation:
-				keys = keys.concat(J.Constant.relationRelationKeys);
+				keys = keys.concat(J.Relation.relation);
 				break;
 		};
 
@@ -664,7 +664,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getLimit () {
 		const container = U.Common.getPageContainer(this.props.isPopup);
-		const size = J.Constant.size.store;
+		const size = J.Size.store;
 		const maxWidth = container.width() - size.border * 2;
 		const limit = Math.floor(maxWidth / (size.width + size.margin));
 

@@ -492,7 +492,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const view = node.find('.viewContent');
 		const container = U.Common.getPageContainer(isPopup);
 		const cw = container.width();
-		const size = J.Constant.size.dataview.board;
+		const size = J.Size.dataview.board;
 		const groups = this.getGroups(false);
 		const width = groups.length * (size.card + size.margin) - size.margin;
 

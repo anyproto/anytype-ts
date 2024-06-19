@@ -20,7 +20,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	constructor (props: I.ViewComponent) {
 		super(props);
 
-		const { height } = J.Constant.size.dataview.gallery;
+		const { height } = J.Size.dataview.gallery;
 
 		this.cache = new CellMeasurerCache({
 			defaultHeight: height,
@@ -196,7 +196,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return;
 		};
 
-		const { margin } = J.Constant.size.dataview.gallery;
+		const { margin } = J.Size.dataview.gallery;
 
 		let size = 0;
 		switch (view.cardSize) {
@@ -273,7 +273,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	getCardHeight (): number {
 		const { getVisibleRelations } = this.props;
 		const relations = getVisibleRelations();
-		const size = J.Constant.size.dataview.gallery;
+		const size = J.Size.dataview.gallery;
 
 		let height = size.padding * 2 + size.margin - 4;
 

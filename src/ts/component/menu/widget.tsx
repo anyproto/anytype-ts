@@ -70,7 +70,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 							className="c28"
 							text={translate('menuWidgetAddWidget')}
 							onClick={this.save} 
-							onMouseEnter={() => S.Menu.closeAll(J.Constant.menuIds.widget)} 
+							onMouseEnter={() => S.Menu.closeAll(J.Menu.widget)} 
 						/>
 					</div>
 				) : ''}
@@ -99,7 +99,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this._isMounted = false;
 		this.unbind();
 
-		S.Menu.closeAll(J.Constant.menuIds.widget);
+		S.Menu.closeAll(J.Menu.widget);
 		$(window).trigger(`updateWidgetData.${blockId}`);
 	};
 
@@ -257,7 +257,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 	onOver (e: React.MouseEvent, item) {
 		if (!item.arrow) {
-			S.Menu.closeAll(J.Constant.menuIds.widget);
+			S.Menu.closeAll(J.Menu.widget);
 			return;
 		};
 
@@ -374,7 +374,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
-			S.Menu.closeAll(J.Constant.menuIds.widget, () => {
+			S.Menu.closeAll(J.Menu.widget, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

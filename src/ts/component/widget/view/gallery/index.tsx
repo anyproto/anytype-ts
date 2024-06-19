@@ -86,7 +86,7 @@ const WidgetViewGallery = observer(class WidgetViewGallery extends React.Compone
 
 	getItems () {
 		const { getRecordIds, subId } = this.props;
-		const items = [].concat(getRecordIds().map(id => S.Detail.get(subId, id, J.Constant.sidebarRelationKeys)));
+		const items = [].concat(getRecordIds().map(id => S.Detail.get(subId, id, J.Relation.sidebar)));
 
 		items.push({ id: 'blank', name: translate('widgetShowAll') });
 

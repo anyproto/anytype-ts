@@ -53,7 +53,7 @@ class Sidebar {
 			const y = wh / 2 - this.getMaxHeight() / 2;
 
 			this.set({
-				width: J.Constant.size.sidebar.width.default,
+				width: J.Size.sidebar.width.default,
 				y,
 				x: 0,
 				snap: I.MenuDirection.Left,
@@ -519,7 +519,7 @@ class Sidebar {
 	 * Limit the sidebar width to the max and min bounds
 	 */
 	private limitWidth (width: number): number {
-		const { min, max } = J.Constant.size.sidebar.width;
+		const { min, max } = J.Size.sidebar.width;
 		return Math.max(min, Math.min(max, Number(width) || 0));
 	};
 

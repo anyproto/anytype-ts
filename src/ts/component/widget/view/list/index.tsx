@@ -200,7 +200,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 		const { targetBlockId } = block.content;
 		const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
 
-		let items = getRecordIds().map(id => S.Detail.get(subId, id, J.Constant.sidebarRelationKeys));
+		let items = getRecordIds().map(id => S.Detail.get(subId, id, J.Relation.sidebar));
 
 		if (isPreview && isRecent) {
 			// add group labels
