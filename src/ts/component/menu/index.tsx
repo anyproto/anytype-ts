@@ -463,7 +463,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
-		const { border } = J.Size.menu;
 		const borderTop = this.getBorderTop();
 		const borderBottom = this.getBorderBottom();
 
@@ -555,7 +554,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					x += offsetX;
 
 					// Switch
-					if (!noFlipX && (x >= ww - width - border)) {
+					if (!noFlipX && (x >= ww - width - J.Size.menuBorder)) {
 						x = ox - width;
 						flipX = true;
 					};
@@ -569,7 +568,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					x -= width + offsetX - ew;
 
 					// Switch
-					if (!noFlipX && (x <= border)) {
+					if (!noFlipX && (x <= J.Size.menuBorder)) {
 						x = ox + ew;
 						flipX = true;
 					};
@@ -581,8 +580,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				y -= scrollTop;
 			};
 
-			x = Math.max(border, x);
-			x = Math.min(ww - width - border, x);
+			x = Math.max(J.Size.menuBorder, x);
+			x = Math.min(ww - width - J.Size.menuBorder, x);
 
 			y = Math.max(borderTop, y);
 			y = Math.min(wh - height - borderBottom, y);
@@ -975,7 +974,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		const node = $(this.node);
 		const menu = node.find('.menu');
-		const { border } = J.Size.menu;
 		
 		menu.find('.item.hover').removeClass('hover');
 
@@ -1004,7 +1002,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const pt = el.position().top;
 			const eh = el.outerHeight();
 			const ch = scrollWrap.height();
-			const top = Math.max(0, st + pt + eh - border - ch);
+			const top = Math.max(0, st + pt + eh - J.Size.menuBorder - ch);
 			
 			scrollWrap.scrollTop(top);
 		};
