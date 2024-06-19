@@ -154,23 +154,33 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		refButton.setLoading(true);
 
+		if (tierItem.nameMinLength == 0) {
+			// do not check name if the tier does not feature it
+			this.onPayContinued(tier, method, name, refButton);
+			return;
+		}
+
 		this.checkName(name, () => {
-			C.MembershipRegisterPaymentRequest(tier, method, name, (message) => {
-				refButton.setLoading(false);
-
-				if (message.error.code) {
-					this.setError(message.error.description);
-					return;
-				};
-
-				if (message.url) {
-					U.Common.onUrl(message.url);
-				};
-
-				analytics.event('ClickMembership', { params: { tier, method }});
-			});
+			this.onPayContinued(tier, method, name, refButton);
 		});
 	};
+
+	onPayContinued(tier: I.TierType, method: I.PaymentMethod, name: string, refButton: any) {
+		C.MembershipRegisterPaymentRequest(tier, method, name, (message) => {
+			refButton.setLoading(false);
+
+			if (message.error.code) {
+				this.setError(message.error.description);
+				return;
+			};
+
+			if (message.url) {
+				U.Common.onUrl(message.url);
+			};
+
+			analytics.event('ClickMembership', { params: { tier, method }});
+		});
+	}
 
 	validateName (callBack?: () => void) {
 		const name = this.getName();
