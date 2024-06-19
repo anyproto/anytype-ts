@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable } from 'Component';
-import { I, M, Action, UtilData, UtilObject, focus, keyboard, Relation, translate, UtilSpace } from 'Lib';
-import { blockStore, detailStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, M, S, U, J, Action, focus, keyboard, Relation, translate } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -37,16 +35,16 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	render (): any {
 		const { rootId, onCreate, isContextMenuDisabled, readonly } = this.props;
-		const check = UtilData.checkDetails(rootId);
-		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
+		const check = U.Data.checkDetails(rootId);
+		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
-		const allowDetails = !readonly && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const allowDetails = !readonly && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const isTypeOrRelation = UtilObject.isTypeOrRelationLayout(object.layout);
-		const isRelation = UtilObject.isRelationLayout(object.layout);
-		const canEditIcon = allowDetails && !UtilObject.isRelationLayout(object.layout);
+		const isTypeOrRelation = U.Object.isTypeOrRelationLayout(object.layout);
+		const isRelation = U.Object.isRelationLayout(object.layout);
+		const canEditIcon = allowDetails && !U.Object.isRelationLayout(object.layout);
 		const cn = [ 'headSimple', check.className ];
 		const placeholder = {
 			title: this.props.placeholder,
@@ -166,7 +164,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	init () {
 		const { focused } = focus.state;
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		this.setValue();
 
@@ -198,7 +196,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	onKeyUp () {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.save(), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => this.save(), J.Constant.delay.keyboard);
 	};
 
 	onSelectText (e: any, item: any) {
@@ -213,7 +211,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId } = this.props;
 
 		for (const item of EDITORS) {
-			UtilData.blockSetText(rootId, item.blockId, this.getValue(item.blockId), [], true);
+			U.Data.blockSetText(rootId, item.blockId, this.getValue(item.blockId), [], true);
 		};
 	};
 
@@ -227,7 +225,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	setValue () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		for (const item of EDITORS) {
 			if (!this.refEditable[item.blockId]) {
@@ -264,25 +262,25 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	onInstall () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
-		Action.install(object, false, (message: any) => UtilObject.openAuto(message.details));
+		Action.install(object, false, (message: any) => U.Object.openAuto(message.details));
 	};
 
 	isInstalled () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
 		let sources: string[] = [];
 
 		switch (object.layout) {
 			case I.ObjectLayout.Type: {
-				sources = dbStore.getTypes().map(it => it.sourceObject);
+				sources = S.Record.getTypes().map(it => it.sourceObject);
 				break;
 			};
 
 			case I.ObjectLayout.Relation: {
-				sources = dbStore.getRelations().map(it => it.sourceObject);
+				sources = S.Record.getRelations().map(it => it.sourceObject);
 				break;
 			};
 		};

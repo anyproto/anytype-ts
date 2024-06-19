@@ -1,4 +1,4 @@
-import { I, Onboarding, keyboard, translate, UtilSpace } from 'Lib';
+import { I, U, translate } from 'Lib';
 
 export default {
     mainGraph: () => ({
@@ -176,7 +176,7 @@ export default {
     }),
 
     dashboard: () => {
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		return {
 			category: translate('onboardingDashboard'),

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { UtilCommon } from 'Lib';
+import { U } from 'Lib';
 import { Icon } from 'Component';
 
 interface Props {
@@ -108,7 +108,7 @@ class MediaVideo extends React.Component<Props> {
 			return;
 		};
 
-        UtilCommon.pauseMedia();
+        U.Common.pauseMedia();
 		video.get(0).play();
     };
 

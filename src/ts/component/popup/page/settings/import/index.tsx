@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, UtilCommon, translate, Action, UtilMenu } from 'Lib';
+import { I, U, J, translate, Action } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
-
-const Constant = require('json/constant.json');
 
 interface Props extends I.PopupSettings {
 	onImport: (type: I.ImportType, param: any) => void;
@@ -47,15 +45,15 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const common = [ I.ImportType.Html, I.ImportType.Text, I.ImportType.Protobuf, I.ImportType.Markdown ];
 
 		if (common.includes(item.format)) {
-			Action.import(item.format, Constant.fileExtension.import[item.format]);
+			Action.import(item.format, J.Constant.fileExtension.import[item.format]);
 			close();
 		} else {
-			onPage(UtilCommon.toCamelCase('import-' + item.id));
+			onPage(U.Common.toCamelCase('import-' + item.id));
 		};
 	};
 
 	getItems () {
-		return UtilMenu.getImportFormats();
+		return U.Menu.getImportFormats();
 	};
 
 });

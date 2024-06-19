@@ -2,10 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
-import { detailStore, blockStore, dbStore, commonStore } from 'Store';
-
-const Constant = require('json/constant.json');
+import { I, S, U, J, translate, keyboard, focus, Preview } from 'Lib';
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
 	
@@ -25,13 +22,13 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 	render() {
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, block.content.targetBlockId, Constant.coverRelationKeys);
+		const object = S.Detail.get(rootId, block.content.targetBlockId, J.Constant.coverRelationKeys);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
-		const content = UtilData.checkLinkSettings(block.content, layout);
-		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+		const content = U.Data.checkLinkSettings(block.content, layout);
+		const readonly = this.props.readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const { description, cardStyle, relations } = content;
 		const { size, iconSize } = this.getIconSize();
-		const type = dbStore.getTypeById(object.type);
+		const type = S.Record.getTypeById(object.type);
 		const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
 
 		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
@@ -52,7 +49,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			element = (
 				<div 
 					className="loading" 
-					{...UtilCommon.dataProps({ 'target-block-id': object.id })}
+					{...U.Common.dataProps({ 'target-block-id': object.id })}
 				>
 					<Loader type="loader" />
 					<div className="name">{translate('blockLinkSyncing')}</div>
@@ -67,7 +64,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 				</div>
 			);
 		} else {
-			const cnc = [ 'linkCard', UtilData.layoutClass(object.id, layout), 'c' + size ];
+			const cnc = [ 'linkCard', U.Data.layoutClass(object.id, layout), 'c' + size ];
 			const cns = [ 'sides' ];
 			const cnl = [ 'side', 'left' ];
 			
@@ -249,16 +246,16 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		};
 
 		const { rootId, block } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const { targetBlockId } = block.content;
-		const object = detailStore.get(rootId, targetBlockId, []);
+		const object = S.Detail.get(rootId, targetBlockId, []);
 		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (object._empty_ || (targetBlockId == rootId) || (keyboard.withCommand(e) && ids.length)) {
 			return;
 		};
 
-		UtilObject.openEvent(e, object);
+		U.Object.openEvent(e, object);
 	};
 	
 	onMouseEnter (e: React.MouseEvent) {
@@ -273,7 +270,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const object = detailStore.get(rootId, targetBlockId, []);
+		const object = S.Detail.get(rootId, targetBlockId, []);
 		if (object._empty_ || object.isDeleted) {
 			return;
 		};
@@ -304,8 +301,8 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 	getIconSize () {
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, block.content.targetBlockId, [ 'layout' ], true);
-		const content = UtilData.checkLinkSettings(block.content, object.layout);
+		const object = S.Detail.get(rootId, block.content.targetBlockId, [ 'layout' ], true);
+		const content = U.Data.checkLinkSettings(block.content, object.layout);
 		const { cardStyle } = content;
 
 		let size = 20;

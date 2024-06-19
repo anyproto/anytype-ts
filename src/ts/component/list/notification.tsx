@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { Notification, Icon } from 'Component';
-import { notificationStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I, C } from 'Lib';
+import { I, C, S } from 'Lib';
 
 const LIMIT = 5;
 
@@ -23,7 +21,7 @@ const ListNotification = observer(class ListNotification extends React.Component
 	};
 
 	render () {
-		const { list } = notificationStore;
+		const { list } = S.Notification;
 
 		return (
 			<div 
@@ -89,8 +87,8 @@ const ListNotification = observer(class ListNotification extends React.Component
 	};
 
 	onClear () {
-		C.NotificationReply(notificationStore.list.map(it => it.id), I.NotificationAction.Close);
-		notificationStore.clear();
+		C.NotificationReply(S.Notification.list.map(it => it.id), I.NotificationAction.Close);
+		S.Notification.clear();
 	};
 
 	resize () {

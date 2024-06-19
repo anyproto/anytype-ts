@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, UtilCommon, analytics, Storage, Preview, translate } from 'Lib';
+import { I, S, U, analytics, Storage, Preview, translate } from 'Lib';
 import { Dimmer } from 'Component';
-import { menuStore, popupStore, commonStore } from 'Store';
 
 import PopupSettings from './settings';
 import PopupSettingsOnboarding from './settings/onboarding';
@@ -82,12 +81,12 @@ class Popup extends React.Component<I.Popup> {
 			cn.push(className);
 		};
 
-		if (popupStore.showDimmerIds().includes(id)) {
+		if (S.Popup.showDimmerIds().includes(id)) {
 			cn.push('showDimmer');
 		};
 		
 		if (!Component) {
-			return <div>{UtilCommon.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
+			return <div>{U.Common.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
 		};
 
 		return (
@@ -167,7 +166,7 @@ class Popup extends React.Component<I.Popup> {
 			window.setTimeout(() => { 
 				wrap.css({ transform: 'none' }); 
 				this.isAnimating = false;
-			}, popupStore.getTimeout());
+			}, S.Popup.getTimeout());
 		});
 	};
 	
@@ -181,7 +180,7 @@ class Popup extends React.Component<I.Popup> {
 					
 			const node = $(this.node);
 			const inner = node.find('.innerWrap');
-			const { ww } = UtilCommon.getWindowDimensions();
+			const { ww } = U.Common.getWindowDimensions();
 
 			const sidebar = $('#sidebar');
 			const isRight = sidebar.hasClass('right');
@@ -189,7 +188,7 @@ class Popup extends React.Component<I.Popup> {
 			const height = inner.outerHeight();
 
 			let sw = 0;
-			if (commonStore.isSidebarFixed && sidebar.hasClass('active') && !popupStore.showDimmerIds().includes(id)) {
+			if (S.Common.isSidebarFixed && sidebar.hasClass('active') && !S.Popup.showDimmerIds().includes(id)) {
 				sw = sidebar.outerWidth();
 			};
 
@@ -213,10 +212,10 @@ class Popup extends React.Component<I.Popup> {
 		Preview.tooltipHide(true);
 
 		if (!preventMenuClose) {
-			menuStore.closeAll();
+			S.Menu.closeAll();
 		};
 
-		popupStore.close(id, callBack);
+		S.Popup.close(id, callBack);
 	};
 
 	onDimmer () {
@@ -234,7 +233,7 @@ class Popup extends React.Component<I.Popup> {
 	};
 
 	getId (): string {
-		return UtilCommon.toCamelCase('popup-' + this.props.id);
+		return U.Common.toCamelCase('popup-' + this.props.id);
 	};
 
 };

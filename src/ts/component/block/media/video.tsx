@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Loader, Error, MediaVideo } from 'Component';
-import { I, C, translate, focus, Action, keyboard } from 'Lib';
-import { commonStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, J, translate, focus, Action, keyboard } from 'Lib';
 
 const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComponent> {
 
@@ -53,7 +51,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 							block={block} 
 							icon="video" 
 							textFile={translate('blockVideoUpload')} 
-							accept={Constant.fileExtension.video} 
+							accept={J.Constant.fileExtension.video} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 
@@ -70,7 +68,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 				element = (
 					<div className="wrap resizable" style={css}>
 						<MediaVideo
-							src={commonStore.fileUrl(targetObjectId)}
+							src={S.Common.fileUrl(targetObjectId)}
 							onPlay={this.onPlay}
 							onPause={this.onPause}
 						/>
@@ -220,7 +218,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		};
 		
 		const { block } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		
 		focus.set(block.id, { from: 0, to: 0 });

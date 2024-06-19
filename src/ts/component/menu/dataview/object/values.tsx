@@ -5,8 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName, EmptySearch } from 'Component';
-import { I, UtilObject, keyboard, Relation, translate } from 'Lib';
-import { commonStore, detailStore, menuStore } from 'Store';
+import { I, S, U, keyboard, Relation, translate } from 'Lib';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 28;
@@ -189,13 +188,13 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 
 	getItems () {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, valueMapper, nameAdd } = data;
 
 		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map(it => detailStore.get(rootId, it, []));
+		value = value.map(it => S.Detail.get(rootId, it, []));
 		
 		if (valueMapper) {
 			value = value.map(valueMapper);
@@ -222,7 +221,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		if (item.id == 'add') {
 			this.onAdd();
 		} else {
-			UtilObject.openEvent(e, item);
+			U.Object.openEvent(e, item);
 		};
 	};
 
@@ -237,7 +236,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { data, className, classNameWrap } = param;
 		const { width } = getSize();
 
-		menuStore.open('dataviewObjectList', {
+		S.Menu.open('dataviewObjectList', {
 			element: `#${getId()}`,
 			vertical: I.MenuDirection.Center,
 			offsetX: width,
@@ -270,8 +269,8 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		this.n = -1;
 
 		onChange(value, () => {
-			menuStore.updateData(id, { value });
-			menuStore.updateData('dataviewObjectList', { value });
+			S.Menu.updateData(id, { value });
+			S.Menu.updateData('dataviewObjectList', { value });
 		});
 	};
 
@@ -290,7 +289,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		value = arrayMove(value, oldIndex, newIndex);
 		value = Relation.formatValue(relation, value, true);
 
-		onChange(value, () => menuStore.updateData(id, { value }));
+		onChange(value, () => S.Menu.updateData(id, { value }));
 		keyboard.disableSelection(false);
 	};
 

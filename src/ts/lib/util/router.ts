@@ -1,7 +1,5 @@
 import $ from 'jquery';
-import { C, UtilData, Preview, analytics, Storage, keyboard } from 'Lib';
-import { commonStore, authStore, blockStore, menuStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { C, S, U, J, Preview, analytics, Storage } from 'Lib';
 
 type RouteParam = { 
 	replace: boolean;
@@ -46,8 +44,8 @@ class UtilRouter {
 
 	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; viewId: string; }>): string {
 		const { page, action, spaceId } = param;
-		const id = String(param.id || Constant.blankRouteId);
-		const viewId = String(param.viewId || Constant.blankRouteId);
+		const id = String(param.id || J.Constant.blankRouteId);
+		const viewId = String(param.viewId || J.Constant.blankRouteId);
 
 		let route = [ page, action, id ];
 		route = route.concat([ 'spaceId', spaceId ]);
@@ -63,17 +61,17 @@ class UtilRouter {
 
 		const { replace, animate, onFadeOut, onFadeIn, onRouteChange } = param;
 		const routeParam = this.getParam(route);
-		const { space } = commonStore;
+		const { space } = S.Common;
 
-		let timeout = menuStore.getTimeout();
+		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
-			timeout = popupStore.getTimeout();
+			timeout = S.Popup.getTimeout();
 		};
 
-		menuStore.closeAll();
-		popupStore.closeAll();
+		S.Menu.closeAll();
+		S.Popup.closeAll();
 
-		if (routeParam.spaceId && ![ Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
+		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route);
 			return;
 		};
@@ -112,7 +110,7 @@ class UtilRouter {
 				};
 
 				fade.removeClass('show');
-			}, Constant.delay.route);
+			}, J.Constant.delay.route);
 
 			window.setTimeout(() => {
 				if (onFadeIn) {
@@ -120,15 +118,15 @@ class UtilRouter {
 				};
 
 				fade.hide();
-			}, Constant.delay.route * 2);
+			}, J.Constant.delay.route * 2);
 		};
 
 		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
 	};
 
 	switchSpace (id: string, route?: string, callBack?: () => void) {
-		const { space } = commonStore;
-		const { accountSpaceId } = authStore;
+		const { space } = S.Common;
+		const { accountSpaceId } = S.Auth;
 
 		if (!id || (space == id)) {
 			return;
@@ -147,12 +145,12 @@ class UtilRouter {
 				animate: true,
 				onFadeOut: () => {
 					analytics.removeContext();
-					blockStore.clear(blockStore.widgets);
-					commonStore.defaultType = '';
+					S.Block.clear(S.Block.widgets);
+					S.Common.defaultType = '';
 					Storage.set('spaceId', id);
 
-					UtilData.onInfo(message.info);
-					UtilData.onAuth({ route }, callBack);
+					U.Data.onInfo(message.info);
+					U.Data.onAuth({ route }, callBack);
 				}
 			});
 		});
@@ -164,7 +162,7 @@ class UtilRouter {
 
 	getRouteSpaceId () {
 		const param = this.getParam(this.getRoute());
-		return param.spaceId || commonStore.space;
+		return param.spaceId || S.Common.space;
 	};
 
 };

@@ -1,4 +1,4 @@
-{
+export default {
  	"register": {
 		"url": "https://community.anytype.io/survey0"
 	},
@@ -22,4 +22,4 @@
 	"multiplayer": {
 		"url": "https://community.anytype.io/survey5"
 	}
-}
+};

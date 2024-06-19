@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { UtilDate, UtilObject, I, keyboard } from 'Lib';
-import { detailStore } from 'Store';
+import { I, S, U, keyboard } from 'Lib';
 
 interface State {
 	version: I.HistoryVersion;
@@ -25,8 +24,8 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		const { rootId, renderLeftIcons } = this.props;
 		const { version } = this.state;
 		const cmd = keyboard.cmdSymbol();
-		const object = detailStore.get(rootId, rootId, []);
-		const showMenu = !UtilObject.isTypeOrRelationLayout(object.layout);
+		const object = S.Detail.get(rootId, rootId, []);
+		const showMenu = !U.Object.isTypeOrRelationLayout(object.layout);
 
 		return (
 			<React.Fragment>
@@ -34,7 +33,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 
 				<div className="side center">
 					<div className="txt">
-						{version ? UtilDate.date('M d, Y g:i:s A', version.time) : ''}
+						{version ? U.Date.date('M d, Y g:i:s A', version.time) : ''}
 					</div>
 				</div>
 
@@ -47,9 +46,9 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 
 	onBack (e: any) {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 
-		UtilObject.openEvent(e, object);
+		U.Object.openEvent(e, object);
 	};
 
 	onRelation () {

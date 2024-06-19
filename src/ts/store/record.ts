@@ -1,15 +1,12 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, M, UtilCommon, Dataview } from 'Lib';
-import { detailStore, commonStore } from 'Store';
-
-const Constant = require('json/constant.json');
+import { S, I, M, U, J, Dataview } from 'Lib';
 
 enum KeyMapType {
 	Relation = 'relation',
 	Type = 'type',
 };
 
-class DbStore {
+class RecordStore {
 
     public relationMap: Map<string, any[]> = observable(new Map());
 	public relationKeyMap: Map<string, Map<string, string>> = new Map();
@@ -68,11 +65,11 @@ class DbStore {
 	};
 
 	relationKeyMapGet (key: string): string {
-		let map = this.keyMapGet(KeyMapType.Relation, commonStore.space);
+		let map = this.keyMapGet(KeyMapType.Relation, S.Common.space);
 		let ret = map.get(key);
 
 		if (!ret) {
-			map = this.keyMapGet(KeyMapType.Relation, Constant.storeSpaceId);
+			map = this.keyMapGet(KeyMapType.Relation, J.Constant.storeSpaceId);
 			ret = map.get(key);
 		};
 
@@ -86,11 +83,11 @@ class DbStore {
 	};
 
 	typeKeyMapGet (key: string): string {
-		let map = this.keyMapGet(KeyMapType.Type, commonStore.space);
+		let map = this.keyMapGet(KeyMapType.Type, S.Common.space);
 		let ret = map.get(key);
 
 		if (!ret) {
-			map = this.keyMapGet(KeyMapType.Type, Constant.storeSpaceId);
+			map = this.keyMapGet(KeyMapType.Type, J.Constant.storeSpaceId);
 			ret = map.get(key);
 		};
 
@@ -102,7 +99,7 @@ class DbStore {
 		const relations = (this.relationMap.get(this.getId(rootId, blockId)) || []).
 			concat(list.map(it => ({ relationKey: it.relationKey, format: it.format })));
 
-		this.relationMap.set(key, UtilCommon.arrayUniqueObjects(relations, 'relationKey'));
+		this.relationMap.set(key, U.Common.arrayUniqueObjects(relations, 'relationKey'));
 	};
 
 	relationListDelete (rootId: string, blockId: string, keys: string[]) {
@@ -260,7 +257,7 @@ class DbStore {
 	};
 
 	getTypeById (id: string) {
-		const object = detailStore.get(Constant.subId.type, id, Constant.typeRelationKeys);
+		const object = S.Detail.get(J.Constant.subId.type, id, J.Constant.typeRelationKeys);
 		return object._empty_ ? null : object;
 	};
 
@@ -270,36 +267,36 @@ class DbStore {
 	};
 
 	getTemplateType () {
-		return this.getTypeByKey(Constant.typeKey.template);
+		return this.getTypeByKey(J.Constant.typeKey.template);
 	};
 
 	getCollectionType () {
-		return this.getTypeByKey(Constant.typeKey.collection);
+		return this.getTypeByKey(J.Constant.typeKey.collection);
 	};
 
 	getSetType () {
-		return this.getTypeByKey(Constant.typeKey.set);
+		return this.getTypeByKey(J.Constant.typeKey.set);
 	};
 
 	getSpaceType () {
-		return this.getTypeByKey(Constant.typeKey.space);
+		return this.getTypeByKey(J.Constant.typeKey.space);
 	};
 
 	getTypeType () {
-		return this.getTypeByKey(Constant.typeKey.type);
+		return this.getTypeByKey(J.Constant.typeKey.type);
 	};
 
 	getBookmarkType () {
-		return this.getTypeByKey(Constant.typeKey.bookmark);
+		return this.getTypeByKey(J.Constant.typeKey.bookmark);
 	};
 
 	getTypes () {
-		return this.getRecordIds(Constant.subId.type, '').map(id => this.getTypeById(id)).
+		return this.getRecordIds(J.Constant.subId.type, '').map(id => this.getTypeById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
 	getRelations () {
-		return this.getRecordIds(Constant.subId.relation, '').map(id => this.getRelationById(id)).
+		return this.getRecordIds(J.Constant.subId.relation, '').map(id => this.getRelationById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
@@ -321,12 +318,12 @@ class DbStore {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.relation, id, Constant.relationRelationKeys, true);
+		const object = S.Detail.get(J.Constant.subId.relation, id, J.Constant.relationRelationKeys, true);
 		return object._empty_ ? null : object;
 	};
 
 	getOption (id: string) {
-		const object = detailStore.get(Constant.subId.option, id, Constant.optionRelationKeys, true);
+		const object = S.Detail.get(J.Constant.subId.option, id, J.Constant.optionRelationKeys, true);
 		return object._empty_ ? null : object;
 	};
 
@@ -354,7 +351,7 @@ class DbStore {
 	};
 
 	getRecords (subId: string, keys?: string[], forceKeys?: boolean): any[] {
-		return this.getRecordIds(subId, '').map(id => detailStore.get(subId, id, keys));
+		return this.getRecordIds(subId, '').map(id => S.Detail.get(subId, id, keys));
 	};
 
 	getGroups (rootId: string, blockId: string) {
@@ -379,4 +376,4 @@ class DbStore {
 
 };
 
- export const dbStore: DbStore = new DbStore();
+ export const Record: RecordStore = new RecordStore();

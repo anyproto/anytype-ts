@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { popupStore } from 'Store';
+import { S } from 'Lib';
 
 class HeaderAuthIndex extends React.Component {
 	
@@ -23,7 +23,7 @@ class HeaderAuthIndex extends React.Component {
 	};
 
 	onSettings () {
-		popupStore.open('settingsOnboarding', {});
+		S.Popup.open('settingsOnboarding', {});
 	};
 	
 };

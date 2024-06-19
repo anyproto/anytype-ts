@@ -9,11 +9,7 @@ import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar } from 'Component';
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, notificationStore } from 'Store';
-import { 
-	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
-	focus, Preview, Mark, Animation, Onboarding, Survey, UtilDate, UtilSmile, Encode, Decode, UtilSpace, sidebar
-} from 'Lib';
+import { I, C, S, U, J, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
 
@@ -40,13 +36,9 @@ import 'scss/notification/common.scss';
 import 'scss/media/print.scss';
 import 'scss/theme/dark/common.scss';
 
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
-const Routes = require('json/route.json');
-
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
-const electron = UtilCommon.getElectron();
+const electron = U.Common.getElectron();
 const isPackaged = electron.isPackaged;
 
 interface RouteElement { path: string; };
@@ -76,34 +68,15 @@ declare global {
 	}
 };
 
-const rootStore = {
-	commonStore,
-	authStore,
-	blockStore,
-	detailStore,
-	dbStore,
-	menuStore,
-	popupStore,
-	notificationStore,
-};
-
 window.$ = $;
 
 if (!isPackaged) {
 	window.Anytype = {
-		Store: rootStore,
 		Lib: {
 			I,
 			C,
-			UtilCommon,
-			UtilData,
-			UtilFile,
-			UtilObject,
-			UtilMenu,
-			UtilRouter,
-			UtilSmile,
-			UtilDate,
-			UtilSpace,
+			S,
+			U,
 			analytics,
 			dispatcher,
 			keyboard,
@@ -139,7 +112,7 @@ enableLogging({
 Sentry.init({
 	release: electron.version.app,
 	environment: isPackaged ? 'production' : 'development',
-	dsn: Constant.sentry,
+	dsn: J.Constant.sentry,
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
 		e.request.url = '';
@@ -154,7 +127,7 @@ Sentry.init({
 });
 
 Sentry.setContext('info', {
-	network: I.NetworkMode[authStore.networkConfig?.mode],
+	network: I.NetworkMode[S.Auth.networkConfig?.mode],
 	isPackaged: isPackaged,
 });
 
@@ -162,8 +135,8 @@ class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
 		return (
-			<SelectionProvider ref={ref => commonStore.refSet('selectionProvider', ref)}>
-				<DragProvider ref={ref => commonStore.refSet('dragProvider', ref)}>
+			<SelectionProvider ref={ref => S.Common.refSet('selectionProvider', ref)}>
+				<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
 					<Sidebar key="sidebar" {...this.props} />
@@ -201,7 +174,7 @@ class App extends React.Component<object, State> {
 
 	render () {
 		const { isLoading } = this.state;
-		const platform = UtilCommon.getPlatform();
+		const platform = U.Common.getPlatform();
 
 		let drag = null;
 		if (platform == I.Platform.Mac) {
@@ -210,7 +183,7 @@ class App extends React.Component<object, State> {
 		
 		return (
 			<Router history={history}>
-				<Provider {...rootStore}>
+				<Provider {...S}>
 					<div ref={node => this.node = node}>
 						{isLoading ? (
 							<div id="root-loader" className="loaderWrapper">
@@ -231,7 +204,7 @@ class App extends React.Component<object, State> {
 						<ListNotification key="listNotification" />
 
 						<Switch>
-							{Routes.map((item: RouteElement, i: number) => (
+							{J.Route.map((item: RouteElement, i: number) => (
 								<Route path={item.path} exact={true} key={i} component={RoutePage} />
 							))}
 						</Switch>
@@ -248,7 +221,8 @@ class App extends React.Component<object, State> {
 	init () {
 		const { version, arch, getGlobal } = electron;
 
-		UtilRouter.init(history);
+		U.Router.init(history);
+		U.Smile.init();
 
 		dispatcher.init(getGlobal('serverAddress'));
 		dispatcher.listenEvents();
@@ -265,7 +239,7 @@ class App extends React.Component<object, State> {
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 
 		if (!lastSurveyTime) {
-			Storage.set('lastSurveyTime', UtilDate.now());
+			Storage.set('lastSurveyTime', U.Date.now());
 		};
 
 		Storage.delete('lastSurveyCanceled');
@@ -279,17 +253,17 @@ class App extends React.Component<object, State> {
 		Renderer.on('update-available', this.onUpdateAvailable);
 		Renderer.on('update-confirm', this.onUpdateConfirm);
 		Renderer.on('update-not-available', this.onUpdateUnavailable);
-		Renderer.on('update-downloaded', () => commonStore.progressClear());
+		Renderer.on('update-downloaded', () => S.Common.progressClear());
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('spellcheck', this.onSpellcheck);
-		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
-		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
-		Renderer.on('config', (e: any, config: any) => commonStore.configSet(config, true));
-		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
-		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
-		Renderer.on('logout', () => authStore.logout(false, false));
-		Renderer.on('data-path', (e: any, p: string) => commonStore.dataPathSet(p));
+		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
+		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
+		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
+		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
+		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
+		Renderer.on('logout', () => S.Auth.logout(false, false));
+		Renderer.on('data-path', (e: any, p: string) => S.Common.dataPathSet(p));
 		Renderer.on('will-close-window', this.onWillCloseWindow);
 
 		Renderer.on('shutdownStart', () => {
@@ -308,17 +282,17 @@ class App extends React.Component<object, State> {
 		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {
-			commonStore.nativeThemeSet(isDark);
-			commonStore.themeSet(commonStore.theme);
+			S.Common.nativeThemeSet(isDark);
+			S.Common.themeSet(S.Common.theme);
 		});
 
 		Renderer.on('pin-check', () => {
 			keyboard.setPinChecked(false);
-			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
+			U.Router.go('/auth/pin-check', { replace: true, animate: true });
 		});
 
 		Renderer.on('reload', () => {
-			Renderer.send('reload', UtilRouter.getRoute());
+			Renderer.send('reload', U.Router.getRoute());
 		});
 	};
 
@@ -334,11 +308,11 @@ class App extends React.Component<object, State> {
 		const route = String(data.route || redirect || '');
 		const spaceId = Storage.get('spaceId');
 
-		commonStore.configSet(config, true);
-		commonStore.nativeThemeSet(isDark);
-		commonStore.themeSet(config.theme);
-		commonStore.languagesSet(languages);
-		commonStore.dataPathSet(dataPath);
+		S.Common.configSet(config, true);
+		S.Common.nativeThemeSet(isDark);
+		S.Common.themeSet(config.theme);
+		S.Common.languagesSet(languages);
+		S.Common.dataPathSet(dataPath);
 
 		analytics.init();
 		this.initStorage();
@@ -350,7 +324,7 @@ class App extends React.Component<object, State> {
 		raf(() => anim.removeClass('from'));
 
 		if (css) {
-			UtilCommon.injectCss('anytype-custom-css', css);
+			U.Common.injectCss('anytype-custom-css', css);
 		};
 
 		body.addClass('over');
@@ -372,41 +346,41 @@ class App extends React.Component<object, State> {
 		if (accountId) {
 			if (isChild) {
 				Renderer.send('keytarGet', accountId).then((phrase: string) => {
-					UtilData.createSession(phrase, '', () => {
+					U.Data.createSession(phrase, '', () => {
 						keyboard.setPinChecked(isPinChecked);
-						commonStore.redirectSet(route);
+						S.Common.redirectSet(route);
 
 						if (account) {
-							authStore.accountSet(account);
-							commonStore.configSet(account.config, false);
+							S.Auth.accountSet(account);
+							S.Common.configSet(account.config, false);
 
 							if (spaceId) {
-								UtilRouter.switchSpace(spaceId, '', cb);
+								U.Router.switchSpace(spaceId, '', cb);
 							} else {
-								UtilData.onInfo(account.info);
-								UtilData.onAuth({}, cb);
+								U.Data.onInfo(account.info);
+								U.Data.onAuth({}, cb);
 							};
 
-							UtilData.onAuthOnce(false);
+							U.Data.onAuthOnce(false);
 						};
 					});
 				});
 
 				win.off('unload').on('unload', (e: any) => {
-					if (!authStore.token) {
+					if (!S.Auth.token) {
 						return;
 					};
 
 					e.preventDefault();
-					C.WalletCloseSession(authStore.token, () => {
-						authStore.tokenSet('');
+					C.WalletCloseSession(S.Auth.token, () => {
+						S.Auth.tokenSet('');
 						window.close();
 					});
 					return false;
 				});
 			} else {
-				commonStore.redirectSet(route);
-				UtilRouter.go('/auth/setup/init', { replace: true });
+				S.Common.redirectSet(route);
+				U.Router.go('/auth/setup/init', { replace: true });
 				cb();
 			};
 		} else {
@@ -419,7 +393,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onPopup (e: any, id: string, param: any, close?: boolean) {
-		if (Constant.popupPinIds.includes(id) && !keyboard.isPinChecked) {
+		if (J.Constant.popupPinIds.includes(id) && !keyboard.isPinChecked) {
 			return;
 		};
 
@@ -428,27 +402,27 @@ class App extends React.Component<object, State> {
 		param.data.rootId = keyboard.getRootId();
 
 		if (close) {
-			popupStore.closeAll();
+			S.Popup.closeAll();
 		};
 
-		window.setTimeout(() => popupStore.open(id, param), popupStore.getTimeout());
+		window.setTimeout(() => S.Popup.open(id, param), S.Popup.getTimeout());
 	};
 
 	onUpdateCheck (e: any, auto: boolean) {
 		if (!auto) {
-			commonStore.progressSet({ status: translate('progressUpdateCheck'), current: 0, total: 1, isUnlocked: true });
+			S.Common.progressSet({ status: translate('progressUpdateCheck'), current: 0, total: 1, isUnlocked: true });
 		};
 	};
 
 	onUpdateConfirm (e: any, auto: boolean) {
-		commonStore.progressClear();
+		S.Common.progressClear();
 		Storage.setHighlight('whatsNew', true);
 
 		if (auto) {
 			return;
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
@@ -467,13 +441,13 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateAvailable (e: any, auto: boolean) {
-		commonStore.progressClear();
+		S.Common.progressClear();
 
 		if (auto) {
 			return;
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
@@ -492,18 +466,18 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateUnavailable (e: any, auto: boolean) {
-		commonStore.progressClear();
+		S.Common.progressClear();
 
 		if (auto) {
 			return;
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				icon: 'updated',
 				bgColor: 'green',
 				title: translate('popupConfirmUpdateDoneTitle'),
-				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
+				text: U.Common.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
 				colorConfirm: 'blank',
 				canCancel: false,
@@ -513,18 +487,18 @@ class App extends React.Component<object, State> {
 
 	onUpdateError (e: any, err: string, auto: boolean) {
 		console.error(err);
-		commonStore.progressClear();
+		S.Common.progressClear();
 
 		if (auto) {
 			return;
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				icon: 'error',
 				bgColor: 'red',
 				title: translate('popupConfirmUpdateErrorTitle'),
-				text: UtilCommon.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
+				text: U.Common.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
 				textConfirm: translate('commonRetry'),
 				textCancel: translate('commonLater'),
 				onConfirm: () => {
@@ -538,8 +512,8 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateProgress (e: any, progress: any) {
-		commonStore.progressSet({ 
-			status: UtilCommon.sprintf(translate('commonUpdateProgress'), UtilFile.size(progress.transferred), UtilFile.size(progress.total)), 
+		S.Common.progressSet({ 
+			status: U.Common.sprintf(translate('commonUpdateProgress'), U.File.size(progress.transferred), U.File.size(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
 			isUnlocked: true,
@@ -548,9 +522,9 @@ class App extends React.Component<object, State> {
 
 	onRoute (route: string) {
 		if (keyboard.isMain()) {
-			UtilRouter.go(route, {});
+			U.Router.go(route, {});
 		} else {
-			commonStore.redirectSet(route);
+			S.Common.redirectSet(route);
 		};
 	};
 
@@ -571,11 +545,11 @@ class App extends React.Component<object, State> {
 
 		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			className: 'fromBlock',
 			classNameWrap: 'fromPopup',
 			recalcRect: () => rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			onOpen: () => menuStore.close('blockContext'),
+			onOpen: () => S.Menu.close('blockContext'),
 			onClose: () => keyboard.disableContextOpen(false),
 			data: {
 				options,
@@ -584,14 +558,14 @@ class App extends React.Component<object, State> {
 						switch (item.id) {
 							default: {
 								const rootId = keyboard.getRootId();
-								const block = blockStore.getLeaf(rootId, focused);
+								const block = S.Block.getLeaf(rootId, focused);
 
 								if (block && block.isText()) {
 									const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
 									const value = String(obj.get(0).innerText || '');
 
-									blockStore.updateContent(rootId, focused, { text: value });
-									UtilData.blockInsertText(rootId, focused, item.id, range.from, range.to);
+									S.Block.updateContent(rootId, focused, { text: value });
+									U.Data.blockInsertText(rootId, focused, item.id, range.from, range.to);
 
 									focus.set(focused, { from: range.from, to: range.from + item.id.length });
 									focus.apply();

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader } from 'Component';
-import { C, I, translate, UtilData, UtilCommon } from 'Lib';
-import { authStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, translate } from 'Lib';
 
 interface State {
 	status: string,
@@ -35,13 +33,13 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 
 		if (!tierItem) {
 			return null;
 		};
 
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 		const { period } = tierItem;
 		const { name, nameType } = membership;
 
@@ -50,7 +48,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 			if (period == 1) {
 				labelText = translate('popupMembershipPaidTextPerYear');
 			} else {
-				labelText = UtilCommon.sprintf(translate('popupMembershipPaidTextPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+				labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerYears'), period, U.Common.plural(period, translate('pluralYear')));
 			};
 		};
 
@@ -68,7 +66,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 						className={name ? 'disabled' : ''}
 						placeholder={translate(`popupMembershipPaidPlaceholder`)}
 					/>
-					<div className="ns">{Constant.namespace[nameType]}</div>
+					<div className="ns">{J.Constant.namespace[nameType]}</div>
 				</div>
 
 				<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
@@ -126,7 +124,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 					};
 				});
 			});
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 	};
 
 	onConfirm () {
@@ -141,20 +139,20 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 				return;
 			};
 
-			UtilData.getMembershipTiers(true);
-			UtilData.getMembershipStatus((membership) => {
+			U.Data.getMembershipTiers(true);
+			U.Data.getMembershipStatus((membership) => {
 				if (!membership || membership.isNone) {
 					this.setError(translate('pageMainMembershipError'));
 					return;
 				};
 
-				popupStore.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
+				S.Popup.replace('membershipFinalization', 'membership', { data: { tier: membership.tier, success: true } });
 			});
 		});
 	};
 
 	getName () {
-		return String(authStore.membership?.name || '');
+		return String(S.Auth.membership?.name || '');
 	};
 
 	setOk (t: string) {

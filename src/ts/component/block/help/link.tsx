@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject } from 'Component';
-import { UtilRouter } from 'Lib';
+import { U } from 'Lib';
 
 interface Props {
 	icon?: string;
@@ -28,7 +28,7 @@ class ContentLink extends React.Component<Props> {
 	};
 	
 	onClick (e: any) {
-		UtilRouter.go(`/help/${this.props.contentId}`, {});
+		U.Router.go(`/help/${this.props.contentId}`, {});
 	};
 	
 };

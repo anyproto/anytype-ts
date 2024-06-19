@@ -5,9 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 import { ListMenu } from 'Component';
-import { UtilRouter, C, UtilData } from 'Lib'; 
-import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore, extensionStore } from 'Store';
-const Extension = require('json/extension.json');
+import { S, U, C, J } from 'Lib'; 
 
 import Index from './popup/index';
 import Challenge from './popup/challenge';
@@ -33,17 +31,6 @@ const Components = {
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 
-const rootStore = {
-	commonStore,
-	authStore,
-	blockStore,
-	detailStore,
-	dbStore,
-	menuStore,
-	popupStore,
-	extensionStore,
-};
-
 class RoutePage extends React.Component<RouteComponentProps> {
 	render () {
 		const { match } = this.props;
@@ -68,7 +55,7 @@ class Popup extends React.Component {
 	render () {
 		return (
 			<Router history={history}>
-				<Provider {...rootStore}>
+				<Provider {...S}>
 					<div ref={node => this.node = node}>
 						<Switch>
 							{Routes.map((item: any, i: number) => (
@@ -82,13 +69,13 @@ class Popup extends React.Component {
 	};
 
 	componentDidMount () {
-		UtilRouter.init(history);
+		U.Router.init(history);
 
 		const win = $(window);
 
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-			if (!Extension.clipper.ids.includes(sender.id)) {
+			if (!J.Extension.clipper.ids.includes(sender.id)) {
 				return false;
 			};
 
@@ -97,12 +84,12 @@ class Popup extends React.Component {
 		});
 
 		win.off('beforeunload').on('beforeunload', (e: any) => {
-			if (!authStore.token) {
+			if (!S.Auth.token) {
 				return;
 			};
 
-			UtilData.destroySubscriptions(() => {
-				C.WalletCloseSession(authStore.token, () => authStore.tokenSet(''));
+			U.Data.destroySubscriptions(() => {
+				C.WalletCloseSession(S.Auth.token, () => S.Auth.tokenSet(''));
 			});
 		});
 	};

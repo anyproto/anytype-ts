@@ -1,8 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, keyboard, Storage, UtilCommon } from 'Lib';
-import { commonStore, menuStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, keyboard, Storage } from 'Lib';
 
 interface SidebarData {
 	x: number;
@@ -48,14 +46,14 @@ class Sidebar {
 
 			this.set(stored);
 		} else {
-			commonStore.autoSidebarSet(true);
-			commonStore.isSidebarFixedSet(true);
+			S.Common.autoSidebarSet(true);
+			S.Common.isSidebarFixedSet(true);
 
-			const { wh } = UtilCommon.getWindowDimensions();
+			const { wh } = U.Common.getWindowDimensions();
 			const y = wh / 2 - this.getMaxHeight() / 2;
 
 			this.set({
-				width: Constant.size.sidebar.width.default,
+				width: J.Constant.size.sidebar.width.default,
 				y,
 				x: 0,
 				snap: I.MenuDirection.Left,
@@ -90,17 +88,17 @@ class Sidebar {
 
 		if (
 			this.isAnimating ||
-			commonStore.isSidebarFixed ||
-			!commonStore.autoSidebar
+			S.Common.isSidebarFixed ||
+			!S.Common.autoSidebar
 		) {
 			return;
 		};
 
 		const { x } = keyboard.mouse.page;
 		const { width, snap } = this.data;
-		const { ww } = UtilCommon.getWindowDimensions();
-		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview', 'widget' ]);
-		const popupOpen = popupStore.isOpen();
+		const { ww } = U.Common.getWindowDimensions();
+		const menuOpen = S.Menu.isOpenList([ 'dataviewContext', 'preview', 'widget' ]);
+		const popupOpen = S.Popup.isOpen();
 
 		let show = false;
 		let hide = false;
@@ -146,7 +144,7 @@ class Sidebar {
 			return;
 		};
 
-		const { autoSidebar } = commonStore;
+		const { autoSidebar } = S.Common;
 		const { x, y, width, snap } = this.data;
 		const css: any = { top: 0, height: '100%' };
 		const mouse = keyboard.mouse.page;
@@ -200,7 +198,7 @@ class Sidebar {
 			return;
 		};
 
-		const { autoSidebar } = commonStore;
+		const { autoSidebar } = S.Common;
 		const { snap } = this.data;
 		const mh = this.getMaxHeight();
 		const css: any = { top: 0, transform: 'translate3d(0px,0px,0px)' };
@@ -293,7 +291,7 @@ class Sidebar {
 			$(window).trigger('resize');
 		};
 
-		commonStore.isSidebarFixed ? this.collapse() : this.expand();
+		S.Common.isSidebarFixed ? this.collapse() : this.expand();
 	};
 
 	private removeAnimation (callBack?: () => void): void {
@@ -314,7 +312,7 @@ class Sidebar {
 
 	resize (): void {
 		const { snap, width } = this.data;
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const set: Partial<SidebarData> = {};
 
 		if (snap == I.MenuDirection.Left) {
@@ -324,7 +322,7 @@ class Sidebar {
 			set.x = ww - width;
 		};
 
-		if (UtilCommon.objectLength(set)) {
+		if (U.Common.objectLength(set)) {
 			this.set(set);
 		};
 	};
@@ -332,7 +330,7 @@ class Sidebar {
 	resizePage () {
 		this.initObjects();
 
-		const { isSidebarFixed } = commonStore;
+		const { isSidebarFixed } = S.Common;
 		const { snap } = this.data;
 
 		let width = 0;
@@ -344,7 +342,7 @@ class Sidebar {
 			};
 		};
 
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const pageWidth = ww - width;
 		const css: any = { width: '' };
 		const cssLoader: any = { width: pageWidth, left: '', right: '' };
@@ -439,7 +437,7 @@ class Sidebar {
 		const css: any = { left: '', right: '', width };
 		const cn = [];
 
-		if (commonStore.isSidebarFixed) {
+		if (S.Common.isSidebarFixed) {
 			cn.push('fixed active');
 		} else {
 			css.top = y;
@@ -469,7 +467,7 @@ class Sidebar {
 	};
 
 	private setFixed (v: boolean): void {
-		commonStore.isSidebarFixedSet(v);
+		S.Common.isSidebarFixedSet(v);
 
 		this.data.snap = this.getSnap(this.data.x, this.data.width);
 		this.resizePage();
@@ -485,7 +483,7 @@ class Sidebar {
 		if (x <= SNAP_THRESHOLD) {
 			return I.MenuDirection.Left;
 		} else 
-		if (commonStore.isSidebarFixed) {
+		if (S.Common.isSidebarFixed) {
 			return I.MenuDirection.Left;
 		} else {
 			return null;
@@ -496,15 +494,15 @@ class Sidebar {
 	 * Get max height allowed
 	 */
 	private getMaxHeight (): number {
-		return UtilCommon.getWindowDimensions().wh - UtilCommon.sizeHeader() * 2;
+		return U.Common.getWindowDimensions().wh - U.Common.sizeHeader() * 2;
 	};
 
 	/**
 	 * Limit the sidebar coordinates to the max and min bounds
 	 */
 	private limitCoords (x: number, y: number, width: number, height: number ): { x: number; y: number } {
-		const { ww, wh } = UtilCommon.getWindowDimensions();
-		const hh = UtilCommon.sizeHeader();
+		const { ww, wh } = U.Common.getWindowDimensions();
+		const hh = U.Common.sizeHeader();
 
 		x = Number(x);
 		x = Math.max(0, x);
@@ -521,7 +519,7 @@ class Sidebar {
 	 * Limit the sidebar width to the max and min bounds
 	 */
 	private limitWidth (width: number): number {
-		const { min, max } = Constant.size.sidebar.width;
+		const { min, max } = J.Constant.size.sidebar.width;
 		return Math.max(min, Math.min(max, Number(width) || 0));
 	};
 

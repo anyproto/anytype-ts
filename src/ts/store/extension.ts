@@ -34,4 +34,4 @@ class ExtensionStore {
 
 };
 
-export const extensionStore: ExtensionStore = new ExtensionStore();
+export const Extension: ExtensionStore = new ExtensionStore();

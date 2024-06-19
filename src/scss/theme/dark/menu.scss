@@ -256,12 +256,4 @@
 
 	.menuQuickCapture { background: none; box-shadow: none; }
 	.menuQuickCapture.isExpanded { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
-
-	/* ThreadList */
-
-    .menu.menuThreadList {
-        .item {
-            .icon.cafe { background-image: url('#{$themePath}/icon/cafe.svg'); }
-        }
-    }
 }

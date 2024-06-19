@@ -237,7 +237,7 @@
 	"electronMenuFlagMw": "Middleware",
 	"electronMenuFlagMwRequest": "Request/Response",
 	"electronMenuFlagMwEvent": "Common events",
-	"electronMenuFlagMwThread": "Sync events",
+	"electronMenuFlagMwSync": "Sync events",
 	"electronMenuFlagMwFile": "File events",
 	"electronMenuFlagMwJson": "JSON logs",
 	"electronMenuFlagMwTime": "Time",
@@ -1466,28 +1466,6 @@
 	"menuRelationSuggestSystem": "System Relations",
 	"menuRelationSuggestCreateRelation": "Create Relation %s",
 
-	"menuThreadListLastSync": "Last sync",
-	"menuThreadListProduction": "Anytype Network",
-	"menuThreadListDevelopment": "Anytype Staging",
-	"menuThreadListSelf": "Self-hosted Network",
-	"menuThreadListLocal": "Local only",
-
-	"menuThreadStatusObjectBackedUp": "This Object is backed up",
-	"menuThreadStatusUpdatesRequested": "Updates requested",
-	"menuThreadStatusNoInteraction": "No interaction",
-	"menuThreadStatusSomeChangesNotBackedUp": "Some changes are not backed up",
-	"menuThreadStatusUploading": "Uploading",
-	"menuThreadStatusWaitingForUpload": "Waiting for upload",
-	"menuThreadStatusStored": "Stored",
-	"menuThreadStatusStatus": "Status",
-	"menuThreadStatusFiles": "Files",
-	"menuThreadStatusDirectInteractionTitle": "Direct interaction with my devices",
-	"menuThreadStatusDirectInteractionStatus": "Direct interaction status",
-	"menuThreadStatusOnline": "Online",
-	"menuThreadStatusOffline": "Offline",
-	"menuThreadStatusLastEditsReceived": "Last edits received",
-	"menuThreadStatusNoChanges": "No changes",
-
 	"menuTypeSuggestFilterTypes": "Filter Types...",
 	"menuTypeSuggestMyTypes": "My Types",
 	"menuTypeSuggestCreateType": "Create type %s",
@@ -1518,6 +1496,37 @@
 	"menuQuickCapturePin": "Pin on top",
 	"menuQuickCaptureUnpin": "Unpin",
 
+	"syncButtonNameError1": "Storage limit reached",
+	"syncButtonNameError2": "Incompatible version",
+	"syncButtonNameError3": "No access",
+	"syncButtonNameOffline": "No internet",
+
+	"menuSyncStatusTitle": "Sync status",
+
+	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
+	"menuSyncStatusP2PNoDevicesConnected": "No devices connected",
+
+	"menuSyncStatusInfoNetworkTitle": "Anytype network",
+	"menuSyncStatusInfoNetworkMessageSynced": "End-to-end encrypted",
+	"menuSyncStatusInfoNetworkMessageSyncing": "%s %s syncing...",
+
+	"menuSyncStatusInfoNetworkMessageError1": "Storage limit reached",
+	"menuSyncStatusInfoNetworkMessageError2": "Incompatible version",
+	"menuSyncStatusInfoNetworkMessageError3": "No access to the space",
+	"menuSyncStatusInfoNetworkMessageErrorUpdateApp": "Update the app",
+	"menuSyncStatusInfoNetworkMessageErrorSeeMembership": "See membership plans",
+
+	"menuSyncStatusInfoNetworkMessageOffline": "No internet connection",
+
+	"menuSyncStatusInfoSelfTitle": "Self Host",
+	"menuSyncStatusInfoSelfMessageSynced": "Synced",
+	"menuSyncStatusInfoSelfMessageSyncing": "Syncing...",
+	"menuSyncStatusInfoSelfMessageError": "Error",
+	"menuSyncStatusInfoLocalOnlyTitle": "Local Only",
+	"menuSyncStatusInfoLocalOnlyMessage": "Data backup is disabled",
+
+	"menuSyncStatusInfoP2pTitle": "P2P Connection",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",
@@ -1543,22 +1552,6 @@
 	"filterConditionNotInArray": "Has none of",
 
 	"inputWithFileTextUrl": "Paste a link",
-
-	"threadStatus0": "Preparing...",
-	"threadStatus1": "No connection",
-	"threadStatus2": "Syncing...",
-	"threadStatus3": "Synced",
-	"threadStatus4": "Not syncing",
-	"threadStatus5": "Incompatible version",
-	"threadStatus100": "Local-only",
-
-	"threadStatus0Tooltip": "Initializing sync",
-	"threadStatus1Tooltip": "Anytype node is not connected",
-	"threadStatus2Tooltip": "Downloading or uploading data to some node",
-	"threadStatus3Tooltip": "Backed up on one node at least",
-	"threadStatus4Tooltip": "Failed to sync, trying again...",
-	"threadStatus5Tooltip": "We have updated the protocol version. Click to update and sync the Objects.",
-	"threadStatus100Tooltip": "Don't back up; sync within local network",
 
 	"toastTemplateCreate": "is saved as a Template!",
 	"toastCopy": "%s has been copied to clipboard",

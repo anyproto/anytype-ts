@@ -2,8 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
-import { commonStore, menuStore } from 'Store';
-import { I, UtilObject, keyboard, UtilCommon, Preview, translate, UtilSpace, analytics } from 'Lib';
+import { I, S, U, keyboard, Preview, translate, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
 
@@ -23,15 +22,15 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	render () {
-		const { navigationMenu } = commonStore;
+		const { navigationMenu } = S.Common;
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
-		const participant = UtilSpace.getParticipant();
-		const isWin = UtilCommon.isPlatformWindows();
-		const isLinux = UtilCommon.isPlatformLinux();
+		const participant = U.Space.getParticipant();
+		const isWin = U.Common.isPlatformWindows();
+		const isLinux = U.Common.isPlatformLinux();
 		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
 		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		let buttonPlus: any = null;
 		if (canWrite) {
@@ -166,7 +165,7 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	onGraph () {
-		UtilObject.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
+		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
 	onSearch () {
@@ -176,8 +175,8 @@ const Navigation = observer(class Navigation extends React.Component {
 	onProfile () {
 		window.clearTimeout(this.timeoutPlus);
 
-		if (menuStore.isOpen('space')) {
-			menuStore.close('space');
+		if (S.Menu.isOpen('space')) {
+			S.Menu.close('space');
 		} else {
 			keyboard.onSpaceMenu(false);
 		};
@@ -190,13 +189,13 @@ const Navigation = observer(class Navigation extends React.Component {
 
 		const win = $(window);
 		const node = $(this.node);
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const width = node.outerWidth();
 		const sidebar = $('#sidebar');
 		const isRight = sidebar.hasClass('right');
 
 		let sw = 0;
-		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+		if (S.Common.isSidebarFixed && sidebar.hasClass('active')) {
 			sw = sidebar.outerWidth();
 		};
 

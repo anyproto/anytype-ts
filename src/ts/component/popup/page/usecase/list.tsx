@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Loader, Title, Label, EmptySearch, Icon, Filter } from 'Component';
-import { I, C, translate, UtilCommon, analytics } from 'Lib';
+import { I, C, S, U, translate, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from 'react-virtualized';
-import { commonStore } from 'Store';
 
 interface State {
 	isLoading: boolean;
@@ -46,7 +45,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		const { getAuthor, onAuthor } = this.props;
 		const { isLoading, category } = this.state;
 		const items = this.getItems();
-		const { gallery } = commonStore;
+		const { gallery } = S.Common;
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
 
 		if (isLoading) {
@@ -55,10 +54,10 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 
 		let textEmpty = '';
 		if (filter) {
-			textEmpty = UtilCommon.sprintf(translate('popupUsecaseListEmptyFilter'), filter);
+			textEmpty = U.Common.sprintf(translate('popupUsecaseListEmptyFilter'), filter);
 		} else
 		if (category) {
-			textEmpty = UtilCommon.sprintf(translate('popupUsecaseListEmptyCategory'), category.name);
+			textEmpty = U.Common.sprintf(translate('popupUsecaseListEmptyCategory'), category.name);
 		};
 
 		const Category = (item: any) => {
@@ -186,14 +185,14 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	};
 
 	componentDidMount (): void {
-		if (commonStore.gallery.list.length) {
+		if (S.Common.gallery.list.length) {
 			return;
 		};
 
 		this.setState({ isLoading: true });
 
 		C.GalleryDownloadIndex((message: any) => {
-			commonStore.gallery = {
+			S.Common.gallery = {
 				categories: (message.categories || []).map(it => ({ ...it, name: this.categoryName(it.id) })),
 				list: message.list || [],
 			};
@@ -245,13 +244,13 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		const ret: any[] = [];
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
 		
-		let items = commonStore.gallery.list || [];
+		let items = S.Common.gallery.list || [];
 		if (category) {
 			items = items.filter(it => category.list.includes(it.name));
 		};
 
 		if (filter) {
-			const reg = new RegExp(UtilCommon.regexEscape(filter), 'gi');
+			const reg = new RegExp(U.Common.regexEscape(filter), 'gi');
 			items = items.filter(it => reg.test(it.title) || reg.test(it.description));
 		};
 
@@ -282,11 +281,11 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	};
 
 	categoryName (id: string) {
-		return translate(UtilCommon.toCamelCase(`usecaseCategory-${id}`));
+		return translate(U.Common.toCamelCase(`usecaseCategory-${id}`));
 	};
 
 	calcPages () {
-		const { categories } = commonStore.gallery;
+		const { categories } = S.Common.gallery;
 		const node = $(this.node);
 		const width = node.width();
 		const items = node.find('#categories .item');
@@ -339,7 +338,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 	};
 
 	onBanner () {
-		const { gallery } = commonStore;
+		const { gallery } = S.Common;
 		const category = gallery.categories.find(it => it.id == 'collaboration');
 
 		if (category) {

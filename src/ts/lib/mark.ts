@@ -1,8 +1,8 @@
 import $ from 'jquery';
-import { I, UtilCommon, analytics } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, U, J, analytics } from 'Lib';
 
 const Tags = {};
+
 for (const i in I.MarkType) {
 	if (isNaN(Number(i))) {
 		continue;
@@ -64,8 +64,8 @@ class Mark {
 		];
 
 		for (const item of Markdown) {
-			const non = UtilCommon.regexEscape(item.key.substring(0, 1));
-			const k = UtilCommon.regexEscape(item.key);
+			const non = U.Common.regexEscape(item.key.substring(0, 1));
+			const k = U.Common.regexEscape(item.key);
 			this.regexpMarkdown.push({ 
 				type: item.type,
 				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
@@ -78,7 +78,7 @@ class Mark {
 			return marks;	
 		};
 
-		const map = UtilCommon.mapToArray(marks, 'type');
+		const map = U.Common.mapToArray(marks, 'type');
 		const type = mark.type;
 
 		let add = true;
@@ -167,7 +167,7 @@ class Mark {
 		};
 
 		analytics.event('ChangeTextStyle', { type, count: 1 });
-		return UtilCommon.unmap(map).sort(this.sort);
+		return U.Common.unmap(map).sort(this.sort);
 	};
 	
 	sort (c1: I.Mark, c2: I.Mark) {
@@ -233,7 +233,7 @@ class Mark {
 	};
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
-		const map = UtilCommon.mapToArray(marks, 'type');
+		const map = U.Common.mapToArray(marks, 'type');
 		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
 
 		if (!map[type] || !map[type].length) {
@@ -388,7 +388,7 @@ class Mark {
 			const html = item.find('span').html();
 			const face = String(item.attr('face') || '').toLowerCase();
 
-			if (face == Constant.fontCode) {
+			if (face == J.Constant.fontCode) {
 				const tag = this.getTag(I.MarkType.Code);
 				item.replaceWith(`<${tag}>${html}</${tag}>`);
 			} else {
@@ -576,7 +576,7 @@ class Mark {
 
 	// Unicode symbols
 	fromUnicode (html: string, marks: I.Mark[]): { marks: I.Mark[], text: string, adjustMarks: boolean } {
-		const keys = Object.keys(Patterns).map(it => UtilCommon.regexEscape(it));
+		const keys = Object.keys(Patterns).map(it => U.Common.regexEscape(it));
 		const reg = new RegExp(`(${keys.join('|')})`, 'g');
 		const test = reg.test(html);
 		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
