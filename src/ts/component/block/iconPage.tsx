@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
-import { I } from 'Lib';
-import { detailStore } from 'Store';
+import { I, S } from 'Lib';
 
 const BlockIconPage = observer(class BlockIconPage extends React.Component<I.BlockComponent> {
 
@@ -13,7 +12,7 @@ const BlockIconPage = observer(class BlockIconPage extends React.Component<I.Blo
 			<IconObject 
 				id={`block-icon-${rootId}`} 
 				canEdit={!readonly} 
-				getObject={() => detailStore.get(rootId, rootId, [])} 
+				getObject={() => S.Detail.get(rootId, rootId, [])} 
 				size={96} 
 			/>
 		);

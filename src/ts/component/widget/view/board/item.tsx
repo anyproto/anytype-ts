@@ -2,10 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, DropTarget } from 'Component';
-import { blockStore, menuStore, detailStore } from 'Store';
-import { I, UtilObject, keyboard, analytics, translate, UtilSpace } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;
@@ -29,12 +26,12 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 	render () {
 		const { subId, id, block, isEditing, hideIcon } = this.props;
 		const rootId = keyboard.getRootId();
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions } = object;
-		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
+		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
-		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-		const hasMore = UtilSpace.canMyParticipantWrite();
+		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+		const hasMore = U.Space.canMyParticipantWrite();
 		const more = hasMore ? <Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} /> : null;
 
 		let icon = null;
@@ -102,9 +99,9 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		e.stopPropagation();
 
 		const { subId, id, } = this.props;
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
 
-		UtilObject.openEvent(e, object);
+		U.Object.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
 	};
 
@@ -128,7 +125,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 			subId, 
 			objectId: id, 
 			data: {
-				relationKeys: Constant.defaultRelationKeys.concat(view.groupRelationKey),
+				relationKeys: J.Constant.defaultRelationKeys.concat(view.groupRelationKey),
 			},
 		});
 	};

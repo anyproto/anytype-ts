@@ -1,4 +1,4 @@
-{
+export default {
 	"backspace": 8,
 	"tab":		 9,
 	"enter":	 13,
@@ -54,4 +54,4 @@
 	"slash":	 191,
 	"/":		 191,
 	"dead":		 192
-}
+};

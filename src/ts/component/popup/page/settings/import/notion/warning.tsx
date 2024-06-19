@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Title, Button } from 'Component';
-import { I, C, translate, analytics, UtilCommon } from 'Lib';
-import { commonStore, popupStore } from 'Store';
+import { I, C, S, U, translate, analytics } from 'Lib';
 import Head from '../../head';
 
 class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettings> {
@@ -20,10 +19,10 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 
 				<div className="listWrapper">
 					<ol className="list">
-						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(translate('popupSettingsImportNotionWarningLi1')) }} />
-						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(translate('popupSettingsImportNotionWarningLi2')) }} />
-						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(translate('popupSettingsImportNotionWarningLi3')) }} />
-						<li className="label" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(translate('popupSettingsImportNotionWarningLi4')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(translate('popupSettingsImportNotionWarningLi1')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(translate('popupSettingsImportNotionWarningLi2')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(translate('popupSettingsImportNotionWarningLi3')) }} />
+						<li className="label" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(translate('popupSettingsImportNotionWarningLi4')) }} />
 					</ol>
 				</div>
 
@@ -38,12 +37,12 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 		analytics.event('ImportNotionProceed');
 
 		close();
-		C.ObjectImport(commonStore.space, { apiKey: commonStore.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
+		C.ObjectImport(S.Common.space, { apiKey: S.Common.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
 			if (!message.error.code) {
 				const { collectionId, count } = message;
 
 				if (collectionId) {
-					popupStore.replace(id, 'objectManager', { 
+					S.Popup.replace(id, 'objectManager', { 
 						data: { 
 							collectionId, 
 							type: I.ObjectManagerPopup.Favorites,

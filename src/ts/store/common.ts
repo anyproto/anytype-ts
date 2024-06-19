@@ -1,8 +1,6 @@
-import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { I, M, Storage, UtilCommon, UtilObject, Renderer, UtilRouter } from 'Lib';
-import { dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
+import { I, M, S, U, J, Storage, Renderer } from 'Lib';
 
 interface Filter {
 	from: number;
@@ -144,7 +142,7 @@ class CommonStore {
 			membershipTiersListSet: action,
 		});
 
-		intercept(this.configObj as any, change => UtilCommon.intercept(this.configObj, change));
+		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
     };
 
     get config(): any {
@@ -177,11 +175,11 @@ class CommonStore {
 	};
 
 	get type(): string {
-		const key = String(this.defaultType || Storage.get('defaultType') || Constant.default.typeKey);
+		const key = String(this.defaultType || Storage.get('defaultType') || J.Constant.default.typeKey);
 
-		let type = dbStore.getTypeByKey(key);
-		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
-			type = dbStore.getTypeByKey(Constant.default.typeKey);
+		let type = S.Record.getTypeByKey(key);
+		if (!type || !type.isInstalled || !U.Object.getPageLayouts().includes(type.recommendedLayout)) {
+			type = S.Record.getTypeByKey(J.Constant.default.typeKey);
 		};
 
 		return type ? type.id : '';
@@ -192,7 +190,7 @@ class CommonStore {
 	};
 
 	get pinTime(): number {
-		return (Number(this.pinTimeId) || Storage.get('pinTime') || Constant.default.pinTime) * 1000;
+		return (Number(this.pinTimeId) || Storage.get('pinTime') || J.Constant.default.pinTime) * 1000;
 	};
 
 	get emailConfirmationTime(): number {
@@ -229,7 +227,7 @@ class CommonStore {
 	};
 
 	get interfaceLang (): string {
-		return this.config.interfaceLang || Constant.default.interfaceLang;
+		return this.config.interfaceLang || J.Constant.default.interfaceLang;
 	};
 
 	get showRelativeDates (): boolean {
@@ -318,8 +316,8 @@ class CommonStore {
 		const ids = [ objectId, targetId, originId ].filter(it => it);
 
 		if (ids.length) {
-			UtilObject.getByIds(ids, (objects: any[]) => {
-				const map = UtilCommon.mapToObject(objects, 'id');
+			U.Object.getByIds(ids, (objects: any[]) => {
+				const map = U.Common.mapToObject(objects, 'id');
 
 				if (targetId && map[targetId]) {
 					toast.target = map[targetId];
@@ -359,7 +357,7 @@ class CommonStore {
 	};
 
 	pinTimeSet (v: string) {
-		this.pinTimeId = Number(v) || Constant.default.pinTime;
+		this.pinTimeId = Number(v) || J.Constant.default.pinTime;
 
 		Storage.set('pinTime', this.pinTimeId);
 	};
@@ -401,7 +399,7 @@ class CommonStore {
 	};
 
 	redirectSet (v: string) {
-		const param = UtilRouter.getParam(v);
+		const param = U.Router.getParam(v);
 
 		if ((param.page == 'auth') && (param.action == 'pin-check')) {
 			return;
@@ -449,7 +447,7 @@ class CommonStore {
 		const head = $('head');
 		const c = this.getThemeClass();
 
-		UtilCommon.addBodyClass('theme', c);
+		U.Common.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
 
 		head.find('#link-prism').remove();
@@ -528,7 +526,7 @@ class CommonStore {
 
 	getGraph (key: string): Graph {
 		const stored = Storage.get(key);
-		const def = UtilCommon.objectCopy(this.graphObj);
+		const def = U.Common.objectCopy(this.graphObj);
 
 		return Object.assign(def, stored);
 	};
@@ -539,4 +537,4 @@ class CommonStore {
 
 };
 
-export const commonStore: CommonStore = new CommonStore();
+export const Common: CommonStore = new CommonStore();

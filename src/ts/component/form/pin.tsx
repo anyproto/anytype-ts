@@ -1,11 +1,10 @@
 import * as React from 'react';
 import sha1 from 'sha1';
 import { Input } from 'Component';
-import { keyboard } from 'Lib';
-const Constant = require('json/constant.json');
+import { J, keyboard } from 'Lib';
 
 interface Props {
-	/** the length of the pin, defaults to Constant.pinLength */
+	/** the length of the pin, defaults to J.Constant.pinLength */
 	pinLength?: number;
 	/** the expected pin, encrypted in sha1. if none provided, this component does not make a comparison check */
 	expectedPin?: string | null;
@@ -33,7 +32,7 @@ const TIMEOUT_DURATION = 150;
 class Pin extends React.Component<Props, State> {
 
 	public static defaultProps = {
-		pinLength: Constant.pinLength,
+		pinLength: J.Constant.pinLength,
 		expectedPin: null,
 		focusOnMount: true,
 		isVisible: false,

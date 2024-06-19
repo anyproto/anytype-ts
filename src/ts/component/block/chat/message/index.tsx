@@ -2,9 +2,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilSpace, UtilDate, Mark, UtilCommon, UtilObject } from 'Lib';
-import { commonStore, blockStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, S, U, J, Mark } from 'Lib';
 
 interface Props extends I.Block, I.BlockComponent {
 	data: any;
@@ -18,11 +16,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 	render () {
 		const { id, data, isThread, onThread } = this.props;
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const length = this.getChildren().length;
-		const author = UtilSpace.getParticipant(UtilSpace.getParticipantId(space, data.identity));
+		const author = U.Space.getParticipant(U.Space.getParticipantId(space, data.identity));
 		const text = Mark.toHtml(data.text, data.marks);
-		const files = (data.files || []).map(id => detailStore.get(Constant.subId.file, id));
+		const files = (data.files || []).map(id => S.Detail.get(J.Constant.subId.file, id));
 
 		return (
 			<div 
@@ -35,15 +33,15 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 						<IconObject object={author} />
 						<ObjectName object={author} />
 					</div>
-					<div className="time">{UtilDate.date('H:i', data.time)}</div>
+					<div className="time">{U.Date.date('H:i', data.time)}</div>
 				</div>
 
-				<div className="text" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }}></div>
+				<div className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}></div>
 
 				{files.length ? (
 					<div className="files">
 						{files.map((item: any, i: number) => (
-							<IconObject key={i} object={item} size={48} onClick={() => UtilObject.openPopup(item)} />
+							<IconObject key={i} object={item} size={48} onClick={() => U.Object.openPopup(item)} />
 						))}
 					</div>
 				) : ''}
@@ -63,9 +61,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 	getChildren () {
 		const { rootId, id } = this.props;
-		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		const childrenIds = S.Block.getChildrenIds(rootId, id);
 
-		return blockStore.getChildren(rootId, id, it => it.isText());
+		return S.Block.getChildren(rootId, id, it => it.isText());
 	};
 
 });

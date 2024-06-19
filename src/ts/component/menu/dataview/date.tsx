@@ -2,8 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, UtilDate, UtilMenu, translate } from 'Lib';
-import { menuStore, dbStore } from 'Store';
+import { I, C, S, U, keyboard, translate } from 'Lib';
 
 const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<I.Menu> {
 
@@ -71,7 +70,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { getView, relationId } = data;
-		const relation = dbStore.getRelationById(relationId);
+		const relation = S.Record.getRelationById(relationId);
 		const dateOptions = this.getOptions('dateFormat');
 		const timeOptions = this.getOptions('timeFormat');
 
@@ -113,7 +112,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 			},
 		];
 
-		sections = UtilMenu.sectionsMap(sections);
+		sections = U.Menu.sectionsMap(sections);
 		return sections;
 	};
 	
@@ -133,11 +132,11 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		switch (key) {
 			case 'dateFormat':
 				options = [
-					{ id: I.DateFormat.MonthAbbrBeforeDay, name: UtilDate.date('M d, Y', UtilDate.now()) },
-					{ id: I.DateFormat.MonthAbbrAfterDay, name: UtilDate.date('d M, Y', UtilDate.now()) },
-					{ id: I.DateFormat.Short, name: UtilDate.date('d.m.Y', UtilDate.now()) },
-					{ id: I.DateFormat.ShortUS, name: UtilDate.date('m.d.Y', UtilDate.now()) },
-					{ id: I.DateFormat.ISO, name: UtilDate.date('Y-m-d', UtilDate.now()) },
+					{ id: I.DateFormat.MonthAbbrBeforeDay, name: U.Date.date('M d, Y', U.Date.now()) },
+					{ id: I.DateFormat.MonthAbbrAfterDay, name: U.Date.date('d M, Y', U.Date.now()) },
+					{ id: I.DateFormat.Short, name: U.Date.date('d.m.Y', U.Date.now()) },
+					{ id: I.DateFormat.ShortUS, name: U.Date.date('m.d.Y', U.Date.now()) },
+					{ id: I.DateFormat.ISO, name: U.Date.date('Y-m-d', U.Date.now()) },
 				];
 				break;
 
@@ -163,13 +162,13 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 			view = getView();
 			relation = view.getRelation(relationKey);
 		} else {
-			relation = dbStore.getRelationByKey(relationKey);
+			relation = S.Record.getRelationByKey(relationKey);
 		};
 
 		const options = this.getOptions(item.itemId);
 		const value = options.find(it => it.id == relation[item.itemId]) || options[0];
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			offsetY: -38,

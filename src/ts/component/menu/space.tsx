@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, UtilCommon, UtilSpace, UtilRouter, keyboard, translate, UtilMenu, analytics, Storage } from 'Lib';
-import { commonStore, popupStore, blockStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, keyboard, translate, analytics, Storage } from 'Lib';
 
 const ITEM_WIDTH = 112;
 
@@ -23,8 +21,8 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	render () {
 		const { setHover } = this.props;
 		const items = this.getItems();
-		const participant = UtilSpace.getParticipant();
-		const { spaceview } = blockStore;
+		const participant = U.Space.getParticipant();
+		const { spaceview } = S.Block;
 
 		const Item = (item) => {
 			const cn = [ 'item', 'space' ];
@@ -156,7 +154,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	onContextMenu (e: any, item: any) {
 		const { param } = this.props;
 
-		UtilMenu.spaceContext(item, {
+		U.Menu.spaceContext(item, {
 			classNameWrap: param.classNameWrap,
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
@@ -187,13 +185,13 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const { config } = commonStore;
-		const items = UtilCommon.objectCopy(UtilSpace.getList());
+		const { config } = S.Common;
+		const items = U.Common.objectCopy(U.Space.getList());
 		const length = items.length;
 
 		items.push({ id: 'gallery', name: translate('commonGallery') });
 
-		if (config.sudo || (length < Constant.limit.space)) {
+		if (config.sudo || (length < J.Constant.limit.space)) {
 			items.push({ id: 'add', name: translate('commonCreateNew') });
 		};
 
@@ -206,22 +204,22 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				this.onAdd();
 			} else
 			if (item.id == 'gallery') {
-				popupStore.open('usecase', {});
+				S.Popup.open('usecase', {});
 			} else {
-				UtilRouter.switchSpace(item.targetSpaceId);
+				U.Router.switchSpace(item.targetSpaceId);
 				analytics.event('SwitchSpace');
 			};
 		});
 	};
 
 	onAdd () {
-		popupStore.open('settings', { 
+		S.Popup.open('settings', { 
 			className: 'isSpaceCreate',
 			data: { 
 				page: 'spaceCreate', 
 				isSpace: true,
 				onCreate: (id) => {
-					UtilRouter.switchSpace(id, '', () => Storage.initPinnedTypes());
+					U.Router.switchSpace(id, '', () => Storage.initPinnedTypes());
 					analytics.event('SwitchSpace');
 				},
 			}, 
@@ -230,14 +228,14 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 	onSettings () {
 		this.props.close(() => {
-			popupStore.open('settings', {});
+			S.Popup.open('settings', {});
 		});
 	};
 
 	beforePosition () {
 		const node = $(this.node);
 		const obj = node.find('.items');
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const sidebar = $('#sidebar');
 		const sw = sidebar.outerWidth();
 		const items = this.getItems();

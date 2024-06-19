@@ -1,4 +1,4 @@
-{
+export default {
 	"server": "http://127.0.0.1:31008",
 	"pinLength": 6,
 	"sentry": "https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3",
@@ -288,6 +288,11 @@
 		"participantPermissions",
 		"participantStatus",
 		"globalName"
+	],
+	"syncStatusRelationKeys": [
+		"syncStatus",
+		"syncDate",
+		"syncError"
 	],
 
 	"pageCoverRelationKey": "pageCover",
@@ -617,4 +622,4 @@
 		"uk": "Українська",
 		"vi": "Tiếng Việt"
 	}
-}
+};

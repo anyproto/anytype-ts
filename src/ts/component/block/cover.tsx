@@ -2,11 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Drag, Cover, Loader, Label } from 'Component';
-import { I, C, UtilCommon, UtilData, UtilObject, focus, translate, keyboard, Action } from 'Lib';
-import { commonStore, blockStore, detailStore, menuStore } from 'Store';
+import { I, C, S, U, J, focus, translate, keyboard } from 'Lib';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
-const Constant = require('json/constant.json');
-const Url = require('json/url.json');
 
 interface State {
 	isEditing: boolean;
@@ -61,10 +58,10 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	render () {
 		const { isEditing } = this.state;
 		const { rootId, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
+		const object = S.Detail.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(J.Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
-		const isImage = UtilData.coverIsImage(coverType);
-		const root = blockStore.getLeaf(rootId, rootId);
+		const isImage = U.Data.coverIsImage(coverType);
+		const root = S.Block.getLeaf(rootId, rootId);
 		const cn = [ 'elements', 'editorControlElements' ];
 
 		if (!root) {
@@ -77,9 +74,9 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		let content = null;
 
 		if (coverType == I.CoverType.Source) {
-			image = detailStore.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
+			image = S.Detail.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
 			author = (
-				<Label className="author" text={UtilCommon.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>`)} />
+				<Label className="author" text={U.Common.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + J.Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${J.Url.unsplash.site + J.Url.unsplash.utm}>Unsplash</a>`)} />
 			);
 		};
 
@@ -159,14 +156,14 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this._isMounted = true;
 		this.resize();
 
-		UtilCommon.renderLinks($(this.node));
+		U.Common.renderLinks($(this.node));
 		$(window).off('resize.cover').on('resize.cover', () => this.resize());
 	};
 	
 	componentDidUpdate () {
 		this.resize();
 
-		UtilCommon.renderLinks($(this.node));
+		U.Common.renderLinks($(this.node));
 	};
 	
 	componentWillUnmount () {
@@ -178,12 +175,12 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
-		const object = detailStore.get(rootId, rootId, []);
-		const cb = () => menuStore.update('smile', { element: `#block-icon-${rootId}` });
+		const object = S.Detail.get(rootId, rootId, []);
+		const cb = () => S.Menu.update('smile', { element: `#block-icon-${rootId}` });
 
 		focus.clear(true);
 
-		menuStore.open('smile', { 
+		S.Menu.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => elements.addClass('hover'),
@@ -191,10 +188,10 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			data: {
 				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => {
-					UtilObject.setIcon(rootId, icon, '', cb);
+					U.Object.setIcon(rootId, icon, '', cb);
 				},
 				onUpload (objectId: string) {
-					UtilObject.setIcon(rootId, '', objectId, cb);
+					U.Object.setIcon(rootId, '', objectId, cb);
 				},
 			}
 		});
@@ -204,9 +201,9 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 		
-		menuStore.open('blockLayout', { 
+		S.Menu.open('blockLayout', { 
 			element: `#block-${block.id} #button-layout`,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
@@ -215,7 +212,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			onClose: () => {
 				elements.removeClass('hover');
 			},
-			subIds: Constant.menuIds.layout,
+			subIds: J.Constant.menuIds.layout,
 			data: {
 				rootId: rootId,
 				value: object.layout,
@@ -247,12 +244,12 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 
 		this.loaded = false;
-		UtilObject.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+		U.Object.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 	
 	onEdit (e: any) {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
 
 		this.coords.x = object.coverX;
 		this.coords.y = object.coverY;
@@ -283,7 +280,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.coords.y = -0.25;
 		this.scale = 0;
 
-		UtilObject.setCover(rootId, type, objectId, this.coords.x, this.coords.y, this.scale, () => {
+		U.Object.setCover(rootId, type, objectId, this.coords.x, this.coords.y, this.scale, () => {
 			this.loaded = false;
 			this.setLoading(false);
 		});
@@ -294,9 +291,9 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		e.stopPropagation();
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
 
-		UtilObject.setCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
+		U.Object.setCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
 			this.setState({ isEditing: false });
 		});
 	};
@@ -314,10 +311,10 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
 		const { coverId, coverType } = object;
 		const node = $(this.node);
-		const isImage = UtilData.coverIsImage(coverType);
+		const isImage = U.Data.coverIsImage(coverType);
 		
 		if (!isImage || !node.hasClass('wrap')) {
 			return;
@@ -333,7 +330,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.setLoading(true);
 
 		const cb = () => {
-			const object = detailStore.get(rootId, rootId, [ 'coverScale' ], true);
+			const object = S.Detail.get(rootId, rootId, [ 'coverScale' ], true);
 			const { coverScale } = object;
 
 			if (this.refDrag) {
@@ -357,7 +354,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType)) {
-			el.src = commonStore.imageUrl(coverId, Constant.size.cover);
+			el.src = S.Common.imageUrl(coverId, J.Constant.size.cover);
 		};
 	};
 	
@@ -424,7 +421,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 
 		const node = $(this.node);
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverX', 'coverY' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'coverX', 'coverY' ], true);
 		const { coverX, coverY } = object;
 		const value = node.find('#dragValue');
 
@@ -484,17 +481,17 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		keyboard.disableCommonDrop(true);
 		this.setLoading(true);
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setLoading(false);
 			keyboard.disableCommonDrop(false);
 			
 			if (!message.error.code) {
 				this.loaded = false;
-				UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
+				U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
 			};
 			
 			this.loaded = false;
-			UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
+			U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
 		});
 	};
 	

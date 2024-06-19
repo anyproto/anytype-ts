@@ -1,4 +1,4 @@
-import { I, UtilCommon } from 'Lib';
+import { I, U } from 'Lib';
 
 const COLORS = [
 	'green',
@@ -39,7 +39,7 @@ class MembershipTier implements I.MembershipTier {
 	};
 
 	get price (): number {
-		return UtilCommon.round(this.priceCents / 100, 2);
+		return U.Common.round(this.priceCents / 100, 2);
 	};
 
 	get isNone (): boolean {

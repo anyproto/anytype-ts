@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UtilCommon } from 'Lib';
+import { U } from 'Lib';
 
 interface Props {
 	text: string;
@@ -16,7 +16,7 @@ class EmptySearch extends React.Component<Props> {
 		
 		return (
 			<div ref={node => this.node = node} style={style} className="emptySearch">
-				<div className="txt" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} />
+				<div className="txt" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
 			</div>
 		);
 	};

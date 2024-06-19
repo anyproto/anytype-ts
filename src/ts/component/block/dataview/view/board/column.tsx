@@ -2,8 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore } from 'Component';
-import { I, Relation, UtilData, UtilObject, UtilCommon, translate, Dataview } from 'Lib';
-import { dbStore, detailStore, menuStore } from 'Store';
+import { I, S, U, translate, Dataview } from 'Lib';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
 
@@ -38,12 +37,12 @@ const Column = observer(class Column extends React.Component<Props> {
 		const target = getTarget();
 		const subId = getSubId();
 		const items = this.getItems();
-		const { total } = dbStore.getMeta(subId, '');
+		const { total } = S.Record.getMeta(subId, '');
 		const limit = getLimit();
 		const head = {};
 		const cn = [ 'column' ];
 		const cnbg = [];
-		const group = dbStore.getGroup(rootId, block.id, id);
+		const group = S.Record.getGroup(rootId, block.id, id);
 		const order = (block.content.groupOrder || []).find(it => it.viewId == view.id);
 		const orderGroup = (order?.groups || []).find(it => it.groupId == id) || {};
 		const isAllowedObject = this.props.isAllowedObject();
@@ -58,7 +57,7 @@ const Column = observer(class Column extends React.Component<Props> {
 
 		// Subscriptions
 		items.forEach((item: any) => {
-			const object = detailStore.get(subId, item.id, [ view.groupRelationKey ]);
+			const object = S.Detail.get(subId, item.id, [ view.groupRelationKey ]);
 		});
 
 		return (
@@ -66,7 +65,7 @@ const Column = observer(class Column extends React.Component<Props> {
 				ref={node => this.node = node} 
 				id={`column-${id}`} 
 				className={cn.join(' ')}
-				{...UtilCommon.dataProps({ id })}
+				{...U.Common.dataProps({ id })}
 			>
 				<div id={`column-${id}-head`} className="head">
 					<div className="sides">
@@ -143,7 +142,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			return;
 		};
 
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+		const relation = S.Record.getRelationByKey(view.groupRelationKey);
 		if (!relation) {
 			return;
 		};
@@ -153,7 +152,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		const subId = getSubId();
 		const limit = getLimit() + this.offset;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
@@ -172,7 +171,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			this.setState({ loading: true });
 		};
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			subId,
 			filters: filters.map(it => Dataview.filterMapper(view, it)),
 			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
@@ -183,7 +182,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		}, () => {
-			dbStore.recordsSet(subId, '', applyObjectOrder(id, dbStore.getRecordIds(subId, '')));
+			S.Record.recordsSet(subId, '', applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -193,13 +192,13 @@ const Column = observer(class Column extends React.Component<Props> {
 
 	clear () {
 		const { getSubId } = this.props;
-		dbStore.recordsClear(getSubId(), '');
+		S.Record.recordsClear(getSubId(), '');
 	};
 
 	getItems () {
 		const { id, getSubId, applyObjectOrder } = this.props;
 
-		return applyObjectOrder(id, UtilCommon.objectCopy(dbStore.getRecordIds(getSubId(), ''))).map(id => ({ id }));
+		return applyObjectOrder(id, U.Common.objectCopy(S.Record.getRecordIds(getSubId(), ''))).map(id => ({ id }));
 	};
 
 	onLoadMore () {
@@ -224,7 +223,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		const node = $(this.node);
 		const element = `#button-${id}-more`;
 
-		menuStore.open('dataviewGroupEdit', {
+		S.Menu.open('dataviewGroupEdit', {
 			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,

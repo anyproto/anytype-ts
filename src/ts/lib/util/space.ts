@@ -1,17 +1,14 @@
-import { I, UtilCommon, UtilData, UtilObject, Storage, translate } from 'Lib';
-import { commonStore, authStore, blockStore, detailStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
-const Url = require('json/url.json');
+import { I, S, U, J, Storage, translate } from 'Lib';
 
 class UtilSpace {
 
 	openDashboard (type: string, param?: any) {
-		const fn = UtilCommon.toCamelCase(`open-${type}`);
+		const fn = U.Common.toCamelCase(`open-${type}`);
 		
 		let home = this.getDashboard();
 
 		if (home && (home.id == I.HomePredefinedId.Last)) {
-			home = Storage.getLastOpened(UtilCommon.getCurrentElectronWindowId());
+			home = Storage.getLastOpened(U.Common.getCurrentElectronWindowId());
 
 			// Invalid data protection
 			if (!home || !home.id) {
@@ -19,17 +16,17 @@ class UtilSpace {
 			};
 
 			if (home && !home.spaceId) {
-				home.spaceId = commonStore.space;
+				home.spaceId = S.Common.space;
 			};
 		};
 
 		if (!home) {
-			UtilObject.openRoute({ layout: I.ObjectLayout.Empty }, param);
+			U.Object.openRoute({ layout: I.ObjectLayout.Empty }, param);
 			return;
 		};
 
-		if (UtilObject[fn]) {
-			UtilObject[fn](home, param);
+		if (U.Object[fn]) {
+			U.Object[fn](home, param);
 		};
 	};
 
@@ -48,7 +45,7 @@ class UtilSpace {
 		if (id == I.HomePredefinedId.Last) {
 			ret = this.getLastOpened();
 		} else {
-			ret = detailStore.get(Constant.subId.space, id);
+			ret = S.Detail.get(J.Constant.subId.space, id);
 		};
 
 		if (!ret || ret._empty_ || ret.isDeleted) {
@@ -74,10 +71,10 @@ class UtilSpace {
 	};
 
 	getList () {
-		const subId = Constant.subId.space;
-		const { spaceview } = blockStore;
+		const subId = J.Constant.subId.space;
+		const { spaceview } = S.Block;
 
-		let items = dbStore.getRecords(subId, UtilData.spaceRelationKeys());
+		let items = S.Record.getRecords(subId, U.Data.spaceRelationKeys());
 		items = items.filter(it => it.isAccountActive && it.isLocalOk);
 		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));
 
@@ -91,15 +88,15 @@ class UtilSpace {
 	};
 
 	getSpaceview (id?: string) {
-		return detailStore.get(Constant.subId.space, id || blockStore.spaceview);
+		return S.Detail.get(J.Constant.subId.space, id || S.Block.spaceview);
 	};
 
 	getSpaceviewBySpaceId (id: string) {
-		return dbStore.getRecords(Constant.subId.space).find(it => it.targetSpaceId == id);
+		return S.Record.getRecords(J.Constant.subId.space).find(it => it.targetSpaceId == id);
 	};
 
 	getParticipantsList (statuses?: I.ParticipantStatus[]) {
-		const ret = dbStore.getRecords(Constant.subId.participant);
+		const ret = S.Record.getRecords(J.Constant.subId.participant);
 		return statuses ? ret.filter(it => statuses.includes(it.status)) : ret;
 	};
 
@@ -114,30 +111,30 @@ class UtilSpace {
 	};
 
 	getProfile () {
-		return detailStore.get(Constant.subId.profile, blockStore.profile);
+		return S.Detail.get(J.Constant.subId.profile, S.Block.profile);
 	};
 
 	getParticipant (id?: string) {
-		const { space } = commonStore;
-		const { account } = authStore;
+		const { space } = S.Common;
+		const { account } = S.Auth;
 
 		if (!account) {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.participant, id || this.getParticipantId(space, account.id));
+		const object = S.Detail.get(J.Constant.subId.participant, id || this.getParticipantId(space, account.id));
 		return object._empty_ ? null : object;
 	};
 
 	getMyParticipant (spaceId?: string) {
-		const { account } = authStore;
-		const { space } = commonStore;
+		const { account } = S.Auth;
+		const { space } = S.Common;
 
 		if (!account) {
 			return null;
 		};
 
-		const object = detailStore.get(Constant.subId.myParticipant, this.getParticipantId(spaceId || space, account.id));
+		const object = S.Detail.get(J.Constant.subId.myParticipant, this.getParticipantId(spaceId || space, account.id));
 		return object._empty_ ? null : object;
 	};
 
@@ -147,12 +144,12 @@ class UtilSpace {
 	};
 
 	isMyOwner (spaceId?: string): boolean {
-		const participant = this.getMyParticipant(spaceId || commonStore.space);
+		const participant = this.getMyParticipant(spaceId || S.Common.space);
 		return participant ? participant.isOwner : false;
 	};
 
 	isShareActive () {
-		return commonStore.isOnline && !UtilData.isLocalNetwork();
+		return S.Common.isOnline && !U.Data.isLocalNetwork();
 	};
 
 	getReaderLimit () {
@@ -176,7 +173,7 @@ class UtilSpace {
 	};
 
 	getInviteLink (cid: string, key: string) {
-		return UtilData.isAnytypeNetwork() ? UtilCommon.sprintf(Url.invite, cid, key) : `${Constant.protocol}://invite/?cid=${cid}&key=${key}`;
+		return U.Data.isAnytypeNetwork() ? U.Common.sprintf(J.Url.invite, cid, key) : `${J.Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
 };

@@ -1,10 +1,6 @@
 import $ from 'jquery';
-import { I, C, Preview, Renderer, translate, UtilSpace, Mark } from 'Lib';
-import { popupStore } from 'Store';
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
-const Text = require('json/text.json');
 import DOMPurify from 'dompurify';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark } from 'Lib';
 
 const TEST_HTML = /<[^>]*>/;
 
@@ -516,7 +512,7 @@ class UtilCommon {
 	};
 
 	getPlatform (): I.Platform {
-		return Constant.platforms[this.getElectron().platform] || I.Platform.None;
+		return J.Constant.platforms[this.getElectron().platform] || I.Platform.None;
 	};
 
 	isPlatformMac (): boolean {
@@ -537,14 +533,14 @@ class UtilCommon {
 		};
 
 		// App is already working
-		if (code == Errors.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
+		if (code == J.Error.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
 			alert('You have another instance of anytype running on this machine. Closing...');
 			Renderer.send('exit', false);
 			return false;
 		};
 
 		// App needs update
-		if ([ Errors.Code.ANYTYPE_NEEDS_UPGRADE, Errors.Code.PROTOCOL_NEEDS_UPGRADE ].includes(code)) {
+		if ([ J.Error.Code.ANYTYPE_NEEDS_UPGRADE, J.Error.Code.PROTOCOL_NEEDS_UPGRADE ].includes(code)) {
 			this.onErrorUpdate();
 			return false;
 		};
@@ -565,14 +561,14 @@ class UtilCommon {
 			return false;
 		};
 
-		if ([ Errors.Code.NOT_FOUND, Errors.Code.OBJECT_DELETED ].includes(code)) {
+		if ([ J.Error.Code.NOT_FOUND, J.Error.Code.OBJECT_DELETED ].includes(code)) {
 			if (context) {
 				context.setState({ isDeleted: true });
 			};
 		} else {
 			const logPath = this.getElectron().logPath();
 
-			popupStore.open('confirm', {
+			S.Popup.open('confirm', {
 				data: {
 					icon: 'error',
 					bgColor: 'red',
@@ -586,7 +582,7 @@ class UtilCommon {
 							};
 						});
 
-						UtilSpace.openDashboard('route', { replace: true });
+						U.Space.openDashboard('route', { replace: true });
 					}
 				},
 			});
@@ -596,7 +592,7 @@ class UtilCommon {
 	};
 
 	onErrorUpdate (onConfirm?: () => void) {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
@@ -616,14 +612,14 @@ class UtilCommon {
 	};
 
 	onInviteRequest () {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupInviteInviteConfirmTitle'),
 				text: translate('popupInviteInviteConfirmText'),
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					window.setTimeout(() => { popupStore.open('settings', { data: { page: 'spaceList' } }); }, popupStore.getTimeout());
+					window.setTimeout(() => { S.Popup.open('settings', { data: { page: 'spaceList' } }); }, S.Popup.getTimeout());
 				},
 			},
 		});
@@ -863,6 +859,7 @@ class UtilCommon {
 	translateError (command: string, error: any) {
 		const { code, description } = error;
 		const id = this.toCamelCase(`error-${command}${code}`);
+		const Text = require('json/text.json');
 
 		return Text[id] ? translate(id) : description;
 	};

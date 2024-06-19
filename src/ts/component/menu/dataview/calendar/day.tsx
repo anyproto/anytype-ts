@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Icon, IconObject, ObjectName } from 'Component';
-import { I, UtilObject, keyboard, UtilDate, translate } from 'Lib';
-import { blockStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
+import { Icon, IconObject, ObjectName } from 'Component';
+import { I, S, U, keyboard, translate } from 'Lib';
 
 const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I.Menu> {
 	
@@ -20,7 +19,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		let size = 16;
 
 		if (fromWidget) {
-			const w = Number(UtilDate.date('N', UtilDate.timestamp(y, m, d))) + 1;
+			const w = Number(U.Date.date('N', U.Date.timestamp(y, m, d))) + 1;
 			label = `${translate(`day${w}`)} ${d}`;
 			size = 18;
 		};
@@ -30,7 +29,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		};
 
 		const Item = (item) => {
-			const canEdit = !item.isReadonly && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
+			const canEdit = !item.isReadonly && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
 
 			let icon = null;
 			if (item.icon) {
@@ -117,7 +116,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 				onCreate();
 			};
 		} else {
-			UtilObject.openPopup(item);
+			U.Object.openPopup(item);
 		};
 	};
 
@@ -125,9 +124,9 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, d, m, y, relationKey, readonly, onCreate } = data;
-		const items = dbStore.getRecords(dbStore.getSubId(rootId, blockId), [ relationKey ]);
+		const items = S.Record.getRecords(S.Record.getSubId(rootId, blockId), [ relationKey ]);
 		const current = [ d, m, y ].join('-');
-		const ret = items.filter(it => UtilDate.date('j-n-Y', it[relationKey]) == current);
+		const ret = items.filter(it => U.Date.date('j-n-Y', it[relationKey]) == current);
 
 		if (!readonly && onCreate) {
 			ret.push({ id: 'add', icon: 'plus', name: translate('commonCreateNewObject') });

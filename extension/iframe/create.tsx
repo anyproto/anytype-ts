@@ -2,8 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
-import { I, C, M, translate, UtilObject, UtilData, UtilSpace } from 'Lib';
-import { blockStore, extensionStore, menuStore, dbStore, commonStore } from 'Store';
+import { I, C, M, S, U, translate } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -35,9 +34,9 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	render () {
 		const { isLoading, error, object } = this.state;
-		const { html } = extensionStore;
-		const { space } = commonStore;
-		const children = blockStore.getChildren(ROOT_ID, ROOT_ID, it => !it.isFile());
+		const { html } = S.Extension;
+		const { space } = S.Common;
+		const children = S.Block.getChildren(ROOT_ID, ROOT_ID, it => !it.isFile());
 
 		return (
 			<div ref={ref => this.node = ref} className="page pageCreate">
@@ -91,7 +90,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	componentDidMount (): void {
-		UtilData.createSubscriptions(() => {
+		U.Data.createSubscriptions(() => {
 			this.init();
 		});
 	};
@@ -102,12 +101,12 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	init () {
-		const spaces = UtilSpace.getList()
-			.filter(it => it && UtilSpace.canMyParticipantWrite(it.targetSpaceId))
+		const spaces = U.Space.getList()
+			.filter(it => it && U.Space.canMyParticipantWrite(it.targetSpaceId))
 			.map(it => ({ ...it, id: it.targetSpaceId, object: it, iconSize: 16 }));
 
 		if (this.refSpace && spaces.length) {
-			const space = commonStore.space || spaces[0].targetSpaceId;
+			const space = S.Common.space || spaces[0].targetSpaceId;
 
 			this.refSpace?.setOptions(spaces);
 			this.refSpace?.setValue(space);
@@ -116,14 +115,14 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	initBlocks () {
-		const { html, tabUrl } = extensionStore;
+		const { html, tabUrl } = S.Extension;
 
 		if (html == this.html) {
 			return;
 		};
 
 		this.html = html;
-		blockStore.clear(ROOT_ID);
+		S.Block.clear(ROOT_ID);
 
 		if (!html) {
 			this.forceUpdate();
@@ -142,11 +141,11 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 				structure.push({ id: block.id, childrenIds: block.childrenIds });
 			});
 
-			blockStore.set(ROOT_ID, blocks);
-			blockStore.setStructure(ROOT_ID, structure);
-			blockStore.updateStructureParents(ROOT_ID);
-			blockStore.updateNumbers(ROOT_ID); 
-			blockStore.updateMarkup(ROOT_ID);
+			S.Block.set(ROOT_ID, blocks);
+			S.Block.setStructure(ROOT_ID, structure);
+			S.Block.updateStructureParents(ROOT_ID);
+			S.Block.updateNumbers(ROOT_ID); 
+			S.Block.updateMarkup(ROOT_ID);
 
 			this.forceUpdate();
 		});
@@ -155,13 +154,13 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	onSelect () {
 		const { object } = this.state;
 		const node = $(this.node);
-		const templateType = dbStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 		];
 
-		menuStore.open('searchObject', {
+		S.Menu.open('searchObject', {
 			element: node.find('#select'),
 			data: {
 				value: object ? [ object.id ] : [],
@@ -177,8 +176,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onSpaceChange (id: string): void {
-		commonStore.spaceSet(id);
-		UtilData.createSubscriptions();
+		S.Common.spaceSet(id);
+		U.Data.createSubscriptions();
 	};
 
 	getWrapperWidth () {
@@ -187,7 +186,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	onSave () {
-		const { html, tabUrl } = extensionStore;
+		const { html, tabUrl } = S.Extension;
 		const { object } = this.state;
 
 		if (!object) {

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Editable, IconObject } from 'Component';
-import { I, C, keyboard, UtilDate, UtilCommon, Mark, translate, UtilFile } from 'Lib';
-import { authStore, blockStore, menuStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
 
 import ChatButtons from './chat/buttons';
 import ChatMessage from './chat/message';
@@ -109,7 +107,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 								<div key={i} className="file">
 									<IconObject object={{ name: file.name, layout: I.ObjectLayout.File }} />
 									<div className="name">{file.name}</div>
-									<div className="size">{UtilFile.size(file.size)}</div>
+									<div className="size">{U.File.size(file.size)}</div>
 								</div>
 							))}
 						</div>
@@ -209,15 +207,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		e.stopPropagation();
 
 		const { files } = this.state;
-		const { dataset } = this.props;		
-		const { preventCommonDrop } = dataset || {};
 		const node = $(this.node);
 		
 		node.removeClass('isDraggingOver');
-		preventCommonDrop(true);
+		keyboard.disableCommonDrop(true);
 
 		this.setState({ files: files.concat(Array.from(e.dataTransfer.files)) });
-		preventCommonDrop(false);
+		keyboard.disableCommonDrop(false);
 	};
 
 	getBlockId () {
@@ -227,8 +223,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	getMessages () {
 		const { rootId } = this.props;
 		const blockId = this.getBlockId();
-		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
-		const children = blockStore.unwrapTree([ blockStore.wrapTree(rootId, blockId) ]).filter(it => it.isText());
+		const childrenIds = S.Block.getChildrenIds(rootId, blockId);
+		const children = S.Block.unwrapTree([ S.Block.wrapTree(rootId, blockId) ]).filter(it => it.isText());
 		const length = children.length;
 		const slice = length > LIMIT ? children.slice(length - LIMIT, length) : children;
 
@@ -247,10 +243,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		const { rootId } = this.props;
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const { files } = this.state;
 		const blockId = this.getBlockId();
-		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
+		const childrenIds = S.Block.getChildrenIds(rootId, blockId);
 		const length = childrenIds.length;
 		const target = length ? childrenIds[length - 1] : blockId;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.InnerFirst;
@@ -258,7 +254,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const data = {
 			...this.getMarksFromHtml(),
 			identity: account.id,
-			time: UtilDate.now(),
+			time: U.Date.now(),
 			files: [],
 		};
 		
@@ -279,7 +275,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		if (files.length) {
 			let n = 0;
 			for (const file of files) {
-				C.FileUpload(commonStore.space, '', file.path, I.FileType.None, {}, (message: any) => {
+				C.FileUpload(S.Common.space, '', file.path, I.FileType.None, {}, (message: any) => {
 					n++;
 
 					data.files.push(message.objectId);
@@ -366,7 +362,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		let menuParam: any = {
 			element: `#button-${blockId}-${type}`,
 			recalcRect: () => { 
-				const rect = UtilCommon.getSelectionRect();
+				const rect = U.Common.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + $(window).scrollTop() } : null; 
 			},
 			offsetY: 6,
@@ -422,9 +418,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 		};
 
-		if (menuId && !menuStore.isOpen(menuId)) {
-			menuStore.closeAll(Constant.menuIds.context, () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId)) {
+			S.Menu.closeAll(J.Constant.menuIds.context, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};

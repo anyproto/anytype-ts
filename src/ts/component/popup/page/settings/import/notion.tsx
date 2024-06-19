@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Title, Button, Input, Label, Icon, Error } from 'Component';
-import { I, C, translate, analytics } from 'Lib';
-import { commonStore } from 'Store';
+import { I, C, S, translate, analytics } from 'Lib';
 import Head from '../head';
 
 interface State {
@@ -76,7 +75,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 	onImport (): void {
 		const token = this.ref.getValue();
 
-		commonStore.notionTokenSet(token);
+		S.Common.notionTokenSet(token);
 
 		analytics.event('ClickImport', { type: I.ImportType.Notion });
 

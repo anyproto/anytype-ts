@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { I, sidebar } from 'Lib';
-import { menuStore } from 'Store';
+import { I, S, sidebar } from 'Lib';
 
 import FooterAuthIndex from './auth';
 import FooterAuthDisclaimer from './auth/disclaimer';
@@ -53,7 +52,7 @@ class Footer extends React.Component<Props> {
 	};
 
 	onHelp () {
-		menuStore.open('help', {
+		S.Menu.open('help', {
 			element: '#footer #button-help',
 			classNameWrap: 'fixed',
 			vertical: I.MenuDirection.Top,

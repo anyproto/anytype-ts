@@ -2,11 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { ObjectName, IconObject, DropTarget, Cover, MediaAudio, MediaVideo, ObjectCover } from 'Component';
-import { blockStore, menuStore, detailStore, commonStore } from 'Store';
-import { I, UtilObject, keyboard, analytics, UtilSpace, Dataview } from 'Lib';
-
-const Constant = require('json/constant.json');
+import { ObjectName, IconObject, DropTarget, ObjectCover } from 'Component';
+import { I, S, U, J, keyboard, analytics, Dataview } from 'Lib';
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;
@@ -30,11 +27,11 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 	render () {
 		const { subId, id, block, isEditing, hideIcon } = this.props;
 		const rootId = keyboard.getRootId();
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions } = object;
-		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
+		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
-		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const cn = [ 'item' ];
 		const cover = this.getCoverObject();
 
@@ -113,13 +110,13 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		e.preventDefault();
 		e.stopPropagation();
 
-		UtilObject.openEvent(e, this.getObject());
+		U.Object.openEvent(e, this.getObject());
 		analytics.event('OpenSidebarObject');
 	};
 
 	getObject () {
 		const { subId, id, } = this.props;
-		return detailStore.get(subId, id);
+		return S.Detail.get(subId, id);
 	};
 
 	onContext (e: React.MouseEvent) {
@@ -132,7 +129,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 			return;
 		};
 
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 		if (!canWrite) {
 			return;
 		};
@@ -153,7 +150,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 			},
 		};
 
-		menuStore.open('dataviewContext', menuParam);
+		S.Menu.open('dataviewContext', menuParam);
 	};
 
 	getCoverObject (): any {

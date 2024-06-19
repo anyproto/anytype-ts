@@ -3,9 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
-import { I, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate, analytics } from 'Lib';
-import { menuStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, keyboard, Relation, translate } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -59,7 +57,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return null;
 			};
 
-			const type = dbStore.getTypeById(item.type);
+			const type = S.Record.getTypeById(item.type);
 			const name = <ObjectName object={item} />;
 
 			let content = null;
@@ -253,7 +251,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const types = this.getTypes();
 
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -268,12 +266,12 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			this.setState({ isLoading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
@@ -303,7 +301,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { canAdd } = data;
 		const value = Relation.getArrayValue(data.value);
-		const ret = UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
+		const ret = U.Common.objectCopy(this.items).filter(it => !value.includes(it.id));
 		const typeNames = this.getTypeNames();
 
 		if (typeNames) {
@@ -314,7 +312,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			if (ret.length || typeNames) {
 				ret.push({ isDiv: true });
 			};
-			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObjectWithName'), data.filter) });
+			ret.push({ id: 'add', name: U.Common.sprintf(translate('commonCreateObjectWithName'), data.filter) });
 		};
 
 		return ret;
@@ -324,7 +322,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { data } = param;
 
-		return (data.types || []).map(id => dbStore.getTypeById(id)).filter(it => it);
+		return (data.types || []).map(id => S.Record.getTypeById(id)).filter(it => it);
 	};
 
 	getTypeNames (): string {
@@ -344,12 +342,12 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			names.push(`+${more}`);
 		};
 
-		return `${UtilCommon.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
+		return `${U.Common.plural(l, translate('pluralObjectType'))}: ${names.join(', ')}`;
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -387,14 +385,14 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return;
 			};
 
-			let value = UtilCommon.arrayUnique(Relation.getArrayValue(data.value).concat([ id ]));
+			let value = U.Common.arrayUnique(Relation.getArrayValue(data.value).concat([ id ]));
 			if (maxCount) {
 				value = value.slice(value.length - maxCount, value.length);
 			};
 
 			onChange(value, () => {
-				menuStore.updateData(this.props.id, { value });
-				menuStore.updateData(MENU_ID, { value });
+				S.Menu.updateData(this.props.id, { value });
+				S.Menu.updateData(MENU_ID, { value });
 
 				position();
 			});
@@ -403,7 +401,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (item.id == 'add') {
 			const { details, flags } = Relation.getParamForNewObject(filter, relation);
 
-			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', (message: any) => {
+			U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', (message: any) => {
 				cb(message.targetId);
 				close();
 			});
