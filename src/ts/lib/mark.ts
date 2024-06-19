@@ -249,7 +249,7 @@ class Mark {
 	};
 
 	adjust (marks: I.Mark[], from: number, length: number) {
-		marks = UtilCommon.objectCopy(marks || []);
+		marks = U.Common.objectCopy(marks || []);
 
 		for (const mark of marks) {
 			if ((mark.range.from < from) && (mark.range.to > from)) {
