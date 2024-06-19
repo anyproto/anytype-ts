@@ -204,7 +204,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			};
 
 			if (d < 0) {
-				if (S.Common.isSidebarFixed && (w <= J.Constant.size.sidebar.width.close)) {
+				if (S.Common.isSidebarFixed && (w <= J.Size.sidebar.width.close)) {
 					sidebar.close();
 				} else {
 					sidebar.set({ width: w, isClosed: false });
@@ -212,10 +212,10 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			};
 
 			if (d > 0) {
-				if ((w >= 0) && (w <= J.Constant.size.sidebar.width.close)) {
-					sidebar.open(J.Constant.size.sidebar.width.min);
+				if ((w >= 0) && (w <= J.Size.sidebar.width.close)) {
+					sidebar.open(J.Size.sidebar.width.min);
 				} else 
-				if (w > J.Constant.size.sidebar.width.close) {
+				if (w > J.Size.sidebar.width.close) {
 					sidebar.set({ width: w, isClosed: false });
 				};
 			};

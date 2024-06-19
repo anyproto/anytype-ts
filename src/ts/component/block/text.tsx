@@ -122,8 +122,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				
 			case I.TextStyle.Code: {
 				const options: I.Option[] = [];
-				for (const i in J.Constant.codeLang) {
-					options.push({ id: i, name: J.Constant.codeLang[i] });
+				for (const i in J.Lang.code) {
+					options.push({ id: i, name: J.Lang.code[i] });
 				};
 
 				spellcheck = false;
@@ -1107,7 +1107,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				},
 				offsetX: () => {
 					const rect = U.Common.getSelectionRect();
-					return rect ? 0 : J.Constant.size.blockMenu;
+					return rect ? 0 : J.Size.blockMenu;
 				},
 				noFlipX: false,
 				noFlipY: false,
@@ -1153,7 +1153,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			},
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
-				return rect ? 0 : J.Constant.size.blockMenu;
+				return rect ? 0 : J.Size.blockMenu;
 			},
 			data: {
 				noHead: true,

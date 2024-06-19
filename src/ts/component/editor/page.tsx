@@ -487,7 +487,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			if (
 				(pageX >= x) && 
-				(pageX <= x + J.Constant.size.blockMenu) && 
+				(pageX <= x + J.Size.blockMenu) && 
 				(pageY >= offset + BUTTON_OFFSET) && 
 				(pageY <= this.winScrollTop + rectContainer.height + offset + BUTTON_OFFSET)
 			) {
@@ -501,7 +501,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			const buttonX = hoveredRect.x - (rectContainer.x - J.Constant.size.blockMenu) + 2;
+			const buttonX = hoveredRect.x - (rectContainer.x - J.Size.blockMenu) + 2;
 			const buttonY = pageY - rectContainer.y - BUTTON_OFFSET - this.winScrollTop;
 			
 			clear();
@@ -648,7 +648,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				S.Menu.closeAll([ 'blockContext', 'blockAdd' ], () => {
 					S.Menu.open('blockAction', { 
 						element: `#block-${ids[0]}`,
-						offsetX: J.Constant.size.blockMenu,
+						offsetX: J.Size.blockMenu,
 						data: {
 							blockId: ids[0],
 							blockIds: ids,
@@ -814,7 +814,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			S.Menu.close('blockContext', () => {
 				S.Menu.open('blockAction', { 
 					element: `#block-${block.id}`,
-					offsetX: J.Constant.size.blockMenu,
+					offsetX: J.Size.blockMenu,
 					data: {
 						blockId: block.id,
 						blockIds: U.Data.selectionGet(block.id, true, true),
@@ -1600,14 +1600,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		S.Menu.open('blockAdd', { 
 			element: $(`#block-${blockId}`),
-			subIds: J.Constant.menuIds.add,
+			subIds: J.Menu.add,
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
-				return rect ? 0 : J.Constant.size.blockMenu;
+				return rect ? 0 : J.Size.blockMenu;
 			},
 			commonFilter: true,
 			onClose: () => {
@@ -1790,7 +1790,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			},
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
-				return rect ? 0 : J.Constant.size.blockMenu;
+				return rect ? 0 : J.Size.blockMenu;
 			},
 			onOpen: () => {
 				if (block) {
@@ -2157,7 +2157,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				const ch = scrollContainer.height();
 				const height = Math.max(ch / 2, ch - blocks.outerHeight() - blocks.offset().top - ct - 2);
 
-				last.css({ height: Math.max(J.Constant.size.lastBlock, height) });
+				last.css({ height: Math.max(J.Size.lastBlock, height) });
 			};
 
 			if (note.length) {

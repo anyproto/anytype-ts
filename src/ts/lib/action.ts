@@ -365,7 +365,7 @@ class Action {
 		const { mode, path } = networkConfig;
 
 		this.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], dataPath, U.Common.rand(1, J.Constant.iconCnt), (message: any) => {
+			C.AccountRecoverFromLegacyExport(paths[0], dataPath, U.Common.rand(1, J.Constant.count.icon), (message: any) => {
 				if (onError(message.error)) {
 					return;
 				};

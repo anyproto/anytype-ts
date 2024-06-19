@@ -121,7 +121,7 @@ const Group = observer(class Group extends React.Component<Props> {
 			subId,
 			filters: filters.map(it => Dataview.filterMapper(view, it)),
 			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
-			keys: J.Constant.sidebarRelationKeys,
+			keys: J.Relation.sidebar,
 			sources: object.setOf || [],
 			limit,
 			ignoreHidden: true,

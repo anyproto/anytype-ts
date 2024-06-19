@@ -840,7 +840,7 @@ class Keyboard {
 			S.Menu.open(id, menuParam);
 		} else {
 			S.Popup.close('search', () => {
-				S.Menu.closeAll(J.Constant.menuIds.navigation, () => {
+				S.Menu.closeAll(J.Menu.navigation, () => {
 					S.Menu.open(id, menuParam);
 				});
 			});

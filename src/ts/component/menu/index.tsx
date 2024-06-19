@@ -463,7 +463,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
-		const { border } = J.Constant.size.menu;
+		const { border } = J.Size.menu;
 		const borderTop = this.getBorderTop();
 		const borderBottom = this.getBorderBottom();
 
@@ -975,7 +975,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		const node = $(this.node);
 		const menu = node.find('.menu');
-		const { border } = J.Constant.size.menu;
+		const { border } = J.Size.menu;
 		
 		menu.find('.item.hover').removeClass('hover');
 

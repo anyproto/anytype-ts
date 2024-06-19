@@ -179,7 +179,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 
 	componentWillUnmount () {
 		this.unbind();
-		S.Menu.closeAll(J.Constant.menuIds.cell);
+		S.Menu.closeAll(J.Menu.cell);
 	};
 
 	rebind () {

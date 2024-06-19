@@ -589,7 +589,7 @@ class UtilMenu {
 		const ret: any[] = [];
 		const Locale = require('lib/json/locale.json');
 
-		for (const id of J.Constant.enabledInterfaceLang) {
+		for (const id of J.Lang.enabled) {
 			ret.push({ id, name: Locale[id] });
 		};
 
@@ -600,7 +600,7 @@ class UtilMenu {
 		let ret: any[] = [];
 
 		ret = ret.concat(S.Common.languages || []);
-		ret = ret.map(id => ({ id, name: J.Constant.spellingLang[id] }));
+		ret = ret.map(id => ({ id, name: J.Lang.spelling[id] }));
 		ret.unshift({ id: '', name: translate('commonDisabled') });
 
 		return ret;

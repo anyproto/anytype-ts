@@ -451,7 +451,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			S.Menu.open('select', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
 				offsetY: 8,
-				subIds: J.Constant.menuIds.featuredType,
+				subIds: J.Menu.featuredType,
 				onOpen: (context: any) => {
 					this.menuContext = context;
 				},
@@ -490,7 +490,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block } = this.props;
 
 		if (!item.arrow) {
-			S.Menu.closeAll(J.Constant.menuIds.featuredType);
+			S.Menu.closeAll(J.Menu.featuredType);
 			return;
 		};
 
@@ -564,7 +564,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			if (S.Menu.isOpen(menuId)) {
 				S.Menu.open(menuId, menuParam);
 			} else {
-				S.Menu.closeAll(J.Constant.menuIds.featuredType, () => {
+				S.Menu.closeAll(J.Menu.featuredType, () => {
 					S.Menu.open(menuId, menuParam);
 				});
 			};
@@ -753,7 +753,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					horizontal: I.MenuDirection.Right,
 					noFlipY: true,
 					noAnimation: true,
-					subIds: J.Constant.menuIds.cell,
+					subIds: J.Menu.cell,
 					onOpen: (component: any) => {
 						if (component && component.ref) {
 							component.ref.onCellClick(e, relationKey);
@@ -826,7 +826,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		menuParam = Object.assign(menuParam, param);
 		menuParam.data = Object.assign(menuParam.data, data);
 
-		S.Menu.closeAll(J.Constant.menuIds.cell, () => {
+		S.Menu.closeAll(J.Menu.cell, () => {
 			S.Menu.open(menuId, menuParam);
 		});
 	};

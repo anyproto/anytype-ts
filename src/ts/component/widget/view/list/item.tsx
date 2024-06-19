@@ -32,7 +32,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	render () {
 		const { subId, id, block, style, isCompact, isEditing, index, isPreview, isSection } = this.props;
 		const rootId = keyboard.getRootId();
-		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Relation.sidebar);
 		const { isReadonly, isArchived, restrictions, source } = object;
 		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
@@ -160,7 +160,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		e.stopPropagation();
 
 		const { subId, id, } = this.props;
-		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Relation.sidebar);
 
 		U.Object.openEvent(e, object);
 		analytics.event('OpenSidebarObject');

@@ -57,7 +57,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 			};
 		} else 
 		if (objectId) {
-			element = <img src={S.Common.imageUrl(objectId, J.Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={e => e.preventDefault()} />;
+			element = <img src={S.Common.imageUrl(objectId, J.Size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={e => e.preventDefault()} />;
 		} else 
 		if (iconClass) {
 			element = <img src={IconSrc[iconClass]} className={[ 'iconCommon', iconClass, 'c' + size ].join(' ')} />;

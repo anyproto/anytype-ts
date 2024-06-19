@@ -8,6 +8,10 @@ import Latex from './latex';
 import Route from './route';
 import Theme from './theme';
 import Url from './url';
+import Lang from './lang';
+import Relation from './relation';
+import Menu from './menu';
+import Size from './size';
 
 export {
 	Color,
@@ -20,4 +24,8 @@ export {
 	Route,
 	Theme,
 	Url,
+	Lang,
+	Relation,
+	Menu,
+	Size,
 };

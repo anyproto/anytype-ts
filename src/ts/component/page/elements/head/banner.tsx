@@ -108,7 +108,7 @@ class HeaderBanner extends React.Component<Props> {
 			element: node,
 			className: 'fromBanner',
 			offsetY: isPopup ? 10 : 0,
-			subIds: J.Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
+			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			onOpen: (context) => {

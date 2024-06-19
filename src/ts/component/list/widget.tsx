@@ -209,7 +209,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			offsetY: -2,
-			subIds: J.Constant.menuIds.widget,
+			subIds: J.Menu.widget,
 			vertical: I.MenuDirection.Top,
 			data: {
 				setEditing: this.setEditing,

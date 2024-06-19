@@ -249,7 +249,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { data } = param;
 		const { isPopup } = data;
 		const scrollContainer = this.getScrollContainer();
-		const offset = J.Constant.size.lastBlock + U.Common.sizeHeader();
+		const offset = J.Size.lastBlock + U.Common.sizeHeader();
 		const tag = Mark.getTag(I.MarkType.Search);
 
 		this.container.find(`${tag}.active`).removeClass('active');

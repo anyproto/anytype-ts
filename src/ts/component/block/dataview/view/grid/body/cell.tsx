@@ -37,7 +37,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		const idPrefix = getIdPrefix();
 		const id = Relation.cellId(idPrefix, relationKey, record.id);
 		const width = Relation.width(this.props.width, relation.format);
-		const size = J.Constant.size.dataview.cell;
+		const size = J.Size.dataview.cell;
 		const subId = S.Record.getSubId(rootId, block.id);
 		const canEdit = canCellEdit(relation, record);
 
@@ -77,7 +77,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 					viewType={I.ViewType.Grid}
 					idPrefix={idPrefix}
 					onCellChange={onCellChange}
-					maxWidth={J.Constant.size.dataview.cell.edit}
+					maxWidth={J.Size.dataview.cell.edit}
 				/>
 				{iconEdit}
 			</div>

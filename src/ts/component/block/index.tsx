@@ -519,7 +519,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		const menuParam: Partial<I.MenuParam> = Object.assign({
 			noFlipX: true,
-			subIds: J.Constant.menuIds.action,
+			subIds: J.Menu.action,
 			onClose: () => {
 				selection?.clear();
 				focus.apply();
@@ -551,7 +551,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const win = $(window);
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
-		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + J.Constant.size.blockMenu ;
+		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + J.Size.blockMenu ;
 		const add = $('#button-block-add');
 		
 		selection?.clear();
@@ -659,7 +659,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const width = getWrapperWidth();
 		const dw = 1 / childrenIds.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
-		const offset = J.Constant.size.blockMenu * 2;
+		const offset = J.Size.blockMenu * 2;
 		
 		x = Math.max(offset, x);
 		x = Math.min(sum * width - offset, x);
@@ -682,7 +682,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		const sm = J.Constant.size.blockMenu;
+		const sm = J.Size.blockMenu;
 		const node = $(this.node);
 		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;

@@ -474,7 +474,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			rect: { width: 0, height: 0, x: x + 4, y },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			subIds: J.Constant.menuIds.widget,
+			subIds: J.Menu.widget,
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
 			data: {
@@ -535,7 +535,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				node.removeClass('isClosed');
 				wrapper.css({ height: 'auto' });
 			};
-		}, 450);
+		}, J.Constant.delay.widget);
 	};
 
 	close () {
@@ -563,7 +563,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				wrapper.css({ height: '' });
 				innerWrap.hide();
 			};
-		}, 450);
+		}, J.Constant.delay.widget);
 	};
 
 	getMinHeight () {
@@ -628,7 +628,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			filters,
 			sorts,
 			limit,
-			keys: J.Constant.sidebarRelationKeys,
+			keys: J.Relation.sidebar,
 		}, () => {
 			if (callBack) {
 				callBack();

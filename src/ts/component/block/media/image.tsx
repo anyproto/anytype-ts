@@ -65,7 +65,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 					<div id="wrap" className="wrap" style={css}>
 						<img 
 							className="mediaImage" 
-							src={S.Common.imageUrl(targetObjectId, J.Constant.size.image)} 
+							src={S.Common.imageUrl(targetObjectId, J.Size.image)} 
 							onDragStart={e => e.preventDefault()} 
 							onClick={this.onClick} 
 							onLoad={this.onLoad} 
@@ -219,7 +219,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	
 	onClick (e: any) {
 		if (!keyboard.withCommand(e)) {
-			const src = S.Common.imageUrl(this.props.block.content.targetObjectId, J.Constant.size.image);
+			const src = S.Common.imageUrl(this.props.block.content.targetObjectId, J.Size.image);
 
 			S.Popup.open('preview', { data: { src, type: I.FileType.Image } });
 		};

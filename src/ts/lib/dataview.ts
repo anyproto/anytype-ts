@@ -68,7 +68,7 @@ class Dataview {
 			const rel: any = view.getRelation(relationKey) || {};
 
 			rel.relationKey = relationKey;
-			rel.width = rel.width || J.Constant.size.dataview.cell.default;
+			rel.width = rel.width || J.Size.dataview.cell.default;
 			rel.isVisible = true;
 
 			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, rel, (message: any) => {
@@ -98,7 +98,7 @@ class Dataview {
 			rootId: '',
 			blockId: '',
 			newViewId: '',
-			keys: J.Constant.defaultRelationKeys,
+			keys: J.Relation.default,
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
@@ -517,7 +517,7 @@ class Dataview {
 		];
 
 		let ret = null;
-		if (relationKey == J.Constant.pageCoverRelationKey) {
+		if (relationKey == J.Relation.pageCover) {
 			ret = object;
 		} else {
 			for (const id of value) {

@@ -209,7 +209,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 	componentWillUnmount () {
 		this.unbind();
-		S.Menu.closeAll(J.Constant.menuIds.cell);
+		S.Menu.closeAll(J.Menu.cell);
 	};
 
 	rebind () {

@@ -26,7 +26,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 	render () {
 		const { subId, id, block, isEditing, hideIcon } = this.props;
 		const rootId = keyboard.getRootId();
-		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Relation.sidebar);
 		const { isReadonly, isArchived, restrictions } = object;
 		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const iconKey = `widget-icon-${block.id}-${id}`;
@@ -99,7 +99,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		e.stopPropagation();
 
 		const { subId, id, } = this.props;
-		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Relation.sidebar);
 
 		U.Object.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
@@ -125,7 +125,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 			subId, 
 			objectId: id, 
 			data: {
-				relationKeys: J.Constant.defaultRelationKeys.concat(view.groupRelationKey),
+				relationKeys: J.Relation.default.concat(view.groupRelationKey),
 			},
 		});
 	};
