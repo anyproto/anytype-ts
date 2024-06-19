@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Label } from 'Component';
-import { I, UtilCommon, translate } from 'Lib';
+import { I, U, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 const CellCheckbox = observer(class CellCheckbox extends React.Component<I.Cell> {
@@ -28,7 +28,7 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<I.Cell>
 
 		let label = '';
 		if (withLabel) {
-			label = UtilCommon.sprintf(translate(`relationCheckboxLabel${Number(value)}`), relation.name);
+			label = U.Common.sprintf(translate(`relationCheckboxLabel${Number(value)}`), relation.name);
 		} else
 		if (withName) {
 			label = relation.name;

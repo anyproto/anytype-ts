@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, IconObject, Header, Footer, Icon } from 'Component';
-import { I, UtilMenu, UtilSpace, translate } from 'Lib';
+import { I, U, translate } from 'Lib';
 
 const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.PageComponent> {
 
@@ -14,8 +14,8 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	render () {
-		const space = UtilSpace.getSpaceview();
-		const home = UtilSpace.getDashboard();
+		const space = U.Space.getSpaceview();
+		const home = U.Space.getDashboard();
 
 		return (
 			<div 
@@ -58,7 +58,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	onDashboard () {
-		UtilMenu.dashboardSelect('.pageMainEmpty #empty-dashboard-select', true);
+		U.Menu.dashboardSelect('.pageMainEmpty #empty-dashboard-select', true);
 	};
 
 });

@@ -2,10 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
-import { C, I, M, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
-import { blockStore, menuStore, detailStore, commonStore } from 'Store';
-
-const Constant = require('json/constant.json');
+import { I, C, M, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 type State = {
 	isEditing: boolean;
@@ -42,14 +39,14 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
-		const { widgets } = blockStore;
+		const { widgets } = S.Block;
 		const cn = [ 'listWidget' ];
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		let content = null;
 
 		if (previewId) {
-			const block = blockStore.getLeaf(widgets, previewId);
+			const block = S.Block.getLeaf(widgets, previewId);
 
 			if (block) {
 				cn.push('isListPreview');
@@ -66,24 +63,24 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			};
 		} else {
 			const buttons: I.ButtonComponent[] = [];
-			const blocks = blockStore.getChildren(widgets, widgets, (block: I.Block) => {
-				const childrenIds = blockStore.getChildrenIds(widgets, block.id);
+			const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
+				const childrenIds = S.Block.getChildrenIds(widgets, block.id);
 				if (!childrenIds.length) {
 					return false;
 				};
 
-				const child = blockStore.getLeaf(widgets, childrenIds[0]);
+				const child = S.Block.getLeaf(widgets, childrenIds[0]);
 				if (!child) {
 					return false;
 				};
 
 				const target = child.content.targetBlockId;
 
-				if (Object.values(Constant.widgetId).includes(target)) {
+				if (Object.values(J.Constant.widgetId).includes(target)) {
 					return true;
 				};
 
-				const object = detailStore.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
+				const object = S.Detail.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
 				if (object._empty_ || object.isArchived || object.isDeleted) {
 					return false;
 				};
@@ -104,7 +101,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			};
 
 			if (isEditing) {
-				if (blocks.length <= Constant.limit.widgets) {
+				if (blocks.length <= J.Constant.limit.widgets) {
 					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onMouseDown: this.onAdd });
 				};
 
@@ -119,7 +116,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 					<DropTarget 
 						{...this.props} 
 						isTargetTop={true}
-						rootId={blockStore.widgets} 
+						rootId={S.Block.widgets} 
 						id={first?.id}
 						dropType={I.DropType.Widget} 
 						canDropMiddle={false}
@@ -152,7 +149,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 					<DropTarget 
 						{...this.props} 
 						isTargetBottom={true}
-						rootId={blockStore.widgets} 
+						rootId={S.Block.widgets} 
 						id={last?.id}
 						dropType={I.DropType.Widget} 
 						canDropMiddle={false}
@@ -207,12 +204,12 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	onAdd (e: any): void {
 		e.stopPropagation();
 
-		menuStore.open('widget', {
+		S.Menu.open('widget', {
 			element: '#widget-list-add',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			offsetY: -2,
-			subIds: Constant.menuIds.widget,
+			subIds: J.Constant.menuIds.widget,
 			vertical: I.MenuDirection.Top,
 			data: {
 				setEditing: this.setEditing,
@@ -223,7 +220,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	onDragStart (e: React.DragEvent, blockId: string): void {
 		e.stopPropagation();
 
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		const obj = node.find(`#widget-${blockId}`);
@@ -286,7 +283,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 		e.stopPropagation();
 
-		const { widgets } = blockStore;
+		const { widgets } = S.Block;
 		const blockId = e.dataTransfer.getData('text');
 
 		if (blockId != this.dropTargetId) {
@@ -305,7 +302,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 		const { isEditing } = this.state;
 
 		if (!isEditing && !e.button) {
-			UtilObject.openEvent(e, { layout: I.ObjectLayout.Store });
+			U.Object.openEvent(e, { layout: I.ObjectLayout.Store });
 		};
 	};
 
@@ -313,29 +310,29 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 		const { isEditing } = this.state;
 
 		if (!isEditing && !e.button) {
-			UtilObject.openEvent(e, { layout: I.ObjectLayout.Archive });
+			U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
 		};
 	};
 
 	onContextMenu () {
 		const { previewId } = this.state;
-		if (previewId || !UtilSpace.canMyParticipantWrite()) {
+		if (previewId || !U.Space.canMyParticipantWrite()) {
 			return;
 		};
 
 		const win = $(window);
-		const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
+		const widgetIds = S.Block.getChildrenIds(S.Block.widgets, S.Block.widgets);
 		const options: any[] = [
 			{ id: 'edit', name: translate('widgetEdit') },
 		];
 
-		if (widgetIds.length < Constant.limit.widgets) {
+		if (widgetIds.length < J.Constant.limit.widgets) {
 			options.unshift({ id: 'add', name: translate('widgetAdd'), arrow: true });
 		};
 
 		let menuContext = null;
 
-		menuStore.open('selectList', {
+		S.Menu.open('selectList', {
 			component: 'select',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -355,13 +352,13 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 					};
 
 					if (!item.arrow) {
-						menuStore.close('widget');
+						S.Menu.close('widget');
 						return;
 					};
 
 					const { x, y } = keyboard.mouse.page;
 
-					menuStore.open('widget', {
+					S.Menu.open('widget', {
 						element: `#${menuContext.getId()} #item-${item.id}`,
 						offsetX: menuContext.getSize().width,
 						isSub: true,
@@ -438,7 +435,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			win.on('keydown.sidebar', e => {
 				keyboard.shortcut('escape', e, () => close(e));
 			});
-		}, menuStore.getTimeout());
+		}, S.Menu.getTimeout());
 	};
 
 });

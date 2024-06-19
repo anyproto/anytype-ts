@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, ListObjectManager } from 'Component';
-import { I, translate, Action } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, J, translate, Action } from 'Lib';
 import Head from '../head';
 
 const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageManager extends React.Component<I.PopupSettings, {}> {
@@ -33,7 +32,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 
                 <ListObjectManager
                     ref={ref => this.refManager = ref}
-                    subId={Constant.subId.files}
+                    subId={J.Constant.subId.files}
                     rowLength={2}
                     withArchived={true}
                     buttons={buttons}

@@ -2,8 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
-import { I, C, Relation, analytics, keyboard, translate } from 'Lib';
-import { menuStore } from 'Store';
+import { I, C, S, Relation, analytics, keyboard, translate } from 'Lib';
 
 const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	
@@ -99,7 +98,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { getId, getSize } = this.props;
 		const value = this.getValue();
 
-		menuStore.open('searchObject', { 
+		S.Menu.open('searchObject', { 
 			element: `#${getId()} #item-add`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
@@ -144,7 +143,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			return;
 		};
 
-		menuStore.open('typeSuggest', {
+		S.Menu.open('typeSuggest', {
 			element: `#${getId()} #item-${item.itemId}`,
 			offsetX: getSize().width,
 			offsetY: -56,

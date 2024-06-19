@@ -1,6 +1,5 @@
-import { UtilCommon, translate } from 'Lib';
+import { U, J, translate } from 'Lib';
 import { init } from 'emoji-mart';
-const data = require('json/emoji.json');
 
 const DIV = 65039;
 const CAP = 8419;
@@ -9,25 +8,23 @@ class UtilSmile {
 
 	icons: any[] = [];
 	cache: any = {};
-	data: any = {};
 	aliases: any = {};
 
-	constructor () {
-		init({ data });
+	init () {
+		init({ data: J.Emoji });
 
-		this.data = data;
-		this.icons = Object.keys(this.data.emojis);
+		this.icons = Object.keys(J.Emoji.emojis);
 
-		for (const id in this.data.emojis) {
-			const item = this.data.emojis[id];
+		for (const id in J.Emoji.emojis) {
+			const item = J.Emoji.emojis[id];
 
 			for (const skin of item.skins) {
 				this.cache[skin.native] = skin.shortcodes;
 			};
 		};
 
-		for (const k in this.data.aliases) {
-			this.aliases[this.data.aliases[k]] = k;
+		for (const k in J.Emoji.aliases) {
+			this.aliases[J.Emoji.aliases[k]] = k;
 		};
 	};
 
@@ -36,7 +33,7 @@ class UtilSmile {
 			return '';
 		};
 
-		const item = this.data.emojis[id];
+		const item = J.Emoji.emojis[id];
 		if (!item) {
 			return '';
 		};
@@ -56,8 +53,8 @@ class UtilSmile {
 
 	randomParam (): { id: string, skin: number } {
 		return { 
-			id: this.icons[UtilCommon.rand(0, this.icons.length - 1)], 
-			skin: UtilCommon.rand(1, 6) 
+			id: this.icons[U.Common.rand(0, this.icons.length - 1)], 
+			skin: U.Common.rand(1, 6) 
 		};
 	};
 	
@@ -73,8 +70,8 @@ class UtilSmile {
 
 		const parts = String(colons || '').split('::');
 		const id = String(parts[0] || '').replace(/:/g, '');
-		const prefix = UtilCommon.getGlobalConfig().emojiUrl || './img/emoji/';
-		const item = this.data.emojis[id];
+		const prefix = U.Common.getGlobalConfig().emojiUrl || './img/emoji/';
+		const item = J.Emoji.emojis[id];
 
 		if (!item) {
 			return '';
@@ -138,9 +135,9 @@ class UtilSmile {
 	};
 
 	getCategories () {
-		return this.data.categories.filter(it => it.id != 'frequent').map(it => ({
+		return J.Emoji.categories.filter(it => it.id != 'frequent').map(it => ({
 			...it,
-			name: translate(UtilCommon.toCamelCase(`emojiCategory-${it.id}`)),
+			name: translate(U.Common.toCamelCase(`emojiCategory-${it.id}`)),
 		}));
 	};
 

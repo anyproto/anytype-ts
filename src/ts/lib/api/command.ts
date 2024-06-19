@@ -1,11 +1,8 @@
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
-import { detailStore } from 'Store';
-import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
+import { I, S, U, J, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
 
-const Constant = require('json/constant.json');
-
-const Rpc = Commands.Rpc;
+const { Rpc, Empty } = Commands;
 
 export const MetricsSetParameters = (platform: I.Platform, version: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Metrics.SetParameters.Request();
@@ -35,7 +32,7 @@ export const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 // ---------------------- GALLERY ---------------------- //
 
 export const GalleryDownloadIndex = (callBack?: (message: any) => void) => {
-	dispatcher.request(GalleryDownloadIndex.name, new Commands.Empty(), callBack);
+	dispatcher.request(GalleryDownloadIndex.name, new Empty(), callBack);
 };
 
 export const GalleryDownloadManifest = (url: string, callBack?: (message: any) => void) => {
@@ -49,11 +46,11 @@ export const GalleryDownloadManifest = (url: string, callBack?: (message: any) =
 // ---------------------- APP ---------------------- //
 
 export const AppShutdown = (callBack?: (message: any) => void) => {
-	dispatcher.request(AppShutdown.name, new Commands.Empty(), callBack);
+	dispatcher.request(AppShutdown.name, new Empty(), callBack);
 };
 
 export const AppGetVersion = (callBack?: (message: any) => void) => {
-	dispatcher.request(AppGetVersion.name, new Commands.Empty(), callBack);
+	dispatcher.request(AppGetVersion.name, new Empty(), callBack);
 };
 
 // ---------------------- WALLET ---------------------- //
@@ -201,11 +198,11 @@ export const AccountStop = (removeData: boolean, callBack?: (message: any) => vo
 };
 
 export const AccountDelete = (callBack?: (message: any) => void) => {
-	dispatcher.request(AccountDelete.name, new Commands.Empty(), callBack);
+	dispatcher.request(AccountDelete.name, new Empty(), callBack);
 };
 
 export const AccountRevertDeletion = (callBack?: (message: any) => void) => {
-	dispatcher.request(AccountRevertDeletion.name, new Commands.Empty(), callBack);
+	dispatcher.request(AccountRevertDeletion.name, new Empty(), callBack);
 };
 
 export const AccountRecoverFromLegacyExport = (path: string, rootPath: string, icon: number, callBack?: (message: any) => void) => {
@@ -284,7 +281,7 @@ export const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (m
 
 
 export const FileNodeUsage = (callBack?: (message: any) => void) => {
-	dispatcher.request(FileNodeUsage.name, new Commands.Empty(), callBack);
+	dispatcher.request(FileNodeUsage.name, new Empty(), callBack);
 };
 
 export const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
@@ -385,7 +382,7 @@ export const BlockTextSetText = (contextId: string, blockId: string, text: strin
 	text = text.replace(/&lt;/g, '<');
 	text = text.replace(/&gt;/g, '>');
 
-	marks = UtilCommon.objectCopy(marks);
+	marks = U.Common.objectCopy(marks);
 	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark) as any;
 
 	const request = new Rpc.BlockText.SetText.Request();
@@ -486,7 +483,7 @@ export const BlockUpload = (contextId: string, blockId: string, url: string, pat
 };
 
 export const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
-	blocks = UtilCommon.objectCopy(blocks);
+	blocks = U.Common.objectCopy(blocks);
 
 	const request = new Rpc.Block.Copy.Request();
 
@@ -498,7 +495,7 @@ export const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRan
 };
 
 export const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
-	blocks = UtilCommon.objectCopy(blocks);
+	blocks = U.Common.objectCopy(blocks);
 
 	const request = new Rpc.Block.Cut.Request();
 
@@ -510,7 +507,7 @@ export const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRang
 };
 
 export const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, url: string, callBack?: (message: any) => void) => {
-	data = UtilCommon.objectCopy(data);
+	data = U.Common.objectCopy(data);
 
 	const request = new Rpc.Block.Paste.Request();
 
@@ -1225,7 +1222,7 @@ export const ObjectCreate = (details: any, flags: I.ObjectFlag[], templateId: st
 	request.setInternalflagsList(flags.map(Mapper.To.InternalFlag));
 	request.setTemplateid(templateId);
 	request.setSpaceid(spaceId);
-	request.setObjecttypeuniquekey(typeKey || Constant.default.typeKey);
+	request.setObjecttypeuniquekey(typeKey || J.Constant.default.typeKey);
 
 	dispatcher.request(ObjectCreate.name, request, callBack);
 };
@@ -1323,8 +1320,8 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 		};
 
 		// Save last opened object
-		const object = detailStore.get(objectId, objectId, []);
-		const windowId = UtilCommon.getCurrentElectronWindowId();
+		const object = S.Detail.get(objectId, objectId, []);
+		const windowId = U.Common.getCurrentElectronWindowId();
 
 		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
 			Storage.setLastOpened(windowId, { id: object.id, layout: object.layout, spaceId: object.spaceId });
@@ -1547,7 +1544,7 @@ export const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts:
 	request.setSortsList(sorts.map(Mapper.To.Sort));
 	request.setOffset(offset);
 	request.setLimit(limit);
-	request.setKeysList(UtilCommon.arrayUnique(keys));
+	request.setKeysList(U.Common.arrayUnique(keys));
 	request.setSourceList(sources);
 	request.setIgnoreworkspace(ignoreWorkspace as any);
 	request.setAfterid(afterId);
@@ -1950,7 +1947,7 @@ export const MembershipRegisterPaymentRequest = (tier: I.TierType, method: I.Pay
 };
 
 export const MembershipGetPortalLinkUrl = (callBack?: (message: any) => void) => {
-	const request = new Commands.Empty();
+	const request = new Empty();
 	dispatcher.request(MembershipGetPortalLinkUrl.name, request, callBack);
 };
 
@@ -2104,4 +2101,10 @@ export const BroadcastPayloadEvent = (payload: any, callBack?: (message: any) =>
 	request.setPayload(JSON.stringify(payload, null, 3));
 
 	dispatcher.request(BroadcastPayloadEvent.name, request, callBack);
+};
+
+// ---------------------- DEVICES ---------------------- //
+
+export const DeviceList = (callBack?: (message: any) => void) => {
+	dispatcher.request(DeviceList.name, new Commands.Empty(), callBack);
 };

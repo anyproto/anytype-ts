@@ -1,4 +1,4 @@
-{
+export default {
     "gradientIcons": {
         "common": {
             "steps": { "from": 0.2292, "to": 1 }
@@ -22,4 +22,4 @@
             { "colors": { "from": "#4d7aff", "to":  "#f6eb7d" } }
         ]
     }
-}
+};

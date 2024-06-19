@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, UtilData, translate } from 'Lib';
-import { commonStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, translate } from 'Lib';
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
@@ -45,14 +43,14 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				rootId: this.rootId,
 				blockId: this.rootId,
 				blockIds: [ this.rootId ],
-				filters: UtilData.graphFilters(),
-				filter: commonStore.getGraph(Constant.graphId.global).filter,
+				filters: U.Data.graphFilters(),
+				filter: S.Common.getGraph(J.Constant.graphId.global).filter,
 				canAdd: true,
 				onSelect: (item: any) => {
 					$(window).trigger('updateGraphRoot', { id: item.id });
 				},
 				onFilterChange: (v: string) => {
-					commonStore.graphSet(Constant.graphId.global, { filter: v });
+					S.Common.graphSet(J.Constant.graphId.global, { filter: v });
 				},
 			}
 		});
@@ -66,7 +64,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				allowLocal: true,
-				storageKey: Constant.graphId.global,
+				storageKey: J.Constant.graphId.global,
 			}
 		});
 	};

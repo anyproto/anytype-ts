@@ -1,24 +1,14 @@
-import * as I from 'Interface';
-import * as M from 'Model';
-import Renderer from './renderer';
+import * as J from 'json';			 // JSON
+import * as I from 'Interface';		 // Interfaces
+import * as M from 'Model';			 // Models
+import * as U from './util';		 // Utils
+import * as C from './api/command';	 // Commands
+import * as S from 'Store';			 // Stores
 
-import * as C from './api/command';
+import Renderer from './renderer';
 import { dispatcher } from './api/dispatcher';
 import { Mapper } from './api/mapper';
 import { Encode, Decode } from './api/struct';
-
-import UtilCommon from './util/common';
-import UtilData from './util/data';
-import UtilSmile from './util/smile';
-import UtilFile from './util/file';
-import UtilObject from './util/object';
-import UtilSpace from './util/space';
-import UtilMenu from './util/menu';
-import UtilRouter from './util/router';
-import UtilDate from './util/date';
-import UtilGraph from './util/graph';
-import UtilEmbed from './util/embed';
-
 import { keyboard, Key } from './keyboard';
 import { sidebar } from './sidebar';
 import Storage from './storage';
@@ -38,6 +28,12 @@ import Animation from './animation';
 import { translate } from './translate';
 
 export {
+	I,
+	C,
+	M,
+	S,
+	U,
+	J,
 	keyboard,
 	sidebar,
 	focus,
@@ -46,9 +42,6 @@ export {
 	Mark,
 	Relation,
 	Dataview,
-	I,
-	C,
-	M,
 	translate,
 	dispatcher,
 	Mapper,
@@ -64,16 +57,4 @@ export {
 	Preview,
 	Highlight,
 	Animation,
-
-	UtilCommon,
-	UtilData,
-	UtilSmile,
-	UtilFile,
-	UtilObject,
-	UtilSpace,
-	UtilMenu,
-	UtilRouter,
-	UtilDate,
-	UtilEmbed,
-	UtilGraph,
 };

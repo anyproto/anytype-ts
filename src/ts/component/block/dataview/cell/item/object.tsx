@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
-import { I, UtilObject } from 'Lib';
-import { blockStore } from 'Store';
+import { I, S } from 'Lib';
 
 interface Props {
 	cellId: string;
@@ -29,7 +28,7 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 		const cn = [ 'element' ];
 		const object = this.getObject();
 		const { done, isReadonly, isArchived } = object;
-		const allowedDetails = blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+		const allowedDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 
 		let iconObject = null;
 		let iconRemove = null;

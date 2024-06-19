@@ -1,7 +1,5 @@
-import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
 import * as Sentry from '@sentry/browser';
+import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding } from 'Lib';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -68,7 +66,7 @@ class UtilData {
 	blockClass (block: any) {
 		const { content } = block;
 		const { style, type, processor } = content;
-		const dc = UtilCommon.toCamelCase(`block-${block.type}`);
+		const dc = U.Common.toCamelCase(`block-${block.type}`);
 		const c = [];
 
 		switch (block.type) {
@@ -102,7 +100,7 @@ class UtilData {
 	layoutClass (id: string, layout: I.ObjectLayout) {
 		let c = '';
 		switch (layout) {
-			default: c = UtilCommon.toCamelCase(`is-${I.ObjectLayout[layout]}`); break;
+			default: c = U.Common.toCamelCase(`is-${I.ObjectLayout[layout]}`); break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 		};
 		return c;
@@ -116,18 +114,6 @@ class UtilData {
 	cardSizeClass (v: I.CardSize) {
 		v = v || I.CardSize.Small;
 		return String(I.CardSize[v]).toLowerCase();
-	};
-
-	threadColor (s: I.ThreadStatus) {
-		let c = '';
-		switch (s) {
-			default: c = ''; break;
-			case I.ThreadStatus.Syncing: c = 'orange'; break;
-			case I.ThreadStatus.Failed: 
-			case I.ThreadStatus.Incompatible: c = 'red'; break;
-			case I.ThreadStatus.Synced: c = 'green'; break;
-		};
-		return c;
 	};
 
 	diffClass (t: I.DiffType): string {
@@ -155,7 +141,7 @@ class UtilData {
 	Used to click and set selection automatically in block menu for example
 	*/
 	selectionGet (id: string, withChildren: boolean, save: boolean): string[] {
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		
 		if (!selection) {
 			return [];
@@ -175,13 +161,13 @@ class UtilData {
 	};
 
 	onInfo (info: I.AccountInfo) {
-		blockStore.rootSet(info.homeObjectId);
-		blockStore.widgetsSet(info.widgetsId);
-		blockStore.profileSet(info.profileObjectId);
-		blockStore.spaceviewSet(info.spaceViewId);
+		S.Block.rootSet(info.homeObjectId);
+		S.Block.widgetsSet(info.widgetsId);
+		S.Block.profileSet(info.profileObjectId);
+		S.Block.spaceviewSet(info.spaceViewId);
 
-		commonStore.gatewaySet(info.gatewayUrl);
-		commonStore.spaceSet(info.accountSpaceId);
+		S.Common.gatewaySet(info.gatewayUrl);
+		S.Common.spaceSet(info.accountSpaceId);
 
 		analytics.profile(info.analyticsId, info.networkId);
 		Sentry.setUser({ id: info.analyticsId });
@@ -192,15 +178,15 @@ class UtilData {
 		param.routeParam = param.routeParam || {};
 
 		const pin = Storage.getPin();
-		const { root, widgets } = blockStore;
-		const { redirect, space } = commonStore;
+		const { root, widgets } = S.Block;
+		const { redirect, space } = S.Common;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
 		const routeParam = Object.assign({ replace: true }, param.routeParam);
 		const route = param.route || redirect;
 
 		if (!widgets) {
-			console.error('[UtilData].onAuth No widgets defined');
+			console.error('[U.Data].onAuth No widgets defined');
 			return;
 		};
 
@@ -208,27 +194,27 @@ class UtilData {
 		analytics.event('OpenAccount');
 
 		C.ObjectOpen(root, '', space, (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(root, message.error.code, null)) {
+			if (!U.Common.checkErrorOnOpen(root, message.error.code, null)) {
 				return;
 			};
 
 			C.ObjectOpen(widgets, '', space, (message: any) => {
-				if (!UtilCommon.checkErrorOnOpen(widgets, message.error.code, null)) {
+				if (!U.Common.checkErrorOnOpen(widgets, message.error.code, null)) {
 					return;
 				};
 
 				this.createSubscriptions(() => {
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
-						UtilRouter.go('/auth/pin-check', routeParam);
+						U.Router.go('/auth/pin-check', routeParam);
 					} else {
 						if (route) {
-							UtilRouter.go(route, routeParam);
+							U.Router.go(route, routeParam);
 						} else {
-							UtilSpace.openDashboard('route', routeParam);
+							U.Space.openDashboard('route', routeParam);
 						};
 
-						commonStore.redirectSet('');
+						S.Common.redirectSet('');
 					};
 
 					if (!color) {
@@ -245,7 +231,7 @@ class UtilData {
 						I.SurveyType.Shared, 
 					].forEach(it => Survey.check(it));
 
-					const space = UtilSpace.getSpaceview();
+					const space = U.Space.getSpaceview();
 
 					if (!space.isPersonal) {
 						Onboarding.start('space', keyboard.isPopup(), false);
@@ -262,15 +248,15 @@ class UtilData {
 	};
 
 	onAuthOnce (noTierCache: boolean) {
-		C.NotificationList(false, Constant.limit.notification, (message: any) => {
+		C.NotificationList(false, J.Constant.limit.notification, (message: any) => {
 			if (!message.error.code) {
-				notificationStore.set(message.list);
+				S.Notification.set(message.list);
 			};
 		});
 
 		C.FileNodeUsage((message: any) => {
 			if (!message.error.code) {
-				commonStore.spaceStorageSet(message);
+				S.Common.spaceStorageSet(message);
 			};
 		});
 
@@ -279,20 +265,20 @@ class UtilData {
 	};
 
 	createSubscriptions (callBack?: () => void): void {
-		const { space } = commonStore;
-		const { account } = authStore;
+		const { space } = S.Common;
+		const { account } = S.Auth;
 		const list: any[] = [
 			{
-				subId: Constant.subId.profile,
+				subId: J.Constant.subId.profile,
 				filters: [
-					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: blockStore.profile },
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
 				ignoreHidden: false,
 			},
 			{
-				subId: Constant.subId.deleted,
+				subId: J.Constant.subId.deleted,
 				keys: [],
 				filters: [
 					{ relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
@@ -301,10 +287,10 @@ class UtilData {
 				noDeps: true,
 			},
 			{
-				subId: Constant.subId.type,
+				subId: J.Constant.subId.type,
 				keys: this.typeRelationKeys(),
 				filters: [
-					{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, space ] },
+					{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
 					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
@@ -317,14 +303,14 @@ class UtilData {
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				onSubscribe: () => {
-					dbStore.getTypes().forEach(it => dbStore.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
+					S.Record.getTypes().forEach(it => S.Record.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
 			},
 			{
-				subId: Constant.subId.relation,
-				keys: Constant.relationRelationKeys,
+				subId: J.Constant.subId.relation,
+				keys: J.Constant.relationRelationKeys,
 				filters: [
-					{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, space ] },
+					{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
 					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
@@ -332,12 +318,12 @@ class UtilData {
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				onSubscribe: () => {
-					dbStore.getRelations().forEach(it => dbStore.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
+					S.Record.getRelations().forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
 			},
 			{
-				subId: Constant.subId.option,
-				keys: Constant.optionRelationKeys,
+				subId: J.Constant.subId.option,
+				keys: J.Constant.optionRelationKeys,
 				filters: [
 					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
@@ -348,7 +334,7 @@ class UtilData {
 				ignoreDeleted: true,
 			},
 			{
-				subId: Constant.subId.space,
+				subId: J.Constant.subId.space,
 				keys: this.spaceRelationKeys(),
 				filters: [
 					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
@@ -360,7 +346,7 @@ class UtilData {
 				ignoreHidden: false,
 			},
 			{
-				subId: Constant.subId.participant,
+				subId: J.Constant.subId.participant,
 				keys: this.participantRelationKeys(),
 				filters: [
 					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
@@ -376,7 +362,7 @@ class UtilData {
 
 		if (account) {
 			list.push({
-				subId: Constant.subId.myParticipant,
+				subId: J.Constant.subId.myParticipant,
 				keys: this.participantRelationKeys(),
 				filters: [
 					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
@@ -408,27 +394,31 @@ class UtilData {
 	};
 
 	destroySubscriptions (callBack?: () => void): void {
-		C.ObjectSearchUnsubscribe(Object.values(Constant.subId), callBack);
+		C.ObjectSearchUnsubscribe(Object.values(J.Constant.subId), callBack);
 	};
 
 	spaceRelationKeys () {
-		return Constant.defaultRelationKeys.concat(Constant.spaceRelationKeys).concat(Constant.participantRelationKeys);
+		return J.Constant.defaultRelationKeys.concat(J.Constant.spaceRelationKeys).concat(J.Constant.participantRelationKeys);
 	};
 
 	typeRelationKeys () {
-		return Constant.defaultRelationKeys.concat(Constant.typeRelationKeys);
+		return J.Constant.defaultRelationKeys.concat(J.Constant.typeRelationKeys);
 	};
 
 	participantRelationKeys () {
-		return Constant.defaultRelationKeys.concat(Constant.participantRelationKeys);
+		return J.Constant.defaultRelationKeys.concat(J.Constant.participantRelationKeys);
+	};
+
+	syncStatusRelationKeys () {
+		return J.Constant.defaultRelationKeys.concat(J.Constant.syncStatusRelationKeys);
 	};
 
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
 		C.WalletCreateSession(phrase, key, (message: any) => {
 
 			if (!message.error.code) {
-				authStore.tokenSet(message.token);
-				authStore.appTokenSet(message.appToken);
+				S.Auth.tokenSet(message.token);
+				S.Auth.appTokenSet(message.appToken);
 				dispatcher.listenEvents();
 			};
 
@@ -439,7 +429,7 @@ class UtilData {
 	};
 
 	blockSetText (rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
@@ -448,20 +438,20 @@ class UtilData {
 		marks = marks || [];
 
 		if (update) {
-			blockStore.updateContent(rootId, blockId, { text, marks });
+			S.Block.updateContent(rootId, blockId, { text, marks });
 		};
 
 		C.BlockTextSetText(rootId, blockId, text, marks, focus.state.range, callBack);
 	};
 
 	blockInsertText (rootId: string, blockId: string, needle: string, from: number, to: number, callBack?: (message: any) => void) {
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
 
 		const diff = needle.length - (to - from);
-		const text = UtilCommon.stringInsert(block.content.text, needle, from, to);
+		const text = U.Common.stringInsert(block.content.text, needle, from, to);
 		const marks = Mark.adjust(block.content.marks, from, diff);
 
 		this.blockSetText(rootId, blockId, text, marks, true, callBack);
@@ -469,13 +459,13 @@ class UtilData {
 
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withCollection, limit } = param || {};
-		const { space, config } = commonStore;
-		const pageLayouts = UtilObject.getPageLayouts();
-		const skipLayouts = UtilObject.getSetLayouts();
+		const { space, config } = S.Common;
+		const pageLayouts = U.Object.getPageLayouts();
+		const skipLayouts = U.Object.getSetLayouts();
 
 		let items: any[] = [];
 
-		items = items.concat(dbStore.getTypes().filter(it => {
+		items = items.concat(S.Record.getTypes().filter(it => {
 			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
 		}));
 
@@ -484,11 +474,11 @@ class UtilData {
 		};
 
 		if (withSet) {
-			items.push(dbStore.getSetType());
+			items.push(S.Record.getSetType());
 		};
 
 		if (withCollection) {
-			items.push(dbStore.getCollectionType());
+			items.push(S.Record.getCollectionType());
 		};
 
 		items = items.filter(it => it);
@@ -501,7 +491,7 @@ class UtilData {
 	};
 
 	getTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
-		const templateType = dbStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 		const filters: I.Filter[] = [
 			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
 			{ relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
@@ -509,21 +499,21 @@ class UtilData {
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
-		const keys = Constant.defaultRelationKeys.concat([ 'targetObjectType' ]);
+		const keys = J.Constant.defaultRelationKeys.concat([ 'targetObjectType' ]);
 
 		this.search({
 			filters,
 			sorts,
 			keys,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 		}, callBack);
 	};
 
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(Constant.coverRelationKeys), true);
-		const checkType = blockStore.checkBlockTypeExists(rootId);
+		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Constant.coverRelationKeys), true);
+		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret = {
 			withCover: false,
@@ -554,7 +544,7 @@ class UtilData {
 			};
 		};
 
-		if (UtilObject.isFileLayout(object.layout)) {
+		if (U.Object.isFileLayout(object.layout)) {
 			ret.withIcon = true;
 		};
 
@@ -647,14 +637,14 @@ class UtilData {
 
 	// Check if there is at least 1 set for object types
 	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		const setType = dbStore.getTypeByKey(Constant.typeKey.set);
+		const setType = S.Record.getTypeByKey(J.Constant.typeKey.set);
 		this.checkObjectWithRelationCnt('setOf', setType?.id, ids, 2, callBack);
 	};
 
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
-			cardStyle: commonStore.linkStyle,
+			cardStyle: S.Common.linkStyle,
 			description: I.LinkDescription.None,
 			relations: [],
 		};
@@ -663,7 +653,7 @@ class UtilData {
 	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
 		const relationKeys = [ 'type', 'cover', 'tag' ];
 
-		content = UtilCommon.objectCopy(content);
+		content = U.Common.objectCopy(content);
 		content.iconSize = Number(content.iconSize) || I.LinkIconSize.None;
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
 		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
@@ -680,7 +670,7 @@ class UtilData {
 			content.relations = content.relations.filter(it => filter.includes(it)); 
 		};
 
-		content.relations = UtilCommon.arrayUnique(content.relations);
+		content.relations = U.Common.arrayUnique(content.relations);
 		return content;
 	};
 
@@ -693,7 +683,7 @@ class UtilData {
 			return;
 		};
 		if (message.counters) {
-			dbStore.metaSet(subId, '', { total: message.counters.total, keys });
+			S.Record.metaSet(subId, '', { total: message.counters.total, keys });
 		};
 
 		const mapper = (it: any) => { 
@@ -705,19 +695,19 @@ class UtilData {
 		details = details.concat(message.dependencies.map(mapper));
 		details = details.concat(message.records.map(mapper));
 
-		detailStore.set(subId, details);
-		dbStore.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
+		S.Detail.set(subId, details);
+		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
 	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
-		const { config, space } = commonStore;
+		const { config, space } = S.Common;
 
 		param = Object.assign({
 			subId: '',
 			idField: 'id',
 			filters: [],
 			sorts: [],
-			keys: Constant.defaultRelationKeys,
+			keys: J.Constant.defaultRelationKeys,
 			sources: [],
 			offset: 0,
 			limit: 0,
@@ -736,7 +726,7 @@ class UtilData {
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		if (!subId) {
-			console.error('[UtilData].searchSubscribe: subId is empty');
+			console.error('[U.Data].searchSubscribe: subId is empty');
 			return;
 		};
 
@@ -774,20 +764,20 @@ class UtilData {
 		param = Object.assign({
 			subId: '',
 			ids: [],
-			keys: Constant.defaultRelationKeys,
+			keys: J.Constant.defaultRelationKeys,
 			noDeps: false,
 			idField: 'id',
 		}, param);
 
 		const { subId, keys, noDeps, idField } = param;
-		const ids = UtilCommon.arrayUnique(param.ids.filter(it => it));
+		const ids = U.Common.arrayUnique(param.ids.filter(it => it));
 
 		if (!subId) {
-			console.error('[UtilData].subscribeIds: subId is empty');
+			console.error('[U.Data].subscribeIds: subId is empty');
 			return;
 		};
 		if (!ids.length) {
-			console.error('[UtilData].subscribeIds: ids list is empty');
+			console.error('[U.Data].subscribeIds: ids list is empty');
 			return;
 		};
 
@@ -813,14 +803,14 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, space } = commonStore;
+		const { config, space } = S.Common;
 
 		param = Object.assign({
 			idField: 'id',
 			fullText: '',
 			filters: [],
 			sorts: [],
-			keys: Constant.defaultRelationKeys,
+			keys: J.Constant.defaultRelationKeys,
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
@@ -855,7 +845,7 @@ class UtilData {
 
 		C.ObjectSearch(filters, sorts.map(this.sortMapper), keys, param.fullText, offset, limit, (message: any) => {
 			if (message.records) {
-				message.records = message.records.map(it => detailStore.mapper(it));
+				message.records = message.records.map(it => S.Detail.mapper(it));
 			};
 
 			if (callBack) {
@@ -872,34 +862,34 @@ class UtilData {
 	};
 
 	setWindowTitle (rootId: string, objectId: string) {
-		this.setWindowTitleText(UtilObject.name(detailStore.get(rootId, objectId, [])));
+		this.setWindowTitleText(U.Object.name(S.Detail.get(rootId, objectId, [])));
 	};
 
 	setWindowTitleText (name: string) {
-		const space = UtilSpace.getSpaceview();
+		const space = U.Space.getSpaceview();
 		const title = [];
 
 		if (name) {
-			title.push(UtilCommon.shorten(name, 60));
+			title.push(U.Common.shorten(name, 60));
 		};
 
 		if (!space._empty_) {
 			title.push(space.name);
 		};
 
-		title.push(Constant.appName);
+		title.push(J.Constant.appName);
 		document.title = title.join(' - ');
 	};
 
 	graphFilters () {
-		const { space } = commonStore;
-		const templateType = dbStore.getTemplateType();
+		const { space } = S.Common;
+		const templateType = S.Record.getTemplateType();
 		const filters = [
 			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
-			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
 			{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
 			{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] },
 		];
@@ -911,7 +901,7 @@ class UtilData {
 	};
 
 	moveToPage (rootId: string, ids: string[], typeId: string, route: string) {
-		const type = dbStore.getTypeById(typeId);
+		const type = S.Record.getTypeById(typeId);
 		if (!type) {
 			return;
 		};
@@ -922,53 +912,6 @@ class UtilData {
 			};
 		});
 	};
-
-	getThreadStatus (rootId: string, key: string) {
-		const { account } = authStore;
-
-		if (!account) {
-			return I.ThreadStatus.Unknown;
-		};
-
-		const { info } = account || {};
-		const thread = authStore.threadGet(rootId);
-		const { summary } = thread;
-
-		if (!info.networkId) {
-			return I.ThreadStatus.Local;
-		};
-
-		if (!summary) {
-			return I.ThreadStatus.Unknown;
-		};
-
-		return (thread[key] || {}).status || I.ThreadStatus.Unknown;
-	};
-
-	getNetworkName (): string {
-		const { account } = authStore;
-		const { info } = account;
-
-		let ret = '';
-		switch (info.networkId) {
-			default:
-				ret = translate('menuThreadListSelf');
-				break;
-
-			case Constant.networkId.production:
-				ret = translate('menuThreadListProduction');
-				break;
-
-			case Constant.networkId.development:
-				ret = translate('menuThreadListDevelopment');
-				break;
-
-			case '':
-				ret = translate('menuThreadListLocal');
-				break;
-		};
-		return ret;
-	}
 
 	getMembershipStatus (callBack?: (membership: I.Membership) => void) {
 		if (!this.isAnytypeNetwork()) {
@@ -981,11 +924,11 @@ class UtilData {
 			if (membership) {
 				const { status, tier } = membership;
 
-				authStore.membershipSet(membership);
+				S.Auth.membershipSet(membership);
 				analytics.setTier(tier);
 				
 				if (status && (status == I.MembershipStatus.Finalization)) {
-					popupStore.open('membershipFinalization', { data: { tier } });
+					S.Popup.open('membershipFinalization', { data: { tier } });
 				};
 			};
 
@@ -996,7 +939,7 @@ class UtilData {
 	};
 
 	getMembershipTiers (noCache: boolean) {
-		const { config, interfaceLang, isOnline } = commonStore;
+		const { config, interfaceLang, isOnline } = S.Common;
 		const { testPayment } = config;
 
 		if (!isOnline || !this.isAnytypeNetwork()) {
@@ -1009,32 +952,32 @@ class UtilData {
 			};
 
 			const tiers = message.tiers.filter(it => (it.id == I.TierType.Explorer) || (it.isTest == !!testPayment));
-			commonStore.membershipTiersListSet(tiers);
+			S.Common.membershipTiersListSet(tiers);
 		});
 	};
 
 	getMembershipTier (id: I.TierType): I.MembershipTier {
-		return commonStore.membershipTiers.find(it => it.id == id) || new M.MembershipTier({ id: I.TierType.None });
+		return S.Common.membershipTiers.find(it => it.id == id) || new M.MembershipTier({ id: I.TierType.None });
 	};
 
 	isAnytypeNetwork (): boolean {
-		return Object.values(Constant.networkId).includes(authStore.account?.info?.networkId);
+		return Object.values(J.Constant.networkId).includes(S.Auth.account?.info?.networkId);
 	};
 
 	isLocalNetwork (): boolean {
-		return !authStore.account?.info?.networkId;
+		return !S.Auth.account?.info?.networkId;
 	};
 
 	isLocalOnly (): boolean {
-		return authStore.account?.info?.networkId == '';
+		return S.Auth.account?.info?.networkId == '';
 	};
 
 	accountCreate (onError?: (text: string) => void, callBack?: () => void) {
 		onError = onError || (() => {});
 
-		const { networkConfig } = authStore;
+		const { networkConfig } = S.Auth;
 		const { mode, path } = networkConfig;
-		const { dataPath } = commonStore;
+		const { dataPath } = S.Common;
 
 		let phrase = '';
 
@@ -1052,25 +995,76 @@ class UtilData {
 					return;
 				};
 
-				C.AccountCreate('', '', dataPath, UtilCommon.rand(1, Constant.iconCnt), mode, path, (message) => {
+				C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.iconCnt), mode, path, (message) => {
 					if (message.error.code) {
 						onError(message.error.description);
 						return;
 					};
 
-					authStore.accountSet(message.account);
-					commonStore.configSet(message.account.config, false);
-					commonStore.isSidebarFixedSet(true);
+					S.Auth.accountSet(message.account);
+					S.Common.configSet(message.account.config, false);
+					S.Common.isSidebarFixedSet(true);
 
 					this.onInfo(message.account.info);
 					Renderer.send('keytarSet', message.account.id, phrase);
-					Action.importUsecase(commonStore.space, I.Usecase.GetStarted, callBack);
+					Action.importUsecase(S.Common.space, I.Usecase.GetStarted, callBack);
 
 					analytics.event('CreateAccount', { middleTime: message.middleTime });
 					analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted });
 				});
 			});
 		});
+	};
+
+	groupDateSections (records: any[], key: string, sectionTemplate?: any) {
+		const now = U.Date.now();
+		const { d, m, y } = U.Date.getCalendarDateParam(now);
+		const today = now - U.Date.timestamp(y, m, d);
+		const yesterday = now - U.Date.timestamp(y, m, d - 1);
+		const lastWeek = now - U.Date.timestamp(y, m, d - 7);
+		const lastMonth = now - U.Date.timestamp(y, m - 1, d);
+		const groups = {
+			today: [],
+			yesterday: [],
+			lastWeek: [],
+			lastMonth: [],
+			older: []
+		};
+
+		let groupedRecords = [];
+
+		if (!sectionTemplate) {
+			sectionTemplate = {};
+		};
+
+
+		records.forEach((record) => {
+			const diff = now - record[key];
+
+			if (diff < today) {
+				groups.today.push(record);
+			} else
+			if (diff < yesterday) {
+				groups.yesterday.push(record);
+			} else
+			if (diff < lastWeek) {
+				groups.lastWeek.push(record);
+			} else
+			if (diff < lastMonth) {
+				groups.lastMonth.push(record);
+			} else {
+				groups.older.push(record);
+			};
+		});
+
+		Object.keys(groups).forEach((key) => {
+			if (groups[key].length) {
+				groupedRecords.push(Object.assign({ id: key, isSection: true }, sectionTemplate));
+				groupedRecords = groupedRecords.concat(groups[key]);
+			};
+		});
+
+		return groupedRecords;
 	};
 
 };

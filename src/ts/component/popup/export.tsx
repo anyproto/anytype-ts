@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { I, Action, keyboard, analytics, translate } from 'Lib';
+import { I, S, Action, keyboard, analytics, translate } from 'Lib';
 import { Title, Select, Button, Switch } from 'Component';
-import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const PopupExport = observer(class PopupExport extends React.Component<I.Popup> {
@@ -172,7 +171,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		const { param } = this.props;
 		const { data } = param;
 		const { allowHtml } = data;
-		const { config } = commonStore;
+		const { config } = S.Common;
 
 		return [
 			{ id: I.ExportType.Markdown, name: 'Markdown' },
@@ -187,7 +186,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 	};
 
 	onConfirm (e: any) {
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const { param, close } = this.props;
 		const { data } = param;
 		const { objectIds, route } = data;

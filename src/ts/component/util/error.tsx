@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, UtilCommon } from 'Lib';
+import { I, U } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -31,8 +31,8 @@ class Error extends React.Component<Props> {
 			<div 
 				id={id}
 				className={cn.join(' ')}
-				dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} 
-				{...UtilCommon.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
+				dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} 
+				{...U.Common.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 			/>
 		);
 	};

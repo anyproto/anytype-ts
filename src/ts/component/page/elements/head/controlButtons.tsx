@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon } from 'Component';
-import { I, UtilData, UtilObject, UtilCommon, translate, analytics, focus } from 'Lib';
-import { blockStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-const Constant = require('json/constant.json');
+import { Icon } from 'Component';
+import { I, S, U, J, translate, analytics, focus } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -34,14 +32,14 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 
 	render (): any {
 		const { rootId, readonly } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
 		};
 
-		const checkType = blockStore.checkBlockTypeExists(rootId);
-		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const checkType = S.Block.checkBlockTypeExists(rootId);
+		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		let allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && !root.isObjectCollection();
 		let allowedIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote() && !root.isObjectBookmark();
@@ -126,7 +124,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		e.stopPropagation();
 
 		const { rootId, onCoverOpen, onCoverClose, onEdit } = this.props;
-		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
 		const element = $(e.currentTarget);
 		const hasCover = object.coverType != I.CoverType.None;
 		
@@ -138,20 +136,20 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const options: any[] = [
 			{ id: 'change', icon: 'coverChange', name: translate('pageHeadControlButtonsChangeCover') },
 		];
-		if (UtilData.coverIsImage(object.coverType)) {
+		if (U.Data.coverIsImage(object.coverType)) {
 			options.push({ id: 'position', icon: 'coverPosition', name: translate('pageHeadControlButtonsReposition') });
 		};
 		if (hasCover) {
 			options.push({ id: 'remove', icon: 'remove', name: translate('commonRemove') });
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element,
 			horizontal: I.MenuDirection.Center,
 			onOpen: onCoverOpen,
 			onClose: () => {
 				window.clearTimeout(this.timeout);
-				this.timeout = window.setTimeout(() => onCoverClose(), menuStore.getTimeout());
+				this.timeout = window.setTimeout(() => onCoverClose(), S.Menu.getTimeout());
 			},
 			data: {
 				options: options,
@@ -161,7 +159,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 							window.setTimeout(() => {
 								window.clearTimeout(this.timeout);
 								this.onChange(element);
-							}, menuStore.getTimeout());
+							}, S.Menu.getTimeout());
 							break;
 						
 						case 'position':
@@ -171,7 +169,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 							break;
 
 						case 'remove':
-							UtilObject.setCover(rootId, I.CoverType.None, '');
+							U.Object.setCover(rootId, I.CoverType.None, '');
 							analytics.event('RemoveCover');
 							break;
 					};
@@ -183,7 +181,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 	onChange (element: any) {
 		const { rootId, onEdit, onUploadStart, onUpload, onCoverOpen, onCoverClose, onCoverSelect } = this.props;
 
-		menuStore.open('blockCover', {
+		S.Menu.open('blockCover', {
 			element,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
@@ -202,7 +200,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 	};
 
 	resize () {
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const node = $(this.node);
 
 		ww <= 900 ? node.addClass('small') : node.removeClass('small');
