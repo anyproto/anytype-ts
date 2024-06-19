@@ -151,36 +151,26 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const tierItem = U.Data.getMembershipTier(tier);
 		const name = globalName || !tierItem.namesCount ? '' : this.getName();
 		const refButton = method == I.PaymentMethod.Stripe ? this.refButtonCard : this.refButtonCrypto;
+		const cb = () => {
+			C.MembershipRegisterPaymentRequest(tier, method, name, (message) => {
+				refButton.setLoading(false);
+
+				if (message.error.code) {
+					this.setError(message.error.description);
+					return;
+				};
+
+				if (message.url) {
+					U.Common.onUrl(message.url);
+				};
+
+				analytics.event('ClickMembership', { params: { tier, method }});
+			});
+		};
 
 		refButton.setLoading(true);
-
-		if (tierItem.nameMinLength == 0) {
-			// do not check name if the tier does not feature it
-			this.onPayContinued(tier, method, name, refButton);
-			return;
-		}
-
-		this.checkName(name, () => {
-			this.onPayContinued(tier, method, name, refButton);
-		});
+		tierItem.nameMinLength ? this.validateName(cb) : cb();
 	};
-
-	onPayContinued(tier: I.TierType, method: I.PaymentMethod, name: string, refButton: any) {
-		C.MembershipRegisterPaymentRequest(tier, method, name, (message) => {
-			refButton.setLoading(false);
-
-			if (message.error.code) {
-				this.setError(message.error.description);
-				return;
-			};
-
-			if (message.url) {
-				U.Common.onUrl(message.url);
-			};
-
-			analytics.event('ClickMembership', { params: { tier, method }});
-		});
-	}
 
 	validateName (callBack?: () => void) {
 		const name = this.getName();
