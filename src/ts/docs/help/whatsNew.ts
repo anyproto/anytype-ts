@@ -30,7 +30,7 @@ export default [
 	video(`40.5/1.mp4`),
 	bullet(`<b>Reuse Files:</b> Incorporate existing files within file blocks in the editor 📂 `),
 	video(`40.5/2.mp4`),
-	bullet(`<b>Keyboard shortcut: ${hl(`${cmd} + Enter`)} checks and unchecks checkboxes ✅ Thanks, ${link('https://github.com/anyproto/anytype-ts/pull/709', '@mikailcf')}!`),
+	bullet(`<b>Keyboard shortcut:</b> ${hl(`${cmd} + Enter`)} checks and unchecks checkboxes ✅ Thanks, ${link('https://github.com/anyproto/anytype-ts/pull/709', '@mikailcf')}!`),
 	bullet(`<b>Text Justification:</b> New option to justify text in blocks for better formatting 📄`),
 	img('40.5/4.png'),
 	bullet(`<b>Enhanced Graph Settings:</b> Distinct settings for global and local graphs in Sets/Collections ⚙️ Thanks, ${link('https://community.anytype.io/t/graph-view-with-space-local-graph-clashes/20599', '@Donatas')}`),
