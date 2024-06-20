@@ -1465,9 +1465,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						const rowId = rowContainerElement.childrenIds[nextIdx];
 
 						if (rowId) {
-							C.BlockTableRowListFill(rootId, [ rowId ], () => {
-								cb();
-							});
+							C.BlockTableRowListFill(rootId, [ rowId ], cb);
 							return;
 						};
 					};
