@@ -1404,6 +1404,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = S.Block.getLeaf(rootId, focused);
+		if (!block) {
+			return;
+		};
+
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
 		if ((dir < 0) && range.to) {
@@ -1440,6 +1444,35 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.focusNextBlock(next, dir);
+		};
+
+		const parentElement = S.Block.getParentMapElement(rootId, block.id);
+		const idx = parentElement.childrenIds.indexOf(block.id);
+
+		// Check if there is empty table to fill when moving
+		if (idx >= 0) {
+			const nextChildId = parentElement.childrenIds[idx + dir];
+			const next = S.Block.getLeaf(rootId, nextChildId);
+
+			if (next && next.isTable()) {
+				const tableData = S.Block.getTableData(rootId, next.id);
+
+				if (tableData) {
+					const rowContainerElement = S.Block.getMapElement(rootId, tableData.rowContainer.id);
+
+					if (rowContainerElement) {
+						const nextIdx = dir > 0 ? 0 : rowContainerElement.childrenIds.length - 1;
+						const rowId = rowContainerElement.childrenIds[nextIdx];
+
+						if (rowId) {
+							C.BlockTableRowListFill(rootId, [ rowId ], () => {
+								cb();
+							});
+							return;
+						};
+					};
+				};
+			};
 		};
 
 		if (isInsideTable) {

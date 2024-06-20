@@ -199,24 +199,24 @@ class BlockStore {
 		return this.treeMap.get(rootId) || new Map();
 	};
 
-    getMapElement (rootId: string, blockId: string) {
+    getMapElement (rootId: string, blockId: string): I.BlockStructure {
 		const map = this.getMap(rootId);
 		return map ? map.get(blockId) : null;
 	};
 
-    getLeaf (rootId: string, id: string): any {
+	getParentMapElement (rootId: string, id: string): I.BlockStructure {
+		const element = this.getMapElement(rootId, id);
+		return element ? this.getMapElement(rootId, element.parentId) : null;
+	};
+
+	getLeaf (rootId: string, id: string): I.Block {
 		const map = this.blockMap.get(rootId);
 		return map ? map.get(id) : null;
 	};
 
-	getParentLeaf (rootId: string, id: string) {
+	getParentLeaf (rootId: string, id: string): I.Block {
 		const element = this.getMapElement(rootId, id);
 		return element ? this.getLeaf(rootId, element.parentId) : null;
-	};
-
-	getParentMapElement (rootId: string, id: string) {
-		const element = this.getMapElement(rootId, id);
-		return element ? this.getMapElement(rootId, element.parentId) : null;
 	};
 
     getBlocks (rootId: string, filter?: (it: any) => boolean): I.Block[] {

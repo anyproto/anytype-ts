@@ -184,7 +184,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		
 		const { config } = S.Common;
 		const { filter } = this.state;
-		const { align, content, bgColor } = block;
+		const { hAlign, content, bgColor } = block;
 		const { color, style } = content;
 		const checkFlag = this.checkFlagByObject(block.getTargetObjectId());
 
@@ -279,7 +279,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				hasTurnFile ? { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true } : null,
 				hasTurnText ? turnText : null,
 				hasTurnDiv ? { id: 'turnStyle', icon: U.Data.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
-				hasAlign ? { id: 'align', icon: U.Data.alignHIcon(align), name: translate('commonAlign'), arrow: true } : null,
+				hasAlign ? { id: 'align', icon: U.Data.alignHIcon(hAlign), name: translate('commonAlign'), arrow: true } : null,
 				hasColor ? { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, isTextColor: true, value: (color || 'default') } : null,
 				hasBg ? { id: 'background', icon: 'color', name: translate('commonBackground'), arrow: true, isBgColor: true, value: (bgColor || 'default') } : null,
 			].filter(it => it);
