@@ -66,7 +66,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.blockCreate = this.blockCreate.bind(this);
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.resizePage = this.resizePage.bind(this);
-		this.focusTitle = this.focusTitle.bind(this);
+		this.focusFirstBlock = this.focusFirstBlock.bind(this);
 		this.blockRemove = this.blockRemove.bind(this);
 		this.setLayoutWidth = this.setLayoutWidth.bind(this);
 	};
@@ -103,7 +103,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					{...this.props} 
 					resize={this.resizePage} 
 					readonly={readonly}
-					onLayoutSelect={this.focusTitle} 
+					onLayoutSelect={this.focusFirstBlock} 
 				/>
 				
 				<div id={`editor-${rootId}`} className="editor">
@@ -252,7 +252,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
-			this.focusTitle();
+			this.focusFirstBlock();
 
 			U.Common.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 
@@ -322,21 +322,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 	};
 	
-	focusTitle () {
+	focusFirstBlock () {
 		const { rootId } = this.props;
-		const block = S.Block.getFirstBlock(rootId, 1, it => it.isText());
+		const block = S.Block.getFirstBlock(rootId, 1, it => it.isText() && !it.getLength());
 
 		if (!block) {
 			return;
 		};
 
-		const length = block.getLength();
-		if (length) {
-			focus.clear(true);
-		} else {
-			focus.set(block.id, { from: 0, to: 0 });
-			focus.apply();
-		};
+		focus.set(block.id, { from: 0, to: 0 });
+		focus.apply();
 	};
 	
 	unbind () {
