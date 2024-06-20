@@ -528,6 +528,25 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		return ret;
 	};
 
+	/*
+	Used to click and set selection automatically in block menu for example
+	*/
+	getForClick (id: string, withChildren: boolean, save: boolean): string[] {
+		let ids: string[] = this.get(I.SelectType.Block, withChildren);
+
+		if (id && !ids.includes(id)) {
+			this.clear();
+			this.set(I.SelectType.Block, [ id ]);
+
+			ids = this.get(I.SelectType.Block, withChildren);
+
+			if (!save) {
+				this.clear();
+			};
+		};
+		return ids;
+	};
+
 	cacheChildrenIds (id: string): string[] {
 		const block = S.Block.getLeaf(this.rootId, id);
 		if (!block) {

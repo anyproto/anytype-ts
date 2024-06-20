@@ -346,6 +346,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 
+		const selection = S.Common.getRef('selectionProvider');
 		const node = $(this.node);
 		const el = node.find(`#item-${item.id}`);
 		const offsetX = node.outerWidth();
@@ -479,7 +480,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 				
 			case 'background': {
-				ids = U.Data.selectionGet(blockId, false, false);
+				ids = selection?.getForClick(blockId, false, false);
 				menuId = 'blockBackground';
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -595,7 +596,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const ids = U.Data.selectionGet(blockId, false, false);
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection.getForClick(blockId, false, false);
 		const targetObjectId = block.getTargetObjectId();
 
 		switch (item.itemId) {

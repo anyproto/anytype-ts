@@ -812,7 +812,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					offsetX: J.Size.blockMenu,
 					data: {
 						blockId: block.id,
-						blockIds: U.Data.selectionGet(block.id, true, true),
+						blockIds: selection.getForClick(block.id, true, true),
 						rootId,
 						onCopy: this.onCopy,
 					},

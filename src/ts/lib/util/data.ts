@@ -137,29 +137,6 @@ class UtilData {
 		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 	
-	/*
-	Used to click and set selection automatically in block menu for example
-	*/
-	selectionGet (id: string, withChildren: boolean, save: boolean): string[] {
-		const selection = S.Common.getRef('selectionProvider');
-		
-		if (!selection) {
-			return [];
-		};
-		
-		let ids: string[] = selection.get(I.SelectType.Block, withChildren);
-		if (id && !ids.includes(id)) {
-			selection.clear();
-			selection.set(I.SelectType.Block, [ id ]);
-			ids = selection.get(I.SelectType.Block, withChildren);
-
-			if (!save) {
-				selection.clear();
-			};
-		};
-		return ids;
-	};
-
 	onInfo (info: I.AccountInfo) {
 		S.Block.rootSet(info.homeObjectId);
 		S.Block.widgetsSet(info.widgetsId);

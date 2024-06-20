@@ -1357,7 +1357,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onSelect () {
 		const { rootId, block, isPopup, isInsideTable, readonly } = this.props;
-		const ids = U.Data.selectionGet('', false, true);
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.getForClick('', false, true);
 		const range = this.getRange();
 
 		focus.set(block.id, range);
