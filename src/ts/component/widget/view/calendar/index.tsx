@@ -24,12 +24,20 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 
 	render (): React.ReactNode {
 		const { value } = this.state;
+		const { getView } = this.props;
+		const view = getView();
+
+		if (!view) {
+			return null;
+		};
+
 		const data = U.Date.getCalendarMonth(value);
 		const { m, y } = this.getDateParam(value);
 		const today = this.getDateParam(U.Date.now());
 		const days = U.Date.getWeekDays();
 		const months = U.Date.getMonths();
 		const years = U.Date.getYears(0, 3000);
+		const { groupRelationKey } = view;
 
 		return (
 			<div ref={ref => this.node = ref} className="body">
@@ -80,6 +88,9 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 							if (i < 7) {
 								cn.push('first');
 							};
+
+
+							const check = this.checkItems(item.d, item.m, item.y, groupRelationKey);
 							return (
 								<div 
 									id={`day-${item.d}-${item.m}-${item.y}`} 
@@ -88,6 +99,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 									onClick={() => this.onClick(item.d, item.m, item.y)}
 								>
 									{item.d}
+									{check ? <div className="bullet" /> : ''}
 								</div>	
 							);
 						})}
@@ -211,6 +223,15 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 			}
 		];
 	};
+
+	checkItems (d: number, m: number, y: number, relationKey: string) {
+		const { rootId } = this.props;
+		const items = S.Record.getRecords(S.Record.getSubId(rootId, J.Constant.blockId.dataview), [ relationKey ]);
+		const current = [ d, m, y ].join('-');
+
+		return !!items.find(it => U.Date.date('j-n-Y', it[relationKey]) == current);
+	};
+
 
 });
 
