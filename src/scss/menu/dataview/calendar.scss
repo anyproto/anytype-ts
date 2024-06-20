@@ -42,6 +42,7 @@
 		.day.th { color: var(--color-control-active); @include text-small; }
 
 		.day.today, .day.active { font-weight: 600; }
+		.day.today { color: #c38400; }
 		.day.active { background: var(--color-system-accent-100); color: var(--color-text-inversion); }
 		.day.other { color: var(--color-control-active); }
 		
