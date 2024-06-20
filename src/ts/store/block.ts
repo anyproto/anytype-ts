@@ -281,9 +281,28 @@ class BlockStore {
 		};
 	};
 
-	getNextTableRow (rootId: string, id: string, dir: number) {
-		const element = S.Block.getMapElement(rootId, id);
-		return element ? S.Block.getNextBlock(rootId, element.parentId, dir, it => it.isTableRow()) : null;
+	getNextTableRow (rootId: string, id: string, dir: number): I.Block {
+		const table = this.getHighestParent(rootId, id);
+		if (!table) {
+			return null;
+		};
+
+		const tableData = this.getTableData(rootId, table.id);
+		if (!tableData) {
+			return null;
+		};
+
+		const rowContainerElement = this.getMapElement(rootId, tableData.rowContainer.id);
+		if (!rowContainerElement) {
+			return null;
+		};
+
+		const idx = rowContainerElement.childrenIds.indexOf(id);
+		if (idx < 0) {
+			return null;
+		};
+
+		return this.getLeaf(rootId, rowContainerElement.childrenIds[idx + dir]);
 	};
 
 	// Check if blockId is inside parentId children recursively

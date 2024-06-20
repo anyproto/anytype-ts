@@ -1443,13 +1443,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (isInsideTable) {
+			const row = S.Block.getParentLeaf(rootId, block.id);
 			const rowElement = S.Block.getParentMapElement(rootId, block.id);
-			if (!rowElement) {
-				cb();
-			};
-
 			const idx = rowElement.childrenIds.indexOf(block.id);
-			const nextRow = S.Block.getNextTableRow(rootId, block.id, dir);
+			const nextRow = S.Block.getNextTableRow(rootId, row.id, dir);
 
 			if ((idx >= 0) && nextRow) {
 				const nextRowElement = S.Block.getMapElement(rootId, nextRow.id);
@@ -1460,7 +1457,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					cb();
 				});
 			} else {
-				next = S.Block.getNextBlock(rootId, rowElement.childrenIds[rowElement.childrenIds.length - 1], dir, it => it.isFocusable());
+				const nextIdx = dir > 0 ? rowElement.childrenIds.length - 1 : 0;
+
+				next = S.Block.getNextBlock(rootId, rowElement.childrenIds[nextIdx], dir, it => it.isFocusable());
 				cb();
 			};
 		} else {
@@ -1490,6 +1489,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 		};
 
+		const onVertical = () => {
+			this.onArrowVertical(e, (dir < 0 ? 'arrowup' : 'arrowdown'), range, length, props);
+		};
+
 		if (isInsideTable) {
 			const element = S.Block.getMapElement(rootId, block.id);
 			const rowElement = S.Block.getParentMapElement(rootId, block.id);
@@ -1516,13 +1519,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 
 				if (!nextCellId) {
-					const nextRow = S.Block.getNextTableRow(rootId, block.id, dir);
+					const row = S.Block.getParentLeaf(rootId, block.id);
+					const nextRow = S.Block.getNextTableRow(rootId, row.id, dir);
+
 					if (nextRow) {
 						const nextRowElement = S.Block.getMapElement(rootId, nextRow.id);
 						fill(nextRow.id, () => {
 							nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
 							this.focusNextBlock(S.Block.getLeaf(rootId, nextCellId), dir);
 						});
+					} else {
+						onVertical();
 					};
 				};
 
@@ -1544,7 +1551,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 			};
 
-			this.onArrowVertical(e, (dir < 0 ? 'arrowup' : 'arrowdown'), range, length, props);
+			onVertical();
 		};
 	};
 
