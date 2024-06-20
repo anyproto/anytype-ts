@@ -129,6 +129,12 @@
     /* DataviewCalendar */
 
     .menu.menuDataviewCalendar {
+		.head {
+			.side.right {
+				.btn { background-image: url('#{$themePath}/arrow/calendarNav.svg'); }
+			}
+		}
+
         .select {
 			.icon.arrow { background-image: url('#{$themePath}/arrow/select/big.svg'); }
 		}
