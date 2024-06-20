@@ -1395,13 +1395,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		return S.Menu.isOpen('', '', [ 'blockContext', 'searchText', 'onboarding' ]);
 	};
 
-	getNextTableRow (id: string, dir: number) {
-		const { rootId } = this.props;
-		const element = S.Block.getMapElement(rootId, id);
-
-		return element ? S.Block.getNextBlock(rootId, element.parentId, dir, it => it.isTableRow()) : null;
-	};
-
 	onArrowVertical (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
 		if (this.menuCheck()) {
 			return;
@@ -1451,8 +1444,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		if (isInsideTable) {
 			const rowElement = S.Block.getParentMapElement(rootId, block.id);
+			if (!rowElement) {
+				cb();
+			};
+
 			const idx = rowElement.childrenIds.indexOf(block.id);
-			const nextRow = this.getNextTableRow(block.id, dir);
+			const nextRow = S.Block.getNextTableRow(rootId, block.id, dir);
 
 			if ((idx >= 0) && nextRow) {
 				const nextRowElement = S.Block.getMapElement(rootId, nextRow.id);
@@ -1462,6 +1459,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					};
 					cb();
 				});
+			} else {
+				next = S.Block.getNextBlock(rootId, rowElement.childrenIds[rowElement.childrenIds.length - 1], dir, it => it.isFocusable());
+				cb();
 			};
 		} else {
 			cb();
@@ -1516,7 +1516,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 
 				if (!nextCellId) {
-					const nextRow = this.getNextTableRow(block.id, dir);
+					const nextRow = S.Block.getNextTableRow(rootId, block.id, dir);
 					if (nextRow) {
 						const nextRowElement = S.Block.getMapElement(rootId, nextRow.id);
 						fill(nextRow.id, () => {

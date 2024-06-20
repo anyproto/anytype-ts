@@ -247,11 +247,13 @@ class BlockStore {
 		};
 
 		const idx = list.findIndex(item => item.id == id);
-		if ((idx + dir < 0) || (idx + dir > list.length - 1)) {
+		const nidx = idx + dir;
+
+		if ((nidx < 0) || (nidx > list.length - 1)) {
 			return null;
 		};
 
-		const ret = list[idx + dir];
+		const ret = list[nidx];
 		if (check && ret) {
 			return check(ret) ? ret : this.getNextBlock(rootId, ret.id, dir, check, list);
 		} else {
@@ -277,6 +279,11 @@ class BlockStore {
 		} else {
 			return this.getHighestParent(rootId, parent.id);
 		};
+	};
+
+	getNextTableRow (rootId: string, id: string, dir: number) {
+		const element = S.Block.getMapElement(rootId, id);
+		return element ? S.Block.getNextBlock(rootId, element.parentId, dir, it => it.isTableRow()) : null;
 	};
 
 	// Check if blockId is inside parentId children recursively
