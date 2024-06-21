@@ -33,6 +33,7 @@ export class Decode {
 	public static value (value: any) {
 		let data = null;
 		try { data = value ? value.toJavaScript() : null; } catch (e) { /**/ };
+
 		return data;
 	};
 

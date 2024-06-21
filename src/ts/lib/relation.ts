@@ -435,9 +435,9 @@ class Relation {
 		return options;
 	};
 
-	public getNumberValue (value: any): number {
+	public getNumberValue (value: any): any {
 		if (value === 0) {
-			value = '0';
+			return value;
 		};
 
 		value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+-]*/gi, '');

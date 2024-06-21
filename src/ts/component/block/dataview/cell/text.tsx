@@ -58,7 +58,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		let value = record[relation.relationKey];
 
 		if (isDate || isNumber) {
-			value = Relation.formatValue(relation, record[relation.relationKey], true);
+			value = Relation.formatValue(relation, value, true);
 			if (isNumber) {
 				value = value === null ? null : String(value);
 			};
