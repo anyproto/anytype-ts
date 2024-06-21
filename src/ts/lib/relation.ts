@@ -436,6 +436,10 @@ class Relation {
 	};
 
 	public getNumberValue (value: any): number {
+		if (value === 0) {
+			value = '0';
+		};
+
 		value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+-]*/gi, '');
 		if ((value === '') || (value === undefined)) {
 			value = null;
