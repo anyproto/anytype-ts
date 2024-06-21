@@ -16,9 +16,9 @@
 
 		.icon.arrow { 
 			width: 24px; height: 24px; background-size: 20px; background-image: url('~img/arrow/dateSelect.svg'); border-radius: 4px; 
-			transition: $transitionAllCommon; transform: rotateZ(270deg);
+			transition: $transitionAllCommon; transform: rotateZ(90deg);
 		}
-		.icon.arrow.left { transform: rotateZ(90deg); }
+		.icon.arrow.left { transform: rotateZ(270deg); }
 
 		.icon.arrow:hover { background-color: var(--color-shape-highlight-medium); }
 	}
