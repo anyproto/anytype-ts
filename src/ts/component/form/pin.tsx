@@ -4,22 +4,15 @@ import { Input } from 'Component';
 import { J, keyboard } from 'Lib';
 
 interface Props {
-	/** the length of the pin, defaults to J.Constant.pinLength */
 	pinLength?: number;
-	/** the expected pin, encrypted in sha1. if none provided, this component does not make a comparison check */
 	expectedPin?: string | null;
-	/** if true, the input field will be focused on component mount */
 	focusOnMount?: boolean;
-	/** callback when the pin is entered (and matches expectedPin if provided)*/
 	onSuccess?: (value: string) => void;
-	/** callback when the pin is entered (and does not match expectedPin if provided)*/
 	onError?: () => void;
-	/** if true, input will not turn to type password after filled*/
 	isVisible?: boolean;
 };
 
 type State = {
-	/** index of the current pin character in focus */
 	index: number;
 };
 
@@ -32,7 +25,7 @@ const TIMEOUT_DURATION = 150;
 class Pin extends React.Component<Props, State> {
 
 	public static defaultProps = {
-		pinLength: J.Constant.pinLength,
+		pinLength: 6,
 		expectedPin: null,
 		focusOnMount: true,
 		isVisible: false,

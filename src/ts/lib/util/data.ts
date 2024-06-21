@@ -137,29 +137,6 @@ class UtilData {
 		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 	
-	/*
-	Used to click and set selection automatically in block menu for example
-	*/
-	selectionGet (id: string, withChildren: boolean, save: boolean): string[] {
-		const selection = S.Common.getRef('selectionProvider');
-		
-		if (!selection) {
-			return [];
-		};
-		
-		let ids: string[] = selection.get(I.SelectType.Block, withChildren);
-		if (id && !ids.includes(id)) {
-			selection.clear();
-			selection.set(I.SelectType.Block, [ id ]);
-			ids = selection.get(I.SelectType.Block, withChildren);
-
-			if (!save) {
-				selection.clear();
-			};
-		};
-		return ids;
-	};
-
 	onInfo (info: I.AccountInfo) {
 		S.Block.rootSet(info.homeObjectId);
 		S.Block.widgetsSet(info.widgetsId);
@@ -227,8 +204,6 @@ class UtilData {
 					[ 
 						I.SurveyType.Register, 
 						I.SurveyType.Object, 
-						I.SurveyType.Multiplayer,
-						I.SurveyType.Shared, 
 					].forEach(it => Survey.check(it));
 
 					const space = U.Space.getSpaceview();
@@ -308,7 +283,7 @@ class UtilData {
 			},
 			{
 				subId: J.Constant.subId.relation,
-				keys: J.Constant.relationRelationKeys,
+				keys: J.Relation.relation,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
@@ -323,7 +298,7 @@ class UtilData {
 			},
 			{
 				subId: J.Constant.subId.option,
-				keys: J.Constant.optionRelationKeys,
+				keys: J.Relation.option,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
@@ -398,19 +373,19 @@ class UtilData {
 	};
 
 	spaceRelationKeys () {
-		return J.Constant.defaultRelationKeys.concat(J.Constant.spaceRelationKeys).concat(J.Constant.participantRelationKeys);
+		return J.Relation.default.concat(J.Relation.space).concat(J.Relation.participant);
 	};
 
 	typeRelationKeys () {
-		return J.Constant.defaultRelationKeys.concat(J.Constant.typeRelationKeys);
+		return J.Relation.default.concat(J.Relation.type);
 	};
 
 	participantRelationKeys () {
-		return J.Constant.defaultRelationKeys.concat(J.Constant.participantRelationKeys);
+		return J.Relation.default.concat(J.Relation.participant);
 	};
 
 	syncStatusRelationKeys () {
-		return J.Constant.defaultRelationKeys.concat(J.Constant.syncStatusRelationKeys);
+		return J.Relation.default.concat(J.Relation.syncStatus);
 	};
 
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
@@ -499,7 +474,7 @@ class UtilData {
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
-		const keys = J.Constant.defaultRelationKeys.concat([ 'targetObjectType' ]);
+		const keys = J.Relation.default.concat([ 'targetObjectType' ]);
 
 		this.search({
 			filters,
@@ -512,7 +487,7 @@ class UtilData {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Constant.coverRelationKeys), true);
+		const object = S.Detail.get(rootId, blockId, [ 'layout', 'layoutAlign', 'iconImage', 'iconEmoji', 'templateIsBundled' ].concat(J.Relation.cover), true);
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret = {
@@ -686,10 +661,7 @@ class UtilData {
 			S.Record.metaSet(subId, '', { total: message.counters.total, keys });
 		};
 
-		const mapper = (it: any) => { 
-			keys.forEach(k => it[k] = it[k] || '');
-			return { id: it[idField], details: it }; 
-		};
+		const mapper = it => ({ id: it[idField], details: it });
 
 		let details = [];
 		details = details.concat(message.dependencies.map(mapper));
@@ -707,7 +679,7 @@ class UtilData {
 			idField: 'id',
 			filters: [],
 			sorts: [],
-			keys: J.Constant.defaultRelationKeys,
+			keys: J.Relation.default,
 			sources: [],
 			offset: 0,
 			limit: 0,
@@ -764,7 +736,7 @@ class UtilData {
 		param = Object.assign({
 			subId: '',
 			ids: [],
-			keys: J.Constant.defaultRelationKeys,
+			keys: J.Relation.default,
 			noDeps: false,
 			idField: 'id',
 		}, param);
@@ -810,7 +782,7 @@ class UtilData {
 			fullText: '',
 			filters: [],
 			sorts: [],
-			keys: J.Constant.defaultRelationKeys,
+			keys: J.Relation.default,
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
@@ -890,7 +862,7 @@ class UtilData {
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
-			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
+			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] },
 		];
 
@@ -995,7 +967,7 @@ class UtilData {
 					return;
 				};
 
-				C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.iconCnt), mode, path, (message) => {
+				C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.count.icon), mode, path, (message) => {
 					if (message.error.code) {
 						onError(message.error.description);
 						return;

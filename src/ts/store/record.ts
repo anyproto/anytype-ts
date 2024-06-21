@@ -257,7 +257,7 @@ class RecordStore {
 	};
 
 	getTypeById (id: string) {
-		const object = S.Detail.get(J.Constant.subId.type, id, J.Constant.typeRelationKeys);
+		const object = S.Detail.get(J.Constant.subId.type, id, J.Relation.type);
 		return object._empty_ ? null : object;
 	};
 
@@ -318,12 +318,12 @@ class RecordStore {
 			return null;
 		};
 
-		const object = S.Detail.get(J.Constant.subId.relation, id, J.Constant.relationRelationKeys, true);
+		const object = S.Detail.get(J.Constant.subId.relation, id, J.Relation.relation, true);
 		return object._empty_ ? null : object;
 	};
 
 	getOption (id: string) {
-		const object = S.Detail.get(J.Constant.subId.option, id, J.Constant.optionRelationKeys, true);
+		const object = S.Detail.get(J.Constant.subId.option, id, J.Relation.option, true);
 		return object._empty_ ? null : object;
 	};
 

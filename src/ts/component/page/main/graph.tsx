@@ -105,7 +105,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	load () {
 		this.setLoading(true);
 
-		C.ObjectGraph(S.Common.space, U.Data.graphFilters(), 0, [], J.Constant.graphRelationKeys, '', [], (message: any) => {
+		C.ObjectGraph(S.Common.space, U.Data.graphFilters(), 0, [], J.Relation.graph, '', [], (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -140,7 +140,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
 
-			U.Data.onSubscribe(J.Constant.subId.graph, 'id', J.Constant.graphRelationKeys, {
+			U.Data.onSubscribe(J.Constant.subId.graph, 'id', J.Relation.graph, {
 				error: {},
 				records: message.nodes,
 				dependencies: [],

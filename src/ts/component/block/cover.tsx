@@ -58,7 +58,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	render () {
 		const { isEditing } = this.state;
 		const { rootId, readonly } = this.props;
-		const object = S.Detail.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(J.Constant.coverRelationKeys), true);
+		const object = S.Detail.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(J.Relation.cover), true);
 		const { coverType, coverId } = object;
 		const isImage = U.Data.coverIsImage(coverType);
 		const root = S.Block.getLeaf(rootId, rootId);
@@ -212,7 +212,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			onClose: () => {
 				elements.removeClass('hover');
 			},
-			subIds: J.Constant.menuIds.layout,
+			subIds: J.Menu.layout,
 			data: {
 				rootId: rootId,
 				value: object.layout,
@@ -249,7 +249,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	
 	onEdit (e: any) {
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 
 		this.coords.x = object.coverX;
 		this.coords.y = object.coverY;
@@ -291,7 +291,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		e.stopPropagation();
 		
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 
 		U.Object.setCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
 			this.setState({ isEditing: false });
@@ -311,7 +311,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 		
 		const { rootId } = this.props;
-		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 		const { coverId, coverType } = object;
 		const node = $(this.node);
 		const isImage = U.Data.coverIsImage(coverType);
@@ -354,7 +354,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		};
 
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType)) {
-			el.src = S.Common.imageUrl(coverId, J.Constant.size.cover);
+			el.src = S.Common.imageUrl(coverId, J.Size.cover);
 		};
 	};
 	

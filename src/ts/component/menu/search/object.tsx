@@ -321,7 +321,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		U.Data.search({
 			filters,
 			sorts,
-			keys: keys || J.Constant.defaultRelationKeys,
+			keys: keys || J.Relation.default,
 			fullText: filter,
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,

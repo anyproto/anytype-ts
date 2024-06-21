@@ -232,7 +232,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 				records = sortFavorite(records);
 			};
 
-			children = records.map(id => this.mapper(S.Detail.get(subId, id, J.Constant.sidebarRelationKeys)));
+			children = records.map(id => this.mapper(S.Detail.get(subId, id, J.Relation.sidebar)));
 		} else {
 			children = this.getChildNodesDetails(object.id);
 			this.subscribeToChildNodes(object.id, Relation.getArrayValue(object.links));
@@ -328,7 +328,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		U.Data.subscribeIds({
 			subId,
 			ids: links,
-			keys: J.Constant.sidebarRelationKeys,
+			keys: J.Relation.sidebar,
 			noDeps: true,
 		});
 	};

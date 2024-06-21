@@ -124,7 +124,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		e.stopPropagation();
 
 		const { rootId, onCoverOpen, onCoverClose, onEdit } = this.props;
-		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 		const element = $(e.currentTarget);
 		const hasCover = object.coverType != I.CoverType.None;
 		

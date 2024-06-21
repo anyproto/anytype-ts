@@ -41,8 +41,6 @@ const history = memoryHistory();
 const electron = U.Common.getElectron();
 const isPackaged = electron.isPackaged;
 
-interface RouteElement { path: string; };
-
 interface State {
 	isLoading: boolean;
 };
@@ -204,8 +202,8 @@ class App extends React.Component<object, State> {
 						<ListNotification key="listNotification" />
 
 						<Switch>
-							{J.Route.map((item: RouteElement, i: number) => (
-								<Route path={item.path} exact={true} key={i} component={RoutePage} />
+							{J.Route.map((path: string, i: number) => (
+								<Route path={path} exact={true} key={i} component={RoutePage} />
 							))}
 						</Switch>
 					</div>

@@ -199,24 +199,24 @@ class BlockStore {
 		return this.treeMap.get(rootId) || new Map();
 	};
 
-    getMapElement (rootId: string, blockId: string) {
+    getMapElement (rootId: string, blockId: string): I.BlockStructure {
 		const map = this.getMap(rootId);
 		return map ? map.get(blockId) : null;
 	};
 
-    getLeaf (rootId: string, id: string): any {
+	getParentMapElement (rootId: string, id: string): I.BlockStructure {
+		const element = this.getMapElement(rootId, id);
+		return element ? this.getMapElement(rootId, element.parentId) : null;
+	};
+
+	getLeaf (rootId: string, id: string): I.Block {
 		const map = this.blockMap.get(rootId);
 		return map ? map.get(id) : null;
 	};
 
-	getParentLeaf (rootId: string, id: string) {
+	getParentLeaf (rootId: string, id: string): I.Block {
 		const element = this.getMapElement(rootId, id);
 		return element ? this.getLeaf(rootId, element.parentId) : null;
-	};
-
-	getParentMapElement (rootId: string, id: string) {
-		const element = this.getMapElement(rootId, id);
-		return element ? this.getMapElement(rootId, element.parentId) : null;
 	};
 
     getBlocks (rootId: string, filter?: (it: any) => boolean): I.Block[] {
@@ -247,11 +247,13 @@ class BlockStore {
 		};
 
 		const idx = list.findIndex(item => item.id == id);
-		if ((idx + dir < 0) || (idx + dir > list.length - 1)) {
+		const nidx = idx + dir;
+
+		if ((nidx < 0) || (nidx > list.length - 1)) {
 			return null;
 		};
 
-		const ret = list[idx + dir];
+		const ret = list[nidx];
 		if (check && ret) {
 			return check(ret) ? ret : this.getNextBlock(rootId, ret.id, dir, check, list);
 		} else {
@@ -277,6 +279,30 @@ class BlockStore {
 		} else {
 			return this.getHighestParent(rootId, parent.id);
 		};
+	};
+
+	getNextTableRow (rootId: string, id: string, dir: number): I.Block {
+		const table = this.getHighestParent(rootId, id);
+		if (!table) {
+			return null;
+		};
+
+		const tableData = this.getTableData(rootId, table.id);
+		if (!tableData) {
+			return null;
+		};
+
+		const rowContainerElement = this.getMapElement(rootId, tableData.rowContainer.id);
+		if (!rowContainerElement) {
+			return null;
+		};
+
+		const idx = rowContainerElement.childrenIds.indexOf(id);
+		if (idx < 0) {
+			return null;
+		};
+
+		return this.getLeaf(rootId, rowContainerElement.childrenIds[idx + dir]);
 	};
 
 	// Check if blockId is inside parentId children recursively

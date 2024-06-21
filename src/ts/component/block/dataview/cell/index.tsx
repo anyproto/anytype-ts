@@ -444,17 +444,17 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 				$(pageContainer).off('mousedown.cell').on('mousedown.cell', (e: any) => { 
 					if (!$(e.target).parents(`#${cellId}`).length) {
-						S.Menu.closeAll(J.Constant.menuIds.cell); 
+						S.Menu.closeAll(J.Menu.cell); 
 					};
 				});
 
 				if (!config.debug.ui) {
-					win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(J.Constant.menuIds.cell));
+					win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(J.Menu.cell));
 				};
 			} else 
 			if (closeIfOpen) {
 				setOff();
-				S.Menu.closeAll(J.Constant.menuIds.cell);
+				S.Menu.closeAll(J.Menu.cell);
 				window.clearTimeout(this.timeout);
 			};
 		} else {

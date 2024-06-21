@@ -294,7 +294,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         const node = $(ReactDOM.findDOMNode(this));
         const wrapper = node.find('#filterWrapper');
 
-        S.Menu.closeAll(J.Constant.menuIds.store);
+        S.Menu.closeAll(J.Menu.store);
         wrapper.removeClass('active');
     };
 

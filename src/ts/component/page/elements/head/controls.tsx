@@ -43,7 +43,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	render (): any {
 		const { rootId, readonly } = this.props;
 		const { loading } = this.state;
-		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys);
+		const object = S.Detail.get(rootId, rootId, J.Relation.cover);
 		const cn = [ 'editorControls', 'editorControlElements' ];
 		
 		if ((object.coverType != I.CoverType.None) && object.coverId) {
@@ -150,7 +150,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			onClose: () => {
 				node.removeClass('hover');
 			},
-			subIds: J.Constant.menuIds.layout,
+			subIds: J.Menu.layout,
 			data: {
 				rootId,
 				value: object.layout,

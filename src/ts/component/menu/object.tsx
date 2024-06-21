@@ -73,7 +73,7 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		S.Menu.closeAll(J.Constant.menuIds.object);
+		S.Menu.closeAll(J.Menu.object);
 	};
 
 	rebind () {
@@ -266,7 +266,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			S.Menu.closeAll(J.Constant.menuIds.object);
+			S.Menu.closeAll(J.Menu.object);
 			return;
 		};
 
@@ -329,7 +329,7 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
-			S.Menu.closeAll(J.Constant.menuIds.object, () => {
+			S.Menu.closeAll(J.Menu.object, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};
@@ -435,7 +435,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				U.Common.clipboardCopy({ text: J.Url.protocol + U.Object.universalRoute(object) });
+				U.Common.clipboardCopy({ text: `${J.Constant.protocol}://${U.Object.universalRoute(object)}` });
 				analytics.event('CopyLink', { route });
 				break;
 			};
