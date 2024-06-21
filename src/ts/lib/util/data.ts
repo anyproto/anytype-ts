@@ -204,8 +204,6 @@ class UtilData {
 					[ 
 						I.SurveyType.Register, 
 						I.SurveyType.Object, 
-						I.SurveyType.Multiplayer,
-						I.SurveyType.Shared, 
 					].forEach(it => Survey.check(it));
 
 					const space = U.Space.getSpaceview();
