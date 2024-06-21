@@ -87,7 +87,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
-		let addCollection = { id: 'addCollection', icon: 'linkTo', name: translate('commonAddToCollection'), arrow: true };
+		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };

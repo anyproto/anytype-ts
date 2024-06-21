@@ -113,7 +113,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let setDefaultTemplate = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
-		let addCollection = { id: 'addCollection', icon: 'linkTo', name: translate('commonAddToCollection'), arrow: true };
+		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: (U.Common.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
