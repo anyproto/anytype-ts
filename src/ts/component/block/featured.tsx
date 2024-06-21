@@ -601,7 +601,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 				C.ObjectCreateSet([ object.type ], details, '', S.Common.space, (message: any) => {
 					if (!message.error.code) {
-						U.Object.openPopup(message.details);
+						const object = message.details;
+
+						U.Object.openPopup(object);
+						analytics.createObject(object.type, object.layout, analytics.route.featured, message.middleTime);
 					};
 				});
 				break;
