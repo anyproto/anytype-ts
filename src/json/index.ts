@@ -1,17 +1,17 @@
-import Color from './color';
-import Constant from './constant';
-import Emoji from './emoji';
-import Error from './error';
-import Extension from './extension';
-import Key from './key';
-import Latex from './latex';
-import Route from './route';
-import Theme from './theme';
-import Url from './url';
-import Lang from './lang';
-import Relation from './relation';
-import Menu from './menu';
-import Size from './size';
+import Color from 'json/color';
+import Constant from 'json/constant';
+import Emoji from 'json/emoji';
+import Error from 'json/error';
+import Extension from 'json/extension';
+import Key from 'json/key';
+import Latex from 'json/latex';
+import Route from 'json/route';
+import Theme from 'json/theme';
+import Url from 'json/url';
+import Lang from 'json/lang';
+import Relation from 'json/relation';
+import Menu from 'json/menu';
+import Size from 'json/size';
 
 export {
 	Color,
