@@ -313,16 +313,28 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'addCollection': {
+				const collectionType = S.Record.getCollectionType();
+
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
-					type: I.NavigationType.LinkTo,
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
-					onSelect: () => close(),
+					onSelect: (el: any) => {
+						Action.addToCollection(el.id, [ rootId ]);
+					},
 					skipIds: [ rootId ],
-					position: I.BlockPosition.Bottom,
+					canAdd: true,
+					addParam: {
+						name: translate('blockDataviewCreateNewCollection'),
+						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
+						onClick: (details: any) => {
+							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
+								Action.addToCollection(message.objectId, [ rootId ]);
+							});
+						},
+					},
 				});
 				break;
 			};

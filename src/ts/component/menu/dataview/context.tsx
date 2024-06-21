@@ -291,6 +291,8 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 
 			case 'addCollection': {
+				const collectionType = S.Record.getCollectionType();
+
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
@@ -301,17 +303,18 @@ class MenuContext extends React.Component<I.Menu> {
 					blockId: itemId,
 					blockIds: [ itemId ],
 					skipIds: [ itemId ],
-					position: I.BlockPosition.Bottom,
 					canAdd: true,
+					addParam: {
+						name: translate('blockDataviewCreateNewCollection'),
+						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
+						onClick: (details: any) => {
+							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
+								Action.addToCollection(message.objectId, objectIds);
+							});
+						},
+					},
 					onSelect: (el: any) => {
-						C.ObjectCollectionAdd(el.id, objectIds, (message: any) => {
-							if (message.error.code) {
-								return;
-							};
-
-							Preview.toastShow({ action: I.ToastAction.Collection, objectId: itemId, targetId: el.id });
-							analytics.event('LinkToObject', { objectType: el.type, linkType: 'Collection' });
-						});
+						Action.addToCollection(el.id, objectIds);
 
 						if (onLinkTo) {
 							onLinkTo(itemId, el.id);
