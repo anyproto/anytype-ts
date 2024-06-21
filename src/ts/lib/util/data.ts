@@ -204,8 +204,6 @@ class UtilData {
 					[ 
 						I.SurveyType.Register, 
 						I.SurveyType.Object, 
-						I.SurveyType.Multiplayer,
-						I.SurveyType.Shared, 
 					].forEach(it => Survey.check(it));
 
 					const space = U.Space.getSpaceview();
@@ -663,10 +661,7 @@ class UtilData {
 			S.Record.metaSet(subId, '', { total: message.counters.total, keys });
 		};
 
-		const mapper = (it: any) => { 
-			keys.forEach(k => it[k] = it[k] || '');
-			return { id: it[idField], details: it }; 
-		};
+		const mapper = it => ({ id: it[idField], details: it });
 
 		let details = [];
 		details = details.concat(message.dependencies.map(mapper));

@@ -235,6 +235,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		const actionParam = { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject };
+		const changeFile = { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true }
 		const restrictedAlign = [];
 
 		if (!hasText) {
@@ -254,6 +255,10 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: U.Menu.getHAlign(restrictedAlign) };
 			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: U.Menu.getBgColors() };
 			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: U.Menu.getTextColors() };
+
+			if (hasTurnFile) {
+				action.children.push(changeFile);
+			};
 
 			if (hasTurnText)	 sections.push(turnText);
 			if (hasTurnList)	 sections.push(turnList);
@@ -276,7 +281,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			const c2: any[] = [
 				hasLink ? { id: 'linkSettings', icon: `linkStyle${content.cardStyle}`, name: translate('commonPreview'), arrow: true } : null,
 				hasTurnFile ? { id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true } : null,
-				hasTurnFile ? { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true } : null,
+				hasTurnFile ? changeFile : null,
 				hasTurnText ? turnText : null,
 				hasTurnDiv ? { id: 'turnStyle', icon: U.Data.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
 				hasAlign ? { id: 'align', icon: U.Data.alignHIcon(hAlign), name: translate('commonAlign'), arrow: true } : null,
@@ -335,7 +340,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		if (!block) {
 			return;
 		};
-		
+
 		const { content, hAlign, bgColor } = block;
 		const { color } = content;
 
@@ -562,7 +567,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.data = Object.assign(menuParam.data, {
 					rootId,
 					blockId: block.id,
-					value: [ block.content.targetObjectId ],
+					value: [ block.getTargetObjectId() ],
 					blockIds: [ block.id ],
 					filters,
 					canAdd: true,
@@ -620,6 +625,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 			case 'copy': {
 				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom);
+				break;
+			};
+
+			case 'copyUrl': {
+				U.Common.copyToast(translate('commonUrl'), block.content.url);
 				break;
 			};
 				
