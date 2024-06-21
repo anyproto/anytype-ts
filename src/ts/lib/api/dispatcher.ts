@@ -162,11 +162,6 @@ class Dispatcher {
 					break;
 				};
 
-				case 'ThreadStatus': {
-					S.Auth.threadSet(rootId, mapped);
-					break;
-				};
-
 				case 'ObjectRelationsAmend': {
 					S.Record.relationsSet(rootId, mapped.id, mapped.relations);
 					break;

@@ -21,7 +21,6 @@ class Action {
 			this.dbClearRoot(rootId);
 
 			S.Block.clear(rootId);
-			S.Auth.threadRemove(rootId);
 		};
 
 		onClose();
