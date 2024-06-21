@@ -1038,7 +1038,7 @@ export const Mapper = {
 
 			if (v == V.SUBSCRIPTIONADD)				 t = 'SubscriptionAdd';
 			if (v == V.SUBSCRIPTIONREMOVE)			 t = 'SubscriptionRemove';
-			if (v == V.SUBSCRIPTIONPOSITION)		 t = 'subscriptionPosition';
+			if (v == V.SUBSCRIPTIONPOSITION)		 t = 'SubscriptionPosition';
 			if (v == V.SUBSCRIPTIONCOUNTERS)		 t = 'SubscriptionCounters';
 			if (v == V.SUBSCRIPTIONGROUPS)			 t = 'SubscriptionGroups';
 

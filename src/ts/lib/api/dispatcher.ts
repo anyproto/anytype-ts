@@ -1018,7 +1018,6 @@ class Dispatcher {
 
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
 		const [ sid, dep ] = subId.split('/');
-
 		if (dep) {
 			return;
 		};
