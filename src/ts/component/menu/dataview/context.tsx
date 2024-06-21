@@ -294,6 +294,7 @@ class MenuContext extends React.Component<I.Menu> {
 				const collectionType = S.Record.getCollectionType();
 
 				menuId = 'searchObject';
+				menuParam.className = 'single';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
