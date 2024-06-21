@@ -39,7 +39,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	container = null;
 	containerRect = null;
 	dir = 0;
-	cntSelect = 0;
 
 	state = {
 		isLoading: false,
@@ -1590,22 +1589,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onSelectAll () {
 		const { rootId } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
+		const { title } = J.Constant.blockId;
 
 		if (!selection) {
 			return;
 		};
 
-		this.cntSelect++;
-
-		let blocks = S.Block.getBlocks(rootId, it => it.isSelectable());
-		if (this.cntSelect == 1) {
-			blocks = blocks.filter(it => !it.isTextTitle() && !it.isTextDescription());
+		const all = S.Block.getBlocks(rootId, it => it.isSelectable()).map(it => it.id);
+		
+		let ids = selection.get(I.SelectType.Block, true);
+		if (ids.length < all.length - 1) {
+			ids = all;
 		};
-		if (this.cntSelect > 1) {
-			this.cntSelect = 0;
-		};
+		ids = ids.includes(title) ? ids.filter(id => id != title) : ids.concat(title);
 
-		selection.set(I.SelectType.Block, blocks.map(it => it.id));
+		selection.set(I.SelectType.Block, ids);
 		focus.clear(true);
 		S.Menu.close('blockContext');
 	};
