@@ -52,6 +52,10 @@ class UtilObject {
 	};
 
 	universalRoute (object: any): string {
+		if (!object) {
+			return;
+		};
+
 		return object ? `object?objectId=${object.id}&spaceId=${object.spaceId}` : '';
 	};
 
@@ -74,6 +78,9 @@ class UtilObject {
 	};
 
 	openAuto (object: any, param?: any) {
+		if (!object) {
+			return;
+		};
 
 		// Prevent opening object in popup from different space
 		if (object.spaceId && (object.spaceId != S.Common.space)) {
