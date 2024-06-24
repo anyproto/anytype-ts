@@ -223,6 +223,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			vertical: I.MenuDirection.Top,
 			data: {
 				filters,
+				canAdd: true,
 				dataChange: (items: any[]) => {
 					const fixed: any[] = [
 						{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },

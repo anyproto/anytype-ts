@@ -245,6 +245,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters,
 					value: this.target ? this.target.id : '',
+					canAdd: true,
 					dataChange: (items: any[]) => {
 						const fixed: any[] = [
 							{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
