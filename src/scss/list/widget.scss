@@ -21,7 +21,7 @@
 		.button:hover { background-color: var(--color-shape-tertiary); }
 
 		.button.disabled { background: var(--color-shape-tertiary); max-width: 80px; }
-		.button.edit { 
+		.button.grey { 
 			box-shadow: 0px 0px; background: var(--color-shape-highlight-medium); border-radius: 6px; @include text-common; color: var(--color-text-primary); line-height: 26px; width: auto;
 			padding: 0px 10px;
 		}

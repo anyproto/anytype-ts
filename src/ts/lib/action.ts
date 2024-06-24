@@ -679,7 +679,7 @@ class Action {
 			};
 		};
 
-		const limit = Number(U.Menu.getWidgetLimits(layout)[0]?.id) || 0;
+		const limit = Number(U.Menu.getWidgetLimitOptions(layout)[0]?.id) || 0;
 		const newBlock = { 
 			type: I.BlockType.Link,
 			content: { 
