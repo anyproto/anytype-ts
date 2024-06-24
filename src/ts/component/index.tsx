@@ -22,6 +22,7 @@ import ListObjectManager from './list/objectManager';
 import Header from './header';
 import Footer from './footer';
 import Sidebar from './sidebar';
+import Vault from './vault';
 import Widget from './widget';
 
 import Menu from './menu';
@@ -158,6 +159,7 @@ export {
 	Cell,
 
 	Sidebar,
+	Vault,
 	Widget,
 
 	ObjectName,
