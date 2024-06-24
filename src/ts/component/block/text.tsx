@@ -420,8 +420,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			const object = S.Detail.get(rootId, data.param, []);
 			const { _empty_, layout, done, isDeleted, isArchived } = object;
 
-			console.log(object);
-
 			let icon = null;
 			if (_empty_) {
 				icon = <Loader type="loader" className={[ 'c' + size, 'inline' ].join(' ')} />;

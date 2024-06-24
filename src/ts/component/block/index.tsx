@@ -110,8 +110,6 @@ const Block = observer(class Block extends React.Component<Props> {
 			cd.push('bgColor bgColor-' + bgColor);
 		};
 
-		console.log(id, type);
-
 		switch (type) {
 			case I.BlockType.Text: {
 				canDropMiddle = canDrop && block.canHaveChildren();
