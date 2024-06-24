@@ -86,10 +86,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		};
 
 		return (
-			<div 
-				ref={node => this.node = node}
-				className={[ 'setWrapper', check.className ].join(' ')}
-			>
+			<div ref={node => this.node = node}>
 				<Header 
 					{...this.props} 
 					component="mainObject" 
@@ -97,7 +94,11 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 					rootId={rootId} 
 				/>
 
-				{content}
+				<div id="bodyWrapper" className="wrapper">
+					<div className={[ 'editorWrapper', check.className ].join(' ')}>
+						{content}
+					</div>
+				</div>
 
 				<Footer component="mainObject" {...this.props} />
 			</div>

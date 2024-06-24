@@ -177,7 +177,8 @@
 /* Set, Collection */
 
 .editorWrapper.isSet,
-.editorWrapper.isCollection {
+.editorWrapper.isCollection,
+.editorWrapper.isDate {
 	.blocks { width: calc(100% - 96px); margin: 0px auto; padding: 0px; user-select: none; }
 	.blocks {
 		.block {
@@ -202,7 +203,6 @@
 .editorWrapper.isCollection.withIcon {
 	.controlButtons { left: 14px; }
 }
-
 
 .editorWrapper.isSet.withIconAndCover, 
 .editorWrapper.isCollection.withIconAndCover { padding-top: 356px; }
