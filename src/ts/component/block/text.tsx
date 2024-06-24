@@ -122,8 +122,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				
 			case I.TextStyle.Code: {
 				const options: I.Option[] = [];
-				for (const i in J.Constant.codeLang) {
-					options.push({ id: i, name: J.Constant.codeLang[i] });
+				for (const i in J.Lang.code) {
+					options.push({ id: i, name: J.Lang.code[i] });
 				};
 
 				spellcheck = false;
@@ -995,6 +995,25 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const text = block.canHaveMarks() ? parsed.text : value;
 
+		// When typing text adjust links markup to break it
+		if (!keyboard.isSpecial(e)) {
+			const d = text.length - this.text.length;
+			const markTypes = [ I.MarkType.Link, I.MarkType.Object ];
+
+			if (d > 0) {
+				for (let i = 0; i < this.marks.length; ++i) {
+					let mark = this.marks[i];
+
+					if (markTypes.includes(mark.type) && (mark.range.to == range.to)) {
+						const adjusted = Mark.adjust([ mark ], mark.range.from, -d);
+
+						this.marks[i] = adjusted[0];
+						adjustMarks = true;
+					};
+				};
+			};
+		};
+
 		if (!ret && (adjustMarks || (value != text))) {
 			this.setValue(text);
 
@@ -1036,7 +1055,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				},
 				offsetX: () => {
 					const rect = U.Common.getSelectionRect();
-					return rect ? 0 : J.Constant.size.blockMenu;
+					return rect ? 0 : J.Size.blockMenu;
 				},
 				noFlipX: false,
 				noFlipY: false,
@@ -1082,7 +1101,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			},
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
-				return rect ? 0 : J.Constant.size.blockMenu;
+				return rect ? 0 : J.Size.blockMenu;
 			},
 			data: {
 				noHead: true,
@@ -1265,7 +1284,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onSelect () {
 		const { rootId, block, isPopup, isInsideTable, readonly } = this.props;
-		const ids = U.Data.selectionGet('', false, true);
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.getForClick('', false, true);
 		const range = this.getRange();
 
 		focus.set(block.id, range);

@@ -241,7 +241,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		S.Menu.closeAll(J.Constant.menuIds.add);
+		S.Menu.closeAll(J.Menu.add);
 	};
 
 	checkFilter () {
@@ -364,7 +364,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			S.Menu.closeAll(J.Constant.menuIds.add);
+			S.Menu.closeAll(J.Menu.add);
 			return;
 		};
 
@@ -460,7 +460,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
-			S.Menu.closeAll(J.Constant.menuIds.add, () => {
+			S.Menu.closeAll(J.Menu.add, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

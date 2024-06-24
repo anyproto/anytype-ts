@@ -32,7 +32,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const subKey = getSubKey();
 		const subId = getSubId(parentId);
 		const isOpen = Storage.checkToggle(subKey, treeKey);
-		const object = S.Detail.get(subId, id, J.Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Relation.sidebar);
 		const { isReadonly, isArchived, type, restrictions, done, layout } = object;
 		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
 		const rootId = keyboard.getRootId();
@@ -156,7 +156,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { id, parentId, onToggle, getSubId } = this.props;
-		const object = S.Detail.get(getSubId(parentId), id, J.Constant.sidebarRelationKeys, true);
+		const object = S.Detail.get(getSubId(parentId), id, J.Relation.sidebar, true);
 
 		onToggle(e, { ...this.props, details: object });
 		this.forceUpdate();

@@ -51,7 +51,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		} else {
 			const object = S.Detail.get(rootId, rootId, []);
 			const isCollection = object.layout == I.ObjectLayout.Collection;
-			const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
+			const children = S.Block.getChildren(rootId, rootId, it => it.isChat());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
 

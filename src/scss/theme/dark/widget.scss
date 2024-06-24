@@ -55,6 +55,12 @@
 			}
 		}
 	}
+
+	.viewCalendar {
+		.dateSelect {
+			.icon.arrow { background-image: url('#{$themePath}/arrow/dateSelect.svg'); }
+		}
+	}
 }
 
 .button.widget {

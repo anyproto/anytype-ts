@@ -344,7 +344,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this._isMounted = false;
 		this.unbind();
 
-		S.Menu.closeAll(J.Constant.menuIds.cell);
+		S.Menu.closeAll(J.Menu.cell);
     };
 
 	rebind () {

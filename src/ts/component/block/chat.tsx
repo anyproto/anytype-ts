@@ -419,7 +419,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId)) {
-			S.Menu.closeAll(J.Constant.menuIds.context, () => {
+			S.Menu.closeAll(J.Menu.context, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

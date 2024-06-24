@@ -113,7 +113,7 @@ class UtilEmbed {
 				const place = url.match(/place\/([^\/]+)/);
 				const param = url.match(/\/@([^\/\?]+)/);
 				const search: any = {
-					key: J.Constant.embed.googleMaps.key,
+					key: J.Constant.googleMaps,
 				};
 
 				let endpoint = '';

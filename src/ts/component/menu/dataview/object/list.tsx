@@ -169,6 +169,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { filter } = data;
 
 		if (filter != this.filter) {
+			this.top = 0;
 			this.offset = 0;
 			this.filter = filter;
 			this.n = -1;

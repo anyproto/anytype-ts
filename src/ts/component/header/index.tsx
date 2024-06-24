@@ -181,7 +181,7 @@ class Header extends React.Component<Props> {
 			noFlipX: true,
 			noFlipY: true,
 			horizontal: I.MenuDirection.Right,
-			subIds: J.Constant.menuIds.cell,
+			subIds: J.Menu.cell,
 			classNameWrap: cnw.join(' '),
 			...param,
 			data: {

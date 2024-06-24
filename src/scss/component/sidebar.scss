@@ -53,7 +53,7 @@
 			.icon.toggle:hover { background-image: url('~img/icon/widget/toggle1.svg'); }
 		}
 
-		> .body { height: calc(100% - 12px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: hidden; overscroll-behavior: none; }
+		> .body { height: calc(100% - 12px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: auto; overscroll-behavior: none; }
 	}
 
 	.resize-h { width: 10px; height: 100%; position: absolute; top: 0px; right: -5px; cursor: col-resize; }
@@ -78,16 +78,13 @@
 	.resize-v { height: 10px; width: 100%; position: absolute; bottom: -5px; left: 0px; cursor: row-resize; }
 	.loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 }
-.sidebar:hover {
-	> .inner > .body { overflow-y: auto; }
-}
 
 html.platformWindows {
 	.sidebar.fixed {
 		> .inner > .head { height: 38px; }
 	}
 
-	.sidebar:hover {
+	.sidebar {
 		> .inner > .body { overflow-y: overlay; }
 	}
 }	

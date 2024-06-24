@@ -28,7 +28,7 @@ class Relation {
 	};
 
 	public width (width: number, format: I.RelationType): number {
-		const size = J.Constant.size.dataview.cell;
+		const size = J.Size.dataview.cell;
 		return Number(width || size[`format${format}`]) || size.default;
 	};
 
@@ -342,7 +342,7 @@ class Relation {
 
 		return [
 			{ id: '', icon: '', name: translate('commonNone') },
-			{ id: J.Constant.pageCoverRelationKey, icon: 'image', name: translate('libRelationPageCover') },
+			{ id: J.Relation.pageCover, icon: 'image', name: translate('libRelationPageCover') },
 		].concat(options);
 	};
 
@@ -435,7 +435,11 @@ class Relation {
 		return options;
 	};
 
-	public getNumberValue (value: any): number {
+	public getNumberValue (value: any): any {
+		if (value === 0) {
+			return value;
+		};
+
 		value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+-]*/gi, '');
 		if ((value === '') || (value === undefined)) {
 			value = null;

@@ -251,7 +251,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 								};
 
 								case I.ObjectLayout.Image: {
-									url = S.Common.imageUrl(item.id, J.Constant.size.image);
+									url = S.Common.imageUrl(item.id, J.Size.image);
 									break;
 								};
 							};

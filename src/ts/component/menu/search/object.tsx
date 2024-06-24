@@ -249,11 +249,22 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				items.push({ isDiv: true });
 			};
 
+			let name = '';
 			if (addParam) {
-				items.push({ id: 'add', icon: 'plus', name: addParam.name, isAdd: true });
-			} else
-			if (filter) {
-				items.push({ id: 'add', icon: 'plus', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter), isAdd: true });
+				if (addParam.nameWithFilter && filter) {
+					name = U.Common.sprintf(addParam.nameWithFilter, filter);
+				} else 
+				if (addParam.name) {
+					name = addParam.name;
+				};
+			};
+
+			if (!name && filter) {
+				name = U.Common.sprintf(translate('commonCreateObjectWithName'), filter);
+			};
+
+			if (name) {
+				items.push({ id: 'add', icon: 'plus', name, isAdd: true });
 			};
 		};
 
@@ -321,7 +332,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		U.Data.search({
 			filters,
 			sorts,
-			keys: keys || J.Constant.defaultRelationKeys,
+			keys: keys || J.Relation.default,
 			fullText: filter,
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,
@@ -451,8 +462,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 			};
 		};
-
-
 
 		if (item.isAdd) {
 			details = { name: filter, ...details };

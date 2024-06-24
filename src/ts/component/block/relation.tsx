@@ -126,7 +126,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 
 		S.Menu.open('relationSuggest', { 
 			element: `#block-${block.id}`,
-			offsetX: J.Constant.size.blockMenu,
+			offsetX: J.Size.blockMenu,
 			data: {
 				rootId,
 				blockId: block.id,

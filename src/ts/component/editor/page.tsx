@@ -66,7 +66,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.blockCreate = this.blockCreate.bind(this);
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.resizePage = this.resizePage.bind(this);
-		this.focusTitle = this.focusTitle.bind(this);
+		this.focusFirstBlock = this.focusFirstBlock.bind(this);
 		this.blockRemove = this.blockRemove.bind(this);
 		this.setLayoutWidth = this.setLayoutWidth.bind(this);
 	};
@@ -103,7 +103,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					{...this.props} 
 					resize={this.resizePage} 
 					readonly={readonly}
-					onLayoutSelect={this.focusTitle} 
+					onLayoutSelect={this.focusFirstBlock} 
 				/>
 				
 				<div id={`editor-${rootId}`} className="editor">
@@ -252,7 +252,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
-			this.focusTitle();
+			this.focusFirstBlock();
 
 			U.Common.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 
@@ -322,21 +322,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 	};
 	
-	focusTitle () {
+	focusFirstBlock () {
 		const { rootId } = this.props;
-		const block = S.Block.getFirstBlock(rootId, 1, it => it.isText());
+		const block = S.Block.getFirstBlock(rootId, 1, it => it.isText() && !it.getLength());
 
 		if (!block) {
 			return;
 		};
 
-		const length = block.getLength();
-		if (length) {
-			focus.clear(true);
-		} else {
-			focus.set(block.id, { from: 0, to: 0 });
-			focus.apply();
-		};
+		focus.set(block.id, { from: 0, to: 0 });
+		focus.apply();
 	};
 	
 	unbind () {
@@ -487,7 +482,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			if (
 				(pageX >= x) && 
-				(pageX <= x + J.Constant.size.blockMenu) && 
+				(pageX <= x + J.Size.blockMenu) && 
 				(pageY >= offset + BUTTON_OFFSET) && 
 				(pageY <= this.winScrollTop + rectContainer.height + offset + BUTTON_OFFSET)
 			) {
@@ -501,7 +496,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			const buttonX = hoveredRect.x - (rectContainer.x - J.Constant.size.blockMenu) + 2;
+			const buttonX = hoveredRect.x - (rectContainer.x - J.Size.blockMenu) + 2;
 			const buttonY = pageY - rectContainer.y - BUTTON_OFFSET - this.winScrollTop;
 			
 			clear();
@@ -648,7 +643,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				S.Menu.closeAll([ 'blockContext', 'blockAdd' ], () => {
 					S.Menu.open('blockAction', { 
 						element: `#block-${ids[0]}`,
-						offsetX: J.Constant.size.blockMenu,
+						offsetX: J.Size.blockMenu,
 						data: {
 							blockId: ids[0],
 							blockIds: ids,
@@ -814,10 +809,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			S.Menu.close('blockContext', () => {
 				S.Menu.open('blockAction', { 
 					element: `#block-${block.id}`,
-					offsetX: J.Constant.size.blockMenu,
+					offsetX: J.Size.blockMenu,
 					data: {
 						blockId: block.id,
-						blockIds: U.Data.selectionGet(block.id, true, true),
+						blockIds: selection.getForClick(block.id, true, true),
 						rootId,
 						onCopy: this.onCopy,
 					},
@@ -1400,13 +1395,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		return S.Menu.isOpen('', '', [ 'blockContext', 'searchText', 'onboarding' ]);
 	};
 
-	getNextTableRow (id: string, dir: number) {
-		const { rootId } = this.props;
-		const element = S.Block.getMapElement(rootId, id);
-
-		return element ? S.Block.getNextBlock(rootId, element.parentId, dir, it => it.isTableRow()) : null;
-	};
-
 	onArrowVertical (e: any, pressed: string, range: I.TextRange, length: number, props: any) {
 		if (this.menuCheck()) {
 			return;
@@ -1416,6 +1404,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = S.Block.getLeaf(rootId, focused);
+		if (!block) {
+			return;
+		};
+
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
 		if ((dir < 0) && range.to) {
@@ -1454,10 +1446,38 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			this.focusNextBlock(next, dir);
 		};
 
+		const parentElement = S.Block.getParentMapElement(rootId, block.id);
+		const idx = parentElement.childrenIds.indexOf(block.id);
+
+		// Check if there is empty table to fill when moving
+		if (idx >= 0) {
+			const nextChildId = parentElement.childrenIds[idx + dir];
+			const next = S.Block.getLeaf(rootId, nextChildId);
+
+			if (next && next.isTable()) {
+				const tableData = S.Block.getTableData(rootId, next.id);
+
+				if (tableData) {
+					const rowContainerElement = S.Block.getMapElement(rootId, tableData.rowContainer.id);
+
+					if (rowContainerElement) {
+						const nextIdx = dir > 0 ? 0 : rowContainerElement.childrenIds.length - 1;
+						const rowId = rowContainerElement.childrenIds[nextIdx];
+
+						if (rowId) {
+							C.BlockTableRowListFill(rootId, [ rowId ], cb);
+							return;
+						};
+					};
+				};
+			};
+		};
+
 		if (isInsideTable) {
+			const row = S.Block.getParentLeaf(rootId, block.id);
 			const rowElement = S.Block.getParentMapElement(rootId, block.id);
 			const idx = rowElement.childrenIds.indexOf(block.id);
-			const nextRow = this.getNextTableRow(block.id, dir);
+			const nextRow = S.Block.getNextTableRow(rootId, row.id, dir);
 
 			if ((idx >= 0) && nextRow) {
 				const nextRowElement = S.Block.getMapElement(rootId, nextRow.id);
@@ -1467,6 +1487,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					};
 					cb();
 				});
+			} else {
+				const nextIdx = dir > 0 ? rowElement.childrenIds.length - 1 : 0;
+
+				next = S.Block.getNextBlock(rootId, rowElement.childrenIds[nextIdx], dir, it => it.isFocusable());
+				cb();
 			};
 		} else {
 			cb();
@@ -1495,6 +1520,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 		};
 
+		const onVertical = () => {
+			this.onArrowVertical(e, (dir < 0 ? 'arrowup' : 'arrowdown'), range, length, props);
+		};
+
 		if (isInsideTable) {
 			const element = S.Block.getMapElement(rootId, block.id);
 			const rowElement = S.Block.getParentMapElement(rootId, block.id);
@@ -1521,13 +1550,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 
 				if (!nextCellId) {
-					const nextRow = this.getNextTableRow(block.id, dir);
+					const row = S.Block.getParentLeaf(rootId, block.id);
+					const nextRow = S.Block.getNextTableRow(rootId, row.id, dir);
+
 					if (nextRow) {
 						const nextRowElement = S.Block.getMapElement(rootId, nextRow.id);
 						fill(nextRow.id, () => {
 							nextCellId = nextRowElement.childrenIds[dir > 0 ? 0 : nextRowElement.childrenIds.length - 1];
 							this.focusNextBlock(S.Block.getLeaf(rootId, nextCellId), dir);
 						});
+					} else {
+						onVertical();
 					};
 				};
 
@@ -1549,19 +1582,28 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 			};
 
-			this.onArrowVertical(e, (dir < 0 ? 'arrowup' : 'arrowdown'), range, length, props);
+			onVertical();
 		};
 	};
 
 	onSelectAll () {
 		const { rootId } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
+		const { title } = J.Constant.blockId;
 
 		if (!selection) {
 			return;
 		};
+
+		const all = S.Block.getBlocks(rootId, it => it.isSelectable()).map(it => it.id);
 		
-		selection.set(I.SelectType.Block, S.Block.getBlocks(rootId, it => it.isSelectable()).map(it => it.id));
+		let ids = selection.get(I.SelectType.Block, true);
+		if (ids.length < all.length - 1) {
+			ids = all;
+		};
+		ids = ids.includes(title) ? ids.filter(id => id != title) : ids.concat(title);
+
+		selection.set(I.SelectType.Block, ids);
 		focus.clear(true);
 		S.Menu.close('blockContext');
 	};
@@ -1600,14 +1642,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		S.Menu.open('blockAdd', { 
 			element: $(`#block-${blockId}`),
-			subIds: J.Constant.menuIds.add,
+			subIds: J.Menu.add,
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
-				return rect ? 0 : J.Constant.size.blockMenu;
+				return rect ? 0 : J.Size.blockMenu;
 			},
 			commonFilter: true,
 			onClose: () => {
@@ -1790,7 +1832,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			},
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
-				return rect ? 0 : J.Constant.size.blockMenu;
+				return rect ? 0 : J.Size.blockMenu;
 			},
 			onOpen: () => {
 				if (block) {
@@ -2157,7 +2199,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				const ch = scrollContainer.height();
 				const height = Math.max(ch / 2, ch - blocks.outerHeight() - blocks.offset().top - ct - 2);
 
-				last.css({ height: Math.max(J.Constant.size.lastBlock, height) });
+				last.css({ height: Math.max(J.Size.lastBlock, height) });
 			};
 
 			if (note.length) {

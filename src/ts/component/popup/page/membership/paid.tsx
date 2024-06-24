@@ -151,10 +151,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const tierItem = U.Data.getMembershipTier(tier);
 		const name = globalName || !tierItem.namesCount ? '' : this.getName();
 		const refButton = method == I.PaymentMethod.Stripe ? this.refButtonCard : this.refButtonCrypto;
-
-		refButton.setLoading(true);
-
-		this.checkName(name, () => {
+		const cb = () => {
 			C.MembershipRegisterPaymentRequest(tier, method, name, (message) => {
 				refButton.setLoading(false);
 
@@ -169,7 +166,10 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 				analytics.event('ClickMembership', { params: { tier, method }});
 			});
-		});
+		};
+
+		refButton.setLoading(true);
+		tierItem.nameMinLength ? this.validateName(cb) : cb();
 	};
 
 	validateName (callBack?: () => void) {

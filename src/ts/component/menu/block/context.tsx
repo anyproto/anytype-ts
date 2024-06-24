@@ -165,7 +165,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 	};
 
 	componentWillUnmount(): void {
-		S.Menu.closeAll(J.Constant.menuIds.context.concat('selectContext'));
+		S.Menu.closeAll(J.Menu.context.concat('selectContext'));
 	};
 
 	onMark (e: any, type: any) {
@@ -249,7 +249,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 				menuParam = Object.assign(menuParam, {
 					component: 'select',
-					subIds: J.Constant.menuIds.selectContext,
+					subIds: J.Menu.selectContext,
 					onOpen: context => this.menuContext = context,
 				});
 
@@ -266,7 +266,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						};
 
 						if (!item.arrow) {
-							S.Menu.closeAll(J.Constant.menuIds.selectContext);
+							S.Menu.closeAll(J.Menu.selectContext);
 							return;
 						};
 
@@ -358,7 +358,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		focusApply ? focus.apply() : focus.clear(false);
 
 		if (menuId && !S.Menu.isOpen(menuId)) {
-			const menuIds = [].concat(J.Constant.menuIds.context);
+			const menuIds = [].concat(J.Menu.context);
 			
 			if (closeContext) {
 				menuIds.push(this.props.id);
@@ -453,7 +453,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId)) {
-			S.Menu.closeAll(J.Constant.menuIds.selectContext, () => {
+			S.Menu.closeAll(J.Menu.selectContext, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

@@ -53,7 +53,7 @@ class Sidebar {
 			const y = wh / 2 - this.getMaxHeight() / 2;
 
 			this.set({
-				width: J.Constant.size.sidebar.width.default,
+				width: J.Size.sidebar.width.default,
 				y,
 				x: 0,
 				snap: I.MenuDirection.Left,
@@ -86,10 +86,12 @@ class Sidebar {
 			return;
 		};
 
+		const { isSidebarFixed, autoSidebar } = S.Common;
+
 		if (
 			this.isAnimating ||
-			S.Common.isSidebarFixed ||
-			!S.Common.autoSidebar
+			isSidebarFixed ||
+			!autoSidebar
 		) {
 			return;
 		};
@@ -191,7 +193,7 @@ class Sidebar {
 				this.obj.removeClass('active');
 			};
 		});
-	}
+	};
 
 	expand (): void {
 		if (!this.obj || !this.obj.length) {
@@ -232,7 +234,7 @@ class Sidebar {
 				right: '',
 			});
 		});
-	}
+	};
 
 	show (): void {
 		if (!this.obj || !this.obj.length) {
@@ -285,13 +287,13 @@ class Sidebar {
 
 	toggleExpandCollapse () {
 		const { isClosed, width } = this.data;
+		const { isSidebarFixed } = S.Common;
 
 		if (isClosed) {
-			this.set({ width, isClosed: false }, true);
-			$(window).trigger('resize');
+			this.open(width);
+		} else {
+			isSidebarFixed ? this.collapse() : this.expand();
 		};
-
-		S.Common.isSidebarFixed ? this.collapse() : this.expand();
 	};
 
 	private removeAnimation (callBack?: () => void): void {
@@ -519,7 +521,7 @@ class Sidebar {
 	 * Limit the sidebar width to the max and min bounds
 	 */
 	private limitWidth (width: number): number {
-		const { min, max } = J.Constant.size.sidebar.width;
+		const { min, max } = J.Size.sidebar.width;
 		return Math.max(min, Math.min(max, Number(width) || 0));
 	};
 

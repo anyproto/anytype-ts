@@ -373,14 +373,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		});
 
 		if (!S.Menu.isOpen(id)) {
-			S.Menu.closeAll(J.Constant.menuIds.relationEdit, () => {
+			S.Menu.closeAll(J.Menu.relationEdit, () => {
 				S.Menu.open(id, options);
 			});
 		};
 	};
 
 	menuClose () {
-		S.Menu.closeAll(J.Constant.menuIds.relationEdit);
+		S.Menu.closeAll(J.Menu.relationEdit);
 	};
 
 	onOpen (e: any) {

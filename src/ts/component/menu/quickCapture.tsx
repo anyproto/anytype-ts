@@ -665,7 +665,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
 		});
 
-		obj.css({ width: Math.min(ww - J.Constant.size.menu.border * 2 - sw, Math.ceil(obj.outerWidth())) });
+		obj.css({ width: Math.min(ww - J.Size.menuBorder * 2 - sw, Math.ceil(obj.outerWidth())) });
 	};
 
 };

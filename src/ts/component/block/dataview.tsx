@@ -430,11 +430,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getKeys (id: string): string[] {
 		const view = this.getView(id);
 
-		let keys = J.Constant.defaultRelationKeys.concat(J.Constant.coverRelationKeys);
+		let keys = J.Relation.default.concat(J.Relation.cover);
 		if (view) {
 			keys = keys.concat((view.relations || []).map(it => it && it.relationKey));
 
-			if (view.coverRelationKey && (view.coverRelationKey != J.Constant.pageCoverRelationKey)) {
+			if (view.coverRelationKey && (view.coverRelationKey != J.Relation.pageCover)) {
 				keys.push(view.coverRelationKey);
 			};
 
@@ -762,7 +762,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			...menuParam,
 			offsetY: 10,
 			noAnimation: true,
-			subIds: J.Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
+			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 			onOpen: context => menuContext = context,
@@ -957,6 +957,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
+			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 			addParam.onClick = (details: any) => {
 				C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => onSelect(message.details, true));
 			};
@@ -967,6 +968,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewSet');
+			addParam.nameWithFilter = translate('blockDataviewCreateNewSetWithName');
 			addParam.onClick = (details: any) => {
 				C.ObjectCreateSet([], details, '', S.Common.space, message => onSelect(message.details, true));
 			};
