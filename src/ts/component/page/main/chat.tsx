@@ -55,6 +55,8 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
 
+			console.log(S.Block.getChildren(rootId, rootId));
+
 			content = (
 				<React.Fragment>
 					{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
