@@ -46,10 +46,12 @@ class MenuHelp extends React.Component<I.Menu> {
 	componentDidMount () {
 		this.rebind();
 		Highlight.showAll();
+		U.Common.shareTooltipShow();
 	};
 
 	componentWillUnmount () {
 		this.unbind();
+		U.Common.shareTooltipHide();
 	};
 
 	rebind () {

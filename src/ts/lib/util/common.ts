@@ -944,6 +944,23 @@ class UtilCommon {
 		return String(s || '').replace(/\r\n?/g, '\n');
 	};
 
+	shareTooltipShow (canClose?: boolean) {
+		const el = $('#shareTooltip');
+		const css = { marginBottom: $('#notifications').height() };
+
+		el.addClass('visible').css(css);
+		if (canClose) {
+			el.addClass('canClose');
+		};
+	};
+
+	shareTooltipHide () {
+		$('#shareTooltip')
+			.removeClass('visible')
+			.removeClass('canClose')
+			.css({ marginBottom: 0 });
+	};
+
 };
 
 export default new UtilCommon();
