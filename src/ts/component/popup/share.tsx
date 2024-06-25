@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Title, Label, Button, IconObject } from 'Component';
-import { I, U, J, translate } from 'Lib';
+import { Title, Label, Button } from 'Component';
+import { I, U, J, translate, analytics } from 'Lib';
 
 class PopupShare extends React.Component<I.Popup> {
 
@@ -27,6 +27,7 @@ class PopupShare extends React.Component<I.Popup> {
 
 	onClick () {
 		U.Common.copyToast(translate('commonLink'), J.Url.download);
+		analytics.event('ClickShareAppCopyLink');
 	};
 
 };

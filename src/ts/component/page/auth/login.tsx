@@ -112,6 +112,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 					window.setTimeout(() => {
 						U.Common.shareTooltipShow(true);
+						analytics.event('OnboardingTooltip', { id: 'ShareApp' });
 					}, J.Constant.delay.login);
 				});
 			});
