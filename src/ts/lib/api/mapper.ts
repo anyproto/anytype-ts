@@ -488,91 +488,46 @@ export const Mapper = {
 			});
 		},
 
-		View: (obj: I.View) => {
-			obj = new M.View(U.Common.objectCopy(obj));
-			
-			const item = new Model.Block.Content.Dataview.View();
-
-			item.setId(obj.id);
-			item.setName(obj.name);
-			item.setType(obj.type as any);
-			item.setCoverrelationkey(obj.coverRelationKey);
-			item.setGrouprelationkey(obj.groupRelationKey);
-			item.setGroupbackgroundcolors(obj.groupBackgroundColors);
-			item.setCoverfit(obj.coverFit);
-			item.setCardsize(obj.cardSize as any);
-			item.setHideicon(obj.hideIcon);
-			item.setPagelimit(obj.pageLimit);
-			item.setRelationsList(obj.relations.map(Mapper.To.ViewRelation));
-			item.setFiltersList(obj.filters.map(Mapper.To.Filter));
-			item.setSortsList(obj.sorts.map(Mapper.To.Sort));
-			item.setDefaulttemplateid(obj.defaultTemplateId);
-			item.setDefaultobjecttypeid(obj.defaultTypeId);
-
-			return item;
+		View: (obj: Model.Block_Content_Dataview_View) => {
+			return Model.Block_Content_Dataview_View.create({
+				...obj,
+				relations: obj.relations.map(Mapper.To.ViewRelation),
+				filters: obj.filters.map(Mapper.To.Filter),
+				sorts: obj.sorts.map(Mapper.To.Sort),
+			});
 		},
 
 		PasteFile: (obj: any) => {
-			const item = new Rpc.Block.Paste.Request.File();
-
-			item.setName(obj.name);
-			item.setLocalpath(obj.path);
-
-			return item;
+			return Commands.Rpc_Block_Paste_Request_File.create({
+				...obj,
+				localPath: obj.path,
+			});
 		},
 
 		GroupOrder: (obj: any) => {
-			const item = new Model.Block.Content.Dataview.GroupOrder();
-
-			item.setViewid(obj.viewId);
-			item.setViewgroupsList(obj.groups.map((it: any) => {
-				const el = new Model.Block.Content.Dataview.ViewGroup();
-
-				el.setGroupid(it.groupId);
-				el.setIndex(it.index);
-				el.setHidden(it.isHidden);
-				el.setBackgroundcolor(it.bgColor);
-
-				return el;
-			}));
-
-			return item;
+			return Model.Block_Content_Dataview_GroupOrder.create({
+				...obj,
+				viewGroups: obj.groups.map(Model.Block_Content_Dataview_ViewGroup.create),
+			});
 		},
 
 		ObjectOrder: (obj: any) => {
-			const item = new Model.Block.Content.Dataview.ObjectOrder();
-
-			item.setViewid(obj.viewId);
-			item.setGroupid(obj.groupId);
-			item.setObjectidsList(obj.objectIds);
-
-			return item;
+			return Model.Block_Content_Dataview_ObjectOrder.create(obj);
 		},
 
 		InternalFlag: (value: I.ObjectFlag) => {
-			const item = new Model.InternalFlag();
-
-			item.setValue(value as any);
-
-			return item;
+			return Model.InternalFlag.create({ value: value as any });
 		},
 
-		Snapshot: (obj: any) => {
-			const item = new Rpc.Object.Import.Request.Snapshot();
-
-			item.setId(obj.id);
-			item.setSnapshot(obj.snapshot);
-
-			return item;
+		Snapshot: (obj: Commands.Rpc_Object_Import_Request_Snapshot) => {
+			return Commands.Rpc_Object_Import_Request_Snapshot.create(obj);
 		},
 
 		ParticipantPermissionChange: (obj: any) => {
-			const item = new Model.ParticipantPermissionChange();
-
-			item.setIdentity(obj.identity);
-			item.setPerms(obj.permissions);
-
-			return item;
+			return Model.ParticipantPermissionChange.create({
+				...obj,
+				perms: obj.permissions,
+			});
 		},
 
 	},
@@ -591,7 +546,7 @@ export const Mapper = {
 
 		AccountUpdate: (obj: Events.Event_Account_Update) => {
 			return {
-				status: Mapper.From.AccountStatus(obj.getStatus()),
+				status: Mapper.From.AccountStatus(obj.status),
 			};
 		},
 
@@ -599,204 +554,186 @@ export const Mapper = {
 			return obj;
 		},
 
-		AccountLinkChallenge: (obj: Events.Event.Account.LinkChallenge) => {
+		AccountLinkChallenge: (obj: Events.Event_Account_LinkChallenge) => {
+			return obj;
+		},
+
+		ObjectRelationsAmend: (obj: Events.Event_Object_Relations_Amend) => {
 			return {
-				challenge: obj.getChallenge(),
+				...obj,
+				relations: (obj.relationLinks || []).map(Mapper.From.RelationLink),
 			};
 		},
 
-		ObjectRelationsAmend: (obj: Events.Event.Object.Relations.Amend) => {
+		ObjectRelationsRemove: (obj: Events.Event_Object_Relations_Remove) => {
+			return obj;
+		},
+
+		ObjectRestrictionsSet: (obj: Events.Event_Object_Restrictions_Set) => {
 			return {
-				id: obj.getId(),
-				relations: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
+				restrictions: Mapper.From.Restrictions(obj.restrictions),
 			};
 		},
 
-		ObjectRelationsRemove: (obj: Events.Event.Object.Relations.Remove) => {
+		FileSpaceUsage: (obj: Events.Event_File_SpaceUsage) => {
+			return obj;
+		},
+
+		FileLocalUsage: (obj: Events.Event_File_LocalUsage) => {
 			return {
-				id: obj.getId(),
-				relationKeys: obj.getRelationkeysList() || [],
+				localUsage: obj.localBytesUsage,
 			};
 		},
 
-		ObjectRestrictionsSet: (obj: Events.Event.Object.Restrictions.Set) => {
+		FileLimitUpdated: (obj: Events.Event_File_LimitUpdated) => {
+			return obj;
+		},
+
+		BlockAdd: (obj: Events.Event_Block_Add) => {
 			return {
-				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
+				blocks: obj.blocks.map(Mapper.From.Block),
 			};
 		},
 
-		FileSpaceUsage: (obj: Events.Event.File.SpaceUsage) => {
+		BlockDelete: (obj: Events.Event_Block_Delete) => {
+			return obj;
+		},
+
+		BlockSetChildrenIds: (obj: Events.Event_Block_Set_ChildrenIds) => {
+			return obj;
+		},
+
+		BlockSetFields: (obj: Events.Event_Block_Set_Fields) => {
 			return {
-				spaceId: obj.getSpaceid(),
-				bytesUsage: obj.getBytesusage(),
+				...obj,
+				fields: Decode.struct(obj.fields),
 			};
 		},
 
-		FileLocalUsage: (obj: Events.Event.File.LocalUsage) => {
+		BlockSetLink: (obj: Events.Event_Block_Set_Link) => {
 			return {
-				localUsage: obj.getLocalbytesusage(),
+				id: obj.id,
+				targetBlockId: obj.targetBlockId ? obj.targetBlockId.value : null,
+				cardStyle: obj.cardStyle ? obj.cardStyle.value : null,
+				iconSize: obj.iconSize ? obj.iconSize.value : null,
+				description: obj.description ? obj.description.value : null,
+				relations: obj.relations ? obj.relations.value : null,
+				fields: obj.fields ? obj.fields.value : null,
 			};
 		},
 
-		FileLimitUpdated: (obj: Events.Event.File.LimitUpdated) => {
+		BlockSetText: (obj: Events.Event_Block_Set_Text) => {
 			return {
-				bytesLimit: obj.getByteslimit(),
+				id: obj.id,
+				text: obj.text ? obj.text.value : null,
+				style: obj.style ? obj.style.value : null,
+				checked: obj.checked ? obj.checked.value : null,
+				color: obj.color ? obj.color.value : null,
+				iconEmoji: obj.iconEmoji ? obj.iconEmoji.value : null,
+				iconImage: obj.iconImage ? obj.iconImage.value : null,
+				marks: obj.marks ? (obj.marks.value.marks || []).map(Mapper.From.Mark) : null,
 			};
 		},
 
-		BlockAdd: (obj: Events.Event.Block.Add) => {
+		BlockSetDiv: (obj: Events.Event_Block_Set_Div) => {
 			return {
-				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
+				id: obj.id,
+				style: obj.style ? obj.style.value : null,
 			};
 		},
 
-		BlockDelete: (obj: Events.Event.Block.Delete) => {
+		BlockDataviewTargetObjectIdSet: (obj: Events.Event_Block_Dataview_TargetObjectIdSet) => {
+			return obj;
+		},
+
+		BlockDataviewIsCollectionSet: (obj: Events.Event_Block_Dataview_IsCollectionSet) => {
 			return {
-				blockIds: obj.getBlockidsList() || [],
+				id: obj.id,
+				isCollection: obj.value,
 			};
 		},
 
-		BlockSetChildrenIds: (obj: Events.Event.Block.Set.ChildrenIds) => {
+		BlockSetWidget: (obj: Events.Event_Block_Set_Widget) => {
 			return {
-				id: obj.getId(),
-				childrenIds: obj.getChildrenidsList() || [],
+				id: obj.id,
+				layout: obj.layout ? obj.layout.value : null,
+				limit: obj.limit ? obj.limit.value : null,
+				viewId: obj.viewId ? obj.viewId.value : null,
 			};
 		},
 
-		BlockSetFields: (obj: Events.Event.Block.Set.Fields) => {
+		BlockSetFile: (obj: Events.Event_Block_Set_File) => {
 			return {
-				id: obj.getId(),
-				fields: obj.hasFields() ? Decode.struct(obj.getFields()) : {},
+				id: obj.id,
+				targetObjectId: obj.targetObjectId ? obj.targetObjectId.value : null,
+				type: obj.type ? obj.type.value : null,
+				style: obj.style ? obj.style.value : null,
+				state: obj.state ? obj.state.value : null,
 			};
 		},
 
-		BlockSetLink: (obj: Events.Event.Block.Set.Link) => {
+		BlockSetBookmark: (obj: Events.Event_Block_Set_Bookmark) => {
 			return {
-				id: obj.getId(),
-				targetBlockId: obj.hasTargetblockid() ? obj.getTargetblockid().getValue() : null,
-				cardStyle: obj.hasCardstyle() ? obj.getCardstyle().getValue() : null,
-				iconSize: obj.hasIconsize() ? obj.getIconsize().getValue() : null,
-				description: obj.hasDescription() ? obj.getDescription().getValue() : null,
-				relations: obj.hasRelations() ? obj.getRelations().getValueList() || [] : null,
-				fields: obj.hasFields() ? Decode.struct(obj.getFields()) : null,
+				id: obj.id,
+				targetObjectId: obj.targetObjectId ? obj.targetObjectId.value : null,
+				state: obj.state ? obj.state.value : null,
 			};
 		},
 
-		BlockSetText: (obj: Events.Event.Block.Set.Text) => {
+		BlockSetBackgroundColor: (obj: Events.Event_Block_Set_BackgroundColor) => {
 			return {
-				id: obj.getId(),
-				text: obj.hasText() ? obj.getText().getValue() : null,
-				style: obj.hasStyle() ? obj.getStyle().getValue() : null,
-				checked: obj.hasChecked() ? obj.getChecked().getValue() : null,
-				color: obj.hasColor() ? obj.getColor().getValue() : null,
-				iconEmoji: obj.hasIconemoji() ? obj.getIconemoji().getValue() : null,
-				iconImage: obj.hasIconimage() ? obj.getIconimage().getValue() : null,
-				marks: obj.hasMarks() ? (obj.getMarks().getValue().getMarksList() || []).map(Mapper.From.Mark) : null,
+				id: obj.id,
+				bgColor: obj.backgroundColor,
 			};
 		},
 
-		BlockSetDiv: (obj: Events.Event.Block.Set.Div) => {
+		BlockSetAlign: (obj: Events.Event_Block_Set_Align) => {
 			return {
-				id: obj.getId(),
-				style: obj.hasStyle() ? obj.getStyle().getValue() : null,
+				id: obj.id,
+				align: obj.align,
 			};
 		},
 
-		BlockDataviewTargetObjectIdSet: (obj: Events.Event.Block.Dataview.TargetObjectIdSet) => {
+		BlockSetVerticalAlign: (obj: Events.Event_Block_Set_VerticalAlign) => {
 			return {
-				id: obj.getId(),
-				targetObjectId: obj.getTargetobjectid(),
+				id: obj.id,
+				align: obj.verticalAlign,
 			};
 		},
 
-		BlockDataviewIsCollectionSet: (obj: Events.Event.Block.Dataview.IsCollectionSet) => {
+		BlockSetRelation: (obj: Events.Event_Block_Set_Relation) => {
 			return {
-				id: obj.getId(),
-				isCollection: obj.getValue(),
+				id: obj.id,
+				key: obj.key ? obj.key.value : null,
 			};
 		},
 
-		BlockSetWidget: (obj: Events.Event.Block.Set.Widget) => {
+		BlockSetLatex: (obj: Events.Event_Block_Set_Latex) => {
 			return {
-				id: obj.getId(),
-				layout: obj.hasLayout() ? obj.getLayout().getValue() : null,
-				limit: obj.hasLimit() ? obj.getLimit().getValue() : null,
-				viewId: obj.hasViewid() ? obj.getViewid().getValue() : null,
+				id: obj.id,
+				text: obj.text ? obj.text.value : null,
 			};
 		},
 
-		BlockSetFile: (obj: Events.Event.Block.Set.File) => {
+		BlockSetTableRow: (obj: Events.Event_Block_Set_TableRow) => {
 			return {
-				id: obj.getId(),
-				targetObjectId: obj.hasTargetobjectid() ? obj.getTargetobjectid().getValue() : null,
-				type: obj.hasType() ? obj.getType().getValue() : null,
-				style: obj.hasStyle() ? obj.getStyle().getValue() : null,
-				state: obj.hasState() ? obj.getState().getValue() : null,
+				id: obj.id,
+				isHeader: obj.isHeader ? obj.isHeader.value : null,
 			};
 		},
 
-		BlockSetBookmark: (obj: Events.Event.Block.Set.Bookmark) => {
+		BlockDataviewViewSet: (obj: Events.Event_Block_Dataview_ViewSet) => {
 			return {
-				id: obj.getId(),
-				targetObjectId: obj.hasTargetobjectid() ? obj.getTargetobjectid().getValue() : null,
-				state: obj.hasState() ? obj.getState().getValue() : null,
+				id: obj.id,
+				view: Mapper.From.View(obj.view),
 			};
 		},
 
-		BlockSetBackgroundColor: (obj: Events.Event.Block.Set.BackgroundColor) => {
-			return {
-				id: obj.getId(),
-				bgColor: obj.getBackgroundcolor(),
-			};
-		},
-
-		BlockSetAlign: (obj: Events.Event.Block.Set.Align) => {
-			return {
-				id: obj.getId(),
-				align: obj.getAlign(),
-			};
-		},
-
-		BlockSetVerticalAlign: (obj: Events.Event.Block.Set.VerticalAlign) => {
-			return {
-				id: obj.getId(),
-				align: obj.getVerticalalign(),
-			};
-		},
-
-		BlockSetRelation: (obj: Events.Event.Block.Set.Relation) => {
-			return {
-				id: obj.getId(),
-				key: obj.hasKey() ? obj.getKey().getValue() : null,
-			};
-		},
-
-		BlockSetLatex: (obj: Events.Event.Block.Set.Latex) => {
-			return {
-				id: obj.getId(),
-				text: obj.hasText() ? obj.getText().getValue() : null,
-			};
-		},
-
-		BlockSetTableRow: (obj: Events.Event.Block.Set.TableRow) => {
-			return {
-				id: obj.getId(),
-				isHeader: obj.hasIsheader() ? obj.getIsheader().getValue() : null,
-			};
-		},
-
-		BlockDataviewViewSet: (obj: Events.Event.Block.Dataview.ViewSet) => {
-			return {
-				id: obj.getId(),
-				view: Mapper.From.View(obj.getView()),
-			};
-		},
-
-		BlockDataviewViewUpdate: (obj: Events.Event.Block.Dataview.ViewUpdate) => {
+		BlockDataviewViewUpdate: (obj: Events.Event_Block_Dataview_ViewUpdate) => {
 			const ret = {
-				id: obj.getId(),
-				viewId: obj.getViewid(),
-				fields: obj.hasFields() ? Mapper.From.ViewFields(obj.getFields()) : null,
+				id: obj.id,
+				viewId: obj.viewId,
+				fields: Mapper.From.ViewFields(obj.fields),
 			};
 
 			const keys = [ 
