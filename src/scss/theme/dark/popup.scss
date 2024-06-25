@@ -205,4 +205,11 @@
 			}
 		}
 	}
+
+	/* PopupShare */
+
+	.popup.popupShare {
+		.content::before { display: none; }
+		.content::after { background-image: url('#{$themePath}/icon/popup/share/header.svg'); }
+	}
 }

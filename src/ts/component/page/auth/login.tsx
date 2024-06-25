@@ -107,7 +107,13 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 			S.Auth.accountListClear();
 			U.Data.createSession(phrase, '', () => {
-				C.AccountRecover(message => this.setError(message.error));
+				C.AccountRecover(message => {
+					this.setError(message.error);
+
+					window.setTimeout(() => {
+						U.Common.shareTooltipShow(true);
+					}, J.Constant.delay.login);
+				});
 			});
 		});
 	};

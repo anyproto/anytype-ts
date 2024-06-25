@@ -51,6 +51,7 @@ export default {
 		keyboard:		 500,
 		notification:	 200,
 		widget:			 450,
+		login:			 1000,
 	},
 
 	fileExtension: {

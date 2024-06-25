@@ -19,6 +19,7 @@ class Share extends React.Component<{}, {}> {
 	};
 
 	onClick () {
+		U.Common.shareTooltipHide();
 		S.Popup.open('share', {});
 	};
 

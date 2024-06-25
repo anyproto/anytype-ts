@@ -84,6 +84,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	onLogout () {
 		this.props.setPinConfirmed(false);
 
+		U.Common.shareTooltipHide();
 		U.Router.go('/', { 
 			replace: true, 
 			animate: true,
