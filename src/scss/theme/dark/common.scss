@@ -47,6 +47,8 @@ html.themeDark {
 
     /* Common */
 
+    @mixin shadow { box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+
     body { color-scheme: dark; }
 
     .cover.type2.black { background-color: #000 !important; }
@@ -210,7 +212,7 @@ html.themeDark {
         .content { background: var(--color-bg-secondary); }
     }
 
-	.previewGraph { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+	.previewGraph { background: var(--color-bg-secondary); @include shadow; }
 
     /* Pager */
 
@@ -283,8 +285,6 @@ html.themeDark {
 
 	/* Notifications */
 
-	@mixin shadow { box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
-
 	.notifications {
 		.head {
 			.icon { border-color: var(--color-bg-secondary); }
@@ -296,6 +296,13 @@ html.themeDark {
 			.icon.delete { background-color: var(--color-bg-secondary); }
 		}
 	}
+
+    /* Share Tooltip */
+    .shareTooltip { background: var(--color-bg-secondary); @include shadow; }
+    .shareTooltip {
+        .icon.smile { background-image: url('#{$themePath}/icon/share/smile.svg'); }
+        .icon.close { background-color: var(--color-bg-secondary); }
+    }
 
 	@import "./menu.scss";
     @import "./popup.scss";
