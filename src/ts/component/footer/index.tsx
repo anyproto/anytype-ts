@@ -58,7 +58,6 @@ class Footer extends React.Component<Props> {
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			offsetY: () => -($('#notifications').height() + 78),
-			passThrough: true,
 		});
 	};
 

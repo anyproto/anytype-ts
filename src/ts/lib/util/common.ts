@@ -948,6 +948,10 @@ class UtilCommon {
 		const el = $('#shareTooltip');
 		const css = { marginBottom: $('#notifications').height() };
 
+		if (S.Menu.isOpen('help')) {
+			return;
+		};
+
 		el.addClass('visible').css(css);
 		if (canClose) {
 			el.addClass('canClose');
