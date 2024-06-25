@@ -28,7 +28,7 @@ export interface Notification {
 	id: string;
 	type: NotificationType;
 	status: NotificationStatus;
-	createTime: number;
+	createTime: bigint;
 	isLocal: boolean;
 	payload: any;
 	title?: string;

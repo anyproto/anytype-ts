@@ -124,7 +124,7 @@ class Dispatcher {
 		for (const message of messages) {
 			const type = message.value.oneofKind;
 			const data = Mapper.Event.Data(message);
-			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : {};
+			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : data;
 			const needLog = this.checkLog(type) && !skipDebug;
 
 			switch (type) {

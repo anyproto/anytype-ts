@@ -51,8 +51,8 @@ export enum MembershipTierDataPeriodType {
 export interface Membership {
 	tier?: TierType;
 	status?: MembershipStatus;
-	dateStarted?: number;
-	dateEnds?: number;
+	dateStarted?: bigint;
+	dateEnds?: bigint;
 	isAutoRenew?: boolean;
 	nextTier?: TierType;
 	nextTierEnds?: number;

@@ -98,7 +98,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 							))}
 						</div>
 						<Label text={U.Common.sprintf(translate('popupUsecaseUpdated'), U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrBeforeDay), U.Date.now()))} />
-						<Label text={U.File.size(object.size)} />
+						<Label text={U.File.size(object.fileSize)} />
 					</div>
 				</div>
 			</div>

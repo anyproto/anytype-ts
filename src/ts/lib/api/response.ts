@@ -207,9 +207,10 @@ export const HistoryDiffVersions = (response: Commands.Rpc_History_DiffVersions_
 	return {
 		events: (response.historyEvents || []).map(it => {
 			const type = it.value.oneofKind;
-			const data = Mapper.Event[type](Mapper.Event.Data(it));
+			const data = Mapper.Event.Data(it);
+			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : data;
 
-			return { type, data };
+			return { type, data: mapped };
 		}),
 	};
 };
@@ -246,25 +247,6 @@ export const WorkspaceObjectAdd = (response: Commands.Rpc_Workspace_Object_Add_R
 export const UnsplashSearch = (response: Commands.Rpc_Unsplash_Search_Response) => {
 	return {
 		pictures: (response.pictures || []).map(Mapper.From.UnsplashPicture),
-	};
-};
-
-export const GalleryDownloadIndex = (response: Commands.Rpc_Gallery_DownloadIndex_Response) => {
-	return {
-		categories: (response.categories || []).map((it: Commands.Rpc_Gallery_DownloadIndex_Response_Category) => {
-			return {
-				id: it.id,
-				icon: it.icon,
-				list: it.experiences || [],
-			};
-		}),
-		list: (response.experiences || []).map(Mapper.From.Manifest),
-	};
-};
-
-export const GalleryDownloadManifest = (response: Commands.Rpc_Gallery_DownloadManifest_Response) => {
-	return {
-		info: Mapper.From.Manifest(response.info),
 	};
 };
 
