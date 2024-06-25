@@ -24,7 +24,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 
 	render (): React.ReactNode {
 		const { value } = this.state;
-		const { getView } = this.props;
+		const { block, getView } = this.props;
 		const view = getView();
 
 		if (!view) {
@@ -45,7 +45,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 					<div className="side left">
 						<Select 
 							ref={ref => this.refMonth = ref}
-							id="calendar-month" 
+							id={`widget-${block.id}-calendar-month`} 
 							value={m} 
 							options={months} 
 							className="month" 
@@ -53,7 +53,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 						/>
 						<Select 
 							ref={ref => this.refYear = ref}
-							id="calendar-year" 
+							id={`widget-${block.id}-calendar-year`} 
 							value={y} 
 							options={years} 
 							className="year" 

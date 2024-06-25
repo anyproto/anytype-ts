@@ -27,7 +27,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 	};
 
 	render () {
-		const { className } = this.props;
+		const { block, className } = this.props;
 		const { value } = this.state;
 		const cn = [ 'viewContent', className ];
 		const data = this.getData();
@@ -43,7 +43,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 					<div className="side left">
 						<Select 
 							ref={ref => this.refMonth = ref}
-							id="calendar-month" 
+							id={`block-${block.id}-calendar-month`}
 							value={m} 
 							options={months} 
 							className="month" 
@@ -51,7 +51,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 						/>
 						<Select 
 							ref={ref => this.refYear = ref}
-							id="calendar-year" 
+							id={`block-${block.id}-calendar-year`}
 							value={y} 
 							options={years} 
 							className="year" 

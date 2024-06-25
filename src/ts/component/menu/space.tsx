@@ -185,13 +185,11 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const { config } = S.Common;
 		const items = U.Common.objectCopy(U.Space.getList());
-		const length = items.length;
 
 		items.push({ id: 'gallery', name: translate('commonGallery') });
 
-		if (config.sudo || (length < J.Constant.limit.space)) {
+		if (U.Space.canCreateSpace()) {
 			items.push({ id: 'add', name: translate('commonCreateNew') });
 		};
 

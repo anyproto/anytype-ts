@@ -430,7 +430,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(object.id, [ object.id ]);
+				C.ObjectCollectionAdd(targetBlockId, [ object.id ]);
 			};
 
 			U.Object.openAuto(object);

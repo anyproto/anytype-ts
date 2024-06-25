@@ -176,6 +176,14 @@ class UtilSpace {
 		return U.Data.isAnytypeNetwork() ? U.Common.sprintf(J.Url.invite, cid, key) : `${J.Constant.protocol}://invite/?cid=${cid}&key=${key}`;
 	};
 
+	canCreateSpace (): boolean {
+		const { config } = S.Common;
+		const items = U.Common.objectCopy(this.getList());
+		const length = items.length;
+
+		return config.sudo || (length < J.Constant.limit.space);
+	};
+
 };
 
 export default new UtilSpace();

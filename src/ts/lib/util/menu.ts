@@ -186,7 +186,6 @@ class UtilMenu {
 			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate'), caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
-			//{ id: 'comment', icon: 'comment', name: translate('commonComment')' }
 		];
 
 		if (hasTurnObject) {
@@ -198,11 +197,11 @@ class UtilMenu {
 		};
 		
 		if (hasFile) {
-			items = items.concat([
-				{ id: 'download', icon: 'download', name: translate('commonDownload') },
-				//{ id: 'rename', icon: 'rename', name: translate('libMenuRename') ),
-				//{ id: 'replace', icon: 'replace', name: translate('libMenuReplace') },
-			]);
+			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
+		};
+
+		if (hasBookmark) {
+			items.push({ id: 'copyUrl', icon: 'copy', name: translate('libMenuCopyUrl') });
 		};
 
 		if (hasDataview) {

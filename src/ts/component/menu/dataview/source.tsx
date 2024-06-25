@@ -27,7 +27,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			const canDelete = item.id != 'type';
 			return (
 				<form id={'item-' + item.itemId} className={[ 'item' ].join(' ')} onMouseEnter={e => this.onOver(e, item)}>
-					<IconObject size={40} object={item} forceLetter={true} />
+					<IconObject size={40} object={item} />
 					<div className="txt" onClick={e => this.onClick(e, item)}>
 						<div className="name">{item.name}</div>
 						<div className="value">{item.value}</div>

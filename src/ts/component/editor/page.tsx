@@ -39,6 +39,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	container = null;
 	containerRect = null;
 	dir = 0;
+	cntSelect = 0;
 
 	state = {
 		isLoading: false,
@@ -1465,9 +1466,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						const rowId = rowContainerElement.childrenIds[nextIdx];
 
 						if (rowId) {
-							C.BlockTableRowListFill(rootId, [ rowId ], () => {
-								cb();
-							});
+							C.BlockTableRowListFill(rootId, [ rowId ], cb);
 							return;
 						};
 					};
@@ -1595,8 +1594,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!selection) {
 			return;
 		};
-		
-		selection.set(I.SelectType.Block, S.Block.getBlocks(rootId, it => it.isSelectable()).map(it => it.id));
+
+		this.cntSelect++;
+
+		let blocks = S.Block.getBlocks(rootId, it => it.isSelectable());
+		if (this.cntSelect == 1) {
+			blocks = blocks.filter(it => !it.isTextTitle() && !it.isTextDescription());
+		};
+		if (this.cntSelect > 1) {
+			this.cntSelect = 0;
+		};
+
+		selection.set(I.SelectType.Block, blocks.map(it => it.id));
 		focus.clear(true);
 		S.Menu.close('blockContext');
 	};
