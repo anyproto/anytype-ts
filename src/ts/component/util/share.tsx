@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Label } from 'Component';
-import { S, U, translate, analytics, I } from 'Lib'
+import { S, U, translate, analytics, I } from 'Lib';
 
 class Share extends React.Component<{}, {}> {
 
@@ -11,7 +11,7 @@ class Share extends React.Component<{}, {}> {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
-	}
+	};
 
 	render () {
 		return (
@@ -30,7 +30,7 @@ class Share extends React.Component<{}, {}> {
 
 	onClick () {
 		S.Popup.open('share', {});
-		
+
 		analytics.event('ClickShareApp', { route: $(this.node).hasClass('canClose') ? 'Onboarding' : 'Help' });
 
 		U.Common.shareTooltipHide();
