@@ -281,28 +281,23 @@ class BlockStore {
 		};
 	};
 
-	getNextTableRow (rootId: string, id: string, dir: number): I.Block {
-		const table = this.getHighestParent(rootId, id);
-		if (!table) {
+	getNextTableRow (rootId: string, rowId: string, dir: number): I.Block {
+		const rowContainer = this.getParentMapElement(rootId, rowId);
+		if (!rowContainer) {
 			return null;
 		};
 
-		const tableData = this.getTableData(rootId, table.id);
-		if (!tableData) {
-			return null;
-		};
-
-		const rowContainerElement = this.getMapElement(rootId, tableData.rowContainer.id);
-		if (!rowContainerElement) {
-			return null;
-		};
-
-		const idx = rowContainerElement.childrenIds.indexOf(id);
+		const idx = rowContainer.childrenIds.indexOf(rowId);
 		if (idx < 0) {
 			return null;
 		};
 
-		return this.getLeaf(rootId, rowContainerElement.childrenIds[idx + dir]);
+		const next = rowContainer.childrenIds[idx + dir];
+		if (!next) {
+			return null;
+		};
+
+		return this.getLeaf(rootId, next);
 	};
 
 	// Check if blockId is inside parentId children recursively

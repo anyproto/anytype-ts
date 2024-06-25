@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, analytics, translate, focus, Action } from 'Lib';
+import { I, C, S, U, J, keyboard, analytics, translate, focus, Action, Preview } from 'Lib';
 
 class MenuContext extends React.Component<I.Menu> {
 	
@@ -87,6 +87,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
+		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
@@ -103,6 +104,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedType = true;
 		let allowedLink = data.allowedLink;
 		let allowedOpen = data.allowedOpen;
+		let allowedCollection = true;
 		let allowedUnlink = isCollection;
 		let allowedExport = true;
 		let allowedWidget = true;
@@ -161,6 +163,8 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedLink = false;
 			allowedUnlink = false;
 			allowedWidget = false;
+			allowedRelation = false;
+			allowedCollection = false;
 		};
 
 		if (archiveCnt == length) {
@@ -169,6 +173,7 @@ class MenuContext extends React.Component<I.Menu> {
 			allowedUnlink = false;
 			allowedType = false;
 			allowedFav = false;
+			allowedCollection = false;
 			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
@@ -186,7 +191,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedRelation)	 relation = null;
 
 		let sections = [
-			{ children: [ createWidget, open, fav, linkTo, exportObject, relation ] },
+			{ children: [ createWidget, open, fav, linkTo, addCollection, exportObject, relation ] },
 			{ children: [ changeType, pageCopy, unlink, archive ] },
 		];
 
@@ -264,7 +269,7 @@ class MenuContext extends React.Component<I.Menu> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					rootId: itemId,
@@ -275,6 +280,43 @@ class MenuContext extends React.Component<I.Menu> {
 					position: I.BlockPosition.Bottom,
 					canAdd: true,
 					onSelect: (el: any) => {
+						if (onLinkTo) {
+							onLinkTo(itemId, el.id);
+						};
+
+						close();
+					},
+				});
+				break;
+			};
+
+			case 'addCollection': {
+				const collectionType = S.Record.getCollectionType();
+
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+				menuParam.data = Object.assign(menuParam.data, {
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
+						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+					],
+					rootId: itemId,
+					blockId: itemId,
+					blockIds: [ itemId ],
+					skipIds: [ itemId ],
+					canAdd: true,
+					addParam: {
+						name: translate('blockDataviewCreateNewCollection'),
+						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
+						onClick: (details: any) => {
+							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
+								Action.addToCollection(message.objectId, objectIds);
+							});
+						},
+					},
+					onSelect: (el: any) => {
+						Action.addToCollection(el.id, objectIds);
+
 						if (onLinkTo) {
 							onLinkTo(itemId, el.id);
 						};

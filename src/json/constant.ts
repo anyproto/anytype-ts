@@ -44,14 +44,14 @@ export default {
 	},
 
 	delay: {
-		menu:			 160,
-		popup:			 160,
+		menu:			 150,
+		popup:			 150,
 		toast:			 2500,
 		route:			 250,
 		keyboard:		 500,
 		notification:	 200,
-		widget:			 450,
-		login:			 1000,
+		widget:			 400,
+		login:			 800,
 	},
 
 	fileExtension: {

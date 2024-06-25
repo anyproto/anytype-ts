@@ -173,6 +173,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.getDeleted();
 
 		if (this.refList) {
+			this.refList.recomputeRowHeights(0);
 			this.refList.scrollToPosition(this.top);
 		};
 	};
@@ -413,10 +414,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	getRowHeight (node: any, index: number) {
-		if (node && node.isSection) {
-			return index ? HEIGHT + 12 : HEIGHT;
+		let h = HEIGHT;
+		if (node && node.isSection && index) {
+			h += 12;
 		};
-		return HEIGHT;
+		return h;
 	};
 
 	resize () {

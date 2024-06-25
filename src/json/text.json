@@ -89,6 +89,7 @@
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
 	"commonAddToFavorites": "Add to Favorites",
+	"commonAddToCollection": "Add to Collection",
 	"commonRestore": "Restore",
 	"commonRestoreFromBin": "Restore from Bin",
 	"commonMoveToBin": "Move to Bin",
@@ -535,7 +536,9 @@
 	"blockLinkArchived": "Deleted",
 
 	"blockDataviewCreateNewCollection": "Create new Collection",
+	"blockDataviewCreateNewCollectionWithName": "Create new Collection \"%s\"",
 	"blockDataviewCreateNewSet": "Create new Set",
+	"blockDataviewCreateNewSetWithName": "Create new Set \"%s\"",
 	"blockDataviewCreateNewTooltipCollection": "Create new Object in this Collection",
 	"blockDataviewCreateNewTooltipType": "Create new %s object",
 	"blockDataviewShowTemplates": "Show Templates",
