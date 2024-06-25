@@ -1,384 +1,212 @@
 import { Mapper } from 'Lib';
 import { Decode, Commands } from 'Lib/api/pb';
 
-export const AccountCreate = (response: Rpc.Account.Create.Response) => {
+export const AccountDelete = (response: Commands.Rpc_Account_Delete_Response) => {
 	return {
-		account: Mapper.From.Account(response.getAccount()),
+		status: Mapper.From.AccountStatus(response.status),
 	};
 };
 
-export const AccountSelect = (response: Rpc.Account.Select.Response) => {
+export const AccountRecoverFromLegacyExport = (response: Commands.Rpc_Account_RecoverFromLegacyExport_Response) => {
 	return {
-		account: Mapper.From.Account(response.getAccount()),
+		accountId: response.accountId,
+		spaceId: response.personalSpaceId,
 	};
 };
 
-export const AccountDelete = (response: Rpc.Account.Delete.Response) => {
+export const AccountLocalLinkSolveChallenge = (response: Commands.Rpc_Account_LocalLink_SolveChallenge_Response) => {
 	return {
-		status: response.hasStatus() ? Mapper.From.AccountStatus(response.getStatus()) : null,
+		token: response.sessionToken,
+		appKey: response.appKey,
 	};
 };
 
-export const AccountRecoverFromLegacyExport = (response: Rpc.Account.RecoverFromLegacyExport.Response) => {
-	return {
-		accountId: response.getAccountid(),
-		spaceId: response.getPersonalspaceid(),
-	};
-};
-
-export const AccountLocalLinkNewChallenge = (response: Rpc.Account.LocalLink.NewChallenge.Response) => {
-	return {
-		challengeId: response.getChallengeid(),
-	};
-};
-
-export const AccountLocalLinkSolveChallenge = (response: Rpc.Account.LocalLink.SolveChallenge.Response) => {
-	return {
-		token: response.getSessiontoken(),
-		appKey: response.getAppkey(),
-	};
-};
-
-export const DebugSpaceSummary = (response: Rpc.Debug.SpaceSummary.Response) => {
-	return response.toObject();
-};
-
-export const DebugStat = (response: Rpc.Debug.Stat.Response) => {
+export const DebugStat = (response: Commands.Rpc_Debug_Stat_Response) => {
 	let res = {};
-	try { res = JSON.parse(response.getJsonstat()); } catch (e) { /**/ };
+	try { res = JSON.parse(response.jsonStat); } catch (e) { /**/ };
 	return res;
 };
 
-export const Export = (response: any) => {
+export const FileListOffload = (response: Commands.Rpc_File_ListOffload_Response) => {
 	return {
-		path: response.getPath(),
+		files: response.filesOffloaded,
+		bytes: response.bytesOffloaded,
 	};
 };
 
-export const LinkPreview = (response: Rpc.LinkPreview.Response) => {
-	return {
-		previewLink: response.hasLinkpreview() ? Mapper.From.PreviewLink(response.getLinkpreview()) : {},
-	};
-};
-
-export const FileListOffload = (response: Rpc.File.ListOffload.Response) => {
-	return {
-		files: response.getFilesoffloaded(),
-		bytes: response.getBytesoffloaded(),
-	};
-};
-
-export const FileNodeUsage = (response: Rpc.File.NodeUsage.Response) => {
-	const usage = response.getUsage();
+export const FileNodeUsage = (response: Commands.Rpc_File_NodeUsage_Response) => {
+	const usage = response.usage;
 	
-	let res = {};
+	let res = {
+		spaces: response.spaces,
+	};
 
 	if (usage) {
 		res = Object.assign(res, {
-			bytesLimit: usage.getByteslimit(),
-			localUsage: usage.getLocalbytesusage(),
+			bytesLimit: usage.bytesLimit,
+			localUsage: usage.localBytesUsage,
 		});
 	};
 
+	return res;
+};
+
+export const FileUpload = (response: Commands.Rpc_File_Upload_Response) => {
 	return {
-		...res,
-		spaces: (response.getSpacesList() || []).map(it => ({
-			spaceId: it.getSpaceid(),
-			bytesUsage: it.getBytesusage(),
-		})),
+		objectId: response.objectId,
+		details: Decode.struct(response.details),
 	};
 };
 
-export const FileUpload = (response: Rpc.File.Upload.Response) => {
+export const FileDownload = (response: Commands.Rpc_File_Download_Response) => {
 	return {
-		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		path: response.localPath,
 	};
 };
 
-export const FileDownload = (response: Rpc.File.Download.Response) => {
+export const ObjectImport = (response: Commands.Rpc_Object_Import_Response) => {
 	return {
-		path: response.getLocalpath(),
+		collectionId: response.collectionId,
+		count: response.objectsCount,
 	};
 };
 
-export const WalletCreate = (response: Rpc.Wallet.Create.Response) => {
+export const ObjectCreate = (response: Commands.Rpc_Object_Create_Response) => {
 	return {
-		mnemonic: response.getMnemonic(),
+		objectId: response.objectId,
+		details: Decode.struct(response.details),
 	};
 };
 
-export const WalletConvert = (response: Rpc.Wallet.Convert.Response) => {
+export const ObjectCreateSet = (response: Commands.Rpc_Object_CreateSet_Response) => {
 	return {
-		mnemonic: response.getMnemonic(),
-		entropy: response.getEntropy(),
+		objectId: response.objectId,
+		details: Decode.struct(response.details),
 	};
 };
 
-export const WalletCreateSession = (response: Rpc.Wallet.CreateSession.Response) => {
+export const ObjectCreateBookmark = (response: Commands.Rpc_Object_CreateBookmark_Response) => {
 	return {
-		token: response.getToken(),
-		appToken: response.getApptoken(),
-		accountId: response.getAccountid(),
+		objectId: response.objectId,
+		details: Decode.struct(response.details),
 	};
 };
 
-export const ObjectImport = (response: any) => {
+export const ObjectCreateFromUrl = (response: Commands.Rpc_Object_CreateFromUrl_Response) => {
 	return {
-		collectionId: response.getCollectionid(),
-		count: response.getObjectscount(),
+		objectId: response.objectId,
+		details: Decode.struct(response.details),
 	};
 };
 
-export const ObjectCreate = (response: Rpc.Object.Create.Response) => {
+export const ObjectCreateObjectType = (response: Commands.Rpc_Object_CreateObjectType_Response) => {
 	return {
-		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		objectId: response.objectId,
+		details: Decode.struct(response.details),
 	};
 };
 
-export const ObjectCreateSet = (response: Rpc.Object.CreateSet.Response) => {
+export const ObjectCreateRelation = (response: Commands.Rpc_Object_CreateRelation_Response) => {
 	return {
-		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		objectId: response.objectId,
+		relationKey: response.key,
+		details: Decode.struct(response.details),
 	};
 };
 
-export const ObjectCreateBookmark = (response: Rpc.Object.CreateBookmark.Response) => {
+export const ObjectCreateRelationOption = (response: Commands.Rpc_Object_CreateRelationOption_Response) => {
 	return {
-		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		objectId: response.objectId,
+		details: Decode.struct(response.details),
 	};
 };
 
-export const ObjectCreateFromUrl = (response: Rpc.Object.CreateFromUrl.Response) => {
+export const ObjectOpen = (response: Commands.Rpc_Object_Open_Response) => {
 	return {
-		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		objectView: Mapper.From.ObjectView(response.objectView),
 	};
 };
 
-export const ObjectCreateObjectType = (response: Rpc.Object.CreateObjectType.Response) => {
+export const ObjectShow = (response: Commands.Rpc_Object_Show_Response) => {
 	return {
-		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		objectView: Mapper.From.ObjectView(response.objectView),
 	};
 };
 
-export const ObjectCreateRelation = (response: Rpc.Object.CreateRelation.Response) => {
+export const ObjectSearch = (response: Commands.Rpc_Object_Search_Response) => {
 	return {
-		objectId: response.getObjectid(),
-		relationKey: response.getKey(),
-		details: Decode.struct(response.getDetails()),
+		records: (response.records || []).map(Decode.struct),
 	};
 };
 
-export const ObjectCreateRelationOption = (response: Rpc.Object.CreateRelationOption.Response) => {
+export const ObjectSearchWithMeta = (response: Commands.Rpc_Object_SearchWithMeta_Response) => {
 	return {
-		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
+		records: (response.results || []).map(Mapper.From.ObjectSearchWithMeta),
 	};
 };
 
-export const ObjectOpen = (response: Rpc.Object.Open.Response) => {
+export const ObjectGroupsSubscribe = (response: Commands.Rpc_Object_GroupsSubscribe_Response) => {
 	return {
-		objectView: Mapper.From.ObjectView(response.getObjectview()),
+		subId: response.subId,
+		groups: (response.groups || []).map(Mapper.From.BoardGroup),
 	};
 };
 
-export const ObjectShow = (response: Rpc.Object.Show.Response) => {
+export const ObjectSearchSubscribe = (response: Commands.Rpc_Object_SearchSubscribe_Response) => {
 	return {
-		objectView: Mapper.From.ObjectView(response.getObjectview()),
+		counters: response.counters,
+		records: (response.records || []).map(Decode.struct),
+		dependencies: (response.dependencies || []).map(Decode.struct),
 	};
 };
 
-export const ObjectSearch = (response: Rpc.Object.Search.Response) => {
+export const ObjectSubscribeIds = (response: Commands.Rpc_Object_SubscribeIds_Response) => {
 	return {
-		records: (response.getRecordsList() || []).map(Decode.struct),
+		records: (response.records || []).map(Decode.struct),
+		dependencies: (response.dependencies || []).map(Decode.struct),
 	};
 };
 
-export const ObjectSearchWithMeta = (response: Rpc.Object.SearchWithMeta.Response) => {
+export const ObjectGraph = (response: Commands.Rpc_Object_Graph_Response) => {
 	return {
-		records: (response.getResultsList() || []).map(Mapper.From.ObjectSearchWithMeta),
+		edges: (response.edges || []).map(Mapper.From.GraphEdge),
+		nodes: (response.nodes || []).map(Decode.struct),
 	};
 };
 
-export const ObjectGroupsSubscribe = (response: Rpc.Object.GroupsSubscribe.Response) => {
+export const BlockPreview = (response: Commands.Rpc_Block_Preview_Response) => {
 	return {
-		subId: response.getSubid(),
-		groups: (response.getGroupsList() || []).map(Mapper.From.BoardGroup),
+		blocks: (response.blocks || []).map(Mapper.From.Block),
 	};
 };
 
-export const ObjectSearchSubscribe = (response: Rpc.Object.SearchSubscribe.Response) => {
-	const counters = response.getCounters();
+export const BlockDataviewCreateFromExistingObject = (response: Commands.Rpc_BlockDataview_CreateFromExistingObject_Response) => {
 	return {
-		counters: {
-			total: counters.getTotal(),
-			nextCount: counters.getNextcount(),
-			prevCount: counters.getPrevcount(),
-		},
-		records: (response.getRecordsList() || []).map(Decode.struct),
-		dependencies: (response.getDependenciesList() || []).map(Decode.struct),
+		blockId: response.blockId,
+		targetObjectId: response.targetObjectId,
+		views: (response.view || []).map(Mapper.From.View),
 	};
 };
 
-export const ObjectSubscribeIds = (response: Rpc.Object.SubscribeIds.Response) => {
+export const BlockLinkCreateWithObject = (response: Commands.Rpc_BlockLink_CreateWithObject_Response) => {
 	return {
-		records: (response.getRecordsList() || []).map(Decode.struct),
-		dependencies: (response.getDependenciesList() || []).map(Decode.struct),
+		blockId: response.blockId,
+		targetId: response.targetId,
+		details: Decode.struct(response.details),
 	};
-};
-
-export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
-	return {
-		edges: (response.getEdgesList() || []).map(Mapper.From.GraphEdge),
-		nodes: (response.getNodesList() || []).map(Decode.struct),
-	};
-};
-
-export const ObjectToBookmark = (response: Rpc.Object.ToBookmark.Response) => {
-	return {
-		objectId: response.getObjectid(),
-	};
-};
-
-export const ObjectShareByLink = (response: Rpc.Object.ShareByLink.Response) => {
-	return {
-		link: response.getLink(),
-	};
-};
-
-export const ObjectListDuplicate = (response: Rpc.Object.ListDuplicate.Response) => {
-	return {
-		ids: response.getIdsList(),
-	};
-};
-
-export const ObjectUndo = (response: Rpc.Object.Undo.Response) => {
-	return {
-		blockId: response.getBlockid(),
-		range: Mapper.From.Range(response.getRange()),
-	};
-};
-
-export const ObjectRedo = (response: Rpc.Object.Redo.Response) => {
-	return {
-		blockId: response.getBlockid(),
-		range: Mapper.From.Range(response.getRange()),
-	};
-};
-
-export const BlockCreate = (response: Rpc.Block.Create.Response) => {
-	return {
-		blockId: response.getBlockid(),
-	};
-};
-
-export const BlockTableCreate = (response: Rpc.BlockTable.Create.Response) => {
-	return {
-		blockId: response.getBlockid(),
-	};
-};
-
-export const BlockSplit = (response: Rpc.Block.Split.Response) => {
-	return {
-		blockId: response.getBlockid(),
-	};
-};
-
-export const BlockCopy = (response: Rpc.Block.Copy.Response) => {
-	return {
-		textSlot: response.getTextslot(),
-		htmlSlot: response.getHtmlslot(),
-		anySlot: response.getAnyslotList(),
-	};
-};
-
-export const BlockCut = (response: Rpc.Block.Cut.Response) => {
-	return {
-		textSlot: response.getTextslot(),
-		htmlSlot: response.getHtmlslot(),
-		anySlot: response.getAnyslotList(),
-	};
-};
-
-export const BlockPaste = (response: Rpc.Block.Paste.Response) => {
-	return {
-		blockIds: response.getBlockidsList(),
-		caretPosition: response.getCaretposition(),
-		isSameBlockCaret: response.getIssameblockcaret(),
-	};
-};
-
-export const BlockListDuplicate = (response: Rpc.Block.ListDuplicate.Response) => {
-	return {
-		blockIds: response.getBlockidsList(),
-	};
-};
-
-export const BlockListConvertToObjects = (response: Rpc.Block.ListConvertToObjects.Response) => {
-	return {
-		linkIds: response.getLinkidsList(),
-	};
-};
-
-export const BlockPreview = (response: Rpc.Block.Preview.Response) => {
-	return {
-		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
-	};
-};
-
-export const BlockDataviewCreateFromExistingObject = (response: Rpc.BlockDataview.CreateFromExistingObject.Response) => {
-	return {
-		blockId: response.getBlockid(),
-		targetObjectId: response.getTargetobjectid(),
-		views: (response.getViewList() || []).map(Mapper.From.View),
-	};
-};
-
-export const BlockDataviewViewCreate = (response: Rpc.BlockDataview.View.Create.Response) => {
-	return {
-		viewId: response.getViewid(),
-	};
-};
-
-export const BlockLinkCreateWithObject = (response: Rpc.BlockLink.CreateWithObject.Response) => {
-	return {
-		blockId: response.getBlockid(),
-		targetId: response.getTargetid(),
-		details: Decode.struct(response.getDetails()),
-	};
-};
-
-export const BlockBookmarkCreateAndFetch = (response: Rpc.BlockBookmark.CreateAndFetch.Response) => {
-	return {
-		blockId: response.getBlockid(),
-	};
-};
-
-export const BlockFileCreateAndUpload = (response: Rpc.BlockFile.CreateAndUpload.Response) => {
-	return {
-		blockId: response.getBlockid(),
-	};
-};
-
-export const HistoryGetVersions = (response: Commands.Rpc_History_GetVersions_Response) => {
-	return response;
 };
 
 export const HistoryShowVersion = (response: Commands.Rpc_History_ShowVersion_Response) => {
 	return {
 		version: response.version,
-		objectView: response.objectView,
+		objectView: Mapper.From.ObjectView(response.objectView),
 	};
 };
 
-export const HistoryDiffVersions = (response: Rpc.History.DiffVersions.Response) => {
+export const HistoryDiffVersions = (response: Commands.Rpc_History_DiffVersions_Response) => {
 	return {
-		events: (response.getHistoryeventsList() || []).map(it => {
-			const type = Mapper.Event.Type(it.getValueCase());
+		events: (response.historyEvents || []).map(it => {
+			const type = it.value.oneofKind;
 			const data = Mapper.Event[type](Mapper.Event.Data(it));
 
 			return { type, data };
@@ -386,137 +214,100 @@ export const HistoryDiffVersions = (response: Rpc.History.DiffVersions.Response)
 	};
 };
 
-export const NavigationGetObjectInfoWithLinks = (response: Rpc.Navigation.GetObjectInfoWithLinks.Response) => {
-	const object = response.getObject();
-	const links = object.getLinks();
+export const NavigationGetObjectInfoWithLinks = (response: Commands.Rpc_Navigation_GetObjectInfoWithLinks_Response) => {
+	const object = response.object;
+	const links = object.links;
 
 	return {
 		object: {
-			id: object.getId(),
-			info: Mapper.From.ObjectInfo(object.getInfo()),
+			id: object.id,
+			info: Mapper.From.ObjectInfo(object.info),
 			links: {
-				inbound: (links.getInboundList() || []).map(Mapper.From.ObjectInfo),
-				outbound: (links.getOutboundList() || []).map(Mapper.From.ObjectInfo),
+				inbound: (links.inbound || []).map(Mapper.From.ObjectInfo),
+				outbound: (links.outbound || []).map(Mapper.From.ObjectInfo),
 			},
 		},
 	};
 };
 
-export const TemplateCreateFromObject = (response: Rpc.Template.CreateFromObject.Response) => {
+export const WorkspaceCreate = (response: Commands.Rpc_Workspace_Create_Response) => {
 	return {
-		id: response.getId(),
+		objectId: response.spaceId,
 	};
 };
 
-export const WorkspaceCreate = (response: Rpc.Workspace.Create.Response) => {
+export const WorkspaceObjectAdd = (response: Commands.Rpc_Workspace_Object_Add_Response) => {
 	return {
-		objectId: response.getSpaceid(),
+		objectId: response.objectId,
+		details: Decode.struct(response.details),
 	};
 };
 
-export const WorkspaceOpen = (response: Rpc.Workspace.Open.Response) => {
+export const UnsplashSearch = (response: Commands.Rpc_Unsplash_Search_Response) => {
 	return {
-		info: Mapper.From.AccountInfo(response.getInfo()),
+		pictures: (response.pictures || []).map(Mapper.From.UnsplashPicture),
 	};
 };
 
-export const WorkspaceObjectAdd = (response: Rpc.Workspace.Object.Add.Response) => {
+export const GalleryDownloadIndex = (response: Commands.Rpc_Gallery_DownloadIndex_Response) => {
 	return {
-		objectId: response.getObjectid(),
-		details: Decode.struct(response.getDetails()),
-	};
-};
-
-export const UnsplashSearch = (response: Rpc.Unsplash.Search.Response) => {
-	return {
-		pictures: (response.getPicturesList() || []).map(Mapper.From.UnsplashPicture),
-	};
-};
-
-export const UnsplashDownload = (response: Rpc.Unsplash.Download.Response) => {
-	return {
-		objectId: response.getObjectid(),
-	};
-};
-
-export const GalleryDownloadIndex = (response: Rpc.Gallery.DownloadIndex.Response) => {
-	return {
-		categories: (response.getCategoriesList() || []).map((it: Rpc.Gallery.DownloadIndex.Response.Category) => {
+		categories: (response.categories || []).map((it: Commands.Rpc_Gallery_DownloadIndex_Response_Category) => {
 			return {
-				id: it.getId(),
-				icon: it.getIcon(),
-				list: it.getExperiencesList() || [],
+				id: it.id,
+				icon: it.icon,
+				list: it.experiences || [],
 			};
 		}),
-		list: (response.getExperiencesList() || []).map(Mapper.From.Manifest),
+		list: (response.experiences || []).map(Mapper.From.Manifest),
 	};
 };
 
-export const GalleryDownloadManifest = (response: Rpc.Gallery.DownloadManifest.Response) => {
+export const GalleryDownloadManifest = (response: Commands.Rpc_Gallery_DownloadManifest_Response) => {
 	return {
-		info: Mapper.From.Manifest(response.getInfo()),
+		info: Mapper.From.Manifest(response.info),
 	};
 };
 
-export const NotificationList = (response: Rpc.Notification.List.Response) => {
+export const NotificationList = (response: Commands.Rpc_Notification_List_Response) => {
 	return {
-		list: (response.getNotificationsList() || []).map(Mapper.From.Notification),
+		list: (response.notifications || []).map(Mapper.From.Notification),
 	};
 };
 
-export const NameServiceResolveName = (response: Rpc.NameService.ResolveName.Response) => {
+export const MembershipGetStatus = (response: Commands.Rpc_Membership_GetStatus_Response) => {
 	return {
-		available: response.getAvailable(),
-		ownerScwEthAddress: response.getOwnerscwethaddress(),
-		ownerEtherAddress: response.getOwnerethaddress(),
-		ownerAnyAddress: response.getOwneranyaddress(),
-		spaceId: response.getSpaceid(),
-		nameExpires: response.getNameexpires(),
+		membership: Mapper.From.Membership(response.data),
 	};
 };
 
-export const MembershipGetStatus = (response: Rpc.Membership.GetStatus.Response) => {
+export const MembershipGetTiers = (response: Commands.Rpc_Membership_GetTiers_Response) => {
 	return {
-		membership: Mapper.From.Membership(response.getData()),
+		tiers: (response.tiers || []).map(it => Mapper.From.MembershipTierData(it)),
 	};
 };
 
-export const MembershipGetTiers = (response: Rpc.Membership.GetTiers.Response) => {
+export const MembershipRegisterPaymentRequest = (response: Commands.Rpc_Membership_RegisterPaymentRequest_Response) => {
 	return {
-		tiers: (response.getTiersList() || []).map(it => Mapper.From.MembershipTierData(it)),
+		url: response.paymentUrl,
 	};
 };
 
-export const MembershipRegisterPaymentRequest = (response: Rpc.Membership.RegisterPaymentRequest.Response) => {
-	return {
-		url: response.getPaymenturl(),
-	};
-};
-
-export const MembershipGetPortalLinkUrl = (response: Rpc.Membership.GetPortalLinkUrl.Response) => {
+export const MembershipGetPortalLinkUrl = (response: Commands.Rpc_Membership_GetPortalLinkUrl_Response) => {
 	return { 
-		url: response.getPortalurl(),
+		url: response.portalUrl,
 	};
 };
 
-export const SpaceInviteGenerate = (response: Rpc.Space.InviteGenerate.Response) => {
+export const SpaceInviteGenerate = (response: Commands.Rpc_Space_InviteGenerate_Response) => {
 	return {
-		inviteCid: response.getInvitecid(),
-		inviteKey: response.getInvitefilekey(),
+		inviteCid: response.inviteCid,
+		inviteKey: response.inviteFileKey,
 	};
 };
 
-export const SpaceInviteGetCurrent = (response: Rpc.Space.InviteGetCurrent.Response) => {
+export const SpaceInviteGetCurrent = (response: Commands.Rpc_Space_InviteGetCurrent_Response) => {
 	return {
-		inviteCid: response.getInvitecid(),
-		inviteKey: response.getInvitefilekey(),
-	};
-};
-
-export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
-	return {
-		spaceName: response.getSpacename(),
-		creatorName: response.getCreatorname(),
-		spaceId: response.getSpaceid(),
+		inviteCid: response.inviteCid,
+		inviteKey: response.inviteFileKey,
 	};
 };

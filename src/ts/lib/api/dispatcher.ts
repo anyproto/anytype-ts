@@ -7,17 +7,17 @@ import * as Response from './response';
 import { Commands, Events, Service } from 'Lib/api/pb';
 
 const SORT_IDS = [ 
-	'BlockAdd', 
-	'BlockDelete', 
-	'BlockSetChildrenIds', 
-	'ObjectDetailsSet', 
-	'ObjectDetailsAmend', 
-	'ObjectDetailsUnset', 
-	'SubscriptionCounters',
-	'BlockDataviewViewSet',
-	'BlockDataviewViewDelete',
+	'blockAdd', 
+	'blockDelete', 
+	'blockSetChildrenIds', 
+	'objectDetailsSet', 
+	'objectDetailsAmend', 
+	'objectDetailsUnset', 
+	'subscriptionCounters',
+	'blockDataviewViewSet',
+	'blockDataviewViewDelete',
 ];
-const SKIP_IDS = [ 'BlockSetCarriage' ];
+const SKIP_IDS = [ 'blockSetCarriage' ];
 const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent' ];
 
 class Dispatcher {
@@ -129,23 +129,23 @@ class Dispatcher {
 
 			switch (type) {
 
-				case 'AccountShow': {
+				case 'accountShow': {
 					S.Auth.accountAdd(mapped.account);
 					break;
 				};
 
-				case 'AccountUpdate': {
+				case 'accountUpdate': {
 					S.Auth.accountSetStatus(mapped.status);
 					break;	
 				};
 
-				case 'AccountConfigUpdate': {
+				case 'accountConfigUpdate': {
 					S.Common.configSet(mapped.config, true);
 					Renderer.send('setConfig', U.Common.objectCopy(S.Common.config));
 					break;
 				};
 
-				case 'AccountLinkChallenge': {
+				case 'accountLinkChallenge': {
 					if (!isMainWindow) {
 						break;
 					};
@@ -158,27 +158,27 @@ class Dispatcher {
 					break;
 				};
 
-				case 'ThreadStatus': {
+				case 'threadStatus': {
 					S.Auth.threadSet(rootId, mapped);
 					break;
 				};
 
-				case 'ObjectRelationsAmend': {
+				case 'objectRelationsAmend': {
 					S.Record.relationsSet(rootId, mapped.id, mapped.relations);
 					break;
 				};
 
-				case 'ObjectRelationsRemove': {
+				case 'objectRelationsRemove': {
 					S.Record.relationListDelete(rootId, mapped.id, mapped.relationKeys);
 					break;
 				};
 
-				case 'ObjectRestrictionsSet': {
+				case 'objectRestrictionsSet': {
 					S.Block.restrictionsSet(rootId, mapped.restrictions);
 					break;
 				};
 
-				case 'FileSpaceUsage': {
+				case 'fileSpaceUsage': {
 					const { spaces } = S.Common.spaceStorage;
 					const space = spaces.find(it => it.spaceId == mapped.spaceId);
 
@@ -190,13 +190,13 @@ class Dispatcher {
 					break;
 				};
 
-				case 'FileLimitUpdated':
-				case 'FileLocalUsage': {
+				case 'fileLimitUpdated':
+				case 'fileLocalUsage': {
 					S.Common.spaceStorageSet(mapped);
 					break;
 				};
 
-				case 'FileLimitReached': {
+				case 'fileLimitReached': {
 					const { bytesLimit, localUsage, spaces } = S.Common.spaceStorage;
 					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
 					const percentageUsed = Math.floor(U.Common.getPercent(bytesUsed, bytesLimit));
@@ -210,7 +210,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockAdd': {
+				case 'blockAdd': {
 					const { blocks } = mapped;
 
 					for (const block of blocks) {
@@ -227,7 +227,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDelete': {
+				case 'blockDelete': {
 					const { blockIds } = mapped;
 
 					for (const blockId of blockIds) {
@@ -247,7 +247,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetChildrenIds': {
+				case 'blockSetChildrenIds': {
 					const { id, childrenIds } = mapped;
 
 					S.Block.updateStructure(rootId, id, childrenIds);
@@ -260,7 +260,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetFields': {
+				case 'blockSetFields': {
 					const { id, fields } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -272,7 +272,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetLink': {
+				case 'blockSetLink': {
 					const { id, cardStyle, iconSize, description, targetBlockId, relations, fields } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -310,7 +310,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetText': {
+				case 'blockSetText': {
 					const { id, text, marks, style, checked, color, iconEmoji, iconImage } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -352,7 +352,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetDiv': {
+				case 'blockSetDiv': {
 					const { id, style } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -368,7 +368,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewTargetObjectIdSet': {
+				case 'blockDataviewTargetObjectIdSet': {
 					const { id, targetObjectId } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -380,7 +380,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewIsCollectionSet': {
+				case 'blockDataviewIsCollectionSet': {
 					const { id, isCollection } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -392,7 +392,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetWidget': {
+				case 'blockSetWidget': {
 					const { id, layout, limit, viewId } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -418,7 +418,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetFile': {
+				case 'blockSetFile': {
 					const { id, targetObjectId, type, style, state } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -448,7 +448,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetBookmark': {
+				case 'blockSetBookmark': {
 					const { id, targetObjectId, state } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -470,7 +470,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetBackgroundColor': {
+				case 'blockSetBackgroundColor': {
 					const { id, bgColor } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -482,7 +482,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetAlign': {
+				case 'blockSetAlign': {
 					const { id, align } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -494,7 +494,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetVerticalAlign': {
+				case 'blockSetVerticalAlign': {
 					const { id, align } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -506,7 +506,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetRelation': {
+				case 'blockSetRelation': {
 					const { id, key } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -524,7 +524,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetLatex': {
+				case 'blockSetLatex': {
 					const { id, text } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -542,7 +542,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockSetTableRow': {
+				case 'blockSetTableRow': {
 					const { id, isHeader } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -560,7 +560,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewViewSet': {
+				case 'blockDataviewViewSet': {
 					const { id, view } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -573,7 +573,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewViewUpdate': {
+				case 'blockDataviewViewUpdate': {
 					const { id, viewId, fields } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -688,7 +688,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewViewDelete': {
+				case 'blockDataviewViewDelete': {
 					const { id, viewId } = mapped;
 					const subId = S.Record.getSubId(rootId, id);
 
@@ -707,7 +707,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewViewOrder': {
+				case 'blockDataviewViewOrder': {
 					const { id, viewIds } = mapped;
 
 					S.Record.viewsSort(rootId, id, viewIds);
@@ -715,21 +715,21 @@ class Dispatcher {
 					break; 
 				};
 
-				case 'BlockDataviewRelationDelete': {
+				case 'blockDataviewRelationDelete': {
 					const { id, relationKeys } = mapped;
 
 					S.Record.relationListDelete(rootId, id, relationKeys);
 					break;
 				};
 
-				case 'BlockDataviewRelationSet': {
+				case 'blockDataviewRelationSet': {
 					const { id, relations } = mapped;
 
 					S.Record.relationsSet(rootId, id, relations);
 					break;
 				};
 
-				case 'BlockDataviewGroupOrderUpdate': {
+				case 'blockDataViewGroupOrderUpdate': {
 					const { id, groupOrder } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -742,7 +742,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewObjectOrderUpdate': {
+				case 'blockDataViewObjectOrderUpdate': {
 					const { id, viewId, groupId, changes } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -796,21 +796,21 @@ class Dispatcher {
 					break;
 				};
 
-				case 'ObjectDetailsSet': {
+				case 'objectDetailsSet': {
 					const { id, subIds, details } = mapped;
 
 					this.detailsUpdate(details, rootId, id, subIds, true);
 					break;
 				};
 
-				case 'ObjectDetailsAmend': {
+				case 'objectDetailsAmend': {
 					const { id, subIds, details } = mapped;
 
 					this.detailsUpdate(details, rootId, id, subIds, false);
 					break;
 				};
 
-				case 'ObjectDetailsUnset': {
+				case 'objectDetailsUnset': {
 					const { id, subIds, keys } = mapped;
 
 					// Subscriptions
@@ -821,14 +821,14 @@ class Dispatcher {
 					break;
 				};
 
-				case 'SubscriptionAdd': {
+				case 'subscriptionAdd': {
 					const { id, afterId, subId } = mapped;
 
 					this.subscriptionPosition(subId, id, afterId, true);
 					break;
 				};
 
-				case 'SubscriptionRemove': {
+				case 'subscriptionRemove': {
 					const { id } = mapped;
 					const [ subId, dep ] = mapped.subId.split('/');
 
@@ -839,14 +839,14 @@ class Dispatcher {
 					break;
 				};
 
-				case 'SubscriptionPosition': {
+				case 'subscriptionPosition': {
 					const { id, afterId, subId } = mapped;
 
 					this.subscriptionPosition(subId, id, afterId, false);
 					break;
 				};
 
-				case 'SubscriptionCounters': {
+				case 'subscriptionCounters': {
 					const [ subId, dep ] = mapped.subId.split('/');
 					
 					if (!dep) {
@@ -855,7 +855,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'SubscriptionGroups': {
+				case 'subscriptionGroups': {
 					const { group, remove } = mapped;
 					const [ rootId, blockId ] = mapped.subId.split('-');
 
@@ -869,7 +869,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'NotificationSend': {
+				case 'notificationSend': {
 					const item = new M.Notification(mapped.notification);
 
 					S.Notification.add(item);
@@ -880,12 +880,12 @@ class Dispatcher {
 					break;
 				};
 
-				case 'NotificationUpdate': {
+				case 'notificationUpdate': {
 					S.Notification.update(mapped.notification);
 					break;
 				};
 
-				case 'PayloadBroadcast': {
+				case 'payloadBroadcast': {
 					if (!isMainWindow) {
 						break;
 					};
@@ -911,15 +911,20 @@ class Dispatcher {
 					break;
 				};
 
-				case 'MembershipUpdate': {
+				case 'membershipUpdate': {
 					S.Auth.membershipUpdate(mapped.membership);
 					U.Data.getMembershipTiers(true);
 					break;
 				};
 
-				case 'ProcessNew':
-				case 'ProcessUpdate':
-				case 'ProcessDone': {
+				case 'spaceSyncStatusUpdate': {
+					S.Auth.syncStatusUpdate(mapped);
+					break;
+				};
+
+				case 'processNew':
+				case 'processUpdate':
+				case 'processDone': {
 					const { process } = mapped;
 					const { id, progress, state, type } = process;
 
@@ -951,11 +956,6 @@ class Dispatcher {
 							break;
 						};
 					};
-					break;
-				};
-
-				case 'SpaceSyncStatusUpdate': {
-					S.Auth.syncStatusUpdate(mapped);
 					break;
 				};
 			};
@@ -1203,8 +1203,8 @@ class Dispatcher {
 	checkLog (type: string) {
 		const { config } = S.Common;
 		const { event, sync, file } = config.flagsMw;
-		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
-		const syncEvents = [ 'SpaceSyncStatusUpdate' ];
+		const fileEvents = [ 'fileLocalUsage', 'fileSpaceUsage' ];
+		const syncEvents = [ 'spaceSyncStatusUpdate' ];
 
 		let check = false;
 		if (event && !syncEvents.concat(fileEvents).includes(type)) {

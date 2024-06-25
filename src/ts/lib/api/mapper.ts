@@ -1,8 +1,6 @@
 import { I, M, U } from 'Lib';
 import { Commands, Events, Model, Encode, Decode } from 'Lib/api/pb';
 
-const { Rpc } = Commands;
-
 export const Mapper = {
 
 	BoardGroupType (v: Model.Block.Content.Dataview.Group.ValueCase) {
@@ -36,37 +34,19 @@ export const Mapper = {
 	From: {
 
 		Account: (obj: Model.Account): I.Account => {
+
 			return {
-				id: obj.getId(),
-				info: obj.hasInfo() ? Mapper.From.AccountInfo(obj.getInfo()) : null,
-				config: obj.hasConfig() ? Mapper.From.AccountConfig(obj.getConfig()) : null,
-				status: obj.hasStatus() ? Mapper.From.AccountStatus(obj.getStatus()) : null,
+				id: obj.id,
+				info: obj.info,
+				config: obj.config,
+				status: Mapper.From.AccountStatus(obj.status),
 			};
 		},
 
-		AccountInfo: (obj: Model.Account.Info): I.AccountInfo => {
+		AccountStatus: (obj: Model.Account_Status): I.AccountStatus => {
 			return {
-				homeObjectId: obj.getHomeobjectid(),
-				profileObjectId: obj.getProfileobjectid(),
-				gatewayUrl: obj.getGatewayurl(),
-				deviceId: obj.getDeviceid(),
-				localStoragePath: obj.getLocalstoragepath(),
-				accountSpaceId: obj.getAccountspaceid(),
-				spaceViewId: obj.getSpaceviewid(),
-				widgetsId: obj.getWidgetsid(),
-				analyticsId: obj.getAnalyticsid(),
-				networkId: obj.getNetworkid(),
-			};
-		},
-
-		AccountConfig: (obj: Model.Account.Config): I.AccountConfig => {
-			return {};
-		},
-
-		AccountStatus: (obj: Model.Account.Status): I.AccountStatus => {
-			return {
-				type: obj.getStatustype() as number,
-				date: obj.getDeletiondate(),
+				type: obj.statusType as number,
+				date: obj.deletionDate,
 			};
 		},
 		
@@ -84,30 +64,16 @@ export const Mapper = {
 		},
 
 		Range: (obj: Model.Range): I.TextRange => {
-			return {
-				from: obj.getFrom(),
-				to: obj.getTo(),
-			};
+			return obj;
 		},
 
-		Mark: (obj: Model.Block.Content.Text.Mark): I.Mark => {
+		Mark: (obj: Model.Block_Content_Text_Mark): I.Mark => {
 			return {
-				type: obj.getType() as number,
-				param: obj.getParam(),
-				range: Mapper.From.Range(obj.getRange()),
+				type: obj.type as number,
+				param: obj.param,
+				range: obj.range,
 			};
 		},
-
-		PreviewLink: (obj: Model.LinkPreview) => {
-            return {
-                type: obj.getType(),
-                title: obj.getTitle(),
-                description: obj.getDescription(),
-                faviconUrl: obj.getFaviconurl(),
-                imageUrl: obj.getImageurl(),
-                url: obj.getUrl(),
-            };
-        },
 
 		Details: (obj: any): any => {
 			return {
@@ -380,16 +346,10 @@ export const Mapper = {
             };
         },
 
-		GraphEdge: (obj: Rpc.Object.Graph.Edge) => {
+		GraphEdge: (obj: Commands.Rpc_Object_Graph_Edge) => {
             return {
-				type: obj.getType(),
-				source: obj.getSource(),
-				target: obj.getTarget(),
-				name: obj.getName(),
-				description: obj.getDescription(),
-				iconImage: obj.getIconimage(),
-				iconEmoji: obj.getIconemoji(),
-				isHidden: obj.getHidden(),
+				...obj,
+				isHidden: obj.hidden,
             };
         },
 
@@ -611,13 +571,13 @@ export const Mapper = {
 			};
 		},
 
-		MetaList: (obj: Model.Search.Meta): any => {
+		MetaList: (obj: Model.Search_Meta): any => {
 			return {
-				highlight: obj.getHighlight(),
-				blockId: obj.getBlockid(),
-				relationKey: obj.getRelationkey(),
-				relationDetails: Decode.struct(obj.getRelationdetails()),
-				ranges: (obj.getHighlightrangesList() || []).map(Mapper.From.Range),
+				highlight: obj.highlight,
+				blockId: obj.blockId,
+				relationKey: obj.relationKey,
+				relationDetails: Decode.struct(obj.relationDetails),
+				ranges: obj.highlightRanges || [],
 			};
 		},
 
@@ -1059,10 +1019,8 @@ export const Mapper = {
 			};
 		},
 
-		AccountConfigUpdate: (obj: Events.Event.Account.Config.Update) => {
-			return {
-				config: Mapper.From.AccountConfig(obj.getConfig()),
-			};
+		AccountConfigUpdate: (obj: Events.Event_Account_Config_Update) => {
+			return obj;
 		},
 
 		AccountLinkChallenge: (obj: Events.Event.Account.LinkChallenge) => {
@@ -1465,30 +1423,30 @@ export const Mapper = {
 			};
 		},
 
-		ProcessNew: (obj: Events.Event.Process.New) => {
+		ProcessNew: (obj: Events.Event_Process_New) => {
 			return {
-				process: Mapper.From.Process(obj.getProcess()),
+				process: Mapper.From.Process(obj.process),
 			};
 		},
 
-		ProcessUpdate: (obj: Events.Event.Process.Update) => {
+		ProcessUpdate: (obj: Events.Event_Process_Update) => {
 			return {
-				process: Mapper.From.Process(obj.getProcess()),
+				process: Mapper.From.Process(obj.process),
 			};
 		},
 
-		ProcessDone: (obj: Events.Event.Process.Done) => {
+		ProcessDone: (obj: Events.Event_Process_Done) => {
 			return {
-				process: Mapper.From.Process(obj.getProcess()),
+				process: Mapper.From.Process(obj.process),
 			};
 		},
 
-		SpaceSyncStatusUpdate: (obj: Events.Event.Space.SyncStatus.Update) => {
+		SpaceSyncStatusUpdate: (obj: Events.Event_Space_SyncStatus_Update) => {
 			return {
-				error: obj.getError(),
-				network: obj.getNetwork(),
-				status: obj.getStatus(),
-				syncingCounter: obj.getSyncingobjectscounter()
+				error: obj.error,
+				network: obj.network,
+				status: obj.status,
+				syncingCounter: obj.syncingObjectsCounter,
 			};
 		},
 	},

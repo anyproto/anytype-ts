@@ -98,7 +98,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 			let state: any = { loading: false };
 
 			if (!message.error.code) {
-				state = Object.assign(state, message.previewLink);
+				state = Object.assign(state, message.linkPreview);
 			};
 
 			this.setState(state);
