@@ -2,7 +2,6 @@ export * from './account';
 export * from './space';
 export * from './animation';
 export * from './common';
-export * from './thread';
 export * from './progress';
 export * from './popup';
 export * from './preview';

@@ -21,7 +21,6 @@ class Action {
 			this.dbClearRoot(rootId);
 
 			S.Block.clear(rootId);
-			S.Auth.threadRemove(rootId);
 		};
 
 		onClose();
@@ -747,6 +746,19 @@ class Action {
 					});
 				},
 			},
+		});
+	};
+
+	addToCollection (targetId: string, objectIds: string[]) {
+		const collectionType = S.Record.getCollectionType();
+
+		C.ObjectCollectionAdd(targetId, objectIds, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			Preview.toastShow({ action: I.ToastAction.Collection, objectId: objectIds[0], targetId });
+			analytics.event('LinkToObject', { objectType: collectionType?.id, linkType: 'Collection' });
 		});
 	};
 
