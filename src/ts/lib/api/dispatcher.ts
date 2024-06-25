@@ -2,12 +2,9 @@ import * as Sentry from '@sentry/browser';
 import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observable, set } from 'mobx';
-import Commands from 'dist/lib/pb/protos/commands_pb';
-import Events from 'dist/lib/pb/protos/events_pb';
-import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
 import { I, M, S, U, J, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Storage, keyboard } from 'Lib';
 import * as Response from './response';
-import { ClientReadableStream } from 'grpc-web';
+import { Commands, Events, Service } from 'Lib/api/pb';
 
 const SORT_IDS = [ 
 	'BlockAdd', 
@@ -25,8 +22,8 @@ const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage'
 
 class Dispatcher {
 
-	service: Service.ClientCommandsClient = null;
-	stream: ClientReadableStream<Events.Event> = null;
+	service = null;
+	stream = null;
 	timeoutStream = 0;
 	timeoutEvent: any = {};
 	reconnects = 0;
@@ -49,8 +46,7 @@ class Dispatcher {
 
 		window.clearTimeout(this.timeoutStream);
 
-		const request = new Commands.StreamRequest();
-		request.setToken(S.Auth.token);
+		const request = Commands.StreamRequest.create({ token: S.Auth.token });
 
 		this.stream = this.service.listenSessionEvents(request, null);
 
@@ -94,8 +90,8 @@ class Dispatcher {
 
 	event (event: Events.Event, skipDebug?: boolean) {
 		const { config } = S.Common;
-		const traceId = event.getTraceid();
-		const ctx: string[] = [ event.getContextid() ];
+		const traceId = event.traceId;
+		const ctx: string[] = [ event.contextId ];
 		const electron = U.Common.getElectron();
 		const currentWindow = electron.currentWindow();
 		const { windowId } = currentWindow;
@@ -108,7 +104,7 @@ class Dispatcher {
 		};
 
 		const rootId = ctx.join('-');
-		const messages = event.getMessagesList() || [];
+		const messages = event.messages || [];
 		const log = (rootId: string, type: string, data: any, valueCase: any) => {
 			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', rootId);
 			if (!type) {
@@ -126,7 +122,7 @@ class Dispatcher {
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
 		for (const message of messages) {
-			const type = Mapper.Event.Type(message.getValueCase());
+			const type = message.value.oneofKind;
 			const data = Mapper.Event.Data(message);
 			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : {};
 			const needLog = this.checkLog(type) && !skipDebug;
@@ -965,7 +961,7 @@ class Dispatcher {
 			};
 
 			if (needLog) {
-				log(rootId, type, data, message.getValueCase());
+				log(rootId, type, data, message.value.oneofKind);
 			};
 		};
 

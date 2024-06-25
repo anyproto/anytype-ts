@@ -1,12 +1,5 @@
-import { Rpc } from 'dist/lib/pb/protos/commands_pb';
-import { Decode, Mapper, dispatcher } from 'Lib';
-
-export const AppGetVersion = (response: Rpc.App.GetVersion.Response) => {
-	return {
-		details: response.getDetails(),
-		version: response.getVersion(),
-	};
-};
+import { Mapper } from 'Lib';
+import { Decode, Commands } from 'Lib/api/pb';
 
 export const AccountCreate = (response: Rpc.Account.Create.Response) => {
 	return {
@@ -371,17 +364,14 @@ export const BlockFileCreateAndUpload = (response: Rpc.BlockFile.CreateAndUpload
 	};
 };
 
-export const HistoryGetVersions = (response: Rpc.History.GetVersions.Response) => {
-	return {
-		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
-	};
+export const HistoryGetVersions = (response: Commands.Rpc_History_GetVersions_Response) => {
+	return response;
 };
 
-export const HistoryShowVersion = (response: Rpc.History.ShowVersion.Response) => {
-	const version = response.getVersion();
+export const HistoryShowVersion = (response: Commands.Rpc_History_ShowVersion_Response) => {
 	return {
-		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
-		objectView: Mapper.From.ObjectView(response.getObjectview()),
+		version: response.version,
+		objectView: response.objectView,
 	};
 };
 

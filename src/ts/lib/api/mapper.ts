@@ -1,32 +1,9 @@
-import { I, M, U, Encode, Decode } from 'Lib';
-import { Rpc } from 'dist/lib/pb/protos/commands_pb';
-import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
-import Events from 'dist/lib/pb/protos/events_pb';
+import { I, M, U } from 'Lib';
+import { Commands, Events, Model, Encode, Decode } from 'Lib/api/pb';
+
+const { Rpc } = Commands;
 
 export const Mapper = {
-
-	BlockType: (v: Model.Block.ContentCase): I.BlockType => {
-		const V = Model.Block.ContentCase;
-
-		let t = I.BlockType.Empty;
-		if (v == V.SMARTBLOCK)			 t = I.BlockType.Page;
-		if (v == V.TEXT)				 t = I.BlockType.Text;
-		if (v == V.FILE)				 t = I.BlockType.File;
-		if (v == V.LAYOUT)				 t = I.BlockType.Layout;
-		if (v == V.DIV)					 t = I.BlockType.Div;
-		if (v == V.BOOKMARK)			 t = I.BlockType.Bookmark;
-		if (v == V.LINK)				 t = I.BlockType.Link;
-		if (v == V.DATAVIEW)			 t = I.BlockType.Dataview;
-		if (v == V.RELATION)			 t = I.BlockType.Relation;
-		if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
-		if (v == V.LATEX)				 t = I.BlockType.Embed;
-		if (v == V.TABLE)				 t = I.BlockType.Table;
-		if (v == V.TABLECOLUMN)			 t = I.BlockType.TableColumn;
-		if (v == V.TABLEROW)			 t = I.BlockType.TableRow;
-		if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
-		if (v == V.WIDGET)		 		 t = I.BlockType.Widget;
-		return t;
-	},
 
 	BoardGroupType (v: Model.Block.Content.Dataview.Group.ValueCase) {
 		const V = Model.Block.Content.Dataview.Group.ValueCase;
@@ -257,26 +234,25 @@ export const Mapper = {
 		},
 
 		Block: (obj: Model.Block): I.Block => {
-			const cc = obj.getContentCase();
-			const type = Mapper.BlockType(obj.getContentCase());
+			const type = obj.content.oneofKind;
 			const fn = `get${U.Common.ucFirst(type)}`;
 			const fm = U.Common.toUpperCamelCase(`block-${type}`);
 			const content = obj[fn] ? obj[fn]() : {};
 			const item: I.Block = {
-				id: obj.getId(),
-				type: type,
-				childrenIds: obj.getChildrenidsList() || [],
-				fields: Decode.struct(obj.getFields()) || {},
-				hAlign: obj.getAlign() as number,
-				vAlign: obj.getVerticalalign() as number,
-				bgColor: obj.getBackgroundcolor(),
+				id: obj.id,
+				type: type as I.BlockType,
+				childrenIds: obj.childrenIds || [],
+				fields: Decode.struct(obj.fields) || {},
+				hAlign: obj.align as number,
+				vAlign: obj.verticalAlign as number,
+				bgColor: obj.backgroundColor,
 				content: {} as any,
 			};
 
 			if (Mapper.From[fm]) {
 				item.content = Mapper.From[fm](content);
 			} else {
-				console.log('[Mapper] From does not exist: ', fm, cc);
+				console.log('[Mapper] From does not exist: ', fm, type);
 			};
 			return item;
 		},
@@ -356,16 +332,6 @@ export const Mapper = {
 				type: obj.getType() as number,
 				customOrder: (obj.getCustomorderList() || []).map(Decode.value),
 				empty: obj.getEmptyplacement() as number,
-			};
-		},
-
-		HistoryVersion: (obj: Rpc.History.Version): I.HistoryVersion => {
-			return {
-				id: obj.getId(),
-				previousIds: obj.getPreviousidsList() || [],
-				authorId: obj.getAuthorid(),
-				groupId: obj.getGroupid(),
-				time: obj.getTime(),
 			};
 		},
 

@@ -74,8 +74,8 @@ export interface HistoryVersion {
 	id: string;
 	previousIds: string[];
 	authorId: string;
-	groupId: number;
-	time: number;
+	groupId: bigint;
+	time: bigint;
 };
 
 export enum ImportMode {

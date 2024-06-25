@@ -10,7 +10,7 @@ export interface PageInfo {
 
 export enum BlockType {
 	Empty				 = '',
-	Page				 = 'page',
+	Page				 = 'smartblock',
 	Dataview			 = 'dataview',
 	Layout				 = 'layout',
 	Text				 = 'text',

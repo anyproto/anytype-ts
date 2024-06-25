@@ -100,6 +100,7 @@
 		"@babel/preset-typescript": "^7.24.7",
 		"@electron/remote": "^2.1.2",
 		"@emoji-mart/data": "^1.1.2",
+		"@protobuf-ts/runtime": "^2.9.4",
 		"@sentry/browser": "^7.39.0",
 		"@sentry/cli": "^2.18.1",
 		"@testing-library/react": "^12.1.5",

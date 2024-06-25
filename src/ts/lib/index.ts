@@ -5,10 +5,10 @@ import * as U from './util';		 // Utils
 import * as C from './api/command';	 // Commands
 import * as S from 'Store';			 // Stores
 
-import Renderer from './renderer';
 import { dispatcher } from './api/dispatcher';
 import { Mapper } from './api/mapper';
-import { Encode, Decode } from './api/struct';
+
+import Renderer from './renderer';
 import { keyboard, Key } from './keyboard';
 import { sidebar } from './sidebar';
 import Storage from './storage';
@@ -45,8 +45,6 @@ export {
 	translate,
 	dispatcher,
 	Mapper,
-	Encode, 
-	Decode,
 	analytics,
 	history,
 	scrollOnMove,
