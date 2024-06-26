@@ -167,8 +167,7 @@ const Navigation = observer(class Navigation extends React.Component {
 		const node = $(this.node);
 		const { ww } = U.Common.getWindowDimensions();
 		const width = node.outerWidth();
-		const sidebar = $('#sidebar');
-		const sw = sidebar.outerWidth();
+		const sw = $('#sidebarDummy').outerWidth();
 		const x = (ww - sw) / 2 - width / 2 + sw;
 
 		node.css({ left: x });

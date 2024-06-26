@@ -182,13 +182,12 @@ class Popup extends React.Component<I.Popup> {
 			const inner = node.find('.innerWrap');
 			const { ww } = U.Common.getWindowDimensions();
 
-			const sidebar = $('#sidebar');
 			const width = inner.outerWidth();
 			const height = inner.outerHeight();
 
 			let sw = 0;
 			if (!S.Popup.showDimmerIds().includes(id)) {
-				sw = sidebar.outerWidth();
+				sw = $('#sidebarDummy').outerWidth();
 			};
 
 			let x = (ww - sw) / 2 - width / 2 + sw;

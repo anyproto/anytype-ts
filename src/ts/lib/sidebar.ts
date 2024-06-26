@@ -114,19 +114,18 @@ class Sidebar {
 		};
 
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = this.vault.hasClass('isExpanded') ? 0 : this.vault.width();
+		const vw = this.vault.hasClass('isExpanded') ? 0 : 92;
 		const pageWidth = ww - width;
 		const css: any = { width: '' };
-		
-		this.header.css(css).removeClass('withSidebar');
-		this.footer.css(css).removeClass('withSidebar');
-		this.dummy.css({ width });
 
-		css.width = this.header.outerWidth() - width;
+		this.header.css(css).removeClass('withSidebar');
+		this.footer.css(css);
+		this.dummy.css({ width: width + vw });
+
+		css.width = this.header.outerWidth() - width - vw;
 
 		if (width) {
 			this.header.addClass('withSidebar');
-			this.footer.addClass('withSidebar');
 		};
 
 		this.page.css({ width: pageWidth });

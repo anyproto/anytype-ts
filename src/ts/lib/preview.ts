@@ -264,10 +264,9 @@ class Preview {
 	 */
 	toastPosition () {
 		const obj = $('#toast');
-		const sidebar = $('#sidebar');
 		const { ww } = U.Common.getWindowDimensions();
 		const y = 32;
-		const sw = sidebar.outerWidth();
+		const sw = $('#sidebarDummy').outerWidth();
 		const x = (ww - sw) / 2 - obj.outerWidth() / 2 + sw;
 
 		obj.show().css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });

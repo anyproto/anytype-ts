@@ -83,8 +83,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		const loader = obj.find('#loader');
 		const { ww, wh } = U.Common.getWindowDimensions();
 		const mh = wh - BORDER * 2;
-		const sidebar = $('#sidebar');
-		const mw = ww - BORDER * 2 - sidebar.outerWidth();
+		const mw = ww - BORDER * 2 - $('#sidebarDummy').outerWidth();
 
 		const onError = () => {
 			wrap.addClass('brokenMedia');
