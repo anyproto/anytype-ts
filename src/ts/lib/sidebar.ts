@@ -30,6 +30,7 @@ class Sidebar {
 	loader: JQuery<HTMLElement> = null;
 	dummyLeft: JQuery<HTMLElement> = null;
 	dummyRight: JQuery<HTMLElement> = null;
+	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	isDragging = false;
 	timeoutHide = 0;
@@ -72,6 +73,7 @@ class Sidebar {
 		this.loader = this.page.find('#loader');
 		this.dummyLeft = $('#sidebarDummyLeft');
 		this.dummyRight = $('#sidebarDummyRight');
+		this.vault = $('#vault');
 	};
 
 	onMouseMove (): void {
@@ -345,9 +347,12 @@ class Sidebar {
 		};
 
 		const { ww } = U.Common.getWindowDimensions();
-		const pageWidth = ww - width;
+		const vw = this.vault.width();
+		const pageWidth = ww - width - vw;
 		const css: any = { width: '' };
 		const cssLoader: any = { width: pageWidth, left: '', right: '' };
+
+		let dummyWidth = width;
 		
 		this.header.css(css).removeClass('withSidebar snapLeft snapRight');
 		this.footer.css(css).removeClass('withSidebar snapLeft snapRight');
@@ -355,7 +360,7 @@ class Sidebar {
 		this.dummyLeft.css({ width: 0 });
 		this.dummyRight.css({ width: 0 });
 
-		css.width = this.header.outerWidth() - width;
+		css.width = this.header.outerWidth() - width - vw;
 
 		if (isSidebarFixed && width) {
 			this.header.addClass('withSidebar');
@@ -373,6 +378,7 @@ class Sidebar {
 				cssLoader.right = '';
 			} else {
 				dummy = this.dummyLeft;
+				dummyWidth += vw;
 				this.header.addClass('snapLeft');
 				this.footer.addClass('snapLeft');
 
@@ -382,7 +388,7 @@ class Sidebar {
 		};
 
 		if (dummy && dummy.length) {
-			dummy.css({ width: width ? width : 0 });
+			dummy.css({ width: dummyWidth });
 		};
 
 		this.page.css({ width: pageWidth });

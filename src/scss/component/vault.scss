@@ -1,3 +1,55 @@
 @import "~scss/_mixins";
 
-.vault { position: fixed; background-color: #000; z-index: 22; left: 0px; top: 0px; width: 60px; height: 100%; }
+.vault { 
+	position: fixed; background-color: #000; z-index: 22; left: 0px; top: 0px; width: 404px; height: 100%; padding: 48px 0px 0px 0px; 
+	display: flex; flex-direction: column;
+}
+.vault {
+	.items { display: flex; flex-direction: column; gap: 16px 0px; overflow: auto; padding: 0px 22px 22px 22px;  }
+
+	.items {
+		.item { 
+			position: relative; padding: 16px; display: flex; flex-direction: row; align-items: center; border-radius: 12px; gap: 0px 16px;
+		}
+		.item {
+			.iconWrap { 
+				width: 48px; height: 48px; border-radius: 4px; overflow: hidden; background-position: center; background-repeat: no-repeat; 
+				position: relative; z-index: 1;
+			}
+			.iconWrap {
+				.icon.shared { 
+					width: 10px; height: 10px; position: absolute; left: 6px; bottom: 6px; background-image: url('~img/icon/menu/space/shared.svg');
+				}
+			}
+
+			.coverWrap { width: 100%; height: 100%; overflow: hidden; border-radius: inherit; position: absolute; z-index: 0; left: 0px; top: 0px; }
+			.coverWrap {
+				.iconObject { width: 100%; height: 360px; margin-top: -140px; opacity: 0.6; filter: blur(15px); }
+			}
+
+			.infoWrap { position: relative; z-index: 1; }
+			.infoWrap {
+				.name { width: 100%; color: #fff; @include text-common; font-weight: 600; @include text-overflow-nw; }
+				.descr { color: rgba(255,255,255,0.6); }
+			}
+		}
+
+		.item.gallery { background: #3f3f3f; }
+		.item.gallery {
+			.iconWrap { background-image: url('~img/icon/vault/gallery.svg'); }
+		}
+
+		.item.add { background: #2b2b2b; justify-content: center; }
+		.item.add {
+			.iconWrap { background-image: url('~img/icon/vault/plus.svg'); background-size: 20px; }
+		}
+
+		.item::after { 
+			content: ''; position: absolute; left: -16px; top: 20%; width: 4px; height: 60%; background: #fff; border-radius: 0px 2px 2px 0px;
+			opacity: 0; 
+		}
+
+		.item.isActive::after, .item:hover::after { opacity: 1; }
+	}
+
+}
