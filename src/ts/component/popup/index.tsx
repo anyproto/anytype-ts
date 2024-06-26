@@ -188,7 +188,7 @@ class Popup extends React.Component<I.Popup> {
 			const height = inner.outerHeight();
 
 			let sw = 0;
-			if (S.Common.isSidebarFixed && sidebar.hasClass('active') && !S.Popup.showDimmerIds().includes(id)) {
+			if (sidebar.hasClass('active') && !S.Popup.showDimmerIds().includes(id)) {
 				sw = sidebar.outerWidth();
 			};
 

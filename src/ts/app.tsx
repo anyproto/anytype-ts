@@ -137,11 +137,13 @@ class RoutePage extends React.Component<RouteComponentProps> {
 				<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
-					<Sidebar key="sidebar" {...this.props} />
 					<Vault key="vault" {...this.props} />
-					<Navigation key="navigation" {...this.props} />
 
-					<Page {...this.props} />
+					<div id="vaultContentContainer">
+						<Sidebar key="sidebar" {...this.props} />
+						<Navigation key="navigation" {...this.props} />
+						<Page {...this.props} />
+					</div>
 				</DragProvider>
 			</SelectionProvider>
 		);

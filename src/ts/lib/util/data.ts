@@ -972,7 +972,6 @@ class UtilData {
 
 					S.Auth.accountSet(message.account);
 					S.Common.configSet(message.account.config, false);
-					S.Common.isSidebarFixedSet(true);
 
 					this.onInfo(message.account.info);
 					Renderer.send('keytarSet', message.account.id, phrase);

@@ -86,7 +86,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		const sidebar = $('#sidebar');
 
 		let mw = ww - BORDER * 2;
-		if (S.Common.isSidebarFixed && sidebar.hasClass('active')) {
+		if (sidebar.hasClass('active')) {
 			mw -= sidebar.outerWidth();
 		};
 

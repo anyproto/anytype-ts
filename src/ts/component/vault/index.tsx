@@ -156,8 +156,14 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onExpand () {
-		$(this.node).toggleClass('isExpanded');
-		$('#pageFlex').toggleClass('isVaultExpanded');
+		const { wh } = U.Common.getWindowDimensions();
+		const node = $(this.node);
+		const container = $('#vaultContentContainer');
+		const isExpanded = node.hasClass('isExpanded');
+
+		node.toggleClass('isExpanded');
+		container.toggleClass('isExpanded');
+		container.css({ height: !isExpanded ? wh : '' });
 	};
 
 });

@@ -270,7 +270,7 @@ class Preview {
 		const y = 32;
 
 		let sw = 0;
-		if (S.Common.isSidebarFixed && sidebar.hasClass('active')) {
+		if (sidebar.hasClass('active')) {
 			sw = sidebar.outerWidth();
 		};
 

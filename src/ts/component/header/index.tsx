@@ -92,7 +92,7 @@ class Header extends React.Component<Props> {
 					tooltip={translate('sidebarToggle')}
 					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 					tooltipY={I.MenuDirection.Bottom}
-					onClick={() => sidebar.toggleExpandCollapse()}
+					onClick={() => sidebar.toggleOpenClose()}
 				/>
 
 				<Icon 

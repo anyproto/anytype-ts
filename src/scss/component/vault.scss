@@ -1,7 +1,13 @@
 @import "~scss/_mixins";
 
+#vaultContentContainer { transition: transform 0.3s $easeInQuint; }
+#vaultContentContainer.isExpanded { transform: translate3d(calc($vaultWidthExpanded + $vaultWidthCollapsed), 0px, 0px); overflow: hidden; }
+#vaultContentContainer.isExpanded {
+	#sidebar { left: 0px; }
+}
+
 .vault { 
-	position: fixed; background-color: #000; z-index: 22; left: 0px; top: 0px; width: 92px; height: 100%; padding: 48px 0px 0px 0px; 
+	position: fixed; background-color: #000; z-index: 30; left: 0px; top: 0px; width: $vaultWidthCollapsed; height: 100%; padding: 48px 0px 0px 0px; 
 	display: flex; flex-direction: column; transition: width 0.3s $easeInQuint;
 }
 .vault {
@@ -18,7 +24,7 @@
 
 		.coverWrap { width: 100%; height: 100%; overflow: hidden; border-radius: inherit; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; }
 		.coverWrap {
-			.iconObject { width: 100%; height: 360px; margin-top: -140px; opacity: 0.6; filter: blur(15px); }
+			.iconObject { width: $vaultWidthExpanded; height: $vaultWidthExpanded; margin-top: -140px; opacity: 0.6; filter: blur(50px); }
 		}
 
 		.infoWrap { display: none; }
@@ -47,7 +53,7 @@
 
 }
 
-.vault.isExpanded { width: 404px; }
+.vault.isExpanded { width: calc($vaultWidthExpanded + $vaultWidthCollapsed); }
 .vault.isExpanded {
 	.item { padding: 16px; display: flex; flex-direction: row; align-items: center; border-radius: 12px; gap: 0px 16px; }
 	.item {

@@ -171,7 +171,7 @@ const Navigation = observer(class Navigation extends React.Component {
 		const isRight = sidebar.hasClass('right');
 
 		let sw = 0;
-		if (S.Common.isSidebarFixed && sidebar.hasClass('active')) {
+		if (sidebar.hasClass('active')) {
 			sw = sidebar.outerWidth();
 		};
 
