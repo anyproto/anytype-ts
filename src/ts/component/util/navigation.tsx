@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, IconObject } from 'Component';
+import { Icon } from 'Component';
 import { I, S, U, keyboard, Preview, translate, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
@@ -18,14 +18,12 @@ const Navigation = observer(class Navigation extends React.Component {
 		this.onAdd = this.onAdd.bind(this);
 		this.onGraph = this.onGraph.bind(this);
 		this.onSearch = this.onSearch.bind(this);
-		this.onProfile = this.onProfile.bind(this);
 	};
 
 	render () {
 		const { navigationMenu } = S.Common;
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
-		const participant = U.Space.getParticipant();
 		const isWin = U.Common.isPlatformWindows();
 		const isLinux = U.Common.isPlatformLinux();
 		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
@@ -111,18 +109,6 @@ const Navigation = observer(class Navigation extends React.Component {
 							</div>
 						);
 					})}
-
-					<div className="line" />
-
-					<div 
-						id="button-navigation-profile"
-						className="iconWrap"
-						onClick={this.onProfile}
-						onMouseEnter={e => this.onTooltipShow(e, translate('navigationAccount'), 'Ctrl + Tab')}
-						onMouseLeave={e => Preview.tooltipHide(false)}
-					>
-						<IconObject object={participant} />
-					</div>
 				</div>
 			</div>
 		);
@@ -170,16 +156,6 @@ const Navigation = observer(class Navigation extends React.Component {
 
 	onSearch () {
 		keyboard.onSearchPopup(analytics.route.navigation);
-	};
-
-	onProfile () {
-		window.clearTimeout(this.timeoutPlus);
-
-		if (S.Menu.isOpen('space')) {
-			S.Menu.close('space');
-		} else {
-			keyboard.onSpaceMenu(false);
-		};
 	};
 
 	resize () {

@@ -118,6 +118,8 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onClick (e: any, item: any) {
+		e.stopPropagation();
+
 		if (item.id == 'add') {
 			this.onAdd();
 		} else
@@ -155,6 +157,7 @@ const Vault = observer(class Vault extends React.Component {
 
 	onExpand () {
 		$(this.node).toggleClass('isExpanded');
+		$('#pageFlex').toggleClass('isVaultExpanded');
 	};
 
 });

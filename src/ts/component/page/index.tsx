@@ -103,7 +103,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			content = wrap;
 		} else {
 			content = (
-				<div className="pageFlex">
+				<div id="pageFlex" className="pageFlex">
 					<div id="sidebarDummyLeft" className="sidebarDummy left" />
 					{wrap}
 					<div id="sidebarDummyRight" className="sidebarDummy right" />

@@ -1,10 +1,11 @@
 @import "~scss/_mixins";
 
-.pageFlex { display: flex; flex-direction: row; justify-content: space-between; width: 100% !important; }
+.pageFlex { display: flex; flex-direction: row; justify-content: space-between; width: 100% !important; transition: transform 0.2s $easeInQuint; }
 .pageFlex {
 	.sidebarDummy { flex-shrink: 0; }
 	#page { width: 100%; position: relative; }
 }
+.pageFlex.isVaultExpanded { transform: translate3d(360px, 0px, 0px); }
 
 .sidebar {
 	position: fixed; background-color: var(--color-shape-tertiary); z-index: 21; border-radius: 12px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); 
