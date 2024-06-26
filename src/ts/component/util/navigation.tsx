@@ -168,17 +168,9 @@ const Navigation = observer(class Navigation extends React.Component {
 		const { ww } = U.Common.getWindowDimensions();
 		const width = node.outerWidth();
 		const sidebar = $('#sidebar');
-		const isRight = sidebar.hasClass('right');
+		const sw = sidebar.outerWidth();
+		const x = (ww - sw) / 2 - width / 2 + sw;
 
-		let sw = 0;
-		if (sidebar.hasClass('active')) {
-			sw = sidebar.outerWidth();
-		};
-
-		let x = (ww - sw) / 2 - width / 2;
-		if (!isRight) {
-			x += sw;
-		};
 		node.css({ left: x });
 		win.trigger('resize.menuSpace');
 	};

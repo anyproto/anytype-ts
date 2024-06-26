@@ -183,19 +183,15 @@ class Popup extends React.Component<I.Popup> {
 			const { ww } = U.Common.getWindowDimensions();
 
 			const sidebar = $('#sidebar');
-			const isRight = sidebar.hasClass('right');
 			const width = inner.outerWidth();
 			const height = inner.outerHeight();
 
 			let sw = 0;
-			if (sidebar.hasClass('active') && !S.Popup.showDimmerIds().includes(id)) {
+			if (!S.Popup.showDimmerIds().includes(id)) {
 				sw = sidebar.outerWidth();
 			};
 
-			let x = (ww - sw) / 2 - width / 2;
-			if (!isRight) {
-				x += sw;
-			};
+			let x = (ww - sw) / 2 - width / 2 + sw;
 			if (width >= ww - sw) {
 				x -= sw / 2;
 			};

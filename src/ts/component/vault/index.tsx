@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { U, S, keyboard, translate, analytics, Storage } from 'Lib';
+import { U, S, keyboard, translate, analytics, Storage, sidebar } from 'Lib';
 
 const Vault = observer(class Vault extends React.Component {
 	
 	node = null;
+	isAnimating = false;
 
 	constructor (props) {
 		super(props);
@@ -156,6 +157,10 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onExpand () {
+		if (this.isAnimating) {
+			return;
+		};
+
 		const { wh } = U.Common.getWindowDimensions();
 		const node = $(this.node);
 		const container = $('#vaultContentContainer');
@@ -164,6 +169,11 @@ const Vault = observer(class Vault extends React.Component {
 		node.toggleClass('isExpanded');
 		container.toggleClass('isExpanded');
 		container.css({ height: !isExpanded ? wh : '' });
+
+		this.isAnimating = true;
+		sidebar.resizePage();
+
+		window.setTimeout(() => this.isAnimating = false, 300);
 	};
 
 });
