@@ -9,12 +9,13 @@ const Vault = observer(class Vault extends React.Component {
 
 	constructor (props) {
 		super(props);
+
+		this.onExpand = this.onExpand.bind(this);
 	};
 
     render () {
 		const items = this.getItems();
 		const { spaceview } = S.Block;
-
 
 		const Item = (item) => {
 			const cn = [ 'item', 'space' ];
@@ -81,6 +82,7 @@ const Vault = observer(class Vault extends React.Component {
 				ref={node => this.node = node}
 				id="vault"
 				className="vault"
+				onClick={this.onExpand}
             >
 				<div className="items">
 					{items.map(item => {
@@ -141,9 +143,6 @@ const Vault = observer(class Vault extends React.Component {
 		});
 	};
 
-	onMouseEnter () {
-	};
-
 	onContextMenu (e: any, item: any) {
 		U.Menu.spaceContext(item, {
 			recalcRect: () => { 
@@ -154,6 +153,9 @@ const Vault = observer(class Vault extends React.Component {
 		});
 	};
 
+	onExpand () {
+		$(this.node).toggleClass('isExpanded');
+	};
 
 });
 
