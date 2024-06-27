@@ -109,14 +109,15 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			};
 
 			if (withIcon) {
+				const canEdit = !readonly && !isArchived && (object.layout == I.ObjectLayout.Task);
 				icon = (
 					<IconObject 
 						id={`block-${block.id}-icon`}
 						size={size}
 						iconSize={iconSize}
 						object={object} 
-						canEdit={!readonly && !isArchived} 
-						noClick={true}
+						canEdit={canEdit} 
+						noClick={canEdit}
 					/>
 				);
 			};
