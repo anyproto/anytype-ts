@@ -2190,7 +2190,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const header = pageContainer.find('#header');
 			const root = S.Block.getLeaf(rootId, rootId);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
-			const hh = isPopup ? header.height() : U.Common.sizeHeader();
+			const hh = isPopup ? header.height() : J.Size.header;
 
 			this.setLayoutWidth(root?.fields?.width);
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, U, keyboard, translate } from 'Lib';
+import { I, U, J, keyboard, translate } from 'Lib';
 
 interface State {
 	page: string;
@@ -352,7 +352,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const loader = obj.find('#loader');
-		const hh = U.Common.sizeHeader();
+		const hh = J.Size.header;
 
 		loader.css({ width: obj.width(), height: obj.height() });
 		position();

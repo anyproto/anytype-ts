@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, S, U, focus, translate } from 'Lib';
+import { I, S, U, J, focus, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 const BlockTableOfContents = observer(class BlockTableOfContents extends React.Component<I.BlockComponent> {
@@ -121,7 +121,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 		const container = U.Common.getScrollContainer(isPopup);
 		const no = node.offset().top;
 		const st = container.scrollTop();
-		const hh = U.Common.sizeHeader();
+		const hh = J.Size.header;
 		const y = Math.max(hh + 20, (isPopup ? (no - container.offset().top + st) : no) - hh - 20);
 
 		container.scrollTop(y);

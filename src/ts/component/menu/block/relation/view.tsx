@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, U, Relation, analytics, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, Relation, analytics, keyboard, translate } from 'Lib';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -365,7 +365,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const maxOffset = isPopup ? 16 : 80;
 
 		obj.css({ 
-			height: container.height() - U.Common.sizeHeader() - maxOffset,
+			height: container.height() - J.Size.header - maxOffset,
 			width: Math.max(min, container.width() / 2 - offset),
 		});
 

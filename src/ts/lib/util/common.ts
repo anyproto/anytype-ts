@@ -660,10 +660,6 @@ class UtilCommon {
 		};
 	};
 
-	sizeHeader (): number {
-		return this.isPlatformWindows() ? 38 : 52;
-	};
-
 	searchParam (url: string): any {
 		const a = url.replace(/^\?/, '').split('&');
 		const param: any = {};

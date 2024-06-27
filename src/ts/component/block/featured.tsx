@@ -773,7 +773,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				};
 
 				if (!isPopup) {
-					param.fixedY = U.Common.sizeHeader();
+					param.fixedY = J.Size.header;
 					param.classNameWrap = 'fixed fromHeader';
 				};
 
