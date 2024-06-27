@@ -90,21 +90,28 @@ const Vault = observer(class Vault extends React.Component {
 					<Icon className="close" onClick={this.onToggle} />
 				</div>
 				<div className="body">
-					{items.map(item => {
-						item.key = `item-space-${item.id}`;
+					<div className="side top">
+						{items.map(item => {
+							item.key = `item-space-${item.id}`;
 
-						let content = null;
-						if (item.id == 'add') {
-							content = <ItemAdd {...item} />;
-						} else 
-						if ([ 'void', 'gallery' ].includes(item.id)) {
-							content = <ItemIcon {...item} />;
-						} else {
-							content = <Item {...item} />;
-						};
+							let content = null;
+							if (item.id == 'add') {
+								content = <ItemAdd {...item} />;
+							} else 
+							if ([ 'void', 'gallery' ].includes(item.id)) {
+								content = <ItemIcon {...item} />;
+							} else {
+								content = <Item {...item} />;
+							};
 
-						return content;
-					})}
+							return content;
+						})}
+					</div>
+					<div className="side bottom">
+						<div className="item settings">
+							<div className="iconWrap" />
+						</div>
+					</div>
 				</div>	
             </div>
 		);
@@ -113,7 +120,7 @@ const Vault = observer(class Vault extends React.Component {
 	getItems () {
 		const items = U.Common.objectCopy(U.Space.getList());
 
-		items.unshift({ id: 'void' });
+		//items.unshift({ id: 'void' });
 		items.push({ id: 'gallery', name: translate('commonGallery') });
 
 		if (U.Space.canCreateSpace()) {

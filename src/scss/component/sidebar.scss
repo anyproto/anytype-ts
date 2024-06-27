@@ -16,7 +16,7 @@
 	> .inner { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
 	> .inner {
 		> .head { 
-			display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 52px;
+			display: flex; flex-direction: row; align-items: center; justify-content: flex-start; padding: 0px 16px; height: 52px;
 			-webkit-app-region: no-drag;
 		}
 		> .head {

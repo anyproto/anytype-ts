@@ -11,16 +11,20 @@
 	display: flex; flex-direction: column; transition: width 0.3s $easeInQuint;
 }
 .vault {
-	.head { height: 52px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 22px; }
+	.head { height: 42px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 22px; flex-shrink: 0; }
 	.head {
 		.icon { width: 24px; height: 24px; background-size: 20px; border-radius: 4px; -webkit-app-region: no-drag; opacity: 0; }
 		.icon.settings { background-image: url('~img/icon/vault/settings.svg'); }
 		.icon.close { background-image: url('~img/icon/vault/close.svg'); }
 		.icon:hover { background-color: var(--color-shape-highlight-medium); }
 	}
-	.body { display: flex; flex-direction: column; gap: 16px 0px; overflow: auto; padding: 0px 22px 22px 22px;  }
+	.body { display: flex; flex-direction: column; justify-content: space-between; padding: 0px 22px 12px 22px; flex-grow: 1; }
+	.body {
+		.side.top { display: flex; flex-direction: column; gap: 16px 0px; overflow: auto; height: calc(100% - 48px); flex-grow: 1; }
+		.side.bottom { flex-shrink: 0; align-items: flex-end; }
+	}
 
-	.item { position: relative; border-radius: 2px; }
+	.item { position: relative; border-radius: 2px; transition: background $transitionCommon; }
 	.item {
 		.iconWrap, .infoWrap { position: relative; z-index: 1;  }
 
@@ -54,6 +58,11 @@
 	.item.add {
 		.iconWrap { background-image: url('~img/icon/vault/plus.svg'); background-size: 20px; }
 	}
+
+	.item.settings {
+		.iconWrap { background-size: 20px; background-image: url('~img/icon/vault/settings.svg'); }
+	}
+	.item.settings:hover { background: #2b2b2b; }
 
 	.item::after { 
 		content: ''; position: absolute; left: -16px; top: 20%; width: 4px; height: 60%; background: #fff; border-radius: 0px 2px 2px 0px;
