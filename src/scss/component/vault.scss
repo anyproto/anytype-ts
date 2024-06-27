@@ -8,7 +8,7 @@
 
 .vault { 
 	position: fixed; background-color: #000; z-index: 30; left: 0px; top: 0px; width: $vaultWidthCollapsed; height: 100%;
-	display: flex; flex-direction: column; transition: width 0.3s $easeInQuint;
+	display: flex; flex-direction: column; transition: width 0.3s $easeInQuint; padding-top: 42px;
 }
 .vault {
 	.head { height: 42px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 14px; flex-shrink: 0; }

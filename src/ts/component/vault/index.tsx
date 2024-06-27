@@ -109,10 +109,12 @@ const Vault = observer(class Vault extends React.Component {
 				id="vault"
 				className="vault"
             >
+				{/*
 				<div className="head">
 					<Icon className="settings" onClick={this.onSettings} />
 					<Icon className="close" onClick={this.onToggle} />
 				</div>
+				*/}
 				<div className="body">
 					<List 
 						axis="y" 
@@ -125,7 +127,7 @@ const Vault = observer(class Vault extends React.Component {
 						helperClass="isDragging"
 						helperContainer={() => $(`#vault .side.top`).get(0)}
 					/>
-					<div className="side bottom">
+					<div className="side bottom" onClick={this.onSettings}>
 						<div className="item settings">
 							<div className="iconWrap" />
 						</div>
@@ -150,8 +152,6 @@ const Vault = observer(class Vault extends React.Component {
 			items.sort((c1, c2) => {
 				const i1 = ids.indexOf(c1.id);
 				const i2 = ids.indexOf(c2.id);
-
-
 
 				if (i1 > i2) return 1;
 				if (i1 < i2) return -1;
