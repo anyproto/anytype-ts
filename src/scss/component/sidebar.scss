@@ -13,7 +13,7 @@
 .sidebar.anim { transition-property: left, top, width, box-shadow, transform; transition-duration: 0.2s; transition-timing-function: ease-in-out; }
 
 .sidebar {
-	> .inner { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; min-width: 240px; }
+	> .inner { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
 	> .inner {
 		> .head { 
 			display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 52px;
@@ -26,7 +26,7 @@
 			.icon.toggle:hover { background-image: url('~img/icon/widget/toggle1.svg'); }
 		}
 
-		> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: auto; overscroll-behavior: none; }
+		> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: auto; overscroll-behavior: none; min-width: 240px; }
 	}
 
 	.resize-h { width: 10px; height: 100%; position: absolute; top: 0px; right: -5px; cursor: col-resize; }
