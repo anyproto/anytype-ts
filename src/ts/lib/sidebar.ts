@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, U, J, Storage } from 'Lib';
+import { U, J, Storage } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -112,7 +112,7 @@ class Sidebar {
 		};
 
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = this.vault.hasClass('isExpanded') ? 0 : 92;
+		const vw = this.vault.hasClass('isExpanded') ? 0 : 76;
 		const pageWidth = ww - width;
 		const css: any = { width: '' };
 
