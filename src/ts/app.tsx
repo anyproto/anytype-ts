@@ -200,7 +200,8 @@ class App extends React.Component<object, State> {
 						<Progress />
 						<Toast />
 						<ListNotification key="listNotification" />
-						<Share />
+
+						<Share showOnce={true} />
 
 						<Switch>
 							{J.Route.map((path: string, i: number) => (

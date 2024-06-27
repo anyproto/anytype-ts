@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Preview } from 'Lib';
 
 interface State {
 	error: string;
@@ -111,7 +111,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 					this.setError(message.error);
 
 					window.setTimeout(() => {
-						U.Common.shareTooltipShow(true);
+						Preview.shareTooltipShow();
 						analytics.event('OnboardingTooltip', { id: 'ShareApp' });
 					}, J.Constant.delay.login);
 				});

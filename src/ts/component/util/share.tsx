@@ -1,19 +1,29 @@
 import * as React from 'react';
-import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { S, U, translate, analytics, I } from 'Lib';
+import { S, translate, analytics, Preview } from 'Lib';
 
-class Share extends React.Component<{}, {}> {
+interface Props {
+	showOnce?: boolean;
+};
+
+const Share = observer(class Share extends React.Component<Props, {}> {
 
 	node: any = null;
 
-	constructor (props) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
+		const { showOnce } = this.props;
+
+		if (!S.Common.shareTooltip && showOnce) {
+			return null;
+		};
+
 		return (
 			<div
 				ref={ref => this.node = ref}
@@ -29,20 +39,21 @@ class Share extends React.Component<{}, {}> {
 	};
 
 	onClick () {
+		const { showOnce } = this.props;
+
 		S.Popup.open('share', {});
+		Preview.shareTooltipHide();
 
-		analytics.event('ClickShareApp', { route: $(this.node).hasClass('canClose') ? 'Onboarding' : 'Help' });
-
-		U.Common.shareTooltipHide();
+		analytics.event('ClickShareApp', { route: showOnce ? 'Onboarding' : 'Help' });
 	};
 
 	onClose (e) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		U.Common.shareTooltipHide();
+		Preview.shareTooltipHide();
 	};
 
-};
+});
 
-export default Share;
+export default Share

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button, Share } from 'Component';
-import { I, S, U, J, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, translate } from 'Lib';
+import { I, S, U, J, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, translate, Preview } from 'Lib';
 
 class MenuHelp extends React.Component<I.Menu> {
 
@@ -48,6 +48,7 @@ class MenuHelp extends React.Component<I.Menu> {
 
 	componentDidMount () {
 		this.rebind();
+		Preview.shareTooltipHide();
 		Highlight.showAll();
 	};
 

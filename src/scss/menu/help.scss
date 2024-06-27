@@ -3,6 +3,9 @@
 .menus {
 	.menu.menuHelp { width: 280px; position: fixed; }
 	.menu.menuHelp {
-		.shareTooltip { display: flex; position: absolute; right: 0; top: 100%; margin-top: 8px; }
+		.shareTooltip { display: flex; position: absolute; left: auto; right: 0; top: 100%; margin-top: 8px; }
+		.shareTooltip {
+			.icon.close { display: none; }
+		}
 	}
 }

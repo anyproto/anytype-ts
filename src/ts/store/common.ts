@@ -55,6 +55,7 @@ class CommonStore {
 	public navigationMenuValue = null;
 	public linkStyleValue = null;
 	public isOnlineValue = false;
+	public shareTooltipValue = false;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -110,6 +111,7 @@ class CommonStore {
 			navigationMenuValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
+			shareTooltipValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
             config: computed,
@@ -123,6 +125,7 @@ class CommonStore {
 			membershipTiers: computed,
 			space: computed,
 			isOnline: computed,
+			shareTooltip: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -139,6 +142,7 @@ class CommonStore {
 			navigationMenuSet: action,
 			linkStyleSet: action,
 			isOnlineSet: action,
+			shareTooltipSet: action,
 			membershipTiersListSet: action,
 		});
 
@@ -259,6 +263,10 @@ class CommonStore {
 
 	get isOnline (): boolean {
 		return Boolean(this.isOnlineValue);
+	};
+
+	get shareTooltip (): boolean {
+		return Boolean(this.shareTooltipValue);
 	};
 
 	get membershipTiers (): I.MembershipTier[] {
@@ -486,6 +494,10 @@ class CommonStore {
 	isOnlineSet (v: boolean) {
 		this.isOnlineValue = Boolean(v);
 		console.log('[Online status]:', v);
+	};
+
+	shareTooltipSet (v: boolean) {
+		this.shareTooltipValue = Boolean(v);
 	};
 
 	configSet (config: any, force: boolean) {
