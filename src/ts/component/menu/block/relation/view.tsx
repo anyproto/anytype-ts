@@ -316,10 +316,13 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { rootId } = data;
 		const relation = S.Record.getRelationByKey(relationKey);
+		const object = S.Detail.get(rootId, rootId);
 
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
-		analytics.changeRelationValue(relation, value, 'menu');
+		if (JSON.stringify(object[relationKey]) !== JSON.stringify(value)) {
+			analytics.changeRelationValue(relation, value, 'menu');
+		};
 	};
 
 	scrollTo (relationKey: string) {
