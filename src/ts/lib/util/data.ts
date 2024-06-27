@@ -315,7 +315,7 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
 				sorts: [
-					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				ignoreWorkspace: true,
 				ignoreHidden: false,
@@ -369,7 +369,10 @@ class UtilData {
 	};
 
 	destroySubscriptions (callBack?: () => void): void {
-		C.ObjectSearchUnsubscribe(Object.values(J.Constant.subId), callBack);
+		const ids = Object.values(J.Constant.subId);
+
+		C.ObjectSearchUnsubscribe(ids, callBack);
+		ids.forEach(id => Action.dbClearRoot(id));
 	};
 
 	spaceRelationKeys () {
@@ -975,7 +978,6 @@ class UtilData {
 
 					S.Auth.accountSet(message.account);
 					S.Common.configSet(message.account.config, false);
-					S.Common.isSidebarFixedSet(true);
 
 					this.onInfo(message.account.info);
 					Renderer.send('keytarSet', message.account.id, phrase);

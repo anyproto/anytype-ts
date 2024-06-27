@@ -483,8 +483,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const sideRight = node.find('#dataviewControlsSideRight');
 		const container = U.Common.getPageContainer(isPopup);
 		const { left } = sideLeft.offset();
-		const sidebar = $('#sidebar');
-		const sw = sidebar.outerWidth();
+		const sw = $('#sidebarDummy').outerWidth();
 		const cw = container.outerWidth();
 		const nw = node.outerWidth();
 

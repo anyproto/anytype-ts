@@ -63,19 +63,9 @@ class Keyboard {
 
 			this.pressed = [];
 
-			if (!S.Common.isSidebarFixed) {
-				sidebar.hide();
-			};
-
 			S.Menu.closeAll([ 'blockContext' ]);
 
 			$('.dropTarget.isOver').removeClass('isOver');
-		});
-
-		doc.off('mouseleave.common').on('mouseleave.common', () => {
-			if (!S.Common.isSidebarFixed) {
-				sidebar.hide();
-			};
 		});
 
 		Renderer.remove('commandGlobal');
@@ -122,10 +112,6 @@ class Keyboard {
 			page: { x: e.pageX, y: e.pageY },
 			client: { x: e.clientX, y: e.clientY },
 		};
-
-		if (this.isMain()) {
-			sidebar.onMouseMove();
-		};
 	};
 	
 	onKeyDown (e: any) {
@@ -145,7 +131,7 @@ class Keyboard {
 				return;
 			};
 
-			S.Common.isSidebarFixed ? sidebar.toggleOpenClose() : sidebar.toggleExpandCollapse();
+			sidebar.toggleOpenClose();
 		});
 
 		// Navigation
@@ -198,11 +184,6 @@ class Keyboard {
 			// Shortcuts
 			this.shortcut('ctrl+space', e, () => {
 				S.Popup.open('shortcut', { preventResize: true });
-			});
-
-			// Spaces
-			this.shortcut('ctrl+tab', e, () => {
-				this.onSpaceMenu(true);
 			});
 
 			// Print
@@ -845,10 +826,6 @@ class Keyboard {
 				});
 			});
 		};
-	};
-
-	onSpaceMenu (shortcut: boolean) {
-		this.menuFromNavigation('space', {}, { shortcut });
 	};
 
 	onQuickCapture (shortcut: boolean, param?: Partial<I.MenuParam>) {

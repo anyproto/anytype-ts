@@ -48,8 +48,6 @@ class CommonStore {
 	public languages: string[] = [];
 	public spaceId = '';
 	public notionToken = '';
-	public autoSidebarValue = null;
-	public isSidebarFixedValue = null;
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
 	public navigationMenuValue = null;
@@ -105,8 +103,6 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			defaultType: observable,
 			isFullScreen: observable,
-			autoSidebarValue: observable,
-			isSidebarFixedValue: observable,
 			fullscreenObjectValue: observable,
 			navigationMenuValue: observable,
 			linkStyleValue: observable,
@@ -199,14 +195,6 @@ class CommonStore {
 
 	get emailConfirmationTime(): number {
 		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
-	};
-
-	get autoSidebar(): boolean {
-		return this.boolGet('autoSidebar');
-	};
-
-	get isSidebarFixed(): boolean {
-		return this.boolGet('isSidebarFixed');
 	};
 
 	get fullscreenObject(): boolean {
@@ -374,14 +362,6 @@ class CommonStore {
 		this.emailConfirmationTimeId = t;
 
 		Storage.set('emailConfirmationTime', this.emailConfirmationTimeId);
-	};
-
-	autoSidebarSet (v: boolean) {
-		this.boolSet('autoSidebar', v);
-	};
-
-	isSidebarFixedSet (v: boolean) {
-		this.boolSet('isSidebarFixed', v);
 	};
 
 	showRelativeDatesSet (v: boolean) {

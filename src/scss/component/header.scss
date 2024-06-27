@@ -1,17 +1,14 @@
 @import "~scss/_mixins";
 
 .header { 
-	position: fixed; top: 0px; width: 100%; z-index: 20; user-select: none; display: flex; flex-direction: row; align-items: center; 
+	position: fixed; top: 0px; right: 0px; width: 100%; z-index: 20; user-select: none; display: flex; flex-direction: row; align-items: center; 
 	justify-content: stretch;
 }
-
-.header.snapRight { left: 0px; }
-.header.snapLeft { right: 0px; }
 
 .header {
 	.sides { height: 100%; width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: stretch; }
 	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; }
-	.side.left { padding: 0px 6px; width: 20%; flex-shrink: 0; gap: 0px 8px; }
+	.side.left { padding: 0px 16px; width: 20%; flex-shrink: 0; gap: 0px 8px; }
 	.side.center { width: 60%; flex-grow: 1; justify-content: center; }
 	.side.right { padding: 0px 12px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 8px; }
 
@@ -74,14 +71,13 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	}
 }
 
-.header.mainHistory { height: 38px; width: calc(100% - 336px); background: var(--color-bg-primary); }
+.header.mainHistory { height: 38px; width: calc(100% - $historyPanelWidth); right: $historyPanelWidth; background: var(--color-bg-primary); }
 .header.mainHistory {
 	.side.center { overflow: hidden; }
 	.side.center {
 		.txt { @include text-overflow-nw; }
 	}
 }
-.header.mainHistory.snapLeft { right: 336px; }
 
 .header.isCommon { background: var(--color-bg-primary); height: 38px; }
 .header.isCommon {
@@ -150,17 +146,4 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 
 html.platformMac {
 	.header { height: 52px !important; }
-	.header {
-		.side.left { padding-left: 88px; }
-	}
-
-	.header.withSidebar.snapLeft {
-		.side.left { padding-left: 16px; }
-	}
-}
-
-body.isFullScreen {
-	.header {
-		.side.left { padding-left: 6px; }
-	}
 }

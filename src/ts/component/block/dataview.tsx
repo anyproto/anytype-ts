@@ -889,8 +889,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const subId = this.getSubId();
 		const relation = S.Record.getRelationByKey(relationKey);
+		const record = this.getRecord(id);
 
-		if (!relation) {
+		if (!record || !relation) {
 			return;
 		};
 
@@ -902,7 +903,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], callBack);
 
-		analytics.changeRelationValue(relation, value, 'dataview');
+		if (JSON.stringify(record[relationKey]) !== JSON.stringify(value)) {
+			analytics.changeRelationValue(relation, value, 'dataview');
+		};
 	};
 
 	onContext (e: any, id: string): void {

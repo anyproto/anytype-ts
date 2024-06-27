@@ -66,6 +66,7 @@ const IconSize = {
 	108: 64,
 	112: 64,
 	128: 64,
+	360: 360,
 };
 
 const FontSize = {

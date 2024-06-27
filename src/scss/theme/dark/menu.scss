@@ -241,22 +241,6 @@
 		}
     }
 
-	/* Space */
-
-	.menu.menuSpace { color: var(--color-text-primary); }
-	.menu.menuSpace { 
-		.head {
-			.icon.settings { background-image: url('#{$themePath}/icon/menu/space/settings.svg'); }
-		}
-
-		.items {
-			.item.add {
-				.iconWrap { background-image: url('#{$themePath}/icon/plus/space.svg'); }
-			}
-			.item.hover { background-color: rgba(255, 255, 255, 0.1); }
-		}
-	}
-
 	/* QuickCapture */
 
 	.menuQuickCapture { background: none; box-shadow: none; }
