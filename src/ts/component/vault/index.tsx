@@ -18,7 +18,6 @@ const Vault = observer(class Vault extends React.Component {
 		this.onSettings = this.onSettings.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onScroll = this.onScroll.bind(this);
 	};
 
     render () {
