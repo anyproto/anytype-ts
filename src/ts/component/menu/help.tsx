@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { MenuItemVertical, Button } from 'Component';
-import { I, S, U, J, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, translate } from 'Lib';
+import { MenuItemVertical, Button, Share } from 'Component';
+import { I, S, U, J, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, translate, Preview } from 'Lib';
 
 class MenuHelp extends React.Component<I.Menu> {
 
@@ -16,35 +16,39 @@ class MenuHelp extends React.Component<I.Menu> {
 		const items = this.getItems();
 
 		return (
-			<div className="items">
-				{items.map((item: any, i: number) => {
-					let content = null;
-					
-					if (item.isDiv) {
-						content = (
-							<div key={i} className="separator">
-								<div className="inner" />
-							</div>
-						);
-					} else {
-						content = (
-							<MenuItemVertical
-								key={i}
-								{...item}
-								onMouseEnter={e => this.onMouseEnter(e, item)}
-								onClick={e => this.onClick(e, item)}
-							/>
-						);
-					};
+			<React.Fragment>
+				<div className="items">
+					{items.map((item: any, i: number) => {
+						let content = null;
 
-					return content;
-				})}
-			</div>
+						if (item.isDiv) {
+							content = (
+								<div key={i} className="separator">
+									<div className="inner" />
+								</div>
+							);
+						} else {
+							content = (
+								<MenuItemVertical
+									key={i}
+									{...item}
+									onMouseEnter={e => this.onMouseEnter(e, item)}
+									onClick={e => this.onClick(e, item)}
+								/>
+							);
+						};
+
+						return content;
+					})}
+				</div>
+				<Share />
+			</React.Fragment>
 		);
 	};
 
 	componentDidMount () {
 		this.rebind();
+		Preview.shareTooltipHide();
 		Highlight.showAll();
 	};
 

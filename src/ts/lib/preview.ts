@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import raf from 'raf';
 import { I, S, U, J, keyboard } from 'Lib';
+import { Share } from 'Component';
 
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
@@ -277,12 +278,27 @@ class Preview {
 	};
 
 	/**
+	 * Show the share app tooltip
+	 */
+	shareTooltipShow () {
+		S.Common.shareTooltipSet(true);
+	};
+
+	/**
+	 * Hide the share app tooltip
+	 */
+	shareTooltipHide () {
+		S.Common.shareTooltipSet(false);
+	};
+
+	/**
 	 * Force hides all tooltips, previews, and toasts.
 	 */
 	hideAll () {
 		this.tooltipHide(true);
 		this.previewHide(true);
 		this.toastHide(true);
+		this.shareTooltipHide();
 	};
 
 };

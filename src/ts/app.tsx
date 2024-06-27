@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar, Vault } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar, Vault, Share } from 'Component';
 import { I, C, S, U, J, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
@@ -203,6 +203,7 @@ class App extends React.Component<object, State> {
 						<Progress />
 						<Toast />
 						<ListNotification key="listNotification" />
+						<Share showOnce={true} />
 
 						<Switch>
 							{J.Route.map((path: string, i: number) => (
