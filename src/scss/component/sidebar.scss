@@ -11,10 +11,9 @@
 }
 
 .sidebar.anim { transition-property: left, top, width, box-shadow, transform; transition-duration: 0.2s; transition-timing-function: ease-in-out; }
-.sidebar.active { transform: translate3d(0px, 0px, 0px); }
 
 .sidebar {
-	> .inner { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+	> .inner { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; min-width: 240px; }
 	> .inner {
 		> .head { 
 			display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 52px;

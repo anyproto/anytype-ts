@@ -61,7 +61,7 @@ class Sidebar {
 		};
 
 		this.setAnimating(true);
-		this.obj.addClass('anim').removeClass('active');
+		this.obj.addClass('anim over');
 		this.setStyle({ width: 0 });
 		this.set({ isClosed: true });
 		this.removeAnimation(() => $(window).trigger('resize'));
@@ -73,7 +73,7 @@ class Sidebar {
 		};
 
 		this.setAnimating(true);
-		this.obj.addClass('anim').removeClass('active');
+		this.obj.addClass('anim').removeClass('over');
 		this.setStyle({ width });
 		this.set({ isClosed: false });
 		this.removeAnimation(() => $(window).trigger('resize'));
@@ -81,9 +81,7 @@ class Sidebar {
 
 	toggleOpenClose () {
 		if (!this.isAnimating) {
-			if (this.data.isClosed) {
-			} else {
-			};
+			this.data.isClosed ? this.open(this.data.width) : this.close();
 		};
 	};
 
@@ -118,6 +116,7 @@ class Sidebar {
 		const pageWidth = ww - width;
 		const css: any = { width: '' };
 
+		this.obj.addClass('over');
 		this.header.css(css).removeClass('withSidebar');
 		this.footer.css(css);
 		this.dummy.css({ width: width + vw });
@@ -126,6 +125,7 @@ class Sidebar {
 
 		if (width) {
 			this.header.addClass('withSidebar');
+			this.obj.removeClass('over');
 		};
 
 		this.page.css({ width: pageWidth });
