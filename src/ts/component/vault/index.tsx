@@ -137,6 +137,24 @@ const Vault = observer(class Vault extends React.Component {
 		);
     };
 
+	componentDidMount(): void {
+		this.resize();
+		this.rebind();
+	};
+
+	componentWillUnmount(): void {
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).off('resize.vault');
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('resize.vault', () => this.resize());
+	};
+
 	getItems () {
 		const ids = Storage.get('vaultOrder') || [];
 		const items = U.Common.objectCopy(U.Space.getList());
@@ -246,6 +264,10 @@ const Vault = observer(class Vault extends React.Component {
 
 		keyboard.disableSelection(false);
 		this.forceUpdate();
+	};
+
+	resize () {
+		$(this.node).css({ height: U.Common.getWindowDimensions().wh });
 	};
 
 });
