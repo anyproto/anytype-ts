@@ -715,14 +715,30 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Latex: {
-				value.html(katex.renderToString(text, { 
-					displayMode: true, 
-					strict: false,
-					throwOnError: false,
-					output: 'html',
-					fleqn: true,
-					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
-				}));
+				let html = '';
+
+				try {
+					html = katex.renderToString(text, { 
+						displayMode: true, 
+						strict: false,
+						throwOnError: true,
+						output: 'html',
+						fleqn: true,
+						trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
+					});
+				} catch (e) {
+					if (e instanceof katex.ParseError) {
+						const replace = (s: string) => {
+							return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+						};
+
+						html = `<div class="error">Error in LaTeX '${replace(text)}': ${replace(e.message)}</div>`;
+					} else {
+						console.error(e);
+					};
+				};
+
+				value.html(html);
 
 				value.find('a').each((i: number, item: any) => {
 					item = $(item);
