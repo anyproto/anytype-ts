@@ -9,6 +9,7 @@ const Vault = observer(class Vault extends React.Component {
 	
 	node = null;
 	isAnimating = false;
+	top = 0;
 
 	constructor (props) {
 		super(props);
@@ -17,13 +18,14 @@ const Vault = observer(class Vault extends React.Component {
 		this.onSettings = this.onSettings.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 
     render () {
 		const items = this.getItems();
 		const { spaceview } = S.Block;
 
-		const Item = SortableElement((item) => {
+		const Item = SortableElement(item => {
 			const cn = [ 'item', 'space' ];
 			const icon = item.isShared ? 'shared' : '';
 
@@ -84,7 +86,7 @@ const Vault = observer(class Vault extends React.Component {
 		));
 
 		const List = SortableContainer(() => (
-			<div className="side top">
+			<div id="scroll" className="side top" onScroll={this.onScroll}>
 				{items.map((item, i) => {
 					item.key = `item-space-${item.id}`;
 

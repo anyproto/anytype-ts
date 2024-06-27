@@ -21,7 +21,8 @@
 	.body { display: flex; flex-direction: column; justify-content: space-between; padding: 0px 0px 12px 0px; flex-grow: 1; height: calc(100% - 42px); gap: 16px 0px; }
 	.body {
 		.side { padding: 0px 14px; }
-		.side.top { display: flex; flex-direction: column; gap: 16px 0px; overflow: auto; height: calc(100% - 64px); flex-grow: 1; }
+		.side.top { display: flex; flex-direction: column; gap: 16px 0px; overflow: auto; height: calc(100% - 64px); flex-grow: 1; overscroll-behavior: none; }
+		.side.top::-webkit-scrollbar { display: none; }
 		.side.bottom { flex-shrink: 0; align-items: flex-end; }
 	}
 

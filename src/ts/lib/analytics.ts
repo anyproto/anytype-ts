@@ -499,7 +499,7 @@ class Analytics {
 		} else {
 			key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';
 		};
-		this.event(key, { type });
+		this.event(key, { type, relationKey: relation.relationKey });
 	};
 
 	pageMapper (params: any): string {
