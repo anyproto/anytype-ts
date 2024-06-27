@@ -4,6 +4,7 @@ import { C, S, U, J, Preview, analytics, Storage } from 'Lib';
 type RouteParam = { 
 	replace: boolean;
 	animate: boolean;
+	delay: number;
 	onFadeOut: () => void;
 	onFadeIn?: () => void;
 	onRouteChange?: () => void;
@@ -59,7 +60,7 @@ class UtilRouter {
 			return;
 		};
 
-		const { replace, animate, onFadeOut, onFadeIn, onRouteChange } = param;
+		const { replace, animate, onFadeOut, onFadeIn, onRouteChange, delay } = param;
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;
 
@@ -97,6 +98,9 @@ class UtilRouter {
 			};
 
 			const fade = $('#globalFade');
+			const t = delay || J.Constant.delay.route;
+
+			fade.css({ transitionDuration: `${t / 1000}s` });
 				
 			fade.show();
 			window.setTimeout(() => fade.addClass('show'), 15);
@@ -108,7 +112,7 @@ class UtilRouter {
 
 				change();
 				fade.removeClass('show');
-			}, J.Constant.delay.route);
+			}, t);
 
 			window.setTimeout(() => {
 				if (onFadeIn) {
@@ -116,7 +120,7 @@ class UtilRouter {
 				};
 
 				fade.hide();
-			}, J.Constant.delay.route * 2);
+			}, t * 2);
 		};
 
 		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
@@ -141,7 +145,11 @@ class UtilRouter {
 			this.go('/main/blank', { 
 				replace: true, 
 				animate: true,
+				delay: 300,
 				onFadeOut: () => {
+					S.Record.metaClear(J.Constant.subId.participant, '');
+					S.Record.recordsClear(J.Constant.subId.participant, '');
+
 					analytics.removeContext();
 					S.Block.clear(S.Block.widgets);
 					S.Common.defaultType = '';

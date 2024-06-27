@@ -369,7 +369,10 @@ class UtilData {
 	};
 
 	destroySubscriptions (callBack?: () => void): void {
-		C.ObjectSearchUnsubscribe(Object.values(J.Constant.subId), callBack);
+		const ids = Object.values(J.Constant.subId);
+
+		C.ObjectSearchUnsubscribe(ids, callBack);
+		ids.forEach(id => Action.dbClearRoot(id));
 	};
 
 	spaceRelationKeys () {
