@@ -7,11 +7,18 @@
 }
 
 .vault { 
-	position: fixed; background-color: #000; z-index: 30; left: 0px; top: 0px; width: $vaultWidthCollapsed; height: 100%; padding: 48px 0px 0px 0px; 
+	position: fixed; background-color: #000; z-index: 30; left: 0px; top: 0px; width: $vaultWidthCollapsed; height: 100%;
 	display: flex; flex-direction: column; transition: width 0.3s $easeInQuint;
 }
 .vault {
-	.items { display: flex; flex-direction: column; gap: 16px 0px; overflow: auto; padding: 0px 22px 22px 22px;  }
+	.head { height: 52px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 22px; }
+	.head {
+		.icon { width: 24px; height: 24px; background-size: 20px; border-radius: 4px; -webkit-app-region: no-drag; opacity: 0; }
+		.icon.settings { background-image: url('~img/icon/vault/settings.svg'); }
+		.icon.close { background-image: url('~img/icon/vault/close.svg'); }
+		.icon:hover { background-color: var(--color-shape-highlight-medium); }
+	}
+	.body { display: flex; flex-direction: column; gap: 16px 0px; overflow: auto; padding: 0px 22px 22px 22px;  }
 
 	.item { position: relative; border-radius: 2px; }
 	.item {
@@ -32,6 +39,10 @@
 			.name { width: 100%; color: #fff; @include text-common; font-weight: 600; @include text-overflow-nw; }
 			.descr { color: rgba(255,255,255,0.6); }
 		}
+	}
+
+	.item.void {
+		.iconWrap { background-image: url('~img/icon/vault/void.svg'); background-size: 24px; border: 1px solid rgba(255,255,255,0.3); }
 	}
 
 	.item.gallery { background: #3f3f3f; }
@@ -55,8 +66,14 @@
 
 .vault.isExpanded { width: calc($vaultWidthExpanded + $vaultWidthCollapsed); }
 .vault.isExpanded {
+	.head {
+		.icon { opacity: 1; }
+	}
+
 	.item { padding: 16px; display: flex; flex-direction: row; align-items: center; border-radius: 12px; gap: 0px 16px; }
 	.item {
 		.coverWrap, .infoWrap { display: block; }
 	}
+
+	#item-void { display: none; }
 }

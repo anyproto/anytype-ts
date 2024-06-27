@@ -11,7 +11,8 @@ const Vault = observer(class Vault extends React.Component {
 	constructor (props) {
 		super(props);
 
-		this.onExpand = this.onExpand.bind(this);
+		this.onToggle = this.onToggle.bind(this);
+		this.onSettings = this.onSettings.bind(this);
 	};
 
     render () {
@@ -83,9 +84,12 @@ const Vault = observer(class Vault extends React.Component {
 				ref={node => this.node = node}
 				id="vault"
 				className="vault"
-				onClick={this.onExpand}
             >
-				<div className="items">
+				<div className="head">
+					<Icon className="settings" onClick={this.onSettings} />
+					<Icon className="close" onClick={this.onToggle} />
+				</div>
+				<div className="body">
 					{items.map(item => {
 						item.key = `item-space-${item.id}`;
 
@@ -93,7 +97,7 @@ const Vault = observer(class Vault extends React.Component {
 						if (item.id == 'add') {
 							content = <ItemAdd {...item} />;
 						} else 
-						if (item.id == 'gallery') {
+						if ([ 'void', 'gallery' ].includes(item.id)) {
 							content = <ItemIcon {...item} />;
 						} else {
 							content = <Item {...item} />;
@@ -109,6 +113,7 @@ const Vault = observer(class Vault extends React.Component {
 	getItems () {
 		const items = U.Common.objectCopy(U.Space.getList());
 
+		items.unshift({ id: 'void' });
 		items.push({ id: 'gallery', name: translate('commonGallery') });
 
 		if (U.Space.canCreateSpace()) {
@@ -121,14 +126,23 @@ const Vault = observer(class Vault extends React.Component {
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 
-		if (item.id == 'add') {
-			this.onAdd();
-		} else
-		if (item.id == 'gallery') {
-			S.Popup.open('usecase', {});
-		} else {
-			U.Router.switchSpace(item.targetSpaceId);
-			analytics.event('SwitchSpace');
+		switch (item.id) {
+			case 'add':
+				this.onAdd();
+				break;
+
+			case 'void':
+				this.onToggle();
+				break;
+
+			case 'gallery':
+				S.Popup.open('usecase', {});
+				break;
+
+			default:
+				U.Router.switchSpace(item.targetSpaceId);
+				analytics.event('SwitchSpace');
+				break;
 		};
 	};
 
@@ -156,7 +170,7 @@ const Vault = observer(class Vault extends React.Component {
 		});
 	};
 
-	onExpand () {
+	onToggle () {
 		if (this.isAnimating) {
 			return;
 		};
@@ -174,6 +188,10 @@ const Vault = observer(class Vault extends React.Component {
 		sidebar.resizePage();
 
 		window.setTimeout(() => this.isAnimating = false, 300);
+	};
+
+	onSettings () {
+		S.Popup.open('settings', {});
 	};
 
 });

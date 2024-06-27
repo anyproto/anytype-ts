@@ -314,6 +314,9 @@ class UtilData {
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
 				ignoreWorkspace: true,
 				ignoreHidden: false,
 			},
