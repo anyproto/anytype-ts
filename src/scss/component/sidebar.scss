@@ -8,6 +8,7 @@
 
 .sidebar {
 	position: fixed; background-color: var(--color-shape-tertiary); z-index: 21; user-select: none; transition: none; top: 0px; left: $vaultWidthCollapsed; height: 100%;
+	transform: translate3d(0px,0px,0px);
 }
 
 .sidebar.anim { transition-property: left, top, width, box-shadow, transform; transition-duration: 0.2s; transition-timing-function: ease-in-out; }
