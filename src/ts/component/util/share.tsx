@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { S, translate, analytics, Preview } from 'Lib';
+import { S, translate, analytics, Preview, U } from 'Lib';
 
 interface Props {
 	showOnce?: boolean;
@@ -18,9 +18,12 @@ const Share = observer(class Share extends React.Component<Props, {}> {
 	};
 
 	render () {
+		const space = U.Space.getSpaceview();
+		const { createdDate } = space;
 		const { showOnce } = this.props;
+		const olderThanWeek = (U.Date.now() - createdDate) / 86400 > 7;
 
-		if (!S.Common.shareTooltip && showOnce) {
+		if (showOnce && (!S.Common.shareTooltip || !olderThanWeek)) {
 			return null;
 		};
 
