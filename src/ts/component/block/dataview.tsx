@@ -847,16 +847,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return true;
 	};
 
-	onCellClick (e: any, relationKey: string, recordId: string) {
+	onCellClick (e: any, relationKey: string, recordId: string, record?: any) {
 		if (e.button) {
 			return;
 		};
 
+		if (!record) {
+			record = this.getRecord(recordId);
+		};
+
 		const selection = S.Common.getRef('selectionProvider');
 		const relation = S.Record.getRelationByKey(relationKey);
-		const id = Relation.cellId(this.getIdPrefix(), relationKey, recordId);
+		const id = Relation.cellId(this.getIdPrefix(), relationKey, record.id);
 		const ref = this.refCells.get(id);
-		const record = this.getRecord(recordId);
 		const view = this.getView();
 
 		if (!relation || !ref || !record) {
