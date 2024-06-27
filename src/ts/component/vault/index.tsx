@@ -85,7 +85,7 @@ const Vault = observer(class Vault extends React.Component {
 		));
 
 		const List = SortableContainer(() => (
-			<div id="scroll" className="side top" onScroll={this.onScroll}>
+			<div id="scroll" className="side top">
 				{items.map((item, i) => {
 					item.key = `item-space-${item.id}`;
 
