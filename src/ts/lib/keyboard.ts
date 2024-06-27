@@ -186,11 +186,6 @@ class Keyboard {
 				S.Popup.open('shortcut', { preventResize: true });
 			});
 
-			// Spaces
-			this.shortcut('ctrl+tab', e, () => {
-				this.onSpaceMenu(true);
-			});
-
 			// Print
 			this.shortcut(`${cmd}+p`, e, () => {
 				e.preventDefault();
@@ -831,10 +826,6 @@ class Keyboard {
 				});
 			});
 		};
-	};
-
-	onSpaceMenu (shortcut: boolean) {
-		this.menuFromNavigation('space', {}, { shortcut });
 	};
 
 	onQuickCapture (shortcut: boolean, param?: Partial<I.MenuParam>) {

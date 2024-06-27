@@ -71,7 +71,7 @@
 		opacity: 0; 
 	}
 
-	.item.isActive::after, .item:hover::after { opacity: 1; }
+	.item.isActive::after { opacity: 1; }
 
 }
 
