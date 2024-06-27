@@ -87,6 +87,7 @@ import MediaVideo from './util/media/video';
 import MediaPdf from './util/media/pdf';
 
 import ProgressBar from './util/progressBar';
+import Share from './util/share';
 
 export {
 	Page,
@@ -172,5 +173,6 @@ export {
 	MediaVideo,
 	MediaPdf,
 
-	ProgressBar
+	ProgressBar,
+	Share
 };

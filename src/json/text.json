@@ -307,6 +307,8 @@
 	"headerGraphTooltipFilters": "Filters",
 	"headerGraphTooltipSettings": "Settings",
 
+	"shareTooltipLabel": "<b>Share Anytype</b> with<br/>those you care about",
+
 	"authInviteTitle": "Welcome to Anytype",
 	"authInviteLabel": "Enter your invite code. If you don't have one, visit <a href=\"https:\/\/anytype.io\">anytype.io<\/a> to register for early access. We are inviting new testers on a rolling basis.",
 	"authInvitePlaceholder": "Code",
@@ -1237,6 +1239,10 @@
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no relations shown yet",
 	"popupRelationAddToView": "Add relations to the view",
+
+	"popupShareTitle": "Share Anytype with those you care about",
+	"popupShareLabel": "Thanks for sharing Anytype",
+	"popupShareLinkText": "The everything app for those who celebrate trust & autonomy. <a href=\"%s\">https://simple-sharing.anytype.io/</a>",
 
 	"menuVaultPeer": "%d\/%d peers",
 	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
