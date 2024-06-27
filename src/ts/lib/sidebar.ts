@@ -113,7 +113,7 @@ class Sidebar {
 
 		const { ww } = U.Common.getWindowDimensions();
 		const vw = this.vault.hasClass('isExpanded') ? 0 : 76;
-		const pageWidth = ww - width;
+		const pageWidth = ww - width - vw;
 		const css: any = { width: '' };
 
 		this.header.css(css).removeClass('withSidebar');
