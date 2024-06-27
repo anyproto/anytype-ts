@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import arrayMove from 'array-move';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { U, S, keyboard, translate, analytics, Storage, sidebar } from 'Lib';
 
@@ -13,13 +15,15 @@ const Vault = observer(class Vault extends React.Component {
 
 		this.onToggle = this.onToggle.bind(this);
 		this.onSettings = this.onSettings.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
+		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
     render () {
 		const items = this.getItems();
 		const { spaceview } = S.Block;
 
-		const Item = (item) => {
+		const Item = SortableElement((item) => {
 			const cn = [ 'item', 'space' ];
 			const icon = item.isShared ? 'shared' : '';
 
@@ -54,9 +58,9 @@ const Vault = observer(class Vault extends React.Component {
 					</div>
 				</div>
 			);
-		};
+		});
 
-		const ItemIcon = (item: any) => (
+		const ItemIcon = SortableElement((item: any) => (
 			<div 
 				id={`item-${item.id}`} 
 				className={`item ${item.id}`} 
@@ -67,9 +71,9 @@ const Vault = observer(class Vault extends React.Component {
 					<div className="name">{item.name}</div>
 				</div>
 			</div>
-		);
+		));
 
-		const ItemAdd = (item: any) => (
+		const ItemAdd = SortableElement((item: any) => (
 			<div 
 				id={`item-${item.id}`} 
 				className={`item ${item.id}`} 
@@ -77,7 +81,27 @@ const Vault = observer(class Vault extends React.Component {
 			>
 				<div className="iconWrap" />
 			</div>
-		);
+		));
+
+		const List = SortableContainer(() => (
+			<div className="side top">
+				{items.map((item, i) => {
+					item.key = `item-space-${item.id}`;
+
+					let content = null;
+					if (item.id == 'add') {
+						content = <ItemAdd {...item} index={i} />;
+					} else 
+					if ([ 'void', 'gallery' ].includes(item.id)) {
+						content = <ItemIcon {...item} index={i} />;
+					} else {
+						content = <Item {...item} index={i} />;
+					};
+
+					return content;
+				})}
+			</div>
+		));
 
         return (
             <div 
@@ -90,23 +114,17 @@ const Vault = observer(class Vault extends React.Component {
 					<Icon className="close" onClick={this.onToggle} />
 				</div>
 				<div className="body">
-					<div className="side top">
-						{items.map(item => {
-							item.key = `item-space-${item.id}`;
-
-							let content = null;
-							if (item.id == 'add') {
-								content = <ItemAdd {...item} />;
-							} else 
-							if ([ 'void', 'gallery' ].includes(item.id)) {
-								content = <ItemIcon {...item} />;
-							} else {
-								content = <Item {...item} />;
-							};
-
-							return content;
-						})}
-					</div>
+					<List 
+						axis="y" 
+						lockAxis="y"
+						lockToContainerEdges={true}
+						transitionDuration={150}
+						distance={10}
+						onSortStart={this.onSortStart}
+						onSortEnd={this.onSortEnd}
+						helperClass="isDragging"
+						helperContainer={() => $(`#vault .side.top`).get(0)}
+					/>
 					<div className="side bottom">
 						<div className="item settings">
 							<div className="iconWrap" />
@@ -118,6 +136,7 @@ const Vault = observer(class Vault extends React.Component {
     };
 
 	getItems () {
+		const ids = Storage.get('vaultOrder') || [];
 		const items = U.Common.objectCopy(U.Space.getList());
 
 		//items.unshift({ id: 'void' });
@@ -125,6 +144,19 @@ const Vault = observer(class Vault extends React.Component {
 
 		if (U.Space.canCreateSpace()) {
 			items.push({ id: 'add', name: translate('commonCreateNew') });
+		};
+
+		if (ids && (ids.length > 0)) {
+			items.sort((c1, c2) => {
+				const i1 = ids.indexOf(c1.id);
+				const i2 = ids.indexOf(c2.id);
+
+
+
+				if (i1 > i2) return 1;
+				if (i1 < i2) return -1;
+				return 0;
+			});
 		};
 
 		return items;
@@ -199,6 +231,21 @@ const Vault = observer(class Vault extends React.Component {
 
 	onSettings () {
 		S.Popup.open('settings', {});
+	};
+
+	onSortStart () {
+		keyboard.disableSelection(true);
+	};
+
+	onSortEnd (result: any) {
+		const { oldIndex, newIndex } = result;
+
+		let ids = this.getItems().map(it => it.id)
+		ids = arrayMove(ids, oldIndex, newIndex);
+		Storage.set('vaultOrder', ids, true);
+
+		keyboard.disableSelection(false);
+		this.forceUpdate();
 	};
 
 });
