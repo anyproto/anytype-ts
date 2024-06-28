@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { U, J, Storage } from 'Lib';
+import { U, J, Storage, keyboard } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -117,6 +117,7 @@ class Sidebar {
 		const { ww } = U.Common.getWindowDimensions();
 		const vw = this.vault.hasClass('isExpanded') ? 0 : 76;
 		const pageWidth = ww - width - vw;
+		const ho = keyboard.isMainHistory() ? 336 : 0;
 
 		this.header.css({ width: '' }).removeClass('withSidebar');
 		this.footer.css({ width: '' });
@@ -138,8 +139,8 @@ class Sidebar {
 
 		this.page.css({ width: pageWidth });
 		this.loader.css({ width: pageWidth, right: 0 });
-		this.header.css({ width: pageWidth });
-		this.footer.css({ width: pageWidth });
+		this.header.css({ width: pageWidth - ho });
+		this.footer.css({ width: pageWidth - ho });
 
 		$(window).trigger('sidebarResize');
 	};

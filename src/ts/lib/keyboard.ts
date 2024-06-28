@@ -936,6 +936,10 @@ class Keyboard {
 		return this.isMain() && (this.match?.params?.action == 'index');
 	};
 
+	isMainHistory () {
+		return this.isMain() && (this.match?.params?.action == 'history');
+	};
+
 	isAuth () {
 		return this.match?.params?.page == 'auth';
 	};
