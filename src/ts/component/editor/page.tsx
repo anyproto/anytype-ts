@@ -2192,7 +2192,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const hh = isPopup ? header.height() : J.Size.header;
 
-			this.setLayoutWidth(root?.fields?.width, true);
+			this.setLayoutWidth(root?.fields?.width);
 
 			if (blocks.length && last.length && scrollContainer.length) {
 				const ct = isPopup ? scrollContainer.offset().top : 0;
@@ -2238,29 +2238,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.focus(next.id, from, from, true);
 	};
 
-	setLayoutWidth (v: number, animate?: boolean) {
+	setLayoutWidth (v: number) {
 		v = Number(v) || 0;
 
+		const { isPopup, rootId } = this.props;
+		const container = U.Common.getPageContainer(isPopup);
+		const cw = container.width();
 		const node = $(this.node);
 		const width = this.getWidth(v);
 		const elements = node.find('#elements');
+		const percent = width / cw * 100;
 
 		this.width = width;
 
-		if (animate) {
-			node.addClass('withAnimation');
-		};
-
-		node.css({ width });
-		elements.css({ width, marginLeft: -width / 2 });
+		node.css({ width: `${percent}%` });
+		elements.css({ width: `${percent}%`, marginLeft: `-${percent / 2}%` });
 
 		if (this.refHeader && this.refHeader.refDrag) {
 			this.refHeader.refDrag.setValue(v);
 			this.refHeader.setPercent(v);
-		};
-
-		if (animate) {
-			window.setTimeout(() => node.removeClass('withAnimation'), 250);
 		};
 	};
 
