@@ -186,7 +186,6 @@ class UtilMenu {
 			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate'), caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
-			//{ id: 'comment', icon: 'comment', name: translate('commonComment')' }
 		];
 
 		if (hasTurnObject) {
@@ -198,11 +197,11 @@ class UtilMenu {
 		};
 		
 		if (hasFile) {
-			items = items.concat([
-				{ id: 'download', icon: 'download', name: translate('commonDownload') },
-				//{ id: 'rename', icon: 'rename', name: translate('libMenuRename') ),
-				//{ id: 'replace', icon: 'replace', name: translate('libMenuReplace') },
-			]);
+			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
+		};
+
+		if (hasBookmark) {
+			items.push({ id: 'copyUrl', icon: 'copy', name: translate('libMenuCopyUrl') });
 		};
 
 		if (hasDataview) {
@@ -363,7 +362,7 @@ class UtilMenu {
 		});
 	};
 
-	getWidgetLimits (layout: I.WidgetLayout) {
+	getWidgetLimitOptions (layout: I.WidgetLayout) {
 		let options = [];
 		switch (layout) {
 			default: {
@@ -377,6 +376,53 @@ class UtilMenu {
 			};
 		};
 		return options.map(id => ({ id: String(id), name: id }));
+	};
+
+	getWidgetLayoutOptions (target: any) {
+		const isCollection = this.isWidgetCollection(target?.id);
+		
+		let options = [
+			I.WidgetLayout.Compact,
+			I.WidgetLayout.List,
+			I.WidgetLayout.Tree,
+		];
+		if (!isCollection) {
+			options.push(I.WidgetLayout.Link);
+		};
+
+		if (target) {
+			if (!isCollection) {
+				const isSet = U.Object.isSetLayout(target.layout);
+				const setLayouts = U.Object.getSetLayouts();
+				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
+
+				// Sets can only become Link and List layouts, non-sets can't become List
+				if (treeSkipLayouts.includes(target.layout)) {
+					options = options.filter(it => it != I.WidgetLayout.Tree);
+				};
+				if (!isSet) {
+					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it) );
+				} else {
+					options = [ I.WidgetLayout.View, I.WidgetLayout.Link ];
+				};
+			};
+
+			if ([ J.Constant.widgetId.set, J.Constant.widgetId.collection ].includes(target.id)) {
+				options = options.filter(it => it != I.WidgetLayout.Tree);
+			};
+		};
+
+		return options.map(id => ({
+			id,
+			name: translate(`widget${id}Name`),
+			description: translate(`widget${id}Description`),
+			icon: `widget-${id}`,
+			withDescription: true,
+		}));
+	};
+
+	isWidgetCollection (id: string) {
+		return id && Object.values(J.Constant.widgetId).includes(id);
 	};
 
 	getCoverColors () {
@@ -589,7 +635,7 @@ class UtilMenu {
 		const ret: any[] = [];
 		const Locale = require('lib/json/locale.json');
 
-		for (const id of J.Constant.enabledInterfaceLang) {
+		for (const id of J.Lang.enabled) {
 			ret.push({ id, name: Locale[id] });
 		};
 
@@ -600,7 +646,7 @@ class UtilMenu {
 		let ret: any[] = [];
 
 		ret = ret.concat(S.Common.languages || []);
-		ret = ret.map(id => ({ id, name: J.Constant.spellingLang[id] }));
+		ret = ret.map(id => ({ id, name: J.Lang.spelling[id] }));
 		ret.unshift({ id: '', name: translate('commonDisabled') });
 
 		return ret;

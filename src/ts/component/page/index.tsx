@@ -103,10 +103,9 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			content = wrap;
 		} else {
 			content = (
-				<div className="pageFlex">
-					<div id="sidebarDummyLeft" className="sidebarDummy left" />
+				<div id="pageFlex" className="pageFlex">
+					<div id="sidebarDummy" className="sidebarDummy" />
 					{wrap}
-					<div id="sidebarDummyRight" className="sidebarDummy right" />
 				</div>
 			);
 		};
@@ -348,7 +347,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				this.refChild.resize();			
 			};
 
-			sidebar.resizePage();
+			sidebar.resizePage(null, false);
 		});
 	};
 	

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, ObjectName } from 'Component';
-import { I, C, S, U, J, translate, Preview, analytics, Action } from 'Lib';
+import { I, C, S, U, J, translate, Preview, analytics, Action, Storage } from 'Lib';
 
 interface State {
 	error: string;
@@ -35,6 +35,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		this.onUpgrade = this.onUpgrade.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onMoreLink = this.onMoreLink.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 	};
 
 	render () {
@@ -147,7 +148,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<div className="sectionContent">
 
 							{space.isPersonal ? (
-								<div className="item isDefault">
+								<div className="item isDefault" onClick={this.onAdd}>
 									<div className="sides">
 										<div className="side left">
 											<Title text={translate('popupSettingsSpaceIndexShareShareTitle')} />
@@ -539,6 +540,26 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			cid,
 			key,
 			onInviteRevoke: () => this.setInvite('', ''),
+		});
+	};
+
+	onAdd () {
+		if (!U.Space.canCreateSpace()) {
+			return;
+		};
+
+		S.Popup.closeAll(null, () => {
+			S.Popup.open('settings', { 
+				className: 'isSpaceCreate',
+				data: { 
+					page: 'spaceCreate', 
+					isSpace: true,
+					onCreate: (id) => {
+						U.Router.switchSpace(id, '', () => Storage.initPinnedTypes());
+						analytics.event('SwitchSpace');
+					},
+				}, 
+			});
 		});
 	};
 

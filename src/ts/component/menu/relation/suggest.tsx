@@ -229,7 +229,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		U.Data.search({
 			filters,
 			sorts,
-			keys: J.Constant.relationRelationKeys,
+			keys: J.Relation.relation,
 			fullText: filter,
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,
@@ -449,7 +449,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				cb(item);
 
 				if (!noInstall) {
-					analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type });
+					analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type, relationKey: item.relationKey });
 				};
 			} else {
 				Action.install(item, true, message => cb(message.details));

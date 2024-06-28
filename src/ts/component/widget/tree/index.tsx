@@ -173,6 +173,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.getDeleted();
 
 		if (this.refList) {
+			this.refList.recomputeRowHeights(0);
 			this.refList.scrollToPosition(this.top);
 		};
 	};
@@ -232,7 +233,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 				records = sortFavorite(records);
 			};
 
-			children = records.map(id => this.mapper(S.Detail.get(subId, id, J.Constant.sidebarRelationKeys)));
+			children = records.map(id => this.mapper(S.Detail.get(subId, id, J.Relation.sidebar)));
 		} else {
 			children = this.getChildNodesDetails(object.id);
 			this.subscribeToChildNodes(object.id, Relation.getArrayValue(object.links));
@@ -328,7 +329,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		U.Data.subscribeIds({
 			subId,
 			ids: links,
-			keys: J.Constant.sidebarRelationKeys,
+			keys: J.Relation.sidebar,
 			noDeps: true,
 		});
 	};
@@ -413,10 +414,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	getRowHeight (node: any, index: number) {
-		if (node && node.isSection) {
-			return index ? HEIGHT + 12 : HEIGHT;
+		let h = HEIGHT;
+		if (node && node.isSection && index) {
+			h += 12;
 		};
-		return HEIGHT;
+		return h;
 	};
 
 	resize () {

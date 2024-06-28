@@ -131,7 +131,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	componentWillUnmount(): void {
-		S.Menu.closeAll(J.Constant.menuIds.cell);
+		S.Menu.closeAll(J.Menu.cell);
 		C.ObjectSearchUnsubscribe([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
 	};
 
@@ -144,7 +144,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			filters: [
 				{ relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
 			],
-			keys: J.Constant.defaultRelationKeys.concat(relationKeys),
+			keys: J.Relation.default.concat(relationKeys),
 			noDeps: true,
 		}, callBack);
 	};
@@ -205,7 +205,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	getRelationKeys (): string[] {
-		return U.Common.arrayUnique([].concat(this.props.param.data.relationKeys || J.Constant.defaultRelationKeys));
+		return U.Common.arrayUnique([].concat(this.props.param.data.relationKeys || J.Relation.default));
 	};
 
 	getRelations (): any[] {
@@ -252,7 +252,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 		S.Menu.open('relationSuggest', { 
 			element,
-			offsetX: J.Constant.size.blockMenu,
+			offsetX: J.Size.blockMenu,
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
 			onOpen: () => $(element).addClass('active'),

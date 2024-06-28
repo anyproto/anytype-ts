@@ -184,6 +184,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		switch (layout) {
+			case I.WidgetLayout.Link: {
+				cn.push('widgetLink');
+				break;
+			};
 
 			case I.WidgetLayout.Space: {
 				cn.push('widgetSpace');
@@ -369,7 +373,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				return;
 			};
 
-			details = Object.assign(details, Dataview.getDetails(rootId, J.Constant.blockId.dataview, object.id, viewId));
+			details = Object.assign(Dataview.getDetails(rootId, J.Constant.blockId.dataview, object.id, viewId), details);
 			flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 			typeKey = type.uniqueKey;
 			templateId = view.defaultTemplateId || type.defaultTemplateId;
@@ -426,7 +430,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(object.id, [ object.id ]);
+				C.ObjectCollectionAdd(targetBlockId, [ object.id ]);
 			};
 
 			U.Object.openAuto(object);
@@ -470,7 +474,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			rect: { width: 0, height: 0, x: x + 4, y },
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			subIds: J.Constant.menuIds.widget,
+			subIds: J.Menu.widget,
 			onOpen: () => node.addClass('active'),
 			onClose: () => node.removeClass('active'),
 			data: {
@@ -486,14 +490,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	initToggle () {
 		const { block, isPreview } = this.props;
 		const node = $(this.node);
-		const wrapper = node.find('#wrapper');
+		const innerWrap = node.find('#innerWrap');
 		const icon = node.find('.icon.collapse');
 		const isClosed = Storage.checkToggle('widget', block.id);
 
 		if (!isPreview) {
 			isClosed ? node.addClass('isClosed') : node.removeClass('isClosed');
 			isClosed ? icon.addClass('isClosed') : node.removeClass('isClosed');
-			isClosed ? wrapper.hide() : wrapper.show();
+			isClosed ? innerWrap.hide() : innerWrap.show();
 		};
 	};
 
@@ -509,17 +513,19 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block } = this.props;
 		const node = $(this.node);
 		const icon = node.find('.icon.collapse');
-		const innerWrap = node.find('#innerWrap');
+		const innerWrap = node.find('#innerWrap').show();
 		const wrapper = node.find('#wrapper').css({ height: 'auto' });
 		const height = wrapper.outerHeight();
 		const minHeight = this.getMinHeight();
 
 		node.addClass('isClosed');
 		icon.removeClass('isClosed');
-		wrapper.css({ height: minHeight }).show();
-		innerWrap.css({ opacity: 1 });
+		wrapper.css({ height: minHeight });
 
-		raf(() => { wrapper.css({ height }); });
+		raf(() => { 
+			wrapper.css({ height }); 
+			innerWrap.css({ opacity: 1 });
+		});
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { 
@@ -529,7 +535,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				node.removeClass('isClosed');
 				wrapper.css({ height: 'auto' });
 			};
-		}, 450);
+		}, J.Constant.delay.widget);
 	};
 
 	close () {
@@ -554,9 +560,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const isClosed = Storage.checkToggle('widget', block.id);
 
 			if (isClosed) {
-				wrapper.css({ height: '' }).hide();
+				wrapper.css({ height: '' });
+				innerWrap.hide();
 			};
-		}, 450);
+		}, J.Constant.delay.widget);
 	};
 
 	getMinHeight () {
@@ -621,7 +628,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			filters,
 			sorts,
 			limit,
-			keys: J.Constant.sidebarRelationKeys,
+			keys: J.Relation.sidebar,
 		}, () => {
 			if (callBack) {
 				callBack();
@@ -720,9 +727,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (U.Object.isSetLayout(object.layout)) {
 			const rootId = this.getRootId();
 			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id);
-			const type = S.Record.getTypeById(typeId);
+			const type = S.Record.getTypeById(typeId)
+			const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Participant);
 
-			if (type && U.Object.isFileLayout(type.recommendedLayout)) {
+			if (type && layouts.includes(type.recommendedLayout)) {
 				return false;
 			};
 		} else
@@ -745,7 +753,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	getLimit ({ limit, layout }): number {
 		const { isPreview } = this.props;
-		const options = U.Menu.getWidgetLimits(layout).map(it => Number(it.id));
+		const options = U.Menu.getWidgetLimitOptions(layout).map(it => Number(it.id));
 
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];

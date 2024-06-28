@@ -571,7 +571,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
 				isReversed = Boolean(obj.attr('data-reversed'));
 
-				col1 = x - J.Constant.size.blockMenu / 4;
+				col1 = x - J.Size.blockMenu / 4;
 				col2 = x + width;
 			};
 

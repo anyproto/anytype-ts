@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar } from 'Component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu, ListNotification, Sidebar, Vault, Share, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Storage, analytics, dispatcher, translate, Renderer, focus, Preview, Mark, Animation, Onboarding, Survey, Encode, Decode, sidebar } from 'Lib';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
@@ -40,8 +40,6 @@ const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
 const electron = U.Common.getElectron();
 const isPackaged = electron.isPackaged;
-
-interface RouteElement { path: string; };
 
 interface State {
 	isLoading: boolean;
@@ -139,10 +137,13 @@ class RoutePage extends React.Component<RouteComponentProps> {
 				<DragProvider ref={ref => S.Common.refSet('dragProvider', ref)}>
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
-					<Sidebar key="sidebar" {...this.props} />
-					<Navigation key="navigation" {...this.props} />
+					<Vault key="vault" {...this.props} />
 
-					<Page {...this.props} />
+					<div id="vaultContentContainer">
+						<Sidebar key="sidebar" {...this.props} />
+						<Navigation  ref={ref => S.Common.refSet('navigation', ref)} key="navigation" {...this.props} />
+						<Page {...this.props} />
+					</div>
 				</DragProvider>
 			</SelectionProvider>
 		);
@@ -196,16 +197,19 @@ class App extends React.Component<object, State> {
 
 						{drag}
 						<div id="tooltipContainer" />
-						<div id="globalFade" />
+						<div id="globalFade">
+							<Loader id="loader" />
+						</div>
 
 						<PreviewIndex />
 						<Progress />
 						<Toast />
 						<ListNotification key="listNotification" />
+						<Share showOnce={true} />
 
 						<Switch>
-							{J.Route.map((item: RouteElement, i: number) => (
-								<Route path={item.path} exact={true} key={i} component={RoutePage} />
+							{J.Route.map((path: string, i: number) => (
+								<Route path={path} exact={true} key={i} component={RoutePage} />
 							))}
 						</Switch>
 					</div>

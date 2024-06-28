@@ -89,6 +89,7 @@
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
 	"commonAddToFavorites": "Add to Favorites",
+	"commonAddToCollection": "Add to Collection",
 	"commonRestore": "Restore",
 	"commonRestoreFromBin": "Restore from Bin",
 	"commonMoveToBin": "Move to Bin",
@@ -150,6 +151,7 @@
 	"commonCreateNewObject": "Create new Object",
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObject": "Create Object",
+	"commonUrl": "Url",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -304,6 +306,8 @@
 	"headerGraphTooltipSearch": "Search",
 	"headerGraphTooltipFilters": "Filters",
 	"headerGraphTooltipSettings": "Settings",
+
+	"shareTooltipLabel": "<b>Share Anytype</b> with<br/>those you care about",
 
 	"authInviteTitle": "Welcome to Anytype",
 	"authInviteLabel": "Enter your invite code. If you don't have one, visit <a href=\"https:\/\/anytype.io\">anytype.io<\/a> to register for early access. We are inviting new testers on a rolling basis.",
@@ -532,7 +536,9 @@
 	"blockLinkArchived": "Deleted",
 
 	"blockDataviewCreateNewCollection": "Create new Collection",
+	"blockDataviewCreateNewCollectionWithName": "Create new Collection \"%s\"",
 	"blockDataviewCreateNewSet": "Create new Set",
+	"blockDataviewCreateNewSetWithName": "Create new Set \"%s\"",
 	"blockDataviewCreateNewTooltipCollection": "Create new Object in this Collection",
 	"blockDataviewCreateNewTooltipType": "Create new %s object",
 	"blockDataviewShowTemplates": "Show Templates",
@@ -1129,7 +1135,6 @@
 	"popupShortcutNavigationBasics6": "Return to the home screen",
 	"popupShortcutNavigationBasics7": "Show previous object from History",
 	"popupShortcutNavigationBasics8": "Show next Object from History",
-	"popupShortcutNavigationBasics9": "Switch spaces",
 	"popupShortcutNavigationMenu": "Menu, search and navigation pane",
 	"popupShortcutNavigationMenu1": "Go the next option",
 	"popupShortcutNavigationMenu2": "Go to the previous option",
@@ -1233,6 +1238,10 @@
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no relations shown yet",
 	"popupRelationAddToView": "Add relations to the view",
+
+	"popupShareTitle": "Share Anytype with those you care about",
+	"popupShareLabel": "Thanks for sharing Anytype",
+	"popupShareLinkText": "The everything app for those who celebrate trust & autonomy. <a href=\"%s\">https://simple-sharing.anytype.io/</a>",
 
 	"menuVaultPeer": "%d\/%d peers",
 	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
@@ -1804,9 +1813,6 @@
 	"onboardingTemplateSelectTitle": "New Template Selector",
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
-	"onboardingSpaceSelectTitle": "Create and Share Spaces",
-	"onboardingSpaceSelectDescription": "Click here to create a new space and share it with others!",
-
 	"onboardingQuickCaptureTitle": "Use Different Object Types",
 	"onboardingQuickCaptureDescription": "Select types for your objects to categorize and connect them.",
 
@@ -1838,6 +1844,7 @@
 	"libMenuChangeSource": "Change source %s",
 	"libMenuOpenSource": "Open source %s",
 	"libMenuOpenFullscreen": "Open fullscreen",
+	"libMenuCopyUrl": "Copy URL",
 
 	"libActionUninstallTypeTitle": "Do you want to remove Type \"%s\"?",
 	"libActionUninstallTypeText": "This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",

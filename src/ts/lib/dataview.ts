@@ -68,7 +68,7 @@ class Dataview {
 			const rel: any = view.getRelation(relationKey) || {};
 
 			rel.relationKey = relationKey;
-			rel.width = rel.width || J.Constant.size.dataview.cell.default;
+			rel.width = rel.width || J.Size.dataview.cell.default;
 			rel.isVisible = true;
 
 			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, rel, (message: any) => {
@@ -98,7 +98,7 @@ class Dataview {
 			rootId: '',
 			blockId: '',
 			newViewId: '',
-			keys: J.Constant.defaultRelationKeys,
+			keys: J.Relation.default,
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
@@ -411,23 +411,23 @@ class Dataview {
 		];
 		const details: any = {};
 
-		let group = null;
-
-		if (groupId) {
-			group = S.Record.getGroup(rootId, blockId, groupId);
-			if (group) {
-				details[view.groupRelationKey] = group.value;
-			};
-		};
-
 		if (relations.length) {
-			relations.forEach((it: any) => {
-				details[it.relationKey] = Relation.formatValue(it, null, true);
+			relations.forEach(it => {
+				details[it.relationKey] = Relation.formatValue(it, details[it.relationKey] || null, true);
 			});
 		};
 
-		if ((view.type == I.ViewType.Calendar) && view.groupRelationKey) {
-			details[view.groupRelationKey] = U.Date.now();
+		if (view.groupRelationKey && ('undefined' == typeof(details[view.groupRelationKey]))) {
+			if (groupId) {
+				const group = S.Record.getGroup(rootId, blockId, groupId);
+				if (group) {
+					details[view.groupRelationKey] = group.value;
+				};
+			};
+
+			if (view.type == I.ViewType.Calendar) {
+				details[view.groupRelationKey] = U.Date.now();
+			};
 		};
 
 		for (const filter of view.filters) {
@@ -517,7 +517,7 @@ class Dataview {
 		];
 
 		let ret = null;
-		if (relationKey == J.Constant.pageCoverRelationKey) {
+		if (relationKey == J.Relation.pageCover) {
 			ret = object;
 		} else {
 			for (const id of value) {

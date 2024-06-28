@@ -373,14 +373,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		});
 
 		if (!S.Menu.isOpen(id)) {
-			S.Menu.closeAll(J.Constant.menuIds.relationEdit, () => {
+			S.Menu.closeAll(J.Menu.relationEdit, () => {
 				S.Menu.open(id, options);
 			});
 		};
 	};
 
 	menuClose () {
-		S.Menu.closeAll(J.Constant.menuIds.relationEdit);
+		S.Menu.closeAll(J.Menu.relationEdit);
 	};
 
 	onOpen (e: any) {
@@ -406,13 +406,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { close, param } = this.props;
 		const { data } = param;
 		const { deleteCommand } = data;
+		const relation = this.getRelation();
 
 		if (deleteCommand) {
 			deleteCommand();
 		};
 
 		close();
-		analytics.event('DeleteRelation');
+		analytics.event('DeleteRelation', { relationKey: relation?.relationKey });
 	};
 
 	onSubmit (e: any) {

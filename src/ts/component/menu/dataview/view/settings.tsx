@@ -95,7 +95,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			this.save(true);
 		};
 
-		S.Menu.closeAll(J.Constant.menuIds.viewEdit);
+		S.Menu.closeAll(J.Menu.viewEdit);
 	};
 
 	focus () {
@@ -175,7 +175,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		this.isFocused = true;
 		this.props.setActive();
 
-		S.Menu.closeAll(J.Constant.menuIds.viewEdit);
+		S.Menu.closeAll(J.Menu.viewEdit);
 	};
 	
 	onNameBlur () {
@@ -187,7 +187,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		if (!keyboard.isMouseDisabled) {
 			this.n = -1;
 			this.props.setHover(null, false);
-			S.Menu.closeAll(J.Constant.menuIds.viewEdit);
+			S.Menu.closeAll(J.Menu.viewEdit);
 		};
 	};
 

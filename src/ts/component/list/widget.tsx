@@ -62,7 +62,6 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 				);
 			};
 		} else {
-			const buttons: I.ButtonComponent[] = [];
 			const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
 				const childrenIds = S.Block.getChildrenIds(widgets, block.id);
 				if (!childrenIds.length) {
@@ -90,6 +89,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 			let last = null;
 			let first = null;
+			let buttons: I.ButtonComponent[] = [];
 
 			if (blocks.length) {
 				first = blocks[0];
@@ -108,7 +108,10 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 				buttons.push({ id: 'widget-list-done', text: translate('commonDone'), onMouseDown: this.onEdit });
 			} else 
 			if (canWrite) {
-				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: translate('widgetEdit'), onMouseDown: this.onEdit });
+				buttons = buttons.concat([
+					{ id: 'widget-list-add', className: 'grey c28', text: translate('widgetAdd'), onMouseDown: this.onAdd },
+					{ id: 'widget-list-edit', className: 'grey c28', text: translate('widgetEdit'), onMouseDown: this.onEdit }
+				]);
 			};
 
 			content = (
@@ -174,7 +177,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 					<div className="buttons">
 						{buttons.map(button => (
-							<Button key={button.id} color="" {...button} />
+							<Button key={button.id + (isEditing ? 'edit' : '')} color="" {...button} />
 						))}
 					</div>
 				</React.Fragment>
@@ -204,15 +207,49 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	onAdd (e: any): void {
 		e.stopPropagation();
 
-		S.Menu.open('widget', {
+		const { widgets } = S.Block;
+		const position = I.BlockPosition.Top;
+		const templateType = S.Record.getTemplateType();
+		const filters: I.Filter[] = [
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+		];
+
+		S.Menu.open('searchObject', {
 			element: '#widget-list-add',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			offsetY: -2,
-			subIds: J.Constant.menuIds.widget,
 			vertical: I.MenuDirection.Top,
 			data: {
-				setEditing: this.setEditing,
+				filters,
+				canAdd: true,
+				dataChange: (items: any[]) => {
+					const fixed: any[] = [
+						{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
+						{ id: J.Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: ':mag:' },
+						{ id: J.Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: ':card_index_dividers:' },
+						{ id: J.Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: ':memo:' },
+						{ id: J.Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: ':date:', caption: translate('menuWidgetRecentOpenCaption') },
+					];
+					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
+				},
+				onSelect: (target) => {
+					const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
+					const layoutOptions = U.Menu.getWidgetLayoutOptions(target);
+					const newBlock = { 
+						type: I.BlockType.Link,
+						content: { 
+							targetBlockId: target.id, 
+						},
+					};
+
+					C.BlockCreateWidget(widgets, '', newBlock, position, layoutOptions[0].id, Number(limitOptions[0].id), (message: any) => {
+						if (!message.error.code) {
+							analytics.event('AddWidget', { type: I.WidgetLayout.Link });
+						};
+					});					
+				},
 			}
 		});
 	};

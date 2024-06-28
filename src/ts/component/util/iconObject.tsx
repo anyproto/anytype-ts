@@ -66,6 +66,7 @@ const IconSize = {
 	108: 64,
 	112: 64,
 	128: 64,
+	360: 360,
 };
 
 const FontSize = {
@@ -515,14 +516,14 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	gradientSvg (radius: number): string {
 		const object = this.getObject();
 		const iconSize = this.iconSize();
-		const option = J.Color.gradientIcons.options[object.iconOption - 1] as any;
-		const steps = option.steps || J.Color.gradientIcons.common.steps;
+		const item = J.Color.icons.colors[object.iconOption - 1] as any;
+		const { from, to } = J.Color.icons.steps;
 
 		const gradient = `
 			<defs>
 				<radialGradient id="gradient">
-					<stop offset="${steps.from}" stop-color="${option.colors.from}" />
-					<stop offset="${steps.to}" stop-color="${option.colors.to}" />
+					<stop offset="${from}" stop-color="${item.from}" />
+					<stop offset="${to}" stop-color="${item.to}" />
 				</radialGradient>
 			</defs>
 		`;

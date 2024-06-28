@@ -516,7 +516,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			template.isDefault = true;
 		};
 
-		S.Menu.closeAll(J.Constant.menuIds.dataviewTemplate, () => {
+		S.Menu.closeAll(J.Menu.dataviewTemplate, () => {
 			S.Menu.open('dataviewTemplateContext', {
 				menuKey: item.id,
 				element: `#item-more-${item.id}`,

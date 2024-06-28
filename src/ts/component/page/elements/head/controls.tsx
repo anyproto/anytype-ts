@@ -43,7 +43,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	render (): any {
 		const { rootId, readonly } = this.props;
 		const { loading } = this.state;
-		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys);
+		const object = S.Detail.get(rootId, rootId, J.Relation.cover);
 		const cn = [ 'editorControls', 'editorControlElements' ];
 		
 		if ((object.coverType != I.CoverType.None) && object.coverId) {
@@ -98,6 +98,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const node = $(this.node);
 		const object = S.Detail.get(rootId, rootId, []);
 		const cb = () => S.Menu.update('smile', { element: `#block-icon-${rootId}` });
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		focus.clear(true);
 
@@ -107,6 +108,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			onOpen: () => node.addClass('hover'),
 			onClose: () => node.removeClass('hover'),
 			data: {
+				noUpload: root.isObjectType(),
 				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => {
 					U.Object.setIcon(rootId, icon, '', cb);
@@ -150,7 +152,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			onClose: () => {
 				node.removeClass('hover');
 			},
-			subIds: J.Constant.menuIds.layout,
+			subIds: J.Menu.layout,
 			data: {
 				rootId,
 				value: object.layout,

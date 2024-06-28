@@ -245,16 +245,24 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		if (canAdd && canWrite) {
-			if (length && (addParam || filter)) {
-				items.push({ isDiv: true });
+			let name = translate('commonCreateObject');
+			if (addParam) {
+				if (addParam.nameWithFilter && filter) {
+					name = U.Common.sprintf(addParam.nameWithFilter, filter);
+				} else 
+				if (addParam.name) {
+					name = addParam.name;
+				};
 			};
 
-			if (addParam) {
-				items.push({ id: 'add', icon: 'plus', name: addParam.name, isAdd: true });
-			} else
-			if (filter) {
-				items.push({ id: 'add', icon: 'plus', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter), isAdd: true });
+			if (!name && filter) {
+				name = U.Common.sprintf(translate('commonCreateObjectWithName'), filter);
 			};
+
+			if (length) {
+				items.unshift({ isDiv: true });
+			};
+			items.unshift({ id: 'add', icon: 'plus', name, isAdd: true });
 		};
 
 		return items;
@@ -321,7 +329,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		U.Data.search({
 			filters,
 			sorts,
-			keys: keys || J.Constant.defaultRelationKeys,
+			keys: keys || J.Relation.default,
 			fullText: filter,
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,
@@ -451,8 +459,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 			};
 		};
-
-
 
 		if (item.isAdd) {
 			details = { name: filter, ...details };

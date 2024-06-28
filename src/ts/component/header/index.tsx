@@ -74,11 +74,11 @@ class Header extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 	};
 
 	componentDidUpdate () {
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 		this.refChild.forceUpdate();
 	};
 
@@ -92,7 +92,7 @@ class Header extends React.Component<Props> {
 					tooltip={translate('sidebarToggle')}
 					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 					tooltipY={I.MenuDirection.Bottom}
-					onClick={() => sidebar.toggleExpandCollapse()}
+					onClick={() => sidebar.toggleOpenClose()}
 				/>
 
 				<Icon 
@@ -181,7 +181,7 @@ class Header extends React.Component<Props> {
 			noFlipX: true,
 			noFlipY: true,
 			horizontal: I.MenuDirection.Right,
-			subIds: J.Constant.menuIds.cell,
+			subIds: J.Menu.cell,
 			classNameWrap: cnw.join(' '),
 			...param,
 			data: {

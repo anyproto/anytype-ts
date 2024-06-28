@@ -184,7 +184,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	getKeys () {
-		return J.Constant.defaultRelationKeys.concat(this.props.columns.map(it => it.relationKey));
+		return J.Relation.default.concat(this.props.columns.map(it => it.relationKey));
 	};
 
 	getData (page: number, callBack?: (message: any) => void) {

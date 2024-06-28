@@ -173,14 +173,14 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 
 	componentWillUnmount () {
 		this.unbind();
-		S.Menu.closeAll(J.Constant.menuIds.cell);
+		S.Menu.closeAll(J.Menu.cell);
 	};
 
 	rebind () {
 		const { getId } = this.props;
 		const obj = $(`#${getId()} .content`);
 
-		obj.off('click').on('click', () => S.Menu.closeAll(J.Constant.menuIds.cell));
+		obj.off('click').on('click', () => S.Menu.closeAll(J.Menu.cell));
 
 		this.unbind();
 		$(window).on('keydown.menu', e => this.props.onKeyDown(e));

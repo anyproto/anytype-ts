@@ -293,7 +293,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, onSelect, onUpload, onUploadStart } = data;
-		const object = S.Detail.get(rootId, rootId, J.Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 
 		if (!object.coverId) {
 			close();

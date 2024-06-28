@@ -1,0 +1,66 @@
+export default {
+	cell: [
+		'select',
+		'button',
+		'dataviewText',
+		'dataviewRelationEdit',
+		'dataviewObjectList',
+		'dataviewObjectValues',
+		'dataviewOptionList',
+		'dataviewOptionEdit',
+		'dataviewFileList',
+		'dataviewFileValues',
+		'dataviewCalendar',
+		'relationSuggest'
+	],
+	cellAdd: [
+		'dataviewRelationEdit',
+		'dataviewRelationSuggest',
+		'dataviewRelationList'
+	],
+	context: [
+		'select',
+		'blockStyle',
+		'blockLink',
+		'blockColor',
+		'blockBackground',
+		'searchObject',
+		'typeSuggest',
+		'blockAlign'
+	],
+	selectContext: [
+		'searchObject',
+		'typeSuggest',
+		'blockAlign'
+	],
+	add: [ 'searchObject', 'blockRelationEdit', 'typeSuggest' ],
+	action: [
+		'blockStyle',
+		'blockColor',
+		'blockBackground',
+		'blockAlign',
+		'blockLinkSettings',
+		'searchObject',
+		'typeSuggest'
+	],
+	object: [ 'select', 'searchObject' ],
+	index: [ 'searchObject' ],
+	relationEdit: [
+		'select',
+		'searchObject',
+		'dataviewDate',
+		'dataviewObjectValues',
+		'dataviewObjectList'
+	],
+	layout: [ 'blockAlign' ],
+	latex: [ 'previewLatex' ],
+	viewEdit: [ 'select', 'graphSettings' ],
+	featuredType: [ 'searchObject', 'typeSuggest' ],
+	dataviewHead: [ 'dataviewSource', 'searchObject' ],
+	store: [ 'typeSuggest', 'relationSuggest' ],
+	widget: [ 'searchObject', 'select' ],
+	dataviewTemplate: [ 'previewObject' ],
+	table: [ 'select2', 'blockColor', 'blockBackground' ],
+	navigation: [ 'quickCapture', 'space' ],
+	dataviewContext: [ 'typeSuggest', 'searchObject' ]
+};

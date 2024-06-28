@@ -36,7 +36,7 @@ class Cover extends React.Component<Props> {
 		};
 
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(type) && image) {
-			style.backgroundImage = `url("${S.Common.imageUrl(image, J.Constant.size.cover)}")`;
+			style.backgroundImage = `url("${S.Common.imageUrl(image, J.Size.cover)}")`;
 		};
 
 		if (src) {

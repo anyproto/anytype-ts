@@ -45,7 +45,7 @@ class Survey {
 		};
 
 		Storage.setSurvey(type, param);
-		Renderer.send('urlOpen', U.Common.sprintf(J.Survey[t].url, account.id));
+		Renderer.send('urlOpen', U.Common.sprintf(J.Url.survey[t], account.id));
 		analytics.event('SurveyOpen', { type });
 	};
 

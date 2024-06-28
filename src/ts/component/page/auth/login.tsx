@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Preview } from 'Lib';
 
 interface State {
 	error: string;
@@ -93,7 +93,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const phrase = this.refPhrase.getValue();
 		const length = phrase.split(' ').length;
 
-		if (length < J.Constant.limit.phrase.word) {
+		if (length < J.Constant.count.phrase.word) {
 			this.setError({ code: 1, description: translate('pageAuthLoginInvalidPhrase')});
 			return;
 		};
@@ -107,7 +107,14 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 			S.Auth.accountListClear();
 			U.Data.createSession(phrase, '', () => {
-				C.AccountRecover(message => this.setError(message.error));
+				C.AccountRecover(message => {
+					this.setError(message.error);
+
+					window.setTimeout(() => {
+						Preview.shareTooltipShow();
+						analytics.event('OnboardingTooltip', { id: 'ShareApp' });
+					}, J.Constant.delay.login);
+				});
 			});
 		});
 	};
@@ -170,7 +177,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	canSubmit (): boolean {
-		return this.refPhrase.getValue().split(' ').length == J.Constant.limit.phrase.word;
+		return this.refPhrase.getValue().split(' ').length == J.Constant.count.phrase.word;
 	};
 
 	onKeyDownPhrase (e: React.KeyboardEvent) {

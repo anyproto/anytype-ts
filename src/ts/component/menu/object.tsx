@@ -73,7 +73,7 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		S.Menu.closeAll(J.Constant.menuIds.object);
+		S.Menu.closeAll(J.Menu.object);
 	};
 
 	rebind () {
@@ -113,6 +113,7 @@ class MenuObject extends React.Component<I.Menu> {
 		let setDefaultTemplate = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
+		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: (U.Common.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
@@ -136,6 +137,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 		if (object.isArchived) {
 			linkTo = null;
+			addCollection = null;
 			remove = { id: 'pageRemove', icon: 'remove', name: translate('commonDeleteImmediately') };
 			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
@@ -162,6 +164,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedFav = canWrite && !object.isArchived && !U.Object.isFileOrSystemLayout(object.layout) && !object.templateIsBundled;
 		const allowedLock = canWrite && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite;
+		const allowedAddCollection = canWrite;
 		const allowedPageLink = true;
 		const allowedCopy = canWrite && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = canWrite && object.source && block.isObjectBookmark();
@@ -190,6 +193,7 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedWidget)		 createWidget = null;
 		if (!allowedLinkTo)		 linkTo = null;
 		if (!allowedPageLink)	 pageLink = null;
+		if (!allowedAddCollection)	 addCollection = null;
 
 		if (!canWrite) {
 			template = null;
@@ -205,7 +209,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 			sections = [
 				{ children: [ createWidget, fav, pageLock, history ] },
-				{ children: [ linkTo ] },
+				{ children: [ linkTo, addCollection ] },
 				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },
 			];
@@ -224,7 +228,7 @@ class MenuObject extends React.Component<I.Menu> {
 			} else {
 				sections = [
 					{ children: [ createWidget, fav, pageLock ] },
-					{ children: [ linkTo, template ] },
+					{ children: [ linkTo, addCollection, template ] },
 					{ children: [ search, history, pageCopy, archive ] },
 					{ children: [ pageLink, pageReload ] },
 					{ children: [ print, pageExport ] },
@@ -262,7 +266,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			S.Menu.closeAll(J.Constant.menuIds.object);
+			S.Menu.closeAll(J.Menu.object);
 			return;
 		};
 
@@ -298,7 +302,7 @@ class MenuObject extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.LinkTo,
 					filters: [
-						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
+						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: () => close(),
@@ -307,10 +311,38 @@ class MenuObject extends React.Component<I.Menu> {
 				});
 				break;
 			};
+
+			case 'addCollection': {
+				const collectionType = S.Record.getCollectionType();
+
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+				menuParam.data = Object.assign(menuParam.data, {
+					filters: [
+						{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
+						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+					],
+					onSelect: (el: any) => {
+						Action.addToCollection(el.id, [ rootId ]);
+					},
+					skipIds: [ rootId ],
+					canAdd: true,
+					addParam: {
+						name: translate('blockDataviewCreateNewCollection'),
+						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
+						onClick: (details: any) => {
+							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
+								Action.addToCollection(message.objectId, [ rootId ]);
+							});
+						},
+					},
+				});
+				break;
+			};
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
-			S.Menu.closeAll(J.Constant.menuIds.object, () => {
+			S.Menu.closeAll(J.Menu.object, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};
@@ -416,7 +448,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageLink': {
-				U.Common.clipboardCopy({ text: J.Url.protocol + U.Object.universalRoute(object) });
+				U.Common.clipboardCopy({ text: `${J.Constant.protocol}://${U.Object.universalRoute(object)}` });
 				analytics.event('CopyLink', { route });
 				break;
 			};

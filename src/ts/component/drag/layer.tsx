@@ -72,7 +72,7 @@ class DragLayer extends React.Component<object, State> {
 		const comp = $(ReactDOM.findDOMNode(component));
 		const rect = (comp.get(0) as Element).getBoundingClientRect();
 		
-		this.setState({ rootId, type, width: rect.width - J.Constant.size.blockMenu, ids });
+		this.setState({ rootId, type, width: rect.width - J.Size.blockMenu, ids });
 	};
 
 	hide () {

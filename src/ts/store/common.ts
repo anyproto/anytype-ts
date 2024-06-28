@@ -48,13 +48,12 @@ class CommonStore {
 	public languages: string[] = [];
 	public spaceId = '';
 	public notionToken = '';
-	public autoSidebarValue = null;
-	public isSidebarFixedValue = null;
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
 	public navigationMenuValue = null;
 	public linkStyleValue = null;
 	public isOnlineValue = false;
+	public shareTooltipValue = false;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -104,12 +103,11 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			defaultType: observable,
 			isFullScreen: observable,
-			autoSidebarValue: observable,
-			isSidebarFixedValue: observable,
 			fullscreenObjectValue: observable,
 			navigationMenuValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
+			shareTooltipValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
             config: computed,
@@ -123,6 +121,7 @@ class CommonStore {
 			membershipTiers: computed,
 			space: computed,
 			isOnline: computed,
+			shareTooltip: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -139,6 +138,7 @@ class CommonStore {
 			navigationMenuSet: action,
 			linkStyleSet: action,
 			isOnlineSet: action,
+			shareTooltipSet: action,
 			membershipTiersListSet: action,
 		});
 
@@ -197,14 +197,6 @@ class CommonStore {
 		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
 	};
 
-	get autoSidebar(): boolean {
-		return this.boolGet('autoSidebar');
-	};
-
-	get isSidebarFixed(): boolean {
-		return this.boolGet('isSidebarFixed');
-	};
-
 	get fullscreenObject(): boolean {
 		return this.boolGet('fullscreenObject');
 	};
@@ -259,6 +251,10 @@ class CommonStore {
 
 	get isOnline (): boolean {
 		return Boolean(this.isOnlineValue);
+	};
+
+	get shareTooltip (): boolean {
+		return Boolean(this.shareTooltipValue);
 	};
 
 	get membershipTiers (): I.MembershipTier[] {
@@ -366,14 +362,6 @@ class CommonStore {
 		this.emailConfirmationTimeId = t;
 
 		Storage.set('emailConfirmationTime', this.emailConfirmationTimeId);
-	};
-
-	autoSidebarSet (v: boolean) {
-		this.boolSet('autoSidebar', v);
-	};
-
-	isSidebarFixedSet (v: boolean) {
-		this.boolSet('isSidebarFixed', v);
 	};
 
 	showRelativeDatesSet (v: boolean) {
@@ -486,6 +474,10 @@ class CommonStore {
 	isOnlineSet (v: boolean) {
 		this.isOnlineValue = Boolean(v);
 		console.log('[Online status]:', v);
+	};
+
+	shareTooltipSet (v: boolean) {
+		this.shareTooltipValue = Boolean(v);
 	};
 
 	configSet (config: any, force: boolean) {

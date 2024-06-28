@@ -226,7 +226,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (relation && Relation.isSystem(relation.relationKey)) {
 			canDelete = false;
 		};
-		if (readonly) {
+		if (!relation || readonly) {
 			canDuplicate = false;
 			canDelete = false;
 		};
@@ -516,14 +516,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		});
 
 		if (!S.Menu.isOpen(id)) {
-			S.Menu.closeAll(J.Constant.menuIds.relationEdit, () => {
+			S.Menu.closeAll(J.Menu.relationEdit, () => {
 				S.Menu.open(id, options);
 			});
 		};
 	};
 
 	menuClose () {
-		S.Menu.closeAll(J.Constant.menuIds.relationEdit);
+		S.Menu.closeAll(J.Menu.relationEdit);
 	};
 
 	onChangeTime (v: boolean) {

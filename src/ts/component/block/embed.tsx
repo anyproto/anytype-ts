@@ -56,6 +56,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	render () {
+		const { isOnline } = S.Common;
 		const { isShowing, isEditing } = this.state;
 		const { readonly, block } = this.props;
 		const { content, fields, hAlign } = block;
@@ -133,7 +134,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				<div id="valueWrap" className="valueWrap resizable" style={css}>
 					{select ? <div className="selectWrap">{select}</div> : ''}
 
-					<div className="preview" onClick={this.onPreview} />
+					<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={this.onPreview} />
 					<div id="value" onMouseDown={this.onEdit} />
 					<div id={this.getContainerId()} />
 
@@ -195,11 +196,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	rebind () {
+		const { isOnline } = S.Common;
 		const { block, isPopup } = this.props;
 		const { processor } = block.content;
 		const { isEditing, isShowing } = this.state;
 		const win = $(window);
 		const node = $(this.node);
+		const preview = node.find('#preview');
 
 		this.unbind();
 
@@ -225,12 +228,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			});
 		};
 
-		win.on(`online.${block.id} offline.${block.id}`, () => {
-			if ((isShowing || U.Embed.allowAutoRender(processor)) && navigator.onLine) {
-				node.find('#receiver').remove('');
-				this.setContent(this.text);
-			};
-		});
+		node.find('#receiver').remove();
+		isOnline ? preview.hide() : preview.show();
+
+		if (isOnline && (isShowing || U.Embed.allowAutoRender(processor))) {
+			this.setContent(this.text);
+		};
 
 		if (!U.Embed.allowAutoRender(processor)) {
 			const container = U.Common.getScrollContainer(isPopup);
@@ -497,11 +500,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			offsetY: 4,
 			offsetX: () => {
 				const rect = recalcRect();
-				return rect ? 0 : J.Constant.size.blockMenu;
+				return rect ? 0 : J.Size.blockMenu;
 			},
 			commonFilter: true,
 			className: (isTemplate ? 'isTemplate' : ''),
-			subIds: J.Constant.menuIds.latex,
+			subIds: J.Menu.latex,
 			onClose: () => {
 				S.Common.filterSet(0, '');
 			},
@@ -715,14 +718,30 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Latex: {
-				value.html(katex.renderToString(text, { 
-					displayMode: true, 
-					strict: false,
-					throwOnError: false,
-					output: 'html',
-					fleqn: true,
-					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
-				}));
+				let html = '';
+
+				try {
+					html = katex.renderToString(text, { 
+						displayMode: true, 
+						strict: false,
+						throwOnError: true,
+						output: 'html',
+						fleqn: true,
+						trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
+					});
+				} catch (e) {
+					if (e instanceof katex.ParseError) {
+						const replace = (s: string) => {
+							return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+						};
+
+						html = `<div class="error">Error in LaTeX '${replace(text)}': ${replace(e.message)}</div>`;
+					} else {
+						console.error(e);
+					};
+				};
+
+				value.html(html);
 
 				value.find('a').each((i: number, item: any) => {
 					item = $(item);

@@ -99,7 +99,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 
 		this.setLoading(true);
 
-		C.ObjectGraph(S.Common.space, filters, 0, [], J.Constant.graphRelationKeys, (isCollection ? target.id : ''), target.setOf, (message: any) => {
+		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -127,7 +127,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 
 			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
 
-			U.Data.onSubscribe(J.Constant.subId.graph, 'id', J.Constant.graphRelationKeys, {
+			U.Data.onSubscribe(J.Constant.subId.graph, 'id', J.Relation.graph, {
 				error: {},
 				records: message.nodes,
 				dependencies: [],

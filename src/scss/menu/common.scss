@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 22; }
+	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 23; }
 	.menuWrap.fromPopup, 
 	.menuWrap.fromHeader, 
 	.menuWrap.fromSidebar,
@@ -12,7 +12,7 @@
 		.menu { position: fixed; }
 	}
 
-	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); }
+	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); -webkit-app-region: no-drag;  }
 	#menu-polygon { z-index: 1000; position: absolute; }
 
 	.menu * { user-select: none; }
@@ -236,7 +236,6 @@ html.platformWindows {
 @import "./smile.scss";
 @import "./type.scss";
 @import "./widget.scss";
-@import "./space.scss";
 @import "./quickCapture.scss";
 @import "./syncStatus.scss";
 

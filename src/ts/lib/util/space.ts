@@ -71,20 +71,7 @@ class UtilSpace {
 	};
 
 	getList () {
-		const subId = J.Constant.subId.space;
-		const { spaceview } = S.Block;
-
-		let items = S.Record.getRecords(subId, U.Data.spaceRelationKeys());
-		items = items.filter(it => it.isAccountActive && it.isLocalOk);
-		items = items.map(it => ({ ...it, isActive: spaceview == it.id }));
-
-		items.sort((c1, c2) => {
-			if (c1.isActive && !c2.isActive) return -1;
-			if (!c1.isActive && c2.isActive) return 1;
-			return 0;
-		});
-
-		return items;
+		return S.Record.getRecords(J.Constant.subId.space, U.Data.spaceRelationKeys()).filter(it => it.isAccountActive && it.isLocalOk);
 	};
 
 	getSpaceview (id?: string) {
@@ -174,6 +161,14 @@ class UtilSpace {
 
 	getInviteLink (cid: string, key: string) {
 		return U.Data.isAnytypeNetwork() ? U.Common.sprintf(J.Url.invite, cid, key) : `${J.Constant.protocol}://invite/?cid=${cid}&key=${key}`;
+	};
+
+	canCreateSpace (): boolean {
+		const { config } = S.Common;
+		const items = U.Common.objectCopy(this.getList());
+		const length = items.length;
+
+		return config.sudo || (length < J.Constant.limit.space);
 	};
 
 };
