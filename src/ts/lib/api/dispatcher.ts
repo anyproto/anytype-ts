@@ -681,7 +681,7 @@ class Dispatcher {
 					S.Block.updateWidgetViews(rootId);
 
 					if (updateData) {
-						win.trigger(`updateDataviewData.${id}`);
+						win.trigger(`updateDataviewData`);
 						S.Block.updateWidgetData(rootId);
 					};
 					break;
@@ -1004,7 +1004,7 @@ class Dispatcher {
 
 			if (undefined !== details.setOf) {
 				S.Block.updateWidgetData(rootId);
-				$(window).trigger(`updateDataviewData.dataview`);
+				$(window).trigger(`updateDataviewData`);
 			};
 
 			S.Block.checkTypeSelect(rootId);
