@@ -2192,7 +2192,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const hh = isPopup ? header.height() : J.Size.header;
 
-			this.setLayoutWidth(root?.fields?.width);
+			this.setLayoutWidth(root?.fields?.width, true);
 
 			if (blocks.length && last.length && scrollContainer.length) {
 				const ct = isPopup ? scrollContainer.offset().top : 0;
@@ -2238,7 +2238,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.focus(next.id, from, from, true);
 	};
 
-	setLayoutWidth (v: number) {
+	setLayoutWidth (v: number, animate?: boolean) {
 		v = Number(v) || 0;
 
 		const node = $(this.node);
@@ -2247,12 +2247,20 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		this.width = width;
 
+		if (animate) {
+			node.addClass('anim');
+		};
+
 		node.css({ width });
 		elements.css({ width, marginLeft: -width / 2 });
 
 		if (this.refHeader && this.refHeader.refDrag) {
 			this.refHeader.refDrag.setValue(v);
 			this.refHeader.setPercent(v);
+		};
+
+		if (animate) {
+			window.setTimeout(() => node.removeClass('anim'), 200);
 		};
 	};
 
