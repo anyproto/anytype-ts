@@ -210,7 +210,7 @@ const Vault = observer(class Vault extends React.Component {
 				break;
 
 			default:
-				U.Router.switchSpace(item.targetSpaceId);
+				U.Router.switchSpace(item.targetSpaceId, '', () => this.unsetLine());
 				analytics.event('SwitchSpace');
 				break;
 		};
