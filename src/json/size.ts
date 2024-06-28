@@ -8,6 +8,15 @@ export default {
 	menuBorder: 10,
 	header: 52,
 
+	vault: {
+		collapsed: 76,
+		expanded: 240,
+	},
+
+	history: {
+		panel: 336,
+	},
+
 	sidebar: {
 		width: { min: 240, max: 500, default: 336, close: 180 }
 	},

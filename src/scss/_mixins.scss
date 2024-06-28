@@ -4,7 +4,7 @@ $transitionAllCommon: all $transitionCommon;
 
 $historyPanelWidth: 336px;
 $vaultWidthCollapsed: 76px;
-$vaultWidthExpanded: 360px;
+$vaultWidthExpanded: 240px;
 
 @mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }
 @mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
