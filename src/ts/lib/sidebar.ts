@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { U, J, Storage, keyboard } from 'Lib';
+import { U, S, J, Storage, keyboard } from 'Lib';
 
 interface SidebarData {
 	width: number;
@@ -118,6 +118,7 @@ class Sidebar {
 		const vw = this.vault.hasClass('isExpanded') ? 0 : 76;
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? 336 : 0;
+		const navigation = S.Common.getRef('navigation');
 
 		this.header.css({ width: '' }).removeClass('withSidebar');
 		this.footer.css({ width: '' });
@@ -135,6 +136,7 @@ class Sidebar {
 			this.dummy.removeClass('sidebarAnimation');
 		};
 
+		navigation.setX(width + vw, animate);
 		width ? this.header.addClass('withSidebar') : this.header.removeClass('withSidebar');
 
 		this.page.css({ width: pageWidth });

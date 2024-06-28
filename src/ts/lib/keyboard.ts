@@ -78,8 +78,6 @@ class Keyboard {
 
 	onScroll () {
 		Preview.tooltipHide(false);
-
-		$(window).trigger('resize.menuOnboarding resize.menuSpace');
 	};
 
 	onMouseDown (e: any) {
