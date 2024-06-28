@@ -305,8 +305,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.unbind();
 
-		console.log('NAMESPACE', ns);
-
 		win.on(`resize.${ns} sidebarResize.${ns}`, () => this.resize());
 		win.on(`updateDataviewData.${ns}`, () => this.loadData(this.getView().id, 0, true));
 		win.on(`setDataviewSource.${ns}`, () => this.onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));

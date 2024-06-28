@@ -819,8 +819,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				this.ref.n = 0;
 			};
 
-			this.setActive(null, true);
-
 			const item = items[this.ref.n];
 			if (!item) {
 				return;
@@ -830,6 +828,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				onArrowDown();
 				return;
 			};
+
+			this.setActive(null, true);
 
 			if (!item.arrow && this.ref.onOver) {
 				this.ref.onOver(e, item);
@@ -847,9 +847,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				};
 			};
 
-			this.setActive(null, true);
-
 			const item = items[this.ref.n];
+
 			if (!item) {
 				return;
 			};
@@ -859,6 +858,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				return;
 			};
 
+			this.setActive(null, true);
 			if (!item.arrow && this.ref.onOver) {
 				this.ref.onOver(e, item);
 			};

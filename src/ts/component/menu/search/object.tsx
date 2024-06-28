@@ -245,11 +245,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		if (canAdd && canWrite) {
-			if (length && (addParam || filter)) {
-				items.push({ isDiv: true });
-			};
-
-			let name = '';
+			let name = translate('commonCreateObject');
 			if (addParam) {
 				if (addParam.nameWithFilter && filter) {
 					name = U.Common.sprintf(addParam.nameWithFilter, filter);
@@ -263,9 +259,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				name = U.Common.sprintf(translate('commonCreateObjectWithName'), filter);
 			};
 
-			if (name) {
-				items.push({ id: 'add', icon: 'plus', name, isAdd: true });
+			if (length) {
+				items.unshift({ isDiv: true });
 			};
+			items.unshift({ id: 'add', icon: 'plus', name, isAdd: true });
 		};
 
 		return items;
