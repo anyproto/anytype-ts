@@ -24,7 +24,7 @@
 .sidebar {
 	> .coverWrap { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; overflow: hidden; }
 	> .coverWrap {
-		.iconObject { height: 100%; aspect-ratio: 1; opacity: 0.2; filter: blur(300px); width: 1920px; margin-left: -960px; }
+		.iconObject { height: 100%; aspect-ratio: 1; opacity: 0.2; filter: blur(300px); width: 200%; transform: translateX(-50%); }
 	}
 
 	> .inner { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; }
