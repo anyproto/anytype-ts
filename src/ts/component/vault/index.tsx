@@ -18,7 +18,6 @@ const Vault = observer(class Vault extends React.Component {
 		super(props);
 
 		this.onToggle = this.onToggle.bind(this);
-		this.onSettings = this.onSettings.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
@@ -66,7 +65,7 @@ const Vault = observer(class Vault extends React.Component {
 			);
 		});
 
-		const ItemIcon = SortableElement((item: any) => (
+		const ItemIcon = item => (
 			<div 
 				id={`item-${item.id}`} 
 				className={`item ${item.id}`} 
@@ -75,35 +74,26 @@ const Vault = observer(class Vault extends React.Component {
 				onMouseLeave={() => this.onMouseLeave()}
 			>
 				<div className="iconWrap" />
-				<div className="infoWrap">
-					<div className="name">{item.name}</div>
-				</div>
+				{item.withName ? (
+					<div className="infoWrap">
+						<div className="name">{item.name}</div>
+					</div>
+				) : ''}
 			</div>
-		));
+		);
 
-		const ItemAdd = SortableElement((item: any) => (
-			<div 
-				id={`item-${item.id}`} 
-				className={`item ${item.id}`} 
-				onClick={e => this.onClick(e, item)}
-				onMouseEnter={e => this.onMouseEnter(e, item)}
-				onMouseLeave={() => this.onMouseLeave()}
-			>
-				<div className="iconWrap" />
-			</div>
-		));
+		const ItemIconSortable = SortableElement(it => <ItemIcon {...it} index={it.index} />);
 
 		const List = SortableContainer(() => (
 			<div id="scroll" className="side top">
 				{items.map((item, i) => {
 					item.key = `item-space-${item.id}`;
 
+					const withName = [ 'void', 'gallery' ].includes(item.id);
+
 					let content = null;
-					if (item.id == 'add') {
-						content = <ItemAdd {...item} index={i} />;
-					} else 
-					if ([ 'void', 'gallery' ].includes(item.id)) {
-						content = <ItemIcon {...item} index={i} />;
+					if ([ 'void', 'gallery', 'add' ].includes(item.id)) {
+						content = <ItemIconSortable {...item} index={i} withName={withName} />;
 					} else {
 						content = <Item {...item} index={i} />;
 					};
@@ -121,7 +111,7 @@ const Vault = observer(class Vault extends React.Component {
             >
 				{/*
 				<div className="head">
-					<Icon className="settings" onClick={this.onSettings} />
+					<Icon className="settings" />
 					<Icon className="close" onClick={this.onToggle} />
 				</div>
 				*/}
@@ -137,10 +127,9 @@ const Vault = observer(class Vault extends React.Component {
 						helperClass="isDragging"
 						helperContainer={() => $(`#vault .side.top`).get(0)}
 					/>
-					<div className="side bottom" onClick={this.onSettings}>
-						<div className="item settings">
-							<div className="iconWrap" />
-						</div>
+
+					<div className="side bottom">
+						<ItemIcon {...{ id: 'settings', name: translate('commonSettings') }} />
 					</div>
 
 					<div id="line" className="line" />
@@ -209,6 +198,10 @@ const Vault = observer(class Vault extends React.Component {
 				S.Popup.open('usecase', {});
 				break;
 
+			case 'settings':
+				S.Popup.open('settings', {});
+				break;
+
 			default:
 				U.Router.switchSpace(item.targetSpaceId, '', () => this.unsetLine());
 				analytics.event('SwitchSpace');
@@ -262,11 +255,8 @@ const Vault = observer(class Vault extends React.Component {
 		window.setTimeout(() => this.isAnimating = false, 300);
 	};
 
-	onSettings () {
-		S.Popup.open('settings', {});
-	};
-
 	onSortStart () {
+		keyboard.setDragging(true);
 		keyboard.disableSelection(true);
 	};
 
@@ -278,10 +268,15 @@ const Vault = observer(class Vault extends React.Component {
 		Storage.set('vaultOrder', ids, true);
 
 		keyboard.disableSelection(false);
+		keyboard.setDragging(false);
 		this.forceUpdate();
 	};
 
 	onMouseEnter (e: any, item: any) {
+		if (keyboard.isDragging) {
+			return;
+		};
+
 		Preview.tooltipShow({ 
 			title: item.name, 
 			element: $(e.currentTarget), 
