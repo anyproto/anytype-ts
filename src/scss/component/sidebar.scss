@@ -6,6 +6,8 @@
 	#page { width: 100%; position: relative; }
 }
 
+.sidebarAnimation { transition: width 0.2s ease-in-out; }
+
 .sidebar {
 	position: fixed; background-color: var(--color-shape-tertiary); z-index: 21; user-select: none; transition: none; top: 0px; left: $vaultWidthCollapsed; height: 100%;
 	transform: translate3d(0px,0px,0px);

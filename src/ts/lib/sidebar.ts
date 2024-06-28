@@ -41,7 +41,7 @@ class Sidebar {
 				isClosed: false,
 			});
 
-			this.resizePage();
+			this.resizePage(J.Size.sidebar.width.default, false);
 		};
 	};
 
@@ -64,6 +64,8 @@ class Sidebar {
 		this.obj.addClass('anim');
 		this.setStyle({ width: 0 });
 		this.set({ isClosed: true });
+		this.resizePage(0, true);
+
 		this.removeAnimation(() => $(window).trigger('resize'));
 	};
 
@@ -76,6 +78,8 @@ class Sidebar {
 		this.obj.addClass('anim');
 		this.setStyle({ width });
 		this.set({ isClosed: false });
+		this.resizePage(width, true);
+
 		this.removeAnimation(() => $(window).trigger('resize'));
 	};
 
@@ -101,11 +105,10 @@ class Sidebar {
 		}, ANIMATION);
 	};
 
-	resizePage () {
+	resizePage (width: number, animate: boolean): void {
 		this.initObjects();
 
-		let width = 0;
-		if (this.obj && this.obj.length) {
+		if ((width === null) && this.obj && this.obj.length) {
 			if (this.obj.css('display') != 'none') {
 				width = this.obj.outerWidth();
 			};
@@ -114,22 +117,29 @@ class Sidebar {
 		const { ww } = U.Common.getWindowDimensions();
 		const vw = this.vault.hasClass('isExpanded') ? 0 : 76;
 		const pageWidth = ww - width - vw;
-		const css: any = { width: '' };
 
-		this.header.css(css).removeClass('withSidebar');
-		this.footer.css(css);
+		this.header.css({ width: '' }).removeClass('withSidebar');
+		this.footer.css({ width: '' });
 		this.dummy.css({ width: width + vw });
 
-		css.width = this.header.outerWidth() - width - vw;
-
-		if (width) {
-			this.header.addClass('withSidebar');
+		if (animate) {
+			this.header.addClass('sidebarAnimation');
+			this.page.addClass('sidebarAnimation');
+			this.footer.addClass('sidebarAnimation');
+			this.dummy.addClass('sidebarAnimation');
+		} else {
+			this.header.removeClass('sidebarAnimation');
+			this.page.removeClass('sidebarAnimation');
+			this.footer.removeClass('sidebarAnimation');
+			this.dummy.removeClass('sidebarAnimation');
 		};
+
+		width ? this.header.addClass('withSidebar') : this.header.removeClass('withSidebar');
 
 		this.page.css({ width: pageWidth });
 		this.loader.css({ width: pageWidth, right: 0 });
-		this.header.css(css);
-		this.footer.css(css);
+		this.header.css({ width: pageWidth });
+		this.footer.css({ width: pageWidth });
 
 		$(window).trigger('sidebarResize');
 	};
@@ -150,7 +160,6 @@ class Sidebar {
 		this.data = Object.assign<SidebarData, Partial<SidebarData>>(this.data, { width });
 
 		this.save();
-		this.resizePage();
 		this.setStyle(this.data);
 	};
 

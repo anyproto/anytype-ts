@@ -167,7 +167,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.apply();
 		S.Block.updateNumbers(rootId);
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');

@@ -257,7 +257,7 @@ const Vault = observer(class Vault extends React.Component {
 		container.css({ height: !isExpanded ? wh : '' });
 
 		this.isAnimating = true;
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 
 		window.setTimeout(() => this.isAnimating = false, 300);
 	};
