@@ -343,7 +343,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			this.loaded = true;
 			this.setLoading(false);
 		};
-		
+
 		if (this.loaded) {
 			cb();
 		} else {
@@ -502,16 +502,18 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		x = Math.max(-mx, Math.min(0, x));
 		y = Math.max(-my, Math.min(0, y));
 
-		const css: any = { transform: `translate3d(${x}px,${y}px,0px)` };
+		const px = x / this.rect.cw * 100;
+		const py = y / this.rect.ch * 100;
+		const css: any = { transform: `translate3d(${px}%,${py}%,0px)` };
 		
 		if (this.rect.ch < this.rect.height) {
 			css.transform = 'translate3d(0px,0px,0px)';
 			css.height = this.rect.height;
 			css.width = 'auto';
 		};
-		
+
 		this.cover.css(css);
-		return { x: x, y: y };
+		return { x, y };
 	};
 	
 	checkPercent (p: number): number {
