@@ -6,7 +6,7 @@ interface SidebarData {
 	isClosed: boolean;
 };
 
-const ANIMATION = 200;
+const ANIMATION = 250;
 
 class Sidebar {
 	
