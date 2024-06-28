@@ -143,7 +143,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 				if (w <= J.Size.sidebar.width.close) {
 					sidebar.close();
 				} else {
-					sidebar.set({ width: w, isClosed: false });
+					sidebar.setWidth(w);
 				};
 			};
 
@@ -152,7 +152,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					sidebar.open(J.Size.sidebar.width.min);
 				} else 
 				if (w > J.Size.sidebar.width.close) {
-					sidebar.set({ width: w, isClosed: false });
+					sidebar.setWidth(w);
 				};
 			};
 

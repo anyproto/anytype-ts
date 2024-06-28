@@ -89,6 +89,13 @@ class Sidebar {
 		};
 	};
 
+	setWidth (w: number): void {
+		w = this.limitWidth(w);
+
+		this.set({ width: w, isClosed: false });
+		this.resizePage(w, false);
+	};
+
 	private removeAnimation (callBack?: () => void): void {
 		if (!this.obj || !this.obj.length) {
 			return;
@@ -151,16 +158,14 @@ class Sidebar {
 		Storage.set('sidebar', this.data);
 	};
 
-	set (v: Partial<SidebarData>, force?: boolean): void {
+	set (v: Partial<SidebarData>): void {
 		v = Object.assign(this.data, v);
 
-		let { width } = v;
+		const { width } = v;
 
-		if (!force) {
-			width = this.limitWidth(width);
-		};
-
-		this.data = Object.assign<SidebarData, Partial<SidebarData>>(this.data, { width });
+		this.data = Object.assign<SidebarData, Partial<SidebarData>>(this.data, { 
+			width: this.limitWidth(width),
+		});
 
 		this.save();
 		this.setStyle(this.data);
