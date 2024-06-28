@@ -19,7 +19,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const { space } = S.Common;
 		const length = this.getChildren().length;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, data.identity));
-		const text = Mark.toHtml(data.text, data.marks);
+		const text = U.Common.lbBr(Mark.toHtml(data.text, data.marks));
 		const files = (data.files || []).map(id => S.Detail.get(J.Constant.subId.file, id));
 
 		return (
