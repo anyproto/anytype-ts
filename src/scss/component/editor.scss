@@ -177,13 +177,13 @@
 /* Chat */
 
 .editorWrapper.isChat {
-	.blocks { width: calc(100% - 96px); margin: 0px auto; padding: 0px; user-select: none; }
+	.blocks { width: 704px; margin: 0px auto; padding: 0px 0px 80px 0px; user-select: none; }
 	.blocks {
 		.block {
 			.wrapMenu { display: none; }
 			.wrapContent { width: 100%; }
 		}
-		.block.blockDataview { padding: 0px; }
+		.block.blockChat { padding: 0px; }
 
 		.editorControls { height: 52px; width: 100%; margin-bottom: 8px; padding: 0px 14px; }
 

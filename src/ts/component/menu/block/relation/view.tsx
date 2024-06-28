@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, U, Relation, analytics, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, Relation, analytics, keyboard, translate } from 'Lib';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -221,7 +221,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		if (idx < 0) {
 			const item = items.find(it => it.relationKey == relationKey);
 			const cb = () => {
-				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation'));
+				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation', { relationKey }));
 			};
 
 			if (item.scope == I.RelationScope.Type) {
@@ -230,7 +230,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				cb();
 			};
 		} else {
-			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation'));
+			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation', { relationKey }));
 		};
 	};
 
@@ -316,10 +316,13 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { rootId } = data;
 		const relation = S.Record.getRelationByKey(relationKey);
+		const object = S.Detail.get(rootId, rootId);
 
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
-		analytics.changeRelationValue(relation, value, 'menu');
+		if (JSON.stringify(object[relationKey]) !== JSON.stringify(value)) {
+			analytics.changeRelationValue(relation, value, 'menu');
+		};
 	};
 
 	scrollTo (relationKey: string) {
@@ -362,7 +365,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const maxOffset = isPopup ? 16 : 80;
 
 		obj.css({ 
-			height: container.height() - U.Common.sizeHeader() - maxOffset,
+			height: container.height() - J.Size.header - maxOffset,
 			width: Math.max(min, container.width() / 2 - offset),
 		});
 

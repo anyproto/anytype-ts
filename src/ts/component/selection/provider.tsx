@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { I, M, S, U, focus, keyboard, scrollOnMove } from 'Lib';
+import { I, M, S, U, J, focus, keyboard, scrollOnMove } from 'Lib';
 
 interface Props {
 	children?: React.ReactNode;
@@ -112,7 +112,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			const no = node.offset().top;
 			const nh = node.outerHeight();
 			const st = container.scrollTop();
-			const hh = U.Common.sizeHeader();
+			const hh = J.Size.header;
 			const y = isPopup ? (no - container.offset().top + st) : no;
 
 			if (y <= st + hh) {

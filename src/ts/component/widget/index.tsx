@@ -753,7 +753,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	getLimit ({ limit, layout }): number {
 		const { isPreview } = this.props;
-		const options = U.Menu.getWidgetLimits(layout).map(it => Number(it.id));
+		const options = U.Menu.getWidgetLimitOptions(layout).map(it => Number(it.id));
 
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];

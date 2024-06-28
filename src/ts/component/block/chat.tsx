@@ -267,8 +267,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				}
 			};
 
-			C.BlockCreate(rootId, target, position, param, (message: any) => {
+			C.BlockCreate(rootId, target, position, param, () => {
 				this.scrollToBottom();
+				this.refEditable.setRange({ from: 0, to: 0 });
 			});
 		};
 

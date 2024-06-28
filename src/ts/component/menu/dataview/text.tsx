@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable } from 'Component';
-import { I, U, keyboard, translate } from 'Lib';
+import { I, J, keyboard, translate } from 'Lib';
 
 const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 	
@@ -109,7 +109,7 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 		const obj = $(`#${getId()}`);
 		const input = obj.find('#input');
 		const wh = win.height();
-		const hh = U.Common.sizeHeader();
+		const hh = J.Size.header;
 		const cell = $(`#${cellId}`);
 
 		raf(() => {

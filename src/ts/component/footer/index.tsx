@@ -57,7 +57,7 @@ class Footer extends React.Component<Props> {
 			classNameWrap: 'fixed',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
-			offsetY: () => -($('#notifications').height() + 4),
+			offsetY: () => -($('#notifications').height() + 78),
 		});
 	};
 

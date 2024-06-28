@@ -655,8 +655,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const { getId } = this.props;
 		const obj = $(`#${getId()}`);
 		const { ww } = U.Common.getWindowDimensions();
-		const sidebar = $('#sidebar');
-		const sw = sidebar.outerWidth();
+		const sw = $('#sidebarDummy').outerWidth();
 		
 		obj.css({ width: '' });
 

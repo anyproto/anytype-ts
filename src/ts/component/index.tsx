@@ -22,6 +22,7 @@ import ListObjectManager from './list/objectManager';
 import Header from './header';
 import Footer from './footer';
 import Sidebar from './sidebar';
+import Vault from './vault';
 import Widget from './widget';
 
 import Menu from './menu';
@@ -87,6 +88,7 @@ import MediaVideo from './util/media/video';
 import MediaPdf from './util/media/pdf';
 
 import ProgressBar from './util/progressBar';
+import Share from './util/share';
 
 export {
 	Page,
@@ -158,6 +160,7 @@ export {
 	Cell,
 
 	Sidebar,
+	Vault,
 	Widget,
 
 	ObjectName,
@@ -172,5 +175,6 @@ export {
 	MediaVideo,
 	MediaPdf,
 
-	ProgressBar
+	ProgressBar,
+	Share
 };

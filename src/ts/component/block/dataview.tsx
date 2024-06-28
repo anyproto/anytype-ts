@@ -305,6 +305,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.unbind();
 
+		console.log('NAMESPACE', ns);
+
 		win.on(`resize.${ns} sidebarResize.${ns}`, () => this.resize());
 		win.on(`updateDataviewData.${ns}`, () => this.loadData(this.getView().id, 0, true));
 		win.on(`setDataviewSource.${ns}`, () => this.onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
@@ -847,16 +849,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return true;
 	};
 
-	onCellClick (e: any, relationKey: string, recordId: string) {
+	onCellClick (e: any, relationKey: string, recordId: string, record?: any) {
 		if (e.button) {
 			return;
 		};
 
+		if (!record) {
+			record = this.getRecord(recordId);
+		};
+
 		const selection = S.Common.getRef('selectionProvider');
 		const relation = S.Record.getRelationByKey(relationKey);
-		const id = Relation.cellId(this.getIdPrefix(), relationKey, recordId);
+		const id = Relation.cellId(this.getIdPrefix(), relationKey, record.id);
 		const ref = this.refCells.get(id);
-		const record = this.getRecord(recordId);
 		const view = this.getView();
 
 		if (!relation || !ref || !record) {
@@ -886,8 +891,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const subId = this.getSubId();
 		const relation = S.Record.getRelationByKey(relationKey);
+		const record = this.getRecord(id);
 
-		if (!relation) {
+		if (!record || !relation) {
 			return;
 		};
 
@@ -899,7 +905,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], callBack);
 
-		analytics.changeRelationValue(relation, value, 'dataview');
+		if (JSON.stringify(record[relationKey]) !== JSON.stringify(value)) {
+			analytics.changeRelationValue(relation, value, 'dataview');
+		};
 	};
 
 	onContext (e: any, id: string): void {

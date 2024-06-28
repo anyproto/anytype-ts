@@ -49,13 +49,8 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const object = S.Detail.get(rootId, rootId, []);
-			const isCollection = object.layout == I.ObjectLayout.Collection;
 			const children = S.Block.getChildren(rootId, rootId, it => it.isChat());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
-			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
-
-			console.log(S.Block.getChildren(rootId, rootId));
 
 			content = (
 				<React.Fragment>
@@ -66,7 +61,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 						<HeadSimple 
 							{...this.props} 
 							ref={ref => this.refHead = ref} 
-							placeholder={placeholder} rootId={rootId} 
+							placeholder={translate('defaultNamePage')} rootId={rootId} 
 						/>
 
 						{children.map((block: I.Block, i: number) => (
@@ -282,7 +277,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 			const cover = node.find('.block.blockCover');
 			const container = U.Common.getPageContainer(isPopup);
 			const header = container.find('#header');
-			const hh = isPopup ? header.height() : U.Common.sizeHeader();
+			const hh = isPopup ? header.height() : J.Size.header;
 
 			if (cover.length) {
 				cover.css({ top: hh });

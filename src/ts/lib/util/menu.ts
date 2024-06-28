@@ -106,7 +106,7 @@ class UtilMenu {
 	};
 
 	getBlockObject () {
-		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
+		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true, withChat: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
 			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }
@@ -127,18 +127,6 @@ class UtilMenu {
 				isHidden: type.isHidden,
 			});
 		};
-
-		ret.push({ 
-			id: `object${i++}`, 
-			type: I.BlockType.Page,
-			objectTypeId: '', 
-			iconEmoji: '', 
-			name: 'Chat', 
-			description: '',
-			isObject: true,
-			isHidden: false,
-			isChat: true,
-		});
 
 		return ret.map(this.mapperBlock);
 	};
@@ -375,7 +363,7 @@ class UtilMenu {
 		});
 	};
 
-	getWidgetLimits (layout: I.WidgetLayout) {
+	getWidgetLimitOptions (layout: I.WidgetLayout) {
 		let options = [];
 		switch (layout) {
 			default: {
@@ -389,6 +377,53 @@ class UtilMenu {
 			};
 		};
 		return options.map(id => ({ id: String(id), name: id }));
+	};
+
+	getWidgetLayoutOptions (target: any) {
+		const isCollection = this.isWidgetCollection(target?.id);
+		
+		let options = [
+			I.WidgetLayout.Compact,
+			I.WidgetLayout.List,
+			I.WidgetLayout.Tree,
+		];
+		if (!isCollection) {
+			options.push(I.WidgetLayout.Link);
+		};
+
+		if (target) {
+			if (!isCollection) {
+				const isSet = U.Object.isSetLayout(target.layout);
+				const setLayouts = U.Object.getSetLayouts();
+				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
+
+				// Sets can only become Link and List layouts, non-sets can't become List
+				if (treeSkipLayouts.includes(target.layout)) {
+					options = options.filter(it => it != I.WidgetLayout.Tree);
+				};
+				if (!isSet) {
+					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it) );
+				} else {
+					options = [ I.WidgetLayout.View, I.WidgetLayout.Link ];
+				};
+			};
+
+			if ([ J.Constant.widgetId.set, J.Constant.widgetId.collection ].includes(target.id)) {
+				options = options.filter(it => it != I.WidgetLayout.Tree);
+			};
+		};
+
+		return options.map(id => ({
+			id,
+			name: translate(`widget${id}Name`),
+			description: translate(`widget${id}Description`),
+			icon: `widget-${id}`,
+			withDescription: true,
+		}));
+	};
+
+	isWidgetCollection (id: string) {
+		return id && Object.values(J.Constant.widgetId).includes(id);
 	};
 
 	getCoverColors () {

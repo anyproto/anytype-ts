@@ -406,13 +406,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { close, param } = this.props;
 		const { data } = param;
 		const { deleteCommand } = data;
+		const relation = this.getRelation();
 
 		if (deleteCommand) {
 			deleteCommand();
 		};
 
 		close();
-		analytics.event('DeleteRelation');
+		analytics.event('DeleteRelation', { relationKey: relation?.relationKey });
 	};
 
 	onSubmit (e: any) {

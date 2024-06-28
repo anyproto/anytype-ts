@@ -6,6 +6,7 @@ export default {
 	image: 1920,
 	cover: 1920,
 	menuBorder: 10,
+	header: 52,
 
 	sidebar: {
 		width: { min: 240, max: 500, default: 336, close: 180 }

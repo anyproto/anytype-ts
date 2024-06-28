@@ -561,7 +561,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 
 				const onCreate = () => {
-					window.setTimeout(() => { $(window).trigger(`updateDataviewData.${block.id}`); }, 50);
+					window.setTimeout(() => $(window).trigger(`updateDataviewData`), 50);
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {

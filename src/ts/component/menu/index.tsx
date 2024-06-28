@@ -42,7 +42,6 @@ import MenuTypeSuggest from './type/suggest';
 
 import MenuGraphSettings from './graph/settings';
 import MenuWidget from './widget';
-import MenuSpace from './space';
 import MenuObject from './object';
 
 import MenuDataviewRelationList from './dataview/relation/list';
@@ -122,7 +121,6 @@ const Components: any = {
 
 	graphSettings:			 MenuGraphSettings,
 	widget:					 MenuWidget,
-	space:					 MenuSpace,
 	object:					 MenuObject,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
@@ -446,7 +444,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	getBorderTop () {
-		return Number(window.AnytypeGlobalConfig?.menuBorderTop) || U.Common.sizeHeader();
+		return Number(window.AnytypeGlobalConfig?.menuBorderTop) || J.Size.header;
 	};
 	
 	getBorderBottom () {

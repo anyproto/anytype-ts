@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
-import { I, C, S, Relation, analytics, keyboard, translate } from 'Lib';
+import { I, C, S, U, Relation, analytics, keyboard, translate } from 'Lib';
 
 const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	
@@ -137,7 +137,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { readonly, blockId } = data;
+		const { readonly } = data;
 
 		if ((item.itemId != 'type') || readonly) {
 			return;
@@ -163,10 +163,11 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { objectId, blockId } = data;
+		const ns = blockId + U.Common.getEventNamespace(keyboard.isPopup());
 
 		C.ObjectSetSource(objectId, value, () => {
 			if (blockId) {
-				$(window).trigger(`updateDataviewData.${blockId}`);
+				$(window).trigger(`updateDataviewData`);
 			};
 
 			if (callBack) {
