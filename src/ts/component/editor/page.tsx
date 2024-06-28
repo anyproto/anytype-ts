@@ -2248,7 +2248,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.width = width;
 
 		if (animate) {
-			node.addClass('anim');
+			node.addClass('withAnimation');
 		};
 
 		node.css({ width });
@@ -2260,7 +2260,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		if (animate) {
-			window.setTimeout(() => node.removeClass('anim'), 200);
+			window.setTimeout(() => node.removeClass('withAnimation'), 250);
 		};
 	};
 
