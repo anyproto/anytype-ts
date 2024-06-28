@@ -411,23 +411,23 @@ class Dataview {
 		];
 		const details: any = {};
 
-		let group = null;
-
-		if (groupId) {
-			group = S.Record.getGroup(rootId, blockId, groupId);
-			if (group) {
-				details[view.groupRelationKey] = group.value;
-			};
-		};
-
 		if (relations.length) {
-			relations.forEach((it: any) => {
-				details[it.relationKey] = Relation.formatValue(it, null, true);
+			relations.forEach(it => {
+				details[it.relationKey] = Relation.formatValue(it, details[it.relationKey] || null, true);
 			});
 		};
 
-		if ((view.type == I.ViewType.Calendar) && view.groupRelationKey) {
-			details[view.groupRelationKey] = U.Date.now();
+		if (view.groupRelationKey && ('undefined' == typeof(details[view.groupRelationKey]))) {
+			if (groupId) {
+				const group = S.Record.getGroup(rootId, blockId, groupId);
+				if (group) {
+					details[view.groupRelationKey] = group.value;
+				};
+			};
+
+			if (view.type == I.ViewType.Calendar) {
+				details[view.groupRelationKey] = U.Date.now();
+			};
 		};
 
 		for (const filter of view.filters) {

@@ -373,7 +373,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				return;
 			};
 
-			details = Object.assign(details, Dataview.getDetails(rootId, J.Constant.blockId.dataview, object.id, viewId));
+			details = Object.assign(Dataview.getDetails(rootId, J.Constant.blockId.dataview, object.id, viewId), details);
 			flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 			typeKey = type.uniqueKey;
 			templateId = view.defaultTemplateId || type.defaultTemplateId;
