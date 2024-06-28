@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { U, S, keyboard, translate, analytics, Storage, sidebar, Preview } from 'Lib';
+import { I, U, S, keyboard, translate, analytics, Storage, sidebar, Preview } from 'Lib';
 
 const Vault = observer(class Vault extends React.Component {
 	
@@ -50,7 +50,7 @@ const Vault = observer(class Vault extends React.Component {
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
 					<div className="iconWrap">
-						<IconObject object={item} size={48} forceLetter={true} tooltip={item.name} />
+						<IconObject object={item} size={48} forceLetter={true} />
 						{icon ? <Icon className={icon} /> : ''}
 					</div>
 					<div className="coverWrap">
@@ -282,7 +282,14 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		Preview.tooltipShow({ text: item.name, element: $(e.currentTarget) })
+		Preview.tooltipShow({ 
+			title: item.name, 
+			element: $(e.currentTarget), 
+			className: 'big', 
+			typeX: I.MenuDirection.Left,
+			typeY: I.MenuDirection.Center,
+			offsetX: 66,
+		})
 		
 		window.clearTimeout(this.timeoutHover);
 		this.setLine(item.id);

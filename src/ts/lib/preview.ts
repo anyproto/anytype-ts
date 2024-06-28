@@ -11,7 +11,9 @@ interface TooltipParam {
 	text: string;
 	element: JQuery<HTMLElement>;
 	typeX: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
-	typeY: I.MenuDirection.Top | I.MenuDirection.Bottom;
+	typeY: I.MenuDirection.Top | I.MenuDirection.Center | I.MenuDirection.Bottom;
+	offsetX: number;
+	offsetY: number;
 	delay: number;
 	className?: string;
 	title?: string;
@@ -46,6 +48,8 @@ class Preview {
 		const typeX = Number(param.typeX) || I.MenuDirection.Center;
 		const typeY = Number(param.typeY) || I.MenuDirection.Top;
 		const delay = Number(param.delay) || DELAY_TOOLTIP;
+		const offsetX = Number(param.offsetX) || 0;
+		const offsetY = Number(param.offsetY) || 0;
 		const text = String(param.text || '').replace(/\\n/g, '\n');
 
 		if (!element.length || keyboard.isResizing) {
@@ -63,34 +67,32 @@ class Preview {
 			const ew = element.outerWidth();
 			const eh = element.outerHeight();
 			const { ww } = U.Common.getWindowDimensions();
-			const node = $('<div class="tooltip anim"><div class="txt"></div></div>');
+			const node = $(`<div class="tooltip anim"><div class="txt">${U.Common.lbBr(text)}</div></div>`);
 
 			if (param.className) {
 				node.addClass(param.className);
 			};
 
 			if (param.title) {
-				node.prepend('<div class="title"></div>');
-				node.find('.title').html(param.title);
+				node.prepend(`<div class="title">${param.title}</div>`);
 			};
 
-			node.find('.txt').html(U.Common.lbBr(text));
 			obj.html('').append(node);
 			
 			const ow = node.outerWidth();
 			const oh = node.outerHeight();
 
-			let x = left;
-			let y = top;
+			let x = left + offsetX;
+			let y = top + offsetY;
 
 			switch (typeX) {
 				default:
-				case I.MenuDirection.Center: {
-					x += ew / 2 - ow / 2;
+				case I.MenuDirection.Left: {
 					break;
 				};
 
-				case I.MenuDirection.Left: {
+				case I.MenuDirection.Center: {
+					x += ew / 2 - ow / 2;
 					break;
 				};
 
@@ -109,6 +111,11 @@ class Preview {
 				
 				case I.MenuDirection.Bottom: {
 					y += eh + 6 - st;
+					break;
+				};
+
+				case I.MenuDirection.Center: {
+					y -= oh / 2 - eh / 2;
 					break;
 				};
 			};
