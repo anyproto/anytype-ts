@@ -8,6 +8,12 @@
 
 .sidebarAnimation { transition: width 0.2s ease-in-out; }
 
+#sidebarToggle { 
+	width: 28px; height: 28px; background-size: 20px; border-radius: 6px; position: fixed; left: 92px; top: 12px; 
+	background-image: url('~img/icon/widget/toggle0.svg'); z-index: 22; -webkit-app-region: no-drag;
+}
+#sidebarToggle:hover { background-color: var(--color-shape-highlight-medium); background-image: url('~img/icon/widget/toggle1.svg'); }
+
 .sidebar {
 	position: fixed; background-color: var(--color-shape-tertiary); z-index: 21; user-select: none; transition: none; top: 0px; left: $vaultWidthCollapsed; height: 100%;
 	transform: translate3d(0px,0px,0px);

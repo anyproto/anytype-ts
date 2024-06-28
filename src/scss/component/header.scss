@@ -51,16 +51,19 @@
 	.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
 	.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
 
-	.icon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }
-	.icon.toggle:hover { background-image: url('~img/icon/widget/toggle1.svg'); }
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
 	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 	.icon.lock { width: 8px; height: 20px; background-size: 100%; background-color: none; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
 }
-.header.withSidebar {
-	.icon.toggle { display: none; }
+
+.header.sidebarAnimation {
+	.side.left { transition: padding-left 0.2s ease-in-out; }
+}
+
+.header:not(.withSidebar) {
+	.side.left { padding-left: 52px; }
 }
 
 .header.authIndex { height: 52px; }

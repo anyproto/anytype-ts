@@ -33,34 +33,43 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		const cmd = keyboard.cmdSymbol();
 
         return (
-            <div 
-				ref={node => this.node = node}
-                id="sidebar" 
-                className={cn.join(' ')} 
-            >
-				<div className="inner">
-					<div className="head">
-						<Icon
-							className="toggle"
-							tooltip={translate('sidebarToggle')}
-							tooltipCaption={`${cmd} + \\, ${cmd} + .`}
-							tooltipY={I.MenuDirection.Bottom}
-							onClick={() => sidebar.toggleOpenClose()}
-						/>
+			<React.Fragment>
+				<Icon 
+					id="sidebarToggle"
+					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+					tooltipY={I.MenuDirection.Bottom}
+					onClick={() => sidebar.toggleOpenClose()}
+				/>
+
+				<div 
+					ref={node => this.node = node}
+					id="sidebar" 
+					className={cn.join(' ')} 
+				>
+					<div className="inner">
+						<div className="head">
+							<Icon
+								className="toggle"
+								tooltip={translate('sidebarToggle')}
+								tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+								tooltipY={I.MenuDirection.Bottom}
+								onClick={() => sidebar.toggleOpenClose()}
+							/>
+						</div>
+
+						<div 
+							ref={ref => this.refBody = ref}
+							className="body"
+						>
+							<ListWidget ref={ref => this.refList = ref} {...this.props} />
+						</div>
 					</div>
 
-					<div 
-						ref={ref => this.refBody = ref}
-						className="body"
-					>
-						<ListWidget ref={ref => this.refList = ref} {...this.props} />
+					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
+						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>
 				</div>
-
-				<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
-					<div className="resize-handle" onClick={this.onHandleClick} />
-				</div>
-            </div>
+			</React.Fragment>
 		);
     };
 
