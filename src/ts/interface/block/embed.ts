@@ -23,6 +23,7 @@ export enum EmbedProcessor {
 	Kroki 			 = 19,
 	Graphviz		 = 20,
 	Sketchfab		 = 21,
+	Image			 = 22,
 };
 
 export interface ContentEmbed {
