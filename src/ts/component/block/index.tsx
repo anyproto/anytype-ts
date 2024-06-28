@@ -149,7 +149,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.File: {
-				if (content.state == I.BookmarkState.Done) {
+				const object = S.Detail.get(rootId, content.targetObjectId, [ 'isDeleted' ], true);
+				
+				if (!object.isDeleted && (content.state == I.BookmarkState.Done)) {
 					cn.push('withContent');
 				};
 
@@ -203,7 +205,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.Link: {
-				const object = S.Detail.get(rootId, content.targetBlockId, [ 'restrictions' ]);
+				const object = S.Detail.get(rootId, content.targetBlockId, [ 'restrictions' ], true);
 				
 				if (S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;
@@ -216,13 +218,13 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Bookmark: {
-				const object = S.Detail.get(rootId, content.targetObjectId, [ 'restrictions' ]);
+				const object = S.Detail.get(rootId, content.targetObjectId, [ 'restrictions', 'isDeleted' ], true);
 				
 				if (S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;
 				};
 
-				if (content.state == I.BookmarkState.Done) {
+				if (!object.isDeleted && (content.state == I.BookmarkState.Done)) {
 					cn.push('withContent');
 				};
 

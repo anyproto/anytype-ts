@@ -27,9 +27,10 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	};
 
 	render () {
-		const { block, readonly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { width } = block.fields || {};
 		const { state, targetObjectId } = block.content;
+		const object = S.Detail.get(rootId, targetObjectId, []);
 		const css: any = {};
 		
 		if (width) {
@@ -37,45 +38,57 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 		};
 		
 		let element = null;
-		switch (state) {
-			default:
-			case I.FileState.Empty:
-				element = (
-					<React.Fragment>
-						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="image" 
-							textFile={translate('blockImageUpload')} 
-							accept={J.Constant.fileExtension.image} 
-							onChangeUrl={this.onChangeUrl} 
-							onChangeFile={this.onChangeFile} 
-							readonly={readonly} 
-						/>
-					</React.Fragment>
-				);
-				break;
-				
-			case I.FileState.Uploading:
-				element = <Loader />;
-				break;
-				
-			case I.FileState.Done:
-				element = (
-					<div id="wrap" className="wrap" style={css}>
-						<img 
-							className="mediaImage" 
-							src={S.Common.imageUrl(targetObjectId, J.Size.image)} 
-							onDragStart={e => e.preventDefault()} 
-							onClick={this.onClick} 
-							onLoad={this.onLoad} 
-							onError={this.onError} 
-						/>
-						<Icon className="download" onClick={this.onDownload} />
-						<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
-					</div>
-				);
-				break;
+		if (object.isDeleted) {
+			element = (
+				<div className="deleted">
+					<Icon className="ghost" />
+					<div className="name">{translate('commonDeletedObject')}</div>
+				</div>
+			);
+		} else {
+			switch (state) {
+				default:
+				case I.FileState.Empty: {
+					element = (
+						<React.Fragment>
+							{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
+							<InputWithFile 
+								block={block} 
+								icon="image" 
+								textFile={translate('blockImageUpload')} 
+								accept={J.Constant.fileExtension.image} 
+								onChangeUrl={this.onChangeUrl} 
+								onChangeFile={this.onChangeFile} 
+								readonly={readonly} 
+							/>
+						</React.Fragment>
+					);
+					break;
+				};
+					
+				case I.FileState.Uploading: {
+					element = <Loader />;
+					break;
+				};
+					
+				case I.FileState.Done: {
+					element = (
+						<div id="wrap" className="wrap" style={css}>
+							<img 
+								className="mediaImage" 
+								src={S.Common.imageUrl(targetObjectId, J.Size.image)} 
+								onDragStart={e => e.preventDefault()} 
+								onClick={this.onClick} 
+								onLoad={this.onLoad} 
+								onError={this.onError} 
+							/>
+							<Icon className="download" onClick={this.onDownload} />
+							<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
+						</div>
+					);
+					break;
+				};
+			};
 		};
 		
 		return (
