@@ -8,7 +8,7 @@
 .navigationPanel.hide * { pointer-events: none; }
 
 .navigationPanel {
-	.inner { display: flex; flex-direction: row; gap: 0px 24px; align-items: center; justify-content: center; position: relative; z-index: 1; }
+	.inner { display: flex; flex-direction: row; gap: 0px 20px; align-items: center; justify-content: center; position: relative; z-index: 1; }
 
 	.iconWrap { 
 		width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; 

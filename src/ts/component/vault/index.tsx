@@ -1,4 +1,5 @@
 import * as React from 'react';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -10,6 +11,8 @@ const Vault = observer(class Vault extends React.Component {
 	node = null;
 	isAnimating = false;
 	top = 0;
+	timeoutHover = 0;
+	id = '';
 
 	constructor (props) {
 		super(props);
@@ -42,6 +45,8 @@ const Vault = observer(class Vault extends React.Component {
 					id={`item-${item.id}`}
 					className={cn.join(' ')}
 					onClick={e => this.onClick(e, item)}
+					onMouseEnter={e => this.onMouseEnter(e, item)}
+					onMouseLeave={() => this.onMouseLeave()}
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
 					<div className="iconWrap">
@@ -66,8 +71,8 @@ const Vault = observer(class Vault extends React.Component {
 				id={`item-${item.id}`} 
 				className={`item ${item.id}`} 
 				onClick={e => this.onClick(e, item)}
-				onMouseEnter={e => Preview.tooltipShow({ text: item.name, element: $(e.currentTarget) })}
-				onMouseLeave={() => Preview.tooltipHide()}
+				onMouseEnter={e => this.onMouseEnter(e, item)}
+				onMouseLeave={() => this.onMouseLeave()}
 			>
 				<div className="iconWrap" />
 				<div className="infoWrap">
@@ -81,8 +86,8 @@ const Vault = observer(class Vault extends React.Component {
 				id={`item-${item.id}`} 
 				className={`item ${item.id}`} 
 				onClick={e => this.onClick(e, item)}
-				onMouseEnter={e => Preview.tooltipShow({ text: item.name, element: $(e.currentTarget) })}
-				onMouseLeave={() => Preview.tooltipHide()}
+				onMouseEnter={e => this.onMouseEnter(e, item)}
+				onMouseLeave={() => this.onMouseLeave()}
 			>
 				<div className="iconWrap" />
 			</div>
@@ -137,6 +142,8 @@ const Vault = observer(class Vault extends React.Component {
 							<div className="iconWrap" />
 						</div>
 					</div>
+
+					<div id="line" className="line" />
 				</div>	
             </div>
 		);
@@ -149,6 +156,7 @@ const Vault = observer(class Vault extends React.Component {
 
 	componentWillUnmount(): void {
 		this.unbind();
+		window.clearTimeout(this.timeoutHover);
 	};
 
 	unbind () {
@@ -271,6 +279,64 @@ const Vault = observer(class Vault extends React.Component {
 
 		keyboard.disableSelection(false);
 		this.forceUpdate();
+	};
+
+	onMouseEnter (e: any, item: any) {
+		Preview.tooltipShow({ text: item.name, element: $(e.currentTarget) })
+		
+		window.clearTimeout(this.timeoutHover);
+		this.setLine(item.id);
+	};
+
+	onMouseLeave () {
+		Preview.tooltipHide();
+
+		window.clearTimeout(this.timeoutHover);
+		this.timeoutHover = window.setTimeout(() => this.unsetLine(), 40);	
+	};
+
+	setLine (id: string) {
+		const node = $(this.node);
+		const line = node.find('#line');
+		const el = node.find(`#item-${id}`);
+		if (!el.length) {
+			return;
+		};
+
+		const top = el.position().top;
+
+		if (this.id) {
+			line.css({ transform: `translate3d(0px,${top}px,0px)`});
+		} else {
+			line.removeClass('anim');
+			line.css({ transform: `translate3d(-100%,${top}px,0px)`});
+
+			raf(() => {
+				line.addClass('anim');
+				line.css({ transform: `translate3d(0px,${top}px,0px)`});
+			});
+		};
+
+		this.id = id;
+	};
+
+	unsetLine () {
+		if (!this.id) {
+			return;
+		};
+
+		const node = $(this.node);
+		const line = node.find('#line');
+		const el = node.find(`#item-${this.id}`);
+
+		if (!el.length) {
+			return;
+		};
+
+		line.addClass('anim');
+		line.css({ transform: `translate3d(-100%,${el.position().top}px,0px)`});
+
+		this.id = '';
 	};
 
 	resize () {
