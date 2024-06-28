@@ -28,26 +28,28 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 				id={`item-${id}`} 
 				className="message"
 			>
-				<div className="info">
-					<div className="author">
-						<IconObject object={author} />
-						<ObjectName object={author} />
-					</div>
-					<div className="time">{U.Date.date('H:i', data.time)}</div>
+				<div className="side left">
+					<IconObject object={author} size={48} />
 				</div>
-
-				<div className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}></div>
-
-				{files.length ? (
-					<div className="files">
-						{files.map((item: any, i: number) => (
-							<IconObject key={i} object={item} size={48} onClick={() => U.Object.openPopup(item)} />
-						))}
+				<div className="side right">
+					<div className="author">
+						<ObjectName object={author} />
+						<div className="time">{U.Date.date('H:i', data.time)}</div>
 					</div>
-				) : ''}
 
-				<div className="sub" onClick={() => onThread(id)}>
-					{!isThread ? <div className="item">{length} replies</div> : ''}
+					<div className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}></div>
+
+					{files.length ? (
+						<div className="files">
+							{files.map((item: any, i: number) => (
+								<IconObject key={i} object={item} size={48} onClick={() => U.Object.openPopup(item)} />
+							))}
+						</div>
+					) : ''}
+
+					<div className="sub" onClick={() => onThread(id)}>
+						{!isThread ? <div className="item">{length} replies</div> : ''}
+					</div>
 				</div>
 			</div>
 		);

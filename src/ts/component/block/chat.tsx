@@ -60,10 +60,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
 			>
-				<div className="head">
-					{threadId ? <div className="item" onClick={() => this.onThread('')}>Back</div> : ''}
-				</div>
-
 				<div ref={ref => this.refList = ref} className="scrollWrap">
 					<div className="scroll">
 						{messages.map((item: any) => (
