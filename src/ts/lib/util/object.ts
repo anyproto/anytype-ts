@@ -305,6 +305,14 @@ class UtilObject {
 		return layout == I.ObjectLayout.Participant;
 	};
 
+	isTaskLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Task;
+	};
+
+	isBookmarkLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Bookmark;
+	};
+
 	getPageLayouts (): I.ObjectLayout[] {
 		return [ 
 			I.ObjectLayout.Page, 

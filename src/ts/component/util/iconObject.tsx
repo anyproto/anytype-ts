@@ -340,7 +340,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			Preview.tooltipShow({ text: tooltip, element: node, typeY: tooltipY });
 		};
 
-		if (canEdit && (object.layout == I.ObjectLayout.Task)) {
+		if (canEdit && U.Object.isTaskLayout(object.layout)) {
 			node.find('#checkbox').attr({ src: object.done ? CheckboxTask[tc][2] : CheckboxTask[tc][1] });
 		};
 		
@@ -357,7 +357,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		
 		Preview.tooltipHide(false);
 
-		if (canEdit && (object.layout == I.ObjectLayout.Task)) {
+		if (canEdit && U.Object.isTaskLayout(object.layout)) {
 			node.find('#checkbox').attr({ src: object.done ? CheckboxTask[tc][2] : CheckboxTask[tc][0] });
 		};
 		

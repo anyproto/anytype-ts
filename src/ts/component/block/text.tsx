@@ -482,14 +482,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			const smile = item.find('smile');
-			const name = item.find('name');
-
 			if (!smile.length) {
 				return;
 			};
 
 			const object = S.Detail.get(rootId, data.param, []);
-			const { _empty_, layout, done, isDeleted, isArchived } = object;
+			const { id, _empty_, layout, done, isDeleted, isArchived } = object;
+			const isTask = U.Object.isTaskLayout(layout);
+			const name = item.find('name');
+			const clickable = isTask ? item.find('name') : item;
 
 			let icon = null;
 			if (_empty_) {
@@ -500,10 +501,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						id={`mention-${block.id}-${i}`}
 						size={size} 
 						object={object} 
-						canEdit={!isArchived} 
-						onSelect={icon => this.onMentionSelect(object.id, icon)} 
-						onUpload={objectId => this.onMentionUpload(object.id, objectId)} 
-						onCheckbox={() => this.onMentionCheckbox(object.id, !done)}
+						canEdit={!isArchived && isTask} 
+						onSelect={icon => this.onMentionSelect(id, icon)} 
+						onUpload={objectId => this.onMentionUpload(id, objectId)} 
+						onCheckbox={() => this.onMentionCheckbox(id, !done)}
 					/>
 				);
 			};
@@ -522,8 +523,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				};
 			});
 
-			name.off('mouseenter.mention');
-			name.on('mouseenter.mention', e => {
+			clickable.off('mouseenter.mention');
+			clickable.on('mouseenter.mention', e => {
 				const sr = U.Common.getSelectionRange();
 				if (sr && !sr.collapsed) {
 					return;
@@ -538,7 +539,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 				const object = S.Detail.get(rootId, param, []);
 
-				name.off('click.mention').on('click.mention', e => {
+				clickable.off('click.mention').on('click.mention', e => {
 					e.preventDefault();
 					U.Object.openEvent(e, object);
 				});
