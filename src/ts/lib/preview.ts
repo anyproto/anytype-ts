@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
 import { I, S, U, J, keyboard } from 'Lib';
-import { Share } from 'Component';
 
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
@@ -115,7 +114,7 @@ class Preview {
 				};
 
 				case I.MenuDirection.Center: {
-					y -= oh / 2 - eh / 2;
+					y -= oh / 2 - eh / 2 + st;
 					break;
 				};
 			};
