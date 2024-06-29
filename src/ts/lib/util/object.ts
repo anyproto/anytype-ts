@@ -139,8 +139,8 @@ class UtilObject {
 		window.setTimeout(() => S.Popup.open('page', param), S.Popup.getTimeout());
 	};
 
-	openConfig (object: any) {
-		S.Common.fullscreenObject ? this.openAuto(object) : this.openPopup(object);
+	openConfig (object: any, param?: any) {
+		S.Common.fullscreenObject ? this.openAuto(object, param) : this.openPopup(object, param);
 	};
 
 	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {

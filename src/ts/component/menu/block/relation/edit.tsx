@@ -385,7 +385,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 	onOpen (e: any) {
 		this.props.close();
-		U.Object.openPopup(this.getRelation());
+		U.Object.openConfig(this.getRelation());
 	};
 
 	onCopy (e: any) {

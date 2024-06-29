@@ -79,7 +79,7 @@ class MenuTemplateContext extends React.Component<I.Menu> {
 			};
 
 			case 'edit': {
-				U.Object.openPopup(template, {
+				U.Object.openConfig(template, {
 					onClose: () => $(window).trigger(`updatePreviewObject.${template.id}`)
 				});
 
