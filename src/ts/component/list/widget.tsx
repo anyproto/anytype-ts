@@ -207,22 +207,18 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	onAdd (e: any): void {
 		e.stopPropagation();
 
-		const { widgets } = S.Block;
-		const position = I.BlockPosition.Top;
-		const templateType = S.Record.getTemplateType();
-		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
-		];
-
-		S.Menu.open('searchObject', {
+		S.Menu.open('searchObjectWidgetAdd', {
+			component: 'searchObject',
 			element: '#widget-list-add',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			offsetY: -2,
+			offsetY: -4,
 			vertical: I.MenuDirection.Top,
 			data: {
-				filters,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
+				],
 				canAdd: true,
 				dataChange: (items: any[]) => {
 					const fixed: any[] = [
@@ -236,7 +232,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 				},
 				onSelect: (target) => {
 					const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
-					const layoutOptions = U.Menu.getWidgetLayoutOptions(target);
+					const layoutOptions = U.Menu.getWidgetLayoutOptions(target.id, target.layout);
 					const newBlock = { 
 						type: I.BlockType.Link,
 						content: { 
@@ -244,13 +240,13 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 						},
 					};
 
-					C.BlockCreateWidget(widgets, '', newBlock, position, layoutOptions[0].id, Number(limitOptions[0].id), (message: any) => {
+					C.BlockCreateWidget(S.Block.widgets, '', newBlock, I.BlockPosition.Top, layoutOptions[0].id, Number(limitOptions[0].id), (message: any) => {
 						if (!message.error.code) {
 							analytics.event('AddWidget', { type: I.WidgetLayout.Link });
 						};
 					});					
 				},
-			}
+			},
 		});
 	};
 
