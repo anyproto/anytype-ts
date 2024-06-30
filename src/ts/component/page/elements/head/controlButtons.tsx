@@ -140,7 +140,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		if (U.Data.coverIsImage(coverType)) {
 			options.push({ id: 'position', icon: 'coverPosition', name: translate('pageHeadControlButtonsReposition') });
 		};
-		if ((coverType == I.CoverType.Upload) && coverId) {
+		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType) && coverId) {
 			options.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
 		};
 
