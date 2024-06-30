@@ -867,14 +867,7 @@ class UtilCommon {
 			return s;
 		};
 
-		const tags = [ 'b', 'br', 'a', 'ul', 'li', 'h1', 'span', 'p', 'name', 'smile', 'img' ];
-
-		for (const i in I.MarkType) {
-			if (isNaN(I.MarkType[i] as any)) {
-				continue;
-			};
-			tags.push(Mark.getTag(I.MarkType[i] as any));
-		};
+		const tags = [ 'b', 'br', 'a', 'ul', 'li', 'h1', 'span', 'p', 'name', 'smile', 'img' ].concat(Object.values(Mark.getTags()));
 
 		return DOMPurify.sanitize(s, { 
 			ADD_TAGS: tags,

@@ -1,16 +1,6 @@
 import $ from 'jquery';
 import { I, U, J, analytics } from 'Lib';
 
-const Tags = {};
-
-for (const i in I.MarkType) {
-	if (isNaN(Number(i))) {
-		continue;
-	};
-
-	Tags[i] = `markup${I.MarkType[i].toLowerCase()}`;
-};
-
 const Patterns = {
 	'-→': '⟶',
 	'—>': '⟶',
@@ -72,7 +62,7 @@ class Mark {
 			});
 		};
 	};
-	
+
 	toggle (marks: I.Mark[], mark: I.Mark): I.Mark[] {
 		if ((mark.type === null) || (mark.range.from == mark.range.to)) {
 			return marks;	
@@ -322,7 +312,7 @@ class Mark {
 			};
 
 			const attr = this.paramToAttr(mark.type, param);
-			const tag = Tags[mark.type];
+			const tag = this.getTag(mark.type);
 			const data = [ `data-range="${mark.range.from}-${mark.range.to}"` ];
 			
 			if (param) {
@@ -402,7 +392,8 @@ class Mark {
 	};
 	
 	fromHtml (html: string, restricted: I.MarkType[]): { marks: I.Mark[], text: string, adjustMarks: boolean } {
-		const rh = new RegExp(`<(\/)?(${Object.values(Tags).join('|')})(?:([^>]*)>|>)`, 'ig');
+		const tags = this.getTags();
+		const rh = new RegExp(`<(\/)?(${Object.values(tags).join('|')})(?:([^>]*)>|>)`, 'ig');
 		const rp = new RegExp('data-param="([^"]*)"', 'i');
 		const obj = this.cleanHtml(html);
 		const marks: I.Mark[] = [];
@@ -450,7 +441,7 @@ class Mark {
 
 			const end = p1 == '/';
 			const offset = Number(text.indexOf(s)) || 0;
-			const type = Object.values(Tags).indexOf(p2);
+			const type = Object.values(tags).indexOf(p2);
 
 			if (type < 0) {
 				return;
@@ -684,8 +675,21 @@ class Mark {
 		};
 	};
 
+	getTags () {
+		const tags: any = {};
+
+		for (const i in I.MarkType) {
+			if (isNaN(I.MarkType[i] as any)) {
+				continue;
+			};
+			tags[i] = this.getTag(I.MarkType[i] as any);
+		};
+
+		return tags;
+	};
+
 	getTag (t: I.MarkType) {
-		return Tags[t];
+		return `markup${I.MarkType[t].toLowerCase()}`;
 	};
 	
 };
