@@ -104,10 +104,10 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 						onClick={e => onCellClick(e, relationKey, object.id)}
 						onCellChange={onCellChange}
 					/>
-					{canFav ? (
-						<Icon className={fcn.join(' ')} tooltip={tooltip} onClick={e => onFav(e, relationKey)} />
-					) : ''}
 				</div>
+				{canFav ? (
+					<Icon className={fcn.join(' ')} tooltip={tooltip} onClick={e => onFav(e, relationKey)} />
+				) : ''}
 			</div>
 		);
     };

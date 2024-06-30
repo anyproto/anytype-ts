@@ -164,6 +164,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			cell.addClass('isEditing');
 			
 			this.placeholderCheck();
+			this.focus();
 			this.resize();
 		} else {
 			cell.removeClass('isEditing');
@@ -306,7 +307,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 
 		const node = $(this.node);
 		const entry = node.find('#entry');
-		
+
 		if (entry.length) {
 			window.setTimeout(() => {
 				entry.focus();

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch } from 'Component';
-import { I, S, U, translate, Action } from 'Lib';
+import { I, S, U, translate, Action, analytics } from 'Lib';
 
 const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<I.PopupSettings> {
 
@@ -65,7 +65,10 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							id="navigationMenu"
 							value={navigationMenu}
 							options={navigationMenuModes}
-							onChange={v => S.Common.navigationMenuSet(v)}
+							onChange={v => {
+								S.Common.navigationMenuSet(v);
+								analytics.event('ChangeShowQuickCapture', { type: v });
+							}}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right }}
 						/>

@@ -26,6 +26,7 @@ import PopupInviteConfirm from './invite/confirm';
 import PopupInviteQr from './invite/qr';
 import PopupMembership from './membership';
 import PopupMembershipFinalization from './membership/finalization';
+import PopupShare from './share';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -71,6 +72,7 @@ class Popup extends React.Component<I.Popup> {
 			inviteQr:				 PopupInviteQr,
 			membership: 		 	 PopupMembership,
 			membershipFinalization:  PopupMembershipFinalization,
+			share:					 PopupShare,
 		};
 		
 		const popupId = this.getId();
@@ -182,20 +184,15 @@ class Popup extends React.Component<I.Popup> {
 			const inner = node.find('.innerWrap');
 			const { ww } = U.Common.getWindowDimensions();
 
-			const sidebar = $('#sidebar');
-			const isRight = sidebar.hasClass('right');
 			const width = inner.outerWidth();
 			const height = inner.outerHeight();
 
 			let sw = 0;
-			if (S.Common.isSidebarFixed && sidebar.hasClass('active') && !S.Popup.showDimmerIds().includes(id)) {
-				sw = sidebar.outerWidth();
+			if (!S.Popup.showDimmerIds().includes(id)) {
+				sw = $('#sidebarDummy').outerWidth();
 			};
 
-			let x = (ww - sw) / 2 - width / 2;
-			if (!isRight) {
-				x += sw;
-			};
+			let x = (ww - sw) / 2 - width / 2 + sw;
 			if (width >= ww - sw) {
 				x -= sw / 2;
 			};

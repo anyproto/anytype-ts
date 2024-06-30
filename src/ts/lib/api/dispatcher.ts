@@ -162,11 +162,6 @@ class Dispatcher {
 					break;
 				};
 
-				case 'ThreadStatus': {
-					S.Auth.threadSet(rootId, mapped);
-					break;
-				};
-
 				case 'ObjectRelationsAmend': {
 					S.Record.relationsSet(rootId, mapped.id, mapped.relations);
 					break;
@@ -686,7 +681,7 @@ class Dispatcher {
 					S.Block.updateWidgetViews(rootId);
 
 					if (updateData) {
-						win.trigger(`updateDataviewData.${id}`);
+						win.trigger(`updateDataviewData`);
 						S.Block.updateWidgetData(rootId);
 					};
 					break;
@@ -1009,7 +1004,7 @@ class Dispatcher {
 
 			if (undefined !== details.setOf) {
 				S.Block.updateWidgetData(rootId);
-				$(window).trigger(`updateDataviewData.dataview`);
+				$(window).trigger(`updateDataviewData`);
 			};
 
 			S.Block.checkTypeSelect(rootId);
@@ -1018,7 +1013,6 @@ class Dispatcher {
 
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
 		const [ sid, dep ] = subId.split('/');
-
 		if (dep) {
 			return;
 		};

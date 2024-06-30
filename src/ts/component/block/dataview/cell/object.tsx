@@ -155,6 +155,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			cell.addClass('isEditing');
 
 			this.placeholderCheck();
+			this.focus();
 			this.resize();
 		} else {
 			cell.removeClass('isEditing');
@@ -191,7 +192,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 		if (canOpen) {
 			e.stopPropagation();
-			U.Object.openPopup(item);
+			U.Object.openConfig(item);
 		};
 	};
 

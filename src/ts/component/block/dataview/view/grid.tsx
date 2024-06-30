@@ -182,7 +182,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const { getVisibleRelations } = this.props;
 		const node = $(this.node);
 		const relations = getVisibleRelations();
-		const size = J.Constant.size.dataview.cell;
+		const size = J.Size.dataview.cell;
 		const widths = this.getColumnWidths(relationKey, width);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 
@@ -296,7 +296,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	checkWidth (width: number): number {
-		const { min, max } = J.Constant.size.dataview.cell;
+		const { min, max } = J.Size.dataview.cell;
 		return Math.min(max, Math.max(min, Math.floor(width)));
 	};
 
@@ -315,7 +315,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 				isInline,
 				isCollection,
 				blockId: block.id,
-				onAdd: () => S.Menu.closeAll(J.Constant.menuIds.cellAdd)
+				onAdd: () => S.Menu.closeAll(J.Menu.cellAdd)
 			}
 		});
 	};
@@ -359,7 +359,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = U.Common.getPageContainer(isPopup);
-		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, J.Constant.size.blockMenu);
+		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, J.Size.blockMenu);
 		const length = S.Record.getRecordIds(S.Record.getSubId(rootId, block.id), '').length;
 		const cw = container.width();
 		const rh = this.getRowHeight();
@@ -377,7 +377,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 					wrap.css({ width: vw + margin - offset, paddingRight: margin - offset });
 				} else {
 					const parentObj = $(`#block-${parent.id}`);
-					const vw = parentObj.length ? (parentObj.width() - J.Constant.size.blockMenu) : 0;
+					const vw = parentObj.length ? (parentObj.width() - J.Size.blockMenu) : 0;
 
 					wrap.css({ width: Math.max(vw, width) });
 				};

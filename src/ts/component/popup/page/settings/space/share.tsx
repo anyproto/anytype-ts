@@ -128,7 +128,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		
 			return (
 				<div id={`item-${item.id}`} className="row" style={item.style} >
-					<div className="side left" onClick={() => U.Object.openPopup(item)}>
+					<div className="side left" onClick={() => U.Object.openConfig(item)}>
 						<IconObject size={48} object={item} />
 						<ObjectName object={item} />
 						{tag}

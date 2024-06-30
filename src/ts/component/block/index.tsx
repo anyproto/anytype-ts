@@ -149,7 +149,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.File: {
-				if (content.state == I.BookmarkState.Done) {
+				const object = S.Detail.get(rootId, content.targetObjectId, [ 'isDeleted' ], true);
+				
+				if (!object.isDeleted && (content.state == I.BookmarkState.Done)) {
 					cn.push('withContent');
 				};
 
@@ -203,7 +205,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.Link: {
-				const object = S.Detail.get(rootId, content.targetBlockId, [ 'restrictions' ]);
+				const object = S.Detail.get(rootId, content.targetBlockId, [ 'restrictions' ], true);
 				
 				if (S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;
@@ -216,13 +218,13 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Bookmark: {
-				const object = S.Detail.get(rootId, content.targetObjectId, [ 'restrictions' ]);
+				const object = S.Detail.get(rootId, content.targetObjectId, [ 'restrictions', 'isDeleted' ], true);
 				
 				if (S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;
 				};
 
-				if (content.state == I.BookmarkState.Done) {
+				if (!object.isDeleted && (content.state == I.BookmarkState.Done)) {
 					cn.push('withContent');
 				};
 
@@ -433,26 +435,32 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { block } = this.props;
 		const dragProvider = S.Common.getRef('dragProvider');
 		const selection = S.Common.getRef('selectionProvider');
-		
+
 		if (!block.isDraggable()) {
 			e.preventDefault();
 			return;
 		};
 		
 		keyboard.disableSelection(true);
-		if (selection && selection.isSelecting) {
-			selection.setIsSelecting(false);
-		};
 
-		this.ids = U.Data.selectionGet(block.id, false, true);
+		if (selection) {
+			if (selection.isSelecting) {
+				selection.setIsSelecting(false);
+			};
+
+			this.ids = selection.getForClick(block.id, false, true);
+		};
+		
 		dragProvider?.onDragStart(e, I.DropType.Block, this.ids, this);
 	};
 	
 	onMenuDown (e: any) {
 		e.stopPropagation();
 
+		const selection = S.Common.getRef('selectionProvider');
+
 		focus.clear(true);
-		this.ids = U.Data.selectionGet(this.props.block.id, false, false);
+		this.ids = selection?.getForClick(this.props.block.id, false, false);
 	};
 	
 	onMenuClick () {
@@ -499,8 +507,10 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		focus.clear(true);
 		S.Menu.closeAll([], () => {
-			this.ids = U.Data.selectionGet(block.id, false, false);
-			selection?.set(I.SelectType.Block, this.ids);
+			if (selection) {
+				this.ids = selection.getForClick(block.id, false, false);
+				selection.set(I.SelectType.Block, this.ids);
+			};
 
 			this.menuOpen({
 				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
@@ -519,7 +529,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		const menuParam: Partial<I.MenuParam> = Object.assign({
 			noFlipX: true,
-			subIds: J.Constant.menuIds.action,
+			subIds: J.Menu.action,
 			onClose: () => {
 				selection?.clear();
 				focus.apply();
@@ -551,7 +561,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const win = $(window);
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
-		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + J.Constant.size.blockMenu ;
+		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + J.Size.blockMenu ;
 		const add = $('#button-block-add');
 		
 		selection?.clear();
@@ -659,7 +669,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const width = getWrapperWidth();
 		const dw = 1 / childrenIds.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
-		const offset = J.Constant.size.blockMenu * 2;
+		const offset = J.Size.blockMenu * 2;
 		
 		x = Math.max(offset, x);
 		x = Math.min(sum * width - offset, x);
@@ -682,7 +692,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		const sm = J.Constant.size.blockMenu;
+		const sm = J.Size.blockMenu;
 		const node = $(this.node);
 		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;

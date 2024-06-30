@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { I, S, U, history as historyPopup, keyboard } from 'Lib';
+import { I, S, J, history as historyPopup, keyboard } from 'Lib';
 import { Page } from 'Component';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -83,7 +83,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const loader = obj.find('#loader');
-		const hh = U.Common.sizeHeader();
+		const hh = J.Size.header;
 
 		loader.css({ width: obj.width(), height: obj.height() });
 		position();

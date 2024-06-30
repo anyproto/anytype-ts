@@ -74,28 +74,27 @@ class UtilGraph {
 	};
 
 	gradientIcon (iconOption: number, small?: boolean) {
-		const option: any = J.Color.gradientIcons.options[iconOption - 1];
+		const option: any = J.Color.icons.colors[iconOption - 1];
 		if (!option) {
 			return;
 		};
 
 		const theme = S.Common.getThemeClass();
-		const { from, to } = option.colors;
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
 		const w = 160;
 		const r = w / 2;
 		const fillW = small ? w * 0.7 : w;
 		const fillR = fillW / 2;
-		const steps = option.steps || J.Color.gradientIcons.common.steps;
-		const step0 = U.Common.getPercentage(fillR, steps.from * 100);
-		const step1 = U.Common.getPercentage(fillR, steps.to * 100);
+		const { from, to } = J.Color.icons.steps;
+		const step0 = U.Common.getPercentage(fillR, from * 100);
+		const step1 = U.Common.getPercentage(fillR, to * 100);
 		const grd = ctx.createRadialGradient(r, r, step0, r, r, step1);
 
 		canvas.width = w;
 		canvas.height = w;
-		grd.addColorStop(0, from);
-		grd.addColorStop(1, to);
+		grd.addColorStop(0, option.from);
+		grd.addColorStop(1, option.to);
 
 		if (small) {
 			ctx.fillStyle = J.Theme[theme].graph.iconBg;

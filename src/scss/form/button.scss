@@ -13,7 +13,7 @@
 }
 
 .button.orange { background: var(--color-system-accent-100); color: var(--color-bg-primary); }
-.button.orange:not(.disabled):hover, .button.orange:not(.disabled).hover { background: #f09c0e; }
+.button.orange:not(.disabled):hover, .button.orange:not(.disabled).hover { background: var(--color-system-accent-125); }
 
 .button.pink { background: #ff6a7b; color: var(--color-text-inversion); }
 .button.pink:not(.disabled):hover { background: #e5374b; }

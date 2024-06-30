@@ -154,7 +154,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const loader = obj.find('#loader');
-		const hh = U.Common.sizeHeader();
+		const hh = J.Size.header;
 
 		loader.css({ width: obj.width(), height: obj.height() });
 		position();

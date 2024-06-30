@@ -369,51 +369,6 @@ export const Mapper = {
 			};
 		},
 
-		ThreadSummary: (obj: any) => {
-            return {
-                status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
-            };
-        },
-
-		ThreadCafe: (obj: any) => {
-            return {
-                status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
-                lastPulled: obj.getLastpulled(),
-                lastPushSucceed: obj.getLastpushsucceed(),
-				files: Mapper.From.ThreadFiles(obj.getFiles()),
-            };
-        },
-
-		ThreadFiles: (obj: any) => {
-            return {
-				pinning: obj.getPinning(),
-				pinned: obj.getPinned(),
-				failed: obj.getFailed(),
-				updated: obj.getUpdated(),
-            };
-        },
-
-		ThreadDevice: (obj: any) => {
-            return {
-                name: obj.getName(),
-				online: obj.getOnline(),
-                lastPulled: obj.getLastpulled(),
-                lastEdited: obj.getLastedited(),
-            };
-        },
-
-		ThreadAccount: (obj: any) => {
-            return {
-				id: obj.getId(),
-				name: obj.getName(),
-				imageHash: obj.getImagehash(),
-				online: obj.getOnline(),
-                lastPulled: obj.getLastpulled(),
-                lastEdited: obj.getLastedited(),
-				devices: (obj.getDevicesList() || []).map(Mapper.From.ThreadDevice),
-            };
-        },
-
 		GraphEdge: (obj: Rpc.Object.Graph.Edge) => {
             return {
 				type: obj.getType(),
@@ -1038,7 +993,7 @@ export const Mapper = {
 
 			if (v == V.SUBSCRIPTIONADD)				 t = 'SubscriptionAdd';
 			if (v == V.SUBSCRIPTIONREMOVE)			 t = 'SubscriptionRemove';
-			if (v == V.SUBSCRIPTIONPOSITION)		 t = 'subscriptionPosition';
+			if (v == V.SUBSCRIPTIONPOSITION)		 t = 'SubscriptionPosition';
 			if (v == V.SUBSCRIPTIONCOUNTERS)		 t = 'SubscriptionCounters';
 			if (v == V.SUBSCRIPTIONGROUPS)			 t = 'SubscriptionGroups';
 
@@ -1058,8 +1013,6 @@ export const Mapper = {
 
 			if (v == V.NOTIFICATIONSEND)			 t = 'NotificationSend';
 			if (v == V.NOTIFICATIONUPDATE)			 t = 'NotificationUpdate';
-
-			if (v == V.THREADSTATUS)				 t = 'ThreadStatus';
 
 			if (v == V.PAYLOADBROADCAST)			 t = 'PayloadBroadcast';
 			
@@ -1102,14 +1055,6 @@ export const Mapper = {
 		AccountLinkChallenge: (obj: Events.Event.Account.LinkChallenge) => {
 			return {
 				challenge: obj.getChallenge(),
-			};
-		},
-
-		ThreadStatus: (obj: Events.Event.Status.Thread) => {
-			return {
-				summary: Mapper.From.ThreadSummary(obj.getSummary()),
-				cafe: Mapper.From.ThreadCafe(obj.getCafe()),
-				accounts: (obj.getAccountsList() || []).map(Mapper.From.ThreadAccount),
 			};
 		},
 

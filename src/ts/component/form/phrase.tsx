@@ -250,7 +250,7 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	checkValue (v: string[]) {
-		return v.map(it => it.substring(0, J.Constant.limit.phrase.letter)).filter(it => it).slice(0, J.Constant.limit.phrase.word);
+		return v.map(it => it.substring(0, J.Constant.count.phrase.letter)).filter(it => it).slice(0, J.Constant.count.phrase.word);
 	};
 
 	setError (v: boolean) {

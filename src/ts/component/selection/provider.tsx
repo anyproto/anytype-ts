@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { I, M, S, U, focus, keyboard, scrollOnMove } from 'Lib';
+import { I, M, S, U, J, focus, keyboard, scrollOnMove } from 'Lib';
 
 interface Props {
 	children?: React.ReactNode;
@@ -112,7 +112,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			const no = node.offset().top;
 			const nh = node.outerHeight();
 			const st = container.scrollTop();
-			const hh = U.Common.sizeHeader();
+			const hh = J.Size.header;
 			const y = isPopup ? (no - container.offset().top + st) : no;
 
 			if (y <= st + hh) {
@@ -526,6 +526,25 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		return ret;
+	};
+
+	/*
+	Used to click and set selection automatically in block menu for example
+	*/
+	getForClick (id: string, withChildren: boolean, save: boolean): string[] {
+		let ids: string[] = this.get(I.SelectType.Block, withChildren);
+
+		if (id && !ids.includes(id)) {
+			this.clear();
+			this.set(I.SelectType.Block, [ id ]);
+
+			ids = this.get(I.SelectType.Block, withChildren);
+
+			if (!save) {
+				this.clear();
+			};
+		};
+		return ids;
 	};
 
 	cacheChildrenIds (id: string): string[] {

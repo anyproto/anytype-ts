@@ -4,10 +4,7 @@ import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
 import { I, U, J, keyboard, translate, analytics, Mark } from 'Lib';
 
-const SKIP = [ 
-	'span', 'div', 'name', 'markupMention', 'markupColor', 'markupBgcolor', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 
-	'markupUnderline', 'markupLink', 'markupEmoji', 'markupObject',
-].map(tag => tag.toLowerCase());
+const SKIP = [ 'span', 'div', 'name' ].concat(Object.values(Mark.getTags()));
 
 class MenuSearchText extends React.Component<I.Menu> {
 	
@@ -81,17 +78,26 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, () => {
+		const cmd = keyboard.cmdKey();
+
+		keyboard.shortcut(`arrowup, arrowdown, tab, enter`, e, () => {
 			e.preventDefault();
+		});
+
+		keyboard.shortcut(`${cmd}+f`, e, () => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			this.onArrow(1);
 		});
 	};
 	
 	onKeyUp (e: any) {
 		e.preventDefault();
 
-		const cmd = keyboard.cmdKey();
-
 		let ret = false;
+
+		const cmd = keyboard.cmdKey();
 
 		keyboard.shortcut(`arrowup, arrowdown, tab, enter, ${cmd}+f`, e, (pressed: string) => {
 			this.onArrow(pressed == 'arrowup' ? -1 : 1);
@@ -118,7 +124,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			this.n = 0;
 		};
 
-		this.search();
+		this.focus();
 	};
 
 	onSearch (e: any) {
@@ -156,8 +162,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			wrap: tag,
 			portionMode: 'first',
 			filterElements: (el: any) => {
-				const tag = el.nodeName.toLowerCase();
-				if (SKIP.indexOf(tag) < 0) {
+				if (SKIP.indexOf(el.nodeName.toLowerCase()) < 0) {
 					return false;
 				};
 
@@ -249,7 +254,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { data } = param;
 		const { isPopup } = data;
 		const scrollContainer = this.getScrollContainer();
-		const offset = J.Constant.size.lastBlock + U.Common.sizeHeader();
+		const offset = J.Size.lastBlock + J.Size.header;
 		const tag = Mark.getTag(I.MarkType.Search);
 
 		this.container.find(`${tag}.active`).removeClass('active');

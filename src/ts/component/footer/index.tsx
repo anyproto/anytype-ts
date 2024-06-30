@@ -43,11 +43,11 @@ class Footer extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 	};
 
 	componentDidUpdate () {
-		sidebar.resizePage();	
+		sidebar.resizePage(null, false);	
 		this.refChild.forceUpdate();
 	};
 
@@ -57,7 +57,7 @@ class Footer extends React.Component<Props> {
 			classNameWrap: 'fixed',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
-			offsetY: () => -($('#notifications').height() + 4),
+			offsetY: () => -($('#notifications').height() + 78),
 		});
 	};
 

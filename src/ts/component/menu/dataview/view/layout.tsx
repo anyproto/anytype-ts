@@ -295,7 +295,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const view = data.view.get();
 
 		if (!item.arrow || isReadonly) {
-			S.Menu.closeAll(J.Constant.menuIds.viewEdit);
+			S.Menu.closeAll(J.Menu.viewEdit);
 			return;
 		};
 
@@ -365,7 +365,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
-			S.Menu.closeAll(J.Constant.menuIds.viewEdit, () => {
+			S.Menu.closeAll(J.Menu.viewEdit, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};
@@ -416,7 +416,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	};
 
 	menuClose () {
-		S.Menu.closeAll(J.Constant.menuIds.viewEdit);
+		S.Menu.closeAll(J.Menu.viewEdit);
 	};
 
 	resize () {

@@ -16,7 +16,7 @@
 		.head {
 			.date { color: var(--color-control-active); margin-bottom: 6px; }
 			.sides { margin-bottom: 10px; }
-			.side.right { display: flex; gap: 0 8px; justify-content: flex-end; }
+			.side.right { display: flex; gap: 0px 2px; justify-content: flex-end; }
 			.side.right {
 				.btn { width: 24px; height: 24px; background-size: 20px; background-image: url('~img/arrow/calendarNav.svg'); background-position: 50% 50%; border-radius: 4px; }
 				.btn:hover { background-color: var(--color-shape-highlight-medium); }
@@ -37,11 +37,12 @@
 			display: inline-block; vertical-align: top; width: 28px; height: 28px; line-height: 28px; text-align: center; margin-right: 8px; border-radius: 4px;
 		}
 		.day:nth-child(7n + 7) { margin: 0px; }
-		.day:not(.th):not(.active):hover { background: var(--color-system-accent-25); }
+		.day:not(.th):not(.active):hover { background: var(--color-shape-highlight-medium); }
 
 		.day.th { color: var(--color-control-active); @include text-small; }
 
 		.day.today, .day.active { font-weight: 600; }
+		.day.today { color: var(--color-system-accent-125); }
 		.day.active { background: var(--color-system-accent-100); color: var(--color-text-inversion); }
 		.day.other { color: var(--color-control-active); }
 		

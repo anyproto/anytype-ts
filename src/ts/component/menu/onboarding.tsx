@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
-import { I, C, S, U, Onboarding, analytics, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, Onboarding, analytics, keyboard, translate } from 'Lib';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
 interface State {
@@ -182,7 +182,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 
 		const rect = element.get(0).getBoundingClientRect() as DOMRect;
-		const hh = U.Common.sizeHeader();
+		const hh = J.Size.header;
 
 		let containerOffset = { top: 0, left: 0 };
 

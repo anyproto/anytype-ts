@@ -4,6 +4,7 @@ import { C, S, U, J, Preview, analytics, Storage } from 'Lib';
 type RouteParam = { 
 	replace: boolean;
 	animate: boolean;
+	delay: number;
 	onFadeOut: () => void;
 	onFadeIn?: () => void;
 	onRouteChange?: () => void;
@@ -59,7 +60,7 @@ class UtilRouter {
 			return;
 		};
 
-		const { replace, animate, onFadeOut, onFadeIn, onRouteChange } = param;
+		const { replace, animate, onFadeOut, onFadeIn, onRouteChange, delay } = param;
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;
 
@@ -76,6 +77,13 @@ class UtilRouter {
 			return;
 		};
 
+		const change = () => {
+			this.history.push(route); 
+			if (onRouteChange) {
+				onRouteChange();
+			};
+		};
+
 		const onTimeout = () => {
 			Preview.hideAll();
 
@@ -85,17 +93,16 @@ class UtilRouter {
 			};
 
 			if (!animate) {
-				this.history.push(route); 
-
-				if (onRouteChange) {
-					onRouteChange();
-				};
+				change();
 				return;
 			};
 
 			const fade = $('#globalFade');
+			const t = delay || J.Constant.delay.route;
+			const wait = t;
+
+			fade.css({ transitionDuration: `${t / 1000}s` }).show();
 				
-			fade.show();
 			window.setTimeout(() => fade.addClass('show'), 15);
 
 			window.setTimeout(() => {
@@ -103,22 +110,17 @@ class UtilRouter {
 					onFadeOut();
 				};
 
-				this.history.push(route);
-
-				if (onRouteChange) {
-					onRouteChange();
-				};
-
-				fade.removeClass('show');
-			}, J.Constant.delay.route);
+				change();
+			}, t);
 
 			window.setTimeout(() => {
 				if (onFadeIn) {
 					onFadeIn();
 				};
 
-				fade.hide();
-			}, J.Constant.delay.route * 2);
+				fade.removeClass('show');
+				window.setTimeout(() => fade.hide(), t);
+			}, wait + t);
 		};
 
 		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
@@ -143,7 +145,11 @@ class UtilRouter {
 			this.go('/main/blank', { 
 				replace: true, 
 				animate: true,
+				delay: 250,
 				onFadeOut: () => {
+					S.Record.metaClear(J.Constant.subId.participant, '');
+					S.Record.recordsClear(J.Constant.subId.participant, '');
+
 					analytics.removeContext();
 					S.Block.clear(S.Block.widgets);
 					S.Common.defaultType = '';

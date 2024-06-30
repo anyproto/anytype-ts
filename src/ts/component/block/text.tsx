@@ -122,8 +122,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				
 			case I.TextStyle.Code: {
 				const options: I.Option[] = [];
-				for (const i in J.Constant.codeLang) {
-					options.push({ id: i, name: J.Constant.codeLang[i] });
+				for (const i in J.Lang.code) {
+					options.push({ id: i, name: J.Lang.code[i] });
 				};
 
 				spellcheck = false;
@@ -482,14 +482,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			const smile = item.find('smile');
-			const name = item.find('name');
-
 			if (!smile.length) {
 				return;
 			};
 
 			const object = S.Detail.get(rootId, data.param, []);
-			const { _empty_, layout, done, isDeleted, isArchived } = object;
+			const { id, _empty_, layout, done, isDeleted, isArchived } = object;
+			const isTask = U.Object.isTaskLayout(layout);
+			const name = item.find('name');
+			const clickable = isTask ? item.find('name') : item;
 
 			let icon = null;
 			if (_empty_) {
@@ -500,10 +501,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						id={`mention-${block.id}-${i}`}
 						size={size} 
 						object={object} 
-						canEdit={!isArchived} 
-						onSelect={icon => this.onMentionSelect(object.id, icon)} 
-						onUpload={objectId => this.onMentionUpload(object.id, objectId)} 
-						onCheckbox={() => this.onMentionCheckbox(object.id, !done)}
+						canEdit={!isArchived && isTask} 
+						onSelect={icon => this.onMentionSelect(id, icon)} 
+						onUpload={objectId => this.onMentionUpload(id, objectId)} 
+						onCheckbox={() => this.onMentionCheckbox(id, !done)}
 					/>
 				);
 			};
@@ -522,8 +523,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				};
 			});
 
-			name.off('mouseenter.mention');
-			name.on('mouseenter.mention', e => {
+			clickable.off('mouseenter.mention');
+			clickable.on('mouseenter.mention', e => {
 				const sr = U.Common.getSelectionRange();
 				if (sr && !sr.collapsed) {
 					return;
@@ -538,7 +539,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 				const object = S.Detail.get(rootId, param, []);
 
-				name.off('click.mention').on('click.mention', e => {
+				clickable.off('click.mention').on('click.mention', e => {
 					e.preventDefault();
 					U.Object.openEvent(e, object);
 				});
@@ -1066,6 +1067,25 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const text = block.canHaveMarks() ? parsed.text : value;
 
+		// When typing text adjust links markup to break it
+		if (!keyboard.isSpecial(e)) {
+			const d = text.length - this.text.length;
+			const markTypes = [ I.MarkType.Link, I.MarkType.Object ];
+
+			if (d > 0) {
+				for (let i = 0; i < this.marks.length; ++i) {
+					let mark = this.marks[i];
+
+					if (markTypes.includes(mark.type) && (mark.range.to == range.to)) {
+						const adjusted = Mark.adjust([ mark ], mark.range.from, -d);
+
+						this.marks[i] = adjusted[0];
+						adjustMarks = true;
+					};
+				};
+			};
+		};
+
 		if (!ret && (adjustMarks || (value != text))) {
 			this.setValue(text);
 
@@ -1107,7 +1127,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				},
 				offsetX: () => {
 					const rect = U.Common.getSelectionRect();
-					return rect ? 0 : J.Constant.size.blockMenu;
+					return rect ? 0 : J.Size.blockMenu;
 				},
 				noFlipX: false,
 				noFlipY: false,
@@ -1153,7 +1173,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			},
 			offsetX: () => {
 				const rect = U.Common.getSelectionRect();
-				return rect ? 0 : J.Constant.size.blockMenu;
+				return rect ? 0 : J.Size.blockMenu;
 			},
 			data: {
 				noHead: true,
@@ -1338,7 +1358,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onSelect () {
 		const { rootId, block, isPopup, isInsideTable, readonly } = this.props;
-		const ids = U.Data.selectionGet('', false, true);
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.getForClick('', false, true);
 		const range = this.getRange();
 
 		focus.set(block.id, range);

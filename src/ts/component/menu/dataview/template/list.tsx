@@ -204,7 +204,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
-		const keys = J.Constant.defaultRelationKeys.concat([ 'targetObjectType' ]);
+		const keys = J.Relation.default.concat([ 'targetObjectType' ]);
 
 		U.Data.searchSubscribe({
 			subId: this.getSubId(),
@@ -274,13 +274,13 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			return;
 		};
 
-		S.Menu.closeAll(J.Constant.menuIds.dataviewTemplate, () => {
+		S.Menu.closeAll(J.Menu.dataviewTemplate, () => {
 			S.Menu.open('dataviewTemplateContext', {
 				menuKey: item.id,
 				element: `#${getId()} #item-more-${item.id}`,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
-				subIds: J.Constant.menuIds.dataviewTemplate,
+				subIds: J.Menu.dataviewTemplate,
 				onOpen: () => {
 					node.addClass('active');
 				},
@@ -294,7 +294,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					typeId,
 					templateId,
 					route,
-					onDuplicate: object => U.Object.openPopup(object, {}),
+					onDuplicate: object => U.Object.openConfig(object, {}),
 					onSetDefault,
 				}
 			});

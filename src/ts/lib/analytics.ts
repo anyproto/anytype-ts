@@ -374,6 +374,11 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeShowQuickCapture': {
+				data.type = I.NavigationMenuMode[data.type];
+				break;
+			};
+
 			case 'SelectUsecase': {
 				data.type = Number(data.type) || 0;
 				data.type = I.Usecase[data.type];
@@ -499,7 +504,7 @@ class Analytics {
 		} else {
 			key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';
 		};
-		this.event(key, { type });
+		this.event(key, { type, relationKey: relation.relationKey });
 	};
 
 	pageMapper (params: any): string {
@@ -533,6 +538,7 @@ class Analytics {
 		const map = {
 			help:				 'MenuHelp',
 			blockRelationView:	 'ScreenObjectRelation',
+			quickCapture:		 'ScreenQuickCapture',
 		};
 
 		return map[id] || '';

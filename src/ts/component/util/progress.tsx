@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Icon, Label } from 'Component';
-import { S, U, C, Storage, keyboard } from 'Lib';
+import { S, U, C, J, Storage, keyboard } from 'Lib';
 
 const Progress = observer(class Progress extends React.Component {
 	
@@ -124,7 +124,7 @@ const Progress = observer(class Progress extends React.Component {
 		x = Math.min(ww - this.width, x);
 
 		y = Number(y) || 0;
-		y = Math.max(U.Common.sizeHeader(), y);
+		y = Math.max(J.Size.header, y);
 		y = Math.min(wh - this.height, y);
 
 		return { x, y };

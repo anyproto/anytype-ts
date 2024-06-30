@@ -430,11 +430,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getKeys (id: string): string[] {
 		const view = this.getView(id);
 
-		let keys = J.Constant.defaultRelationKeys.concat(J.Constant.coverRelationKeys);
+		let keys = J.Relation.default.concat(J.Relation.cover);
 		if (view) {
 			keys = keys.concat((view.relations || []).map(it => it && it.relationKey));
 
-			if (view.coverRelationKey && (view.coverRelationKey != J.Constant.pageCoverRelationKey)) {
+			if (view.coverRelationKey && (view.coverRelationKey != J.Relation.pageCover)) {
 				keys.push(view.coverRelationKey);
 			};
 
@@ -670,7 +670,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			if ([ I.ViewType.Calendar ].includes(view.type)) {
-				U.Object.openPopup(object);
+				U.Object.openConfig(object);
 			} else {
 				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
 				const ref = this.refCells.get(id);
@@ -762,7 +762,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			...menuParam,
 			offsetY: 10,
 			noAnimation: true,
-			subIds: J.Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
+			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 			onOpen: context => menuContext = context,
@@ -828,7 +828,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: typeId, route: this.analyticsRoute() });
 
-			U.Object.openPopup(object);
+			U.Object.openConfig(object);
 		});
 	};
 
@@ -847,16 +847,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return true;
 	};
 
-	onCellClick (e: any, relationKey: string, recordId: string) {
+	onCellClick (e: any, relationKey: string, recordId: string, record?: any) {
 		if (e.button) {
 			return;
 		};
 
+		if (!record) {
+			record = this.getRecord(recordId);
+		};
+
 		const selection = S.Common.getRef('selectionProvider');
 		const relation = S.Record.getRelationByKey(relationKey);
-		const id = Relation.cellId(this.getIdPrefix(), relationKey, recordId);
+		const id = Relation.cellId(this.getIdPrefix(), relationKey, record.id);
 		const ref = this.refCells.get(id);
-		const record = this.getRecord(recordId);
 		const view = this.getView();
 
 		if (!relation || !ref || !record) {
@@ -886,8 +889,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const subId = this.getSubId();
 		const relation = S.Record.getRelationByKey(relationKey);
+		const record = this.getRecord(id);
 
-		if (!relation) {
+		if (!record || !relation) {
 			return;
 		};
 
@@ -899,7 +903,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], callBack);
 
-		analytics.changeRelationValue(relation, value, 'dataview');
+		if (JSON.stringify(record[relationKey]) !== JSON.stringify(value)) {
+			analytics.changeRelationValue(relation, value, 'dataview');
+		};
 	};
 
 	onContext (e: any, id: string): void {
@@ -957,6 +963,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
+			addParam.nameWithFilter = translate('blockDataviewCreateNewCollectionWithName');
 			addParam.onClick = (details: any) => {
 				C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => onSelect(message.details, true));
 			};
@@ -967,6 +974,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewSet');
+			addParam.nameWithFilter = translate('blockDataviewCreateNewSetWithName');
 			addParam.onClick = (details: any) => {
 				C.ObjectCreateSet([], details, '', S.Common.space, message => onSelect(message.details, true));
 			};

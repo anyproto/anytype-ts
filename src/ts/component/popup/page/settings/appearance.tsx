@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance extends React.Component<I.PopupSettings> {
 
 	render () {
-		const { autoSidebar, showRelativeDates, config, theme } = S.Common;
+		const { showRelativeDates, config, theme } = S.Common;
 		const { hideTray, hideMenuBar } = config;
 		const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
 		const themes: any[] = [
@@ -39,11 +39,6 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 				<Label className="section" text={translate('popupSettingsAppearancePersonalisation')} />
 
 				<div className="actionItems">
-					<div className="item">
-						<Label text={translate('popupSettingsAppearancePersonalisationSidebar')} />
-						<Switch className="big" value={autoSidebar} onChange={(e: any, v: boolean) => S.Common.autoSidebarSet(v)} />
-					</div>
-
 					<div className="item">
 						<Label text={translate('electronMenuShowTray')} />
 						<Switch className="big" value={!hideTray} onChange={(e: any, v: boolean) => Renderer.send('setHideTray', v)} />

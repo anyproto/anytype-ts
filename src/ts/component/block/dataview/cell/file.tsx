@@ -97,7 +97,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 
 		if (canOpen && !canEdit) {
 			e.stopPropagation();
-			U.Object.openPopup(item);
+			U.Object.openConfig(item);
 		};
 	};
 

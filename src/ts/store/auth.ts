@@ -13,7 +13,6 @@ class AuthStore {
 	public token = '';
 	public appToken = '';
 	public appKey = '';
-	public threadMap: Map<string, any> = new Map();
 	public membershipData: I.Membership = { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
 	public syncStatusData: I.SyncStatus = { error: 0, network: 0, status: 3, syncingCounter: 0 };
 	
@@ -21,7 +20,6 @@ class AuthStore {
 		makeObservable(this, {
 			accountItem: observable,
 			accountList: observable,
-			threadMap: observable,
 			membershipData: observable,
 			syncStatusData: observable,
 			membership: computed,
@@ -29,9 +27,7 @@ class AuthStore {
 			account: computed,
 			accountAdd: action,
 			accountSet: action,
-			threadSet: action,
 			membershipSet: action,
-			threadRemove: action,
 			clearAll: action,
 			logout: action,
 		});
@@ -143,25 +139,7 @@ class AuthStore {
 		].includes(this.accountItem.status.type);
 	};
 
-	threadSet (rootId: string, obj: any) {
-		const thread = this.threadMap.get(rootId);
-		if (thread) {
-			set(thread, obj);
-		} else {
-			this.threadMap.set(rootId, observable(obj));
-		};
-    };
-
-	threadRemove (rootId: string) {
-		this.threadMap.delete(rootId);
-    };
-
-	threadGet (rootId: string) {
-		return this.threadMap.get(rootId) || {};
-    };
-
 	clearAll () {
-		this.threadMap = new Map();
 		this.accountItem = null;
 
 		this.accountListClear();

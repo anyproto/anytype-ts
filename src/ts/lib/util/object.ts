@@ -16,7 +16,7 @@ class UtilObject {
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
-			case I.ObjectLayout.Date:
+			case I.ObjectLayout.Date: 		 r = 'set'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
@@ -52,6 +52,10 @@ class UtilObject {
 	};
 
 	universalRoute (object: any): string {
+		if (!object) {
+			return;
+		};
+
 		return object ? `object?objectId=${object.id}&spaceId=${object.spaceId}` : '';
 	};
 
@@ -74,6 +78,9 @@ class UtilObject {
 	};
 
 	openAuto (object: any, param?: any) {
+		if (!object) {
+			return;
+		};
 
 		// Prevent opening object in popup from different space
 		if (object.spaceId && (object.spaceId != S.Common.space)) {
@@ -132,8 +139,8 @@ class UtilObject {
 		window.setTimeout(() => S.Popup.open('page', param), S.Popup.getTimeout());
 	};
 
-	openConfig (object: any) {
-		S.Common.fullscreenObject ? this.openAuto(object) : this.openPopup(object);
+	openConfig (object: any, param?: any) {
+		S.Common.fullscreenObject ? this.openAuto(object, param) : this.openPopup(object, param);
 	};
 
 	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {
@@ -298,6 +305,14 @@ class UtilObject {
 		return layout == I.ObjectLayout.Participant;
 	};
 
+	isTaskLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Task;
+	};
+
+	isBookmarkLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Bookmark;
+	};
+
 	getPageLayouts (): I.ObjectLayout[] {
 		return [ 
 			I.ObjectLayout.Page, 
@@ -312,6 +327,7 @@ class UtilObject {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
+			I.ObjectLayout.Date,
 		];
 	};
 

@@ -53,7 +53,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 
 	componentWillUnmount (): void {
-		S.Menu.closeAll(J.Constant.menuIds.layout);
+		S.Menu.closeAll(J.Menu.layout);
 	};
 	
 	rebind () {
@@ -77,7 +77,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
 
-		if (!allowedDetails || (object.layout == I.ObjectLayout.Task)) {
+		if (!allowedDetails || U.Object.isTaskLayout(object.layout)) {
 			align = null;
 		};
 		if (!allowedDetails) {
@@ -124,7 +124,11 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			S.Menu.closeAll(J.Constant.menuIds.layout);
+			S.Menu.closeAll(J.Menu.layout);
+			return;
+		};
+
+		if (S.Menu.isAnimating) {
 			return;
 		};
 
@@ -133,7 +137,6 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const { rootId } = data;
 		const object = S.Detail.get(rootId, rootId);
 
-		let menuId = '';
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -147,6 +150,8 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 				rebind: this.rebind,
 			},
 		};
+
+		let menuId = '';
 
 		switch (item.id) {
 			case 'align':
@@ -165,7 +170,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
-			S.Menu.closeAll(J.Constant.menuIds.layout, () => {
+			S.Menu.closeAll(J.Menu.layout, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

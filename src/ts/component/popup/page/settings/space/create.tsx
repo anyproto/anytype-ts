@@ -18,7 +18,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	state = {
 		error: '',
 		isLoading: false,
-		iconOption: U.Common.rand(1, J.Constant.iconCnt),
+		iconOption: U.Common.rand(1, J.Constant.count.icon),
 		usecase: I.Usecase.Empty,
 	};
 

@@ -170,6 +170,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		const node = $(this.node);
 		const container = node.find('#historySideLeft');
+
+		if (!container || !container.length) {
+			return;
+		};
+
 		const ch = container.height();
 		const no = element.offset().top;
 		const st = container.scrollTop();
@@ -398,7 +403,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const sc = U.Common.getScrollContainer(isPopup);
 		const header = container.find('#header');
 		const height = sc.height();
-		const hh = isPopup ? header.height() : U.Common.sizeHeader();
+		const hh = isPopup ? header.height() : J.Size.header;
 		const cssl: any = { height };
 
 		sideRight.css({ height });

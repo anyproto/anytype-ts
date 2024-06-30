@@ -405,7 +405,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			className: 'big',
 			element: $(e.currentTarget),
 			typeY: I.MenuDirection.Bottom,
-			typeX: I.MenuDirection.Left
+			typeX: I.MenuDirection.Left,
 		});
 	};
 

@@ -119,7 +119,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 						onChange={e => this.onClick(e, item)}
 					/>
 				)}
-                <div className="objectClickArea" onClick={() => U.Object.openPopup(item)}>
+                <div className="objectClickArea" onClick={() => U.Object.openConfig(item)}>
 					<IconObject object={item} size={iconSize} />
 
 					<div className="info">
@@ -294,7 +294,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         const node = $(ReactDOM.findDOMNode(this));
         const wrapper = node.find('#filterWrapper');
 
-        S.Menu.closeAll(J.Constant.menuIds.store);
+        S.Menu.closeAll(J.Menu.store);
         wrapper.removeClass('active');
     };
 

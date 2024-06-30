@@ -455,10 +455,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	onClick (e: any, item: I.PageInfo) {
 		e.stopPropagation();
 
-		const { isPopup } = this.props;
-		const obj = { id: item.id, layout: I.ObjectLayout.Navigation };
-
-		isPopup ? U.Object.openPopup(obj) : U.Object.openRoute(obj);
+		U.Object.openAuto({ id: item.id, layout: I.ObjectLayout.Navigation });
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {

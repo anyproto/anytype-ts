@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
-.viewList, .viewGrid { display: flex; flex-direction: column; height: 100%; }
-.viewList, .viewGrid {
+.viewList, .viewGrid, .viewGraph { display: flex; flex-direction: column; height: 100%; }
+.viewList, .viewGrid, .viewGraph {
 	.body { display: flex; flex-direction: column; }
 	.body {
 		.items { height: 100%; }
@@ -16,10 +16,7 @@
 		.item { 
 			.dropTarget { position: relative; display: flex; flex-direction: row; align-items: center; width: 100%; border-radius: 6px; height: 100%; }
 
-			.icon.dnd { 
-				width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; 
-				flex-shrink: 0;
-			}
+			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; flex-shrink: 0; }
 
 			.inner { display: flex; flex-direction: row; align-items: center; height: 100%; width: 100%; }
 			.iconObject { flex-shrink: 0; }

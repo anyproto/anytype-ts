@@ -126,7 +126,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 
 		S.Menu.open('relationSuggest', { 
 			element: `#block-${block.id}`,
-			offsetX: J.Constant.size.blockMenu,
+			offsetX: J.Size.blockMenu,
 			data: {
 				rootId,
 				blockId: block.id,
@@ -155,10 +155,13 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId } = this.props;
 		const relation = S.Record.getRelationByKey(relationKey);
+		const object = S.Detail.get(rootId, rootId);
 		
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
-		analytics.changeRelationValue(relation, value, 'block');
+		if (JSON.stringify(object[relationKey]) !== JSON.stringify(value)) {
+			analytics.changeRelationValue(relation, value, 'block');
+		};
 	};
 
 	onCellClick (e: any) {

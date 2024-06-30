@@ -113,8 +113,9 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { recordId, getRecord, onCellClick } = this.props;
-		const record = getRecord(recordId);
+		const { id, rootId, block, groupId, onCellClick } = this.props;
+		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
+		const record = S.Detail.get(subId, id);
 		const relation = S.Record.getRelationByKey(vr.relationKey);
 
 		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
@@ -124,7 +125,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		onCellClick(e, relation.relationKey, record.id);
+		onCellClick(e, relation.relationKey, record.id, record);
 	};
 
 	resize () {

@@ -70,7 +70,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 							className="c28"
 							text={translate('menuWidgetAddWidget')}
 							onClick={this.save} 
-							onMouseEnter={() => S.Menu.closeAll(J.Constant.menuIds.widget)} 
+							onMouseEnter={() => S.Menu.closeAll(J.Menu.widget)} 
 						/>
 					</div>
 				) : ''}
@@ -99,7 +99,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this._isMounted = false;
 		this.unbind();
 
-		S.Menu.closeAll(J.Constant.menuIds.widget);
+		S.Menu.closeAll(J.Menu.widget);
 		$(window).trigger(`updateWidgetData.${blockId}`);
 	};
 
@@ -127,7 +127,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { isEditing } = data;
-		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout) || this.isCollection();
+		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout) || U.Menu.isWidgetCollection(this.target?.id);
 
 		let sourceName = translate('menuWidgetChooseSource');
 		let layoutName = translate('menuWidgetWidgetType');
@@ -167,26 +167,26 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	checkState () {
-		const setLayouts = U.Object.getSetLayouts();
-		const layoutOptions = this.getLayoutOptions().map(it => it.id);
+		const { id, layout } = this.target || {};
+		const layoutOptions = U.Menu.getWidgetLayoutOptions(id, layout).map(it => it.id);
 
-		if (this.isCollection()) {
+		if (U.Menu.isWidgetCollection(id)) {
 			if ([ null, I.WidgetLayout.Link ].includes(this.layout)) {
-				this.layout = this.target.id == J.Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
+				this.layout = id == J.Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
 			};
-		} else 
-		if (this.target) {
-			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !setLayouts.includes(this.target.layout)) {
+		} else {
+			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !U.Object.isSetLayout(layout)) {
 				this.layout = I.WidgetLayout.Tree;
 			};
-			if ((this.layout == I.WidgetLayout.Tree) && setLayouts.includes(this.target.layout)) {
+
+			if ((this.layout == I.WidgetLayout.Tree) && U.Object.isSetLayout(layout)) {
 				this.layout = I.WidgetLayout.Compact;
 			};
 		};
 
 		this.layout = layoutOptions.includes(this.layout) ? this.layout : (layoutOptions.length ? layoutOptions[0] : null);
 
-		const limitOptions = U.Menu.getWidgetLimits(this.layout).map(it => Number(it.id));
+		const limitOptions = U.Menu.getWidgetLimitOptions(this.layout).map(it => Number(it.id));
 
 		this.limit = limitOptions.includes(this.limit) ? this.limit : (limitOptions.length ? limitOptions[0] : null);
 	};
@@ -201,53 +201,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		return items;
 	};
 
-	getLayoutOptions () {
-		const isCollection = this.isCollection();
-		
-		let options = [
-			I.WidgetLayout.Compact,
-			I.WidgetLayout.List,
-			I.WidgetLayout.Tree,
-		];
-		if (!isCollection) {
-			options.push(I.WidgetLayout.Link);
-		};
-
-		if (this.target) {
-			if (!isCollection) {
-				const isSet = U.Object.isSetLayout(this.target.layout);
-				const setLayouts = U.Object.getSetLayouts();
-				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
-
-				// Sets can only become Link and List layouts, non-sets can't become List
-				if (treeSkipLayouts.includes(this.target.layout)) {
-					options = options.filter(it => it != I.WidgetLayout.Tree);
-				};
-				if (!isSet) {
-					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it) );
-				} else {
-					options = [ I.WidgetLayout.View, I.WidgetLayout.Link ];
-				};
-			};
-
-			if ([ J.Constant.widgetId.set, J.Constant.widgetId.collection ].includes(this.target.id)) {
-				options = options.filter(it => it != I.WidgetLayout.Tree);
-			};
-		};
-
-		return options.map(id => ({
-			id,
-			name: translate(`widget${id}Name`),
-			description: translate(`widget${id}Description`),
-			icon: `widget-${id}`,
-			withDescription: true,
-		}));
-	};
-
-	isCollection () {
-		return this.target && Object.values(J.Constant.widgetId).includes(this.target.id);
-	};
-
     onMouseEnter (e: React.MouseEvent, item): void {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
@@ -257,7 +210,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 	onOver (e: React.MouseEvent, item) {
 		if (!item.arrow) {
-			S.Menu.closeAll(J.Constant.menuIds.widget);
+			S.Menu.closeAll(J.Menu.widget);
 			return;
 		};
 
@@ -292,6 +245,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters,
 					value: this.target ? this.target.id : '',
+					canAdd: true,
 					dataChange: (items: any[]) => {
 						const fixed: any[] = [
 							{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
@@ -327,7 +281,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				menuId = 'select';
 				menuParam.width = 320;
 				menuParam.data = Object.assign(menuParam.data, {
-					options: this.getLayoutOptions(),
+					options: U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout),
 					value: this.layout,
 					onSelect: (e, option) => {
 						this.layout = Number(option.id);
@@ -351,7 +305,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			case 'limit':
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
-					options: U.Menu.getWidgetLimits(this.layout),
+					options: U.Menu.getWidgetLimitOptions(this.layout),
 					value: String(this.limit || ''),
 					onSelect: (e, option) => {
 						this.limit = Number(option.id);
@@ -374,7 +328,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
-			S.Menu.closeAll(J.Constant.menuIds.widget, () => {
+			S.Menu.closeAll(J.Menu.widget, () => {
 				S.Menu.open(menuId, menuParam);
 			});
 		};

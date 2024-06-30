@@ -137,7 +137,7 @@ export interface ViewComponent {
 	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
 	onTemplateAdd?: () => void;
 	onTemplateMenu?: (e: any, dur: number) => void;
-	onCellClick?(e: any, key: string, id?: string): void;
+	onCellClick?(e: any, key: string, id?: string, record?: any): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	onDragRecordStart?: (e: any, id?: string) => void;

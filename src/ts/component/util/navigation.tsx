@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, IconObject } from 'Component';
+import { Icon } from 'Component';
 import { I, S, U, keyboard, Preview, translate, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
@@ -18,14 +18,12 @@ const Navigation = observer(class Navigation extends React.Component {
 		this.onAdd = this.onAdd.bind(this);
 		this.onGraph = this.onGraph.bind(this);
 		this.onSearch = this.onSearch.bind(this);
-		this.onProfile = this.onProfile.bind(this);
 	};
 
 	render () {
 		const { navigationMenu } = S.Common;
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
-		const participant = U.Space.getParticipant();
 		const isWin = U.Common.isPlatformWindows();
 		const isLinux = U.Common.isPlatformLinux();
 		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
@@ -111,18 +109,6 @@ const Navigation = observer(class Navigation extends React.Component {
 							</div>
 						);
 					})}
-
-					<div className="line" />
-
-					<div 
-						id="button-navigation-profile"
-						className="iconWrap"
-						onClick={this.onProfile}
-						onMouseEnter={e => this.onTooltipShow(e, translate('navigationAccount'), 'Ctrl + Tab')}
-						onMouseLeave={e => Preview.tooltipHide(false)}
-					>
-						<IconObject object={participant} />
-					</div>
 				</div>
 			</div>
 		);
@@ -130,26 +116,13 @@ const Navigation = observer(class Navigation extends React.Component {
 
 	componentDidMount () {
 		this._isMounted = true;
-		this.resize();
-		this.rebind();
 	};
 
 	componentDidUpdate () {
-		this.resize();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
-	};
-
-	unbind () {
-		$(window).off('resize.navigation sidebarResize.navigation');
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('resize.navigation sidebarResize.navigation', () => this.resize());
 	};
 
 	onBack () {
@@ -172,39 +145,21 @@ const Navigation = observer(class Navigation extends React.Component {
 		keyboard.onSearchPopup(analytics.route.navigation);
 	};
 
-	onProfile () {
-		window.clearTimeout(this.timeoutPlus);
-
-		if (S.Menu.isOpen('space')) {
-			S.Menu.close('space');
-		} else {
-			keyboard.onSpaceMenu(false);
-		};
-	};
-
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const win = $(window);
+	setX (sw: number, animate: boolean) {
 		const node = $(this.node);
 		const { ww } = U.Common.getWindowDimensions();
 		const width = node.outerWidth();
-		const sidebar = $('#sidebar');
-		const isRight = sidebar.hasClass('right');
+		const x = (ww - sw) / 2 - width / 2 + sw;
 
-		let sw = 0;
-		if (S.Common.isSidebarFixed && sidebar.hasClass('active')) {
-			sw = sidebar.outerWidth();
+		if (animate) {
+			node.addClass('sidebarAnimation');
 		};
 
-		let x = (ww - sw) / 2 - width / 2;
-		if (!isRight) {
-			x += sw;
+		node.css({ left: `${x / ww * 100}%` });
+
+		if (animate) {
+			window.setTimeout(() => node.removeClass('sidebarAnimation'), 200);
 		};
-		node.css({ left: x });
-		win.trigger('resize.menuSpace');
 	};
 
 	onTooltipShow (e: any, text: string, caption?: string) {

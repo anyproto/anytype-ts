@@ -21,7 +21,6 @@ class Action {
 			this.dbClearRoot(rootId);
 
 			S.Block.clear(rootId);
-			S.Auth.threadRemove(rootId);
 		};
 
 		onClose();
@@ -365,7 +364,7 @@ class Action {
 		const { mode, path } = networkConfig;
 
 		this.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], dataPath, U.Common.rand(1, J.Constant.iconCnt), (message: any) => {
+			C.AccountRecoverFromLegacyExport(paths[0], dataPath, U.Common.rand(1, J.Constant.count.icon), (message: any) => {
 				if (onError(message.error)) {
 					return;
 				};
@@ -521,6 +520,7 @@ class Action {
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
 		const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
 
+		let next = null;
 		let blocks = S.Block.unwrapTree(tree).filter(it => ids.includes(it.id));
 
 		ids.forEach((id: string) => {
@@ -542,6 +542,10 @@ class Action {
 			return it;
 		});
 
+		if (isCut) {
+			next = S.Block.getNextBlock(rootId, focused, -1, it => it.isFocusable());
+		};
+
 		C[cmd](rootId, blocks, range, (message: any) => {
 			U.Common.clipboardCopy({
 				text: message.textSlot,
@@ -555,8 +559,12 @@ class Action {
 			if (isCut) {
 				S.Menu.closeAll([ 'blockContext', 'blockAction' ]);
 
-				focus.set(focused, { from: range.from, to: range.from });
-				focus.apply();
+				if (next) {
+					const l = next.getLength();
+
+					focus.set(next.id, { from: l, to: l });
+					focus.apply();
+				};
 			};
 		});
 
@@ -680,7 +688,7 @@ class Action {
 			};
 		};
 
-		const limit = Number(U.Menu.getWidgetLimits(layout)[0]?.id) || 0;
+		const limit = Number(U.Menu.getWidgetLimitOptions(layout)[0]?.id) || 0;
 		const newBlock = { 
 			type: I.BlockType.Link,
 			content: { 
@@ -747,6 +755,19 @@ class Action {
 					});
 				},
 			},
+		});
+	};
+
+	addToCollection (targetId: string, objectIds: string[]) {
+		const collectionType = S.Record.getCollectionType();
+
+		C.ObjectCollectionAdd(targetId, objectIds, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			Preview.toastShow({ action: I.ToastAction.Collection, objectId: objectIds[0], targetId });
+			analytics.event('LinkToObject', { objectType: collectionType?.id, linkType: 'Collection' });
 		});
 	};
 

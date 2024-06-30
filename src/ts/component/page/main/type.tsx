@@ -329,7 +329,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	templateOpen (object: any) {
-		U.Object.openPopup(object, {
+		U.Object.openConfig(object, {
 			onClose: () => $(window).trigger(`updatePreviewObject.${object.id}`)
 		});
 	};
@@ -397,7 +397,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 			const object = message.details;
 
-			U.Object.openPopup(object);
+			U.Object.openConfig(object);
 			analytics.createObject(object.type, object.layout, analytics.route.type, message.middleTime);
 		});
 	};
@@ -424,7 +424,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		C.ObjectCreateSet([ rootId ], details, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
-				U.Object.openPopup(message.details);
+				U.Object.openConfig(message.details);
 			};
 		});
 	};
@@ -516,7 +516,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			template.isDefault = true;
 		};
 
-		S.Menu.closeAll(J.Constant.menuIds.dataviewTemplate, () => {
+		S.Menu.closeAll(J.Menu.dataviewTemplate, () => {
 			S.Menu.open('dataviewTemplateContext', {
 				menuKey: item.id,
 				element: `#item-more-${item.id}`,

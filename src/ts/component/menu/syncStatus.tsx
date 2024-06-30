@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, Action, translate } from 'Lib';
+import { I, C, S, U, Action, translate } from 'Lib';
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 28;
@@ -150,6 +150,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.onCloseInfo();
+
+		C.ObjectSearchUnsubscribe([ SUB_ID ]);
 	};
 
 	onContextMenu (e, item) {
