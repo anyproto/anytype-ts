@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, J, translate, analytics, focus } from 'Lib';
+import { I, S, U, J, translate, analytics, focus, Renderer } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -126,7 +126,8 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const { rootId, onCoverOpen, onCoverClose, onEdit } = this.props;
 		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 		const element = $(e.currentTarget);
-		const hasCover = object.coverType != I.CoverType.None;
+		const { coverType, coverId } = object;
+		const hasCover = coverType != I.CoverType.None;
 		
 		if (!hasCover) {
 			this.onChange(element);
@@ -136,9 +137,13 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const options: any[] = [
 			{ id: 'change', icon: 'coverChange', name: translate('pageHeadControlButtonsChangeCover') },
 		];
-		if (U.Data.coverIsImage(object.coverType)) {
+		if (U.Data.coverIsImage(coverType)) {
 			options.push({ id: 'position', icon: 'coverPosition', name: translate('pageHeadControlButtonsReposition') });
 		};
+		if ((coverType == I.CoverType.Upload) && coverId) {
+			options.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
+		};
+
 		if (hasCover) {
 			options.push({ id: 'remove', icon: 'remove', name: translate('commonRemove') });
 		};
@@ -155,23 +160,31 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 				options: options,
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
-						case 'change':
+						case 'change': {
 							window.setTimeout(() => {
 								window.clearTimeout(this.timeout);
 								this.onChange(element);
 							}, S.Menu.getTimeout());
 							break;
+						};
 						
-						case 'position':
+						case 'position': {
 							if (onEdit) {
 								onEdit(e);
 							};
 							break;
+						};
 
-						case 'remove':
+						case 'download': {
+							Renderer.send('download', S.Common.imageUrl(coverId, 1000000), { saveAs: true });
+							break;
+						};
+
+						case 'remove': {
 							U.Object.setCover(rootId, I.CoverType.None, '');
 							analytics.event('RemoveCover');
 							break;
+						};
 					};
 				}
 			}
