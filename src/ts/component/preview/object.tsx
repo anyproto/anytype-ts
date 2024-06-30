@@ -54,8 +54,8 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const object = S.Detail.get(contextId, rootId);
 		const { name, description, coverType, coverId, coverX, coverY, coverScale, iconImage } = object;
 		const childBlocks = S.Block.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
-		const isTask = object.layout == I.ObjectLayout.Task;
-		const isBookmark = object.layout == I.ObjectLayout.Bookmark;
+		const isTask = U.Object.isTaskLayout(object.layout);
+		const isBookmark = U.Object.isBookmarkLayout(object.layou);
 		const cn = [ 'previewObject' , check.className, className ];
 
 		let n = 0;

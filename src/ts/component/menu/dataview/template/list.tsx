@@ -294,7 +294,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					typeId,
 					templateId,
 					route,
-					onDuplicate: object => U.Object.openPopup(object, {}),
+					onDuplicate: object => U.Object.openConfig(object, {}),
 					onSetDefault,
 				}
 			});

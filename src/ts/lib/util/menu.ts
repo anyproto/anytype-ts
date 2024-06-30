@@ -378,8 +378,8 @@ class UtilMenu {
 		return options.map(id => ({ id: String(id), name: id }));
 	};
 
-	getWidgetLayoutOptions (target: any) {
-		const isCollection = this.isWidgetCollection(target?.id);
+	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout) {
+		const isCollection = this.isWidgetCollection(id);
 		
 		let options = [
 			I.WidgetLayout.Compact,
@@ -390,14 +390,14 @@ class UtilMenu {
 			options.push(I.WidgetLayout.Link);
 		};
 
-		if (target) {
+		if (id) {
 			if (!isCollection) {
-				const isSet = U.Object.isSetLayout(target.layout);
+				const isSet = U.Object.isSetLayout(layout);
 				const setLayouts = U.Object.getSetLayouts();
 				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
 
 				// Sets can only become Link and List layouts, non-sets can't become List
-				if (treeSkipLayouts.includes(target.layout)) {
+				if (treeSkipLayouts.includes(layout)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				};
 				if (!isSet) {
@@ -407,7 +407,7 @@ class UtilMenu {
 				};
 			};
 
-			if ([ J.Constant.widgetId.set, J.Constant.widgetId.collection ].includes(target.id)) {
+			if ([ J.Constant.widgetId.set, J.Constant.widgetId.collection ].includes(id)) {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
 			};
 		};

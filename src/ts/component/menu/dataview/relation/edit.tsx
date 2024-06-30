@@ -294,7 +294,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		switch (item.id) {
 			case 'open': {
-				U.Object.openPopup(relation);
+				U.Object.openConfig(relation);
 				break;
 			};
 

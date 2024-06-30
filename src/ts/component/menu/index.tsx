@@ -451,7 +451,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { id } = this.props;
 		
 		let ret = Number(window.AnytypeGlobalConfig?.menuBorderBottom) || 80;
-		if ([ 'help', 'onboarding' ].includes(id)) {
+		if ([ 'help', 'onboarding', 'searchObjectWidgetAdd' ].includes(id)) {
 			ret = 16;
 		};
 
@@ -578,7 +578,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				y -= scrollTop;
 			};
 
-			x = Math.max(J.Size.menuBorder, x);
+			x = Math.max(J.Size.vault.collapsed + J.Size.menuBorder, x);
 			x = Math.min(ww - width - J.Size.menuBorder, x);
 
 			y = Math.max(borderTop, y);

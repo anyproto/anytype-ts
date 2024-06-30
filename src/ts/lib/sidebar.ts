@@ -6,7 +6,7 @@ interface SidebarData {
 	isClosed: boolean;
 };
 
-const ANIMATION = 200;
+const ANIMATION = 250;
 
 class Sidebar {
 	
@@ -122,9 +122,9 @@ class Sidebar {
 		};
 
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = this.vault.hasClass('isExpanded') ? 0 : 76;
+		const vw = this.vault.hasClass('isExpanded') ? 0 : J.Size.vault.collapsed;
 		const pageWidth = ww - width - vw;
-		const ho = keyboard.isMainHistory() ? 336 : 0;
+		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
 
 		this.header.css({ width: '' }).removeClass('withSidebar');
@@ -143,7 +143,7 @@ class Sidebar {
 			this.dummy.removeClass('sidebarAnimation');
 		};
 
-		navigation.setX(width + vw, animate);
+		navigation?.setX(width + vw, animate);
 		width ? this.header.addClass('withSidebar') : this.header.removeClass('withSidebar');
 
 		this.page.css({ width: pageWidth });

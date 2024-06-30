@@ -116,7 +116,7 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 				onCreate();
 			};
 		} else {
-			U.Object.openPopup(item);
+			U.Object.openConfig(item);
 		};
 	};
 

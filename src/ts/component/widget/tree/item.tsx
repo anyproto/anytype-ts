@@ -96,7 +96,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 						id={`widget-icon-${treeKey}`}
 						object={object} 
 						size={20} 
-						canEdit={!isReadonly && !isArchived && allowedDetails} 
+						canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(object.layout)} 
 						menuParam={{ 
 							className: 'fixed',
 							classNameWrap: 'fromSidebar',

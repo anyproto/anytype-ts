@@ -167,19 +167,19 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	checkState () {
-		const setLayouts = U.Object.getSetLayouts();
-		const layoutOptions = U.Menu.getWidgetLayoutOptions(this.target).map(it => it.id);
+		const { id, layout } = this.target || {};
+		const layoutOptions = U.Menu.getWidgetLayoutOptions(id, layout).map(it => it.id);
 
-		if (U.Menu.isWidgetCollection(this.target.id)) {
+		if (U.Menu.isWidgetCollection(id)) {
 			if ([ null, I.WidgetLayout.Link ].includes(this.layout)) {
-				this.layout = this.target.id == J.Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
+				this.layout = id == J.Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
 			};
-		} else 
-		if (this.target) {
-			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !setLayouts.includes(this.target.layout)) {
+		} else {
+			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !U.Object.isSetLayout(layout)) {
 				this.layout = I.WidgetLayout.Tree;
 			};
-			if ((this.layout == I.WidgetLayout.Tree) && setLayouts.includes(this.target.layout)) {
+
+			if ((this.layout == I.WidgetLayout.Tree) && U.Object.isSetLayout(layout)) {
 				this.layout = I.WidgetLayout.Compact;
 			};
 		};
@@ -281,7 +281,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				menuId = 'select';
 				menuParam.width = 320;
 				menuParam.data = Object.assign(menuParam.data, {
-					options: U.Menu.getWidgetLayoutOptions(this.target),
+					options: U.Menu.getWidgetLayoutOptions(this.target?.id, this.target?.layout),
 					value: this.layout,
 					onSelect: (e, option) => {
 						this.layout = Number(option.id);

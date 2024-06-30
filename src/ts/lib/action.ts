@@ -520,6 +520,7 @@ class Action {
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
 		const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
 
+		let next = null;
 		let blocks = S.Block.unwrapTree(tree).filter(it => ids.includes(it.id));
 
 		ids.forEach((id: string) => {
@@ -541,6 +542,10 @@ class Action {
 			return it;
 		});
 
+		if (isCut) {
+			next = S.Block.getNextBlock(rootId, focused, -1, it => it.isFocusable());
+		};
+
 		C[cmd](rootId, blocks, range, (message: any) => {
 			U.Common.clipboardCopy({
 				text: message.textSlot,
@@ -554,8 +559,12 @@ class Action {
 			if (isCut) {
 				S.Menu.closeAll([ 'blockContext', 'blockAction' ]);
 
-				focus.set(focused, { from: range.from, to: range.from });
-				focus.apply();
+				if (next) {
+					const l = next.getLength();
+
+					focus.set(next.id, { from: l, to: l });
+					focus.apply();
+				};
 			};
 		});
 

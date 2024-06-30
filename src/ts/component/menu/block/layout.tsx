@@ -77,7 +77,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
 
-		if (!allowedDetails || (object.layout == I.ObjectLayout.Task)) {
+		if (!allowedDetails || U.Object.isTaskLayout(object.layout)) {
 			align = null;
 		};
 		if (!allowedDetails) {

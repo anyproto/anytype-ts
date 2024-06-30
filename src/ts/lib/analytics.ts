@@ -374,6 +374,11 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeShowQuickCapture': {
+				data.type = I.NavigationMenuMode[data.type];
+				break;
+			};
+
 			case 'SelectUsecase': {
 				data.type = Number(data.type) || 0;
 				data.type = I.Usecase[data.type];
@@ -533,6 +538,7 @@ class Analytics {
 		const map = {
 			help:				 'MenuHelp',
 			blockRelationView:	 'ScreenObjectRelation',
+			quickCapture:		 'ScreenQuickCapture',
 		};
 
 		return map[id] || '';

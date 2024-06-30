@@ -357,7 +357,7 @@ class MenuContext extends React.Component<I.Menu> {
 		switch (item.id) {
 
 			case 'open': {
-				U.Object.openPopup(first);
+				U.Object.openConfig(first);
 				break;
 			};
 
@@ -368,7 +368,7 @@ class MenuContext extends React.Component<I.Menu> {
 					};
 
 					if (first) {
-						U.Object.openPopup({ id: message.ids[0], layout: first.layout });
+						U.Object.openConfig({ id: message.ids[0], layout: first.layout });
 					};
 
 					analytics.event('DuplicateObject', { count, route });

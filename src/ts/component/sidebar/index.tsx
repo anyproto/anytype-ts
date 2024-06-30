@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
-import { I, S, J, keyboard, Preview, sidebar, translate } from 'Lib';
+import { Icon, IconObject } from 'Component';
+import { I, U, J, keyboard, Preview, sidebar, translate } from 'Lib';
 import ListWidget from 'Component/list/widget';
 
 const Sidebar = observer(class Sidebar extends React.Component {
@@ -30,37 +30,42 @@ const Sidebar = observer(class Sidebar extends React.Component {
 
     render() {
         const cn = [ 'sidebar' ];
+		const space = U.Space.getSpaceview();
 		const cmd = keyboard.cmdSymbol();
 
         return (
-            <div 
-				ref={node => this.node = node}
-                id="sidebar" 
-                className={cn.join(' ')} 
-            >
-				<div className="inner">
-					<div className="head">
-						<Icon
-							className="toggle"
-							tooltip={translate('sidebarToggle')}
-							tooltipCaption={`${cmd} + \\, ${cmd} + .`}
-							tooltipY={I.MenuDirection.Bottom}
-							onClick={() => sidebar.toggleOpenClose()}
-						/>
+			<React.Fragment>
+				<Icon 
+					id="sidebarToggle"
+					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+					tooltipY={I.MenuDirection.Bottom}
+					onClick={() => sidebar.toggleOpenClose()}
+				/>
+
+				<div 
+					ref={node => this.node = node}
+					id="sidebar" 
+					className={cn.join(' ')} 
+				>
+					<div className="coverWrap">
+						<IconObject object={space} size={1920} forceLetter={true} />
 					</div>
 
-					<div 
-						ref={ref => this.refBody = ref}
-						className="body"
-					>
-						<ListWidget ref={ref => this.refList = ref} {...this.props} />
+					<div className="inner">
+						<div className="head" />
+						<div 
+							ref={ref => this.refBody = ref}
+							className="body"
+						>
+							<ListWidget ref={ref => this.refList = ref} {...this.props} />
+						</div>
+					</div>
+
+					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
+						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>
 				</div>
-
-				<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
-					<div className="resize-handle" onClick={this.onHandleClick} />
-				</div>
-            </div>
+			</React.Fragment>
 		);
     };
 

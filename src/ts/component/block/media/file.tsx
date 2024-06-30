@@ -124,7 +124,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 	
 	onOpen (e: any) {
 		if (!e.button) {
-			U.Object.openPopup({ id: this.props.block.content.targetObjectId, layout: I.ObjectLayout.File });
+			U.Object.openConfig({ id: this.props.block.content.targetObjectId, layout: I.ObjectLayout.File });
 		};
 	};
 	

@@ -74,7 +74,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 					onContextMenu={e => this.onContext(e, item.id)}
 				>
 					<div className="cell isName">
-						<div className="cellContent isName" onClick={() => U.Object.openPopup(item)}>
+						<div className="cellContent isName" onClick={() => U.Object.openConfig(item)}>
 							<div className="flex">
 								<IconObject object={item} />
 								<ObjectName object={item} />
@@ -97,7 +97,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 							if (column.isObject) {
 								const object = S.Detail.get(subId, value, []);
 								if (!object._empty_) {
-									onClick = () => U.Object.openPopup(object);
+									onClick = () => U.Object.openConfig(object);
 									content = (
 										<div className="flex">
 											<IconObject object={object} />

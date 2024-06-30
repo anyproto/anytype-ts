@@ -62,7 +62,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		let more = null;
 
 		if (!isCompact) {
-			if (object.layout == I.ObjectLayout.Bookmark) {
+			if (U.Object.isBookmarkLayout(object.layout)) {
 				descr = <div className="descr">{U.Common.shortUrl(source)}</div>;
 			} else {
 				descr = <ObjectDescription object={object} />;
@@ -81,7 +81,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					object={object} 
 					size={isCompact ? 18 : 48} 
 					iconSize={isCompact ? 18 : 28}
-					canEdit={!isReadonly && !isArchived && allowedDetails} 
+					canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(object.layout)} 
 					menuParam={{ 
 						className: 'fixed',
 						classNameWrap: 'fromSidebar',

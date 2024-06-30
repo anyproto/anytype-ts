@@ -177,7 +177,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {
-				U.Object.openPopup(message.details);
+				U.Object.openConfig(message.details);
 			};
 		});
 	};

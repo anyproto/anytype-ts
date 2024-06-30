@@ -192,7 +192,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 		if (canOpen) {
 			e.stopPropagation();
-			U.Object.openPopup(item);
+			U.Object.openConfig(item);
 		};
 	};
 
