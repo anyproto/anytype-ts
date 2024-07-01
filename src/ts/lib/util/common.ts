@@ -187,6 +187,10 @@ class UtilCommon {
 		return this.hasProperty(o, 'length') ? o.length : Object.keys(o).length;
 	};
 
+	getKeyByValue (o: any, v: any) {
+		return Object.keys(o || {}).find(k => o[k] === v);
+	};
+
 	hasProperty (o: any, p: string) {
 		o = o || {};
 		return Object.prototype.hasOwnProperty.call(o, p);

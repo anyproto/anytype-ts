@@ -311,10 +311,14 @@ class Mark {
 				return;
 			};
 
-			const attr = this.paramToAttr(mark.type, param);
 			const tag = this.getTag(mark.type);
+			if (!tag) {
+				return;
+			};
+
+			const attr = this.paramToAttr(mark.type, param);
 			const data = [ `data-range="${mark.range.from}-${mark.range.to}"` ];
-			
+
 			if (param) {
 				data.push(`data-param="${param}"`);
 			};
@@ -441,29 +445,33 @@ class Mark {
 
 			const end = p1 == '/';
 			const offset = Number(text.indexOf(s)) || 0;
-			const type = Object.values(tags).indexOf(p2);
-
-			if (type < 0) {
+			
+			let type: any = U.Common.getKeyByValue(tags, p2);
+			if (undefined === type) {
 				return;
 			};
 
-			if (end) {
-				for (let i = 0; i < marks.length; ++i) {
-					const m = marks[i];
-					if ((m.type == type) && !m.range.to) {
-						marks[i].range.to = offset;
-						break;
+			type = Number(type);
+
+			if (![ I.MarkType.Change, I.MarkType.Highlight, I.MarkType.Search ].includes(type)) {
+				if (end) {
+					for (let i = 0; i < marks.length; ++i) {
+						const m = marks[i];
+						if ((m.type == type) && !m.range.to) {
+							marks[i].range.to = offset;
+							break;
+						};
 					};
+				} else {
+					const pm = p3.match(rp);
+					const param = pm ? pm[1]: '';
+
+					marks.push({
+						type,
+						range: { from: offset, to: 0 },
+						param: param,
+					});
 				};
-			} else {
-				const pm = p3.match(rp);
-				const param = pm ? pm[1]: '';
-				
-				marks.push({
-					type,
-					range: { from: offset, to: 0 },
-					param: param,
-				});
 			};
 
 			text = text.replace(s, '');
@@ -680,16 +688,15 @@ class Mark {
 
 		for (const i in I.MarkType) {
 			if (isNaN(I.MarkType[i] as any)) {
-				continue;
+				tags[i] = this.getTag(i as any);
 			};
-			tags[i] = this.getTag(I.MarkType[i] as any);
 		};
 
 		return tags;
 	};
 
 	getTag (t: I.MarkType) {
-		return `markup${I.MarkType[t].toLowerCase()}`;
+		return I.MarkType[t] ? `markup${I.MarkType[t].toLowerCase()}` : '';
 	};
 	
 };
