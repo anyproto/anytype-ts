@@ -554,7 +554,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.In, value: [ object.type ] }
 					],
 					onSelect: (item: any) => {
-						U.Object.openPopup({ id: item.id, layout: I.ObjectLayout.Set });
+						U.Object.openConfig({ id: item.id, layout: I.ObjectLayout.Set });
 						this.menuContext.close();
 					}
 				});
@@ -584,11 +584,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		switch (item.id) {
 			case 'open':
-				U.Object.openPopup(type);
+				U.Object.openConfig(type);
 				break;
 
 			case 'setOpen':
-				U.Object.openPopup({ id: this.setId, layout: I.ObjectLayout.Set });
+				U.Object.openConfig({ id: this.setId, layout: I.ObjectLayout.Set });
 				break;
 
 			case 'setCreate':
@@ -603,7 +603,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					if (!message.error.code) {
 						const object = message.details;
 
-						U.Object.openPopup(object);
+						U.Object.openConfig(object);
 						analytics.createObject(object.type, object.layout, analytics.route.featured, message.middleTime);
 					};
 				});

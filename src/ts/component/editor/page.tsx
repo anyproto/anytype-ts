@@ -167,7 +167,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.apply();
 		S.Block.updateNumbers(rootId);
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
@@ -2241,14 +2241,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	setLayoutWidth (v: number) {
 		v = Number(v) || 0;
 
+		const { isPopup, rootId } = this.props;
+		const container = U.Common.getPageContainer(isPopup);
+		const cw = container.width();
 		const node = $(this.node);
 		const width = this.getWidth(v);
 		const elements = node.find('#elements');
+		const percent = width / cw * 100;
 
 		this.width = width;
 
-		node.css({ width });
-		elements.css({ width, marginLeft: -width / 2 });
+		node.css({ width: `${percent}%` });
+		elements.css({ width: `${percent}%`, marginLeft: `-${percent / 2}%` });
 
 		if (this.refHeader && this.refHeader.refDrag) {
 			this.refHeader.refDrag.setValue(v);

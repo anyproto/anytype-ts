@@ -305,8 +305,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.unbind();
 
-		console.log('NAMESPACE', ns);
-
 		win.on(`resize.${ns} sidebarResize.${ns}`, () => this.resize());
 		win.on(`updateDataviewData.${ns}`, () => this.loadData(this.getView().id, 0, true));
 		win.on(`setDataviewSource.${ns}`, () => this.onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
@@ -672,7 +670,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			if ([ I.ViewType.Calendar ].includes(view.type)) {
-				U.Object.openPopup(object);
+				U.Object.openConfig(object);
 			} else {
 				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
 				const ref = this.refCells.get(id);
@@ -830,7 +828,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: typeId, route: this.analyticsRoute() });
 
-			U.Object.openPopup(object);
+			U.Object.openConfig(object);
 		});
 	};
 

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, ObjectName } from 'Component';
-import { I, C, S, U, Action, translate } from 'Lib';
+import { I, C, S, U, Action, translate, analytics } from 'Lib';
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 28;
@@ -35,12 +35,17 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		const icons = this.getIcons();
 
 		const PanelIcon = (item) => {
-			const { id, status } = item;
+			const { id, className } = item;
+			const cn = [ 'iconWrapper' ];
+
+			if (className) {
+				cn.push(className);
+			};
 
 			return (
 				<div
 					id={U.Common.toCamelCase([ 'icon', id ].join('-'))}
-					className={[ 'iconWrapper', status ? status : ''].join(' ')}
+					className={cn.join(' ')}
 					onClick={e => this.onPanelIconClick(e, item)}
 				>
 					<Icon className={id} />
@@ -49,8 +54,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		const Item = (item: any) => {
-			const { syncStatus } = item;
-			const icon = this.getClassBySyncStatus(syncStatus);
+			const icon = U.Data.syncStatusClass(item.syncStatus);
 
 			return (
 				<div
@@ -185,7 +189,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 							break;
 						};
 						case 'archive': {
-							Action.delete([ id ], 'syncStatus');
+							Action.delete([ id ], analytics.route.syncStatus);
 							break;
 						};
 					};
@@ -264,25 +268,25 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIconNetwork () {
-		const syncData = S.Auth.syncStatus;
-		const { network, error, syncingCounter } = syncData;
+		const syncStatus = S.Auth.getSyncStatus();
+		const { network, error, syncingCounter, status } = syncStatus;
 
 		let id = '';
 		let title = '';
-		let status = '';
+		let className = '';
 		let message = '';
 		let buttons: any[] = [];
 
 		let isConnected = false;
 		let isError = false;
 
-		if ([ I.SyncStatusSpace.Syncing, I.SyncStatusSpace.Synced ].includes(syncData.status)) {
+		if ([ I.SyncStatusSpace.Syncing, I.SyncStatusSpace.Synced ].includes(status)) {
 			isConnected = true;
-			status = 'connected';
+			className = 'connected';
 		} else
-		if (I.SyncStatusSpace.Error == syncData.status) {
+		if (I.SyncStatusSpace.Error == status) {
 			isError = true;
-			status = 'error';
+			className = 'error';
 		};
 
 		switch (network) {
@@ -318,7 +322,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				id = 'self';
 				title = translate('menuSyncStatusInfoSelfTitle');
 
-				switch (syncData.status) {
+				switch (status) {
 					case I.SyncStatusSpace.Syncing: {
 						message = translate('menuSyncStatusInfoSelfMessageSyncing');
 						break;
@@ -343,14 +347,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			};
 		};
 
-		return { id, status, title, message, buttons };
-	};
-
-	getClassBySyncStatus (status: I.SyncStatusObject) {
-		if (!status) {
-			status = 0;
-		};
-		return I.SyncStatusObject[status].toLowerCase();
+		return { id, className, title, message, buttons };
 	};
 
 	getRowHeight (item: any) {

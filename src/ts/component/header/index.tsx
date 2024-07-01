@@ -74,27 +74,17 @@ class Header extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 	};
 
 	componentDidUpdate () {
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 		this.refChild.forceUpdate();
 	};
 
 	renderLeftIcons (onOpen?: () => void) {
-		const cmd = keyboard.cmdSymbol();
-
 		return (
 			<React.Fragment>
-				<Icon
-					className="toggle"
-					tooltip={translate('sidebarToggle')}
-					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
-					tooltipY={I.MenuDirection.Bottom}
-					onClick={() => sidebar.toggleOpenClose()}
-				/>
-
 				<Icon 
 					className="expand" 
 					tooltip={translate('commonOpenObject')} 

@@ -48,7 +48,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 					object={object} 
 					size={16} 
 					iconSize={16}
-					canEdit={!isReadonly && !isArchived && allowedDetails} 
+					canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(object.layout)} 
 					menuParam={{ 
 						className: 'fixed',
 						classNameWrap: 'fromSidebar',

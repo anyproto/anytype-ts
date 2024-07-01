@@ -32,7 +32,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 				<div 
 					id={`item-${item.id}`} 
 					className="row" style={item.style}
-					onClick={() => U.Object.openPopup(item)}
+					onClick={() => U.Object.openConfig(item)}
 				>
 					<div className="col">
 						<IconObject size={42} object={item} />

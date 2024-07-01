@@ -349,7 +349,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				this.refChild.resize();			
 			};
 
-			sidebar.resizePage();
+			sidebar.resizePage(null, false);
 		});
 	};
 	

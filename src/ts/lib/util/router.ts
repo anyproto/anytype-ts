@@ -99,10 +99,10 @@ class UtilRouter {
 
 			const fade = $('#globalFade');
 			const t = delay || J.Constant.delay.route;
+			const wait = t;
 
-			fade.css({ transitionDuration: `${t / 1000}s` });
+			fade.css({ transitionDuration: `${t / 1000}s` }).show();
 				
-			fade.show();
 			window.setTimeout(() => fade.addClass('show'), 15);
 
 			window.setTimeout(() => {
@@ -111,7 +111,6 @@ class UtilRouter {
 				};
 
 				change();
-				fade.removeClass('show');
 			}, t);
 
 			window.setTimeout(() => {
@@ -119,8 +118,9 @@ class UtilRouter {
 					onFadeIn();
 				};
 
-				fade.hide();
-			}, t * 2);
+				fade.removeClass('show');
+				window.setTimeout(() => fade.hide(), t);
+			}, wait + t);
 		};
 
 		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
@@ -145,7 +145,7 @@ class UtilRouter {
 			this.go('/main/blank', { 
 				replace: true, 
 				animate: true,
-				delay: 300,
+				delay: 250,
 				onFadeOut: () => {
 					S.Record.metaClear(J.Constant.subId.participant, '');
 					S.Record.recordsClear(J.Constant.subId.participant, '');

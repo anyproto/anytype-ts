@@ -116,15 +116,19 @@ class UtilData {
 		return String(I.CardSize[v]).toLowerCase();
 	};
 
-	diffClass (t: I.DiffType): string {
+	diffClass (v: I.DiffType): string {
 		let c = '';
-		switch (t) {
+		switch (v) {
 			case I.DiffType.None: c = 'diffNone'; break;
 			case I.DiffType.Add: c = 'diffAdd'; break;
 			case I.DiffType.Change: c = 'diffChange'; break;
 			case I.DiffType.Remove: c = 'diffRemove'; break;
 		};
 		return c;
+	};
+
+	syncStatusClass (v: I.SyncStatusObject): string {
+		return I.SyncStatusObject[v].toLowerCase();
 	};
 	
 	alignHIcon (v: I.BlockHAlign): string {

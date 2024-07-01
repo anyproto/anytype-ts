@@ -77,7 +77,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
 
-		if (!allowedDetails || (object.layout == I.ObjectLayout.Task)) {
+		if (!allowedDetails || U.Object.isTaskLayout(object.layout)) {
 			align = null;
 		};
 		if (!allowedDetails) {
@@ -128,12 +128,15 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 			return;
 		};
 
+		if (S.Menu.isAnimating) {
+			return;
+		};
+
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = S.Detail.get(rootId, rootId);
 
-		let menuId = '';
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -147,6 +150,8 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 				rebind: this.rebind,
 			},
 		};
+
+		let menuId = '';
 
 		switch (item.id) {
 			case 'align':

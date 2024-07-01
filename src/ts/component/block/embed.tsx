@@ -55,6 +55,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	render () {
+		const { isOnline } = S.Common;
 		const { isShowing, isEditing } = this.state;
 		const { readonly, block } = this.props;
 		const { content, fields, hAlign } = block;
@@ -132,7 +133,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				<div id="valueWrap" className="valueWrap resizable" style={css}>
 					{select ? <div className="selectWrap">{select}</div> : ''}
 
-					<div className="preview" onClick={this.onPreview} />
+					<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={this.onPreview} />
 					<div id="value" onMouseDown={this.onEdit} />
 					<div id={this.getContainerId()} />
 
@@ -193,11 +194,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	rebind () {
+		const { isOnline } = S.Common;
 		const { block, isPopup } = this.props;
 		const { processor } = block.content;
 		const { isEditing, isShowing } = this.state;
 		const win = $(window);
 		const node = $(this.node);
+		const preview = node.find('#preview');
 
 		this.unbind();
 
@@ -223,12 +226,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			});
 		};
 
-		win.on(`online.${block.id} offline.${block.id}`, () => {
-			if ((isShowing || U.Embed.allowAutoRender(processor)) && navigator.onLine) {
-				node.find('#receiver').remove('');
-				this.setContent(this.text);
-			};
-		});
+		node.find('#receiver').remove();
+		isOnline ? preview.hide() : preview.show();
+
+		if (isOnline && (isShowing || U.Embed.allowAutoRender(processor))) {
+			this.setContent(this.text);
+		};
 
 		if (!U.Embed.allowAutoRender(processor)) {
 			const container = U.Common.getScrollContainer(isPopup);

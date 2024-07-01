@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.editorWrapper { margin: 0px auto; }
+.editorWrapper { margin: 0px auto; min-width: 300px; }
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 

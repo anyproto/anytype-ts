@@ -59,67 +59,79 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 			css.minHeight = this.height;
 		};
 
-		switch (state) {
-			default:
-			case I.FileState.Error:
-			case I.FileState.Empty:
-				element = (
-					<React.Fragment>
-						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="pdf" 
-							textFile={translate('blockPdfUpload')}
-							accept={J.Constant.fileExtension.pdf} 
-							onChangeUrl={this.onChangeUrl} 
-							onChangeFile={this.onChangeFile} 
-							readonly={readonly} 
-						/>
-					</React.Fragment>
-				);
-				break;
-				
-			case I.FileState.Uploading:
-				element = <Loader />;
-				break;
-				
-			case I.FileState.Done:
-				if (pages > 1) {
-					pager = (
-						<Pager 
-							offset={page - 1} 
-							limit={1} 
-							total={pages} 
-							pageLimit={1}
-							isShort={true}
-							onChange={page => this.setState({ page })} 
-						/>
+		if (object.isDeleted) {
+			element = (
+				<div className="deleted">
+					<Icon className="ghost" />
+					<div className="name">{translate('commonDeletedObject')}</div>
+				</div>
+			);
+		} else {
+			switch (state) {
+				default:
+				case I.FileState.Error:
+				case I.FileState.Empty: {
+					element = (
+						<React.Fragment>
+							{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
+							<InputWithFile 
+								block={block} 
+								icon="pdf" 
+								textFile={translate('blockPdfUpload')}
+								accept={J.Constant.fileExtension.pdf} 
+								onChangeUrl={this.onChangeUrl} 
+								onChangeFile={this.onChangeFile} 
+								readonly={readonly} 
+							/>
+						</React.Fragment>
 					);
+					break;
 				};
+					
+				case I.FileState.Uploading: {
+					element = <Loader />;
+					break;
+				};
+					
+				case I.FileState.Done: {
+					if (pages > 1) {
+						pager = (
+							<Pager 
+								offset={page - 1} 
+								limit={1} 
+								total={pages} 
+								pageLimit={1}
+								isShort={true}
+								onChange={page => this.setState({ page })} 
+							/>
+						);
+					};
 
-				element = (
-					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
-						<div className="info" onMouseDown={this.onOpen}>
-							<ObjectName object={object} />
-							<span className="size">{U.File.size(object.sizeInBytes)}</span>
+					element = (
+						<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
+							<div className="info" onMouseDown={this.onOpen}>
+								<ObjectName object={object} />
+								<span className="size">{U.File.size(object.sizeInBytes)}</span>
+							</div>
+
+							<MediaPdf 
+								id={`pdf-block-${id}`}
+								ref={ref => this.refMedia = ref}
+								src={S.Common.fileUrl(targetObjectId)}
+								page={page}
+								onDocumentLoad={this.onDocumentLoad}
+								onPageRender={this.onPageRender}
+								onClick={this.onClick}
+							/>
+
+							{pager}
+
+							<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
 						</div>
-
-						<MediaPdf 
-							id={`pdf-block-${id}`}
-							ref={ref => this.refMedia = ref}
-							src={S.Common.fileUrl(targetObjectId)}
-							page={page}
-							onDocumentLoad={this.onDocumentLoad}
-							onPageRender={this.onPageRender}
-							onClick={this.onClick}
-						/>
-
-						{pager}
-
-						<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
-					</div>
-				);
-				break;
+					);
+					break;
+				};
+			};
 		};
 		
 		return (

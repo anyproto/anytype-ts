@@ -37,7 +37,6 @@ class Keyboard {
 		this.unbind();
 		
 		const win = $(window);
-		const doc = $(document);
 
 		S.Common.isOnlineSet(navigator.onLine);
 
@@ -78,8 +77,6 @@ class Keyboard {
 
 	onScroll () {
 		Preview.tooltipHide(false);
-
-		$(window).trigger('resize.menuOnboarding resize.menuSpace');
 	};
 
 	onMouseDown (e: any) {
@@ -121,6 +118,7 @@ class Keyboard {
 		const isMain = this.isMain();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const selection = S.Common.getRef('selectionProvider');
+		const { spaceview } = S.Block;
 
 		this.pressed.push(key);
 
@@ -184,6 +182,15 @@ class Keyboard {
 			// Shortcuts
 			this.shortcut('ctrl+space', e, () => {
 				S.Popup.open('shortcut', { preventResize: true });
+			});
+
+			// Spaces
+			this.shortcut('ctrl+tab', e, () => {
+				const items = U.Menu.getVaultItems().filter(it => !it.isButton);
+				const idx = items.findIndex(it => it.id == spaceview) + 1;
+				const next = items[idx] ? items[idx] : items[0];
+
+				U.Router.switchSpace(next.targetSpaceId);
 			});
 
 			// Print
@@ -934,6 +941,10 @@ class Keyboard {
 
 	isMainIndex () {
 		return this.isMain() && (this.match?.params?.action == 'index');
+	};
+
+	isMainHistory () {
+		return this.isMain() && (this.match?.params?.action == 'history');
 	};
 
 	isAuth () {

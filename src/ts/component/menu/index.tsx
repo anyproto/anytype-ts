@@ -451,7 +451,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { id } = this.props;
 		
 		let ret = Number(window.AnytypeGlobalConfig?.menuBorderBottom) || 80;
-		if ([ 'help', 'onboarding' ].includes(id)) {
+		if ([ 'help', 'onboarding', 'searchObjectWidgetAdd' ].includes(id)) {
 			ret = 16;
 		};
 
@@ -578,7 +578,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				y -= scrollTop;
 			};
 
-			x = Math.max(J.Size.menuBorder, x);
+			x = Math.max(J.Size.vault.collapsed + J.Size.menuBorder, x);
 			x = Math.min(ww - width - J.Size.menuBorder, x);
 
 			y = Math.max(borderTop, y);
@@ -819,8 +819,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				this.ref.n = 0;
 			};
 
-			this.setActive(null, true);
-
 			const item = items[this.ref.n];
 			if (!item) {
 				return;
@@ -830,6 +828,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				onArrowDown();
 				return;
 			};
+
+			this.setActive(null, true);
 
 			if (!item.arrow && this.ref.onOver) {
 				this.ref.onOver(e, item);
@@ -847,9 +847,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				};
 			};
 
-			this.setActive(null, true);
-
 			const item = items[this.ref.n];
+
 			if (!item) {
 				return;
 			};
@@ -859,6 +858,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				return;
 			};
 
+			this.setActive(null, true);
 			if (!item.arrow && this.ref.onOver) {
 				this.ref.onOver(e, item);
 			};

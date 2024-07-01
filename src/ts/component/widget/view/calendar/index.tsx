@@ -175,7 +175,6 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 					readonly: !canCreate,
 					onCreate: () => {
 						const details = {};
-
 						details[view.groupRelationKey] = U.Date.timestamp(y, m, d, 12, 0, 0);
 
 						onCreate({ details });

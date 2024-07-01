@@ -8,7 +8,7 @@
 		padding: 12px 16px 10px 16px;
 	}
 	.head {
-		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-grow: 1; width: 100%; @include text-paragraph; font-weight: 600; }
+		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-grow: 1; @include text-paragraph; font-weight: 600; width: 100%; }
 		.clickable {
 			.name { @include text-overflow-nw; }
 			.count { color: var(--color-text-secondary); }
@@ -27,11 +27,6 @@
 
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; position: relative; z-index: 2; }
 		.buttons.active { display: flex; } 
-	}
-	.head:hover { padding-right: 8px; }
-	.head:hover {
-		.clickable { width: calc(100% - 60px); }
-		.buttons { display: flex; }
 	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
@@ -72,7 +67,7 @@
 	.item.isSection .inner::before { display: none !important; }
 }
 
-.widget.active {
+.widget.active, .widget:hover {
 	.head { padding-right: 8px; }
 	.head {
 		.clickable { width: calc(100% - 60px); }

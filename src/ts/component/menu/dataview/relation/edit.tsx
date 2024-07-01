@@ -226,7 +226,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (relation && Relation.isSystem(relation.relationKey)) {
 			canDelete = false;
 		};
-		if (readonly) {
+		if (!relation || readonly) {
 			canDuplicate = false;
 			canDelete = false;
 		};
@@ -294,7 +294,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		switch (item.id) {
 			case 'open': {
-				U.Object.openPopup(relation);
+				U.Object.openConfig(relation);
 				break;
 			};
 

@@ -116,26 +116,13 @@ const Navigation = observer(class Navigation extends React.Component {
 
 	componentDidMount () {
 		this._isMounted = true;
-		this.resize();
-		this.rebind();
 	};
 
 	componentDidUpdate () {
-		this.resize();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
-	};
-
-	unbind () {
-		$(window).off('resize.navigation sidebarResize.navigation');
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('resize.navigation sidebarResize.navigation', () => this.resize());
 	};
 
 	onBack () {
@@ -158,20 +145,21 @@ const Navigation = observer(class Navigation extends React.Component {
 		keyboard.onSearchPopup(analytics.route.navigation);
 	};
 
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const win = $(window);
+	setX (sw: number, animate: boolean) {
 		const node = $(this.node);
 		const { ww } = U.Common.getWindowDimensions();
 		const width = node.outerWidth();
-		const sw = $('#sidebarDummy').outerWidth();
 		const x = (ww - sw) / 2 - width / 2 + sw;
 
-		node.css({ left: x });
-		win.trigger('resize.menuSpace');
+		if (animate) {
+			node.addClass('sidebarAnimation');
+		};
+
+		node.css({ left: `${x / ww * 100}%` });
+
+		if (animate) {
+			window.setTimeout(() => node.removeClass('sidebarAnimation'), 200);
+		};
 	};
 
 	onTooltipShow (e: any, text: string, caption?: string) {

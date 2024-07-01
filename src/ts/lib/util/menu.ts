@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation, Storage } from 'Lib';
 
 class UtilMenu {
 
@@ -379,8 +379,8 @@ class UtilMenu {
 		return options.map(id => ({ id: String(id), name: id }));
 	};
 
-	getWidgetLayoutOptions (target: any) {
-		const isCollection = this.isWidgetCollection(target?.id);
+	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout) {
+		const isCollection = this.isWidgetCollection(id);
 		
 		let options = [
 			I.WidgetLayout.Compact,
@@ -391,14 +391,14 @@ class UtilMenu {
 			options.push(I.WidgetLayout.Link);
 		};
 
-		if (target) {
+		if (id) {
 			if (!isCollection) {
-				const isSet = U.Object.isSetLayout(target.layout);
+				const isSet = U.Object.isSetLayout(layout);
 				const setLayouts = U.Object.getSetLayouts();
 				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
 
 				// Sets can only become Link and List layouts, non-sets can't become List
-				if (treeSkipLayouts.includes(target.layout)) {
+				if (treeSkipLayouts.includes(layout)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				};
 				if (!isSet) {
@@ -408,7 +408,7 @@ class UtilMenu {
 				};
 			};
 
-			if ([ J.Constant.widgetId.set, J.Constant.widgetId.collection ].includes(target.id)) {
+			if ([ J.Constant.widgetId.set, J.Constant.widgetId.collection ].includes(id)) {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
 			};
 		};
@@ -798,6 +798,31 @@ class UtilMenu {
 				},
 			}
 		});
+	};
+
+	getVaultItems () {
+		const ids = Storage.get('spaceOrder') || [];
+		const items = U.Common.objectCopy(U.Space.getList());
+
+		//items.unshift({ id: 'void', isButton: true });
+		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
+
+		if (U.Space.canCreateSpace()) {
+			items.push({ id: 'add', name: translate('commonCreateNew'), isButton: true });
+		};
+
+		if (ids && (ids.length > 0)) {
+			items.sort((c1, c2) => {
+				const i1 = ids.indexOf(c1.id);
+				const i2 = ids.indexOf(c2.id);
+
+				if (i1 > i2) return 1;
+				if (i1 < i2) return -1;
+				return 0;
+			});
+		};
+
+		return items;
 	};
 
 };

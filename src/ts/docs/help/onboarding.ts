@@ -194,18 +194,6 @@ export default {
 					}
 				},
 				{
-					name: translate('onboardingSpaceSelectTitle'),
-					description: translate('onboardingSpaceSelectDescription'),
-					video: './img/help/onboarding/space-s.mp4',
-					param: {
-						element: '#navigationPanel #button-navigation-profile',
-						classNameWrap: 'fixed',
-						vertical: I.MenuDirection.Top,
-						horizontal: I.MenuDirection.Center,
-						offsetY: -24,
-					}
-				},
-				{
 					name: translate('onboardingQuickCaptureTitle'),
 					description: translate('onboardingQuickCaptureDescription'),
 					param: {

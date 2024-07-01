@@ -26,8 +26,9 @@ export enum SyncStatusError {
 };
 
 export interface SyncStatus {
-	status: SyncStatusSpace,
-	network: SyncStatusNetwork,
-	error: SyncStatusError,
-	syncingCounter: number
+	id: string;
+	status: SyncStatusSpace;
+	network: SyncStatusNetwork;
+	error: SyncStatusError;
+	syncingCounter: number;
 };
