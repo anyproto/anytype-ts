@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation, Storage } from 'Lib';
 
 class UtilMenu {
 
@@ -797,6 +797,31 @@ class UtilMenu {
 				},
 			}
 		});
+	};
+
+	getVaultItems () {
+		const ids = Storage.get('spaceOrder') || [];
+		const items = U.Common.objectCopy(U.Space.getList());
+
+		//items.unshift({ id: 'void', isButton: true });
+		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
+
+		if (U.Space.canCreateSpace()) {
+			items.push({ id: 'add', name: translate('commonCreateNew'), isButton: true });
+		};
+
+		if (ids && (ids.length > 0)) {
+			items.sort((c1, c2) => {
+				const i1 = ids.indexOf(c1.id);
+				const i2 = ids.indexOf(c2.id);
+
+				if (i1 > i2) return 1;
+				if (i1 < i2) return -1;
+				return 0;
+			});
+		};
+
+		return items;
 	};
 
 };

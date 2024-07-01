@@ -23,7 +23,7 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
     render () {
-		const items = this.getItems();
+		const items = U.Menu.getVaultItems();
 		const { spaceview } = S.Block;
 
 		const Item = SortableElement(item => {
@@ -157,31 +157,6 @@ const Vault = observer(class Vault extends React.Component {
 		$(window).on('resize.vault', () => this.resize());
 	};
 
-	getItems () {
-		const ids = Storage.get('vaultOrder') || [];
-		const items = U.Common.objectCopy(U.Space.getList());
-
-		//items.unshift({ id: 'void' });
-		items.push({ id: 'gallery', name: translate('commonGallery') });
-
-		if (U.Space.canCreateSpace()) {
-			items.push({ id: 'add', name: translate('commonCreateNew') });
-		};
-
-		if (ids && (ids.length > 0)) {
-			items.sort((c1, c2) => {
-				const i1 = ids.indexOf(c1.id);
-				const i2 = ids.indexOf(c2.id);
-
-				if (i1 > i2) return 1;
-				if (i1 < i2) return -1;
-				return 0;
-			});
-		};
-
-		return items;
-	};
-
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 
@@ -263,12 +238,13 @@ const Vault = observer(class Vault extends React.Component {
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
 
-		let ids = this.getItems().map(it => it.id)
+		let ids = U.Menu.getVaultItems().map(it => it.id)
 		ids = arrayMove(ids, oldIndex, newIndex);
-		Storage.set('vaultOrder', ids, true);
+		Storage.set('spaceOrder', ids, true);
 
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
+
 		this.forceUpdate();
 	};
 
