@@ -43,7 +43,7 @@ class UtilData {
 	};
 
 	blockEmbedClass (v: I.EmbedProcessor): string {
-		return `is${I.EmbedProcessor[v]}`;
+		return `is${String(I.EmbedProcessor[v])}`;
 	};
 
 	styleIcon (type: I.BlockType, v: number): string {
@@ -129,8 +129,7 @@ class UtilData {
 
 	syncStatusClass (v: I.SyncStatusObject): string {
 		v = v || I.SyncStatusObject.Synced;
-
-		return I.SyncStatusObject[v].toLowerCase();
+		return String(I.SyncStatusObject[v]).toLowerCase();
 	};
 	
 	alignHIcon (v: I.BlockHAlign): string {
