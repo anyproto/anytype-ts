@@ -887,7 +887,7 @@ class UtilData {
 			return;
 		};
 		
-		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, (message: any) => {
+		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, this.getLinkBlockParam('', type.recommendedLayout), (message: any) => {
 			if (!message.error.code) {
 				analytics.createObject(type.id, type.recommendedLayout, route, message.middleTime);
 			};
@@ -1045,6 +1045,44 @@ class UtilData {
 		});
 
 		return groupedRecords;
+	};
+
+	getLinkBlockParam (id: string, layout: I.ObjectLayout) {
+		const param: Partial<I.Block> = {};
+
+		if (U.Object.isFileLayout(layout)) {
+			return {
+				type: I.BlockType.File,
+				content: {
+					targetObjectId: id,
+					style: I.FileStyle.Embed,
+					state: I.FileState.Done,
+					type: U.Object.getFileTypeByLayout(layout),
+				},
+			};
+		};
+
+		switch (layout) {
+			case I.ObjectLayout.Bookmark: {
+				param.type = I.BlockType.Bookmark;
+				param.content = {
+					state: I.BookmarkState.Done,
+					targetObjectId: id,
+				};
+				break;
+			};
+
+			default: {
+				param.type = I.BlockType.Link;
+				param.content = {
+					...this.defaultLinkSettings(),
+					targetBlockId: id,
+				};
+				break;
+			};
+		};
+
+		return param;
 	};
 
 };

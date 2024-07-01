@@ -428,7 +428,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Link:
-					C.BlockCreate(rootId, blockId, position, this.getBlockParam(target.id, item.layout), (message: any) => {
+					C.BlockCreate(rootId, blockId, position, U.Data.getLinkBlockParam(target.id, item.layout), (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -457,7 +457,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					if (isCollection) {
 						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
 					} else {
-						C.BlockCreate(target.id, '', position, this.getBlockParam(blockId, object.layout), cb);
+						C.BlockCreate(target.id, '', position, U.Data.getLinkBlockParam(blockId, object.layout), cb);
 					};
 					break;
 			};
@@ -480,44 +480,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		} else {
 			process(item, false);
 		};
-	};
-
-	getBlockParam (id: string, layout: I.ObjectLayout) {
-		const param: Partial<I.Block> = {};
-
-		if (U.Object.isFileLayout(layout)) {
-			return {
-				type: I.BlockType.File,
-				content: {
-					targetObjectId: id,
-					style: I.FileStyle.Embed,
-					state: I.FileState.Done,
-					type: U.Object.getFileTypeByLayout(layout),
-				},
-			};
-		};
-
-		switch (layout) {
-			case I.ObjectLayout.Bookmark: {
-				param.type = I.BlockType.Bookmark;
-				param.content = {
-					state: I.BookmarkState.Done,
-					targetObjectId: id,
-				};
-				break;
-			};
-
-			default: {
-				param.type = I.BlockType.Link;
-				param.content = {
-					...U.Data.defaultLinkSettings(),
-					targetBlockId: id,
-				};
-				break;
-			};
-		};
-
-		return param;
 	};
 
 	onFilterChange (v: string) {
