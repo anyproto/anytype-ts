@@ -142,7 +142,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		U.Data.searchSubscribe({
 			subId: SUB_ID_OBJECT,
 			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
+				{ relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
 			],
 			keys: J.Relation.default.concat(relationKeys),
 			noDeps: true,
@@ -170,7 +170,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		U.Data.searchSubscribe({
 			subId: SUB_ID_DEPS,
 			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: depIds },
+				{ relationKey: 'id', condition: I.FilterCondition.In, value: depIds },
 			],
 			noDeps: true,
 		}, cb);

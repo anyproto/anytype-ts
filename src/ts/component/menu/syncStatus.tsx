@@ -236,7 +236,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	load () {
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
 		const sorts = [
 			{ relationKey: 'syncDate', type: I.SortType.Desc },

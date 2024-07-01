@@ -124,7 +124,7 @@ class Dataview {
 		const filters = U.Common.objectCopy(view.filters).concat(param.filters || []);
 		const sorts = U.Common.objectCopy(view.sorts).concat(param.sorts || []);
 
-		filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() });
+		filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() });
 
 		if (viewChange) {
 			meta.viewId = newViewId;
@@ -272,7 +272,7 @@ class Dataview {
 	};
 
 	getGroupFilter (relation: any, value: any): I.Filter {
-		const filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
+		const filter: any = { relationKey: relation.relationKey };
 
 		switch (relation.format) {
 			default: {
