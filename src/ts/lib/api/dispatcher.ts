@@ -957,6 +957,11 @@ class Dispatcher {
 					S.Auth.syncStatusUpdate(mapped);
 					break;
 				};
+
+				case 'P2PStatusUpdate': {
+					S.Auth.p2pSyncStatusUpdate(mapped);
+					break;
+				};
 			};
 
 			if (needLog) {

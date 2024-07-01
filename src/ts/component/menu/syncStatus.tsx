@@ -260,11 +260,40 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		const iconNetwork = this.getIconNetwork();
 		const iconP2P = this.getIconP2P();
 
-		return [ iconNetwork ];
+		return [ iconP2P, iconNetwork ];
 	};
 
 	getIconP2P () {
-		return {};
+		const p2pStatus = S.Auth.getP2PSyncStatus();
+		const { status } = p2pStatus;
+
+		let className = '';
+		let message = '';
+
+		switch (status) {
+			default:
+			case I.P2PStatus.NotConnected: {
+				message = translate('menuSyncStatusP2PNoDevicesConnected');
+				break;
+			};
+			case I.P2PStatus.Connected: {
+				className = 'connected';
+				break;
+			};
+			case I.P2PStatus.NotPossible: {
+				message = translate('menuSyncStatusP2PRestricted');
+				className = 'error';
+				break;
+			};
+		};
+
+		return {
+			id: 'p2p',
+			className,
+			title: translate('menuSyncStatusInfoP2pTitle'),
+			message,
+			buttons: []
+		};
 	};
 
 	getIconNetwork () {
