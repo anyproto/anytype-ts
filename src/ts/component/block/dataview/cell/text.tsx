@@ -411,7 +411,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		keyboard.setFocus(false);
 		this.range = null;
 
-		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(this.value)) {
+		if (U.Common.compareJSON(record[relation.relationKey], this.value)) {
 			this.setEditing(false);
 			return;
 		};
