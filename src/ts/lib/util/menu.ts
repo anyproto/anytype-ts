@@ -824,6 +824,16 @@ class UtilMenu {
 		return items;
 	};
 
+	getFixedWidgets () {
+		return [
+			{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
+			{ id: J.Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: ':mag:' },
+			{ id: J.Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: ':card_index_dividers:' },
+			{ id: J.Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: ':memo:' },
+			{ id: J.Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: ':date:', caption: translate('menuWidgetRecentOpenCaption') },
+		];
+	};
+
 };
 
 export default new UtilMenu();

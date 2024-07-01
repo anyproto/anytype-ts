@@ -245,7 +245,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		if (canAdd && canWrite) {
-			let name = translate('commonCreateObject');
+			let name = '';
 			if (addParam) {
 				if (addParam.nameWithFilter && filter) {
 					name = U.Common.sprintf(addParam.nameWithFilter, filter);
@@ -259,10 +259,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				name = U.Common.sprintf(translate('commonCreateObjectWithName'), filter);
 			};
 
-			if (length) {
-				items.unshift({ isDiv: true });
+			if (name) {
+				if (length) {
+					items.unshift({ isDiv: true });
+				};
+
+				items.unshift({ id: 'add', icon: 'plus', name, isAdd: true });
 			};
-			items.unshift({ id: 'add', icon: 'plus', name, isAdd: true });
 		};
 
 		return items;
@@ -355,7 +358,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			this.items = this.items.concat(message.records || []);
 
 			if (clear && dataChange) {
-				this.items = dataChange(this.items);
+				this.items = dataChange(this, this.items);
 			};
 
 			if (dataMapper) {

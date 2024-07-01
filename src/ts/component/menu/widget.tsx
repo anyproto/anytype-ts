@@ -246,14 +246,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					filters,
 					value: this.target ? this.target.id : '',
 					canAdd: true,
-					dataChange: (items: any[]) => {
-						const fixed: any[] = [
-							{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
-							{ id: J.Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: ':mag:' },
-							{ id: J.Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: ':card_index_dividers:' },
-							{ id: J.Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: ':memo:' },
-							{ id: J.Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: ':date:', caption: translate('menuWidgetRecentOpenCaption') },
-						];
+					dataChange: (context: any, items: any[]) => {
+						const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
+						const fixed: any[] = U.Menu.getFixedWidgets().filter(it => it.name.match(reg));
+
 						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 					},
 					onSelect: (target) => {
