@@ -20,6 +20,7 @@ const Vault = observer(class Vault extends React.Component {
 		this.onToggle = this.onToggle.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 
     render () {
@@ -85,7 +86,7 @@ const Vault = observer(class Vault extends React.Component {
 		const ItemIconSortable = SortableElement(it => <ItemIcon {...it} index={it.index} />);
 
 		const List = SortableContainer(() => (
-			<div id="scroll" className="side top">
+			<div id="scroll" className="side top" onScroll={this.onScroll}>
 				{items.map((item, i) => {
 					item.key = `item-space-${item.id}`;
 
@@ -138,12 +139,19 @@ const Vault = observer(class Vault extends React.Component {
 		);
     };
 
-	componentDidMount(): void {
+	componentDidMount (): void {
 		this.resize();
 		this.rebind();
 	};
 
-	componentWillUnmount(): void {
+	componentDidUpdate (): void {
+		const node = $(this.node);
+		const scroll = node.find('#scroll');
+
+		scroll.scrollTop(this.top);
+	};
+
+	componentWillUnmount (): void {
 		this.unbind();
 		window.clearTimeout(this.timeoutHover);
 	};
@@ -246,6 +254,13 @@ const Vault = observer(class Vault extends React.Component {
 		keyboard.setDragging(false);
 
 		this.forceUpdate();
+	};
+
+	onScroll () {
+		const node = $(this.node);
+		const scroll = node.find('#scroll');
+
+		this.top = scroll.scrollTop();
 	};
 
 	onMouseEnter (e: any, item: any) {
