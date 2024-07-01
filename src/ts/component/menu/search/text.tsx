@@ -101,6 +101,11 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		const cmd = keyboard.cmdKey();
 
+		keyboard.shortcut(`tab, enter`, e, () => {
+			this.search();
+			ret = true;
+		});
+
 		keyboard.shortcut(`arrowup, arrowdown, tab, enter, ${cmd}+f`, e, (pressed: string) => {
 			this.onArrow(pressed == 'arrowup' ? -1 : 1);
 			ret = true;
@@ -135,7 +140,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 	search () {
 		const value = this.ref.getValue();
-
 		if (value && (this.last == value)) {
 			return;
 		};
@@ -189,6 +193,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		this.items = this.container.get(0).querySelectorAll(tag) || [];
 		this.items.length ? switcher.addClass('active') : switcher.removeClass('active');
 
+		this.setCnt();
 		this.focus();
 	};
 
@@ -252,8 +257,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
-		const node = $(this.node);
-		const cnt = node.find('#cnt');
 		const scrollContainer = this.getScrollContainer();
 		const offset = J.Size.lastBlock + J.Size.header;
 		const tag = Mark.getTag(I.MarkType.Search);
@@ -282,8 +285,15 @@ class MenuSearchText extends React.Component<I.Menu> {
 			wh = $(window).height();
 		};
 
-		cnt.text(`${this.n + 1}/${this.items.length}`);
+		this.setCnt();
 		scrollContainer.scrollTop(y - wh + offset);
+	};
+
+	setCnt () {
+		const node = $(this.node);
+		const cnt = node.find('#cnt');
+
+		cnt.text(`${this.n + 1}/${this.items.length}`);
 	};
 	
 };

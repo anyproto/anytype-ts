@@ -128,6 +128,8 @@ class UtilData {
 	};
 
 	syncStatusClass (v: I.SyncStatusObject): string {
+		v = v || I.SyncStatusObject.Synced;
+
 		return I.SyncStatusObject[v].toLowerCase();
 	};
 	
