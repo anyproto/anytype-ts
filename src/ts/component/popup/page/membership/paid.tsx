@@ -47,9 +47,11 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		let periodText = '';
 		let labelText = '';
 		let paidOnOtherPlatform = false;
+		let canEnterName = !name;
 
 		if ((membership.tier == I.TierType.Builder) && (paymentMethod != I.PaymentMethod.Stripe)) {
 			paidOnOtherPlatform = true;
+			canEnterName = false;
 		};
 
 		if (period) {
@@ -74,8 +76,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 								ref={ref => this.refName = ref}
 								value={name}
 								onKeyUp={this.onKeyUp}
-								readonly={!!name}
-								className={name ? 'disabled' : ''}
+								readonly={!canEnterName}
+								className={!canEnterName ? 'disabled' : ''}
 								placeholder={translate(`popupMembershipPaidPlaceholder`)}
 							/>
 							<div className="ns">{J.Constant.namespace[nameType]}</div>
