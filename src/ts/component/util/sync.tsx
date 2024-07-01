@@ -58,7 +58,8 @@ const Sync = observer(class Sync extends React.Component<Props> {
 	};
 
 	getStatus (): any {
-		const { status, network, error } = S.Auth.syncStatus;
+		const syncStatus = S.Auth.getSyncStatus();
+		const { status, network, error } = syncStatus;
 
 		let icon = '';
 		let name = '';

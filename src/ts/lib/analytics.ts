@@ -36,6 +36,7 @@ class Analytics {
 		shortcut: 'Shortcut',
 		turn: 'TurnInto',
 		powertool: 'Powertool',
+		syncStatus: 'SyncStatus',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',

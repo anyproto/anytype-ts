@@ -1464,6 +1464,7 @@ export const Mapper = {
 
 		SpaceSyncStatusUpdate: (obj: Events.Event.Space.SyncStatus.Update) => {
 			return {
+				id: obj.getId(),
 				error: obj.getError(),
 				network: obj.getNetwork(),
 				status: obj.getStatus(),
