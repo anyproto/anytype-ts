@@ -89,11 +89,13 @@ class MenuSearchText extends React.Component<I.Menu> {
 			e.stopPropagation();
 
 			this.onArrow(1);
+			window.clearTimeout(this.timeout);
 		});
 	};
 	
 	onKeyUp (e: any) {
 		e.preventDefault();
+		window.clearTimeout(this.timeout);
 
 		let ret = false;
 
@@ -108,7 +110,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 			return;
 		};
 
-		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => this.search(), J.Constant.delay.keyboard);
 	};
 
@@ -133,19 +134,21 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	search () {
+		const value = this.ref.getValue();
+
+		if (value && (this.last == value)) {
+			return;
+		};
+
 		const { storageSet, param } = this.props;
 		const { data } = param;
 		const { route } = data;
-		const value = this.ref.getValue();
 		const node = $(this.node);
-		const cnt = node.find('#cnt');
 		const switcher = node.find('#switcher').removeClass('active');
 		const tag = Mark.getTag(I.MarkType.Search);
 
-		if (this.last != value) {
-			this.n = 0;
-			this.clear();
-		};
+		this.n = 0;
+		this.clear();
 		this.last = value;
 		
 		storageSet({ search: value });
@@ -185,8 +188,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		this.items = this.container.get(0).querySelectorAll(tag) || [];
 		this.items.length ? switcher.addClass('active') : switcher.removeClass('active');
-
-		cnt.text(`${this.n + 1}/${this.items.length}`);
 
 		this.focus();
 	};
@@ -251,6 +252,8 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
+		const node = $(this.node);
+		const cnt = node.find('#cnt');
 		const scrollContainer = this.getScrollContainer();
 		const offset = J.Size.lastBlock + J.Size.header;
 		const tag = Mark.getTag(I.MarkType.Search);
@@ -279,6 +282,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			wh = $(window).height();
 		};
 
+		cnt.text(`${this.n + 1}/${this.items.length}`);
 		scrollContainer.scrollTop(y - wh + offset);
 	};
 	
