@@ -699,7 +699,6 @@ class UtilMenu {
 
 		if (space.isAccountRemoving) {
 			options = options.concat([
-				{ id: 'export', name: translate('popupSettingsSpaceIndexExport') },
 				{ id: 'remove', color: 'red', name: translate('commonDelete') },
 			]);
 		} else 
