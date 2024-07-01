@@ -172,7 +172,6 @@ class UtilData {
 		};
 
 		keyboard.initPinCheck();
-		analytics.event('OpenAccount');
 
 		C.ObjectOpen(root, '', space, (message: any) => {
 			if (!U.Common.checkErrorOnOpen(root, message.error.code, null)) {
@@ -241,6 +240,8 @@ class UtilData {
 
 		this.getMembershipTiers(noTierCache);
 		this.getMembershipStatus();
+
+		analytics.event('OpenAccount');
 	};
 
 	createSubscriptions (callBack?: () => void): void {

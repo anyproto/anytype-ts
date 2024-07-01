@@ -598,6 +598,7 @@
 	"blockEmbedLatexEmpty": "Here your equation will be rendered with <span class='icon tex'></span>. Click to edit",
 	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
+	"blockEmbedOffline": "You are not connected to the Internet",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 

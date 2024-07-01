@@ -50,6 +50,9 @@
 			display: none; position: relative; aspect-ratio: 16/9; background-color: var(--color-shape-highlight-light); border-radius: 4px; 
 			background-size: 40px; background-repeat: no-repeat; background-position: center; background-image: url('~img/icon/block/embed/default.svg');
 		}
+		.preview {
+			.label { color: #d4d4d4; position: absolute; bottom: 12px; left: 0px; width: 100%; text-align: center; @include text-small; }
+		}
 		.preview.isLatex { background-image: url('~img/icon/block/embed/latex.svg'); }
 		.preview.isMermaid { background-image: url('~img/icon/block/embed/mermaid.svg'); }
 		.preview.isChart { background-image: url('~img/icon/block/embed/chart.svg'); }
