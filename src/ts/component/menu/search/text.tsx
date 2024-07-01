@@ -202,15 +202,13 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	clear () {
-		if (!this.items) {
-			return;
-		};
-
 		const node = $(this.node);
 		const switcher = node.find('#switcher');
+		const tag = Mark.getTag(I.MarkType.Search);
+		const items = this.container.get(0).querySelectorAll(tag) || [];
 
-		for (let i = 0; i < this.items.length; i++) {
-			const item = $(this.items[i]);
+		for (let i = 0; i < items.length; i++) {
+			const item = $(items[i]);
 
 			item.replaceWith(item.html());
 		};
