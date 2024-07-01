@@ -29,7 +29,6 @@ const Vault = observer(class Vault extends React.Component {
 
 		const Item = SortableElement(item => {
 			const cn = [ 'item', 'space' ];
-			const icon = item.isShared ? 'shared' : '';
 
 			if (item.id == spaceview) {
 				cn.push('isActive');
@@ -51,7 +50,6 @@ const Vault = observer(class Vault extends React.Component {
 				>
 					<div className="iconWrap">
 						<IconObject object={item} size={48} forceLetter={true} />
-						{icon ? <Icon className={icon} /> : ''}
 					</div>
 					<div className="coverWrap">
 						<IconObject object={item} size={360} forceLetter={true} />
