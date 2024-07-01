@@ -254,6 +254,10 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	focus () {
+		if (!this.items || !this.items.length) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
