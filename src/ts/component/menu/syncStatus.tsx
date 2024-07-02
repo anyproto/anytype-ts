@@ -147,8 +147,13 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	componentDidMount () {
+		const syncStatus = S.Auth.getSyncStatus();
+		const { status } = syncStatus;
+
 		this._isMounted = true;
 		this.load();
+
+		analytics.event('ClickSyncStatus', { status });
 	};
 
 	componentWillUnmount () {
@@ -257,18 +262,47 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIcons () {
-		const iconNetwork = this.getIconNetwork();
-		const iconP2P = this.getIconP2P();
-
-		return [ iconNetwork ];
-	};
-
-	getIconP2P () {
-		return {};
-	};
-
-	getIconNetwork () {
 		const syncStatus = S.Auth.getSyncStatus();
+		const iconNetwork = this.getIconNetwork(syncStatus);
+		const iconP2P = this.getIconP2P(syncStatus);
+
+		return [ iconP2P, iconNetwork ];
+	};
+
+	getIconP2P (syncStatus) {
+		const { p2p, devicesCounter } = syncStatus;
+
+		let className = '';
+		let message = '';
+
+		if (devicesCounter) {
+			message = U.Common.sprintf(translate('menuSyncStatusP2PDevicesConnected'), devicesCounter, U.Common.plural(devicesCounter, translate('pluralDevice')));
+		} else {
+			message = translate('menuSyncStatusP2PNoDevicesConnected');
+		};
+
+		switch (p2p) {
+			case I.P2PStatus.Connected: {
+				className = 'connected';
+				break;
+			};
+			case I.P2PStatus.NotPossible: {
+				message = translate('menuSyncStatusP2PRestricted');
+				className = 'error';
+				break;
+			};
+		};
+
+		return {
+			id: 'p2p',
+			className,
+			title: translate('menuSyncStatusInfoP2pTitle'),
+			message,
+			buttons: []
+		};
+	};
+
+	getIconNetwork (syncStatus) {
 		const { network, error, syncingCounter, status } = syncStatus;
 
 		let id = '';
@@ -310,7 +344,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						buttons.push({ id: 'updateApp', name: translate('menuSyncStatusInfoNetworkMessageErrorUpdateApp') });
 					} else
 					if (error == I.SyncStatusError.StorageLimitExceed) {
-						buttons.push({ id: 'upgradeMembership', name: translate('menuSyncStatusInfoNetworkMessageErrorSeeMembership') });
+						buttons.push({ id: 'upgradeMembership', name: translate('menuSyncStatusInfoNetworkMessageErrorAddMoreStorage') });
 					};
 				} else {
 					message = translate('menuSyncStatusInfoNetworkMessageOffline');
@@ -343,6 +377,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				id = 'localOnly';
 				title = translate('menuSyncStatusInfoLocalOnlyTitle');
 				message = translate('menuSyncStatusInfoLocalOnlyMessage');
+				className = '';
 				break;
 			};
 		};

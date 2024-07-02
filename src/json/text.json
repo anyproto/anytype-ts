@@ -167,6 +167,7 @@
 	"pluralReader": "reader|readers",
 	"pluralWriter": "writers|writers",
 	"pluralYear": "year|years",
+	"pluralDevice": "device|devices",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -1515,6 +1516,8 @@
 
 	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
 	"menuSyncStatusP2PNoDevicesConnected": "No devices connected",
+	"menuSyncStatusP2PDevicesConnected": "%s %s connected",
+	"menuSyncStatusP2PRestricted": "Restricted. Check device settings.",
 
 	"menuSyncStatusInfoNetworkTitle": "Anytype network",
 	"menuSyncStatusInfoNetworkMessageSynced": "End-to-end encrypted",
@@ -1524,9 +1527,9 @@
 	"menuSyncStatusInfoNetworkMessageError2": "Incompatible version",
 	"menuSyncStatusInfoNetworkMessageError3": "No access to the space",
 	"menuSyncStatusInfoNetworkMessageErrorUpdateApp": "Update the app",
-	"menuSyncStatusInfoNetworkMessageErrorSeeMembership": "See membership plans",
+	"menuSyncStatusInfoNetworkMessageErrorAddMoreStorage": "Add more storage",
 
-	"menuSyncStatusInfoNetworkMessageOffline": "No internet connection",
+	"menuSyncStatusInfoNetworkMessageOffline": "No connection",
 
 	"menuSyncStatusInfoSelfTitle": "Self Host",
 	"menuSyncStatusInfoSelfMessageSynced": "Synced",

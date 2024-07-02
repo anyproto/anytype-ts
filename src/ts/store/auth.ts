@@ -138,7 +138,15 @@ class AuthStore {
 	};
 
 	getSyncStatus (spaceId?: string): I.SyncStatus {
-		return this.syncStatusMap.get(spaceId || S.Common.space) || { id: '', error: 0, network: 0, status: 3, syncingCounter: 0 };
+		return this.syncStatusMap.get(spaceId || S.Common.space) || {
+			id: '',
+			error: I.SyncStatusError.None,
+			network: I.SyncStatusNetwork.Anytype,
+			status: I.SyncStatusSpace.Offline,
+			p2p: I.P2PStatus.NotConnected,
+			syncingCounter: 0,
+			devicesCounter: 0
+		};
 	};
 
 	clearAll () {
