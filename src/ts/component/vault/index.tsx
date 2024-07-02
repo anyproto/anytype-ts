@@ -108,12 +108,12 @@ const Vault = observer(class Vault extends React.Component {
 				id="vault"
 				className="vault"
             >
-				{/*
 				<div className="head">
+					{/*
 					<Icon className="settings" />
 					<Icon className="close" onClick={this.onToggle} />
+					*/}
 				</div>
-				*/}
 				<div className="body">
 					<List 
 						axis="y" 

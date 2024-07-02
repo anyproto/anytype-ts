@@ -8,10 +8,13 @@
 
 .vault { 
 	position: fixed; background-color: #000; z-index: 30; left: 0px; top: 0px; width: $vaultWidthCollapsed; height: 100%;
-	display: flex; flex-direction: column; transition: width 0.3s $easeInQuint; padding-top: 42px;
+	display: flex; flex-direction: column; transition: width 0.3s $easeInQuint;
 }
 .vault {
-	.head { height: 42px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 14px; flex-shrink: 0; }
+	.head { 
+		height: 42px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 14px; flex-shrink: 0;
+		position: relative; z-index: 1; background: #000;
+	}
 	.head {
 		.icon { width: 24px; height: 24px; background-size: 20px; border-radius: 4px; -webkit-app-region: no-drag; opacity: 0; }
 		.icon.settings { background-image: url('~img/icon/vault/settings.svg'); }
@@ -28,7 +31,7 @@
 
 	.item { 
 		position: relative; border-radius: 2px; transition-property: background, filter; transition-duration: 0.2s; transition-timing-function: $easeInQuint; 
-		filter: grayscale(100%) contrast(70%); 
+		filter: grayscale(100%) contrast(80%);
 	}
 	.item {
 		.iconWrap, .infoWrap { position: relative; z-index: 1;  }

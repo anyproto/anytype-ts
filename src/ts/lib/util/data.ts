@@ -184,7 +184,7 @@ class UtilData {
 					return;
 				};
 
-				this.createSubscriptions(() => {
+				this.createSpaceSubscriptions(() => {
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
 						U.Router.go('/auth/pin-check', routeParam);
@@ -241,13 +241,57 @@ class UtilData {
 
 		this.getMembershipTiers(noTierCache);
 		this.getMembershipStatus();
+		this.createGlobalSubscriptions();
 
 		analytics.event('OpenAccount');
 	};
 
-	createSubscriptions (callBack?: () => void): void {
-		const { space } = S.Common;
+	createGlobalSubscriptions (callBack?: () => void) {
 		const { account } = S.Auth;
+		const list: any[] = [
+			{
+				subId: J.Constant.subId.profile,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
+				],
+				noDeps: true,
+				ignoreWorkspace: true,
+				ignoreHidden: false,
+			},
+			{
+				subId: J.Constant.subId.space,
+				keys: this.spaceRelationKeys(),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				ignoreWorkspace: true,
+				ignoreHidden: false,
+			},
+		];
+
+		if (account) {
+			list.push({
+				subId: J.Constant.subId.myParticipant,
+				keys: this.participantRelationKeys(),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+					{ operator: I.FilterOperator.And, relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
+				],
+				ignoreWorkspace: true,
+				ignoreDeleted: true,
+				ignoreHidden: false,
+				noDeps: true,
+			});
+		};
+
+		this.createSubscriptions(list, callBack);
+	};
+
+	createSpaceSubscriptions (callBack?: () => void): void {
+		const { space } = S.Common;
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.profile,
@@ -315,18 +359,6 @@ class UtilData {
 				ignoreDeleted: true,
 			},
 			{
-				subId: J.Constant.subId.space,
-				keys: this.spaceRelationKeys(),
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
-				],
-				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
-				ignoreWorkspace: true,
-				ignoreHidden: false,
-			},
-			{
 				subId: J.Constant.subId.participant,
 				keys: this.participantRelationKeys(),
 				filters: [
@@ -341,21 +373,10 @@ class UtilData {
 			},
 		];
 
-		if (account) {
-			list.push({
-				subId: J.Constant.subId.myParticipant,
-				keys: this.participantRelationKeys(),
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-					{ operator: I.FilterOperator.And, relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
-				],
-				ignoreWorkspace: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
-				noDeps: true,
-			});
-		};
+		this.createSubscriptions(list, callBack);
+	};
 
+	createSubscriptions (list: any[], callBack?: () => void) {
 		let cnt = 0;
 		const cb = (item: any) => {
 			if (item.onSubscribe) {
