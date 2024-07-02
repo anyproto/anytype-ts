@@ -3,7 +3,7 @@ import $ from 'jquery';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
-import { I, C, S, U, J, analytics, keyboard, translate, Action, Storage, Preview } from 'Lib';
+import { I, C, S, U, J, analytics, keyboard, translate, Action, Storage, Preview, sidebar } from 'Lib';
 
 interface State {
 	isExpanded: boolean;
@@ -655,7 +655,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const { getId } = this.props;
 		const obj = $(`#${getId()}`);
 		const { ww } = U.Common.getWindowDimensions();
-		const sw = $('#sidebarDummy').outerWidth();
+		const sw = sidebar.getDummyWidth();
 		
 		obj.css({ width: '' });
 

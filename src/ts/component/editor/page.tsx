@@ -1915,8 +1915,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			}
 		};
 
+		keyboard.disableContext(true);
 		S.Menu.closeAll([ 'blockContext', 'blockAdd', 'blockAction' ], () => {
 			S.Menu.open('selectPasteUrl', menuParam);
+			keyboard.disableContext(false);
 		});
 	};
 

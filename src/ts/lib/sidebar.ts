@@ -198,6 +198,10 @@ class Sidebar {
 		return Math.max(min, Math.min(max, Number(width) || 0));
 	};
 
+	getDummyWidth (): number {
+		return Number($('#sidebarDummy').outerWidth()) || 0;
+	};
+
 };
 
 export const sidebar: Sidebar = new Sidebar();
