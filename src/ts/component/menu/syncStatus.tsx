@@ -148,11 +148,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	componentDidMount () {
 		const syncStatus = S.Auth.getSyncStatus();
+		const { status } = syncStatus;
 
 		this._isMounted = true;
 		this.load();
 
-		analytics.event('ClickSyncStatus', { status: I.SyncStatusSpace[syncStatus.status] });
+		analytics.event('ClickSyncStatus', { status });
 	};
 
 	componentWillUnmount () {
