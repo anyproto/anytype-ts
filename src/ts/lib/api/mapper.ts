@@ -25,6 +25,7 @@ export const Mapper = {
 		if (v == V.TABLEROW)			 t = I.BlockType.TableRow;
 		if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
 		if (v == V.WIDGET)		 		 t = I.BlockType.Widget;
+		if (v == V.CHAT)				 t = I.BlockType.Chat;
 		return t;
 	},
 
@@ -254,6 +255,10 @@ export const Mapper = {
 				limit: obj.getLimit(),
 				viewId: obj.getViewid(),
 			};
+		},
+
+		BlockChat: () => {
+			return {};
 		},
 
 		Block: (obj: Model.Block): I.Block => {
@@ -783,6 +788,12 @@ export const Mapper = {
 			content.setLimit(obj.limit);
 			content.setViewid(obj.viewId);
 
+			return content;
+		},
+
+		BlockChat: (obj: any) => {
+			const content = new Model.Block.Content.Chat();
+			
 			return content;
 		},
 

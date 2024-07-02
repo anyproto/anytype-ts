@@ -108,6 +108,7 @@
 	.block > .wrapMenu > .icon.dnd { opacity: 1; }
 }
 
+@import "./markup.scss";
 @import "./bookmark.scss";
 @import "./cover.scss";
 @import "./dataview.scss";
@@ -133,3 +134,4 @@
 @import "./text.scss";
 @import "./type.scss";
 @import "./embed.scss";
+@import "./chat.scss";

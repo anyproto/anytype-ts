@@ -32,7 +32,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 
                 <ListObjectManager
                     ref={ref => this.refManager = ref}
-                    subId={J.Constant.subId.files}
+                    subId={J.Constant.subId.fileManager}
                     rowLength={2}
                     withArchived={true}
                     buttons={buttons}
@@ -57,6 +57,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
     onBack = () => {
         this.props.onPage('spaceIndex');
     };
+
 });
 
 export default PopupSettingsPageStorageManager;

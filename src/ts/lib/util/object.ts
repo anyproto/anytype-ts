@@ -16,7 +16,6 @@ class UtilObject {
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
-			case I.ObjectLayout.Date: 		 r = 'set'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
@@ -26,6 +25,7 @@ class UtilObject {
 			case I.ObjectLayout.Archive:	 r = 'archive'; break;
 			case I.ObjectLayout.Block:		 r = 'block'; break;
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
+			case I.ObjectLayout.Chat:		 r = 'chat'; break;
 		};
 		return r;
 	};

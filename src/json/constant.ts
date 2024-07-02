@@ -85,7 +85,8 @@ export default {
 		sidebar:		 'sidebar',
 		graph:			 'graph',
 		space:			 'space',
-		files:			 'files',
+		file:			 'file',
+		fileManager:	 'fileManager',
 		participant:	 'participant',
 		myParticipant:	 'myParticipant'
 	},
@@ -108,7 +109,8 @@ export default {
 		collection:		 'ot-collection',
 		dashboard:		 'ot-dashboard',
 		date:			 'ot-date',
-		profile:		 'ot-profile'
+		profile:		 'ot-profile',
+		chat:			 'ot-chat',
 	},
 
 	templateId: {

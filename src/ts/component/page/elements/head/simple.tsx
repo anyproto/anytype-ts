@@ -176,12 +176,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	onFocus (e: any, item: any) {
-		keyboard.setFocus(true);
 		this.placeholderCheck(item.id);
 	};
 
 	onBlur (e: any, item: any) {
-		keyboard.setFocus(false);
 		window.clearTimeout(this.timeout);
 		this.save();
 	};

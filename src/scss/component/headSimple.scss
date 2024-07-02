@@ -11,7 +11,9 @@
 		}
 
 		.editableWrap { flex-grow: 1; }
-		.editable { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative;  word-break: break-word; cursor: text; }
+		.editableWrap {
+			.editable { z-index: 1; position: relative;  word-break: break-word; cursor: text; }
+		}
 		
 		> .descr { @include text-paragraph; }
 	}
