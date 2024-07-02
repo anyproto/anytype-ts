@@ -16,11 +16,20 @@ class BlockStore {
 
     constructor() {
         makeObservable(this, {
+			rootId: observable,
             profileId: observable,
+			spaceviewId: observable,
+			widgetsId: observable,
+
             profile: computed,
 			root: computed,
+			spaceview: computed,
+			widgets: computed,
+
+			rootSet: action,
             profileSet: action,
             widgetsSet: action,
+			spaceviewSet: action,
             set: action,
             clear: action,
             clearAll: action,
@@ -28,7 +37,7 @@ class BlockStore {
             update: action,
 			updateContent: action,
             updateStructure: action,
-            delete: action
+            delete: action,
         });
     };
 

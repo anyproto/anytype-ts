@@ -134,7 +134,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				<div id="valueWrap" className="valueWrap resizable" style={css}>
 					{select ? <div className="selectWrap">{select}</div> : ''}
 
-					<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={this.onPreview} />
+					<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={this.onPreview}>
+						<Label text={translate('blockEmbedOffline')} />
+					</div>
 					<div id="value" onMouseDown={this.onEdit} />
 					<div id={this.getContainerId()} />
 

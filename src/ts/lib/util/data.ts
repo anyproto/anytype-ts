@@ -43,7 +43,7 @@ class UtilData {
 	};
 
 	blockEmbedClass (v: I.EmbedProcessor): string {
-		return `is${I.EmbedProcessor[v]}`;
+		return `is${String(I.EmbedProcessor[v])}`;
 	};
 
 	styleIcon (type: I.BlockType, v: number): string {
@@ -128,7 +128,7 @@ class UtilData {
 	};
 
 	syncStatusClass (v: I.SyncStatusObject): string {
-		if (v == undefined) {
+		if (undefined === v) {
 			console.log('[U.Data].syncStatusClass: Sync status is undefined');
 			return '';
 		};
@@ -176,7 +176,6 @@ class UtilData {
 		};
 
 		keyboard.initPinCheck();
-		analytics.event('OpenAccount');
 
 		C.ObjectOpen(root, '', space, (message: any) => {
 			if (!U.Common.checkErrorOnOpen(root, message.error.code, null)) {
@@ -188,7 +187,7 @@ class UtilData {
 					return;
 				};
 
-				this.createSubscriptions(() => {
+				this.createSpaceSubscriptions(() => {
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
 						U.Router.go('/auth/pin-check', routeParam);
@@ -245,11 +244,63 @@ class UtilData {
 
 		this.getMembershipTiers(noTierCache);
 		this.getMembershipStatus();
+		this.createGlobalSubscriptions();
+
+		analytics.event('OpenAccount');
 	};
 
-	createSubscriptions (callBack?: () => void): void {
-		const { space } = S.Common;
+	createAllSubscriptions (callBack?: () => void) {
+		this.createGlobalSubscriptions(() => {
+			this.createSpaceSubscriptions(callBack);
+		});
+	};
+
+	createGlobalSubscriptions (callBack?: () => void) {
 		const { account } = S.Auth;
+		const list: any[] = [
+			{
+				subId: J.Constant.subId.profile,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
+				],
+				noDeps: true,
+				ignoreWorkspace: true,
+				ignoreHidden: false,
+			},
+			{
+				subId: J.Constant.subId.space,
+				keys: this.spaceRelationKeys(),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				ignoreWorkspace: true,
+				ignoreHidden: false,
+			},
+		];
+
+		if (account) {
+			list.push({
+				subId: J.Constant.subId.myParticipant,
+				keys: this.participantRelationKeys(),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+					{ operator: I.FilterOperator.And, relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
+				],
+				ignoreWorkspace: true,
+				ignoreDeleted: true,
+				ignoreHidden: false,
+				noDeps: true,
+			});
+		};
+
+		this.createSubscriptions(list, callBack);
+	};
+
+	createSpaceSubscriptions (callBack?: () => void): void {
+		const { space } = S.Common;
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.profile,
@@ -317,18 +368,6 @@ class UtilData {
 				ignoreDeleted: true,
 			},
 			{
-				subId: J.Constant.subId.space,
-				keys: this.spaceRelationKeys(),
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
-				],
-				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
-				ignoreWorkspace: true,
-				ignoreHidden: false,
-			},
-			{
 				subId: J.Constant.subId.participant,
 				keys: this.participantRelationKeys(),
 				filters: [
@@ -343,21 +382,10 @@ class UtilData {
 			},
 		];
 
-		if (account) {
-			list.push({
-				subId: J.Constant.subId.myParticipant,
-				keys: this.participantRelationKeys(),
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-					{ operator: I.FilterOperator.And, relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
-				],
-				ignoreWorkspace: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
-				noDeps: true,
-			});
-		};
+		this.createSubscriptions(list, callBack);
+	};
 
+	createSubscriptions (list: any[], callBack?: () => void) {
 		let cnt = 0;
 		const cb = (item: any) => {
 			if (item.onSubscribe) {
@@ -524,6 +552,7 @@ class UtilData {
 			};
 
 			case I.ObjectLayout.Human:
+			case I.ObjectLayout.Participant:
 			case I.ObjectLayout.Relation: {
 				ret.withIcon = true;
 				break;
@@ -889,7 +918,7 @@ class UtilData {
 			return;
 		};
 		
-		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, (message: any) => {
+		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, this.getLinkBlockParam('', type.recommendedLayout), (message: any) => {
 			if (!message.error.code) {
 				analytics.createObject(type.id, type.recommendedLayout, route, message.middleTime);
 			};
@@ -1047,6 +1076,44 @@ class UtilData {
 		});
 
 		return groupedRecords;
+	};
+
+	getLinkBlockParam (id: string, layout: I.ObjectLayout) {
+		const param: Partial<I.Block> = {};
+
+		if (U.Object.isFileLayout(layout)) {
+			return {
+				type: I.BlockType.File,
+				content: {
+					targetObjectId: id,
+					style: I.FileStyle.Embed,
+					state: I.FileState.Done,
+					type: U.Object.getFileTypeByLayout(layout),
+				},
+			};
+		};
+
+		switch (layout) {
+			case I.ObjectLayout.Bookmark: {
+				param.type = I.BlockType.Bookmark;
+				param.content = {
+					state: I.BookmarkState.Done,
+					targetObjectId: id,
+				};
+				break;
+			};
+
+			default: {
+				param.type = I.BlockType.Link;
+				param.content = {
+					...this.defaultLinkSettings(),
+					targetBlockId: id,
+				};
+				break;
+			};
+		};
+
+		return param;
 	};
 
 };

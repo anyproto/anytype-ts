@@ -348,6 +348,10 @@ class Analytics {
 				break;
 			};
 
+			case 'DeleteRelationValue':
+			case 'ChangeRelationValue':
+			case 'FeatureRelation':
+			case 'UnfeatureRelation':
 			case 'CreateRelation':
 			case 'AddExistingRelation': {
 				data.format = Number(data.format) || 0;
@@ -505,7 +509,7 @@ class Analytics {
 		} else {
 			key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';
 		};
-		this.event(key, { type, relationKey: relation.relationKey });
+		this.event(key, { type, relationKey: relation.relationKey, format: relation.format });
 	};
 
 	pageMapper (params: any): string {

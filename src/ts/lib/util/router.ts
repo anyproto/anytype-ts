@@ -134,6 +134,8 @@ class UtilRouter {
 			return;
 		};
 
+		S.Menu.closeAllForced();
+
 		C.WorkspaceOpen(id, (message: any) => {
 			if (message.error.code) {
 				if (id != accountSpaceId) {

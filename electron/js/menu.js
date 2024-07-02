@@ -274,14 +274,6 @@ class MenuManager {
 					}
 				},
 
-				{
-					label: 'Test crypto payments', type: 'checkbox', checked: config.testCryptoPayment,
-					click: () => {
-						Api.setConfig(this.win, { testCryptoPayment: !config.testCryptoPayment });
-						this.win.reload();
-					}
-				},
-
 				Separator,
 
 				{ label: 'Export templates', click: () => Util.send(this.win, 'commandGlobal', 'exportTemplates') },

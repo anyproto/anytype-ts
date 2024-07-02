@@ -65,7 +65,6 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 
 			case I.NotificationType.Remove: {
 				buttons = buttons.concat([
-					{ id: 'spaceExport', text: translate('notificationButtonSpaceExport') },
 					{ id: 'spaceDelete', text: translate('notificationButtonSpaceDelete'), color: 'red' },
 				]);
 				break;
@@ -128,18 +127,6 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 			case 'spaceSwitch': {
 				U.Router.switchSpace(payload.spaceId);
 				analytics.event('SwitchSpace');
-				break;
-			};
-
-			case 'spaceExport': {
-				Action.export(payload.spaceId, [], I.ExportType.Protobuf, { 
-					zip: true, 
-					nested: true, 
-					files: true, 
-					archived: true, 
-					json: false, 
-					route: analytics.route.notification,
-				});
 				break;
 			};
 

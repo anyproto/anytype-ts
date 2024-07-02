@@ -217,11 +217,12 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
 		const featured = U.Common.objectCopy(object.featuredRelations || []);
 		const idx = featured.findIndex(it => it == relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (idx < 0) {
 			const item = items.find(it => it.relationKey == relationKey);
 			const cb = () => {
-				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation', { relationKey }));
+				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation', { relationKey, format: relation.format }));
 			};
 
 			if (item.scope == I.RelationScope.Type) {
@@ -230,7 +231,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				cb();
 			};
 		} else {
-			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation', { relationKey }));
+			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation', { relationKey, format: relation.format }));
 		};
 	};
 
@@ -320,7 +321,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
-		if (JSON.stringify(object[relationKey]) !== JSON.stringify(value)) {
+		if ((undefined !== object[relationKey]) && !U.Common.compareJSON(object[relationKey], value)) {
 			analytics.changeRelationValue(relation, value, 'menu');
 		};
 	};

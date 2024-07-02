@@ -216,7 +216,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				ref={node => this.node = node}
 				id={`widget-${block.id}`}
 				className={cn.join(' ')}
-				draggable={isEditing}
+				draggable={true}
 				onDragStart={e => onDragStart(e, block.id)}
 				onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
 				onDragEnd={this.onDragEnd}

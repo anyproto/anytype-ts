@@ -89,15 +89,22 @@ class MenuSearchText extends React.Component<I.Menu> {
 			e.stopPropagation();
 
 			this.onArrow(1);
+			window.clearTimeout(this.timeout);
 		});
 	};
 	
 	onKeyUp (e: any) {
 		e.preventDefault();
+		window.clearTimeout(this.timeout);
 
 		let ret = false;
 
 		const cmd = keyboard.cmdKey();
+
+		keyboard.shortcut(`tab, enter`, e, () => {
+			this.search();
+			ret = true;
+		});
 
 		keyboard.shortcut(`arrowup, arrowdown, tab, enter, ${cmd}+f`, e, (pressed: string) => {
 			this.onArrow(pressed == 'arrowup' ? -1 : 1);
@@ -108,7 +115,6 @@ class MenuSearchText extends React.Component<I.Menu> {
 			return;
 		};
 
-		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => this.search(), J.Constant.delay.keyboard);
 	};
 
@@ -133,19 +139,20 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	search () {
+		const value = this.ref.getValue();
+		if (value && (this.last == value)) {
+			return;
+		};
+
 		const { storageSet, param } = this.props;
 		const { data } = param;
 		const { route } = data;
-		const value = this.ref.getValue();
 		const node = $(this.node);
-		const cnt = node.find('#cnt');
 		const switcher = node.find('#switcher').removeClass('active');
 		const tag = Mark.getTag(I.MarkType.Search);
 
-		if (this.last != value) {
-			this.n = 0;
-			this.clear();
-		};
+		this.n = 0;
+		this.clear();
 		this.last = value;
 		
 		storageSet({ search: value });
@@ -186,8 +193,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		this.items = this.container.get(0).querySelectorAll(tag) || [];
 		this.items.length ? switcher.addClass('active') : switcher.removeClass('active');
 
-		cnt.text(`${this.n + 1}/${this.items.length}`);
-
+		this.setCnt();
 		this.focus();
 	};
 
@@ -202,15 +208,13 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	clear () {
-		if (!this.items) {
-			return;
-		};
-
 		const node = $(this.node);
 		const switcher = node.find('#switcher');
+		const tag = Mark.getTag(I.MarkType.Search);
+		const items = this.container.get(0).querySelectorAll(tag) || [];
 
-		for (let i = 0; i < this.items.length; i++) {
-			const item = $(this.items[i]);
+		for (let i = 0; i < items.length; i++) {
+			const item = $(items[i]);
 
 			item.replaceWith(item.html());
 		};
@@ -250,6 +254,10 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	focus () {
+		if (!this.items || !this.items.length) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
@@ -281,7 +289,15 @@ class MenuSearchText extends React.Component<I.Menu> {
 			wh = $(window).height();
 		};
 
+		this.setCnt();
 		scrollContainer.scrollTop(y - wh + offset);
+	};
+
+	setCnt () {
+		const node = $(this.node);
+		const cnt = node.find('#cnt');
+
+		cnt.text(`${this.n + 1}/${this.items.length}`);
 	};
 	
 };

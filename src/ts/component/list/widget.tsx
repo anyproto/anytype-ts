@@ -220,19 +220,17 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
 				],
 				canAdd: true,
-				dataChange: (items: any[]) => {
-					const fixed: any[] = [
-						{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
-						{ id: J.Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: ':mag:' },
-						{ id: J.Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: ':card_index_dividers:' },
-						{ id: J.Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: ':memo:' },
-						{ id: J.Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: ':date:', caption: translate('menuWidgetRecentOpenCaption') },
-					];
+				dataChange: (context: any, items: any[]) => {
+					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
+					const fixed: any[] = U.Menu.getFixedWidgets().filter(it => it.name.match(reg));
+
 					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 				},
 				onSelect: (target) => {
 					const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
 					const layoutOptions = U.Menu.getWidgetLayoutOptions(target.id, target.layout);
+					const layout = layoutOptions.length ? layoutOptions[0].id : I.WidgetLayout.Link;
+
 					const newBlock = { 
 						type: I.BlockType.Link,
 						content: { 
@@ -240,9 +238,15 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 						},
 					};
 
-					C.BlockCreateWidget(S.Block.widgets, '', newBlock, I.BlockPosition.Top, layoutOptions[0].id, Number(limitOptions[0].id), (message: any) => {
+					C.BlockCreateWidget(S.Block.widgets, '', newBlock, I.BlockPosition.Top, layout, Number(limitOptions[0].id), (message: any) => {
 						if (!message.error.code) {
 							analytics.event('AddWidget', { type: I.WidgetLayout.Link });
+
+							analytics.event('ChangeWidgetSource', {
+								layout,
+								route: 'AddWidget',
+								params: { target },
+							});
 						};
 					});					
 				},
@@ -311,7 +315,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	onDrop (e: React.DragEvent): void {
 		const { isEditing } = this.state;
 		if (!isEditing) {
-			return;
+			//return;
 		};
 
 		e.stopPropagation();

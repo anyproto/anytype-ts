@@ -383,6 +383,7 @@ export const BlockTextSetText = (contextId: string, blockId: string, text: strin
 	text = text.replace(/&gt;/g, '>');
 
 	marks = U.Common.objectCopy(marks);
+	marks = marks.filter(it => Mark.canSave(it.type));
 	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark) as any;
 
 	const request = new Rpc.BlockText.SetText.Request();
@@ -537,13 +538,14 @@ export const BlockListMoveToExistingObject = (contextId: string, targetContextId
 	dispatcher.request(BlockListMoveToExistingObject.name, request, callBack);
 };
 
-export const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, templateId: string, callBack?: (message: any) => void) => {
+export const BlockListConvertToObjects = (contextId: string, blockIds: string[], typeKey: string, templateId: string, block: Partial<I.Block>, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ListConvertToObjects.Request();
 
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
 	request.setObjecttypeuniquekey(typeKey);
 	request.setTemplateid(templateId);
+	request.setBlock(Mapper.To.Block(block));
 
 	dispatcher.request(BlockListConvertToObjects.name, request, callBack);
 };

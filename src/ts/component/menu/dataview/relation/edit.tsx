@@ -326,9 +326,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 				C.BlockDataviewFilterAdd(rootId, blockId, view.id, filter, () => {
 					S.Menu.open('dataviewFilterList', { 
-						element: `#button-dataview-filter`,
+						element: `#button-${blockId}-filter`,
 						horizontal: I.MenuDirection.Center,
 						offsetY: 10,
+						onOpen: () => $(`#block-${blockId} .hoverArea`).addClass('active'),
+						onClose: () => $(`#block-${blockId} .hoverArea`).removeClass('active'),
 						data: {
 							...data,
 							view: observable.box(view),

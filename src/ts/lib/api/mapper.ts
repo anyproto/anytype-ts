@@ -1022,6 +1022,7 @@ export const Mapper = {
 			if (v == V.PROCESSUPDATE)				 t = 'ProcessUpdate';
 			if (v == V.PROCESSDONE)					 t = 'ProcessDone';
 
+			if (v == V.THREADSTATUS) 				 t = 'ThreadStatus';
 			if (v == V.SPACESYNCSTATUSUPDATE)		 t = 'SpaceSyncStatusUpdate';
 			if (v == V.P2PSTATUSUPDATE)		 		 t = 'P2PStatusUpdate';
 

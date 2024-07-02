@@ -165,7 +165,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	componentDidMount(): void {
-		U.Data.createSubscriptions(() => {
+		U.Data.createAllSubscriptions(() => {
 			this.initSpace();
 			this.initName();
 			this.initType();
@@ -264,7 +264,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	onSpaceChange (id: string): void {
 		S.Common.spaceSet(id);
-		U.Data.createSubscriptions(() => this.forceUpdate());
+		U.Data.createAllSubscriptions(() => this.forceUpdate());
 
 		Storage.set('lastSpaceId', id);
 	};

@@ -787,7 +787,7 @@ class Keyboard {
 			return;
 		};
 
-		S.Menu.closeAll([ 'blockContext' ], () => {
+		S.Menu.closeAll(null, () => {
 			S.Menu.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
