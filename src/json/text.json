@@ -1529,7 +1529,7 @@
 	"menuSyncStatusInfoNetworkMessageErrorUpdateApp": "Update the app",
 	"menuSyncStatusInfoNetworkMessageErrorAddMoreStorage": "Add more storage",
 
-	"menuSyncStatusInfoNetworkMessageOffline": "Without Internet",
+	"menuSyncStatusInfoNetworkMessageOffline": "No connection",
 
 	"menuSyncStatusInfoSelfTitle": "Self Host",
 	"menuSyncStatusInfoSelfMessageSynced": "Synced",
