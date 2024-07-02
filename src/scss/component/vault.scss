@@ -26,7 +26,10 @@
 		.side.bottom { flex-shrink: 0; align-items: flex-end; }
 	}
 
-	.item { position: relative; border-radius: 2px; transition: background $transitionCommon; }
+	.item { 
+		position: relative; border-radius: 2px; transition-property: background, filter; transition-duration: 0.2s; transition-timing-function: $easeInQuint; 
+		filter: grayscale(100%) contrast(70%); 
+	}
 	.item {
 		.iconWrap, .infoWrap { position: relative; z-index: 1;  }
 
@@ -63,9 +66,12 @@
 	}
 	.item.settings:hover { background: #2b2b2b; }
 
+	.item.isActive { filter: none; }
+	/*
 	.item.isActive::after { 
 		content: ''; position: absolute; left: -14px; top: 0px; width: 4px; height: 100%; background: #fff; border-radius: 0px 2px 2px 0px; 
 	}
+	*/
 
 	.line { 
 		position: absolute; left: 0px; top: 0px; width: 4px; height: 48px; background: #fff; border-radius: 0px 2px 2px 0px; 

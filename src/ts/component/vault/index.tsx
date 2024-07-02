@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { Icon, IconObject, ObjectName } from 'Component';
+import { IconObject, ObjectName } from 'Component';
 import { I, U, S, keyboard, translate, analytics, Storage, sidebar, Preview } from 'Lib';
 
 const Vault = observer(class Vault extends React.Component {
@@ -28,7 +28,7 @@ const Vault = observer(class Vault extends React.Component {
 		const { spaceview } = S.Block;
 
 		const Item = SortableElement(item => {
-			const cn = [ 'item', 'space' ];
+			const cn = [ 'item' ];
 
 			if (item.id == spaceview) {
 				cn.push('isActive');
@@ -166,6 +166,8 @@ const Vault = observer(class Vault extends React.Component {
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 
+		this.setActive(item.id);
+
 		switch (item.id) {
 			case 'add':
 				this.onAdd();
@@ -188,6 +190,13 @@ const Vault = observer(class Vault extends React.Component {
 				analytics.event('SwitchSpace');
 				break;
 		};
+	};
+
+	setActive (id: string) {
+		const node = $(this.node);
+
+		node.find('.item.isActive').removeClass('isActive');
+		node.find(`#item-${id}`).addClass('isActive');
 	};
 
 	onAdd () {
