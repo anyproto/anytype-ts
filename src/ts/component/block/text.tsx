@@ -1356,6 +1356,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onSelect () {
+		if (keyboard.isContextDisabled) {
+			return;
+		};
+
 		const { rootId, block, isPopup, isInsideTable, readonly } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.getForClick('', false, true);

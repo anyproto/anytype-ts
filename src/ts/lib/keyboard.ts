@@ -25,6 +25,7 @@ class Keyboard {
 	isPinChecked = false;
 	isBlurDisabled = false;
 	isCloseDisabled = false;
+	isContextDisabled = false;
 	isContextCloseDisabled = false;
 	isContextOpenDisabled = false;
 	isPasteDisabled = false;
@@ -1053,6 +1054,11 @@ class Keyboard {
 	// Flag to prevent blur events
 	disableBlur (v: boolean) {
 		this.isBlurDisabled = v;
+	};
+
+	// Flag to prevent menuBlockContext from opening
+	disableContext (v: boolean) {
+		this.isContextDisabled = v;
 	};
 
 	// Flag to prevent menuBlockContext from closing
