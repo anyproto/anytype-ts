@@ -341,7 +341,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						buttons.push({ id: 'updateApp', name: translate('menuSyncStatusInfoNetworkMessageErrorUpdateApp') });
 					} else
 					if (error == I.SyncStatusError.StorageLimitExceed) {
-						buttons.push({ id: 'upgradeMembership', name: translate('menuSyncStatusInfoNetworkMessageErrorSeeMembership') });
+						buttons.push({ id: 'upgradeMembership', name: translate('menuSyncStatusInfoNetworkMessageErrorAddMoreStorage') });
 					};
 				} else {
 					message = translate('menuSyncStatusInfoNetworkMessageOffline');

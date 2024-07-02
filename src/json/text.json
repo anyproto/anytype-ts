@@ -1527,9 +1527,9 @@
 	"menuSyncStatusInfoNetworkMessageError2": "Incompatible version",
 	"menuSyncStatusInfoNetworkMessageError3": "No access to the space",
 	"menuSyncStatusInfoNetworkMessageErrorUpdateApp": "Update the app",
-	"menuSyncStatusInfoNetworkMessageErrorSeeMembership": "See membership plans",
+	"menuSyncStatusInfoNetworkMessageErrorAddMoreStorage": "Add more storage",
 
-	"menuSyncStatusInfoNetworkMessageOffline": "No internet connection",
+	"menuSyncStatusInfoNetworkMessageOffline": "Without Internet",
 
 	"menuSyncStatusInfoSelfTitle": "Self Host",
 	"menuSyncStatusInfoSelfMessageSynced": "Synced",
