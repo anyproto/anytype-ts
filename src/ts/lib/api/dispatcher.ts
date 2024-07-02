@@ -957,7 +957,7 @@ class Dispatcher {
 				case 'P2PStatusUpdate': {
 					S.Auth.syncStatusUpdate(mapped);
 
-					C.DeviceList((message) => {
+					C.DeviceList(message => {
 						if (message.devices) {
 							S.Auth.syncStatusUpdate(Object.assign(mapped, { devicesCounter: message.devices.length }));
 						};
