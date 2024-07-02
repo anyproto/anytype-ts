@@ -26,6 +26,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { readonly } = data;
 		const relation = this.getRelation();
 		const viewRelation = this.getViewRelation();
 		const isDate = this.format == I.RelationType.Date;
@@ -76,7 +79,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						icon="clock" 
 						name={translate('menuDataviewRelationEditIncludeTime')}
 						onMouseEnter={this.menuClose}
-						readonly={isReadonly}
+						readonly={readonly}
 						withSwitch={true}
 						switchValue={viewRelation?.includeTime}
 						onSwitch={(e: any, v: boolean) => { this.onChangeTime(v); }}
@@ -480,13 +483,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		e.preventDefault();
 		e.stopPropagation();
 
-		const isReadonly = this.isReadonly();
-		if (isReadonly) {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { readonly } = data;
+
+		if (readonly) {
 			return;
 		};
 
-		const { param, getId } = this.props;
-		const { data } = param;
 		const relation = this.getRelation();
 
 		this.menuOpen('dataviewDate', { 
