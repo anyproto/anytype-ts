@@ -57,7 +57,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
-		const allowedObject = object.isInstalled && U.Object.getPageLayouts().includes(object.recommendedLayout);
+		const allowedObject = object.isInstalled && this.isAllowedObject(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite;
@@ -334,6 +334,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		});
 	};
 
+	isAllowedObject (layout: I.ObjectLayout): boolean {
+		return U.Object.isPageLayout(layout) || U.Object.isSetLayout(layout);
+	};
+
 	onCreate () {
 		const rootId = this.getRootId();
 		const type = S.Record.getTypeById(rootId);
@@ -341,8 +345,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return;
 		};
 
-		const isSetLayout = U.Object.isSetLayout(type.recommendedLayout);
-		const allowedObject = U.Object.getPageLayouts().includes(type.recommendedLayout) || isSetLayout;
+		const allowedObject = this.isAllowedObject(type.recommendedLayout);
 		const options = [];
 
 		if (allowedObject) {
