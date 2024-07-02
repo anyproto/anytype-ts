@@ -90,7 +90,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 	};
 
 	componentDidMount (): void {
-		U.Data.createSpaceSubscriptions(() => this.init());
+		U.Data.createAllSubscriptions(() => this.init());
 	};
 
 	componentDidUpdate (): void {
@@ -175,7 +175,7 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 
 	onSpaceChange (id: string): void {
 		S.Common.spaceSet(id);
-		U.Data.createSpaceSubscriptions();
+		U.Data.createAllSubscriptions();
 	};
 
 	getWrapperWidth () {

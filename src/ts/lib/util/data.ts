@@ -246,6 +246,12 @@ class UtilData {
 		analytics.event('OpenAccount');
 	};
 
+	createAllSubscriptions (callBack?: () => void) {
+		this.createGlobalSubscriptions(() => {
+			this.createSpaceSubscriptions(callBack);
+		});
+	};
+
 	createGlobalSubscriptions (callBack?: () => void) {
 		const { account } = S.Auth;
 		const list: any[] = [
