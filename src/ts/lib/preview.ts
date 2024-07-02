@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, J, keyboard } from 'Lib';
+import { I, S, U, J, keyboard, sidebar } from 'Lib';
 
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
@@ -273,7 +273,7 @@ class Preview {
 		const obj = $('#toast');
 		const { ww } = U.Common.getWindowDimensions();
 		const y = 32;
-		const sw = $('#sidebarDummy').outerWidth();
+		const sw = sidebar.getDummyWidth();;
 		const x = (ww - sw) / 2 - obj.outerWidth() / 2 + sw;
 
 		obj.show().css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });

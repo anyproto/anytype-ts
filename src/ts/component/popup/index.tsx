@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, analytics, Storage, Preview, translate } from 'Lib';
+import { I, S, U, analytics, Storage, Preview, translate, sidebar } from 'Lib';
 import { Dimmer } from 'Component';
 
 import PopupSettings from './settings';
@@ -189,7 +189,7 @@ class Popup extends React.Component<I.Popup> {
 
 			let sw = 0;
 			if (!S.Popup.showDimmerIds().includes(id)) {
-				sw = $('#sidebarDummy').outerWidth();
+				sw = sidebar.getDummyWidth();
 			};
 
 			let x = (ww - sw) / 2 - width / 2 + sw;
