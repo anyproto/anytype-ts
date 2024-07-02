@@ -1202,7 +1202,7 @@ class Dispatcher {
 		const { config } = S.Common;
 		const { event, sync, file } = config.flagsMw;
 		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
-		const syncEvents = [ 'SpaceSyncStatusUpdate' ];
+		const syncEvents = [ 'SpaceSyncStatusUpdate', 'ThreadStatus' ];
 
 		let check = false;
 		if (event && !syncEvents.concat(fileEvents).includes(type)) {
