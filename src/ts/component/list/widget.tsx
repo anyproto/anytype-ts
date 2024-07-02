@@ -229,6 +229,8 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 				onSelect: (target) => {
 					const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
 					const layoutOptions = U.Menu.getWidgetLayoutOptions(target.id, target.layout);
+					const layout = layoutOptions.length ? layoutOptions[0].id : I.WidgetLayout.Link;
+
 					const newBlock = { 
 						type: I.BlockType.Link,
 						content: { 
@@ -236,9 +238,15 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 						},
 					};
 
-					C.BlockCreateWidget(S.Block.widgets, '', newBlock, I.BlockPosition.Top, layoutOptions[0].id, Number(limitOptions[0].id), (message: any) => {
+					C.BlockCreateWidget(S.Block.widgets, '', newBlock, I.BlockPosition.Top, layout, Number(limitOptions[0].id), (message: any) => {
 						if (!message.error.code) {
 							analytics.event('AddWidget', { type: I.WidgetLayout.Link });
+
+							analytics.event('ChangeWidgetSource', {
+								layout,
+								route: 'AddWidget',
+								params: { target },
+							});
 						};
 					});					
 				},
