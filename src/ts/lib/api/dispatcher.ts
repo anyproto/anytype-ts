@@ -953,14 +953,8 @@ class Dispatcher {
 					break;
 				};
 
-				case 'SpaceSyncStatusUpdate': {
-					S.Auth.syncStatusUpdate(mapped);
-					break;
-				};
-				
+				case 'SpaceSyncStatusUpdate':
 				case 'P2PStatusUpdate': {
-					mapped.p2p = mapped.status;
-					delete mapped.status;
 					S.Auth.syncStatusUpdate(mapped);
 
 					C.DeviceList((message) => {

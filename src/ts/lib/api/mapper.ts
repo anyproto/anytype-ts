@@ -1473,6 +1473,13 @@ export const Mapper = {
 				syncingCounter: obj.getSyncingobjectscounter()
 			};
 		},
+
+		P2PStatusUpdate: (obj: Events.Event.P2PStatus.Update) => {
+			return {
+				id: obj.getSpaceid(),
+				p2p: obj.getStatus()
+			};
+		},
 	},
 
 };
