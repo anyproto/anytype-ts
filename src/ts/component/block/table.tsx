@@ -1445,8 +1445,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		h += 2;
 
 		const frame = { id, x, y, w, h, type, rowId, columnId, cellId, position };
-		let current = this.frames.find(it => it.id == frame.id);
 		
+		let current = this.frames.find(it => it.id == frame.id);
 		if (!current) {
 			current = frame;
 			this.frames.push(current);
@@ -1484,9 +1484,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			obj = frame;
 		};
 
-		raf(() => {
-			obj.css({ left: item.x, top: item.y, width: item.w, height: item.h });
-		});
+		obj.css({ left: item.x, top: item.y, width: item.w, height: item.h });
 	};
 
 	framesUpdate () {
