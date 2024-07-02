@@ -274,17 +274,15 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		let className = '';
 		let message = '';
 
+		if (devicesCounter) {
+			message = U.Common.sprintf(translate('menuSyncStatusP2PDevicesConnected'), devicesCounter, U.Common.plural(devicesCounter, translate('pluralDevice')));
+		} else {
+			message = translate('menuSyncStatusP2PNoDevicesConnected');
+		};
+
 		switch (p2p) {
-			default:
-			case I.P2PStatus.NotConnected: {
-				message = translate('menuSyncStatusP2PNoDevicesConnected');
-				break;
-			};
 			case I.P2PStatus.Connected: {
 				className = 'connected';
-				if (devicesCounter) {
-					message = U.Common.sprintf(translate('menuSyncStatusP2PDevicesConnected'), devicesCounter, U.Common.plural(devicesCounter, translate('pluralDevice')));
-				};
 				break;
 			};
 			case I.P2PStatus.NotPossible: {

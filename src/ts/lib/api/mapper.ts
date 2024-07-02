@@ -2,6 +2,7 @@ import { I, M, U, Encode, Decode } from 'Lib';
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
+import { DeviceList } from 'ts/lib/api/command';
 
 export const Mapper = {
 
@@ -607,6 +608,16 @@ export const Mapper = {
 				relationKey: obj.getRelationkey(),
 				relationDetails: Decode.struct(obj.getRelationdetails()),
 				ranges: (obj.getHighlightrangesList() || []).map(Mapper.From.Range),
+			};
+		},
+
+		DeviceInfo: (obj: Model.DeviceInfo): any => {
+			return {
+				id: obj.getId(),
+				name: obj.getName(),
+				addDate: obj.getAdddate(),
+				isConnected: obj.getIsconnected(),
+				archived: obj.getArchived()
 			};
 		},
 
