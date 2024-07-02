@@ -377,6 +377,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				id = 'localOnly';
 				title = translate('menuSyncStatusInfoLocalOnlyTitle');
 				message = translate('menuSyncStatusInfoLocalOnlyMessage');
+				className = '';
 				break;
 			};
 		};
