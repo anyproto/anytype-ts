@@ -30,7 +30,7 @@ class Name extends React.Component<Props> {
 				name = U.Object.name(object);
 			};
 		};
-		
+
 		return (
 			<div 
 				className={className} 
@@ -39,7 +39,11 @@ class Name extends React.Component<Props> {
 				onMouseEnter={onMouseEnter} 
 				onMouseLeave={onMouseLeave}
 			>
-				<span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
+				{'string' == typeof(name) ? (
+					<span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
+				) : (
+					<span>{name}</span>
+				)}
 			</div>
 		);
 	};

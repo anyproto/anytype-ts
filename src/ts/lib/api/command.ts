@@ -383,6 +383,7 @@ export const BlockTextSetText = (contextId: string, blockId: string, text: strin
 	text = text.replace(/&gt;/g, '>');
 
 	marks = U.Common.objectCopy(marks);
+	marks = marks.filter(it => Mark.canSave(it.type));
 	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark) as any;
 
 	const request = new Rpc.BlockText.SetText.Request();
