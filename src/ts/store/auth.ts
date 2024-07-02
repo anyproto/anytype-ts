@@ -15,7 +15,6 @@ class AuthStore {
 	public appKey = '';
 	public membershipData: I.Membership = { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
 	public syncStatusMap: Map<string, I.SyncStatus> = new Map();
-	public p2pSyncStatusMap: Map<string, I.P2PSyncStatus> = new Map();
 	
 	constructor () {
 		makeObservable(this, {
@@ -23,7 +22,6 @@ class AuthStore {
 			accountList: observable,
 			membershipData: observable,
 			syncStatusMap: observable,
-			p2pSyncStatusMap: observable,
 			membership: computed,
 			accounts: computed,
 			account: computed,
@@ -90,12 +88,6 @@ class AuthStore {
 		this.syncStatusMap.set(v.id, Object.assign(obj, v));
 	};
 
-	p2pSyncStatusUpdate (v: I.P2PSyncStatus) {
-		const obj = this.getP2PSyncStatus(v.id);
-
-		this.p2pSyncStatusMap.set(v.id, Object.assign(obj, v));
-	};
-
 	accountAdd (account: any) {
 		account.info = account.info || {};
 		account.status = account.status || {};
@@ -146,11 +138,15 @@ class AuthStore {
 	};
 
 	getSyncStatus (spaceId?: string): I.SyncStatus {
-		return this.syncStatusMap.get(spaceId || S.Common.space) || { id: '', error: 0, network: 0, status: 3, syncingCounter: 0 };
-	};
-
-	getP2PSyncStatus (spaceId?: string): I.P2PSyncStatus {
-		return this.p2pSyncStatusMap.get(spaceId || S.Common.space) || { id: '', status: 0 };
+		return this.syncStatusMap.get(spaceId || S.Common.space) || {
+			id: '',
+			error: I.SyncStatusError.None,
+			network: I.SyncStatusNetwork.Anytype,
+			status: I.SyncStatusSpace.Offline,
+			p2p: I.P2PStatus.NotConnected,
+			syncingCounter: 0,
+			devicesCounter: 0
+		};
 	};
 
 	clearAll () {

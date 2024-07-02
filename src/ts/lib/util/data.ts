@@ -129,6 +129,7 @@ class UtilData {
 
 	syncStatusClass (v: I.SyncStatusObject): string {
 		if (v == undefined) {
+			console.log('[U.Data].syncStatusClass: Sync status is undefined');
 			return '';
 		};
 		return I.SyncStatusObject[v].toLowerCase();

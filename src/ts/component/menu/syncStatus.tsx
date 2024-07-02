@@ -257,20 +257,20 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getIcons () {
-		const iconNetwork = this.getIconNetwork();
-		const iconP2P = this.getIconP2P();
+		const syncStatus = S.Auth.getSyncStatus();
+		const iconNetwork = this.getIconNetwork(syncStatus);
+		const iconP2P = this.getIconP2P(syncStatus);
 
 		return [ iconP2P, iconNetwork ];
 	};
 
-	getIconP2P () {
-		const p2pStatus = S.Auth.getP2PSyncStatus();
-		const { status } = p2pStatus;
+	getIconP2P (syncStatus) {
+		const { p2p, devicesCounter } = syncStatus;
 
 		let className = '';
 		let message = '';
 
-		switch (status) {
+		switch (p2p) {
 			default:
 			case I.P2PStatus.NotConnected: {
 				message = translate('menuSyncStatusP2PNoDevicesConnected');
@@ -278,6 +278,9 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			};
 			case I.P2PStatus.Connected: {
 				className = 'connected';
+				if (devicesCounter) {
+					message = U.Common.sprintf(translate('menuSyncStatusP2PDevicesConnected'), devicesCounter, U.Common.plural(devicesCounter, translate('pluralDevice')));
+				};
 				break;
 			};
 			case I.P2PStatus.NotPossible: {
@@ -296,8 +299,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 	};
 
-	getIconNetwork () {
-		const syncStatus = S.Auth.getSyncStatus();
+	getIconNetwork (syncStatus) {
 		const { network, error, syncingCounter, status } = syncStatus;
 
 		let id = '';

@@ -30,7 +30,9 @@ export interface SyncStatus {
 	status: SyncStatusSpace;
 	network: SyncStatusNetwork;
 	error: SyncStatusError;
+	p2p: P2PStatus;
 	syncingCounter: number;
+	devicesCounter: number;
 };
 
 export enum P2PStatus {
