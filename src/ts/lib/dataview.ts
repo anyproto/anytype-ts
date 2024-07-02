@@ -195,7 +195,7 @@ class Dataview {
 
 	isCollection (rootId: string, blockId: string): boolean {
 		const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
-		const isInline = !U.Object.getSystemLayouts().includes(object.layout);
+		const isInline = !U.Object.isSystemLayout(object.layout);
 
 		if (!isInline) {
 			return object.layout == I.ObjectLayout.Collection;
