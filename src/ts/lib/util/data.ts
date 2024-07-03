@@ -128,8 +128,11 @@ class UtilData {
 	};
 
 	syncStatusClass (v: I.SyncStatusObject): string {
-		v = v || I.SyncStatusObject.Synced;
-		return String(I.SyncStatusObject[v]).toLowerCase();
+		const s = I.SyncStatusObject[v];
+		if ('undefined' == typeof(s)) {
+			return '';
+		};
+		return String(s || '').toLowerCase();
 	};
 	
 	alignHIcon (v: I.BlockHAlign): string {
@@ -609,6 +612,12 @@ class UtilData {
 	sortByWeight (c1: any, c2: any) {
 		if (c1._sortWeight_ > c2._sortWeight_) return -1;
 		if (c1._sortWeight_ < c2._sortWeight_) return 1;
+		return this.sortByName(c1, c2);
+	};
+
+	sortByFormat (c1: any, c2: any) {
+		if (c1.format > c2.format) return 1;
+		if (c1.format < c2.format) return -1;
 		return this.sortByName(c1, c2);
 	};
 

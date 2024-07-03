@@ -49,6 +49,7 @@ const Vault = observer(class Vault extends React.Component {
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
 					<div className="iconWrap">
+						<div className="border" />
 						<IconObject object={item} size={48} forceLetter={true} />
 					</div>
 					<div className="coverWrap">
@@ -56,9 +57,7 @@ const Vault = observer(class Vault extends React.Component {
 					</div>
 					<div className="infoWrap">
 						<ObjectName object={item} />
-						<div className="descr">
-							{descr}
-						</div>
+						<div className="descr">{descr}</div>
 					</div>
 				</div>
 			);
@@ -72,7 +71,9 @@ const Vault = observer(class Vault extends React.Component {
 				onMouseEnter={e => this.onMouseEnter(e, item)}
 				onMouseLeave={() => this.onMouseLeave()}
 			>
-				<div className="iconWrap" />
+				<div className="iconWrap">
+					<div className="border" />
+				</div>
 				{item.withName ? (
 					<div className="infoWrap">
 						<div className="name">{item.name}</div>
@@ -278,7 +279,7 @@ const Vault = observer(class Vault extends React.Component {
 		Preview.tooltipShow({ 
 			title: item.name, 
 			element: $(e.currentTarget), 
-			className: 'big', 
+			className: 'big fromVault', 
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
 			offsetX: 66,

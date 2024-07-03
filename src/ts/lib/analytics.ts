@@ -459,6 +459,11 @@ class Analytics {
 				break;
 			};
 
+			case 'ClickSyncStatus': {
+				data.status = I.SyncStatusSpace[data.status]
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;

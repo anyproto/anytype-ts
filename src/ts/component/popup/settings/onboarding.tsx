@@ -127,7 +127,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	};
 
 	onUpload () {
-		Action.openFile([ 'yml' ], (paths: string[]) => this.onChange('path', paths[0]));
+		Action.openFileDialog([ 'yml' ], (paths: string[]) => this.onChange('path', paths[0]));
 	};
 
 	onSave () {
@@ -160,7 +160,7 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	onChangeStorage () {
 		const onConfirm = () => {
-			Action.openDir({}, (paths: string[]) => this.onChange('userPath', paths[0]));
+			Action.openDirectoryDialog({}, (paths: string[]) => this.onChange('userPath', paths[0]));
 		};
 
 		if (this.config.mode == I.NetworkMode.Local) {

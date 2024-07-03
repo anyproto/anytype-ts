@@ -30,5 +30,18 @@ export interface SyncStatus {
 	status: SyncStatusSpace;
 	network: SyncStatusNetwork;
 	error: SyncStatusError;
+	p2p: P2PStatus;
 	syncingCounter: number;
+	devicesCounter: number;
+};
+
+export enum P2PStatus {
+	NotConnected 	= 0,
+	NotPossible 	= 1,
+	Connected 		= 2,
+};
+
+export interface P2PSyncStatus {
+	id: string;
+	status: P2PStatus;
 };

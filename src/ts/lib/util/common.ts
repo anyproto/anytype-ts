@@ -941,6 +941,10 @@ class UtilCommon {
 		return String(s || '').replace(/\r\n?/g, '\n');
 	};
 
+	htmlSpecialChars (s: string) {
+		return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	};
+
 };
 
 export default new UtilCommon();

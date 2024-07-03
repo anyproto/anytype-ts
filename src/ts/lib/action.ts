@@ -175,7 +175,19 @@ class Action {
 		focus.apply();
 	};
 
-	openFile (extensions: string[], callBack?: (paths: string[]) => void) {
+	openFile (id: string) {
+		if (!id) {
+			return;
+		};
+
+		C.FileDownload(id, U.Common.getElectron().tmpPath, (message: any) => {
+			if (message.path) {
+				Renderer.send('pathOpen', message.path);
+			};
+		});
+	};
+
+	openFileDialog (extensions: string[], callBack?: (paths: string[]) => void) {
 		const options: any = { 
 			properties: [ 'openFile' ], 
 		};
@@ -197,7 +209,7 @@ class Action {
 		});
 	};
 
-	openDir (param: any, callBack?: (paths: string[]) => void) {
+	openDirectoryDialog (param: any, callBack?: (paths: string[]) => void) {
 		param = Object.assign({}, param);
 
 		const options = Object.assign(param, { 
@@ -363,7 +375,7 @@ class Action {
 		const { dataPath } = S.Common;
 		const { mode, path } = networkConfig;
 
-		this.openFile([ 'zip' ], paths => {
+		this.openFileDialog([ 'zip' ], paths => {
 			C.AccountRecoverFromLegacyExport(paths[0], dataPath, U.Common.rand(1, J.Constant.count.icon), (message: any) => {
 				if (onError(message.error)) {
 					return;
@@ -484,7 +496,7 @@ class Action {
 	export (spaceId: string, ids: string[], type: I.ExportType, param: any, onSelectPath?: () => void, callBack?: (message: any) => void): void {
 		const { zip, nested, files, archived, json, route } = param;
 
-		this.openDir({ buttonLabel: translate('commonExport') }, paths => {
+		this.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
 			if (onSelectPath) {
 				onSelectPath();
 			};
