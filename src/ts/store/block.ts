@@ -600,14 +600,17 @@ class BlockStore {
 			return [];
 		};
 		
-		let ret: any[] = [];
+		let ret = [];
+
 		for (const id of ids) {
 			const parent = this.getParentLeaf(rootId, id);
-			if (!parent || !parent.isLayout() || parent.isLayoutDiv() || parent.isLayoutHeader()) {
+			if (!parent || !parent.isLayout() || parent.isLayoutHeader()) {
 				continue;
 			};
 			
-			ret.push(parent.id);
+			if (ret.indexOf(parent.id) < 0) {
+				ret.push(parent.id);
+			};
 			
 			if (parent.isLayoutColumn()) {
 				ret = ret.concat(this.getLayoutIds(rootId, [ parent.id ]));
