@@ -385,11 +385,6 @@ class Mark {
 			item.html(item.find('name').html());
 		});
 
-		obj.find(this.getTag(I.MarkType.Latex)).each((i: number, item: any) => {
-			item = $(item);
-			item.html(item.attr('data-text'));
-		});
-
 		obj.find('font').each((i: number, item: any) => {
 			item = $(item);
 

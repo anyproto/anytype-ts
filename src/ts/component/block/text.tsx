@@ -611,15 +611,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const html = value.replace(/\$([^\$]+)\$/g, (s: string, p: string, o: number) => {
 			let ret = '';
 			try {
-				ret = katex.renderToString(p, { 
+				ret = katex.renderToString(U.Common.stripTags(p), { 
 					displayMode: false, 
 					throwOnError: false,
 					output: 'html',
 					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
 				});
 
-				ret = ret ? `<${tag} data-text="${s}">${ret}</${tag}>` : s;
-			} catch {
+				ret = ret ? `<${tag}>${ret}</${tag}>` : s;
+			} catch (e) {
 				ret = s;
 			};
 
