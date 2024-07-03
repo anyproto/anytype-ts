@@ -613,9 +613,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
 				});
 
-				if (ret) {
-					ret = `<${tag} data-text="${s}">${ret}</${tag}>`;
-				};
+				ret = ret ? `<${tag} data-text="${s}">${ret}</${tag}>` : s;
 			} catch {
 				ret = s;
 			};
