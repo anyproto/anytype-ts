@@ -1,6 +1,5 @@
 import $ from 'jquery';
-import { I, UtilCommon, analytics } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, U, J, analytics } from 'Lib';
 
 const Tags = {};
 for (const i in I.MarkType) {
@@ -63,8 +62,8 @@ class Mark {
 		];
 
 		for (const item of Markdown) {
-			const non = UtilCommon.regexEscape(item.key.substring(0, 1));
-			const k = UtilCommon.regexEscape(item.key);
+			const non = U.Common.regexEscape(item.key.substring(0, 1));
+			const k = U.Common.regexEscape(item.key);
 
 			this.regexpMarkdown.push({ 
 				type: item.type,
@@ -72,13 +71,13 @@ class Mark {
 			});
 		};
 	};
-	
+
 	toggle (marks: I.Mark[], mark: I.Mark): I.Mark[] {
 		if ((mark.type === null) || (mark.range.from == mark.range.to)) {
 			return marks;	
 		};
 
-		const map = UtilCommon.mapToArray(marks, 'type');
+		const map = U.Common.mapToArray(marks, 'type');
 		const type = mark.type;
 
 		let add = true;
@@ -167,7 +166,7 @@ class Mark {
 		};
 
 		analytics.event('ChangeTextStyle', { type, count: 1 });
-		return UtilCommon.unmap(map).sort(this.sort);
+		return U.Common.unmap(map).sort(this.sort);
 	};
 	
 	sort (c1: I.Mark, c2: I.Mark) {
@@ -233,7 +232,7 @@ class Mark {
 	};
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
-		const map = UtilCommon.mapToArray(marks, 'type');
+		const map = U.Common.mapToArray(marks, 'type');
 		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
 
 		if (!map[type] || !map[type].length) {
@@ -249,10 +248,10 @@ class Mark {
 	};
 
 	adjust (marks: I.Mark[], from: number, length: number) {
-		marks = marks || [];
+		marks = U.Common.objectCopy(marks || []);
 
 		for (const mark of marks) {
-			if ((mark.range.from <= from) && (mark.range.to > from)) {
+			if ((mark.range.from < from) && (mark.range.to > from)) {
 				mark.range.to += length;
 			} else
 			if (mark.range.from >= from) {
@@ -261,6 +260,7 @@ class Mark {
 			};
 			mark.range.from = Math.max(0, mark.range.from);
 		};
+
 		return marks;
 	};
 	
@@ -320,10 +320,14 @@ class Mark {
 				return;
 			};
 
+			const tag = this.getTag(mark.type);
+			if (!tag) {
+				return;
+			};
+
 			const attr = this.paramToAttr(mark.type, param);
-			const tag = Tags[mark.type];
 			const data = [ `data-range="${mark.range.from}-${mark.range.to}"` ];
-			
+
 			if (param) {
 				data.push(`data-param="${param}"`);
 			};
@@ -393,7 +397,7 @@ class Mark {
 			const html = item.find('span').html();
 			const face = String(item.attr('face') || '').toLowerCase();
 
-			if (face == Constant.fontCode) {
+			if (face == J.Constant.fontCode) {
 				const tag = this.getTag(I.MarkType.Code);
 				item.replaceWith(`<${tag}>${html}</${tag}>`);
 			} else {
@@ -406,7 +410,8 @@ class Mark {
 	};
 	
 	fromHtml (html: string, restricted: I.MarkType[]): { marks: I.Mark[], text: string, adjustMarks: boolean } {
-		const rh = new RegExp(`<(\/)?(${Object.values(Tags).join('|')})(?:([^>]*)>|>)`, 'ig');
+		const tags = this.getTags();
+		const rh = new RegExp(`<(\/)?(${Object.values(tags).join('|')})(?:([^>]*)>|>)`, 'ig');
 		const rp = new RegExp('data-param="([^"]*)"', 'i');
 		const obj = this.cleanHtml(html);
 		const marks: I.Mark[] = [];
@@ -454,11 +459,13 @@ class Mark {
 
 			const end = p1 == '/';
 			const offset = Number(text.indexOf(s)) || 0;
-			const type = Object.values(Tags).indexOf(p2);
-
-			if (type < 0) {
+			
+			let type: any = U.Common.getKeyByValue(tags, p2);
+			if (undefined === type) {
 				return;
 			};
+
+			type = Number(type);
 
 			if (end) {
 				for (let i = 0; i < marks.length; ++i) {
@@ -471,7 +478,7 @@ class Mark {
 			} else {
 				const pm = p3.match(rp);
 				const param = pm ? pm[1]: '';
-				
+
 				marks.push({
 					type,
 					range: { from: offset, to: 0 },
@@ -488,7 +495,7 @@ class Mark {
 	};
 
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean): { marks: I.Mark[], text: string, adjustMarks: boolean } {
-		const test = /((^|\s)_|[`\*~\[]\$){1}/.test(html);
+		const test = /((^|\s)_|[`\*~\[\$]){1}/.test(html);
 		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 		const overlaps = [ I.MarkOverlap.Left, I.MarkOverlap.Right, I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight ];
 
@@ -512,9 +519,15 @@ class Mark {
 				p4 = String(p4 || '');
 				p5 = String(p5 || '');
 
-				const from = (Number(text.indexOf(s)) || 0) + p1.length;
-				const to = from + p3.length;
-				const replace = (p1 + p3 + ' ').replace(new RegExp('\\$', 'g'), '$$$');
+				let from = (Number(text.indexOf(s)) || 0) + p1.length;
+				let to = from + p3.length;
+				let replace = null;
+
+				if (item.type != I.MarkType.Latex) {
+					replace = (p1 + p3 + ' ').replace(new RegExp('\\$', 'g'), '$$$');
+				} else {
+					to += p2.length + p4.length;
+				};
 
 				let check = true;
 				for (const mark of checked) {
@@ -526,16 +539,23 @@ class Mark {
 				};
 
 				if (check) {
-					marks = this.adjust(marks, from, -p2.length);
-					marks = this.adjust(marks, to, -p4.length);
+					if (item.type != I.MarkType.Latex) {
+						marks = this.adjust(marks, from, -p2.length);
+						marks = this.adjust(marks, to, -p4.length);
+					};
+
 					marks.push({ type: item.type, range: { from, to }, param: '' });
 
-					text = text.replace(s, replace);
-					adjustMarks = true;
+					if (replace) {
+						text = text.replace(s, replace);
+						adjustMarks = true;
+					};
 				};
 				return s;
 			});
 		};
+
+		marks = this.checkRanges(text, marks);
 
 		// Links
 		html = text;
@@ -581,7 +601,7 @@ class Mark {
 
 	// Unicode symbols
 	fromUnicode (html: string, marks: I.Mark[]): { marks: I.Mark[], text: string, adjustMarks: boolean } {
-		const keys = Object.keys(Patterns).map(it => UtilCommon.regexEscape(it));
+		const keys = Object.keys(Patterns).map(it => U.Common.regexEscape(it));
 		const reg = new RegExp(`(${keys.join('|')})`, 'g');
 		const test = reg.test(html);
 		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
@@ -689,10 +709,30 @@ class Mark {
 		};
 	};
 
-	getTag (t: I.MarkType) {
-		return Tags[t];
+	getTags () {
+		const tags: any = {};
+
+		for (const i in I.MarkType) {
+			if (isNaN(I.MarkType[i] as any)) {
+				tags[i] = this.getTag(i as any);
+			};
+		};
+
+		return tags;
 	};
-	
+
+	getTag (t: I.MarkType): string {
+		return I.MarkType[t] ? `markup${I.MarkType[t].toLowerCase()}` : '';
+	};
+
+	needsBreak (t: I.MarkType): boolean {
+		return [ I.MarkType.Link, I.MarkType.Object, I.MarkType.Search, I.MarkType.Change, I.MarkType.Highlight ].includes(t);
+	};
+
+	canSave (t: I.MarkType): boolean {
+		return ![ I.MarkType.Search, I.MarkType.Change, I.MarkType.Highlight ].includes(t);
+	};
+
 };
 
 export default new Mark();

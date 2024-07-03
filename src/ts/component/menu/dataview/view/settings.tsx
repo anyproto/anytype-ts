@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon, UtilData, UtilObject } from 'Lib';
+import { I, C, S, U, J, analytics, keyboard, Key, translate, Dataview } from 'Lib';
 import { InputWithLabel, MenuItemVertical } from 'Component';
-import { blockStore, dbStore, detailStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
 
 const MenuViewSettings = observer(class MenuViewSettings extends React.Component<I.Menu> {
 	
@@ -77,7 +75,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 
-		this.param = UtilCommon.objectCopy(data.view.get());
+		this.param = U.Common.objectCopy(data.view.get());
 		this.forceUpdate();
 		this.rebind();
 
@@ -97,7 +95,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			this.save(true);
 		};
 
-		menuStore.closeAll(Constant.menuIds.viewEdit);
+		S.Menu.closeAll(J.Menu.viewEdit);
 	};
 
 	focus () {
@@ -177,7 +175,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		this.isFocused = true;
 		this.props.setActive();
 
-		menuStore.closeAll(Constant.menuIds.viewEdit);
+		S.Menu.closeAll(J.Menu.viewEdit);
 	};
 	
 	onNameBlur () {
@@ -189,7 +187,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		if (!keyboard.isMouseDisabled) {
 			this.n = -1;
 			this.props.setHover(null, false);
-			menuStore.closeAll(Constant.menuIds.viewEdit);
+			S.Menu.closeAll(J.Menu.viewEdit);
 		};
 	};
 
@@ -203,7 +201,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onSave, readonly } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		const view = data.view.get();
 
 		if (readonly || !block || !view) {
@@ -222,17 +220,17 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const { id, type } = this.param;
-		const views = dbStore.getViews(rootId, blockId);
+		const views = S.Record.getViews(rootId, blockId);
 		const view = data.view.get();
 		const isReadonly = this.isReadonly();
 		const isBoard = type == I.ViewType.Board;
 		const sortCnt = view.sorts.length;
-		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
+		const filters = view.filters.filter(it => S.Record.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
 
 		const relations = view.getVisibleRelations().map((it) => {
-			const relation = dbStore.getRelationByKey(it.relationKey) || {};
-			return relation ? UtilCommon.shorten(relation.name || '', 16) : '';
+			const relation = S.Record.getRelationByKey(it.relationKey) || {};
+			return relation ? U.Common.shorten(relation.name || '', 16) : '';
 		}).filter(it => it);
 
 		const relationCnt = relations.slice(0, 2);
@@ -246,8 +244,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt.join(', ') },
 		];
 		const tools = [
-			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
-			{ id: 'sort', name: translate('menuDataviewViewSort'), subComponent: 'dataviewSort', caption: sortCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), sortCnt) : '' }
+			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? U.Common.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
+			{ id: 'sort', name: translate('menuDataviewViewSort'), subComponent: 'dataviewSort', caption: sortCnt ? U.Common.sprintf(translate('menuDataviewViewApplied'), sortCnt) : '' }
 		];
 
 		let sections: any[] = [
@@ -325,7 +323,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				param.data = Object.assign(addParam.data, item.data);
 			};
 
-			menuStore.replace(id, item.subComponent, Object.assign(param, addParam));
+			S.Menu.replace(id, item.subComponent, Object.assign(param, addParam));
 			return;
 		};
 
@@ -352,7 +350,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				};
 
 				case 'remove': {
-					const views = dbStore.getViews(rootId, blockId);
+					const views = S.Record.getViews(rootId, blockId);
 					const idx = views.findIndex(it => it.id == view.id);
 					const filtered = views.filter(it => it.id != view.id);
 					
@@ -399,7 +397,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		return readonly || !allowedView;
 	};

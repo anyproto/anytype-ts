@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { I, Relation, UtilCommon, translate, UtilDate } from 'Lib';
+import { I, S, U, Relation, translate } from 'Lib';
 import { Icon, Tag, IconObject } from 'Component';
-import { detailStore } from 'Store';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
 
@@ -63,12 +62,12 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 				let name = String(filterOption.name || '').toLowerCase();
 
 				if (quickOption == I.FilterQuickOption.ExactDate) {
-					v.push(value !== null ? UtilDate.date('d.m.Y', value) : '');
+					v.push(value !== null ? U.Date.date('d.m.Y', value) : '');
 				} else
 				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
 					value = Number(value) || 0;
 					name = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `menuItemFilterTimeAgo` : `menuItemFilterTimeFromNow`;
-					v.push(UtilCommon.sprintf(translate(name), value, UtilCommon.plural(value, translate('pluralDay'))));
+					v.push(U.Common.sprintf(translate(name), value, U.Common.plural(value, translate('pluralDay'))));
 				} else 
 				if (filterOption) {
 					v.push(name);
@@ -119,7 +118,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 					);
 				};
 
-				list = Relation.getArrayValue(value).map(it => detailStore.get(subId, it, []));
+				list = Relation.getArrayValue(value).map(it => S.Detail.get(subId, it, []));
 				list = list.filter(it => !it._empty_);
 
 				v = (

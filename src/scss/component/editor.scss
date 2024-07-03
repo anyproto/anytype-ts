@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.editorWrapper { margin: 0px auto; }
+.editorWrapper { margin: 0px auto; min-width: 300px; }
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 
@@ -174,10 +174,11 @@
 	.editorControls { height: 70px; margin-bottom: 8px; }
 }
 
-/* Set, Collection */
+/* Set, Collection, Date */
 
 .editorWrapper.isSet,
-.editorWrapper.isCollection {
+.editorWrapper.isCollection,
+.editorWrapper.isDate {
 	.blocks { width: calc(100% - 96px); margin: 0px auto; padding: 0px; user-select: none; }
 	.blocks {
 		.block {
@@ -202,7 +203,6 @@
 .editorWrapper.isCollection.withIcon {
 	.controlButtons { left: 14px; }
 }
-
 
 .editorWrapper.isSet.withIconAndCover, 
 .editorWrapper.isCollection.withIconAndCover { padding-top: 356px; }

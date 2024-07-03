@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { I, focus, UtilObject, UtilCommon, translate } from 'Lib';
-import { blockStore } from 'Store';
+import { I, S, U, J, focus, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 const BlockTableOfContents = observer(class BlockTableOfContents extends React.Component<I.BlockComponent> {
@@ -77,7 +76,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 
 	getTree () {
 		const { rootId } = this.props;
-		const blocks = blockStore.unwrapTree([ blockStore.wrapTree(rootId, rootId) ]).filter(it => it.isTextHeader());
+		const blocks = S.Block.unwrapTree([ S.Block.wrapTree(rootId, rootId) ]).filter(it => it.isTextHeader());
 		const list: any[] = [];
 
 		let hasH1 = false;
@@ -119,10 +118,10 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 			return;
 		};
 
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 		const no = node.offset().top;
 		const st = container.scrollTop();
-		const hh = UtilCommon.sizeHeader();
+		const hh = J.Size.header;
 		const y = Math.max(hh + 20, (isPopup ? (no - container.offset().top + st) : no) - hh - 20);
 
 		container.scrollTop(y);

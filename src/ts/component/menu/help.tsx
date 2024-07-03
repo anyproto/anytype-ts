@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { MenuItemVertical, Button } from 'Component';
-import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilSpace, translate } from 'Lib';
-import { popupStore, blockStore } from 'Store';
-const Url = require('json/url.json');
+import { MenuItemVertical, Button, Share } from 'Component';
+import { I, S, U, J, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, translate, Preview } from 'Lib';
 
 class MenuHelp extends React.Component<I.Menu> {
 
@@ -18,35 +16,39 @@ class MenuHelp extends React.Component<I.Menu> {
 		const items = this.getItems();
 
 		return (
-			<div className="items">
-				{items.map((item: any, i: number) => {
-					let content = null;
-					
-					if (item.isDiv) {
-						content = (
-							<div key={i} className="separator">
-								<div className="inner" />
-							</div>
-						);
-					} else {
-						content = (
-							<MenuItemVertical
-								key={i}
-								{...item}
-								onMouseEnter={e => this.onMouseEnter(e, item)}
-								onClick={e => this.onClick(e, item)}
-							/>
-						);
-					};
+			<React.Fragment>
+				<div className="items">
+					{items.map((item: any, i: number) => {
+						let content = null;
 
-					return content;
-				})}
-			</div>
+						if (item.isDiv) {
+							content = (
+								<div key={i} className="separator">
+									<div className="inner" />
+								</div>
+							);
+						} else {
+							content = (
+								<MenuItemVertical
+									key={i}
+									{...item}
+									onMouseEnter={e => this.onMouseEnter(e, item)}
+									onClick={e => this.onClick(e, item)}
+								/>
+							);
+						};
+
+						return content;
+					})}
+				</div>
+				<Share />
+			</React.Fragment>
 		);
 	};
 
 	componentDidMount () {
 		this.rebind();
+		Preview.shareTooltipHide();
 		Highlight.showAll();
 	};
 
@@ -65,7 +67,7 @@ class MenuHelp extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const btn = <Button className="c16" text={UtilCommon.getElectron().version.app} />;
+		const btn = <Button className="c16" text={U.Common.getElectron().version.app} />;
 
 		return [
 			{ id: 'whatsNew', document: 'whatsNew', caption: btn },
@@ -80,7 +82,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			{ isDiv: true },
 			{ id: 'terms' },
 			{ id: 'privacy' },
-		].map(it => ({ ...it, name: translate(UtilCommon.toCamelCase(`menuHelp-${it.id}`)) }));
+		].map(it => ({ ...it, name: translate(U.Common.toCamelCase(`menuHelp-${it.id}`)) }));
 	};
 
 	onMouseEnter (e: any, item: any) {
@@ -96,21 +98,21 @@ class MenuHelp extends React.Component<I.Menu> {
 		const storeTab = Storage.get('tabStore');
 		const isStoreType = isStore && (storeTab == I.StoreTab.Type);
 		const isStoreRelation = isStore && (storeTab == I.StoreTab.Relation);
-		const home = UtilSpace.getDashboard();
+		const home = U.Space.getDashboard();
 
 		close();
-		analytics.event(UtilCommon.toUpperCamelCase([ getId(), item.id ].join('-')), { route: analytics.route.menuHelp });
+		analytics.event(U.Common.toUpperCamelCase([ getId(), item.id ].join('-')), { route: analytics.route.menuHelp });
 
 		Highlight.hide(item.id);
 
 		switch (item.id) {
 			case 'whatsNew': {
-				popupStore.open('help', { preventResize: true, data: { document: item.document } });
+				S.Popup.open('help', { preventResize: true, data: { document: item.document } });
 				break;
 			};
 
 			case 'shortcut': {
-				popupStore.open('shortcut', { preventResize: true });
+				S.Popup.open('shortcut', { preventResize: true });
 				break;
 			};
 
@@ -119,7 +121,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			case 'tutorial':
 			case 'privacy':
 			case 'community': {
-				Renderer.send('urlOpen', Url[item.id]);
+				Renderer.send('urlOpen', J.Url[item.id]);
 				break;
 			};
 
@@ -148,7 +150,7 @@ class MenuHelp extends React.Component<I.Menu> {
 					key = 'mainSet';
 				} else
 				if (isEditor) {
-					key = blockStore.checkBlockTypeExists(rootId) ? 'objectCreationStart' : 'editor';
+					key = S.Block.checkBlockTypeExists(rootId) ? 'objectCreationStart' : 'editor';
 				} else
 				if (isGraph) {
 					key = 'mainGraph';
@@ -161,7 +163,7 @@ class MenuHelp extends React.Component<I.Menu> {
 				} else {
 					const { page, action } = keyboard.getMatch().params;
 
-					key = UtilCommon.toCamelCase([ page, action ].join('-'));
+					key = U.Common.toCamelCase([ page, action ].join('-'));
 				};
 
 				if (key) {

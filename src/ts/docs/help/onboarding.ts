@@ -1,4 +1,4 @@
-import { I, Onboarding, keyboard, translate, UtilSpace } from 'Lib';
+import { I, U, translate } from 'Lib';
 
 export default {
     mainGraph: () => ({
@@ -176,7 +176,7 @@ export default {
     }),
 
     dashboard: () => {
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		return {
 			category: translate('onboardingDashboard'),
@@ -191,18 +191,6 @@ export default {
 						vertical: I.MenuDirection.Top,
 						horizontal: I.MenuDirection.Right,
 						offsetY: () => -($('#notifications').height() + 12),
-					}
-				},
-				{
-					name: translate('onboardingSpaceSelectTitle'),
-					description: translate('onboardingSpaceSelectDescription'),
-					video: './img/help/onboarding/space-s.mp4',
-					param: {
-						element: '#navigationPanel #button-navigation-profile',
-						classNameWrap: 'fixed',
-						vertical: I.MenuDirection.Top,
-						horizontal: I.MenuDirection.Center,
-						offsetY: -24,
 					}
 				},
 				{

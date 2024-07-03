@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, UtilRouter, UtilData, UtilCommon, translate, C, keyboard, Animation, Renderer, analytics } from 'Lib';
-import { commonStore, authStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
+import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Preview } from 'Lib';
 
 interface State {
 	error: string;
@@ -34,7 +31,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	
 	render () {
 		const { error } = this.state;
-		const { accounts } = authStore;
+		const { accounts } = S.Auth;
 		const length = accounts.length;
 		
         return (
@@ -96,27 +93,34 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const phrase = this.refPhrase.getValue();
 		const length = phrase.split(' ').length;
 
-		if (length < Constant.limit.phrase.word) {
-			this.setError({ code: 1, description: translate('pageAuthLoginInvalidPhrase')})
+		if (length < J.Constant.count.phrase.word) {
+			this.setError({ code: 1, description: translate('pageAuthLoginInvalidPhrase')});
 			return;
 		};
 
 		this.refSubmit?.setLoading(true);
 		
-		C.WalletRecover(commonStore.dataPath, phrase, (message: any) => {
+		C.WalletRecover(S.Common.dataPath, phrase, (message: any) => {
 			if (this.setError({ ...message.error, description: translate('pageAuthLoginInvalidPhrase')})) {
 				return;
 			};
 
-			authStore.accountListClear();
-			UtilData.createSession(phrase, '', () => {
-				C.AccountRecover(message => this.setError(message.error));
+			S.Auth.accountListClear();
+			U.Data.createSession(phrase, '', () => {
+				C.AccountRecover(message => {
+					this.setError(message.error);
+
+					window.setTimeout(() => {
+						Preview.shareTooltipShow();
+						analytics.event('OnboardingTooltip', { id: 'ShareApp' });
+					}, J.Constant.delay.login);
+				});
 			});
 		});
 	};
 
 	select () {
-		const { accounts, networkConfig } = authStore;
+		const { accounts, networkConfig } = S.Auth;
 		if (this.isSelecting || !accounts.length) {
 			return;
 		};
@@ -126,22 +130,22 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const { mode, path } = networkConfig;
 		const account = accounts[0];
 
-		authStore.accountSet(account);
+		S.Auth.accountSet(account);
 		Renderer.send('keytarSet', account.id, this.refPhrase.getValue());
 
-		C.AccountSelect(account.id, commonStore.dataPath, mode, path, (message: any) => {
+		C.AccountSelect(account.id, S.Common.dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				this.isSelecting = false;
 				return;
 			};
 
-			authStore.accountSet(message.account);
-			commonStore.configSet(message.account.config, false);
+			S.Auth.accountSet(message.account);
+			S.Common.configSet(message.account.config, false);
 
-			UtilData.onInfo(message.account.info);
+			U.Data.onInfo(message.account.info);
 			Animation.from(() => {
-				UtilData.onAuth();
-				UtilData.onAuthOnce(true);
+				U.Data.onAuth();
+				U.Data.onAuthOnce(true);
 
 				this.isSelecting = false;
 			});
@@ -154,8 +158,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			return false;
 		};
 
-		if (error.code == Errors.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
-			UtilRouter.go('/auth/setup/select', {});
+		if (error.code == J.Error.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
+			U.Router.go('/auth/setup/select', {});
 			return;
 		};
 
@@ -163,9 +167,9 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.refPhrase?.setError(true);
 		this.refSubmit?.setLoading(false);
 
-		authStore.accountListClear();
+		S.Auth.accountListClear();
 
-		return UtilCommon.checkErrorCommon(error.code);
+		return U.Common.checkErrorCommon(error.code);
 	};
 
 	checkButton () {
@@ -173,7 +177,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	canSubmit (): boolean {
-		return this.refPhrase.getValue().split(' ').length == Constant.limit.phrase.word;
+		return this.refPhrase.getValue().split(' ').length == J.Constant.count.phrase.word;
 	};
 
 	onKeyDownPhrase (e: React.KeyboardEvent) {
@@ -188,8 +192,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	onCancel () {
-		authStore.logout(true, false);
-		Animation.from(() => UtilRouter.go('/', { replace: true }));
+		S.Auth.logout(true, false);
+		Animation.from(() => U.Router.go('/', { replace: true }));
 	};
 
 	onChange () {
@@ -197,9 +201,9 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	onForgot () {
-		const platform = UtilCommon.getPlatform();
+		const platform = U.Common.getPlatform();
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			className: 'lostPhrase isLeft',
             data: {
 				title: translate('popupConfirmLostPhraseTitle'),

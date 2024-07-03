@@ -1,14 +1,12 @@
 import * as React from 'react';
+import $ from 'jquery';
+import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
-import arrayMove from 'array-move';
 import { SortableContainer } from 'react-sortable-hoc';
-import $ from 'jquery';
 import { Icon } from 'Component';
-import { dbStore, menuStore, blockStore } from 'Store';
-import { I, C, UtilCommon, keyboard, analytics, Relation, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, analytics, Relation, translate } from 'Lib';
 import Item from 'Component/menu/item/filter';
-const Constant = require('json/constant.json');
 
 const HEIGHT = 48;
 const LIMIT = 20;
@@ -41,7 +39,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			return null;
 		};
 
-		const subId = dbStore.getSubId(rootId, blockId);
+		const subId = S.Record.getSubId(rootId, blockId);
 		const isReadonly = this.isReadonly();
 		const filterCnt = view.filters.length;
 		const items = this.getItems();
@@ -175,14 +173,14 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 
 	componentWillUnmount () {
 		this.unbind();
-		menuStore.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(J.Menu.cell);
 	};
 
 	rebind () {
 		const { getId } = this.props;
 		const obj = $(`#${getId()} .content`);
 
-		obj.off('click').on('click', () => menuStore.closeAll(Constant.menuIds.cell));
+		obj.off('click').on('click', () => S.Menu.closeAll(J.Menu.cell));
 
 		this.unbind();
 		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
@@ -238,7 +236,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			loadData(view.id, 0);
 		});
 
-		menuStore.close('select');
+		S.Menu.close('select');
 		analytics.event('RemoveFilter', {
 			objectType: object.type,
 			embedType: analytics.embedType(isInline)
@@ -257,7 +255,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		const { rootId, blockId, loadData, getView } = data;
 		const view = getView();
 
-		menuStore.open('dataviewFilterValues', {
+		S.Menu.open('dataviewFilterValues', {
 			element: `#${getId()} #item-${item.id}`,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
@@ -306,10 +304,10 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			return [];
 		};
 
-		return UtilCommon.objectCopy(view.filters || []).map((it: any) => {
+		return U.Common.objectCopy(view.filters || []).map((it: any) => {
 			return { 
 				...it, 
-				relation: dbStore.getRelationByKey(it.relationKey),
+				relation: S.Record.getRelationByKey(it.relationKey),
 			};
 		}).filter(it => it.relation);
 	};
@@ -343,7 +341,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		return readonly || !allowedView;
 	};

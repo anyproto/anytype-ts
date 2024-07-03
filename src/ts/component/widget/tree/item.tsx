@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label } from 'Component';
-import { I, keyboard, Storage, translate, UtilCommon, UtilSpace, analytics } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, keyboard, Storage, translate } from 'Lib';
 
 interface Props extends I.WidgetTreeItem {
 	index: number;
@@ -34,14 +32,14 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const subKey = getSubKey();
 		const subId = getSubId(parentId);
 		const isOpen = Storage.checkToggle(subKey, treeKey);
-		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const object = S.Detail.get(subId, id, J.Relation.sidebar);
 		const { isReadonly, isArchived, type, restrictions, done, layout } = object;
 		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
 		const rootId = keyboard.getRootId();
-		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
-		const allowedDetails = blockStore.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
+		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 6;
-		const hasMore = UtilSpace.canMyParticipantWrite();
+		const hasMore = U.Space.canMyParticipantWrite();
 
 		let arrow = null;
 		let onArrowClick = null;
@@ -58,7 +56,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 					className={cn.join(' ')}
 				>
 					<div className="inner">
-						<Label text={translate(UtilCommon.toCamelCase([ 'common', id ].join('-')))} />
+						<Label text={translate(U.Common.toCamelCase([ 'common', id ].join('-')))} />
 					</div>
 				</div>
 			);
@@ -98,7 +96,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 						id={`widget-icon-${treeKey}`}
 						object={object} 
 						size={20} 
-						canEdit={!isReadonly && !isArchived && allowedDetails} 
+						canEdit={!isReadonly && !isArchived && allowedDetails && U.Object.isTaskLayout(object.layout)} 
 						menuParam={{ 
 							className: 'fixed',
 							classNameWrap: 'fromSidebar',
@@ -158,7 +156,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		e.stopPropagation();
 
 		const { id, parentId, onToggle, getSubId } = this.props;
-		const object = detailStore.get(getSubId(parentId), id, Constant.sidebarRelationKeys, true);
+		const object = S.Detail.get(getSubId(parentId), id, J.Relation.sidebar, true);
 
 		onToggle(e, { ...this.props, details: object });
 		this.forceUpdate();

@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
-import { keyboard, Storage } from 'Lib';
-import { popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { J, S, keyboard, Storage } from 'Lib';
 
 interface Props {
 	value: string;
@@ -245,14 +243,14 @@ class Phrase extends React.Component<Props, State> {
 		};
 
 		if (isHidden && checkPin && pin) {
-			popupStore.open('pin', { data: { onSuccess } });
+			S.Popup.open('pin', { data: { onSuccess } });
 		} else {
 			onSuccess();
 		};
 	};
 
 	checkValue (v: string[]) {
-		return v.map(it => it.substring(0, Constant.limit.phrase.letter)).filter(it => it).slice(0, Constant.limit.phrase.word);
+		return v.map(it => it.substring(0, J.Constant.count.phrase.letter)).filter(it => it).slice(0, J.Constant.count.phrase.word);
 	};
 
 	setError (v: boolean) {

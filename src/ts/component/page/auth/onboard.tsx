@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, translate, Animation, C, UtilCommon, analytics, keyboard, UtilRouter, UtilData, Renderer, UtilObject, Storage, Action } from 'Lib';
-import { authStore, commonStore, popupStore, blockStore } from 'Store';
+import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Storage, Action } from 'Lib';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -53,7 +52,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		let content = null;
-		let footer = null;
 		let buttons = null;
 		let more = null;
 
@@ -141,8 +139,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{more}
 				</Frame>
 
-				{footer}
-
 				<CanvasWorkerBridge state={0} />
 			</div>
 		);
@@ -159,7 +155,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	componentDidUpdate (_, prevState): void {
 		const { stage } = this.state;
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		if (prevState.stage != stage) {
 			Animation.to();
@@ -213,7 +209,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		const { stage } = this.state;
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		if (stage == Stage.Vault) {
 			const cb = () => {
@@ -227,7 +223,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				cb();
 			} else {
 				this.refNext?.setLoading(true);
-				UtilData.accountCreate(this.setError, cb);
+				U.Data.accountCreate(this.setError, cb);
 			};
 		};
 
@@ -243,7 +239,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage == Stage.Soul) {
 			const name = this.refName.getValue();
-			const { redirect } = commonStore;
+			const { redirect } = S.Common;
 
 			const cb = () => {
 				Animation.from(() => {
@@ -254,6 +250,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						animate: true,
 						onFadeIn: () => {
 							Storage.initPinnedTypes();
+							S.Common.fullscreenObjectSet(true);
 
 							if (!redirect) {
 								Action.welcome();
@@ -261,8 +258,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						},
 					};
 
-					UtilData.onAuth({ routeParam });
-					UtilData.onAuthOnce(true);
+					U.Data.onAuth({ routeParam });
+					U.Data.onAuthOnce(true);
 				});
 			};
 
@@ -285,7 +282,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage } = this.state;
 
 		if (stage == Stage.Vault) {
-			Animation.from(() => UtilRouter.go('/', { replace: true }));
+			Animation.from(() => U.Router.go('/', { replace: true }));
 		} else {
 			this.setState({ stage: stage - 1 });
 		};
@@ -305,20 +302,20 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	accountUpdate = (name: string, callBack?: () => void): void => {
-		UtilObject.setName(blockStore.profile, name, () => {
-			C.WorkspaceSetInfo(commonStore.space, { name }, callBack);
+		U.Object.setName(S.Block.profile, name, () => {
+			C.WorkspaceSetInfo(S.Common.space, { name }, callBack);
 		});
 	};
 
 	/** Copies key phrase to clipboard and shows a toast */
 	onCopy () {
-		UtilCommon.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
+		U.Common.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
 		analytics.event('KeychainCopy', { type: 'Onboarding' });
 	};
 
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	onPhraseTooltip () {
-		popupStore.open('phrase', {});
+		S.Popup.open('phrase', {});
 		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: Stage[this.state.stage] });
 	};
 

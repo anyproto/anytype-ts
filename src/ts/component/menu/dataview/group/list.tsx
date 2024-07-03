@@ -1,14 +1,11 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import $ from 'jquery';
-import { Icon, Switch } from 'Component';
-import Cell from 'Component/block/dataview/cell';
-import { I, C, Dataview, keyboard, translate } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
-const Constant = require('json/constant.json');
+import { Icon, Switch, Cell } from 'Component';
+import { I, C, S, J, Dataview, keyboard, translate } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -36,8 +33,8 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		const { readonly, rootId, blockId, getView } = data;
 		const items = this.getItems();
 		const view = getView();
-		const block = blockStore.getLeaf(rootId, blockId);
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const block = S.Block.getLeaf(rootId, blockId);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -46,7 +43,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		const Item = SortableElement((item: any) => {
 			const canHide = allowedView;
 			const canEdit = !readonly && allowedView;
-			const subId = dbStore.getSubId(rootId, [ blockId, item.id ].join(':'));
+			const subId = S.Record.getSubId(rootId, [ blockId, item.id ].join(':'));
 			const cn = [ 'item' ];
 			const head = {};
 
@@ -182,7 +179,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 
 	componentWillUnmount () {
 		this.unbind();
-		menuStore.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(J.Menu.cell);
 	};
 
 	rebind () {
@@ -230,7 +227,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		const { data } = param;
 		const { rootId, blockId } = data;
 			
-		dbStore.groupsSet(rootId, blockId, arrayMove(this.getItems(), oldIndex, newIndex));
+		S.Record.groupsSet(rootId, blockId, arrayMove(this.getItems(), oldIndex, newIndex));
 		this.save();
 
 		keyboard.disableSelection(false);
@@ -256,7 +253,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 			update.push({ ...it, groupId: it.id, index: i });
 		});
 
-		dbStore.groupsSet(rootId, blockId, groups);
+		S.Record.groupsSet(rootId, blockId, groups);
 		Dataview.groupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 	};
@@ -272,7 +269,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		const { data } = param;
 		const { rootId, blockId } = data;
 
-		return dbStore.getGroups(rootId, blockId);
+		return S.Record.getGroups(rootId, blockId);
 	};
 
 	resize () {

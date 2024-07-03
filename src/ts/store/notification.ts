@@ -65,4 +65,4 @@ class NotificationStore {
 
 };
 
- export const notificationStore: NotificationStore = new NotificationStore();
+export const Notification: NotificationStore = new NotificationStore();

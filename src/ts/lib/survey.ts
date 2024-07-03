@@ -1,7 +1,4 @@
-import { I, Storage, UtilCommon, analytics, Renderer, translate, UtilObject, UtilSpace, UtilData, UtilDate } from 'Lib';
-import { popupStore, authStore } from 'Store';
-
-const Surveys = require('json/survey.json');
+import { I, S, U, J, Storage, analytics, Renderer, translate } from 'Lib';
 
 class Survey {
 
@@ -16,7 +13,7 @@ class Survey {
 	show (type: I.SurveyType) {
 		const prefix = `survey${type}`;
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate(`${prefix}Title`),
 				text: translate(`${prefix}Text`),
@@ -33,9 +30,8 @@ class Survey {
 	};
 
 	onConfirm (type: I.SurveyType) {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const t = I.SurveyType[type].toLowerCase();
-		const survey = Surveys[t];
 		const param: any = {};
 
 		switch (type) {
@@ -44,12 +40,12 @@ class Survey {
 				break;
 
 			case I.SurveyType.Pmf:
-				param.time = UtilDate.now();
+				param.time = U.Date.now();
 				break;
 		};
 
 		Storage.setSurvey(type, param);
-		Renderer.send('urlOpen', UtilCommon.sprintf(survey.url, account.id));
+		Renderer.send('urlOpen', U.Common.sprintf(J.Url.survey[t], account.id));
 		analytics.event('SurveyOpen', { type });
 	};
 
@@ -63,7 +59,7 @@ class Survey {
 
 			case I.SurveyType.Pmf:
 				param.cancel = true;
-				param.time = UtilDate.now();
+				param.time = U.Date.now();
 				break;
 		};
 
@@ -76,12 +72,12 @@ class Survey {
 	};
 
 	getTimeRegister (): number {
-		const profile = UtilSpace.getProfile();
+		const profile = U.Space.getProfile();
 		return Number(profile?.createdDate) || 0;
 	};
 
 	checkPmf (type: I.SurveyType) {
-		const time = UtilDate.now();
+		const time = U.Date.now();
 		const obj = Storage.getSurvey(type);
 		const timeRegister = this.getTimeRegister();
 		const lastCompleted = Number(obj.time || Storage.get('lastSurveyTime')) || 0;
@@ -99,7 +95,7 @@ class Survey {
 			return;
 		};
 
-		if (!popupStore.isOpen() && (cancelTime || !lastCompleted) && !completeTime) {
+		if (!S.Popup.isOpen() && (cancelTime || !lastCompleted) && !completeTime) {
 			this.show(type);
 		};
 	};
@@ -107,9 +103,9 @@ class Survey {
 	checkRegister (type: I.SurveyType) {
 		const timeRegister = this.getTimeRegister();
 		const isComplete = this.isComplete(type);
-		const surveyTime = timeRegister && ((UtilDate.now() - 86400 * 7 - timeRegister) > 0);
+		const surveyTime = timeRegister && ((U.Date.now() - 86400 * 7 - timeRegister) > 0);
 
-		if (!isComplete && surveyTime && !popupStore.isOpen()) {
+		if (!isComplete && surveyTime && !S.Popup.isOpen()) {
 			this.show(type);
 		};
 	};
@@ -130,9 +126,9 @@ class Survey {
 			return;
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 				{ operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 86400 * 3 }
 			],
 			limit: 50,
@@ -149,8 +145,8 @@ class Survey {
 			return;
 		};
 
-		const { account } = authStore;
-		const check = UtilSpace.getList().filter(it => it.isShared && (it.creator == UtilSpace.getParticipantId(it.targetSpaceId, account.id)));
+		const { account } = S.Auth;
+		const check = U.Space.getList().filter(it => it.isShared && (it.creator == U.Space.getParticipantId(it.targetSpaceId, account.id)));
 		if (!check.length) {
 			return;
 		};
@@ -161,7 +157,7 @@ class Survey {
 	checkMultiplayer (type: I.SurveyType) {
 		const isComplete = this.isComplete(type);
 		const timeRegister = this.getTimeRegister();
-		const surveyTime = timeRegister && (timeRegister <= UtilDate.now() - 86400 * 7);
+		const surveyTime = timeRegister && (timeRegister <= U.Date.now() - 86400 * 7);
 
 		if (isComplete || this.isComplete(I.SurveyType.Shared) || !surveyTime) {
 			return;
@@ -174,7 +170,7 @@ class Survey {
 
 	checkRandSeed (percent: number) {
 		const randSeed = 10000000;
-		const rand = UtilCommon.rand(0, randSeed);
+		const rand = U.Common.rand(0, randSeed);
 
 		return rand < randSeed * percent / 100;
 	};

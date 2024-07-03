@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, UtilCommon, Renderer } from 'Lib';
+import { I, U, Renderer } from 'Lib';
 
 import PopupUsecasePageList from './page/usecase/list';
 import PopupUsecasePageItem from './page/usecase/item';
@@ -45,7 +45,7 @@ const PopupUsecase = observer(class PopupUsecase extends React.Component<I.Popup
 		return (
 			<div 
 				ref={ref => this.node = ref}
-				className={[ 'page', UtilCommon.toCamelCase(`page-${page}`) ].join(' ')}
+				className={[ 'page', U.Common.toCamelCase(`page-${page}`) ].join(' ')}
 			>
 				{content}
 			</div>

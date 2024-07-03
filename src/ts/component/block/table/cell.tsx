@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard, UtilCommon } from 'Lib';
+import { I, U, J, keyboard } from 'Lib';
 import { Icon, Block } from 'Component';
-const Constant = require('json/constant.json');
 
 interface Props extends I.BlockComponentTable {
 	rowIdx: number;
@@ -126,7 +125,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				onMouseEnter={e => onCellEnter(e, row.id, column.id, cellId)}
 				onMouseLeave={e => onCellLeave(e, row.id, column.id, cellId)}
 				onMouseDown={this.onMouseDown}
-				{...UtilCommon.dataProps({ 'column-id': column.id })}
+				{...U.Common.dataProps({ 'column-id': column.id })}
 			>
 				{!rowIdx ? <Handle key={'handle-column-' + cellId} type={I.BlockType.TableColumn} {...column} /> : ''}
 				{!columnIdx ? <Handle key={'handle-row-' + cellId} type={I.BlockType.TableRow} {...row} /> : ''}
@@ -147,7 +146,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 						onUpdate={() => onCellUpdate(cellId)}
 						onFocus={e => onCellFocus(e, row.id, column.id, cellId)}
 						onBlur={e => onCellBlur(e, row.id, column.id, cellId)}
-						getWrapperWidth={() => Constant.size.editor} 
+						getWrapperWidth={() => J.Size.editor} 
 					/>
 				) : (
 					<EmptyBlock />

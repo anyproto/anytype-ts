@@ -1,14 +1,11 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, UtilDate } from 'Lib';
-import { menuStore, dbStore } from 'Store';
+import { I, S, U, J } from 'Lib';
 
 interface State {
 	value: number;
 };
-
-const Constant = require('json/constant.json');
 
 const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Component<I.WidgetViewComponent, State> {
 
@@ -16,7 +13,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	refMonth = null;
 	refYear = null;
 	state = {
-		value: UtilDate.now(),
+		value: U.Date.now(),
 	};
 
 	constructor (props: I.WidgetViewComponent) {
@@ -27,12 +24,20 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 
 	render (): React.ReactNode {
 		const { value } = this.state;
-		const data = UtilDate.getCalendarMonth(value);
+		const { block, getView } = this.props;
+		const view = getView();
+
+		if (!view) {
+			return null;
+		};
+
+		const data = U.Date.getCalendarMonth(value);
 		const { m, y } = this.getDateParam(value);
-		const today = this.getDateParam(UtilDate.now());
-		const days = UtilDate.getWeekDays();
-		const months = UtilDate.getMonths();
-		const years = UtilDate.getYears(0, 3000);
+		const today = this.getDateParam(U.Date.now());
+		const days = U.Date.getWeekDays();
+		const months = U.Date.getMonths();
+		const years = U.Date.getYears(0, 3000);
+		const { groupRelationKey } = view;
 
 		return (
 			<div ref={ref => this.node = ref} className="body">
@@ -40,19 +45,19 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 					<div className="side left">
 						<Select 
 							ref={ref => this.refMonth = ref}
-							id="calendar-month" 
+							id={`widget-${block.id}-calendar-month`} 
 							value={m} 
 							options={months} 
 							className="month" 
-							onChange={m => this.setValue(UtilDate.timestamp(y, m, 1))} 
+							onChange={m => this.setValue(U.Date.timestamp(y, m, 1))} 
 						/>
 						<Select 
 							ref={ref => this.refYear = ref}
-							id="calendar-year" 
+							id={`widget-${block.id}-calendar-year`} 
 							value={y} 
 							options={years} 
 							className="year" 
-							onChange={y => this.setValue(UtilDate.timestamp(y, m, 1))} 
+							onChange={y => this.setValue(U.Date.timestamp(y, m, 1))} 
 						/>
 					</div>
 
@@ -83,6 +88,9 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 							if (i < 7) {
 								cn.push('first');
 							};
+
+
+							const check = this.checkItems(item.d, item.m, item.y, groupRelationKey);
 							return (
 								<div 
 									id={`day-${item.d}-${item.m}-${item.y}`} 
@@ -91,6 +99,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 									onClick={() => this.onClick(item.d, item.m, item.y)}
 								>
 									{item.d}
+									{check ? <div className="bullet" /> : ''}
 								</div>	
 							);
 						})}
@@ -116,7 +125,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	};
 
 	getDateParam (t: number) {
-		const [ d, m, y ] = UtilDate.date('j,n,Y', t).split(',').map(it => Number(it));
+		const [ d, m, y ] = U.Date.date('j,n,Y', t).split(',').map(it => Number(it));
 		return { d, m, y };
 	};
 
@@ -133,7 +142,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 			y++;
 		};
 
-		this.setValue(UtilDate.timestamp(y, m, 1));
+		this.setValue(U.Date.timestamp(y, m, 1));
 	};
 
 	setValue (value: number) {
@@ -145,8 +154,8 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 		const view = getView();
 		const element = `#day-${d}-${m}-${y}`;
 
-		menuStore.closeAll([ 'dataviewCalendarDay' ], () => {
-			menuStore.open('dataviewCalendarDay', {
+		S.Menu.closeAll([ 'dataviewCalendarDay' ], () => {
+			S.Menu.open('dataviewCalendarDay', {
 				element,
 				className: 'fixed fromWidget',
 				classNameWrap: 'fromSidebar',
@@ -156,7 +165,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 				onClose: () => $(element).removeClass('active'),
 				data: {
 					rootId,
-					blockId: Constant.blockId.dataview,
+					blockId: J.Constant.blockId.dataview,
 					relationKey: view.groupRelationKey,
 					d,
 					m, 
@@ -166,8 +175,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 					readonly: !canCreate,
 					onCreate: () => {
 						const details = {};
-
-						details[view.groupRelationKey] = UtilDate.timestamp(y, m, d, 12, 0, 0);
+						details[view.groupRelationKey] = U.Date.timestamp(y, m, d, 12, 0, 0);
 
 						onCreate({ details });
 					}
@@ -179,21 +187,21 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	getFilters (): I.Filter[] {
 		const { getView } = this.props;
 		const view = getView();
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+		const relation = S.Record.getRelationByKey(view.groupRelationKey);
 
 		if (!relation) {
 			return [];
 		};
 
-		const data = UtilDate.getCalendarMonth(this.state.value);
+		const data = U.Date.getCalendarMonth(this.state.value);
 		if (!data.length) {
 			return;
 		};
 
 		const first = data[0];
 		const last = data[data.length - 1];
-		const start = UtilDate.timestamp(first.y, first.m, first.d, 0, 0, 0);
-		const end = UtilDate.timestamp(last.y, last.m, last.d, 23, 59, 59);
+		const start = U.Date.timestamp(first.y, first.m, first.d, 0, 0, 0);
+		const end = U.Date.timestamp(last.y, last.m, last.d, 23, 59, 59);
 
 		return [
 			{ 
@@ -214,6 +222,15 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 			}
 		];
 	};
+
+	checkItems (d: number, m: number, y: number, relationKey: string) {
+		const { rootId } = this.props;
+		const items = S.Record.getRecords(S.Record.getSubId(rootId, J.Constant.blockId.dataview), [ relationKey ]);
+		const current = [ d, m, y ].join('-');
+
+		return !!items.find(it => U.Date.date('j-n-Y', it[relationKey]) == current);
+	};
+
 
 });
 

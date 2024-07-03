@@ -2,11 +2,10 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, keyboard, UtilData, UtilMenu, UtilCommon } from 'Lib';
-import { commonStore, menuStore } from 'Store';
-const Sections = require('json/latex.json');
+import { I, S, U, J, keyboard } from 'Lib';
 
 const katex = require('katex');
+
 require('katex/dist/contrib/mhchem');
 
 const HEIGHT_SECTION = 28;
@@ -33,7 +32,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { isTemplate } = data;
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const items = this.getItems(true);
 
 		if (!this.cache) {
@@ -67,7 +66,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 					>
 						{isTemplate ? (
 							<div className="inner">
-								<div className="math" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(math) }} />
+								<div className="math" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(math) }} />
 							</div>
 						) : (
 							<div className="name">{name}</div>
@@ -146,7 +145,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 	};
 
 	componentDidUpdate () {
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const items = this.getItems(false);
 
 		if (filter.text != this.filter) {
@@ -169,7 +168,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		this.props.setActive();
 		this.onOver(null, items[this.n]);
 
-		menuStore.close('previewLatex');
+		S.Menu.close('previewLatex');
 	};
 
 	componentWillUnmount () {
@@ -199,7 +198,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 			return;
 		};
 
-		menuStore.open('previewLatex', {
+		S.Menu.open('previewLatex', {
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width - (isTemplate ? 14 : 0),
 			vertical: I.MenuDirection.Center,
@@ -221,7 +220,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect, isTemplate } = data;
@@ -242,9 +241,9 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { isTemplate } = data;
-		const filter = UtilCommon.regexEscape(commonStore.filter.text);
+		const filter = U.Common.regexEscape(S.Common.filter.text);
 
-		let sections = UtilMenu.sectionsMap(Sections);
+		let sections = U.Menu.sectionsMap(J.Latex);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);
 
 		sections = sections.map((it: any) => {
@@ -257,7 +256,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		});
 
 		if (filter) {
-			sections = UtilMenu.sectionsFilter(sections, filter);
+			sections = U.Menu.sectionsFilter(sections, filter);
 
 			const regS = new RegExp('/^' + filter + '/', 'gi');
 
@@ -276,10 +275,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 					s._sortWeight_ += w;
 					return c;
 				});
-				s.children.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
+				s.children.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 				return s;
 			});
-			sections.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
+			sections.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 		};
 
 		return sections;

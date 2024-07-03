@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, UtilCommon, translate, Dataview, UtilObject, UtilData, Storage } from 'Lib';
-import { dbStore, detailStore } from 'Store';
+import { I, S, U, J, translate, Dataview, Storage } from 'Lib';
 import Cell from 'Component/block/dataview/cell';
 import Item from './item';
 
-const Constant = require('json/constant.json');
 const ANIMATION = 200;
 
 interface Props extends I.WidgetViewComponent {
@@ -32,14 +30,14 @@ const Group = observer(class Group extends React.Component<Props> {
 		const subId = this.getSubId();
 		const items = this.getItems();
 		const limit = getViewLimit();
-		const { total } = dbStore.getMeta(subId, '');
+		const { total } = S.Record.getMeta(subId, '');
 		const head = {};
 
 		head[view.groupRelationKey] = value;
 
 		// Subscriptions
 		items.forEach((item: any) => {
-			const object = detailStore.get(subId, item.id, [ view.groupRelationKey ]);
+			const object = S.Detail.get(subId, item.id, [ view.groupRelationKey ]);
 		});
 
 		return (
@@ -53,7 +51,7 @@ const Group = observer(class Group extends React.Component<Props> {
 						id={`board-head-${id}`} 
 						rootId={rootId}
 						subId={subId}
-						block={Constant.blockId.dataview}
+						block={S.Block.getLeaf(rootId, J.Constant.blockId.dataview)}
 						relationKey={view.groupRelationKey} 
 						viewType={I.ViewType.Board}
 						getRecord={() => head}
@@ -107,47 +105,47 @@ const Group = observer(class Group extends React.Component<Props> {
 			return;
 		};
 
-		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+		const relation = S.Record.getRelationByKey(view.groupRelationKey);
 		if (!relation) {
 			return;
 		};
 
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
 		].concat(view.filters);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const limit = getViewLimit();
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			subId,
 			filters: filters.map(it => Dataview.filterMapper(view, it)),
 			sorts: sorts.map(it => Dataview.filterMapper(view, it)),
-			keys: Constant.sidebarRelationKeys,
+			keys: J.Relation.sidebar,
 			sources: object.setOf || [],
 			limit,
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		}, () => {
-			dbStore.recordsSet(subId, '', this.applyObjectOrder(id, dbStore.getRecordIds(subId, '')));
+			S.Record.recordsSet(subId, '', this.applyObjectOrder(id, S.Record.getRecordIds(subId, '')));
 		});
 	};
 
 	clear () {
-		dbStore.recordsClear(this.getSubId(), '');
+		S.Record.recordsClear(this.getSubId(), '');
 	};
 
 	getSubId () {
 		const { rootId, id } = this.props;
 
-		return dbStore.getGroupSubId(rootId, Constant.blockId.dataview, id);
+		return S.Record.getGroupSubId(rootId, J.Constant.blockId.dataview, id);
 	};
 
 	getItems () {
 		const { id } = this.props;
 		const subId = this.getSubId();
-		const records = UtilCommon.objectCopy(dbStore.getRecordIds(subId, ''));
+		const records = U.Common.objectCopy(S.Record.getRecordIds(subId, ''));
 
 		return this.applyObjectOrder(id, records).map(id => ({ id }));
 	};
@@ -155,7 +153,7 @@ const Group = observer(class Group extends React.Component<Props> {
 	applyObjectOrder (groupId: string, ids: string[]): any[] {
 		const { rootId, parent } = this.props;
 
-		return Dataview.applyObjectOrder(rootId, Constant.blockId.dataview, parent.content.viewId, groupId, ids);
+		return Dataview.applyObjectOrder(rootId, J.Constant.blockId.dataview, parent.content.viewId, groupId, ids);
 	};
 
 	getToggleKey () {
@@ -234,7 +232,7 @@ const Group = observer(class Group extends React.Component<Props> {
 		const { getObject, parent } = this.props;
 		const object = getObject();
 
-		UtilObject.openEvent(e, { ...object, _routeParam_: { viewId: parent.content.viewId } });
+		U.Object.openEvent(e, { ...object, _routeParam_: { viewId: parent.content.viewId } });
 	};
 
 });

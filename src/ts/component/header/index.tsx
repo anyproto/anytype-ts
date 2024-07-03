@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { I, UtilObject, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
+import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
-import { popupStore, menuStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -76,27 +74,17 @@ class Header extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 	};
 
 	componentDidUpdate () {
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 		this.refChild.forceUpdate();
 	};
 
 	renderLeftIcons (onOpen?: () => void) {
-		const cmd = keyboard.cmdSymbol();
-
 		return (
 			<React.Fragment>
-				<Icon
-					className="toggle"
-					tooltip={translate('sidebarToggle')}
-					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
-					tooltipY={I.MenuDirection.Bottom}
-					onClick={() => sidebar.toggleExpandCollapse()}
-				/>
-
 				<Icon 
 					className="expand" 
 					tooltip={translate('commonOpenObject')} 
@@ -129,7 +117,7 @@ class Header extends React.Component<Props> {
 	onExpand () {
 		const { rootId, layout } = this.props;
 
-		popupStore.closeAll(null, () => UtilObject.openRoute({ id: rootId, layout }));
+		S.Popup.closeAll(null, () => U.Object.openRoute({ id: rootId, layout }));
 	};
 
 	onSearch () {
@@ -165,7 +153,7 @@ class Header extends React.Component<Props> {
 			menuParam.classNameWrap = 'fixed fromHeader';
 		};
 
-		menuStore.closeAllForced(null, () => menuStore.open(id, menuParam));
+		S.Menu.closeAllForced(null, () => S.Menu.open(id, menuParam));
 	};
 
 	onRelation (param?: Partial<I.MenuParam>, data?: any) {
@@ -183,7 +171,7 @@ class Header extends React.Component<Props> {
 			noFlipX: true,
 			noFlipY: true,
 			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.cell,
+			subIds: J.Menu.cell,
 			classNameWrap: cnw.join(' '),
 			...param,
 			data: {

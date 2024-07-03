@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, UtilObject, translate } from 'Lib';
+import { I, U, translate } from 'Lib';
 
 interface Props {
 	object: any;
@@ -27,10 +27,10 @@ class Name extends React.Component<Props> {
 			if (layout == I.ObjectLayout.Note) {
 				name = snippet || <span className="empty">{translate('commonEmpty')}</span>;
 			} else {
-				name = UtilObject.name(object);
+				name = U.Object.name(object);
 			};
 		};
-		
+
 		return (
 			<div 
 				className={className} 
@@ -39,7 +39,11 @@ class Name extends React.Component<Props> {
 				onMouseEnter={onMouseEnter} 
 				onMouseLeave={onMouseLeave}
 			>
-				<span>{name}</span>
+				{'string' == typeof(name) ? (
+					<span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
+				) : (
+					<span>{name}</span>
+				)}
 			</div>
 		);
 	};

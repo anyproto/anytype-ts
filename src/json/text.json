@@ -89,6 +89,7 @@
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
 	"commonAddToFavorites": "Add to Favorites",
+	"commonAddToCollection": "Add to Collection",
 	"commonRestore": "Restore",
 	"commonRestoreFromBin": "Restore from Bin",
 	"commonMoveToBin": "Move to Bin",
@@ -150,6 +151,7 @@
 	"commonCreateNewObject": "Create new Object",
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObject": "Create Object",
+	"commonUrl": "Url",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -237,7 +239,7 @@
 	"electronMenuFlagMw": "Middleware",
 	"electronMenuFlagMwRequest": "Request/Response",
 	"electronMenuFlagMwEvent": "Common events",
-	"electronMenuFlagMwThread": "Sync events",
+	"electronMenuFlagMwSync": "Sync events",
 	"electronMenuFlagMwFile": "File events",
 	"electronMenuFlagMwJson": "JSON logs",
 	"electronMenuFlagMwTime": "Time",
@@ -304,6 +306,8 @@
 	"headerGraphTooltipSearch": "Search",
 	"headerGraphTooltipFilters": "Filters",
 	"headerGraphTooltipSettings": "Settings",
+
+	"shareTooltipLabel": "<b>Share Anytype</b> with<br/>those you care about",
 
 	"authInviteTitle": "Welcome to Anytype",
 	"authInviteLabel": "Enter your invite code. If you don't have one, visit <a href=\"https:\/\/anytype.io\">anytype.io<\/a> to register for early access. We are inviting new testers on a rolling basis.",
@@ -532,7 +536,9 @@
 	"blockLinkArchived": "Deleted",
 
 	"blockDataviewCreateNewCollection": "Create new Collection",
+	"blockDataviewCreateNewCollectionWithName": "Create new Collection \"%s\"",
 	"blockDataviewCreateNewSet": "Create new Set",
+	"blockDataviewCreateNewSetWithName": "Create new Set \"%s\"",
 	"blockDataviewCreateNewTooltipCollection": "Create new Object in this Collection",
 	"blockDataviewCreateNewTooltipType": "Create new %s object",
 	"blockDataviewShowTemplates": "Show Templates",
@@ -592,6 +598,7 @@
 	"blockEmbedLatexEmpty": "Here your equation will be rendered with <span class='icon tex'></span>. Click to edit",
 	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
+	"blockEmbedOffline": "You are not connected to the Internet",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 
@@ -1129,7 +1136,6 @@
 	"popupShortcutNavigationBasics6": "Return to the home screen",
 	"popupShortcutNavigationBasics7": "Show previous object from History",
 	"popupShortcutNavigationBasics8": "Show next Object from History",
-	"popupShortcutNavigationBasics9": "Switch spaces",
 	"popupShortcutNavigationMenu": "Menu, search and navigation pane",
 	"popupShortcutNavigationMenu1": "Go the next option",
 	"popupShortcutNavigationMenu2": "Go to the previous option",
@@ -1233,6 +1239,10 @@
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no relations shown yet",
 	"popupRelationAddToView": "Add relations to the view",
+
+	"popupShareTitle": "Share Anytype with those you care about",
+	"popupShareLabel": "Thanks for sharing Anytype",
+	"popupShareLinkText": "The everything app for those who celebrate trust & autonomy. <a href=\"%s\">https://simple-sharing.anytype.io/</a>",
 
 	"menuVaultPeer": "%d\/%d peers",
 	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
@@ -1466,28 +1476,6 @@
 	"menuRelationSuggestSystem": "System Relations",
 	"menuRelationSuggestCreateRelation": "Create Relation %s",
 
-	"menuThreadListLastSync": "Last sync",
-	"menuThreadListProduction": "Anytype Network",
-	"menuThreadListDevelopment": "Anytype Staging",
-	"menuThreadListSelf": "Self-hosted Network",
-	"menuThreadListLocal": "Local only",
-
-	"menuThreadStatusObjectBackedUp": "This Object is backed up",
-	"menuThreadStatusUpdatesRequested": "Updates requested",
-	"menuThreadStatusNoInteraction": "No interaction",
-	"menuThreadStatusSomeChangesNotBackedUp": "Some changes are not backed up",
-	"menuThreadStatusUploading": "Uploading",
-	"menuThreadStatusWaitingForUpload": "Waiting for upload",
-	"menuThreadStatusStored": "Stored",
-	"menuThreadStatusStatus": "Status",
-	"menuThreadStatusFiles": "Files",
-	"menuThreadStatusDirectInteractionTitle": "Direct interaction with my devices",
-	"menuThreadStatusDirectInteractionStatus": "Direct interaction status",
-	"menuThreadStatusOnline": "Online",
-	"menuThreadStatusOffline": "Offline",
-	"menuThreadStatusLastEditsReceived": "Last edits received",
-	"menuThreadStatusNoChanges": "No changes",
-
 	"menuTypeSuggestFilterTypes": "Filter Types...",
 	"menuTypeSuggestMyTypes": "My Types",
 	"menuTypeSuggestCreateType": "Create type %s",
@@ -1518,6 +1506,37 @@
 	"menuQuickCapturePin": "Pin on top",
 	"menuQuickCaptureUnpin": "Unpin",
 
+	"syncButtonNameError1": "Storage limit reached",
+	"syncButtonNameError2": "Incompatible version",
+	"syncButtonNameError3": "No access",
+	"syncButtonNameOffline": "No internet",
+
+	"menuSyncStatusTitle": "Sync status",
+
+	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
+	"menuSyncStatusP2PNoDevicesConnected": "No devices connected",
+
+	"menuSyncStatusInfoNetworkTitle": "Anytype network",
+	"menuSyncStatusInfoNetworkMessageSynced": "End-to-end encrypted",
+	"menuSyncStatusInfoNetworkMessageSyncing": "%s %s syncing...",
+
+	"menuSyncStatusInfoNetworkMessageError1": "Storage limit reached",
+	"menuSyncStatusInfoNetworkMessageError2": "Incompatible version",
+	"menuSyncStatusInfoNetworkMessageError3": "No access to the space",
+	"menuSyncStatusInfoNetworkMessageErrorUpdateApp": "Update the app",
+	"menuSyncStatusInfoNetworkMessageErrorSeeMembership": "See membership plans",
+
+	"menuSyncStatusInfoNetworkMessageOffline": "No internet connection",
+
+	"menuSyncStatusInfoSelfTitle": "Self Host",
+	"menuSyncStatusInfoSelfMessageSynced": "Synced",
+	"menuSyncStatusInfoSelfMessageSyncing": "Syncing...",
+	"menuSyncStatusInfoSelfMessageError": "Error",
+	"menuSyncStatusInfoLocalOnlyTitle": "Local Only",
+	"menuSyncStatusInfoLocalOnlyMessage": "Data backup is disabled",
+
+	"menuSyncStatusInfoP2pTitle": "P2P Connection",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",
@@ -1543,22 +1562,6 @@
 	"filterConditionNotInArray": "Has none of",
 
 	"inputWithFileTextUrl": "Paste a link",
-
-	"threadStatus0": "Preparing...",
-	"threadStatus1": "No connection",
-	"threadStatus2": "Syncing...",
-	"threadStatus3": "Synced",
-	"threadStatus4": "Not syncing",
-	"threadStatus5": "Incompatible version",
-	"threadStatus100": "Local-only",
-
-	"threadStatus0Tooltip": "Initializing sync",
-	"threadStatus1Tooltip": "Anytype node is not connected",
-	"threadStatus2Tooltip": "Downloading or uploading data to some node",
-	"threadStatus3Tooltip": "Backed up on one node at least",
-	"threadStatus4Tooltip": "Failed to sync, trying again...",
-	"threadStatus5Tooltip": "We have updated the protocol version. Click to update and sync the Objects.",
-	"threadStatus100Tooltip": "Don't back up; sync within local network",
 
 	"toastTemplateCreate": "is saved as a Template!",
 	"toastCopy": "%s has been copied to clipboard",
@@ -1811,9 +1814,6 @@
 	"onboardingTemplateSelectTitle": "New Template Selector",
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
-	"onboardingSpaceSelectTitle": "Create and Share Spaces",
-	"onboardingSpaceSelectDescription": "Click here to create a new space and share it with others!",
-
 	"onboardingQuickCaptureTitle": "Use Different Object Types",
 	"onboardingQuickCaptureDescription": "Select types for your objects to categorize and connect them.",
 
@@ -1845,6 +1845,7 @@
 	"libMenuChangeSource": "Change source %s",
 	"libMenuOpenSource": "Open source %s",
 	"libMenuOpenFullscreen": "Open fullscreen",
+	"libMenuCopyUrl": "Copy URL",
 
 	"libActionUninstallTypeTitle": "Do you want to remove Type \"%s\"?",
 	"libActionUninstallTypeText": "This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",

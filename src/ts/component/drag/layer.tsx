@@ -1,9 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import { I, M, UtilCommon, keyboard } from 'Lib';
-import { blockStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, M, S, U, J, keyboard } from 'Lib';
 
 interface State {
 	rootId: string;
@@ -74,7 +72,7 @@ class DragLayer extends React.Component<object, State> {
 		const comp = $(ReactDOM.findDOMNode(component));
 		const rect = (comp.get(0) as Element).getBoundingClientRect();
 		
-		this.setState({ rootId, type, width: rect.width - Constant.size.blockMenu, ids });
+		this.setState({ rootId, type, width: rect.width - J.Size.blockMenu, ids });
 	};
 
 	hide () {
@@ -87,14 +85,14 @@ class DragLayer extends React.Component<object, State> {
 		const { rootId, type, ids } = this.state;
 		const node = $(this.node);
 		const inner = node.find('#inner').html('');
-		const container = UtilCommon.getPageContainer(keyboard.isPopup());
+		const container = U.Common.getPageContainer(keyboard.isPopup());
 		const wrap = $('<div></div>');
 
 		switch (type) {
 			case I.DropType.Block: {
 				wrap.addClass('blocks');
 
-				const items = ids.map(id => blockStore.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(UtilCommon.objectCopy(it)));
+				const items = ids.map(id => S.Block.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(U.Common.objectCopy(it)));
 
 				items.forEach(block => {
 					const clone = container.find(`#block-${block.id}`).clone();
@@ -123,7 +121,7 @@ class DragLayer extends React.Component<object, State> {
 
 				wrap.addClass('menus').append(add);
 
-				const items = ids.map(relationKey => dbStore.getRelationByKey(relationKey)).filter(it => it);
+				const items = ids.map(relationKey => S.Record.getRelationByKey(relationKey)).filter(it => it);
 
 				items.forEach(item => {
 					const el = $(`#menuBlockRelationView #item-${item.id}`);

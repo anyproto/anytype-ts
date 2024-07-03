@@ -5,9 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'Component';
-import { I, C, Relation, UtilCommon, keyboard, analytics, translate } from 'Lib';
-import { commonStore, menuStore, dbStore, blockStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Relation, keyboard, analytics, translate } from 'Lib';
 
 const HEIGHT = 48;
 const LIMIT = 20;
@@ -31,7 +29,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	};
 	
 	render () {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { param, getId, setHover } = this.props;
 		const { data } = param;
 		const { getView } = data;
@@ -57,7 +55,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation: any = dbStore.getRelationByKey(item.relationKey) || {};
+			const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
 			return (
 				<div 
 					id={'item-' + item.id} 
@@ -211,7 +209,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 	componentWillUnmount () {
 		this.unbind();
-		menuStore.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(J.Menu.cell);
 	};
 
 	rebind () {
@@ -230,7 +228,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { getView } = data;
 		const view = getView();
 
-		return view ? UtilCommon.objectCopy(view.sorts || []) : [];
+		return view ? U.Common.objectCopy(view.sorts || []) : [];
 	};
 
 	getRelationOptions () {
@@ -251,7 +249,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { param, getId } = this.props;
 		const { data } = param;
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#${getId()} #item-${item.id}`,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
@@ -276,7 +274,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			{ id: I.EmptyType.End, name: translate('menuDataviewSortShowEmptyBottom') },
 		];
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#${getId()} #item-${item.id} .more`,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
@@ -352,7 +350,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 		C.BlockDataviewSortRemove(rootId, blockId, view.id, [ item.id ]);
 
-		menuStore.close('select');
+		S.Menu.close('select');
 		analytics.event('RemoveSort', {
 			objectType: object.type,
 			embedType: analytics.embedType(isInline)
@@ -403,7 +401,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		return readonly || !allowedView;
 	};

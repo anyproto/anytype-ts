@@ -2,13 +2,10 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List as VList } from 'react-virtualized';
-import { blockStore, dbStore, detailStore } from 'Store';
-import { I, keyboard, Action } from 'Lib';
+import { I, S, J, keyboard, Action } from 'Lib';
 import { SortableContainer } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import WidgetListItem from './item';
-
-const Constant = require('json/constant.json');
 
 const LIMIT = 30;
 const HEIGHT_COMPACT = 28;
@@ -31,7 +28,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 
 	render (): React.ReactNode {
 		const { parent, block, isPreview, subId } = this.props;
-		const { total } = dbStore.getMeta(subId, '');
+		const { total } = S.Record.getMeta(subId, '');
 		const items = this.getItems();
 		const length = items.length;
 		const isCompact = this.isCompact();
@@ -178,32 +175,32 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 
 		keyboard.disableSelection(false);
 
-		if ((oldIndex == newIndex) || (targetBlockId != Constant.widgetId.favorite)) {
+		if ((oldIndex == newIndex) || (targetBlockId != J.Constant.widgetId.favorite)) {
 			return;
 		};
 
-		const { root } = blockStore;
+		const { root } = S.Block;
 		const records = getRecordIds();
-		const children = blockStore.getChildren(root, root, it => it.isLink());
+		const children = S.Block.getChildren(root, root, it => it.isLink());
 		const ro = records[oldIndex];
 		const rn = records[newIndex];
 		const oidx = children.findIndex(it => it.content.targetBlockId == ro);
 		const nidx = children.findIndex(it => it.content.targetBlockId == rn);
 		const current = children[oidx];
 		const target = children[nidx];
-		const childrenIds = blockStore.getChildrenIds(root, root);
+		const childrenIds = S.Block.getChildrenIds(root, root);
 		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
-		blockStore.updateStructure(root, root, arrayMove(childrenIds, oidx, nidx));
+		S.Block.updateStructure(root, root, arrayMove(childrenIds, oidx, nidx));
 		Action.move(root, root, target.id, [ current.id ], position);
 	};
 
 	getItems () {
 		const { block, addGroupLabels, isPreview, getRecordIds, subId } = this.props;
 		const { targetBlockId } = block.content;
-		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
+		const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
 
-		let items = getRecordIds().map(id => detailStore.get(subId, id, Constant.sidebarRelationKeys));
+		let items = getRecordIds().map(id => S.Detail.get(subId, id, J.Relation.sidebar));
 
 		if (isPreview && isRecent) {
 			// add group labels
@@ -275,7 +272,8 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 	};
 
 	isCompact () {
-		return [ I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(this.props.parent.content.layout);
+		const { isSystemTarget, parent } = this.props;
+		return !isSystemTarget() || [ I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(parent.content.layout);
 	};
 
 });

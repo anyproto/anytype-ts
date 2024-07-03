@@ -2,10 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, C, analytics, UtilMenu, UtilObject, Preview, translate, keyboard, Relation, UtilCommon } from 'Lib';
+import { I, C, S, U, J, analytics, Preview, translate, keyboard, Relation } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
-import { dbStore, menuStore, blockStore, detailStore, commonStore } from 'Store';
-const Constant = require('json/constant.json');
 
 const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<I.Menu> {
 
@@ -35,7 +33,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { rootId, ref, readonly, noDelete } = data;
 
 		const relation = this.getRelation();
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const isReadonly = this.isReadonly();
@@ -50,7 +48,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			canDuplicate = canDelete = false;
 		} else
 		if (root) {
-			if (root.isLocked() || !blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ])) {
+			if (root.isLocked() || !S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ])) {
 				canDuplicate = canDelete = false;
 			};
 		};
@@ -73,7 +71,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
 			const length = this.objectTypes.length;
 			const typeId = length ? this.objectTypes[0] : '';
-			const type = dbStore.getTypeById(typeId);
+			const type = S.Record.getTypeById(typeId);
 			const typeProps: any = { 
 				name: translate('menuBlockRelationEditSelectObjectType'),
 				caption: (length > 1 ? '+' + (length - 1) : ''),
@@ -260,7 +258,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				...data,
 				filter: '',
 				value: this.format,
-				options: UtilMenu.getRelationTypes(),
+				options: U.Menu.getRelationTypes(),
 				noFilter: true,
 				onSelect: (e: any, item: any) => {
 					this.format = item.id;
@@ -299,13 +297,13 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				nameAdd: translate('menuBlockRelationEditAddObjectType'),
 				placeholderFocus: translate('menuBlockRelationEditFilterObjectTypes'),
 				value: this.objectTypes, 
-				types: [ dbStore.getTypeType()?.id ],
+				types: [ S.Record.getTypeType()?.id ],
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 				],
 				relation: observable.box(relation),
-				valueMapper: it => dbStore.getTypeById(it.id),
+				valueMapper: it => S.Record.getTypeById(it.id),
 				onChange: (value: any, callBack?: () => void) => {
 					this.objectTypes = value;
 					this.forceUpdate();
@@ -337,7 +335,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		this.menuOpen('dataviewDate', { 
 			element: `#${getId()} #item-date-settings`,
 			onClose: () => {
-				menuStore.close('select');
+				S.Menu.close('select');
 			},
 			data,
 		});
@@ -374,20 +372,20 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			rebind: this.rebind,
 		});
 
-		if (!menuStore.isOpen(id)) {
-			menuStore.closeAll(Constant.menuIds.relationEdit, () => {
-				menuStore.open(id, options);
+		if (!S.Menu.isOpen(id)) {
+			S.Menu.closeAll(J.Menu.relationEdit, () => {
+				S.Menu.open(id, options);
 			});
 		};
 	};
 
 	menuClose () {
-		menuStore.closeAll(Constant.menuIds.relationEdit);
+		S.Menu.closeAll(J.Menu.relationEdit);
 	};
 
 	onOpen (e: any) {
 		this.props.close();
-		UtilObject.openPopup(this.getRelation());
+		U.Object.openConfig(this.getRelation());
 	};
 
 	onCopy (e: any) {
@@ -408,13 +406,17 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { close, param } = this.props;
 		const { data } = param;
 		const { deleteCommand } = data;
+		const relation = this.getRelation();
 
 		if (deleteCommand) {
 			deleteCommand();
 		};
 
 		close();
-		analytics.event('DeleteRelation');
+
+		if (relation) {
+			analytics.event('DeleteRelation', { relationKey: relation?.relationKey, format: relation?.format });
+		};
 	};
 
 	onSubmit (e: any) {
@@ -451,9 +453,9 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, addCommand, onChange, ref } = data;
-		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
 
-		C.ObjectCreateRelation(item, commonStore.space, (message: any) => {
+		C.ObjectCreateRelation(item, S.Common.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -461,13 +463,13 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			const { details } = message;
 			
 			data.relationId = details.id;
-			detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
+			S.Detail.update(J.Constant.subId.relation, { id: details.id, details }, false);
 
 			if (addCommand) {
 				addCommand(rootId, blockId, details, onChange);
 			};
 
-			Preview.toastShow({ text: UtilCommon.sprintf(translate('menuBlockRelationEditToastOnCreate'), details.name) });
+			Preview.toastShow({ text: U.Common.sprintf(translate('menuBlockRelationEditToastOnCreate'), details.name) });
 			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type });
 		});
 	};
@@ -490,19 +492,19 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { data } = param;
 		const { relationId } = data;
 
-		return dbStore.getRelationById(relationId);
+		return S.Record.getRelationById(relationId);
 	};
 
 	isAllowed () {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		const relation = this.getRelation();
 
-		let ret = relation ? blockStore.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) : true;
+		let ret = relation ? S.Block.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) : true;
 		if (ret && root) {
-			ret = !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+			ret = !root.isLocked() && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		};
 		return ret;
 	};

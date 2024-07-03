@@ -2,11 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Tag, Filter, DragBox } from 'Component';
-import { I, C, UtilCommon, UtilMenu, keyboard, Relation, translate } from 'Lib';
-import { menuStore, dbStore, commonStore } from 'Store';
-const Constant = require('json/constant.json');
-import arrayMove from 'array-move';
+import { Icon, Tag, Filter } from 'Component';
+import { I, C, S, U, J, keyboard, Relation, translate } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 40;
@@ -196,7 +193,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
-		$(`#${this.props.getId()}`).on('click', () => menuStore.close('dataviewOptionEdit'));
+		$(`#${this.props.getId()}`).on('click', () => S.Menu.close('dataviewOptionEdit'));
 		window.setTimeout(() => this.props.setActive(), 15);
 	};
 
@@ -269,7 +266,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		let value = Relation.getArrayValue(data.value);
 
 		value.push(id);
-		value = UtilCommon.arrayUnique(value);
+		value = U.Common.arrayUnique(value);
 
 		if (maxCount) {
 			value = value.slice(value.length - maxCount, value.length);
@@ -279,7 +276,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			};
 		};
 
-		menuStore.updateData(this.props.id, { value });
+		S.Menu.updateData(this.props.id, { value });
 		onChange(value);
 	};
 
@@ -291,7 +288,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const idx = value.indexOf(id);
 
 		value.splice(idx, 1);
-		menuStore.updateData(this.props.id, { value });
+		S.Menu.updateData(this.props.id, { value });
 		onChange(value);
 	};
 
@@ -300,8 +297,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { data } = param;
 		const { filter } = data;
 		const relation = data.relation.get();
-		const colors = UtilMenu.getBgColors();
-		const option = { name: filter, color: colors[UtilCommon.rand(1, colors.length - 1)].value };
+		const colors = U.Menu.getBgColors();
+		const option = { name: filter, color: colors[U.Common.rand(1, colors.length - 1)].value };
 
 		if (!option.name) {
 			return;
@@ -319,7 +316,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			relationKey: relation.relationKey,
 			name: option.name,
 			relationOptionColor: option.color,
-		}, commonStore.space, (message: any) => {
+		}, S.Common.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -344,7 +341,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 
-		menuStore.open('dataviewOptionEdit', { 
+		S.Menu.open('dataviewOptionEdit', { 
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
@@ -369,7 +366,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const value = Relation.getArrayValue(data.value);
 		const ret = [];
 
-		let items = Relation.getOptions(dbStore.getRecordIds(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
+		let items = Relation.getOptions(S.Record.getRecordIds(J.Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
 		let check = [];
 
 		items.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
@@ -389,7 +386,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		});
 
 		if (data.filter) {
-			const filter = new RegExp(UtilCommon.regexEscape(data.filter), 'gi');
+			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');
 			
 			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());
 			items = items.filter(it => it.name.match(filter));
@@ -397,7 +394,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			if (canAdd && !check.length) {
 				ret.unshift({ 
 					id: 'add', 
-					name: UtilCommon.sprintf(isSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
+					name: U.Common.sprintf(isSelect ? translate('menuDataviewOptionListSetStatus') : translate('menuDataviewOptionListCreateOption'), data.filter),
 				});
 			};
 		};

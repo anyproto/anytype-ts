@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
-import { I, C, UtilCommon, focus, analytics, Relation, keyboard, translate } from 'Lib';
+import { I, C, S, U, J, focus, analytics, Relation, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, detailStore, dbStore, blockStore } from 'Store';
-const Constant = require('json/constant.json');
 
 const BlockRelation = observer(class BlockRelation extends React.Component<I.BlockComponent> {
 
@@ -27,12 +25,12 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 		const id = Relation.cellId(idPrefix, relationKey, rootId);
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 
-		let relation = dbStore.getRelationByKey(relationKey);
+		let relation = S.Record.getRelationByKey(relationKey);
 		if (!relation) {
-			relation = dbStore.getRelations().find(it => it.relationKey == relationKey);
+			relation = S.Record.getRelations().find(it => it.relationKey == relationKey);
 		};
 
-		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
+		const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
 		const isDeleted = !relation;
 
 		if (isDeleted) {
@@ -72,13 +70,13 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 							subId={rootId}
 							block={block}
 							relationKey={relation.relationKey}
-							getRecord={() => detailStore.get(rootId, rootId, [ relation.relationKey ], true)}
+							getRecord={() => S.Detail.get(rootId, rootId, [ relation.relationKey ], true)}
 							viewType={I.ViewType.Grid}
 							readonly={readonly || !allowedValue}
 							idPrefix={idPrefix}
 							menuClassName="fromBlock"
 							onCellChange={this.onCellChange}
-							pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
+							pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
 						/>
 					</div>
 				</div>
@@ -126,9 +124,9 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 			return;
 		};
 
-		menuStore.open('relationSuggest', { 
+		S.Menu.open('relationSuggest', { 
 			element: `#block-${block.id}`,
-			offsetX: Constant.size.blockMenu,
+			offsetX: J.Size.blockMenu,
 			data: {
 				rootId,
 				blockId: block.id,
@@ -142,7 +140,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 						};
 
 						C.BlockRelationSetKey(rootId, block.id, relation.relationKey, () => { 
-							menuStore.close('relationSuggest'); 
+							S.Menu.close('relationSuggest'); 
 						});
 
 						if (onChange) {
@@ -156,11 +154,14 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId } = this.props;
-		const relation = dbStore.getRelationByKey(relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
+		const object = S.Detail.get(rootId, rootId);
 		
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
-		analytics.changeRelationValue(relation, value, 'block');
+		if ((undefined !== object[relationKey]) && !U.Common.compareJSON(object[relationKey], value)) {
+			analytics.changeRelationValue(relation, value, 'block');
+		};
 	};
 
 	onCellClick (e: any) {

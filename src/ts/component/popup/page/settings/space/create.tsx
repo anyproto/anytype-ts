@@ -2,9 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Title, Label, Input, IconObject, Button, Select, Loader, Error } from 'Component';
-import { UtilObject, UtilCommon, I, C, translate, keyboard, Preview, analytics } from 'Lib';
-import { menuStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, translate, keyboard, Preview, analytics } from 'Lib';
 
 interface State {
 	error: string;
@@ -20,7 +18,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	state = {
 		error: '',
 		isLoading: false,
-		iconOption: UtilCommon.rand(1, Constant.iconCnt),
+		iconOption: U.Common.rand(1, J.Constant.count.icon),
 		usecase: I.Usecase.Empty,
 	};
 
@@ -130,7 +128,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	componentWillUnmount(): void {
-		menuStore.closeAll([ 'select', 'searchObject' ]);	
+		S.Menu.closeAll([ 'select', 'searchObject' ]);	
 	};
 
 	onKeyDown (e: any, v: string) {

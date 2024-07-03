@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, UtilCommon, UtilData, UtilMenu, keyboard, Relation, translate } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, Relation, translate } from 'Lib';
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<I.Menu> {
 	
@@ -83,7 +81,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		};
 
 		if (!item.arrow) {
-			menuStore.close('select');
+			S.Menu.close('select');
 			return;
 		};
 
@@ -129,9 +127,9 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 		menuParam.data = Object.assign(menuParam.data, { options });
 
-		if (!menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.object, () => {
-				menuStore.open(menuId, menuParam);
+		if (!S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll(J.Menu.object, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};
@@ -140,10 +138,10 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		const { param } = this.props;
         const { data } = param;
         const { rootId, blockId } = data;
-        const block = blockStore.getLeaf(rootId, blockId);
-        const object = detailStore.get(rootId, block.content.targetBlockId);
+        const block = S.Block.getLeaf(rootId, blockId);
+        const object = S.Detail.get(rootId, block.content.targetBlockId);
 
-        return UtilData.checkLinkSettings(block.content, object.layout);
+        return U.Data.checkLinkSettings(block.content, object.layout);
 	};
 
 	getStyles () {
@@ -180,13 +178,13 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		const { param } = this.props;
         const { data } = param;
         const { rootId, blockId } = data;
-        const block = blockStore.getLeaf(rootId, blockId);
+        const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return [];
 		};
 
-        const object = detailStore.get(rootId, block.content.targetBlockId);
+        const object = S.Detail.get(rootId, block.content.targetBlockId);
         const content = this.getContent();
 
         const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(object.layout);
@@ -234,7 +232,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			s.children = s.children.filter(it => it);
 			return s;
 		});
-		sections = UtilMenu.sectionsMap(sections);
+		sections = U.Menu.sectionsMap(sections);
 
 		sections = sections.map((s: any) => {
 			s.children = s.children.map((child: any) => {
@@ -276,13 +274,13 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { param } = this.props;
         const { data } = param;
         const { rootId, blockId, blockIds } = data;
-        const block = blockStore.getLeaf(rootId, blockId);
+        const block = S.Block.getLeaf(rootId, blockId);
 		
 		if (!block) {
 			return;
 		};
 
-        const content = UtilCommon.objectCopy(block.content || {});
+        const content = U.Common.objectCopy(block.content || {});
 
         content[id] = v;
 		C.BlockLinkListSetAppearance(rootId, blockIds, content.iconSize, content.cardStyle, content.description, content.relations);

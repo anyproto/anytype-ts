@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate, UtilDate } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, analytics, keyboard, Relation, Renderer, Preview, translate } from 'Lib';
 
 import CellText from './text';
 import CellSelect from './select';
@@ -184,7 +182,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			return;
 		};
 
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, record.id);
 		const win = $(window);
 		const cell = $(`#${cellId}`);
@@ -238,7 +236,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			};
 
 			$(`#${cellId}`).removeClass('isEditing');
-			commonStore.cellId = '';
+			S.Common.cellId = '';
 		};
 
 		let ret = false;
@@ -275,7 +273,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 			case I.RelationType.Date: {
 				param.data = Object.assign(param.data, {
-					value: param.data.value || UtilDate.now(),
+					value: param.data.value || U.Date.now(),
 				});
 					
 				menuId = 'dataviewCalendar';
@@ -337,7 +335,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 			case I.RelationType.LongText: {
 				const wh = win.height();
-				const hh = UtilCommon.sizeHeader();
+				const hh = J.Size.header;
 				const height = Math.min(wh - hh - 20, cell.outerHeight());
 
 				param = Object.assign(param, {
@@ -399,7 +397,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 							};
 
 							case 'copy': {
-								UtilCommon.clipboardCopy({ text: value, html: value });
+								U.Common.clipboardCopy({ text: value, html: value });
 								analytics.event('RelationUrlCopy');
 								break;
 							};
@@ -432,12 +430,12 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		};
 
 		if (menuId) {
-			if (commonStore.cellId != cellId) {
-				commonStore.cellId = cellId;
+			if (S.Common.cellId != cellId) {
+				S.Common.cellId = cellId;
 				
-				const isOpen = menuStore.isOpen(menuId);
+				const isOpen = S.Menu.isOpen(menuId);
 
-				menuStore.open(menuId, param);
+				S.Menu.open(menuId, param);
 
 				// If menu was already open OnOpen callback won't be called
 				if (isOpen) {
@@ -446,17 +444,17 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 				$(pageContainer).off('mousedown.cell').on('mousedown.cell', (e: any) => { 
 					if (!$(e.target).parents(`#${cellId}`).length) {
-						menuStore.closeAll(Constant.menuIds.cell); 
+						S.Menu.closeAll(J.Menu.cell); 
 					};
 				});
 
 				if (!config.debug.ui) {
-					win.off('blur.cell').on('blur.cell', () => menuStore.closeAll(Constant.menuIds.cell));
+					win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(J.Menu.cell));
 				};
 			} else 
 			if (closeIfOpen) {
 				setOff();
-				menuStore.closeAll(Constant.menuIds.cell);
+				S.Menu.closeAll(J.Menu.cell);
 				window.clearTimeout(this.timeout);
 			};
 		} else {
@@ -507,7 +505,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	};
 
 	getRelation () {
-		return dbStore.getRelationByKey(this.props.relationKey);
+		return S.Record.getRelationByKey(this.props.relationKey);
 	};
 
 	canCellEdit (relation: any, record: any): boolean {

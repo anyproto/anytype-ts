@@ -2,8 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
-import { I, keyboard, focus, translate, Action } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, J, keyboard, focus, translate, Action } from 'Lib';
 
 interface Props {
 	icon?: string;
@@ -248,7 +247,7 @@ class InputWithFile extends React.Component<Props, State> {
 			if (onChangeUrl) {
 				onChangeUrl(e, url);
 			};
-		}, force ? 50 : Constant.delay.keyboard);
+		}, force ? 50 : J.Constant.delay.keyboard);
 	};
 	
 	onClickFile (e: any) {
@@ -261,7 +260,7 @@ class InputWithFile extends React.Component<Props, State> {
 			return;
 		};
 
-		Action.openFile(accept, paths => {
+		Action.openFileDialog(accept, paths => {
 			if (onChangeFile) {
 				onChangeFile(e, paths[0]);	
 			};

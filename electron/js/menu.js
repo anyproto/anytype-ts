@@ -180,7 +180,7 @@ class MenuManager {
 		const flagsMw = {
 			request: Util.translate('electronMenuFlagMwRequest'),
 			event: Util.translate('electronMenuFlagMwEvent'),
-			thread: Util.translate('electronMenuFlagMwThread'),
+			sync: Util.translate('electronMenuFlagMwSync'),
 			file: Util.translate('electronMenuFlagMwFile'),
 			time: Util.translate('electronMenuFlagMwTime'),
 			json: Util.translate('electronMenuFlagMwJson'),
@@ -270,14 +270,6 @@ class MenuManager {
 					label: 'Test payments', type: 'checkbox', checked: config.testPayment,
 					click: () => {
 						Api.setConfig(this.win, { testPayment: !config.testPayment });
-						this.win.reload();
-					}
-				},
-
-				{
-					label: 'Test crypto payments', type: 'checkbox', checked: config.testCryptoPayment,
-					click: () => {
-						Api.setConfig(this.win, { testCryptoPayment: !config.testCryptoPayment });
 						this.win.reload();
 					}
 				},

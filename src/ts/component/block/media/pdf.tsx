@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
-import { I, C, translate, focus, Action, UtilCommon, UtilObject, UtilFile, Renderer, keyboard } from 'Lib';
-import { commonStore, detailStore } from 'Store';
+import { I, C, S, U, J, translate, focus, Action, Renderer, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { pdfjs } from 'react-pdf';
-const Constant = require('json/constant.json');
 
 import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
 import 'react-pdf/dist/cjs/Page/TextLayer.css';
@@ -30,7 +28,6 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	constructor (props: I.BlockComponent) {
 		super(props);
 		
-		this.onOpen = this.onOpen.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
@@ -38,7 +35,8 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onDocumentLoad = this.onDocumentLoad.bind(this);
 		this.onPageRender = this.onPageRender.bind(this);
-		this.onClick = this.onClick.bind(this);
+		this.onOpenFile = this.onOpenFile.bind(this);
+		this.onOpenObject = this.onOpenObject.bind(this);
 	};
 
 	render () {
@@ -46,7 +44,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		const { id, fields, content } = block;
 		const { state, targetObjectId } = content;		
 		const { page, pages } = this.state;
-		const object = detailStore.get(rootId, targetObjectId, []);
+		const object = S.Detail.get(rootId, targetObjectId, []);
 		const width = Number(fields.width) || 0;
 		const css: any = {};
 
@@ -61,67 +59,79 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 			css.minHeight = this.height;
 		};
 
-		switch (state) {
-			default:
-			case I.FileState.Error:
-			case I.FileState.Empty:
-				element = (
-					<React.Fragment>
-						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="pdf" 
-							textFile={translate('blockPdfUpload')}
-							accept={Constant.fileExtension.pdf} 
-							onChangeUrl={this.onChangeUrl} 
-							onChangeFile={this.onChangeFile} 
-							readonly={readonly} 
-						/>
-					</React.Fragment>
-				);
-				break;
-				
-			case I.FileState.Uploading:
-				element = <Loader />;
-				break;
-				
-			case I.FileState.Done:
-				if (pages > 1) {
-					pager = (
-						<Pager 
-							offset={page - 1} 
-							limit={1} 
-							total={pages} 
-							pageLimit={1}
-							isShort={true}
-							onChange={page => this.setState({ page })} 
-						/>
+		if (object.isDeleted) {
+			element = (
+				<div className="deleted">
+					<Icon className="ghost" />
+					<div className="name">{translate('commonDeletedObject')}</div>
+				</div>
+			);
+		} else {
+			switch (state) {
+				default:
+				case I.FileState.Error:
+				case I.FileState.Empty: {
+					element = (
+						<React.Fragment>
+							{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
+							<InputWithFile 
+								block={block} 
+								icon="pdf" 
+								textFile={translate('blockPdfUpload')}
+								accept={J.Constant.fileExtension.pdf} 
+								onChangeUrl={this.onChangeUrl} 
+								onChangeFile={this.onChangeFile} 
+								readonly={readonly} 
+							/>
+						</React.Fragment>
 					);
+					break;
 				};
+					
+				case I.FileState.Uploading: {
+					element = <Loader />;
+					break;
+				};
+					
+				case I.FileState.Done: {
+					if (pages > 1) {
+						pager = (
+							<Pager 
+								offset={page - 1} 
+								limit={1} 
+								total={pages} 
+								pageLimit={1}
+								isShort={true}
+								onChange={page => this.setState({ page })} 
+							/>
+						);
+					};
 
-				element = (
-					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
-						<div className="info" onMouseDown={this.onOpen}>
-							<ObjectName object={object} />
-							<span className="size">{UtilFile.size(object.sizeInBytes)}</span>
+					element = (
+						<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
+							<div className="info" onMouseDown={this.onOpenObject}>
+								<ObjectName object={object} />
+								<span className="size">{U.File.size(object.sizeInBytes)}</span>
+							</div>
+
+							<MediaPdf 
+								id={`pdf-block-${id}`}
+								ref={ref => this.refMedia = ref}
+								src={S.Common.fileUrl(targetObjectId)}
+								page={page}
+								onDocumentLoad={this.onDocumentLoad}
+								onPageRender={this.onPageRender}
+								onClick={this.onOpenFile}
+							/>
+
+							{pager}
+
+							<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
 						</div>
-
-						<MediaPdf 
-							id={`pdf-block-${id}`}
-							ref={ref => this.refMedia = ref}
-							src={commonStore.fileUrl(targetObjectId)}
-							page={page}
-							onDocumentLoad={this.onDocumentLoad}
-							onPageRender={this.onPageRender}
-							onClick={this.onClick}
-						/>
-
-						{pager}
-
-						<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
-					</div>
-				);
-				break;
+					);
+					break;
+				};
+			};
 		};
 		
 		return (
@@ -212,14 +222,6 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		Action.upload(I.FileType.Pdf, rootId, id, '', path);
 	};
 
-	onOpen (e: any) {
-		C.FileDownload(this.props.block.getTargetObjectId(), UtilCommon.getElectron().tmpPath, (message: any) => {
-			if (message.path) {
-				Renderer.send('pathOpen', message.path);
-			};
-		});
-	};
-
 	onDocumentLoad (result: any) {
 		this.setState({ pages: result.numPages });
 	};
@@ -231,9 +233,13 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		this.height = wrap.outerHeight();
 	};
 
-	onClick (e: any) {
+	onOpenFile () {
+		Action.openFile(this.props.block.getTargetObjectId());
+	};
+
+	onOpenObject (e: any) {
 		if (!keyboard.withCommand(e)) {
-			UtilObject.openConfig({ id: this.props.block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
+			U.Object.openConfig({ id: this.props.block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
 		};
 	};
 
@@ -261,7 +267,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		};
 		
 		const { block } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		
 		focus.set(block.id, { from: 0, to: 0 });

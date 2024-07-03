@@ -1,8 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader } from 'Component';
-import { I, keyboard, UtilCommon } from 'Lib';
-import { commonStore } from 'Store';
+import { I, keyboard, U, sidebar } from 'Lib';
 
 const BORDER = 16;
 const WIDTH_DEFAULT = 450;
@@ -82,14 +81,9 @@ class PopupPreview extends React.Component<I.Popup> {
 		const obj = $(`#${getId()}-innerWrap`);
 		const wrap = obj.find('#wrap');
 		const loader = obj.find('#loader');
-		const { ww, wh } = UtilCommon.getWindowDimensions();
+		const { ww, wh } = U.Common.getWindowDimensions();
 		const mh = wh - BORDER * 2;
-		const sidebar = $('#sidebar');
-
-		let mw = ww - BORDER * 2;
-		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
-			mw -= sidebar.outerWidth();
-		};
+		const mw = ww - BORDER * 2 - sidebar.getDummyWidth();;
 
 		const onError = () => {
 			wrap.addClass('brokenMedia');

@@ -4,8 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
-import { I, C, UtilObject, UtilCommon, UtilMenu, keyboard, focus, translate, UtilSpace } from 'Lib';
-import { popupStore, commonStore } from 'Store';
+import { I, C, S, U, keyboard, focus, translate } from 'Lib';
 
 interface State {
 	loading: boolean;
@@ -117,7 +116,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				
 					<div className="buttons">
 						<Button text={translate('popupNavigationOpen')} className="c36" onClick={e => this.onConfirm(e, item)} />
-						{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={() => popupStore.close('page')} /> : ''}
+						{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={() => S.Popup.close('page')} /> : ''}
 					</div>
 				</div>
 			);
@@ -133,7 +132,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					ref={ref => this.refHeader = ref} 
 					component="mainNavigation" 
 					rootId={rootId} 
-					tabs={UtilMenu.getGraphTabs()} 
+					tabs={U.Menu.getGraphTabs()} 
 					tab="navigation" 
 					onTab={this.onTab}
 					layout={I.ObjectLayout.Navigation}
@@ -281,7 +280,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const node = $(this.node);
 
 		raf(() => {
-			const container = UtilCommon.getScrollContainer(isPopup);
+			const container = U.Common.getScrollContainer(isPopup);
 			const header = node.find('#header');
 			const items = node.find('.items');
 			const sides = node.find('.sides');
@@ -348,7 +347,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		keyboard.shortcut('enter, space', e, () => {
 			const item = items[this.n];
 			if (item) {
-				UtilObject.openAuto({ ...item, layout: (this.panel == Panel.Center) ? item.layout : I.ObjectLayout.Navigation });
+				U.Object.openAuto({ ...item, layout: (this.panel == Panel.Center) ? item.layout : I.ObjectLayout.Navigation });
 			};
 		});
 	};
@@ -436,7 +435,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	filterMapper (it: any) {
-		const { config } = commonStore;
+		const { config } = S.Common;
 
 		if (!it.id) {
 			return false;
@@ -456,10 +455,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	onClick (e: any, item: I.PageInfo) {
 		e.stopPropagation();
 
-		const { isPopup } = this.props;
-		const obj = { id: item.id, layout: I.ObjectLayout.Navigation };
-
-		isPopup ? UtilObject.openPopup(obj) : UtilObject.openRoute(obj);
+		U.Object.openAuto({ id: item.id, layout: I.ObjectLayout.Navigation });
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
@@ -467,7 +463,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			e.persist();
 		};
 
-		UtilObject.openEvent(e, item);
+		U.Object.openEvent(e, item);
 	};
 
 	getRootId () {
@@ -475,16 +471,16 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		let root = rootId ? rootId : match.params.id;
 		if (root == I.HomePredefinedId.Graph) {
-			root = UtilSpace.getLastOpened()?.id;
+			root = U.Space.getLastOpened()?.id;
 		};
 		return root;
 	};
 
 	onTab (id: string) {
-		const tab = UtilMenu.getGraphTabs().find(it => it.id == id);
+		const tab = U.Menu.getGraphTabs().find(it => it.id == id);
 
 		if (tab) {
-			UtilObject.openAuto({ id: this.getRootId(), layout: tab.layout });
+			U.Object.openAuto({ id: this.getRootId(), layout: tab.layout });
 		};
 	};
 

@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { InputWithFile, Loader, Error, MediaAudio } from 'Component';
-import { I, translate, focus, keyboard, Action } from 'Lib';
-import { commonStore, detailStore } from 'Store';
-const Constant = require('json/constant.json');
+import { InputWithFile, Loader, Error, MediaAudio, Icon } from 'Component';
+import { I, S, J, translate, focus, keyboard, Action } from 'Lib';
 
 const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
 
@@ -28,48 +26,60 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { state, targetObjectId } = content;
-		const object = detailStore.get(rootId, targetObjectId, [ 'name' ], true);
+		const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted' ], true);
 		
 		let element = null;
-		
-		switch (state) {
-			default:
-			case I.FileState.Error:
-			case I.FileState.Empty:
-				element = (
-					<React.Fragment>
-						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="audio" 
-							textFile={translate('blockAudioUpload')} 
-							accept={Constant.fileExtension.audio} 
-							onChangeUrl={this.onChangeUrl} 
-							onChangeFile={this.onChangeFile} 
-							readonly={readonly} 
-						/>
-					</React.Fragment>
-				);
-				break;
-				
-			case I.FileState.Uploading:
-				element = <Loader />;
-				break;
-				
-			case I.FileState.Done:
-				const playlist = [ 
-					{ name: object.name, src: commonStore.fileUrl(targetObjectId) },
-				];
 
-				element = (
-					<MediaAudio
-						ref={node => this.refPlayer = node}
-						playlist={playlist}
-						onPlay={this.onPlay}
-						onPause={this.onPause}
-					/>
-				);
-				break;
+		if (object.isDeleted) {
+			element = (
+				<div className="deleted">
+					<Icon className="ghost" />
+					<div className="name">{translate('commonDeletedObject')}</div>
+				</div>
+			);
+		} else {
+			switch (state) {
+				default:
+				case I.FileState.Error:
+				case I.FileState.Empty: {
+					element = (
+						<React.Fragment>
+							{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
+							<InputWithFile 
+								block={block} 
+								icon="audio" 
+								textFile={translate('blockAudioUpload')} 
+								accept={J.Constant.fileExtension.audio} 
+								onChangeUrl={this.onChangeUrl} 
+								onChangeFile={this.onChangeFile} 
+								readonly={readonly} 
+							/>
+						</React.Fragment>
+					);
+					break;
+				};
+					
+				case I.FileState.Uploading: {
+					element = <Loader />;
+					break;
+				};
+					
+				case I.FileState.Done: {
+					const playlist = [ 
+						{ name: object.name, src: S.Common.fileUrl(targetObjectId) },
+					];
+
+					element = (
+						<MediaAudio
+							ref={node => this.refPlayer = node}
+							playlist={playlist}
+							onPlay={this.onPlay}
+							onPause={this.onPause}
+						/>
+					);
+					break;
+				};
+			};
 		};
 		
 		return (

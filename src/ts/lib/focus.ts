@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
-import { I, C, keyboard, UtilCommon } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, C, U, J, keyboard } from 'Lib';
 
 interface State {
 	focused: string;
@@ -32,14 +31,14 @@ class Focus {
 				to: Math.max(0, Number(range.to) || 0),
 			},
 		};
-		this.backup = UtilCommon.objectCopy(this.state);
+		this.backup = U.Common.objectCopy(this.state);
 
 		C.BlockSetCarriage(keyboard.getRootId(), id, range);
 		return this;
 	};
 
 	restore () {
-		this.state = UtilCommon.objectCopy(this.backup);
+		this.state = U.Common.objectCopy(this.backup);
 	};
 
 	clear (withRange: boolean) {
@@ -56,7 +55,7 @@ class Focus {
 		};
 
 		if (withRange) {
-			UtilCommon.clearSelection();
+			U.Common.clearSelection();
 			keyboard.setFocus(false);
 		};
 
@@ -101,11 +100,11 @@ class Focus {
 			return;
 		};
 
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 		const ch = container.height();
 		const no = node.offset().top;
-		const hh = UtilCommon.sizeHeader();
-		const o = Constant.size.lastBlock + hh;
+		const hh = J.Size.header;
+		const o = J.Size.lastBlock + hh;
 		const st = container.scrollTop();
 		const y = isPopup ? (no - container.offset().top + st) : no;
 

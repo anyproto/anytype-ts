@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, IconObject, ObjectName } from 'Component';
-import { I, UtilObject, UtilSpace, translate } from 'Lib';
+import { I, U, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import Head from '../head';
@@ -24,7 +24,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	render () {
 		const items = this.getItems();
 		const length = items.length;
-		const participant = UtilSpace.getParticipant();
+		const participant = U.Space.getParticipant();
 
 		const Member = (item: any) => {
 			const isActive = item.id == participant.id;
@@ -32,7 +32,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 				<div 
 					id={`item-${item.id}`} 
 					className="row" style={item.style}
-					onClick={() => UtilObject.openPopup(item)}
+					onClick={() => U.Object.openConfig(item)}
 				>
 					<div className="col">
 						<IconObject size={42} object={item} />
@@ -115,7 +115,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 	};
 
 	getItems () {
-		return UtilSpace.getParticipantsList([ I.ParticipantStatus.Active ]);
+		return U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	};
 
 	onScroll ({ scrollTop }) {

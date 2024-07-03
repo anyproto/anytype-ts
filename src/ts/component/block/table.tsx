@@ -4,11 +4,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
-import { I, C, keyboard, focus, UtilCommon, Mark, Action, translate, UtilMenu, UtilData } from 'Lib';
-import { menuStore, blockStore, commonStore } from 'Store';
+import { I, C, S, U, J, keyboard, focus, Mark, Action, translate } from 'Lib';
 import Row from './table/row';
-
-const Constant = require('json/constant.json');
 
 const PADDING = 46;
 const SNAP = 10;
@@ -175,7 +172,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	getData () {
 		const { rootId, block } = this.props;
-		return blockStore.getTableData(rootId, block.id);
+		return S.Block.getTableData(rootId, block.id);
 	};
 
 	onHandleColumn (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
@@ -256,7 +253,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		e.stopPropagation();
 
 		const { rootId } = this.props;
-		const current: any = blockStore.getLeaf(rootId, cellId) || {};
+		const current: any = S.Block.getLeaf(rootId, cellId) || {};
 		const node = $(this.node);
 		const options: any[] = this.getOptions(type, rowId, columnId, cellId);
 		
@@ -269,10 +266,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				raf(() => this.onOptionsOpen(type, rowId, columnId, cellId)); 
 			},
 			onClose: () => {
-				menuStore.closeAll(Constant.menuIds.table);
+				S.Menu.closeAll(J.Menu.table);
 				this.onOptionsClose();
 			},
-			subIds: Constant.menuIds.table,
+			subIds: J.Menu.table,
 		};
 
 		let element: any = null;
@@ -350,12 +347,12 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 						return;
 					};
 
-					if (menuStore.isAnimating(menuContext.props.id)) {
+					if (S.Menu.isAnimating(menuContext.props.id)) {
 						return;
 					};
 
 					if (!item.arrow) {
-						menuStore.closeAll(Constant.menuIds.table);
+						S.Menu.closeAll(J.Menu.table);
 						return;
 					};
 
@@ -431,7 +428,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: UtilMenu.getHAlign([]),
+								options: U.Menu.getHAlign([]),
 								value: current.hAlign,
 								onSelect: (e: any, el: any) => {
 									fill(() => C.BlockListSetAlign(rootId, blockIds, el.id));
@@ -445,7 +442,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 							menuId = 'select2';
 							menuParam.component = 'select';
 							menuParam.data = Object.assign(menuParam.data, {
-								options: UtilMenu.getVAlign(),
+								options: U.Menu.getVAlign(),
 								value: current.vAlign,
 								onSelect: (e: any, el: any) => {
 									fill(() => C.BlockListSetVerticalAlign(rootId, blockIds, el.id));
@@ -491,8 +488,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 						};
 					};
 
-					menuStore.closeAll(Constant.menuIds.table, () => {
-						menuStore.open(menuId, menuParam);
+					S.Menu.closeAll(J.Menu.table, () => {
+						S.Menu.open(menuId, menuParam);
 					});
 				},
 				onSelect: (e: any, item: any) => {
@@ -504,7 +501,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			},
 		});
 
-		menuStore.open('select1', menuParam);
+		S.Menu.open('select1', menuParam);
 	};
 
 	onSelect (e: any, item: any, rowId: string, columnId: string, blockIds: string[]) {
@@ -520,7 +517,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		let idx = -1;
 		let nextIdx = -1;
 
-		menuStore.closeAll(Constant.menuIds.table);
+		S.Menu.closeAll(J.Menu.table);
 
 		switch (item.id) {
 			case 'columnBefore':
@@ -683,13 +680,13 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	onCellFocus (e: any, rowId: string, columnId: string, cellId: string) {
 		const { rootId, readonly } = this.props;
-		const selection = commonStore.getRef('selectionProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
 		if (readonly) {
 			return;
 		};
 
-		const cell = blockStore.getLeaf(rootId, cellId);
+		const cell = S.Block.getLeaf(rootId, cellId);
 		const cb = () => {
 			this.setEditing(cellId);
 			keyboard.disableSelection(true);
@@ -877,7 +874,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const ret = [];
 
 		columns.forEach((it: I.Block) => {
-			ret.push(this.checkWidth(it.fields.width || Constant.size.table.default));
+			ret.push(this.checkWidth(it.fields.width || J.Size.table.default));
 		});
 
 		return ret;
@@ -958,7 +955,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				continue;
 			};
 
-			if (rect && UtilCommon.rectsCollide({ x: e.pageX, y: 0, width: current.width, height: current.height }, rect)) {
+			if (rect && U.Common.rectsCollide({ x: e.pageX, y: 0, width: current.width, height: current.height }, rect)) {
 				this.hoverId = column.id;
 				this.position = (i < current.index) ? I.BlockPosition.Left : I.BlockPosition.Right;
 				break;
@@ -1050,7 +1047,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				continue;
 			};
 
-			if (rect && UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
+			if (rect && U.Common.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				this.hoverId = row.id;
 				this.position = (i < current.index) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
@@ -1193,13 +1190,13 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	initSize () {
 		const { columns } = this.getData();
-		const widths = columns.map(it => this.checkWidth(it.fields.width || Constant.size.table.default));
+		const widths = columns.map(it => this.checkWidth(it.fields.width || J.Size.table.default));
 
 		this.setColumnWidths(widths);
 	};
 
 	checkWidth (w: number) {
-		const { min, max } = Constant.size.table;
+		const { min, max } = J.Size.table;
 		const steps = 5;
 
 		let width = Math.max(min, Math.min(max, w));
@@ -1215,7 +1212,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	optionsRow (id: string, isInner?: boolean) {
 		const { rootId } = this.props;
 		const { rows } = this.getData();
-		const row = blockStore.getLeaf(rootId, id);
+		const row = S.Block.getLeaf(rootId, id);
 		const isHeader = row.content.isHeader;
 		const idx = rows.findIndex(it => it.id == id);
 		const length = rows.length;
@@ -1290,7 +1287,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	optionsColor (cellId: string) {
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, cellId);
+		const current = S.Block.getLeaf(rootId, cellId);
 		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (current?.content.color || 'default') ].join(' ')} />;
 		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current?.bgColor || 'default') ].join(' ')} />;
 
@@ -1305,17 +1302,17 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	optionsAlign (cellId: string) {
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, cellId);
+		const current = S.Block.getLeaf(rootId, cellId);
 
 		return [
-			{ id: 'horizontal', icon: UtilData.alignHIcon(current?.hAlign), name: translate('blockTableOptionsAlignText'), arrow: true },
-			{ id: 'vertical', icon: UtilData.alignVIcon(current?.vAlign), name: translate('blockTableOptionsAlignVertical'), arrow: true },
+			{ id: 'horizontal', icon: U.Data.alignHIcon(current?.hAlign), name: translate('blockTableOptionsAlignText'), arrow: true },
+			{ id: 'vertical', icon: U.Data.alignVIcon(current?.vAlign), name: translate('blockTableOptionsAlignVertical'), arrow: true },
 		];
 	};
 
 	optionsStyle (cellId: string) {
 		const { rootId } = this.props;
-		const current = blockStore.getLeaf(rootId, cellId);
+		const current = S.Block.getLeaf(rootId, cellId);
 		const ret: any[] = [
 			{ id: I.MarkType.Bold, icon: 'bold', name: translate('commonBold') },
 			{ id: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic') },
@@ -1448,8 +1445,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		h += 2;
 
 		const frame = { id, x, y, w, h, type, rowId, columnId, cellId, position };
-		let current = this.frames.find(it => it.id == frame.id);
 		
+		let current = this.frames.find(it => it.id == frame.id);
 		if (!current) {
 			current = frame;
 			this.frames.push(current);
@@ -1487,9 +1484,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			obj = frame;
 		};
 
-		raf(() => {
-			obj.css({ left: item.x, top: item.y, width: item.w, height: item.h });
-		});
+		obj.css({ left: item.x, top: item.y, width: item.w, height: item.h });
 	};
 
 	framesUpdate () {
@@ -1517,7 +1512,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		};
 
 		const { isPopup, rootId, block, getWrapperWidth } = this.props;
-		const parent = blockStore.getParentLeaf(rootId, block.id);
+		const parent = S.Block.getParentLeaf(rootId, block.id);
 
 		if (!parent) {
 			return;
@@ -1528,7 +1523,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const row = node.find('.row').first();
 		const obj = $(`#block-${block.id}`);
 
-		let width = Constant.size.blockMenu + 10;
+		let width = J.Size.blockMenu + 10;
 		let maxWidth = 0;
 		let wrapperWidth = 0;
 
@@ -1537,10 +1532,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		obj.css({ width: 'auto' });
 
 		if (parent.isPage() || parent.isLayoutDiv()) {
-			const container = UtilCommon.getPageContainer(isPopup);
+			const container = U.Common.getPageContainer(isPopup);
 
 			maxWidth = container.width() - PADDING;
-			wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;
+			wrapperWidth = getWrapperWidth() + J.Size.blockMenu;
 
 			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');
 			width = Math.max(wrapperWidth, Math.min(maxWidth, width));
@@ -1552,7 +1547,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		} else {
 			const parentObj = $(`#block-${parent.id}`);
 			if (parentObj.length) {
-				maxWidth = parentObj.width() - Constant.size.blockMenu;
+				maxWidth = parentObj.width() - J.Size.blockMenu;
 			};
 
 			width > maxWidth ? wrap.addClass('withScroll') : wrap.removeClass('withScroll');

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, UtilCommon } from 'Lib';
+import { I, U } from 'Lib';
 
 interface Props {
 	id: string;
@@ -28,7 +28,7 @@ class SelectionTarget extends React.Component<Props> {
 				className={`selectionTarget ${className}`}
 				style={style}
 				onContextMenu={onContextMenu}
-				{...UtilCommon.dataProps({ id, type })}
+				{...U.Common.dataProps({ id, type })}
 			>
 				{children}
 			</div>

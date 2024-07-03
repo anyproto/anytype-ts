@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, UtilCommon, UtilData, UtilObject, keyboard, translate, Relation, UtilDate } from 'Lib';
+import { I, S, U, J, keyboard, translate, Relation } from 'Lib';
 import { Input, IconObject } from 'Component';
-import { commonStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
 
 interface State { 
 	isEditing: boolean; 
@@ -39,7 +37,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	render () {
 		const { isEditing } = this.state;
-		const { showRelativeDates } = commonStore;
+		const { showRelativeDates } = S.Common;
 		const { recordId, relation, textLimit, isInline, iconSize, placeholder, shortUrl, canEdit, getView, getRecord } = this.props;
 		const record = getRecord(recordId);
 		
@@ -60,7 +58,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		let value = record[relation.relationKey];
 
 		if (isDate || isNumber) {
-			value = Relation.formatValue(relation, record[relation.relationKey], true);
+			value = Relation.formatValue(relation, value, true);
 			if (isNumber) {
 				value = value === null ? null : String(value);
 			};
@@ -142,7 +140,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 				if (name) {
 					if (textLimit) {
-						name = UtilCommon.shorten(name, textLimit);
+						name = U.Common.shorten(name, textLimit);
 					};
 					content = <div className="name">{name}</div>;
 				} else {
@@ -163,9 +161,9 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				if (value !== null) {
 					value = Number(value) || 0;
 
-					const day = showRelativeDates ? UtilDate.dayString(value) : null;
-					const date = day ? day : UtilDate.date(UtilDate.dateFormat(viewRelation.dateFormat), value);
-					const time = UtilDate.date(UtilDate.timeFormat(viewRelation.timeFormat), value);
+					const day = showRelativeDates ? U.Date.dayString(value) : null;
+					const date = day ? day : U.Date.date(U.Date.dateFormat(viewRelation.dateFormat), value);
+					const time = U.Date.date(U.Date.timeFormat(viewRelation.timeFormat), value);
 					
 					value = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 				} else {
@@ -174,13 +172,13 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			};
 
 			if (isUrl && shortUrl) {
-				value = value !== null ? UtilCommon.shortUrl(value) : '';
+				value = value !== null ? U.Common.shortUrl(value) : '';
 			};
 
 			if (isNumber) {
 				if (value !== null) {
 					const mapped = Relation.mapValue(relation, value);
-					value = mapped !== null ? mapped : UtilCommon.formatNumber(value);
+					value = mapped !== null ? mapped : U.Common.formatNumber(value);
 				} else {
 					value = '';
 				};
@@ -253,7 +251,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					format.push('H:i');
 				};
 
-				value = this.value !== null ? UtilDate.date(format.join(' ').trim(), this.value) : '';
+				value = this.value !== null ? U.Date.date(format.join(' ').trim(), this.value) : '';
 			} else
 			if (relation.format == I.RelationType.Number) {
 				value = Relation.formatValue(relation, this.value, true);
@@ -286,8 +284,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			};
 		};
 
-		if (commonStore.cellId) {
-			$(`#${commonStore.cellId}`).addClass('isEditing');
+		if (S.Common.cellId) {
+			$(`#${S.Common.cellId}`).addClass('isEditing');
 		};
 	};
 
@@ -340,7 +338,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		};
 
 		if ([ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email ].includes(relation.format)) {
-			menuStore.updateData('select', { disabled: !value });
+			S.Menu.updateData('select', { disabled: !value });
 		};
 
 		this.setValue(value);
@@ -355,7 +353,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			e.preventDefault();
 
 			this.save(value, () => {
-				menuStore.closeAll(Constant.menuIds.cell);
+				S.Menu.closeAll(J.Menu.cell);
 
 				this.range = null;
 				this.setEditing(false);
@@ -367,7 +365,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		/*
 		if (!ret) {
 			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => this.save(value), Constant.delay.keyboard);
+			this.timeout = window.setTimeout(() => this.save(value), J.Constant.delay.keyboard);
 		};
 		*/
 	};
@@ -376,7 +374,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		this.setValue(this.fixDateValue(value));
 
 		if (this.value) {
-			menuStore.updateData(MENU_ID, { value: this.value });
+			S.Menu.updateData(MENU_ID, { value: this.value });
 		};
 
 		if (this.isComposition) {
@@ -387,14 +385,14 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
-			this.save(this.value, () => menuStore.close(MENU_ID));
+			this.save(this.value, () => S.Menu.close(MENU_ID));
 
 			ret = true;
 		});
 
 		if (!ret) {
 			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => this.save(this.value), Constant.delay.keyboard);
+			this.timeout = window.setTimeout(() => this.save(this.value), J.Constant.delay.keyboard);
 		};
 	};
 
@@ -413,13 +411,13 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		keyboard.setFocus(false);
 		this.range = null;
 
-		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(this.value)) {
+		if (U.Common.compareJSON(record[relation.relationKey], this.value)) {
 			this.setEditing(false);
 			return;
 		};
 
 		this.save(this.value, () => {
-			if (!menuStore.isOpen(MENU_ID)) {
+			if (!S.Menu.isOpen(MENU_ID)) {
 				this.setEditing(false);
 			};
 		});
@@ -449,7 +447,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		};
 
 		v = String(v || '').replace(/_/g, '');
-		return v ? UtilDate.parseDate(v, viewRelation.dateFormat) : null;
+		return v ? U.Date.parseDate(v, viewRelation.dateFormat) : null;
 	};
 
 	onCompositionStart () {

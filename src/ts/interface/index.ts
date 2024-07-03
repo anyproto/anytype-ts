@@ -2,7 +2,6 @@ export * from './account';
 export * from './space';
 export * from './animation';
 export * from './common';
-export * from './thread';
 export * from './progress';
 export * from './popup';
 export * from './preview';
@@ -12,6 +11,7 @@ export * from './restriction';
 export * from './notification';
 export * from './payment';
 export * from './history';
+export * from './syncStatus';
 
 export * from './block';
 export * from './block/dataview';
