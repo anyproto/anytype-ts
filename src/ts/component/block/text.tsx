@@ -600,29 +600,27 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		const node = $(this.node);
-		const items = node.find(Mark.getTag(I.MarkType.Latex));
+		const value = this.getValue();
+		const tag = Mark.getTag(I.MarkType.Latex);
 
-		items.each((i: number, item: any) => {
-			item = $(item);
-
-			const text = item.text().replace(/^\$|\$$/g, '');
-
-			let html = '';
+		const html = value.replace(/\$([^\$]+)\$/g, (s: string, p: string, o: number) => {
+			let replace = '';
 			try {
-				html = katex.renderToString(text, { 
+				replace = katex.renderToString(p, { 
 					displayMode: false, 
 					throwOnError: false,
 					output: 'html',
 					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
 				});
 			} catch {
-				html = text;
+				replace = s;
 			};
-
-			item.attr({ 'data-text': text });
-			item.html(html);
+			return `<${tag} data-text="${s}">${replace}</${tag}>`;
 		});
+
+		if (this.refEditable) {
+			this.refEditable.setValue(html);
+		};
 	};
 
 	emojiParam (style: I.TextStyle) {

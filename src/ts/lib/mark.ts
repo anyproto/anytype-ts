@@ -58,7 +58,6 @@ class Mark {
 			{ key: '*', type: I.MarkType.Italic },
 			{ key: '_', type: I.MarkType.Italic },
 			{ key: '~~', type: I.MarkType.Strike },
-			{ key: '$', type: I.MarkType.Latex },
 		];
 
 		for (const item of Markdown) {
@@ -279,7 +278,7 @@ class Mark {
 			I.MarkType.Mention, 
 			I.MarkType.Emoji,
 		];
-		const priorityRender = [ I.MarkType.Mention, I.MarkType.Emoji, I.MarkType.Latex ];
+		const priorityRender = [ I.MarkType.Mention, I.MarkType.Emoji ];
 
 		let borders: any[] = [];
 		
@@ -495,7 +494,7 @@ class Mark {
 	};
 
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean): { marks: I.Mark[], text: string, adjustMarks: boolean } {
-		const test = /((^|\s)_|[`\*~\[\$]){1}/.test(html);
+		const test = /((^|\s)_|[`\*~\[]){1}/.test(html);
 		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 		const overlaps = [ I.MarkOverlap.Left, I.MarkOverlap.Right, I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight ];
 
@@ -519,15 +518,9 @@ class Mark {
 				p4 = String(p4 || '');
 				p5 = String(p5 || '');
 
-				let from = (Number(text.indexOf(s)) || 0) + p1.length;
-				let to = from + p3.length;
-				let replace = null;
-
-				if (item.type != I.MarkType.Latex) {
-					replace = (p1 + p3 + ' ').replace(new RegExp('\\$', 'g'), '$$$');
-				} else {
-					to += p2.length + p4.length;
-				};
+				const from = (Number(text.indexOf(s)) || 0) + p1.length;
+				const to = from + p3.length;
+				const replace = (p1 + p3 + ' ').replace(new RegExp('\\$', 'g'), '$$$');
 
 				let check = true;
 				for (const mark of checked) {
@@ -539,17 +532,12 @@ class Mark {
 				};
 
 				if (check) {
-					if (item.type != I.MarkType.Latex) {
-						marks = this.adjust(marks, from, -p2.length);
-						marks = this.adjust(marks, to, -p4.length);
-					};
-
+					marks = this.adjust(marks, from, -p2.length);
+					marks = this.adjust(marks, to, -p4.length);
 					marks.push({ type: item.type, range: { from, to }, param: '' });
 
-					if (replace) {
-						text = text.replace(s, replace);
-						adjustMarks = true;
-					};
+					text = text.replace(s, replace);
+					adjustMarks = true;
 				};
 				return s;
 			});
@@ -644,23 +632,27 @@ class Mark {
 		};
 		
 		switch (type) {
-			case I.MarkType.Link:
+			case I.MarkType.Link: {
 				attr = `href="${param}"`;
 				break;
+			};
 
 			case I.MarkType.Mention:
-			case I.MarkType.Emoji:
-			case I.MarkType.Latex:
+			case I.MarkType.Emoji: {
 				attr = 'contenteditable="false"';
 				break;
+			};
 				
-			case I.MarkType.Color:
+			case I.MarkType.Color: {
 				attr = `class="textColor textColor-${param}"`;
 				break;
+			};
 				
-			case I.MarkType.BgColor:
+			case I.MarkType.BgColor: {
 				attr = `class="bgColor bgColor-${param}"`;
 				break;
+			};
+
 		};
 		return attr;
 	};
