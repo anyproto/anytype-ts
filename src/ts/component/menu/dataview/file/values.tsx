@@ -180,7 +180,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	};
 	
 	onUpload (e: any) {
-		Action.openFile([], paths => {
+		Action.openFileDialog([], paths => {
 			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, (message: any) => {
 				if (!message.error.code) {
 					this.add(message.objectId);

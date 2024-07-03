@@ -16,11 +16,20 @@ class BlockStore {
 
     constructor() {
         makeObservable(this, {
+			rootId: observable,
             profileId: observable,
+			spaceviewId: observable,
+			widgetsId: observable,
+
             profile: computed,
 			root: computed,
+			spaceview: computed,
+			widgets: computed,
+
+			rootSet: action,
             profileSet: action,
             widgetsSet: action,
+			spaceviewSet: action,
             set: action,
             clear: action,
             clearAll: action,
@@ -28,7 +37,7 @@ class BlockStore {
             update: action,
 			updateContent: action,
             updateStructure: action,
-            delete: action
+            delete: action,
         });
     };
 
@@ -591,14 +600,17 @@ class BlockStore {
 			return [];
 		};
 		
-		let ret: any[] = [];
+		let ret = [];
+
 		for (const id of ids) {
 			const parent = this.getParentLeaf(rootId, id);
-			if (!parent || !parent.isLayout() || parent.isLayoutDiv() || parent.isLayoutHeader()) {
+			if (!parent || !parent.isLayout() || parent.isLayoutHeader()) {
 				continue;
 			};
 			
-			ret.push(parent.id);
+			if (ret.indexOf(parent.id) < 0) {
+				ret.push(parent.id);
+			};
 			
 			if (parent.isLayoutColumn()) {
 				ret = ret.concat(this.getLayoutIds(rootId, [ parent.id ]));

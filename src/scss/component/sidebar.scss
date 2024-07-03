@@ -31,10 +31,9 @@
 	> .inner {
 		> .head { 
 			display: flex; flex-direction: row; align-items: center; justify-content: flex-start; padding: 0px 16px; height: 52px;
-			-webkit-app-region: no-drag;
 		}
 		> .head {
-			.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; }
+			.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; -webkit-app-region: no-drag; }
 			.icon:hover { background-color: var(--color-shape-highlight-medium); }
 			.icon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }
 			.icon.toggle:hover { background-image: url('~img/icon/widget/toggle1.svg'); }

@@ -5,7 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { I, M, S, U, J, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Storage, keyboard } from 'Lib';
+import { I, M, S, U, J, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Storage, keyboard, C } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 
@@ -953,8 +953,9 @@ class Dispatcher {
 					break;
 				};
 
-				case 'SpaceSyncStatusUpdate': {
-					S.Auth.syncStatusUpdate(mapped);
+				case 'SpaceSyncStatusUpdate':
+				case 'P2PStatusUpdate': {
+					S.Auth.syncStatusUpdate(mapped)
 					break;
 				};
 			};
@@ -1202,7 +1203,7 @@ class Dispatcher {
 		const { config } = S.Common;
 		const { event, sync, file } = config.flagsMw;
 		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
-		const syncEvents = [ 'SpaceSyncStatusUpdate' ];
+		const syncEvents = [ 'SpaceSyncStatusUpdate', 'P2PStatusUpdate', 'ThreadStatus' ];
 
 		let check = false;
 		if (event && !syncEvents.concat(fileEvents).includes(type)) {

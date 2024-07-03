@@ -167,6 +167,7 @@
 	"pluralReader": "reader|readers",
 	"pluralWriter": "writers|writers",
 	"pluralYear": "year|years",
+	"pluralDevice": "device|devices",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -600,6 +601,7 @@
 	"blockEmbedLatexEmpty": "Here your equation will be rendered with <span class='icon tex'></span>. Click to edit",
 	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
+	"blockEmbedOffline": "You are not connected to the Internet",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 
@@ -1516,6 +1518,8 @@
 
 	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
 	"menuSyncStatusP2PNoDevicesConnected": "No devices connected",
+	"menuSyncStatusP2PDevicesConnected": "%s %s connected",
+	"menuSyncStatusP2PRestricted": "Restricted. Check device settings.",
 
 	"menuSyncStatusInfoNetworkTitle": "Anytype network",
 	"menuSyncStatusInfoNetworkMessageSynced": "End-to-end encrypted",
@@ -1525,9 +1529,9 @@
 	"menuSyncStatusInfoNetworkMessageError2": "Incompatible version",
 	"menuSyncStatusInfoNetworkMessageError3": "No access to the space",
 	"menuSyncStatusInfoNetworkMessageErrorUpdateApp": "Update the app",
-	"menuSyncStatusInfoNetworkMessageErrorSeeMembership": "See membership plans",
+	"menuSyncStatusInfoNetworkMessageErrorAddMoreStorage": "Add more storage",
 
-	"menuSyncStatusInfoNetworkMessageOffline": "No internet connection",
+	"menuSyncStatusInfoNetworkMessageOffline": "No connection",
 
 	"menuSyncStatusInfoSelfTitle": "Self Host",
 	"menuSyncStatusInfoSelfMessageSynced": "Synced",

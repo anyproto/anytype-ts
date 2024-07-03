@@ -530,3 +530,9 @@ export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
 		spaceId: response.getSpaceid(),
 	};
 };
+
+export const DeviceList = (response: Rpc.Device.List.Response) => {
+	return {
+		devices: (response.getDevicesList() || []).map(it => Mapper.From.DeviceInfo(it))
+	};
+};

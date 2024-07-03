@@ -70,7 +70,7 @@ class MenuSyncStatusInfo extends React.Component<I.Menu> {
 				break;
 			};
 			case 'upgradeMembership': {
-				S.Popup.open('settings', { data: { page: 'membership' } });
+				S.Popup.open('membership', { data: { tier: I.TierType.Builder } });
 				break;
 			};
 		};

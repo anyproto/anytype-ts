@@ -315,10 +315,14 @@ class Mark {
 				return;
 			};
 
-			const attr = this.paramToAttr(mark.type, param);
 			const tag = this.getTag(mark.type);
+			if (!tag) {
+				return;
+			};
+
+			const attr = this.paramToAttr(mark.type, param);
 			const data = [ `data-range="${mark.range.from}-${mark.range.to}"` ];
-			
+
 			if (param) {
 				data.push(`data-param="${param}"`);
 			};
@@ -445,11 +449,13 @@ class Mark {
 
 			const end = p1 == '/';
 			const offset = Number(text.indexOf(s)) || 0;
-			const type = Object.values(tags).indexOf(p2);
-
-			if (type < 0) {
+			
+			let type: any = U.Common.getKeyByValue(tags, p2);
+			if (undefined === type) {
 				return;
 			};
+
+			type = Number(type);
 
 			if (end) {
 				for (let i = 0; i < marks.length; ++i) {
@@ -462,7 +468,7 @@ class Mark {
 			} else {
 				const pm = p3.match(rp);
 				const param = pm ? pm[1]: '';
-				
+
 				marks.push({
 					type,
 					range: { from: offset, to: 0 },
@@ -684,18 +690,25 @@ class Mark {
 
 		for (const i in I.MarkType) {
 			if (isNaN(I.MarkType[i] as any)) {
-				continue;
+				tags[i] = this.getTag(i as any);
 			};
-			tags[i] = this.getTag(I.MarkType[i] as any);
 		};
 
 		return tags;
 	};
 
-	getTag (t: I.MarkType) {
-		return `markup${I.MarkType[t].toLowerCase()}`;
+	getTag (t: I.MarkType): string {
+		return I.MarkType[t] ? `markup${I.MarkType[t].toLowerCase()}` : '';
 	};
-	
+
+	needsBreak (t: I.MarkType): boolean {
+		return [ I.MarkType.Link, I.MarkType.Object, I.MarkType.Search, I.MarkType.Change, I.MarkType.Highlight ].includes(t);
+	};
+
+	canSave (t: I.MarkType): boolean {
+		return ![ I.MarkType.Search, I.MarkType.Change, I.MarkType.Highlight ].includes(t);
+	};
+
 };
 
 export default new Mark();

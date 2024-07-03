@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, Button, Filter } from 'Component';
-import { C, I, S, U, analytics, Relation, keyboard, translate, Dataview } from 'Lib';
+import { C, I, S, U, analytics, Relation, keyboard, translate, Dataview, sidebar } from 'Lib';
 import Head from './head';
 
 interface Props extends I.ViewComponent {
@@ -483,7 +483,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const sideRight = node.find('#dataviewControlsSideRight');
 		const container = U.Common.getPageContainer(isPopup);
 		const { left } = sideLeft.offset();
-		const sw = $('#sidebarDummy').outerWidth();
+		const sw = sidebar.getDummyWidth();
 		const cw = container.outerWidth();
 		const nw = node.outerWidth();
 

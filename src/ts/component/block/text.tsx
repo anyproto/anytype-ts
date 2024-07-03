@@ -996,16 +996,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const text = block.canHaveMarks() ? parsed.text : value;
 
-		// When typing text adjust links markup to break it
+		// When typing text adjust several markups to break it
 		if (!keyboard.isSpecial(e)) {
 			const d = text.length - this.text.length;
-			const markTypes = [ I.MarkType.Link, I.MarkType.Object ];
 
 			if (d > 0) {
 				for (let i = 0; i < this.marks.length; ++i) {
 					let mark = this.marks[i];
 
-					if (markTypes.includes(mark.type) && (mark.range.to == range.to)) {
+					if (Mark.needsBreak(mark.type) && (mark.range.to == range.to)) {
 						const adjusted = Mark.adjust([ mark ], mark.range.from, -d);
 
 						this.marks[i] = adjusted[0];
@@ -1284,6 +1283,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onSelect () {
+		if (keyboard.isContextDisabled) {
+			return;
+		};
+
 		const { rootId, block, isPopup, isInsideTable, readonly } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.getForClick('', false, true);

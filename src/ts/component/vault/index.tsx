@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { Icon, IconObject, ObjectName } from 'Component';
+import { IconObject, ObjectName } from 'Component';
 import { I, U, S, keyboard, translate, analytics, Storage, sidebar, Preview } from 'Lib';
 
 const Vault = observer(class Vault extends React.Component {
@@ -20,6 +20,7 @@ const Vault = observer(class Vault extends React.Component {
 		this.onToggle = this.onToggle.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 
     render () {
@@ -27,8 +28,7 @@ const Vault = observer(class Vault extends React.Component {
 		const { spaceview } = S.Block;
 
 		const Item = SortableElement(item => {
-			const cn = [ 'item', 'space' ];
-			const icon = item.isShared ? 'shared' : '';
+			const cn = [ 'item' ];
 
 			if (item.id == spaceview) {
 				cn.push('isActive');
@@ -49,17 +49,15 @@ const Vault = observer(class Vault extends React.Component {
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
 					<div className="iconWrap">
+						<div className="border" />
 						<IconObject object={item} size={48} forceLetter={true} />
-						{icon ? <Icon className={icon} /> : ''}
 					</div>
 					<div className="coverWrap">
 						<IconObject object={item} size={360} forceLetter={true} />
 					</div>
 					<div className="infoWrap">
 						<ObjectName object={item} />
-						<div className="descr">
-							{descr}
-						</div>
+						<div className="descr">{descr}</div>
 					</div>
 				</div>
 			);
@@ -73,7 +71,9 @@ const Vault = observer(class Vault extends React.Component {
 				onMouseEnter={e => this.onMouseEnter(e, item)}
 				onMouseLeave={() => this.onMouseLeave()}
 			>
-				<div className="iconWrap" />
+				<div className="iconWrap">
+					<div className="border" />
+				</div>
 				{item.withName ? (
 					<div className="infoWrap">
 						<div className="name">{item.name}</div>
@@ -85,7 +85,7 @@ const Vault = observer(class Vault extends React.Component {
 		const ItemIconSortable = SortableElement(it => <ItemIcon {...it} index={it.index} />);
 
 		const List = SortableContainer(() => (
-			<div id="scroll" className="side top">
+			<div id="scroll" className="side top" onScroll={this.onScroll}>
 				{items.map((item, i) => {
 					item.key = `item-space-${item.id}`;
 
@@ -109,12 +109,12 @@ const Vault = observer(class Vault extends React.Component {
 				id="vault"
 				className="vault"
             >
-				{/*
 				<div className="head">
+					{/*
 					<Icon className="settings" />
 					<Icon className="close" onClick={this.onToggle} />
+					*/}
 				</div>
-				*/}
 				<div className="body">
 					<List 
 						axis="y" 
@@ -138,12 +138,19 @@ const Vault = observer(class Vault extends React.Component {
 		);
     };
 
-	componentDidMount(): void {
+	componentDidMount (): void {
 		this.resize();
 		this.rebind();
 	};
 
-	componentWillUnmount(): void {
+	componentDidUpdate (): void {
+		const node = $(this.node);
+		const scroll = node.find('#scroll');
+
+		scroll.scrollTop(this.top);
+	};
+
+	componentWillUnmount (): void {
 		this.unbind();
 		window.clearTimeout(this.timeoutHover);
 	};
@@ -159,6 +166,8 @@ const Vault = observer(class Vault extends React.Component {
 
 	onClick (e: any, item: any) {
 		e.stopPropagation();
+
+		this.setActive(item.id);
 
 		switch (item.id) {
 			case 'add':
@@ -182,6 +191,13 @@ const Vault = observer(class Vault extends React.Component {
 				analytics.event('SwitchSpace');
 				break;
 		};
+	};
+
+	setActive (id: string) {
+		const node = $(this.node);
+
+		node.find('.item.isActive').removeClass('isActive');
+		node.find(`#item-${id}`).addClass('isActive');
 	};
 
 	onAdd () {
@@ -246,6 +262,13 @@ const Vault = observer(class Vault extends React.Component {
 		keyboard.setDragging(false);
 
 		this.forceUpdate();
+	};
+
+	onScroll () {
+		const node = $(this.node);
+		const scroll = node.find('#scroll');
+
+		this.top = scroll.scrollTop();
 	};
 
 	onMouseEnter (e: any, item: any) {

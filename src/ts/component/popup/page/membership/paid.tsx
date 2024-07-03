@@ -34,8 +34,6 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const { status, statusText } = this.state;
-		const { config } = S.Common;
-		const { testCryptoPayment } = config;
 		const tierItem = U.Data.getMembershipTier(tier);
 
 		if (!tierItem) {
@@ -49,9 +47,11 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		let periodText = '';
 		let labelText = '';
 		let paidOnOtherPlatform = false;
+		let canEnterName = !name;
 
 		if ((membership.tier == I.TierType.Builder) && (paymentMethod != I.PaymentMethod.Stripe)) {
 			paidOnOtherPlatform = true;
+			canEnterName = false;
 		};
 
 		if (period) {
@@ -76,8 +76,8 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 								ref={ref => this.refName = ref}
 								value={name}
 								onKeyUp={this.onKeyUp}
-								readonly={!!name}
-								className={name ? 'disabled' : ''}
+								readonly={!canEnterName}
+								className={!canEnterName ? 'disabled' : ''}
 								placeholder={translate(`popupMembershipPaidPlaceholder`)}
 							/>
 							<div className="ns">{J.Constant.namespace[nameType]}</div>
@@ -97,10 +97,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				) : (
 					<React.Fragment>
 						<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
-
-						{testCryptoPayment ? (
-							<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
-						) : ''}
+						<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
 
 						<FooterAuthDisclaimer />
 					</React.Fragment>

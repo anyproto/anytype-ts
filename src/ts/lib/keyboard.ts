@@ -25,6 +25,7 @@ class Keyboard {
 	isPinChecked = false;
 	isBlurDisabled = false;
 	isCloseDisabled = false;
+	isContextDisabled = false;
 	isContextCloseDisabled = false;
 	isContextOpenDisabled = false;
 	isPasteDisabled = false;
@@ -541,7 +542,7 @@ class Keyboard {
 			};
 
 			case 'exportTemplates': {
-				Action.openDir({ buttonLabel: translate('commonExport') }, paths => {
+				Action.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
 					C.TemplateExportAll(paths[0], (message: any) => {
 						if (message.error.code) {
 							return;
@@ -554,7 +555,7 @@ class Keyboard {
 			};
 
 			case 'exportLocalstore': {
-				Action.openDir({ buttonLabel: translate('commonExport') }, paths => {
+				Action.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
 					C.DebugExportLocalstore(paths[0], [], (message: any) => {
 						if (!message.error.code) {
 							Renderer.send('pathOpen', paths[0]);
@@ -787,7 +788,7 @@ class Keyboard {
 			return;
 		};
 
-		S.Menu.closeAll([ 'blockContext' ], () => {
+		S.Menu.closeAll(null, () => {
 			S.Menu.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
@@ -1053,6 +1054,11 @@ class Keyboard {
 	// Flag to prevent blur events
 	disableBlur (v: boolean) {
 		this.isBlurDisabled = v;
+	};
+
+	// Flag to prevent menuBlockContext from opening
+	disableContext (v: boolean) {
+		this.isContextDisabled = v;
 	};
 
 	// Flag to prevent menuBlockContext from closing

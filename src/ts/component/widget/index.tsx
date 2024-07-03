@@ -55,6 +55,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return null;
 		};
 
+		const canWrite = U.Space.canMyParticipantWrite();
 		const { targetBlockId } = child?.content || {};
 		const cn = [ 'widget' ];
 		const object = this.getObject();
@@ -99,6 +100,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		let buttons = null;
 		let targetTop = null;
 		let targetBot = null;
+		let isDraggable = canWrite;
 
 		if (isPreview) {
 			back = (
@@ -192,6 +194,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			case I.WidgetLayout.Space: {
 				cn.push('widgetSpace');
 				content = <WidgetSpace {...props} />;
+
+				isDraggable = false;
 				break;
 			};
 
@@ -216,7 +220,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				ref={node => this.node = node}
 				id={`widget-${block.id}`}
 				className={cn.join(' ')}
-				draggable={isEditing}
+				draggable={isDraggable}
 				onDragStart={e => onDragStart(e, block.id)}
 				onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
 				onDragEnd={this.onDragEnd}

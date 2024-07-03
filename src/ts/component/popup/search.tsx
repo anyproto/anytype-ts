@@ -70,8 +70,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 
 			if (highlight) {
-				const marks = ranges.map(it => ({ type: I.MarkType.Highlight, range: it }));
-				const text = Mark.toHtml(highlight, marks);
+				const text = Mark.toHtml(highlight, ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
 
 				value = <div className="value" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />;
 			} else 
@@ -149,10 +148,15 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					);
 				};
 
+				let name = U.Object.name(item);
+				if (meta.highlight && (meta.relationKey == 'name')) {
+					name = Mark.toHtml(meta.highlight, meta.ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
+				};
+
 				content = (
 					<div className="sides">
 						<div className="side left">
-							<ObjectName object={item} />
+							<ObjectName object={{ ...item, name }} />
 							<Context {...meta} />
 							<div className="caption">{item.caption}</div>
 						</div>
@@ -517,7 +521,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const filter = this.getFilter();
 		const templateType = S.Record.getTemplateType();
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space }
 		];
