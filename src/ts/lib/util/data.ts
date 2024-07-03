@@ -128,8 +128,11 @@ class UtilData {
 	};
 
 	syncStatusClass (v: I.SyncStatusObject): string {
-		v = v || I.SyncStatusObject.Synced;
-		return String(I.SyncStatusObject[v]).toLowerCase();
+		const s = I.SyncStatusObject[v];
+		if ('undefined' == typeof(s)) {
+			return '';
+		};
+		return String(s || '').toLowerCase();
 	};
 	
 	alignHIcon (v: I.BlockHAlign): string {
