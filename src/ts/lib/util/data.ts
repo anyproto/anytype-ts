@@ -615,6 +615,12 @@ class UtilData {
 		return this.sortByName(c1, c2);
 	};
 
+	sortByFormat (c1: any, c2: any) {
+		if (c1.format > c2.format) return 1;
+		if (c1.format < c2.format) return -1;
+		return this.sortByName(c1, c2);
+	};
+
 	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
 		const idx1 = ids.indexOf(c1.id);
 		const idx2 = ids.indexOf(c2.id);
