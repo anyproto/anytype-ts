@@ -49,7 +49,9 @@
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
-	.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
+	.side.right {
+		.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
+	}
 
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
