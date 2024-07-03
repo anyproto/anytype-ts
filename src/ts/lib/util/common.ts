@@ -942,12 +942,7 @@ class UtilCommon {
 	};
 
 	htmlSpecialChars (s: string) {
-		return String(s || '').replace(/(<|>|&)/g, (s: string, p: string) => {
-			if (p == '<') p = '&lt;';
-			if (p == '>') p = '&gt;';
-			if (p == '&') p = '&amp;';
-			return p;
-		});
+		return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	};
 
 };
