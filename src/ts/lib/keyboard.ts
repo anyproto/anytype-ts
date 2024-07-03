@@ -542,7 +542,7 @@ class Keyboard {
 			};
 
 			case 'exportTemplates': {
-				Action.openDir({ buttonLabel: translate('commonExport') }, paths => {
+				Action.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
 					C.TemplateExportAll(paths[0], (message: any) => {
 						if (message.error.code) {
 							return;
@@ -555,7 +555,7 @@ class Keyboard {
 			};
 
 			case 'exportLocalstore': {
-				Action.openDir({ buttonLabel: translate('commonExport') }, paths => {
+				Action.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
 					C.DebugExportLocalstore(paths[0], [], (message: any) => {
 						if (!message.error.code) {
 							Renderer.send('pathOpen', paths[0]);
