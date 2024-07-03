@@ -19,6 +19,11 @@
 	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border-radius: 8px;
 }
 .tooltip.big {
-	.title { @include text-common; font-weight: 500; margin-bottom: 2px; }
-	.txt { @include text-small; }
+	.title { @include text-common; font-weight: 500;  }
+	.txt { @include text-small; margin: 2px 0px 0px 0px; }
+}
+
+.tooltip.big.fromVault { padding: 5px 10px; min-width: unset; max-width: 360px; }
+.tooltip.big.fromVault {
+	.title { white-space: nowrap; }
 }

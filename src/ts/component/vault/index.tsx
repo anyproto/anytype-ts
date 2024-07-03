@@ -279,7 +279,7 @@ const Vault = observer(class Vault extends React.Component {
 		Preview.tooltipShow({ 
 			title: item.name, 
 			element: $(e.currentTarget), 
-			className: 'big', 
+			className: 'big fromVault', 
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
 			offsetX: 66,
