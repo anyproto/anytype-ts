@@ -33,8 +33,8 @@
 	}
 
 	.day { 
-		display: flex; flex-direction: row; align-items: center; justify-content: center; @include text-small; aspect-ratio: 1; border-radius: 4px; 
-		transition: $transitionAllCommon; position: relative;
+		display: flex; flex-direction: row; align-items: center; justify-content: center; @include text-small; border-radius: 4px; 
+		transition: $transitionAllCommon; position: relative; height: 28px;
 	}
 	.day.today { color: var(--color-system-accent-125); font-weight: 500; }
 	.day.other { color: var(--color-text-secondary); }
