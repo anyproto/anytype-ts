@@ -941,6 +941,15 @@ class UtilCommon {
 		return String(s || '').replace(/\r\n?/g, '\n');
 	};
 
+	htmlSpecialChars (s: string) {
+		return String(s || '').replace(/(<|>|&)/g, (s: string, p: string) => {
+			if (p == '<') p = '&lt;';
+			if (p == '>') p = '&gt;';
+			if (p == '&') p = '&amp;';
+			return p;
+		});
+	};
+
 };
 
 export default new UtilCommon();

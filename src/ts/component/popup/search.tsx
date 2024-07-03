@@ -151,12 +151,14 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				let name = U.Object.name(item);
 				if (meta.highlight && (meta.relationKey == 'name')) {
 					name = Mark.toHtml(meta.highlight, meta.ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
+				} else {
+					name = U.Common.htmlSpecialChars(name);
 				};
 
 				content = (
 					<div className="sides">
 						<div className="side left">
-							<ObjectName object={{ ...item, name }} />
+							<div className="name" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
 							<Context {...meta} />
 							<div className="caption">{item.caption}</div>
 						</div>
