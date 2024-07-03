@@ -66,7 +66,7 @@ class Mark {
 
 			this.regexpMarkdown.push({ 
 				type: item.type,
-				reg: new RegExp('([^\\*_\\$]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
+				reg: new RegExp(`([^\\*_]{1}|^)(${k})([^${non}]+)(${k})(\\s|$)`, 'gi'),
 			});
 		};
 	};
