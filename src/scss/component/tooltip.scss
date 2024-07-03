@@ -25,5 +25,5 @@
 
 .tooltip.big.fromVault { padding: 5px 10px; min-width: unset; max-width: 360px; }
 .tooltip.big.fromVault {
-	.title { white-space: nowrap; }
+	.title { @include text-overflow-nw; }
 }
