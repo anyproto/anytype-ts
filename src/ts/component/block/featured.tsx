@@ -450,7 +450,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const showMenu = () => {
 			S.Menu.open('select', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
-				offsetY: 8,
+				offsetY: 4,
 				subIds: J.Menu.featuredType,
 				onOpen: (context: any) => {
 					this.menuContext = context;
@@ -645,7 +645,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		S.Menu.closeAll(null, () => {
 			S.Menu.open('dataviewSource', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', rootId)}`,
-				horizontal: I.MenuDirection.Center,
+				offsetY: 4,
 				data: {
 					rootId,
 					objectId: rootId,
