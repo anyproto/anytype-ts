@@ -733,11 +733,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					});
 				} catch (e) {
 					if (e instanceof katex.ParseError) {
-						const replace = (s: string) => {
-							return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-						};
-
-						html = `<div class="error">Error in LaTeX '${replace(text)}': ${replace(e.message)}</div>`;
+						html = `<div class="error">Error in LaTeX '${U.Common.htmlSpecialChars(text)}': ${U.Common.htmlSpecialChars(e.message)}</div>`;
 					} else {
 						console.error(e);
 					};

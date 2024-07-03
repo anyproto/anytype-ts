@@ -39,11 +39,7 @@ class Name extends React.Component<Props> {
 				onMouseEnter={onMouseEnter} 
 				onMouseLeave={onMouseLeave}
 			>
-				{'string' == typeof(name) ? (
-					<span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
-				) : (
-					<span>{name}</span>
-				)}
+				<span>{name}</span>
 			</div>
 		);
 	};
