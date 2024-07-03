@@ -608,7 +608,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const tag = Mark.getTag(I.MarkType.Latex);
-		const html = value.replace(/\$([^\$]+)\$/g, (s: string, p: string, o: number) => {
+		const html = value.replace(reg, (s: string, p: string, o: number) => {
 			let ret = '';
 			try {
 				ret = katex.renderToString(U.Common.stripTags(p), { 
