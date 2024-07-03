@@ -1488,7 +1488,8 @@ export const Mapper = {
 		P2PStatusUpdate: (obj: Events.Event.P2PStatus.Update) => {
 			return {
 				id: obj.getSpaceid(),
-				p2p: obj.getStatus()
+				p2p: obj.getStatus(),
+				devicesCounter: obj.getDevicescounter(),
 			};
 		},
 	},
