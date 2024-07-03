@@ -604,18 +604,23 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const tag = Mark.getTag(I.MarkType.Latex);
 
 		const html = value.replace(/\$([^\$]+)\$/g, (s: string, p: string, o: number) => {
-			let replace = '';
+			let ret = '';
 			try {
-				replace = katex.renderToString(p, { 
+				ret = katex.renderToString(p, { 
 					displayMode: false, 
 					throwOnError: false,
 					output: 'html',
 					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
 				});
+
+				if (ret) {
+					ret = `<${tag} data-text="${s}">${ret}</${tag}>`;
+				};
 			} catch {
-				replace = s;
+				ret = s;
 			};
-			return `<${tag} data-text="${s}">${replace}</${tag}>`;
+
+			return ret;
 		});
 
 		if (this.refEditable) {
