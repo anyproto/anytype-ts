@@ -741,17 +741,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `ctrl+shift+l` },
 			{ key: `ctrl+shift+/` },
 		];
-
-		if (isInsideTable) {
-			if (!range.to) {
-				saveKeys.push({ key: `arrowleft, arrowup` });
-			};
-
-			if (range.to == value.length) {
-				saveKeys.push({ key: `arrowright, arrowdown` });
-			};
-		};
-		
 		const twinePairs = {
 			'[': ']',
 			'{': '}',
@@ -764,8 +753,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			'（': '）',
 			'“': '”',
 			'‘': '’',
+			'$': '$',
 		};
 
+		if (isInsideTable) {
+			if (!range.to) {
+				saveKeys.push({ key: `arrowleft, arrowup` });
+			};
+
+			if (range.to == value.length) {
+				saveKeys.push({ key: `arrowright, arrowdown` });
+			};
+		};
+		
 		for (let i = 0; i < 9; ++i) {
 			saveKeys.push({ key: `${cmd}+${i}` });
 		};
