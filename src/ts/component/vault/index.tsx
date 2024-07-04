@@ -147,8 +147,6 @@ const Vault = observer(class Vault extends React.Component {
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 
-		this.setActive(item.id);
-
 		switch (item.id) {
 			case 'add':
 				this.onAdd();
