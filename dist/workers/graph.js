@@ -281,7 +281,9 @@ updateSettings = (param) => {
 	};
 };
 
-updateTheme = ({ theme }) => {
+updateTheme = ({ theme, colors }) => {
+	data.colors = colors;
+
 	initTheme(theme);
 	redraw();
 };
