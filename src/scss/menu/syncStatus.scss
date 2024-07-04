@@ -91,8 +91,4 @@
         }
         .items:before { content: ''; display: block; height: 1px; margin: 8px 16px 6px; background-color: var(--color-shape-secondary); }
     }
-
-    .menu.menuSyncStatusContext {
-        #item-delete { color: var(--color-red); }
-    }
 }

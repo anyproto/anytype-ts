@@ -173,7 +173,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		];
 
 		if (U.Space.canMyParticipantWrite() && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
-			options.push({ id: 'delete', name: translate('commonDeleteImmediately') });
+			options.push({ id: 'delete', name: translate('commonDeleteImmediately'), color: 'red' });
 		};
 
 		itemNode.addClass('selected');
