@@ -54,6 +54,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					<div className="inner">
 						<div className="head" />
 						<div 
+							id="sidebarBody"
 							ref={ref => this.refBody = ref}
 							className="body"
 						>
