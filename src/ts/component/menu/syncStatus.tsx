@@ -172,8 +172,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			{ id: 'open', name: translate('commonOpen') }
 		];
 
-		if (U.Space.canMyParticipantWrite()) {
-			options.push({ id: 'archive', name: translate('commonDeleteImmediately'), isRed: true });
+		if (U.Space.canMyParticipantWrite() && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
+			options.push({ id: 'delete', name: translate('commonDeleteImmediately') });
 		};
 
 		itemNode.addClass('selected');
@@ -193,7 +193,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 							U.Object.openAuto(item);
 							break;
 						};
-						case 'archive': {
+						case 'delete': {
 							Action.delete([ id ], analytics.route.syncStatus);
 							break;
 						};
