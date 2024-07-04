@@ -67,7 +67,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 
 	getSections () {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const allowedLayout = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Layout ]);
@@ -168,6 +168,8 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 				});
 				break;
 		};
+
+		console.log(menuId, menuParam);
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
 			S.Menu.closeAll(J.Menu.layout, () => {

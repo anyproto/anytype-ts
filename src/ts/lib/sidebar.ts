@@ -128,7 +128,7 @@ class Sidebar {
 		};
 
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = this.vault.hasClass('isExpanded') ? 0 : J.Size.vault.collapsed;
+		const vw = J.Size.vault.width;
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
