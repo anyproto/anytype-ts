@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S } from 'Lib';
+import { I, S, analytics } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -51,10 +51,13 @@ const Sync = observer(class Sync extends React.Component<Props> {
 
 	onClick (e: any) {
 		const { onClick } = this.props;
+		const syncStatus = S.Auth.getSyncStatus();
 
 		if (onClick) {
 			onClick(e);
 		};
+
+		analytics.event('ClickSyncStatus', { status: syncStatus.status });
 	};
 
 	getStatus (): any {

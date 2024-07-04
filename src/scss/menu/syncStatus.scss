@@ -8,17 +8,18 @@
     .menu.menuSyncStatus { width: 408px; height: 396px; }
     .menu.menuSyncStatus {
         .content { padding: 0px; height: 100%; max-height: unset; }
-        .syncMenuWrapper { padding: 16px 0px 8px 0px; height: 100%; display: flex; flex-direction: column; }
+        .syncMenuWrapper { padding: 16px 0px 0px 0px; height: 100%; display: flex; flex-direction: column; }
         .syncPanel { height: 28px; padding: 0px 16px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
 
         .title { @include text-paragraph; font-weight: 600; padding: 0; color: var(--color-text-primary); }
+
         .icons { display: flex; gap: 0px 8px; }
         .icons {
             .iconWrapper { display: flex; position: relative; align-items: center; justify-content: center; width: 28px; height: 28px; }
             .iconWrapper::before { content: ''; width: 100%; height: 100%; position: absolute; z-index: 0; border-radius: 50%; background: var(--color-shape-tertiary); }
             .iconWrapper.connected::before { background: #c5efa3; }
             .iconWrapper.error::before { background: #fcd1c3; }
-            .iconWrapper:hover::before { opacity: .5; }
+            .iconWrapper:hover::before { opacity: 0.5; }
 
             .iconWrapper {
                 .icon { width: 20px; height: 20px; }
@@ -52,6 +53,7 @@
                     .icon.synced { background-image: url('~img/icon/menu/syncStatus/ok.svg'); }
                     .icon.error { background-image: url('~img/icon/menu/syncStatus/failed.svg'); display: block; margin: 0px; }
                     .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); opacity: 0; position: static; margin: 0px; }
+					.icon.more:hover { background-color: unset !important; background-image: url('~img/icon/menu/action/more1.svg'); }
                 }
             }
 
@@ -92,7 +94,4 @@
         .items:before { content: ''; display: block; height: 1px; margin: 8px 16px 6px; background-color: var(--color-shape-secondary); }
     }
 
-    .menu.menuSyncStatusContext {
-        #item-delete { color: var(--color-red); }
-    }
 }

@@ -13,6 +13,7 @@ const SUB_ID = 'syncStatusObjectsList';
 const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, {}> {
 
 	_isMounted = false;
+	node = null;
 	cache: any = {};
 	items: any[] = [];
 	currentInfo = '';
@@ -44,7 +45,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 			return (
 				<div
-					id={U.Common.toCamelCase([ 'icon', id ].join('-'))}
+					id={`icon-${id}`}
 					className={cn.join(' ')}
 					onClick={e => this.onPanelIconClick(e, item)}
 				>
@@ -105,7 +106,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		return (
-			<div className="syncMenuWrapper" onClick={this.onCloseInfo}>
+			<div ref={ref => this.node = ref} className="syncMenuWrapper" onClick={this.onCloseInfo}>
 				<div className="syncPanel">
 					<Title text={translate('menuSyncStatusTitle')} />
 
@@ -147,13 +148,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	componentDidMount () {
-		const syncStatus = S.Auth.getSyncStatus();
-		const { status } = syncStatus;
-
 		this._isMounted = true;
 		this.load();
-
-		analytics.event('ClickSyncStatus', { status });
 	};
 
 	componentWillUnmount () {
@@ -164,27 +160,26 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	onContextMenu (e, item) {
-		const { id } = item;
 		const { param } = this.props;
 		const { classNameWrap } = param;
-		const itemNode = $(`.syncMenuWrapper #item-${id}`);
+		const node = $(this.node);
+		const canWrite = U.Space.canMyParticipantWrite();
+		const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+		const element = node.find(`#item-${item.id}`);
 		const options: any[] = [
 			{ id: 'open', name: translate('commonOpen') }
 		];
 
-		if (U.Space.canMyParticipantWrite() && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
-			options.push({ id: 'delete', name: translate('commonDeleteImmediately') });
+		if (canWrite && canDelete) {
+			options.push({ id: 'delete', color: 'red', name: translate('commonDeleteImmediately') });
 		};
 
-		itemNode.addClass('selected');
 		S.Menu.open('select', {
 			classNameWrap,
-			className: 'menuSyncStatusContext',
-			element: itemNode.find('.more'),
+			element: element.find('.more'),
 			offsetY: 4,
-			onClose: () => {
-				itemNode.removeClass('selected');
-			},
+			onOpen: () => element.addClass('selected'),
+			onClose: () => element.removeClass('selected'),
 			data: {
 				options,
 				onSelect: (e, option) => {
@@ -194,7 +189,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 							break;
 						};
 						case 'delete': {
-							Action.delete([ id ], analytics.route.syncStatus);
+							Action.delete([ item.id ], analytics.route.syncStatus);
 							break;
 						};
 					};
@@ -204,10 +199,9 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	onPanelIconClick (e, item) {
-		const { id } = item;
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { classNameWrap } = param;
-		const element = `.syncPanel ${U.Common.toCamelCase([ '#icon', id ].join('-'))}`;
+		const element = `#${getId()} #icon-${item.id}`;
 		const menuParam = {
 			classNameWrap,
 			element,
@@ -220,14 +214,14 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		e.stopPropagation();
 
 		if (S.Menu.isOpen('syncStatusInfo')) {
-			if (id == this.currentInfo) {
+			if (item.id == this.currentInfo) {
 				this.onCloseInfo();
 			} else {
-				this.currentInfo = id;
+				this.currentInfo = item.id;
 				S.Menu.update('syncStatusInfo', menuParam);
 			};
 		} else {
-			this.currentInfo = id;
+			this.currentInfo = item.id;
 			S.Menu.open('syncStatusInfo', menuParam);
 		};
 	};
@@ -310,7 +304,6 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		let className = '';
 		let message = '';
 		let buttons: any[] = [];
-
 		let isConnected = false;
 		let isError = false;
 
