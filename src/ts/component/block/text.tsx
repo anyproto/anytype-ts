@@ -900,7 +900,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			'##':			 I.TextStyle.Header2,
 			'###':			 I.TextStyle.Header3,
 			'"':			 I.TextStyle.Quote,
-			//'```([a-z]+)?':	 I.TextStyle.Code,
 			'\\>':			 I.TextStyle.Toggle,
 			'1\\.':			 I.TextStyle.Numbered,
 		};
