@@ -248,8 +248,9 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		const { param } = this.props;
 		const { data } = param;
-		const { filter } = data;
+		const { filter, canEdit } = data;
 		const types = this.getTypes();
+		const value = Relation.getArrayValue(data.value);
 
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
@@ -267,12 +268,19 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			this.setState({ isLoading: true });
 		};
 
+		let limit = J.Constant.limit.menuRecords;
+
+		if (!canEdit) {
+			limit = 0;
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value });
+		};
+
 		U.Data.search({
 			filters,
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: J.Constant.limit.menuRecords,
+			limit,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
