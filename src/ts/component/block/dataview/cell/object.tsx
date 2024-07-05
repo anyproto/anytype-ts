@@ -38,7 +38,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 	render () {
 		const { isEditing } = this.state;
-		const { id, recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
+		const { id, recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, canEdit } = this.props;
 		const record = getRecord(recordId);
 		const cn = [ 'wrap' ];
 
@@ -81,7 +81,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 										iconSize={iconSize} 
 										relation={relation} 
 										elementMapper={elementMapper}
-										canEdit={true}
+										canEdit={canEdit}
 										onClick={(e, item) => this.onClick(e, item)}
 										onRemove={(e: any, id: string) => this.onValueRemove(id)}
 									/>
@@ -122,7 +122,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 								iconSize={iconSize} 
 								relation={relation} 
 								elementMapper={elementMapper} 
-								canEdit={!readonly}
+								canEdit={canEdit}
 								onClick={e => this.onClick(e, item)}
 							/>
 						))}
@@ -181,21 +181,6 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	onClick (e: any, item: any) {
-		/*
-		const item = this.getItems().find(item => item.id == id);
-		if (!item) {
-			return;
-		};
-
-		// Template type is disabled for opening
-		const templateType = S.Record.getTemplateType();
-		const canOpen = this.props.canOpen && (item.id != templateType.id);
-
-		if (canOpen) {
-			e.stopPropagation();
-			U.Object.openConfig(item);
-		};
-		*/
 	};
 
 	placeholderCheck () {

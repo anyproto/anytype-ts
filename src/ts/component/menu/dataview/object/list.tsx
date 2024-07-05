@@ -300,16 +300,19 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd } = data;
+		const { canAdd, canEdit } = data;
 		const value = Relation.getArrayValue(data.value);
-		const ret = U.Common.objectCopy(this.items).filter(it => !value.includes(it.id));
 		const typeNames = this.getTypeNames();
 
+		let ret = U.Common.objectCopy(this.items);
+		if (canEdit) {
+			ret = ret.filter(it => !value.includes(it.id));
+		};
 		if (typeNames) {
 			ret.unshift({ isSection: true, name: typeNames });
 		};
 
-		if (data.filter && canAdd) {
+		if (data.filter && canAdd && canEdit) {
 			if (ret.length || typeNames) {
 				ret.push({ isDiv: true });
 			};

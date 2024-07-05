@@ -21,7 +21,7 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { value, placeholder } = data;
+		const { value, placeholder, canEdit } = data;
 		const relation = data.relation.get();
 
 		return (
@@ -29,6 +29,7 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 				ref={node => this.node = node}
 				id="input"
 				placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
+				readonly={!canEdit}
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}
 				onInput={this.onInput}
