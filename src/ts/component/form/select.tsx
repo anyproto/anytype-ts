@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, S, J, Relation } from 'Lib';
+import { I, S, Relation } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
 
 interface Props {
