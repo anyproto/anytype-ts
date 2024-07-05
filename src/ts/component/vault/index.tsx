@@ -111,9 +111,7 @@ const Vault = observer(class Vault extends React.Component {
 					<div className="side bottom">
 						<ItemIcon id="settings" name={translate('commonSettings')} />
 					</div>
-
-					<div id="line" className="line" />
-				</div>	
+				</div>
             </div>
 		);
     };
