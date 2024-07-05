@@ -38,7 +38,7 @@ export default {
 
 	default: {
 		interfaceLang:	 'en-US',
-		codeLang:		 'javascript',
+		codeLang:		 'plain',
 		typeKey:		 'ot-note',
 		pinTime:		 600,
 	},

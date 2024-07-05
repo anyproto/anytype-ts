@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, S, Relation } from 'Lib';
+import { I, S, J, Relation } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
 
 interface Props {
@@ -68,8 +68,9 @@ class Select extends React.Component<Props, State> {
 			};
 		});
 
-		if (!current.length && options.length) {
-			current.push(options[0]);
+		if (!current.length) {
+			const { codeLang } = J.Constant.default;
+			current.push({ id: codeLang, name: J.Lang.code[codeLang] });
 		};
 
 		let onClick = null;
