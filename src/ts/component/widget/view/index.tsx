@@ -35,7 +35,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	render (): React.ReactNode {
-		const { parent, block, isSystemTarget, canCreate, onCreate } = this.props;
+		const { parent, block, isSystemTarget, onCreate } = this.props;
 		const { viewId, limit } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
@@ -47,6 +47,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const viewType = this.getViewType();
 		const cn = [ 'innerWrap' ];
 		const showEmpty = ![ I.ViewType.Calendar, I.ViewType.Board ].includes(viewType);
+		const canCreate = this.props.canCreate && this.isAllowedObject();
 		const props = {
 			...this.props,
 			ref: ref => this.refChild = ref,
@@ -86,8 +87,8 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		if (!isLoading && !length && showEmpty) {
 			content = (
 				<div className="emptyWrap">
-					<Label className="empty" text={canCreate && this.isAllowedObject() ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
-					{canCreate && this.isAllowedObject() ? <Button text={translate('commonCreateObject')} color="blank" className="c28" onClick={onCreate} /> : ''}
+					<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
+					{canCreate ? <Button text={translate('commonCreateObject')} color="blank" className="c28" onClick={onCreate} /> : ''}
 				</div>
 			);
 		} else {

@@ -79,14 +79,19 @@ class Sidebar {
 		this.setStyle({ width });
 		this.set({ isClosed: false });
 		this.resizePage(width, true);
-
 		this.removeAnimation(() => $(window).trigger('resize'));
 	};
 
 	toggleOpenClose () {
-		if (!this.isAnimating) {
-			this.data.isClosed ? this.open(this.data.width) : this.close();
+		if (this.isAnimating) {
+			return;
 		};
+		
+		const { width } = this.data;
+		const body = this.obj.find('#sidebarBody');
+
+		body.css({ width });
+		this.data.isClosed ? this.open(width) : this.close();
 	};
 
 	setWidth (w: number): void {
@@ -104,6 +109,7 @@ class Sidebar {
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			this.obj.removeClass('anim');
+			this.obj.find('#sidebarBody').css({ width: '' });
 			this.setAnimating(false);
 
 			if (callBack) {
@@ -122,7 +128,7 @@ class Sidebar {
 		};
 
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = this.vault.hasClass('isExpanded') ? 0 : J.Size.vault.collapsed;
+		const vw = J.Size.vault.width;
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');

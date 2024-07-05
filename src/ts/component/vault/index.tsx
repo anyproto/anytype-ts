@@ -1,9 +1,8 @@
 import * as React from 'react';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { IconObject, ObjectName } from 'Component';
+import { IconObject } from 'Component';
 import { I, U, S, keyboard, translate, analytics, Storage, sidebar, Preview } from 'Lib';
 
 const Vault = observer(class Vault extends React.Component {
@@ -52,13 +51,6 @@ const Vault = observer(class Vault extends React.Component {
 						<div className="border" />
 						<IconObject object={item} size={48} forceLetter={true} />
 					</div>
-					<div className="coverWrap">
-						<IconObject object={item} size={360} forceLetter={true} />
-					</div>
-					<div className="infoWrap">
-						<ObjectName object={item} />
-						<div className="descr">{descr}</div>
-					</div>
 				</div>
 			);
 		});
@@ -74,11 +66,6 @@ const Vault = observer(class Vault extends React.Component {
 				<div className="iconWrap">
 					<div className="border" />
 				</div>
-				{item.withName ? (
-					<div className="infoWrap">
-						<div className="name">{item.name}</div>
-					</div>
-				) : ''}
 			</div>
 		);
 
@@ -89,11 +76,9 @@ const Vault = observer(class Vault extends React.Component {
 				{items.map((item, i) => {
 					item.key = `item-space-${item.id}`;
 
-					const withName = [ 'void', 'gallery' ].includes(item.id);
-
 					let content = null;
 					if ([ 'void', 'gallery', 'add' ].includes(item.id)) {
-						content = <ItemIconSortable {...item} index={i} withName={withName} />;
+						content = <ItemIconSortable {...item} index={i} />;
 					} else {
 						content = <Item {...item} index={i} />;
 					};
@@ -109,12 +94,7 @@ const Vault = observer(class Vault extends React.Component {
 				id="vault"
 				className="vault"
             >
-				<div className="head">
-					{/*
-					<Icon className="settings" />
-					<Icon className="close" onClick={this.onToggle} />
-					*/}
-				</div>
+				<div className="head" />
 				<div className="body">
 					<List 
 						axis="y" 
@@ -129,11 +109,9 @@ const Vault = observer(class Vault extends React.Component {
 					/>
 
 					<div className="side bottom">
-						<ItemIcon {...{ id: 'settings', name: translate('commonSettings') }} />
+						<ItemIcon id="settings" name={translate('commonSettings')} />
 					</div>
-
-					<div id="line" className="line" />
-				</div>	
+				</div>
             </div>
 		);
     };
@@ -167,8 +145,6 @@ const Vault = observer(class Vault extends React.Component {
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 
-		this.setActive(item.id);
-
 		switch (item.id) {
 			case 'add':
 				this.onAdd();
@@ -187,7 +163,7 @@ const Vault = observer(class Vault extends React.Component {
 				break;
 
 			default:
-				U.Router.switchSpace(item.targetSpaceId, '', () => this.unsetLine());
+				U.Router.switchSpace(item.targetSpaceId);
 				analytics.event('SwitchSpace');
 				break;
 		};
@@ -283,61 +259,11 @@ const Vault = observer(class Vault extends React.Component {
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
 			offsetX: 66,
-		})
-		
-		window.clearTimeout(this.timeoutHover);
-		this.setLine(item.id);
+		});
 	};
 
 	onMouseLeave () {
 		Preview.tooltipHide();
-
-		window.clearTimeout(this.timeoutHover);
-		this.timeoutHover = window.setTimeout(() => this.unsetLine(), 40);	
-	};
-
-	setLine (id: string) {
-		const node = $(this.node);
-		const line = node.find('#line');
-		const el = node.find(`#item-${id}`);
-		if (!el.length) {
-			return;
-		};
-
-		const top = el.position().top;
-
-		if (this.id) {
-			line.css({ transform: `translate3d(0px,${top}px,0px)`});
-		} else {
-			line.removeClass('anim');
-			line.css({ transform: `translate3d(-100%,${top}px,0px)`});
-
-			raf(() => {
-				line.addClass('anim');
-				line.css({ transform: `translate3d(0px,${top}px,0px)`});
-			});
-		};
-
-		this.id = id;
-	};
-
-	unsetLine () {
-		if (!this.id) {
-			return;
-		};
-
-		const node = $(this.node);
-		const line = node.find('#line');
-		const el = node.find(`#item-${this.id}`);
-
-		if (!el.length) {
-			return;
-		};
-
-		line.addClass('anim');
-		line.css({ transform: `translate3d(-100%,${el.position().top}px,0px)`});
-
-		this.id = '';
 	};
 
 	resize () {

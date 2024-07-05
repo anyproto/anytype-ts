@@ -68,9 +68,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.unbind();
 		win.on('updateGraphSettings.graph', () => this.updateSettings());
 		win.on('updateGraphRoot.graph', (e: any, data: any) => this.setRootId(data.id));
-		win.on('updateTheme.graph', () => this.send('updateTheme', { theme: S.Common.getThemeClass() }));
 		win.on('removeGraphNode.graph', (e: any, data: any) => this.send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
 		win.on(`keydown.graph`, e => this.onKeyDown(e));
+		win.on('updateTheme.graph', () => {
+			const theme = S.Common.getThemeClass();
+			this.send('updateTheme', { theme, colors: J.Theme[theme].graph || {} });
+		});
 	};
 
 	unbind () {
