@@ -133,7 +133,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						<Select 
 							id={'lang-' + id} 
 							arrowClassName="light" 
-							value={fields.lang} 
+							value={fields.lang || J.Constant.default.codeLang} 
 							ref={ref => this.refLang = ref} 
 							options={options} 
 							onChange={this.onLang}

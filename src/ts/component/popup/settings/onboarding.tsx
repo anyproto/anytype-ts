@@ -37,6 +37,8 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 			return it;
 		});
 
+		console.log(JSON.stringify(networkModes));
+
 		return (
 			<div className="mainSides">
 				<div id="sideRight" className="side right tabOnboarding">

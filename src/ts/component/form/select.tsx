@@ -60,7 +60,7 @@ class Select extends React.Component<Props, State> {
 		if (readonly) {
 			cn.push('isReadonly');
 		};
-		
+
 		value.forEach((id: string) => {
 			const option = options.find(item => item.id == id);
 			if (option) {
@@ -68,9 +68,8 @@ class Select extends React.Component<Props, State> {
 			};
 		});
 
-		if (!current.length) {
-			const { codeLang } = J.Constant.default;
-			current.push({ id: codeLang, name: J.Lang.code[codeLang] });
+		if (!current.length && options.length) {
+			current.push(options[0]);
 		};
 
 		let onClick = null;
