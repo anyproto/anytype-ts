@@ -12,7 +12,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
-		const { value, isEmpty } = data;
+		const { value, isEmpty, canEdit } = data;
 		const items = this.getData();
 		const { m, y } = U.Date.getCalendarDateParam(value);
 		const todayParam = U.Date.getCalendarDateParam(this.originalValue);
@@ -105,18 +105,22 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 						);
 					})}
 				</div>
-				<div className="line" />
-				<div className="foot">
-					<div className="sides">
-						<div className="side left">
-							<div className="btn" onClick={() => this.setValue(U.Date.mergeTimeWithDate(now, value), true, true)}>{translate('commonToday')}</div>
-							<div className="btn" onClick={() => this.setValue(U.Date.mergeTimeWithDate(tomorrow, value), true, true)}>{translate('commonTomorrow')}</div>
+				{canEdit ? (
+					<React.Fragment>
+						<div className="line" />
+						<div className="foot">
+							<div className="sides">
+								<div className="side left">
+									<div className="btn" onClick={() => this.setValue(U.Date.mergeTimeWithDate(now, value), true, true)}>{translate('commonToday')}</div>
+									<div className="btn" onClick={() => this.setValue(U.Date.mergeTimeWithDate(tomorrow, value), true, true)}>{translate('commonTomorrow')}</div>
+								</div>
+								<div className="side right">
+									<div className="btn clear" onClick={() => this.setValue(null, true, true)}>{translate('commonClear')}</div>
+								</div>
+							</div>
 						</div>
-						<div className="side right">
-							<div className="btn clear" onClick={() => this.setValue(null, true, true)}>{translate('commonClear')}</div>
-						</div>
-					</div>
-				</div>
+					</React.Fragment>
+				) : ''}
 			</div>
 		);
 	};
@@ -145,7 +149,11 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu>
 	setValue (value: number, save: boolean, close: boolean) {
 		const { param, id } = this.props;
 		const { data } = param;
-		const { onChange } = data;
+		const { onChange, canEdit } = data;
+
+		if (!canEdit) {
+			return;
+		};
 
 		S.Menu.updateData(id, { value });
 

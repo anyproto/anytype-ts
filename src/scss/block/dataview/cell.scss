@@ -42,7 +42,7 @@
 	.iconObject { margin-right: 8px; vertical-align: top; flex-shrink: 0; cursor: default; }
 	.icon.clear { display: none; }
 
-	.name { display: inline-block; vertical-align: top; }
+	.name { display: inline-block; vertical-align: top; user-select: text !important; }
 	.empty { vertical-align: top; display: none; }
 
 	.more { display: inline-block; vertical-align: middle; @include text-small; color: var(--color-text-secondary); }

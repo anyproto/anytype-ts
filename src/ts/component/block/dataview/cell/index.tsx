@@ -173,7 +173,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, recordId, getRecord, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, cellPosition, placeholder, isInline } = this.props;
+		const { rootId, subId, recordId, getRecord, block, maxWidth, menuClassName, menuClassNameWrap, idPrefix, cellPosition, placeholder, isInline } = this.props;
 		const record = getRecord(recordId);
 		const relation = this.getRelation();
 
@@ -189,6 +189,10 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, value) + value);
 				return;
 			};
+
+			if (relation.format == I.RelationType.Checkbox) {
+				return;
+			};
 		};
 
 		const { config } = S.Common;
@@ -196,6 +200,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		const win = $(window);
 		const cell = $(`#${cellId}`);
 		const className = [];
+		const pageContainer = $(this.props.pageContainer);
 
 		if (menuClassName) {
 			className.push(menuClassName);
@@ -231,11 +236,13 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				this.ref.onClick();
 			};
 
+			keyboard.disableSelection(true);
 			win.trigger('resize');
 		};
 
 		const setOff = () => {
 			keyboard.disableBlur(false);
+			keyboard.disableSelection(false);
 
 			if (this.ref && this.ref.onBlur) {
 				this.ref.onBlur();
@@ -439,6 +446,16 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			return;
 		};
 
+		const bindContainerClick = () => {
+			pageContainer.off(`mousedown.cell${cellId}`).on(`mousedown.cell${cellId}`, (e: any) => { 
+				if (!$(e.target).parents(`#${cellId}`).length) {
+					S.Menu.closeAll(J.Menu.cell);
+					setOff();
+				};
+				pageContainer.off(`mousedown.cell${cellId}`);
+			});
+		};
+
 		if (menuId) {
 			if (S.Common.cellId != cellId) {
 				S.Common.cellId = cellId;
@@ -452,11 +469,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					setOn();
 				};
 
-				$(pageContainer).off('mousedown.cell').on('mousedown.cell', (e: any) => { 
-					if (!$(e.target).parents(`#${cellId}`).length) {
-						S.Menu.closeAll(J.Menu.cell); 
-					};
-				});
+				bindContainerClick();
 
 				if (!config.debug.ui) {
 					win.off('blur.cell').on('blur.cell', () => S.Menu.closeAll(J.Menu.cell));
@@ -469,6 +482,10 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			};
 		} else {
 			setOn();
+
+			if (!canEdit && [ I.RelationType.Number ].includes(relation.format)) {
+				bindContainerClick();
+			};
 		};
 	};
 

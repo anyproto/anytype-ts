@@ -27,21 +27,23 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, canAdd, noFilter } = data;
+		const { filter, canAdd, canEdit, noFilter } = data;
 		const relation = data.relation.get();
 		const value = data.value || [];
 		const items = this.getItems();
 
-		let placeholder;
-		let empty;
+		let placeholder = '';
+		let empty = '';
 
 		if (canAdd) {
 			placeholder = translate('menuDataviewOptionListFilterOrCreateOptions');
 			empty = translate('menuDataviewOptionListTypeToCreate');
-		}
-		else {
+		} else {
 			placeholder = translate('menuDataviewOptionListFilterOptions');
 			empty = translate('menuDataviewOptionListTypeToSearch');
+		};
+
+		if (!canEdit) {
 		};
 
 		if (!this.cache) {
