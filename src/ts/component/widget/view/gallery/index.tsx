@@ -76,6 +76,12 @@ const WidgetViewGallery = observer(class WidgetViewGallery extends React.Compone
 
 	componentDidUpdate () {
 		this.maxPages = this.getMaxPages();	
+
+		if (this.page > this.maxPages) {
+			this.page = this.maxPages;
+			this.setPage(false);
+		};
+
 		this.resize();
 		this.checkArrows();
 	};
