@@ -194,10 +194,8 @@ const Vault = observer(class Vault extends React.Component {
 		U.Menu.spaceContext(item, {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			recalcRect: () => { 
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			},
+			element: `#vault #item-${item.id}`,
+			vertical: I.MenuDirection.Center,
 			route: analytics.route.navigation,
 		});
 	};

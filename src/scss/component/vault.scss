@@ -25,7 +25,7 @@
 			transition: background-color 0.2s $easeInQuint;
 		}
 	}
-	.item:hover { border-color: #2b2b2b; border-radius: 8px; }
+	.item:hover, .item.hover { border-color: #2b2b2b; border-radius: 8px; }
 	.item.isActive { border-color: #fff; border-radius: 8px; }
 
 	.item.void {
