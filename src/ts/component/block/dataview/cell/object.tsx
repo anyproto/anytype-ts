@@ -38,7 +38,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 	render () {
 		const { isEditing } = this.state;
-		const { id, recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, canEdit } = this.props;
+		const { id, recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, canEdit, placeholder } = this.props;
 		const record = getRecord(recordId);
 		const cn = [ 'wrap' ];
 
@@ -48,7 +48,6 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 		let value = this.getItems();
 
-		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		const length = value.length;
 
 		if (arrayLimit) {
@@ -71,7 +70,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 									key={i}
 									id={`item-${item.id}`}
 									className="itemWrap isDraggable"
-									draggable={true}
+									draggable={canEdit}
 									{...U.Common.dataProps({ id: item.id, index: i })}
 								>
 									<ItemObject 
@@ -90,22 +89,24 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 						</DragBox>
 					</span>
 					
-					<span 
-						id="entry" 
-						contentEditable={true}
-						suppressContentEditableWarning={true} 
-						onFocus={this.onFocus}
-						onBlur={this.onBlur}
-						onInput={this.onInput}
-						onKeyPress={this.onKeyPress}
-						onKeyDown={this.onKeyDown}
-						onKeyUp={this.onKeyUp}
-						onCompositionStart={() => keyboard.setComposition(true)}
-						onCompositionEnd={() => keyboard.setComposition(false)}
-						onClick={e => e.stopPropagation()}
-					>
-						{'\n'}
-					</span>
+					{canEdit ? (
+						<span 
+							id="entry" 
+							contentEditable={true}
+							suppressContentEditableWarning={true} 
+							onFocus={this.onFocus}
+							onBlur={this.onBlur}
+							onInput={this.onInput}
+							onKeyPress={this.onKeyPress}
+							onKeyDown={this.onKeyDown}
+							onKeyUp={this.onKeyUp}
+							onCompositionStart={() => keyboard.setComposition(true)}
+							onCompositionEnd={() => keyboard.setComposition(false)}
+							onClick={e => e.stopPropagation()}
+						>
+							{'\n'}
+						</span>
+					) : ''}
 				</div>
 			);
 		} else {

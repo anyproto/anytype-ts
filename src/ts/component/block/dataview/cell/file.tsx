@@ -65,7 +65,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
 					</span>
 				) : (
-					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>
+					<div className="empty">{placeholder}</div>
 				)}
 			</div>
 		);

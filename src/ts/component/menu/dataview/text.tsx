@@ -22,13 +22,12 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { value, placeholder, canEdit } = data;
-		const relation = data.relation.get();
 
 		return (
 			<Editable
 				ref={node => this.node = node}
 				id="input"
-				placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
+				placeholder={placeholder}
 				readonly={!canEdit}
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}

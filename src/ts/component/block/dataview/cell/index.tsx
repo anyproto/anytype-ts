@@ -63,6 +63,23 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		];
 
 		let CellComponent: any = null;
+		let placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`); 
+
+		if (!canEdit) {
+			placeholder = translate(`placeholderCellCommon`);
+		};
+
+		const props = {
+			...this.props,
+			ref: ref => this.ref = ref,
+			id,
+			key: id,
+			canEdit,
+			relation,
+			placeholder,
+			onChange: this.onChange,
+		};
+
 		switch (relation.format) {
 			default:
 			case I.RelationType.ShortText:
@@ -105,15 +122,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
-				<CellComponent 
-					ref={ref => this.ref = ref} 
-					{...this.props} 
-					id={id} 
-					key={id}
-					canEdit={canEdit}
-					relation={relation}
-					onChange={this.onChange} 
-				/>
+				<CellComponent {...props} />
 			</div>
 		);
 	};
