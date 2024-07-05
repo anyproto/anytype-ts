@@ -23,7 +23,9 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	};
 
 	render () {
-		const { position, getId, setHover } = this.props;
+		const { param, position, getId, setHover } = this.props;
+		const { data } = param;
+		const { canEdit } = data;
 		const items = this.getItems();
 		
         const Handle = SortableHandle(() => (
@@ -99,17 +101,19 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 					/>
 				) : <EmptySearch text={translate('popupSearchEmpty')} />}
 
-				<div className="bottom">
-					<div className="line" />
-					<MenuItemVertical 
-						id="add" 
-						icon="plus" 
-						name={translate('commonAdd')} 
-						onClick={this.onAdd}
-						onMouseEnter={() => setHover({ id: 'add' })}
-						onMouseLeave={() => setHover()}
-					/>
-				</div>
+				{canEdit ? (
+					<div className="bottom">
+						<div className="line" />
+						<MenuItemVertical 
+							id="add" 
+							icon="plus" 
+							name={translate('commonAdd')} 
+							onClick={this.onAdd}
+							onMouseEnter={() => setHover({ id: 'add' })}
+							onMouseLeave={() => setHover()}
+						/>
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -201,9 +205,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { onChange } = data;
 
-		onChange(U.Common.arrayUnique(value), () => {
-			S.Menu.updateData(id, { value });
-		});
+		onChange(U.Common.arrayUnique(value), () => S.Menu.updateData(id, { value }));
 	};
 
 	onMore (e: any, item: any) {
@@ -212,8 +214,20 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { onChange } = data;
 		const itemEl = $(`#${getId()} #item-${item.id}`);
 		const element = `#${getId()} #item-${item.id} .icon.more`;
+		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
 		let value = Relation.getArrayValue(data.value);
+		let options: any[] = [
+			{ id: 'open', icon: 'expand', name: translate('commonOpen') },
+			{ id: 'download', icon: 'download', name: translate('commonDownload') },
+		];
+
+		if (isAllowed) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'remove', icon: 'remove', name: translate('commonDelete') },
+			]);
+		};
 
 		S.Menu.open('select', { 
 			element,
@@ -229,12 +243,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			},
 			data: {
 				value: '',
-				options: [
-					{ id: 'open', icon: 'expand', name: translate('commonOpen') },
-					{ id: 'download', icon: 'download', name: translate('commonDownload') },
-					{ isDiv: true },
-					{ id: 'remove', icon: 'remove', name: translate('commonDelete') },
-				],
+				options,
 				onSelect: (event: any, el: any) => {
 
 					switch (el.id) {
