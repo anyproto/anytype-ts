@@ -230,7 +230,7 @@ const Vault = observer(class Vault extends React.Component {
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
 
-		let ids = U.Menu.getVaultItems().map(it => it.id)
+		let ids = U.Menu.getVaultItems().map(it => it.id);
 		ids = arrayMove(ids, oldIndex, newIndex);
 		Storage.set('spaceOrder', ids, true);
 
