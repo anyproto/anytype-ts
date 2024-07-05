@@ -48,6 +48,7 @@
 
 			.item {
 				.inner { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; height: 28px; }
+				.iconObject { flex-shrink: 0; }
 				.name { @include text-overflow-nw; flex-grow: 1; }
 
 				.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
