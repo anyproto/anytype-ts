@@ -18,7 +18,7 @@
 		.side.bottom { flex-shrink: 0; align-items: flex-end; }
 	}
 
-	.item { transition: border 0.2s $easeInQuint; border: 4px solid rgba(0,0,0,0); overflow: hidden; border-radius: 2px; }
+	.item { transition: border 0.2s $easeInQuint; border: 4px solid rgba(0,0,0,0); overflow: hidden; border-radius: 2px; flex-shrink: 0; }
 	.item {
 		.iconWrap { 
 			width: 48px; height: 48px; border-radius: 2px; background-color: #2b2b2b; background-repeat: no-repeat; background-position: center; 
