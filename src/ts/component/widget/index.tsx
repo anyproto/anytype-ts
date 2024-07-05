@@ -526,6 +526,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		icon.removeClass('isClosed');
 		wrapper.css({ height: minHeight });
 
+		if (this.ref && this.ref.onOpen) {
+			this.ref.onOpen();
+		};
+
 		raf(() => { 
 			wrapper.css({ height }); 
 			innerWrap.css({ opacity: 1 });

@@ -137,6 +137,10 @@ const WidgetViewGallery = observer(class WidgetViewGallery extends React.Compone
 		U.Object.openEvent(e, { ...object, _routeParam_: { viewId: parent.content.viewId } });
 	};
 
+	onOpen () {
+		this.resize();
+	};
+
 	resize () {
 		raf(() => {
 			if (!this._isMounted) {

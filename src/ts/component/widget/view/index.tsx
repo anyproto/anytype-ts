@@ -367,6 +367,12 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		return object.layout == I.ObjectLayout.Collection;
 	};
 
+	onOpen () {
+		if (this.refChild && this.refChild.onOpen) {
+			this.refChild.onOpen();
+		};
+	};
+
 });
 
 export default WidgetView;
