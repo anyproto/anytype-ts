@@ -144,6 +144,8 @@ class UtilRouter {
 				return;
 			};
 
+			S.Common.spaceSet(id);
+
 			this.go('/main/blank', { 
 				replace: true, 
 				animate: true,
