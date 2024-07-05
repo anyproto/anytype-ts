@@ -386,6 +386,10 @@ const Cell = observer(class Cell extends React.Component<Props> {
 					break;
 				};
 
+				if (!value) {
+					break;
+				};
+
 				const options = [
 					{ id: 'go', icon: 'browse', name: translate(`menuDataviewUrlActionGo${relation.format}`) },
 					{ id: 'copy', icon: 'copy', name: translate('commonCopyLink') },
@@ -483,7 +487,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		} else {
 			setOn();
 
-			if (!canEdit && [ I.RelationType.Number ].includes(relation.format)) {
+			if (!canEdit && Relation.isText(relation.format)) {
 				bindContainerClick();
 			};
 		};

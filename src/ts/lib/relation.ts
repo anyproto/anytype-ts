@@ -481,6 +481,10 @@ class Relation {
 		return [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(type);
 	};
 
+	public isText (type: I.RelationType) {
+		return this.isUrl(type) || [ I.RelationType.Number, I.RelationType.ShortText ].includes(type);
+	};
+
 	public getUrlScheme (type: I.RelationType, value: string): string {
 		value = String(value || '');
 

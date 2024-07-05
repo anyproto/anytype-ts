@@ -44,6 +44,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		};
 
 		if (!canEdit) {
+			empty = translate('placeholderCellCommon');
 		};
 
 		if (!this.cache) {
