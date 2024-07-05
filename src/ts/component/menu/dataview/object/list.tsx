@@ -366,7 +366,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	onClick (e: any, item: any) {
 		const { param, close, position } = this.props;
 		const { data } = param;
-		const { onChange, maxCount, filter, cellRef } = data;
+		const { onChange, maxCount, filter, cellRef, canEdit } = data;
 		const relation = data.relation.get();
 
 		e.preventDefault();
@@ -374,6 +374,11 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		if (!item || !relation) {
 			close();
+			return;
+		};
+
+		if (!canEdit) {
+			U.Object.openConfig(item);
 			return;
 		};
 

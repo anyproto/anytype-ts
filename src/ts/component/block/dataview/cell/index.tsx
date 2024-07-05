@@ -178,8 +178,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		if (!canEdit) {
 			if (Relation.isUrl(relation.format) && value) {
 				Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, value) + value);
+				return;
 			};
-			return;
 		};
 
 		const { config } = S.Common;
@@ -260,6 +260,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				relation: observable.box(relation),
 				record,
 				placeholder,
+				canEdit,
 				onChange: (value: any, callBack?: (message: any) => void) => {
 					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);

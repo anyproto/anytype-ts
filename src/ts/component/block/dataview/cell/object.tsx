@@ -82,7 +82,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 										relation={relation} 
 										elementMapper={elementMapper}
 										canEdit={true}
-										onClick={(e, item) => this.onClick(e, item.id)}
+										onClick={(e, item) => this.onClick(e, item)}
 										onRemove={(e: any, id: string) => this.onValueRemove(id)}
 									/>
 								</span>
@@ -123,7 +123,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 								relation={relation} 
 								elementMapper={elementMapper} 
 								canEdit={!readonly}
-								onClick={e => this.onClick(e, item.id)}
+								onClick={e => this.onClick(e, item)}
 							/>
 						))}
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
@@ -180,7 +180,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 	};
 
-	onClick (e: any, id: string) {
+	onClick (e: any, item: any) {
+		/*
 		const item = this.getItems().find(item => item.id == id);
 		if (!item) {
 			return;
@@ -194,6 +195,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			e.stopPropagation();
 			U.Object.openConfig(item);
 		};
+		*/
 	};
 
 	placeholderCheck () {
