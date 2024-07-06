@@ -1,22 +1,28 @@
 {
-    "folders": [
-        {
-            "path": "."
-        }
-    ],
-    "extensions": {
-        "recommendations": [
-            "aaron-bond.better-comments",
-            "github.copilot",
-            "eamodio.gitlens",
-            "timonwong.shellcheck",
-            "dbaeumer.vscode-eslint"
-        ]
-    },
-    "settings": {
-        "editor.formatOnSave": false,
-        "editor.formatOnPaste": false,
-        "editor.formatOnType": false,
-        "debug.inlineValues": "on"
-    }
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"extensions": {
+		"recommendations": [
+			"aaron-bond.better-comments",
+			"github.copilot",
+			"eamodio.gitlens",
+			"timonwong.shellcheck",
+			"dbaeumer.vscode-eslint",
+			"esbenp.prettier-vscode"
+		]
+	},
+	"settings": {
+		"editor.formatOnSave": true,
+		"editor.formatOnPaste": false,
+		"editor.formatOnType": false,
+		"debug.inlineValues": "on",
+		"editor.codeActionsOnSave": {
+			"source.fixAll": "always"
+		},
+		"eslint.enable": true,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	}
 }
