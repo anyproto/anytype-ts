@@ -248,7 +248,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			limit,
 			filters: this.getFilters(),
 			collectionId: (isCollection ? object.id : ''),
-			keys: J.Relation.sidebar.concat(view.groupRelationKey).concat(J.Relation.cover),
+			keys: J.Relation.sidebar.concat([ view.groupRelationKey, view.coverRelationKey ]).concat(J.Relation.cover),
 		});
 	};
 
@@ -365,6 +365,12 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	isCollection () {
 		const object = this.getObject();
 		return object.layout == I.ObjectLayout.Collection;
+	};
+
+	onOpen () {
+		if (this.refChild && this.refChild.onOpen) {
+			this.refChild.onOpen();
+		};
 	};
 
 });

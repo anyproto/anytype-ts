@@ -12,13 +12,13 @@
 		.clickable:hover::before { opacity: 1; }
 
 		.clickable {
-			.icon { width: 24px; height: 24px; background-size: 20px; flex-shrink: 0px; transition: $transitionAllCommon; border-radius: 4px; }
+			.icon { width: 24px; height: 24px; background-size: 20px; flex-shrink: 0; transition: $transitionAllCommon; border-radius: 4px; }
 
 			.icon.arrow {  background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); }
 			.icon.plus { background-image: url('~img/icon/widget/plus.svg'); opacity: 0; }
 			.icon.plus:hover { background-color: var(--color-shape-highlight-medium); }
 
-			.cellContent { flex-grow: 1; }
+			.cellContent { flex-grow: 1; width: calc(100% - 24px); }
 			.cellContent {
 				.empty { display: block; color: var(--color-text-secondary); }
 			}
@@ -30,6 +30,7 @@
 		}
 		.clickable:hover {
 			.icon.plus { opacity: 1; }
+			.cellContent { width: calc(100% - 58px); }
 		}
 
 		.clickable.isExpanded {
@@ -47,6 +48,7 @@
 
 			.item {
 				.inner { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; height: 28px; }
+				.iconObject { flex-shrink: 0; }
 				.name { @include text-overflow-nw; flex-grow: 1; }
 
 				.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }

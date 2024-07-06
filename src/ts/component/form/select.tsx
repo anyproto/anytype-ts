@@ -60,7 +60,7 @@ class Select extends React.Component<Props, State> {
 		if (readonly) {
 			cn.push('isReadonly');
 		};
-		
+
 		value.forEach((id: string) => {
 			const option = options.find(item => item.id == id);
 			if (option) {

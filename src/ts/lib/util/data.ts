@@ -274,7 +274,7 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
 				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
+					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
 				ignoreWorkspace: true,
 				ignoreHidden: false,

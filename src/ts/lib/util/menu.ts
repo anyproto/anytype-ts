@@ -181,8 +181,7 @@ class UtilMenu {
 	getActions (param: any) {
 		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject } = param;
 		const cmd = keyboard.cmdSymbol();
-
-		let items: any[] = [
+		const items: any[] = [
 			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate'), caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },

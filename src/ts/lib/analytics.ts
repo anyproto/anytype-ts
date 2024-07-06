@@ -460,7 +460,7 @@ class Analytics {
 			};
 
 			case 'ClickSyncStatus': {
-				data.status = I.SyncStatusSpace[data.status]
+				data.status = I.SyncStatusSpace[data.status];
 				break;
 			};
 
