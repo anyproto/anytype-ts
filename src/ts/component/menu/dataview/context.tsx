@@ -83,6 +83,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { subId, objectIds, getObject, isCollection } = data;
 		const length = objectIds.length;
 		const canWrite = U.Space.canMyParticipantWrite();
+		const exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
@@ -90,7 +91,6 @@ class MenuContext extends React.Component<I.Menu> {
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
-		let exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
 		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
 		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuDataviewContextEditRelations') };
 		let archive = null;
@@ -106,7 +106,6 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedOpen = data.allowedOpen;
 		let allowedCollection = true;
 		let allowedUnlink = isCollection;
-		let allowedExport = true;
 		let allowedWidget = true;
 		let allowedRelation = true;
 
@@ -186,9 +185,9 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedLink)		 linkTo = null;
 		if (!allowedOpen)		 open = null;
 		if (!allowedUnlink)		 unlink = null;
-		if (!allowedExport)		 exportObject = null;
 		if (!allowedWidget)		 createWidget = null;
 		if (!allowedRelation)	 relation = null;
+		if (!allowedCollection)	 addCollection = null;
 
 		let sections = [
 			{ children: [ createWidget, open, fav, linkTo, addCollection, exportObject, relation ] },

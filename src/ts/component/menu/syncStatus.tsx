@@ -195,7 +195,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					};
 				}
 			}
-		})
+		});
 	};
 
 	onPanelIconClick (e, item) {
@@ -298,12 +298,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	getIconNetwork (syncStatus) {
 		const { network, error, syncingCounter, status } = syncStatus;
+		const buttons: any[] = [];
 
 		let id = '';
 		let title = '';
 		let className = '';
 		let message = '';
-		let buttons: any[] = [];
 		let isConnected = false;
 		let isError = false;
 

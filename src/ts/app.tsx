@@ -140,7 +140,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 
 					<div id="vaultContentContainer">
 						<Sidebar key="sidebar" {...this.props} />
-						<Navigation  ref={ref => S.Common.refSet('navigation', ref)} key="navigation" {...this.props} />
+						<Navigation ref={ref => S.Common.refSet('navigation', ref)} key="navigation" {...this.props} />
 						<Page {...this.props} />
 					</div>
 				</DragProvider>

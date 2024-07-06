@@ -735,7 +735,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (U.Object.isSetLayout(object.layout)) {
 			const rootId = this.getRootId();
 			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id);
-			const type = S.Record.getTypeById(typeId)
+			const type = S.Record.getTypeById(typeId);
 			const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Participant);
 
 			if (type && layouts.includes(type.recommendedLayout)) {

@@ -1078,7 +1078,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			if (d > 0) {
 				for (let i = 0; i < this.marks.length; ++i) {
-					let mark = this.marks[i];
+					const mark = this.marks[i];
 
 					if (Mark.needsBreak(mark.type) && (mark.range.to == range.to)) {
 						const adjusted = Mark.adjust([ mark ], mark.range.from, -d);
