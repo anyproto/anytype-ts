@@ -72,7 +72,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
 					const check = Relation.checkRelationValue(relation, value);
 
-					if (!check && !canEdit) {
+					if (!check) {
 						return null;
 					};
 
@@ -665,12 +665,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		const { isPopup, rootId, readonly } = this.props;
+		const { isPopup, rootId } = this.props;
 		const storeId = this.getStoreId();
 		const object = S.Detail.get(rootId, storeId, [ relationKey ]);
 		const relation = S.Record.getRelationByKey(relationKey);
 
-		if (readonly || !relation || relation.isReadonlyValue) {
+		if (!relation) {
 			return;
 		};
 
@@ -717,7 +717,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					canAdd: true,
 					maxCount: relation.maxCount,
 				};
-
 				break;
 			};
 
@@ -751,46 +750,43 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				C.ObjectListSetDetails([ rootId ], details);
 				break;
 			};
-
-			default: {
-				const param: any = {
-					element: '#header',
-					horizontal: I.MenuDirection.Right,
-					noFlipY: true,
-					noAnimation: true,
-					subIds: J.Menu.cell,
-					onOpen: (component: any) => {
-						if (component && component.ref) {
-							component.ref.onCellClick(e, relationKey);
-							component.ref.scrollTo(relationKey);
-						};
-					},
-					onClose: () => {
-						S.Menu.closeAll();
-					},
-					data: {
-						relationKey,
-						rootId,
-					},
-				};
-
-				if (!isPopup) {
-					param.fixedY = J.Size.header;
-					param.classNameWrap = 'fixed fromHeader';
-				};
-
-				S.Menu.closeAll(null, () => S.Menu.open('blockRelationView', param));
-				break;
-			};
 		};
 
 		if (menuId) {
 			this.onCellMenu(relationKey, menuId, menuParam, menuData);
+		} else {
+			const param: Partial<I.MenuParam> = {
+				element: '#header',
+				horizontal: I.MenuDirection.Right,
+				noFlipY: true,
+				noAnimation: true,
+				subIds: J.Menu.cell,
+				onOpen: (component: any) => {
+					if (component && component.ref) {
+						component.ref.onCellClick(e, relationKey);
+						component.ref.scrollTo(relationKey);
+					};
+				},
+				onClose: () => {
+					S.Menu.closeAll();
+				},
+				data: {
+					relationKey,
+					rootId,
+				},
+			};
+
+			if (!isPopup) {
+				param.fixedY = J.Size.header;
+				param.classNameWrap = 'fixed fromHeader';
+			};
+
+			S.Menu.closeAll(null, () => S.Menu.open('blockRelationView', param));
 		};
 	};
 
 	onCellMenu (relationKey: string, menuId: string, param: any, data: any) {
-		const { rootId, block } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const storeId = this.getStoreId();
 		const object = S.Detail.get(rootId, storeId, [ relationKey ]);
 		const relation = S.Record.getRelationByKey(relationKey);
@@ -814,6 +810,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				blockId: block.id,
 				relation: observable.box(relation),
 				relationKey,
+				canEdit: !readonly && !relation.isReadonlyValue,
 				onChange: (v: any, callBack?: () => void) => {
 					const details = [
 						{ key: relationKey, value: Relation.formatValue(relation, v, true) },

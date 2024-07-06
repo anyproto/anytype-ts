@@ -64,8 +64,12 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 			return (
 				<div id={`item-${item.id}`} className={cn.join(' ')}>
-					<Handle />
-					<div className="clickable" onClick={() => U.Object.openConfig(item)} onContextMenu={e => this.onMore(e, item)}>
+					{canEdit ? <Handle /> : ''}
+					<div 
+						className="clickable" 
+						onClick={() => U.Object.openConfig(item)} 
+						onContextMenu={e => this.onMore(e, item)}
+					>
 						{content}
 					</div>
 					<div className="buttons">
