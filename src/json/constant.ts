@@ -9,7 +9,7 @@ export default {
 	anytypeProfileId:	 '_anytype_profile',
 	fontCode:			 'plex',
 	popupPinIds:		 [ 'search' ],
-	textColor:			 [ 'white', 'black', 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],
+	textColor:			 [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],
 	namespace:			 { 0: '.any' },
 
 	count: {
