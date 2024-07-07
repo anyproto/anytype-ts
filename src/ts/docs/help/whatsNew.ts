@@ -45,7 +45,7 @@ export default [
 	bullet(`Added Option to disable preview on graph view. Thanks, ${link('https://community.anytype.io/t/21898', '@iamWing')}!`),
 	bullet(`Typed text after a linked object no longer becomes part of the link and can be unlinked. Thanks, ${link('https://community.anytype.io/t/8075', '@floseq')}!`),
 	bullet(`Select all (Ctrl+A) twice now excludes the title. Thanks, ${link('https://community.anytype.io/t/ctrl-a-behaviour-inconsistent-unpredictable/7612', '@qualquertipo')}!`),
-	bullet(`Menu item added for faster "add to collection" workflow. Thanks, @sharipova!`),
+	bullet(`Menu item added for faster "add to collection" workflow.`),
 
 	h2(`🛠️ Technical Updates:`),
 	bullet(`Electron updated to 31.0.0`),
@@ -59,9 +59,9 @@ export default [
 	bullet(`Deleted media files now appear as non-existent when embedded in an object. Thanks, ${link('https://community.anytype.io/t/deleted-files-are-not-shown-as-deleted/11208', '@Balcion')}!`),
 	bullet(`First sentence of an Object no longer appears on title bar when the app is locked. Thanks, ${link('https://community.anytype.io/t/21551', '@NoteMyBrain')}`),
 	bullet(`Search pane now displays correctly on smaller screen sizes. Thanks, ${link('https://community.anytype.io/t/22130', '@C.c.')}!`),
-	bullet(`Search in Relation options now shows results even if options were scrolled. Thanks, @y0ur1!`),
+	bullet(`Search in Relation options now shows results even if options were scrolled.`),
 	bullet(`Checkbox sorting in Set has been restored. Thanks, ${link('https://community.anytype.io/t/22266', '@effreyh')}!`),
-	bullet(`The Query of the set now updates correctly in the pop-up. Thanks, @AntonQA!`),
+	bullet(`The Query of the set now updates correctly in the pop-up.`),
 	bullet(`Fixed issue with using library images for type Icons. Thanks, ${link('https://community.anytype.io/t/22297', '@Self-Perfection')}!`),
 	bullet(`Keyboard cursor no longer disappears after cutting a whole line (block). Thanks, ${link('https://community.anytype.io/t/20781', '@Filip')}!`),
 
