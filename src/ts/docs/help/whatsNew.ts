@@ -18,7 +18,55 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Spring Update 🌸 Batch Editing V1`),
+	h2(`💫 Feature Highlights`),
+	h3(`🖼️ Set Views Added to Widgets`),
+	text(`Widgets are now able to display the same custom Views as their Sets.`),
+
+	h3(`💰 Crypto Payments`),
+	text(`Now you can use crypto (BTC, ETH, USDT, USDC, BNB, Dai, etc.) to pay for the membership.`),
+
+	h3(`🔄 Sync Status Upgrade`),
+	text(`More informative sync status for Objects, Files, and Spaces, including indicators like "Error" for Wi-Fi issues, "Offline" for no network connection.`),
+
+	h3(`🔐 Vault UI`),
+	text(`We've reworked the sidebar logic and removed the previous floating mode.`),
+
+	h3(`🔗 Simplified App Sharing`),
+	text(`Easily grab a link to share Anytype with others directly from the help menu on Desktop.`),
+
+	h2(`🪷 Quality-of-Life`),
+	bullet(`⚡ Menu item added for faster "add to collection" workflow.`),
+	bullet(`🖱️ Navigate Tables using only arrow keys to enter, jump cells &amp; exit to the next block. Thanks @Code-Jack`),
+	bullet(`🔗 Added an option to copy the URL from bookmark blocks. Thanks @maxitg`),
+	bullet(`🗂️ Reduced mouse action needed after creating a new page in Collections. Thanks @Code-Jack!`),
+	bullet(`📄 "Turn into Object" adapts to default Templates now. Thanks, ${link('https://community.anytype.io/t/turn-into-object-did-not-adapt-to-default-template/21983', '@LSK')}!`),
+	bullet(`🔍 Added Option to disable preview on graph view. Thanks, ${link('https://community.anytype.io/t/21898', '@iamWing')}!`),
+	bullet(`✏️ Typed text after a linked object no longer becomes part of the link and can be unlinked. Thanks, ${link('https://community.anytype.io/t/8075', '@floseq')}!`),
+	bullet(`📑 Select all (Ctrl+A) twice now excludes the title. Thanks, ${link('https://community.anytype.io/t/ctrl-a-behaviour-inconsistent-unpredictable/7612', '@qualquertipo')}!`),
+
+	h2(`🛠️ Technical Updates:`),
+	text(`💻 Electron updated to 31.0.0`),
+
+	h2(`🦂 Bug Fixes:`),
+	bullet(`🌑 Mermaid diagrams now display correctly with dark mode backgrounds. Thanks @BoxOfWood`),
+	bullet(`🪟 Top menu no longer shows up below the cover in sets when using the modal window. Thanks @Elias`),
+	bullet(`🏷️ Fixed strange behavior when adding multiple tags in a relation block inside the canvas. Thanks @dzlg`),
+	bullet(`0️⃣ Relations with number type can now have a value of 0. Thanks @gcsapo`),
+	bullet(`🔲 Widget pop-ups at the bottom of the sidebar are no longer hidden by the app border. Thanks @Tamalika`),
+	bullet(`🗑️ Deleted media files now appear as non-existent when embedded in an object.`),
+	bullet(`🔒 First sentence of an Object no longer appears on title bar when the app is locked. Thanks @NoteMyBrain`),
+	bullet(`📱 Search pane now displays correctly on smaller screen sizes. Thanks @C.c.`),
+	bullet(`🔍 Search in Relation options now shows results even if options were scrolled.`),
+	bullet(`✒️ The carriage no longer disappears after entering the Relation object type field. Thanks @dzlg`),
+	bullet(`☑️ Checkbox sorting in Set has been restored. Thanks @effreyh`),
+	bullet(`🔄 The Query of the set now updates correctly in the pop-up.`),
+	bullet(`🖼️ Fixed issue with using library images for type Icons. Thanks @Self-Perfection`),
+	bullet(`✂️ Keyboard cursor no longer disappears after cutting a whole line (block). Thanks @Filip`),
+
+	div(),
+	// --------------------------------------------//
+
+	h1(`Spring Update 🌸 Batch Editing V1`),
 	text(`You didn't think we'd let Spring slip by before sneaking in a release, did you?`),
 	text(`This request has been a long-time coming, so it brings us great pleasure to present V1 of Batch Relation Editing!`),
 	text(`Wave goodbye to the days of tediously managing objects one by one. This new function allows you to add Tags and Relations to many Objects at a time, making it much quicker to organize your content and tidy-up your graph.`),
