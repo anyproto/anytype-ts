@@ -1070,7 +1070,8 @@
 	"popupExportFormat": "Export format",
 	"popupExportOk": "Export",
 
-	"popupHelpOlderReleases": "Older releases",
+	"popupHelpPrevious": "Previous",
+	"popupHelpNext": "Next",
 
 	"popupIndexComponentNotFound": "Component %s not found",
 
