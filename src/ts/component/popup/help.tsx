@@ -151,13 +151,16 @@ class PopupHelp extends React.Component<I.Popup, State> {
 	};
 
 	onArrow (dir: number) {
+		const { getId } = this.props;
 		const { page } = this.state;
 		const length = this.getSections().length;
+		const obj = $(`#${getId()}-innerWrap`);
 
 		if ((page + dir < 0) || (page + dir >= length)) {
 			return;
 		};
 
+		obj.scrollTop(0);
 		this.setState({ page: page + dir });
 	};
 
