@@ -396,7 +396,18 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	onOpen (item: any) {
 		if (!item.isInstalled) {
-			const installed = S.Record.getTypeByKey(item.uniqueKey);
+			let installed = null;
+
+			switch (this.tab) {
+				case I.StoreTab.Type:
+					installed = S.Record.getTypeByKey(item.uniqueKey);
+					break;
+
+				case I.StoreTab.Relation:
+					installed = S.Record.getRelationByKey(item.relationKey);
+					break;
+			};
+
 			if (installed) {
 				item = installed;
 			};
