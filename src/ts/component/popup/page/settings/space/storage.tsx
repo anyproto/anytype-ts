@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, ListObjectManager } from 'Component';
-import { I, J, translate, Action } from 'Lib';
+import { I, J, translate, Action, analytics } from 'Lib';
 import Head from '../head';
 
 const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageManager extends React.Component<I.PopupSettings, {}> {
 
-    refManager: any = null;
+    ref = null;
 
     constructor (props: I.PopupSettings) {
         super(props);
 
         this.onRemove = this.onRemove.bind(this);
+		this.onBack = this.onBack.bind(this);
     };
 
     render () {
@@ -31,7 +32,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
                 <Title text={translate('popupSettingsSpaceStorageManagerTitle')} />
 
                 <ListObjectManager
-                    ref={ref => this.refManager = ref}
+                    ref={ref => this.ref = ref}
                     subId={J.Constant.subId.files}
                     rowLength={2}
                     withArchived={true}
@@ -47,14 +48,12 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
     };
 
     onRemove () {
-		Action.delete(this.refManager?.selected || [], 'Settings', () => this.selectionClear());
+		if (this.ref) {
+			Action.delete(this.ref.selected || [], analytics.route.settings, () => this.ref.selectionClear());
+		};
     };
 
-	selectionClear () {
-		this.refManager?.selectionClear();
-	};
-
-    onBack = () => {
+    onBack () {
         this.props.onPage('spaceIndex');
     };
 });
