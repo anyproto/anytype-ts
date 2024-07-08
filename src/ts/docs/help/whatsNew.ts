@@ -22,19 +22,25 @@ export default [
 	text(`This release introduces updates such as set views for widgets and crypto payments, a revamped sidebar UX, and simplified app sharing, along with various other features, quality-of-life enhancements, and bug fixes to improve user experience.`),
 
 	h2(`💫 Feature Highlights`),
+
 	h3(`🖼️ Set Views Added to Widgets`),
+	img(`42/1.png`),
 	text(`Widgets are now able to display the same custom Views as their Sets.`),
 
 	h3(`💰 Crypto Payments`),
+	img(`42/2.png`),
 	text(`Now you can use crypto (BTC, ETH, USDT, USDC, BNB, Dai, etc.) to pay for the membership.`),
 
 	h3(`🔄 Sync Status Upgrade`),
+	img(`42/3.png`),
 	text(`More informative sync status for Objects, Files, and Spaces, including indicators like "Error" for Wi-Fi issues, "Offline" for no network connection.`),
 
 	h3(`🔐 Vault UI`),
+	img(`42/4.png`),
 	text(`We've reworked the sidebar logic and removed the previous floating mode.`),
 
 	h3(`🔗 Simplified App Sharing`),
+	img(`42/5.png`),
 	text(`Easily grab a link to share Anytype with others directly from the help menu on Desktop.`),
 
 	h2(`🪷 Quality-of-Life`),

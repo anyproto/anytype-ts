@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuBlockLinkSettings { width: 256px; }
+	.menu.menuBlockLinkSettings { width: var(--menu-width-icon); }
 	.menu.menuBlockLinkSettings {
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 58px); }

@@ -1,0 +1,109 @@
+@import "~scss/_mixins";
+
+.menus {
+	.menu.menuBlockAdd { width: var(--menu-width-add) !important; }
+	.menu.menuBlockAdd {
+		.content { padding: 0px; }
+		.wrap { height: 100%; }
+		.items { height: 100%; }
+
+		.sectionName { padding: 0px 14px 4px 14px; }
+		.sectionName::before { content: ""; display: block; width: 100%; height: 1px; margin: 8px 0px 11px 0px; background: var(--color-shape-secondary); }
+		.sectionName.first { padding-top: 4px; }
+		.sectionName.first::before { display: none; }
+
+		.info { 
+			width: 154px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background $transitionCommon; 
+			flex-shrink: 0; margin-right: 6px;
+		}
+
+		.item { padding: 4px 16px; }
+		.item.add { padding: 6px 16px; }
+		.item.sides { display: flex; padding: 6px 16px; }
+		.item.empty { padding: 16px; @include text-small; }
+
+		.item {
+			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
+		}
+		.item::before { transition: none; }
+
+		.item.isBig {
+			.iconObject { background-color: var(--color-shape-tertiary); }
+		}
+		.item.isBig {
+			.icon.textParagraph { background-image: url('~img/icon/menu/action/block/text/paragraph1.svg'); }
+			.icon.textHeader1 { background-image: url('~img/icon/menu/action/block/text/header11.svg'); }
+			.icon.textHeader2 { background-image: url('~img/icon/menu/action/block/text/header21.svg'); }
+			.icon.textHeader3 { background-image: url('~img/icon/menu/action/block/text/header31.svg'); }
+			.icon.textQuote { background-image: url('~img/icon/menu/action/block/text/quote1.svg'); }
+			.icon.textCallout { background-image: url('~img/icon/menu/action/block/text/callout1.svg'); }
+			.icon.textBulleted { background-image: url('~img/icon/menu/action/block/text/bulleted1.svg'); }
+			.icon.textCheckbox { background-image: url('~img/icon/menu/action/block/text/checkbox1.svg'); }
+			.icon.textNumbered { background-image: url('~img/icon/menu/action/block/text/numbered1.svg'); }
+			.icon.textToggle { background-image: url('~img/icon/menu/action/block/text/toggle1.svg'); }
+			
+			.icon.mediaFile { background-image: url('~img/icon/menu/action/block/media/file1.svg'); }
+			.icon.mediaImage { background-image: url('~img/icon/menu/action/block/media/image1.svg'); }
+			.icon.mediaVideo { background-image: url('~img/icon/menu/action/block/media/video1.svg'); }
+			.icon.mediaAudio { background-image: url('~img/icon/menu/action/block/media/audio1.svg'); }
+			.icon.mediaPdf { background-image: url('~img/icon/menu/action/block/media/pdf1.svg'); }
+
+			.icon.divLine { background-image: url('~img/icon/menu/action/block/div/line1.svg'); }
+			.icon.divDot { background-image: url('~img/icon/menu/action/block/div/dot1.svg'); }
+
+			.icon.embed-latex { background-image: url('~img/icon/menu/action/block/embed/latex.svg'); }
+			.icon.embed-mermaid { background-image: url('~img/icon/menu/action/block/embed/mermaid.svg'); }
+			.icon.embed-youtube { background-image: url('~img/icon/menu/action/block/embed/youtube.svg'); }
+			.icon.embed-vimeo { background-image: url('~img/icon/menu/action/block/embed/vimeo.svg'); }
+			.icon.embed-googleMaps { background-image: url('~img/icon/menu/action/block/embed/googleMaps.svg'); }
+			.icon.embed-soundcloud { background-image: url('~img/icon/menu/action/block/embed/soundcloud.svg'); }
+			.icon.embed-chart { background-image: url('~img/icon/menu/action/block/embed/chart.svg'); }
+			.icon.embed-miro { background-image: url('~img/icon/menu/action/block/embed/miro.svg'); }
+			.icon.embed-figma { background-image: url('~img/icon/menu/action/block/embed/figma.svg'); }
+			.icon.embed-bilibili { background-image: url('~img/icon/menu/action/block/embed/bilibili.svg'); }
+			.icon.embed-codepen { background-image: url('~img/icon/menu/action/block/embed/codepen.svg'); }
+			.icon.embed-facebook { background-image: url('~img/icon/menu/action/block/embed/facebook.svg'); }
+			.icon.embed-githubGist { background-image: url('~img/icon/menu/action/block/embed/githubGist.svg'); }
+			.icon.embed-graphviz { background-image: url('~img/icon/menu/action/block/embed/graphviz.svg'); }
+			.icon.embed-instagram { background-image: url('~img/icon/menu/action/block/embed/instagram.svg'); }
+			.icon.embed-kroki { background-image: url('~img/icon/menu/action/block/embed/kroki.svg'); }
+			.icon.embed-openStreetMap { background-image: url('~img/icon/menu/action/block/embed/openStreetMap.svg'); }
+			.icon.embed-reddit { background-image: url('~img/icon/menu/action/block/embed/reddit.svg'); }
+			.icon.embed-telegram { background-image: url('~img/icon/menu/action/block/embed/telegram.svg'); }
+			.icon.embed-twitter { background-image: url('~img/icon/menu/action/block/embed/twitter.svg'); }
+			.icon.embed-excalidraw { background-image: url('~img/icon/menu/action/block/embed/excalidraw.svg'); }
+			.icon.embed-sketchfab { background-image: url('~img/icon/menu/action/block/embed/sketchfab.svg'); }
+
+			.icon.existing { background-image: url('~img/icon/menu/action/block/existing1.svg'); }
+			.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark1.svg'); }
+			.icon.code { background-image: url('~img/icon/menu/action/block/code1.svg'); }
+			.icon.table { background-image: url('~img/icon/menu/action/block/table1.svg'); }
+			.icon.tableOfContents { background-image: url('~img/icon/menu/action/block/tableOfContents1.svg'); }
+			.icon.relation { background-image: url('~img/icon/menu/action/block/relation1.svg'); }
+			.icon.set { background-image: url('~img/icon/menu/action/block/set1.svg'); }
+			.icon.collection { background-image: url('~img/icon/menu/action/block/collection1.svg'); }
+		}
+
+		.cell { width: calc(100% - 160px); white-space: nowrap; }
+		.cell.c-select {
+			.tagItem { margin-bottom: 0px; vertical-align: middle; }
+		}
+
+		.cellContent { overflow: hidden; height: 20px; line-height: 20px; }
+		.cellContent {
+			.empty { display: block; }
+		}
+
+		.cellContent.c-longText {
+			.name { -webkit-line-clamp: 1; -webkit-box-orient: vertical; display: -webkit-box; }
+		}
+	}
+}
+
+html.platformWindows, html.platformLinux {
+	.menus {
+		.menu.menuBlockAdd {
+			.ReactVirtualized__List { overflow-y: overlay !important; }
+		}
+	}
+}

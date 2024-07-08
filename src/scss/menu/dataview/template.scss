@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-    .menu.menuDataviewTemplateList { width: 360px; }
+    .menu.menuDataviewTemplateList { width: var(--menu-width-set); }
     .menu.menuDataviewTemplateList {
         .titleWrapper + .content { padding-top: 8px; }
 

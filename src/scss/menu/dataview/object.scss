@@ -2,7 +2,7 @@
 
 .menus {
 
-	.menu.menuDataviewObjectList { width: 288px; }
+	.menu.menuDataviewObjectList { width: var(--menu-width-value);; }
 	.menu.menuDataviewObjectList {
 		.content { padding: 0px; transition: none; }
 		
@@ -23,7 +23,7 @@
 		.filter { flex-shrink: 0; }
 	}
 
-	.menu.menuDataviewObjectList.single { width: 256px; }
+	.menu.menuDataviewObjectList.single { width: var(--menu-width-icon); }
 	.menu.menuDataviewObjectList.single {
 		.item {
 			.name { margin: 0px; }
@@ -31,7 +31,7 @@
 		}
 	}
 
-	.menu.menuDataviewObjectValues { width: 288px; }
+	.menu.menuDataviewObjectValues { width: var(--menu-width-value);; }
 	.menu.menuDataviewObjectValues {
 		.content { padding: 0px; }
 

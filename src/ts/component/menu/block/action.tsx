@@ -359,7 +359,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: offsetX,
-			offsetY: node.offset().top - el.offset().top - 36,
+			offsetY: node.offset().top - el.offset().top - 40,
 			isSub: true,
 			noFlipX: true,
 			data: {
