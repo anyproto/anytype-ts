@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Block } from 'Component';
+import { Header, Block } from 'Component';
 import { I, M, S, U, translate } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -14,6 +14,7 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 
 	node = null;
 	refHead = null;
+	refHeader = null;
 	top = 0;
 
 	constructor (props: Props) {
@@ -61,6 +62,14 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 
 		return (
 			<div ref={ref => this.node = ref} id="historySideLeft" onScroll={this.onScroll}>
+				<Header 
+					{...this.props} 
+					ref={ref => this.refHeader = ref}
+					component="mainHistory" 
+					rootId={rootId}
+					layout={I.ObjectLayout.History}
+				/>
+
 				<div id="editorWrapper" className={cn.join(' ')}>
 					<div className="editor">
 						<div className="blocks">

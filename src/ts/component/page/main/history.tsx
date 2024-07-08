@@ -15,7 +15,6 @@ interface State {
 const PageMainHistory = observer(class PageMainHistory extends React.Component<I.PageComponent, State> {
 
 	node = null;
-	refHeader = null;
 	refSideLeft = null;
 	refSideRight = null;
 	state = {
@@ -39,14 +38,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		return (
 			<div ref={node => this.node = node}>
-				<Header 
-					{...this.props} 
-					ref={ref => this.refHeader = ref}
-					component="mainHistory" 
-					rootId={rootId}
-					layout={I.ObjectLayout.History}
-				/>
-
 				{isLoading ? <Loader id="loader" /> : ''}
 
 				<div id="body" className="flex">
@@ -468,8 +459,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	setVersion (version: I.HistoryVersion) {
-		this.refHeader?.refChild.setVersion(version);
 		this.refSideLeft?.forceUpdate();
+		this.refSideLeft?.refHeader?.refChild.setVersion(version);
 		this.refSideLeft?.refHead?.forceUpdate();
 
 		$(window).trigger('updateDataviewData');
