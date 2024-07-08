@@ -112,6 +112,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					}}
 				/>
 			);
+
+			isDraggable = false;
 		} else {
 			buttons = (
 				<div className="buttons">
