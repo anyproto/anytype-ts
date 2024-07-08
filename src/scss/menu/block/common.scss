@@ -5,7 +5,7 @@
 		.item.empty { @include text-small; padding-top: 8px; }
 	}
 
-	.menu.menuBlockAction { width: var(--menu-width-value); }
+	.menu.menuBlockAction { width: var(--menu-width-icon); }
 	.menu.menuBlockAction {
 		.content { padding-top: 12px; }
 	}
