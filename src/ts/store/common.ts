@@ -17,6 +17,7 @@ interface Graph {
 	link: boolean;
 	files: boolean;
 	local: boolean;
+	cluster: boolean;
 	filter: string;
 };
 
@@ -79,6 +80,7 @@ class CommonStore {
 		files: false,
 		link: true,
 		local: false,
+		cluster: false,
 		filter: '',
 	};
 
