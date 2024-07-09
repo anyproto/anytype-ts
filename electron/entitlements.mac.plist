@@ -10,10 +10,5 @@
     <true/>
     <key>com.apple.security.cs.disable-library-validation</key>
     <true/>
-	<key>com.apple.developer.associated-domains</key>
-	<array>
-		<string>applinks:invite-stage.any.coop</string>
-		<string>applinks:invite.any.coop</string>
-	</array>
   </dict>
 </plist>
