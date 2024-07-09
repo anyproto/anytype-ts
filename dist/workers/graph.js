@@ -172,7 +172,7 @@ initForces = () => {
 	simulation.force('link')
 	.links(edges)
 	.distance(link.distance)
-	.strength(d => d.source.layout == d.target.layout ? 1 : 0.5);
+	.strength(d => d.source.type == d.target.type ? 1 : 0.5);
 
 	simulation.force('forceX')
 	.strength(d => d.isOrphan ? forceX.strength : 0)
@@ -802,7 +802,7 @@ const getRadius = (d) => {
 	maxEdges = Math.max(maxEdges, e);
 
 	if (maxEdges > 0) {
-		k += e / maxEdges;
+		k += Math.min(1, e / maxEdges);
 	};
 
 	return d.radius / transform.k * k;
