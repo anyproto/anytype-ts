@@ -186,12 +186,16 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
         const object = S.Detail.get(rootId, block.content.targetBlockId);
         const content = this.getContent();
+		const isCard = content.cardStyle == I.LinkCardStyle.Card;
+		const isText = content.cardStyle == I.LinkCardStyle.Text;
+		const isTask = U.Object.isTaskLayout(object.layout);
+		const isNote = U.Object.isNoteLayout(object.layout);
 
-        const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(object.layout);
-		const canIconSize = canIcon && (content.cardStyle == I.LinkCardStyle.Card);
-		const canIconSwitch = canIcon && (content.cardStyle == I.LinkCardStyle.Text);
-        const canCover = ![ I.ObjectLayout.Note ].includes(object.layout) && (content.cardStyle == I.LinkCardStyle.Card);
-        const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
+        const canIcon = !isTask && !isNote;
+		const canIconSize = canIcon && isCard;
+		const canIconSwitch = canIcon && isText;
+        const canCover = !isNote && isCard;
+        const canDescription = !isNote;
 
         const styles = this.getStyles();
 		const style = styles.find(it => it.id == content.cardStyle) || styles[0];

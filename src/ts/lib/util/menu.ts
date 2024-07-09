@@ -291,7 +291,7 @@ class UtilMenu {
 	};
 
 	turnLayouts () {
-		const allowed = [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Note ];
+		const allowed = U.Object.getPageLayouts();
 		return this.getLayouts().filter(it => allowed.includes(it.id));
 	};
 

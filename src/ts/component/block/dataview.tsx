@@ -494,7 +494,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (item.name == translate('defaultNamePage')) {
 			item.name = '';
 		};
-		if (layout == I.ObjectLayout.Note) {
+		if (U.Object.isNoteLayout(layout)) {
 			item.name = snippet;
 		};
 
@@ -675,7 +675,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
 				const ref = this.refCells.get(id);
 
-				if (object.layout == I.ObjectLayout.Note) {
+				if (U.Object.isNoteLayout(object.layout)) {
 					this.onCellClick(e, 'name', object.id);
 				} else
 				if (ref) {
@@ -841,7 +841,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
-		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
+		if (U.Object.isNoteLayout(record.layout) && (relation.relationKey == 'name')) {
 			return false;
 		};
 		return true;

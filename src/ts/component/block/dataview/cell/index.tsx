@@ -517,7 +517,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
-		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
+		if (U.Object.isNoteLayout(record.layout) && (relation.relationKey == 'name')) {
 			return false;
 		};
 		return true;
