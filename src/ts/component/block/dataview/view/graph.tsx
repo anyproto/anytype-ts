@@ -126,21 +126,11 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 			};
 
 			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
-
-			U.Data.onSubscribe(J.Constant.subId.graph, 'id', J.Relation.graph, {
-				error: {},
-				records: message.nodes,
-				dependencies: [],
-				counters: { total: message.nodes.length },
-			});
-
-			this.resize();
+			this.forceUpdate();
 
 			if (this.refGraph) {
 				this.refGraph.init();
 			};
-
-			this.forceUpdate();
 		});
 	};
 

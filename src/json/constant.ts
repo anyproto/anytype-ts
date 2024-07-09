@@ -83,7 +83,6 @@ export default {
 		store:			 'store',
 		archive:		 'archive',
 		sidebar:		 'sidebar',
-		graph:			 'graph',
 		space:			 'space',
 		files:			 'files',
 		participant:	 'participant',

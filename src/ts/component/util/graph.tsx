@@ -400,7 +400,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			...param,
 			data: {
 				route: analytics.route.graph,
-				subId: J.Constant.subId.graph,
 				objectIds: ids,
 				getObject: id => this.getNode(id),
 				allowedLink: true,
