@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewCalendar { width: var(--menu-select-value); }
+	.menu.menuDataviewCalendar { width: var(--menu-width-value); }
 	.menu.menuDataviewCalendar {
 		.titleWrapper { padding: 8px 16px 0px; }
 		.content { padding: 10px 0px; overflow: visible; max-height: unset; }
