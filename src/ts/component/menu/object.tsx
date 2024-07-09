@@ -171,7 +171,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedInstall = canWrite && !object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout);
 		const allowedUninstall = canWrite && object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout) && canDelete;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
-		const allowedWidget = canWrite;
+		const allowedWidget = canWrite && !S.Block.checkBlockTypeExists(rootId);
 		const hasShortMenu = (
 			block.isObjectType() || 
 			block.isObjectRelation() || 

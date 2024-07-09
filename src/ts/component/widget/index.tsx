@@ -40,6 +40,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.isSystemTarget = this.isSystemTarget.bind(this);
 		this.getData = this.getData.bind(this);
 		this.getLimit = this.getLimit.bind(this);
+		this.getTraceId = this.getTraceId.bind(this);
 		this.sortFavorite = this.sortFavorite.bind(this);
 		this.canCreate = this.canCreate.bind(this);
 	};
@@ -76,6 +77,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			isSystemTarget: this.isSystemTarget,
 			getData: this.getData,
 			getLimit: this.getLimit,
+			getTraceId: this.getTraceId,
 			sortFavorite: this.sortFavorite,
 			addGroupLabels: this.addGroupLabels,
 			onContext: this.onContext,
@@ -375,15 +377,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id, viewId);
 			const type = S.Record.getTypeById(typeId);
 
-			if (!view || !type) {
+			if (!type) {
 				return;
 			};
 
 			details = Object.assign(Dataview.getDetails(rootId, J.Constant.blockId.dataview, object.id, viewId), details);
 			flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 			typeKey = type.uniqueKey;
-			templateId = view.defaultTemplateId || type.defaultTemplateId;
-			isCollection = Dataview.isCollection(rootId, J.Constant.blockId.dataview);
+			templateId = view?.defaultTemplateId || type.defaultTemplateId;
+			isCollection = object.layout == I.ObjectLayout.Collection;
 		} else {
 			switch (targetBlockId) {
 				default:
@@ -751,14 +753,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		return true;
 	};
 
-	getRootId = (): string => {
-		const child = this.getTargetBlock();
-		if (!child) {
-			return '';
-		};
+	getRootId (): string {
+		const target = this.getTargetBlock();
+		return target ? [ target.content.targetBlockId, 'widget', target.id ].join('-') : '';
+	};
 
-		const { targetBlockId } = child.content;
-		return [ targetBlockId, 'widget', child.id ].join('-');
+	getTraceId (): string {
+		const target = this.getTargetBlock();
+		return target ? [ 'widget', target.id ].join('-') : '';
 	};
 
 	getLimit ({ limit, layout }): number {

@@ -169,8 +169,6 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 				break;
 		};
 
-		console.log(menuId, menuParam);
-
 		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
 			S.Menu.closeAll(J.Menu.layout, () => {
 				S.Menu.open(menuId, menuParam);

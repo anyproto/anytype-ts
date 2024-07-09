@@ -128,7 +128,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	componentDidMount (): void {
-		const { block, isSystemTarget, getData } = this.props;
+		const { block, isSystemTarget, getData, getTraceId } = this.props;
 		const { targetBlockId } = block.content;
 
 		if (isSystemTarget()) {
@@ -136,7 +136,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		} else {
 			this.setState({ isLoading: true });
 
-			C.ObjectShow(targetBlockId, this.getTraceId(), U.Router.getRouteSpaceId(), () => {
+			C.ObjectShow(targetBlockId, getTraceId(), U.Router.getRouteSpaceId(), () => {
 				this.setState({ isLoading: false });
 
 				const view = this.getView();
@@ -206,10 +206,6 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 
 	getSubId () {
 		return S.Record.getSubId(this.getRootId(), J.Constant.blockId.dataview);
-	};
-
-	getTraceId = (): string => {
-		return [ 'widget', this.props.block.id ].join('-');
 	};
 
 	getRootId = (): string => {

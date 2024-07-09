@@ -417,6 +417,10 @@ class Dataview {
 			});
 		};
 
+		if (!view) {
+			return details;
+		};
+
 		if (view.groupRelationKey && ('undefined' == typeof(details[view.groupRelationKey]))) {
 			if (groupId) {
 				const group = S.Record.getGroup(rootId, blockId, groupId);
