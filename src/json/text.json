@@ -643,6 +643,7 @@
 
 	"blockChatEmpty": "There is no messages yet. Be the first to start a discussion",
 	"blockChatMessageExpand": "Expand",
+	"blockChatReactionAdd": "Add reaction",
 
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",

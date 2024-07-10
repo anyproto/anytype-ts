@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription } from 'Component';
-import { I, S, U, J, Mark,translate } from 'Lib';
+import { I, S, U, J, Mark, translate, Preview } from 'Lib';
 
 interface Props extends I.Block, I.BlockComponent {
 	data: any;
@@ -24,6 +24,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 		this.onExpand = this.onExpand.bind(this);
 		this.onReactionAdd = this.onReactionAdd.bind(this);
+		this.onReactionEnter = this.onReactionEnter.bind(this);
+		this.onReactionLeave = this.onReactionLeave.bind(this);
 	};
 
 	render () {
@@ -53,7 +55,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			const author = length ? U.Space.getParticipant(U.Space.getParticipantId(space, authors[0])) : '';
 
 			return (
-				<div className="reaction" onClick={() => this.onReactionSelect(item.value)}>
+				<div 
+					className="reaction" 
+					onClick={() => this.onReactionSelect(item.value)}
+					onMouseEnter={e => this.onReactionEnter(e, authors)}
+					onMouseLeave={this.onReactionLeave}
+				>
 					<div className="value">
 						<IconObject object={{ iconEmoji: item.value }} size={18} />
 					</div>
@@ -99,8 +106,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 					{attachments.length ? (
 						<div className="attachments">
-							{attachments.map((item: any) => (
-								<Attachment key={item.id} {...item} />
+							{attachments.map((item: any, i: number) => (
+								<Attachment key={i} {...item} />
 							))}
 						</div>
 					) : ''}
@@ -109,7 +116,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 						{reactions.map((item: any, i: number) => (
 							<Reaction key={i} {...item} />
 						))}
-						<Icon className="add" onClick={this.onReactionAdd} />
+						<Icon className="add" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
 					</div>
 
 					<div className="sub" onClick={() => onThread(id)}>
@@ -151,6 +158,22 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		};
 	};
 
+	onReactionEnter (e: any, authors: string[]) {
+		const { space } = S.Common;
+
+		const text = authors.map(it => {
+			const author = U.Space.getParticipant(U.Space.getParticipantId(space, it));
+
+			return author.name;
+		}).filter(it => it).join('\n');
+
+		Preview.tooltipShow({ text, element: $(e.currentTarget) });
+	};
+
+	onReactionLeave (e: any) {
+		Preview.tooltipHide(false);
+	};
+
 	onReactionAdd () {
 		const node = $(this.node);
 
@@ -178,10 +201,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			item.authors = item.authors || [];
 
 			if (item.authors.includes(account.id)) {
-				return;
+				item.authors = item.authors.filter(id => id != account.id);
+			} else {
+				item.authors = item.authors.concat(account.id);
 			};
-
-			item.authors.push(account.id);
 		};
 
 		U.Data.blockSetText(rootId, id, JSON.stringify({ ...data, reactions }), [], true);
