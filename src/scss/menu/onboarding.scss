@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuOnboarding { width: 334px; }
+	.menu.menuOnboarding { width: var(--menu-width-value); }
 	.menu.menuOnboarding {
 		.content { padding: 16px; max-height: unset; }
 		.wrap { display: flex; flex-direction: column; }
@@ -70,7 +70,7 @@
 		}
 	}
 
-	.menu.menuOnboarding.isWizard { width: 280px; min-height: 458px; }
+	.menu.menuOnboarding.isWizard { min-height: 458px; }
 	.menu.menuOnboarding.isWizard {
 		.bottom { position: absolute; bottom: 16px; width: calc(100% - 32px); margin: 0px; }
 	}

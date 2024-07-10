@@ -3,7 +3,7 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
-import { Loader, Label } from 'Component';
+import { Loader, Label, Button } from 'Component';
 import { I, C, S, U, J, analytics, Relation, Storage, translate } from 'Lib';
 import Item from './item';
 
@@ -44,7 +44,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 	render () {
 		const { loading } = this.state;
-		const { isPreview } = this.props;
+		const { isPreview, canCreate, onCreate } = this.props;
 		const nodes = this.loadTree();
 		const length = nodes.length;
 
@@ -60,7 +60,12 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			content = <Loader />;
 		} else
 		if (!length) {
-			content = <Label className="empty" text={translate('widgetEmptyLabel')} />;
+			content = (
+				<div className="emptyWrap">
+					<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
+					{canCreate ? <Button text={translate('commonCreateObject')} color="blank" className="c28" onClick={onCreate} /> : ''}
+				</div>
+			);
 		} else 
 		if (isPreview) {
 			const rowRenderer = ({ index, parent, style }) => {
@@ -157,12 +162,14 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { isSystemTarget, getData } = this.props;
+		const { block, isSystemTarget, getData, getTraceId } = this.props;
+		const { targetBlockId } = block.content;
 
 		if (isSystemTarget()) {
 			getData(this.getSubId(), this.initCache);
 		} else {
 			this.initCache();
+			C.ObjectShow(targetBlockId, getTraceId(), U.Router.getRouteSpaceId());
 		};
 
 		this.getDeleted();
@@ -427,6 +434,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const node = $(this.node);
 		const length = nodes.length;
 		const css: any = { height: this.getTotalHeight() + 8, paddingBottom: '' };
+		const emptyWrap = node.find('.emptyWrap');
 
 		if (isPreview) {
 			const head = $(`#widget-${parent.id} .head`);
@@ -436,8 +444,8 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		};
 
 		if (!length) {
-			css.paddingBottom = 12;
-			css.height = 36 + css.paddingBottom;
+			css.paddingBottom = 8;
+			css.height = emptyWrap.outerHeight() + css.paddingBottom;
 		};
 
 		node.css(css);

@@ -10,7 +10,7 @@
 		}
 	}
 
-	.menu.menuDataviewFileList { width: 288px; }
+	.menu.menuDataviewFileList { width: var(--menu-width-value); }
 	.menu.menuDataviewFileList {
 		.content { padding-top: 12px; padding-bottom: 0px; transition: none; }
 

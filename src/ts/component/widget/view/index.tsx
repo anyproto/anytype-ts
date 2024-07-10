@@ -35,7 +35,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	render (): React.ReactNode {
-		const { parent, block, isSystemTarget, canCreate, onCreate } = this.props;
+		const { parent, block, isSystemTarget, onCreate } = this.props;
 		const { viewId, limit } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
@@ -47,6 +47,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		const viewType = this.getViewType();
 		const cn = [ 'innerWrap' ];
 		const showEmpty = ![ I.ViewType.Calendar, I.ViewType.Board ].includes(viewType);
+		const canCreate = this.props.canCreate && this.isAllowedObject();
 		const props = {
 			...this.props,
 			ref: ref => this.refChild = ref,
@@ -86,8 +87,8 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		if (!isLoading && !length && showEmpty) {
 			content = (
 				<div className="emptyWrap">
-					<Label className="empty" text={canCreate && this.isAllowedObject() ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
-					{canCreate && this.isAllowedObject() ? <Button text={translate('commonCreateObject')} color="blank" className="c28" onClick={onCreate} /> : ''}
+					<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
+					{canCreate ? <Button text={translate('commonCreateObject')} color="blank" className="c28" onClick={onCreate} /> : ''}
 				</div>
 			);
 		} else {
@@ -127,7 +128,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	componentDidMount (): void {
-		const { block, isSystemTarget, getData } = this.props;
+		const { block, isSystemTarget, getData, getTraceId } = this.props;
 		const { targetBlockId } = block.content;
 
 		if (isSystemTarget()) {
@@ -135,7 +136,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		} else {
 			this.setState({ isLoading: true });
 
-			C.ObjectShow(targetBlockId, this.getTraceId(), U.Router.getRouteSpaceId(), () => {
+			C.ObjectShow(targetBlockId, getTraceId(), U.Router.getRouteSpaceId(), () => {
 				this.setState({ isLoading: false });
 
 				const view = this.getView();
@@ -207,10 +208,6 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		return S.Record.getSubId(this.getRootId(), J.Constant.blockId.dataview);
 	};
 
-	getTraceId = (): string => {
-		return [ 'widget', this.props.block.id ].join('-');
-	};
-
 	getRootId = (): string => {
 		const { block } = this.props;
 		const { targetBlockId } = block.content;
@@ -247,7 +244,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			limit,
 			filters: this.getFilters(),
 			collectionId: (isCollection ? object.id : ''),
-			keys: J.Relation.sidebar.concat(view.groupRelationKey).concat(J.Relation.cover),
+			keys: J.Relation.sidebar.concat([ view.groupRelationKey, view.coverRelationKey ]).concat(J.Relation.cover),
 		});
 	};
 
@@ -364,6 +361,12 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	isCollection () {
 		const object = this.getObject();
 		return object.layout == I.ObjectLayout.Collection;
+	};
+
+	onOpen () {
+		if (this.refChild && this.refChild.onOpen) {
+			this.refChild.onOpen();
+		};
 	};
 
 });

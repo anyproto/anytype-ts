@@ -4,15 +4,15 @@
 	.block.blockChat { 
 		.wrap.isDraggingOver { opacity: 0.5; cursor: copy; }
 
-		.scrollWrap { height: 600px; overflow: auto; padding: 16px 16px 16px 0px; }
-		.scrollWrap {
+		.scrollWrapper { padding: 16px 16px 16px 0px; }
+		.scrollWrapper {
 			.scroll { display: flex; flex-direction: column; justify-content: flex-end; min-height: 100%; gap: 16px 0px; }
 		}
 
-		.message { display: flex; flex-direction: row; gap: 0px 12px; align-items: flex-start; @include text-common; }
+		.message { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; @include text-common; }
 		.message {
 			.side.left { flex-shrink: 0; }
-			.side.right { padding: 12px 16px; background: rgba(242, 242, 242, 0.50); border-radius: 20px; display: flex; flex-direction: column; }
+			.side.right { display: flex; flex-direction: column; padding: 12px 16px; border-radius: 20px; background: rgba(242, 242, 242, 0.5); }
 
 			.author { display: flex; align-items: center; gap: 0px 8px; }
 			.author {
@@ -30,11 +30,23 @@
 
 			.files { margin: 8px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 4px; }
 
-		}
+			.reactions { margin: 12px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; }
+			.reactions {
+				.reaction { 
+					display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500; 
+					background-color: var(--color-shape-highlight-medium); padding: 4px 6px; flex-shrink: 0;
+				}
 
-		.message.isMe { flex-direction: row-reverse; }
-		.message.isMe {
-			.side.right { background: rgba(229, 248, 214, 0.50); }
+				.icon.add { 
+					width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/block/chat/reaction.svg');
+					background-color: var(--color-shape-highlight-medium); flex-shrink: 0; border-radius: 50%; background-position: center 3px;
+				}
+			}
+
+		}
+		.message.isSelf { flex-direction: row-reverse; }
+		.message.isSelf {
+			.side.right { background: rgba(229, 248, 214, 0.5); }
 		}
 
 		.message.canExpand {
@@ -44,10 +56,10 @@
 			.text { -webkit-line-clamp: unset; }
 		}
 
-		.message:last-child { margin: 0px; }
+		.formWrapper.isFixed { padding: 0px 0px 80px 0px; position: sticky; z-index: 1; bottom: 0px; width: 704px; background: var(--color-bg-primary); }
 
-		.bottom { padding: 8px 16px 16px 16px; border: 1px solid var(--color-shape-tertiary); border-radius: 12px; }
-		.bottom {
+		.form { padding: 8px 16px 16px 16px; border: 1px solid var(--color-shape-tertiary); border-radius: 12px; }
+		.form {
 			.buttons { margin: 0px 0px 8px 0px; }
 			.buttons {
 				.icon { width: 32px; height: 32px; background-size: 20px 20px; vertical-align: top; margin: 0px; border-radius: 4px; transition: none; }

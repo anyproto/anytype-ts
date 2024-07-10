@@ -7,7 +7,7 @@ import { I, U, J, translate } from 'Lib';
 import Block from 'Component/block/help';
 
 interface State {
-	showFull: boolean;
+	page: number;
 };
 
 const LIMIT = 1;
@@ -17,11 +17,11 @@ class PopupHelp extends React.Component<I.Popup, State> {
 	_isMounted = false;
 	node: any = null;
 	state = {
-		showFull: false,
+		page: 0,
 	};
 	
 	render () {
-		const { showFull } = this.state;
+		const { page } = this.state;
 		const document = this.getDocument();
 		const blocks = this.getBlocks();
 		const title = blocks.find(it => it.style == I.TextStyle.Title);
@@ -37,8 +37,11 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		);
 
 		let sections = this.getSections();
-		if (isWhatsNew && !showFull) {
-			sections = sections.slice(0, LIMIT);
+
+		const length = sections.length;
+
+		if (isWhatsNew) {
+			sections = sections.slice(page, page + LIMIT);
 		};
 
 		return (
@@ -65,9 +68,10 @@ class PopupHelp extends React.Component<I.Popup, State> {
 						))}
 					</div>
 
-					{isWhatsNew && !showFull ? (
+					{isWhatsNew ? (
 						<div className="buttons">
-							<Button text={translate('popupHelpOlderReleases')} onClick={() => { this.setState({ showFull: true }); }} />
+							{page < length - 1 ? <Button className="c28" text={translate('popupHelpPrevious')} onClick={() => this.onArrow(1)} /> : ''}
+							{page > 0 ? <Button className="c28" text={translate('popupHelpNext')} onClick={() => this.onArrow(-1)} /> : ''}
 						</div>
 					) : ''}
 				</div>
@@ -146,6 +150,20 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		return sections;
 	};
 
+	onArrow (dir: number) {
+		const { getId } = this.props;
+		const { page } = this.state;
+		const length = this.getSections().length;
+		const obj = $(`#${getId()}-innerWrap`);
+
+		if ((page + dir < 0) || (page + dir >= length)) {
+			return;
+		};
+
+		obj.scrollTop(0);
+		this.setState({ page: page + dir });
+	};
+
 	resize () {
 		if (!this._isMounted) {
 			return;
@@ -161,7 +179,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 
 		raf(() => { obj.css({ top: hh + 20, marginTop: 0 }); });
 	};
-	
+
 };
 
 export default PopupHelp;

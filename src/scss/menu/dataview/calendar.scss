@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewCalendar { width: 276px; }
+	.menu.menuDataviewCalendar { width: var(--menu-width-value); }
 	.menu.menuDataviewCalendar {
 		.titleWrapper { padding: 8px 16px 0px; }
 		.content { padding: 10px 0px; overflow: visible; max-height: unset; }
@@ -106,7 +106,7 @@
 		}
 	}
 
-	.menu.menuDataviewCalendarDay.fromWidget { width: 312px; }
+	.menu.menuDataviewCalendarDay.fromWidget { width: var(--menu-width-value); }
 	.menu.menuDataviewCalendarDay.fromWidget {
 		.content { padding: 12px 0px 8px 0px; }
 

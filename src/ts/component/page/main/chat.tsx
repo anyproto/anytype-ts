@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, translate } from 'Lib';
+import { I, M, C, S, U, J, Action, keyboard, translate, sidebar } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -278,6 +278,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 			const container = U.Common.getPageContainer(isPopup);
 			const header = container.find('#header');
 			const hh = isPopup ? header.height() : J.Size.header;
+			const formWrapper = node.find('#formWrapper');
 
 			if (cover.length) {
 				cover.css({ top: hh });
@@ -285,6 +286,8 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 
 			container.css({ minHeight: isPopup ? '' : win.height() });
 			node.css({ paddingTop: isPopup ? 0 : hh });
+
+			formWrapper.addClass('isFixed');
 		});
 	};
 

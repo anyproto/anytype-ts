@@ -52,7 +52,7 @@
 		.arrowDirection.c4 { right: -12px; transform: rotateZ(90deg); }
 	}
 	
-	.menu.vertical { width: 224px; }
+	.menu.vertical { width: var(--menu-width-common); }
 	.menu.vertical {
 		.content { overflow-y: auto; overflow-x: hidden; max-height: 368px; padding: 8px 0px; border-radius: inherit; transform: none; }
 		.ReactVirtualized__List { padding: 8px 0px; }
@@ -245,6 +245,7 @@ html.platformWindows {
 @import "./preview/object.scss";
 
 @import "./block/common.scss";
+@import "./block/add.scss";
 @import "./block/context.scss";
 @import "./block/cover.scss";
 @import "./block/icon.scss";

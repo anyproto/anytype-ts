@@ -1,9 +1,9 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuBlockLink { width: 420px; }
+	.menu.menuBlockLink { width: var(--menu-width-large); }
 	.menu.menuBlockLink {
-		.content { transition: none; padding: 0px; max-height: 420px; padding: 4px 0px 0px 0px; }
+		.content { transition: none; padding: 0px; max-height: var(--menu-width-large); padding: 4px 0px 0px 0px; }
 		.content.initial {
 			.filter {
 				.line { display: none; }

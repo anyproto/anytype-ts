@@ -21,6 +21,7 @@ export interface WidgetComponent {
 	setEditing?: (v: boolean) => void;
 	getData?: (subId: string, callBack?: () => void) => void;
 	getLimit?: (content: ContentWidget) => number;
+	getTraceId?: () => string;
 	sortFavorite?: (records: string[]) => string[];
 	addGroupLabels?: (records: any[], widgetId: string) => any[];
 	onContext?: (param: any) => void;

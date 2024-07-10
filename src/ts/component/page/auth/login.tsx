@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Preview } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, Animation, Renderer, analytics, Preview, Storage } from 'Lib';
 
 interface State {
 	error: string;
@@ -142,13 +142,18 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			S.Auth.accountSet(message.account);
 			S.Common.configSet(message.account.config, false);
 
-			U.Data.onInfo(message.account.info);
-			Animation.from(() => {
-				U.Data.onAuth();
-				U.Data.onAuthOnce(true);
+			const spaceId = Storage.get('spaceId');
+			if (spaceId) {
+				U.Router.switchSpace(spaceId);
+			} else {
+				U.Data.onInfo(message.account.info);
+				Animation.from(() => {
+					U.Data.onAuth();
+					this.isSelecting = false;
+				});
+			};
 
-				this.isSelecting = false;
-			});
+			U.Data.onAuthOnce(true);
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};

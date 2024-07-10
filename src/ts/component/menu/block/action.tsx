@@ -235,7 +235,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		const actionParam = { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject };
-		const changeFile = { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true }
+		const changeFile = { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true };
 		const restrictedAlign = [];
 
 		if (!hasText) {
@@ -359,7 +359,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: offsetX,
-			offsetY: node.offset().top - el.offset().top - 36,
+			offsetY: node.offset().top - el.offset().top - 40,
 			isSub: true,
 			noFlipX: true,
 			data: {

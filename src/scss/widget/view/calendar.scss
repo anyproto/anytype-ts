@@ -1,10 +1,11 @@
 @import "~scss/_mixins";
 
 .viewCalendar {
-	.dateSelect { padding: 0px 12px; display: flex; flex-direction: row; margin: 8px 0px; justify-content: space-between; }
+	.dateSelect { padding: 0px 12px; display: flex; flex-direction: row; margin: 4px 0px; justify-content: space-between; }
 	.dateSelect {
-		.side.left { @include text-paragraph; font-weight: 600; display: flex; flex-direction: row; gap: 0px 2px; align-items: center; }
-		.side.right { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 2px; align-items: center; }
+		.side { gap: 0px 4px; display: flex; flex-direction: row; align-items: center; }
+		.side.left { @include text-paragraph; font-weight: 600; }
+		.side.right { justify-content: flex-end; }
 
 		.select { padding: 2px 4px; border: 0px; }
 		.select {
@@ -19,31 +20,37 @@
 			transition: $transitionAllCommon; transform: rotateZ(90deg);
 		}
 		.icon.arrow.left { transform: rotateZ(270deg); }
-
 		.icon.arrow:hover { background-color: var(--color-shape-highlight-medium); }
 	}
 
 	.table { display: flex; flex-flow: column; padding: 0px 16px; }
 	.table {
 		.tableHead, .tableBody { display: grid; grid-template-columns: repeat(7, 1fr); }
-		.tableHead { flex-shrink: 0; margin: 0px 0px 8px 0px; }
+		.tableHead { flex-shrink: 0; height: 28px; }
 		.tableHead {
-			.item { @include text-small; text-align: center; color: var(--color-text-secondary); }
+			.item, .inner { display: flex; flex-direction: row; align-items: center; justify-content: center; }
+
+			.item { @include text-small; color: var(--color-text-secondary); }
+			.item {
+				.inner { width: 100%; max-width: 28px; height: 28px; }
+			}
 		}
 	}
 
-	.day { 
-		display: flex; flex-direction: row; align-items: center; justify-content: center; @include text-small; aspect-ratio: 1; border-radius: 4px; 
-		transition: $transitionAllCommon; position: relative;
-	}
+	.day { @include text-common; }
 	.day.today { color: var(--color-system-accent-125); font-weight: 500; }
 	.day.other { color: var(--color-text-secondary); }
 
+	.day, .day .inner { display: flex; flex-direction: row; align-items: center; justify-content: center; }
+
 	.day {
+		.inner { width: 100%; max-width: 28px; height: 28px; border-radius: 4px; transition: $transitionAllCommon; position: relative; }
 		.bullet { width: 3px; height: 3px; border-radius: 50%; position: absolute; bottom: 2px; left: 50%; margin-left: -1.5px; background: var(--color-control-active); }
 	}
 
-	.day:hover, .day.active { background-color: var(--color-shape-highlight-medium); }
+	.day:hover, .day.active { 
+		.inner { background-color: var(--color-shape-highlight-medium); }
+	}
 	.day:hover, .day.active {
 		.bullet { background: var(--color-text-primary); }
 	}

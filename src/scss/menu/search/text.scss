@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuSearchText { width: 400px; height: 44px; padding: 0px; position: fixed; top: 42px; }
+	.menu.menuSearchText { width: var(--menu-width-large); height: 44px; padding: 0px; position: fixed; top: 42px; }
 	.menu.menuSearchText {
 		.content { height: 100%; display: block; }
 		.flex { width: 100%; flex-direction: row; align-items: center; padding: 0px 0px 0px 8px; }

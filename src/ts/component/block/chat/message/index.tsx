@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName } from 'Component';
-import { I, S, U, J, Mark, translate } from 'Lib';
+import { IconObject, Icon, ObjectName } from 'Component';
+import { I, S, U, J, Mark,translate } from 'Lib';
 
 interface Props extends I.Block, I.BlockComponent {
 	data: any;
@@ -28,21 +28,39 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	render () {
 		const { id, data, isThread, onThread } = this.props;
 		const { space } = S.Common;
+		const { account } = S.Auth;
 		const length = this.getChildren().length;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, data.identity));
-		const me = U.Space.getMyParticipant();
 		const text = U.Common.lbBr(Mark.toHtml(data.text, data.marks));
 		const files = (data.files || []).map(id => S.Detail.get(J.Constant.subId.file, id));
-		const cn = [ 'message', author.id == me.id ? 'isMe' : '' ];
+		const reactions = data.reactions || [ '😄', '🧑🏻‍🎤', '👨🏻‍⚖️' ].map(it => {
+			return { value: it, author: account.id, count: U.Common.rand(1, 5) };
+		});
+		const cn = [ 'message' ];
 
-		if (author.id == me.id) {
-			cn.push('isMe');
+		if (data.identity == account.id) {
+			cn.push('isSelf');
 		};
 		if (this.canExpand) {
 			cn.push('canExpand');
 		};
 		if (this.expanded) {
 			cn.push('expanded');
+		};
+
+		const Reaction = (item: any) => {
+			const author = U.Space.getParticipant(U.Space.getParticipantId(space, item.author));
+
+			return (
+				<div className="reaction">
+					<div className="value">
+						<IconObject object={{ iconEmoji: item.value }} size={18} />
+					</div>
+					<div className="count">
+						{item.count > 1 ? item.count : <IconObject object={author} size={18} />}
+					</div>
+				</div>
+			);
 		};
 
 		return (
@@ -73,6 +91,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 							))}
 						</div>
 					) : ''}
+
+					<div className="reactions">
+						{reactions.map((item: any, i: number) => (
+							<Reaction key={i} {...item} />
+						))}
+						<Icon className="add" />
+					</div>
 
 					<div className="sub" onClick={() => onThread(id)}>
 						{!isThread ? <div className="item">{length} replies</div> : ''}

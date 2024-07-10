@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewRelationList { width: 360px; }
+	.menu.menuDataviewRelationList { width: var(--menu-width-set); }
 	.menu.menuDataviewRelationList {
 		.content { overflow: visible !important; padding: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; padding: 0px 0px 8px 0px; }
@@ -21,7 +21,7 @@
 		}
 	}
 	
-	.menu.menuDataviewRelationEdit { width: 224px; }
+	.menu.menuDataviewRelationEdit { width: var(--menu-width-icon); }
 	.menu.menuDataviewRelationEdit {
 		.content { padding: 0px; max-height: unset; }
 		.form { padding: 8px 0px; }

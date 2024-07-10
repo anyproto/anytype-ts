@@ -1,4 +1,5 @@
 import * as React from 'react';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, IconObject } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
@@ -60,7 +61,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
 			>
-				<div ref={ref => this.refList = ref} className="scrollWrap">
+				<div id="scrollWrapper" ref={ref => this.refList = ref} className="scrollWrapper">
 					<div className="scroll">
 						{messages.map((item: any) => (
 							<ChatMessage 
@@ -74,40 +75,42 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					</div>
 				</div>
 
-				<div className="bottom">
-					<ChatButtons 
-						ref={ref => this.refButtons = ref}
-						blockId={blockId} 
-						buttons={this.getButtons()}
-						onButton={this.onButton}
-					/>
+				<div id="formWrapper" className="formWrapper">
+					<div className="form">
+						<ChatButtons 
+							ref={ref => this.refButtons = ref}
+							blockId={blockId} 
+							buttons={this.getButtons()}
+							onButton={this.onButton}
+						/>
 
-					<Editable 
-						ref={ref => this.refEditable = ref}
-						readonly={readonly}
-						placeholder={'Enter your message'}
-						onSelect={this.onSelect}
-						onFocus={this.onFocusInput}
-						onBlur={this.onBlurInput}
-						onKeyUp={this.onKeyUpInput} 
-						onKeyDown={this.onKeyDownInput}
-						onInput={this.onChange}
-						onPaste={this.onPaste}
-						onMouseDown={this.onMouseDown}
-						onMouseUp={this.onMouseUp}
-					/>
+						<Editable 
+							ref={ref => this.refEditable = ref}
+							readonly={readonly}
+							placeholder={'Enter your message'}
+							onSelect={this.onSelect}
+							onFocus={this.onFocusInput}
+							onBlur={this.onBlurInput}
+							onKeyUp={this.onKeyUpInput} 
+							onKeyDown={this.onKeyDownInput}
+							onInput={this.onChange}
+							onPaste={this.onPaste}
+							onMouseDown={this.onMouseDown}
+							onMouseUp={this.onMouseUp}
+						/>
 
-					{files.length ? (
-						<div className="files">
-							{files.map((file: any, i: number) => (
-								<div key={i} className="file">
-									<IconObject object={{ name: file.name, layout: I.ObjectLayout.File }} />
-									<div className="name">{file.name}</div>
-									<div className="size">{U.File.size(file.size)}</div>
-								</div>
-							))}
-						</div>
-					) : ''}
+						{files.length ? (
+							<div className="files">
+								{files.map((file: any, i: number) => (
+									<div key={i} className="file">
+										<IconObject object={{ name: file.name, layout: I.ObjectLayout.File }} />
+										<div className="name">{file.name}</div>
+										<div className="size">{U.File.size(file.size)}</div>
+									</div>
+								))}
+							</div>
+						) : ''}
+					</div>
 				</div>
 			</div>
 		);
@@ -296,7 +299,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	scrollToBottom () {
-		$(this.refList).scrollTop(this.refList.scrollHeight);
+		window.setTimeout(() => {
+			const { isPopup } = this.props;
+			const container = U.Common.getScrollContainer(isPopup);
+			const height = isPopup ? container.get(0).scrollHeight : document.body.scrollHeight;
+
+			container.scrollTop(height);
+		}, 10);
 	};
 
 	getTextValue (): string {

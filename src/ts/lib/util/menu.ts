@@ -182,8 +182,7 @@ class UtilMenu {
 	getActions (param: any) {
 		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject } = param;
 		const cmd = keyboard.cmdSymbol();
-
-		let items: any[] = [
+		const items: any[] = [
 			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate'), caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
@@ -293,7 +292,7 @@ class UtilMenu {
 	};
 
 	turnLayouts () {
-		const allowed = [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Note ];
+		const allowed = U.Object.getPageLayouts();
 		return this.getLayouts().filter(it => allowed.includes(it.id));
 	};
 

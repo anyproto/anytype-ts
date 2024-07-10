@@ -955,7 +955,7 @@ class Dispatcher {
 
 				case 'SpaceSyncStatusUpdate':
 				case 'P2PStatusUpdate': {
-					S.Auth.syncStatusUpdate(mapped)
+					S.Auth.syncStatusUpdate(mapped);
 					break;
 				};
 			};
