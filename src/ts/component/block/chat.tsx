@@ -372,7 +372,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							value = U.Common.stringInsert(value, icon, range.from, range.from);
 
 							this.refEditable.setValue(value);
-							this.refEditable.setRange({ from: range.to + 1, to: range.to + 1});
+							this.refEditable.setRange({ from: value.length, to: value.length});
 						},
 					}
 				});
