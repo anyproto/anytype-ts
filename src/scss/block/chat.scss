@@ -53,6 +53,9 @@
 					display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500; 
 					background-color: var(--color-shape-highlight-medium); padding: 4px 6px; flex-shrink: 0;
 				}
+				.reaction {
+					.count { min-width: 18px; text-align: center; }
+				}
 
 				.icon.add { 
 					width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/block/chat/reaction.svg');

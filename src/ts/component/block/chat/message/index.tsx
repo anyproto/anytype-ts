@@ -194,6 +194,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const { account } = S.Auth;
 		const reactions = data.reactions || [];
 		const item = reactions.find(it => it.value == icon);
+		const idx = reactions.findIndex(it => it.value == icon);
 
 		if (!item) {
 			reactions.push({ value: icon, authors: [ account.id ], count: 1 });
@@ -204,6 +205,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 				item.authors = item.authors.filter(id => id != account.id);
 			} else {
 				item.authors = item.authors.concat(account.id);
+			};
+
+			if (!item.authors.length) {
+				reactions.splice(idx, 1);
 			};
 		};
 
