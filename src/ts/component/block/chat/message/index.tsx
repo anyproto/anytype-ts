@@ -1,8 +1,8 @@
-
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, C, S, U, J, Mark } from 'Lib';
+import { I, S, U, J, Mark,translate } from 'Lib';
 
 interface Props extends I.Block, I.BlockComponent {
 	data: any;
@@ -10,15 +10,22 @@ interface Props extends I.Block, I.BlockComponent {
 	onThread: (id: string) => void;
 };
 
+const LINES_LIMIT = 10;
+
 const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 	node = null;
+	text: any = null;
+	canExpand: boolean = false;
+	expanded: boolean = false;
 
 	constructor (props: Props) {
 		super(props);
 
+		this.onExpand = this.onExpand.bind(this);
 		this.onReactionAdd = this.onReactionAdd.bind(this);
 	};
+
 
 	render () {
 		const { id, data, isThread, onThread } = this.props;
@@ -33,6 +40,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 		if (data.identity == account.id) {
 			cn.push('isSelf');
+		};
+		if (this.canExpand) {
+			cn.push('canExpand');
+		};
+		if (this.expanded) {
+			cn.push('expanded');
 		};
 
 		const Reaction = (item: any) => {
@@ -65,7 +78,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 						<div className="time">{U.Date.date('H:i', data.time)}</div>
 					</div>
 
-					<div className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}></div>
+					<div className="textWrapper">
+						<div ref={ref => this.text = ref}  className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}></div>
+
+						{this.canExpand && !this.expanded ? <div className="expand" onClick={this.onExpand}>{translate('blockChatMessageExpand')}</div> : ''}
+					</div>
 
 					{files.length ? (
 						<div className="files">
@@ -85,6 +102,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					<div className="sub" onClick={() => onThread(id)}>
 						{!isThread ? <div className="item">{length} replies</div> : ''}
 					</div>
+
 				</div>
 			</div>
 		);
@@ -94,6 +112,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const { data, renderLinks } = this.props;
 
 		renderLinks(this.node, data.marks, false, () => {});
+
+		this.checkLinesLimit();
+	};
+
+	onExpand () {
+		this.expanded = true;
+		this.forceUpdate();
 	};
 
 	getChildren () {
@@ -101,6 +126,16 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const childrenIds = S.Block.getChildrenIds(rootId, id);
 
 		return S.Block.getChildren(rootId, id, it => it.isText());
+	};
+
+	checkLinesLimit () {
+		const textHeight = $(this.text).outerHeight();
+		const lineHeight = Number($(this.text).css('line-height').replace('px', ''));
+
+		if (textHeight/lineHeight > LINES_LIMIT) {
+			this.canExpand = true;
+			this.forceUpdate();
+		};
 	};
 
 	onReactionAdd () {
