@@ -17,7 +17,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	node = null;
 	text: any = null;
 	canExpand: boolean = false;
-	expanded: boolean = false;
+	isExpanded: boolean = false;
 
 	constructor (props: Props) {
 		super(props);
@@ -44,7 +44,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		if (this.canExpand) {
 			cn.push('canExpand');
 		};
-		if (this.expanded) {
+		if (this.isExpanded) {
 			cn.push('expanded');
 		};
 
@@ -81,7 +81,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					<div className="textWrapper">
 						<div ref={ref => this.text = ref}  className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}></div>
 
-						{this.canExpand && !this.expanded ? <div className="expand" onClick={this.onExpand}>{translate('blockChatMessageExpand')}</div> : ''}
+						{this.canExpand && !this.isExpanded ? <div className="expand" onClick={this.onExpand}>{translate('blockChatMessageExpand')}</div> : ''}
 					</div>
 
 					{files.length ? (
@@ -117,7 +117,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	onExpand () {
-		this.expanded = true;
+		this.isExpanded = true;
 		this.forceUpdate();
 	};
 

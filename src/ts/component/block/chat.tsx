@@ -77,12 +77,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 				<div id="formWrapper" className="formWrapper">
 					<div className="form">
-						<ChatButtons 
-							ref={ref => this.refButtons = ref}
-							blockId={blockId} 
-							buttons={this.getButtons()}
-							onButton={this.onButton}
-						/>
 
 						<Editable 
 							ref={ref => this.refEditable = ref}
@@ -97,6 +91,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							onPaste={this.onPaste}
 							onMouseDown={this.onMouseDown}
 							onMouseUp={this.onMouseUp}
+						/>
+
+						<ChatButtons
+							ref={ref => this.refButtons = ref}
+							blockId={blockId}
+							buttons={this.getButtons()}
+							onButton={this.onButton}
 						/>
 
 						{files.length ? (
@@ -326,6 +327,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getButtons () {
+		return this.hasSelection() ? this.getTextButtons() : this.getChatButtons();
+	};
+
+	getChatButtons () {
+		return [];
+	};
+
+	getTextButtons () {
 		const cmd = keyboard.cmdSymbol();
 		const colorMark = Mark.getInRange(this.marks, I.MarkType.Color, this.range) || {};
 		const bgMark = Mark.getInRange(this.marks, I.MarkType.BgColor, this.range) || {};
@@ -436,6 +445,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.setState({ threadId: id }, () => {
 			this.scrollToBottom();
 		});
+	};
+
+	hasSelection () {
+		if (!this.range) {
+			return;
+		};
+
+		const { from, to } = this.range;
+
+		return to - from > 0
 	};
 
 });
