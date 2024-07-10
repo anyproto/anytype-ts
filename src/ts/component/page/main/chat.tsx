@@ -289,7 +289,12 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 
 			node.css({ paddingTop: isPopup ? 0 : hh });
 
-			const mh = scrollContainer.height() - hh - formWrapper.outerHeight() - controls.outerHeight() - head.outerHeight();
+			console.log('sh', scrollContainer.height());
+			console.log('fh', formWrapper.height());
+			console.log('ch', controls.outerHeight());
+			console.log('hh', head.outerHeight(true));
+
+			const mh = scrollContainer.height() - hh - formWrapper.outerHeight() - controls.outerHeight(true) - head.outerHeight(true);
 
 			scrollWrapper.css({ minHeight: mh });
 		});

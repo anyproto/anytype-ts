@@ -197,6 +197,10 @@
 	}
 }
 
+.editorWrapper.isChat.withIcon {
+	.controlButtons { left: 0px; }
+}
+
 /* Set, Collection, Date */
 
 .editorWrapper.isSet,
