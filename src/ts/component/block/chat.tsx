@@ -1,7 +1,6 @@
 import * as React from 'react';
-import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Editable, IconObject } from 'Component';
+import { Editable, IconObject, Label } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
 
 import ChatButtons from './chat/buttons';
@@ -62,17 +61,23 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				onDrop={this.onDrop}
 			>
 				<div id="scrollWrapper" ref={ref => this.refList = ref} className="scrollWrapper">
-					<div className="scroll">
-						{messages.map((item: any) => (
-							<ChatMessage 
-								key={item.id} 
-								{...this.props} 
-								{...item} 
-								isThread={!!threadId}
-								onThread={this.onThread}
-							/>
-						))}
-					</div>
+					{!messages.length ? (
+						<div className="emptyState">
+							<Label text={translate('blockChatEmpty')} />
+						</div>
+					) : (
+						<div className="scroll">
+							{messages.map((item: any) => (
+								<ChatMessage 
+									key={item.id} 
+									{...this.props} 
+									{...item} 
+									isThread={!!threadId}
+									onThread={this.onThread}
+								/>
+							))}
+						</div>
+					)}
 				</div>
 
 				<div id="formWrapper" className="formWrapper">

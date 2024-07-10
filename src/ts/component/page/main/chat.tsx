@@ -272,22 +272,26 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		};
 
 		raf(() => {
-			const win = $(window);
 			const node = $(this.node);
 			const cover = node.find('.block.blockCover');
-			const container = U.Common.getPageContainer(isPopup);
-			const header = container.find('#header');
+			const pageContainer = U.Common.getPageContainer(isPopup);
+			const scrollContainer = U.Common.getScrollContainer(isPopup);
+			const header = pageContainer.find('#header');
 			const hh = isPopup ? header.height() : J.Size.header;
-			const formWrapper = node.find('#formWrapper');
+			const scrollWrapper = node.find('#scrollWrapper');
+			const formWrapper = node.find('#formWrapper').addClass('isFixed');
+			const controls = node.find('.editorControls');
+			const head = node.find('.headSimple');
 
 			if (cover.length) {
 				cover.css({ top: hh });
 			};
 
-			container.css({ minHeight: isPopup ? '' : win.height() });
 			node.css({ paddingTop: isPopup ? 0 : hh });
 
-			formWrapper.addClass('isFixed');
+			const mh = scrollContainer.height() - hh - formWrapper.outerHeight() - controls.outerHeight() - head.outerHeight();
+
+			scrollWrapper.css({ minHeight: mh });
 		});
 	};
 
