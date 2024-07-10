@@ -20,7 +20,10 @@
 				.time { @include text-small; color: var(--color-text-secondary); }
 			}
 
-			.sub { @include text-small; color: var(--color-text-secondary); }
+			.expand { display: flex; align-items: center; gap: 0px 8px; @include text-small; font-weight: 500; color: var(--color-text-secondary); margin-top: 4px; }
+			.expand::after { content: ''; display: block; width: 8px; height: 8px; background: url('~img/arrow/button/grey.svg'); }
+
+			.sub { @include text-small; color: var(--color-text-secondary); display: none; }
 			.sub {
 				.item:hover { color: var(--color-text-primary); }
 			}
@@ -44,6 +47,13 @@
 		.message.isSelf { flex-direction: row-reverse; }
 		.message.isSelf {
 			.side.right { background: rgba(229, 248, 214, 0.5); }
+		}
+
+		.message.canExpand {
+			.text { @include clamp; -webkit-line-clamp: 10; }
+		}
+		.message.canExpand.expanded {
+			.text { -webkit-line-clamp: unset; }
 		}
 
 		.formWrapper.isFixed { padding: 0px 0px 80px 0px; position: sticky; z-index: 1; bottom: 0px; width: 704px; background: var(--color-bg-primary); }
