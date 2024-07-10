@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Editable, IconObject, Label } from 'Component';
+import { Editable, IconObject, Label, Icon } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
 
 import ChatButtons from './chat/buttons';
@@ -64,6 +64,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				<div id="scrollWrapper" ref={ref => this.refList = ref} className="scrollWrapper">
 					{!messages.length ? (
 						<div className="emptyState">
+							<div className="img"><Icon /></div>
 							<Label text={translate('blockChatEmpty')} />
 						</div>
 					) : (
