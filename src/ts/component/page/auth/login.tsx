@@ -151,11 +151,10 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 					U.Data.onAuth();
 					this.isSelecting = false;
 				});
-
-				analytics.event('SelectAccount', { middleTime: message.middleTime });
 			};
 
 			U.Data.onAuthOnce(true);
+			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
 
