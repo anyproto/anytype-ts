@@ -235,7 +235,7 @@ class Storage {
 
 	getLastOpened (windowId: string) {
 		const obj = this.get('lastOpenedObject') || {};
-		return obj[windowId] || null;
+		return obj[windowId] || obj[1] || null;
 	};
 
 	setToggle (rootId: string, id: string, value: boolean) {
