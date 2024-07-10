@@ -30,7 +30,20 @@
 				.item:hover { color: var(--color-text-primary); }
 			}
 
-			.files { margin: 8px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 4px; }
+			.attachments { margin: 8px 0px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-column-gap: 8px; grid-row-gap: 8px; }
+			.attachments {
+				.attachment { 
+					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); 
+					background: var(--color-bg-primary); border-radius: 12px; border: 1px solid var(--color-shape-tertiary); padding: 16px;
+				}
+				.attachment {
+					.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); }
+					.info { flex-grow: 1; }
+
+					.name { line-height: 20px; font-weight: 500; @include clamp1; }
+					.descr { @include text-small; }
+				}
+			}
 
 			.reactions { margin: 12px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; }
 			.reactions {
@@ -103,9 +116,9 @@
 				}
 			}
 
-			.files { @include text-small; margin: 8px 0px 0px 0px; display: flex; flex-direction: column; gap: 2px 0px; }
-			.files {
-				.file { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+			.attachments { @include text-small; margin: 8px 0px 0px 0px; display: flex; flex-direction: column; gap: 2px 0px; }
+			.attachments {
+				.attachment { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 			}
 
 			.editableWrap { border: 1px solid var(--color-shape-secondary); background-color: var(--color-bg-primary); padding: 8px; border-radius: 4px; }

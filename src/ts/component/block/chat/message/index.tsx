@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { IconObject, Icon, ObjectName } from 'Component';
+import { IconObject, Icon, ObjectName, ObjectDescription } from 'Component';
 import { I, S, U, J, Mark,translate } from 'Lib';
 
 interface Props extends I.Block, I.BlockComponent {
@@ -33,7 +33,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const length = this.getChildren().length;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, data.identity));
 		const text = U.Common.lbBr(Mark.toHtml(data.text, data.marks));
-		const files = (data.files || []).map(id => S.Detail.get(J.Constant.subId.file, id));
+		const attachments = (data.attachments || []).map(id => S.Detail.get(J.Constant.subId.file, id));
 		const reactions = data.reactions || [];
 		const cn = [ 'message' ];
 
@@ -64,6 +64,18 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			);
 		};
 
+		const Attachment = (item: any) => {
+			return (
+				<div className="attachment" onClick={() => U.Object.openPopup(item)}>
+					<IconObject object={item} size={48} />
+					<div className="info">
+						<ObjectName object={item} />
+						<ObjectDescription object={item} />
+					</div>
+				</div>
+			);
+		};
+
 		return (
 			<div 
 				ref={ref => this.node = ref} 
@@ -85,10 +97,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 						{this.canExpand && !this.expanded ? <div className="expand" onClick={this.onExpand}>{translate('blockChatMessageExpand')}</div> : ''}
 					</div>
 
-					{files.length ? (
-						<div className="files">
-							{files.map((item: any, i: number) => (
-								<IconObject key={i} object={item} size={48} onClick={() => U.Object.openPopup(item)} />
+					{attachments.length ? (
+						<div className="attachments">
+							{attachments.map((item: any) => (
+								<Attachment key={item.id} {...item} />
 							))}
 						</div>
 					) : ''}

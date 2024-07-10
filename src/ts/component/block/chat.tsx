@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Editable, IconObject, Label } from 'Component';
+import { Editable, IconObject, Label, ObjectName } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
 
 import ChatButtons from './chat/buttons';
@@ -10,7 +10,7 @@ const LIMIT = 50;
 
 interface State {
 	threadId: string;
-	files: File[];
+	attachments: File[];
 };
 
 const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent, State> {
@@ -24,7 +24,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	range: I.TextRange = { from: 0, to: 0 };
 	state = {
 		threadId: '',
-		files: [],
+		attachments: [],
 	};
 
 	constructor (props: I.BlockComponent) {
@@ -48,7 +48,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	render () {
 		const { readonly } = this.props;
-		const { threadId, files } = this.state;
+		const { threadId, attachments } = this.state;
 		const blockId = this.getBlockId();
 		const messages = this.getMessages();
 
@@ -104,12 +104,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							onMouseUp={this.onMouseUp}
 						/>
 
-						{files.length ? (
-							<div className="files">
-								{files.map((file: any, i: number) => (
-									<div key={i} className="file">
+						{attachments.length ? (
+							<div className="attachments">
+								{attachments.map((file: any, i: number) => (
+									<div key={i} className="attachment">
 										<IconObject object={{ name: file.name, layout: I.ObjectLayout.File }} />
-										<div className="name">{file.name}</div>
+										<ObjectName object={file} />
 										<div className="size">{U.File.size(file.size)}</div>
 									</div>
 								))}
@@ -124,6 +124,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	componentDidMount () {
 		this._isMounted = true;
 		this.scrollToBottom();
+		this.refEditable?.setRange({ from: 0, to: 0 });
 	};
 
 	componentWillUnmount () {
@@ -210,13 +211,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { files } = this.state;
+		const { attachments } = this.state;
 		const node = $(this.node);
 		
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
 
-		this.setState({ files: files.concat(Array.from(e.dataTransfer.files)) });
+		this.setState({ attachments: attachments.concat(Array.from(e.dataTransfer.files)) });
 		keyboard.disableCommonDrop(false);
 	};
 
@@ -248,7 +249,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const { rootId } = this.props;
 		const { account } = S.Auth;
-		const { files } = this.state;
+		const { attachments } = this.state;
 		const blockId = this.getBlockId();
 		const childrenIds = S.Block.getChildrenIds(rootId, blockId);
 		const length = childrenIds.length;
@@ -259,7 +260,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			...this.getMarksFromHtml(),
 			identity: account.id,
 			time: U.Date.now(),
-			files: [],
+			attachments: [],
 			reactions: [],
 		};
 		
@@ -278,15 +279,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			});
 		};
 
-		if (files.length) {
+		if (attachments.length) {
 			let n = 0;
-			for (const file of files) {
+			for (const file of attachments) {
 				C.FileUpload(S.Common.space, '', file.path, I.FileType.None, {}, (message: any) => {
 					n++;
 
-					data.files.push(message.objectId);
+					data.attachments.push(message.objectId);
 
-					if (n == files.length) {
+					if (n == attachments.length) {
 						create();
 					};
 				});
@@ -301,7 +302,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.refEditable.setValue('');
 		this.refEditable.placeholderCheck();
 
-		this.setState({ files: [] });
+		this.setState({ attachments: [] });
 	};
 
 	scrollToBottom () {
