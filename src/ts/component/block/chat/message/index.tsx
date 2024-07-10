@@ -26,7 +26,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		this.onReactionAdd = this.onReactionAdd.bind(this);
 	};
 
-
 	render () {
 		const { id, data, isThread, onThread } = this.props;
 		const { space } = S.Common;
