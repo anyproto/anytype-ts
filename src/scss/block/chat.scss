@@ -4,7 +4,7 @@
 	.block.blockChat { 
 		.wrap.isDraggingOver { opacity: 0.5; cursor: copy; }
 
-		.scrollWrapper { padding: 16px 16px 16px 0px; display: flex; flex-direction: column; min-height: 206px; }
+		.scrollWrapper { padding: 16px 0px; display: flex; flex-direction: column; min-height: 206px; }
 		.scrollWrapper {
 			.scroll { display: flex; flex-direction: column; justify-content: flex-end; min-height: 100%; gap: 16px 0px; }
 		}
@@ -38,13 +38,31 @@
 				.item:hover { color: var(--color-text-primary); }
 			}
 
-			.files { margin: 8px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 4px; }
+			.textWrapper { padding: 0px 0px 8px 0px; }
 
-			.reactions { margin: 12px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; }
+			.attachments { padding: 0px 0px 8px 0px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-column-gap: 8px; grid-row-gap: 8px; }
+			.attachments {
+				.attachment { 
+					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); 
+					background: var(--color-bg-primary); border-radius: 12px; border: 1px solid var(--color-shape-tertiary); padding: 16px;
+				}
+				.attachment {
+					.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); }
+					.info { flex-grow: 1; }
+
+					.name { line-height: 20px; font-weight: 500; @include clamp1; }
+					.descr { @include text-small; }
+				}
+			}
+
+			.reactions { padding: 4px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; }
 			.reactions {
 				.reaction { 
 					display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500; 
 					background-color: var(--color-shape-highlight-medium); padding: 4px 6px; flex-shrink: 0;
+				}
+				.reaction {
+					.count { min-width: 18px; text-align: center; }
 				}
 
 				.icon.add { 
@@ -132,9 +150,9 @@
 
 			.icon.send { position: absolute; bottom: 10px; right: 16px; width: 20px; height: 20px; background: url('~img/icon/chat/buttons/send.svg'); }
 
-			.files { @include text-small; margin: 8px 0px 0px 0px; display: flex; flex-direction: column; gap: 2px 0px; }
-			.files {
-				.file { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+			.attachments { @include text-small; margin: 8px 0px 0px 0px; display: flex; flex-direction: column; gap: 2px 0px; }
+			.attachments {
+				.attachment { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 			}
 		}
 

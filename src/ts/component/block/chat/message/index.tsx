@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { IconObject, Icon, ObjectName } from 'Component';
-import { I, S, U, J, Mark,translate } from 'Lib';
+import { IconObject, Icon, ObjectName, ObjectDescription } from 'Component';
+import { I, S, U, J, Mark, translate, Preview } from 'Lib';
 
 interface Props extends I.Block, I.BlockComponent {
 	data: any;
@@ -25,6 +25,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 		this.onExpand = this.onExpand.bind(this);
 		this.onReactionAdd = this.onReactionAdd.bind(this);
+		this.onReactionEnter = this.onReactionEnter.bind(this);
+		this.onReactionLeave = this.onReactionLeave.bind(this);
 	};
 
 	render () {
@@ -35,7 +37,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const length = this.getChildren().length;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, data.identity));
 		const text = U.Common.lbBr(Mark.toHtml(data.text, data.marks));
-		const files = (data.files || []).map(id => S.Detail.get(J.Constant.subId.file, id));
+		const attachments = (data.attachments || []).map(id => S.Detail.get(J.Constant.subId.file, id));
 		const reactions = data.reactions || [];
 		const cn = [ 'message' ];
 
@@ -55,12 +57,29 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			const author = length ? U.Space.getParticipant(U.Space.getParticipantId(space, authors[0])) : '';
 
 			return (
-				<div className="reaction" onClick={() => this.onReactionSelect(item.value)}>
+				<div 
+					className="reaction" 
+					onClick={() => this.onReactionSelect(item.value)}
+					onMouseEnter={e => this.onReactionEnter(e, authors)}
+					onMouseLeave={this.onReactionLeave}
+				>
 					<div className="value">
 						<IconObject object={{ iconEmoji: item.value }} size={18} />
 					</div>
 					<div className="count">
 						{length > 1 ? length : <IconObject object={author} size={18} />}
+					</div>
+				</div>
+			);
+		};
+
+		const Attachment = (item: any) => {
+			return (
+				<div className="attachment" onClick={() => U.Object.openPopup(item)}>
+					<IconObject object={item} size={48} />
+					<div className="info">
+						<ObjectName object={item} />
+						<ObjectDescription object={item} />
 					</div>
 				</div>
 			);
@@ -97,10 +116,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 						</div>
 					) : ''}
 
-					{files.length ? (
-						<div className="files">
-							{files.map((item: any, i: number) => (
-								<IconObject key={i} object={item} size={48} onClick={() => U.Object.openPopup(item)} />
+					{attachments.length ? (
+						<div className="attachments">
+							{attachments.map((item: any, i: number) => (
+								<Attachment key={i} {...item} />
 							))}
 						</div>
 					) : ''}
@@ -109,7 +128,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 						{reactions.map((item: any, i: number) => (
 							<Reaction key={i} {...item} />
 						))}
-						<Icon className="add" onClick={this.onReactionAdd} />
+						<Icon className="add" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
 					</div>
 
 					<div className="sub" onClick={() => onThread(id)}>
@@ -151,6 +170,22 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		};
 	};
 
+	onReactionEnter (e: any, authors: string[]) {
+		const { space } = S.Common;
+
+		const text = authors.map(it => {
+			const author = U.Space.getParticipant(U.Space.getParticipantId(space, it));
+
+			return author.name;
+		}).filter(it => it).join('\n');
+
+		Preview.tooltipShow({ text, element: $(e.currentTarget) });
+	};
+
+	onReactionLeave (e: any) {
+		Preview.tooltipHide(false);
+	};
+
 	onReactionAdd () {
 		const node = $(this.node);
 
@@ -171,6 +206,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const { account } = S.Auth;
 		const reactions = data.reactions || [];
 		const item = reactions.find(it => it.value == icon);
+		const idx = reactions.findIndex(it => it.value == icon);
 
 		if (!item) {
 			reactions.push({ value: icon, authors: [ account.id ], count: 1 });
@@ -178,10 +214,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			item.authors = item.authors || [];
 
 			if (item.authors.includes(account.id)) {
-				return;
+				item.authors = item.authors.filter(id => id != account.id);
+			} else {
+				item.authors = item.authors.concat(account.id);
 			};
 
-			item.authors.push(account.id);
+			if (!item.authors.length) {
+				reactions.splice(idx, 1);
+			};
 		};
 
 		U.Data.blockSetText(rootId, id, JSON.stringify({ ...data, reactions }), [], true);
