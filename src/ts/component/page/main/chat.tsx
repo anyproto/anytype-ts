@@ -271,30 +271,31 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 			return;
 		};
 
+		const rootId = this.getRootId();
+		const check = U.Data.checkDetails(rootId);
+
 		raf(() => {
 			const node = $(this.node);
 			const cover = node.find('.block.blockCover');
 			const pageContainer = U.Common.getPageContainer(isPopup);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const header = pageContainer.find('#header');
-			const hh = isPopup ? header.height() : J.Size.header;
+			const headerHeight = isPopup ? header.height() : J.Size.header;
 			const scrollWrapper = node.find('#scrollWrapper');
 			const formWrapper = node.find('#formWrapper').addClass('isFixed');
 			const controls = node.find('.editorControls');
 			const head = node.find('.headSimple');
 
 			if (cover.length) {
-				cover.css({ top: hh });
+				cover.css({ top: headerHeight });
 			};
 
-			node.css({ paddingTop: isPopup ? 0 : hh });
+			node.css({ paddingTop: isPopup ? 0 : headerHeight });
 
-			console.log('sh', scrollContainer.height());
-			console.log('fh', formWrapper.height());
-			console.log('ch', controls.outerHeight());
-			console.log('hh', head.outerHeight(true));
-
-			const mh = scrollContainer.height() - hh - formWrapper.outerHeight() - controls.outerHeight(true) - head.outerHeight(true);
+			const fh = Number(formWrapper.outerHeight(true)) || 0;
+			const ch = Number(controls.outerHeight(true)) || 0;
+			const hh = Number(head.outerHeight(true)) || 0;
+			const mh = scrollContainer.height() - headerHeight - fh - ch - hh - (check.withCover ? J.Size.coverPadding : 0);
 
 			scrollWrapper.css({ minHeight: mh });
 		});
