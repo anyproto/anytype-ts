@@ -255,6 +255,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			identity: account.id,
 			time: U.Date.now(),
 			files: [],
+			reactions: [],
 		};
 		
 		const create = () => {
