@@ -10,7 +10,7 @@
 		position: relative; z-index: 1; background: #000;
 	}
 
-	.body { display: flex; flex-direction: column; justify-content: space-between; padding: 0px 0px 12px 0px; flex-grow: 1; height: calc(100% - 42px); gap: 16px 0px; }
+	.body { display: flex; flex-direction: column; justify-content: space-between; padding: 0px 0px 10px 0px; flex-grow: 1; height: calc(100% - 42px); gap: 16px 0px; }
 	.body {
 		.side { padding: 0px 10px; }
 		.side.top { display: flex; flex-direction: column; gap: 16px 0px; overflow: auto; height: calc(100% - 64px); flex-grow: 1; overscroll-behavior: none; }
@@ -45,5 +45,11 @@
 	}
 	.item.settings:hover { 
 		.iconWrap { background-color: #2b2b2b; }
+	}
+}
+
+html.platformWindows, html.platformLinux {
+	.vault {
+		.head { height: 10px; }
 	}
 }
