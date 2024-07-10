@@ -1,7 +1,7 @@
 
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName } from 'Component';
+import { IconObject, Icon, ObjectName } from 'Component';
 import { I, S, U, J, Mark } from 'Lib';
 
 interface Props extends I.Block, I.BlockComponent {
@@ -17,16 +17,40 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	render () {
 		const { id, data, isThread, onThread } = this.props;
 		const { space } = S.Common;
+		const { account } = S.Auth;
 		const length = this.getChildren().length;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, data.identity));
 		const text = U.Common.lbBr(Mark.toHtml(data.text, data.marks));
 		const files = (data.files || []).map(id => S.Detail.get(J.Constant.subId.file, id));
+		const reactions = data.reactions || [ '😄', '🧑🏻‍🎤', '👨🏻‍⚖️' ].map(it => {
+			return { value: it, author: account.id, count: U.Common.rand(1, 5) };
+		});
+		const cn = [ 'message' ];
+
+		if (data.identity == account.id) {
+			cn.push('isSelf');
+		};
+
+		const Reaction = (item: any) => {
+			const author = U.Space.getParticipant(U.Space.getParticipantId(space, item.author));
+
+			return (
+				<div className="reaction">
+					<div className="value">
+						<IconObject object={{ iconEmoji: item.value }} size={18} />
+					</div>
+					<div className="count">
+						{item.count > 1 ? item.count : <IconObject object={author} size={18} />}
+					</div>
+				</div>
+			);
+		};
 
 		return (
 			<div 
 				ref={ref => this.node = ref} 
 				id={`item-${id}`} 
-				className="message"
+				className={cn.join(' ')}
 			>
 				<div className="side left">
 					<IconObject object={author} size={48} />
@@ -46,6 +70,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 							))}
 						</div>
 					) : ''}
+
+					<div className="reactions">
+						{reactions.map((item: any, i: number) => (
+							<Reaction key={i} {...item} />
+						))}
+						<Icon className="add" />
+					</div>
 
 					<div className="sub" onClick={() => onThread(id)}>
 						{!isThread ? <div className="item">{length} replies</div> : ''}

@@ -67,7 +67,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 
 	getSections () {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const allowedLayout = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Layout ]);
@@ -128,11 +128,11 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 			return;
 		};
 
-		if (S.Menu.isAnimating) {
+		const { id, param, getId, getSize, close } = this.props;
+		if (S.Menu.isAnimating(id)) {
 			return;
 		};
 
-		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = S.Detail.get(rootId, rootId);

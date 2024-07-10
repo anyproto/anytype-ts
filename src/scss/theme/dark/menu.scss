@@ -253,5 +253,13 @@
             .iconWrapper.connected::before { background: #294b0e; }
             .iconWrapper.error::before { background: #581f0c; }
         }
+
+		.items {
+            .sides {
+                .side.right {
+					.icon.more:hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
+                }
+            }
+		}
     }
 }

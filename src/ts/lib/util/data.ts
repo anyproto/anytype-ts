@@ -274,7 +274,7 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
 				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
+					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
 				ignoreWorkspace: true,
 				ignoreHidden: false,
@@ -692,11 +692,10 @@ class UtilData {
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
 		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
 
-		if (layout == I.ObjectLayout.Task) {
+		if (U.Object.isTaskLayout(layout)) {
 			content.iconSize = I.LinkIconSize.Small;
-		};
-
-		if (layout == I.ObjectLayout.Note) {
+		} else
+		if (U.Object.isNoteLayout(layout)) {
 			const filter = [ 'type' ];
 
 			content.description = I.LinkDescription.None;

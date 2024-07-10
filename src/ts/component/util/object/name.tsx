@@ -24,7 +24,7 @@ class Name extends React.Component<Props> {
 		let name = String(object.name || '');
 
 		if (!isDeleted) {
-			if (layout == I.ObjectLayout.Note) {
+			if (U.Object.isNoteLayout(layout)) {
 				name = snippet || <span className="empty">{translate('commonEmpty')}</span>;
 			} else {
 				name = U.Object.name(object);
@@ -39,11 +39,7 @@ class Name extends React.Component<Props> {
 				onMouseEnter={onMouseEnter} 
 				onMouseLeave={onMouseLeave}
 			>
-				{'string' == typeof(name) ? (
-					<span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
-				) : (
-					<span>{name}</span>
-				)}
+				<span>{name}</span>
 			</div>
 		);
 	};

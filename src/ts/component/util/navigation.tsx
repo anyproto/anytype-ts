@@ -145,7 +145,7 @@ const Navigation = observer(class Navigation extends React.Component {
 		keyboard.onSearchPopup(analytics.route.navigation);
 	};
 
-	setX (sw: number, animate: boolean) {
+	position (sw: number, animate: boolean) {
 		const node = $(this.node);
 		const { ww } = U.Common.getWindowDimensions();
 		const width = node.outerWidth();

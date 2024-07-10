@@ -1,5 +1,10 @@
 import { I, S, U, J } from 'Lib';
 
+const ACCOUNT_KEYS = [
+	'spaceId',
+	'spaceOrder',
+];
+
 const SPACE_KEYS = [
 	'toggle',
 	'lastOpenedObject',
@@ -26,6 +31,14 @@ class Storage {
 			};
 
 			return this.getSpaceKey(key);
+		} else 
+		if (this.isAccountKey(key)) {
+			if (o) {
+				delete(this.storage[key]);
+				this.set(key, this.parse(o), true);
+			};
+
+			return this.getAccountKey(key);
 		} else {
 			return this.parse(o);
 		};
@@ -52,6 +65,9 @@ class Storage {
 
 		if (this.isSpaceKey(key)) {
 			this.setSpaceKey(key, o);
+		} else 
+		if (this.isAccountKey(key)) {
+			this.setAccountKey(key, o);
 		} else {
 			this.storage[key] = JSON.stringify(o);
 		};
@@ -59,11 +75,10 @@ class Storage {
 	
 	delete (key: string) {
 		if (this.isSpaceKey(key)) {
-			const obj = this.getSpace();
-
-			delete(obj[S.Common.space][key]);
-
-			this.setSpace(obj);
+			this.deleteSpaceKey(key);
+		} else 
+		if (this.isAccountKey(key)) {
+			this.deleteAccountKey(key);
 		} else {
 			delete(this.storage[key]);
 		};
@@ -84,6 +99,14 @@ class Storage {
 	getSpaceKey (key: string) {
 		const obj = this.getSpace();
 		return obj[S.Common.space][key];
+	};
+
+	deleteSpaceKey (key: string) {
+		const obj = this.getSpace();
+
+		delete(obj[S.Common.space][key]);
+
+		this.setSpace(obj);
 	};
 
 	getSpace () {
@@ -115,6 +138,60 @@ class Storage {
 				this.deleteSpace(key);
 			};
 		});
+	};
+
+	isAccountKey (key: string): boolean {
+		return ACCOUNT_KEYS.includes(key);
+	};
+
+	setAccountKey (key: string, value: any) {
+		const obj = this.getAccount();
+		const accountId = this.getAccountId();
+
+		obj[accountId][key] = value;
+
+		this.setAccount(obj);
+	};
+
+	getAccountKey (key: string) {
+		const obj = this.getAccount();
+		const accountId = this.getAccountId();
+
+		return obj[accountId][key];
+	};
+
+	getAccount () {
+		const obj = this.get('account') || {};
+		const accountId = this.getAccountId();
+
+		obj[accountId] = obj[accountId] || {};
+
+		return obj;
+	};
+
+	setAccount (obj: any) {
+		this.set('account', obj, true);
+	};
+
+	deleteAccount (id: string) {
+		const obj = this.getAccount();
+
+		delete(obj[id]);
+
+		this.setAccount(obj);
+	};
+
+	deleteAccountKey (key: string) {
+		const obj = this.getAccount();
+		const accountId = this.getAccountId();
+
+		delete(obj[accountId][key]);
+
+		this.setAccount(obj);
+	};
+
+	getAccountId () {
+		return this.get('accountId');
 	};
 
 	getPin () {
@@ -158,7 +235,7 @@ class Storage {
 
 	getLastOpened (windowId: string) {
 		const obj = this.get('lastOpenedObject') || {};
-		return obj[windowId] || null;
+		return obj[windowId] || obj[1] || null;
 	};
 
 	setToggle (rootId: string, id: string, value: boolean) {
@@ -326,7 +403,6 @@ class Storage {
 	logout () {
 		const keys = [ 
 			'accountId',
-			'spaceId',
 			'pin',
 		];
 

@@ -578,7 +578,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				y -= scrollTop;
 			};
 
-			x = Math.max(J.Size.vault.collapsed + J.Size.menuBorder, x);
+			x = Math.max(J.Size.vault.width + J.Size.menuBorder, x);
 			x = Math.min(ww - width - J.Size.menuBorder, x);
 
 			y = Math.max(borderTop, y);

@@ -260,7 +260,6 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 							{ com: '->',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '→') },
 							{ com: '<-',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '←') },
 							{ com: '--',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '—') },
-							{ com: '(c)',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '©') },
 							{ com: '(r)',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '®') },
 							{ com: '(tm)',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '™') },
 							{ com: '...',				 name: U.Common.sprintf(translate('popupShortcutMarkdownWhileTypingInserts'), '…') },

@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewSource { width: 360px; }
+	.menu.menuDataviewSource { width: var(--menu-width-set); }
 	.menu.menuDataviewSource {
 		.content { overflow: visible !important; padding: 0px; }
 		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: auto; max-height: 350px; }

@@ -9,7 +9,7 @@
 
 	.blocks > .empty { width: 100%; text-align: center; color: var(--color-text-secondary); @include text-header3; }
 
-	.blocks.horizontal { width: 704px; flex-direction: column; }
+	.blocks.horizontal { width: 704px; flex-direction: column; padding-bottom: 80px; }
 
 	.blocks.isVideo {
 		.block.blockMedia { max-height: unset; }

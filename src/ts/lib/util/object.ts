@@ -309,6 +309,10 @@ class UtilObject {
 		return layout == I.ObjectLayout.Task;
 	};
 
+	isNoteLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Note;
+	};
+
 	isBookmarkLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Bookmark;
 	};

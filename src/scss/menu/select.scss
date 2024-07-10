@@ -23,7 +23,7 @@
 		.items { height: calc(100% - 38px); }
 	}
 
-	.menu.menuSelect.skip { width: 320px; }
+	.menu.menuSelect.skip { width: var(--menu-width-value); }
 	.menu.menuSelect.skip {
 		.name { margin: 0px; width: calc(100% - 24px); @include text-overflow-nw; }
 	}
@@ -56,7 +56,7 @@
 		.items { padding: 8px 0px; }
 	}
 
-	.menu.menuSelect.spaceSelect { width: 280px; }
+	.menu.menuSelect.spaceSelect { width: var(--menu-width-value); }
 	.menu.menuSelect.spaceSelect {
 		.content { padding: 8px 0px; }
 		.item { padding: 4px 16px; }

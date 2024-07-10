@@ -123,13 +123,8 @@ class Keyboard {
 
 		this.pressed.push(key);
 
-		this.shortcut(`${cmd}+\\, ${cmd}+.`, e, (pressed: string) => {
+		this.shortcut(`${cmd}+\\, ${cmd}+dot`, e, (pressed: string) => {
 			e.preventDefault();
-
-			if (pressed.match('.') && this.isFocused) {
-				return;
-			};
-
 			sidebar.toggleOpenClose();
 		});
 

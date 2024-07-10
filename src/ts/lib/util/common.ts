@@ -398,7 +398,7 @@ class UtilCommon {
 	};
 	
 	lbBr (s: string) {
-		return s.toString().replace(new RegExp(/\n+/gi), '<br/>');
+		return s.toString().replace(new RegExp(/\n/gi), '<br/>');
 	};
 	
 	mapToArray (list: any[], field: string): any {
@@ -939,6 +939,10 @@ class UtilCommon {
 
 	normalizeLineEndings (s: string) {
 		return String(s || '').replace(/\r\n?/g, '\n');
+	};
+
+	htmlSpecialChars (s: string) {
+		return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	};
 
 };

@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuBlockMention { width: 360px; }
+	.menu.menuBlockMention { width: var(--menu-width-set); }
 	.menu.menuBlockMention {
 		.content { transition: none; padding: 0px; }
 		.items { height: 100%; }
