@@ -23,7 +23,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		super(props);
 
 		this.onExpand = this.onExpand.bind(this);
+		this.onReactionAdd = this.onReactionAdd.bind(this);
 	};
+
 
 	render () {
 		const { id, data, isThread, onThread } = this.props;
@@ -33,9 +35,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, data.identity));
 		const text = U.Common.lbBr(Mark.toHtml(data.text, data.marks));
 		const files = (data.files || []).map(id => S.Detail.get(J.Constant.subId.file, id));
-		const reactions = data.reactions || [ '😄', '🧑🏻‍🎤', '👨🏻‍⚖️' ].map(it => {
-			return { value: it, author: account.id, count: U.Common.rand(1, 5) };
-		});
+		const reactions = data.reactions || [];
 		const cn = [ 'message' ];
 
 		if (data.identity == account.id) {
@@ -96,7 +96,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 						{reactions.map((item: any, i: number) => (
 							<Reaction key={i} {...item} />
 						))}
-						<Icon className="add" />
+						<Icon className="add" onClick={this.onReactionAdd} />
 					</div>
 
 					<div className="sub" onClick={() => onThread(id)}>
@@ -136,6 +136,38 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			this.canExpand = true;
 			this.forceUpdate();
 		};
+	};
+
+	onReactionAdd () {
+		const node = $(this.node);
+		const { rootId, id, data } = this.props;
+		const { account } = S.Auth;
+
+		S.Menu.open('smile', { 
+			element: node.find('.reactions .icon.add'),
+			horizontal: I.MenuDirection.Center,
+			vertical: I.MenuDirection.Top,
+			noFlipX: true,
+			noFlipY: true,
+			data: {
+				noUpload: true,
+				value: '',
+				onSelect: (icon: string) => {
+					data.reactions = data.reactions || [];
+
+					const item = data.reactions.find(it => it.value == icon);
+
+					if (!item) {
+						data.reactions.push({ value: icon, author: account.id, count: 1 });
+					};
+
+					U.Data.blockSetText(rootId, id, JSON.stringify(data), [], true);
+
+				},
+				onUpload (objectId: string) {
+				},
+			}
+		});
 	};
 
 });
