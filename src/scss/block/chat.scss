@@ -30,7 +30,9 @@
 				.item:hover { color: var(--color-text-primary); }
 			}
 
-			.attachments { margin: 8px 0px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-column-gap: 8px; grid-row-gap: 8px; }
+			.textWrapper { padding: 0px 0px 8px 0px; }
+
+			.attachments { padding: 0px 0px 8px 0px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-column-gap: 8px; grid-row-gap: 8px; }
 			.attachments {
 				.attachment { 
 					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); 
@@ -45,7 +47,7 @@
 				}
 			}
 
-			.reactions { margin: 12px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; }
+			.reactions { padding: 4px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; }
 			.reactions {
 				.reaction { 
 					display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500; 
