@@ -99,6 +99,9 @@
                     a { color: var(--color-text-secondary); }
                 }
                 .paidOnOtherPlatform { text-align: center; margin: 0 8px; }
+                .platformLabel {
+                    .button { margin-top: 8px; }
+                }
             }
         }
 
