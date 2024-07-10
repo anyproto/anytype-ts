@@ -30,6 +30,9 @@
 			.expand { display: flex; align-items: center; gap: 0px 8px; @include text-small; font-weight: 500; color: var(--color-text-secondary); margin-top: 4px; }
 			.expand::after { content: ''; display: block; width: 8px; height: 8px; background: url('~img/arrow/button/grey.svg'); }
 
+			.mentions { padding-top: 8px; }
+			.mentions.single { display: flex; }
+
 			.sub { @include text-small; color: var(--color-text-secondary); display: none; }
 			.sub {
 				.item:hover { color: var(--color-text-primary); }
@@ -59,7 +62,7 @@
 		.message.canExpand {
 			.text { @include clamp; -webkit-line-clamp: 10; }
 		}
-		.message.canExpand.expanded {
+		.message.canExpand.isExpanded {
 			.text { -webkit-line-clamp: unset; }
 		}
 
@@ -70,6 +73,13 @@
 			.editableWrap { @include text-common; max-height: 352px; overflow: scroll; background-color: var(--color-bg-primary); padding: 8px 16px; }
 			.editableWrap {
 				.placeholder { padding: inherit; }
+			}
+
+			.mentions { padding: 8px 16px; }
+			.mentions {
+				.mention:hover {
+					.icon.remove { opacity: 1; }
+				}
 			}
 
 			.buttons { display: flex; gap: 0px 8px; padding: 10px 16px 0px 16px; margin-left: -4px; }
@@ -120,12 +130,29 @@
 				}
 			}
 
+			.icon.send { position: absolute; bottom: 10px; right: 16px; width: 20px; height: 20px; background: url('~img/icon/chat/buttons/send.svg'); }
+
 			.files { @include text-small; margin: 8px 0px 0px 0px; display: flex; flex-direction: column; gap: 2px 0px; }
 			.files {
 				.file { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 			}
 		}
 
-		
+		.form,
+		.message {
+			.mentions { display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 8px 12px; }
+			.mentions {
+				.mention {
+					position: relative; display: flex; gap: 0px 12px; align-items: center; background: var(--color-bg-primary); padding: 16px; border-radius: 12px;
+					box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.05); border: 1px solid var(--color-shape-tertiary);
+				}
+				.mention {
+					.icon.remove { opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; background-size: 20px 20px; background-image: url('~img/icon/chat/buttons/remove.svg'); }
+					.iconObject { flex-shrink: 0; }
+					.name { @include text-common; font-weight: 500; margin-bottom: 2px; }
+					.description { @include text-small; }
+				}
+			}
+		}
 	}
 }

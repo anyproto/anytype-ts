@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Editable, IconObject, Label, Icon } from 'Component';
+import { Editable, IconObject, Label, Icon, ObjectName, ObjectDescription } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
 
 import ChatButtons from './chat/buttons';
@@ -23,6 +23,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	refButtons = null;
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
+	mentions: any[] = [];
 	state = {
 		threadId: '',
 		files: [],
@@ -40,6 +41,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onKeyDownInput = this.onKeyDownInput.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+		this.onMentionRemove = this.onMentionRemove.bind(this);
 		this.onTextButton = this.onTextButton.bind(this);
 		this.onChatButton = this.onChatButton.bind(this);
 		this.onThread = this.onThread.bind(this);
@@ -53,6 +55,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { threadId, files } = this.state;
 		const blockId = this.getBlockId();
 		const messages = this.getMessages();
+		const value = this.getTextValue();
+		const canSend = value.length || this.mentions.length;
 
 		return (
 			<div 
@@ -77,6 +81,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 									{...item} 
 									isThread={!!threadId}
 									onThread={this.onThread}
+									renderMention={this.renderMention}
 								/>
 							))}
 						</div>
@@ -102,12 +107,25 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							onMouseUp={this.onMouseUp}
 						/>
 
+						{this.mentions.length ? (
+							<div className="mentions">
+								{this.mentions.map((object: any) => (
+									<div key={object.id} className="mention">
+										<Icon className="remove" onClick={() => this.onMentionRemove(object.id)} />
+										{this.renderMention(object)}
+									</div>
+								))}
+							</div>
+						) : ''}
+
 						<ChatButtons
 							ref={ref => this.refButtons = ref}
 							blockId={blockId}
 							buttons={this.getButtons()}
 							onButton={(e, type) => this.hasSelection() ? this.onTextButton(e, type) : this.onChatButton(e, type)}
 						/>
+
+						{canSend ? <Icon className="send" onClick={this.onAddMessage} /> : ''}
 
 						{files.length ? (
 							<div className="files">
@@ -247,7 +265,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onAddMessage = () => {
 		const value = this.getTextValue().trim();
 
-		if (!value) {
+		if (!value && !this.mentions.length) {
 			return;
 		};
 
@@ -266,6 +284,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			time: U.Date.now(),
 			files: [],
 			reactions: [],
+			mentions: this.mentions
 		};
 		
 		const create = () => {
@@ -304,6 +323,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.range = { from: 0, to: 0 };
 
 		this.refEditable.setValue('');
+		this.mentions = [];
 		this.refEditable.placeholderCheck();
 
 		this.setState({ files: [] });
@@ -347,15 +367,42 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		];
 	};
 
+	onMentionRemove (id) {
+		this.mentions = this.mentions.filter(it => it.id != id);
+		this.forceUpdate();
+	};
+
 	onChatButton (e: any, type: I.ChatButton) {
 		const win = $(window);
+		const blockId = this.getBlockId();
 		const range = this.range || { from: 0, to: 0 };
+
 		let value = this.getTextValue();
 
 		switch (type) {
+			case I.ChatButton.Plus: {
+				S.Menu.open('searchObject', {
+					element: `#button-${blockId}-${type}`,
+					horizontal: I.MenuDirection.Left,
+					vertical: I.MenuDirection.Top,
+					noFlipX: true,
+					noFlipY: true,
+					data: {
+						skipIds: this.mentions.map(it => it.id),
+						filters: [
+							{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+						],
+						onSelect: (item: any) => {
+							this.mentions.push(item);
+							this.forceUpdate();
+						}
+					}
+				});
+				break;
+			};
 			case I.ChatButton.Emoji: {
 				S.Menu.open('smile', {
-					element: `#messageBox`,
+					element: `#block-${blockId} #messageBox`,
 					recalcRect: () => {
 						const rect = U.Common.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
@@ -495,9 +542,29 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
+	renderMention (object) {
+		let description = '';
+		if (object.description && object.description.length) {
+			description = object.description;
+		} else
+		if (object.snippet && object.snippet.length) {
+			description = object.snippet;
+		};
+
+		return (
+			<React.Fragment>
+				<IconObject object={object} size={48} />
+				<div className="text">
+					<ObjectName object={object} />
+					<div className="description">{description}</div>
+				</div>
+			</React.Fragment>
+		);
+	};
+
 	hasSelection () {
 		if (!this.range) {
-			return;
+			return false;
 		};
 
 		const { from, to } = this.range;

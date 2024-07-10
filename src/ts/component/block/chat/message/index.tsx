@@ -8,6 +8,7 @@ interface Props extends I.Block, I.BlockComponent {
 	data: any;
 	isThread: boolean;
 	onThread: (id: string) => void;
+	renderMention: (object: any) => any;
 };
 
 const LINES_LIMIT = 10;
@@ -27,7 +28,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	render () {
-		const { id, data, isThread, onThread } = this.props;
+		const { id, data, isThread, onThread, renderMention } = this.props;
+		const { mentions } = data;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const length = this.getChildren().length;
@@ -44,7 +46,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			cn.push('canExpand');
 		};
 		if (this.isExpanded) {
-			cn.push('expanded');
+			cn.push('isExpanded');
 		};
 
 		const Reaction = (item: any) => {
@@ -84,6 +86,16 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 						{this.canExpand && !this.isExpanded ? <div className="expand" onClick={this.onExpand}>{translate('blockChatMessageExpand')}</div> : ''}
 					</div>
+
+					{mentions && mentions.length ? (
+						<div className={[ 'mentions', mentions.length == 1 ? 'single' : '' ].join(' ')}>
+							{mentions.map((object: any) => (
+								<div onClick={() => U.Object.openAuto(object)} key={object.id} className="mention">
+									{renderMention(object)}
+								</div>
+							))}
+						</div>
+					) : ''}
 
 					{files.length ? (
 						<div className="files">
