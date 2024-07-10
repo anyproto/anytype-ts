@@ -58,13 +58,25 @@
 
 		.formWrapper.isFixed { padding: 0px 0px 80px 0px; position: sticky; z-index: 1; bottom: 0px; width: 704px; background: var(--color-bg-primary); }
 
-		.form { padding: 8px 16px 16px 16px; border: 1px solid var(--color-shape-tertiary); border-radius: 12px; }
+		.form { padding: 8px 16px 10px 16px; border: 1px solid var(--color-shape-tertiary); border-radius: 12px; }
 		.form {
-			.buttons { margin: 0px 0px 8px 0px; }
+			.editableWrap { background-color: var(--color-bg-primary); padding: 8px 0px; }
+			.editableWrap {
+				.placeholder { padding: inherit; }
+			}
+
+			.buttons { display: flex; gap: 0px 8px; padding-top: 10px; margin-left: -4px; }
 			.buttons {
-				.icon { width: 32px; height: 32px; background-size: 20px 20px; vertical-align: top; margin: 0px; border-radius: 4px; transition: none; }
+				.icon { width: 28px; height: 28px; background-size: 20px 20px; margin: 0px; border-radius: 6px; transition: none; }
 				.icon:hover { background-color: var(--color-shape-highlight-medium); }
-				
+
+				/* chat buttons */
+				.icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
+				.icon.text { background-image: url('~img/icon/chat/buttons/text.svg'); }
+				.icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
+				.icon.mention { background-image: url('~img/icon/chat/buttons/mention.svg'); }
+
+				/* text buttons */
 				.icon.bold { background-image: url('~img/icon/menu/action/mark/bold0.svg'); }
 				.icon.italic { background-image: url('~img/icon/menu/action/mark/italic0.svg'); }
 				.icon.strike { background-image: url('~img/icon/menu/action/mark/strike0.svg'); }
@@ -104,11 +116,6 @@
 			.files { @include text-small; margin: 8px 0px 0px 0px; display: flex; flex-direction: column; gap: 2px 0px; }
 			.files {
 				.file { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
-			}
-
-			.editableWrap { border: 1px solid var(--color-shape-secondary); background-color: var(--color-bg-primary); padding: 8px; border-radius: 4px; }
-			.editableWrap {
-				.placeholder { padding: inherit; }
 			}
 		}
 

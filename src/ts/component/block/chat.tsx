@@ -40,7 +40,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onKeyDownInput = this.onKeyDownInput.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
-		this.onButton = this.onButton.bind(this);
+		this.onTextButton = this.onTextButton.bind(this);
+		this.onChatButton = this.onChatButton.bind(this);
 		this.onThread = this.onThread.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
@@ -97,7 +98,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							ref={ref => this.refButtons = ref}
 							blockId={blockId}
 							buttons={this.getButtons()}
-							onButton={this.onButton}
+							onButton={(e, type) => this.hasSelection() ? this.onTextButton(e, type) : this.onChatButton(e, type)}
 						/>
 
 						{files.length ? (
@@ -331,7 +332,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getChatButtons () {
-		return [];
+		return [
+			{ type: I.ChatButton.Plus, icon: 'plus' },
+			{ type: I.ChatButton.Text, icon: 'text' },
+			{ type: I.ChatButton.Emoji, icon: 'emoji' },
+			{ type: I.ChatButton.Mention, icon: 'mention' },
+		];
+	};
+
+	onChatButton (e, type) {
+
 	};
 
 	getTextButtons () {
@@ -367,7 +377,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
-	onButton (e: any, type: I.MarkType) {
+	onTextButton (e: any, type: I.MarkType) {
 		const { rootId } = this.props;
 		const blockId = this.getBlockId();
 		const value = this.getTextValue();

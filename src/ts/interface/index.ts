@@ -25,3 +25,4 @@ export * from './block/relation';
 export * from './block/embed';
 export * from './block/table';
 export * from './block/widget';
+export * from './block/chat';
