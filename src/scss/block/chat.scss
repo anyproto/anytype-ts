@@ -42,7 +42,6 @@
 		}
 		.message.canExpand.expanded {
 			.text { -webkit-line-clamp: unset; }
-			.expand { display: none; }
 		}
 
 		.message:last-child { margin: 0px; }

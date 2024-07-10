@@ -63,7 +63,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					<div className="textWrapper">
 						<div ref={ref => this.text = ref}  className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}></div>
 
-						{this.canExpand ? <div className="expand" onClick={this.onExpand}>{translate('blockChatMessageExpand')}</div> : ''}
+						{this.canExpand && !this.expanded ? <div className="expand" onClick={this.onExpand}>{translate('blockChatMessageExpand')}</div> : ''}
 					</div>
 
 					{files.length ? (
