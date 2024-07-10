@@ -4,7 +4,7 @@
 	.block.blockChat { 
 		.wrap.isDraggingOver { opacity: 0.5; cursor: copy; }
 
-		.scrollWrapper { padding: 16px 16px 16px 0px; display: flex; flex-direction: column; }
+		.scrollWrapper { padding: 16px 16px 16px 0px; display: flex; flex-direction: column; min-height: 206px; }
 		.scrollWrapper {
 			.scroll { display: flex; flex-direction: column; justify-content: flex-end; min-height: 100%; gap: 16px 0px; }
 		}
@@ -65,14 +65,14 @@
 
 		.formWrapper.isFixed { padding: 0px 0px 80px 0px; position: sticky; z-index: 1; bottom: 0px; width: 704px; background: var(--color-bg-primary); }
 
-		.form { padding: 8px 16px 10px 16px; border: 1px solid var(--color-shape-tertiary); border-radius: 12px; }
+		.form { padding: 8px 0px 10px 0px; border: 1px solid var(--color-shape-tertiary); border-radius: 12px; }
 		.form {
-			.editableWrap { background-color: var(--color-bg-primary); padding: 8px 0px; }
+			.editableWrap { @include text-common; max-height: 352px; overflow: scroll; background-color: var(--color-bg-primary); padding: 8px 16px; }
 			.editableWrap {
 				.placeholder { padding: inherit; }
 			}
 
-			.buttons { display: flex; gap: 0px 8px; padding-top: 10px; margin-left: -4px; }
+			.buttons { display: flex; gap: 0px 8px; padding: 10px 16px 0px 16px; margin-left: -4px; }
 			.buttons {
 				.icon { width: 28px; height: 28px; background-size: 20px 20px; margin: 0px; border-radius: 6px; transition: none; }
 				.icon:hover { background-color: var(--color-shape-highlight-medium); }

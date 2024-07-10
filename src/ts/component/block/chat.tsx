@@ -5,6 +5,7 @@ import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
 
 import ChatButtons from './chat/buttons';
 import ChatMessage from './chat/message';
+import $ from 'jquery';
 
 const LIMIT = 50;
 
@@ -87,6 +88,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 						<Editable 
 							ref={ref => this.refEditable = ref}
+							id="messageBox"
 							readonly={readonly}
 							placeholder={'Enter your message'}
 							onSelect={this.onSelect}
@@ -340,14 +342,43 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	getChatButtons () {
 		return [
 			{ type: I.ChatButton.Plus, icon: 'plus' },
-			{ type: I.ChatButton.Text, icon: 'text' },
 			{ type: I.ChatButton.Emoji, icon: 'emoji' },
 			{ type: I.ChatButton.Mention, icon: 'mention' },
 		];
 	};
 
-	onChatButton (e, type) {
+	onChatButton (e: any, type: I.ChatButton) {
+		const win = $(window);
+		const range = this.range || { from: 0, to: 0 };
+		let value = this.getTextValue();
 
+		switch (type) {
+			case I.ChatButton.Emoji: {
+				S.Menu.open('smile', {
+					element: `#messageBox`,
+					recalcRect: () => {
+						const rect = U.Common.getSelectionRect();
+						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+					},
+					horizontal: I.MenuDirection.Center,
+					vertical: I.MenuDirection.Top,
+					noFlipX: true,
+					noFlipY: true,
+					data: {
+						noHead: true,
+						noUpload: true,
+						value: '',
+						onSelect: (icon) => {
+							value = U.Common.stringInsert(value, icon, range.from, range.from);
+
+							this.refEditable.setValue(value);
+							this.refEditable.setRange({ from: range.to + 1, to: range.to + 1});
+						},
+					}
+				});
+				break;
+			};
+		};
 	};
 
 	getTextButtons () {
@@ -384,6 +415,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onTextButton (e: any, type: I.MarkType) {
+		const win = $(window);
 		const { rootId } = this.props;
 		const blockId = this.getBlockId();
 		const value = this.getTextValue();
