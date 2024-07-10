@@ -26,7 +26,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		this.onReactionAdd = this.onReactionAdd.bind(this);
 	};
 
-
 	render () {
 		const { id, data, isThread, onThread } = this.props;
 		const { space } = S.Common;
@@ -49,15 +48,17 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		};
 
 		const Reaction = (item: any) => {
-			const author = U.Space.getParticipant(U.Space.getParticipantId(space, item.author));
+			const authors = item.authors || [];
+			const length = authors.length;
+			const author = length ? U.Space.getParticipant(U.Space.getParticipantId(space, authors[0])) : '';
 
 			return (
-				<div className="reaction">
+				<div className="reaction" onClick={() => this.onReactionSelect(item.value)}>
 					<div className="value">
 						<IconObject object={{ iconEmoji: item.value }} size={18} />
 					</div>
 					<div className="count">
-						{item.count > 1 ? item.count : <IconObject object={author} size={18} />}
+						{length > 1 ? length : <IconObject object={author} size={18} />}
 					</div>
 				</div>
 			);
@@ -140,34 +141,38 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 	onReactionAdd () {
 		const node = $(this.node);
-		const { rootId, id, data } = this.props;
-		const { account } = S.Auth;
 
 		S.Menu.open('smile', { 
 			element: node.find('.reactions .icon.add'),
 			horizontal: I.MenuDirection.Center,
-			vertical: I.MenuDirection.Top,
 			noFlipX: true,
-			noFlipY: true,
 			data: {
 				noUpload: true,
 				value: '',
-				onSelect: (icon: string) => {
-					data.reactions = data.reactions || [];
-
-					const item = data.reactions.find(it => it.value == icon);
-
-					if (!item) {
-						data.reactions.push({ value: icon, author: account.id, count: 1 });
-					};
-
-					U.Data.blockSetText(rootId, id, JSON.stringify(data), [], true);
-
-				},
-				onUpload (objectId: string) {
-				},
+				onSelect: icon => this.onReactionSelect(icon),
 			}
 		});
+	};
+
+	onReactionSelect (icon: string) {
+		const { rootId, id, data } = this.props;
+		const { account } = S.Auth;
+		const reactions = data.reactions || [];
+		const item = reactions.find(it => it.value == icon);
+
+		if (!item) {
+			reactions.push({ value: icon, authors: [ account.id ], count: 1 });
+		} else {
+			item.authors = item.authors || [];
+
+			if (item.authors.includes(account.id)) {
+				return;
+			};
+
+			item.authors.push(account.id);
+		};
+
+		U.Data.blockSetText(rootId, id, JSON.stringify({ ...data, reactions }), [], true);
 	};
 
 });

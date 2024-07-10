@@ -191,10 +191,10 @@
 			.side.right { display: none; }
 		}
 	}
+}
 
-	.block.blockCover {
-		.elements { width: calc(100% - 96px); left: 48px; margin: 0px; }
-	}
+.editorWrapper.isChat.withIcon {
+	.controlButtons { left: 0px; }
 }
 
 /* Set, Collection, Date */
@@ -228,9 +228,12 @@
 }
 
 .editorWrapper.isSet.withIconAndCover, 
-.editorWrapper.isCollection.withIconAndCover { padding-top: 356px; }
+.editorWrapper.isCollection.withIconAndCover,
+.editorWrapper.isChat.withIconAndCover { padding-top: 356px; }
+
 .editorWrapper.isSet.withIconAndCover, 
-.editorWrapper.isCollection.withIconAndCover {
+.editorWrapper.isCollection.withIconAndCover,
+.editorWrapper.isChat.withIconAndCover {
 	.controlButtons { left: 0px !important; }
 }
 

@@ -4,10 +4,12 @@
 	.block.blockChat { 
 		.wrap.isDraggingOver { opacity: 0.5; cursor: copy; }
 
-		.scrollWrapper { padding: 16px 16px 16px 0px; }
+		.scrollWrapper { padding: 16px 16px 16px 0px; display: flex; flex-direction: column; }
 		.scrollWrapper {
 			.scroll { display: flex; flex-direction: column; justify-content: flex-end; min-height: 100%; gap: 16px 0px; }
 		}
+
+		.emptyState { display: flex; flex-direction: row; align-items: center; justify-content: center; flex-grow: 1; color: var(--color-text-secondary); }
 
 		.message { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; @include text-common; }
 		.message {

@@ -641,6 +641,7 @@
 
 	"blockTypeMyTypes": "My Types",
 
+	"blockChatEmpty": "There is no messages yet. Be the first to start a discussion",
 	"blockChatMessageExpand": "Expand",
 
 	"popupSettingsTitle": "Settings",

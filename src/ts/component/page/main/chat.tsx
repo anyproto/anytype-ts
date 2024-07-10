@@ -271,23 +271,33 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 			return;
 		};
 
+		const rootId = this.getRootId();
+		const check = U.Data.checkDetails(rootId);
+
 		raf(() => {
-			const win = $(window);
 			const node = $(this.node);
 			const cover = node.find('.block.blockCover');
-			const container = U.Common.getPageContainer(isPopup);
-			const header = container.find('#header');
-			const hh = isPopup ? header.height() : J.Size.header;
-			const formWrapper = node.find('#formWrapper');
+			const pageContainer = U.Common.getPageContainer(isPopup);
+			const scrollContainer = U.Common.getScrollContainer(isPopup);
+			const header = pageContainer.find('#header');
+			const headerHeight = isPopup ? header.height() : J.Size.header;
+			const scrollWrapper = node.find('#scrollWrapper');
+			const formWrapper = node.find('#formWrapper').addClass('isFixed');
+			const controls = node.find('.editorControls');
+			const head = node.find('.headSimple');
 
 			if (cover.length) {
-				cover.css({ top: hh });
+				cover.css({ top: headerHeight });
 			};
 
-			container.css({ minHeight: isPopup ? '' : win.height() });
-			node.css({ paddingTop: isPopup ? 0 : hh });
+			node.css({ paddingTop: isPopup ? 0 : headerHeight });
 
-			formWrapper.addClass('isFixed');
+			const fh = Number(formWrapper.outerHeight(true)) || 0;
+			const ch = Number(controls.outerHeight(true)) || 0;
+			const hh = Number(head.outerHeight(true)) || 0;
+			const mh = scrollContainer.height() - headerHeight - fh - ch - hh - (check.withCover ? J.Size.coverPadding : 0);
+
+			scrollWrapper.css({ minHeight: mh });
 		});
 	};
 
