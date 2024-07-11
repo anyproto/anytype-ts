@@ -51,6 +51,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.renderEmojiAndMentions = this.renderEmojiAndMentions.bind(this);
 	};
 
 	render () {
@@ -233,10 +234,32 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onKeyDownInput (e: any) {
+		const { checkMarkOnBackspace } = this.props;
+		const range = this.refEditable.getRange();
+
+		let value = this.refEditable.getTextValue();
+
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
 			this.onAddMessage();
+		});
+
+		keyboard.shortcut('backspace', e, () => {
+			if (range.to) {
+				const parsed = checkMarkOnBackspace(value, range, this.marks);
+
+				if (parsed.save) {
+					e.preventDefault();
+
+					value = parsed.value;
+					this.marks = parsed.marks;
+
+					this.refEditable.setValue(Mark.toHtml(value, this.marks));
+					this.refEditable.setRange({ from: value.length, to: value.length });
+					this.renderEmojiAndMentions(this.refEditable.node);
+				};
+			}
 		});
 	};
 
@@ -321,8 +344,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const length = childrenIds.length;
 		const target = length ? childrenIds[length - 1] : blockId;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.InnerFirst;
-
-		console.log('MARKS: ', this.getMarksFromHtml())
 
 		const data = {
 			...this.getMarksFromHtml(),
@@ -421,11 +442,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onChatButton (e: any, type: I.ChatButton) {
-		const { renderEmoji } = this.props;
 		const { attachments } = this.state;
 		const win = $(window);
 		const blockId = this.getBlockId();
 		const range = this.range || { from: 0, to: 0 };
+		const rect = U.Common.getSelectionRect();
 
 		switch (type) {
 			case I.ChatButton.Plus: {
@@ -453,10 +474,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				S.Menu.open('smile', {
 					element: `#block-${blockId} #messageBox`,
 					recalcRect: () => {
-						const rect = U.Common.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 					},
-					horizontal: I.MenuDirection.Center,
+					horizontal: rect ? I.MenuDirection.Center : I.MenuDirection.Left,
 					vertical: I.MenuDirection.Top,
 					noFlipX: true,
 					noFlipY: true,
@@ -474,13 +494,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 								range: { from: range.from, to },
 							});
 
-							console.log('MARKS: ', this.marks)
-
 							value = U.Common.stringInsert(value, ' ', range.from, range.from);
 
 							this.refEditable.setValue(Mark.toHtml(value, this.marks));
 							this.refEditable.setRange({ from: to, to });
-							renderEmoji(this.refEditable)
+
+							this.renderEmojiAndMentions(this.refEditable.node);
 						},
 					}
 				});
@@ -609,6 +628,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	hasSelection () {
 		return this.range ? this.range.to - this.range.from > 0 : false;
+	};
+
+	renderEmojiAndMentions (node: any) {
+		const { renderEmoji, renderMentions } = this.props;
+		const value = this.refEditable.getTextValue();
+
+		renderEmoji(node);
+		renderMentions(node, this.marks, value);
 	};
 
 });
