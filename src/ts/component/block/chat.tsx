@@ -27,7 +27,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	refButtons = null;
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
-	attachments: string[] = []; 
+	attachments: string[] = [];
+	timeoutFilter = 0;
 	state = {
 		threadId: '',
 		attachments: [],
@@ -220,6 +221,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onKeyUpInput () {
 		this.range = this.refEditable.getRange();
 
+		const { filter } = S.Common;
 		const value = this.getTextValue();
 		const parsed = this.getMarksFromHtml();
 		const oneSymbolBefore = this.range ? value[this.range.from - 1] : '';
@@ -235,6 +237,23 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		if (canOpenMenuMention) {
 			this.onMention(true);
+		};
+
+		if (menuOpenMention) {
+			window.clearTimeout(this.timeoutFilter);
+			this.timeoutFilter = window.setTimeout(() => {
+				if (!this.range) {
+					return;
+				};
+
+				const d = this.range.from - filter.from;
+
+				if (d >= 0) {
+					const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
+					S.Common.filterSetText(part);
+				};
+			}, 30);
+			return;
 		};
 
 		this.checkSendButton();
