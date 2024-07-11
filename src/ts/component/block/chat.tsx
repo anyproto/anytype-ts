@@ -3,15 +3,17 @@ import { observer } from 'mobx-react';
 import { Editable, IconObject, Label, Icon, ObjectName } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
 
-import ChatButtons from './chat/buttons';
-import ChatMessage from './chat/message';
+import Buttons from './chat/buttons';
+import Message from './chat/message';
+import Attachment from './chat/attachment';
+
 import $ from 'jquery';
 
 const LIMIT = 50;
 
 interface State {
 	threadId: string;
-	attachments: File[];
+	attachments: any[];
 };
 
 const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent, State> {
@@ -23,7 +25,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	refButtons = null;
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
-	mentions: any[] = [];
 	state = {
 		threadId: '',
 		attachments: [],
@@ -41,7 +42,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onKeyDownInput = this.onKeyDownInput.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
-		this.onMentionRemove = this.onMentionRemove.bind(this);
 		this.onTextButton = this.onTextButton.bind(this);
 		this.onChatButton = this.onChatButton.bind(this);
 		this.onThread = this.onThread.bind(this);
@@ -55,8 +55,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { threadId, attachments } = this.state;
 		const blockId = this.getBlockId();
 		const messages = this.getMessages();
-		const value = this.getTextValue();
-		const canSend = value.length || this.mentions.length;
+		const canSend = this.canSend();
 
 		return (
 			<div 
@@ -75,13 +74,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					) : (
 						<div className="scroll">
 							{messages.map((item: any) => (
-								<ChatMessage 
+								<Message 
 									key={item.id} 
 									{...this.props} 
 									{...item} 
 									isThread={!!threadId}
 									onThread={this.onThread}
-									renderMention={this.renderMention}
 								/>
 							))}
 						</div>
@@ -107,18 +105,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							onMouseUp={this.onMouseUp}
 						/>
 
-						{this.mentions.length ? (
-							<div className="mentions">
-								{this.mentions.map((object: any) => (
-									<div key={object.id} className="mention">
-										<Icon className="remove" onClick={() => this.onMentionRemove(object.id)} />
-										{this.renderMention(object)}
-									</div>
+						{attachments.length ? (
+							<div className="attachments">
+								{attachments.map((item: any, i: number) => (
+									<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} />
 								))}
 							</div>
 						) : ''}
 
-						<ChatButtons
+						<Buttons
 							ref={ref => this.refButtons = ref}
 							blockId={blockId}
 							buttons={this.getButtons()}
@@ -126,18 +121,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						/>
 
 						{canSend ? <Icon className="send" onClick={this.onAddMessage} /> : ''}
-						
-						{attachments.length ? (
-							<div className="attachments">
-								{attachments.map((file: any, i: number) => (
-									<div key={i} className="attachment">
-										<IconObject object={{ name: file.name, layout: I.ObjectLayout.File }} />
-										<ObjectName object={file} />
-										<div className="size">{U.File.size(file.size)}</div>
-									</div>
-								))}
-							</div>
-						) : ''}
 					</div>
 				</div>
 			</div>
@@ -236,11 +219,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const { attachments } = this.state;
 		const node = $(this.node);
+		const files = Array.from(e.dataTransfer.files).map(it => {
+
+			return it;
+		});
 		
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
 
-		this.setState({ attachments: attachments.concat(Array.from(e.dataTransfer.files)) });
+		this.setState({ attachments: attachments.concat(files) });
 		keyboard.disableCommonDrop(false);
 	};
 
@@ -264,9 +251,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onAddMessage = () => {
-		const value = this.getTextValue().trim();
-
-		if (!value && !this.mentions.length) {
+		if (!this.canSend()){
 			return;
 		};
 
@@ -283,9 +268,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			...this.getMarksFromHtml(),
 			identity: account.id,
 			time: U.Date.now(),
-			attachments: [],
+			attachments,
 			reactions: [],
-			mentions: this.mentions
 		};
 		
 		const create = () => {
@@ -324,7 +308,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.range = { from: 0, to: 0 };
 
 		this.refEditable.setValue('');
-		this.mentions = [];
 		this.refEditable.placeholderCheck();
 
 		this.setState({ attachments: [] });
@@ -352,6 +335,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return Mark.fromHtml(this.getHtmlValue(), []);
 	};
 
+	onAttachmentRemove (id: string) {
+		const { attachments } = this.state;
+
+		this.setState({ attachments: attachments.filter(it => it.id != id) });
+	};
+
 	updateButtons () {
 		this.refButtons.setButtons(this.getButtons());
 	};
@@ -368,12 +357,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		];
 	};
 
-	onMentionRemove (id) {
-		this.mentions = this.mentions.filter(it => it.id != id);
-		this.forceUpdate();
-	};
-
 	onChatButton (e: any, type: I.ChatButton) {
+		const { attachments } = this.state;
 		const win = $(window);
 		const blockId = this.getBlockId();
 		const range = this.range || { from: 0, to: 0 };
@@ -389,13 +374,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					noFlipX: true,
 					noFlipY: true,
 					data: {
-						skipIds: this.mentions.map(it => it.id),
+						skipIds: attachments.map(it => it.id),
 						filters: [
 							{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 						],
 						onSelect: (item: any) => {
-							this.mentions.push(item);
-							this.forceUpdate();
+							this.setState({ attachments: attachments.concat(item) });
 						}
 					}
 				});
@@ -543,34 +527,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
-	renderMention (object) {
-		let description = '';
-		if (object.description && object.description.length) {
-			description = object.description;
-		} else
-		if (object.snippet && object.snippet.length) {
-			description = object.snippet;
-		};
-
-		return (
-			<React.Fragment>
-				<IconObject object={object} size={48} />
-				<div className="text">
-					<ObjectName object={object} />
-					<div className="description">{description}</div>
-				</div>
-			</React.Fragment>
-		);
+	canSend () {
+		return this.getTextValue() || this.state.attachments.length;
 	};
 
 	hasSelection () {
-		if (!this.range) {
-			return false;
-		};
-
-		const { from, to } = this.range;
-
-		return to - from > 0
+		return this.range ? this.range.to - this.range.from > 0 : false;
 	};
 
 });

@@ -16,10 +16,42 @@
 			.label { @include text-common; color: var(--color-text-secondary); }
 		}
 
+		.attachments { padding: 8px 0px 0px 0px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-column-gap: 8px; grid-row-gap: 8px; }
+		.attachments {
+			.attachment { 
+				display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); position: relative;
+				background: var(--color-bg-primary); border-radius: 12px; border: 1px solid var(--color-shape-tertiary); padding: 16px;
+			}
+			.attachment {
+				.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); }
+				.icon.remove { 
+					opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; background-size: 20px; 
+					background-image: url('~img/icon/chat/buttons/remove.svg'); 
+				}
+				.info { flex-grow: 1; }
+
+				.name { line-height: 20px; font-weight: 500; @include clamp1; }
+				.descr { @include text-small; }
+			}
+
+			.attachment:hover {
+				.icon.remove { opacity: 1; }
+			}
+		}
+
 		.message { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; @include text-common; }
 		.message {
 			.side.left { flex-shrink: 0; }
-			.side.right { display: flex; flex-direction: column; padding: 12px 16px; border-radius: 20px; background: rgba(242, 242, 242, 0.5); }
+			.side.right { 
+				display: flex; flex-direction: column; padding: 12px 16px; border-radius: 20px; background: rgba(242, 242, 242, 0.5); position: relative; 
+				min-width: 40%;
+			}
+
+			.icon.reactionAdd { 
+				width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/block/chat/reaction0.svg');
+				border-radius: 50%; background-position: center 3px; position: absolute; top: 8px; right: 12px; opacity: 0; transition: $transitionAllCommon;
+			}
+			.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/block/chat/reaction1.svg'); }
 
 			.author { display: flex; align-items: center; gap: 0px 8px; }
 			.author {
@@ -30,32 +62,12 @@
 			.expand { display: flex; align-items: center; gap: 0px 8px; @include text-small; font-weight: 500; color: var(--color-text-secondary); margin-top: 4px; }
 			.expand::after { content: ''; display: block; width: 8px; height: 8px; background: url('~img/arrow/button/grey.svg'); }
 
-			.mentions { padding-top: 8px; }
-			.mentions.single { display: flex; }
-
 			.sub { @include text-small; color: var(--color-text-secondary); display: none; }
 			.sub {
 				.item:hover { color: var(--color-text-primary); }
 			}
 
-			.textWrapper { padding: 0px 0px 8px 0px; }
-
-			.attachments { padding: 0px 0px 8px 0px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-column-gap: 8px; grid-row-gap: 8px; }
-			.attachments {
-				.attachment { 
-					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); 
-					background: var(--color-bg-primary); border-radius: 12px; border: 1px solid var(--color-shape-tertiary); padding: 16px;
-				}
-				.attachment {
-					.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); }
-					.info { flex-grow: 1; }
-
-					.name { line-height: 20px; font-weight: 500; @include clamp1; }
-					.descr { @include text-small; }
-				}
-			}
-
-			.reactions { padding: 4px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; }
+			.reactions { padding: 12px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; }
 			.reactions {
 				.reaction { 
 					display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500; 
@@ -65,10 +77,7 @@
 					.count { min-width: 18px; text-align: center; }
 				}
 
-				.icon.add { 
-					width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/block/chat/reaction.svg');
-					background-color: var(--color-shape-highlight-medium); flex-shrink: 0; border-radius: 50%; background-position: center 3px;
-				}
+				.icon.reactionAdd { position: static; background-color: var(--color-shape-highlight-medium); flex-shrink: 0; opacity: 1; }
 			}
 
 		}
@@ -83,35 +92,33 @@
 		.message.canExpand.isExpanded {
 			.text { -webkit-line-clamp: unset; }
 		}
+		.message:hover, .message.hover {
+			.icon.reactionAdd { opacity: 1; }
+		}
 
 		.formWrapper.isFixed { padding: 0px 0px 80px 0px; position: sticky; z-index: 1; bottom: 0px; width: 704px; background: var(--color-bg-primary); }
 
-		.form { padding: 8px 0px 10px 0px; border: 1px solid var(--color-shape-tertiary); border-radius: 12px; }
+		.form { padding: 0px 0px 10px 0px; border: 1px solid var(--color-shape-tertiary); border-radius: 12px; position: relative; }
 		.form {
-			.editableWrap { @include text-common; max-height: 352px; overflow: scroll; background-color: var(--color-bg-primary); padding: 8px 16px; }
+			.editableWrap { @include text-common; max-height: 352px; overflow: scroll; background-color: var(--color-bg-primary); padding: 16px; }
 			.editableWrap {
 				.placeholder { padding: inherit; }
 			}
 
-			.mentions { padding: 8px 16px; }
-			.mentions {
-				.mention:hover {
-					.icon.remove { opacity: 1; }
-				}
-			}
+			.attachments { padding: 0px 16px; }
 
 			.buttons { display: flex; gap: 0px 8px; padding: 10px 16px 0px 16px; margin-left: -4px; }
 			.buttons {
 				.icon { width: 28px; height: 28px; background-size: 20px 20px; margin: 0px; border-radius: 6px; transition: none; }
 				.icon:hover { background-color: var(--color-shape-highlight-medium); }
 
-				/* chat buttons */
+				/* Chat buttons */
 				.icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
 				.icon.text { background-image: url('~img/icon/chat/buttons/text.svg'); }
 				.icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
 				.icon.mention { background-image: url('~img/icon/chat/buttons/mention.svg'); }
 
-				/* text buttons */
+				/* Text buttons */
 				.icon.bold { background-image: url('~img/icon/menu/action/mark/bold0.svg'); }
 				.icon.italic { background-image: url('~img/icon/menu/action/mark/italic0.svg'); }
 				.icon.strike { background-image: url('~img/icon/menu/action/mark/strike0.svg'); }
@@ -149,28 +156,6 @@
 			}
 
 			.icon.send { position: absolute; bottom: 10px; right: 16px; width: 20px; height: 20px; background: url('~img/icon/chat/buttons/send.svg'); }
-
-			.attachments { @include text-small; margin: 8px 0px 0px 0px; display: flex; flex-direction: column; gap: 2px 0px; }
-			.attachments {
-				.attachment { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
-			}
-		}
-
-		.form,
-		.message {
-			.mentions { display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 8px 12px; }
-			.mentions {
-				.mention {
-					position: relative; display: flex; gap: 0px 12px; align-items: center; background: var(--color-bg-primary); padding: 16px; border-radius: 12px;
-					box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.05); border: 1px solid var(--color-shape-tertiary);
-				}
-				.mention {
-					.icon.remove { opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; background-size: 20px 20px; background-image: url('~img/icon/chat/buttons/remove.svg'); }
-					.iconObject { flex-shrink: 0; }
-					.name { @include text-common; font-weight: 500; margin-bottom: 2px; }
-					.description { @include text-small; }
-				}
-			}
 		}
 	}
 }

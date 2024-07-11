@@ -1,8 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { IconObject, Icon, ObjectName, ObjectDescription } from 'Component';
+import { IconObject, Icon, ObjectName } from 'Component';
 import { I, S, U, J, Mark, translate, Preview } from 'Lib';
+
+import Attachment from '../attachment';
 
 interface Props extends I.Block, I.BlockComponent {
 	data: any;
@@ -30,8 +32,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	render () {
-		const { id, data, isThread, onThread, renderMention } = this.props;
-		const { mentions } = data;
+		const { id, data, isThread, onThread } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const length = this.getChildren().length;
@@ -39,6 +40,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const text = U.Common.lbBr(Mark.toHtml(data.text, data.marks));
 		const attachments = (data.attachments || []).map(id => S.Detail.get(J.Constant.subId.file, id));
 		const reactions = data.reactions || [];
+		const hasReactions = reactions.length;
+		const hasAttachments = attachments.length;
 		const cn = [ 'message' ];
 
 		if (data.identity == account.id) {
@@ -73,18 +76,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			);
 		};
 
-		const Attachment = (item: any) => {
-			return (
-				<div className="attachment" onClick={() => U.Object.openPopup(item)}>
-					<IconObject object={item} size={48} />
-					<div className="info">
-						<ObjectName object={item} />
-						<ObjectDescription object={item} />
-					</div>
-				</div>
-			);
-		};
-
 		return (
 			<div 
 				ref={ref => this.node = ref} 
@@ -95,6 +86,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					<IconObject object={author} size={48} />
 				</div>
 				<div className="side right">
+					{!hasReactions ? (
+						<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
+					) : ''}
+
 					<div className="author">
 						<ObjectName object={author} />
 						<div className="time">{U.Date.date('H:i', data.time)}</div>
@@ -103,33 +98,30 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					<div className="textWrapper">
 						<div ref={ref => this.text = ref}  className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}></div>
 
-						{this.canExpand && !this.isExpanded ? <div className="expand" onClick={this.onExpand}>{translate('blockChatMessageExpand')}</div> : ''}
+						{this.canExpand && !this.isExpanded ? (
+							<div className="expand" onClick={this.onExpand}>
+								{translate('blockChatMessageExpand')}
+							</div>
+						) : ''}
 					</div>
 
-					{mentions && mentions.length ? (
-						<div className={[ 'mentions', mentions.length == 1 ? 'single' : '' ].join(' ')}>
-							{mentions.map((object: any) => (
-								<div onClick={() => U.Object.openAuto(object)} key={object.id} className="mention">
-									{renderMention(object)}
-								</div>
-							))}
-						</div>
-					) : ''}
-
-					{attachments.length ? (
+					{hasAttachments ? (
 						<div className="attachments">
 							{attachments.map((item: any, i: number) => (
-								<Attachment key={i} {...item} />
+								<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} />
 							))}
 						</div>
 					) : ''}
 
-					<div className="reactions">
-						{reactions.map((item: any, i: number) => (
-							<Reaction key={i} {...item} />
-						))}
-						<Icon className="add" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
-					</div>
+					{hasReactions ? (
+						<div className="reactions">
+							{reactions.map((item: any, i: number) => (
+								<Reaction key={i} {...item} />
+							))}
+
+							<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
+						</div>
+					) : ''}
 
 					<div className="sub" onClick={() => onThread(id)}>
 						{!isThread ? <div className="item">{length} replies</div> : ''}
@@ -141,9 +133,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	componentDidMount(): void {
-		const { data, renderLinks } = this.props;
+		const { data, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
 
-		renderLinks(this.node, data.marks, false, () => {});
+		renderLinks(this.node, data.marks, data.text);
+		renderMentions(this.node, data.marks, data.text);
+		renderObjects(this.node, data.marks, data.text);
+		renderEmoji(this.node);
 
 		this.checkLinesLimit();
 	};
@@ -164,7 +159,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const textHeight = $(this.text).outerHeight();
 		const lineHeight = Number($(this.text).css('line-height').replace('px', ''));
 
-		if (textHeight/lineHeight > LINES_LIMIT) {
+		if (textHeight / lineHeight > LINES_LIMIT) {
 			this.canExpand = true;
 			this.forceUpdate();
 		};
@@ -190,10 +185,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const node = $(this.node);
 
 		S.Menu.open('smile', { 
-			element: node.find('.reactions .icon.add'),
+			element: node.find('#reaction-add'),
 			horizontal: I.MenuDirection.Center,
 			noFlipX: true,
+			onOpen: () => node.addClass('hover'),
+			onClose: () => node.removeClass('hover'),
 			data: {
+				noHead: true,
 				noUpload: true,
 				value: '',
 				onSelect: icon => this.onReactionSelect(icon),
@@ -225,6 +223,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		};
 
 		U.Data.blockSetText(rootId, id, JSON.stringify({ ...data, reactions }), [], true);
+	};
+
+	onAttachmentRemove (id: string) {
 	};
 
 });

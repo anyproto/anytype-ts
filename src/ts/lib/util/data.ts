@@ -144,6 +144,17 @@ class UtilData {
 		v = v || I.BlockVAlign.Top;
 		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
+
+	emojiParam (t: I.TextStyle) {
+		let s = 24;
+		switch (t) {
+			case I.TextStyle.Header1:	 s = 32; break;
+			case I.TextStyle.Header2:	 s = 28; break;
+			case I.TextStyle.Header3:
+			case I.TextStyle.Quote:		 s = 26; break;
+		};
+		return s;
+	};
 	
 	onInfo (info: I.AccountInfo) {
 		S.Block.rootSet(info.homeObjectId);
