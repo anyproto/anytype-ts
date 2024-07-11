@@ -893,6 +893,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						range: { from: range.from, to },
 					});
 
+					console.log('ICON: ', icon)
+					console.log('MARKS: ', this.marks)
+
 					value = U.Common.stringInsert(value, ' ', range.from, range.from);
 
 					U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
