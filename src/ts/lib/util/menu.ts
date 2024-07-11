@@ -830,8 +830,8 @@ class UtilMenu {
 	getFixedWidgets () {
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: '⭐' },
-			{ id: J.Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: '🔍' },
 			{ id: J.Constant.widgetId.chat, name: translate('menuWidgetChats'), iconEmoji: '💬' },
+			{ id: J.Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: '🔍' },
 			{ id: J.Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: '🗂️' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: '📝' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: '📅', caption: translate('menuWidgetRecentOpenCaption') },
