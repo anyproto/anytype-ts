@@ -940,6 +940,7 @@
 	"popupMembershipWriteToAnyteam": "Write to Anyteam",
 	"popupMembershipManageOnMobilePlatform": "Manage available on Mobile platform",
 	"popupMembershipPaidOnOtherPlatform": "You've already acquired Membership plan on another platform, please cancel Membership first.",
+	"popupMembershipPaidByCrypto": "To upgrade your membership using cryptocurrency, please contact Anytype.",
 
 	"popupMembershipWhatsIncluded": "What’s included",
 
