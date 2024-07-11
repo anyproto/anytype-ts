@@ -131,7 +131,8 @@ export default {
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',
 		set:			 'set',
-		collection:		 'collection'
+		collection:		 'collection',
+		chat:			 'chat',
 	},
 
 	monthDays: {
