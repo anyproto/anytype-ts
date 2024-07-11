@@ -339,7 +339,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	onKeyDown (e: any) {
 		e.persist();
 
-		const { onKeyDown, rootId, block, isInsideTable } = this.props;
+		const { onKeyDown, rootId, block, isInsideTable, checkMarkOnBackspace } = this.props;
 		const { id } = block;
 
 		if (S.Menu.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'object' ])) {
@@ -496,12 +496,13 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			if (range.to) {
-				const parsed = this.checkMarkOnBackspace(value);
+				const parsed = checkMarkOnBackspace(value, range, this.marks);
 
 				if (parsed.save) {
 					e.preventDefault();
 
 					value = parsed.value;
+					this.marks = parsed.marks;
 					U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
 						onKeyDown(e, value, this.marks, range, this.props);
 					});
@@ -893,9 +894,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						range: { from: range.from, to },
 					});
 
-					console.log('ICON: ', icon)
-					console.log('MARKS: ', this.marks)
-
 					value = U.Common.stringInsert(value, ' ', range.from, range.from);
 
 					U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
@@ -1201,39 +1199,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (this.refEditable) {
 			this.refEditable.placeholderHide();
 		};
-	};
-
-	checkMarkOnBackspace (value: string) {
-		const range = this.getRange();
-
-		if (!range || !range.to) {
-			return;
-		};
-
-		const types = [ I.MarkType.Mention, I.MarkType.Emoji ];
-		const marks = this.marks.filter(it => types.includes(it.type));
-
-		let save = false;
-		let mark = null;
-
-		for (const m of marks) {
-			if ((m.range.from < range.from) && (m.range.to == range.to)) {
-				mark = m;
-				break;
-			};
-		};
-
-		if (mark) {
-			value = U.Common.stringCut(value, mark.range.from, mark.range.to);
-			this.marks = this.marks.filter(it => {
-				return (it.type != mark.type) || (it.range.from != mark.range.from) || (it.range.to != mark.range.to) || (it.param != mark.param);
-			});
-
-			this.marks = Mark.adjust(this.marks, mark.range.from, mark.range.from - mark.range.to);
-			save = true;
-		};
-
-		return { value, save };
 	};
 	
 });

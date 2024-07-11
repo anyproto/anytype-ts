@@ -1,6 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import sha1 from 'sha1';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Label, Icon } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
@@ -26,7 +27,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	refButtons = null;
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
-	attachments: string[] = []; 
+	attachments: string[] = [];
+	timeoutFilter = 0;
 	state = {
 		threadId: '',
 		attachments: [],
@@ -51,6 +53,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.renderEmojiAndMentions = this.renderEmojiAndMentions.bind(this);
 	};
 
 	render () {
@@ -218,8 +221,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onKeyUpInput () {
 		this.range = this.refEditable.getRange();
 
+		const { filter } = S.Common;
 		const value = this.getTextValue();
 		const parsed = this.getMarksFromHtml();
+		const oneSymbolBefore = this.range ? value[this.range.from - 1] : '';
+		const menuOpenMention = S.Menu.isOpen('blockMention');
+		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@');
 
 		this.marks = parsed.marks;
 
@@ -228,15 +235,58 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.refEditable.setRange(this.range);
 		};
 
+		if (canOpenMenuMention) {
+			this.onMention(true);
+		};
+
+		if (menuOpenMention) {
+			window.clearTimeout(this.timeoutFilter);
+			this.timeoutFilter = window.setTimeout(() => {
+				if (!this.range) {
+					return;
+				};
+
+				const d = this.range.from - filter.from;
+
+				if (d >= 0) {
+					const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
+					S.Common.filterSetText(part);
+				};
+			}, 30);
+			return;
+		};
+
 		this.checkSendButton();
 		this.updateButtons();
 	};
 
 	onKeyDownInput (e: any) {
+		const { checkMarkOnBackspace } = this.props;
+		const range = this.range;
+
+		let value = this.refEditable.getTextValue();
+
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
 			this.onAddMessage();
+		});
+
+		keyboard.shortcut('backspace', e, () => {
+			if (range && range.to) {
+				const parsed = checkMarkOnBackspace(value, range, this.marks);
+
+				if (parsed.save) {
+					e.preventDefault();
+
+					value = parsed.value;
+					this.marks = parsed.marks;
+
+					this.refEditable.setValue(Mark.toHtml(value, this.marks));
+					this.refEditable.setRange({ from: value.length, to: value.length });
+					this.renderEmojiAndMentions(this.refEditable.node);
+				};
+			}
 		});
 	};
 
@@ -309,7 +359,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onAddMessage = () => {
-		if (!this.canSend()){
+		if (!this.canSend() || S.Menu.isOpen('blockMention')){
 			return;
 		};
 
@@ -321,8 +371,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const length = childrenIds.length;
 		const target = length ? childrenIds[length - 1] : blockId;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.InnerFirst;
-
-		console.log('MARKS: ', this.getMarksFromHtml())
 
 		const data = {
 			...this.getMarksFromHtml(),
@@ -421,9 +469,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onChatButton (e: any, type: I.ChatButton) {
-		const { renderEmoji } = this.props;
 		const { attachments } = this.state;
-		const win = $(window);
 		const blockId = this.getBlockId();
 		const range = this.range || { from: 0, to: 0 };
 		const rect = U.Common.getSelectionRect();
@@ -453,15 +499,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				let value = this.getTextValue();
 
 				S.Menu.open('smile', {
-					element: `#block-${blockId} #messageBox`,
-					recalcRect: () => {
-						const rect = U.Common.getSelectionRect();
-						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
-					},
-					horizontal: rect ? I.MenuDirection.Center : I.MenuDirection.Left,
-					vertical: I.MenuDirection.Top,
-					noFlipX: true,
-					noFlipY: true,
+					...this.caretMenuParam(),
 					data: {
 						noHead: true,
 						noUpload: true,
@@ -476,16 +514,19 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 								range: { from: range.from, to },
 							});
 
-							console.log('MARKS: ', this.marks)
-
 							value = U.Common.stringInsert(value, ' ', range.from, range.from);
 
 							this.refEditable.setValue(Mark.toHtml(value, this.marks));
 							this.refEditable.setRange({ from: to, to });
-							renderEmoji(this.refEditable)
+
+							this.renderEmojiAndMentions(this.refEditable.node);
 						},
 					}
 				});
+				break;
+			};
+			case I.ChatButton.Mention: {
+				this.onMention();
 				break;
 			};
 		};
@@ -599,6 +640,68 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 	};
 
+	onMention (fromKeyboard?: boolean) {
+		if (!this.range) {
+			return;
+		};
+
+		const { rootId, block } = this.props;
+
+		let value = this.refEditable.getTextValue();
+
+		if (fromKeyboard) {
+			value = U.Common.stringCut(value, this.range.from - 1, this.range.from);
+			S.Common.filterSet(this.range.from - 1, '');
+		} else {
+			S.Common.filterSet(this.range.from, '');
+		};
+
+		raf(() => {
+			S.Menu.open('blockMention', {
+				...this.caretMenuParam(),
+				data: {
+					rootId,
+					blockId: block.id,
+					marks: this.marks,
+					skipIds: [ S.Auth.account.id ],
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
+					],
+					onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
+						value = U.Common.stringInsert(value, text, from, from);
+
+						marks.forEach((mark) => {
+							this.marks = Mark.toggle(this.marks, mark);
+						});
+
+						this.refEditable.setValue(Mark.toHtml(value, this.marks));
+						this.refEditable.setRange({ from: to, to });
+
+						this.renderEmojiAndMentions(this.refEditable.node);
+					}
+				}
+			})
+		});
+	};
+
+	caretMenuParam () {
+		const win = $(window);
+		const blockId = this.getBlockId();
+		const rect = U.Common.getSelectionRect();
+
+		return {
+			element: `#block-${blockId} #messageBox`,
+			recalcRect: () => {
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+			},
+			horizontal: rect ? I.MenuDirection.Center : I.MenuDirection.Left,
+			vertical: I.MenuDirection.Top,
+			noFlipX: true,
+			noFlipY: true,
+			offsetY: -4,
+		};
+	};
+
 	onThread (id: string) {
 		this.setState({ threadId: id }, () => {
 			this.scrollToBottom();
@@ -611,6 +714,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	hasSelection () {
 		return this.range ? this.range.to - this.range.from > 0 : false;
+	};
+
+	renderEmojiAndMentions (node: any) {
+		const { renderEmoji, renderMentions } = this.props;
+		const value = this.refEditable.getTextValue();
+
+		renderEmoji(node);
+		renderMentions(node, this.marks, value);
 	};
 
 });

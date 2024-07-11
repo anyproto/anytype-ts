@@ -207,14 +207,19 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { skipIds } = data;
 		const filter = this.getFilter();
 		const skipLayouts = U.Object.getSystemLayouts().filter(it => it != I.ObjectLayout.Date);
-		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
-		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
 		];
+
+		let filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
+		];
+
+		if (data.filters && data.filters.length) {
+			filters = filters.concat(data.filters);
+		};
 
 		if (skipIds && skipIds.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });

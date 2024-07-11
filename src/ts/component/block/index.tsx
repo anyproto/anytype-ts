@@ -146,6 +146,7 @@ const Block = observer(class Block extends React.Component<Props> {
 						renderMentions={this.renderMentions}
 						renderObjects={this.renderObjects}
 						renderEmoji={this.renderEmoji}
+						checkMarkOnBackspace={this.checkMarkOnBackspace}
 					/>
 				);
 				break;
@@ -232,6 +233,7 @@ const Block = observer(class Block extends React.Component<Props> {
 						renderMentions={this.renderMentions}
 						renderObjects={this.renderObjects}
 						renderEmoji={this.renderEmoji}
+						checkMarkOnBackspace={this.checkMarkOnBackspace}
 					/>
 				);
 				break;
@@ -1039,6 +1041,38 @@ const Block = observer(class Block extends React.Component<Props> {
 				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: param }} />, smile.get(0));
 			};
 		});
+	};
+
+	checkMarkOnBackspace (value: string, range: I.TextRange, oM: I.Mark[]) {
+		if (!range || !range.to) {
+			return;
+		};
+
+		const types = [ I.MarkType.Mention, I.MarkType.Emoji ];
+		const marks = U.Common.arrayUnique(oM).filter(it => types.includes(it.type));
+
+		let rM = [];
+		let save = false;
+		let mark = null;
+
+		for (const m of marks) {
+			if ((m.range.from < range.from) && (m.range.to == range.to)) {
+				mark = m;
+				break;
+			};
+		};
+
+		if (mark) {
+			value = U.Common.stringCut(value, mark.range.from, mark.range.to);
+			rM = oM.filter(it => {
+				return (it.type != mark.type) || (it.range.from != mark.range.from) || (it.range.to != mark.range.to) || (it.param != mark.param);
+			});
+
+			rM = Mark.adjust(rM, mark.range.from, mark.range.from - mark.range.to);
+			save = true;
+		};
+
+		return { value, marks: rM, save };
 	};
 
 	onMentionSelect (value: string, marks: I.Mark[], id: string, icon: string) {
