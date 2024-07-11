@@ -74,11 +74,13 @@
 					display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500; 
 					background-color: var(--color-shape-highlight-medium); padding: 4px 6px; flex-shrink: 0;
 				}
+				.reaction:hover { background-color: var(--color-shape-highlight-dark); }
 				.reaction {
 					.count { min-width: 18px; text-align: center; }
 				}
 
 				.icon.reactionAdd { position: static; background-color: var(--color-shape-highlight-medium); flex-shrink: 0; opacity: 1; }
+				.icon.reactionAdd:hover { background-color: var(--color-shape-highlight-dark); }
 			}
 
 		}
