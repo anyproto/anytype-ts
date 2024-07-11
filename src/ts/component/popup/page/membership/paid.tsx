@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Input, Button } from 'Component';
+import { Title, Label, Input, Button, FooterAuthDisclaimer } from 'Component';
 import { I, C, S, U, J, translate, analytics, Action } from 'Lib';
-import FooterAuthDisclaimer from '../../../footer/auth/disclaimer';
 
 interface State {
 	status: string;
