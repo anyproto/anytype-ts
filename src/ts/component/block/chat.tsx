@@ -27,7 +27,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	refButtons = null;
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
-	attachments: string[] = [];
+	deps: string[] = [];
 	timeoutFilter = 0;
 	state = {
 		threadId: '',
@@ -64,7 +64,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const canSend = this.canSend();
 		const attachmentList = attachments.concat(files);
 		const subId = S.Record.getSubId(rootId, block.id);
-		const list = this.getAttachments().map(id => S.Detail.get(subId, id));
+		const list = this.getDeps().map(id => S.Detail.get(subId, id));
 
 		return (
 			<div 
@@ -149,8 +149,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	componentDidUpdate () {
-		if (!U.Common.compareJSON(this.getAttachments(), this.attachments)) {
-			this.attachments = this.getAttachments();
+		const deps = this.getDeps();
+
+		if (!U.Common.compareJSON(deps, this.deps)) {
+			this.deps = deps;
 			this.loadDeps(() => this.forceUpdate());
 		};
 
@@ -165,26 +167,37 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		C.ObjectSearchUnsubscribe([ S.Record.getSubId(rootId, block.id) ]);
 	};
 
-	getAttachments () {
-		return U.Common.arrayUnique(this.getMessages().reduce((acc, it) => {
+	getDeps () {
+		const messages = this.getMessages();
+		const markTypes = [ I.MarkType.Object, I.MarkType.Mention ];
+
+		return U.Common.arrayUnique(messages.reduce((acc, it) => {
 			const data = it.data || {};
-			return acc.concat(data.attachments || []);
+			const marks = (data.marks || [].filter(it => markTypes.includes(it.types))).map(it => it.param);
+
+			return acc.concat(data.attachments || []).concat(marks);
 		}, []));
 	};
 
 	loadDeps (callBack?: () => void) {
 		const { rootId, block } = this.props;
-		const attachments = this.getAttachments();
+		const deps = this.getDeps();
 
-		if (!attachments.length) {
+		if (!deps.length) {
 			return;
 		};
 
 		U.Data.subscribeIds({
 			subId: S.Record.getSubId(rootId, block.id),
-			ids: attachments,
+			ids: deps,
 			noDeps: true,
-		}, callBack);
+		}, (message: any) => {
+			message.records.forEach(it => S.Detail.update(rootId, { id: it.id, details: it }, false));
+
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	checkSendButton () {

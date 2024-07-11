@@ -41,6 +41,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const text = U.Common.lbBr(Mark.toHtml(data.text, data.marks));
 		const attachments = (data.attachments || []).map(id => S.Detail.get(subId, id));
 		const reactions = data.reactions || [];
+		const marks = data.marks || [];
 		const hasReactions = reactions.length;
 		const hasAttachments = attachments.length;
 		const isSingle = attachments.length == 1;
@@ -54,6 +55,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		};
 		if (this.isExpanded) {
 			cn.push('isExpanded');
+		};
+
+		// Subscriptions
+		for (const mark of marks) {
+			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
+				const object = S.Detail.get(rootId, mark.param, []);
+			};
 		};
 
 		const Reaction = (item: any) => {
@@ -135,6 +143,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	componentDidMount(): void {
+		this.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
+	};
+
+	init () {
 		const { data, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
 
 		renderLinks(this.node, data.marks, data.text);

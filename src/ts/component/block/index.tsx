@@ -901,6 +901,8 @@ const Block = observer(class Block extends React.Component<Props> {
 				);
 			};
 
+			item.removeClass('disabled isDone withImage');
+
 			if (_empty_ || isDeleted) {
 				item.addClass('disabled');
 			};
