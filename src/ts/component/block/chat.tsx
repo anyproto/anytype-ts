@@ -1,4 +1,5 @@
 import * as React from 'react';
+import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Editable, Label, Icon } from 'Component';
@@ -7,8 +8,6 @@ import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
 import Buttons from './chat/buttons';
 import Message from './chat/message';
 import Attachment from './chat/attachment';
-
-import $ from 'jquery';
 
 const LIMIT = 50;
 
@@ -238,6 +237,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			name: it.name,
 			layout: I.ObjectLayout.File,
 			description: U.File.size(it.size),
+			path: it.path,
 		}));
 		
 		node.removeClass('isDraggingOver');
@@ -304,17 +304,27 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		if (attachments.length) {
+			const files = attachments.filter(it => it.layout == I.ObjectLayout.File);
+			const length = files.length;
+
 			let n = 0;
-			for (const file of attachments) {
-				C.FileUpload(S.Common.space, '', file.path, I.FileType.None, {}, (message: any) => {
-					n++;
 
-					data.attachments.push(message.objectId);
+			console.log(files, files.length);
 
-					if (n == attachments.length) {
-						create();
-					};
-				});
+			if (length) {
+				for (const file of files) {
+					C.FileUpload(S.Common.space, '', file.path, I.FileType.None, {}, (message: any) => {
+						n++;
+
+						data.attachments.push(message.objectId);
+
+						if (n == length) {
+							create();
+						};
+					});
+				};
+			} else {
+				create();
 			};
 		} else {
 			create();
