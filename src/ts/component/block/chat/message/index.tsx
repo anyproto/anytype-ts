@@ -32,13 +32,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	render () {
-		const { id, data, isThread, onThread } = this.props;
+		const { rootId, block, id, data, isThread, onThread } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const length = this.getChildren().length;
+		const subId = S.Record.getSubId(rootId, block.id);
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, data.identity));
 		const text = U.Common.lbBr(Mark.toHtml(data.text, data.marks));
-		const attachments = (data.attachments || []).map(id => S.Detail.get(J.Constant.subId.file, id));
+		const attachments = (data.attachments || []).map(id => S.Detail.get(subId, id));
 		const reactions = data.reactions || [];
 		const hasReactions = reactions.length;
 		const hasAttachments = attachments.length;

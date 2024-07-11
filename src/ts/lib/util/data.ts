@@ -391,15 +391,6 @@ class UtilData {
 				ignoreHidden: false,
 				noDeps: true,
 			},
-			{
-				subId: J.Constant.subId.file,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
-				],
-				ignoreDeleted: true,
-				ignoreHidden: true,
-				noDeps: true,
-			},
 		];
 
 		this.createSubscriptions(list, callBack);

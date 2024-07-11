@@ -14,6 +14,7 @@ const LIMIT = 50;
 interface State {
 	threadId: string;
 	attachments: any[];
+	files: any[];
 };
 
 const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent, State> {
@@ -25,9 +26,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	refButtons = null;
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
+	attachments: string[] = []; 
 	state = {
 		threadId: '',
 		attachments: [],
+		files: [],
 	};
 
 	constructor (props: I.BlockComponent) {
@@ -51,11 +54,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	render () {
-		const { readonly } = this.props;
-		const { threadId, attachments } = this.state;
+		const { rootId, block, readonly } = this.props;
+		const { threadId, attachments, files } = this.state;
 		const blockId = this.getBlockId();
 		const messages = this.getMessages();
 		const canSend = this.canSend();
+		const attachmentList = attachments.concat(files);
+		const subId = S.Record.getSubId(rootId, block.id);
+		const list = this.getAttachments().map(id => S.Detail.get(subId, id));
 
 		return (
 			<div 
@@ -105,9 +111,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							onMouseUp={this.onMouseUp}
 						/>
 
-						{attachments.length ? (
+						{attachmentList.length ? (
 							<div className="attachments">
-								{attachments.map((item: any, i: number) => (
+								{attachmentList.map((item: any, i: number) => (
 									<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} />
 								))}
 							</div>
@@ -131,15 +137,51 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = true;
 		this.scrollToBottom();
 		this.checkSendButton();
-		this.refEditable?.setRange({ from: 0, to: 0 });
+
+		this.loadDeps(() => {
+			this.forceUpdate(() => {
+				this.refEditable?.setRange({ from: 0, to: 0 });
+			});
+		});
 	};
 
 	componentDidUpdate () {
+		if (!U.Common.compareJSON(this.getAttachments(), this.attachments)) {
+			this.attachments = this.getAttachments();
+			this.loadDeps(() => this.forceUpdate());
+		};
+
 		this.checkSendButton();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
+
+		const { rootId, block } = this.props;
+
+		C.ObjectSearchUnsubscribe([ S.Record.getSubId(rootId, block.id) ]);
+	};
+
+	getAttachments () {
+		return U.Common.arrayUnique(this.getMessages().reduce((acc, it) => {
+			const data = it.data || {};
+			return acc.concat(data.attachments || []);
+		}, []));
+	};
+
+	loadDeps (callBack?: () => void) {
+		const { rootId, block } = this.props;
+		const attachments = this.getAttachments();
+
+		if (!attachments.length) {
+			return;
+		};
+
+		U.Data.subscribeIds({
+			subId: S.Record.getSubId(rootId, block.id),
+			ids: attachments,
+			noDeps: true,
+		}, callBack);
 	};
 
 	checkSendButton () {
@@ -230,9 +272,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { attachments } = this.state;
+		const { files } = this.state;
 		const node = $(this.node);
-		const files = Array.from(e.dataTransfer.files).map((it: any) => ({
+		const list = Array.from(e.dataTransfer.files).map((it: any) => ({
 			id: sha1(it.path),
 			name: it.name,
 			layout: I.ObjectLayout.File,
@@ -243,7 +285,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
 
-		this.setState({ attachments: attachments.concat(files) });
+		this.setState({ files: files.concat(list) });
 		keyboard.disableCommonDrop(false);
 	};
 
@@ -273,7 +315,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const { rootId } = this.props;
 		const { account } = S.Auth;
-		const { attachments } = this.state;
+		const { attachments, files } = this.state;
 		const blockId = this.getBlockId();
 		const childrenIds = S.Block.getChildrenIds(rootId, blockId);
 		const length = childrenIds.length;
@@ -284,7 +326,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			...this.getMarksFromHtml(),
 			identity: account.id,
 			time: U.Date.now(),
-			attachments,
+			attachments: attachments.map(it => it.id),
 			reactions: [],
 		};
 		
@@ -303,28 +345,21 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			});
 		};
 
-		if (attachments.length) {
-			const files = attachments.filter(it => it.layout == I.ObjectLayout.File);
-			const length = files.length;
-
+		if (files.length) {
 			let n = 0;
 
-			console.log(files, files.length);
+			for (const file of files) {
+				C.FileUpload(S.Common.space, '', file.path, I.FileType.None, {}, (message: any) => {
+					n++;
 
-			if (length) {
-				for (const file of files) {
-					C.FileUpload(S.Common.space, '', file.path, I.FileType.None, {}, (message: any) => {
-						n++;
-
+					if (message.objectId) {
 						data.attachments.push(message.objectId);
+					};
 
-						if (n == length) {
-							create();
-						};
-					});
-				};
-			} else {
-				create();
+					if (n == length) {
+						create();
+					};
+				});
 			};
 		} else {
 			create();
@@ -473,15 +508,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onTextButton (e: any, type: I.MarkType) {
-		const win = $(window);
 		const { rootId } = this.props;
 		const blockId = this.getBlockId();
 		const value = this.getTextValue();
 		const { from, to } = this.range;
 		const mark = Mark.getInRange(this.marks, type, { from, to });
 
-		let menuId = '';
-		let menuParam: any = {
+		const menuParam: any = {
 			element: `#button-${blockId}-${type}`,
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
@@ -498,6 +531,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.refEditable.setValue(Mark.toHtml(value, this.marks));
 			this.updateButtons();
 		};
+
+		let menuId = '';
 
 		switch (type) {
 			
