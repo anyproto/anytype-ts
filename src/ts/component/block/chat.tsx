@@ -340,7 +340,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onAddMessage = () => {
-		if (!this.canSend()){
+		if (!this.canSend() || S.Menu.isOpen('blockMention')){
 			return;
 		};
 
