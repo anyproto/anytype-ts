@@ -426,11 +426,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const win = $(window);
 		const blockId = this.getBlockId();
 		const range = this.range || { from: 0, to: 0 };
+		const rect = U.Common.getSelectionRect();
 
 		switch (type) {
 			case I.ChatButton.Plus: {
 				S.Menu.open('searchObject', {
-					element: `#button-${blockId}-${type}`,
+					element: `#block-${blockId} #button-${blockId}-${type}`,
 					horizontal: I.MenuDirection.Left,
 					vertical: I.MenuDirection.Top,
 					noFlipX: true,
@@ -447,6 +448,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				});
 				break;
 			};
+
 			case I.ChatButton.Emoji: {
 				let value = this.getTextValue();
 
@@ -456,7 +458,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						const rect = U.Common.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 					},
-					horizontal: I.MenuDirection.Center,
+					horizontal: rect ? I.MenuDirection.Center : I.MenuDirection.Left,
 					vertical: I.MenuDirection.Top,
 					noFlipX: true,
 					noFlipY: true,
