@@ -138,9 +138,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	componentDidMount(): void {
-		const { data, renderLinks } = this.props;
+		const { data, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
 
-		renderLinks(this.node, data.marks, false, () => {});
+		renderLinks(this.node, data.marks, data.text);
+		renderMentions(this.node, data.marks, data.text);
+		renderObjects(this.node, data.marks, data.text);
+		renderEmoji(this.node);
 
 		this.checkLinesLimit();
 	};
@@ -161,7 +164,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const textHeight = $(this.text).outerHeight();
 		const lineHeight = Number($(this.text).css('line-height').replace('px', ''));
 
-		if (textHeight/lineHeight > LINES_LIMIT) {
+		if (textHeight / lineHeight > LINES_LIMIT) {
 			this.canExpand = true;
 			this.forceUpdate();
 		};
