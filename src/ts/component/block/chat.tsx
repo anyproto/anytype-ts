@@ -322,6 +322,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const target = length ? childrenIds[length - 1] : blockId;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.InnerFirst;
 
+		console.log('MARKS: ', this.getMarksFromHtml())
+
 		const data = {
 			...this.getMarksFromHtml(),
 			identity: account.id,
@@ -419,12 +421,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onChatButton (e: any, type: I.ChatButton) {
+		const { renderEmoji } = this.props;
 		const { attachments } = this.state;
 		const win = $(window);
 		const blockId = this.getBlockId();
 		const range = this.range || { from: 0, to: 0 };
-
-		let value = this.getTextValue();
 
 		switch (type) {
 			case I.ChatButton.Plus: {
@@ -447,6 +448,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				break;
 			};
 			case I.ChatButton.Emoji: {
+				let value = this.getTextValue();
+
 				S.Menu.open('smile', {
 					element: `#block-${blockId} #messageBox`,
 					recalcRect: () => {
@@ -462,10 +465,22 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						noUpload: true,
 						value: '',
 						onSelect: (icon) => {
-							value = U.Common.stringInsert(value, icon, range.from, range.from);
+							const to = range.from + 1;
 
-							this.refEditable.setValue(value);
-							this.refEditable.setRange({ from: value.length, to: value.length});
+							this.marks = Mark.adjust(this.marks, range.from, 1);
+							this.marks = Mark.toggle(this.marks, {
+								type: I.MarkType.Emoji,
+								param: icon,
+								range: { from: range.from, to },
+							});
+
+							console.log('MARKS: ', this.marks)
+
+							value = U.Common.stringInsert(value, ' ', range.from, range.from);
+
+							this.refEditable.setValue(Mark.toHtml(value, this.marks));
+							this.refEditable.setRange({ from: to, to });
+							renderEmoji(this.refEditable)
 						},
 					}
 				});
