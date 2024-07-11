@@ -4,12 +4,40 @@
 	.block.blockChat { 
 		.wrap.isDraggingOver { opacity: 0.5; cursor: copy; }
 
-		.scrollWrapper { padding: 16px 0px; display: flex; flex-direction: column; }
+		.scrollWrapper { padding: 16px 0px; display: flex; flex-direction: column; min-height: 206px; }
 		.scrollWrapper {
 			.scroll { display: flex; flex-direction: column; justify-content: flex-end; min-height: 100%; gap: 16px 0px; }
 		}
 
-		.emptyState { display: flex; flex-direction: row; align-items: center; justify-content: center; flex-grow: 1; color: var(--color-text-secondary); }
+		.emptyState { display: flex; flex-direction: column; gap: 16px 0px; align-items: center; justify-content: center; flex-grow: 1; }
+		.emptyState {
+			.img { width: 320px; height: 104px; display: flex; align-items: center; justify-content: center; background: radial-gradient(50% 50% at 50% 50%, #80D1FF 0%, rgba(187, 231, 255, 0.00) 100%); }
+			.icon { width: 108px; height: 88px; background: url('~img/icon/chat/emptyState.svg'); }
+			.label { @include text-common; color: var(--color-text-secondary); }
+		}
+
+		.attachments { padding: 8px 0px 0px 0px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-column-gap: 8px; grid-row-gap: 8px; }
+		.attachments {
+			.attachment { 
+				display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); position: relative;
+				background: var(--color-bg-primary); border-radius: 12px; border: 1px solid var(--color-shape-tertiary); padding: 16px;
+			}
+			.attachment {
+				.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 10px; }
+				.icon.remove { 
+					opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; background-size: 20px; 
+					background-image: url('~img/icon/chat/buttons/remove.svg'); 
+				}
+				.info { flex-grow: 1; }
+
+				.name { line-height: 20px; font-weight: 500; @include clamp1; }
+				.descr { @include text-small; }
+			}
+
+			.attachment:hover {
+				.icon.remove { opacity: 1; }
+			}
+		}
 
 		.message { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; @include text-common; }
 		.message {
@@ -39,21 +67,6 @@
 				.item:hover { color: var(--color-text-primary); }
 			}
 
-			.attachments { padding: 8px 0px 0px 0px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-column-gap: 8px; grid-row-gap: 8px; }
-			.attachments {
-				.attachment { 
-					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); 
-					background: var(--color-bg-primary); border-radius: 12px; border: 1px solid var(--color-shape-tertiary); padding: 16px;
-				}
-				.attachment {
-					.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); }
-					.info { flex-grow: 1; }
-
-					.name { line-height: 20px; font-weight: 500; @include clamp1; }
-					.descr { @include text-small; }
-				}
-			}
-
 			.reactions { padding: 12px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; }
 			.reactions {
 				.reaction { 
@@ -76,7 +89,7 @@
 		.message.canExpand {
 			.text { @include clamp; -webkit-line-clamp: 10; }
 		}
-		.message.canExpand.expanded {
+		.message.canExpand.isExpanded {
 			.text { -webkit-line-clamp: unset; }
 		}
 		.message:hover, .message.hover {
@@ -85,13 +98,27 @@
 
 		.formWrapper.isFixed { padding: 0px 0px 80px 0px; position: sticky; z-index: 1; bottom: 0px; width: 704px; background: var(--color-bg-primary); }
 
-		.form { padding: 8px 16px 16px 16px; border: 1px solid var(--color-shape-tertiary); border-radius: 12px; }
+		.form { padding: 0px 0px 10px 0px; border: 1px solid var(--color-shape-tertiary); border-radius: 12px; position: relative; }
 		.form {
-			.buttons { margin: 0px 0px 8px 0px; }
+			.editableWrap { @include text-common; max-height: 352px; overflow: scroll; background-color: var(--color-bg-primary); padding: 16px; }
+			.editableWrap {
+				.placeholder { padding: inherit; }
+			}
+
+			.attachments { padding: 0px 16px; }
+
+			.buttons { display: flex; gap: 0px 8px; padding: 10px 16px 0px 16px; margin-left: -4px; }
 			.buttons {
-				.icon { width: 32px; height: 32px; background-size: 20px 20px; vertical-align: top; margin: 0px; border-radius: 4px; transition: none; }
+				.icon { width: 28px; height: 28px; background-size: 20px 20px; margin: 0px; border-radius: 6px; transition: none; }
 				.icon:hover { background-color: var(--color-shape-highlight-medium); }
-				
+
+				/* Chat buttons */
+				.icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
+				.icon.text { background-image: url('~img/icon/chat/buttons/text.svg'); }
+				.icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
+				.icon.mention { background-image: url('~img/icon/chat/buttons/mention.svg'); }
+
+				/* Text buttons */
 				.icon.bold { background-image: url('~img/icon/menu/action/mark/bold0.svg'); }
 				.icon.italic { background-image: url('~img/icon/menu/action/mark/italic0.svg'); }
 				.icon.strike { background-image: url('~img/icon/menu/action/mark/strike0.svg'); }
@@ -128,17 +155,7 @@
 				}
 			}
 
-			.attachments { @include text-small; margin: 8px 0px 0px 0px; display: flex; flex-direction: column; gap: 2px 0px; }
-			.attachments {
-				.attachment { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
-			}
-
-			.editableWrap { border: 1px solid var(--color-shape-secondary); background-color: var(--color-bg-primary); padding: 8px; border-radius: 4px; }
-			.editableWrap {
-				.placeholder { padding: inherit; }
-			}
+			.icon.send { position: absolute; bottom: 10px; right: 16px; width: 20px; height: 20px; background: url('~img/icon/chat/buttons/send.svg'); }
 		}
-
-		
 	}
 }

@@ -462,11 +462,11 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			s = size;
 		};
 
-		if (([ I.ObjectLayout.Set, I.ObjectLayout.Type ].indexOf(layout) >= 0) && !iconImage && !iconEmoji && (size >= 40)) {
+		if ([ I.ObjectLayout.Set, I.ObjectLayout.Type ].includes(layout) && !iconImage && !iconEmoji && (size >= 40)) {
 			s = size;
 		};
 
-		if (([ I.ObjectLayout.Task, I.ObjectLayout.Relation ].indexOf(layout) < 0) && forceLetter && !iconImage && !iconEmoji && (size >= 40)) {
+		if (![ I.ObjectLayout.Task, I.ObjectLayout.Relation ].includes(layout) && forceLetter && !iconImage && !iconEmoji && (size >= 40)) {
 			s = size;
 		};
 

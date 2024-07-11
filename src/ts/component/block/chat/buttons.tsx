@@ -6,7 +6,7 @@ import { I } from 'Lib';
 interface Props {
 	blockId: string;
 	buttons: any[];
-	onButton: (e: React.MouseEvent, type: I.MarkType) => void;
+	onButton: (e: React.MouseEvent, type) => void;
 };
 
 interface State {

@@ -1,13 +1,16 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { IconObject, Icon, ObjectName, ObjectDescription } from 'Component';
+import { IconObject, Icon, ObjectName } from 'Component';
 import { I, S, U, J, Mark, translate, Preview } from 'Lib';
+
+import Attachment from '../attachment';
 
 interface Props extends I.Block, I.BlockComponent {
 	data: any;
 	isThread: boolean;
 	onThread: (id: string) => void;
+	renderMention: (object: any) => any;
 };
 
 const LINES_LIMIT = 10;
@@ -17,7 +20,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	node = null;
 	text: any = null;
 	canExpand: boolean = false;
-	expanded: boolean = false;
+	isExpanded: boolean = false;
 
 	constructor (props: Props) {
 		super(props);
@@ -47,8 +50,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		if (this.canExpand) {
 			cn.push('canExpand');
 		};
-		if (this.expanded) {
-			cn.push('expanded');
+		if (this.isExpanded) {
+			cn.push('isExpanded');
 		};
 
 		const Reaction = (item: any) => {
@@ -68,18 +71,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					</div>
 					<div className="count">
 						{length > 1 ? length : <IconObject object={author} size={18} />}
-					</div>
-				</div>
-			);
-		};
-
-		const Attachment = (item: any) => {
-			return (
-				<div className="attachment" onClick={() => U.Object.openPopup(item)}>
-					<IconObject object={item} size={48} />
-					<div className="info">
-						<ObjectName object={item} />
-						<ObjectDescription object={item} />
 					</div>
 				</div>
 			);
@@ -107,13 +98,17 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					<div className="textWrapper">
 						<div ref={ref => this.text = ref}  className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}></div>
 
-						{this.canExpand && !this.expanded ? <div className="expand" onClick={this.onExpand}>{translate('blockChatMessageExpand')}</div> : ''}
+						{this.canExpand && !this.isExpanded ? (
+							<div className="expand" onClick={this.onExpand}>
+								{translate('blockChatMessageExpand')}
+							</div>
+						) : ''}
 					</div>
 
 					{hasAttachments ? (
 						<div className="attachments">
 							{attachments.map((item: any, i: number) => (
-								<Attachment key={i} {...item} />
+								<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} />
 							))}
 						</div>
 					) : ''}
@@ -149,7 +144,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	onExpand () {
-		this.expanded = true;
+		this.isExpanded = true;
 		this.forceUpdate();
 	};
 
@@ -205,7 +200,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	onReactionSelect (icon: string) {
-		const { rootId, id, data } = this.props;
+		const { data } = this.props;
 		const { account } = S.Auth;
 		const reactions = data.reactions || [];
 		const item = reactions.find(it => it.value == icon);
@@ -227,7 +222,20 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			};
 		};
 
-		U.Data.blockSetText(rootId, id, JSON.stringify({ ...data, reactions }), [], true);
+		this.update({ ...data, reactions });
+	};
+
+	onAttachmentRemove (id: string) {
+		const { data } = this.props;
+		const attachments = (data.attachments || []).filter(it => it != id);
+
+		this.update({ ...data, attachments });
+	};
+
+	update (data: any) {
+		const { rootId, id } = this.props;
+
+		U.Data.blockSetText(rootId, id, JSON.stringify(data), [], true);
 	};
 
 });

@@ -1,5 +1,5 @@
 import loadImage from 'blueimp-load-image';
-import { S, U, J, Relation } from 'Lib';
+import { I, S, U, J, Relation } from 'Lib';
 
 const SIZE_UNIT = 1024;
 const UNITS = {
@@ -168,6 +168,29 @@ class UtilFile {
 		};
 
 		return `${name}.${fileExt}`;
+	};
+
+	layoutByMime (mime: string) {
+		const t = mime.split('/');
+		
+		let layout = I.ObjectLayout.File;
+		if (t.length) {
+			switch (t[0]) {
+				case 'image':
+					layout = I.ObjectLayout.Image;
+					break;
+
+				case 'video':
+					layout = I.ObjectLayout.Video;
+					break;
+
+				case 'audio':
+					layout = I.ObjectLayout.Audio;
+					break;
+			};
+		};
+
+		return layout;
 	};
 
 };
