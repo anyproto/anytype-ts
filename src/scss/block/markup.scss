@@ -1,5 +1,5 @@
-/* Markup */
 
+smile { text-align: center; }
 smile {
 	img { position: static !important; left: auto !important; top: auto !important; margin: 0px !important; vertical-align: top; }
 }
@@ -23,8 +23,9 @@ markupmention { display: inline; user-select: all !important; position: relative
 markupmention * { user-select: text !important; }
 markupmention {
 	smile { display: none; position: relative; z-index: 1; }
-	.space { width: 6px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
+	smile img { margin-top: 2px !important; }
 
+	.space { width: 6px; height: 20px; vertical-align: middle; display: none; }
 	name { display: inline; white-space: normal; position: relative; border-bottom: 0.075em solid; border-color: inherit; }
 }
 markupmention.disabled {
@@ -46,3 +47,9 @@ markupbold { font-weight: 600; }
 markupitalic { font-style: italic; }
 markupstrike { text-decoration: line-through; }
 markupunderline { border-bottom: 0.05em solid; }
+
+markuphighlight { background: #b2dff9 !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
+markuphighlight.active { background: orange !important; }
+
+markupsearch { background: yellow !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
+markupsearch.active { background: orange !important; }
