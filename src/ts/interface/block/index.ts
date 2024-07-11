@@ -87,7 +87,10 @@ export interface BlockComponent {
 	onUpdate?(): void;
 	getWrapperWidth?(): number;
 	blockRemove?(focused?: I.Block): void;
-	renderLinks?(node: any, marks: I.Mark[], canEdit: boolean, onChange: (marks: I.Mark[]) => void): void;
+	renderLinks?(node: any, marks: I.Mark[], value: string): void;
+	renderMentions?(node: any, marks: I.Mark[], value: string): void;
+	renderObjects?(node: any, marks: I.Mark[], value: string): void;
+	renderEmoji?(node: any): void;
 };
 
 export interface BlockStructure {
