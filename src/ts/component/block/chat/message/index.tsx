@@ -43,6 +43,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const reactions = data.reactions || [];
 		const hasReactions = reactions.length;
 		const hasAttachments = attachments.length;
+		const isSingle = attachments.length == 1;
 		const cn = [ 'message' ];
 
 		if (data.identity == account.id) {
@@ -107,7 +108,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					</div>
 
 					{hasAttachments ? (
-						<div className="attachments">
+						<div className={[ 'attachments', (isSingle ? 'isSingle' : '') ].join(' ')}>
 							{attachments.map((item: any, i: number) => (
 								<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} />
 							))}

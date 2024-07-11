@@ -38,6 +38,7 @@
 				.icon.remove { opacity: 1; }
 			}
 		}
+		.attachments.isSingle { grid-template-columns: repeat(1, minmax(0, 1fr)); }
 
 		.message { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; @include text-common; }
 		.message {
