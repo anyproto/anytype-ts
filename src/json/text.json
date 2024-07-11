@@ -644,6 +644,7 @@
 	"blockChatEmpty": "There are no messages yet. Be the first to start a discussion",
 	"blockChatMessageExpand": "Expand",
 	"blockChatReactionAdd": "Add reaction",
+	"blockChatPlaceholder": "Enter your message",
 
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",

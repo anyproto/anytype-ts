@@ -94,7 +94,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							ref={ref => this.refEditable = ref}
 							id="messageBox"
 							readonly={readonly}
-							placeholder={'Enter your message'}
+							placeholder={translate('blockChatPlaceholder')}
 							onSelect={this.onSelect}
 							onFocus={this.onFocusInput}
 							onBlur={this.onBlurInput}
@@ -121,7 +121,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							onButton={(e, type) => this.hasSelection() ? this.onTextButton(e, type) : this.onChatButton(e, type)}
 						/>
 
-						{canSend ? <Icon className="send" onClick={this.onAddMessage} /> : ''}
+						<Icon id="send" className="send" onClick={this.onAddMessage} />
 					</div>
 				</div>
 			</div>
@@ -131,11 +131,23 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	componentDidMount () {
 		this._isMounted = true;
 		this.scrollToBottom();
+		this.checkSendButton();
 		this.refEditable?.setRange({ from: 0, to: 0 });
+	};
+
+	componentDidUpdate () {
+		this.checkSendButton();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+
+	checkSendButton () {
+		const node = $(this.node);
+		const button = node.find('#send');
+
+		this.canSend() ? button.removeClass('disabled') : button.addClass('disabled');	
 	};
 
 	onSelect () {
@@ -175,6 +187,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.refEditable.setRange(this.range);
 		};
 
+		this.checkSendButton();
 		this.updateButtons();
 	};
 

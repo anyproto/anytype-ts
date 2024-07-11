@@ -11,7 +11,7 @@
 
 		.emptyState { display: flex; flex-direction: column; gap: 16px 0px; align-items: center; justify-content: center; flex-grow: 1; }
 		.emptyState {
-			.img { width: 320px; height: 104px; display: flex; align-items: center; justify-content: center; background: radial-gradient(50% 50% at 50% 50%, #80D1FF 0%, rgba(187, 231, 255, 0.00) 100%); }
+			.img { width: 320px; height: 104px; display: flex; align-items: center; justify-content: center; background: radial-gradient(50% 50% at 50% 50%, #80d1ff 0%, rgba(187, 231, 255, 0.00) 100%); }
 			.icon { width: 108px; height: 88px; background: url('~img/icon/chat/emptyState.svg'); }
 			.label { @include text-common; color: var(--color-text-secondary); }
 		}
@@ -31,7 +31,7 @@
 				.info { flex-grow: 1; }
 
 				.name { line-height: 20px; font-weight: 500; @include clamp1; }
-				.descr { @include text-small; }
+				.descr { @include text-small;  @include clamp2; }
 			}
 
 			.attachment:hover {
