@@ -200,7 +200,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	onReactionSelect (icon: string) {
-		const { rootId, id, data } = this.props;
+		const { data } = this.props;
 		const { account } = S.Auth;
 		const reactions = data.reactions || [];
 		const item = reactions.find(it => it.value == icon);
@@ -222,10 +222,20 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			};
 		};
 
-		U.Data.blockSetText(rootId, id, JSON.stringify({ ...data, reactions }), [], true);
+		this.update({ ...data, reactions });
 	};
 
 	onAttachmentRemove (id: string) {
+		const { data } = this.props;
+		const attachments = (data.attachments || []).filter(it => it != id);
+
+		this.update({ ...data, attachments });
+	};
+
+	update (data: any) {
+		const { rootId, id } = this.props;
+
+		U.Data.blockSetText(rootId, id, JSON.stringify(data), [], true);
 	};
 
 });

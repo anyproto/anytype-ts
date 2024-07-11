@@ -1,7 +1,7 @@
 import * as React from 'react';
 import sha1 from 'sha1';
 import { Input } from 'Component';
-import { J, keyboard } from 'Lib';
+import { keyboard } from 'Lib';
 
 interface Props {
 	pinLength?: number;

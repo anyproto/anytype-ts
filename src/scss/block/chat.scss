@@ -23,7 +23,7 @@
 				background: var(--color-bg-primary); border-radius: 12px; border: 1px solid var(--color-shape-tertiary); padding: 16px;
 			}
 			.attachment {
-				.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); }
+				.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 10px; }
 				.icon.remove { 
 					opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; background-size: 20px; 
 					background-image: url('~img/icon/chat/buttons/remove.svg'); 

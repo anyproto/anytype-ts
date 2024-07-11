@@ -10,8 +10,14 @@ interface Props {
 
 const ChatAttachment = observer(class ChatAttachment extends React.Component<Props> {
 
+	constructor (props: Props) {
+		super(props);
+
+		this.onRemove = this.onRemove.bind(this);
+	};
+
 	render () {
-		const { object, onRemove } = this.props;
+		const { object } = this.props;
 
 		return (
 			<div className="attachment" onClick={() => U.Object.openPopup(object)}>
@@ -22,9 +28,14 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 					<ObjectDescription object={object} />
 				</div>
 
-				<Icon className="remove" onClick={onRemove} />
+				<Icon className="remove" onClick={this.onRemove} />
 			</div>
 		);
+	};
+
+	onRemove (e: any) {
+		e.stopPropagation();
+		this.props.onRemove();
 	};
 
 });

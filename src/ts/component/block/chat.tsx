@@ -1,6 +1,7 @@
 import * as React from 'react';
+import sha1 from 'sha1';
 import { observer } from 'mobx-react';
-import { Editable, IconObject, Label, Icon, ObjectName } from 'Component';
+import { Editable, Label, Icon } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
 
 import Buttons from './chat/buttons';
@@ -219,10 +220,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const { attachments } = this.state;
 		const node = $(this.node);
-		const files = Array.from(e.dataTransfer.files).map(it => {
-
-			return it;
-		});
+		const files = Array.from(e.dataTransfer.files).map((it: any) => ({
+			id: sha1(it.path),
+			name: it.name,
+			layout: I.ObjectLayout.File,
+			description: U.File.size(it.size),
+		}));
 		
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
@@ -457,7 +460,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		let menuId = '';
 		let menuParam: any = {
 			element: `#button-${blockId}-${type}`,
-			recalcRect: () => { 
+			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + $(window).scrollTop() } : null; 
 			},
