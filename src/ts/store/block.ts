@@ -532,7 +532,7 @@ class BlockStore {
 				if (U.Object.isNoteLayout(object.layout)) {
 					name = object.name || translate('commonEmpty');
 				} else
-				if (U.Object.isFileLayout(object.layout)) {
+				if (U.Object.isInFileLayouts(object.layout)) {
 					name = U.File.name(object);
 				} else {
 					name = object.name;

@@ -574,7 +574,7 @@ class UtilData {
 			};
 		};
 
-		if (U.Object.isFileLayout(object.layout)) {
+		if (U.Object.isInFileLayouts(object.layout)) {
 			ret.withIcon = true;
 		};
 
@@ -1101,7 +1101,7 @@ class UtilData {
 	getLinkBlockParam (id: string, layout: I.ObjectLayout) {
 		const param: Partial<I.Block> = {};
 
-		if (U.Object.isFileLayout(layout)) {
+		if (U.Object.isInFileLayouts(layout)) {
 			return {
 				type: I.BlockType.File,
 				content: {

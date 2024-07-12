@@ -57,7 +57,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
-		const allowedObject = object.isInstalled && U.Object.isPageLayout(object.recommendedLayout);
+		const allowedObject = object.isInstalled && U.Object.isInPageLayouts(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite;
@@ -84,7 +84,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return config.debug.hiddenObject ? true : !it.isHidden;
 		});
 
-		const isFileType = U.Object.isFileLayout(object.recommendedLayout);
+		const isFileType = U.Object.isInFileLayouts(object.recommendedLayout);
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
@@ -341,7 +341,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return;
 		};
 
-		const allowedObject = U.Object.isPageLayout(type.recommendedLayout) || U.Object.isSetLayout(type.recommendedLayout);
+		const allowedObject = U.Object.isInPageLayouts(type.recommendedLayout) || U.Object.isInSetLayouts(type.recommendedLayout);
 		const options = [];
 
 		if (allowedObject) {
@@ -359,7 +359,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'object':
-							if (type.recommendedLayout == I.ObjectLayout.Bookmark) {
+							if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
 								this.onBookmarkAdd();
 							} else {
 								this.onObjectAdd();
@@ -385,7 +385,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		
 		const details: any = {};
 
-		if (U.Object.isSetLayout(type.recommendedLayout)) {
+		if (U.Object.isInSetLayouts(type.recommendedLayout)) {
 			details.layout = type.recommendedLayout;
 		};
 

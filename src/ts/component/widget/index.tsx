@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard } from 'Lib';
+import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -339,7 +339,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		const id = child.getTargetObjectId();
-		const isSetOrCollection = U.Object.isSetLayout(object.layout);
+		const isSetOrCollection = U.Object.isInSetLayouts(object.layout);
 		const isFavorite = id == J.Constant.widgetId.favorite;
 
 		let details: any = Object.assign({}, param.details || {});
@@ -370,7 +370,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 			typeKey = type.uniqueKey;
 			templateId = view?.defaultTemplateId || type.defaultTemplateId;
-			isCollection = object.layout == I.ObjectLayout.Collection;
+			isCollection = U.Object.isCollectionLayout(object.layout);
 		} else {
 			switch (id) {
 				default:
@@ -714,11 +714,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return false;
 		};
 
-		if (U.Object.isSetLayout(object.layout)) {
+		if (U.Object.isInSetLayouts(object.layout)) {
 			const rootId = this.getRootId();
 			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id);
 			const type = S.Record.getTypeById(typeId);
 			const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Participant);
+			const setOf = Relation.getArrayValue(object.setOf);
+			const isCollection = U.Object.isCollectionLayout(object.layout);
+
+			if (!setOf.length && !isCollection) {
+				return false;
+			};
 
 			if (type && layouts.includes(type.recommendedLayout)) {
 				return false;

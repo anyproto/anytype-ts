@@ -369,9 +369,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	onMouseDown (e: any) {
 		const { canEdit, onClick, onCheckbox } = this.props;
 		const object = this.getObject();
-		const { layout } = object;
-		const isTask = layout == I.ObjectLayout.Task;
-		const isEmoji = LAYOUT_EMOJI.includes(layout);
+		const isTask = U.Object.isTaskLayout(object.layout);
+		const isEmoji = LAYOUT_EMOJI.includes(object.layout);
 
 		if (onClick) {
 			onClick(e);
@@ -447,10 +446,10 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			return s;
 		};
 
-		if ((size == 18) && (layout == I.ObjectLayout.Task)) {
+		if ((size == 18) && (U.Object.isTaskLayout(layout))) {
 			s = 16;
 		};
-		if ((size == 48) && (layout == I.ObjectLayout.Relation)) {
+		if ((size == 48) && U.Object.isRelationLayout(layout)) {
 			s = 28;
 		};
 

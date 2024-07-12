@@ -89,6 +89,7 @@ import MediaPdf from './util/media/pdf';
 
 import ProgressBar from './util/progressBar';
 import Share from './util/share';
+import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
 export {
 	Page,
@@ -176,5 +177,6 @@ export {
 	MediaPdf,
 
 	ProgressBar,
-	Share
+	Share,
+	FooterAuthDisclaimer
 };
