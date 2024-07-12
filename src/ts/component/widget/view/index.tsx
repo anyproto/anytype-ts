@@ -163,16 +163,21 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 
 	updateData () {
 		const { block, isSystemTarget, getData } = this.props;
-		const { targetBlockId } = block.content;
+		const targetId = block.getTargetObjectId();
 		const rootId = this.getRootId();
-		const srcBlock = S.Block.getLeaf(targetBlockId, J.Constant.blockId.dataview);
+		const srcObject = S.Detail.get(targetId, targetId);
+		const srcBlock = S.Block.getLeaf(targetId, J.Constant.blockId.dataview);
 
-		// Update block in widget with source block if object is open
+		// Update block and details in widget with source block if object is open
 		if (srcBlock) {
 			let dstBlock = S.Block.getLeaf(rootId, J.Constant.blockId.dataview);
 
 			if (dstBlock) {
 				dstBlock = Object.assign(dstBlock, srcBlock);
+			};
+
+			if (!srcObject._empty_) {
+				S.Detail.update(rootId, { id: srcObject.id, details: srcObject }, false);
 			};
 		};
 
