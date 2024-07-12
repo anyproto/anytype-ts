@@ -457,32 +457,32 @@ class Dataview {
 		const view = this.getView(rootId, blockId, viewId);
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
-		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation).map(it => it.id).length;
+		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!relations.length;
+
+		if (view && view.defaultTypeId && isAllowedDefaultType) {
+			return view.defaultTypeId;
+		};
 
 		let typeId = '';
+
 		if (types.length) {
 			typeId = types[0].id;
 		} else
 		if (relations.length) {
 			for (const item of relations) {
-				if (item.objectTypes.length) {
-					const first = S.Record.getTypeById(item.objectTypes[0]);
+				if (!item.objectTypes.length) {
+					continue;
+				};
 
-					if (first && !U.Object.isInFileLayouts(first.recommendedLayout) && !U.Object.isInSystemLayouts(first.recommendedLayout)) {
-						typeId = first.id;
-						break;
-					};
+				const first = S.Record.getTypeById(item.objectTypes[0]);
+				if (first && !U.Object.isInFileOrSystemLayouts(first.recommendedLayout)) {
+					typeId = first.id;
+					break;
 				};
 			};
 		};
-		if (view && view.defaultTypeId && isAllowedDefaultType) {
-			typeId = view.defaultTypeId;
-		};
-		if (!typeId) {
-			typeId = S.Common.type;
-		};
 
-		return typeId;
+		return typeId || S.Common.type;
 	};
 
 	getCreateTooltip (rootId: string, blockId: string, objectId: string, viewId: string): string {
