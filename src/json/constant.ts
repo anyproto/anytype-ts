@@ -84,7 +84,6 @@ export default {
 		archive:		 'archive',
 		sidebar:		 'sidebar',
 		space:			 'space',
-		file:			 'file',
 		fileManager:	 'fileManager',
 		participant:	 'participant',
 		myParticipant:	 'myParticipant'
