@@ -586,7 +586,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			let type = null;
 			let param = '';
 
-			for (const item of this.getMarkParam()) {
+			for (const item of keyboard.getMarkParam()) {
 				keyboard.shortcut(item.key, e, () => {
 					type = item.type;
 					param = item.param;
@@ -829,9 +829,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (block.canHaveMarks() && range.to && (range.from != range.to)) {
 			let type = null;
 			let param = '';
-			const markParam = this.getMarkParam();
 
-			for (const item of markParam) {
+			for (const item of keyboard.getMarkParam()) {
 				keyboard.shortcut(item.key, e, (pressed: string) => {
 					type = item.type;
 					param = item.param;
@@ -937,20 +936,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		];
 	};
 
-	getMarkParam () {
-		const cmd = keyboard.cmdKey();
-		return [
-			{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
-			{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },
-			{ key: `${cmd}+u`,		 type: I.MarkType.Underline, param: '' },
-			{ key: `${cmd}+shift+s`, type: I.MarkType.Strike,	 param: '' },
-			{ key: `${cmd}+k`,		 type: I.MarkType.Link,		 param: '' },
-			{ key: `${cmd}+l`,		 type: I.MarkType.Code,		 param: '' },
-			{ key: `${cmd}+shift+h`, type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
-			{ key: `${cmd}+shift+c`, type: I.MarkType.Color,	 param: Storage.get('color') },
-		];
-	};
-	
 	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
 	};
 

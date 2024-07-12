@@ -645,6 +645,9 @@
 	"blockChatMessageExpand": "Expand",
 	"blockChatReactionAdd": "Add reaction",
 	"blockChatPlaceholder": "Enter your message",
+	"blockChatButtonObject": "Add object",
+	"blockChatButtonEmoji": "Add emoji",
+	"blockChatButtonMention": "Add mention",
 
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",

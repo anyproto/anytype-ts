@@ -1089,6 +1089,20 @@ class Keyboard {
 	disableCommonDrop (v: boolean) {
 		this.isCommonDropDisabled = v;
 	};
+
+	getMarkParam () {
+		const cmd = this.cmdKey();
+		return [
+			{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
+			{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },
+			{ key: `${cmd}+u`,		 type: I.MarkType.Underline, param: '' },
+			{ key: `${cmd}+shift+s`, type: I.MarkType.Strike,	 param: '' },
+			{ key: `${cmd}+k`,		 type: I.MarkType.Link,		 param: '' },
+			{ key: `${cmd}+l`,		 type: I.MarkType.Code,		 param: '' },
+			{ key: `${cmd}+shift+h`, type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
+			{ key: `${cmd}+shift+c`, type: I.MarkType.Color,	 param: Storage.get('color') },
+		];
+	};
 	
 	isSpecial (e: any): boolean {
 		return this.isArrow(e) || [ Key.escape, Key.backspace, Key.tab, Key.enter, Key.shift, Key.ctrl, Key.alt, Key.meta ].includes(this.eventKey(e));

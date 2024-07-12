@@ -47,6 +47,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onKeyDownInput = this.onKeyDownInput.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
+		this.onButton = this.onButton.bind(this);
 		this.onTextButton = this.onTextButton.bind(this);
 		this.onChatButton = this.onChatButton.bind(this);
 		this.onThread = this.onThread.bind(this);
@@ -124,7 +125,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							ref={ref => this.refButtons = ref}
 							blockId={blockId}
 							buttons={this.getButtons()}
-							onButton={(e, type) => this.hasSelection() ? this.onTextButton(e, type) : this.onChatButton(e, type)}
+							onButton={this.onButton}
 						/>
 
 						<Icon id="send" className="send" onClick={this.onAddMessage} />
@@ -274,6 +275,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onKeyDownInput (e: any) {
 		const { checkMarkOnBackspace } = this.props;
 		const range = this.range;
+		const menuOpenSmile = S.Menu.isOpen('smile');
+		const cmd = keyboard.cmdKey();
 
 		let value = this.refEditable.getTextValue();
 
@@ -300,6 +303,50 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				};
 			}
 		});
+
+		keyboard.shortcut(`${cmd}+a`, e, () => {
+			if (menuOpenSmile) {
+				return;
+			};
+
+			e.preventDefault();
+			this.onChatButton(e, I.ChatButton.Object);
+		});
+
+		keyboard.shortcut(`${cmd}+e`, e, () => {
+			if (menuOpenSmile) {
+				return;
+			};
+
+			e.preventDefault();
+			this.onChatButton(e, I.ChatButton.Emoji);
+		});
+
+		keyboard.shortcut(`${cmd}+m`, e, () => {
+			if (menuOpenSmile) {
+				return;
+			};
+
+			e.preventDefault();
+			this.onChatButton(e, I.ChatButton.Mention);
+		});
+
+		// Mark-up
+		if (range.to && (range.from != range.to)) {
+			let type = null;
+			let param = '';
+
+			for (const item of keyboard.getMarkParam()) {
+				keyboard.shortcut(item.key, e, (pressed: string) => {
+					type = item.type;
+					param = item.param;
+				});
+			};
+
+			if (type !== null) {
+				this.onTextButton(e, type, param);
+			};
+		};
 	};
 
 	onChange () {
@@ -472,12 +519,51 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return this.hasSelection() ? this.getTextButtons() : this.getChatButtons();
 	};
 
+	onButton (e: any, type: any) {
+		this.hasSelection() ? this.onTextButton(e, type, '') : this.onChatButton(e, type);
+	};
+
 	getChatButtons () {
+		const cmd = keyboard.cmdSymbol();
+
 		return [
-			{ type: I.ChatButton.Plus, icon: 'plus' },
-			{ type: I.ChatButton.Emoji, icon: 'emoji' },
-			{ type: I.ChatButton.Mention, icon: 'mention' },
+			{ type: I.ChatButton.Object, icon: 'plus', name: translate('blockChatButtonObject'), caption: `${cmd} + A` },
+			{ type: I.ChatButton.Emoji, icon: 'emoji', name: translate('blockChatButtonEmoji'), caption: `${cmd} + E` },
+			{ type: I.ChatButton.Mention, icon: 'mention', name: translate('blockChatButtonMention'), caption: `${cmd} + M` },
 		];
+	};
+
+	getTextButtons () {
+		const cmd = keyboard.cmdSymbol();
+		const colorMark = Mark.getInRange(this.marks, I.MarkType.Color, this.range) || {};
+		const bgMark = Mark.getInRange(this.marks, I.MarkType.BgColor, this.range) || {};
+
+		const color = (
+			<div className={[ 'inner', 'textColor', `textColor-${colorMark.param || 'default'}` ].join(' ')} />
+		);
+		const background = (
+			<div className={[ 'inner', 'bgColor', `bgColor-${bgMark.param || 'default'}` ].join(' ')} />
+		);
+
+		return [
+			{ type: I.MarkType.Bold, icon: 'bold', name: translate('commonBold'), caption: `${cmd} + B` },
+			{ type: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic'), caption: `${cmd} + I` },
+			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: `${cmd} + Shift + S` },
+			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: `${cmd} + U` },
+			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: `${cmd} + K` },
+			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: `${cmd} + L` },
+			{ type: I.MarkType.Color, icon: 'color', name: translate('commonColor'), caption: `${cmd} + Shift + C`, inner: color },
+			{ type: I.MarkType.BgColor, icon: 'color', name: translate('commonBackground'), caption: `${cmd} + Shift + H`, inner: background },
+		].map((it: any) => {
+			it.isActive = false;
+			if (it.type == I.MarkType.Link) {
+				const inRange = Mark.getInRange(this.marks, I.MarkType.Link, this.range) || Mark.getInRange(this.marks, I.MarkType.Object, this.range);
+				it.isActive = !!(inRange && inRange.param);
+			} else {
+				it.isActive = !!Mark.getInRange(this.marks, it.type, this.range);
+			};
+			return it;
+		});
 	};
 
 	onChatButton (e: any, type: I.ChatButton) {
@@ -486,13 +572,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const range = this.range || { from: 0, to: 0 };
 
 		switch (type) {
-			case I.ChatButton.Plus: {
+			case I.ChatButton.Object: {
 				S.Menu.open('searchObject', {
 					element: `#block-${blockId} #button-${blockId}-${type}`,
-					horizontal: I.MenuDirection.Left,
 					vertical: I.MenuDirection.Top,
 					noFlipX: true,
 					noFlipY: true,
+					onClose: () => this.refEditable.setRange(this.range),
 					data: {
 						skipIds: attachments.map(it => it.id),
 						filters: [
@@ -536,47 +622,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				});
 				break;
 			};
+
 			case I.ChatButton.Mention: {
 				this.onMention();
 				break;
 			};
+
 		};
 	};
 
-	getTextButtons () {
-		const cmd = keyboard.cmdSymbol();
-		const colorMark = Mark.getInRange(this.marks, I.MarkType.Color, this.range) || {};
-		const bgMark = Mark.getInRange(this.marks, I.MarkType.BgColor, this.range) || {};
-
-		const color = (
-			<div className={[ 'inner', 'textColor', `textColor-${colorMark.param || 'default'}` ].join(' ')} />
-		);
-		const background = (
-			<div className={[ 'inner', 'bgColor', `bgColor-${bgMark.param || 'default'}` ].join(' ')} />
-		);
-
-		return [
-			{ type: I.MarkType.Bold, icon: 'bold', name: translate('commonBold'), caption: `${cmd} + B` },
-			{ type: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic'), caption: `${cmd} + I` },
-			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: `${cmd} + Shift + S` },
-			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: `${cmd} + U` },
-			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: `${cmd} + K` },
-			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: `${cmd} + L` },
-			{ type: I.MarkType.Color, icon: 'color', name: translate('commonColor'), caption: `${cmd} + Shift + C`, inner: color },
-			{ type: I.MarkType.BgColor, icon: 'color', name: translate('commonBackground'), caption: `${cmd} + Shift + H`, inner: background },
-		].map((it: any) => {
-			it.isActive = false;
-			if (it.type == I.MarkType.Link) {
-				const inRange = Mark.getInRange(this.marks, I.MarkType.Link, this.range) || Mark.getInRange(this.marks, I.MarkType.Object, this.range);
-				it.isActive = !!(inRange && inRange.param);
-			} else {
-				it.isActive = !!Mark.getInRange(this.marks, it.type, this.range);
-			};
-			return it;
-		});
-	};
-
-	onTextButton (e: any, type: I.MarkType) {
+	onTextButton (e: any, type: I.MarkType, param: string) {
 		const { rootId } = this.props;
 		const blockId = this.getBlockId();
 		const value = this.getTextValue();
@@ -598,6 +653,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const toggle = (type: I.MarkType, param: string) => {
 			this.marks = Mark.toggle(this.marks, { type, param, range: { from, to } });
 			this.refEditable.setValue(Mark.toHtml(value, this.marks));
+			this.refEditable.setRange({ from, to });
 			this.updateButtons();
 		};
 
@@ -637,8 +693,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
-					value: mark?.param,
-					onChange: (param: string) => toggle(type, param),
+					value: param || mark?.param,
+					onChange: param => toggle(type, param),
 				});
 				break;
 			};
@@ -707,9 +763,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			},
 			horizontal: rect ? I.MenuDirection.Center : I.MenuDirection.Left,
 			vertical: I.MenuDirection.Top,
+			onClose: () => this.refEditable.setRange(this.range),
 			noFlipX: true,
 			noFlipY: true,
-			offsetY: -4,
+			offsetY: -8,
 		};
 	};
 
