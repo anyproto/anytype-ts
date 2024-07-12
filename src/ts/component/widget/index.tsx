@@ -325,6 +325,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	onCreate (param?: any): void {
 		param = param || {};
 
+		const { widgets } = S.Block;
 		const { block } = this.props;
 		const { viewId, layout } = block.content;
 		const object = this.getObject();
@@ -359,7 +360,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
-			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id, viewId);
+			const typeId = Dataview.getTypeId(widgets, J.Constant.blockId.dataview, object.id, viewId);
 			const type = S.Record.getTypeById(typeId);
 
 			if (!type) {
