@@ -9,7 +9,7 @@
 			.scroll { display: flex; flex-direction: column; justify-content: flex-end; min-height: 100%; gap: 16px 0px; }
 		}
 
-		.emptyState { display: flex; flex-direction: column; gap: 16px 0px; align-items: center; justify-content: center; flex-grow: 1; }
+		.emptyState { display: flex; flex-direction: column; gap: 16px 0px; align-items: center; justify-content: center; flex-grow: 1; text-align: center; }
 		.emptyState {
 			.img { width: 320px; height: 104px; display: flex; align-items: center; justify-content: center; background: radial-gradient(50% 50% at 50% 50%, #80d1ff 0%, rgba(187, 231, 255, 0.00) 100%); }
 			.icon { width: 108px; height: 88px; background: url('~img/icon/chat/emptyState.svg'); }
@@ -99,7 +99,7 @@
 			.icon.reactionAdd { opacity: 1; }
 		}
 
-		.formWrapper.isFixed { padding: 0px 0px 90px 0px; position: sticky; z-index: 1; bottom: 0px; width: 704px; background: var(--color-bg-primary); }
+		.formWrapper.isFixed { padding: 0px 0px 90px 0px; position: sticky; z-index: 1; bottom: 0px; width: 100%; background: var(--color-bg-primary); }
 
 		.form { padding: 0px 0px 10px 0px; border: 1px solid var(--color-shape-tertiary); background-color: var(--color-bg-primary); border-radius: 12px; position: relative; }
 		.form {

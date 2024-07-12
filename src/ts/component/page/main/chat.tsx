@@ -56,7 +56,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 				<React.Fragment>
 					{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
 
-					<div className="blocks wrapper">
+					<div className="blocks">
 						<Controls ref={ref => this.refControls = ref} key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
 						<HeadSimple 
 							{...this.props} 

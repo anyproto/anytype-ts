@@ -177,7 +177,7 @@
 /* Chat */
 
 .editorWrapper.isChat {
-	.blocks { width: 704px; margin: 0px auto; padding: 0px; user-select: none; }
+	.blocks { max-width: 704px; width: calc(100% - 32px); margin: 0px auto; padding: 0px; user-select: none; }
 	.blocks {
 		.block {
 			.wrapMenu { display: none; }
