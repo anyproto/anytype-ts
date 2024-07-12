@@ -391,7 +391,7 @@ class UtilMenu {
 
 		if (id) {
 			if (!isCollection) {
-				const isSet = U.Object.isSetLayout(layout);
+				const isSet = U.Object.isInSetLayouts(layout);
 				const setLayouts = U.Object.getSetLayouts();
 				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
 

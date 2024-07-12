@@ -53,7 +53,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		const Row = (item: any) => {
 			const cn = [ 'row' ];
 
-			if ((item.layout == I.ObjectLayout.Task) && item.isDone) {
+			if (U.Object.isTaskLayout(item.layout) && item.isDone) {
 				cn.push('isDone');
 			};
 			if (item.isArchived) {

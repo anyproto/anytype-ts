@@ -175,11 +175,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				this.layout = id == J.Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
 			};
 		} else {
-			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !U.Object.isSetLayout(layout)) {
+			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !U.Object.isInSetLayouts(layout)) {
 				this.layout = I.WidgetLayout.Tree;
 			};
 
-			if ((this.layout == I.WidgetLayout.Tree) && U.Object.isSetLayout(layout)) {
+			if ((this.layout == I.WidgetLayout.Tree) && U.Object.isInSetLayouts(layout)) {
 				this.layout = I.WidgetLayout.Compact;
 			};
 		};

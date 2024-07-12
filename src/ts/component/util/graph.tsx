@@ -185,7 +185,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		d.snippet = String(d.snippet || '');
 
 		// Clear icon props to fix image size
-		if (d.layout == I.ObjectLayout.Task) {
+		if (U.Object.isTaskLayout(d.layout)) {
 			d.iconImage = '';
 			d.iconEmoji = '';
 		};

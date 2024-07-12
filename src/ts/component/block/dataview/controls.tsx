@@ -48,7 +48,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const buttonWrapCn = [ 'buttonWrap' ];
 		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
-		const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isSetLayout(target.layout) && hasSources);
+		const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
 		const cmd = keyboard.cmdSymbol();
 		const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
 

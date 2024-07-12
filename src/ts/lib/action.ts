@@ -689,13 +689,13 @@ class Action {
 		let layout = I.WidgetLayout.Link;
 
 		if (object && !object._empty_) {
-			if (U.Object.isFileOrSystemLayout(object.layout)) {
+			if (U.Object.isInFileOrSystemLayouts(object.layout)) {
 				layout = I.WidgetLayout.Link;
 			} else 
-			if (U.Object.isSetLayout(object.layout)) {
+			if (U.Object.isInSetLayouts(object.layout)) {
 				layout = I.WidgetLayout.Compact;
 			} else
-			if (U.Object.isPageLayout(object.layout)) {
+			if (U.Object.isInPageLayouts(object.layout)) {
 				layout = I.WidgetLayout.Tree;
 			};
 		};
