@@ -844,7 +844,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					blockId: block.id,
 					marks: this.marks,
 					skipIds: [ rootId ],
-					onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
+					canAdd: true,
+					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
 						value = U.Common.stringInsert(value, text, from, from);
 
 						U.Data.blockSetText(rootId, block.id, value, marks, true, () => {

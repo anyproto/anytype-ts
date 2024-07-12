@@ -53,7 +53,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.renderEmojiAndMentions = this.renderEmojiAndMentions.bind(this);
 	};
 
 	render () {
@@ -297,7 +296,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 					this.refEditable.setValue(Mark.toHtml(value, this.marks));
 					this.refEditable.setRange({ from: value.length, to: value.length });
-					this.renderEmojiAndMentions(this.refEditable.node);
+
+					this.renderMarkup();
 				};
 			}
 		});
@@ -485,7 +485,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { attachments } = this.state;
 		const blockId = this.getBlockId();
 		const range = this.range || { from: 0, to: 0 };
-		const rect = U.Common.getSelectionRect();
 
 		switch (type) {
 			case I.ChatButton.Plus: {
@@ -532,7 +531,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							this.refEditable.setValue(Mark.toHtml(value, this.marks));
 							this.refEditable.setRange({ from: to, to });
 
-							this.renderEmojiAndMentions(this.refEditable.node);
+							this.renderMarkup();
 						},
 					}
 				});
@@ -680,17 +679,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
 					],
-					onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
-						value = U.Common.stringInsert(value, text, from, from);
+					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
+						S.Detail.update(rootId, { id: object.id, details: object }, false)
 
-						marks.forEach((mark) => {
-							this.marks = Mark.toggle(this.marks, mark);
-						});
+						value = U.Common.stringInsert(value, text, from, from);
+						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
 
 						this.refEditable.setValue(Mark.toHtml(value, this.marks));
 						this.refEditable.setRange({ from: to, to });
 
-						this.renderEmojiAndMentions(this.refEditable.node);
+						this.renderMarkup();
 					}
 				}
 			})
@@ -705,6 +703,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return {
 			element: `#block-${blockId} #messageBox`,
 			recalcRect: () => {
+				const rect = U.Common.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			horizontal: rect ? I.MenuDirection.Center : I.MenuDirection.Left,
@@ -729,12 +728,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return this.range ? this.range.to - this.range.from > 0 : false;
 	};
 
-	renderEmojiAndMentions (node: any) {
-		const { renderEmoji, renderMentions } = this.props;
+	renderMarkup () {
+		const { renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
+		const node = this.refEditable.node;
 		const value = this.refEditable.getTextValue();
 
-		renderEmoji(node);
+		renderLinks(node, this.marks, value);
 		renderMentions(node, this.marks, value);
+		renderObjects(node, this.marks, value);
+		renderEmoji(node);
 	};
 
 });
