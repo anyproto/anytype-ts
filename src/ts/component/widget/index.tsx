@@ -334,14 +334,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
-		const child = this.getTargetBlock();
-		if (!child) {
-			return;
-		};
-
-		const id = child.getTargetObjectId();
 		const isSetOrCollection = U.Object.isInSetLayouts(object.layout);
-		const isFavorite = id == J.Constant.widgetId.favorite;
+		const isFavorite = object.id == J.Constant.widgetId.favorite;
 
 		let details: any = Object.assign({}, param.details || {});
 		let flags: I.ObjectFlag[] = [];
@@ -373,7 +367,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			templateId = view?.defaultTemplateId || type.defaultTemplateId;
 			isCollection = U.Object.isCollectionLayout(object.layout);
 		} else {
-			switch (id) {
+			switch (object.id) {
 				default:
 				case J.Constant.widgetId.favorite: {
 					const type = S.Record.getTypeById(S.Common.type);
@@ -418,19 +412,18 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				return;
 			};
 
-			const object = message.details;
+			const newObject = message.details;
 
 			if (isFavorite) {
-				Action.setIsFavorite([ object.id ], true, analytics.route.widget);
+				Action.setIsFavorite([ newObject.id ], true, analytics.route.widget);
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(id, [ object.id ]);
+				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};
 
-			U.Object.openAuto(object);
-
-			analytics.createObject(object.type, object.layout, analytics.route.widget, message.middleTime);
+			U.Object.openAuto(newObject);
+			analytics.createObject(newObject.type, newObject.layout, analytics.route.widget, message.middleTime);
 		});
 	};
 
