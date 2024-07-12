@@ -252,12 +252,16 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 					},
-					onSelect: (target) => {
+					onSelect: (target: any, isNew: boolean) => {
 						this.target = target;
 						this.checkState();
 						this.forceUpdate();
 						
 						if (isEditing && this.target) {
+							if (isNew) {
+								U.Object.openConfig(target);
+							};
+
 							C.BlockWidgetSetTargetId(widgets, blockId, this.target.id, () => {
 								C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
 							});
