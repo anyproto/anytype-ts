@@ -57,12 +57,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	render () {
-		const { rootId, block, readonly } = this.props;
+		const { readonly } = this.props;
 		const { threadId, attachments, files } = this.state;
 		const blockId = this.getBlockId();
 		const messages = this.getMessages();
 		const attachmentList = attachments.concat(files);
-		const subId = S.Record.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const list = this.getDeps().map(id => S.Detail.get(subId, id));
 
 		return (
@@ -160,10 +160,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	componentWillUnmount () {
 		this._isMounted = false;
-
-		const { rootId, block } = this.props;
-
-		C.ObjectSearchUnsubscribe([ S.Record.getSubId(rootId, block.id) ]);
+		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
 	};
 
 	getDeps () {
@@ -178,8 +175,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		}, []));
 	};
 
+	getSubId (): string {
+		const { rootId } = this.props;
+		const blockId = this.getBlockId();
+
+		return S.Record.getSubId(rootId, blockId);
+	};
+
 	loadDeps (callBack?: () => void) {
-		const { rootId, block } = this.props;
+		const { rootId } = this.props;
 		const deps = this.getDeps();
 
 		if (!deps.length) {
@@ -187,7 +191,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		U.Data.subscribeIds({
-			subId: S.Record.getSubId(rootId, block.id),
+			subId: this.getSubId(),
 			ids: deps,
 			noDeps: true,
 		}, (message: any) => {
@@ -409,12 +413,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const children = S.Block.unwrapTree([ S.Block.wrapTree(rootId, blockId) ]).filter(it => it.isText());
 		const length = children.length;
 		const slice = length > LIMIT ? children.slice(length - LIMIT, length) : children;
-
-		return slice.map(it => {
+		const mapped = slice.map(it => {
 			it.data = {};
 			try { it.data = JSON.parse(it.content.text); } catch (e) { /**/ };
 			return it;
 		});
+
+		return mapped;
 	};
 
 	onAddMessage = () => {
@@ -712,7 +717,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const { rootId, block } = this.props;
+		const { rootId } = this.props;
+		const blockId = this.getBlockId();
 
 		let value = this.refEditable.getTextValue();
 
@@ -728,7 +734,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				...this.caretMenuParam(),
 				data: {
 					rootId,
-					blockId: block.id,
+					blockId,
 					marks: this.marks,
 					skipIds: [ S.Auth.account.id ],
 					filters: [
