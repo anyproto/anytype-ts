@@ -61,7 +61,8 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 						<HeadSimple 
 							{...this.props} 
 							ref={ref => this.refHead = ref} 
-							placeholder={translate('defaultNamePage')} rootId={rootId} 
+							placeholder={translate('defaultNamePage')} 
+							rootId={rootId} 
 						/>
 
 						{children.map((block: I.Block, i: number) => (
@@ -74,6 +75,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 								block={block}
 								className="noPlus"
 								isSelectionDisabled={true}
+								isContextMenuDisabled={true}
 								readonly={this.isReadonly()}
 							/>
 						))}

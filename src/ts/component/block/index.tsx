@@ -529,7 +529,14 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { rootId, block, readonly, isContextMenuDisabled } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 
-		if (isContextMenuDisabled || readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
+		if (
+			isContextMenuDisabled || 
+			readonly || 
+			block.isSelectable() || 
+			(block.isText() && (focused == block.id)) || 
+			block.isTable() || 
+			block.isDataview()
+		) {
 			return;
 		};
 

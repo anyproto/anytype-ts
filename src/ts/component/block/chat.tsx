@@ -60,7 +60,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { threadId, attachments, files } = this.state;
 		const blockId = this.getBlockId();
 		const messages = this.getMessages();
-		const canSend = this.canSend();
 		const attachmentList = attachments.concat(files);
 		const subId = S.Record.getSubId(rootId, block.id);
 		const list = this.getDeps().map(id => S.Detail.get(subId, id));
@@ -680,7 +679,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
 					],
 					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
-						S.Detail.update(rootId, { id: object.id, details: object }, false)
+						S.Detail.update(rootId, { id: object.id, details: object }, false);
 
 						value = U.Common.stringInsert(value, text, from, from);
 						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
