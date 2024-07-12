@@ -636,8 +636,6 @@ class BlockStore {
 			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.content.targetBlockId == rootId));
 			if (children.length) {
 				win.trigger(`${code}.${block.id}`);
-
-				console.log('TRIGGER', code, block.id);
 			};
 		});
 	};
