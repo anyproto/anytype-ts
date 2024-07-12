@@ -159,9 +159,9 @@ class MenuObject extends React.Component<I.Menu> {
 		// Restrictions
 
 		const allowedArchive = canWrite && canDelete;
-		const allowedSearch = !U.Object.isSetLayout(object.layout);
-		const allowedHistory = !U.Object.isFileOrSystemLayout(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
-		const allowedFav = canWrite && !object.isArchived && !U.Object.isFileOrSystemLayout(object.layout) && !object.templateIsBundled;
+		const allowedSearch = !U.Object.isInSetLayouts(object.layout);
+		const allowedHistory = !U.Object.isInFileOrSystemLayouts(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
+		const allowedFav = canWrite && !object.isArchived && !U.Object.isInFileOrSystemLayouts(object.layout) && !object.templateIsBundled;
 		const allowedLock = canWrite && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite;
 		const allowedAddCollection = canWrite;
@@ -203,7 +203,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 		let sections = [];
 		if (hasShortMenu) {
-			if (!U.Object.isSetLayout(object.layout)) {
+			if (!U.Object.isInSetLayouts(object.layout)) {
 				pageCopy = null;
 			};
 

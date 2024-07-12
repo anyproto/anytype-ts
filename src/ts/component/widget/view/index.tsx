@@ -216,17 +216,22 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	load (viewId: string) {
+		const subId = this.getSubId();
+
 		if (this.refChild && this.refChild.load) {
 			this.refChild.load();
 			S.Record.metaSet(this.getSubId(), '', { viewId });
 			return;
 		};
 
+		const rootId = this.getRootId();
+		const blockId = J.Constant.blockId.dataview;
 		const object = this.getObject();
 		const setOf = Relation.getArrayValue(object.setOf);
-		const isCollection = this.isCollection();
+		const isCollection = U.Object.isCollectionLayout(object.layout);
 
 		if (!setOf.length && !isCollection) {
+			S.Record.recordsSet(subId, '', []);
 			return;
 		};
 
@@ -237,8 +242,8 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		};
 
 		Dataview.getData({
-			rootId: this.getRootId(),
-			blockId: J.Constant.blockId.dataview,
+			rootId,
+			blockId,
 			newViewId: viewId,
 			sources: setOf,
 			limit,
@@ -316,7 +321,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	isAllowedObject () {
 		const rootId = this.getRootId();
 		const object = this.getObject();
-		const isCollection = object.layout == I.ObjectLayout.Collection;
+		const isCollection = U.Object.isCollectionLayout(object.layout);
 
 		let isAllowed = S.Block.checkFlags(rootId, J.Constant.blockId.dataview, [ I.RestrictionDataview.Object ]);
 		if (!isAllowed) {
@@ -346,21 +351,17 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	getSources (): string[] {
-		if (this.isCollection()) {
+		const object = this.getObject();
+
+		if (U.Object.isCollectionLayout(object.layout)) {
 			return [];
 		};
 
 		const rootId = this.getRootId();
-		const object = this.getObject();
 		const types = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Type).map(it => it.id);
 		const relations = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Relation).map(it => it.id);
 
 		return [].concat(types).concat(relations);
-	};
-
-	isCollection () {
-		const object = this.getObject();
-		return object.layout == I.ObjectLayout.Collection;
 	};
 
 	onOpen () {

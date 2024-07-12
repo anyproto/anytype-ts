@@ -36,7 +36,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const withType = relations.includes('type');
         const withCover = relations.includes('cover') && coverId && coverType;
 
-		if ((layout == I.ObjectLayout.Task) && done) {
+		if (U.Object.isTaskLayout(layout) && done) {
 			cn.push('isDone');
 		};
 

@@ -195,10 +195,10 @@ class Dataview {
 
 	isCollection (rootId: string, blockId: string): boolean {
 		const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
-		const isInline = !U.Object.isSystemLayout(object.layout);
+		const isInline = !U.Object.isInSystemLayouts(object.layout);
 
 		if (!isInline) {
-			return object.layout == I.ObjectLayout.Collection;
+			return U.Object.isCollectionLayout(object.layout);
 		};
 
 		const block = S.Block.getLeaf(rootId, blockId);
@@ -209,7 +209,7 @@ class Dataview {
 		const { targetObjectId, isCollection } = block.content;
 		const target = targetObjectId ? S.Detail.get(rootId, targetObjectId, [ 'layout' ], true) : null;
 
-		return target ? target.layout == I.ObjectLayout.Collection : isCollection;
+		return target ? U.Object.isCollectionLayout(target.layout) : isCollection;
 	};
 
 	loadGroupList (rootId: string, blockId: string, viewId: string, object: any) {
@@ -221,7 +221,7 @@ class Dataview {
 		};
 
 		const subId = S.Record.getGroupSubId(rootId, block.id, 'groups');
-		const isCollection = object.layout == I.ObjectLayout.Collection;
+		const isCollection = U.Object.isCollectionLayout(object.layout);
 
 		S.Record.groupsClear(rootId, block.id);
 
@@ -468,7 +468,7 @@ class Dataview {
 				if (item.objectTypes.length) {
 					const first = S.Record.getTypeById(item.objectTypes[0]);
 
-					if (first && !U.Object.isFileLayout(first.recommendedLayout) && !U.Object.isSystemLayout(first.recommendedLayout)) {
+					if (first && !U.Object.isInFileLayouts(first.recommendedLayout) && !U.Object.isInSystemLayouts(first.recommendedLayout)) {
 						typeId = first.id;
 						break;
 					};

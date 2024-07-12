@@ -513,7 +513,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				item.addClass('disabled');
 			};
 
-			if ((layout == I.ObjectLayout.Task) && done) {
+			if (U.Object.isTaskLayout(layout) && done) {
 				item.addClass('isDone');
 			};
 

@@ -532,7 +532,7 @@ class BlockStore {
 				if (U.Object.isNoteLayout(object.layout)) {
 					name = object.name || translate('commonEmpty');
 				} else
-				if (U.Object.isFileLayout(object.layout)) {
+				if (U.Object.isInFileLayouts(object.layout)) {
 					name = U.File.name(object);
 				} else {
 					name = object.name;
@@ -636,6 +636,8 @@ class BlockStore {
 			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.content.targetBlockId == rootId));
 			if (children.length) {
 				win.trigger(`${code}.${block.id}`);
+
+				console.log('TRIGGER', code, block.id);
 			};
 		});
 	};
