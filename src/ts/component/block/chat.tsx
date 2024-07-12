@@ -290,23 +290,24 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.onAddMessage();
 		});
 
-		keyboard.shortcut('backspace', e, () => {
-			if (range && range.to) {
+		if (range && range.to) {
+			keyboard.shortcut('backspace', e, () => {
 				const parsed = checkMarkOnBackspace(value, range, this.marks);
-
-				if (parsed.save) {
-					e.preventDefault();
-
-					value = parsed.value;
-					this.marks = parsed.marks;
-
-					this.refEditable.setValue(Mark.toHtml(value, this.marks));
-					this.refEditable.setRange({ from: value.length, to: value.length });
-
-					this.renderMarkup();
+				if (!parsed.save) {
+					return;
 				};
-			}
-		});
+
+				e.preventDefault();
+
+				value = parsed.value;
+				this.marks = parsed.marks;
+
+				this.refEditable.setValue(Mark.toHtml(value, this.marks));
+				this.refEditable.setRange({ from: value.length, to: value.length });
+
+				this.renderMarkup();
+			});
+		};
 
 		keyboard.shortcut(`${cmd}+a`, e, () => {
 			if (menuOpenSmile) {
@@ -336,7 +337,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		// Mark-up
-		if (range.to && (range.from != range.to)) {
+		if (range && range.to && (range.from != range.to)) {
 			let type = null;
 			let param = '';
 

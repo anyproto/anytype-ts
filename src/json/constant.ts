@@ -122,7 +122,8 @@ export default {
 		featured:		 'featuredRelations',
 		dataview:		 'dataview',
 		type:			 'type',
-		header:			 'header'
+		header:			 'header',
+		chat:			 'chat',
 	},
 
 	widgetId: {
