@@ -30,8 +30,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	deps: string[] = [];
 	timeoutFilter = 0;
 	messagesMap: any = {};
-	lastSeenMessageId: string = '';
-	lastSeenMessageOffset: number = 0;
+	lastMessageId: string = '';
+	lastMessageOffset: number = 0;
 	state = {
 		threadId: '',
 		attachments: [],
@@ -93,7 +93,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 									{...item} 
 									isThread={!!threadId}
 									onThread={this.onThread}
-									isLast={item.id == this.lastSeenMessageId}
+									isLast={item.id == this.lastMessageId}
 								/>
 							))}
 						</div>
@@ -146,14 +146,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = true;
 		this.checkSendButton();
 
-		const lastSeenMessageId = Storage.getLastChatMessageId(blockId);
+		const lastMessageId = Storage.getLastChatMessageId(blockId);
 
-		if (lastSeenMessageId && this.messagesMap[lastSeenMessageId]) {
-			const node = this.messagesMap[lastSeenMessageId].node;
+		if (lastMessageId && this.messagesMap[lastMessageId]) {
+			const node = this.messagesMap[lastMessageId].node;
 
-			this.lastSeenMessageId = lastSeenMessageId;
-			this.lastSeenMessageOffset = node.offsetTop;
-			this.scrollToMessage(lastSeenMessageId);
+			this.lastMessageId = lastMessageId;
+			this.lastMessageOffset = node.offsetTop;
+			this.scrollToMessage(lastMessageId);
 		};
 
 		this.getScrollContainer().on('scroll.chat', e => this.onScroll(e));
@@ -533,9 +533,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const last = messagesIntoView[messagesIntoView.length - 1];
 		const lastNode = this.messagesMap[last.id].node;
 
-		if (lastNode.offsetTop > this.lastSeenMessageOffset) {
-			this.lastSeenMessageId = last.id;
-			this.lastSeenMessageOffset = lastNode.offsetTop;
+		if (lastNode.offsetTop > this.lastMessageOffset) {
+			this.lastMessageId = last.id;
+			this.lastMessageOffset = lastNode.offsetTop;
 			Storage.setLastChatMessageId(blockId, last.id);
 		};
 	};
@@ -544,7 +544,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		window.setTimeout(() => {
 			const container = this.getScrollContainer();
 			const node = this.messagesMap[id].node;
-			const scroll = id == this.lastSeenMessageId ? node.offsetTop + 50 : node.offsetTop + 10;
+			const scroll = id == this.lastMessageId ? node.offsetTop + 50 : node.offsetTop + 10;
 
 			container.scrollTop(scroll);
 		}, 10);
