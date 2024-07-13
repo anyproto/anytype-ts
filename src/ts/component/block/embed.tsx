@@ -138,7 +138,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						<Label text={translate('blockEmbedOffline')} />
 					</div>
 					<div id="value" onMouseDown={this.onEdit} />
-					<div id={this.getContainerId()} />
 
 					{empty ? <Label text={empty} className="label empty" onMouseDown={this.onEdit} /> : ''}					
 					{source}
@@ -180,8 +179,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
-
-		$(`#d${this.getContainerId()}`).remove();
 
 		window.clearTimeout(this.timeoutChange);
 		window.clearTimeout(this.timeoutScroll);
@@ -282,10 +279,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				this.setShowing(true);
 			};
 		}, 50);
-	};
-
-	getContainerId () {
-		return [ 'block', this.props.block.id, 'container' ].join('-');
 	};
 
 	setEditing (isEditing: boolean) {
@@ -756,6 +749,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 			case I.EmbedProcessor.Mermaid: {
 				const theme = (J.Theme[S.Common.getThemeClass()] || {}).mermaid;
+				const body = $('body');
+				const id = `mermaid-${block.id}`;
 
 				if (theme) {
 					for (const k in theme) {
@@ -767,14 +762,22 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					mermaid.initialize({ theme: 'base', themeVariables: theme });
 				};
 
-				mermaid.render(this.getContainerId(), this.text).then(res => {
+				body.find(`#${id}`).remove();
+				body.append($(`<div id="${id}" />`));
+
+				mermaid.render(id, this.text).then(res => {
+					console.log(this.text);
+					console.log(res.svg);
+
 					value.html(res.svg || this.text);
 
 					if (res.bindFunctions) {
 						res.bindFunctions(value.get(0));
 					};
 				}).catch(e => {
-					const error = $(`#d${this.getContainerId()}`).hide();
+					console.log(e);
+
+					const error = $(`#d${id}`).hide();
 
 					if (error.length) {
 						value.html(error.html());
