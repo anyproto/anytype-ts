@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { IconObject, Icon, ObjectName } from 'Component';
+import { IconObject, Icon, ObjectName, Label } from 'Component';
 import { I, S, U, J, Mark, translate, Preview } from 'Lib';
 
 import Attachment from '../attachment';
@@ -11,6 +11,7 @@ interface Props extends I.Block, I.BlockComponent {
 	isThread: boolean;
 	onThread: (id: string) => void;
 	renderMention: (object: any) => any;
+	isLast?: boolean;
 };
 
 const LINES_LIMIT = 10;
@@ -32,7 +33,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, id, data, isThread, onThread } = this.props;
+		const { rootId, block, id, data, isThread, onThread, isLast } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const length = this.getChildren().length;
@@ -55,6 +56,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		};
 		if (this.isExpanded) {
 			cn.push('isExpanded');
+		};
+		if (isLast) {
+			cn.push('isLast');
 		};
 
 		// Subscriptions
@@ -138,6 +142,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					</div>
 
 				</div>
+
+				{isLast ? <Label className="newMessages" text={translate('commonNew')} /> : ''}
 			</div>
 		);
 	};

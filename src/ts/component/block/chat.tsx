@@ -93,6 +93,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 									{...item} 
 									isThread={!!threadId}
 									onThread={this.onThread}
+									isLast={item.id == this.lastSeenMessageId}
 								/>
 							))}
 						</div>
@@ -153,7 +154,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.lastSeenMessageId = lastSeenMessageId;
 			this.lastSeenMessageOffset = node.offsetTop;
 			this.scrollToMessage(lastSeenMessageId, true);
-			$(node).addClass('lastSeen');
 		};
 
 		this.getScrollContainer().on('scroll.chat', e => this.onScroll(e));
