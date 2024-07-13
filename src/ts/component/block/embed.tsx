@@ -766,21 +766,23 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				body.append($(`<div id="${id}" />`));
 
 				mermaid.render(id, this.text).then(res => {
-					console.log(this.text);
-					console.log(res.svg);
-
 					value.html(res.svg || this.text);
 
 					if (res.bindFunctions) {
 						res.bindFunctions(value.get(0));
 					};
 				}).catch(e => {
-					console.log(e);
+					console.error(e);
 
 					const error = $(`#d${id}`).hide();
+					const html = error.length ? error.html() : '';
 
-					if (error.length) {
-						value.html(error.html());
+					console.log(html);
+
+					if (html) {
+						value.html(html);
+					} else {
+						value.html(`<div class="error">${e.toString()}</div>`);
 					};
 				});
 				break;
