@@ -146,14 +146,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = true;
 		this.checkSendButton();
 
-		const lastSeenMessageId = Storage.getSeenChatMessageId(blockId);
+		const lastSeenMessageId = Storage.getLastChatMessageId(blockId);
 
 		if (lastSeenMessageId && this.messagesMap[lastSeenMessageId]) {
 			const node = this.messagesMap[lastSeenMessageId].node;
 
 			this.lastSeenMessageId = lastSeenMessageId;
 			this.lastSeenMessageOffset = node.offsetTop;
-			this.scrollToMessage(lastSeenMessageId, true);
+			this.scrollToMessage(lastSeenMessageId);
 		};
 
 		this.getScrollContainer().on('scroll.chat', e => this.onScroll(e));
@@ -180,48 +180,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = false;
 		this.getScrollContainer().off('scroll.chat');
 		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
-	};
-
-	onScroll (e: any) {
-		const blockId = this.getBlockId();
-		const container = this.getScrollContainer();
-		const top = container.scrollTop() - $('#scrollWrapper').offset().top
-		const form = $('#formWrapper');
-		const formPadding = Number(form.css('padding-bottom').replace('px', ''));
-		const viewport = container.outerHeight() - form.height() - formPadding;
-		const messages = this.getMessages();
-
-		const messagesIntoView = messages.filter((it) => {
-			const node = this.messagesMap[it.id].node;
-			const oT = node.offsetTop + node.clientHeight;
-
-			return oT >= top && oT < top + viewport;
-		});
-
-		const last = messagesIntoView[messagesIntoView.length - 1];
-		const lastNode = this.messagesMap[last.id].node;
-
-		if (lastNode.offsetTop > this.lastSeenMessageOffset) {
-			this.lastSeenMessageId = last.id;
-			this.lastSeenMessageOffset = lastNode.offsetTop;
-			Storage.setSeenChatMessageId(blockId, last.id);
-		};
-	};
-
-	scrollToMessage (id: string, last?: boolean) {
-		window.setTimeout(() => {
-			const container = this.getScrollContainer();
-			const node = this.messagesMap[id].node;
-			const scroll = last ? node.offsetTop + 50 : node.offsetTop + 10;
-
-			container.scrollTop(scroll);
-		}, 10);
-	};
-
-	getScrollContainer () {
-		const { isPopup } = this.props;
-
-		return U.Common.getScrollContainer(isPopup);
 	};
 
 	getDeps () {
@@ -521,7 +479,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 
 			C.BlockCreate(rootId, target, position, param, (message) => {
-				Storage.setSeenChatMessageId(blockId, message.blockId);
+				Storage.setLastChatMessageId(blockId, message.blockId);
 				this.scrollToBottom();
 				this.refEditable.setRange({ from: 0, to: 0 });
 			});
@@ -556,6 +514,42 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.setState({ attachments: [] });
 	};
 
+	onScroll (e: any) {
+		const blockId = this.getBlockId();
+		const container = this.getScrollContainer();
+		const top = container.scrollTop() - $('#scrollWrapper').offset().top;
+		const form = $('#formWrapper');
+		const formPadding = Number(form.css('padding-bottom').replace('px', ''));
+		const viewport = container.outerHeight() - form.height() - formPadding;
+		const messages = this.getMessages();
+
+		const messagesIntoView = messages.filter((it) => {
+			const node = this.messagesMap[it.id].node;
+			const oT = node.offsetTop + node.clientHeight;
+
+			return oT >= top && oT < top + viewport;
+		});
+
+		const last = messagesIntoView[messagesIntoView.length - 1];
+		const lastNode = this.messagesMap[last.id].node;
+
+		if (lastNode.offsetTop > this.lastSeenMessageOffset) {
+			this.lastSeenMessageId = last.id;
+			this.lastSeenMessageOffset = lastNode.offsetTop;
+			Storage.setLastChatMessageId(blockId, last.id);
+		};
+	};
+
+	scrollToMessage (id: string) {
+		window.setTimeout(() => {
+			const container = this.getScrollContainer();
+			const node = this.messagesMap[id].node;
+			const scroll = id == this.lastSeenMessageId ? node.offsetTop + 50 : node.offsetTop + 10;
+
+			container.scrollTop(scroll);
+		}, 10);
+	};
+
 	scrollToBottom () {
 		window.setTimeout(() => {
 			const { isPopup } = this.props;
@@ -564,6 +558,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 			container.scrollTop(height);
 		}, 10);
+	};
+
+	getScrollContainer () {
+		const { isPopup } = this.props;
+
+		return U.Common.getScrollContainer(isPopup);
 	};
 
 	getTextValue (): string {
