@@ -418,6 +418,19 @@ class Storage {
 		try { ret = JSON.parse(s); } catch (e) { /**/ };
 		return ret;
 	};
+
+	setSeenChatMessageId (chatId: string, messageId: string) {
+		const map = this.get('seenChatMessages') || {};
+
+		map[chatId] = messageId;
+		this.set('seenChatMessages', map);
+	};
+
+	getSeenChatMessageId (chatId: string) {
+		const map = this.get('seenChatMessages') || {};
+
+		return map[chatId] || null;
+	};
 	
 };
 

@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Label, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, Mark, translate, Storage } from 'Lib';
 
 import Buttons from './chat/buttons';
 import Message from './chat/message';
@@ -29,6 +29,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	range: I.TextRange = { from: 0, to: 0 };
 	deps: string[] = [];
 	timeoutFilter = 0;
+	messagesMap: any = {};
+	lastSeenMessageId: string = '';
+	lastSeenMessageOffset: number = 0;
 	state = {
 		threadId: '',
 		attachments: [],
@@ -54,6 +57,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 
 	render () {
@@ -81,8 +85,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						</div>
 					) : (
 						<div className="scroll">
-							{messages.map((item: any) => (
-								<Message 
+							{messages.map((item: any, i: number) => (
+								<Message
+									ref={ref => this.messagesMap[item.id] = ref}
 									key={item.id} 
 									{...this.props} 
 									{...item} 
@@ -136,9 +141,22 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 	
 	componentDidMount () {
+		const blockId = this.getBlockId();
 		this._isMounted = true;
-		this.scrollToBottom();
 		this.checkSendButton();
+
+		const lastSeenMessageId = Storage.getSeenChatMessageId(blockId);
+
+		if (lastSeenMessageId && this.messagesMap[lastSeenMessageId]) {
+			const node = this.messagesMap[lastSeenMessageId].node;
+
+			this.lastSeenMessageId = lastSeenMessageId;
+			this.lastSeenMessageOffset = node.offsetTop;
+			this.scrollToMessage(lastSeenMessageId, true);
+			$(node).addClass('lastSeen');
+		};
+
+		this.getScrollContainer().on('scroll.chat', e => this.onScroll(e));
 
 		this.loadDeps(() => {
 			this.forceUpdate(() => {
@@ -160,7 +178,50 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.getScrollContainer().off('scroll.chat');
 		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
+	};
+
+	onScroll (e: any) {
+		const blockId = this.getBlockId();
+		const container = this.getScrollContainer();
+		const top = container.scrollTop() - $('#scrollWrapper').offset().top
+		const form = $('#formWrapper');
+		const formPadding = Number(form.css('padding-bottom').replace('px', ''));
+		const viewport = container.outerHeight() - form.height() - formPadding;
+		const messages = this.getMessages();
+
+		const messagesIntoView = messages.filter((it) => {
+			const node = this.messagesMap[it.id].node;
+			const oT = node.offsetTop + node.clientHeight;
+
+			return oT >= top && oT < top + viewport;
+		});
+
+		const last = messagesIntoView[messagesIntoView.length - 1];
+		const lastNode = this.messagesMap[last.id].node;
+
+		if (lastNode.offsetTop > this.lastSeenMessageOffset) {
+			this.lastSeenMessageId = last.id;
+			this.lastSeenMessageOffset = lastNode.offsetTop;
+			Storage.setSeenChatMessageId(blockId, last.id);
+		};
+	};
+
+	scrollToMessage (id: string, last?: boolean) {
+		window.setTimeout(() => {
+			const container = this.getScrollContainer();
+			const node = this.messagesMap[id].node;
+			const scroll = last ? node.offsetTop + 50 : node.offsetTop + 10;
+
+			container.scrollTop(scroll);
+		}, 10);
+	};
+
+	getScrollContainer () {
+		const { isPopup } = this.props;
+
+		return U.Common.getScrollContainer(isPopup);
 	};
 
 	getDeps () {
@@ -407,6 +468,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return this.state.threadId || this.props.block.id;
 	};
 
+	getMessageNodeById (id) {
+		return {}
+	};
+
 	getMessages () {
 		const { rootId } = this.props;
 		const blockId = this.getBlockId();
@@ -443,6 +508,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			time: U.Date.now(),
 			attachments: attachments.map(it => it.id),
 			reactions: [],
+			seen: true
 		};
 		
 		const create = () => {
@@ -454,7 +520,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				}
 			};
 
-			C.BlockCreate(rootId, target, position, param, () => {
+			C.BlockCreate(rootId, target, position, param, (message) => {
+				Storage.setSeenChatMessageId(blockId, message.blockId);
 				this.scrollToBottom();
 				this.refEditable.setRange({ from: 0, to: 0 });
 			});
@@ -492,7 +559,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	scrollToBottom () {
 		window.setTimeout(() => {
 			const { isPopup } = this.props;
-			const container = U.Common.getScrollContainer(isPopup);
+			const container = this.getScrollContainer();
 			const height = isPopup ? container.get(0).scrollHeight : document.body.scrollHeight;
 
 			container.scrollTop(height);
