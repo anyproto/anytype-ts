@@ -530,6 +530,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return oT >= top && oT < top + viewport;
 		});
 
+		if (!messagesIntoView.length) {
+			return;
+		};
+
 		const last = messagesIntoView[messagesIntoView.length - 1];
 		const lastNode = this.messagesMap[last.id].node;
 
