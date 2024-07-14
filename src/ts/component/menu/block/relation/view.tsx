@@ -102,7 +102,11 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						<Section key={i} {...item} index={i} />
 					))}
 				</div>
-				{!readonly && allowedRelation ? <ItemAdd /> : ''}
+				{!readonly && allowedRelation ? (
+					<div className="bottom">
+						<ItemAdd /> 
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -373,8 +377,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const offset = isPopup ? 16 : 120;
 		const min = isPopup ? 480 : 640;
 		const maxOffset = isPopup ? 16 : 80;
-
-		console.log('resize');
 
 		obj.css({ 
 			height: container.height() - J.Size.header - maxOffset,
