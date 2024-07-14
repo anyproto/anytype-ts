@@ -1,11 +1,12 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
 import { instance as viz } from '@viz-js/viz';
 import { observer } from 'mobx-react';
-import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
+import { Icon, Label, Editable, Dimmer, Select, Error, MediaMermaid } from 'Component';
 import { I, C, S, U, J, keyboard, focus, Renderer, translate } from 'Lib';
 
 const katex = require('katex');
@@ -748,43 +749,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				const theme = (J.Theme[S.Common.getThemeClass()] || {}).mermaid;
-				const body = $('body');
-				const id = `mermaid-${block.id}`;
-
-				if (theme) {
-					for (const k in theme) {
-						if (!theme[k]) {
-							delete(theme[k]);
-						};
-					};
-
-					mermaid.initialize({ theme: 'base', themeVariables: theme });
-				};
-
-				body.find(`#${id}`).remove();
-				body.append($(`<div id="${id}" />`));
-
-				mermaid.render(id, this.text).then(res => {
-					value.html(res.svg || this.text);
-
-					if (res.bindFunctions) {
-						res.bindFunctions(value.get(0));
-					};
-				}).catch(e => {
-					console.error(e);
-
-					const error = $(`#d${id}`).hide();
-					const html = error.length ? error.html() : '';
-
-					console.log(html);
-
-					if (html) {
-						value.html(html);
-					} else {
-						value.html(`<div class="error">${e.toString()}</div>`);
-					};
-				});
+				ReactDOM.render(<MediaMermaid chart={this.text} />, value.get(0));
 				break;
 			};
 
