@@ -11,6 +11,7 @@ const SPACE_KEYS = [
 	'scroll',
 	'defaultType',
 	'pinnedTypes',
+	'lastChatMessageId',
 ];
 
 class Storage {
@@ -417,6 +418,19 @@ class Storage {
 		let ret = '';
 		try { ret = JSON.parse(s); } catch (e) { /**/ };
 		return ret;
+	};
+
+	setLastChatMessageId (chatId: string, messageId: string) {
+		const map = this.get('lastChatMessageId') || {};
+
+		map[chatId] = messageId;
+		this.set('lastChatMessageId', map);
+	};
+
+	getLastChatMessageId (chatId: string) {
+		const map = this.get('lastChatMessageId') || {};
+
+		return map[chatId] || null;
 	};
 	
 };

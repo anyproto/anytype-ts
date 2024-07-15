@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Label, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, Mark, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, Mark, translate, Storage } from 'Lib';
 
 import Buttons from './chat/buttons';
 import Message from './chat/message';
@@ -29,6 +29,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	range: I.TextRange = { from: 0, to: 0 };
 	deps: string[] = [];
 	timeoutFilter = 0;
+	messagesMap: any = {};
+	lastMessageId: string = '';
+	lastMessageOffset: number = 0;
 	state = {
 		threadId: '',
 		attachments: [],
@@ -54,6 +57,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 
 	render () {
@@ -81,13 +85,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						</div>
 					) : (
 						<div className="scroll">
-							{messages.map((item: any) => (
-								<Message 
+							{messages.map((item: any, i: number) => (
+								<Message
+									ref={ref => this.messagesMap[item.id] = ref}
 									key={item.id} 
 									{...this.props} 
 									{...item} 
 									isThread={!!threadId}
 									onThread={this.onThread}
+									isLast={item.id == this.lastMessageId}
 								/>
 							))}
 						</div>
@@ -136,9 +142,26 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 	
 	componentDidMount () {
+		const { isPopup } = this.props;
+		const blockId = this.getBlockId();
+		const ns = blockId + U.Common.getEventNamespace(isPopup);
 		this._isMounted = true;
-		this.scrollToBottom();
 		this.checkSendButton();
+
+		const lastMessageId = Storage.getLastChatMessageId(blockId);
+
+		if (lastMessageId && this.messagesMap[lastMessageId]) {
+			const node = this.messagesMap[lastMessageId].node;
+
+			this.lastMessageId = lastMessageId;
+			this.lastMessageOffset = node.offsetTop;
+
+			window.setTimeout(() => {
+				this.scrollToMessage(lastMessageId);
+			}, 10);
+		};
+
+		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 
 		this.loadDeps(() => {
 			this.forceUpdate(() => {
@@ -159,7 +182,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	componentWillUnmount () {
+		const { isPopup } = this.props;
+		const blockId = this.getBlockId();
+		const ns = blockId + U.Common.getEventNamespace(isPopup);
+
 		this._isMounted = false;
+		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
 		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
 	};
 
@@ -443,6 +471,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			time: U.Date.now(),
 			attachments: attachments.map(it => it.id),
 			reactions: [],
+			seen: true
 		};
 		
 		const create = () => {
@@ -454,7 +483,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				}
 			};
 
-			C.BlockCreate(rootId, target, position, param, () => {
+			C.BlockCreate(rootId, target, position, param, (message) => {
+				Storage.setLastChatMessageId(blockId, message.blockId);
 				this.scrollToBottom();
 				this.refEditable.setRange({ from: 0, to: 0 });
 			});
@@ -487,6 +517,45 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.refEditable.placeholderCheck();
 
 		this.setState({ attachments: [] });
+	};
+
+	onScroll (e: any) {
+		const blockId = this.getBlockId();
+		const { isPopup } = this.props;
+		const container = U.Common.getScrollContainer(isPopup);
+		const top = container.scrollTop() - $('#scrollWrapper').offset().top;
+		const form = $('#formWrapper');
+		const formPadding = Number(form.css('padding-bottom').replace('px', ''));
+		const viewport = container.outerHeight() - form.height() - formPadding;
+		const messages = this.getMessages();
+
+		const messagesIntoView = messages.filter((it) => {
+			const node = this.messagesMap[it.id].node;
+			const oT = node.offsetTop + node.clientHeight;
+
+			return (oT >= top) && (oT < top + viewport);
+		});
+
+		if (!messagesIntoView.length) {
+			return;
+		};
+
+		const last = messagesIntoView[messagesIntoView.length - 1];
+		const lastNode = this.messagesMap[last.id].node;
+
+		if (lastNode.offsetTop > this.lastMessageOffset) {
+			this.lastMessageId = last.id;
+			this.lastMessageOffset = lastNode.offsetTop;
+			Storage.setLastChatMessageId(blockId, last.id);
+		};
+	};
+
+	scrollToMessage (id: string) {const { isPopup } = this.props;
+		const container = U.Common.getScrollContainer(isPopup);
+		const node = this.messagesMap[id].node;
+		const scroll = id == this.lastMessageId ? node.offsetTop + 50 : node.offsetTop + 10;
+
+		container.scrollTop(scroll);
 	};
 
 	scrollToBottom () {
