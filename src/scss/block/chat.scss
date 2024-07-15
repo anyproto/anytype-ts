@@ -42,7 +42,7 @@
 		}
 		.attachments.isSingle { grid-template-columns: repeat(1, minmax(0, 1fr)); }
 
-		.dateSection { position: sticky; display: flex; justify-content: center; top: 60px; z-index: 10; }
+		.dateSection { position: sticky; display: flex; justify-content: center; top: 60px; z-index: 1; }
 		.dateSection {
 			.label { @include text-small; padding: 3px 10px; background: var(--color-bg-loader); border: 1px solid var(--color-shape-tertiary); border-radius: 13px; }
 		}
