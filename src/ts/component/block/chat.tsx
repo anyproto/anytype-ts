@@ -64,10 +64,27 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { readonly } = this.props;
 		const { threadId, attachments, files } = this.state;
 		const blockId = this.getBlockId();
-		const messages = this.getMessages();
+		const messages = this.getMessagesWithSections();
 		const attachmentList = attachments.concat(files);
 		const subId = this.getSubId();
 		const list = this.getDeps().map(id => S.Detail.get(subId, id));
+
+		const Item = (item: any) => {
+			if (item.isSection) {
+				return <div className="dateSection">{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}</div>
+			};
+
+			return (
+				<Message
+					ref={ref => this.messagesMap[item.id] = ref}
+					{...this.props}
+					{...item}
+					isThread={!!threadId}
+					onThread={this.onThread}
+					isLast={item.id == this.lastMessageId}
+				/>
+			);
+		};
 
 		return (
 			<div 
@@ -86,15 +103,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					) : (
 						<div className="scroll">
 							{messages.map((item: any, i: number) => (
-								<Message
-									ref={ref => this.messagesMap[item.id] = ref}
-									key={item.id} 
-									{...this.props} 
-									{...item} 
-									isThread={!!threadId}
-									onThread={this.onThread}
-									isLast={item.id == this.lastMessageId}
-								/>
+								<Item {...item} key={item.id} />
 							))}
 						</div>
 					)}
@@ -449,6 +458,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		return mapped;
+	};
+
+	getMessagesWithSections () {
+		let messages = this.getMessages();
+		let labeled = [];
+
+		messages = messages.map((it) => ({ ...it, time: it.data.time }));
+		messages = U.Data.groupDateSections(messages, 'time', null, I.SortType.Asc);
+
+		return messages;
 	};
 
 	onAddMessage = () => {

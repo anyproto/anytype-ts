@@ -40,6 +40,8 @@
 		}
 		.attachments.isSingle { grid-template-columns: repeat(1, minmax(0, 1fr)); }
 
+		.dateSection { position: sticky; top: 0; }
+
 		.message { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; @include text-common; }
 		.message {
 			.side.left { flex-shrink: 0; }
