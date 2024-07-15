@@ -109,8 +109,8 @@ class Sidebar {
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			this.obj.removeClass('anim');
-			this.obj.find('#sidebarBody').css({ width: '' });
 			this.obj.find('#sidebarHead').css({ width: '' });
+			this.obj.find('#sidebarBody').css({ width: '' });
 			this.setAnimating(false);
 
 			if (callBack) {
