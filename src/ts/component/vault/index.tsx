@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject } from 'Component';
-import { I, U, S, keyboard, translate, analytics, Storage, sidebar, Preview } from 'Lib';
+import { I, U, S, Key, keyboard, translate, analytics, Storage, sidebar, Preview } from 'Lib';
 
 const Vault = observer(class Vault extends React.Component {
 	
@@ -11,12 +11,13 @@ const Vault = observer(class Vault extends React.Component {
 	isAnimating = false;
 	top = 0;
 	timeoutHover = 0;
+	pressed = new Set();
 	id = '';
+	n = 0;
 
 	constructor (props) {
 		super(props);
 
-		this.onToggle = this.onToggle.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
@@ -24,19 +25,9 @@ const Vault = observer(class Vault extends React.Component {
 
     render () {
 		const items = U.Menu.getVaultItems();
-		const { spaceview } = S.Block;
 
 		const Item = SortableElement(item => {
 			const cn = [ 'item' ];
-
-			if (item.id == spaceview) {
-				cn.push('isActive');
-			};
-
-			let descr = null;
-			if (item.isPersonal) {
-				descr = translate(`spaceAccessType${item.spaceAccessType}`);
-			};
 
 			return (
 				<div 
@@ -122,10 +113,14 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	componentDidUpdate (): void {
-		const node = $(this.node);
-		const scroll = node.find('#scroll');
+		$(this.node).find('#scroll').scrollTop(this.top);
 
-		scroll.scrollTop(this.top);
+		const items = this.getSpaceItems();
+		const item = items[this.n];
+
+		if (item) {
+			this.setActive(item.id);
+		};
 	};
 
 	componentWillUnmount (): void {
@@ -134,12 +129,44 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	unbind () {
-		$(window).off('resize.vault');
+		const events = [ 'resize', 'keydown', 'keyup' ];
+		const ns = 'vault';
+
+		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 	};
 
 	rebind () {
+		const win = $(window);
+
 		this.unbind();
-		$(window).on('resize.vault', () => this.resize());
+		win.on('resize.vault', () => this.resize());
+		win.on('keydown.vault', e => this.onKeyDown(e));
+		win.on('keyup.vault', e => this.onKeyUp(e));
+	};
+
+	getSpaceItems () {
+		return U.Menu.getVaultItems().filter(it => !it.isButton);
+	};
+
+	onKeyDown (e: any) {
+		this.pressed.add(e.key.toLowerCase());
+
+		keyboard.shortcut('ctrl+tab', e, (pressed: string) => {
+			this.onArrow(1);
+		});
+	};
+
+	onKeyUp (e: any) {
+		this.pressed.delete(e.key.toLowerCase());
+
+		if (!this.pressed.has(Key.ctrl) && !this.pressed.has(Key.tab)) {
+			const items = this.getSpaceItems();
+			const item = items[this.n];
+
+			if (item) {
+				U.Router.switchSpace(item.targetSpaceId);
+			};
+		};
 	};
 
 	onClick (e: any, item: any) {
@@ -148,10 +175,6 @@ const Vault = observer(class Vault extends React.Component {
 		switch (item.id) {
 			case 'add':
 				this.onAdd();
-				break;
-
-			case 'void':
-				this.onToggle();
 				break;
 
 			case 'gallery':
@@ -169,11 +192,32 @@ const Vault = observer(class Vault extends React.Component {
 		};
 	};
 
+	onArrow (dir: number) {
+		const items = this.getSpaceItems();
+		
+		this.n += dir;
+		if (this.n < 0) {
+			this.n = items.length - 1;
+		};
+		if (this.n >= items.length) {
+			this.n = 0;
+		};
+
+		const next = items[this.n];
+
+		if (next) {
+			this.setActive(next.id);
+		};
+	};
+
 	setActive (id: string) {
 		const node = $(this.node);
+		const items = this.getSpaceItems();
 
 		node.find('.item.isActive').removeClass('isActive');
 		node.find(`#item-${id}`).addClass('isActive');
+
+		this.n = items.findIndex(it => it.id == id);
 	};
 
 	onAdd () {
@@ -198,26 +242,6 @@ const Vault = observer(class Vault extends React.Component {
 			vertical: I.MenuDirection.Center,
 			route: analytics.route.navigation,
 		});
-	};
-
-	onToggle () {
-		if (this.isAnimating) {
-			return;
-		};
-
-		const { wh } = U.Common.getWindowDimensions();
-		const node = $(this.node);
-		const container = $('#vaultContentContainer');
-		const isExpanded = node.hasClass('isExpanded');
-
-		node.toggleClass('isExpanded');
-		container.toggleClass('isExpanded');
-		container.css({ height: !isExpanded ? wh : '' });
-
-		this.isAnimating = true;
-		sidebar.resizePage(null, false);
-
-		window.setTimeout(() => this.isAnimating = false, 300);
 	};
 
 	onSortStart () {

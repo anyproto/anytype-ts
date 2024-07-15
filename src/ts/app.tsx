@@ -92,7 +92,6 @@ if (!isPackaged) {
 	};
 };
 
-/*
 spy(event => {
 	if (event.type == 'action') {
 		console.log('[Mobx].event', event.name, event.arguments);
@@ -105,7 +104,6 @@ enableLogging({
 	transaction: true,
 	compute: true,
 });
-*/
 
 Sentry.init({
 	release: electron.version.app,
@@ -205,7 +203,7 @@ class App extends React.Component<object, State> {
 						<Toast />
 						<ListNotification key="listNotification" />
 						<Share showOnce={true} />
-						<Vault />
+						<Vault ref={ref => S.Common.refSet('vault', ref)} />
 
 						<Switch>
 							{J.Route.map((path: string, i: number) => (
