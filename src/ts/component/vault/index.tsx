@@ -35,9 +35,8 @@ const Vault = observer(class Vault extends React.Component {
 					onMouseLeave={() => this.onMouseLeave()}
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
-					<div className="border" />
 					<div className="iconWrap">
-						<IconObject object={item} size={48} forceLetter={true} />
+						<IconObject object={item} size={56} forceLetter={true} />
 					</div>
 				</div>
 			);
@@ -51,7 +50,6 @@ const Vault = observer(class Vault extends React.Component {
 				onMouseEnter={e => this.onMouseEnter(e, item)}
 				onMouseLeave={() => this.onMouseLeave()}
 			>
-				<div className="border" />
 				<div className="iconWrap" />
 			</div>
 		);
@@ -106,29 +104,15 @@ const Vault = observer(class Vault extends React.Component {
 	componentDidMount (): void {
 		this.resize();
 		this.rebind();
-		this.init();
 	};
 
 	componentDidUpdate (): void {
 		$(this.node).find('#scroll').scrollTop(this.top);
-		this.init();
 	};
 
 	componentWillUnmount (): void {
 		this.unbind();
 		window.clearTimeout(this.timeoutHover);
-	};
-
-	init () {
-		const { spaceview } = S.Block;
-		const items = this.getSpaceItems();
-		const idx = items.findIndex(it => it.id === spaceview);
-
-		if (idx == 0) {
-			this.n = 1;
-		};
-
-		this.setActive(spaceview);
 	};
 
 	unbind () {
@@ -196,6 +180,7 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onArrow (dir: number) {
+		const { spaceview } = S.Block;
 		const items = this.getSpaceItems();
 		
 		this.n += dir;
@@ -207,10 +192,16 @@ const Vault = observer(class Vault extends React.Component {
 		};
 
 		const next = items[this.n];
-
-		if (next) {
-			this.setHover(next.id);
+		if (!next) {
+			return;
 		};
+
+		if ((next.id == spaceview) && (this.n === 0)) {
+			this.onArrow(dir);
+			return;
+		};
+
+		this.setHover(next);
 	};
 
 	setActive (id: string) {
@@ -220,16 +211,16 @@ const Vault = observer(class Vault extends React.Component {
 		node.find(`#item-${id}`).addClass('isActive');
 	};
 
-	setHover (id: string) {
+	setHover (item: any) {
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
-		const item = node.find(`#item-${id}`);
-		const top = item.position().top - scroll.position().top;
+		const el = node.find(`#item-${item.id}`);
+		const top = el.position().top - scroll.position().top;
 		const height = scroll.height();
-		const ih = item.height() + 8;
+		const ih = el.height() + 8;
 
 		node.find('.item.hover').removeClass('hover');
-		item.addClass('hover');
+		el.addClass('hover');
 
 		let s = -1;
 		if (top < 0) {
@@ -241,6 +232,16 @@ const Vault = observer(class Vault extends React.Component {
 		if (s >= 0) {
 			scroll.stop().animate({ scrollTop: s }, 200, 'swing');
 		};
+
+		Preview.tooltipShow({ 
+			text: item.name, 
+			element: el, 
+			className: 'fromVault', 
+			typeX: I.MenuDirection.Left,
+			typeY: I.MenuDirection.Center,
+			offsetX: 62,
+			delay: 1,
+		});
 	};
 
 	onAdd () {
