@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, IconObject } from 'Component';
-import { I, U, J, keyboard, Preview, sidebar, translate } from 'Lib';
+import { Icon } from 'Component';
+import { I, U, J, keyboard, Preview, sidebar } from 'Lib';
 import ListWidget from 'Component/list/widget';
 
 const Sidebar = observer(class Sidebar extends React.Component {
@@ -47,10 +47,6 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					id="sidebar" 
 					className={cn.join(' ')} 
 				>
-					<div className="coverWrap">
-						<IconObject object={space} size={1920} forceLetter={true} />
-					</div>
-
 					<div className="inner">
 						<div className="head" />
 						<div 

@@ -22,11 +22,6 @@
 .sidebar.anim { transition-property: left, top, width, box-shadow, transform; transition-duration: 0.2s; transition-timing-function: ease-in-out; }
 
 .sidebar {
-	> .coverWrap { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; overflow: hidden; transform: translate3d(0px,0px,0px); }
-	> .coverWrap {
-		.iconObject { height: 100%; opacity: 0.2; filter: blur(300px); width: 200%; transform: translateX(-50%); }
-	}
-
 	> .inner { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; }
 	> .inner {
 		> .head { 
