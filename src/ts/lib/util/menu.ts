@@ -801,7 +801,6 @@ class UtilMenu {
 		const ids = Storage.get('spaceOrder') || [];
 		const items = U.Common.objectCopy(U.Space.getList());
 
-		//items.unshift({ id: 'void', isButton: true });
 		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
 
 		if (U.Space.canCreateSpace()) {

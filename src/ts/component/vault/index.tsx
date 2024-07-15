@@ -164,7 +164,7 @@ const Vault = observer(class Vault extends React.Component {
 			const item = items[this.n];
 
 			if (item) {
-				U.Router.switchSpace(item.targetSpaceId);
+				U.Router.switchSpace(item.targetSpaceId, '', true);
 			};
 		};
 	};
@@ -186,8 +186,7 @@ const Vault = observer(class Vault extends React.Component {
 				break;
 
 			default:
-				U.Router.switchSpace(item.targetSpaceId);
-				analytics.event('SwitchSpace');
+				U.Router.switchSpace(item.targetSpaceId, '', true);
 				break;
 		};
 	};
@@ -227,8 +226,7 @@ const Vault = observer(class Vault extends React.Component {
 				page: 'spaceCreate', 
 				isSpace: true,
 				onCreate: (id) => {
-					U.Router.switchSpace(id, '', () => Storage.initPinnedTypes());
-					analytics.event('SwitchSpace');
+					U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
 				},
 			}, 
 		});

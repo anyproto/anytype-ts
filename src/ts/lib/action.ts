@@ -624,7 +624,7 @@ class Action {
 					};
 
 					if (space == id) {
-						U.Router.switchSpace(accountSpaceId, '', cb);
+						U.Router.switchSpace(accountSpaceId, '', false, cb);
 					} else {
 						cb();
 					};

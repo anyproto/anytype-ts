@@ -359,7 +359,7 @@ class App extends React.Component<object, State> {
 							S.Common.configSet(account.config, false);
 
 							if (spaceId) {
-								U.Router.switchSpace(spaceId, '', cb);
+								U.Router.switchSpace(spaceId, '', false, cb);
 							} else {
 								U.Data.onInfo(account.info);
 								U.Data.onAuth({}, cb);
