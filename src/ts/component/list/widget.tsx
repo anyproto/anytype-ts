@@ -207,6 +207,8 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	onAdd (e: any): void {
 		e.stopPropagation();
 
+		analytics.event('ClickAddWidget');
+
 		S.Menu.open('searchObjectWidgetAdd', {
 			component: 'searchObject',
 			element: '#widget-list-add',
