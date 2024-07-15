@@ -143,7 +143,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 				</div>
 
-				{isLast ? <Label className="newMessages" text={translate('commonNew')} /> : ''}
+				{isLast ? <div className="newMessages"><Label text={translate('blockChatNewMessages')} /></div> : ''}
 			</div>
 		);
 	};
