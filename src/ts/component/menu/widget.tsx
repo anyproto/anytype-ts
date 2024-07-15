@@ -127,7 +127,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { isEditing } = data;
-		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout) || U.Menu.isWidgetCollection(this.target?.id);
+		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout) || U.Menu.isSystemWidget(this.target?.id);
 
 		let sourceName = translate('menuWidgetChooseSource');
 		let layoutName = translate('menuWidgetWidgetType');
@@ -170,7 +170,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { id, layout } = this.target || {};
 		const layoutOptions = U.Menu.getWidgetLayoutOptions(id, layout).map(it => it.id);
 
-		if (U.Menu.isWidgetCollection(id)) {
+		if (U.Menu.isSystemWidget(id)) {
 			if ([ null, I.WidgetLayout.Link ].includes(this.layout)) {
 				this.layout = id == J.Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
 			};

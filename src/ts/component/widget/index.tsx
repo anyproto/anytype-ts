@@ -713,11 +713,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	isSystemTarget (): boolean {
 		const target = this.getTargetBlock();
-		if (!target) {
-			return false;
-		};
-
-		return Object.values(J.Constant.widgetId).includes(target.getTargetObjectId());
+		return target ? U.Menu.isSystemWidget(target.getTargetObjectId()) : false;
 	};
 
 	canCreate (): boolean {
