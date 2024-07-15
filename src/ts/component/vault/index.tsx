@@ -270,12 +270,13 @@ const Vault = observer(class Vault extends React.Component {
 		};
 
 		Preview.tooltipShow({ 
-			title: item.name, 
+			text: item.name, 
 			element: $(e.currentTarget), 
-			className: 'big fromVault', 
+			className: 'fromVault', 
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
-			offsetX: 66,
+			offsetX: 62,
+			delay: 300,
 		});
 	};
 
