@@ -27,19 +27,17 @@ const Vault = observer(class Vault extends React.Component {
 		const items = U.Menu.getVaultItems();
 
 		const Item = SortableElement(item => {
-			const cn = [ 'item' ];
-
 			return (
 				<div 
 					id={`item-${item.id}`}
-					className={cn.join(' ')}
+					className="item"
 					onClick={e => this.onClick(e, item)}
 					onMouseEnter={e => this.onMouseEnter(e, item)}
 					onMouseLeave={() => this.onMouseLeave()}
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
+					<div className="border" />
 					<div className="iconWrap">
-						<div className="border" />
 						<IconObject object={item} size={48} forceLetter={true} />
 					</div>
 				</div>
@@ -54,9 +52,8 @@ const Vault = observer(class Vault extends React.Component {
 				onMouseEnter={e => this.onMouseEnter(e, item)}
 				onMouseLeave={() => this.onMouseLeave()}
 			>
-				<div className="iconWrap">
-					<div className="border" />
-				</div>
+				<div className="border" />
+				<div className="iconWrap" />
 			</div>
 		);
 
