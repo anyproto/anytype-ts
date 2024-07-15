@@ -23,8 +23,8 @@ export default [
 
 	h2(`💫 Feature Highlights`),
 
-	h3(`Vault UI 🌐`),
-	text(`We introduced a sleek display column to quickly create & move between Spaces. We also reworked the previous sidebar logic by removing the floating mode.`),
+	h3(`New Vault UI 🌐`),
+	text(`We introduced a sleek display column to quickly create & switch between Spaces. We also reworked the previous sidebar logic by removing the floating mode.`),
 	img(`42/4.png`),
 	
 	
@@ -71,7 +71,7 @@ export default [
 	bullet(`Checkbox sorting in Set has been restored. Thanks, @${link('https://community.anytype.io/t/22266', 'effreyh')}!`),
 	bullet(`The Query of the set now updates correctly in the pop-up.`),
 	bullet(`Fixed issue with using library images for type Icons. Thanks, @${link('https://community.anytype.io/t/22297', 'Self-Perfection')}!`),
-	bullet(`Keyboard cursor no longer disappears after cutting a whole line (block). Thanks, @${link('https://community.anytype.io/t/20781', 'Filip')}!`),
+	bullet(`Keyboard cursor no longer disappears after cutting a whole line (block). Thanks, @${link('https://community.anytype.io/t/20781', 'SirCaptain')}!`),
 
 
 
