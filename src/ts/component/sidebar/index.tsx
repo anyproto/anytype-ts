@@ -60,7 +60,6 @@ const Sidebar = observer(class Sidebar extends React.Component {
 				>
 					<div className="inner">
 						<div className="head">
-							<div className="dummy" />
 							{status ? <div className="status">{status}</div> : ''}
 						</div>
 						<div 

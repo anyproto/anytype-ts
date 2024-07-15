@@ -29,8 +29,9 @@
 			gap: 0px 8px;
 		}
 		> .head {
-			.dummy { width: 28px; flex-shrink: 0;}
-			.status { flex-grow: 1; @include text-small; font-weight: 500; @include text-overflow-nw; text-align: center; color: var(--color-text-secondary); }
+			.status { 
+				@include text-small; font-weight: 500; @include text-overflow-nw; text-align: center; color: var(--color-text-secondary); flex-grow: 1; 
+			}
 
 			.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; -webkit-app-region: no-drag; }
 			.icon:hover { background-color: var(--color-shape-highlight-medium); }
