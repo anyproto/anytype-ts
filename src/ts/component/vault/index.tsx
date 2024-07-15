@@ -108,6 +108,7 @@ const Vault = observer(class Vault extends React.Component {
 
 	componentDidUpdate (): void {
 		$(this.node).find('#scroll').scrollTop(this.top);
+		this.setActive(S.Block.spaceview);
 	};
 
 	componentWillUnmount (): void {
