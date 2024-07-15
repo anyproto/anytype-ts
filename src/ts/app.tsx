@@ -205,7 +205,7 @@ class App extends React.Component<object, State> {
 						<Toast />
 						<ListNotification key="listNotification" />
 						<Share showOnce={true} />
-						<Vault />
+						<Vault ref={ref => S.Common.refSet('vault', ref)} />
 
 						<Switch>
 							{J.Route.map((path: string, i: number) => (
