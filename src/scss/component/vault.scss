@@ -10,10 +10,7 @@
 		position: relative; z-index: 1; background: inherit;
 	}
 
-	.body { 
-		display: flex; flex-direction: column; justify-content: space-between; padding: 0px 0px 10px 0px; flex-grow: 1; 
-		height: calc(100% - 42px); gap: 12px 0px; 
-	}
+	.body { display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; gap: 12px 0px; height: calc(100% - 64px); }
 	.body {
 		.side { padding: 0px 13px; }
 		.side.top { 
@@ -21,7 +18,7 @@
 			overscroll-behavior: none; 
 		}
 		.side.top::-webkit-scrollbar { display: none; }
-		.side.bottom { flex-shrink: 0; align-items: flex-end; }
+		.side.bottom { flex-shrink: 0; align-items: flex-end; padding-bottom: 12px; }
 	}
 
 	.item { width: 48px; height: 48px; flex-shrink: 0; position: relative; }
