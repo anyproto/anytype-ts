@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject } from 'Component';
-import { I, U, S, Key, keyboard, translate, analytics, Storage, sidebar, Preview } from 'Lib';
+import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview } from 'Lib';
 
 const Vault = observer(class Vault extends React.Component {
 	
@@ -65,7 +65,7 @@ const Vault = observer(class Vault extends React.Component {
 					item.key = `item-space-${item.id}`;
 
 					let content = null;
-					if ([ 'void', 'gallery', 'add' ].includes(item.id)) {
+					if ([ 'gallery', 'add' ].includes(item.id)) {
 						content = <ItemIconSortable {...item} index={i} />;
 					} else {
 						content = <Item {...item} index={i} />;
