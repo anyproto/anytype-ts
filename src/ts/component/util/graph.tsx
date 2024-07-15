@@ -173,7 +173,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		d.radius = 4;
 		d.src = U.Graph.imageSrc(d);
 
-		if (d.layout == I.ObjectLayout.Note) {
+		if (U.Object.isNoteLayout(d.layout)) {
 			d.name = d.snippet || translate('commonEmpty');
 		} else {
 			d.name = d.name || translate('defaultNamePage');
@@ -185,7 +185,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		d.snippet = String(d.snippet || '');
 
 		// Clear icon props to fix image size
-		if (d.layout == I.ObjectLayout.Task) {
+		if (U.Object.isTaskLayout(d.layout)) {
 			d.iconImage = '';
 			d.iconEmoji = '';
 		};
@@ -400,7 +400,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			...param,
 			data: {
 				route: analytics.route.graph,
-				subId: J.Constant.subId.graph,
 				objectIds: ids,
 				getObject: id => this.getNode(id),
 				allowedLink: true,

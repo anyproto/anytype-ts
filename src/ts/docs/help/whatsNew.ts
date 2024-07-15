@@ -19,51 +19,61 @@ export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
 	title(`Desktop Release 0.42.0`),
-	text(`This release introduces updates such as set views for widgets and crypto payments, a revamped sidebar UX, and simplified app sharing, along with various other features, quality-of-life enhancements, and bug fixes to improve user experience.`),
+	text(`This release is brimming with game-changing updates, including a redesigned sidebar UX for easier navigation between Spaces, new Widgets offering a more flexible workflow and consistent view options, and simplified, more accessible app sharing. Additionally, we've added quality-of-life improvements such as the option to pay for memberships with crypto, and loads of bug fixes to improve the user experience.`),
 
 	h2(`💫 Feature Highlights`),
-	h3(`🖼️ Set Views Added to Widgets`),
-	text(`Widgets are now able to display the same custom Views as their Sets.`),
 
-	h3(`💰 Crypto Payments`),
-	text(`Now you can use crypto (BTC, ETH, USDT, USDC, BNB, Dai, etc.) to pay for the membership.`),
+	h3(`New Vault UI 🌐`),
+	text(`We introduced a sleek display column to quickly create & switch between Spaces. We also reworked the previous sidebar logic by removing the floating mode.`),
+	img(`42/4.png`),
+	
+	
+	h3(`New Widgets 🖼️`),
+	text(`Widgets can now display all the custom View options as their Sets, including Calendar, Kanban, Gallery and filtered Tag views.`),
+	img(`42/1.png`),
+	
 
-	h3(`🔄 Sync Status Upgrade`),
+	h3(`Sync Status Upgrade 🔄`),
 	text(`More informative sync status for Objects, Files, and Spaces, including indicators like "Error" for Wi-Fi issues, "Offline" for no network connection.`),
+	img(`42/3.png`),
+	
 
-	h3(`🔐 Vault UI`),
-	text(`We've reworked the sidebar logic and removed the previous floating mode.`),
-
-	h3(`🔗 Simplified App Sharing`),
+	h3(`Simplified App Sharing 🔗`),
 	text(`Easily grab a link to share Anytype with others directly from the help menu on Desktop.`),
+	img(`42/5.png`),
+	
 
 	h2(`🪷 Quality-of-Life`),
+	bullet(`You can now use crypto (BTC, ETH, USDT, USDC, BNB, Dai, etc.) to pay for memberships.`),
 	bullet(`Navigate Tables using only arrow keys to enter, jump cells &amp; exit to the next block. Thanks, @Code-Jack!`),
 	bullet(`Added an option to copy the URL from bookmark blocks. Thanks, @maxitg!`),
 	bullet(`Reduced mouse action needed after creating a new page in Collections. Thanks, @Code-Jack!`),
-	bullet(`"Turn into Object" adapts to default Templates now. Thanks, ${link('https://community.anytype.io/t/turn-into-object-did-not-adapt-to-default-template/21983', '@LSK')}!`),
-	bullet(`Added Option to disable preview on graph view. Thanks, ${link('https://community.anytype.io/t/21898', '@iamWing')}!`),
-	bullet(`Typed text after a linked object no longer becomes part of the link and can be unlinked. Thanks, ${link('https://community.anytype.io/t/8075', '@floseq')}!`),
-	bullet(`Select all (Ctrl+A) twice now excludes the title. Thanks, ${link('https://community.anytype.io/t/ctrl-a-behaviour-inconsistent-unpredictable/7612', '@qualquertipo')}!`),
+	bullet(`"Turn into Object" adapts to default Templates now. Thanks, @${link('https://community.anytype.io/t/turn-into-object-did-not-adapt-to-default-template/21983', 'LSK')}!`),
+	bullet(`Added Option to disable preview on graph view. Thanks, @${link('https://community.anytype.io/t/21898', 'iamWing')}!`),
+	bullet(`Typed text after a linked object no longer becomes part of the link and can be unlinked. Thanks, @${link('https://community.anytype.io/t/8075', 'floseq')}!`),
+	bullet(`Select all ${hl(`${cmd} + A`)} twice now excludes the title. Thanks, @${link('https://community.anytype.io/t/ctrl-a-behaviour-inconsistent-unpredictable/7612', 'qualquertipo')}!`),
 	bullet(`Menu item added for faster "add to collection" workflow.`),
 
-	h2(`🛠️ Technical Updates:`),
+
+	h2(`🛠️ Technical Updates`),
 	bullet(`Electron updated to 31.0.0`),
 
-	h2(`🦂 Bug Fixes:`),
-	bullet(`Mermaid diagrams now display correctly with dark mode backgrounds. Thanks, ${link('https://community.anytype.io/t/20228', '@BoxOfWood')}!`),
-	bullet(`Top menu no longer shows up below the cover in sets when using the modal window. Thanks, ${link('https://community.anytype.io/t/22009', '@Elias')}!`),
-	bullet(`Fixed a problem with carriage when adding tags or objects to corresponding relations. Thanks, ${link('https://community.anytype.io/t/10219', '@dzlg')}!`),
-	bullet(`Relations with number type can now have a value of 0. Thanks, ${link('https://community.anytype.io/t/cant-store-0-s-in-a-number-type-relation/3583', '@gcsapo')}!`),
-	bullet(`Widget pop-ups at the bottom of the sidebar are no longer hidden by the app border. Thanks, ${link('https://community.anytype.io/t/19954', '@Tamalika')}!`),
-	bullet(`Deleted media files now appear as non-existent when embedded in an object. Thanks, ${link('https://community.anytype.io/t/deleted-files-are-not-shown-as-deleted/11208', '@Balcion')}!`),
-	bullet(`First sentence of an Object no longer appears on title bar when the app is locked. Thanks, ${link('https://community.anytype.io/t/21551', '@NoteMyBrain')}`),
-	bullet(`Search pane now displays correctly on smaller screen sizes. Thanks, ${link('https://community.anytype.io/t/22130', '@C.c.')}!`),
+	h2(`🦂 Bug Fixes`),
+	bullet(`Mermaid diagrams now display correctly with dark mode backgrounds. Thanks, @${link('https://community.anytype.io/t/20228', 'BoxOfWood')}!`),
+	bullet(`Top menu no longer shows up below the cover in sets when using the modal window. Thanks, ${link('https://community.anytype.io/t/22009', 'Elias')}!`),
+	bullet(`Fixed a problem with carriage when adding tags or objects to corresponding relations. Thanks, @${link('https://community.anytype.io/t/10219', 'dzlg')}!`),
+	bullet(`Relations with number type can now have a value of 0. Thanks, @${link('https://community.anytype.io/t/cant-store-0-s-in-a-number-type-relation/3583', 'gcsapo')}!`),
+	bullet(`Widget pop-ups at the bottom of the sidebar are no longer hidden by the app border. Thanks, @${link('https://community.anytype.io/t/19954', 'Tamalika')}!`),
+	bullet(`Deleted media files now appear as non-existent when embedded in an object. Thanks, @${link('https://community.anytype.io/t/deleted-files-are-not-shown-as-deleted/11208', 'Balcion')}!`),
+	bullet(`First sentence of an Object no longer appears on title bar when the app is locked. Thanks, @${link('https://community.anytype.io/t/21551', 'NoteMyBrain')}`),
+	bullet(`Search pane now displays correctly on smaller screen sizes. Thanks, @${link('https://community.anytype.io/t/22130', 'C.c.')}!`),
 	bullet(`Search in Relation options now shows results even if options were scrolled.`),
-	bullet(`Checkbox sorting in Set has been restored. Thanks, ${link('https://community.anytype.io/t/22266', '@effreyh')}!`),
+	bullet(`Checkbox sorting in Set has been restored. Thanks, @${link('https://community.anytype.io/t/22266', 'effreyh')}!`),
 	bullet(`The Query of the set now updates correctly in the pop-up.`),
-	bullet(`Fixed issue with using library images for type Icons. Thanks, ${link('https://community.anytype.io/t/22297', '@Self-Perfection')}!`),
-	bullet(`Keyboard cursor no longer disappears after cutting a whole line (block). Thanks, ${link('https://community.anytype.io/t/20781', '@Filip')}!`),
+	bullet(`Fixed issue with using library images for type Icons. Thanks, @${link('https://community.anytype.io/t/22297', 'Self-Perfection')}!`),
+	bullet(`Keyboard cursor no longer disappears after cutting a whole line (block). Thanks, @${link('https://community.anytype.io/t/20781', 'SirCaptain')}!`),
+
+
 
 	div(),
 	// --------------------------------------------//
@@ -80,16 +90,16 @@ export default [
 	video(`40.5/1.mp4`),
 	bullet(`<b>Reuse Files:</b> Incorporate existing files within file blocks in the editor 📂 `),
 	video(`40.5/2.mp4`),
-	bullet(`<b>Keyboard shortcut:</b> ${hl(`${cmd} + Enter`)} checks and unchecks checkboxes ✅ Thanks, ${link('https://github.com/anyproto/anytype-ts/pull/709', '@mikailcf')}!`),
+	bullet(`<b>Keyboard shortcut:</b> ${hl(`${cmd} + Enter`)} checks and unchecks checkboxes ✅ Thanks, @${link('https://github.com/anyproto/anytype-ts/pull/709', 'mikailcf')}!`),
 	bullet(`<b>Text Justification:</b> New option to justify text in blocks for better formatting 📄`),
 	img('40.5/4.png'),
-	bullet(`<b>Enhanced Graph Settings:</b> Distinct settings for global and local graphs in Sets/Collections ⚙️ Thanks, ${link('https://community.anytype.io/t/graph-view-with-space-local-graph-clashes/20599', '@Donatas')}`),
-	bullet(`<b>Drag'n'Drop Widgets:</b> Improved widget headers and linked widgets for easier organization 🖱️ Thanks, ${link('https://community.anytype.io/t/drag-drop-not-working-for-sidebar-widgets-with-link-appearance/20195', '@siouso')}`),
+	bullet(`<b>Enhanced Graph Settings:</b> Distinct settings for global and local graphs in Sets/Collections ⚙️ Thanks, @${link('https://community.anytype.io/t/graph-view-with-space-local-graph-clashes/20599', 'Donatas')}`),
+	bullet(`<b>Drag'n'Drop Widgets:</b> Improved widget headers and linked widgets for easier organization 🖱️ Thanks, @${link('https://community.anytype.io/t/drag-drop-not-working-for-sidebar-widgets-with-link-appearance/20195', 'siouso')}`),
 	bullet(`<b>Link Block:</b> Default link style has been changed to Card. Personalize this behaviour in Settings 🔗`),
 	img('40.5/5.png'),
 	bullet(`<b>Version History: </b> Now available in Sets & Collections with a new design that groups changes by Space members and edit time, and highlights changes in the Object 📝🔄`),
 	
-	bullet(`<b>Gallery View Adjustment:</b> Better visual experience with fewer cards in inline set columns 🎨 Thanks, ${link('https://community.anytype.io/t/change-dynamically-the-width-of-gallery-items-when-on-2col-layout/15623', '@Eban')}`),
+	bullet(`<b>Gallery View Adjustment:</b> Better visual experience with fewer cards in inline set columns 🎨 Thanks, @${link('https://community.anytype.io/t/change-dynamically-the-width-of-gallery-items-when-on-2col-layout/15623', 'Eban')}`),
 	bullet(`<b>Library:</b> now has options to sort 📚`),
 	img('40.5/6.png'),
 
@@ -99,16 +109,16 @@ export default [
 	bullet(`<b>App Updates:</b> Now works even without logging in ⬆️`),
 
 	h2(`🐞 Bug Fixes:`),
-	bullet(`<b>Slash Menu:</b> Now shows only after a space character to prevent saving issues ✨ Thanks, ${link('https://community.anytype.io/t/dont-show-the-slash-menu-if-there-is-a-character-or-nunber-direct-before-the-cursor/20500', '@code-jack')}`),
+	bullet(`<b>Slash Menu:</b> Now shows only after a space character to prevent saving issues ✨ Thanks, @${link('https://community.anytype.io/t/dont-show-the-slash-menu-if-there-is-a-character-or-nunber-direct-before-the-cursor/20500', 'code-jack')}`),
 	bullet(`<b>Task Checkbox:</b> Fixed the issue of checkbox deleting object names in sets ✅`),
 	bullet(`<b>Editor:</b> Fixed a bug that was breaking the editor when object was opened from history or by deeplink 🌐`),
-	bullet(`<b>URL Relation Bug:</b> Resolved the issue with opening Windows Explorer when the URL is blank 🖥️ Thanks, ${link('https://community.anytype.io/t/pasting-a-url-in-url-relation-within-a-collection-press-enter-opens-this-pc-on-windows/11197', '@hexara')}`),
-	bullet(`<b>Emoji Markdown:</b> Fixed markdown sequence issues with text blocks starting with an emoji 😃 Thanks, ${link('https://community.anytype.io/t/13159', '@pavloUA')}`),
-	bullet(`<b>System Relations:</b> System relations can now be unlinked from Types 🔗 Thanks, ${link('https://community.anytype.io/t/16517', '@filip')}`),
-	bullet(`<b>Shift + Click:</b> Proper functionality for shift+click on Link/Bookmark blocks 🔍 Thanks, ${link('https://community.anytype.io/t/20194', '@siousu')}`),
+	bullet(`<b>URL Relation Bug:</b> Resolved the issue with opening Windows Explorer when the URL is blank 🖥️ Thanks, @${link('https://community.anytype.io/t/pasting-a-url-in-url-relation-within-a-collection-press-enter-opens-this-pc-on-windows/11197', 'hexara')}`),
+	bullet(`<b>Emoji Markdown:</b> Fixed markdown sequence issues with text blocks starting with an emoji 😃 Thanks, @${link('https://community.anytype.io/t/13159', 'pavloUA')}`),
+	bullet(`<b>System Relations:</b> System relations can now be unlinked from Types 🔗 Thanks, @${link('https://community.anytype.io/t/16517', 'filip')}`),
+	bullet(`<b>Shift + Click:</b> Proper functionality for shift+click on Link/Bookmark blocks 🔍 Thanks, @${link('https://community.anytype.io/t/20194', 'siousu')}`),
 	bullet(`<b>White Flash Issue:</b> Fixed the white flash when returning to the main screen from login/signup 💡`),
 	bullet(`<b>Settings Modal:</b> Now properly adjusts to window height 🖥️`),
-	bullet(`<b>Deeplink Routing:</b> Correct redirection after PIN check 🔒 Thanks, ${link('https://community.anytype.io/t/gallerys-open-in-app-button-failed-to-trigger-while-when-the-app-is-closed/12968', '@JorgeE')}`),
+	bullet(`<b>Deeplink Routing:</b> Correct redirection after PIN check 🔒 Thanks, @${link('https://community.anytype.io/t/gallerys-open-in-app-button-failed-to-trigger-while-when-the-app-is-closed/12968', 'JorgeE')}`),
 	bullet(`<b>Delete Link:</b> Fixed the delete link in the space context menu and local-only mode ❌`),
 
 	text(``),

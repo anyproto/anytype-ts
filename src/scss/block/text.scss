@@ -69,7 +69,7 @@
 
 			.marker.bullet { display: flex; align-items: center; justify-content: center; }
 			.marker.bullet {
-				.markerInner { -webkit-print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: black; display: block; }
+				.markerInner { -webkit-print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-primary); display: block; }
 
 				.markerInner.textColor-default { background-color: var(--color-text-primary) !important; }
 				.markerInner.textColor-black { background-color: var(--color-text-primary) !important; }

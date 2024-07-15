@@ -441,7 +441,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.LinkTo:
-					const isCollection = target.layout == I.ObjectLayout.Collection;
+					const isCollection = U.Object.isCollectionLayout(target.layout);
 					const cb = (message: any) => {
 						if (message.error.code) {
 							return;

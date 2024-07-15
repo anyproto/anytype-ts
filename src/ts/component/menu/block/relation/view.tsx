@@ -102,23 +102,23 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						<Section key={i} {...item} index={i} />
 					))}
 				</div>
-				{!readonly && allowedRelation ? <ItemAdd /> : ''}
+				{!readonly && allowedRelation ? (
+					<div className="bottom">
+						<ItemAdd /> 
+					</div>
+				) : ''}
 			</div>
 		);
 	};
 
 	componentDidMount () {
-		const node = $(this.node);
-		const scrollWrap = node.find('#scrollWrap');
-
-		this.resize();
+		this.beforePosition();
+		this.rebind();
 		this.selectionPrevent(true);
-
-		scrollWrap.off('scroll').on('scroll', () => this.onScroll());
 	};
 
 	componentDidUpdate () {
-		this.resize();
+		this.beforePosition();
 
 		const id = S.Common.cellId;		
 		if (id) {
@@ -133,6 +133,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 	componentWillUnmount () {
 		this.selectionPrevent(false);
+		this.unbind();
 	};
 
 	selectionPrevent (v: boolean) {
@@ -141,6 +142,18 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 	onScroll () {
 		S.Menu.resizeAll();
+	};
+
+	rebind () {
+		const node = $(this.node);
+
+		this.unbind();
+		node.find('#scrollWrap').on('scroll', () => this.onScroll());
+	};
+
+	unbind () {
+		const node = $(this.node);
+		node.find('#scrollWrap').off('scroll');
 	};
 
 	getSections () {
@@ -355,7 +368,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		return Boolean(readonly || root.isLocked() || !allowedValue);
 	};
 
-	resize () {
+	beforePosition () {
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
@@ -369,8 +382,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			height: container.height() - J.Size.header - maxOffset,
 			width: Math.max(min, container.width() / 2 - offset),
 		});
-
-		position();
 	};
 
 	getDiffKeys (): string[] {
