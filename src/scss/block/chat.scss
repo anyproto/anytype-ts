@@ -6,7 +6,9 @@
 
 		.scrollWrapper { padding: 16px 0px; display: flex; flex-direction: column; min-height: 206px; }
 		.scrollWrapper {
-			.scroll { display: flex; flex-direction: column; justify-content: flex-end; min-height: 100%; gap: 16px 0px; }
+			.scroll { min-height: 100%; }
+			.scroll,
+			.section { display: flex; flex-direction: column; justify-content: flex-end; gap: 16px 0px; }
 		}
 
 		.emptyState { display: flex; flex-direction: column; gap: 16px 0px; align-items: center; justify-content: center; flex-grow: 1; text-align: center; }
@@ -40,7 +42,10 @@
 		}
 		.attachments.isSingle { grid-template-columns: repeat(1, minmax(0, 1fr)); }
 
-		.dateSection { position: sticky; top: 0; }
+		.dateSection { position: sticky; display: flex; justify-content: center; top: 60px; z-index: 10; }
+		.dateSection {
+			.label { @include text-small; padding: 3px 10px; background: var(--color-bg-loader); border: 1px solid var(--color-shape-tertiary); border-radius: 13px; }
+		}
 
 		.message { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; @include text-common; }
 		.message {

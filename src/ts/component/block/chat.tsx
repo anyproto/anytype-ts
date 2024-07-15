@@ -64,14 +64,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { readonly } = this.props;
 		const { threadId, attachments, files } = this.state;
 		const blockId = this.getBlockId();
-		const messages = this.getMessagesWithSections();
+		const messages = this.getMessages();
+		const sections = this.getSections();
 		const attachmentList = attachments.concat(files);
 		const subId = this.getSubId();
 		const list = this.getDeps().map(id => S.Detail.get(subId, id));
 
 		const Item = (item: any) => {
 			if (item.isSection) {
-				return <div className="dateSection">{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}</div>
+				const string = U.Date.dayString(item.id);
+
+				return <div className="dateSection"><Label text={string ? string : U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrAfterDay), item.id)} /></div>;
 			};
 
 			return (
@@ -102,8 +105,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						</div>
 					) : (
 						<div className="scroll">
-							{messages.map((item: any, i: number) => (
-								<Item {...item} key={item.id} />
+							{sections.map((section: any[], idx: number) => (
+								<div className="section">
+									{section.map((item: any, i: number) => (
+										<Item {...item} key={item.id} />
+									))}
+								</div>
 							))}
 						</div>
 					)}
@@ -460,14 +467,24 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return mapped;
 	};
 
-	getMessagesWithSections () {
-		let messages = this.getMessages();
-		let labeled = [];
+	getSections () {
+		const messages = this.getMessages();
+		const messagesByDates = {};
+		const sections = [];
 
-		messages = messages.map((it) => ({ ...it, time: it.data.time }));
-		messages = U.Data.groupDateSections(messages, 'time', null, I.SortType.Asc);
+		messages.forEach((el) => {
+			const key = U.Date.date(U.Date.dateFormat(I.DateFormat.ShortUS), el.data.time);
+			if (!messagesByDates[key]) {
+				messagesByDates[key] = [{ id: U.Date.parseDate(key, I.DateFormat.ShortUS), isSection: true }];
+			};
+			messagesByDates[key].push(el);
+		});
 
-		return messages;
+		Object.keys(messagesByDates).forEach((el) =>{
+			sections.push(messagesByDates[el]);
+		});
+
+		return sections;
 	};
 
 	onAddMessage = () => {
@@ -506,6 +523,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				Storage.setLastChatMessageId(blockId, message.blockId);
 				this.scrollToBottom();
 				this.refEditable.setRange({ from: 0, to: 0 });
+				this.lastMessageId = message.blockId;
+				this.forceUpdate();
 			});
 		};
 

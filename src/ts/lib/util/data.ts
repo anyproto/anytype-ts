@@ -1067,7 +1067,6 @@ class UtilData {
 			groupNames.reverse();
 		};
 
-
 		let groupedRecords = [];
 
 		if (!sectionTemplate) {
