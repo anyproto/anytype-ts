@@ -26,7 +26,7 @@
 	> .inner {
 		> .head { 
 			display: flex; flex-direction: row; align-items: center; justify-content: flex-start; padding: 0px 12px; height: 52px;
-			gap: 0px 8px;
+			gap: 0px 8px; overflow: hidden;
 		}
 		> .head {
 			.status { 
