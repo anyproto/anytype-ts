@@ -26,8 +26,12 @@
 	> .inner {
 		> .head { 
 			display: flex; flex-direction: row; align-items: center; justify-content: flex-start; padding: 0px 16px; height: 52px;
+			gap: 0px 8px;
 		}
 		> .head {
+			.dummy { width: 28px; flex-shrink: 0;}
+			.status { flex-grow: 1; @include text-small; font-weight: 500; @include text-overflow-nw; text-align: center; }
+
 			.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; -webkit-app-region: no-drag; }
 			.icon:hover { background-color: var(--color-shape-highlight-medium); }
 			.icon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }

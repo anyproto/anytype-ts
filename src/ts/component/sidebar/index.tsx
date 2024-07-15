@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, keyboard, Preview, sidebar } from 'Lib';
+import { I, U, J, keyboard, Preview, sidebar, translate } from 'Lib';
 import ListWidget from 'Component/list/widget';
 
 const Sidebar = observer(class Sidebar extends React.Component {
@@ -32,6 +32,17 @@ const Sidebar = observer(class Sidebar extends React.Component {
         const cn = [ 'sidebar' ];
 		const space = U.Space.getSpaceview();
 		const cmd = keyboard.cmdSymbol();
+		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
+		const memberCnt = participants.filter(it => it.isActive).length;
+
+		let status = '';
+		if (space && !space._empty_) {
+			if (space.isShared) {
+				status = U.Common.sprintf('%d %s', memberCnt, U.Common.plural(memberCnt, translate('pluralMember')));
+			} else {
+				status = translate(`spaceAccessType${space.spaceAccessType}`);
+			};
+		};
 
         return (
 			<React.Fragment>
@@ -48,7 +59,10 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					className={cn.join(' ')} 
 				>
 					<div className="inner">
-						<div className="head" />
+						<div className="head">
+							<div className="dummy" />
+							{status ? <div className="status">{status}</div> : ''}
+						</div>
 						<div 
 							id="sidebarBody"
 							ref={ref => this.refBody = ref}
