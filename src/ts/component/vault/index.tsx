@@ -47,7 +47,7 @@ const Vault = observer(class Vault extends React.Component {
 		const ItemIcon = item => (
 			<div 
 				id={`item-${item.id}`} 
-				className={`item ${item.id}`} 
+				className={`item isIcon ${item.id}`} 
 				onClick={e => this.onClick(e, item)}
 				onMouseEnter={e => this.onMouseEnter(e, item)}
 				onMouseLeave={() => this.onMouseLeave()}
