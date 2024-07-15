@@ -13,7 +13,7 @@ const Vault = observer(class Vault extends React.Component {
 	timeoutHover = 0;
 	pressed = new Set();
 	id = '';
-	n = 0;
+	n = -1;
 
 	constructor (props) {
 		super(props);
@@ -110,14 +110,10 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	componentDidUpdate (): void {
+		const { spaceview } = S.Block;
+
 		$(this.node).find('#scroll').scrollTop(this.top);
-
-		const items = this.getSpaceItems();
-		const item = items[this.n];
-
-		if (item) {
-			this.setActive(item.id);
-		};
+		this.setActive(spaceview);
 	};
 
 	componentWillUnmount (): void {
@@ -148,7 +144,7 @@ const Vault = observer(class Vault extends React.Component {
 	onKeyDown (e: any) {
 		this.pressed.add(e.key.toLowerCase());
 
-		keyboard.shortcut('ctrl+tab', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+tab', e, () => {
 			this.onArrow(1);
 		});
 	};
@@ -162,6 +158,7 @@ const Vault = observer(class Vault extends React.Component {
 
 			if (item) {
 				U.Router.switchSpace(item.targetSpaceId, '', true);
+				this.n = -1;
 			};
 		};
 	};
@@ -202,18 +199,38 @@ const Vault = observer(class Vault extends React.Component {
 		const next = items[this.n];
 
 		if (next) {
-			this.setActive(next.id);
+			this.setHover(next.id);
 		};
 	};
 
 	setActive (id: string) {
 		const node = $(this.node);
-		const items = this.getSpaceItems();
 
 		node.find('.item.isActive').removeClass('isActive');
 		node.find(`#item-${id}`).addClass('isActive');
+	};
 
-		this.n = items.findIndex(it => it.id == id);
+	setHover (id: string) {
+		const node = $(this.node);
+		const scroll = node.find('#scroll');
+		const item = node.find(`#item-${id}`);
+		const top = item.position().top - scroll.position().top;
+		const height = scroll.height();
+		const ih = item.height() + 8;
+
+		node.find('.item.hover').removeClass('hover');
+		item.addClass('hover');
+
+		let s = -1;
+		if (top < 0) {
+			s = 0;
+		};
+		if (top + ih > height - this.top) {
+			s = this.top + height;
+		};
+		if (s >= 0) {
+			scroll.stop().animate({ scrollTop: s }, 200, 'swing');
+		};
 	};
 
 	onAdd () {

@@ -6,7 +6,7 @@
 }
 .vault {
 	.head { 
-		height: 42px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 14px; flex-shrink: 0;
+		height: 52px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 14px; flex-shrink: 0;
 		position: relative; z-index: 1; background: inherit;
 	}
 
@@ -64,6 +64,6 @@
 
 html.platformWindows, html.platformLinux {
 	.vault {
-		.head { height: 10px; }
+		.head { height: 12px; }
 	}
 }

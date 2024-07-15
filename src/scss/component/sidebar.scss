@@ -30,7 +30,7 @@
 		}
 		> .head {
 			.dummy { width: 28px; flex-shrink: 0;}
-			.status { flex-grow: 1; @include text-small; font-weight: 500; @include text-overflow-nw; text-align: center; }
+			.status { flex-grow: 1; @include text-small; font-weight: 500; @include text-overflow-nw; text-align: center; color: var(--color-text-secondary); }
 
 			.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; -webkit-app-region: no-drag; }
 			.icon:hover { background-color: var(--color-shape-highlight-medium); }
