@@ -12,7 +12,6 @@ const Vault = observer(class Vault extends React.Component {
 	top = 0;
 	timeoutHover = 0;
 	pressed = new Set();
-	id = '';
 	n = -1;
 
 	constructor (props) {
@@ -107,18 +106,29 @@ const Vault = observer(class Vault extends React.Component {
 	componentDidMount (): void {
 		this.resize();
 		this.rebind();
+		this.init();
 	};
 
 	componentDidUpdate (): void {
-		const { spaceview } = S.Block;
-
 		$(this.node).find('#scroll').scrollTop(this.top);
-		this.setActive(spaceview);
+		this.init();
 	};
 
 	componentWillUnmount (): void {
 		this.unbind();
 		window.clearTimeout(this.timeoutHover);
+	};
+
+	init () {
+		const { spaceview } = S.Block;
+		const items = this.getSpaceItems();
+		const idx = items.findIndex(it => it.id === spaceview);
+
+		if (idx == 0) {
+			this.n = 1;
+		};
+
+		this.setActive(spaceview);
 	};
 
 	unbind () {

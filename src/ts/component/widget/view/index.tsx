@@ -64,8 +64,6 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		let content = null;
 		let viewSelect = null;
 
-		cn.push(`view${I.ViewType[viewType]}`);
-
 		if (!isSystemTarget() && (views.length > 1)) {
 			viewSelect = (
 				<Select 
@@ -93,6 +91,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 			);
 		} else {
 			if (layout == I.WidgetLayout.View) {
+				cn.push(`view${I.ViewType[viewType]}`);
 				switch (viewType) {
 					default: {
 						content = <WidgetViewList {...props} />;
@@ -115,6 +114,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 					};
 				};
 			} else {
+				cn.push('viewList');
 				content = <WidgetViewList {...props} />;
 			};
 		};
