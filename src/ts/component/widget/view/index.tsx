@@ -36,7 +36,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 
 	render (): React.ReactNode {
 		const { parent, block, isSystemTarget, onCreate } = this.props;
-		const { viewId, limit } = parent.content;
+		const { viewId, limit, layout } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
 		const rootId = this.getRootId();
@@ -92,26 +92,30 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 				</div>
 			);
 		} else {
-			switch (viewType) {
-				default: {
-					content = <WidgetViewList {...props} />;
-					break;
-				};
+			if (layout == I.WidgetLayout.View) {
+				switch (viewType) {
+					default: {
+						content = <WidgetViewList {...props} />;
+						break;
+					};
 
-				case I.ViewType.Gallery: {
-					content = <WidgetViewGallery {...props} />;
-					break;
-				};
+					case I.ViewType.Gallery: {
+						content = <WidgetViewGallery {...props} />;
+						break;
+					};
 
-				case I.ViewType.Board: {
-					content = <WidgetViewBoard {...props} />;
-					break;
-				};
+					case I.ViewType.Board: {
+						content = <WidgetViewBoard {...props} />;
+						break;
+					};
 
-				case I.ViewType.Calendar: {
-					content = <WidgetViewCalendar {...props} />;
-					break;
+					case I.ViewType.Calendar: {
+						content = <WidgetViewCalendar {...props} />;
+						break;
+					};
 				};
+			} else {
+				content = <WidgetViewList {...props} />;
 			};
 		};
 
