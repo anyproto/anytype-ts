@@ -92,6 +92,7 @@ if (!isPackaged) {
 	};
 };
 
+/*
 spy(event => {
 	if (event.type == 'action') {
 		console.log('[Mobx].event', event.name, event.arguments);
@@ -104,6 +105,7 @@ enableLogging({
 	transaction: true,
 	compute: true,
 });
+*/
 
 Sentry.init({
 	release: electron.version.app,
