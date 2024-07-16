@@ -880,6 +880,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.refEditable.setValue(Mark.toHtml(value, this.marks));
 			this.refEditable.setRange({ from, to });
 			this.updateButtons();
+			this.renderMarkup();
 		};
 
 		let menuId = '';
