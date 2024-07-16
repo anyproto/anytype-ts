@@ -99,7 +99,7 @@ const Group = observer(class Group extends React.Component<Props> {
 		const subId = this.getSubId(); 
 		const object = getObject();
 		const view = getView();
-		const isCollection = object.layout == I.ObjectLayout.Collection;
+		const isCollection = U.Object.isCollectionLayout(object.layout);
 
 		if (!view || !object) {
 			return;

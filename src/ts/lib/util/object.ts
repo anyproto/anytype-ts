@@ -5,11 +5,11 @@ class UtilObject {
 	actionByLayout (v: I.ObjectLayout): string {
 		v = v || I.ObjectLayout.Page;
 
-		if (this.isFileLayout(v)) {
+		if (this.isInFileLayouts(v)) {
 			return 'media';
 		};
 
-		if (this.isSetLayout(v)) {
+		if (this.isInSetLayouts(v)) {
 			return 'set';
 		};
 
@@ -231,7 +231,7 @@ class UtilObject {
 		const { layout, snippet } = object;
 
 		let name = '';
-		if (layout == I.ObjectLayout.Note) {
+		if (this.isNoteLayout(layout)) {
 			name = snippet || translate('commonEmpty');
 		} else {
 			name = object.name || translate('defaultNamePage');
@@ -264,29 +264,41 @@ class UtilObject {
 		});
 	};
 
-	isFileLayout (layout: I.ObjectLayout): boolean {
+	// --------------------------------------------------------- //
+
+	isInSetLayouts (layout: I.ObjectLayout): boolean {
+		return this.getSetLayouts().includes(layout);
+	};
+
+	isInFileLayouts (layout: I.ObjectLayout): boolean {
 		return this.getFileLayouts().includes(layout);
 	};
 
-	isFileOrSystemLayout (layout: I.ObjectLayout): boolean {
-		return this.getFileAndSystemLayouts().includes(layout);
-	};
-
-	isSystemLayout (layout: I.ObjectLayout): boolean {
+	isInSystemLayouts (layout: I.ObjectLayout): boolean {
 		return this.getSystemLayouts().includes(layout);
 	};
 
+	isInFileOrSystemLayouts (layout: I.ObjectLayout): boolean {
+		return this.getFileAndSystemLayouts().includes(layout);
+	};
+
+	isInPageLayouts (layout: I.ObjectLayout): boolean {
+		return this.getPageLayouts().includes(layout);
+	};
+
+	// --------------------------------------------------------- //
+
 	isSetLayout (layout: I.ObjectLayout): boolean {
-		return this.getSetLayouts().includes(layout);
+		return layout == I.ObjectLayout.Set;
+	};
+
+	isCollectionLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Collection;
 	};
 
 	isTemplate (type: string): boolean {
 		const templateType = S.Record.getTemplateType();
 		return templateType ? type == templateType.id : false;
-	};
-
-	isTypeOrRelationLayout (layout: I.ObjectLayout): boolean {
-		return this.isTypeLayout(layout) || this.isRelationLayout(layout);
 	};
 
 	isTypeLayout (layout: I.ObjectLayout): boolean {
@@ -297,8 +309,8 @@ class UtilObject {
 		return layout == I.ObjectLayout.Relation;
 	};
 
-	isPageLayout (layout: I.ObjectLayout): boolean {
-		return this.getPageLayouts().includes(layout);
+	isTypeOrRelationLayout (layout: I.ObjectLayout): boolean {
+		return this.isTypeLayout(layout) || this.isRelationLayout(layout);
 	};
 
 	isParticipantLayout (layout: I.ObjectLayout): boolean {
@@ -309,9 +321,15 @@ class UtilObject {
 		return layout == I.ObjectLayout.Task;
 	};
 
+	isNoteLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Note;
+	};
+
 	isBookmarkLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Bookmark;
 	};
+
+	// --------------------------------------------------------- //
 
 	getPageLayouts (): I.ObjectLayout[] {
 		return [ 
@@ -359,6 +377,8 @@ class UtilObject {
 			I.ObjectLayout.Pdf,
 		];
 	};
+
+	// --------------------------------------------------------- //
 
 	getFileTypeByLayout (layout: I.ObjectLayout): I.FileType {
 		switch (layout) {

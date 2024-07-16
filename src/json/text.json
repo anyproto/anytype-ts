@@ -940,6 +940,7 @@
 	"popupMembershipWriteToAnyteam": "Write to Anyteam",
 	"popupMembershipManageOnMobilePlatform": "Manage available on Mobile platform",
 	"popupMembershipPaidOnOtherPlatform": "You've already acquired Membership plan on another platform, please cancel Membership first.",
+	"popupMembershipPaidByCrypto": "To upgrade your membership using cryptocurrency, please contact Anytype.",
 
 	"popupMembershipWhatsIncluded": "What’s included",
 
@@ -1681,15 +1682,15 @@
 	"survey5Cancel": "No thanks",
 
 	"widget0Name": "Link",
-	"widget0Description": "Compact version of the Object",
+	"widget0Description": "Compact widget view",
 	"widget1Name": "Tree",
-	"widget1Description": "Hierarchical structure of Objects",
+	"widget1Description": "Widget with a hierarchical structure",
 	"widget2Name": "List",
-	"widget2Description": "Widget with a list view of Set Object",
+	"widget2Description": "Widget with a list view",
 	"widget3Name": "Compact list",
-	"widget3Description": "Widget with a list view of Set Object",
+	"widget3Description": "Widget with a compact list view",
 	"widget4Name": "View",
-	"widget4Description": "Widget with a view of the Set Object",
+	"widget4Description": "Widget with a Set or Collection layout",
 
 	"widgetFavorite": "Favorites",
 	"widgetRecent": "Recently edited",
