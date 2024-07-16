@@ -2,8 +2,9 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { IconObject } from 'Component';
 import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview } from 'Lib';
+
+import VaultItem from './item';
 
 const Vault = observer(class Vault extends React.Component {
 	
@@ -25,51 +26,25 @@ const Vault = observer(class Vault extends React.Component {
     render () {
 		const items = U.Menu.getVaultItems();
 
-		const Item = SortableElement(item => {
+		const Item = item => {
+			const onContextMenu = item.isButton ? null : e => this.onContextMenu(e, item);
+
 			return (
-				<div 
-					id={`item-${item.id}`}
-					className="item"
+				<VaultItem 
+					item={item}
 					onClick={e => this.onClick(e, item)}
 					onMouseEnter={e => this.onMouseEnter(e, item)}
 					onMouseLeave={() => this.onMouseLeave()}
-					onContextMenu={e => this.onContextMenu(e, item)}
-				>
-					<div className="iconWrap">
-						<IconObject object={item} size={56} forceLetter={true} />
-					</div>
-				</div>
+					onContextMenu={onContextMenu}
+				/>
 			);
-		});
+		};
 
-		const ItemIcon = item => (
-			<div 
-				id={`item-${item.id}`} 
-				className={`item isIcon ${item.id}`} 
-				onClick={e => this.onClick(e, item)}
-				onMouseEnter={e => this.onMouseEnter(e, item)}
-				onMouseLeave={() => this.onMouseLeave()}
-			>
-				<div className="iconWrap" />
-			</div>
-		);
-
-		const ItemIconSortable = SortableElement(it => <ItemIcon {...it} index={it.index} />);
+		const ItemSortable = SortableElement(it => <Item {...it} index={it.index} />);
 
 		const List = SortableContainer(() => (
 			<div id="scroll" className="side top" onScroll={this.onScroll}>
-				{items.map((item, i) => {
-					item.key = `item-space-${item.id}`;
-
-					let content = null;
-					if ([ 'gallery', 'add' ].includes(item.id)) {
-						content = <ItemIconSortable {...item} index={i} />;
-					} else {
-						content = <Item {...item} index={i} />;
-					};
-
-					return content;
-				})}
+				{items.map((item, i) => <ItemSortable {...item} key={`item-space-${item.id}`} index={i} />)}
 			</div>
 		));
 
@@ -94,7 +69,7 @@ const Vault = observer(class Vault extends React.Component {
 					/>
 
 					<div className="side bottom">
-						<ItemIcon id="settings" name={translate('commonSettings')} />
+						<Item id="settings" isButton={true} name={translate('commonSettings')} />
 					</div>
 				</div>
             </div>
@@ -147,14 +122,18 @@ const Vault = observer(class Vault extends React.Component {
 	onKeyUp (e: any) {
 		this.pressed.delete(e.key.toLowerCase());
 
-		if (!this.pressed.has(Key.ctrl) && !this.pressed.has(Key.tab)) {
-			const items = this.getSpaceItems();
-			const item = items[this.n];
+		if (this.pressed.has(Key.ctrl) || this.pressed.has(Key.tab)) {
+			return;
+		};
 
-			if (item) {
-				U.Router.switchSpace(item.targetSpaceId, '', true);
-				this.n = -1;
-			};
+		const node = $(this.node);
+		const items = this.getSpaceItems();
+		const item = items[this.n];
+
+		if (item) {
+			node.find('.item.hover').removeClass('hover');
+			U.Router.switchSpace(item.targetSpaceId, '', true);
+			this.n = -1;
 		};
 	};
 
@@ -162,21 +141,26 @@ const Vault = observer(class Vault extends React.Component {
 		e.stopPropagation();
 
 		switch (item.id) {
-			case 'add':
+			case 'add': {
 				this.onAdd();
 				break;
+			};
 
-			case 'gallery':
+			case 'gallery': {
 				S.Popup.open('usecase', {});
 				break;
+			};
 
-			case 'settings':
+			case 'settings': {
 				S.Popup.open('settings', {});
 				break;
+			};
 
-			default:
+			default: {
+				$(this.node).find('.item.hover').removeClass('hover');
 				U.Router.switchSpace(item.targetSpaceId, '', true);
 				break;
+			};
 		};
 	};
 
@@ -197,7 +181,7 @@ const Vault = observer(class Vault extends React.Component {
 			return;
 		};
 
-		if ((next.id == spaceview) && (this.n === 0)) {
+		if ((next.id == spaceview) && (this.n === 0) && (items.length > 1)) {
 			this.onArrow(dir);
 			return;
 		};
@@ -223,6 +207,18 @@ const Vault = observer(class Vault extends React.Component {
 		node.find('.item.hover').removeClass('hover');
 		el.addClass('hover');
 
+		const cb = () => {
+			Preview.tooltipShow({ 
+				text: item.name, 
+				element: el, 
+				className: 'fromVault', 
+				typeX: I.MenuDirection.Left,
+				typeY: I.MenuDirection.Center,
+				offsetX: 62,
+				delay: 1,
+			});
+		};
+
 		let s = -1;
 		if (top < 0) {
 			s = 0;
@@ -231,18 +227,11 @@ const Vault = observer(class Vault extends React.Component {
 			s = this.top + height;
 		};
 		if (s >= 0) {
-			scroll.stop().animate({ scrollTop: s }, 200, 'swing');
+			Preview.tooltipHide(true);
+			scroll.stop().animate({ scrollTop: s }, 200, 'swing', () => cb());
+		} else {
+			cb();
 		};
-
-		Preview.tooltipShow({ 
-			text: item.name, 
-			element: el, 
-			className: 'fromVault', 
-			typeX: I.MenuDirection.Left,
-			typeY: I.MenuDirection.Center,
-			offsetX: 62,
-			delay: 1,
-		});
 	};
 
 	onAdd () {
