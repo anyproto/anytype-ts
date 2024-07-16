@@ -238,7 +238,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
 		const sorts = [
-			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [I.SyncStatusObject.Syncing, I.SyncStatusObject.Synced] },
+			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [ I.SyncStatusObject.Syncing, I.SyncStatusObject.Synced ] },
 			{ relationKey: 'syncDate', type: I.SortType.Desc },
 		];
 
@@ -253,7 +253,14 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getItems () {
-		return U.Data.groupDateSections(S.Record.getRecords(SUB_ID), 'syncDate');
+		const records = S.Record.getRecords(SUB_ID).map(it => {
+			if (it.syncStatus == I.SyncStatusObject.Syncing) {
+				it.syncDate = U.Date.now();
+			};
+			return it;
+		});
+
+		return U.Data.groupDateSections(records, 'syncDate');
 	};
 
 	getIcons () {
