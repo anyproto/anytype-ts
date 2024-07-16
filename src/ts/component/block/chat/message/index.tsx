@@ -11,7 +11,6 @@ interface Props extends I.Block, I.BlockComponent {
 	isThread: boolean;
 	onThread: (id: string) => void;
 	onContextMenu: (e: any) => void;
-	renderMention: (object: any) => any;
 	isLast?: boolean;
 };
 

@@ -73,25 +73,31 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const subId = this.getSubId();
 		const list = this.getDeps().map(id => S.Detail.get(subId, id));
 
-		const Item = (item: any) => {
-			if (item.isSection) {
-				const string = U.Date.dayString(item.id);
-
-				return <div className="dateSection"><Label text={string ? string : U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrAfterDay), item.id)} /></div>;
-			};
+		const Section = (item: any) => {
+			const ds = U.Date.dayString(item.time);
 
 			return (
-				<Message
-					ref={ref => this.messagesMap[item.id] = ref}
-					{...this.props}
-					{...item}
-					isThread={!!threadId}
-					onThread={this.onThread}
-					onContextMenu={e => this.onContextMenu(e, item)}
-					isLast={item.id == this.lastMessageId}
-				/>
+				<div className="section">
+					<div className="date">
+						<Label text={ds || U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrAfterDay), item.time)} />
+					</div>
+
+					{(item.list || []).map(item => <Item {...item} key={item.id} />)}
+				</div>
 			);
 		};
+
+		const Item = (item: any) => (
+			<Message
+				ref={ref => this.messagesMap[item.id] = ref}
+				{...this.props}
+				{...item}
+				isThread={!!threadId}
+				onThread={this.onThread}
+				onContextMenu={e => this.onContextMenu(e, item)}
+				isLast={item.id == this.lastMessageId}
+			/>
+		);
 
 		return (
 			<div 
@@ -109,13 +115,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						</div>
 					) : (
 						<div className="scroll">
-							{sections.map((section: any[]) => (
-								<div className="section" key={section[0].id}>
-									{section.map((item: any, i: number) => (
-										<Item {...item} key={item.id} />
-									))}
-								</div>
-							))}
+							{sections.map(section => <Section {...section} key={section.time} />)}
 						</div>
 					)}
 				</div>
@@ -168,17 +168,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = true;
 		this.checkSendButton();
 
-		const lastMessageId = Storage.getLastChatMessageId(blockId);
+		const lastId = Storage.getLastChatMessageId(blockId);
 
-		if (lastMessageId && this.messagesMap[lastMessageId]) {
-			const node = this.messagesMap[lastMessageId].node;
+		if (lastId && this.messagesMap[lastId]) {
+			const node = this.messagesMap[lastId].node;
 
-			this.lastMessageId = lastMessageId;
+			this.lastMessageId = lastId;
 			this.lastMessageOffset = node.offsetTop;
 
-			window.setTimeout(() => {
-				this.scrollToMessage(lastMessageId);
-			}, 10);
+			window.setTimeout(() => this.scrollToMessage(lastId), 10);
 		};
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
@@ -270,39 +268,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onMouseUp () {
 		this.onSelect();
 		this.updateButtons();
-	};
-
-	onContextMenu (e: React.MouseEvent, item: any) {
-		const { rootId } = this.props;
-		const { account } = S.Auth;
-		const blockId = this.getBlockId();
-		const isSelf = item.data.identity == account.id;
-
-		if (isSelf) {
-			S.Menu.open('select', {
-				element: `#block-${blockId} #item-${item.id} .right`,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
-				data: {
-					options: [
-						{ id: 'edit', name: translate('commonEdit') },
-						{ id: 'delete', name: translate('commonDelete'), color: 'red' }
-					],
-					onSelect: (e, option) => {
-						switch (option.id) {
-							case 'edit': {
-								this.onEditMessage(item);
-								break;
-							};
-							case 'delete': {
-								// message delete logic goes here
-								break;
-							};
-						};
-					}
-				}
-			});
-		};
 	};
 
 	onFocusInput () {
@@ -417,16 +382,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.onChatButton(e, I.ChatButton.Mention);
 		});
 
-		keyboard.shortcut('escape', e, () => {
-			if (this.editingId) {
+		if (this.editingId) {
+			keyboard.shortcut('escape', e, () => {
 				this.editingId = '';
 				this.marks = [];
 				this.range = { from: 0, to: 0 };
 
 				this.refEditable.setValue('');
 				this.refEditable.placeholderCheck();
-			};
-		});
+			});
+		};
 
 		// Mark-up
 		if (range && range.to && (range.from != range.to)) {
@@ -434,7 +399,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			let param = '';
 
 			for (const item of keyboard.getMarkParam()) {
-				keyboard.shortcut(item.key, e, (pressed: string) => {
+				keyboard.shortcut(item.key, e, () => {
 					type = item.type;
 					param = item.param;
 				});
@@ -453,7 +418,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	canDrop (e: any): boolean {
-		return this._isMounted && e.dataTransfer.files && e.dataTransfer.files.length && !this.props.readonly && !this.editingId;
+		return this._isMounted && e.dataTransfer.files && e.dataTransfer.files.length && !this.props.readonly;
 	};
 
 	onDragOver (e: any) {
@@ -518,22 +483,65 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	getSections () {
 		const messages = this.getMessages();
-		const messagesByDates = {};
 		const sections = [];
 
-		messages.forEach((el) => {
-			const key = U.Date.date(U.Date.dateFormat(I.DateFormat.ShortUS), el.data.time);
-			if (!messagesByDates[key]) {
-				messagesByDates[key] = [{ id: U.Date.parseDate(key, I.DateFormat.ShortUS), isSection: true }];
+		messages.forEach(item => {
+			if (!item.data.time) {
+				return;
 			};
-			messagesByDates[key].push(el);
+
+			const key = U.Date.date(U.Date.dateFormat(I.DateFormat.ShortUS), item.data.time);
+			const section = sections.find(it => it.key == key);
+
+			if (!section) {
+				sections.push({ time: item.data.time, key, isSection: true, list: [ item ] });
+			} else {
+				section.list.push(item);
+			};
 		});
 
-		Object.keys(messagesByDates).forEach((el) =>{
-			sections.push(messagesByDates[el]);
+		sections.sort((c1, c2) => {
+			if (c1.time > c2.time) return 1;
+			if (c1.time < c2.time) return -1;
+			return 0;
 		});
 
 		return sections;
+	};
+
+	onContextMenu (e: React.MouseEvent, item: any) {
+		const { account } = S.Auth;
+
+		if (item.data.identity != account.id) {
+			return;
+		};
+
+		const { rootId } = this.props;
+		const blockId = this.getBlockId();
+
+		S.Menu.open('select', {
+			element: `#block-${blockId} #item-${item.id} .right`,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				options: [
+					{ id: 'edit', name: translate('commonEdit') },
+					{ id: 'delete', name: translate('commonDelete'), color: 'red' }
+				],
+				onSelect: (e, option) => {
+					switch (option.id) {
+						case 'edit': {
+							this.onEditMessage(item);
+							break;
+						};
+						case 'delete': {
+							C.BlockListDelete(rootId, [ item.id ]);
+							break;
+						};
+					};
+				}
+			}
+		});
 	};
 
 	onAddMessage = () => {
@@ -549,6 +557,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const length = childrenIds.length;
 		const target = length ? childrenIds[length - 1] : blockId;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.InnerFirst;
+		const fl = files.length;
 
 		const data = {
 			...this.getMarksFromHtml(),
@@ -558,37 +567,57 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			reactions: [],
 			isEdited: false
 		};
-		
-		const create = () => {
-			const param = {
-				type: I.BlockType.Text,
-				style: I.TextStyle.Paragraph,
-				content: {
-					text: JSON.stringify(data),
-				}
-			};
 
-			C.BlockCreate(rootId, target, position, param, (message) => {
-				Storage.setLastChatMessageId(blockId, message.blockId);
-				this.scrollToBottom();
-				this.refEditable.setRange({ from: 0, to: 0 });
-				this.lastMessageId = message.blockId;
-				this.forceUpdate();
-			});
+		const clear = () => {
+			this.marks = [];
+			this.range = { from: 0, to: 0 };
+
+			this.refEditable.setValue('');
+			this.refEditable.placeholderCheck();
+
+			this.setState({ attachments: [] });
+		};
+		
+		const callBack = () => {
+			if (this.editingId) {
+				const message = this.getMessages().find(it => it.id == this.editingId);
+				if (message) {
+					const { marks, text } = this.getMarksFromHtml();
+					const update = U.Common.objectCopy(message.data);
+
+					update.attachments = (update.attachments || []).concat(data.attachments || []);
+					update.isEdited = true;
+					update.text = text;
+					update.marks = marks;
+
+					U.Data.blockSetText(rootId, this.editingId, JSON.stringify(update), [], true, () => {
+						this.editingId = '';
+						clear();
+					});
+				};
+			} else {
+				const param = {
+					type: I.BlockType.Text,
+					style: I.TextStyle.Paragraph,
+					content: {
+						text: JSON.stringify(data),
+					}
+				};
+
+				C.BlockCreate(rootId, target, position, param, (message) => {
+					Storage.setLastChatMessageId(blockId, message.blockId);
+
+					this.scrollToBottom();
+					this.refEditable.setRange({ from: 0, to: 0 });
+					this.lastMessageId = message.blockId;
+					this.forceUpdate();
+				});
+
+				clear();
+			};
 		};
 
-		if (this.editingId) {
-			data.isEdited = true;
-
-			const { marks } = this.getMarksFromHtml();
-			const text = JSON.stringify(data);
-
-			C.BlockTextSetText(rootId, this.editingId, text, marks, this.range, (message) => {
-				S.Block.updateContent(rootId, this.editingId, { text, marks });
-				this.editingId = '';
-			});
-		} else
-		if (files.length) {
+		if (fl) {
 			let n = 0;
 
 			for (const file of files) {
@@ -599,43 +628,33 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						data.attachments.push(message.objectId);
 					};
 
-					if (n == length) {
-						create();
+					if (n == fl) {
+						callBack();
 					};
 				});
 			};
 		} else {
-			create();
+			callBack();
 		};
-
-		this.marks = [];
-		this.range = { from: 0, to: 0 };
-
-		this.refEditable.setValue('');
-		this.refEditable.placeholderCheck();
-
-		this.setState({ attachments: [] });
 	};
 
 	onEditMessage = (message) => {
 		const { text, marks } = message.data;
-		const to = text.length;
+		const l = text.length;
 
-		this.marks = [];
-		this.range = { from: to, to };
-
-		marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
+		this.marks = marks;
+		this.range = { from: l, to: l };
 
 		this.editingId = message.id;
 		this.refEditable.setValue(Mark.toHtml(text, this.marks));
-		window.setTimeout(() => {
-			this.refEditable.setRange(this.range);
-		}, 10);
+		this.renderMarkup();
+
+		window.setTimeout(() => this.refEditable.setRange(this.range));
 	};
 
 	onScroll (e: any) {
-		const blockId = this.getBlockId();
 		const { isPopup } = this.props;
+		const blockId = this.getBlockId();
 		const container = U.Common.getScrollContainer(isPopup);
 		const top = container.scrollTop() - $('#scrollWrapper').offset().top;
 		const form = $('#formWrapper');
@@ -643,11 +662,18 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const viewport = container.outerHeight() - form.height() - formPadding;
 		const messages = this.getMessages();
 
-		const messagesIntoView = messages.filter((it) => {
-			const node = this.messagesMap[it.id].node;
-			const oT = node.offsetTop + node.clientHeight;
+		const messagesIntoView = messages.filter(it => {
+			if (!this.messagesMap[it.id]) {
+				return false;
+			};
 
-			return (oT >= top) && (oT < top + viewport);
+			const node = $(this.messagesMap[it.id].node);
+			if (!node.length) {
+				return false;
+			};
+
+			const ot = node.offset().top + node.height();
+			return (ot >= top) && (ot < top + viewport);
 		});
 
 		if (!messagesIntoView.length) {
@@ -660,6 +686,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		if (lastNode.offsetTop > this.lastMessageOffset) {
 			this.lastMessageId = last.id;
 			this.lastMessageOffset = lastNode.offsetTop;
+
 			Storage.setLastChatMessageId(blockId, last.id);
 		};
 	};
@@ -719,7 +746,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			{ type: I.ChatButton.Object, icon: 'plus', name: translate('blockChatButtonObject'), caption: `${cmd} + A` },
 			{ type: I.ChatButton.Emoji, icon: 'emoji', name: translate('blockChatButtonEmoji'), caption: `${cmd} + E` },
 			{ type: I.ChatButton.Mention, icon: 'mention', name: translate('blockChatButtonMention'), caption: `${cmd} + M` },
-		]
+		];
 	};
 
 	getTextButtons () {
@@ -932,7 +959,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 						this.refEditable.setValue(Mark.toHtml(value, this.marks));
 						this.refEditable.setRange({ from: to, to });
-
 						this.renderMarkup();
 					}
 				}
