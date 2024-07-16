@@ -36,7 +36,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 
 	render (): React.ReactNode {
 		const { parent, block, isSystemTarget, onCreate } = this.props;
-		const { viewId, limit } = parent.content;
+		const { viewId, limit, layout } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
 		const rootId = this.getRootId();
@@ -64,8 +64,6 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		let content = null;
 		let viewSelect = null;
 
-		cn.push(`view${I.ViewType[viewType]}`);
-
 		if (!isSystemTarget() && (views.length > 1)) {
 			viewSelect = (
 				<Select 
@@ -92,26 +90,32 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 				</div>
 			);
 		} else {
-			switch (viewType) {
-				default: {
-					content = <WidgetViewList {...props} />;
-					break;
-				};
+			if (layout == I.WidgetLayout.View) {
+				cn.push(`view${I.ViewType[viewType]}`);
+				switch (viewType) {
+					default: {
+						content = <WidgetViewList {...props} />;
+						break;
+					};
 
-				case I.ViewType.Gallery: {
-					content = <WidgetViewGallery {...props} />;
-					break;
-				};
+					case I.ViewType.Gallery: {
+						content = <WidgetViewGallery {...props} />;
+						break;
+					};
 
-				case I.ViewType.Board: {
-					content = <WidgetViewBoard {...props} />;
-					break;
-				};
+					case I.ViewType.Board: {
+						content = <WidgetViewBoard {...props} />;
+						break;
+					};
 
-				case I.ViewType.Calendar: {
-					content = <WidgetViewCalendar {...props} />;
-					break;
+					case I.ViewType.Calendar: {
+						content = <WidgetViewCalendar {...props} />;
+						break;
+					};
 				};
+			} else {
+				cn.push('viewList');
+				content = <WidgetViewList {...props} />;
 			};
 		};
 
@@ -163,16 +167,21 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 
 	updateData () {
 		const { block, isSystemTarget, getData } = this.props;
-		const { targetBlockId } = block.content;
+		const targetId = block.getTargetObjectId();
 		const rootId = this.getRootId();
-		const srcBlock = S.Block.getLeaf(targetBlockId, J.Constant.blockId.dataview);
+		const srcObject = S.Detail.get(targetId, targetId);
+		const srcBlock = S.Block.getLeaf(targetId, J.Constant.blockId.dataview);
 
-		// Update block in widget with source block if object is open
+		// Update block and details in widget with source block if object is open
 		if (srcBlock) {
 			let dstBlock = S.Block.getLeaf(rootId, J.Constant.blockId.dataview);
 
 			if (dstBlock) {
 				dstBlock = Object.assign(dstBlock, srcBlock);
+			};
+
+			if (!srcObject._empty_) {
+				S.Detail.update(rootId, { id: srcObject.id, details: srcObject }, false);
 			};
 		};
 

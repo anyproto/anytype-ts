@@ -982,7 +982,7 @@ class Dispatcher {
 
 		if ([ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(details.spaceAccountStatus)) {
 			if (id == S.Block.spaceview) {
-				U.Router.switchSpace(S.Auth.accountSpaceId, '');
+				U.Router.switchSpace(S.Auth.accountSpaceId);
 			};
 
 			const spaceview = U.Space.getSpaceview(id);

@@ -8,11 +8,6 @@ html.themeDark {
 	--color-text-primary: #ebebeb;
 	--color-text-secondary: #9a9a9a;
 	--color-text-tertiary: #606060;
-
-	--color-text-primary: #ebebeb;
-    --color-text-secondary: #9a9a9a;
-    --color-text-tertiary: #606060;
-
 	--color-text-inversion: #171717;
 
 	/* Shape */
@@ -271,6 +266,23 @@ html.themeDark {
 			.banner {
 				.button { background-color: var(--color-bg-primary); color: var(--color-text-primary); }
 			}
+		}
+	}
+
+	/* Vault */
+
+	.vault { background-color: var(--color-bg-primary); }
+	.vault {
+		.item.gallery {
+			.iconWrap { background-image: url('#{$themePath}/icon/vault/gallery.svg'); }
+		}
+
+		.item.add {
+			.iconWrap { background-image: url('#{$themePath}/icon/vault/plus.svg'); }
+		}
+
+		.item.settings {
+			.iconWrap { background-image: url('#{$themePath}/icon/vault/settings.svg'); }
 		}
 	}
 

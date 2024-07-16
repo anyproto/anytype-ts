@@ -10,7 +10,7 @@ export default {
 	header: 52,
 
 	vault: {
-		width: 76,
+		width: 72,
 	},
 
 	history: {

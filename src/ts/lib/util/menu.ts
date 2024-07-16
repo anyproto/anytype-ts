@@ -379,19 +379,19 @@ class UtilMenu {
 	};
 
 	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout) {
-		const isCollection = this.isWidgetCollection(id);
+		const isSystem = this.isSystemWidget(id);
 		
 		let options = [
 			I.WidgetLayout.Compact,
 			I.WidgetLayout.List,
 			I.WidgetLayout.Tree,
 		];
-		if (!isCollection) {
+		if (!isSystem) {
 			options.push(I.WidgetLayout.Link);
 		};
 
 		if (id) {
-			if (!isCollection) {
+			if (!isSystem) {
 				const isSet = U.Object.isInSetLayouts(layout);
 				const setLayouts = U.Object.getSetLayouts();
 				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
@@ -401,9 +401,10 @@ class UtilMenu {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				};
 				if (!isSet) {
-					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it) );
+					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it));
 				} else {
-					options = [ I.WidgetLayout.View, I.WidgetLayout.Link ];
+					options = options.filter(it => it != I.WidgetLayout.Tree);
+					options.unshift(I.WidgetLayout.View);
 				};
 			};
 
@@ -425,7 +426,7 @@ class UtilMenu {
 		}));
 	};
 
-	isWidgetCollection (id: string) {
+	isSystemWidget (id: string) {
 		return id && Object.values(J.Constant.widgetId).includes(id);
 	};
 
@@ -806,7 +807,6 @@ class UtilMenu {
 		const ids = Storage.get('spaceOrder') || [];
 		const items = U.Common.objectCopy(U.Space.getList());
 
-		//items.unshift({ id: 'void', isButton: true });
 		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
 
 		if (U.Space.canCreateSpace()) {

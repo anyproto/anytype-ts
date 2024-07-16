@@ -354,7 +354,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			const view = Dataview.getView(rootId, J.Constant.blockId.dataview, viewId);
-			const typeId = Dataview.getTypeId(widgets, J.Constant.blockId.dataview, object.id, viewId);
+			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id, viewId);
 			const type = S.Record.getTypeById(typeId);
 
 			if (!type) {
@@ -623,7 +623,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	getFavoriteIds (): string[] {
 		const { root } = S.Block;
 		const ids = S.Block.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
-		const items = ids.map(id => S.Detail.get(root, id)).filter(it => !it.isArchived).map(it => it.id);
+		const items = ids.map(id => S.Detail.get(root, id)).filter(it => !it.isArchived && !it.isDeleted).map(it => it.id);
 
 		return items;
 	};
@@ -688,7 +688,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	isSystemTargetId (id: string): boolean {
-		return Object.values(J.Constant.widgetId).includes(id);
+		return U.Menu.isSystemWidget(id);
 	};
 
 	canCreate (): boolean {
