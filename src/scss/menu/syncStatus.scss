@@ -69,10 +69,8 @@
                 }
             }
 
-            .item:hover,
-            .item.selected { background: var(--color-shape-highlight-medium); }
-            .item:hover,
-            .item.selected {
+            .item:hover, .item.hover { background: var(--color-shape-highlight-medium); }
+            .item:hover, .item.hover {
                 .side.right {
                     .icon:not(.more) { display: none; }
                     .icon.more { opacity: 1; }

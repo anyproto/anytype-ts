@@ -59,8 +59,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					className={cn.join(' ')} 
 				>
 					<div className="inner">
-						<div className="head">
-							<div className="dummy" />
+						<div id="sidebarHead" className="head">
 							{status ? <div className="status">{status}</div> : ''}
 						</div>
 						<div 

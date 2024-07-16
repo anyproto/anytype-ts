@@ -61,9 +61,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				<div
 					id={`item-${item.id}`}
 					className="item sides"
+					onClick={e => this.onContextMenu(e, item)}
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
-					<div className="side left" onClick={() => U.Object.openConfig(item)}>
+					<div className="side left" >
 						<IconObject object={item} size={20} />
 						<div className="info">
 							<ObjectName object={item} />
@@ -72,7 +73,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 					<div className="side right">
 						<Icon className={icon} />
-						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
+						<Icon className="more" />
 					</div>
 				</div>
 			);
@@ -176,10 +177,9 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 		S.Menu.open('select', {
 			classNameWrap,
-			element: element.find('.more'),
+			element,
+			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-			onOpen: () => element.addClass('selected'),
-			onClose: () => element.removeClass('selected'),
 			data: {
 				options,
 				onSelect: (e, option) => {
