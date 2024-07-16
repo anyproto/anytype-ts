@@ -109,8 +109,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						</div>
 					) : (
 						<div className="scroll">
-							{sections.map((section: any[], idx: number) => (
-								<div className="section">
+							{sections.map((section: any[]) => (
+								<div className="section" key={section[0].id}>
 									{section.map((item: any, i: number) => (
 										<Item {...item} key={item.id} />
 									))}
@@ -472,6 +472,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	
 	onDrop (e: any) {
 		if (!this.canDrop(e)) {
+			$(this.node).removeClass('isDraggingOver');
 			return;
 		};
 
@@ -718,7 +719,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			{ type: I.ChatButton.Object, icon: 'plus', name: translate('blockChatButtonObject'), caption: `${cmd} + A` },
 			{ type: I.ChatButton.Emoji, icon: 'emoji', name: translate('blockChatButtonEmoji'), caption: `${cmd} + E` },
 			{ type: I.ChatButton.Mention, icon: 'mention', name: translate('blockChatButtonMention'), caption: `${cmd} + M` },
-		];
+		]
 	};
 
 	getTextButtons () {
