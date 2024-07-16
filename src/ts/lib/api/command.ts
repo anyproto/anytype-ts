@@ -1353,7 +1353,6 @@ export const ObjectShow = (objectId: string, traceId: string, spaceId: string, c
 	});
 };
 
-
 export const ObjectClose = (objectId: string, spaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Close.Request();
 
@@ -1734,6 +1733,14 @@ export const ObjectCollectionSort = (contextId: string, objectIds: string[], cal
 	request.setObjectidsList(objectIds);
 
 	dispatcher.request(ObjectCollectionSort.name, request, callBack);
+};
+
+export const ObjectChatAdd = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ChatAdd.Request();
+
+	request.setObjectid(objectId);
+
+	dispatcher.request(ObjectChatAdd.name, request, callBack);
 };
 
 // ---------------------- OBJECT LIST ---------------------- //

@@ -186,6 +186,20 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
+			case I.ObjectLayout.Set: {
+				if (iconImage) {
+					cn.push('withImage');
+				};
+
+				if (iconEmoji || iconImage) {
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
+				} else 
+				if (forceLetter) {
+					onLetter();
+				};
+				break;
+			};
+
 			case I.ObjectLayout.Human: 
 			case I.ObjectLayout.Participant: {
 				if (iconImage) {
@@ -212,20 +226,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.Type: {
 				if (iconEmoji) {
-					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-				} else 
-				if (forceLetter) {
-					onLetter();
-				};
-				break;
-			};
-
-			case I.ObjectLayout.Set: {
-				if (iconImage) {
-					cn.push('withImage');
-				};
-
-				if (iconEmoji || iconImage) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
 				} else 
 				if (forceLetter) {
@@ -448,25 +448,28 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 		if ((size == 18) && (U.Object.isTaskLayout(layout))) {
 			s = 16;
-		};
+		} else
 		if ((size == 48) && U.Object.isRelationLayout(layout)) {
 			s = 28;
-		};
+		} else
+		if (size >= 40) {
+			if ([ I.ObjectLayout.Human, I.ObjectLayout.Participant ].includes(layout)) {
+				s = size;
+			};
 
-		if ([ I.ObjectLayout.Human, I.ObjectLayout.Participant ].includes(layout) && (size >= 40)) {
-			s = size;
-		};
+			if ([ I.ObjectLayout.Set, I.ObjectLayout.SpaceView ].includes(layout) && iconImage) {
+				s = size;
+			};
 
-		if ([ I.ObjectLayout.Set, I.ObjectLayout.SpaceView ].includes(layout) && iconImage) {
-			s = size;
-		};
+			if (!iconImage && !iconEmoji) {
+				if ([ I.ObjectLayout.Set, I.ObjectLayout.Type ].includes(layout)) {
+					s = size;
+				};
 
-		if ([ I.ObjectLayout.Set, I.ObjectLayout.Type ].includes(layout) && !iconImage && !iconEmoji && (size >= 40)) {
-			s = size;
-		};
-
-		if (![ I.ObjectLayout.Task, I.ObjectLayout.Relation ].includes(layout) && forceLetter && !iconImage && !iconEmoji && (size >= 40)) {
-			s = size;
+				if (![ I.ObjectLayout.Task, I.ObjectLayout.Relation ].includes(layout) && forceLetter) {
+					s = size;
+				};
+			};
 		};
 
 		if (iconSize) {
