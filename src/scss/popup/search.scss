@@ -4,7 +4,8 @@
 	.popup.popupSearch {
 		.ReactVirtualized__List { padding: 8px 0px 4px; }
 
-		.innerWrap { width: 684px; height: 684px; overflow: hidden; }
+		.innerWrap { width: 684px; height: 684px; max-height: calc(100% - 48px); overflow: hidden; }
+
 		@media (max-width: 700px) {
 			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
 		}

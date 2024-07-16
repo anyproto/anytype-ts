@@ -555,8 +555,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					page: 'spaceCreate', 
 					isSpace: true,
 					onCreate: (id) => {
-						U.Router.switchSpace(id, '', () => Storage.initPinnedTypes());
-						analytics.event('SwitchSpace');
+						U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
 					},
 				}, 
 			});

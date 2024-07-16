@@ -13,7 +13,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
-		this.onOpen = this.onOpen.bind(this);
+		this.onClick = this.onClick.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 	};
@@ -60,7 +60,10 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 					
 				case I.FileState.Done: {
 					element = (
-						<div className="inner" onMouseDown={this.onOpen}>
+						<div 
+							className="inner" 
+							onMouseDown={this.onClick} 
+						>
 							<IconObject object={object} size={24} />
 							<ObjectName object={object} />
 							<span className="size">{U.File.size(object.sizeInBytes)}</span>
@@ -122,12 +125,12 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 		Action.upload(I.FileType.File, rootId, block.id, '', path);
 	};
 	
-	onOpen (e: any) {
+	onClick (e: any) {
 		if (!e.button) {
-			U.Object.openConfig({ id: this.props.block.content.targetObjectId, layout: I.ObjectLayout.File });
+			Action.openFile(this.props.block.content.targetObjectId);
 		};
 	};
-	
+
 });
 
 export default BlockFile;

@@ -178,7 +178,7 @@ class CommonStore {
 		const key = String(this.defaultType || Storage.get('defaultType') || J.Constant.default.typeKey);
 
 		let type = S.Record.getTypeByKey(key);
-		if (!type || !type.isInstalled || !U.Object.getPageLayouts().includes(type.recommendedLayout)) {
+		if (!type || !type.isInstalled || !U.Object.isInPageLayouts(type.recommendedLayout)) {
 			type = S.Record.getTypeByKey(J.Constant.default.typeKey);
 		};
 

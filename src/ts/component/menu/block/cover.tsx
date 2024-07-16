@@ -236,7 +236,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					this.setState({ isLoading: false });
 
 					if (message.error.code) {
-						this.setState({ isLoading: false });
 						return;
 					};
 
@@ -268,7 +267,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const { data } = param;
 		const { onUpload, onUploadStart } = data;
 
-		Action.openFile(J.Constant.fileExtension.cover, paths => {
+		Action.openFileDialog(J.Constant.fileExtension.cover, paths => {
 			close();
 
 			if (onUploadStart) {

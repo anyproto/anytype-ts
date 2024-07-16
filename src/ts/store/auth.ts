@@ -14,14 +14,14 @@ class AuthStore {
 	public appToken = '';
 	public appKey = '';
 	public membershipData: I.Membership = { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
-	public syncStatusData: I.SyncStatus = { error: 0, network: 0, status: 3, syncingCounter: 0 };
+	public syncStatusMap: Map<string, I.SyncStatus> = new Map();
 	
 	constructor () {
 		makeObservable(this, {
 			accountItem: observable,
 			accountList: observable,
 			membershipData: observable,
-			syncStatusData: observable,
+			syncStatusMap: observable,
 			membership: computed,
 			accounts: computed,
 			account: computed,
@@ -58,10 +58,6 @@ class AuthStore {
 		return this.membershipData || { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
 	};
 
-	get syncStatus (): I.SyncStatus {
-		return this.syncStatusData || { error: 0, network: 0, status: 3, syncingCounter: 0 };
-	};
-
 	tokenSet (v: string) {
 		this.token = String(v || '');
 	};
@@ -87,7 +83,9 @@ class AuthStore {
 	};
 
 	syncStatusUpdate (v: I.SyncStatus) {
-		set(this.syncStatusData, v);
+		const obj = this.getSyncStatus(v.id);
+
+		this.syncStatusMap.set(v.id, Object.assign(obj, v));
 	};
 
 	accountAdd (account: any) {
@@ -139,11 +137,24 @@ class AuthStore {
 		].includes(this.accountItem.status.type);
 	};
 
+	getSyncStatus (spaceId?: string): I.SyncStatus {
+		return this.syncStatusMap.get(spaceId || S.Common.space) || {
+			id: '',
+			error: I.SyncStatusError.None,
+			network: I.SyncStatusNetwork.Anytype,
+			status: I.SyncStatusSpace.Offline,
+			p2p: I.P2PStatus.NotConnected,
+			syncingCounter: 0,
+			devicesCounter: 0
+		};
+	};
+
 	clearAll () {
 		this.accountItem = null;
 
 		this.accountListClear();
 		this.membershipSet({ tier: I.TierType.None, status: I.MembershipStatus.Unknown });
+		this.syncStatusMap.clear();
 	};
 
 	logout (mainWindow: boolean, removeData: boolean) {

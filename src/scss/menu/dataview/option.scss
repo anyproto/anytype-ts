@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewOptionList { width: 288px; }
+	.menu.menuDataviewOptionList { width: var(--menu-width-value);; }
 	.menu.menuDataviewOptionList {
 		.content { overflow: visible; transition: none; padding: 0px; max-height: unset; }
 		.content {
@@ -13,26 +13,50 @@
 			.items { height: calc(100% - 38px); }
 		}
 
-		.item { padding-top: 5px; padding-bottom: 5px; }
+		.item { display: flex; align-items: center; padding-right: 10px; gap: 0px 4px; }
 		.item {
-			.clickable { width: calc(100% - 20px); }
-			.buttons { display: none; position: absolute; right: 6px; top: 2px; }
+			.buttons { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-shrink: 0; }
+			.buttons {
+				.icon.more { display: none; }
+			}
 		}
-		.item:hover, .item.hover {
+		.item.withCheckbox {
 			.clickable { width: calc(100% - 24px); }
-			.buttons { display: block; }
-			.icon.chk { right: 32px; }
+		}
+
+		.item:hover, .item.hover {
+			.clickable { width: calc(100% - 28px); }
+			.buttons {
+				.icon.more { display: block; }
+			}
 		}
 		.item.withCheckbox:hover, .item.withCheckbox.hover {
-			.clickable { width: calc(100% - 44px); }
+			.clickable { width: calc(100% - 50px); }
 		}
 
 		.item.add {
-			.name { @include text-overflow-nw; width: calc(100% - 24px); }
+			.name { @include text-overflow-nw; }
 		}
 	}
 
-	.menu.menuDataviewOptionEdit { width: 252px; }
+	.menu.menuDataviewOptionList.fromFilter {
+		.item {
+			.icon.more { display: none; }
+		}
+	}
+
+	.menu.menuDataviewOptionList.fromFeatured {
+		.filter { padding-top: 8px; }
+		.item {
+			.buttons,
+			.icon.chk { right: 14px; }
+		}
+		.item:hover, .item.hover {
+			.icon.chk { right: 40px; }
+		}
+	}
+
+	.menu.menuDataviewOptionEdit { width: var(--menu-width-icon); }
 	.menu.menuDataviewOptionEdit {
 		.content { padding-top: 12px; overflow: visible; max-height: unset; }
 		.filter { margin-bottom: 8px; }
@@ -70,20 +94,4 @@
 		.section.colorPicker:after { margin: 16px 0px 0px 0px; }
 	}
 
-	.menu.menuDataviewOptionList.fromFilter {
-		.item {
-			.icon.more { display: none; }
-		}
-	}
-
-	.menu.menuDataviewOptionList.fromFeatured {
-		.filter { padding-top: 8px; }
-		.item {
-			.buttons,
-			.icon.chk { right: 14px; }
-		}
-		.item:hover, .item.hover {
-			.icon.chk { right: 40px; }
-		}
-	}
 }

@@ -86,9 +86,11 @@ import ObjectCover from './util/object/cover';
 import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
 import MediaPdf from './util/media/pdf';
+import MediaMermaid from './util/media/mermaid';
 
 import ProgressBar from './util/progressBar';
 import Share from './util/share';
+import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
 export {
 	Page,
@@ -174,7 +176,9 @@ export {
 	MediaAudio,
 	MediaVideo,
 	MediaPdf,
+	MediaMermaid,
 
 	ProgressBar,
-	Share
+	Share,
+	FooterAuthDisclaimer
 };

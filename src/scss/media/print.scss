@@ -20,7 +20,9 @@ html.printMedia {
 	.sidebarDummy,
 	.progress,
 	.toast,
-	.focusable.isFocused::before
+	.focusable.isFocused::before,
+	#vault,
+	#sidebarToggle
 	{ display: none !important; }
 
 	#page.isFull { width: 100% !important; }

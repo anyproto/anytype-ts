@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation, Storage } from 'Lib';
 
 class UtilMenu {
 
@@ -181,8 +181,7 @@ class UtilMenu {
 	getActions (param: any) {
 		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject } = param;
 		const cmd = keyboard.cmdSymbol();
-
-		let items: any[] = [
+		const items: any[] = [
 			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate'), caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
@@ -292,7 +291,7 @@ class UtilMenu {
 	};
 
 	turnLayouts () {
-		const allowed = [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Note ];
+		const allowed = U.Object.getPageLayouts();
 		return this.getLayouts().filter(it => allowed.includes(it.id));
 	};
 
@@ -379,20 +378,20 @@ class UtilMenu {
 	};
 
 	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout) {
-		const isCollection = this.isWidgetCollection(id);
+		const isSystem = this.isSystemWidget(id);
 		
 		let options = [
 			I.WidgetLayout.Compact,
 			I.WidgetLayout.List,
 			I.WidgetLayout.Tree,
 		];
-		if (!isCollection) {
+		if (!isSystem) {
 			options.push(I.WidgetLayout.Link);
 		};
 
 		if (id) {
-			if (!isCollection) {
-				const isSet = U.Object.isSetLayout(layout);
+			if (!isSystem) {
+				const isSet = U.Object.isInSetLayouts(layout);
 				const setLayouts = U.Object.getSetLayouts();
 				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
 
@@ -401,9 +400,10 @@ class UtilMenu {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				};
 				if (!isSet) {
-					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it) );
+					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it));
 				} else {
-					options = [ I.WidgetLayout.View, I.WidgetLayout.Link ];
+					options = options.filter(it => it != I.WidgetLayout.Tree);
+					options.unshift(I.WidgetLayout.View);
 				};
 			};
 
@@ -421,7 +421,7 @@ class UtilMenu {
 		}));
 	};
 
-	isWidgetCollection (id: string) {
+	isSystemWidget (id: string) {
 		return id && Object.values(J.Constant.widgetId).includes(id);
 	};
 
@@ -699,7 +699,6 @@ class UtilMenu {
 
 		if (space.isAccountRemoving) {
 			options = options.concat([
-				{ id: 'export', name: translate('popupSettingsSpaceIndexExport') },
 				{ id: 'remove', color: 'red', name: translate('commonDelete') },
 			]);
 		} else 
@@ -797,6 +796,40 @@ class UtilMenu {
 				},
 			}
 		});
+	};
+
+	getVaultItems () {
+		const ids = Storage.get('spaceOrder') || [];
+		const items = U.Common.objectCopy(U.Space.getList());
+
+		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
+
+		if (U.Space.canCreateSpace()) {
+			items.push({ id: 'add', name: translate('commonCreateNew'), isButton: true });
+		};
+
+		if (ids && (ids.length > 0)) {
+			items.sort((c1, c2) => {
+				const i1 = ids.indexOf(c1.id);
+				const i2 = ids.indexOf(c2.id);
+
+				if (i1 > i2) return 1;
+				if (i1 < i2) return -1;
+				return 0;
+			});
+		};
+
+		return items;
+	};
+
+	getFixedWidgets () {
+		return [
+			{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
+			{ id: J.Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: ':mag:' },
+			{ id: J.Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: ':card_index_dividers:' },
+			{ id: J.Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: ':memo:' },
+			{ id: J.Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: ':date:', caption: translate('menuWidgetRecentOpenCaption') },
+		];
 	};
 
 };

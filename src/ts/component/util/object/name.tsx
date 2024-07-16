@@ -24,13 +24,13 @@ class Name extends React.Component<Props> {
 		let name = String(object.name || '');
 
 		if (!isDeleted) {
-			if (layout == I.ObjectLayout.Note) {
+			if (U.Object.isNoteLayout(layout)) {
 				name = snippet || <span className="empty">{translate('commonEmpty')}</span>;
 			} else {
 				name = U.Object.name(object);
 			};
 		};
-		
+
 		return (
 			<div 
 				className={className} 

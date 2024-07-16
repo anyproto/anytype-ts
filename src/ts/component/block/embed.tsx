@@ -1,11 +1,12 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
 import { instance as viz } from '@viz-js/viz';
 import { observer } from 'mobx-react';
-import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
+import { Icon, Label, Editable, Dimmer, Select, Error, MediaMermaid } from 'Component';
 import { I, C, S, U, J, keyboard, focus, Renderer, translate } from 'Lib';
 
 const katex = require('katex');
@@ -134,9 +135,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				<div id="valueWrap" className="valueWrap resizable" style={css}>
 					{select ? <div className="selectWrap">{select}</div> : ''}
 
-					<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={this.onPreview} />
+					<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={this.onPreview}>
+						<Label text={translate('blockEmbedOffline')} />
+					</div>
 					<div id="value" onMouseDown={this.onEdit} />
-					<div id={this.getContainerId()} />
 
 					{empty ? <Label text={empty} className="label empty" onMouseDown={this.onEdit} /> : ''}					
 					{source}
@@ -178,8 +180,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
-
-		$(`#d${this.getContainerId()}`).remove();
 
 		window.clearTimeout(this.timeoutChange);
 		window.clearTimeout(this.timeoutScroll);
@@ -280,10 +280,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				this.setShowing(true);
 			};
 		}, 50);
-	};
-
-	getContainerId () {
-		return [ 'block', this.props.block.id, 'container' ].join('-');
 	};
 
 	setEditing (isEditing: boolean) {
@@ -731,11 +727,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					});
 				} catch (e) {
 					if (e instanceof katex.ParseError) {
-						const replace = (s: string) => {
-							return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-						};
-
-						html = `<div class="error">Error in LaTeX '${replace(text)}': ${replace(e.message)}</div>`;
+						html = `<div class="error">Error in LaTeX '${U.Common.htmlSpecialChars(text)}': ${U.Common.htmlSpecialChars(e.message)}</div>`;
 					} else {
 						console.error(e);
 					};
@@ -757,31 +749,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				const theme = (J.Theme[S.Common.getThemeClass()] || {}).mermaid;
-
-				if (theme) {
-					for (const k in theme) {
-						if (!theme[k]) {
-							delete(theme[k]);
-						};
-					};
-
-					mermaid.initialize({ theme: 'base', themeVariables: theme });
-				};
-
-				mermaid.render(this.getContainerId(), this.text).then(res => {
-					value.html(res.svg || this.text);
-
-					if (res.bindFunctions) {
-						res.bindFunctions(value.get(0));
-					};
-				}).catch(e => {
-					const error = $(`#d${this.getContainerId()}`).hide();
-
-					if (error.length) {
-						value.html(error.html());
-					};
-				});
+				ReactDOM.render(<MediaMermaid chart={this.text} />, value.get(0));
 				break;
 			};
 

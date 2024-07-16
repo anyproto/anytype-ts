@@ -167,6 +167,7 @@
 	"pluralReader": "reader|readers",
 	"pluralWriter": "writers|writers",
 	"pluralYear": "year|years",
+	"pluralDevice": "device|devices",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -598,6 +599,7 @@
 	"blockEmbedLatexEmpty": "Here your equation will be rendered with <span class='icon tex'></span>. Click to edit",
 	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
+	"blockEmbedOffline": "You are not connected to the Internet",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 
@@ -938,6 +940,7 @@
 	"popupMembershipWriteToAnyteam": "Write to Anyteam",
 	"popupMembershipManageOnMobilePlatform": "Manage available on Mobile platform",
 	"popupMembershipPaidOnOtherPlatform": "You've already acquired Membership plan on another platform, please cancel Membership first.",
+	"popupMembershipPaidByCrypto": "To upgrade your membership using cryptocurrency, please contact Anytype.",
 
 	"popupMembershipWhatsIncluded": "What’s included",
 
@@ -1068,7 +1071,8 @@
 	"popupExportFormat": "Export format",
 	"popupExportOk": "Export",
 
-	"popupHelpOlderReleases": "Older releases",
+	"popupHelpPrevious": "Previous",
+	"popupHelpNext": "Next",
 
 	"popupIndexComponentNotFound": "Component %s not found",
 
@@ -1514,6 +1518,8 @@
 
 	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
 	"menuSyncStatusP2PNoDevicesConnected": "No devices connected",
+	"menuSyncStatusP2PDevicesConnected": "%s %s connected",
+	"menuSyncStatusP2PRestricted": "Restricted. Check device settings.",
 
 	"menuSyncStatusInfoNetworkTitle": "Anytype network",
 	"menuSyncStatusInfoNetworkMessageSynced": "End-to-end encrypted",
@@ -1523,9 +1529,9 @@
 	"menuSyncStatusInfoNetworkMessageError2": "Incompatible version",
 	"menuSyncStatusInfoNetworkMessageError3": "No access to the space",
 	"menuSyncStatusInfoNetworkMessageErrorUpdateApp": "Update the app",
-	"menuSyncStatusInfoNetworkMessageErrorSeeMembership": "See membership plans",
+	"menuSyncStatusInfoNetworkMessageErrorAddMoreStorage": "Add more storage",
 
-	"menuSyncStatusInfoNetworkMessageOffline": "No internet connection",
+	"menuSyncStatusInfoNetworkMessageOffline": "No connection",
 
 	"menuSyncStatusInfoSelfTitle": "Self Host",
 	"menuSyncStatusInfoSelfMessageSynced": "Synced",
@@ -1675,15 +1681,15 @@
 	"survey5Cancel": "No thanks",
 
 	"widget0Name": "Link",
-	"widget0Description": "Compact version of the Object",
+	"widget0Description": "Compact widget view",
 	"widget1Name": "Tree",
-	"widget1Description": "Hierarchical structure of Objects",
+	"widget1Description": "Widget with a hierarchical structure",
 	"widget2Name": "List",
-	"widget2Description": "Widget with a list view of Set Object",
+	"widget2Description": "Widget with a list view",
 	"widget3Name": "Compact list",
-	"widget3Description": "Widget with a list view of Set Object",
+	"widget3Description": "Widget with a compact list view",
 	"widget4Name": "View",
-	"widget4Description": "Widget with a view of the Set Object",
+	"widget4Description": "Widget with a Set or Collection layout",
 
 	"widgetFavorite": "Favorites",
 	"widgetRecent": "Recently edited",

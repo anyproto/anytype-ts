@@ -1,13 +1,7 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
-import { I, C, S, U, J, translate, focus, Action, Renderer, keyboard } from 'Lib';
+import { I, C, S, U, J, translate, focus, Action, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
-import { pdfjs } from 'react-pdf';
-
-import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
-import 'react-pdf/dist/cjs/Page/TextLayer.css';
-
-pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
 interface State {
 	pages: number;
@@ -28,7 +22,6 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	constructor (props: I.BlockComponent) {
 		super(props);
 		
-		this.onOpen = this.onOpen.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
@@ -36,7 +29,8 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onDocumentLoad = this.onDocumentLoad.bind(this);
 		this.onPageRender = this.onPageRender.bind(this);
-		this.onClick = this.onClick.bind(this);
+		this.onOpenFile = this.onOpenFile.bind(this);
+		this.onOpenObject = this.onOpenObject.bind(this);
 	};
 
 	render () {
@@ -109,7 +103,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 
 					element = (
 						<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
-							<div className="info" onMouseDown={this.onOpen}>
+							<div className="info" onMouseDown={this.onOpenObject}>
 								<ObjectName object={object} />
 								<span className="size">{U.File.size(object.sizeInBytes)}</span>
 							</div>
@@ -121,7 +115,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 								page={page}
 								onDocumentLoad={this.onDocumentLoad}
 								onPageRender={this.onPageRender}
-								onClick={this.onClick}
+								onClick={this.onOpenFile}
 							/>
 
 							{pager}
@@ -222,14 +216,6 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		Action.upload(I.FileType.Pdf, rootId, id, '', path);
 	};
 
-	onOpen (e: any) {
-		C.FileDownload(this.props.block.getTargetObjectId(), U.Common.getElectron().tmpPath, (message: any) => {
-			if (message.path) {
-				Renderer.send('pathOpen', message.path);
-			};
-		});
-	};
-
 	onDocumentLoad (result: any) {
 		this.setState({ pages: result.numPages });
 	};
@@ -241,7 +227,11 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		this.height = wrap.outerHeight();
 	};
 
-	onClick (e: any) {
+	onOpenFile () {
+		Action.openFile(this.props.block.getTargetObjectId());
+	};
+
+	onOpenObject (e: any) {
 		if (!keyboard.withCommand(e)) {
 			U.Object.openConfig({ id: this.props.block.getTargetObjectId(), layout: I.ObjectLayout.Pdf });
 		};

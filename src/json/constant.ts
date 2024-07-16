@@ -38,7 +38,7 @@ export default {
 
 	default: {
 		interfaceLang:	 'en-US',
-		codeLang:		 'javascript',
+		codeLang:		 'plain',
 		typeKey:		 'ot-note',
 		pinTime:		 600,
 	},
@@ -83,7 +83,6 @@ export default {
 		store:			 'store',
 		archive:		 'archive',
 		sidebar:		 'sidebar',
-		graph:			 'graph',
 		space:			 'space',
 		files:			 'files',
 		participant:	 'participant',

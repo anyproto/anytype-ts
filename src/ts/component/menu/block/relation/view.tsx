@@ -102,23 +102,23 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						<Section key={i} {...item} index={i} />
 					))}
 				</div>
-				{!readonly && allowedRelation ? <ItemAdd /> : ''}
+				{!readonly && allowedRelation ? (
+					<div className="bottom">
+						<ItemAdd /> 
+					</div>
+				) : ''}
 			</div>
 		);
 	};
 
 	componentDidMount () {
-		const node = $(this.node);
-		const scrollWrap = node.find('#scrollWrap');
-
-		this.resize();
+		this.beforePosition();
+		this.rebind();
 		this.selectionPrevent(true);
-
-		scrollWrap.off('scroll').on('scroll', () => this.onScroll());
 	};
 
 	componentDidUpdate () {
-		this.resize();
+		this.beforePosition();
 
 		const id = S.Common.cellId;		
 		if (id) {
@@ -133,6 +133,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 	componentWillUnmount () {
 		this.selectionPrevent(false);
+		this.unbind();
 	};
 
 	selectionPrevent (v: boolean) {
@@ -141,6 +142,18 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 	onScroll () {
 		S.Menu.resizeAll();
+	};
+
+	rebind () {
+		const node = $(this.node);
+
+		this.unbind();
+		node.find('#scrollWrap').on('scroll', () => this.onScroll());
+	};
+
+	unbind () {
+		const node = $(this.node);
+		node.find('#scrollWrap').off('scroll');
 	};
 
 	getSections () {
@@ -217,11 +230,12 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const object = S.Detail.get(rootId, rootId, [ 'featuredRelations' ], true);
 		const featured = U.Common.objectCopy(object.featuredRelations || []);
 		const idx = featured.findIndex(it => it == relationKey);
+		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (idx < 0) {
 			const item = items.find(it => it.relationKey == relationKey);
 			const cb = () => {
-				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation', { relationKey }));
+				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => analytics.event('FeatureRelation', { relationKey, format: relation.format }));
 			};
 
 			if (item.scope == I.RelationScope.Type) {
@@ -230,7 +244,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				cb();
 			};
 		} else {
-			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation', { relationKey }));
+			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => analytics.event('UnfeatureRelation', { relationKey, format: relation.format }));
 		};
 	};
 
@@ -320,7 +334,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
-		if (JSON.stringify(object[relationKey]) !== JSON.stringify(value)) {
+		if ((undefined !== object[relationKey]) && !U.Common.compareJSON(object[relationKey], value)) {
 			analytics.changeRelationValue(relation, value, 'menu');
 		};
 	};
@@ -354,7 +368,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		return Boolean(readonly || root.isLocked() || !allowedValue);
 	};
 
-	resize () {
+	beforePosition () {
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
@@ -368,8 +382,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			height: container.height() - J.Size.header - maxOffset,
 			width: Math.max(min, container.width() / 2 - offset),
 		});
-
-		position();
 	};
 
 	getDiffKeys (): string[] {

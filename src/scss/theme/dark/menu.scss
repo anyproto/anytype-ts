@@ -245,4 +245,21 @@
 
 	.menuQuickCapture { background: none; box-shadow: none; }
 	.menuQuickCapture.isExpanded { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+
+    /* SyncStatus */
+
+    .menuSyncStatus {
+        .icons {
+            .iconWrapper.connected::before { background: #294b0e; }
+            .iconWrapper.error::before { background: #581f0c; }
+        }
+
+		.items {
+            .sides {
+                .side.right {
+					.icon.more:hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
+                }
+            }
+		}
+    }
 }

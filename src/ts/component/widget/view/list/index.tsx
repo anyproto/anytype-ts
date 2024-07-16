@@ -272,7 +272,8 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 	};
 
 	isCompact () {
-		return [ I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(this.props.parent.content.layout);
+		const { parent } = this.props;
+		return [ I.WidgetLayout.Compact, I.WidgetLayout.View ].includes(parent.content.layout);
 	};
 
 });

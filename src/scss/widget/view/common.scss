@@ -7,8 +7,6 @@
 	.contentWrapper { flex-grow: 1; min-height: 8px; }
 	.head { padding-bottom: 4px; }
 
-	.emptyWrap { padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px 0px; }
-
 	#viewSelect { padding: 0px 16px; }
 	#viewSelect:empty { display: none; }
 	#viewSelect {
@@ -24,8 +22,8 @@
 }
 
 .widget.widgetView.isPreview {
-	.body.isCompact {
-		.item {
+	.body {
+		.item.canDrag {
 			.inner { padding-left: 0px !important; padding-right: 8px !important; width: calc(100% - 20px); }
 		}
 	}
