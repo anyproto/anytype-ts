@@ -10,6 +10,7 @@ interface Props extends I.Block, I.BlockComponent {
 	data: any;
 	isThread: boolean;
 	onThread: (id: string) => void;
+	onContextMenu: (e: any) => void;
 	renderMention: (object: any) => any;
 	isLast?: boolean;
 };
@@ -33,7 +34,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, id, data, isThread, onThread, isLast } = this.props;
+		const { rootId, block, id, data, isThread, onThread, isLast, onContextMenu } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const length = this.getChildren().length;
@@ -95,6 +96,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 				ref={ref => this.node = ref} 
 				id={`item-${id}`} 
 				className={cn.join(' ')}
+				onContextMenu={onContextMenu}
 			>
 				<div className="side left">
 					<IconObject object={author} size={48} />

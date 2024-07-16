@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Label, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, Mark, translate, Storage } from 'Lib';
+import { I, C, S, U, J, keyboard, Mark, translate, Storage, Action } from 'Lib';
 
 import Buttons from './chat/buttons';
 import Message from './chat/message';
@@ -32,6 +32,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	messagesMap: any = {};
 	lastMessageId: string = '';
 	lastMessageOffset: number = 0;
+	editingId: string = '';
 	state = {
 		threadId: '',
 		attachments: [],
@@ -58,6 +59,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.onContextMenu = this.onContextMenu.bind(this);
+		this.onEditMessage = this.onEditMessage.bind(this);
 	};
 
 	render () {
@@ -84,6 +87,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					{...item}
 					isThread={!!threadId}
 					onThread={this.onThread}
+					onContextMenu={e => this.onContextMenu(e, item)}
 					isLast={item.id == this.lastMessageId}
 				/>
 			);
@@ -268,6 +272,39 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.updateButtons();
 	};
 
+	onContextMenu (e: React.MouseEvent, item: any) {
+		const { rootId } = this.props;
+		const { account } = S.Auth;
+		const blockId = this.getBlockId();
+		const isSelf = item.data.identity == account.id;
+
+		if (isSelf) {
+			S.Menu.open('select', {
+				element: `#block-${blockId} #item-${item.id} .right`,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				data: {
+					options: [
+						{ id: 'edit', name: translate('commonEdit') },
+						{ id: 'delete', name: translate('commonDelete'), color: 'red' }
+					],
+					onSelect: (e, option) => {
+						switch (option.id) {
+							case 'edit': {
+								this.onEditMessage(item);
+								break;
+							};
+							case 'delete': {
+								// message delete logic goes here
+								break;
+							};
+						};
+					}
+				}
+			});
+		};
+	};
+
 	onFocusInput () {
 		keyboard.disableSelection(true);
 		this.refEditable?.placeholderCheck();
@@ -378,6 +415,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 			e.preventDefault();
 			this.onChatButton(e, I.ChatButton.Mention);
+		});
+
+		keyboard.shortcut('escape', e, () => {
+			if (this.editingId) {
+				this.editingId = '';
+				this.marks = [];
+				this.range = { from: 0, to: 0 };
+
+				this.refEditable.setValue('');
+				this.refEditable.placeholderCheck();
+			};
 		});
 
 		// Mark-up
@@ -507,7 +555,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			time: U.Date.now(),
 			attachments: attachments.map(it => it.id),
 			reactions: [],
-			seen: true
+			isEdited: false
 		};
 		
 		const create = () => {
@@ -528,6 +576,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			});
 		};
 
+		if (this.editingId) {
+			data.isEdited = true;
+
+			const { marks } = this.getMarksFromHtml();
+			const text = JSON.stringify(data);
+
+			C.BlockTextSetText(rootId, this.editingId, text, marks, this.range, (message) => {
+				S.Block.updateContent(rootId, this.editingId, { text, marks });
+				this.editingId = '';
+			});
+		} else
 		if (files.length) {
 			let n = 0;
 
@@ -555,6 +614,22 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.refEditable.placeholderCheck();
 
 		this.setState({ attachments: [] });
+	};
+
+	onEditMessage = (message) => {
+		const { text, marks } = message.data;
+		const to = text.length;
+
+		this.marks = [];
+		this.range = { from: to, to };
+
+		marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
+
+		this.editingId = message.id;
+		this.refEditable.setValue(Mark.toHtml(text, this.marks));
+		window.setTimeout(() => {
+			this.refEditable.setRange(this.range);
+		}, 10);
 	};
 
 	onScroll (e: any) {
