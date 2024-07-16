@@ -59,7 +59,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 				return false;
 			};
 
-			if (!recommended.includes(it.id)) {
+			if (!recommended.includes(it.id) || (it.relationKey == 'description')) {
 				return false;
 			};
 
