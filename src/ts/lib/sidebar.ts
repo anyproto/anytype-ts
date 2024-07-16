@@ -88,9 +88,9 @@ class Sidebar {
 		};
 		
 		const { width } = this.data;
-		const body = this.obj.find('#sidebarBody');
 
-		body.css({ width });
+		this.obj.find('#sidebarHead').css({ width });
+		this.obj.find('#sidebarBody').css({ width });
 		this.data.isClosed ? this.open(width) : this.close();
 	};
 
@@ -109,6 +109,7 @@ class Sidebar {
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			this.obj.removeClass('anim');
+			this.obj.find('#sidebarHead').css({ width: '' });
 			this.obj.find('#sidebarBody').css({ width: '' });
 			this.setAnimating(false);
 
