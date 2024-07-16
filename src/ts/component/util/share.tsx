@@ -59,4 +59,4 @@ const Share = observer(class Share extends React.Component<Props, {}> {
 
 });
 
-export default Share
+export default Share;

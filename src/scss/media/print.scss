@@ -21,7 +21,8 @@ html.printMedia {
 	.progress,
 	.toast,
 	.focusable.isFocused::before,
-	#vault
+	#vault,
+	#sidebarToggle
 	{ display: none !important; }
 
 	#page.isFull { width: 100% !important; }

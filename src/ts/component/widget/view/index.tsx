@@ -36,7 +36,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 
 	render (): React.ReactNode {
 		const { parent, block, isSystemTarget, onCreate } = this.props;
-		const { viewId, limit } = parent.content;
+		const { viewId, limit, layout } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
 		const rootId = this.getRootId();
@@ -64,8 +64,6 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		let content = null;
 		let viewSelect = null;
 
-		cn.push(`view${I.ViewType[viewType]}`);
-
 		if (!isSystemTarget() && (views.length > 1)) {
 			viewSelect = (
 				<Select 
@@ -92,26 +90,32 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 				</div>
 			);
 		} else {
-			switch (viewType) {
-				default: {
-					content = <WidgetViewList {...props} />;
-					break;
-				};
+			if (layout == I.WidgetLayout.View) {
+				cn.push(`view${I.ViewType[viewType]}`);
+				switch (viewType) {
+					default: {
+						content = <WidgetViewList {...props} />;
+						break;
+					};
 
-				case I.ViewType.Gallery: {
-					content = <WidgetViewGallery {...props} />;
-					break;
-				};
+					case I.ViewType.Gallery: {
+						content = <WidgetViewGallery {...props} />;
+						break;
+					};
 
-				case I.ViewType.Board: {
-					content = <WidgetViewBoard {...props} />;
-					break;
-				};
+					case I.ViewType.Board: {
+						content = <WidgetViewBoard {...props} />;
+						break;
+					};
 
-				case I.ViewType.Calendar: {
-					content = <WidgetViewCalendar {...props} />;
-					break;
+					case I.ViewType.Calendar: {
+						content = <WidgetViewCalendar {...props} />;
+						break;
+					};
 				};
+			} else {
+				cn.push('viewList');
+				content = <WidgetViewList {...props} />;
 			};
 		};
 
@@ -128,7 +132,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	componentDidMount (): void {
-		const { block, isSystemTarget, getData } = this.props;
+		const { block, isSystemTarget, getData, getTraceId } = this.props;
 		const { targetBlockId } = block.content;
 
 		if (isSystemTarget()) {
@@ -136,7 +140,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		} else {
 			this.setState({ isLoading: true });
 
-			C.ObjectShow(targetBlockId, this.getTraceId(), U.Router.getRouteSpaceId(), () => {
+			C.ObjectShow(targetBlockId, getTraceId(), U.Router.getRouteSpaceId(), () => {
 				this.setState({ isLoading: false });
 
 				const view = this.getView();
@@ -163,16 +167,21 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 
 	updateData () {
 		const { block, isSystemTarget, getData } = this.props;
-		const { targetBlockId } = block.content;
+		const targetId = block.getTargetObjectId();
 		const rootId = this.getRootId();
-		const srcBlock = S.Block.getLeaf(targetBlockId, J.Constant.blockId.dataview);
+		const srcObject = S.Detail.get(targetId, targetId);
+		const srcBlock = S.Block.getLeaf(targetId, J.Constant.blockId.dataview);
 
-		// Update block in widget with source block if object is open
+		// Update block and details in widget with source block if object is open
 		if (srcBlock) {
 			let dstBlock = S.Block.getLeaf(rootId, J.Constant.blockId.dataview);
 
 			if (dstBlock) {
 				dstBlock = Object.assign(dstBlock, srcBlock);
+			};
+
+			if (!srcObject._empty_) {
+				S.Detail.update(rootId, { id: srcObject.id, details: srcObject }, false);
 			};
 		};
 
@@ -208,10 +217,6 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		return S.Record.getSubId(this.getRootId(), J.Constant.blockId.dataview);
 	};
 
-	getTraceId = (): string => {
-		return [ 'widget', this.props.block.id ].join('-');
-	};
-
 	getRootId = (): string => {
 		const { block } = this.props;
 		const { targetBlockId } = block.content;
@@ -220,17 +225,22 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	load (viewId: string) {
+		const subId = this.getSubId();
+
 		if (this.refChild && this.refChild.load) {
 			this.refChild.load();
 			S.Record.metaSet(this.getSubId(), '', { viewId });
 			return;
 		};
 
+		const rootId = this.getRootId();
+		const blockId = J.Constant.blockId.dataview;
 		const object = this.getObject();
 		const setOf = Relation.getArrayValue(object.setOf);
-		const isCollection = this.isCollection();
+		const isCollection = U.Object.isCollectionLayout(object.layout);
 
 		if (!setOf.length && !isCollection) {
+			S.Record.recordsSet(subId, '', []);
 			return;
 		};
 
@@ -241,14 +251,14 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 		};
 
 		Dataview.getData({
-			rootId: this.getRootId(),
-			blockId: J.Constant.blockId.dataview,
+			rootId,
+			blockId,
 			newViewId: viewId,
 			sources: setOf,
 			limit,
 			filters: this.getFilters(),
 			collectionId: (isCollection ? object.id : ''),
-			keys: J.Relation.sidebar.concat(view.groupRelationKey).concat(J.Relation.cover),
+			keys: J.Relation.sidebar.concat([ view.groupRelationKey, view.coverRelationKey ]).concat(J.Relation.cover),
 		});
 	};
 
@@ -320,7 +330,7 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	isAllowedObject () {
 		const rootId = this.getRootId();
 		const object = this.getObject();
-		const isCollection = object.layout == I.ObjectLayout.Collection;
+		const isCollection = U.Object.isCollectionLayout(object.layout);
 
 		let isAllowed = S.Block.checkFlags(rootId, J.Constant.blockId.dataview, [ I.RestrictionDataview.Object ]);
 		if (!isAllowed) {
@@ -350,21 +360,23 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 	};
 
 	getSources (): string[] {
-		if (this.isCollection()) {
+		const object = this.getObject();
+
+		if (U.Object.isCollectionLayout(object.layout)) {
 			return [];
 		};
 
 		const rootId = this.getRootId();
-		const object = this.getObject();
 		const types = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Type).map(it => it.id);
 		const relations = Relation.getSetOfObjects(rootId, object.id, I.ObjectLayout.Relation).map(it => it.id);
 
 		return [].concat(types).concat(relations);
 	};
 
-	isCollection () {
-		const object = this.getObject();
-		return object.layout == I.ObjectLayout.Collection;
+	onOpen () {
+		if (this.refChild && this.refChild.onOpen) {
+			this.refChild.onOpen();
+		};
 	};
 
 });

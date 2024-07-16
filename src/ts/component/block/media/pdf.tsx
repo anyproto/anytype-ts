@@ -1,13 +1,7 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
-import { I, C, S, U, J, translate, focus, Action, Renderer, keyboard } from 'Lib';
+import { I, C, S, U, J, translate, focus, Action, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
-import { pdfjs } from 'react-pdf';
-
-import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
-import 'react-pdf/dist/cjs/Page/TextLayer.css';
-
-pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
 interface State {
 	pages: number;

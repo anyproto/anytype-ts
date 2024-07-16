@@ -5,7 +5,7 @@
 }
 
 .menus {
-    .menu.menuSyncStatus { width: 408px; height: 396px; }
+    .menu.menuSyncStatus { width: var(--menu-width-large); height: var(--menu-width-large); }
     .menu.menuSyncStatus {
         .content { padding: 0px; height: 100%; max-height: unset; }
         .syncMenuWrapper { padding: 16px 0px 0px 0px; height: 100%; display: flex; flex-direction: column; }
@@ -13,7 +13,7 @@
 
         .title { @include text-paragraph; font-weight: 600; padding: 0; color: var(--color-text-primary); }
 
-        .icons { display: flex; gap: 0px 8px; }
+        .icons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
         .icons {
             .iconWrapper { display: flex; position: relative; align-items: center; justify-content: center; width: 28px; height: 28px; }
             .iconWrapper::before { content: ''; width: 100%; height: 100%; position: absolute; z-index: 0; border-radius: 50%; background: var(--color-shape-tertiary); }
@@ -42,9 +42,9 @@
 
         .items { height: 100%; padding: 0px; }
         .items {
-            .sides { display: flex; justify-content: space-between; align-items: center; }
+            .sides { display: flex; align-items: center; gap: 0px 4px; }
             .sides {
-                .side.left { display: flex; align-items: center; }
+                .side.left { display: flex; align-items: center; flex-grow: 1; width: calc(100% - 24px); }
                 .side.right { width: 20px; flex-shrink: 0; display: flex; align-items: center; }
                 .side.right {
                     .icon { width: 20px; height: 20px; }
@@ -58,20 +58,19 @@
             }
 
             .sectionName { padding: 4px 16px; }
+
             .item { padding: 3px 8px; margin: 0px 8px; width: unset; line-height: 22px; border-radius: 6px; }
             .item {
-                .info { display: flex; align-items: baseline; }
+                .info { display: flex; align-items: baseline; width: calc(100% - 24px); }
                 .info {
                     .iconObject { margin-right: 8px; }
-                    .name { margin: 0px 6px 0px 0px; @include text-overflow-nw; max-width: 250px; }
+                    .name { margin: 0px 6px 0px 0px; @include text-overflow-nw; }
                     .size { color: var(--color-text-secondary); }
                 }
             }
 
-            .item:hover,
-            .item.selected { background: var(--color-shape-highlight-medium); }
-            .item:hover,
-            .item.selected {
+            .item:hover, .item.hover { background: var(--color-shape-highlight-medium); }
+            .item:hover, .item.hover {
                 .side.right {
                     .icon:not(.more) { display: none; }
                     .icon.more { opacity: 1; }

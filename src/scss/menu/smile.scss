@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuSmile { width: 404px; user-select: none; }
+	.menu.menuSmile { width: var(--menu-width-large); user-select: none; }
 	.menu.menuSmile {
 		.content { overflow: visible; padding-bottom: 0px; max-height: unset; height: 404px; }
 		.wrap { display: flex; flex-direction: column; height: 100%; }
@@ -140,6 +140,6 @@
 
 html.platformWindows, html.platformLinux {
 	.menus {
-		.menu.menuSmile { width: 401px; }
+		.ReactVirtualized__List { overflow-y: overlay !important; }
 	}
 }

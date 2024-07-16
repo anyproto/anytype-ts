@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject } from 'Component';
-import { I, U, S, keyboard, translate, analytics, Storage, sidebar, Preview } from 'Lib';
+import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview } from 'Lib';
 
 const Vault = observer(class Vault extends React.Component {
 	
@@ -11,12 +11,12 @@ const Vault = observer(class Vault extends React.Component {
 	isAnimating = false;
 	top = 0;
 	timeoutHover = 0;
-	id = '';
+	pressed = new Set();
+	n = -1;
 
 	constructor (props) {
 		super(props);
 
-		this.onToggle = this.onToggle.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
@@ -24,32 +24,19 @@ const Vault = observer(class Vault extends React.Component {
 
     render () {
 		const items = U.Menu.getVaultItems();
-		const { spaceview } = S.Block;
 
 		const Item = SortableElement(item => {
-			const cn = [ 'item' ];
-
-			if (item.id == spaceview) {
-				cn.push('isActive');
-			};
-
-			let descr = null;
-			if (item.isPersonal) {
-				descr = translate(`spaceAccessType${item.spaceAccessType}`);
-			};
-
 			return (
 				<div 
 					id={`item-${item.id}`}
-					className={cn.join(' ')}
+					className="item"
 					onClick={e => this.onClick(e, item)}
 					onMouseEnter={e => this.onMouseEnter(e, item)}
 					onMouseLeave={() => this.onMouseLeave()}
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
 					<div className="iconWrap">
-						<div className="border" />
-						<IconObject object={item} size={48} forceLetter={true} />
+						<IconObject object={item} size={56} forceLetter={true} />
 					</div>
 				</div>
 			);
@@ -58,14 +45,12 @@ const Vault = observer(class Vault extends React.Component {
 		const ItemIcon = item => (
 			<div 
 				id={`item-${item.id}`} 
-				className={`item ${item.id}`} 
+				className={`item isIcon ${item.id}`} 
 				onClick={e => this.onClick(e, item)}
 				onMouseEnter={e => this.onMouseEnter(e, item)}
 				onMouseLeave={() => this.onMouseLeave()}
 			>
-				<div className="iconWrap">
-					<div className="border" />
-				</div>
+				<div className="iconWrap" />
 			</div>
 		);
 
@@ -77,7 +62,7 @@ const Vault = observer(class Vault extends React.Component {
 					item.key = `item-space-${item.id}`;
 
 					let content = null;
-					if ([ 'void', 'gallery', 'add' ].includes(item.id)) {
+					if ([ 'gallery', 'add' ].includes(item.id)) {
 						content = <ItemIconSortable {...item} index={i} />;
 					} else {
 						content = <Item {...item} index={i} />;
@@ -122,10 +107,8 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	componentDidUpdate (): void {
-		const node = $(this.node);
-		const scroll = node.find('#scroll');
-
-		scroll.scrollTop(this.top);
+		$(this.node).find('#scroll').scrollTop(this.top);
+		this.setActive(S.Block.spaceview);
 	};
 
 	componentWillUnmount (): void {
@@ -134,12 +117,45 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	unbind () {
-		$(window).off('resize.vault');
+		const events = [ 'resize', 'keydown', 'keyup' ];
+		const ns = 'vault';
+
+		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
 	};
 
 	rebind () {
+		const win = $(window);
+
 		this.unbind();
-		$(window).on('resize.vault', () => this.resize());
+		win.on('resize.vault', () => this.resize());
+		win.on('keydown.vault', e => this.onKeyDown(e));
+		win.on('keyup.vault', e => this.onKeyUp(e));
+	};
+
+	getSpaceItems () {
+		return U.Menu.getVaultItems().filter(it => !it.isButton);
+	};
+
+	onKeyDown (e: any) {
+		this.pressed.add(e.key.toLowerCase());
+
+		keyboard.shortcut('ctrl+tab', e, () => {
+			this.onArrow(1);
+		});
+	};
+
+	onKeyUp (e: any) {
+		this.pressed.delete(e.key.toLowerCase());
+
+		if (!this.pressed.has(Key.ctrl) && !this.pressed.has(Key.tab)) {
+			const items = this.getSpaceItems();
+			const item = items[this.n];
+
+			if (item) {
+				U.Router.switchSpace(item.targetSpaceId, '', true);
+				this.n = -1;
+			};
+		};
 	};
 
 	onClick (e: any, item: any) {
@@ -148,10 +164,6 @@ const Vault = observer(class Vault extends React.Component {
 		switch (item.id) {
 			case 'add':
 				this.onAdd();
-				break;
-
-			case 'void':
-				this.onToggle();
 				break;
 
 			case 'gallery':
@@ -163,10 +175,34 @@ const Vault = observer(class Vault extends React.Component {
 				break;
 
 			default:
-				U.Router.switchSpace(item.targetSpaceId);
-				analytics.event('SwitchSpace');
+				U.Router.switchSpace(item.targetSpaceId, '', true);
 				break;
 		};
+	};
+
+	onArrow (dir: number) {
+		const { spaceview } = S.Block;
+		const items = this.getSpaceItems();
+		
+		this.n += dir;
+		if (this.n < 0) {
+			this.n = items.length - 1;
+		};
+		if (this.n >= items.length) {
+			this.n = 0;
+		};
+
+		const next = items[this.n];
+		if (!next) {
+			return;
+		};
+
+		if ((next.id == spaceview) && (this.n === 0)) {
+			this.onArrow(dir);
+			return;
+		};
+
+		this.setHover(next);
 	};
 
 	setActive (id: string) {
@@ -176,6 +212,39 @@ const Vault = observer(class Vault extends React.Component {
 		node.find(`#item-${id}`).addClass('isActive');
 	};
 
+	setHover (item: any) {
+		const node = $(this.node);
+		const scroll = node.find('#scroll');
+		const el = node.find(`#item-${item.id}`);
+		const top = el.position().top - scroll.position().top;
+		const height = scroll.height();
+		const ih = el.height() + 8;
+
+		node.find('.item.hover').removeClass('hover');
+		el.addClass('hover');
+
+		let s = -1;
+		if (top < 0) {
+			s = 0;
+		};
+		if (top + ih > height - this.top) {
+			s = this.top + height;
+		};
+		if (s >= 0) {
+			scroll.stop().animate({ scrollTop: s }, 200, 'swing');
+		};
+
+		Preview.tooltipShow({ 
+			text: item.name, 
+			element: el, 
+			className: 'fromVault', 
+			typeX: I.MenuDirection.Left,
+			typeY: I.MenuDirection.Center,
+			offsetX: 62,
+			delay: 1,
+		});
+	};
+
 	onAdd () {
 		S.Popup.open('settings', { 
 			className: 'isSpaceCreate',
@@ -183,8 +252,7 @@ const Vault = observer(class Vault extends React.Component {
 				page: 'spaceCreate', 
 				isSpace: true,
 				onCreate: (id) => {
-					U.Router.switchSpace(id, '', () => Storage.initPinnedTypes());
-					analytics.event('SwitchSpace');
+					U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
 				},
 			}, 
 		});
@@ -194,32 +262,10 @@ const Vault = observer(class Vault extends React.Component {
 		U.Menu.spaceContext(item, {
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			recalcRect: () => { 
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			},
+			element: `#vault #item-${item.id}`,
+			vertical: I.MenuDirection.Center,
 			route: analytics.route.navigation,
 		});
-	};
-
-	onToggle () {
-		if (this.isAnimating) {
-			return;
-		};
-
-		const { wh } = U.Common.getWindowDimensions();
-		const node = $(this.node);
-		const container = $('#vaultContentContainer');
-		const isExpanded = node.hasClass('isExpanded');
-
-		node.toggleClass('isExpanded');
-		container.toggleClass('isExpanded');
-		container.css({ height: !isExpanded ? wh : '' });
-
-		this.isAnimating = true;
-		sidebar.resizePage(null, false);
-
-		window.setTimeout(() => this.isAnimating = false, 300);
 	};
 
 	onSortStart () {
@@ -230,7 +276,7 @@ const Vault = observer(class Vault extends React.Component {
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
 
-		let ids = U.Menu.getVaultItems().map(it => it.id)
+		let ids = U.Menu.getVaultItems().map(it => it.id);
 		ids = arrayMove(ids, oldIndex, newIndex);
 		Storage.set('spaceOrder', ids, true);
 
@@ -253,12 +299,13 @@ const Vault = observer(class Vault extends React.Component {
 		};
 
 		Preview.tooltipShow({ 
-			title: item.name, 
+			text: item.name, 
 			element: $(e.currentTarget), 
-			className: 'big fromVault', 
+			className: 'fromVault', 
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
-			offsetX: 66,
+			offsetX: 62,
+			delay: 300,
 		});
 	};
 

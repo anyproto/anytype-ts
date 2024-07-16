@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Input, Button } from 'Component';
-import { I, C, S, U, J, translate, analytics } from 'Lib';
-import FooterAuthDisclaimer from '../../../footer/auth/disclaimer';
+import { Title, Label, Input, Button, FooterAuthDisclaimer } from 'Component';
+import { I, C, S, U, J, translate, analytics, Action } from 'Lib';
 
 interface State {
 	status: string;
@@ -46,12 +45,25 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 		let periodText = '';
 		let labelText = '';
-		let paidOnOtherPlatform = false;
+		let platformText = '';
+		let withContactButton = false;
 		let canEnterName = !name;
 
-		if ((membership.tier == I.TierType.Builder) && (paymentMethod != I.PaymentMethod.Stripe)) {
-			paidOnOtherPlatform = true;
-			canEnterName = false;
+		if (membership.tier == I.TierType.Builder) {
+			switch (paymentMethod) {
+				case I.PaymentMethod.Apple:
+				case I.PaymentMethod.Google: {
+					platformText = translate('popupMembershipPaidOnOtherPlatform');
+					canEnterName = false;
+					break;
+				};
+				case I.PaymentMethod.Crypto: {
+					platformText = translate('popupMembershipPaidByCrypto');
+					withContactButton = true;
+					canEnterName = false;
+					break;
+				};
+			};
 		};
 
 		if (period) {
@@ -92,8 +104,11 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 					{periodText}
 				</div>
 
-				{paidOnOtherPlatform ? (
-					<Label className="paidOnOtherPlatform" text={translate('popupMembershipPaidOnOtherPlatform')} />
+				{platformText ? (
+					<div className="platformLabel">
+						<Label className="paidOnOtherPlatform" text={platformText} />
+						{withContactButton ? <Button onClick={() => Action.membershipUpgrade()} text={translate('popupMembershipWriteToAnyteam')} className="c36" color="blank" /> : ''}
+					</div>
 				) : (
 					<React.Fragment>
 						<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />

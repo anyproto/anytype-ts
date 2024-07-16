@@ -13,8 +13,8 @@ export enum SyncStatusObject {
 };
 
 export enum SyncStatusNetwork {
-	Anytype   				 = 0,
-	SelfHost  				 = 1,
+	Anytype					 = 0,
+	SelfHost				 = 1,
 	LocalOnly				 = 2,
 };
 

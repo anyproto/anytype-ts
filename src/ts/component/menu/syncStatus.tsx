@@ -61,9 +61,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				<div
 					id={`item-${item.id}`}
 					className="item sides"
+					onClick={e => this.onContextMenu(e, item)}
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
-					<div className="side left">
+					<div className="side left" >
 						<IconObject object={item} size={20} />
 						<div className="info">
 							<ObjectName object={item} />
@@ -72,7 +73,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 					<div className="side right">
 						<Icon className={icon} />
-						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
+						<Icon className="more" />
 					</div>
 				</div>
 			);
@@ -176,10 +177,9 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 		S.Menu.open('select', {
 			classNameWrap,
-			element: element.find('.more'),
+			element,
+			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-			onOpen: () => element.addClass('selected'),
-			onClose: () => element.removeClass('selected'),
 			data: {
 				options,
 				onSelect: (e, option) => {
@@ -195,7 +195,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					};
 				}
 			}
-		})
+		});
 	};
 
 	onPanelIconClick (e, item) {
@@ -238,6 +238,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
 		const sorts = [
+			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [ I.SyncStatusObject.Syncing, I.SyncStatusObject.Synced ] },
 			{ relationKey: 'syncDate', type: I.SortType.Desc },
 		];
 
@@ -252,7 +253,14 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getItems () {
-		return U.Data.groupDateSections(S.Record.getRecords(SUB_ID), 'syncDate');
+		const records = S.Record.getRecords(SUB_ID).map(it => {
+			if (it.syncStatus == I.SyncStatusObject.Syncing) {
+				it.syncDate = U.Date.now();
+			};
+			return it;
+		});
+
+		return U.Data.groupDateSections(records, 'syncDate');
 	};
 
 	getIcons () {
@@ -298,12 +306,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	getIconNetwork (syncStatus) {
 		const { network, error, syncingCounter, status } = syncStatus;
+		const buttons: any[] = [];
 
 		let id = '';
 		let title = '';
 		let className = '';
 		let message = '';
-		let buttons: any[] = [];
 		let isConnected = false;
 		let isError = false;
 

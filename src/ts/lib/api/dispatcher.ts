@@ -955,7 +955,7 @@ class Dispatcher {
 
 				case 'SpaceSyncStatusUpdate':
 				case 'P2PStatusUpdate': {
-					S.Auth.syncStatusUpdate(mapped)
+					S.Auth.syncStatusUpdate(mapped);
 					break;
 				};
 			};
@@ -982,7 +982,7 @@ class Dispatcher {
 
 		if ([ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(details.spaceAccountStatus)) {
 			if (id == S.Block.spaceview) {
-				U.Router.switchSpace(S.Auth.accountSpaceId, '');
+				U.Router.switchSpace(S.Auth.accountSpaceId);
 			};
 
 			const spaceview = U.Space.getSpaceview(id);
@@ -998,17 +998,18 @@ class Dispatcher {
 		S.Detail.update(rootId, { id, details }, clear);
 
 		const root = S.Block.getLeaf(rootId, id);
+
 		if ((id == rootId) && root) {
 			if ((undefined !== details.layout) && (root.layout != details.layout)) {
 				S.Block.update(rootId, rootId, { layout: details.layout });
 			};
 
-			if (undefined !== details.setOf) {
-				S.Block.updateWidgetData(rootId);
-				$(window).trigger(`updateDataviewData`);
-			};
-
 			S.Block.checkTypeSelect(rootId);
+		};
+
+		if (undefined !== details.setOf) {
+			S.Block.updateWidgetData(rootId);
+			$(window).trigger(`updateDataviewData`);
 		};
 	};
 

@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewSort { width: 360px; }
+	.menu.menuDataviewSort { width: var(--menu-width-set); }
 	.menu.menuDataviewSort {
 		.content { overflow: visible !important; padding: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }

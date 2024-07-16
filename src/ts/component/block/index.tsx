@@ -67,6 +67,11 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	render () {
 		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, onMouseEnter, onMouseLeave } = this.props;
+		
+		if (!block) {
+			return null;
+		};
+
 		const { id, type, fields, content, hAlign, bgColor } = block;
 
 		if (!id) {

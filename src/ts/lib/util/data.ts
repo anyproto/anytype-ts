@@ -153,6 +153,7 @@ class UtilData {
 
 		S.Common.gatewaySet(info.gatewayUrl);
 		S.Common.spaceSet(info.accountSpaceId);
+		S.Common.getRef('vault')?.setActive(info.spaceViewId);
 
 		analytics.profile(info.analyticsId, info.networkId);
 		Sentry.setUser({ id: info.analyticsId });
@@ -274,7 +275,7 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
 				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
+					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
 				ignoreWorkspace: true,
 				ignoreHidden: false,
@@ -559,7 +560,7 @@ class UtilData {
 			};
 		};
 
-		if (U.Object.isFileLayout(object.layout)) {
+		if (U.Object.isInFileLayouts(object.layout)) {
 			ret.withIcon = true;
 		};
 
@@ -679,11 +680,10 @@ class UtilData {
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
 		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
 
-		if (layout == I.ObjectLayout.Task) {
+		if (U.Object.isTaskLayout(layout)) {
 			content.iconSize = I.LinkIconSize.Small;
-		};
-
-		if (layout == I.ObjectLayout.Note) {
+		} else
+		if (U.Object.isNoteLayout(layout)) {
 			const filter = [ 'type' ];
 
 			content.description = I.LinkDescription.None;
@@ -1087,7 +1087,7 @@ class UtilData {
 	getLinkBlockParam (id: string, layout: I.ObjectLayout) {
 		const param: Partial<I.Block> = {};
 
-		if (U.Object.isFileLayout(layout)) {
+		if (U.Object.isInFileLayouts(layout)) {
 			return {
 				type: I.BlockType.File,
 				content: {

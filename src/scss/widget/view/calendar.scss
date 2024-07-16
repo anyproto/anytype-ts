@@ -32,7 +32,7 @@
 
 			.item { @include text-small; color: var(--color-text-secondary); }
 			.item {
-				.inner { width: 28px; height: 28px; }
+				.inner { width: 100%; max-width: 28px; height: 28px; }
 			}
 		}
 	}
@@ -42,7 +42,7 @@
 	.day.other { color: var(--color-text-secondary); }
 
 	.day {
-		.inner { width: 28px; height: 28px; border-radius: 4px; transition: $transitionAllCommon; position: relative; }
+		.inner { width: 100%; max-width: 28px; height: 28px; border-radius: 4px; transition: $transitionAllCommon; position: relative; }
 		.bullet { width: 3px; height: 3px; border-radius: 50%; position: absolute; bottom: 2px; left: 50%; margin-left: -1.5px; background: var(--color-control-active); }
 	}
 

@@ -26,7 +26,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 
 	render () {
 		const { id, className } = this.props;
-		const { icon, name, error } = this.getStatus();
+		const { icon, error } = this.getStatus();
 		const cn = [ 'sync' ];
 
 		if (className) {
@@ -44,7 +44,6 @@ const Sync = observer(class Sync extends React.Component<Props> {
 				onClick={this.onClick}
 			>
 				<Icon className={icon} />
-				{name ? <div className="name">{name}</div> : ''}
 			</div>
 		);
 	};
@@ -64,17 +63,15 @@ const Sync = observer(class Sync extends React.Component<Props> {
 		const syncStatus = S.Auth.getSyncStatus();
 		const { status, network, error } = syncStatus;
 
-		let icon = '';
-		let name = '';
-
+		let icon: any = '';
 		if (network == I.SyncStatusNetwork.LocalOnly) {
-			icon = String(I.SyncStatusSpace.Offline);
+			icon = I.SyncStatusSpace.Offline;
 		} else {
 			icon = I.SyncStatusSpace[status];
 		};
 
 		icon = String(icon).toLowerCase();
-		return { icon, name, error };
+		return { icon, error };
 	};
 
 });
