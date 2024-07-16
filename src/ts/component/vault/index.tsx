@@ -147,14 +147,18 @@ const Vault = observer(class Vault extends React.Component {
 	onKeyUp (e: any) {
 		this.pressed.delete(e.key.toLowerCase());
 
-		if (!this.pressed.has(Key.ctrl) && !this.pressed.has(Key.tab)) {
-			const items = this.getSpaceItems();
-			const item = items[this.n];
+		if (this.pressed.has(Key.ctrl) || this.pressed.has(Key.tab)) {
+			return;
+		};
 
-			if (item) {
-				U.Router.switchSpace(item.targetSpaceId, '', true);
-				this.n = -1;
-			};
+		const node = $(this.node);
+		const items = this.getSpaceItems();
+		const item = items[this.n];
+
+		if (item) {
+			node.find('.item.hover').removeClass('hover');
+			U.Router.switchSpace(item.targetSpaceId, '', true);
+			this.n = -1;
 		};
 	};
 
@@ -162,21 +166,26 @@ const Vault = observer(class Vault extends React.Component {
 		e.stopPropagation();
 
 		switch (item.id) {
-			case 'add':
+			case 'add': {
 				this.onAdd();
 				break;
+			};
 
-			case 'gallery':
+			case 'gallery': {
 				S.Popup.open('usecase', {});
 				break;
+			};
 
-			case 'settings':
+			case 'settings': {
 				S.Popup.open('settings', {});
 				break;
+			};
 
-			default:
+			default: {
+				$(this.node).find('.item.hover').removeClass('hover');
 				U.Router.switchSpace(item.targetSpaceId, '', true);
 				break;
+			};
 		};
 	};
 
@@ -223,6 +232,18 @@ const Vault = observer(class Vault extends React.Component {
 		node.find('.item.hover').removeClass('hover');
 		el.addClass('hover');
 
+		const cb = () => {
+			Preview.tooltipShow({ 
+				text: item.name, 
+				element: el, 
+				className: 'fromVault', 
+				typeX: I.MenuDirection.Left,
+				typeY: I.MenuDirection.Center,
+				offsetX: 62,
+				delay: 1,
+			});
+		};
+
 		let s = -1;
 		if (top < 0) {
 			s = 0;
@@ -231,18 +252,11 @@ const Vault = observer(class Vault extends React.Component {
 			s = this.top + height;
 		};
 		if (s >= 0) {
-			scroll.stop().animate({ scrollTop: s }, 200, 'swing');
+			Preview.tooltipHide(true);
+			scroll.stop().animate({ scrollTop: s }, 200, 'swing', () => cb());
+		} else {
+			cb();
 		};
-
-		Preview.tooltipShow({ 
-			text: item.name, 
-			element: el, 
-			className: 'fromVault', 
-			typeX: I.MenuDirection.Left,
-			typeY: I.MenuDirection.Center,
-			offsetX: 62,
-			delay: 1,
-		});
 	};
 
 	onAdd () {
