@@ -594,6 +594,8 @@ class BlockStore {
 	};
 
 	checkChat (rootId: string) {
+		return;
+
 		const { chat } = J.Constant.blockId;
 		const element = this.getMapElement(rootId, rootId);
 

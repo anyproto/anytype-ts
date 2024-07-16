@@ -277,11 +277,13 @@ export const ObjectRedo = (response: Rpc.Object.Redo.Response) => {
 	};
 };
 
+/*
 export const ObjectChatAdd = (response: Rpc.Object.ChatAdd.Response) => {
 	return {
 		chatId: response.getChatid(),
 	};
 };
+*/
 
 export const BlockCreate = (response: Rpc.Block.Create.Response) => {
 	return {

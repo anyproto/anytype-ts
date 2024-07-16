@@ -1736,11 +1736,13 @@ export const ObjectCollectionSort = (contextId: string, objectIds: string[], cal
 };
 
 export const ObjectChatAdd = (objectId: string, callBack?: (message: any) => void) => {
+	/*
 	const request = new Rpc.Object.ChatAdd.Request();
 
 	request.setObjectid(objectId);
 
 	dispatcher.request(ObjectChatAdd.name, request, callBack);
+	*/
 };
 
 // ---------------------- OBJECT LIST ---------------------- //
