@@ -1047,7 +1047,7 @@ class UtilData {
 		});
 	};
 
-	groupDateSections (records: any[], key: string, sectionTemplate?: any) {
+	groupDateSections (records: any[], key: string, sectionTemplate?: any, dir?: I.SortType) {
 		const now = U.Date.now();
 		const { d, m, y } = U.Date.getCalendarDateParam(now);
 		const today = now - U.Date.timestamp(y, m, d);
@@ -1060,6 +1060,11 @@ class UtilData {
 			lastWeek: [],
 			lastMonth: [],
 			older: []
+		};
+
+		const groupNames = [ 'today', 'yesterday', 'lastWeek', 'lastMonth', 'older' ];
+		if (dir == I.SortType.Asc) {
+			groupNames.reverse();
 		};
 
 		let groupedRecords = [];
@@ -1088,10 +1093,13 @@ class UtilData {
 			};
 		});
 
-		Object.keys(groups).forEach((key) => {
-			if (groups[key].length) {
-				groupedRecords.push(Object.assign({ id: key, isSection: true }, sectionTemplate));
-				groupedRecords = groupedRecords.concat(groups[key]);
+		groupNames.forEach((name) => {
+			if (groups[name].length) {
+				groupedRecords.push(Object.assign({ id: name, isSection: true }, sectionTemplate));
+				if (dir) {
+					groups[name] = groups[name].sort((c1, c2) => U.Data.sortByNumericKey(key, c1, c2, dir));
+				};
+				groupedRecords = groupedRecords.concat(groups[name]);
 			};
 		});
 

@@ -648,6 +648,7 @@
 	"blockChatButtonObject": "Add object",
 	"blockChatButtonEmoji": "Add emoji",
 	"blockChatButtonMention": "Add mention",
+	"blockChatNewMessages": "New messages",
 
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",

@@ -6,7 +6,9 @@
 
 		.scrollWrapper { padding: 16px 0px; display: flex; flex-direction: column; min-height: 206px; }
 		.scrollWrapper {
-			.scroll { display: flex; flex-direction: column; justify-content: flex-end; min-height: 100%; gap: 16px 0px; }
+			.scroll { min-height: 100%; }
+			.scroll,
+			.section { display: flex; flex-direction: column; justify-content: flex-end; gap: 16px 0px; }
 		}
 
 		.emptyState { display: flex; flex-direction: column; gap: 16px 0px; align-items: center; justify-content: center; flex-grow: 1; text-align: center; }
@@ -39,6 +41,11 @@
 			}
 		}
 		.attachments.isSingle { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+
+		.dateSection { position: sticky; display: flex; justify-content: center; top: 60px; z-index: 1; }
+		.dateSection {
+			.label { @include text-small; padding: 3px 10px; background: var(--color-bg-loader); border: 1px solid var(--color-shape-tertiary); border-radius: 13px; }
+		}
 
 		.message { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; @include text-common; }
 		.message {
@@ -98,9 +105,12 @@
 		.message:hover, .message.hover {
 			.icon.reactionAdd { opacity: 1; }
 		}
-		.message.isLast:not(:last-child) { position: relative; padding-bottom: 30px; margin-bottom: 10px; border-bottom: 1px solid var(--color-shape-secondary); }
+		.message.isLast:not(:last-child) { position: relative; padding-bottom: 25px; margin-bottom: 6px; border-bottom: 1px solid var(--color-shape-tertiary); }
 		.message.isLast {
-			.newMessages { @include text-small; font-weight: 500; text-align: center; position: absolute; bottom: -9px; left: 50%; margin-left: -40px; width: 80px; background: var(--color-bg-primary); color: var(--color-text-secondary) }
+			.newMessages { display: flex; justify-content: center; position: absolute; bottom: -9px; left: 0px;  width: 100%; }
+			.newMessages {
+				.label { @include text-small; padding: 0px 12px; font-weight: 500; background: var(--color-bg-primary); color: var(--color-text-secondary); }
+			}
 		}
 		.message.isLast:last-child {
 			.newMessages { display: none; }
