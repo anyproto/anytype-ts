@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted } from 'Component';
-import { I, C, S, M, U, Action, translate } from 'Lib';
+import { I, C, S, M, U, Action, translate, Relation } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {

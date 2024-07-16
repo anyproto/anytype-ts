@@ -25,51 +25,40 @@ const Vault = observer(class Vault extends React.Component {
     render () {
 		const items = U.Menu.getVaultItems();
 
-		const Item = SortableElement(item => {
+		const Item = item => {
+			const cn = [ 'item' ];
+
+			let icon = null;
+			let onContextMenu = null;
+
+			if (!item.isButton) {
+				icon = <IconObject object={item} size={56} forceLetter={true} />;
+				onContextMenu = e => this.onContextMenu(e, item);
+			} else {
+				cn.push(`isButton ${item.id}`);
+			};
+
 			return (
 				<div 
 					id={`item-${item.id}`}
-					className="item"
+					className={cn.join(' ')}
 					onClick={e => this.onClick(e, item)}
 					onMouseEnter={e => this.onMouseEnter(e, item)}
 					onMouseLeave={() => this.onMouseLeave()}
-					onContextMenu={e => this.onContextMenu(e, item)}
+					onContextMenu={onContextMenu}
 				>
 					<div className="iconWrap">
-						<IconObject object={item} size={56} forceLetter={true} />
+						{icon}
 					</div>
 				</div>
 			);
-		});
+		};
 
-		const ItemIcon = item => (
-			<div 
-				id={`item-${item.id}`} 
-				className={`item isIcon ${item.id}`} 
-				onClick={e => this.onClick(e, item)}
-				onMouseEnter={e => this.onMouseEnter(e, item)}
-				onMouseLeave={() => this.onMouseLeave()}
-			>
-				<div className="iconWrap" />
-			</div>
-		);
-
-		const ItemIconSortable = SortableElement(it => <ItemIcon {...it} index={it.index} />);
+		const ItemSortable = SortableElement(it => <Item {...it} index={it.index} />);
 
 		const List = SortableContainer(() => (
 			<div id="scroll" className="side top" onScroll={this.onScroll}>
-				{items.map((item, i) => {
-					item.key = `item-space-${item.id}`;
-
-					let content = null;
-					if ([ 'gallery', 'add' ].includes(item.id)) {
-						content = <ItemIconSortable {...item} index={i} />;
-					} else {
-						content = <Item {...item} index={i} />;
-					};
-
-					return content;
-				})}
+				{items.map((item, i) => <ItemSortable {...item} key={`item-space-${item.id}`} index={i} />)}
 			</div>
 		));
 
@@ -94,7 +83,7 @@ const Vault = observer(class Vault extends React.Component {
 					/>
 
 					<div className="side bottom">
-						<ItemIcon id="settings" name={translate('commonSettings')} />
+						<Item id="settings" isButton={true} name={translate('commonSettings')} />
 					</div>
 				</div>
             </div>
