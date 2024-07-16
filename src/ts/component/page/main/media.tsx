@@ -38,6 +38,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
 		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const type = S.Record.getTypeById(object.type);
+		const recommended = Relation.getArrayValue(type?.recommendedRelations);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -54,6 +56,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 		const relations = S.Record.getObjectRelations(rootId, rootId).filter(it => {
 			if (!it) {
+				return false;
+			};
+
+			if (!recommended.includes(it.id)) {
 				return false;
 			};
 
