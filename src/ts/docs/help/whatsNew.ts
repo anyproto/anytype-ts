@@ -29,7 +29,7 @@ export default [
 	
 	
 	h3(`New Widgets 🖼️`),
-	text(`Widgets can now display all the custom View options as their Sets, including Calendar, Kanban, Gallery and filtered Tag views.`),
+	text(`Widgets can now display all the custom View options as their Sets, including Calendar, Kanban, Gallery and filtered Views.`),
 	img(`42/1.png`),
 	
 
