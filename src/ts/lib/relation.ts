@@ -592,7 +592,7 @@ class Relation {
 		let type = null;
 
 		if (objectTypes.length) {
-			const allowedTypes = objectTypes.map(id => S.Record.getTypeById(id)).filter(it => it && !U.Object.isFileOrSystemLayout(it.recommendedLayout));
+			const allowedTypes = objectTypes.map(id => S.Record.getTypeById(id)).filter(it => it && !U.Object.isInFileOrSystemLayouts(it.recommendedLayout));
 			const l = allowedTypes.length;
 
 			if (l) {

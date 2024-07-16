@@ -26,7 +26,7 @@ const Row = observer(class Row extends React.Component<Props> {
 		const { hideIcon } = view;
 		const { done } = record;
 
-		if ((record.layout == I.ObjectLayout.Task) && done) {
+		if (U.Object.isTaskLayout(record.layout) && done) {
 			cn.push('isDone');
 		};
 

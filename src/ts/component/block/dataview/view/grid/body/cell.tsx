@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, S, J, Relation } from 'Lib';
+import { I, S, J, U, Relation } from 'Lib';
 import { Cell, Icon } from 'Component';
 
 interface Props {
@@ -54,7 +54,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		};
 
 		let iconEdit = null;
-		if ((relationKey == 'name') && (record.layout != I.ObjectLayout.Note) && canEdit) {
+		if ((relationKey == 'name') && !U.Object.isNoteLayout(record.layout) && canEdit) {
 			iconEdit = <Icon className="edit" onClick={this.onEdit} />;
 		};
 

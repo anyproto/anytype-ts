@@ -162,12 +162,14 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { isSystemTarget, getData } = this.props;
+		const { block, isSystemTarget, getData, getTraceId } = this.props;
+		const { targetBlockId } = block.content;
 
 		if (isSystemTarget()) {
 			getData(this.getSubId(), this.initCache);
 		} else {
 			this.initCache();
+			C.ObjectShow(targetBlockId, getTraceId(), U.Router.getRouteSpaceId());
 		};
 
 		this.getDeleted();

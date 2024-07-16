@@ -1,9 +1,9 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuBlockCover { width: 410px; }
+	.menu.menuBlockCover { width: var(--menu-width-large); }
 	.menu.menuBlockCover {
-		.content { max-height: unset; height: 404px; overflow: visible; padding-bottom: 0px;  }
+		.content { max-height: unset; height: var(--menu-width-large);; overflow: visible; padding-bottom: 0px;  }
 		.wrap { display: flex; flex-direction: column; height: 100%; }
 
 		.head { 
@@ -23,7 +23,7 @@
 
 		.loaderWrapper { position: relative; background: none; }
 
-		.sections { overflow: auto; flex-grow: 1; }
+		.sections { overflow: hidden auto; flex-grow: 1; }
 		.section > .name { margin-bottom: 8px; }
 		.section:first-child { padding-top: 8px; }
 		.section:last-child { padding-bottom: 8px; }
@@ -74,6 +74,8 @@
 
 html.platformWindows, html.platformLinux {
 	.menus {
-		.menu.menuBlockCover { width: 425px; }
+		.menu.menuBlockCover {
+			.sections { overflow-y: overlay; }
+		}
 	}
 }

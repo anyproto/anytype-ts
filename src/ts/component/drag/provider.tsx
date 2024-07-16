@@ -319,7 +319,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const processAddRecord = () => {
 			U.Object.getById(targetContextId, (object) => {
 				// Add to collection
-				if (object.layout == I.ObjectLayout.Collection) {
+				if (U.Object.isCollectionLayout(object.layout)) {
 					C.ObjectCollectionAdd(targetContextId, ids);
 				} else {
 					ids.forEach((key: string) => {

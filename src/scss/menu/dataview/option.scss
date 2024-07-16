@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewOptionList { width: 288px; }
+	.menu.menuDataviewOptionList { width: var(--menu-width-value);; }
 	.menu.menuDataviewOptionList {
 		.content { overflow: visible; transition: none; padding: 0px; max-height: unset; }
 		.content {
@@ -56,7 +56,7 @@
 		}
 	}
 
-	.menu.menuDataviewOptionEdit { width: 252px; }
+	.menu.menuDataviewOptionEdit { width: var(--menu-width-icon); }
 	.menu.menuDataviewOptionEdit {
 		.content { padding-top: 12px; overflow: visible; max-height: unset; }
 		.filter { margin-bottom: 8px; }

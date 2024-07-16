@@ -446,7 +446,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				options.push({ id: 'change', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true });
 			};
 
-			if (!typeIsDeleted && (object.layout == I.ObjectLayout.Set)) {
+			if (!typeIsDeleted && U.Object.isSetLayout(object.layout)) {
 				options.push({ id: 'turnCollection', name: translate('blockFeaturedTypeMenuTurnSetIntoCollection') });
 			};
 		};

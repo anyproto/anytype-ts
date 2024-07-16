@@ -50,7 +50,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			content = <Loader id="loader" />;
 		} else {
 			const object = S.Detail.get(rootId, rootId, []);
-			const isCollection = object.layout == I.ObjectLayout.Collection;
+			const isCollection = U.Object.isCollectionLayout(object.layout);
 			const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
