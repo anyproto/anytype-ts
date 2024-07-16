@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
+import { U } from 'Lib';
 
 interface Props {
-	item: any;
+	id: string;
+	isButton: boolean;
 	onClick: (e: any) => void;
 	onMouseEnter: (e: any) => void;
 	onMouseLeave: () => void;
@@ -13,20 +15,21 @@ interface Props {
 const VaultItem = observer(class Vault extends React.Component<Props> {
 	
     render () {
-		const { item, onClick, onMouseEnter, onMouseLeave, onContextMenu } = this.props;
+		const { id, isButton, onClick, onMouseEnter, onMouseLeave, onContextMenu } = this.props;
 		const cn = [ 'item' ];
 
 		let icon = null;
 
-		if (!item.isButton) {
-			icon = <IconObject object={item} size={56} forceLetter={true} />;
+		if (!isButton) {
+			const object = U.Space.getSpaceview(id);
+			icon = <IconObject object={object} size={56} forceLetter={true} />;
 		} else {
-			cn.push(`isButton ${item.id}`);
+			cn.push(`isButton ${id}`);
 		};
 
         return (
             <div 
-				id={`item-${item.id}`}
+				id={`item-${id}`}
 				className={cn.join(' ')}
 				onClick={onClick}
 				onMouseEnter={onMouseEnter}

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { trace } from 'mobx';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -31,7 +32,8 @@ const Vault = observer(class Vault extends React.Component {
 
 			return (
 				<VaultItem 
-					item={item}
+					id={item.id}
+					isButton={item.isButton}
 					onClick={e => this.onClick(e, item)}
 					onMouseEnter={e => this.onMouseEnter(e, item)}
 					onMouseLeave={() => this.onMouseLeave()}
