@@ -513,7 +513,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				item.addClass('disabled');
 			};
 
-			if ((layout == I.ObjectLayout.Task) && done) {
+			if (U.Object.isTaskLayout(layout) && done) {
 				item.addClass('isDone');
 			};
 
@@ -838,7 +838,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+e, ${cmd}+dot`, e, () => {
+		keyboard.shortcut(`${cmd}+e`, e, () => {
 			if (menuOpenSmile || !block.canHaveMarks()) {
 				return;
 			};

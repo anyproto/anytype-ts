@@ -1,49 +1,64 @@
 @import "~scss/_mixins";
 
 .vault { 
-	position: fixed; background-color: #000; z-index: 30; left: 0px; top: 0px; width: $vaultWidthCollapsed; height: 100%;
+	position: fixed; background-color: var(--color-shape-primary); z-index: 30; left: 0px; top: 0px; width: $vaultWidthCollapsed; height: 100%;
 	display: flex; flex-direction: column; transition: width 0.3s $easeInQuint;
 }
 .vault {
 	.head { 
-		height: 42px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 14px; flex-shrink: 0;
-		position: relative; z-index: 1; background: #000;
+		height: 50px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 14px; flex-shrink: 0;
+		position: relative; z-index: 1; background: inherit;
 	}
 
-	.body { display: flex; flex-direction: column; justify-content: space-between; padding: 0px 0px 12px 0px; flex-grow: 1; height: calc(100% - 42px); gap: 16px 0px; }
+	.body { display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; gap: 12px 0px; height: calc(100% - 64px); }
 	.body {
 		.side { padding: 0px 10px; }
-		.side.top { display: flex; flex-direction: column; gap: 16px 0px; overflow: auto; height: calc(100% - 64px); flex-grow: 1; overscroll-behavior: none; }
+		.side.top { 
+			display: flex; flex-direction: column; gap: 8px 0px; overflow: auto; flex-grow: 1; overscroll-behavior: none; 
+		}
 		.side.top::-webkit-scrollbar { display: none; }
-		.side.bottom { flex-shrink: 0; align-items: flex-end; }
+		.side.bottom { flex-shrink: 0; align-items: flex-end; padding-bottom: 12px; }
 	}
 
-	.item { transition: border 0.2s $easeInQuint; border: 4px solid rgba(0,0,0,0); overflow: hidden; border-radius: 2px; flex-shrink: 0; }
+	.item { width: 52px; height: 52px; flex-shrink: 0; position: relative; padding: 4px; transition: all 0.2s $easeInQuint; }
 	.item {
 		.iconWrap { 
-			width: 48px; height: 48px; border-radius: 2px; background-color: #2b2b2b; background-repeat: no-repeat; background-position: center; 
-			transition: background-color 0.2s $easeInQuint;
+			width: 100%; height: 100%; border-radius: 2px; background-repeat: no-repeat; background-position: center; 
+			transition: background-color 0.2s $easeInQuint; overflow: hidden;
 		}
+		.iconObject { width: 100% !important; height: 100% !important; }
 	}
-	.item:hover, .item.hover { border-color: #2b2b2b; border-radius: 8px; }
-	.item.isActive { border-color: #fff; border-radius: 8px; }
+	.item::after {
+		content: ''; position: absolute; width: 8px; height: 8px; background-color: var(--color-control-accent); left: -14px; top: 50%; margin-top: -4px;
+		border-radius: 50%; opacity: 0; transition: opacity 0.2s $easeInQuint; opacity: 0;
+	}
 
-	.item.void {
-		.iconWrap { background-image: url('~img/icon/vault/void.svg'); background-size: 24px; }
+	.item:hover, .item.hover { padding: 0px; }
+
+	.item.isIcon {
+		.iconWrap { background-color: var(--color-shape-highlight-dark); }
 	}
+
+	.item.isActive::after { opacity: 1; }
 
 	.item.gallery {
 		.iconWrap { background-image: url('~img/icon/vault/gallery.svg'); }
 	}
 
 	.item.add {
-		.iconWrap { background-image: url('~img/icon/vault/plus.svg'); background-size: 20px; }
+		.iconWrap { background-image: url('~img/icon/vault/plus.svg'); }
 	}
 
 	.item.settings {
-		.iconWrap { background-color: unset; background-size: 20px; background-image: url('~img/icon/vault/settings.svg'); }
+		.iconWrap { background-color: unset; background-image: url('~img/icon/vault/settings.svg'); }
 	}
-	.item.settings:hover { 
-		.iconWrap { background-color: #2b2b2b; }
+	.item.settings:hover {
+		.iconWrap { background-color: var(--color-shape-highlight-dark); }
+	}
+}
+
+html.platformWindows, html.platformLinux {
+	.vault {
+		.head { height: 12px; }
 	}
 }

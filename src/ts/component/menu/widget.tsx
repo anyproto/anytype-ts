@@ -127,7 +127,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { isEditing } = data;
-		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout) || U.Menu.isWidgetCollection(this.target?.id);
+		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout) || U.Menu.isSystemWidget(this.target?.id);
 
 		let sourceName = translate('menuWidgetChooseSource');
 		let layoutName = translate('menuWidgetWidgetType');
@@ -170,16 +170,16 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { id, layout } = this.target || {};
 		const layoutOptions = U.Menu.getWidgetLayoutOptions(id, layout).map(it => it.id);
 
-		if (U.Menu.isWidgetCollection(id)) {
+		if (U.Menu.isSystemWidget(id)) {
 			if ([ null, I.WidgetLayout.Link ].includes(this.layout)) {
 				this.layout = id == J.Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
 			};
 		} else {
-			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !U.Object.isSetLayout(layout)) {
+			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !U.Object.isInSetLayouts(layout)) {
 				this.layout = I.WidgetLayout.Tree;
 			};
 
-			if ((this.layout == I.WidgetLayout.Tree) && U.Object.isSetLayout(layout)) {
+			if ((this.layout == I.WidgetLayout.Tree) && U.Object.isInSetLayouts(layout)) {
 				this.layout = I.WidgetLayout.Compact;
 			};
 		};
@@ -252,12 +252,16 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 					},
-					onSelect: (target) => {
+					onSelect: (target: any, isNew: boolean) => {
 						this.target = target;
 						this.checkState();
 						this.forceUpdate();
 						
 						if (isEditing && this.target) {
+							if (isNew) {
+								U.Object.openConfig(target);
+							};
+
 							C.BlockWidgetSetTargetId(widgets, blockId, this.target.id, () => {
 								C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
 							});

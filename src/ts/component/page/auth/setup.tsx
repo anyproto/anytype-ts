@@ -139,7 +139,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		const { networkConfig } = S.Auth;
 		const { dataPath } = S.Common;
 		const { mode, path } = networkConfig;
-		const spaceId = Storage.get('spaceId');
 
 		C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
@@ -149,6 +148,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			S.Auth.accountSet(message.account);
 			S.Common.configSet(message.account.config, false);
 
+			const spaceId = Storage.get('spaceId');
 			if (spaceId) {
 				U.Router.switchSpace(spaceId);
 			} else {

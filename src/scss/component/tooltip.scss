@@ -23,7 +23,7 @@
 	.txt { @include text-small; margin: 2px 0px 0px 0px; }
 }
 
-.tooltip.big.fromVault { padding: 5px 10px; min-width: unset; max-width: 360px; }
-.tooltip.big.fromVault {
-	.title { @include text-overflow-nw; }
+.tooltip.fromVault { min-width: unset; max-width: 360px; transform: scale3d(1, 1, 1); }
+.tooltip.fromVault {
+	.txt { @include text-overflow-nw; width: 100%; }
 }

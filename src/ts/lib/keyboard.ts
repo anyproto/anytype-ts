@@ -123,13 +123,8 @@ class Keyboard {
 
 		this.pressed.push(key);
 
-		this.shortcut(`${cmd}+\\, ${cmd}+.`, e, (pressed: string) => {
+		this.shortcut(`${cmd}+\\, ${cmd}+dot`, e, (pressed: string) => {
 			e.preventDefault();
-
-			if (pressed.match('.') && this.isFocused) {
-				return;
-			};
-
 			sidebar.toggleOpenClose();
 		});
 
@@ -183,15 +178,6 @@ class Keyboard {
 			// Shortcuts
 			this.shortcut('ctrl+space', e, () => {
 				S.Popup.open('shortcut', { preventResize: true });
-			});
-
-			// Spaces
-			this.shortcut('ctrl+tab', e, () => {
-				const items = U.Menu.getVaultItems().filter(it => !it.isButton);
-				const idx = items.findIndex(it => it.id == spaceview) + 1;
-				const next = items[idx] ? items[idx] : items[0];
-
-				U.Router.switchSpace(next.targetSpaceId);
 			});
 
 			// Print
@@ -517,8 +503,7 @@ class Keyboard {
 						page: 'spaceCreate', 
 						isSpace: true,
 						onCreate: (id) => {
-							U.Router.switchSpace(id, '', () => Storage.initPinnedTypes());
-							analytics.event('SwitchSpace');
+							U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
 						},
 					}, 
 				});

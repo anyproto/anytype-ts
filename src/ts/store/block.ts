@@ -529,10 +529,10 @@ class BlockStore {
 				const old = text.substring(from, to);
 
 				let name = '';
-				if (object.layout == I.ObjectLayout.Note) {
+				if (U.Object.isNoteLayout(object.layout)) {
 					name = object.name || translate('commonEmpty');
 				} else
-				if (U.Object.isFileLayout(object.layout)) {
+				if (U.Object.isInFileLayouts(object.layout)) {
 					name = U.File.name(object);
 				} else {
 					name = object.name;

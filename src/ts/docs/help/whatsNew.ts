@@ -19,28 +19,23 @@ export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
 	title(`Desktop Release 0.42.0`),
-	text(`This release introduces updates such as set views for widgets and crypto payments, a revamped sidebar UX, and simplified app sharing, along with various other features, quality-of-life enhancements, and bug fixes to improve user experience.`),
+	text(`This release is brimming with game-changing updates, including a redesigned sidebar UX for easier navigation between Spaces, new Widgets offering a more flexible workflow and consistent view options, and simplified, more accessible app sharing. Additionally, we've added quality-of-life improvements such as the option to pay for memberships with crypto, and loads of bug fixes to improve the user experience.`),
 
 	h2(`💫 Feature Highlights`),
 
-	h3(`Set Views Added to Widgets 🖼️`),
-	text(`Widgets are now able to display the same custom Views as their Sets.`),
+	h3(`New Vault UI 🌐`),
+	text(`We introduced a sleek display column to quickly create & switch between Spaces. We also reworked the previous sidebar logic by removing the floating mode.`),
+	img(`42/4.png`),
+	
+	
+	h3(`New Widgets 🖼️`),
+	text(`Widgets can now display all the custom View options as their Sets, including Calendar, Kanban, Gallery and filtered Tag views.`),
 	img(`42/1.png`),
-
-
-	h3(`Crypto Payments 💰`),
-	text(`Now you can use crypto (BTC, ETH, USDT, USDC, BNB, Dai, etc.) to pay for the membership.`),
-	img(`42/2.png`),
 	
 
 	h3(`Sync Status Upgrade 🔄`),
 	text(`More informative sync status for Objects, Files, and Spaces, including indicators like "Error" for Wi-Fi issues, "Offline" for no network connection.`),
 	img(`42/3.png`),
-	
-
-	h3(`Vault UI 🔐`),
-	text(`We've reworked the sidebar logic and removed the previous floating mode.`),
-	img(`42/4.png`),
 	
 
 	h3(`Simplified App Sharing 🔗`),
@@ -49,6 +44,7 @@ export default [
 	
 
 	h2(`🪷 Quality-of-Life`),
+	bullet(`You can now use crypto (BTC, ETH, USDT, USDC, BNB, Dai, etc.) to pay for memberships.`),
 	bullet(`Navigate Tables using only arrow keys to enter, jump cells &amp; exit to the next block. Thanks, @Code-Jack!`),
 	bullet(`Added an option to copy the URL from bookmark blocks. Thanks, @maxitg!`),
 	bullet(`Reduced mouse action needed after creating a new page in Collections. Thanks, @Code-Jack!`),
@@ -75,7 +71,7 @@ export default [
 	bullet(`Checkbox sorting in Set has been restored. Thanks, @${link('https://community.anytype.io/t/22266', 'effreyh')}!`),
 	bullet(`The Query of the set now updates correctly in the pop-up.`),
 	bullet(`Fixed issue with using library images for type Icons. Thanks, @${link('https://community.anytype.io/t/22297', 'Self-Perfection')}!`),
-	bullet(`Keyboard cursor no longer disappears after cutting a whole line (block). Thanks, @${link('https://community.anytype.io/t/20781', 'Filip')}!`),
+	bullet(`Keyboard cursor no longer disappears after cutting a whole line (block). Thanks, @${link('https://community.anytype.io/t/20781', 'SirCaptain')}!`),
 
 
 
