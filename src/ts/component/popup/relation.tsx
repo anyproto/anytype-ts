@@ -189,7 +189,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 				const value = Relation.formatValue(relation, object[relationKey], false);
 
 				cnt[relationKey] = cnt[relationKey] || 1;
-				if (reference && (JSON.stringify(value) == JSON.stringify(reference[relationKey]))) {
+				if (reference && U.Common.compareJSON(value, reference[relationKey])) {
 					cnt[relationKey]++;
 				};
 				if (cnt[relationKey] == objects.length) {

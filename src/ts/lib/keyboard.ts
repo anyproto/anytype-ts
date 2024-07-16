@@ -25,6 +25,7 @@ class Keyboard {
 	isPinChecked = false;
 	isBlurDisabled = false;
 	isCloseDisabled = false;
+	isContextDisabled = false;
 	isContextCloseDisabled = false;
 	isContextOpenDisabled = false;
 	isPasteDisabled = false;
@@ -37,7 +38,6 @@ class Keyboard {
 		this.unbind();
 		
 		const win = $(window);
-		const doc = $(document);
 
 		S.Common.isOnlineSet(navigator.onLine);
 
@@ -119,16 +119,12 @@ class Keyboard {
 		const isMain = this.isMain();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const selection = S.Common.getRef('selectionProvider');
+		const { spaceview } = S.Block;
 
 		this.pressed.push(key);
 
-		this.shortcut(`${cmd}+\\, ${cmd}+.`, e, (pressed: string) => {
+		this.shortcut(`${cmd}+\\, ${cmd}+dot`, e, (pressed: string) => {
 			e.preventDefault();
-
-			if (pressed.match('.') && this.isFocused) {
-				return;
-			};
-
 			sidebar.toggleOpenClose();
 		});
 
@@ -507,8 +503,7 @@ class Keyboard {
 						page: 'spaceCreate', 
 						isSpace: true,
 						onCreate: (id) => {
-							U.Router.switchSpace(id, '', () => Storage.initPinnedTypes());
-							analytics.event('SwitchSpace');
+							U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
 						},
 					}, 
 				});
@@ -532,7 +527,7 @@ class Keyboard {
 			};
 
 			case 'exportTemplates': {
-				Action.openDir({ buttonLabel: translate('commonExport') }, paths => {
+				Action.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
 					C.TemplateExportAll(paths[0], (message: any) => {
 						if (message.error.code) {
 							return;
@@ -545,7 +540,7 @@ class Keyboard {
 			};
 
 			case 'exportLocalstore': {
-				Action.openDir({ buttonLabel: translate('commonExport') }, paths => {
+				Action.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
 					C.DebugExportLocalstore(paths[0], [], (message: any) => {
 						if (!message.error.code) {
 							Renderer.send('pathOpen', paths[0]);
@@ -778,7 +773,7 @@ class Keyboard {
 			return;
 		};
 
-		S.Menu.closeAll([ 'blockContext' ], () => {
+		S.Menu.closeAll(null, () => {
 			S.Menu.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
@@ -1044,6 +1039,11 @@ class Keyboard {
 	// Flag to prevent blur events
 	disableBlur (v: boolean) {
 		this.isBlurDisabled = v;
+	};
+
+	// Flag to prevent menuBlockContext from opening
+	disableContext (v: boolean) {
+		this.isContextDisabled = v;
 	};
 
 	// Flag to prevent menuBlockContext from closing

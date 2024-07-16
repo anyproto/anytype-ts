@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewFilterList { width: 360px; }
+	.menu.menuDataviewFilterList { width: var(--menu-width-set); }
 	.menu.menuDataviewFilterList {
 		.content { overflow: visible !important; padding: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
@@ -63,7 +63,7 @@
 		}
 	}
 
-	.menu.menuDataviewFilterValues { width: 288px; }
+	.menu.menuDataviewFilterValues { width: var(--menu-width-value); }
 	.menu.menuDataviewFilterValues {
 		.select { border: 0px; padding: 0px; display: block; width: 100%; }
 		.select:hover, .select.isFocused { background: none; }

@@ -126,7 +126,7 @@ class UtilRouter {
 		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
 	};
 
-	switchSpace (id: string, route?: string, callBack?: () => void) {
+	switchSpace (id: string, route?: string, sendEvent?: boolean, callBack?: () => void) {
 		const { space } = S.Common;
 		const { accountSpaceId } = S.Auth;
 
@@ -134,10 +134,16 @@ class UtilRouter {
 			return;
 		};
 
+		S.Menu.closeAllForced();
+
+		if (sendEvent) {
+			analytics.event('SwitchSpace');
+		};
+
 		C.WorkspaceOpen(id, (message: any) => {
 			if (message.error.code) {
 				if (id != accountSpaceId) {
-					this.switchSpace(accountSpaceId, route, callBack);
+					this.switchSpace(accountSpaceId, route, false, callBack);
 				};
 				return;
 			};

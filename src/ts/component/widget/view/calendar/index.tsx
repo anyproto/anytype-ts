@@ -71,7 +71,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 					<div className="tableHead">
 						{days.map((item, i) => (
 							<div key={i} className="item">
-								{item.name.substring(0, 2)}
+								<div className="inner">{item.name.substring(0, 2)}</div>
 							</div>
 						))}
 					</div>
@@ -89,7 +89,6 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 								cn.push('first');
 							};
 
-
 							const check = this.checkItems(item.d, item.m, item.y, groupRelationKey);
 							return (
 								<div 
@@ -98,8 +97,10 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 									className={cn.join(' ')} 
 									onClick={() => this.onClick(item.d, item.m, item.y)}
 								>
-									{item.d}
-									{check ? <div className="bullet" /> : ''}
+									<div className="inner">
+										{item.d}
+										{check ? <div className="bullet" /> : ''}
+									</div>
 								</div>	
 							);
 						})}

@@ -250,6 +250,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						animate: true,
 						onFadeIn: () => {
 							Storage.initPinnedTypes();
+							S.Common.fullscreenObjectSet(true);
 
 							if (!redirect) {
 								Action.welcome();

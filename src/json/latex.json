@@ -1,4 +1,4 @@
-export default [
+[
     {
        "id": "templates",
        "name": "Templates",
@@ -3929,4 +3929,4 @@ export default [
           }
        ]
     }
-];
+]

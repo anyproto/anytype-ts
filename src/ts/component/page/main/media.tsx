@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted } from 'Component';
-import { I, C, S, U, Action, Renderer, translate } from 'Lib';
+import { I, C, S, M, U, Action, translate } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -33,6 +33,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	render () {
+		const { config } = S.Common;
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
@@ -46,9 +47,18 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			return <Loader id="loader" />;
 		};
 
-		const blocks = S.Block.getBlocks(rootId);
-		const file = blocks.find(it => it.isFile());
-		const relations = blocks.filter(it => it.isRelation());
+		const file = this.getBlock();
+		if (!file) {
+			return null;
+		};
+
+		const relations = S.Record.getObjectRelations(rootId, rootId).filter(it => {
+			if (!it) {
+				return false;
+			};
+
+			return !config.debug.hiddenObject ? !it.isHidden : true;
+		}).sort((c1, c2) => U.Data.sortByFormat(c1, c2));
 
 		const isVideo = file?.isFileVideo();
 		const isImage = file?.isFileImage();
@@ -138,9 +148,9 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 											{...this.props} 
 											key={item.id} 
 											rootId={rootId} 
-											block={item} 
+											block={new M.Block({ id: item.id, type: I.BlockType.Relation, content: { key: item.relationKey } })} 
 											readonly={!allowed} 
-											isSelectionDisabled={true} 
+											isSelectionDisabled={true}
 											isContextMenuDisabled={true}
 										/>
 									))}
@@ -249,28 +259,19 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		};
 	};
 
-	onOpen (e: any) {
+	getBlock (): I.Block {
 		const rootId = this.getRootId();
 		const blocks = S.Block.getBlocks(rootId);
-		const block = blocks.find(it => it.isFile());
 
-		if (!block) {
-			return;
-		};
-
-		C.FileDownload(block.content.targetObjectId, U.Common.getElectron().tmpPath, (message: any) => {
-			if (message.path) {
-				Renderer.send('pathOpen', message.path);
-			};
-		});
+		return blocks.find(it => it.isFile());
 	};
 
-	onDownload (e: any) {
-		const rootId = this.getRootId();
-		const blocks = S.Block.getBlocks(rootId);
-		const block = blocks.find(it => it.isFile());
-		
-		Action.download(block, 'media');
+	onOpen () {
+		Action.openFile(this.getBlock()?.content?.targetObjectId);
+	};
+
+	onDownload () {
+		Action.download(this.getBlock(), 'media');
 	};
 
 	getRootId () {

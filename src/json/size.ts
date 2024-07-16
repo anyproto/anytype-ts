@@ -9,8 +9,7 @@ export default {
 	header: 52,
 
 	vault: {
-		collapsed: 76,
-		expanded: 240,
+		width: 72,
 	},
 
 	history: {

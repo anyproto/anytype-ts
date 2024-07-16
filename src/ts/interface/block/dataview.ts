@@ -86,7 +86,7 @@ export interface Sort {
 	relationKey: string;
 	type: SortType;
 	includeTime?: boolean;
-	customOrder?: string[];
+	customOrder?: any[];
 	empty?: EmptyType;
 };
 

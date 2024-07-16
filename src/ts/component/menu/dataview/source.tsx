@@ -163,13 +163,8 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { objectId, blockId } = data;
-		const ns = blockId + U.Common.getEventNamespace(keyboard.isPopup());
 
 		C.ObjectSetSource(objectId, value, () => {
-			if (blockId) {
-				$(window).trigger(`updateDataviewData`);
-			};
-
 			if (callBack) {
 				callBack();
 			};
@@ -207,7 +202,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			});
 		} else {
 			value.forEach(it => {
-				if (it.layout == I.ObjectLayout.Type) {
+				if (U.Object.isTypeLayout(it.layout)) {
 					items.push({
 						...it,
 						itemId: 'type',

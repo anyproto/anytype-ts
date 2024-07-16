@@ -133,7 +133,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						<Select 
 							id={'lang-' + id} 
 							arrowClassName="light" 
-							value={fields.lang} 
+							value={fields.lang || J.Constant.default.codeLang} 
 							ref={ref => this.refLang = ref} 
 							options={options} 
 							onChange={this.onLang}
@@ -513,7 +513,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				item.addClass('disabled');
 			};
 
-			if ((layout == I.ObjectLayout.Task) && done) {
+			if (U.Object.isTaskLayout(layout) && done) {
 				item.addClass('isDone');
 			};
 
@@ -838,7 +838,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+e, ${cmd}+dot`, e, () => {
+		keyboard.shortcut(`${cmd}+e`, e, () => {
 			if (menuOpenSmile || !block.canHaveMarks()) {
 				return;
 			};
@@ -890,6 +890,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { filter } = S.Common;
 		const { id, content } = block;
 		const range = this.getRange();
+		const langCodes = Object.keys(J.Lang.code).join('|');
+		const langKey = '```(' + langCodes + ')?';
+
 		const Markdown = {
 			'[\\*\\-\\+]':	 I.TextStyle.Bulleted,
 			'\\[\\]':		 I.TextStyle.Checkbox,
@@ -897,10 +900,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			'##':			 I.TextStyle.Header2,
 			'###':			 I.TextStyle.Header3,
 			'"':			 I.TextStyle.Quote,
-			'```([a-z]+)?':	 I.TextStyle.Code,
 			'\\>':			 I.TextStyle.Toggle,
 			'1\\.':			 I.TextStyle.Numbered,
 		};
+		Markdown[langKey] = I.TextStyle.Code;
+
 		const Length: any = {};
 
 		Length[I.TextStyle.Bulleted] = 1;
@@ -997,7 +1001,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		// Parse markdown commands
 		if (block.canHaveMarks() && (!isInsideTable && !block.isTextCode())) {
 			for (const k in Markdown) {
-				const reg = new RegExp(`^(${k}\\s)`);
 				const newStyle = Markdown[k];
 
 				if (newStyle == content.style) {
@@ -1008,7 +1011,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					continue;
 				};
 
+				const reg = new RegExp(`^(${k}\\s)`);
 				const match = value.match(reg);
+
 				if (!match) {
 					continue;
 				};
@@ -1067,16 +1072,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const text = block.canHaveMarks() ? parsed.text : value;
 
-		// When typing text adjust links markup to break it
+		// When typing text adjust several markups to break it
 		if (!keyboard.isSpecial(e)) {
 			const d = text.length - this.text.length;
-			const markTypes = [ I.MarkType.Link, I.MarkType.Object ];
 
 			if (d > 0) {
 				for (let i = 0; i < this.marks.length; ++i) {
-					let mark = this.marks[i];
+					const mark = this.marks[i];
 
-					if (markTypes.includes(mark.type) && (mark.range.to == range.to)) {
+					if (Mark.needsBreak(mark.type) && (mark.range.to == range.to)) {
 						const adjusted = Mark.adjust([ mark ], mark.range.from, -d);
 
 						this.marks[i] = adjusted[0];
@@ -1357,6 +1361,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onSelect () {
+		if (keyboard.isContextDisabled) {
+			return;
+		};
+
 		const { rootId, block, isPopup, isInsideTable, readonly } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.getForClick('', false, true);

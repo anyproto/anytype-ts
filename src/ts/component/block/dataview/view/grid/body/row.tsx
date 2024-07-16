@@ -21,7 +21,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const cn = [ 'row', U.Data.layoutClass('', record.layout), ];
 
-		if ((record.layout == I.ObjectLayout.Task) && record.done) {
+		if (U.Object.isTaskLayout(record.layout) && record.done) {
 			cn.push('isDone');
 		};
 		if (record.isArchived) {

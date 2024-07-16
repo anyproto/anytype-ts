@@ -195,10 +195,10 @@ class Dataview {
 
 	isCollection (rootId: string, blockId: string): boolean {
 		const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
-		const isInline = !U.Object.getSystemLayouts().includes(object.layout);
+		const isInline = !U.Object.isInSystemLayouts(object.layout);
 
 		if (!isInline) {
-			return object.layout == I.ObjectLayout.Collection;
+			return U.Object.isCollectionLayout(object.layout);
 		};
 
 		const block = S.Block.getLeaf(rootId, blockId);
@@ -209,7 +209,7 @@ class Dataview {
 		const { targetObjectId, isCollection } = block.content;
 		const target = targetObjectId ? S.Detail.get(rootId, targetObjectId, [ 'layout' ], true) : null;
 
-		return target ? target.layout == I.ObjectLayout.Collection : isCollection;
+		return target ? U.Object.isCollectionLayout(target.layout) : isCollection;
 	};
 
 	loadGroupList (rootId: string, blockId: string, viewId: string, object: any) {
@@ -221,7 +221,7 @@ class Dataview {
 		};
 
 		const subId = S.Record.getGroupSubId(rootId, block.id, 'groups');
-		const isCollection = object.layout == I.ObjectLayout.Collection;
+		const isCollection = U.Object.isCollectionLayout(object.layout);
 
 		S.Record.groupsClear(rootId, block.id);
 
@@ -417,6 +417,10 @@ class Dataview {
 			});
 		};
 
+		if (!view) {
+			return details;
+		};
+
 		if (view.groupRelationKey && ('undefined' == typeof(details[view.groupRelationKey]))) {
 			if (groupId) {
 				const group = S.Record.getGroup(rootId, blockId, groupId);
@@ -453,32 +457,32 @@ class Dataview {
 		const view = this.getView(rootId, blockId, viewId);
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
-		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation).map(it => it.id).length;
+		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!relations.length;
+
+		if (view && view.defaultTypeId && isAllowedDefaultType) {
+			return view.defaultTypeId;
+		};
 
 		let typeId = '';
+
 		if (types.length) {
 			typeId = types[0].id;
 		} else
 		if (relations.length) {
 			for (const item of relations) {
-				if (item.objectTypes.length) {
-					const first = S.Record.getTypeById(item.objectTypes[0]);
+				if (!item.objectTypes.length) {
+					continue;
+				};
 
-					if (first && !U.Object.isFileLayout(first.recommendedLayout) && !U.Object.isSystemLayout(first.recommendedLayout)) {
-						typeId = first.id;
-						break;
-					};
+				const first = S.Record.getTypeById(item.objectTypes[0]);
+				if (first && !U.Object.isInFileOrSystemLayouts(first.recommendedLayout)) {
+					typeId = first.id;
+					break;
 				};
 			};
 		};
-		if (view && view.defaultTypeId && isAllowedDefaultType) {
-			typeId = view.defaultTypeId;
-		};
-		if (!typeId) {
-			typeId = S.Common.type;
-		};
 
-		return typeId;
+		return typeId || S.Common.type;
 	};
 
 	getCreateTooltip (rootId: string, blockId: string, objectId: string, viewId: string): string {

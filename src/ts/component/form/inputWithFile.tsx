@@ -260,7 +260,7 @@ class InputWithFile extends React.Component<Props, State> {
 			return;
 		};
 
-		Action.openFile(accept, paths => {
+		Action.openFileDialog(accept, paths => {
 			if (onChangeFile) {
 				onChangeFile(e, paths[0]);	
 			};

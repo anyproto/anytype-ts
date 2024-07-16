@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Title, Label, Input, IconObject, Button, Select, Loader, Error } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Preview, analytics } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, Preview, analytics, Storage } from 'Lib';
 
 interface State {
 	error: string;
@@ -187,7 +187,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onSubmit () {
-		const { close, param } = this.props;
+		const { param } = this.props;
 		const { isLoading, usecase, iconOption } = this.state;
 		const { data } = param;
 		const { onCreate } = data;
@@ -214,6 +214,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				this.setState({ error: message.error.description });
 				return;
 			};
+
+			const ids = U.Menu.getVaultItems().map(it => it.id);
+			ids.unshift(message.objectId);
+			Storage.set('spaceOrder', ids, true);
 
 			if (onCreate) {
 				onCreate(message.objectId);

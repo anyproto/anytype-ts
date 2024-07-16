@@ -1589,7 +1589,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onSelectAll () {
 		const { rootId } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
-		const { title } = J.Constant.blockId;
+		const { title, description, featured } = J.Constant.blockId;
 
 		if (!selection) {
 			return;
@@ -1598,10 +1598,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const all = S.Block.getBlocks(rootId, it => it.isSelectable()).map(it => it.id);
 		
 		let ids = selection.get(I.SelectType.Block, true);
-		if (ids.length < all.length - 1) {
+		if (ids.length < all.length - 3) {
 			ids = all;
 		};
-		ids = ids.includes(title) ? ids.filter(id => id != title) : ids.concat(title);
+		if (!ids.includes(title)) {
+			ids = [ title, description, featured ].concat(ids);
+		} else {
+			ids = ids.filter(id => ![ title, description, featured ].includes(id));
+		};
 
 		selection.set(I.SelectType.Block, ids);
 		focus.clear(true);
@@ -1915,8 +1919,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			}
 		};
 
+		keyboard.disableContext(true);
 		S.Menu.closeAll([ 'blockContext', 'blockAdd', 'blockAction' ], () => {
 			S.Menu.open('selectPasteUrl', menuParam);
+			keyboard.disableContext(false);
 		});
 	};
 

@@ -30,13 +30,13 @@
 }
 
 .widget.widgetView {
-	.viewList, .viewGrid {
-		#viewSelect {
-			.select {
-				.icon.arrow { background-image: url('#{$themePath}/arrow/widget.svg') !important; }
-			}
+	#viewSelect {
+		.select {
+			.icon.arrow { background-image: url('#{$themePath}/arrow/widget.svg') !important; }
 		}
+	}
 
+	.viewList, .viewGrid {
 		.body {
 			.item {
 				.iconObject.isTask, .iconObject.isBookmark { background: none; }

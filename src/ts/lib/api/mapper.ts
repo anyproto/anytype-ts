@@ -2,6 +2,7 @@ import { I, M, U, Encode, Decode } from 'Lib';
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
+import { DeviceList } from 'ts/lib/api/command';
 
 export const Mapper = {
 
@@ -610,6 +611,16 @@ export const Mapper = {
 			};
 		},
 
+		DeviceInfo: (obj: Model.DeviceInfo): any => {
+			return {
+				id: obj.getId(),
+				name: obj.getName(),
+				addDate: obj.getAdddate(),
+				isConnected: obj.getIsconnected(),
+				archived: obj.getArchived()
+			};
+		},
+
     },
 
 	//------------------------------------------------------------
@@ -1023,7 +1034,9 @@ export const Mapper = {
 			if (v == V.PROCESSUPDATE)				 t = 'ProcessUpdate';
 			if (v == V.PROCESSDONE)					 t = 'ProcessDone';
 
+			if (v == V.THREADSTATUS) 				 t = 'ThreadStatus';
 			if (v == V.SPACESYNCSTATUSUPDATE)		 t = 'SpaceSyncStatusUpdate';
+			if (v == V.P2PSTATUSUPDATE)		 		 t = 'P2PStatusUpdate';
 
 			return t;
 		},
@@ -1465,10 +1478,19 @@ export const Mapper = {
 
 		SpaceSyncStatusUpdate: (obj: Events.Event.Space.SyncStatus.Update) => {
 			return {
+				id: obj.getId(),
 				error: obj.getError(),
 				network: obj.getNetwork(),
 				status: obj.getStatus(),
 				syncingCounter: obj.getSyncingobjectscounter()
+			};
+		},
+
+		P2PStatusUpdate: (obj: Events.Event.P2PStatus.Update) => {
+			return {
+				id: obj.getSpaceid(),
+				p2p: obj.getStatus(),
+				devicesCounter: obj.getDevicescounter(),
 			};
 		},
 	},

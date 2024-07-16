@@ -622,7 +622,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					const type = S.Record.getTypeById(item.objectTypeId) || {};
 					const details: any = { type: type.id };
 
-					if (U.Object.isSetLayout(type.recommendedLayout)) {
+					if (U.Object.isInSetLayouts(type.recommendedLayout)) {
 						details.layout = type.recommendedLayout;
 					};
 

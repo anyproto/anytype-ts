@@ -144,7 +144,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					};
 					content = <div className="name">{name}</div>;
 				} else {
-					if (isName && (record.layout == I.ObjectLayout.Note)) {
+					if (isName && U.Object.isNoteLayout(record.layout)) {
 						content = <span className="emptyText">{translate('commonEmpty')}</span>;
 					} else {
 						content = (
@@ -201,7 +201,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			};
 
 			if (!isEditing) {
-				if (record.layout == I.ObjectLayout.Note) {
+				if (U.Object.isNoteLayout(record.layout)) {
 					value = record.snippet;
 				} else {
 					value = value || translate('defaultNamePage');
@@ -411,7 +411,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		keyboard.setFocus(false);
 		this.range = null;
 
-		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(this.value)) {
+		if (U.Common.compareJSON(record[relation.relationKey], this.value)) {
 			this.setEditing(false);
 			return;
 		};

@@ -65,7 +65,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				{this.renderIdentity()}
 
 				{items.map((relationKey: any, i: any) => {
-					const id = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+					const id = Relation.cellId(PREFIX, relationKey, object.id);
 					const relation = S.Record.getRelationByKey(relationKey);
 					const value = object[relationKey];
 					const canEdit = allowedValue && !relation.isReadonlyValue;
@@ -108,7 +108,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								iconSize={iconSize}
 								readonly={!canEdit}
 								isInline={true}
-								idPrefix={PREFIX + block.id}
+								idPrefix={PREFIX}
 								elementMapper={this.elementMapper}
 								showTooltip={true}
 								tooltipX={I.MenuDirection.Left}
@@ -291,9 +291,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	renderLinks (relationKey: string, index: number) {
-		const { rootId, block } = this.props;
+		const { rootId } = this.props;
 		const object = this.getObject();
-		const id = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+		const id = Relation.cellId(PREFIX, relationKey, object.id);
 		const value = object[relationKey];
 		const options = Relation.getArrayValue(value).map(it => S.Detail.get(rootId, it, [])).filter(it => !it._empty_);
 		const l = options.length;
@@ -303,9 +303,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		return (
-			<span id={id} className="cell" key={index} onClick={e => this.onLinks(e, relationKey)}>
+			<span className="cell" key={index} >
 				<div className="bullet" />
-				<div className="cellContent">
+				<div 
+					id={id} 
+					className="cellContent"
+					onClick={e => this.onLinks(e, relationKey)}
+				>
 					{`${l} ${U.Common.plural(l, translate(U.Common.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
 				</div>
 			</span>
@@ -442,7 +446,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				options.push({ id: 'change', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true });
 			};
 
-			if (!typeIsDeleted && (object.layout == I.ObjectLayout.Set)) {
+			if (!typeIsDeleted && U.Object.isSetLayout(object.layout)) {
 				options.push({ id: 'turnCollection', name: translate('blockFeaturedTypeMenuTurnSetIntoCollection') });
 			};
 		};
@@ -450,11 +454,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const showMenu = () => {
 			S.Menu.open('select', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
-				offsetY: 8,
+				offsetY: 4,
 				subIds: J.Menu.featuredType,
-				onOpen: (context: any) => {
-					this.menuContext = context;
-				},
+				onOpen: context => this.menuContext = context,
 				data: {
 					options: options,
 					noClose: true,
@@ -645,7 +647,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		S.Menu.closeAll(null, () => {
 			S.Menu.open('dataviewSource', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', rootId)}`,
-				horizontal: I.MenuDirection.Center,
+				offsetY: 4,
 				data: {
 					rootId,
 					objectId: rootId,
@@ -792,16 +794,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const storeId = this.getStoreId();
 		const object = S.Detail.get(rootId, storeId, [ relationKey ]);
 		const relation = S.Record.getRelationByKey(relationKey);
-		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+		const elementId = `#block-${block.id} #${Relation.cellId(PREFIX, relationKey, object.id)}`;
 
 		if (!relation) {
 			return;
 		};
 
 		let menuParam = {
-			element: `#${elementId}`,
+			element: elementId,
 			className: 'fromFeatured',
-			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
 			noFlipX: true,
 			title: relation.name,
@@ -845,7 +846,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const object = S.Detail.get(rootId, storeId);
 		const value = Relation.getArrayValue(object[relationKey]);
-		const elementId = Relation.cellId(PREFIX + block.id, relationKey, object.id);
+		const elementId = `#block-${block.id} #${Relation.cellId(PREFIX, relationKey, object.id)}`;
 		const options = value.map(it => S.Detail.get(rootId, it, [])).filter(it => !it._empty_).map(it => ({
 			...it,
 			withDescription: true,
@@ -855,12 +856,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		S.Menu.closeAll([ 'select' ], () => {
 			S.Menu.open('select', {
-				element: `#${elementId}`,
+				element: elementId,
 				className: 'featuredLinks',
 				title: relation.name,
 				width: 360,
-				horizontal: I.MenuDirection.Left,
-				vertical: I.MenuDirection.Bottom,
+				offsetY: 4,
 				noFlipY: true,
 				data: {
 					options,

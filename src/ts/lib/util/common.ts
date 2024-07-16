@@ -187,6 +187,36 @@ class UtilCommon {
 		return this.hasProperty(o, 'length') ? o.length : Object.keys(o).length;
 	};
 
+	objectCompare (o1: any, o2: any): boolean {
+		o1 = o1 || {};
+		o2 = o2 || {};
+		
+		const k1 = Object.keys(o1);
+		const k2 = Object.keys(o2);
+		const v1 = Object.values(o1);
+		const v2 = Object.values(o2);
+		const sort = (c1: any, c2: any) => {
+			if (c1 > c2) return 1;
+			if (c1 < c2) return -1;
+			return 0;
+		};
+		
+		k1.sort(sort);
+		k2.sort(sort);
+		v1.sort(sort);
+		v2.sort(sort);
+		
+		return this.compareJSON(k1, k2) && this.compareJSON(v1, v2);
+	};
+
+	compareJSON (o1: any, o2: any): boolean {
+		return JSON.stringify(o1) === JSON.stringify(o2);
+	};
+
+	getKeyByValue (o: any, v: any) {
+		return Object.keys(o || {}).find(k => o[k] === v);
+	};
+
 	hasProperty (o: any, p: string) {
 		o = o || {};
 		return Object.prototype.hasOwnProperty.call(o, p);
@@ -229,28 +259,6 @@ class UtilCommon {
 			};
 		};
 		return o;
-	};
-
-	objectCompare (o1: any, o2: any): boolean {
-		o1 = o1 || {};
-		o2 = o2 || {};
-		
-		const k1 = Object.keys(o1);
-		const k2 = Object.keys(o2);
-		const v1 = Object.values(o1);
-		const v2 = Object.values(o2);
-		const sort = (c1: any, c2: any) => {
-			if (c1 > c2) return 1;
-			if (c1 < c2) return -1;
-			return 0;
-		};
-		
-		k1.sort(sort);
-		k2.sort(sort);
-		v1.sort(sort);
-		v2.sort(sort);
-		
-		return (JSON.stringify(k1) === JSON.stringify(k2)) && (JSON.stringify(v1) === JSON.stringify(v2));
 	};
 
 	arrayUnique (a: any[]) {
@@ -631,7 +639,7 @@ class UtilCommon {
 	};
 
 	intercept (obj: any, change: any) {
-		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
+		return this.compareJSON(change.newValue, obj[change.name]) ? null : change;
 	};
 
 	getScrollContainer (isPopup: boolean) {
@@ -931,6 +939,10 @@ class UtilCommon {
 
 	normalizeLineEndings (s: string) {
 		return String(s || '').replace(/\r\n?/g, '\n');
+	};
+
+	htmlSpecialChars (s: string) {
+		return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	};
 
 };

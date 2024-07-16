@@ -123,6 +123,9 @@
 		.wrap.isEditing { background: var(--color-shape-highlight-medium); }
 
 		.preview { background-image: url('#{$themePath}/icon/block/embed/default.svg'); }
+		.preview {
+			.label { color: #464646; }
+		}
 		.preview.isLatex { background-image: url('#{$themePath}/icon/block/embed/latex.svg'); }
 		.preview.isMermaid { background-image: url('#{$themePath}/icon/block/embed/mermaid.svg'); }
 		.preview.isChart { background-image: url('#{$themePath}/icon/block/embed/chart.svg'); }
@@ -159,7 +162,6 @@
 
     .block.blockBookmark {
 		.loaderWrapper { border: 0px; }
-        .inner { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
     }
 
 	/* BlockTable */

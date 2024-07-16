@@ -212,7 +212,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		if (U.Object.getSetLayouts().includes(item.recommendedLayout)) {
+		if (U.Object.isInSetLayouts(item.recommendedLayout)) {
 			this.onObjectTo(item.recommendedLayout);
 		} else {
 			this.onChange(item.id);

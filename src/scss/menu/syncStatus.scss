@@ -5,20 +5,21 @@
 }
 
 .menus {
-    .menu.menuSyncStatus { width: 408px; height: 396px; }
+    .menu.menuSyncStatus { width: var(--menu-width-large); height: var(--menu-width-large); }
     .menu.menuSyncStatus {
         .content { padding: 0px; height: 100%; max-height: unset; }
-        .syncMenuWrapper { padding: 16px 0px 8px 0px; height: 100%; display: flex; flex-direction: column; }
+        .syncMenuWrapper { padding: 16px 0px 0px 0px; height: 100%; display: flex; flex-direction: column; }
         .syncPanel { height: 28px; padding: 0px 16px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
 
         .title { @include text-paragraph; font-weight: 600; padding: 0; color: var(--color-text-primary); }
-        .icons { display: flex; gap: 0px 8px; }
+
+        .icons { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
         .icons {
             .iconWrapper { display: flex; position: relative; align-items: center; justify-content: center; width: 28px; height: 28px; }
             .iconWrapper::before { content: ''; width: 100%; height: 100%; position: absolute; z-index: 0; border-radius: 50%; background: var(--color-shape-tertiary); }
-            .iconWrapper.connected::before { background: #E5F8D6; }
-            .iconWrapper.error::before { background: #FEE7E0; }
-            .iconWrapper:hover::before { opacity: .5; }
+            .iconWrapper.connected::before { background: #c5efa3; }
+            .iconWrapper.error::before { background: #fcd1c3; }
+            .iconWrapper:hover::before { opacity: 0.5; }
 
             .iconWrapper {
                 .icon { width: 20px; height: 20px; }
@@ -41,9 +42,9 @@
 
         .items { height: 100%; padding: 0px; }
         .items {
-            .sides { display: flex; justify-content: space-between; align-items: center; }
+            .sides { display: flex; align-items: center; gap: 0px 4px; }
             .sides {
-                .side.left { display: flex; align-items: center; }
+                .side.left { display: flex; align-items: center; flex-grow: 1; width: calc(100% - 24px); }
                 .side.right { width: 20px; flex-shrink: 0; display: flex; align-items: center; }
                 .side.right {
                     .icon { width: 20px; height: 20px; }
@@ -52,24 +53,24 @@
                     .icon.synced { background-image: url('~img/icon/menu/syncStatus/ok.svg'); }
                     .icon.error { background-image: url('~img/icon/menu/syncStatus/failed.svg'); display: block; margin: 0px; }
                     .icon.more { background-image: url('~img/icon/menu/action/more0.svg'); opacity: 0; position: static; margin: 0px; }
+					.icon.more:hover { background-color: unset !important; background-image: url('~img/icon/menu/action/more1.svg'); }
                 }
             }
 
             .sectionName { padding: 4px 16px; }
+
             .item { padding: 3px 8px; margin: 0px 8px; width: unset; line-height: 22px; border-radius: 6px; }
             .item {
-                .info { display: flex; align-items: baseline; }
+                .info { display: flex; align-items: baseline; width: calc(100% - 24px); }
                 .info {
                     .iconObject { margin-right: 8px; }
-                    .name { margin: 0px 6px 0px 0px; @include text-overflow-nw; max-width: 250px; }
+                    .name { margin: 0px 6px 0px 0px; @include text-overflow-nw; }
                     .size { color: var(--color-text-secondary); }
                 }
             }
 
-            .item:hover,
-            .item.selected { background: var(--color-shape-highlight-medium); }
-            .item:hover,
-            .item.selected {
+            .item:hover, .item.hover { background: var(--color-shape-highlight-medium); }
+            .item:hover, .item.hover {
                 .side.right {
                     .icon:not(.more) { display: none; }
                     .icon.more { opacity: 1; }
@@ -92,7 +93,4 @@
         .items:before { content: ''; display: block; height: 1px; margin: 8px 16px 6px; background-color: var(--color-shape-secondary); }
     }
 
-    .menu.menuSyncStatusContext {
-        #item-archive { color: var(--color-red); }
-    }
 }

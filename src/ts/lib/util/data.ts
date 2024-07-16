@@ -43,7 +43,7 @@ class UtilData {
 	};
 
 	blockEmbedClass (v: I.EmbedProcessor): string {
-		return `is${I.EmbedProcessor[v]}`;
+		return `is${String(I.EmbedProcessor[v])}`;
 	};
 
 	styleIcon (type: I.BlockType, v: number): string {
@@ -116,15 +116,23 @@ class UtilData {
 		return String(I.CardSize[v]).toLowerCase();
 	};
 
-	diffClass (t: I.DiffType): string {
+	diffClass (v: I.DiffType): string {
 		let c = '';
-		switch (t) {
+		switch (v) {
 			case I.DiffType.None: c = 'diffNone'; break;
 			case I.DiffType.Add: c = 'diffAdd'; break;
 			case I.DiffType.Change: c = 'diffChange'; break;
 			case I.DiffType.Remove: c = 'diffRemove'; break;
 		};
 		return c;
+	};
+
+	syncStatusClass (v: I.SyncStatusObject): string {
+		const s = I.SyncStatusObject[v];
+		if ('undefined' == typeof(s)) {
+			return '';
+		};
+		return String(s || '').toLowerCase();
 	};
 	
 	alignHIcon (v: I.BlockHAlign): string {
@@ -145,6 +153,7 @@ class UtilData {
 
 		S.Common.gatewaySet(info.gatewayUrl);
 		S.Common.spaceSet(info.accountSpaceId);
+		S.Common.getRef('vault')?.setActive(info.spaceViewId);
 
 		analytics.profile(info.analyticsId, info.networkId);
 		Sentry.setUser({ id: info.analyticsId });
@@ -168,7 +177,6 @@ class UtilData {
 		};
 
 		keyboard.initPinCheck();
-		analytics.event('OpenAccount');
 
 		C.ObjectOpen(root, '', space, (message: any) => {
 			if (!U.Common.checkErrorOnOpen(root, message.error.code, null)) {
@@ -180,7 +188,7 @@ class UtilData {
 					return;
 				};
 
-				this.createSubscriptions(() => {
+				this.createSpaceSubscriptions(() => {
 					// Redirect
 					if (pin && !keyboard.isPinChecked) {
 						U.Router.go('/auth/pin-check', routeParam);
@@ -237,11 +245,63 @@ class UtilData {
 
 		this.getMembershipTiers(noTierCache);
 		this.getMembershipStatus();
+		this.createGlobalSubscriptions();
+
+		analytics.event('OpenAccount');
 	};
 
-	createSubscriptions (callBack?: () => void): void {
-		const { space } = S.Common;
+	createAllSubscriptions (callBack?: () => void) {
+		this.createGlobalSubscriptions(() => {
+			this.createSpaceSubscriptions(callBack);
+		});
+	};
+
+	createGlobalSubscriptions (callBack?: () => void) {
 		const { account } = S.Auth;
+		const list: any[] = [
+			{
+				subId: J.Constant.subId.profile,
+				filters: [
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
+				],
+				noDeps: true,
+				ignoreWorkspace: true,
+				ignoreHidden: false,
+			},
+			{
+				subId: J.Constant.subId.space,
+				keys: this.spaceRelationKeys(),
+				filters: [
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
+				],
+				sorts: [
+					{ relationKey: 'createdDate', type: I.SortType.Desc },
+				],
+				ignoreWorkspace: true,
+				ignoreHidden: false,
+			},
+		];
+
+		if (account) {
+			list.push({
+				subId: J.Constant.subId.myParticipant,
+				keys: this.participantRelationKeys(),
+				filters: [
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+					{ relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
+				],
+				ignoreWorkspace: true,
+				ignoreDeleted: true,
+				ignoreHidden: false,
+				noDeps: true,
+			});
+		};
+
+		this.createSubscriptions(list, callBack);
+	};
+
+	createSpaceSubscriptions (callBack?: () => void): void {
+		const { space } = S.Common;
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.profile,
@@ -309,18 +369,6 @@ class UtilData {
 				ignoreDeleted: true,
 			},
 			{
-				subId: J.Constant.subId.space,
-				keys: this.spaceRelationKeys(),
-				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
-				],
-				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
-				ignoreWorkspace: true,
-				ignoreHidden: false,
-			},
-			{
 				subId: J.Constant.subId.participant,
 				keys: this.participantRelationKeys(),
 				filters: [
@@ -335,21 +383,10 @@ class UtilData {
 			},
 		];
 
-		if (account) {
-			list.push({
-				subId: J.Constant.subId.myParticipant,
-				keys: this.participantRelationKeys(),
-				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-					{ relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
-				],
-				ignoreWorkspace: true,
-				ignoreDeleted: true,
-				ignoreHidden: false,
-				noDeps: true,
-			});
-		};
+		this.createSubscriptions(list, callBack);
+	};
 
+	createSubscriptions (list: any[], callBack?: () => void) {
 		let cnt = 0;
 		const cb = (item: any) => {
 			if (item.onSubscribe) {
@@ -516,13 +553,14 @@ class UtilData {
 			};
 
 			case I.ObjectLayout.Human:
+			case I.ObjectLayout.Participant:
 			case I.ObjectLayout.Relation: {
 				ret.withIcon = true;
 				break;
 			};
 		};
 
-		if (U.Object.isFileLayout(object.layout)) {
+		if (U.Object.isInFileLayouts(object.layout)) {
 			ret.withIcon = true;
 		};
 
@@ -575,6 +613,12 @@ class UtilData {
 	sortByWeight (c1: any, c2: any) {
 		if (c1._sortWeight_ > c2._sortWeight_) return -1;
 		if (c1._sortWeight_ < c2._sortWeight_) return 1;
+		return this.sortByName(c1, c2);
+	};
+
+	sortByFormat (c1: any, c2: any) {
+		if (c1.format > c2.format) return 1;
+		if (c1.format < c2.format) return -1;
 		return this.sortByName(c1, c2);
 	};
 
@@ -636,11 +680,10 @@ class UtilData {
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
 		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
 
-		if (layout == I.ObjectLayout.Task) {
+		if (U.Object.isTaskLayout(layout)) {
 			content.iconSize = I.LinkIconSize.Small;
-		};
-
-		if (layout == I.ObjectLayout.Note) {
+		} else
+		if (U.Object.isNoteLayout(layout)) {
 			const filter = [ 'type' ];
 
 			content.description = I.LinkDescription.None;
@@ -881,7 +924,7 @@ class UtilData {
 			return;
 		};
 		
-		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, (message: any) => {
+		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, this.getLinkBlockParam('', type.recommendedLayout), (message: any) => {
 			if (!message.error.code) {
 				analytics.createObject(type.id, type.recommendedLayout, route, message.middleTime);
 			};
@@ -1039,6 +1082,44 @@ class UtilData {
 		});
 
 		return groupedRecords;
+	};
+
+	getLinkBlockParam (id: string, layout: I.ObjectLayout) {
+		const param: Partial<I.Block> = {};
+
+		if (U.Object.isInFileLayouts(layout)) {
+			return {
+				type: I.BlockType.File,
+				content: {
+					targetObjectId: id,
+					style: I.FileStyle.Embed,
+					state: I.FileState.Done,
+					type: U.Object.getFileTypeByLayout(layout),
+				},
+			};
+		};
+
+		switch (layout) {
+			case I.ObjectLayout.Bookmark: {
+				param.type = I.BlockType.Bookmark;
+				param.content = {
+					state: I.BookmarkState.Done,
+					targetObjectId: id,
+				};
+				break;
+			};
+
+			default: {
+				param.type = I.BlockType.Link;
+				param.content = {
+					...this.defaultLinkSettings(),
+					targetBlockId: id,
+				};
+				break;
+			};
+		};
+
+		return param;
 	};
 
 };

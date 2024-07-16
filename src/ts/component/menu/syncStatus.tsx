@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, ObjectName } from 'Component';
-import { I, C, S, U, Action, translate } from 'Lib';
+import { I, C, S, U, Action, translate, analytics } from 'Lib';
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 28;
@@ -13,6 +13,7 @@ const SUB_ID = 'syncStatusObjectsList';
 const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, {}> {
 
 	_isMounted = false;
+	node = null;
 	cache: any = {};
 	items: any[] = [];
 	currentInfo = '';
@@ -35,12 +36,17 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		const icons = this.getIcons();
 
 		const PanelIcon = (item) => {
-			const { id, status } = item;
+			const { id, className } = item;
+			const cn = [ 'iconWrapper' ];
+
+			if (className) {
+				cn.push(className);
+			};
 
 			return (
 				<div
-					id={U.Common.toCamelCase([ 'icon', id ].join('-'))}
-					className={[ 'iconWrapper', status ? status : ''].join(' ')}
+					id={`icon-${id}`}
+					className={cn.join(' ')}
 					onClick={e => this.onPanelIconClick(e, item)}
 				>
 					<Icon className={id} />
@@ -49,16 +55,16 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		const Item = (item: any) => {
-			const { syncStatus } = item;
-			const icon = this.getClassBySyncStatus(syncStatus);
+			const icon = U.Data.syncStatusClass(item.syncStatus);
 
 			return (
 				<div
 					id={`item-${item.id}`}
 					className="item sides"
+					onClick={e => this.onContextMenu(e, item)}
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
-					<div className="side left">
+					<div className="side left" >
 						<IconObject object={item} size={20} />
 						<div className="info">
 							<ObjectName object={item} />
@@ -67,7 +73,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 					<div className="side right">
 						<Icon className={icon} />
-						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
+						<Icon className="more" />
 					</div>
 				</div>
 			);
@@ -101,7 +107,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		return (
-			<div className="syncMenuWrapper" onClick={this.onCloseInfo}>
+			<div ref={ref => this.node = ref} className="syncMenuWrapper" onClick={this.onCloseInfo}>
 				<div className="syncPanel">
 					<Title text={translate('menuSyncStatusTitle')} />
 
@@ -155,27 +161,25 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	onContextMenu (e, item) {
-		const { id } = item;
 		const { param } = this.props;
 		const { classNameWrap } = param;
-		const itemNode = $(`.syncMenuWrapper #item-${id}`);
+		const node = $(this.node);
+		const canWrite = U.Space.canMyParticipantWrite();
+		const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+		const element = node.find(`#item-${item.id}`);
 		const options: any[] = [
 			{ id: 'open', name: translate('commonOpen') }
 		];
 
-		if (U.Space.canMyParticipantWrite()) {
-			options.push({ id: 'archive', name: translate('commonDeleteImmediately'), isRed: true });
+		if (canWrite && canDelete) {
+			options.push({ id: 'delete', color: 'red', name: translate('commonDeleteImmediately') });
 		};
 
-		itemNode.addClass('selected');
 		S.Menu.open('select', {
 			classNameWrap,
-			className: 'menuSyncStatusContext',
-			element: itemNode.find('.more'),
+			element,
+			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-			onClose: () => {
-				itemNode.removeClass('selected');
-			},
 			data: {
 				options,
 				onSelect: (e, option) => {
@@ -184,21 +188,20 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 							U.Object.openAuto(item);
 							break;
 						};
-						case 'archive': {
-							Action.delete([ id ], 'syncStatus');
+						case 'delete': {
+							Action.delete([ item.id ], analytics.route.syncStatus);
 							break;
 						};
 					};
 				}
 			}
-		})
+		});
 	};
 
 	onPanelIconClick (e, item) {
-		const { id } = item;
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { classNameWrap } = param;
-		const element = `.syncPanel ${U.Common.toCamelCase([ '#icon', id ].join('-'))}`;
+		const element = `#${getId()} #icon-${item.id}`;
 		const menuParam = {
 			classNameWrap,
 			element,
@@ -211,14 +214,14 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		e.stopPropagation();
 
 		if (S.Menu.isOpen('syncStatusInfo')) {
-			if (id == this.currentInfo) {
+			if (item.id == this.currentInfo) {
 				this.onCloseInfo();
 			} else {
-				this.currentInfo = id;
+				this.currentInfo = item.id;
 				S.Menu.update('syncStatusInfo', menuParam);
 			};
 		} else {
-			this.currentInfo = id;
+			this.currentInfo = item.id;
 			S.Menu.open('syncStatusInfo', menuParam);
 		};
 	};
@@ -235,6 +238,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
 		const sorts = [
+			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [ I.SyncStatusObject.Syncing, I.SyncStatusObject.Synced ] },
 			{ relationKey: 'syncDate', type: I.SortType.Desc },
 		];
 
@@ -249,40 +253,75 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	getItems () {
-		return U.Data.groupDateSections(S.Record.getRecords(SUB_ID), 'syncDate');
+		const records = S.Record.getRecords(SUB_ID).map(it => {
+			if (it.syncStatus == I.SyncStatusObject.Syncing) {
+				it.syncDate = U.Date.now();
+			};
+			return it;
+		});
+
+		return U.Data.groupDateSections(records, 'syncDate');
 	};
 
 	getIcons () {
-		const iconNetwork = this.getIconNetwork();
-		const iconP2P = this.getIconP2P();
+		const syncStatus = S.Auth.getSyncStatus();
+		const iconNetwork = this.getIconNetwork(syncStatus);
+		const iconP2P = this.getIconP2P(syncStatus);
 
-		return [ iconNetwork ];
+		return [ iconP2P, iconNetwork ];
 	};
 
-	getIconP2P () {
-		return {};
+	getIconP2P (syncStatus) {
+		const { p2p, devicesCounter } = syncStatus;
+
+		let className = '';
+		let message = '';
+
+		if (devicesCounter) {
+			message = U.Common.sprintf(translate('menuSyncStatusP2PDevicesConnected'), devicesCounter, U.Common.plural(devicesCounter, translate('pluralDevice')));
+		} else {
+			message = translate('menuSyncStatusP2PNoDevicesConnected');
+		};
+
+		switch (p2p) {
+			case I.P2PStatus.Connected: {
+				className = 'connected';
+				break;
+			};
+			case I.P2PStatus.NotPossible: {
+				message = translate('menuSyncStatusP2PRestricted');
+				className = 'error';
+				break;
+			};
+		};
+
+		return {
+			id: 'p2p',
+			className,
+			title: translate('menuSyncStatusInfoP2pTitle'),
+			message,
+			buttons: []
+		};
 	};
 
-	getIconNetwork () {
-		const syncData = S.Auth.syncStatus;
-		const { network, error, syncingCounter } = syncData;
+	getIconNetwork (syncStatus) {
+		const { network, error, syncingCounter, status } = syncStatus;
+		const buttons: any[] = [];
 
 		let id = '';
 		let title = '';
-		let status = '';
+		let className = '';
 		let message = '';
-		let buttons: any[] = [];
-
 		let isConnected = false;
 		let isError = false;
 
-		if ([ I.SyncStatusSpace.Syncing, I.SyncStatusSpace.Synced ].includes(syncData.status)) {
+		if ([ I.SyncStatusSpace.Syncing, I.SyncStatusSpace.Synced ].includes(status)) {
 			isConnected = true;
-			status = 'connected';
+			className = 'connected';
 		} else
-		if (I.SyncStatusSpace.Error == syncData.status) {
+		if (I.SyncStatusSpace.Error == status) {
 			isError = true;
-			status = 'error';
+			className = 'error';
 		};
 
 		switch (network) {
@@ -306,7 +345,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						buttons.push({ id: 'updateApp', name: translate('menuSyncStatusInfoNetworkMessageErrorUpdateApp') });
 					} else
 					if (error == I.SyncStatusError.StorageLimitExceed) {
-						buttons.push({ id: 'upgradeMembership', name: translate('menuSyncStatusInfoNetworkMessageErrorSeeMembership') });
+						buttons.push({ id: 'upgradeMembership', name: translate('menuSyncStatusInfoNetworkMessageErrorAddMoreStorage') });
 					};
 				} else {
 					message = translate('menuSyncStatusInfoNetworkMessageOffline');
@@ -318,7 +357,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				id = 'self';
 				title = translate('menuSyncStatusInfoSelfTitle');
 
-				switch (syncData.status) {
+				switch (status) {
 					case I.SyncStatusSpace.Syncing: {
 						message = translate('menuSyncStatusInfoSelfMessageSyncing');
 						break;
@@ -339,18 +378,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				id = 'localOnly';
 				title = translate('menuSyncStatusInfoLocalOnlyTitle');
 				message = translate('menuSyncStatusInfoLocalOnlyMessage');
+				className = '';
 				break;
 			};
 		};
 
-		return { id, status, title, message, buttons };
-	};
-
-	getClassBySyncStatus (status: I.SyncStatusObject) {
-		if (!status) {
-			status = 0;
-		};
-		return I.SyncStatusObject[status].toLowerCase();
+		return { id, className, title, message, buttons };
 	};
 
 	getRowHeight (item: any) {

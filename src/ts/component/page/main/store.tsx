@@ -176,7 +176,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			
 			return (
 				<div className={cn.join(' ')}>
-					<div className="flex" onClick={e => this.onClick(e, item)}>
+					<div className="flex" onClick={() => this.onOpen(item)}>
 						<IconObject iconSize={iconSize} object={item} />
 						<div className="name">{item.name}</div>
 					</div>
@@ -394,14 +394,32 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		Storage.set('viewStore', id);
 	};
 
-	onClick (e: any, item: any) {
+	onOpen (item: any) {
+		if (!item.isInstalled) {
+			let installed = null;
+
+			switch (this.tab) {
+				case I.StoreTab.Type:
+					installed = S.Record.getTypeByKey(item.uniqueKey);
+					break;
+
+				case I.StoreTab.Relation:
+					installed = S.Record.getRelationByKey(item.relationKey);
+					break;
+			};
+
+			if (installed) {
+				item = installed;
+			};
+		};
+
 		U.Object.openAuto(item);
 	};
 
 	onCreateType (e: any) {
 		C.ObjectCreateObjectType({}, [ I.ObjectFlag.DeleteEmpty ], S.Common.space, (message: any) => {
 			if (!message.error.code) {
-				this.onClick(e, message.details);
+				this.onOpen(message.details);
 				analytics.event('CreateType');
 			};
 		});
@@ -448,9 +466,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		switch (this.tab) {
 			case I.StoreTab.Type:
 				menuParam.data = Object.assign(menuParam.data, {
-					onClick: (item: any) => {
-						this.onClick(e, item);
-					}
+					onClick: item => this.onOpen(item),
 				});
 				break;
 
@@ -458,7 +474,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				menuParam.data = Object.assign(menuParam.data, {
 					menuIdEdit: 'blockRelationEdit',
 					addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-						this.onClick(e, relation);
+						this.onOpen(relation);
 					},
 				});
 				break;
@@ -637,7 +653,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		e.preventDefault();
 		e.stopPropagation();
 
-		Action.install(item, true);
+		Action.install(item, true, () => this.onOpen(item));
 	};
 
 	onRemove (e: any, item: any) {
