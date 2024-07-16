@@ -69,6 +69,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const attachmentList = attachments.concat(files);
 		const subId = this.getSubId();
 		const list = this.getDeps().map(id => S.Detail.get(subId, id));
+		const rootId = this.getRootId();
 
 		const Item = (item: any) => {
 			if (item.isSection) {
@@ -82,6 +83,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					ref={ref => this.messagesMap[item.id] = ref}
 					{...this.props}
 					{...item}
+					rootId={rootId}
 					isThread={!!threadId}
 					onThread={this.onThread}
 					isLast={item.id == this.lastMessageId}
@@ -161,10 +163,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { isPopup } = this.props;
 		const blockId = this.getBlockId();
 		const ns = blockId + U.Common.getEventNamespace(isPopup);
+		const lastMessageId = Storage.getLastChatMessageId(blockId);
+
 		this._isMounted = true;
 		this.checkSendButton();
-
-		const lastMessageId = Storage.getLastChatMessageId(blockId);
 
 		if (lastMessageId && this.messagesMap[lastMessageId]) {
 			const node = this.messagesMap[lastMessageId].node;
@@ -220,14 +222,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getSubId (): string {
-		const { rootId } = this.props;
+		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
 
 		return S.Record.getSubId(rootId, blockId);
 	};
 
 	loadDeps (callBack?: () => void) {
-		const { rootId } = this.props;
+		const rootId = this.getRootId();
 		const deps = this.getDeps();
 
 		if (!deps.length) {
@@ -447,12 +449,19 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		keyboard.disableCommonDrop(false);
 	};
 
+	getRootId () {
+		const { rootId } = this.props;
+		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
+
+		return object.chatId || rootId;
+	};
+
 	getBlockId () {
 		return this.state.threadId || this.props.block.id;
 	};
 
 	getMessages () {
-		const { rootId } = this.props;
+		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
 		const childrenIds = S.Block.getChildrenIds(rootId, blockId);
 		const children = S.Block.unwrapTree([ S.Block.wrapTree(rootId, blockId) ]).filter(it => it.isText());
@@ -492,7 +501,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const { rootId } = this.props;
+		const rootId = this.getRootId();
 		const { account } = S.Auth;
 		const { attachments, files } = this.state;
 		const blockId = this.getBlockId();
@@ -521,6 +530,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 			C.BlockCreate(rootId, target, position, param, (message) => {
 				Storage.setLastChatMessageId(blockId, message.blockId);
+
 				this.scrollToBottom();
 				this.refEditable.setRange({ from: 0, to: 0 });
 				this.lastMessageId = message.blockId;
@@ -745,7 +755,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onTextButton (e: any, type: I.MarkType, param: string) {
-		const { rootId } = this.props;
+		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
 		const value = this.getTextValue();
 		const { from, to } = this.range;
@@ -825,7 +835,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const { rootId } = this.props;
+		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
 
 		let value = this.refEditable.getTextValue();

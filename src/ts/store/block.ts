@@ -601,9 +601,9 @@ class BlockStore {
 			return;
 		};
 
-		const object = S.Detail.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, [ 'chatId' ], true);
 		const exists = this.checkChatExists(rootId);
-		const check = true;
+		const check = object.chatId;
 		const change = (check && !exists) || (!check && exists);
 		
 		if (change) {
