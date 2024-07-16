@@ -453,7 +453,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	canDrop (e: any): boolean {
-		return this._isMounted && e.dataTransfer.files && e.dataTransfer.files.length && !this.props.readonly;
+		return this._isMounted && e.dataTransfer.files && e.dataTransfer.files.length && !this.props.readonly && !this.editingId;
 	};
 
 	onDragOver (e: any) {
