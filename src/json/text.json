@@ -152,6 +152,7 @@
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObject": "Create Object",
 	"commonUrl": "Url",
+	"commonEdit": "Edit",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
