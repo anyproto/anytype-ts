@@ -206,7 +206,7 @@ const Vault = observer(class Vault extends React.Component {
 			return;
 		};
 
-		if ((next.id == spaceview) && (this.n === 0)) {
+		if ((next.id == spaceview) && (this.n === 0) && (items.length > 1)) {
 			this.onArrow(dir);
 			return;
 		};
