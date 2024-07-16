@@ -2,8 +2,9 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { IconObject } from 'Component';
 import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview } from 'Lib';
+
+import VaultItem from './item';
 
 const Vault = observer(class Vault extends React.Component {
 	
@@ -26,31 +27,16 @@ const Vault = observer(class Vault extends React.Component {
 		const items = U.Menu.getVaultItems();
 
 		const Item = item => {
-			const cn = [ 'item' ];
-
-			let icon = null;
-			let onContextMenu = null;
-
-			if (!item.isButton) {
-				icon = <IconObject object={item} size={56} forceLetter={true} />;
-				onContextMenu = e => this.onContextMenu(e, item);
-			} else {
-				cn.push(`isButton ${item.id}`);
-			};
+			const onContextMenu = item.isButton ? null : e => this.onContextMenu(e, item);
 
 			return (
-				<div 
-					id={`item-${item.id}`}
-					className={cn.join(' ')}
+				<VaultItem 
+					item={item}
 					onClick={e => this.onClick(e, item)}
 					onMouseEnter={e => this.onMouseEnter(e, item)}
 					onMouseLeave={() => this.onMouseLeave()}
 					onContextMenu={onContextMenu}
-				>
-					<div className="iconWrap">
-						{icon}
-					</div>
-				</div>
+				/>
 			);
 		};
 
