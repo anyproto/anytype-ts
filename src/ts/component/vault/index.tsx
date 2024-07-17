@@ -70,7 +70,7 @@ const Vault = observer(class Vault extends React.Component {
 						helperContainer={() => $(`#vault .side.top`).get(0)}
 					/>
 
-					<div className="side bottom">
+					<div className="side bottom" onDragStart={e => e.preventDefault()}>
 						<Item id="settings" isButton={true} name={translate('commonSettings')} />
 					</div>
 				</div>
