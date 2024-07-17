@@ -600,7 +600,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					update.marks = marks;
 
 					U.Data.blockSetText(rootId, this.editingId, JSON.stringify(update), [], true, () => {
+						this.scrollToMessage(this.editingId);
 						this.editingId = '';
+
 						clear();
 					});
 				};
@@ -700,12 +702,24 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 	};
 
-	scrollToMessage (id: string) {const { isPopup } = this.props;
-		const container = U.Common.getScrollContainer(isPopup);
-		const node = this.messagesMap[id].node;
-		const scroll = id == this.lastMessageId ? node.offsetTop + 50 : node.offsetTop + 10;
+	scrollToMessage (id: string) {
+		const el = this.messagesMap[id];
+		if (!el) {
+			return;
+		};
 
-		container.scrollTop(scroll);
+		const node = $(this.messagesMap[id].node);
+		if (!node.length) {
+			return;
+		};
+
+		const { isPopup } = this.props;
+		const pageContainer = U.Common.getPageContainer(isPopup);
+		const scrollContainer = U.Common.getScrollContainer(isPopup);
+		const hh = pageContainer.find('#header').height();
+		const top = node.offset().top + node.outerHeight() + hh + 16;
+
+		scrollContainer.scrollTop(top);
 	};
 
 	scrollToBottom () {
