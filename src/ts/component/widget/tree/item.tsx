@@ -62,12 +62,10 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 			);
 		};
 
-		/*
-		if (U.Object.isCollectionLayout(layout)) {
-			arrow = <Icon className="collection" />;
+		if (U.Object.isCollectionLayout(layout) && !numChildren) {
+			arrow = <Icon className="set" />;
 		} else
-		*/
-		if (U.Object.isSetLayout(layout)) {
+		if (!U.Object.isCollectionLayout(layout) && U.Object.isInSetLayouts(layout)) {
 			arrow = <Icon className="set" />;
 		} else
 		if (numChildren > 0) {
