@@ -341,7 +341,12 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return;
 		};
 
-		const allowedObject = U.Object.isInPageLayouts(type.recommendedLayout) || U.Object.isInSetLayouts(type.recommendedLayout);
+		const layout = type.recommendedLayout;
+		const allowedObject = 
+			U.Object.isInPageLayouts(layout) || 
+			U.Object.isInSetLayouts(layout) || 
+			U.Object.isBookmarkLayout(layout) ||
+			U.Object.isChatLayout(layout);
 		const options = [];
 
 		if (allowedObject) {
@@ -382,7 +387,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		if (!type) {
 			return;
 		};
-		
+
 		const details: any = {};
 
 		if (U.Object.isInSetLayouts(type.recommendedLayout)) {

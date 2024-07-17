@@ -329,6 +329,10 @@ class UtilObject {
 		return layout == I.ObjectLayout.Bookmark;
 	};
 
+	isChatLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Chat;
+	};
+
 	// --------------------------------------------------------- //
 
 	getPageLayouts (): I.ObjectLayout[] {

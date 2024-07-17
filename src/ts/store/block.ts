@@ -594,8 +594,6 @@ class BlockStore {
 	};
 
 	checkChat (rootId: string) {
-		return;
-
 		const { chat } = J.Constant.blockId;
 		const element = this.getMapElement(rootId, rootId);
 
@@ -603,7 +601,11 @@ class BlockStore {
 			return;
 		};
 
-		const object = S.Detail.get(rootId, rootId, [ 'chatId' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'layout', 'chatId' ], true);
+		if (U.Object.isChatLayout(object.layout)) {
+			return;
+		};
+
 		const exists = this.checkChatExists(rootId);
 		const check = object.chatId;
 		const change = (check && !exists) || (!check && exists);
