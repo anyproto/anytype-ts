@@ -11,6 +11,7 @@ const Vault = observer(class Vault extends React.Component {
 	
 	node = null;
 	isAnimating = false;
+	checkKeyUp = false;
 	top = 0;
 	timeoutHover = 0;
 	pressed = new Set();
@@ -114,7 +115,12 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onKeyDown (e: any) {
-		this.pressed.add(e.key.toLowerCase());
+		const key = e.key.toLowerCase();
+
+		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
+			this.checkKeyUp = true;
+			this.pressed.add(key);
+		};
 
 		keyboard.shortcut('ctrl+tab, ctrl+shift+tab', e, pressed => this.onArrow(pressed.match('shift') ? -1 : 1));
 	};
@@ -123,9 +129,10 @@ const Vault = observer(class Vault extends React.Component {
 		this.pressed.delete(e.key.toLowerCase());
 
 		if (
-			this.pressed.has(Key.ctrl) || 
+			(this.pressed.has(Key.ctrl) || 
 			this.pressed.has(Key.tab) || 
-			this.pressed.has(Key.shift)
+			this.pressed.has(Key.shift)) ||
+			!this.checkKeyUp
 		) {
 			return;
 		};
@@ -133,6 +140,8 @@ const Vault = observer(class Vault extends React.Component {
 		const node = $(this.node);
 		const items = this.getSpaceItems();
 		const item = items[this.n];
+
+		this.checkKeyUp = false;
 
 		if (item) {
 			node.find('.item.hover').removeClass('hover');
