@@ -118,11 +118,13 @@ const Vault = observer(class Vault extends React.Component {
 		const key = e.key.toLowerCase();
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
-			this.checkKeyUp = true;
 			this.pressed.add(key);
 		};
 
-		keyboard.shortcut('ctrl+tab, ctrl+shift+tab', e, pressed => this.onArrow(pressed.match('shift') ? -1 : 1));
+		keyboard.shortcut('ctrl+tab, ctrl+shift+tab', e, pressed => {
+			this.checkKeyUp = true;
+			this.onArrow(pressed.match('shift') ? -1 : 1);
+		});
 	};
 
 	onKeyUp (e: any) {
@@ -137,6 +139,8 @@ const Vault = observer(class Vault extends React.Component {
 			return;
 		};
 
+		this.checkKeyUp = false;
+
 		const node = $(this.node);
 		const items = this.getSpaceItems();
 		const item = items[this.n];
@@ -145,6 +149,8 @@ const Vault = observer(class Vault extends React.Component {
 			node.find('.item.hover').removeClass('hover');
 			U.Router.switchSpace(item.targetSpaceId, '', true);
 		};
+
+		Preview.tooltipHide();
 	};
 
 	onClick (e: any, item: any) {
@@ -175,7 +181,6 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onArrow (dir: number) {
-		const { spaceview } = S.Block;
 		const items = this.getSpaceItems();
 
 		if (items.length == 1) {
@@ -191,14 +196,8 @@ const Vault = observer(class Vault extends React.Component {
 		};
 
 		const next = items[this.n];
-		if (!next) {
-			return;
-		};
-
-		if (next.id == spaceview) {
-			this.onArrow(dir);
-		} else {
-			this.setHover(next);	
+		if (next) {
+			this.setHover(next);
 		};
 	};
 

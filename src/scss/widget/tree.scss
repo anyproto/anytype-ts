@@ -1,14 +1,14 @@
 @import "~scss/_mixins";
 
 .widget.widgetTree {
-	.ReactVirtualized__List { padding: 0px 4px 12px 4px; }
+	.ReactVirtualized__List { padding: 0px 8px 12px 8px; }
 	.emptyWrap { padding-top: 6px; }
 
 	.item { position: relative; }
 	.item {
 		.inner {
 			display: flex; flex-direction: row; gap: 0px 2px; align-items: center; justify-content: space-between; position: relative;
-			height: 28px; padding: 0px 8px;
+			height: 28px; padding: 0px 4px;
 		}
 		.inner::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
