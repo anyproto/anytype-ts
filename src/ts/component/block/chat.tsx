@@ -178,7 +178,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.lastMessageId = lastId;
 			this.lastMessageOffset = node.offset().top;
 
-			window.setTimeout(() => this.scrollToMessage(lastId), 10);
+			raf(() => this.scrollToMessage(lastId));
 		};
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
@@ -327,14 +327,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onKeyDownInput (e: any) {
 		const { checkMarkOnBackspace } = this.props;
 		const range = this.range;
-		const menuOpenSmile = S.Menu.isOpen('smile');
 		const cmd = keyboard.cmdKey();
 
 		let value = this.refEditable.getTextValue();
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
-
 			this.onAddMessage();
 		});
 
@@ -357,31 +355,25 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			});
 		};
 
-		keyboard.shortcut(`${cmd}+a`, e, () => {
-			if (menuOpenSmile) {
-				return;
+		keyboard.shortcut(`${cmd}+t`, e, () => {
+			if (!S.Menu.isOpen('searchObject')) {
+				e.preventDefault();
+				this.onChatButton(e, I.ChatButton.Object);
 			};
-
-			e.preventDefault();
-			this.onChatButton(e, I.ChatButton.Object);
 		});
 
 		keyboard.shortcut(`${cmd}+e`, e, () => {
-			if (menuOpenSmile) {
-				return;
+			if (!S.Menu.isOpen('smile')) {
+				e.preventDefault();
+				this.onChatButton(e, I.ChatButton.Emoji);
 			};
-
-			e.preventDefault();
-			this.onChatButton(e, I.ChatButton.Emoji);
 		});
 
 		keyboard.shortcut(`${cmd}+m`, e, () => {
-			if (menuOpenSmile) {
-				return;
+			if (!S.Menu.isOpen('mention')) {
+				e.preventDefault();
+				this.onChatButton(e, I.ChatButton.Mention);
 			};
-
-			e.preventDefault();
-			this.onChatButton(e, I.ChatButton.Mention);
 		});
 
 		if (this.editingId) {
@@ -660,7 +652,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.refEditable.setValue(Mark.toHtml(text, this.marks));
 		this.renderMarkup();
 
-		window.setTimeout(() => this.refEditable.setRange(this.range));
+		raf(() => this.refEditable.setRange(this.range));
 	};
 
 	onScroll (e: any) {
@@ -723,13 +715,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	scrollToBottom () {
-		window.setTimeout(() => {
+		raf(() => {
 			const { isPopup } = this.props;
 			const container = U.Common.getScrollContainer(isPopup);
 			const height = isPopup ? container.get(0).scrollHeight : document.body.scrollHeight;
 
 			container.scrollTop(height);
-		}, 10);
+		});
 	};
 
 	getTextValue (): string {
