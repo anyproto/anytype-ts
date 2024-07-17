@@ -14,7 +14,7 @@ const Vault = observer(class Vault extends React.Component {
 	top = 0;
 	timeoutHover = 0;
 	pressed = new Set();
-	n = -1;
+	n = 0;
 
 	constructor (props) {
 		super(props);
@@ -116,15 +116,17 @@ const Vault = observer(class Vault extends React.Component {
 	onKeyDown (e: any) {
 		this.pressed.add(e.key.toLowerCase());
 
-		keyboard.shortcut('ctrl+tab', e, () => {
-			this.onArrow(1);
-		});
+		keyboard.shortcut('ctrl+tab, ctrl+shift+tab', e, pressed => this.onArrow(pressed.match('shift') ? -1 : 1));
 	};
 
 	onKeyUp (e: any) {
 		this.pressed.delete(e.key.toLowerCase());
 
-		if (this.pressed.has(Key.ctrl) || this.pressed.has(Key.tab)) {
+		if (
+			this.pressed.has(Key.ctrl) || 
+			this.pressed.has(Key.tab) || 
+			this.pressed.has(Key.shift)
+		) {
 			return;
 		};
 
@@ -135,7 +137,6 @@ const Vault = observer(class Vault extends React.Component {
 		if (item) {
 			node.find('.item.hover').removeClass('hover');
 			U.Router.switchSpace(item.targetSpaceId, '', true);
-			this.n = -1;
 		};
 	};
 
@@ -169,6 +170,10 @@ const Vault = observer(class Vault extends React.Component {
 	onArrow (dir: number) {
 		const { spaceview } = S.Block;
 		const items = this.getSpaceItems();
+
+		if (items.length == 1) {
+			return;
+		};
 		
 		this.n += dir;
 		if (this.n < 0) {
@@ -183,12 +188,11 @@ const Vault = observer(class Vault extends React.Component {
 			return;
 		};
 
-		if ((next.id == spaceview) && (this.n === 0) && (items.length > 1)) {
+		if (next.id == spaceview) {
 			this.onArrow(dir);
-			return;
+		} else {
+			this.setHover(next);	
 		};
-
-		this.setHover(next);
 	};
 
 	setActive (id: string) {
@@ -202,7 +206,7 @@ const Vault = observer(class Vault extends React.Component {
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const el = node.find(`#item-${item.id}`);
-		const top = el.position().top - scroll.position().top;
+		const top = el.position().top - scroll.position().top - this.top;
 		const height = scroll.height();
 		const ih = el.height() + 8;
 
@@ -213,7 +217,7 @@ const Vault = observer(class Vault extends React.Component {
 			Preview.tooltipShow({ 
 				text: item.name, 
 				element: el, 
-				className: 'fromVault', 
+				className: 'fromVault',
 				typeX: I.MenuDirection.Left,
 				typeY: I.MenuDirection.Center,
 				offsetX: 62,

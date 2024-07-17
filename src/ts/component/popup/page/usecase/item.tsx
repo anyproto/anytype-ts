@@ -156,7 +156,6 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 			data: {
 				options: this.getSpaceOptions(),
 				noVirtualisation: true, 
-				noScroll: true,
 				onSelect: (e: any, item: any) => {
 					const isNew = item.id == 'add';
 
@@ -194,7 +193,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 
 		list = list.concat(U.Space.getList()
 			.filter(it => U.Space.canMyParticipantWrite(it.targetSpaceId))
-			.map(it => ({ ...it, iconSize: 48, object: it })));
+			.map(it => ({ ...it, iconSize: 48, object: it, isBig: true })));
 		
 		return list;
 	};
