@@ -271,8 +271,12 @@ html.themeDark {
 
 	/* Vault */
 
-	.vault { background-color: var(--color-shape-primary); }
+	.vault { background-color: #393939; }
 	.vault {
+		.item.isButton {
+			.iconWrap { background-color: #4f4f4f; }
+		}
+
 		.item.gallery {
 			.iconWrap { background-image: url('#{$themePath}/icon/vault/gallery.svg'); }
 		}
