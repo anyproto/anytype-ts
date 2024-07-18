@@ -170,7 +170,7 @@ jobs:
           RELEASE_VERSION=$( echo "$GITHUB_REF_NAME" | perl -pe 's/^[a-zA-Z]+//' )
           cd artifacts/
           for FILE in *; do
-            UPLOAD_URL="https://publish-releases.anytype.io/electron/${RELEASE_VERSION}/${FILE}"
+            UPLOAD_URL="https://publish-releases.anytype.io/upload/desktop/${RELEASE_VERSION}/${FILE}"
             echo "Uploading files to ${UPLOAD_URL}"
             curl \
               --header "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" \
@@ -179,7 +179,7 @@ jobs:
           done
           cd ../dist/
           for FILE in *.yml; do
-            UPLOAD_URL="https://publish-releases.anytype.io/electron/${RELEASE_VERSION}/${FILE}"
+            UPLOAD_URL="https://publish-releases.anytype.io/upload/desktop/${RELEASE_VERSION}/${FILE}"
             echo "Uploading files to ${UPLOAD_URL}"
             curl \
               --header "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" \
@@ -195,14 +195,14 @@ jobs:
           $files = Get-ChildItem -File artifacts
           foreach ($file in $files) {
             $encodedFileName = [System.Uri]::EscapeDataString($file.Name)
-            $uploadUrl = "https://publish-releases.anytype.io/electron/$releaseVersion/$encodedFileName"
+            $uploadUrl = "https://publish-releases.anytype.io/upload/desktop/$releaseVersion/$encodedFileName"
             echo "Uploading files to $uploadUrl"
             curl.exe -H "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" -T $file.FullName $uploadUrl
           }
           $yml_files = Get-ChildItem -File dist -Filter *.yml
           foreach ($file in $yml_files) {
             $encodedFileName = [System.Uri]::EscapeDataString($file.Name)
-            $uploadUrl = "https://publish-releases.anytype.io/electron/$releaseVersion/$encodedFileName"
+            $uploadUrl = "https://publish-releases.anytype.io/upload/desktop/$releaseVersion/$encodedFileName"
             echo "Uploading files to $uploadUrl"
             curl.exe -H "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" -T $file.FullName $uploadUrl
           }
