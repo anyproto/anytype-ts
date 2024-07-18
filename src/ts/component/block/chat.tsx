@@ -51,9 +51,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onKeyDownInput = this.onKeyDownInput.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
-		this.onButton = this.onButton.bind(this);
-		this.onTextButton = this.onTextButton.bind(this);
-		this.onChatButton = this.onChatButton.bind(this);
+		this.onMention = this.onMention.bind(this);
+		this.onChatButtonSelect = this.onChatButtonSelect.bind(this);
+		this.onTextButtonToggle = this.onTextButtonToggle.bind(this);
+		this.onMenuClose = this.onMenuClose.bind(this);
 		this.onThread = this.onThread.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
@@ -61,18 +62,22 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onScroll = this.onScroll.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onEditMessage = this.onEditMessage.bind(this);
+		this.hasSelection = this.hasSelection.bind(this);
+		this.caretMenuParam = this.caretMenuParam.bind(this);
+		this.getMarksAndRange = this.getMarksAndRange.bind(this);
 	};
 
 	render () {
 		const { readonly } = this.props;
 		const { threadId, attachments, files } = this.state;
+		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
+		const value = this.getTextValue();
 		const messages = this.getMessages();
 		const sections = this.getSections();
 		const attachmentList = attachments.concat(files);
 		const subId = this.getSubId();
 		const list = this.getDeps().map(id => S.Detail.get(subId, id));
-		const rootId = this.getRootId();
 
 		const Section = (item: any) => {
 			const ds = U.Date.dayString(item.time);
@@ -150,9 +155,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 						<Buttons
 							ref={ref => this.refButtons = ref}
+							rootId={rootId}
 							blockId={blockId}
-							buttons={this.getButtons()}
-							onButton={this.onButton}
+							value={value}
+							hasSelection={this.hasSelection}
+							getMarksAndRange={this.getMarksAndRange}
+							attachments={attachments}
+							caretMenuParam={this.caretMenuParam}
+							onMention={this.onMention}
+							onChatButtonSelect={this.onChatButtonSelect}
+							onTextButtonToggle={this.onTextButtonToggle}
+							onMenuClose={this.onMenuClose}
 						/>
 
 						<Icon id="send" className="send" onClick={this.onAddMessage} />
@@ -358,21 +371,21 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		keyboard.shortcut(`${cmd}+t`, e, () => {
 			if (!S.Menu.isOpen('searchObject')) {
 				e.preventDefault();
-				this.onChatButton(e, I.ChatButton.Object);
+				this.refButtons.onChatButton(e, I.ChatButton.Object);
 			};
 		});
 
 		keyboard.shortcut(`${cmd}+e`, e, () => {
 			if (!S.Menu.isOpen('smile')) {
 				e.preventDefault();
-				this.onChatButton(e, I.ChatButton.Emoji);
+				this.refButtons.onChatButton(e, I.ChatButton.Emoji);
 			};
 		});
 
 		keyboard.shortcut(`${cmd}+m`, e, () => {
 			if (!S.Menu.isOpen('mention')) {
 				e.preventDefault();
-				this.onChatButton(e, I.ChatButton.Mention);
+				this.refButtons.onChatButton(e, I.ChatButton.Mention);
 			};
 		});
 
@@ -400,7 +413,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 
 			if (type !== null) {
-				this.onTextButton(e, type, param);
+				this.refButtons.onTextButton(e, type, param);
 			};
 		};
 	};
@@ -724,6 +737,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
+	getMarksAndRange (): any {
+		return { marks: this.marks, range: this.range };
+	};
+
 	getTextValue (): string {
 		return String(this.refEditable?.getTextValue() || '');
 	};
@@ -743,200 +760,50 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	updateButtons () {
-		this.refButtons.setButtons(this.getButtons());
+		this.refButtons.setButtons();
 	};
 
-	getButtons () {
-		return this.hasSelection() ? this.getTextButtons() : this.getChatButtons();
-	};
-
-	onButton (e: any, type: any) {
-		this.hasSelection() ? this.onTextButton(e, type, '') : this.onChatButton(e, type);
-	};
-
-	getChatButtons () {
-		const cmd = keyboard.cmdSymbol();
-
-		return [
-			{ type: I.ChatButton.Object, icon: 'plus', name: translate('blockChatButtonObject'), caption: `${cmd} + A` },
-			{ type: I.ChatButton.Emoji, icon: 'emoji', name: translate('blockChatButtonEmoji'), caption: `${cmd} + E` },
-			{ type: I.ChatButton.Mention, icon: 'mention', name: translate('blockChatButtonMention'), caption: `${cmd} + M` },
-		];
-	};
-
-	getTextButtons () {
-		const cmd = keyboard.cmdSymbol();
-		const colorMark = Mark.getInRange(this.marks, I.MarkType.Color, this.range) || {};
-		const bgMark = Mark.getInRange(this.marks, I.MarkType.BgColor, this.range) || {};
-
-		const color = (
-			<div className={[ 'inner', 'textColor', `textColor-${colorMark.param || 'default'}` ].join(' ')} />
-		);
-		const background = (
-			<div className={[ 'inner', 'bgColor', `bgColor-${bgMark.param || 'default'}` ].join(' ')} />
-		);
-
-		return [
-			{ type: I.MarkType.Bold, icon: 'bold', name: translate('commonBold'), caption: `${cmd} + B` },
-			{ type: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic'), caption: `${cmd} + I` },
-			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: `${cmd} + Shift + S` },
-			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: `${cmd} + U` },
-			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: `${cmd} + K` },
-			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: `${cmd} + L` },
-			{ type: I.MarkType.Color, icon: 'color', name: translate('commonColor'), caption: `${cmd} + Shift + C`, inner: color },
-			{ type: I.MarkType.BgColor, icon: 'color', name: translate('commonBackground'), caption: `${cmd} + Shift + H`, inner: background },
-		].map((it: any) => {
-			it.isActive = false;
-			if (it.type == I.MarkType.Link) {
-				const inRange = Mark.getInRange(this.marks, I.MarkType.Link, this.range) || Mark.getInRange(this.marks, I.MarkType.Object, this.range);
-				it.isActive = !!(inRange && inRange.param);
-			} else {
-				it.isActive = !!Mark.getInRange(this.marks, it.type, this.range);
-			};
-			return it;
-		});
-	};
-
-	onChatButton (e: any, type: I.ChatButton) {
+	onChatButtonSelect (type: I.ChatButton, item: any) {
 		const { attachments } = this.state;
-		const blockId = this.getBlockId();
 		const range = this.range || { from: 0, to: 0 };
 
 		switch (type) {
 			case I.ChatButton.Object: {
-				S.Menu.open('searchObject', {
-					element: `#block-${blockId} #button-${blockId}-${type}`,
-					vertical: I.MenuDirection.Top,
-					noFlipX: true,
-					noFlipY: true,
-					onClose: () => this.refEditable.setRange(this.range),
-					data: {
-						skipIds: attachments.map(it => it.id),
-						filters: [
-							{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-						],
-						onSelect: (item: any) => {
-							this.setState({ attachments: attachments.concat(item) });
-						}
-					}
-				});
+				this.setState({ attachments: attachments.concat(item) });
 				break;
 			};
-
 			case I.ChatButton.Emoji: {
+				const to = range.from + 1;
+
 				let value = this.getTextValue();
 
-				S.Menu.open('smile', {
-					...this.caretMenuParam(),
-					data: {
-						noHead: true,
-						noUpload: true,
-						value: '',
-						onSelect: (icon) => {
-							const to = range.from + 1;
-
-							this.marks = Mark.adjust(this.marks, range.from, 1);
-							this.marks = Mark.toggle(this.marks, {
-								type: I.MarkType.Emoji,
-								param: icon,
-								range: { from: range.from, to },
-							});
-
-							value = U.Common.stringInsert(value, ' ', range.from, range.from);
-
-							this.refEditable.setValue(Mark.toHtml(value, this.marks));
-							this.refEditable.setRange({ from: to, to });
-
-							this.renderMarkup();
-						},
-					}
+				this.marks = Mark.adjust(this.marks, range.from, 1);
+				this.marks = Mark.toggle(this.marks, {
+					type: I.MarkType.Emoji,
+					param: item,
+					range: { from: range.from, to },
 				});
+
+				value = U.Common.stringInsert(value, ' ', range.from, range.from);
+
+				this.refEditable.setValue(Mark.toHtml(value, this.marks));
+				this.refEditable.setRange({ from: to, to });
+
+				this.renderMarkup();
 				break;
 			};
-
-			case I.ChatButton.Mention: {
-				this.onMention();
-				break;
-			};
-
-		};
+		}
 	};
 
-	onTextButton (e: any, type: I.MarkType, param: string) {
-		const rootId = this.getRootId();
-		const blockId = this.getBlockId();
-		const value = this.getTextValue();
+	onTextButtonToggle (type: I.MarkType, param: string) {
 		const { from, to } = this.range;
-		const mark = Mark.getInRange(this.marks, type, { from, to });
+		const value = this.getTextValue();
 
-		const menuParam: any = {
-			element: `#button-${blockId}-${type}`,
-			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + $(window).scrollTop() } : null; 
-			},
-			offsetY: 6,
-			horizontal: I.MenuDirection.Center,
-			noAnimation: true,
-			data: {} as any,
-		};
-
-		const toggle = (type: I.MarkType, param: string) => {
-			this.marks = Mark.toggle(this.marks, { type, param, range: { from, to } });
-			this.refEditable.setValue(Mark.toHtml(value, this.marks));
-			this.refEditable.setRange({ from, to });
-			this.updateButtons();
-			this.renderMarkup();
-		};
-
-		let menuId = '';
-
-		switch (type) {
-			
-			default: {
-				toggle(type, '');
-				break;
-			};
-
-			case I.MarkType.Link: {
-				menuParam.data = Object.assign(menuParam.data, {
-					filter: mark?.param,
-					type: mark?.type,
-					skipIds: [ rootId ],
-					onChange: toggle,
-				});
-
-				menuId = 'blockLink';
-				break;
-			};
-
-			case I.MarkType.BgColor:
-			case I.MarkType.Color: {
-				switch (type) {
-					case I.MarkType.Color: {
-						menuId = 'blockColor';
-						break;
-					};
-
-					case I.MarkType.BgColor: {
-						menuId = 'blockBackground';
-						break;
-					};
-				};
-
-				menuParam.data = Object.assign(menuParam.data, {
-					value: param || mark?.param,
-					onChange: param => toggle(type, param),
-				});
-				break;
-			};
-		};
-
-		if (menuId && !S.Menu.isOpen(menuId)) {
-			S.Menu.closeAll(J.Menu.context, () => {
-				S.Menu.open(menuId, menuParam);
-			});
-		};
+		this.marks = Mark.toggle(this.marks, { type, param, range: { from, to } });
+		this.refEditable.setValue(Mark.toHtml(value, this.marks));
+		this.refEditable.setRange({ from, to });
+		this.updateButtons();
+		this.renderMarkup();
 	};
 
 	onMention (fromKeyboard?: boolean) {
@@ -982,6 +849,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
+	onMenuClose () {
+		this.refEditable.setRange(this.range);
+	};
+
 	caretMenuParam () {
 		const win = $(window);
 		const blockId = this.getBlockId();
@@ -1012,7 +883,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return this.getTextValue() || this.state.attachments.length;
 	};
 
-	hasSelection () {
+	hasSelection (): boolean {
 		return this.range ? this.range.to - this.range.from > 0 : false;
 	};
 
