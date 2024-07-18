@@ -1052,6 +1052,7 @@
 	"popupSearchEmpty": "No Objects found",
 	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
+	"popupSearchEmptyFilterReadonly": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try to search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchAddRelation": "Add Relation",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",

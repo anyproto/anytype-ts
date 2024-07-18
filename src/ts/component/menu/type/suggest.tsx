@@ -44,6 +44,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { data } = param;
 		const { filter, noFilter } = data;
 		const items = this.getItems();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		if (!this.cache) {
 			return null;
@@ -117,7 +118,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				{isLoading ? <Loader /> : ''}
 
 				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? U.Common.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch readonly={!canWrite} filter={filter} />
 				) : ''}
 
 				{this.cache && items.length && !isLoading ? (
