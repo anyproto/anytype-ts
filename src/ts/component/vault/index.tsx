@@ -15,7 +15,7 @@ const Vault = observer(class Vault extends React.Component {
 	top = 0;
 	timeoutHover = 0;
 	pressed = new Set();
-	n = 0;
+	n = -1;
 
 	constructor (props) {
 		super(props);
@@ -206,14 +206,18 @@ const Vault = observer(class Vault extends React.Component {
 
 		node.find('.item.isActive').removeClass('isActive');
 		node.find(`#item-${id}`).addClass('isActive');
+
+		this.n = this.getSpaceItems().findIndex(it => it.id == id);
 	};
 
 	setHover (item: any) {
 		const node = $(this.node);
+		const head = node.find('.head');
 		const scroll = node.find('#scroll');
 		const el = node.find(`#item-${item.id}`);
-		const top = el.position().top - scroll.position().top - this.top;
+		const top = el.offset().top - scroll.position().top + this.top;
 		const height = scroll.height();
+		const hh = head.height();
 		const ih = el.height() + 8;
 
 		node.find('.item.hover').removeClass('hover');
@@ -232,12 +236,13 @@ const Vault = observer(class Vault extends React.Component {
 		};
 
 		let s = -1;
-		if (top < 0) {
+		if (top < this.top) {
 			s = 0;
 		};
-		if (top + ih > height - this.top) {
+		if (top + ih > height + this.top + hh) {
 			s = this.top + height;
 		};
+
 		if (s >= 0) {
 			Preview.tooltipHide(true);
 			scroll.stop().animate({ scrollTop: s }, 200, 'swing', () => cb());
