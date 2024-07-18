@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Input, Button, Loader } from 'Component';
-import { I, C, keyboard, translate } from 'Lib';
-import { popupStore, commonStore } from 'Store';
+import { I, C, S, keyboard, translate, analytics } from 'Lib';
 
 interface State { 
 	loading: boolean;
@@ -55,7 +54,7 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 
 		const { close, param } = this.props;
 		const { data } = param;
-		const { onSubmit } = data;
+		const { onSubmit, route } = data;
 		const value = this.ref.getValue();
 		const details = data.details || {};
 
@@ -65,11 +64,11 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 
 		this.setState({ loading: true });
 
-		C.ObjectCreateBookmark({ ...details, source: value }, commonStore.space, (message: any) => {
+		C.ObjectCreateBookmark({ ...details, source: value }, S.Common.space, (message: any) => {
 			this.setState({ loading: false });
 
 			if (message.error.code) {
-				popupStore.open('confirm', {
+				S.Popup.open('confirm', {
 					data: {
 						title: translate('menuDataviewCreateSomethingWentWrong'),
 						text: translate('menuDataviewContextTryAgain'),
@@ -78,9 +77,13 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 					},
 				});
 			} else {
+				const object = message.details;
+
 				if (onSubmit) {
-					onSubmit(message.details);
+					onSubmit(object);
 				};
+
+				analytics.createObject(object.type, object.layout, route, message.middleTime);
 				close();
 			};
 		});

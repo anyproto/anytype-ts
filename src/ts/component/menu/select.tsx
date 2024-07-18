@@ -3,9 +3,10 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Label } from 'Component';
-import { I, UtilCommon, Relation, keyboard, translate } from 'Lib';
+import { I, U, Relation, keyboard, translate } from 'Lib';
 
 const HEIGHT_ITEM = 28;
+const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_SECTION = 28;
 const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_DIV = 16;
@@ -284,7 +285,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		};
 
 		if (data.filter && !preventFilter) {
-			const filter = new RegExp(UtilCommon.regexEscape(data.filter), 'gi');
+			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');
 
 			items = items.filter(it => String(it.name || '').match(filter));
 		};
@@ -358,6 +359,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		if (item.isDiv) return HEIGHT_DIV;
 		if (item.isSection) return HEIGHT_SECTION;
 		if (item.withDescription) return HEIGHT_DESCRIPTION;
+		if (item.isBig) return HEIGHT_ITEM_BIG;
 		return HEIGHT_ITEM;
 	};
 

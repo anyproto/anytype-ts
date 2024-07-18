@@ -1,10 +1,6 @@
 import $ from 'jquery';
-import { I, C, Preview, Renderer, translate, UtilSpace } from 'Lib';
-import { popupStore } from 'Store';
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
-const Text = require('json/text.json');
 import DOMPurify from 'dompurify';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark } from 'Lib';
 
 const TEST_HTML = /<[^>]*>/;
 
@@ -21,7 +17,7 @@ class UtilCommon {
 			return '0';
 		};
 
-		return electron.currentWindow().windowId.toString();
+		return String(electron.currentWindow().windowId || '');
 	};
 
 	getGlobalConfig () {
@@ -191,6 +187,36 @@ class UtilCommon {
 		return this.hasProperty(o, 'length') ? o.length : Object.keys(o).length;
 	};
 
+	objectCompare (o1: any, o2: any): boolean {
+		o1 = o1 || {};
+		o2 = o2 || {};
+		
+		const k1 = Object.keys(o1);
+		const k2 = Object.keys(o2);
+		const v1 = Object.values(o1);
+		const v2 = Object.values(o2);
+		const sort = (c1: any, c2: any) => {
+			if (c1 > c2) return 1;
+			if (c1 < c2) return -1;
+			return 0;
+		};
+		
+		k1.sort(sort);
+		k2.sort(sort);
+		v1.sort(sort);
+		v2.sort(sort);
+		
+		return this.compareJSON(k1, k2) && this.compareJSON(v1, v2);
+	};
+
+	compareJSON (o1: any, o2: any): boolean {
+		return JSON.stringify(o1) === JSON.stringify(o2);
+	};
+
+	getKeyByValue (o: any, v: any) {
+		return Object.keys(o || {}).find(k => o[k] === v);
+	};
+
 	hasProperty (o: any, p: string) {
 		o = o || {};
 		return Object.prototype.hasOwnProperty.call(o, p);
@@ -233,28 +259,6 @@ class UtilCommon {
 			};
 		};
 		return o;
-	};
-
-	objectCompare (o1: any, o2: any): boolean {
-		o1 = o1 || {};
-		o2 = o2 || {};
-		
-		const k1 = Object.keys(o1);
-		const k2 = Object.keys(o2);
-		const v1 = Object.values(o1);
-		const v2 = Object.values(o2);
-		const sort = (c1: any, c2: any) => {
-			if (c1 > c2) return 1;
-			if (c1 < c2) return -1;
-			return 0;
-		};
-		
-		k1.sort(sort);
-		k2.sort(sort);
-		v1.sort(sort);
-		v2.sort(sort);
-		
-		return (JSON.stringify(k1) === JSON.stringify(k2)) && (JSON.stringify(v1) === JSON.stringify(v2));
 	};
 
 	arrayUnique (a: any[]) {
@@ -467,7 +471,7 @@ class UtilCommon {
 		v = String(v || '');
 
 		const uc = '\\P{Script_Extensions=Latin}';
-		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,6}$`, 'gu');
+		const reg = new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,12}$`, 'gu');
 		return reg.test(v);
 	};
 
@@ -516,7 +520,7 @@ class UtilCommon {
 	};
 
 	getPlatform (): I.Platform {
-		return Constant.platforms[this.getElectron().platform] || I.Platform.None;
+		return J.Constant.platforms[this.getElectron().platform] || I.Platform.None;
 	};
 
 	isPlatformMac (): boolean {
@@ -537,14 +541,14 @@ class UtilCommon {
 		};
 
 		// App is already working
-		if (code == Errors.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
+		if (code == J.Error.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
 			alert('You have another instance of anytype running on this machine. Closing...');
 			Renderer.send('exit', false);
 			return false;
 		};
 
 		// App needs update
-		if ([ Errors.Code.ANYTYPE_NEEDS_UPGRADE, Errors.Code.PROTOCOL_NEEDS_UPGRADE ].includes(code)) {
+		if ([ J.Error.Code.ANYTYPE_NEEDS_UPGRADE, J.Error.Code.PROTOCOL_NEEDS_UPGRADE ].includes(code)) {
 			this.onErrorUpdate();
 			return false;
 		};
@@ -565,14 +569,14 @@ class UtilCommon {
 			return false;
 		};
 
-		if ([ Errors.Code.NOT_FOUND, Errors.Code.OBJECT_DELETED ].includes(code)) {
+		if ([ J.Error.Code.NOT_FOUND, J.Error.Code.OBJECT_DELETED ].includes(code)) {
 			if (context) {
 				context.setState({ isDeleted: true });
 			};
 		} else {
 			const logPath = this.getElectron().logPath();
 
-			popupStore.open('confirm', {
+			S.Popup.open('confirm', {
 				data: {
 					icon: 'error',
 					bgColor: 'red',
@@ -586,7 +590,7 @@ class UtilCommon {
 							};
 						});
 
-						UtilSpace.openDashboard('route', { replace: true });
+						U.Space.openDashboard('route', { replace: true });
 					}
 				},
 			});
@@ -596,7 +600,7 @@ class UtilCommon {
 	};
 
 	onErrorUpdate (onConfirm?: () => void) {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
@@ -616,14 +620,14 @@ class UtilCommon {
 	};
 
 	onInviteRequest () {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupInviteInviteConfirmTitle'),
 				text: translate('popupInviteInviteConfirmText'),
 				textConfirm: translate('commonDone'),
 				textCancel: translate('popupInviteInviteConfirmCancel'),
 				onCancel: () => {
-					window.setTimeout(() => { popupStore.open('settings', { data: { page: 'spaceList' } }); }, popupStore.getTimeout());
+					window.setTimeout(() => { S.Popup.open('settings', { data: { page: 'spaceList' } }); }, S.Popup.getTimeout());
 				},
 			},
 		});
@@ -635,7 +639,7 @@ class UtilCommon {
 	};
 
 	intercept (obj: any, change: any) {
-		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
+		return this.compareJSON(change.newValue, obj[change.name]) ? null : change;
 	};
 
 	getScrollContainer (isPopup: boolean) {
@@ -662,10 +666,6 @@ class UtilCommon {
 			case 'popupRelation':
 				return `#${type}-innerWrap`;
 		};
-	};
-
-	sizeHeader (): number {
-		return this.isPlatformWindows() ? 38 : 52;
 	};
 
 	searchParam (url: string): any {
@@ -863,6 +863,7 @@ class UtilCommon {
 	translateError (command: string, error: any) {
 		const { code, description } = error;
 		const id = this.toCamelCase(`error-${command}${code}`);
+		const Text = require('json/text.json');
 
 		return Text[id] ? translate(id) : description;
 	};
@@ -874,14 +875,11 @@ class UtilCommon {
 			return s;
 		};
 
+		const tags = [ 'b', 'br', 'a', 'ul', 'li', 'h1', 'span', 'p', 'name', 'smile', 'img' ].concat(Object.values(Mark.getTags()));
+
 		return DOMPurify.sanitize(s, { 
-			ADD_TAGS: [ 
-				'b', 'br', 'a', 'ul', 'li', 'h1', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 'markupUnderline', 'markupLink', 'markupColor',
-				'markupBgcolor', 'markupMention', 'markupEmoji', 'markupObject', 'span', 'p', 'name', 'smile', 'img', 'search'
-			],
-			ADD_ATTR: [
-				'contenteditable'
-			],
+			ADD_TAGS: tags,
+			ADD_ATTR: [ 'contenteditable' ],
 			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
 		});
 	};
@@ -937,6 +935,14 @@ class UtilCommon {
 
 	stripTags (s: string): string {
 		return String(s || '').replace(/<[^>]+>/g, '');
+	};
+
+	normalizeLineEndings (s: string) {
+		return String(s || '').replace(/\r\n?/g, '\n');
+	};
+
+	htmlSpecialChars (s: string) {
+		return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	};
 
 };

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { detailStore, blockStore, menuStore, commonStore } from 'Store';
-import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, focus, Action, translate, analytics, Dataview } from 'Lib';
 
 interface State {
 	filter: string;
@@ -99,7 +97,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		this._isMounted = true;
 		this.rebind();
 
-		menu.off('mouseleave').on('mouseleave', () => menuStore.clearTimeout());
+		menu.off('mouseleave').on('mouseleave', () => S.Menu.clearTimeout());
 	};
 
 	componentDidUpdate () {
@@ -111,12 +109,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		this._isMounted = false;
 
 		keyboard.setFocus(false);
-		menuStore.closeAll(Constant.menuIds.action);
-		menuStore.clearTimeout();
+		S.Menu.closeAll(J.Menu.action);
+		S.Menu.clearTimeout();
 	};
 
 	onFilterFocus (e: any) {
-		menuStore.closeAll(Constant.menuIds.action);
+		S.Menu.closeAll(J.Menu.action);
 		this.props.setActive();
 	};
 	
@@ -178,15 +176,15 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		
 		if (!block) {
 			return [];
 		};
 		
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { filter } = this.state;
-		const { align, content, bgColor } = block;
+		const { hAlign, content, bgColor } = block;
 		const { color, style } = content;
 		const checkFlag = this.checkFlagByObject(block.getTargetObjectId());
 
@@ -210,7 +208,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let hasQuote = false;
 		
 		for (const id of blockIds) {
-			const block = blockStore.getLeaf(rootId, id);
+			const block = S.Block.getLeaf(rootId, id);
 			if (!block) {
 				continue;
 			};
@@ -237,6 +235,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		const actionParam = { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject };
+		const changeFile = { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true };
 		const restrictedAlign = [];
 
 		if (!hasText) {
@@ -247,15 +246,19 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: translate('menuBlockActionsSectionsTextStyle'), children: UtilMenu.getBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: translate('menuBlockActionsSectionsListStyle'), children: UtilMenu.getBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: translate('commonTurnIntoObject'), children: UtilMenu.getTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockActionsSectionsDividerStyle'), children: UtilMenu.getTurnDiv() };
-			const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockActionsSectionsFileStyle'), children: UtilMenu.getTurnFile() };
-			const action = { id: 'action', icon: '', name: translate('menuBlockActionsSectionsActions'), children: UtilMenu.getActions(actionParam) };
-			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: UtilMenu.getHAlign(restrictedAlign) };
-			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: UtilMenu.getBgColors() };
-			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: UtilMenu.getTextColors() };
+			const turnText = { id: 'turnText', icon: '', name: translate('menuBlockActionsSectionsTextStyle'), children: U.Menu.getBlockText() };
+			const turnList = { id: 'turnList', icon: '', name: translate('menuBlockActionsSectionsListStyle'), children: U.Menu.getBlockList() };
+			const turnPage = { id: 'turnPage', icon: '', name: translate('commonTurnIntoObject'), children: U.Menu.getTurnPage() };
+			const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockActionsSectionsDividerStyle'), children: U.Menu.getTurnDiv() };
+			const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockActionsSectionsFileStyle'), children: U.Menu.getTurnFile() };
+			const action = { id: 'action', icon: '', name: translate('commonActions'), children: U.Menu.getActions(actionParam) };
+			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: U.Menu.getHAlign(restrictedAlign) };
+			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: U.Menu.getBgColors() };
+			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: U.Menu.getTextColors() };
+
+			if (hasTurnFile) {
+				action.children.push(changeFile);
+			};
 
 			if (hasTurnText)	 sections.push(turnText);
 			if (hasTurnList)	 sections.push(turnList);
@@ -267,21 +270,21 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			if (hasAlign)		 sections.push(align);
 			if (hasAction)		 sections.push(action);
 
-			sections = UtilMenu.sectionsFilter(sections, filter);
+			sections = U.Menu.sectionsFilter(sections, filter);
 		} else {
 			const turnText = { 
-				id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
-				caption: (I.TextStyle[style] ? translate(UtilCommon.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
-			}
+				id: 'turnStyle', icon: U.Data.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
+				caption: (I.TextStyle[style] ? translate(U.Common.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
+			};
 
-			const c1 = hasTitle ? [] : UtilMenu.getActions(actionParam);
+			const c1 = hasTitle ? [] : U.Menu.getActions(actionParam);
 			const c2: any[] = [
 				hasLink ? { id: 'linkSettings', icon: `linkStyle${content.cardStyle}`, name: translate('commonPreview'), arrow: true } : null,
 				hasTurnFile ? { id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true } : null,
-				hasTurnFile ? { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true } : null,
+				hasTurnFile ? changeFile : null,
 				hasTurnText ? turnText : null,
-				hasTurnDiv ? { id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
-				hasAlign ? { id: 'align', icon: UtilData.alignHIcon(align), name: translate('commonAlign'), arrow: true } : null,
+				hasTurnDiv ? { id: 'turnStyle', icon: U.Data.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
+				hasAlign ? { id: 'align', icon: U.Data.alignHIcon(hAlign), name: translate('commonAlign'), arrow: true } : null,
 				hasColor ? { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, isTextColor: true, value: (color || 'default') } : null,
 				hasBg ? { id: 'background', icon: 'color', name: translate('commonBackground'), arrow: true, isBgColor: true, value: (bgColor || 'default') } : null,
 			].filter(it => it);
@@ -289,7 +292,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			sections = [ { children: c1 }, { children: c2 } ];
 		};
 
-		return UtilMenu.sectionsMap(sections);
+		return U.Menu.sectionsMap(sections);
 	};
 
 	checkFlagByObject (id: string): boolean {
@@ -299,7 +302,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 		let flag = false;
 		if (id) {
-			const object = detailStore.get(rootId, id, [ 'isArchived', 'isDeleted' ], true);
+			const object = S.Detail.get(rootId, id, [ 'isArchived', 'isDeleted' ], true);
 			if (!object.isDeleted) {
 				flag = true;
 			};
@@ -332,22 +335,23 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const { param, close, getId, setActive } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;
 		};
-		
+
 		const { content, hAlign, bgColor } = block;
 		const { color } = content;
 
 		setActive(item, false);
 
 		if (!item.arrow) {
-			menuStore.closeAll(Constant.menuIds.action);
+			S.Menu.closeAll(J.Menu.action);
 			return;
 		};
 
+		const selection = S.Common.getRef('selectionProvider');
 		const node = $(this.node);
 		const el = node.find(`#item-${item.id}`);
 		const offsetX = node.outerWidth();
@@ -355,7 +359,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: offsetX,
-			offsetY: node.offset().top - el.offset().top - 36,
+			offsetY: node.offset().top - el.offset().top - 40,
 			isSub: true,
 			noFlipX: true,
 			data: {
@@ -386,7 +390,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 								this.setFocus(blockIds[0]);
 
 								if (item.itemId == I.TextStyle.Toggle) {
-									blockIds.forEach(id => blockStore.toggle(rootId, id, true));
+									blockIds.forEach(id => S.Block.toggle(rootId, id, true));
 								};
 							});
 						};
@@ -414,7 +418,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						this.moveToPage(item.id);
@@ -428,7 +432,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
 					],
 					onSelect: (item: any) => {
 						C.BlockFileSetTargetObjectId(rootId, blockId, item.id);
@@ -443,7 +447,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 				const skipIds = [ rootId ];
 				blockIds.forEach((id: string) => {
-					const block = blockStore.getLeaf(rootId, id);
+					const block = S.Block.getLeaf(rootId, id);
 					if (block && block.isLink()) {
 						skipIds.push(block.getTargetObjectId());
 					};
@@ -454,7 +458,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					position: I.BlockPosition.Bottom,
 					skipIds,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					canAdd: true,
 					onSelect: () => close()
@@ -481,7 +485,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 				
 			case 'background': {
-				ids = UtilData.selectionGet(blockId, false, false, this.props);
+				ids = selection?.getForClick(blockId, false, false);
 				menuId = 'blockBackground';
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -535,11 +539,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				const name = translate(isCollection ? 'commonCollection' : 'commonSet');
 
 				const addParam: any = {
-					name: UtilCommon.sprintf(translate('menuBlockActionsCreateNew'), name),
+					name: U.Common.sprintf(translate('menuBlockActionsCreateNew'), name),
 				};
 				if (isCollection) {
 					addParam.onClick = (details: any) => {
-						C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', Constant.typeKey.collection, commonStore.space, () => onCreate());
+						C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', J.Constant.typeKey.collection, S.Common.space, () => onCreate());
 					};
 
 					filters = filters.concat([
@@ -547,7 +551,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					]);
 				} else {
 					addParam.onClick = (details: any) => {
-						C.ObjectCreateSet([], details, '', commonStore.space, () => onCreate());
+						C.ObjectCreateSet([], details, '', S.Common.space, () => onCreate());
 					};
 
 					filters = filters.concat([
@@ -557,13 +561,13 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 
 				const onCreate = () => {
-					window.setTimeout(() => { $(window).trigger(`updateDataviewData.${block.id}`); }, 50);
+					window.setTimeout(() => $(window).trigger(`updateDataviewData`), 50);
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					rootId,
 					blockId: block.id,
-					value: [ block.content.targetObjectId ],
+					value: [ block.getTargetObjectId() ],
 					blockIds: [ block.id ],
 					filters,
 					canAdd: true,
@@ -576,9 +580,9 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.itemId)) {
-			menuStore.closeAll(Constant.menuIds.action, () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId, item.itemId)) {
+			S.Menu.closeAll(J.Menu.action, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};
@@ -591,13 +595,14 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;
 		};
 
-		const ids = UtilData.selectionGet(blockId, false, false, data);
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection.getForClick(blockId, false, false);
 		const targetObjectId = block.getTargetObjectId();
 
 		switch (item.itemId) {
@@ -607,7 +612,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			case 'openAsObject': {
-				UtilObject.openConfig(detailStore.get(rootId, targetObjectId));
+				U.Object.openConfig(S.Detail.get(rootId, targetObjectId));
 
 				const event: any = { type: block.type };
 				if (block.isFile()) {
@@ -618,14 +623,13 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				break;
 			};
 
-			case 'openDataviewFullscreen': {
-				UtilObject.openConfig({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
-				analytics.event('InlineSetOpenFullscreen');
+			case 'copy': {
+				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom);
 				break;
 			};
 
-			case 'copy': {
-				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom);
+			case 'copyUrl': {
+				U.Common.copyToast(translate('commonUrl'), block.content.url);
 				break;
 			};
 				
@@ -690,8 +694,14 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
+
+		if (!ids.length) {
+			ids.push(blockId);
+		};
 		
-		UtilData.moveToPage(rootId, blockId, typeId, 'TurnInto', this.props);
+		U.Data.moveToPage(rootId, ids, typeId, analytics.route.turn);
 	};
 
 	setFocus (id: string) {
@@ -703,7 +713,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const block = blockStore.getLeaf(rootId, id);
+		const block = S.Block.getLeaf(rootId, id);
 		if (!block) {
 			return;
 		};

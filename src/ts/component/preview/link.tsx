@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader } from 'Component';
-import { C, UtilCommon } from 'Lib';
+import { C, U } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -41,7 +41,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 				{loading ? <Loader /> : (
 					<React.Fragment>
 						<div className="info">
-							<div className="link">{UtilCommon.shortUrl(url)}</div>
+							<div className="link">{U.Common.shortUrl(url)}</div>
 							{title ? <div className="name">{title}</div> : ''}
 							{description ? <div className="descr">{description}</div> : ''}
 						</div>
@@ -84,7 +84,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 		this.url = url;
 		this.setState({ loading: true });
 
-		const scheme = UtilCommon.getScheme(url);
+		const scheme = U.Common.getScheme(url);
 		if (scheme && !ALLOWED_SCHEME.includes(scheme)) {
 			this.setState({ loading: false });
 			return;

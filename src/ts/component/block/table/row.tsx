@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { I } from 'Lib';
+import { I, S } from 'Lib';
 import { observer } from 'mobx-react';
-import { blockStore } from 'Store';
 import Cell from './cell';
 
 interface Props extends I.BlockComponentTable {
@@ -13,8 +12,8 @@ const BlockTableRow = observer(class BlockTableRow extends React.Component<Props
 	render () {
 		const { rootId, block, index, getData } = this.props;
 		const { columns } = getData();
-		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-		const children = blockStore.getChildren(rootId, block.id);
+		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
+		const children = S.Block.getChildren(rootId, block.id);
 		const length = childrenIds.length;
 		const cn = [ 'row' ];
 

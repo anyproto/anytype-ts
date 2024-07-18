@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewGroupList { width: 360px; }
+	.menu.menuDataviewGroupList { width: var(--menu-width-set); }
 	.menu.menuDataviewGroupList {
 		.content { padding: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; padding: 0px; }
@@ -15,7 +15,7 @@
 
 			.cellContent {
 				.wrap { display: inline-block;  width: 100%; }
-				.tagItem { margin: 1px 4px 0px 0px; max-width: 130px; }
+				.tagItem { max-width: 130px; }
 				.more { margin: 1px 0px 0px 0px; vertical-align: top; }
 				.empty { display: inline-block; }
 				.over { white-space: nowrap; overflow: hidden; width: 100%; }

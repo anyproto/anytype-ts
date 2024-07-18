@@ -1,8 +1,6 @@
-import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { I, M, Storage, UtilCommon, UtilObject, Renderer, UtilRouter } from 'Lib';
-import { dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { action, computed, intercept, makeObservable, observable, set } from 'mobx';
+import { I, M, S, U, J, Storage, Renderer } from 'Lib';
 
 interface Filter {
 	from: number;
@@ -11,6 +9,7 @@ interface Filter {
 
 interface Graph {
 	icon: boolean;
+	preview: boolean;
 	orphan: boolean;
 	marker: boolean;
 	label: boolean;
@@ -49,17 +48,18 @@ class CommonStore {
 	public languages: string[] = [];
 	public spaceId = '';
 	public notionToken = '';
-	public autoSidebarValue = null;
-	public isSidebarFixedValue = null;
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
 	public navigationMenuValue = null;
 	public linkStyleValue = null;
 	public isOnlineValue = false;
+	public shareTooltipValue = false;
 	public gallery = {
 		categories: [],
 		list: [],
 	};
+	public diffValue: I.Diff[] = [];
+	public refs: Map<string, any> = new Map();
 
 	public previewObj: I.Preview = { 
 		type: null, 
@@ -71,6 +71,7 @@ class CommonStore {
 
 	private graphObj: Graph = { 
 		icon: true,
+		preview: true,
 		orphan: true,
 		marker: true,
 		label: true,
@@ -102,13 +103,13 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			defaultType: observable,
 			isFullScreen: observable,
-			autoSidebarValue: observable,
-			isSidebarFixedValue: observable,
 			fullscreenObjectValue: observable,
 			navigationMenuValue: observable,
 			linkStyleValue: observable,
 			isOnlineValue: observable,
+			shareTooltipValue: observable,
 			spaceId: observable,
+			membershipTiersList: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -117,8 +118,10 @@ class CommonStore {
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
+			membershipTiers: computed,
 			space: computed,
 			isOnline: computed,
+			shareTooltip: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -135,9 +138,11 @@ class CommonStore {
 			navigationMenuSet: action,
 			linkStyleSet: action,
 			isOnlineSet: action,
+			shareTooltipSet: action,
+			membershipTiersListSet: action,
 		});
 
-		intercept(this.configObj as any, change => UtilCommon.intercept(this.configObj, change));
+		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
     };
 
     get config(): any {
@@ -170,11 +175,11 @@ class CommonStore {
 	};
 
 	get type(): string {
-		const key = String(this.defaultType || Storage.get('defaultType') || Constant.default.typeKey);
+		const key = String(this.defaultType || Storage.get('defaultType') || J.Constant.default.typeKey);
 
-		let type = dbStore.getTypeByKey(key);
-		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
-			type = dbStore.getTypeByKey(Constant.default.typeKey);
+		let type = S.Record.getTypeByKey(key);
+		if (!type || !type.isInstalled || !U.Object.isInPageLayouts(type.recommendedLayout)) {
+			type = S.Record.getTypeByKey(J.Constant.default.typeKey);
 		};
 
 		return type ? type.id : '';
@@ -185,19 +190,11 @@ class CommonStore {
 	};
 
 	get pinTime(): number {
-		return (Number(this.pinTimeId) || Storage.get('pinTime') || Constant.default.pinTime) * 1000;
+		return (Number(this.pinTimeId) || Storage.get('pinTime') || J.Constant.default.pinTime) * 1000;
 	};
 
 	get emailConfirmationTime(): number {
 		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
-	};
-
-	get autoSidebar(): boolean {
-		return this.boolGet('autoSidebar');
-	};
-
-	get isSidebarFixed(): boolean {
-		return this.boolGet('isSidebarFixed');
 	};
 
 	get fullscreenObject(): boolean {
@@ -222,7 +219,7 @@ class CommonStore {
 	};
 
 	get interfaceLang (): string {
-		return this.config.interfaceLang || Constant.default.interfaceLang;
+		return this.config.interfaceLang || J.Constant.default.interfaceLang;
 	};
 
 	get showRelativeDates (): boolean {
@@ -256,8 +253,16 @@ class CommonStore {
 		return Boolean(this.isOnlineValue);
 	};
 
+	get shareTooltip (): boolean {
+		return Boolean(this.shareTooltipValue);
+	};
+
 	get membershipTiers (): I.MembershipTier[] {
 		return this.membershipTiersList || [];
+	};
+
+	get diff (): I.Diff[] {
+		return this.diffValue || [];
 	};
 
     gatewaySet (v: string) {
@@ -307,8 +312,8 @@ class CommonStore {
 		const ids = [ objectId, targetId, originId ].filter(it => it);
 
 		if (ids.length) {
-			UtilObject.getByIds(ids, (objects: any[]) => {
-				const map = UtilCommon.mapToObject(objects, 'id');
+			U.Object.getByIds(ids, (objects: any[]) => {
+				const map = U.Common.mapToObject(objects, 'id');
 
 				if (targetId && map[targetId]) {
 					toast.target = map[targetId];
@@ -348,7 +353,7 @@ class CommonStore {
 	};
 
 	pinTimeSet (v: string) {
-		this.pinTimeId = Number(v) || Constant.default.pinTime;
+		this.pinTimeId = Number(v) || J.Constant.default.pinTime;
 
 		Storage.set('pinTime', this.pinTimeId);
 	};
@@ -357,14 +362,6 @@ class CommonStore {
 		this.emailConfirmationTimeId = t;
 
 		Storage.set('emailConfirmationTime', this.emailConfirmationTimeId);
-	};
-
-	autoSidebarSet (v: boolean) {
-		this.boolSet('autoSidebar', v);
-	};
-
-	isSidebarFixedSet (v: boolean) {
-		this.boolSet('isSidebarFixed', v);
 	};
 
 	showRelativeDatesSet (v: boolean) {
@@ -390,7 +387,7 @@ class CommonStore {
 	};
 
 	redirectSet (v: string) {
-		const param = UtilRouter.getParam(v);
+		const param = U.Router.getParam(v);
 
 		if ((param.page == 'auth') && (param.action == 'pin-check')) {
 			return;
@@ -401,6 +398,10 @@ class CommonStore {
 
 	notionTokenSet (v: string) {
 		this.notionToken = v;
+	};
+
+	refSet (id: string, ref: any) {
+		this.refs.set(id, ref);
 	};
 
 	boolGet (k: string) {
@@ -434,7 +435,7 @@ class CommonStore {
 		const head = $('head');
 		const c = this.getThemeClass();
 
-		UtilCommon.addBodyClass('theme', c);
+		U.Common.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
 
 		head.find('#link-prism').remove();
@@ -475,6 +476,10 @@ class CommonStore {
 		console.log('[Online status]:', v);
 	};
 
+	shareTooltipSet (v: boolean) {
+		this.shareTooltipValue = Boolean(v);
+	};
+
 	configSet (config: any, force: boolean) {
 		const html = $('html');
 		
@@ -507,10 +512,21 @@ class CommonStore {
 		this.membershipTiersList = (list || []).map(it => new M.MembershipTier(it));
 	};
 
+	diffSet (diff: I.Diff[]) {
+		this.diffValue = diff || [];
+	};
+
 	getGraph (key: string): Graph {
-		return Storage.get(key) || UtilCommon.objectCopy(this.graphObj);
+		const stored = Storage.get(key);
+		const def = U.Common.objectCopy(this.graphObj);
+
+		return Object.assign(def, stored);
+	};
+
+	getRef (id: string) {
+		return this.refs.get(id);
 	};
 
 };
 
-export const commonStore: CommonStore = new CommonStore();
+export const Common: CommonStore = new CommonStore();

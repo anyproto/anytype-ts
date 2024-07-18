@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, Mark, UtilData, focus, keyboard, Storage, translate, UtilObject, analytics } from 'Lib';
-import { blockStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Mark, focus, keyboard, Storage, translate, analytics } from 'Lib';
 
 const MenuBlockContext = observer(class MenuBlockContext extends React.Component<I.Menu> {
 	
@@ -21,7 +19,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { data } = param;
 		const { range } = focus.state;
 		const { blockId, rootId, marks, isInsideTable } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return null;
@@ -29,7 +27,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		const { type, content } = block;
 		const { style } = content;
-		const styleIcon = UtilData.styleIcon(type, style);
+		const styleIcon = U.Data.styleIcon(type, style);
 		const colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
 		const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 		const canTurn = block.canTurn() && !isInsideTable;
@@ -167,7 +165,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 	};
 
 	componentWillUnmount(): void {
-		menuStore.closeAll(Constant.menuIds.context.concat('selectContext'));
+		S.Menu.closeAll(J.Menu.context.concat('selectContext'));
 	};
 
 	onMark (e: any, type: any) {
@@ -177,7 +175,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { param, close, getId, getSize } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, onChange, range } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;
@@ -210,7 +208,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			
 			default: {
 				marks = Mark.toggle(marks, { type, param: '', range: { from, to } });
-				menuStore.updateData(this.props.id, { marks });
+				S.Menu.updateData(this.props.id, { marks });
 				onChange(marks);
 				break;
 			};
@@ -235,7 +233,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							C.BlockListConvertToObjects(rootId, blockIds, '');
+							C.BlockListConvertToObjects(rootId, blockIds, '', '', U.Data.getLinkBlockParam('', I.ObjectLayout.Page));
 						};
 						
 						close();
@@ -251,7 +249,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 				menuParam = Object.assign(menuParam, {
 					component: 'select',
-					subIds: Constant.menuIds.selectContext,
+					subIds: J.Menu.selectContext,
 					onOpen: context => this.menuContext = context,
 				});
 
@@ -259,16 +257,16 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					options: [
 						{ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true },
 						{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
-						{ id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(block.hAlign) ].join(' '), arrow: true },
+						{ id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(block.hAlign) ].join(' '), arrow: true },
 						{ id: 'blockRemove', icon: 'remove', name: translate('commonDelete') }
 					],
 					onOver: (e: any, item: any) => {
-						if (!this.menuContext || menuStore.isAnimating(this.menuContext.props.id)) {
+						if (!this.menuContext || S.Menu.isAnimating(this.menuContext.props.id)) {
 							return;
 						};
 
 						if (!item.arrow) {
-							menuStore.closeAll(Constant.menuIds.selectContext);
+							S.Menu.closeAll(J.Menu.selectContext);
 							return;
 						};
 
@@ -310,7 +308,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					skipIds: [ rootId ],
 					onChange: (newType: I.MarkType, param: string) => {
 						marks = Mark.toggleLink({ type: newType, param, range: { from, to } }, marks);
-						menuStore.updateData(this.props.id, { marks });
+						S.Menu.updateData(this.props.id, { marks });
 						onChange(marks);
 
 						window.setTimeout(() => focus.apply(), 15);
@@ -349,7 +347,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						};
 
 						marks = Mark.toggle(marks, { type, param, range: { from, to } });
-						menuStore.updateData(this.props.id, { marks });
+						S.Menu.updateData(this.props.id, { marks });
 						onChange(marks);
 					},
 				});
@@ -359,15 +357,15 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 		focusApply ? focus.apply() : focus.clear(false);
 
-		if (menuId && !menuStore.isOpen(menuId)) {
-			const menuIds = [].concat(Constant.menuIds.context);
+		if (menuId && !S.Menu.isOpen(menuId)) {
+			const menuIds = [].concat(J.Menu.context);
 			
 			if (closeContext) {
 				menuIds.push(this.props.id);
 			};
 
-			menuStore.closeAll(menuIds, () => {
-				menuStore.open(menuId, menuParam);
+			S.Menu.closeAll(menuIds, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};
@@ -376,7 +374,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { close, param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		const context = this.menuContext;
 		const route = analytics.route.menuContext;
 
@@ -389,8 +387,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			focus.clear(true);
 		};
 
-		let menuId = '';
-		let menuParam: any = {
+		const menuParam: any = {
 			element: `#${context.getId()} #item-${item.id}`,
 			offsetX: context.getSize().width,
 			horizontal: I.MenuDirection.Left,
@@ -403,12 +400,14 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			} as any,
 		};
 
+		let menuId = '';
+
 		switch (item.id) {
 			case 'move': {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					type: I.NavigationType.Move, 
 					skipIds: [ rootId ],
@@ -425,10 +424,10 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 					],
 					onClick: (item: any) => {
-						C.BlockListConvertToObjects(rootId, blockIds, item.uniqueKey, (message: any) => {
+						C.BlockListConvertToObjects(rootId, blockIds, item.uniqueKey, item.defaultTemplateId, U.Data.getLinkBlockParam('', item.recommendedLayout), (message: any) => {
 							analytics.createObject(item.id, item.recommendedLayout, route, message.middleTime);
 						});
 
@@ -453,9 +452,9 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			};
 		};
 
-		if (menuId && !menuStore.isOpen(menuId)) {
-			menuStore.closeAll(Constant.menuIds.selectContext, () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId)) {
+			S.Menu.closeAll(J.Menu.selectContext, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};

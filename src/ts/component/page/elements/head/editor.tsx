@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, UtilData, UtilCommon, keyboard } from 'Lib';
+import { I, M, C, S, U, keyboard } from 'Lib';
 import { Block, Drag } from 'Component';
-import { blockStore, detailStore } from 'Store';
 
 interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
@@ -25,15 +24,15 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 
 	render (): any {
 		const { rootId, onKeyDown, onKeyUp, onMenuAdd, onPaste, readonly } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
 		};
 
-		const check = UtilData.checkDetails(rootId);
-		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ], true);
-		const header = blockStore.getLeaf(rootId, 'header') || {};
+		const check = U.Data.checkDetails(rootId);
+		const object = S.Detail.get(rootId, rootId, [ 'layoutAlign' ], true);
+		const header = S.Block.getLeaf(rootId, 'header');
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 
@@ -59,7 +58,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 				{check.withIcon ? <Block {...this.props} key={icon.id} block={icon} className="noPlus" /> : ''}
 
 				<Block 
-					key={header.id} 
+					key={header?.id}
 					{...this.props}
 					readonly={readonly}
 					index={0}
@@ -77,7 +76,7 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 
 	componentDidMount () {
 		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		this.init();
 
@@ -92,10 +91,10 @@ const PageHeadEditor = observer(class PageHeadEditor extends React.Component<Pro
 
 	init () {
 		const { rootId, isPopup } = this.props;
-		const check = UtilData.checkDetails(rootId);
+		const check = U.Data.checkDetails(rootId);
 
 		$('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
-		UtilCommon.triggerResizeEditor(isPopup);
+		U.Common.triggerResizeEditor(isPopup);
 	};
 
 	onScaleStart (e: any, v: number) {

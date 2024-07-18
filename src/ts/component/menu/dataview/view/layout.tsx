@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon } from 'Lib';
+import { I, C, S, U, J, analytics, keyboard, translate, Dataview, Relation } from 'Lib';
 import { Label, Icon, MenuItemVertical } from 'Component';
-import { blockStore, dbStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
 
 const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.Menu> {
 	
@@ -25,7 +23,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const isReadonly = this.isReadonly();
 		const { type } = this.param;
 		const sections = this.getSections();
-		const layouts = UtilMenu.getViews().map((it: any) => {
+		const layouts = U.Menu.getViews().map((it: any) => {
 			it.sectionId = 'type';
 			it.icon = 'view c' + it.id;
 			return it;
@@ -90,7 +88,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 
-		this.param = UtilCommon.objectCopy(data.view.get());
+		this.param = U.Common.objectCopy(data.view.get());
 		this.forceUpdate();
 		this.rebind();
 
@@ -152,7 +150,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onSave } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		const view = data.view.get();
 
 		if (!block || !view || this.isReadonly()) {
@@ -297,7 +295,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const view = data.view.get();
 
 		if (!item.arrow || isReadonly) {
-			menuStore.closeAll(Constant.menuIds.viewEdit);
+			S.Menu.closeAll(J.Menu.viewEdit);
 			return;
 		};
 
@@ -360,15 +358,15 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			case 'graphSettings': {
 				menuId = 'graphSettings';
 				menuParam.data = Object.assign(menuParam.data, {
-					storageKey: Constant.graphId.dataview,
+					storageKey: J.Constant.graphId.dataview,
 				});
 				break;
 			};
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.viewEdit, () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll(J.Menu.viewEdit, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};
@@ -418,7 +416,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	};
 
 	menuClose () {
-		menuStore.closeAll(Constant.menuIds.viewEdit);
+		S.Menu.closeAll(J.Menu.viewEdit);
 	};
 
 	resize () {
@@ -433,7 +431,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		return readonly || !allowedView;
 	};

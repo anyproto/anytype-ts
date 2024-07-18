@@ -3,18 +3,18 @@ const https = require('https');
 const path = require('path');
 const fs = require('fs');
 
-const Constant = require('../../src/json/constant.json');
+const Constant = require('../json/constant.json');
 const OWNER = 'anyproto';
 const REPO = 'l10n-anytype-ts';
 const PATH = '/locales';
-const LANGS = Constant.enabledInterfaceLang;
+const LANGS = Constant.enabledLangs || [];
 
 const run = async () => {
 	for (const lang of LANGS) {
 		const fp = path.join(__dirname, '..', '..', 'dist', 'lib', 'json', 'lang', `${lang}.json`);
 
 		let content = '';
-		if (lang == Constant.default.interfaceLang) {
+		if (lang == 'en-US') {
 			content = JSON.stringify(require('../../src/json/text.json'), null, 4);
 		} else {
 			content = await request(lang).catch(e => console.log(e));

@@ -67,7 +67,7 @@
 				> .side.right {
 					.buttonWrap.withSelect {
 						.button.select { border-left-color: rgba(23,23,23,0.1); }
-						.button.select:after { background-image:  url('~img/arrow/button/black.svg'); }
+						.button.select:after { background-image:  url('#{$themePath}/arrow/button/black.svg'); }
 					}
 				}
 			}
@@ -121,6 +121,36 @@
 	.block.blockEmbed {
 		.empty { color: var(--color-text-secondary); }
 		.wrap.isEditing { background: var(--color-shape-highlight-medium); }
+
+		.preview { background-image: url('#{$themePath}/icon/block/embed/default.svg'); }
+		.preview {
+			.label { color: #464646; }
+		}
+		.preview.isLatex { background-image: url('#{$themePath}/icon/block/embed/latex.svg'); }
+		.preview.isMermaid { background-image: url('#{$themePath}/icon/block/embed/mermaid.svg'); }
+		.preview.isChart { background-image: url('#{$themePath}/icon/block/embed/chart.svg'); }
+		.preview.isYoutube { background-image: url('#{$themePath}/icon/block/embed/youtube.svg'); }
+		.preview.isVimeo { background-image: url('#{$themePath}/icon/block/embed/vimeo.svg'); }
+		.preview.isSoundcloud { background-image: url('#{$themePath}/icon/block/embed/soundcloud.svg'); }
+		.preview.isGoogleMaps { background-image: url('#{$themePath}/icon/block/embed/googleMaps.svg'); }
+		.preview.isMiro { background-image: url('#{$themePath}/icon/block/embed/miro.svg'); }
+		.preview.isFigma { background-image: url('#{$themePath}/icon/block/embed/figma.svg'); }
+		.preview.isOpenStreetMap { background-image: url('#{$themePath}/icon/block/embed/openStreetMap.svg'); }
+		.preview.isReddit { background-image: url('#{$themePath}/icon/block/embed/reddit.svg'); }
+		.preview.isFacebook { background-image: url('#{$themePath}/icon/block/embed/facebook.svg'); }
+		.preview.isInstagram { background-image: url('#{$themePath}/icon/block/embed/instagram.svg'); }
+		.preview.isTelegram { background-image: url('#{$themePath}/icon/block/embed/telegram.svg'); }
+		.preview.isGithubGist { background-image: url('#{$themePath}/icon/block/embed/githubGist.svg'); }
+		.preview.isCodepen { background-image: url('#{$themePath}/icon/block/embed/codepen.svg'); }
+		.preview.isBilibili { background-image: url('#{$themePath}/icon/block/embed/bilibili.svg'); }
+		.preview.isExcalidraw { background-image: url('#{$themePath}/icon/block/embed/excalidraw.svg'); }
+		.preview.isKroki { background-image: url('#{$themePath}/icon/block/embed/kroki.svg'); }
+		.preview.isGraphviz { background-image: url('#{$themePath}/icon/block/embed/graphviz.svg'); }
+		.preview.isSketchfab { background-image: url('#{$themePath}/icon/block/embed/sketchfab.svg'); }
+		.preview.isImage { background-image: url('#{$themePath}/icon/block/embed/image.svg'); }
+	}
+	.block.blockEmbed:not(.isLatex) {
+		#value svg { background: none; }
 	}
 
     /* BlockText */
@@ -132,7 +162,6 @@
 
     .block.blockBookmark {
 		.loaderWrapper { border: 0px; }
-        .inner { border-color: transparent; background-color: var(--color-shape-highlight-medium); }
     }
 
 	/* BlockTable */

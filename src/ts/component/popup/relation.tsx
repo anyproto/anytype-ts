@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button, Cell, Error, Icon, EmptySearch } from 'Component';
-import { I, M, C, UtilCommon, Relation, UtilData, translate } from 'Lib';
-import { dbStore, commonStore, popupStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
+import { Label, Button, Cell, Error, Icon, EmptySearch, Checkbox } from 'Component';
+import { I, M, C, S, U, J, Relation, translate, Dataview } from 'Lib';
 
 const ID_PREFIX = 'popupRelation';
 const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;
@@ -15,8 +13,10 @@ interface State {
 
 const PopupRelation = observer(class PopupRelation extends React.Component<I.Popup, State> {
 
+	refCheckbox = null;
 	cellRefs: Map<string, any> = new Map();
 	details: any = {};
+	addRelationKeys = [];
 	state = {
 		error: '',
 	};
@@ -28,12 +28,13 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { readonly } = data;
+		const { readonly, view } = data;
 		const { error } = this.state;
 		const objects = this.getObjects();
 		const relations = this.getRelations();
@@ -70,7 +71,8 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 								idPrefix={ID_PREFIX}
 								menuClassName="fromBlock"
 								onCellChange={this.onCellChange}
-								pageContainer={UtilCommon.getCellContainer('popupRelation')}
+								getView={view ? (() => view): null}
+								pageContainer={U.Common.getCellContainer('popupRelation')}
 							/>
 						</div>
 					</div>
@@ -80,7 +82,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 		return (
 			<div>
-				<Label text={UtilCommon.sprintf(translate(`popupRelationTitle`), length, UtilCommon.plural(length, translate('pluralLCObject')))} />
+				<Label text={U.Common.sprintf(translate(`popupRelationTitle`), length, U.Common.plural(length, translate('pluralLCObject')))} />
 
 				{!relations.length ? <EmptySearch text={translate('popupRelationEmpty')} /> : (
 					<div className="blocks">
@@ -94,6 +96,13 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 					<Icon className="plus" />
 					{translate('commonAddRelation')}
 				</div>
+
+				{view && this.addRelationKeys.length ? (
+					<div className="item add" onClick={this.onCheckbox}>
+						<Checkbox ref={ref => this.refCheckbox = ref} />
+						{translate('popupRelationAddToView')}
+					</div>
+				) : null}
 
 				<div className="buttons">
 					<Button text="Save" className="c28" onClick={this.save} />
@@ -109,8 +118,20 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		this.loadObjects(() => this.initValues());
 	};
 
+	componentDidUpdate (): void {
+		const id = S.Common.cellId;		
+		if (id) {
+			S.Common.cellId = '';
+			
+			const ref = this.cellRefs.get(id);
+			if (ref) {
+				ref.onClick($.Event('click'));
+			};
+		};
+	};
+
 	componentWillUnmount(): void {
-		menuStore.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(J.Menu.cell);
 		C.ObjectSearchUnsubscribe([ SUB_ID_OBJECT, SUB_ID_DEPS ]);
 	};
 
@@ -118,36 +139,41 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const objectIds = this.getObjectIds();
 		const relationKeys = this.getRelationKeys();
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			subId: SUB_ID_OBJECT,
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
 			],
-			keys: Constant.defaultRelationKeys.concat(relationKeys),
+			keys: J.Relation.default.concat(relationKeys),
 			noDeps: true,
 		}, callBack);
 	};
 
 	loadDeps (callBack?: () => void) {
+		const cb = callBack || (() => {});
+
 		let depIds = [];
 
 		for (const k in this.details) {
-			const relation = dbStore.getRelationByKey(k);
+			const relation = S.Record.getRelationByKey(k);
 
-			if (relation && [ I.RelationType.File, I.RelationType.Object ].includes(relation.format)) {
+			if (relation && Relation.isArrayType(relation.format)) {
 				depIds = depIds.concat(Relation.getArrayValue(this.details[k]));
 			};
 		};
 
-		if (depIds.length) {
-			UtilData.searchSubscribe({
-				subId: SUB_ID_DEPS,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: depIds },
-				],
-				noDeps: true,
-			}, callBack);
+		if (!depIds.length) {
+			cb();
+			return;
 		};
+
+		U.Data.searchSubscribe({
+			subId: SUB_ID_DEPS,
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: depIds },
+			],
+			noDeps: true,
+		}, cb);
 	};
 
 	initValues () {
@@ -163,15 +189,12 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 				const value = Relation.formatValue(relation, object[relationKey], false);
 
 				cnt[relationKey] = cnt[relationKey] || 1;
-
-				if (reference && (JSON.stringify(value) == JSON.stringify(reference[relationKey]))) {
+				if (reference && U.Common.compareJSON(value, reference[relationKey])) {
 					cnt[relationKey]++;
 				};
-
 				if (cnt[relationKey] == objects.length) {
 					this.details[relationKey] = value;
 				};
-
 				object[relationKey] = value;
 			});
 
@@ -182,18 +205,18 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	getRelationKeys (): string[] {
-		return this.props.param.data.relationKeys || Constant.defaultRelationKeys;
+		return U.Common.arrayUnique([].concat(this.props.param.data.relationKeys || J.Relation.default));
 	};
 
 	getRelations (): any[] {
-		const { config } = commonStore;
+		const { config } = S.Common;
 
-		let ret = this.getRelationKeys().map(relationKey => dbStore.getRelationByKey(relationKey));
+		let ret = this.getRelationKeys().map(relationKey => S.Record.getRelationByKey(relationKey));
 
 		ret = ret.filter(it => {
 			return (config.debug.hiddenObject ? true : !it.isHidden) && !it.isReadonlyValue;
 		});
-		ret = ret.sort(UtilData.sortByName);
+		ret = ret.sort(U.Data.sortByName);
 		return ret;
 	};
 
@@ -202,11 +225,16 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	getObjects () {
-		return dbStore.getRecords(SUB_ID_OBJECT, this.getRelationKeys());
+		return S.Record.getRecords(SUB_ID_OBJECT, this.getRelationKeys());
 	};
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
-		this.details[relationKey] = value;
+		const relation = S.Record.getRelationByKey(relationKey);
+		if (!relation) {
+			return;
+		};
+
+		this.details[relationKey] = Relation.formatValue(relation, value, true);
 		this.loadDeps(() => this.forceUpdate());
 
 		if (callBack) {
@@ -222,22 +250,31 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const { getId } = this.props;
 		const element = `#${getId()} #item-add`;
 
-		menuStore.open('relationSuggest', { 
+		S.Menu.open('relationSuggest', { 
 			element,
-			offsetX: Constant.size.blockMenu,
+			offsetX: J.Size.blockMenu,
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
 			onOpen: () => $(element).addClass('active'),
 			onClose: () => $(element).removeClass('active'),
 			data: {
+				menuIdEdit: 'blockRelationEdit',
 				skipKeys: this.getRelationKeys(),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					this.details[relation.relationKey] = Relation.formatValue(relation, null, true);
 					this.props.param.data.relationKeys = this.getRelationKeys().concat([ relation.relationKey ]);
+
+					this.addRelationKeys.push(relation.relationKey);
 					this.loadObjects();
+
+					S.Menu.close('relationSuggest');
 				},
 			}
 		});
+	};
+
+	onCheckbox () {
+		this.refCheckbox.toggle();
 	};
 
 	save () {
@@ -246,16 +283,16 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const details: any[] = []; 
 
 		for (const k in this.details) {
-			const relation = dbStore.getRelationByKey(k);
+			const relation = S.Record.getRelationByKey(k);
 			if (relation) {
 				details.push({ key: k, value: Relation.formatValue(relation, this.details[k], true) });
 			};
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: 'Are you sure?',
-				text: UtilCommon.sprintf('This will update relation values of %d objects', objectIds.length),
+				text: U.Common.sprintf('This will update relation values of %d objects', objectIds.length),
 				onConfirm: () => {
 					C.ObjectListSetDetails(objectIds, details, (message: any) => {
 						if (message.error.code) {
@@ -264,10 +301,34 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 							close();
 						};
 					});
+
+					if (this.addRelationKeys.length && this.refCheckbox?.getValue()) {
+						const cb = () => {
+							this.addRelationKeys.shift();
+							if (!this.addRelationKeys.length) {
+								return;
+							};
+
+							this.addRelation(this.addRelationKeys[0], cb);
+						};
+
+						this.addRelation(this.addRelationKeys[0], cb);
+					};
 				},
 			},
 		});
+	};
 
+	addRelation (relationKey: string, callBack?: (message: any) => void){
+		const { param } = this.props;
+		const { data } = param;
+		const { targetId, blockId, view } = data;
+
+		if (!view) {
+			return;
+		};
+
+		Dataview.relationAdd(targetId, blockId, relationKey, view.relations.length, view, callBack);
 	};
 
 });

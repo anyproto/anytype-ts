@@ -2,8 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
-import { I, C, Relation, analytics, keyboard, translate } from 'Lib';
-import { menuStore } from 'Store';
+import { I, C, S, U, Relation, analytics, keyboard, translate } from 'Lib';
 
 const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	
@@ -28,7 +27,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			const canDelete = item.id != 'type';
 			return (
 				<form id={'item-' + item.itemId} className={[ 'item' ].join(' ')} onMouseEnter={e => this.onOver(e, item)}>
-					<IconObject size={40} object={item} forceLetter={true} />
+					<IconObject size={40} object={item} />
 					<div className="txt" onClick={e => this.onClick(e, item)}>
 						<div className="name">{item.name}</div>
 						<div className="value">{item.value}</div>
@@ -99,7 +98,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { getId, getSize } = this.props;
 		const value = this.getValue();
 
-		menuStore.open('searchObject', { 
+		S.Menu.open('searchObject', { 
 			element: `#${getId()} #item-add`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
@@ -138,13 +137,13 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	onClick (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { readonly, blockId } = data;
+		const { readonly } = data;
 
 		if ((item.itemId != 'type') || readonly) {
 			return;
 		};
 
-		menuStore.open('typeSuggest', {
+		S.Menu.open('typeSuggest', {
 			element: `#${getId()} #item-${item.itemId}`,
 			offsetX: getSize().width,
 			offsetY: -56,
@@ -166,10 +165,6 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { objectId, blockId } = data;
 
 		C.ObjectSetSource(objectId, value, () => {
-			if (blockId) {
-				$(window).trigger(`updateDataviewData.${blockId}`);
-			};
-
 			if (callBack) {
 				callBack();
 			};
@@ -207,7 +202,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			});
 		} else {
 			value.forEach(it => {
-				if (it.layout == I.ObjectLayout.Type) {
+				if (U.Object.isTypeLayout(it.layout)) {
 					items.push({
 						...it,
 						itemId: 'type',

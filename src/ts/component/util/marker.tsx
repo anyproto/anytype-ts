@@ -1,9 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, UtilCommon } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S, U, J } from 'Lib';
 import { observer } from 'mobx-react';
-const Constant = require('json/constant.json');
 
 interface Props {
 	id: string;
@@ -16,9 +14,6 @@ interface Props {
 };
 
 const Icons = {
-	bullets: {
-		default: require('img/icon/bullet/default.svg').default,
-	},
 	checkbox: {
 		0:		 require('img/icon/marker/checkbox0.svg').default,
 		1:		 require('img/icon/marker/checkbox1.svg').default,
@@ -32,15 +27,8 @@ const Icons = {
 	toggle:		 require('img/icon/marker/toggle.svg').default,
 };
 
-for (const c of Constant.textColor) {
-	Icons.bullets[c] = require(`img/icon/bullet/${c}.svg`).default;
-};
-
 const Theme = {
 	dark: {
-		bullets: {
-			default: require('img/theme/dark/icon/bullet/default.svg').default,
-		},
 		toggle:		 require('img/theme/dark/icon/marker/toggle.svg').default,
 		checkbox: {
 			0:		 require('img/icon/marker/checkbox0.svg').default,
@@ -71,7 +59,7 @@ const Marker = observer(class Marker extends React.Component<Props> {
 
 	render () {
 		const { id, type, color, className, active, onClick } = this.props;
-		const { theme } = commonStore;
+		const { theme } = S.Common;
 		const cn = [ 'marker' ];
 		const ci = [ 'markerInner', 'c' + type ];
 
@@ -87,10 +75,10 @@ const Marker = observer(class Marker extends React.Component<Props> {
 		if (color) {
 			ci.push('textColor textColor-' + color);
 		};
-		
+
 		switch (type) {
 			case I.TextStyle.Bulleted: {
-				inner = <img src={this.getBullet()} onDragStart={e => e.preventDefault()} />;
+				inner = <span className={ci.join(' ')} />;
 				break;
 			};
 				
@@ -142,7 +130,7 @@ const Marker = observer(class Marker extends React.Component<Props> {
 
 	onCheckboxEnter () {
 		const { active, readonly } = this.props;
-		const fn = UtilCommon.toCamelCase(`get-${this.getIconKey()}`);
+		const fn = U.Common.toCamelCase(`get-${this.getIconKey()}`);
 
 		if (!active && this[fn] && !readonly) {
 			$(this.node).find('img').attr({ src: this[fn](1) });
@@ -151,7 +139,7 @@ const Marker = observer(class Marker extends React.Component<Props> {
 
 	onCheckboxLeave () {
 		const { active, readonly } = this.props;
-		const fn = UtilCommon.toCamelCase(`get-${this.getIconKey()}`);
+		const fn = U.Common.toCamelCase(`get-${this.getIconKey()}`);
 
 		if (!active && this[fn] && !readonly) {
 			$(this.node).find('img').attr({ src: this[fn](0) });
@@ -170,18 +158,10 @@ const Marker = observer(class Marker extends React.Component<Props> {
 	};
 
 	getIcon (type: string) {
-		const cn = commonStore.getThemeClass();
+		const cn = S.Common.getThemeClass();
 		const item = Theme[cn];
 
 		return (item && item[type]) ? item[type] : Icons[type];
-	};
-
-	getBullet () {
-		const cn = commonStore.getThemeClass();
-		const t = Theme[cn];
-		const color = this.props.color || 'default';
-
-		return (t && t.bullets[color]) ? t.bullets[color] : Icons.bullets[color];
 	};
 
 	getCheckbox (state: number) {

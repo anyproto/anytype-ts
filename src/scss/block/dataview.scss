@@ -242,6 +242,7 @@
 
 		.dataviewControls { margin: 0px 0px 8px 0px; }
 		.dataviewControls {
+			> .sides { align-items: flex-end; }
 			> .sides {
 				> .side { padding: 0px; }
 				> .side.left { display: flex; flex-direction: column; align-items: flex-start; gap: 4px 0px; }

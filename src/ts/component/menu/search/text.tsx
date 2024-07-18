@@ -2,13 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
-import { I, UtilCommon, keyboard, translate, analytics } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, U, J, keyboard, translate, analytics, Mark } from 'Lib';
 
-const SKIP = [ 
-	'span', 'div', 'name', 'markupMention', 'markupColor', 'markupBgcolor', 'markupStrike', 'markupCode', 'markupItalic', 'markupBold', 
-	'markupUnderline', 'markupLink', 'markupEmoji', 'markupObject',
-].map(tag => tag.toLowerCase());
+const SKIP = [ 'span', 'div', 'name' ].concat(Object.values(Mark.getTags()));
 
 class MenuSearchText extends React.Component<I.Menu> {
 	
@@ -82,17 +78,33 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, () => {
+		const cmd = keyboard.cmdKey();
+
+		keyboard.shortcut(`arrowup, arrowdown, tab, enter`, e, () => {
 			e.preventDefault();
+		});
+
+		keyboard.shortcut(`${cmd}+f`, e, () => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			this.onArrow(1);
+			window.clearTimeout(this.timeout);
 		});
 	};
 	
 	onKeyUp (e: any) {
 		e.preventDefault();
+		window.clearTimeout(this.timeout);
+
+		let ret = false;
 
 		const cmd = keyboard.cmdKey();
 
-		let ret = false;
+		keyboard.shortcut(`tab, enter`, e, () => {
+			this.search();
+			ret = true;
+		});
 
 		keyboard.shortcut(`arrowup, arrowdown, tab, enter, ${cmd}+f`, e, (pressed: string) => {
 			this.onArrow(pressed == 'arrowup' ? -1 : 1);
@@ -103,8 +115,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			return;
 		};
 
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.search(), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => this.search(), J.Constant.delay.keyboard);
 	};
 
 	onArrow (dir: number) {
@@ -119,7 +130,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			this.n = 0;
 		};
 
-		this.search();
+		this.focus();
 	};
 
 	onSearch (e: any) {
@@ -128,18 +139,20 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	search () {
+		const value = this.ref.getValue();
+		if (value && (this.last == value)) {
+			return;
+		};
+
 		const { storageSet, param } = this.props;
 		const { data } = param;
 		const { route } = data;
-		const value = this.ref.getValue();
 		const node = $(this.node);
-		const cnt = node.find('#cnt');
 		const switcher = node.find('#switcher').removeClass('active');
+		const tag = Mark.getTag(I.MarkType.Search);
 
-		if (this.last != value) {
-			this.n = 0;
-			this.clear();
-		};
+		this.n = 0;
+		this.clear();
 		this.last = value;
 		
 		storageSet({ search: value });
@@ -152,12 +165,11 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		findAndReplaceDOMText(this.container.get(0), {
 			preset: 'prose',
-			find: new RegExp(UtilCommon.regexEscape(value), 'gi'),
-			wrap: 'search',
+			find: new RegExp(U.Common.regexEscape(value), 'gi'),
+			wrap: tag,
 			portionMode: 'first',
 			filterElements: (el: any) => {
-				const tag = el.nodeName.toLowerCase();
-				if (SKIP.indexOf(tag) < 0) {
+				if (SKIP.indexOf(el.nodeName.toLowerCase()) < 0) {
 					return false;
 				};
 
@@ -178,11 +190,10 @@ class MenuSearchText extends React.Component<I.Menu> {
 			},
 		});
 
-		this.items = this.container.get(0).querySelectorAll('search') || [];
+		this.items = this.container.get(0).querySelectorAll(tag) || [];
 		this.items.length ? switcher.addClass('active') : switcher.removeClass('active');
 
-		cnt.text(`${this.n + 1}/${this.items.length}`);
-
+		this.setCnt();
 		this.focus();
 	};
 
@@ -197,15 +208,13 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	clear () {
-		if (!this.items) {
-			return;
-		};
-
 		const node = $(this.node);
 		const switcher = node.find('#switcher');
+		const tag = Mark.getTag(I.MarkType.Search);
+		const items = this.container.get(0).querySelectorAll(tag) || [];
 
-		for (let i = 0; i < this.items.length; i++) {
-			const item = $(this.items[i]);
+		for (let i = 0; i < items.length; i++) {
+			const item = $(items[i]);
 
 			item.replaceWith(item.html());
 		};
@@ -245,13 +254,18 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	focus () {
+		if (!this.items || !this.items.length) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
 		const scrollContainer = this.getScrollContainer();
-		const offset = Constant.size.lastBlock + UtilCommon.sizeHeader();
+		const offset = J.Size.lastBlock + J.Size.header;
+		const tag = Mark.getTag(I.MarkType.Search);
 
-		this.container.find('search.active').removeClass('active');
+		this.container.find(`${tag}.active`).removeClass('active');
 
 		const next = $(this.items[this.n]);
 
@@ -275,7 +289,15 @@ class MenuSearchText extends React.Component<I.Menu> {
 			wh = $(window).height();
 		};
 
+		this.setCnt();
 		scrollContainer.scrollTop(y - wh + offset);
+	};
+
+	setCnt () {
+		const node = $(this.node);
+		const cnt = node.find('#cnt');
+
+		cnt.text(`${this.n + 1}/${this.items.length}`);
 	};
 	
 };

@@ -1,5 +1,4 @@
-import { I, UtilCommon } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, U, J } from 'Lib';
 
 const DOMAINS: any = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be' ];
@@ -20,7 +19,7 @@ const IFRAME_PARAM = 'frameborder="0" scrolling="no" allowfullscreen';
 class UtilEmbed {
 
 	getHtml (processor: I.EmbedProcessor, content: any): string {
-		const fn = UtilCommon.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
+		const fn = U.Common.toCamelCase(`get-${I.EmbedProcessor[processor]}-html`);
 		return this[fn] ? this[fn](content) : content;
 	};
 
@@ -83,7 +82,8 @@ class UtilEmbed {
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (const i in DOMAINS) {
-			const reg = new RegExp(DOMAINS[i].join('|'), 'gi');
+			const reg = new RegExp(`:\/\/([^.]*.)?(${DOMAINS[i].join('|')})`, 'gi');
+
 			if (url.match(reg)) {
 				p = Number(i);
 				break;
@@ -113,7 +113,7 @@ class UtilEmbed {
 				const place = url.match(/place\/([^\/]+)/);
 				const param = url.match(/\/@([^\/\?]+)/);
 				const search: any = {
-					key: Constant.embed.googleMaps.key,
+					key: J.Constant.googleMaps,
 				};
 
 				let endpoint = '';

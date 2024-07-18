@@ -1,5 +1,4 @@
-import { I, keyboard } from 'Lib';
-const Url = require('json/url.json');
+import { I, J, keyboard } from 'Lib';
 
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
@@ -12,14 +11,123 @@ const h3 = (t: string) => block(I.TextStyle.Header3, t);
 const text = (t: string) => block(I.TextStyle.Paragraph, t);
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
-const video = (src: string, c?: string) => text(`<video src="${Url.cdn}/img/help/${src}" controls class="c70 ${c || ''}" />`);
-const img = (src: string, c?: string) => text(`<img src="${Url.cdn}/img/help/${src}" class="c70 ${c || ''}" />`);
+const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}" controls class="c70 ${c || ''}" />`);
+const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}" class="c70 ${c || ''}" />`);
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Welcome to Local-First Sharing & Collaboration`),
+	title(`Desktop Release 0.42.0`),
+	text(`This release is brimming with game-changing updates, including a redesigned sidebar UX for easier navigation between Spaces, new Widgets offering a more flexible workflow and consistent view options, and simplified, more accessible app sharing. Additionally, we've added quality-of-life improvements such as the option to pay for memberships with crypto, and loads of bug fixes to improve the user experience.`),
+
+	h2(`💫 Feature Highlights`),
+
+	h3(`New Vault UI 🌐`),
+	text(`We introduced a sleek display column to quickly create & switch between Spaces. We also reworked the previous sidebar logic by removing the floating mode.`),
+	img(`42/4.png`),
+	
+	
+	h3(`View Layout for Widgets 🖼️`),
+	text(`Widgets now support a new View option, allowing them to be displayed with Calendar, Kanban, and Gallery layouts`),
+	img(`42/1.png`),
+	
+
+	h3(`Sync Status Upgrade 🔄`),
+	text(`More informative sync status for Objects, Files, and Spaces, including indicators like "Error" for Wi-Fi issues, "Offline" for no network connection.`),
+	img(`42/3.png`),
+	
+
+	h3(`Simplified App Sharing 🔗`),
+	text(`Easily grab a link to share Anytype with others directly from the help menu on Desktop.`),
+	img(`42/5.png`),
+	
+
+	h2(`🪷 Quality-of-Life`),
+	bullet(`You can now use crypto (BTC, ETH, USDT, USDC, BNB, Dai, etc.) to pay for memberships.`),
+	bullet(`Navigate Tables using only arrow keys to enter, jump cells &amp; exit to the next block. Thanks, @Code-Jack!`),
+	bullet(`Added an option to copy the URL from bookmark blocks. Thanks, @maxitg!`),
+	bullet(`Reduced mouse action needed after creating a new page in Collections. Thanks, @Code-Jack!`),
+	bullet(`"Turn into Object" adapts to default Templates now. Thanks, @${link('https://community.anytype.io/t/turn-into-object-did-not-adapt-to-default-template/21983', 'LSK')}!`),
+	bullet(`Added Option to disable preview on graph view. Thanks, @${link('https://community.anytype.io/t/21898', 'iamWing')}!`),
+	bullet(`Typed text after a linked object no longer becomes part of the link and can be unlinked. Thanks, @${link('https://community.anytype.io/t/8075', 'floseq')}!`),
+	bullet(`Select all ${hl(`${cmd} + A`)} twice now excludes the title. Thanks, @${link('https://community.anytype.io/t/ctrl-a-behaviour-inconsistent-unpredictable/7612', 'qualquertipo')}!`),
+	bullet(`Menu item added for faster "add to collection" workflow.`),
+
+
+	h2(`🛠️ Technical Updates`),
+	bullet(`Electron updated to 31.0.0`),
+
+	h2(`🦂 Bug Fixes`),
+	bullet(`Mermaid diagrams now display correctly with dark mode backgrounds. Thanks, @${link('https://community.anytype.io/t/20228', 'BoxOfWood')}!`),
+	bullet(`Top menu no longer shows up below the cover in sets when using the modal window. Thanks, ${link('https://community.anytype.io/t/22009', 'Elias')}!`),
+	bullet(`Fixed a problem with carriage when adding tags or objects to corresponding relations. Thanks, @${link('https://community.anytype.io/t/10219', 'dzlg')}!`),
+	bullet(`Relations with number type can now have a value of 0. Thanks, @${link('https://community.anytype.io/t/cant-store-0-s-in-a-number-type-relation/3583', 'gcsapo')}!`),
+	bullet(`Widget pop-ups at the bottom of the sidebar are no longer hidden by the app border. Thanks, @${link('https://community.anytype.io/t/19954', 'Tamalika')}!`),
+	bullet(`Deleted media files now appear as non-existent when embedded in an object. Thanks, @${link('https://community.anytype.io/t/deleted-files-are-not-shown-as-deleted/11208', 'Balcion')}!`),
+	bullet(`First sentence of an Object no longer appears on title bar when the app is locked. Thanks, @${link('https://community.anytype.io/t/21551', 'NoteMyBrain')}`),
+	bullet(`Search pane now displays correctly on smaller screen sizes. Thanks, @${link('https://community.anytype.io/t/22130', 'C.c.')}!`),
+	bullet(`Search in Relation options now shows results even if options were scrolled.`),
+	bullet(`Checkbox sorting in Set has been restored. Thanks, @${link('https://community.anytype.io/t/22266', 'effreyh')}!`),
+	bullet(`The Query of the set now updates correctly in the pop-up.`),
+	bullet(`Fixed issue with using library images for type Icons. Thanks, @${link('https://community.anytype.io/t/22297', 'Self-Perfection')}!`),
+	bullet(`Keyboard cursor no longer disappears after cutting a whole line (block). Thanks, @${link('https://community.anytype.io/t/20781', 'SirCaptain')}!`),
+
+
+
+	div(),
+	// --------------------------------------------//
+
+	h1(`Release 0.41.0 - Spring Update 🌸 Batch Editing V1`),
+	text(`You didn't think we'd let Spring slip by before sneaking in a release, did you?`),
+	text(`This request has been a long-time coming, so it brings us great pleasure to present V1 of Batch Relation Editing!`),
+	text(`Wave goodbye to the days of tediously managing objects one by one. This new function allows you to add Tags and Relations to many Objects at a time, making it much quicker to organize your content and tidy-up your graph.`),
+
+	h2(`🌿 Quality-of-Life Improvements:`),
+	bullet(`<b>Improved Global Search:</b> Highlights results, shows more total results, searches by text relations, blocks, tags, and statuses, and allows searching links & backlinks.`),
+	video(`40.5/3.mp4`),
+	bullet(`<b>Batch Relation Editing:</b> Easily manage Tags & Relations across multiple objects 📋`),
+	video(`40.5/1.mp4`),
+	bullet(`<b>Reuse Files:</b> Incorporate existing files within file blocks in the editor 📂 `),
+	video(`40.5/2.mp4`),
+	bullet(`<b>Keyboard shortcut:</b> ${hl(`${cmd} + Enter`)} checks and unchecks checkboxes ✅ Thanks, @${link('https://github.com/anyproto/anytype-ts/pull/709', 'mikailcf')}!`),
+	bullet(`<b>Text Justification:</b> New option to justify text in blocks for better formatting 📄`),
+	img('40.5/4.png'),
+	bullet(`<b>Enhanced Graph Settings:</b> Distinct settings for global and local graphs in Sets/Collections ⚙️ Thanks, @${link('https://community.anytype.io/t/graph-view-with-space-local-graph-clashes/20599', 'Donatas')}`),
+	bullet(`<b>Drag'n'Drop Widgets:</b> Improved widget headers and linked widgets for easier organization 🖱️ Thanks, @${link('https://community.anytype.io/t/drag-drop-not-working-for-sidebar-widgets-with-link-appearance/20195', 'siouso')}`),
+	bullet(`<b>Link Block:</b> Default link style has been changed to Card. Personalize this behaviour in Settings 🔗`),
+	img('40.5/5.png'),
+	bullet(`<b>Version History: </b> Now available in Sets & Collections with a new design that groups changes by Space members and edit time, and highlights changes in the Object 📝🔄`),
+	
+	bullet(`<b>Gallery View Adjustment:</b> Better visual experience with fewer cards in inline set columns 🎨 Thanks, @${link('https://community.anytype.io/t/change-dynamically-the-width-of-gallery-items-when-on-2col-layout/15623', 'Eban')}`),
+	bullet(`<b>Library:</b> now has options to sort 📚`),
+	img('40.5/6.png'),
+
+	h2(`🛠️ Technical Updates:`),
+	bullet(`Electron updated to ${link('https://releases.electronjs.org/releases/stable', '30.1.0')}`),
+	bullet(`<b>Membership System:</b> All email domains now supported 📧 Thanks, @Afonso!`),
+	bullet(`<b>App Updates:</b> Now works even without logging in ⬆️`),
+
+	h2(`🐞 Bug Fixes:`),
+	bullet(`<b>Slash Menu:</b> Now shows only after a space character to prevent saving issues ✨ Thanks, @${link('https://community.anytype.io/t/dont-show-the-slash-menu-if-there-is-a-character-or-nunber-direct-before-the-cursor/20500', 'code-jack')}`),
+	bullet(`<b>Task Checkbox:</b> Fixed the issue of checkbox deleting object names in sets ✅`),
+	bullet(`<b>Editor:</b> Fixed a bug that was breaking the editor when object was opened from history or by deeplink 🌐`),
+	bullet(`<b>URL Relation Bug:</b> Resolved the issue with opening Windows Explorer when the URL is blank 🖥️ Thanks, @${link('https://community.anytype.io/t/pasting-a-url-in-url-relation-within-a-collection-press-enter-opens-this-pc-on-windows/11197', 'hexara')}`),
+	bullet(`<b>Emoji Markdown:</b> Fixed markdown sequence issues with text blocks starting with an emoji 😃 Thanks, @${link('https://community.anytype.io/t/13159', 'pavloUA')}`),
+	bullet(`<b>System Relations:</b> System relations can now be unlinked from Types 🔗 Thanks, @${link('https://community.anytype.io/t/16517', 'filip')}`),
+	bullet(`<b>Shift + Click:</b> Proper functionality for shift+click on Link/Bookmark blocks 🔍 Thanks, @${link('https://community.anytype.io/t/20194', 'siousu')}`),
+	bullet(`<b>White Flash Issue:</b> Fixed the white flash when returning to the main screen from login/signup 💡`),
+	bullet(`<b>Settings Modal:</b> Now properly adjusts to window height 🖥️`),
+	bullet(`<b>Deeplink Routing:</b> Correct redirection after PIN check 🔒 Thanks, @${link('https://community.anytype.io/t/gallerys-open-in-app-button-failed-to-trigger-while-when-the-app-is-closed/12968', 'JorgeE')}`),
+	bullet(`<b>Delete Link:</b> Fixed the delete link in the space context menu and local-only mode ❌`),
+
+	text(``),
+	text(`Enjoy and keep an eye out for our next release featuring another banger: 💥Tags as Objects 🏷️`),
+
+	div(),
+	// --------------------------------------------//
+
+	h1(`Release 0.40.0 - Welcome to Local-First Sharing & Collaboration`),
 	text(`Folks, this is the one we’ve been waiting for. This release, in which creating trusted networks with your friends, family and communities in Anytype becomes a reality, is the culmination of nearly five years of R&D.`),
 	text(`What does this mean for you? Now you can share what matters, with those you care about, knowing that everything you share is encrypted and owned by you. Not anytype, nor anybody else can peek inside or deny your access.`),
 	text(`From today onward, we warmly welcome you to begin testing out shared spaces, starting with the small things: idea boards, shopping lists, projects, and wikis. As you’re testing, please kindly note that this is v1 of multiplayer, representing the first step towards full-fledged collaborative experiences. We’ll be enriching this experience with more features in the coming months, so your feedback is, as always, warmly welcomed.`), 
@@ -68,7 +176,7 @@ export default [
 	text(`You can now set an object icon by reusing an image that has already been uploaded to the space.`),
 
 	h2(`💻 Tech:`),
-	bullet(`Electron updated to 29.1.6`),
+	bullet(`Electron has been updated to 29.1.6`),
 	bullet(`Debug logs for Middleware were split into different flags`),
 
 	h2(`🐛 Bug Fixes:`),
@@ -98,7 +206,7 @@ export default [
 
 	h3(`Webclipper`),
 	video('39/1.mp4'),
-	text(`The wait is over - we’re so relieved to bring you v1 of the Anytype webclipper. For those of you using Chrome browsers, you’ll be able to install the Anytype web clipper using ${link(Url.webclipper, 'this link')}.`),
+	text(`The wait is over - we’re so relieved to bring you v1 of the Anytype webclipper. For those of you using Chrome browsers, you’ll be able to install the Anytype web clipper using ${link(J.Url.webclipper, 'this link')}.`),
 	text(`Once installed, you have two options to save content from the web:`),
 	bullet(`Click the web clipper extension icon in your toolbar to save web pages as new objects in Anytype.`),
 	bullet(`Select a text snippet, right click, and add the text to any previously-created object in your space.`),

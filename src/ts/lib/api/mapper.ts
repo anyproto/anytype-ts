@@ -1,6 +1,8 @@
+import { I, M, U, Encode, Decode } from 'Lib';
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
-import { I, M, UtilCommon, Encode, Decode } from 'Lib';
+import Events from 'dist/lib/pb/protos/events_pb';
+import { DeviceList } from 'ts/lib/api/command';
 
 export const Mapper = {
 
@@ -206,6 +208,7 @@ export const Mapper = {
 		BlockDataview: (obj: Model.Block.Content.Dataview) => {
 			return {
 				sources: obj.getSourceList(),
+				viewId: obj.getActiveview(),
 				views: (obj.getViewsList() || []).map(Mapper.From.View),
 				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
 				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
@@ -257,8 +260,8 @@ export const Mapper = {
 		Block: (obj: Model.Block): I.Block => {
 			const cc = obj.getContentCase();
 			const type = Mapper.BlockType(obj.getContentCase());
-			const fn = `get${UtilCommon.ucFirst(type)}`;
-			const fm = UtilCommon.toUpperCamelCase(`block-${type}`);
+			const fn = `get${U.Common.ucFirst(type)}`;
+			const fm = U.Common.toUpperCamelCase(`block-${type}`);
 			const content = obj[fn] ? obj[fn]() : {};
 			const item: I.Block = {
 				id: obj.getId(),
@@ -367,51 +370,6 @@ export const Mapper = {
 			};
 		},
 
-		ThreadSummary: (obj: any) => {
-            return {
-                status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
-            };
-        },
-
-		ThreadCafe: (obj: any) => {
-            return {
-                status: Number(obj.getStatus() || I.ThreadStatus.Unknown),
-                lastPulled: obj.getLastpulled(),
-                lastPushSucceed: obj.getLastpushsucceed(),
-				files: Mapper.From.ThreadFiles(obj.getFiles()),
-            };
-        },
-
-		ThreadFiles: (obj: any) => {
-            return {
-				pinning: obj.getPinning(),
-				pinned: obj.getPinned(),
-				failed: obj.getFailed(),
-				updated: obj.getUpdated(),
-            };
-        },
-
-		ThreadDevice: (obj: any) => {
-            return {
-                name: obj.getName(),
-				online: obj.getOnline(),
-                lastPulled: obj.getLastpulled(),
-                lastEdited: obj.getLastedited(),
-            };
-        },
-
-		ThreadAccount: (obj: any) => {
-            return {
-				id: obj.getId(),
-				name: obj.getName(),
-				imageHash: obj.getImagehash(),
-				online: obj.getOnline(),
-                lastPulled: obj.getLastpulled(),
-                lastEdited: obj.getLastedited(),
-				devices: (obj.getDevicesList() || []).map(Mapper.From.ThreadDevice),
-            };
-        },
-
 		GraphEdge: (obj: Rpc.Object.Graph.Edge) => {
             return {
 				type: obj.getType(),
@@ -440,13 +398,17 @@ export const Mapper = {
 				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
 				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
 				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
-				restrictions: Mapper.From.Restrictions(obj.getRestrictions())
+				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
+				participants: (obj.getBlockparticipantsList() || []).map(it => ({
+					blockId: it.getBlockid(),
+					participantId: it.getParticipantid(),
+				})),
 			};
 		},
 
 		BoardGroup: (obj: any): I.BoardGroup => {
 			const type = Mapper.BoardGroupType(obj.getValueCase());
-			const fn = `get${UtilCommon.ucFirst(type)}`;
+			const fn = `get${U.Common.ucFirst(type)}`;
 			const field = obj[fn] ? obj[fn]() : null;
 
 			let value: any = null;
@@ -487,9 +449,16 @@ export const Mapper = {
 			};
 		},
 
+		ObjectSearchWithMeta: (obj: any) => {
+			return {
+				...Decode.struct(obj.getDetails()),
+				metaList: (obj.getMetaList() || []).map(Mapper.From.MetaList),
+			};
+		},
+
 		Notification: (obj: Model.Notification): I.Notification => {
 			const type = Mapper.NotificationPayload(obj.getPayloadCase());
-			const fn = `get${UtilCommon.ucFirst(type)}`;
+			const fn = `get${U.Common.ucFirst(type)}`;
 			const field = obj[fn] ? obj[fn]() : null;
 			
 			let payload: any = {};
@@ -542,7 +511,7 @@ export const Mapper = {
 						payload = Object.assign(payload, {
 							spaceId: field.getSpaceid(),
 							spaceName: field.getSpacename(),
-        					permissions: field.getPermissions(),
+							permissions: field.getPermissions(),
 						});
 						break;
 					};
@@ -612,6 +581,43 @@ export const Mapper = {
 				colorStr: obj.getColorstr(),
 				features: obj.getFeaturesList(),
 				namesCount: obj.getAnynamescountincluded()
+			};
+		},
+
+		Process: (obj: Events.Model.Process) => {
+			return {
+				id: obj.getId(),
+				state: obj.getState() as number,
+				type: obj.getType() as number,
+				progress: Mapper.From.Progress(obj.getProgress())
+			};
+		},
+
+		Progress: (obj: Events.Model.Process.Progress) => {
+			return {
+				done: obj.getDone(),
+				total: obj.getTotal(),
+				message: obj.getMessage(),
+			};
+		},
+
+		MetaList: (obj: Model.Search.Meta): any => {
+			return {
+				highlight: obj.getHighlight(),
+				blockId: obj.getBlockid(),
+				relationKey: obj.getRelationkey(),
+				relationDetails: Decode.struct(obj.getRelationdetails()),
+				ranges: (obj.getHighlightrangesList() || []).map(Mapper.From.Range),
+			};
+		},
+
+		DeviceInfo: (obj: Model.DeviceInfo): any => {
+			return {
+				id: obj.getId(),
+				name: obj.getName(),
+				addDate: obj.getAdddate(),
+				isConnected: obj.getIsconnected(),
+				archived: obj.getArchived()
 			};
 		},
 
@@ -794,7 +800,7 @@ export const Mapper = {
 		Block: (obj: any) => {
 			obj = obj || {};
 			obj.type = String(obj.type || I.BlockType.Empty);
-			obj.content = UtilCommon.objectCopy(obj.content || {});
+			obj.content = U.Common.objectCopy(obj.content || {});
 	
 			const block = new Model.Block();
 	
@@ -811,8 +817,8 @@ export const Mapper = {
 				block.setFields(Encode.struct(obj.fields || {}));
 			};
 
-			const fb = UtilCommon.toCamelCase('set-' + obj.type.toLowerCase());
-			const fm = UtilCommon.toUpperCamelCase('block-' + obj.type);
+			const fb = U.Common.toCamelCase(`set-${obj.type.toLowerCase()}`);
+			const fm = U.Common.toUpperCamelCase(`block-${obj.type}`);
 
 			if (block[fb] && Mapper.To[fm]) {
 				block[fb](Mapper.To[fm](obj.content));
@@ -866,7 +872,7 @@ export const Mapper = {
 		},
 
 		View: (obj: I.View) => {
-			obj = new M.View(UtilCommon.objectCopy(obj));
+			obj = new M.View(U.Common.objectCopy(obj));
 			
 			const item = new Model.Block.Content.Dataview.View();
 
@@ -952,6 +958,540 @@ export const Mapper = {
 			return item;
 		},
 
-	}
+	},
+
+	Event: {
+
+		Type (v: number): string {
+			const V = Events.Event.Message.ValueCase;
+
+			let t = '';
+			if (v == V.ACCOUNTSHOW)					 t = 'AccountShow';
+			if (v == V.ACCOUNTDETAILS)				 t = 'AccountDetails';
+			if (v == V.ACCOUNTUPDATE)				 t = 'AccountUpdate';
+			if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'AccountConfigUpdate';
+			if (v == V.ACCOUNTLINKCHALLENGE)		 t = 'AccountLinkChallenge';
+
+			if (v == V.BLOCKADD)					 t = 'BlockAdd';
+			if (v == V.BLOCKDELETE)					 t = 'BlockDelete';
+			if (v == V.BLOCKSETFIELDS)				 t = 'BlockSetFields';
+			if (v == V.BLOCKSETCHILDRENIDS)			 t = 'BlockSetChildrenIds';
+			if (v == V.BLOCKSETBACKGROUNDCOLOR)		 t = 'BlockSetBackgroundColor';
+			if (v == V.BLOCKSETTEXT)				 t = 'BlockSetText';
+			if (v == V.BLOCKSETFILE)				 t = 'BlockSetFile';
+			if (v == V.BLOCKSETLINK)				 t = 'BlockSetLink';
+			if (v == V.BLOCKSETBOOKMARK)			 t = 'BlockSetBookmark';
+			if (v == V.BLOCKSETALIGN)				 t = 'BlockSetAlign';
+			if (v == V.BLOCKSETVERTICALALIGN)		 t = 'BlockSetVerticalAlign';
+			if (v == V.BLOCKSETDIV)					 t = 'BlockSetDiv';
+			if (v == V.BLOCKSETRELATION)			 t = 'BlockSetRelation';
+			if (v == V.BLOCKSETLATEX)				 t = 'BlockSetLatex';
+			if (v == V.BLOCKSETTABLEROW)			 t = 'BlockSetTableRow';
+			if (v == V.BLOCKSETWIDGET)				 t = 'BlockSetWidget';
+
+			if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'BlockDataviewViewSet';
+			if (v == V.BLOCKDATAVIEWVIEWUPDATE)		 t = 'BlockDataviewViewUpdate';
+			if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'BlockDataviewViewDelete';
+			if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'BlockDataviewViewOrder';
+
+			if (v == V.BLOCKDATAVIEWTARGETOBJECTIDSET)	 t = 'BlockDataviewTargetObjectIdSet';
+			if (v == V.BLOCKDATAVIEWISCOLLECTIONSET)	 t = 'BlockDataviewIsCollectionSet';
+
+			if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'BlockDataviewRelationSet';
+			if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'BlockDataviewRelationDelete';
+			if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'BlockDataviewGroupOrderUpdate';
+			if (v == V.BLOCKDATAVIEWOBJECTORDERUPDATE)	 t = 'BlockDataviewObjectOrderUpdate';
+
+			if (v == V.SUBSCRIPTIONADD)				 t = 'SubscriptionAdd';
+			if (v == V.SUBSCRIPTIONREMOVE)			 t = 'SubscriptionRemove';
+			if (v == V.SUBSCRIPTIONPOSITION)		 t = 'SubscriptionPosition';
+			if (v == V.SUBSCRIPTIONCOUNTERS)		 t = 'SubscriptionCounters';
+			if (v == V.SUBSCRIPTIONGROUPS)			 t = 'SubscriptionGroups';
+
+			if (v == V.OBJECTREMOVE)				 t = 'ObjectRemove';
+			if (v == V.OBJECTDETAILSSET)			 t = 'ObjectDetailsSet';
+			if (v == V.OBJECTDETAILSAMEND)			 t = 'ObjectDetailsAmend';
+			if (v == V.OBJECTDETAILSUNSET)			 t = 'ObjectDetailsUnset';
+			if (v == V.OBJECTRELATIONSAMEND)		 t = 'ObjectRelationsAmend';
+			if (v == V.OBJECTRELATIONSREMOVE)		 t = 'ObjectRelationsRemove';
+			if (v == V.OBJECTRESTRICTIONSSET)		 t = 'ObjectRestrictionsSet';
+			if (v == V.OBJECTCLOSE)					 t = 'objectClose';
+
+			if (v == V.FILESPACEUSAGE)				 t = 'FileSpaceUsage';
+			if (v == V.FILELOCALUSAGE)				 t = 'FileLocalUsage';
+			if (v == V.FILELIMITREACHED)			 t = 'FileLimitReached';
+			if (v == V.FILELIMITUPDATED)			 t = 'FileLimitUpdated';
+
+			if (v == V.NOTIFICATIONSEND)			 t = 'NotificationSend';
+			if (v == V.NOTIFICATIONUPDATE)			 t = 'NotificationUpdate';
+
+			if (v == V.PAYLOADBROADCAST)			 t = 'PayloadBroadcast';
+			
+			if (v == V.MEMBERSHIPUPDATE)			 t = 'MembershipUpdate';
+
+			if (v == V.PROCESSNEW)					 t = 'ProcessNew';
+			if (v == V.PROCESSUPDATE)				 t = 'ProcessUpdate';
+			if (v == V.PROCESSDONE)					 t = 'ProcessDone';
+
+			if (v == V.THREADSTATUS) 				 t = 'ThreadStatus';
+			if (v == V.SPACESYNCSTATUSUPDATE)		 t = 'SpaceSyncStatusUpdate';
+			if (v == V.P2PSTATUSUPDATE)		 		 t = 'P2PStatusUpdate';
+
+			return t;
+		},
+
+		Data (e: any) {
+			const type = Mapper.Event.Type(e.getValueCase());
+			const fn = `get${U.Common.ucFirst(type)}`;
+
+			return e[fn] ? e[fn]() : {};
+		},
+
+		AccountShow: (obj: Events.Event.Account.Show) => {
+			return {
+				account: Mapper.From.Account(obj.getAccount()),
+			};
+		},
+
+		AccountUpdate: (obj: Events.Event.Account.Update) => {
+			return {
+				status: Mapper.From.AccountStatus(obj.getStatus()),
+			};
+		},
+
+		AccountConfigUpdate: (obj: Events.Event.Account.Config.Update) => {
+			return {
+				config: Mapper.From.AccountConfig(obj.getConfig()),
+			};
+		},
+
+		AccountLinkChallenge: (obj: Events.Event.Account.LinkChallenge) => {
+			return {
+				challenge: obj.getChallenge(),
+			};
+		},
+
+		ObjectRelationsAmend: (obj: Events.Event.Object.Relations.Amend) => {
+			return {
+				id: obj.getId(),
+				relations: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
+			};
+		},
+
+		ObjectRelationsRemove: (obj: Events.Event.Object.Relations.Remove) => {
+			return {
+				id: obj.getId(),
+				relationKeys: obj.getRelationkeysList() || [],
+			};
+		},
+
+		ObjectRestrictionsSet: (obj: Events.Event.Object.Restrictions.Set) => {
+			return {
+				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
+			};
+		},
+
+		FileSpaceUsage: (obj: Events.Event.File.SpaceUsage) => {
+			return {
+				spaceId: obj.getSpaceid(),
+				bytesUsage: obj.getBytesusage(),
+			};
+		},
+
+		FileLocalUsage: (obj: Events.Event.File.LocalUsage) => {
+			return {
+				localUsage: obj.getLocalbytesusage(),
+			};
+		},
+
+		FileLimitUpdated: (obj: Events.Event.File.LimitUpdated) => {
+			return {
+				bytesLimit: obj.getByteslimit(),
+			};
+		},
+
+		BlockAdd: (obj: Events.Event.Block.Add) => {
+			return {
+				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
+			};
+		},
+
+		BlockDelete: (obj: Events.Event.Block.Delete) => {
+			return {
+				blockIds: obj.getBlockidsList() || [],
+			};
+		},
+
+		BlockSetChildrenIds: (obj: Events.Event.Block.Set.ChildrenIds) => {
+			return {
+				id: obj.getId(),
+				childrenIds: obj.getChildrenidsList() || [],
+			};
+		},
+
+		BlockSetFields: (obj: Events.Event.Block.Set.Fields) => {
+			return {
+				id: obj.getId(),
+				fields: obj.hasFields() ? Decode.struct(obj.getFields()) : {},
+			};
+		},
+
+		BlockSetLink: (obj: Events.Event.Block.Set.Link) => {
+			return {
+				id: obj.getId(),
+				targetBlockId: obj.hasTargetblockid() ? obj.getTargetblockid().getValue() : null,
+				cardStyle: obj.hasCardstyle() ? obj.getCardstyle().getValue() : null,
+				iconSize: obj.hasIconsize() ? obj.getIconsize().getValue() : null,
+				description: obj.hasDescription() ? obj.getDescription().getValue() : null,
+				relations: obj.hasRelations() ? obj.getRelations().getValueList() || [] : null,
+				fields: obj.hasFields() ? Decode.struct(obj.getFields()) : null,
+			};
+		},
+
+		BlockSetText: (obj: Events.Event.Block.Set.Text) => {
+			return {
+				id: obj.getId(),
+				text: obj.hasText() ? obj.getText().getValue() : null,
+				style: obj.hasStyle() ? obj.getStyle().getValue() : null,
+				checked: obj.hasChecked() ? obj.getChecked().getValue() : null,
+				color: obj.hasColor() ? obj.getColor().getValue() : null,
+				iconEmoji: obj.hasIconemoji() ? obj.getIconemoji().getValue() : null,
+				iconImage: obj.hasIconimage() ? obj.getIconimage().getValue() : null,
+				marks: obj.hasMarks() ? (obj.getMarks().getValue().getMarksList() || []).map(Mapper.From.Mark) : null,
+			};
+		},
+
+		BlockSetDiv: (obj: Events.Event.Block.Set.Div) => {
+			return {
+				id: obj.getId(),
+				style: obj.hasStyle() ? obj.getStyle().getValue() : null,
+			};
+		},
+
+		BlockDataviewTargetObjectIdSet: (obj: Events.Event.Block.Dataview.TargetObjectIdSet) => {
+			return {
+				id: obj.getId(),
+				targetObjectId: obj.getTargetobjectid(),
+			};
+		},
+
+		BlockDataviewIsCollectionSet: (obj: Events.Event.Block.Dataview.IsCollectionSet) => {
+			return {
+				id: obj.getId(),
+				isCollection: obj.getValue(),
+			};
+		},
+
+		BlockSetWidget: (obj: Events.Event.Block.Set.Widget) => {
+			return {
+				id: obj.getId(),
+				layout: obj.hasLayout() ? obj.getLayout().getValue() : null,
+				limit: obj.hasLimit() ? obj.getLimit().getValue() : null,
+				viewId: obj.hasViewid() ? obj.getViewid().getValue() : null,
+			};
+		},
+
+		BlockSetFile: (obj: Events.Event.Block.Set.File) => {
+			return {
+				id: obj.getId(),
+				targetObjectId: obj.hasTargetobjectid() ? obj.getTargetobjectid().getValue() : null,
+				type: obj.hasType() ? obj.getType().getValue() : null,
+				style: obj.hasStyle() ? obj.getStyle().getValue() : null,
+				state: obj.hasState() ? obj.getState().getValue() : null,
+			};
+		},
+
+		BlockSetBookmark: (obj: Events.Event.Block.Set.Bookmark) => {
+			return {
+				id: obj.getId(),
+				targetObjectId: obj.hasTargetobjectid() ? obj.getTargetobjectid().getValue() : null,
+				state: obj.hasState() ? obj.getState().getValue() : null,
+			};
+		},
+
+		BlockSetBackgroundColor: (obj: Events.Event.Block.Set.BackgroundColor) => {
+			return {
+				id: obj.getId(),
+				bgColor: obj.getBackgroundcolor(),
+			};
+		},
+
+		BlockSetAlign: (obj: Events.Event.Block.Set.Align) => {
+			return {
+				id: obj.getId(),
+				align: obj.getAlign(),
+			};
+		},
+
+		BlockSetVerticalAlign: (obj: Events.Event.Block.Set.VerticalAlign) => {
+			return {
+				id: obj.getId(),
+				align: obj.getVerticalalign(),
+			};
+		},
+
+		BlockSetRelation: (obj: Events.Event.Block.Set.Relation) => {
+			return {
+				id: obj.getId(),
+				key: obj.hasKey() ? obj.getKey().getValue() : null,
+			};
+		},
+
+		BlockSetLatex: (obj: Events.Event.Block.Set.Latex) => {
+			return {
+				id: obj.getId(),
+				text: obj.hasText() ? obj.getText().getValue() : null,
+			};
+		},
+
+		BlockSetTableRow: (obj: Events.Event.Block.Set.TableRow) => {
+			return {
+				id: obj.getId(),
+				isHeader: obj.hasIsheader() ? obj.getIsheader().getValue() : null,
+			};
+		},
+
+		BlockDataviewViewSet: (obj: Events.Event.Block.Dataview.ViewSet) => {
+			return {
+				id: obj.getId(),
+				view: Mapper.From.View(obj.getView()),
+			};
+		},
+
+		BlockDataviewViewUpdate: (obj: Events.Event.Block.Dataview.ViewUpdate) => {
+			const ret = {
+				id: obj.getId(),
+				viewId: obj.getViewid(),
+				fields: obj.hasFields() ? Mapper.From.ViewFields(obj.getFields()) : null,
+			};
+
+			const keys = [ 
+				{ id: 'filter', field: 'filters', mapper: 'Filter' },
+				{ id: 'sort', field: 'sorts', mapper: 'Sort' },
+				{ id: 'relation', field: 'relations', mapper: 'ViewRelation' },
+			];
+
+			keys.forEach(key => {
+				const items = obj[U.Common.toCamelCase(`get-${key.id}-list`)]() || [];
+
+				ret[key.field] = [];
+
+				items.forEach(item => {
+					if (item.hasAdd()) {
+						const op = item.getAdd();
+						const afterId = op.getAfterid();
+						const items = (op.getItemsList() || []).map(Mapper.From[key.mapper]);
+
+						ret[key.field].push({ add: { afterId, items } });
+					};
+
+					if (item.hasMove()) {
+						const op = item.getMove();
+						const afterId = op.getAfterid();
+						const ids = op.getIdsList() || [];
+
+						ret[key.field].push({ move: { afterId, ids } });
+					};
+
+					if (item.hasUpdate()) {
+						const op = item.getUpdate();
+
+						if (op.hasItem()) {
+							const item = Mapper.From[key.mapper](op.getItem());
+
+							ret[key.field].push({ update: { id: op.getId(), item } });
+						};
+					};
+
+					if (item.hasRemove()) {
+						const op = item.getRemove();
+						const ids = op.getIdsList() || [];
+
+						ret[key.field].push({ remove: { ids } });
+					};
+				});
+			});
+
+			return ret;
+		},
+
+		BlockDataviewViewDelete: (obj: Events.Event.Block.Dataview.ViewDelete) => {
+			return {
+				id: obj.getId(),
+				viewId: obj.getViewid(),
+			};
+		},
+
+		BlockDataviewViewOrder: (obj: Events.Event.Block.Dataview.ViewOrder) => {
+			return {
+				id: obj.getId(),
+				viewIds: obj.getViewidsList() || [],
+			};
+		},
+
+		BlockDataviewRelationDelete: (obj: Events.Event.Block.Dataview.RelationDelete) => {
+			return {
+				id: obj.getId(),
+				relationKeys: obj.getRelationkeysList() || [],
+			};
+		},
+
+		BlockDataviewRelationSet: (obj: Events.Event.Block.Dataview.RelationSet) => {
+			return {
+				id: obj.getId(),
+				relations: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
+			};
+		},
+
+		BlockDataviewGroupOrderUpdate: (obj: Events.Event.Block.Dataview.GroupOrderUpdate) => {
+			return {
+				id: obj.getId(),
+				groupOrder: obj.hasGrouporder() ? Mapper.From.GroupOrder(obj.getGrouporder()) : null,
+			};
+		},
+
+		BlockDataviewObjectOrderUpdate: (obj: Events.Event.Block.Dataview.ObjectOrderUpdate) => {
+			return {
+				id: obj.getId(),
+				groupId: obj.getGroupid(),
+				viewId: obj.getViewid(),
+				changes: (obj.getSlicechangesList() || []).map(it => {
+					return {
+						operation: it.getOp(),
+						ids: it.getIdsList() || [],
+						afterId: it.getAfterid(),
+					};
+				})
+			};
+		},
+
+		ObjectDetailsSet: (obj: Events.Event.Object.Details.Set) => {
+			return {
+				id: obj.getId(),
+				subIds: obj.getSubidsList() || [],
+				details: Decode.struct(obj.getDetails()),
+			};
+		},
+
+		ObjectDetailsAmend: (obj: Events.Event.Object.Details.Amend) => {
+			const details = {};
+
+			(obj.getDetailsList() || []).forEach(it => {
+				details[it.getKey()] = Decode.value(it.getValue());
+			});
+
+			return {
+				id: obj.getId(),
+				subIds: obj.getSubidsList() || [],
+				details,
+			};
+		},
+
+		ObjectDetailsUnset: (obj: Events.Event.Object.Details.Unset) => {
+			return {
+				id: obj.getId(),
+				subIds: obj.getSubidsList() || [],
+				keys: obj.getKeysList() || [],
+			};
+		},
+
+		SubscriptionAdd: (obj: Events.Event.Object.Subscription.Add) => {
+			return {
+				id: obj.getId(),
+				afterId: obj.getAfterid(),
+				subId: obj.getSubid(),
+			};
+		},
+
+		SubscriptionRemove: (obj: Events.Event.Object.Subscription.Remove) => {
+			return {
+				id: obj.getId(),
+				subId: obj.getSubid(),
+			};
+		},
+
+		SubscriptionPosition: (obj: Events.Event.Object.Subscription.Position) => {
+			return {
+				id: obj.getId(),
+				afterId: obj.getAfterid(),
+				subId: obj.getSubid(),
+			};
+		},
+
+		SubscriptionCounters: (obj: Events.Event.Object.Subscription.Counters) => {
+			return {
+				total: obj.getTotal(),
+				subId: obj.getSubid(),
+			};
+		},
+
+		SubscriptionGroups: (obj: Events.Event.Object.Subscription.Groups) => {
+			return {
+				subId: obj.getSubid(),
+				group: Mapper.From.BoardGroup(obj.getGroup()),
+				remove: obj.getRemove(),
+			};
+		},
+
+		NotificationSend: (obj: Events.Event.Notification.Send) => {
+			return {
+				notification: Mapper.From.Notification(obj.getNotification()),
+			};
+		},
+
+		NotificationUpdate: (obj: Events.Event.Notification.Update) => {
+			return {
+				notification: Mapper.From.Notification(obj.getNotification()),
+			};
+		},
+
+		PayloadBroadcast: (obj: Events.Event.Payload.Broadcast) => {
+			return {
+				payload: obj.getPayload(),
+			};
+		},
+
+		MembershipUpdate: (obj: Events.Event.Membership.Update) => {
+			return {
+				membership: Mapper.From.Membership(obj.getData()),
+			};
+		},
+
+		ProcessNew: (obj: Events.Event.Process.New) => {
+			return {
+				process: Mapper.From.Process(obj.getProcess()),
+			};
+		},
+
+		ProcessUpdate: (obj: Events.Event.Process.Update) => {
+			return {
+				process: Mapper.From.Process(obj.getProcess()),
+			};
+		},
+
+		ProcessDone: (obj: Events.Event.Process.Done) => {
+			return {
+				process: Mapper.From.Process(obj.getProcess()),
+			};
+		},
+
+		SpaceSyncStatusUpdate: (obj: Events.Event.Space.SyncStatus.Update) => {
+			return {
+				id: obj.getId(),
+				error: obj.getError(),
+				network: obj.getNetwork(),
+				status: obj.getStatus(),
+				syncingCounter: obj.getSyncingobjectscounter()
+			};
+		},
+
+		P2PStatusUpdate: (obj: Events.Event.P2PStatus.Update) => {
+			return {
+				id: obj.getSpaceid(),
+				p2p: obj.getStatus(),
+				devicesCounter: obj.getDevicescounter(),
+			};
+		},
+	},
 
 };

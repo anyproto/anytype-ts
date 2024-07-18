@@ -1,54 +1,58 @@
 import * as React from 'react';
-import { IconObject, ObjectName } from 'Component';
-import { I, UtilObject, keyboard, UtilDate } from 'Lib';
-import { blockStore, dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
+import { Icon, IconObject, ObjectName } from 'Component';
+import { I, S, U, keyboard, translate } from 'Lib';
 
 const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I.Menu> {
 	
 	n = 0;
 
-	constructor (props: I.Menu) {
-		super(props);
-
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
-	};
-
 	render () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { d, getView, className } = data;
+		const { y, m, d, hideIcon, className, fromWidget, readonly, onCreate } = data;
 		const items = this.getItems();
-		const view = getView();
-		const { hideIcon } = view;
-		const cn = [ 'day' ];
+		const cn = [ 'wrap' ];
 		const menuId = getId();
+		
+		let label = d;
+		let size = 16;
+
+		if (fromWidget) {
+			const w = Number(U.Date.date('N', U.Date.timestamp(y, m, d))) + 1;
+			label = `${translate(`day${w}`)} ${d}`;
+			size = 18;
+		};
 
 		if (className) {
 			cn.push(className);
 		};
 
 		const Item = (item) => {
-			const canEdit = !item.isReadonly && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
+			const canEdit = !item.isReadonly && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
+
+			let icon = null;
+			if (item.icon) {
+				icon = <Icon className={item.icon} />;
+			} else 
+			if (!hideIcon) {
+				icon = (
+					<IconObject 
+						id={[ menuId, item.id, 'icon' ].join('-')}
+						object={item} 
+						size={16} 
+						canEdit={canEdit}
+					/>
+				);
+			};
+
 			return (
 				<div 
 					id={`item-${item.id}`}
 					className="item" 
 					onMouseEnter={e => this.onMouseEnter(e, item)}
 				>
-					{!hideIcon ? (
-						<IconObject 
-							id={[ menuId, item.id, 'icon' ].join('-')}
-							object={item} 
-							size={16} 
-							canEdit={canEdit}
-							onSelect={icon => this.onSelect(item, icon)} 
-							onUpload={objectId => this.onUpload(item, objectId)} 
-							onCheckbox={() => this.onCheckbox(item)} 
-						/>
-					) : ''}
+					{icon}
 					<ObjectName object={item} onMouseDown={e => this.onClick(e, item)} />
 				</div>
 			);
@@ -57,12 +61,18 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 		return (
 			<div className={cn.join(' ')}>
 				<div className="number">
-					<div className="inner">{d}</div>
+					<div className="inner">{label}</div>
 				</div>
 				<div className="items">
-					{items.map((item, i) => (
-						<Item key={i} {...item} />
-					))}
+					{!items.length ? (
+						<div className="item empty">{translate('menuDataviewObjectListEmptySearch')}</div>
+					) : (
+						<React.Fragment>
+							{items.map((item, i) => (
+								<Item key={i} {...item} />
+							))}
+						</React.Fragment>
+					)}
 				</div>
 			</div>
 		);
@@ -97,30 +107,32 @@ const MenuCalendarDay = observer(class MenuCalendarDay extends React.Component<I
 	};
 
 	onClick (e: any, item: any) {
-		UtilObject.openPopup(item);
-	};
+		const { param } = this.props;
+		const { data } = param;
+		const { onCreate } = data;
 
-	onSelect (item: any, icon: string) {
-		UtilObject.setIcon(item.id, icon, '');
-	};
-
-	onUpload (item: any, objectId: string) {
-		UtilObject.setIcon(item.id, '', objectId);
-	};
-
-	onCheckbox (item: any) {
-		UtilObject.setDone(item.id, !item.done);
+		if (item.id == 'add') {
+			if (onCreate) {
+				onCreate();
+			};
+		} else {
+			U.Object.openConfig(item);
+		};
 	};
 
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, block, getView, d, m, y } = data;
-		const view = getView();
-		const items = dbStore.getRecords(dbStore.getSubId(rootId, block.id), [ view.groupRelationKey ]);
+		const { rootId, blockId, d, m, y, relationKey, readonly, onCreate } = data;
+		const items = S.Record.getRecords(S.Record.getSubId(rootId, blockId), [ relationKey ]);
 		const current = [ d, m, y ].join('-');
+		const ret = items.filter(it => U.Date.date('j-n-Y', it[relationKey]) == current);
 
-		return items.filter(it => UtilDate.date('j-n-Y', it[view.groupRelationKey]) == current);
+		if (!readonly && onCreate) {
+			ret.push({ id: 'add', icon: 'plus', name: translate('commonCreateNewObject') });
+		};
+
+		return ret;
 	};
 
 });

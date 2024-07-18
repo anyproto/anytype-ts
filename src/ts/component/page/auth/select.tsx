@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Label, Button, Header, Footer, Error } from 'Component';
-import { I, UtilRouter, translate, Animation, analytics, UtilCommon, UtilData } from 'Lib';
+import { I, U, translate, Animation, analytics } from 'Lib';
 
 interface State {
 	error: string;
@@ -46,16 +46,16 @@ class PageAuthSelect extends React.Component<I.PageComponent, State> {
 	};
 
 	componentDidMount (): void {
-		Animation.to(() => UtilCommon.renderLinks($(this.node)));
+		Animation.to(() => U.Common.renderLinks($(this.node)));
 		analytics.event('ScreenIndex');
 	};
 
 	onLogin () {
-		Animation.from(() => UtilRouter.go('/auth/login', {}));
+		Animation.from(() => U.Router.go('/auth/login', {}));
 	};
 
 	onRegister () {
-		Animation.from(() => UtilRouter.go('/auth/onboard', {}));
+		Animation.from(() => U.Router.go('/auth/onboard', {}));
 	};
 
 };

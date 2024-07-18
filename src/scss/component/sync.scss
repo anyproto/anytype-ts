@@ -1,14 +1,34 @@
 @import "~scss/_mixins";
 
-.sync { 
-	height: 18px; display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary); background: var(--color-shape-tertiary); 
-	border-radius: 4px; padding: 0px 6px; gap: 0px 4px;
-}
-.sync {
-	.icon { width: 8px; height: 8px; }
-	.icon.green { background-image: url('~img/icon/status/green.svg'); }
-	.icon.orange { background-image: url('~img/icon/status/orange.svg'); }
-	.icon.red { background-image: url('~img/icon/status/red.svg'); }
+@keyframes syncing {
+	0% { width: 8px; height: 8px; margin: -4px 0px 0px -4px; opacity: .4; }
+	70% { width: 28px; height: 28px; margin: -14px 0px 0px -14px; opacity: 0; }
+	100% { width: 28px; height: 28px; margin: -14px 0px 0px -14px; opacity: 0; }
+};
 
-	.name { @include text-overflow-nw; }
+.sync { 
+	height: 28px; min-width: 28px; display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary);
+	border-radius: 4px; gap: 0px 8px;
+}
+.sync:hover, .sync.hover { background: var(--color-shape-highlight-medium); }
+.sync {
+	.icon { width: 8px; height: 8px; border-radius: 50%; margin-left: 10px; background-color: var(--color-control-active); }
+	.icon.error { background-color: var(--color-red); display: block; }
+	.icon.synced,
+	.icon.syncing { background-color: var(--color-lime); }
+	.icon.syncing::before,
+	.icon.syncing::after {
+		content: ''; @include pos-abs-mid; z-index: 0; margin: -4px 0px 0px -4px;
+		display: block; width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-lime);
+		animation: syncing 1.6s ease-out infinite;
+	}
+	.icon.syncing::after { animation-delay: 0.3s; }
+	.name { @include text-overflow-nw; margin-right: 10px; }
+}
+.sync:not(.errorIncompatibleVersion) {
+	.name { display: none; }
+}
+.sync:hover,
+.sync.hover {
+	.name { display: block; }
 }

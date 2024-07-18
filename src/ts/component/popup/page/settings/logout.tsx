@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Button, Phrase } from 'Component';
-import { I, C, translate, analytics, UtilCommon, UtilRouter, Renderer } from 'Lib';
-import { authStore, menuStore } from 'Store';
+import { I, C, S, U, translate, analytics, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -53,7 +52,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	};
 
 	componentDidMount () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		if (!account) {
 			return;
@@ -73,7 +72,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 
 	onToggle (isHidden: boolean): void {
 		if (!isHidden) {
-			UtilCommon.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
+			U.Common.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
 			analytics.event('KeychainCopy', { type: 'BeforeLogout' });
 		};
 	};
@@ -85,11 +84,11 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	onLogout () {
 		this.props.setPinConfirmed(false);
 
-		UtilRouter.go('/', { 
+		U.Router.go('/', { 
 			replace: true, 
 			animate: true,
 			onRouteChange: () => {
-				authStore.logout(true, false);
+				S.Auth.logout(true, false);
 			},
 		});
 	};

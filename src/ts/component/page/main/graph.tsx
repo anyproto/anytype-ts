@@ -1,13 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, UtilMenu, UtilData, UtilObject, keyboard } from 'Lib';
+import { I, C, S, U, J, keyboard } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
-import { detailStore, commonStore } from 'Store';
-const Constant = require('json/constant.json');
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
 
+	_isMounted = false;
 	node: any = null;
 	data: any = {
 		nodes: [],
@@ -39,7 +38,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 					ref={ref => this.refHeader = ref} 
 					component="mainGraph" 
 					rootId={rootId} 
-					tabs={UtilMenu.getGraphTabs()} 
+					tabs={U.Menu.getGraphTabs()} 
 					tab="graph" 
 					onTab={this.onTab} 
 					layout={I.ObjectLayout.Graph}
@@ -55,7 +54,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 						id="global"
 						rootId={rootId} 
 						data={this.data}
-						storageKey={Constant.graphId.global}
+						storageKey={J.Constant.graphId.global}
 					/>
 				</div>
 
@@ -65,6 +64,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
+
 		this.rebind();
 		this.resize();
 		this.load();
@@ -81,6 +82,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	componentWillUnmount () {
+		this._isMounted = false;
+
 		this.unbind();
 		window.clearTimeout(this.timeoutLoading);
 	};
@@ -107,8 +110,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	load () {
 		this.setLoading(true);
 
-		C.ObjectGraph(commonStore.space, UtilData.graphFilters(), 0, [], Constant.graphRelationKeys, '', [], (message: any) => {
-			if (message.error.code) {
+		C.ObjectGraph(S.Common.space, U.Data.graphFilters(), 0, [], J.Relation.graph, '', [], (message: any) => {
+			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
@@ -140,22 +143,12 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				};
 			};
 
-			this.data.nodes = message.nodes.map(it => detailStore.mapper(it));
-
-			UtilData.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
-				error: {},
-				records: message.nodes,
-				dependencies: [],
-				counters: { total: message.nodes.length },
-			});
-
-			this.resize();
+			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
+			this.forceUpdate();
 
 			if (this.refGraph) {
 				this.refGraph.init();
 			};
-
-			this.forceUpdate();
 		});
 	};
 
@@ -176,7 +169,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	resize () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const obj = UtilCommon.getPageContainer(isPopup);
+		const obj = U.Common.getPageContainer(isPopup);
 		const node = $(this.node);
 		const wrapper = obj.find('.wrapper');
 		const oh = obj.height();
@@ -209,10 +202,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	onTab (id: string) {
-		const tab = UtilMenu.getGraphTabs().find(it => it.id == id);
+		const tab = U.Menu.getGraphTabs().find(it => it.id == id);
 
 		if (tab) {
-			UtilObject.openAuto({ id: this.getRootId(), layout: tab.layout });
+			U.Object.openAuto({ id: this.getRootId(), layout: tab.layout });
 		};
 	};
 

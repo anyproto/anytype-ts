@@ -2,11 +2,16 @@
 
 .popups {
 	.popup.popupSearch {
-		.ReactVirtualized__List { padding: 8px 0px; }
+		.ReactVirtualized__List { padding: 8px 0px 4px; }
 
-		.content { height: 432px; overflow: visible; transition: none; transform: translate3d(0px,0px,0px); }
+		.innerWrap { width: 684px; height: 684px; max-height: calc(100% - 48px); overflow: hidden; }
+
+		@media (max-width: 700px) {
+			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
+		}
+
+		.content { overflow: visible; transition: none; transform: translate3d(0px,0px,0px); height: 100%; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
-		.innerWrap { width: 600px; overflow: hidden; }
 		#loader { top: 55px; height: calc(100% - 55px); }
 
 		.head { 
@@ -23,7 +28,7 @@
 			.filter {
 				.inner { height: auto; }
 				.input { 
-					padding: 0px; height: 54px; vertical-align: middle; width: calc(100% - 32px); vertical-align: top; @include text-paragraph; font-weight: 500;
+					padding: 0px; height: 54px; width: calc(100% - 32px); vertical-align: top; @include text-paragraph; font-weight: 500;
 				}
 				.placeholder { @include text-paragraph; font-weight: 500; }
 				.line { display: none; }
@@ -33,36 +38,58 @@
 		.items { height: 100%; flex-grow: 1; }
 		.items {
 			.pad { height: 12px; }
+			.row { padding: 0 4px; }
 
-			.sectionName { @include text-small; height: 26px; line-height: 18px; padding: 5px 20px; font-weight: 500; color: var(--color-text-secondary); }
+			.sectionName { @include text-small; display: flex; justify-content: space-between; height: 26px; line-height: 18px; padding: 5px 16px; font-weight: 500; color: var(--color-text-secondary); }
 
-			.item { 
-				position: relative; height: 48px; line-height: 22px; padding: 13px 20px; white-space: nowrap; display: flex; gap: 0px 10px; 
-				align-items: center;
+			.item { position: relative; line-height: 22px; padding: 8px 8px 8px 12px; white-space: nowrap; display: flex; gap: 0px 12px; border-radius: 8px; }
+
+			.item.isSmall { height: 38px; align-items: center; }
+			.item.isSmall {
+				.sides { align-items: center; }
 			}
+
 			.item {
 				.icon { width: 20px; height: 20px; flex-shrink: 0; }
 				.icon.plus { background-image: url('~img/icon/popup/search/plus.svg'); }
 				.icon.relation { background-image: url('~img/icon/menu/action/relation0.svg'); }
 				.icon.graph { background-image: url('~img/icon/menu/action/graph0.svg'); }
 				.icon.navigation { background-image: url('~img/icon/menu/action/navigation0.svg'); }
+				.icon.advanced { width: 28px; height: 28px; background: url('~img/arrow/forward.svg'); opacity: 0; }
 
 				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
-				.name { 
-					@include text-overflow-nw; font-weight: 500; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; flex-grow: 1; 
-					width: calc(66% - 30px); 
-				}
-				.caption { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); flex-shrink: 0; width: 33%; flex-grow: 0; text-align: right; }
-				.caption {
-					.label { 
-						padding: 0px 2px; border-radius: 4px; background: var(--color-shape-highlight-medium); display: inline-block; vertical-align: middle; min-width: 18px; 
-						text-align: center; margin-right: 4px;
+				.iconObject:not(.isHuman),
+				.iconObject:not(.isParticipant) { background: var(--color-shape-tertiary); border-radius: 8px; }
+				.iconObject.isTask { background: none; }
+
+				.sides { width: 100%; display: flex; justify-content: space-between; gap: 0px 12px; }
+				.sides {
+					.side.left { width: calc(100% - 40px); overflow: hidden; }
+					.side.right { min-width: 40px; flex-shrink: 0; display: flex; justify-content: right; align-items: center; }
+					.side.right {
+						.label {
+							padding: 0px 2px; border-radius: 4px; background: var(--color-shape-highlight-medium); display: inline-block; vertical-align: middle; min-width: 18px;
+							text-align: center; margin-right: 4px;
+						}
+						.label:last-child { margin: 0px; }
 					}
-					.label:last-child { margin: 0px; }
 				}
+				.name { @include text-overflow-nw; font-weight: 500; }
+				.context { @include text-small; padding: 2px 0px; white-space: normal; display: flex; gap: 0 4px; }
+
+				.context {
+					.key { text-transform: capitalize; }
+					.value { border-radius: 2px; }
+					.key + .value { padding: 0px 3px; }
+				}
+
+				.caption { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
 			}
 
 			.item.active { background-color: var(--color-shape-highlight-medium); }
+			.item.active {
+				.icon.advanced { opacity: 1; }
+			}
 		}
 	}
 }

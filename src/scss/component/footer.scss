@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.footer { position: fixed; bottom: 0px; width: 100%; z-index: 20; }
+.footer { position: fixed; bottom: 0px; right: 0px; width: 100%; z-index: 20; }
 .footer {
 	.copy { 
 		width: 120px; position: absolute; left: 50%; bottom: 12px; z-index: 10; text-align: center; margin-left: -60px; color: var(--color-bg-primary); 
@@ -29,8 +29,5 @@
 		.icon { background-image: url('~img/icon/footer/help.svg'); }
 	}
 }
-
-.footer.snapRight { left: 0px; }
-.footer.snapLeft { right: 0px; }
 
 .footer.mainGraph { display: block !important; position: absolute; }

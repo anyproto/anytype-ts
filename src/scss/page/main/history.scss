@@ -3,55 +3,113 @@
 .pageMainHistory * { user-select: none; }
 .pageMainHistory {
 	#body { overflow: hidden; }
-	.wrapper { padding: 52px 0px 80px 0px; width: calc(100% - 254px); overflow: auto; position: relative; }
-	.loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }
-
-	#footer.snapLeft { right: 254px; }
-	#footer.snapRight { left: 0px; }
-
-	.list { width: 254px; border-left: 1px solid var(--color-shape-secondary); z-index: 20; position: relative; background: var(--color-bg-primary); overflow: auto; }
-	.list {
-		.section { padding: 11px 16px; }
-		.section {
-			.date { text-transform: uppercase; @include text-very-small; }
-		}
-		.section.fix { position: sticky; right: 0px; top: 0px; background: var(--color-bg-primary); width: 253px; }
-
-		.wrap { position: relative; }
-
-		.items { padding: 0px 0px 16px 0px; }
-		.item { padding: 5px 16px 5px 30px; transition: $transitionAllCommon; position: relative; }
-		.item {
-			.author { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
-			.author { 
-				.name { @include text-small; color: var(--color-text-secondary); @include text-overflow-nw; max-width: 100%; }
-			}
-			.date { @include text-overflow-nw; }
-			.icon.arrow { 
-				width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); position: absolute; left: 9px; top: 6px;
-				transition: none;
-			}
-		}
-		.item.expanded {
-			.icon.arrow { transform: rotateZ(90deg); }
-		}
-
-		.children { display: none; transition: $transitionAllCommon; }
-		.children {
-			.item { padding-left: 48px; }
-		}
-
-		.item:hover, .item.active { background: var(--color-shape-tertiary); }
+	#loader { 
+		position: absolute; right: $historyPanelWidth !important; top: 0px; width: 100%; height: 100%; width: calc(100% - $historyPanelWidth) !important; z-index: 10; 
+		background: var(--color-bg-primary); 
 	}
 
-	.editorWrapper:not(.withIconAndCover):not(.withCover) { padding-top: 72px; }
-	.editorWrapper.withIcon { padding-top: 122px !important; }
+	#footer { right: $historyPanelWidth; }
+
+	#body {
+		> #historySideLeft { padding: 52px 0px 80px 0px; width: calc(100% - $historyPanelWidth); overflow-x: hidden; overflow-y: auto; position: relative; }
+
+		> #historySideRight { width: $historyPanelWidth; z-index: 20; background: var(--color-shape-tertiary); display: flex; flex-direction: column; position: relative; }
+		> #historySideRight {
+			> .head { 
+				display: flex; flex-direction: row; align-items: center; justify-content: space-between; -webkit-app-region: no-drag; 
+				@include text-paragraph; font-weight: 600; padding: 0px 4px; flex-shrink: 0; padding: 12px 16px;
+			}
+			> .head {
+				.name { @include text-overflow-nw; }
+				.icon.close { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; background-image: url('~img/icon/close.svg'); }
+				.icon.close:hover { background-color: var(--color-shape-highlight-medium); }
+			}
+
+			> .scroll { display: flex; flex-direction: column; gap: 12px 0px; overflow-y: auto; flex-grow: 1; padding: 0px 12px 12px 12px; }
+
+			.section { background: var(--color-bg-primary); border-radius: 10px; -webkit-app-region: no-drag; padding: 0px 0px 8px 0px; }
+			.section {
+				.head { display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 16px 4px 16px; gap: 0px 6px; }
+				.head {
+					.name, .date { @include text-overflow-nw; flex-grow: 1; }
+					.date { color: var(--color-text-secondary); }
+
+					.authors { display: flex; flex-direction: row; align-items: center; }
+					.authors {
+						.iconObject { margin-left: -6px; border: 2px solid var(--color-bg-primary); background-color: var(--color-bg-primary) !important; }
+					}
+
+					.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); transition: none; transform: rotateZ(180deg); }
+				}
+
+				.items { display: none; transition: $transitionAllCommon; padding: 0px 4px; }
+			}
+
+			.section.isExpanded {
+				.head {
+					.icon.arrow { transform: none; }
+				}
+			}
+
+			.item {
+				> .info { padding: 8px 12px; display: flex; flex-direction: column; transition: $transitionAllCommon; border-radius: 6px; }
+				> .info:hover { background-color: var(--color-shape-highlight-medium); }
+
+				.author { display: flex; flex-direction: row; gap: 0px 6px; @include text-small; color: var(--color-text-secondary); align-items: center; }
+
+				.child {
+					> .info { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 6px; padding: 3px 16px; transition: $transitionAllCommon; }
+					> .info:hover { background-color: var(--color-shape-highlight-medium); }
+
+					.icon { width: 20px; height: 20px; flex-shrink: 0; border-radius: 4px; cursor: default; }
+					.icon.blank { background-image: url('~img/icon/widget/blank.svg'); }
+					.icon.arrow { background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); transition: none; }
+
+					.child {
+						> .info { padding-left: 42px; }
+						.icon { display: none; }
+					}
+
+					.children { display: none; transition: $transitionAllCommon; }
+				}
+				.child.active { 
+					> .info { background-color: var(--color-shape-highlight-medium); }
+				}
+
+				.child.isExpanded {
+					.icon.arrow { transform: none; }
+				}
+			}
+			.item.active { 
+				> .info { background-color: var(--color-shape-highlight-medium);  }
+			}
+
+			> .buttons { 
+				display: flex; justify-content: center; width: 100%; gap: 0px 8px; position: absolute; right: 0px; bottom: 0px; z-index: 10; padding: 0px 16px 16px 16px; 
+				flex-shrink: 0;
+			}
+			> .buttons {
+				.button {
+					box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 8px; width: 100%; min-width: 60px; max-width: 200px; background-color: var(--color-bg-primary); 
+					color: var(--color-text-secondary); font-weight: 400; white-space: nowrap;
+				}
+				.button:hover { background-color: var(--color-shape-tertiary); }
+				.button.disabled { background: var(--color-shape-tertiary); max-width: 80px; }
+			}
+		}
+
+		> #historySideRight.withButtons {
+			.scroll { padding-bottom: 68px; }
+		}
+	}
 
 	.blockLast { height: 100px; }
 }
 
 html.platformWindows {
 	.pageMainHistory {
-		.wrapper, .list { overflow: overlay; }
+		#body {
+			> #historySideLeft, > #historySideRight > .scroll { overflow-y: overlay; }
+		}
 	}
 }

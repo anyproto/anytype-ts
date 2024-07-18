@@ -2,20 +2,18 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon } from 'Component';
-import { I, UtilSpace, UtilRouter, translate, UtilMenu, analytics } from 'Lib';
-import { dbStore, detailStore, authStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, translate, analytics } from 'Lib';
 
 const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList extends React.Component<I.PopupSettings> {
 
 	render () {
-		const { accountSpaceId } = authStore;
+		const { accountSpaceId } = S.Auth;
 		const spaces = this.getItems();
 
 		const Row = (space: any) => {
 			const { targetSpaceId } = space;
-			const participant = UtilSpace.getMyParticipant(targetSpaceId);
-			const creator = detailStore.get(Constant.subId.space, space.creator);
+			const participant = U.Space.getMyParticipant(targetSpaceId);
+			const creator = S.Detail.get(J.Constant.subId.space, space.creator);
 			const hasMenu = targetSpaceId != accountSpaceId;
 
 			let creatorElement = null;
@@ -64,10 +62,10 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 	};
 
 	getItems () {
-		const items = dbStore.getRecords(Constant.subId.space);
+		const items = S.Record.getRecords(J.Constant.subId.space);
 
 		return items.filter(it => !it.isAccountDeleted && it.isLocalOk).map(it => {
-			it.participant = UtilSpace.getMyParticipant(it.targetSpaceId) || {};
+			it.participant = U.Space.getMyParticipant(it.targetSpaceId) || {};
 			return it;
 		}).sort((c1, c2) => {
 			if (c1.isAccountJoining && !c2.isAccountJoining) return -1;
@@ -97,7 +95,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 
 	onClick (space: any) {
 		if (space.isAccountActive) {
-			UtilRouter.switchSpace(space.targetSpaceId);
+			U.Router.switchSpace(space.targetSpaceId, '', true);
 		};
 	};
 
@@ -105,7 +103,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 		const { getId } = this.props;
 		const element = $(`#${getId()} #icon-more-${space.id}`);
 
-		UtilMenu.spaceContext(space, {
+		U.Menu.spaceContext(space, {
 			element,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,

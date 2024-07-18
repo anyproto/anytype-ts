@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Frame, Title, Label, Error, Header, Button } from 'Component';
-import { I, UtilCommon, UtilRouter, C, Action, Survey, UtilSpace, analytics, translate, UtilDate } from 'Lib';
-import { authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
+import { Frame, Title, Label, Error, Button } from 'Component';
+import { I, C, S, U, Action, Survey, analytics, translate } from 'Lib';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 import { OnboardStage } from './animation/constants';
 
@@ -29,15 +28,15 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	};
 	
 	render () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		if (!account) {
 			return null;
 		};
 
 		const { error } = this.state;
-		const duration = Math.max(0, account.status.date - UtilDate.now());
+		const duration = Math.max(0, account.status.date - U.Date.now());
 		const days = Math.max(1, Math.floor(duration / 86400));
-		const dt = `${days} ${UtilCommon.plural(days, translate('pluralDay'))}`;
+		const dt = `${days} ${U.Common.plural(days, translate('pluralDay'))}`;
 
 		// Deletion Status
 		let status: I.AccountStatusType = account.status.type;
@@ -54,7 +53,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		switch (status) {
 			case I.AccountStatusType.PendingDeletion: {
 				showPie = true;
-				title = UtilCommon.sprintf(translate('pageAuthDeletedAccountDeletionTitle'), dt);
+				title = U.Common.sprintf(translate('pageAuthDeletedAccountDeletionTitle'), dt);
 				description = translate('authDeleteDescription');
 				cancelButton = <Button type="input" text={translate('authDeleteCancelButton')} onClick={this.onCancel} />;
 				break;
@@ -105,18 +104,18 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	};
 
 	componentDidMount() {
-		window.setTimeout(() => Survey.check(I.SurveyType.Delete), popupStore.getTimeout());
+		window.setTimeout(() => Survey.check(I.SurveyType.Delete), S.Popup.getTimeout());
 	};
 
 	onRemove () {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate('authDeleteRemovePopupTitle'),
 				text: translate('authDeleteRemovePopupText'),
 				textConfirm: translate('authDeleteRemovePopupConfirm'),
 				onConfirm: () => { 
-					authStore.logout(true, true);
-					UtilRouter.go('/', { replace: true });
+					S.Auth.logout(true, true);
+					U.Router.go('/', { replace: true });
 				},
 			},
 		});
@@ -135,17 +134,17 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 
 	onCancel () {
 		C.AccountRevertDeletion((message) => {
-			authStore.accountSetStatus(message.status);	
-			UtilSpace.openDashboard('route');
+			S.Auth.accountSetStatus(message.status);	
+			U.Space.openDashboard('route');
 			analytics.event('CancelDeletion');
 		});
 	};
 
 	onLogout () {
-		UtilRouter.go('/', { 
+		U.Router.go('/', { 
 			replace: true, 
 			animate: true,
-			onFadeIn: () => authStore.logout(true, false),
+			onFadeIn: () => S.Auth.logout(true, false),
 		});
 	};
 	

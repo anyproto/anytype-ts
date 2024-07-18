@@ -5,13 +5,13 @@
 .widget {
 	.head { 
 		width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; justify-content: space-between; 
-		padding: 12px 8px 10px 16px;
+		padding: 12px 16px 10px 16px;
 	}
 	.head {
-		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; flex-grow: 1; width: 100%; }
+		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-grow: 1; @include text-paragraph; font-weight: 600; width: 100%; }
 		.clickable {
-			.iconObject { flex-shrink: 0; }
-			.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; flex-grow: 1; }
+			.name { @include text-overflow-nw; }
+			.count { color: var(--color-text-secondary); }
 		}
 
 		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: default; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
@@ -28,21 +28,22 @@
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; position: relative; z-index: 2; }
 		.buttons.active { display: flex; } 
 	}
-	.head:hover {
-		.clickable { width: calc(100% - 60px); }
-		.buttons { display: flex; }
-	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
-	.label.empty { text-align: center; @include text-small; white-space: nowrap; }
 
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
+	.innerWrap { transition: opacity 0.4s $easeInQuint; }
+
+	.emptyWrap { padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px 0px; }
+	.emptyWrap {
+		.label { text-align: center; @include text-common; white-space: nowrap; }
+	}
 
 	.icon.remove { position: absolute; top: -15px; left: -15px; height: 40px; width: 40px; display: none; z-index: 2; cursor: default !important; }
 	.icon.remove {
 		.inner {
 			height: 20px; width: 20px; border-radius: 50%; background-color: var(--color-bg-primary);
-			background-image: url('~img/icon/sidebar/remove.svg'); background-size: 12px; box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2); 
+			background-image: url('~img/icon/widget/remove.svg'); background-size: 12px; box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2); 
 			background-repeat: no-repeat; background-position: center; position: absolute; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
 		}
 	}
@@ -70,7 +71,8 @@
 	.item.isSection .inner::before { display: none !important; }
 }
 
-.widget.active {
+.widget.active, .widget:hover {
+	.head { padding-right: 8px; }
 	.head {
 		.clickable { width: calc(100% - 60px); }
 		.buttons { display: flex; }
@@ -89,6 +91,7 @@
 
 .widget.isClosed {
 	.contentWrapper { height: 0px; overflow: hidden; }
+	> .dropTarget.targetHead { border-radius: 12px; }
 }
 
 .widget.widgetLink {
@@ -105,10 +108,10 @@
 }
 .button.widget {
 	.icon { height: 20px; width: 20px; margin: 0px; flex-shrink: 0; }
-	.icon.store { background-image: url('~img/icon/sidebar/store.svg'); }
-	.icon.bin { background-image: url('~img/icon/sidebar/bin.svg'); }
+	.icon.store { background-image: url('~img/icon/widget/store.svg'); }
+	.icon.bin { background-image: url('~img/icon/widget/bin.svg'); }
 }
 
 @import "./space.scss";
-@import "./list.scss";
 @import "./tree.scss";
+@import "./view/common.scss";

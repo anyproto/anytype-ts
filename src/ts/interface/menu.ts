@@ -50,7 +50,6 @@ export interface MenuParam {
 export interface Menu {
 	id: string;
 	param: MenuParam;
-	dataset?: I.Dataset;
 	history?: any;
 	setActive?(item?: any, scroll?: boolean): void;
 	setHover?(item?: any, scroll?: boolean): void;

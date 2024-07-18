@@ -1,12 +1,11 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuHelp { width: 280px; position: fixed; }
+	.menu.menuHelp { width: var(--menu-width-value); position: fixed; }
 	.menu.menuHelp {
-		.icon { width: 24px; height: 24px; }
-		.icon.help { background-size: 20px 20px; background-image: url('~img/icon/menu/help/help.svg'); }
-		.icon.chat { background-size: 18px 20px; background-image: url('~img/icon/menu/help/chat.svg'); }
-		.icon.feature { background-size: 22px 21px; background-image: url('~img/icon/menu/help/feature.svg'); }
-		.icon.community { background-size: 18px 16px; background-image: url('~img/icon/menu/help/community.svg'); }
+		.shareTooltip { display: flex; position: absolute; left: auto; right: 0; top: 100%; margin-top: 8px; }
+		.shareTooltip {
+			.icon.close { display: none; }
+		}
 	}
 }

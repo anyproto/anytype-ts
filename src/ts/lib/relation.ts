@@ -1,6 +1,4 @@
-import { I, UtilCommon, UtilFile, UtilDate, translate, Dataview, UtilObject, UtilMenu } from 'Lib';
-import { dbStore, detailStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, translate, Dataview } from 'Lib';
 
 const DICTIONARY = [ 'layout', 'origin', 'importType' ];
 const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];
@@ -8,7 +6,7 @@ const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];
 class Relation {
 
 	public typeName (v: I.RelationType): string {
-		return UtilCommon.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
+		return U.Common.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
 	};
 
 	public className (v: I.RelationType): string {
@@ -30,7 +28,7 @@ class Relation {
 	};
 
 	public width (width: number, format: I.RelationType): number {
-		const size = Constant.size.dataview.cell;
+		const size = J.Size.dataview.cell;
 		return Number(width || size[`format${format}`]) || size.default;
 	};
 
@@ -220,7 +218,7 @@ class Relation {
 			case I.RelationType.MultiSelect:
 			case I.RelationType.Object:
 			case I.RelationType.Relations: {
-				value = this.getArrayValue(UtilCommon.objectCopy(value));
+				value = this.getArrayValue(U.Common.objectCopy(value));
 
 				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);
@@ -261,12 +259,12 @@ class Relation {
 	public mapValue (relation: any, value: any) {
 		switch (relation.relationKey) {
 			case 'sizeInBytes': {
-				return UtilFile.size(value);
+				return U.File.size(value);
 			};
 
 			case 'widthInPixels':
 			case 'heightInPixels': {
-				return UtilCommon.formatNumber(value) + 'px';
+				return U.Common.formatNumber(value) + 'px';
 			};
 
 			case 'layout': {
@@ -280,7 +278,7 @@ class Relation {
 			};
 
 			case 'importType': {
-				const names = UtilMenu.getImportNames();
+				const names = U.Menu.getImportNames();
 				return undefined === value ? null : names[Number(value)];
 			};
 
@@ -289,13 +287,13 @@ class Relation {
 	};
 
 	public getOptions (value: any[]) {
-		return this.getArrayValue(value).map(id => dbStore.getOption(id)).filter(it => it && !it._empty_);
+		return this.getArrayValue(value).map(id => S.Record.getOption(id)).filter(it => it && !it._empty_);
 	};
 
 	public getFilterOptions (rootId: string, blockId: string, view: I.View) {
 		const ret: any[] = [];
 		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelationByKey(it.relationKey);
+			const relation = S.Record.getRelationByKey(it.relationKey);
 			return relation && (it.relationKey != 'done');
 		});
 		const idxName = relations.findIndex(it => it.relationKey == 'name');
@@ -303,7 +301,7 @@ class Relation {
 		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, { relationKey: 'done' });
 
 		relations.forEach((it: I.ViewRelation) => {
-			const relation: any = dbStore.getRelationByKey(it.relationKey);
+			const relation: any = S.Record.getRelationByKey(it.relationKey);
 			if (!relation) {
 				return;
 			};
@@ -331,7 +329,7 @@ class Relation {
 
 	public getCoverOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.File ];
-		const options: any[] = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter(it => {
+		const options: any[] = U.Common.objectCopy(S.Record.getObjectRelations(rootId, blockId)).filter(it => {
 			if (it.isInstalled && (it.relationKey == 'picture')) {
 				return true;
 			};
@@ -344,7 +342,7 @@ class Relation {
 
 		return [
 			{ id: '', icon: '', name: translate('commonNone') },
-			{ id: Constant.pageCoverRelationKey, icon: 'image', name: translate('libRelationPageCover') },
+			{ id: J.Relation.pageCover, icon: 'image', name: translate('libRelationPageCover') },
 		].concat(options);
 	};
 
@@ -363,7 +361,7 @@ class Relation {
 			};
 		};
 		
-		let options: any[] = dbStore.getObjectRelations(rootId, blockId).filter((it: any) => {
+		let options: any[] = S.Record.getObjectRelations(rootId, blockId).filter((it: any) => {
 			return it.isInstalled && formats.includes(it.format) && (!it.isHidden || [ 'done' ].includes(it.relationKey));
 		});
 
@@ -405,7 +403,7 @@ class Relation {
 	};
 
 	public getDictionaryOptions (relationKey: string) {
-		const names = UtilMenu.getImportNames();
+		const names = U.Menu.getImportNames();
 		const dictionary = {
 			layout: I.ObjectLayout,
 			origin: I.ObjectOrigin,
@@ -437,7 +435,11 @@ class Relation {
 		return options;
 	};
 
-	public getNumberValue (value: any): number {
+	public getNumberValue (value: any): any {
+		if (value === 0) {
+			return value;
+		};
+
 		value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+-]*/gi, '');
 		if ((value === '') || (value === undefined)) {
 			value = null;
@@ -452,7 +454,7 @@ class Relation {
 	};
 
 	public getStringValue (value: any): string {
-		if ((typeof value === 'object') && value && UtilCommon.hasProperty(value, 'length')) {
+		if ((typeof value === 'object') && value && U.Common.hasProperty(value, 'length')) {
 			value = value.length ? value[0] : '';
 		};
 		return String(value || '');
@@ -465,10 +467,10 @@ class Relation {
 		if (typeof value !== 'object') {
 			return [ value ];
 		};
-		if (!UtilCommon.objectLength(value)) {
+		if (!U.Common.objectLength(value)) {
 			return [];
 		};
-		return UtilCommon.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
+		return U.Common.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
 	};
 
 	public isEmpty (v: any) {
@@ -496,7 +498,7 @@ class Relation {
 	};
 
 	public getSetOfObjects (rootId: string, objectId: string, layout: I.ObjectLayout): any[] {
-		const object = detailStore.get(rootId, objectId, [ 'setOf' ]);
+		const object = S.Detail.get(rootId, objectId, [ 'setOf' ]);
 		const setOf = this.getArrayValue(object.setOf);
 		const ret = [];
 
@@ -505,12 +507,12 @@ class Relation {
 
 			switch (layout) {
 				case I.ObjectLayout.Type: {
-					el = dbStore.getTypeById(id);
+					el = S.Record.getTypeById(id);
 					break;
 				};
 
 				case I.ObjectLayout.Relation: {
-					el = dbStore.getRelationById(id);
+					el = S.Record.getRelationById(id);
 					break;
 				};
 			};
@@ -524,7 +526,7 @@ class Relation {
 	};
 
 	public getTimestampForQuickOption (value: any, option: I.FilterQuickOption) {
-		const time = UtilDate.now();
+		const time = U.Date.now();
 
 		switch (option) {
 			case I.FilterQuickOption.Yesterday: {
@@ -586,7 +588,7 @@ class Relation {
 		let type = null;
 
 		if (objectTypes.length) {
-			const allowedTypes = objectTypes.map(id => dbStore.getTypeById(id)).filter(it => it && !UtilObject.isFileOrSystemLayout(it.recommendedLayout));
+			const allowedTypes = objectTypes.map(id => S.Record.getTypeById(id)).filter(it => it && !U.Object.isInFileOrSystemLayouts(it.recommendedLayout));
 			const l = allowedTypes.length;
 
 			if (l) {
@@ -625,6 +627,14 @@ class Relation {
 
 	isDictionary (relationKey: string): boolean {
 		return DICTIONARY.includes(relationKey);
+	};
+
+	arrayTypes () {
+		return [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.File, I.RelationType.Object, I.RelationType.Relations ];
+	};
+
+	isArrayType (format: I.RelationType): boolean {
+		return this.arrayTypes().includes(format);
 	};
 	
 };

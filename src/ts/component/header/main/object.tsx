@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, UtilObject, UtilData, keyboard, translate } from 'Lib';
-import { blockStore, detailStore, popupStore } from 'Store';
+import { I, S, U, J, keyboard, translate } from 'Lib';
 import HeaderBanner from 'Component/page/elements/head/banner';
-const Constant = require('json/constant.json');
 
 interface State {
 	templatesCnt: number;
@@ -29,15 +27,15 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	render () {
 		const { rootId, onSearch, onTooltipShow, onTooltipHide, isPopup, renderLeftIcons } = this.props;
 		const { templatesCnt } = this.state;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 
 		if (!root) {
 			return null;
 		};
 
-		const object = detailStore.get(rootId, rootId, Constant.templateRelationKeys);
+		const object = S.Detail.get(rootId, rootId, J.Relation.template);
 		const isLocked = root ? root.isLocked() : false;
-		const showMenu = !UtilObject.isTypeOrRelationLayout(object.layout);
+		const showMenu = !U.Object.isTypeOrRelationLayout(object.layout);
 		const canSync = showMenu && !object.templateIsBundled && !root.isObjectParticipant();
 		const cmd = keyboard.cmdSymbol();
 		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
@@ -46,10 +44,10 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		let center = null;
 		let banner = I.BannerType.None;
 
-		if (object.isArchived) {
+		if (object.isArchived && U.Space.canMyParticipantWrite()) {
 			banner = I.BannerType.IsArchived;
 		} else
-		if (UtilObject.isTemplate(object.type)) {
+		if (U.Object.isTemplate(object.type)) {
 			banner = I.BannerType.IsTemplate;
 		} else
 		if (allowedTemplateSelect && templatesCnt) {
@@ -105,16 +103,15 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	init () {
-		keyboard.setWindowTitle();
 		this.updateTemplatesCnt();
 	};
 
 	onOpen () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 
 		keyboard.disableClose(true);
-		popupStore.closeAll(null, () => UtilObject.openRoute(object));
+		S.Popup.closeAll(null, () => U.Object.openRoute(object));
 	};
 	
 	onMore () {
@@ -122,7 +119,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 		menuOpen('object', '#button-header-more', {
 			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.object,
+			subIds: J.Menu.object,
 			data: {
 				rootId,
 				blockId: rootId,
@@ -136,8 +133,9 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	onSync () {
 		const { rootId, menuOpen } = this.props;
 
-		menuOpen('threadList', '#button-header-sync', {
+		menuOpen('syncStatus', '#button-header-sync', {
 			horizontal: I.MenuDirection.Left,
+			subIds: [ 'syncStatusInfo' ],
 			data: {
 				rootId,
 			}
@@ -145,39 +143,23 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	onRelation () {
-		const { isPopup, rootId, menuOpen } = this.props;
-		const cnw = [ 'fixed' ];
-		const object = detailStore.get(rootId, rootId, [ 'isArchived' ]);
+		const { rootId } = this.props;
+		const object = S.Detail.get(rootId, rootId, [ 'isArchived' ]);
 
-		if (!isPopup) {
-			cnw.push('fromHeader');
-		};
-
-		menuOpen('blockRelationView', '#button-header-relation', {
-			noFlipX: true,
-			noFlipY: true,
-			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.cell,
-			classNameWrap: cnw.join(' '),
-			data: {
-				isPopup,
-				rootId,
-				readonly: object.isArchived
-			},
-		});
+		this.props.onRelation({}, { readonly: object.isArchived });
 	};
 
 	updateTemplatesCnt () {
 		const { rootId } = this.props;
 		const { templatesCnt } = this.state;
-		const object = detailStore.get(rootId, rootId, [ 'internalFlags' ]);
+		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
 		const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 
 		if (!allowedTemplateSelect || !object.type) {
 			return;
 		};
 
-		UtilData.getTemplatesByTypeId(object.type, (message: any) => {
+		U.Data.getTemplatesByTypeId(object.type, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

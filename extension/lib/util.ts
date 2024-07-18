@@ -1,6 +1,4 @@
-import { UtilData, dispatcher } from 'Lib';
-import { authStore, commonStore, extensionStore } from 'Store';
-const Extension = require('json/extension.json');
+import { S, U, J, dispatcher } from 'Lib';
 
 const INDEX_POPUP = '/popup/index.html';
 const INDEX_IFRAME = '/iframe/index.html'
@@ -10,7 +8,7 @@ class Util {
 	isExtension () {
 		return (
 			(location.protocol == 'chrome-extension:') && 
-			Extension.clipper.ids.includes(location.hostname)
+			J.Extension.clipper.ids.includes(location.hostname)
 		);
 	};
 
@@ -41,16 +39,16 @@ class Util {
 	};
 
 	init (serverPort: string, gatewayPort: string) {
-		extensionStore.serverPort = serverPort;
-		extensionStore.gatewayPort = gatewayPort;
+		S.Extension.serverPort = serverPort;
+		S.Extension.gatewayPort = gatewayPort;
 
 		dispatcher.init(`http://127.0.0.1:${serverPort}`);
-		commonStore.gatewaySet(`http://127.0.0.1:${gatewayPort}`);
+		S.Common.gatewaySet(`http://127.0.0.1:${gatewayPort}`);
 	};
 
 	authorize (appKey: string, onSuccess?: () => void, onError?: (error) => void) {
-		authStore.appKeySet(appKey);
-		UtilData.createSession('', appKey, (message: any) => {
+		S.Auth.appKeySet(appKey);
+		U.Data.createSession('', appKey, (message: any) => {
 			if (message.error.code) {
 				if (onError) {
 					onError(message.error);
@@ -59,7 +57,7 @@ class Util {
 			};
 
 			if (message.accountId) {
-				authStore.accountSet({ id: message.accountId });
+				S.Auth.accountSet({ id: message.accountId });
 			};
 			
 			if (onSuccess) {

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Button, Error, IconObject } from 'Component';
-import { I, C, translate, UtilCommon, UtilSpace, UtilData, analytics } from 'Lib';
-import { authStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, translate, analytics } from 'Lib';
 
 interface State {
 	error: string;
@@ -30,9 +28,9 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 		const { param } = this.props;
 		const { data } = param;
 		const { icon } = data;
-		const { membership } = authStore;
-		const space = UtilSpace.getSpaceviewBySpaceId(this.getSpaceId());
-		const name = UtilCommon.shorten(String(data.name || translate('defaultNamePage')), 32);
+		const { membership } = S.Auth;
+		const space = U.Space.getSpaceviewBySpaceId(this.getSpaceId());
+		const name = U.Common.shorten(String(data.name || translate('defaultNamePage')), 32);
 
 		if (!space) {
 			return null;
@@ -60,7 +58,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 					<IconObject object={{ name, iconImage: icon, layout: I.ObjectLayout.Participant }} size={48} />
 				</div>
 
-				<Title text={UtilCommon.sprintf(translate('popupInviteConfirmTitle'), name, UtilCommon.shorten(space.name, 32))} />
+				<Title text={U.Common.sprintf(translate('popupInviteConfirmTitle'), name, U.Common.shorten(space.name, 32))} />
 
 				<div className="buttons">
 					<div className="sides">
@@ -85,8 +83,8 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	onMembership (type: string) {
-		popupStore.closeAll(null, () => {
-			popupStore.open('settings', { data: { page: 'membership' } })
+		S.Popup.closeAll(null, () => {
+			S.Popup.open('settings', { data: { page: 'membership' } });
 		});
 
 		analytics.event('ClickUpgradePlanTooltip', { type, route: analytics.route.inviteConfirm });
@@ -117,8 +115,8 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	load () {
-		UtilData.search({
-			keys: UtilData.participantRelationKeys(),
+		U.Data.search({
+			keys: U.Data.participantRelationKeys(),
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
@@ -142,7 +140,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	getReaderLimit () {
-		const space = UtilSpace.getSpaceviewBySpaceId(this.getSpaceId());
+		const space = U.Space.getSpaceviewBySpaceId(this.getSpaceId());
 		if (!space) {
 			return 0;
 		};
@@ -152,7 +150,7 @@ const PopupInviteConfirm = observer(class PopupInviteConfirm extends React.Compo
 	};
 
 	getWriterLimit () {
-		const space = UtilSpace.getSpaceviewBySpaceId(this.getSpaceId());
+		const space = U.Space.getSpaceviewBySpaceId(this.getSpaceId());
 		if (!space) {
 			return 0;
 		};

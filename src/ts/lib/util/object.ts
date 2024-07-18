@@ -1,24 +1,22 @@
-import { I, C, keyboard, history as historyPopup, Renderer, UtilData, translate, UtilRouter, analytics } from 'Lib';
-import { commonStore, authStore, blockStore, popupStore, detailStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics } from 'Lib';
 
 class UtilObject {
 
 	actionByLayout (v: I.ObjectLayout): string {
 		v = v || I.ObjectLayout.Page;
 
-		if (this.isFileLayout(v)) {
+		if (this.isInFileLayouts(v)) {
 			return 'media';
 		};
 
-		if (this.isSetLayout(v)) {
+		if (this.isInSetLayouts(v)) {
 			return 'set';
 		};
 
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
-			case I.ObjectLayout.Date:
+			case I.ObjectLayout.Date: 		 r = 'set'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
@@ -37,27 +35,27 @@ class UtilObject {
 			return '';
 		};
 
-		const { layout, identityProfileLink } = object;
-		const { accountSpaceId } = authStore;
-		const action = this.actionByLayout(layout);
+		const id = String(object.id || '');
+		const spaceId = object.spaceId || S.Common.space;
+		const action = this.actionByLayout(object.layout);
 
 		if (!action) {
 			return '';
 		};
 
-		let { id, spaceId } = object;
-
-		/*
-		if (identityProfileLink) {
-			id = identityProfileLink;
-			spaceId = accountSpaceId;
+		let param = { page: 'main', action, id, spaceId };
+		if (object._routeParam_) {
+			param = Object.assign(param, object._routeParam_);
 		};
-		*/
 
-		return UtilRouter.build({ page: 'main', action, id, spaceId });
+		return U.Router.build(param);
 	};
 
 	universalRoute (object: any): string {
+		if (!object) {
+			return;
+		};
+
 		return object ? `object?objectId=${object.id}&spaceId=${object.spaceId}` : '';
 	};
 
@@ -75,14 +73,17 @@ class UtilObject {
 		if ((e.metaKey || e.ctrlKey)) {
 			this.openWindow(object);
 		} else {
-			this.openRoute(object);
+			this.openRoute(object, param);
 		};
 	};
 
 	openAuto (object: any, param?: any) {
+		if (!object) {
+			return;
+		};
 
 		// Prevent opening object in popup from different space
-		if (object.spaceId && (object.spaceId != commonStore.space)) {
+		if (object.spaceId && (object.spaceId != S.Common.space)) {
 			this.openRoute(object, param);
 			return;
 		};
@@ -97,7 +98,7 @@ class UtilObject {
 		};
 
 		keyboard.setSource(null);
-		UtilRouter.go(`/${route}`, param || {});
+		U.Router.go(`/${route}`, param || {});
 	};
 
 	openWindow (object: any) {
@@ -113,24 +114,21 @@ class UtilObject {
 		};
 
 		// Prevent opening object in popup from different space
-		if (object.spaceId && (object.spaceId != commonStore.space)) {
+		if (object.spaceId && (object.spaceId != S.Common.space)) {
 			this.openRoute(object, param);
 			return;
 		};
 
 		const action = this.actionByLayout(object.layout);
+		const params = {
+			page: 'main',
+			action: action,
+			id: object.id,
+		};
 
 		param = param || {};
 		param.preventResize = true;
-		param.data = Object.assign(param.data || {}, { 
-			matchPopup: { 
-				params: {
-					page: 'main',
-					action: action,
-					id: object.id,
-				},
-			},
-		});
+		param.data = Object.assign(param.data || {}, { matchPopup: { params } });
 
 		if (object._routeParam_) {
 			param.data.matchPopup.params = Object.assign(param.data.matchPopup.params, object._routeParam_);
@@ -138,11 +136,11 @@ class UtilObject {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		window.setTimeout(() => popupStore.open('page', param), popupStore.getTimeout());
+		window.setTimeout(() => S.Popup.open('page', param), S.Popup.getTimeout());
 	};
 
-	openConfig (object: any) {
-		commonStore.fullscreenObject ? this.openAuto(object) : this.openPopup(object);
+	openConfig (object: any, param?: any) {
+		S.Common.fullscreenObject ? this.openAuto(object, param) : this.openPopup(object, param);
 	};
 
 	create (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, flags: I.ObjectFlag[], route: string, callBack?: (message: any) => void) {
@@ -151,26 +149,26 @@ class UtilObject {
 		details = details || {};
 
 		if (!templateId) {
-			details.type = details.type || commonStore.type;
+			details.type = details.type || S.Common.type;
 		};
 
 		if (details.type) {
-			const type = dbStore.getTypeById(details.type);
+			const type = S.Record.getTypeById(details.type);
 			if (type) {
 				typeKey = type.uniqueKey;
 
 				if (!templateId) {
-					templateId = type.defaultTemplateId || Constant.templateId.blank;
+					templateId = type.defaultTemplateId || J.Constant.templateId.blank;
 				};
 			};
 		};
 
 		const block = {
 			type: I.BlockType.Link,
-			content: UtilData.defaultLinkSettings(),
+			content: U.Data.defaultLinkSettings(),
 		};
 		
-		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, block, flags, typeKey, commonStore.space, (message: any) => {
+		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, block, flags, typeKey, S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				if (callBack) {
 					callBack(message);
@@ -217,7 +215,7 @@ class UtilObject {
 	};
 
 	setLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
-		blockStore.update(rootId, rootId, { layout });
+		S.Block.update(rootId, rootId, { layout });
 		C.ObjectSetLayout(rootId, layout, callBack);
 	};
 
@@ -233,7 +231,7 @@ class UtilObject {
 		const { layout, snippet } = object;
 
 		let name = '';
-		if (layout == I.ObjectLayout.Note) {
+		if (this.isNoteLayout(layout)) {
 			name = snippet || translate('commonEmpty');
 		} else {
 			name = object.name || translate('defaultNamePage');
@@ -261,34 +259,46 @@ class UtilObject {
 			};
 
 			if (callBack) {
-				callBack(message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_));
+				callBack(message.records.map(it => S.Detail.mapper(it)).filter(it => !it._empty_));
 			};
 		});
 	};
 
-	isFileLayout (layout: I.ObjectLayout): boolean {
-		return this.getFileLayouts().includes(layout);
-	};
+	// --------------------------------------------------------- //
 
-	isFileOrSystemLayout (layout: I.ObjectLayout): boolean {
-		return this.getFileAndSystemLayouts().includes(layout);
-	};
-
-	isSystemLayout (layout: I.ObjectLayout): boolean {
-		return this.getSystemLayouts().includes(layout);
-	};
-
-	isSetLayout (layout: I.ObjectLayout): boolean {
+	isInSetLayouts (layout: I.ObjectLayout): boolean {
 		return this.getSetLayouts().includes(layout);
 	};
 
-	isTemplate (type: string): boolean {
-		const templateType = dbStore.getTemplateType();
-		return templateType ? type == templateType.id : false;
+	isInFileLayouts (layout: I.ObjectLayout): boolean {
+		return this.getFileLayouts().includes(layout);
 	};
 
-	isTypeOrRelationLayout (layout: I.ObjectLayout): boolean {
-		return this.isTypeLayout(layout) || this.isRelationLayout(layout);
+	isInSystemLayouts (layout: I.ObjectLayout): boolean {
+		return this.getSystemLayouts().includes(layout);
+	};
+
+	isInFileOrSystemLayouts (layout: I.ObjectLayout): boolean {
+		return this.getFileAndSystemLayouts().includes(layout);
+	};
+
+	isInPageLayouts (layout: I.ObjectLayout): boolean {
+		return this.getPageLayouts().includes(layout);
+	};
+
+	// --------------------------------------------------------- //
+
+	isSetLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Set;
+	};
+
+	isCollectionLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Collection;
+	};
+
+	isTemplate (type: string): boolean {
+		const templateType = S.Record.getTemplateType();
+		return templateType ? type == templateType.id : false;
 	};
 
 	isTypeLayout (layout: I.ObjectLayout): boolean {
@@ -299,13 +309,27 @@ class UtilObject {
 		return layout == I.ObjectLayout.Relation;
 	};
 
-	isPageLayout (layout: I.ObjectLayout): boolean {
-		return this.getPageLayouts().includes(layout);
+	isTypeOrRelationLayout (layout: I.ObjectLayout): boolean {
+		return this.isTypeLayout(layout) || this.isRelationLayout(layout);
 	};
 
 	isParticipantLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Participant;
 	};
+
+	isTaskLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Task;
+	};
+
+	isNoteLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Note;
+	};
+
+	isBookmarkLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Bookmark;
+	};
+
+	// --------------------------------------------------------- //
 
 	getPageLayouts (): I.ObjectLayout[] {
 		return [ 
@@ -321,6 +345,7 @@ class UtilObject {
 		return [ 
 			I.ObjectLayout.Set,
 			I.ObjectLayout.Collection,
+			I.ObjectLayout.Date,
 		];
 	};
 
@@ -353,6 +378,8 @@ class UtilObject {
 		];
 	};
 
+	// --------------------------------------------------------- //
+
 	getFileTypeByLayout (layout: I.ObjectLayout): I.FileType {
 		switch (layout) {
 			default: return I.FileType.File;
@@ -372,7 +399,7 @@ class UtilObject {
 	};
 
 	isAllowedTemplate (typeId): boolean {
-		const type = dbStore.getTypeById(typeId);
+		const type = S.Record.getTypeById(typeId);
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
 	};
 

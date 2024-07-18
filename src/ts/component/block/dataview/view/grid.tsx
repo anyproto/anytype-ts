@@ -1,14 +1,12 @@
 import * as React from 'react';
-import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
-import { observer } from 'mobx-react';
-import arrayMove from 'array-move';
 import $ from 'jquery';
+import arrayMove from 'array-move';
+import { observer } from 'mobx-react';
+import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { Icon, LoadMore } from 'Component';
-import { I, C, UtilCommon, translate, keyboard, Relation } from 'Lib';
-import { dbStore, menuStore, blockStore, detailStore } from 'Store';
+import { I, C, S, U, J, translate, keyboard, Relation, sidebar } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
-const Constant = require('json/constant.json');
 
 const PADDING = 46;
 
@@ -35,7 +33,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const view = getView();
 		const relations = getVisibleRelations();
 		const records = getRecords();
-		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+		const { offset, total } = S.Record.getMeta(S.Record.getSubId(rootId, block.id), '');
 		const limit = getLimit();
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
@@ -155,7 +153,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		this.resize();
 		this.onScroll();
 
-		UtilCommon.triggerResizeEditor(this.props.isPopup);
+		U.Common.triggerResizeEditor(this.props.isPopup);
 	};
 
 	componentWillUnmount () {
@@ -176,7 +174,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	onScroll () {
-		menuStore.resizeAll();
+		S.Menu.resizeAll();
 		this.resizeColumns('', 0);
 	};
 
@@ -184,7 +182,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const { getVisibleRelations } = this.props;
 		const node = $(this.node);
 		const relations = getVisibleRelations();
-		const size = Constant.size.dataview.cell;
+		const size = J.Size.dataview.cell;
 		const widths = this.getColumnWidths(relationKey, width);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 
@@ -205,7 +203,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		const columns: any = {};
 		
 		relations.forEach(it => {
-			const relation: any = dbStore.getRelationByKey(it.relationKey) || {};
+			const relation: any = S.Record.getRelationByKey(it.relationKey) || {};
 			const w = relationKey && (it.relationKey == relationKey) ? width : it.width;
 
 			columns[it.relationKey] = Relation.width(w, relation.format);
@@ -283,7 +281,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 		node.find('.cellKeyHover').removeClass('cellKeyHover');
 
 		relations.forEach(it => {
-			const relation: any = dbStore.getRelationByKey(it.relationKey) || {};
+			const relation: any = S.Record.getRelationByKey(it.relationKey) || {};
 			if (it.relationKey == relationKey) {
 				it.width = Relation.width(width, relation.format);
 			};
@@ -298,14 +296,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 	};
 
 	checkWidth (width: number): number {
-		const { min, max } = Constant.size.dataview.cell;
+		const { min, max } = J.Size.dataview.cell;
 		return Math.min(max, Math.max(min, Math.floor(width)));
 	};
 
 	onCellAdd (e: any) {
 		const { rootId, block, readonly, loadData, getView, isInline, isCollection } = this.props;
 
-		menuStore.open('dataviewRelationList', { 
+		S.Menu.open('dataviewRelationList', { 
 			element: `#block-${block.id} #cell-add`,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
@@ -317,7 +315,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 				isInline,
 				isCollection,
 				blockId: block.id,
-				onAdd: () => menuStore.closeAll(Constant.menuIds.cellAdd)
+				onAdd: () => S.Menu.closeAll(J.Menu.cellAdd)
 			}
 		});
 	};
@@ -342,27 +340,27 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 
 	loadMoreRows ({ startIndex, stopIndex }) {
 		const { rootId, block, loadData, getView, getLimit } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
-		let { offset } = dbStore.getMeta(subId, '');
+		const subId = S.Record.getSubId(rootId, block.id);
+		let { offset } = S.Record.getMeta(subId, '');
 		const view = getView();
 
         return new Promise((resolve, reject) => {
 			offset += getLimit();
 			loadData(view.id, offset, false, resolve);
-			dbStore.metaSet(subId, '', { offset });
+			S.Record.metaSet(subId, '', { offset });
 		});
 	};
 
 	resize () {
 		const { rootId, block, isPopup, isInline, getVisibleRelations } = this.props;
-		const parent = blockStore.getParentLeaf(rootId, block.id);
+		const parent = S.Block.getParentLeaf(rootId, block.id);
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
-		const container = UtilCommon.getPageContainer(isPopup);
-		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
-		const length = dbStore.getRecordIds(dbStore.getSubId(rootId, block.id), '').length;
+		const container = U.Common.getPageContainer(isPopup);
+		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, J.Size.blockMenu);
+		const length = S.Record.getRecordIds(S.Record.getSubId(rootId, block.id), '').length;
 		const cw = container.width();
 		const rh = this.getRowHeight();
 
@@ -375,11 +373,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 					const margin = (cw - ww) / 2;
 					const offset = 8;
 
-					scroll.css({ width: cw - offset, marginLeft: -margin - 2, paddingLeft: margin });
-					wrap.css({ width: vw + margin - offset, paddingRight: margin - offset });
+					scroll.css({ width: cw, marginLeft: -margin });
+					wrap.css({ width: vw + margin - offset, paddingLeft: margin, paddingRight: offset * 2 });
 				} else {
 					const parentObj = $(`#block-${parent.id}`);
-					const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
+					const vw = parentObj.length ? (parentObj.width() - J.Size.blockMenu) : 0;
 
 					wrap.css({ width: Math.max(vw, width) });
 				};

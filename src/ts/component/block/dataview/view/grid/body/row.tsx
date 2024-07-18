@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, keyboard, UtilData } from 'Lib';
+import { I, U, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, SelectionTarget } from 'Component';
 import Cell from './cell';
@@ -19,9 +19,9 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 		const widths = getColumnWidths('', 0);
 		const record = getRecord(recordId);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
-		const cn = [ 'row', UtilData.layoutClass('', record.layout), ];
+		const cn = [ 'row', U.Data.layoutClass('', record.layout), ];
 
-		if ((record.layout == I.ObjectLayout.Task) && record.done) {
+		if (U.Object.isTaskLayout(record.layout) && record.done) {
 			cn.push('isDone');
 		};
 		if (record.isArchived) {

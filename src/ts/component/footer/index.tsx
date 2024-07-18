@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { I, sidebar } from 'Lib';
-import { menuStore } from 'Store';
+import { I, S, sidebar } from 'Lib';
 
 import FooterAuthIndex from './auth';
 import FooterAuthDisclaimer from './auth/disclaimer';
@@ -44,21 +43,21 @@ class Footer extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 	};
 
 	componentDidUpdate () {
-		sidebar.resizePage();	
+		sidebar.resizePage(null, false);	
 		this.refChild.forceUpdate();
 	};
 
 	onHelp () {
-		menuStore.open('help', {
+		S.Menu.open('help', {
 			element: '#footer #button-help',
 			classNameWrap: 'fixed',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
-			offsetY: () => -($('#notifications').height() + 4),
+			offsetY: () => -($('#notifications').height() + 78),
 		});
 	};
 

@@ -56,6 +56,7 @@ class Filter extends React.Component<Props, State> {
 		this.onClear = this.onClear.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onInput = this.onInput.bind(this);
 	};
 	
 	render () {
@@ -107,6 +108,9 @@ class Filter extends React.Component<Props, State> {
 							onChange={this.onChange} 
 							onKeyDown={this.onKeyDown}
 							onKeyUp={this.onKeyUp}
+							onInput={() => this.placeholderCheck()}
+							onCompositionStart={() => this.placeholderCheck()}
+							onCompositionEnd={() => this.placeholderCheck()}
 						/>
 						<div id="placeholder" className="placeholder">{placeholder}</div>
 					</div>
@@ -174,6 +178,10 @@ class Filter extends React.Component<Props, State> {
 		if (onBlur) {
 			onBlur(e);
 		};
+	};
+
+	onInput () {
+		this.placeholderCheck();
 	};
 
 	addFocusedClass () {

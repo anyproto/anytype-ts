@@ -1,12 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
+import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
-import { I, C, UtilCommon, UtilObject, Relation, Renderer, keyboard, Action, translate } from 'Lib';
-import { commonStore, detailStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Relation, Renderer, keyboard, Action, translate } from 'Lib';
 
 const MENU_ID = 'dataviewFileList';
 
@@ -40,7 +38,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		);
 
 		const Image = (item: any) => (
-			<img src={commonStore.imageUrl(item.id, 208)} className="img" onLoad={() => position()} />
+			<img src={S.Common.imageUrl(item.id, 208)} className="img" onLoad={() => position()} />
 		);
 
         const Item = SortableElement((item: any) => {
@@ -63,9 +61,9 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			};
 
 			return (
-				<div id={'item-' + item.id} className={cn.join(' ')}>
+				<div id={`item-${item.id}`} className={cn.join(' ')}>
 					<Handle />
-					<div className="clickable" onClick={() => UtilObject.openPopup(item)} onContextMenu={e => this.onMore(e, item)}>
+					<div className="clickable" onClick={() => U.Object.openConfig(item)} onContextMenu={e => this.onMore(e, item)}>
 						{content}
 					</div>
 					<div className="buttons">
@@ -123,7 +121,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	componentWillUnmount () {
 		this._isMounted = false;
 
-		menuStore.closeAll([ 'dataviewFileList' ]);
+		S.Menu.closeAll([ 'dataviewFileList' ]);
     };
 
 	onSortStart () {
@@ -136,7 +134,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const value = arrayMove(Relation.getArrayValue(data.value), oldIndex, newIndex);
 
-		menuStore.updateData(id, { value });
+		S.Menu.updateData(id, { value });
 		this.save(value);
 
 		keyboard.disableSelection(false);
@@ -147,7 +145,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { classNameWrap } = param;
 
-		menuStore.open('dataviewFileList', {
+		S.Menu.open('dataviewFileList', {
 			element: `#${getId()}`,
 			className: 'single',
 			offsetX: param.width,
@@ -161,7 +159,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 				noClose: true,
 				placeholderFocus: translate('menuDataviewFileValuesFindAFile'),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() }
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() }
 				],
 				onChange: (value: string[], callBack?: () => void) => {
 					this.save(value);
@@ -182,8 +180,8 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	};
 	
 	onUpload (e: any) {
-		Action.openFile([], paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.None, {}, (message: any) => {
+		Action.openFileDialog([], paths => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, (message: any) => {
 				if (!message.error.code) {
 					this.add(message.objectId);
 				};
@@ -203,8 +201,8 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { onChange } = data;
 
-		onChange(UtilCommon.arrayUnique(value), () => {
-			menuStore.updateData(id, { value });
+		onChange(U.Common.arrayUnique(value), () => {
+			S.Menu.updateData(id, { value });
 		});
 	};
 
@@ -217,7 +215,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 		let value = Relation.getArrayValue(data.value);
 
-		menuStore.open('select', { 
+		S.Menu.open('select', { 
 			element,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap: classNameWrap,
@@ -227,7 +225,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			},
 			onClose: () => {
 				itemEl.removeClass('active');
-				$(element).removeClass('active')
+				$(element).removeClass('active');
 			},
 			data: {
 				value: '',
@@ -241,19 +239,19 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 					switch (el.id) {
 						case 'open': {
-							UtilObject.openPopup(item);
+							U.Object.openConfig(item);
 							break;
 						};
 						case 'download': {
 							let url = '';
 							switch (item.layout) {
 								default: {
-									url = commonStore.fileUrl(item.id);
+									url = S.Common.fileUrl(item.id);
 									break;
 								};
 
 								case I.ObjectLayout.Image: {
-									url = commonStore.imageUrl(item.id, Constant.size.image);
+									url = S.Common.imageUrl(item.id, J.Size.image);
 									break;
 								};
 							};
@@ -266,11 +264,11 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
 						case 'remove': {
 							value = value.filter(it => it != item.id);
-							value = UtilCommon.arrayUnique(value);
+							value = U.Common.arrayUnique(value);
 
 							onChange(value, () => {
-								menuStore.updateData(id, { value });
-								menuStore.updateData(MENU_ID, { value });
+								S.Menu.updateData(id, { value });
+								S.Menu.updateData(MENU_ID, { value });
 								position();
 							});
 							break;
@@ -287,7 +285,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { subId } = data;
 
 		return Relation.getArrayValue(data.value).
-			map(it => detailStore.get(subId, it, [])).
+			map(it => S.Detail.get(subId, it, [])).
 			filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
 	};
 

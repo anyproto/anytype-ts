@@ -1,7 +1,5 @@
 import $ from 'jquery';
-import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, UtilSpace, Relation, Dataview, Action, analytics } from 'Lib';
-import { blockStore, menuStore, detailStore, commonStore, dbStore, authStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation, Storage } from 'Lib';
 
 class UtilMenu {
 
@@ -18,10 +16,10 @@ class UtilMenu {
 			it.name = translate(nameKey);
 			it.description = translate(descriptionKey);
 
-			if (commonStore.interfaceLang != Constant.default.interfaceLang) {
-				it.aliases.push(translate(nameKey, Constant.default.interfaceLang));
-				it.aliases.push(translate(descriptionKey, Constant.default.interfaceLang));
-				it.aliases = UtilCommon.arrayUnique(it.aliases);
+			if (S.Common.interfaceLang != J.Constant.default.interfaceLang) {
+				it.aliases.push(translate(nameKey, J.Constant.default.interfaceLang));
+				it.aliases.push(translate(descriptionKey, J.Constant.default.interfaceLang));
+				it.aliases = U.Common.arrayUnique(it.aliases);
 			};
 		};
 		return it;
@@ -37,7 +35,7 @@ class UtilMenu {
 			{ id: I.TextStyle.Callout, lang: 'Callout', aliases: [ 'callout' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = UtilData.blockTextClass(it.id);
+			it.icon = U.Data.blockTextClass(it.id);
 			return this.mapperBlock(it);
 		});
 	};
@@ -50,7 +48,7 @@ class UtilMenu {
 			{ id: I.TextStyle.Toggle, lang: 'Toggle', aliases: [ 'toggle' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = UtilData.blockTextClass(it.id);
+			it.icon = U.Data.blockTextClass(it.id);
 			return this.mapperBlock(it);
 		});
 	};
@@ -68,7 +66,7 @@ class UtilMenu {
 	};
 
 	getBlockEmbed () {
-		const { config } = commonStore;
+		const { config } = S.Common;
 
 		let ret = [
 			{ id: I.EmbedProcessor.Latex, name: 'LaTeX' },
@@ -102,19 +100,19 @@ class UtilMenu {
 
 		return ret.map(this.mapperBlock).map(it => {
 			it.type = I.BlockType.Embed;
-			it.icon = `embed-${UtilCommon.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
+			it.icon = `embed-${U.Common.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
 			return it;
 		});
 	};
 
 	getBlockObject () {
-		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
+		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
 			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }
 		];
 
-		items.sort((c1, c2) => UtilData.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
+		items.sort((c1, c2) => U.Data.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc));
 
 		let i = 0;
 		for (const type of items) {
@@ -146,7 +144,7 @@ class UtilMenu {
 
 	getTurnPage () {
 		const ret = [];
-		const types = UtilData.getObjectTypesForNewObject(); 
+		const types = U.Data.getObjectTypesForNewObject(); 
 
 		let i = 0;
 		for (const type of types) {
@@ -183,12 +181,10 @@ class UtilMenu {
 	getActions (param: any) {
 		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject } = param;
 		const cmd = keyboard.cmdSymbol();
-
-		let items: any[] = [
+		const items: any[] = [
 			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
 			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate'), caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
-			//{ id: 'comment', icon: 'comment', name: translate('commonComment')' }
 		];
 
 		if (hasTurnObject) {
@@ -200,18 +196,18 @@ class UtilMenu {
 		};
 		
 		if (hasFile) {
-			items = items.concat([
-				{ id: 'download', icon: 'download', name: translate('commonDownload') },
-				//{ id: 'rename', icon: 'rename', name: translate('libMenuRename') ),
-				//{ id: 'replace', icon: 'replace', name: translate('libMenuReplace') },
-			]);
+			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
+		};
+
+		if (hasBookmark) {
+			items.push({ id: 'copyUrl', icon: 'copy', name: translate('libMenuCopyUrl') });
 		};
 
 		if (hasDataview) {
 			const isCollection = Dataview.isCollection(rootId, blockId);
 			const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
 
-			items.push({ id: 'dataviewSource', icon: 'source', name: UtilCommon.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
+			items.push({ id: 'dataviewSource', icon: 'source', name: U.Common.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
 		};
 
 		if (hasFile || hasBookmark || hasDataview) {
@@ -225,7 +221,7 @@ class UtilMenu {
 		const items: any[] = [
 			{ id: 'color-default', name: translate('commonDefault'), value: '', className: 'default', isTextColor: true }
 		];
-		for (const color of Constant.textColor) {
+		for (const color of J.Constant.textColor) {
 			items.push({ id: `color-${color}`, name: translate(`textColor-${color}`), value: color, className: color, isTextColor: true });
 		};
 		return items;
@@ -235,7 +231,7 @@ class UtilMenu {
 		const items: any[] = [
 			{ id: 'bgColor-default', name: translate('commonDefault'), value: '', className: 'default', isBgColor: true }
 		];
-		for (const color of Constant.textColor) {
+		for (const color of J.Constant.textColor) {
 			items.push({ id: `bgColor-${color}`, name: translate(`textColor-${color}`), value: color, className: color, isBgColor: true });
 		};
 		return items;
@@ -254,7 +250,7 @@ class UtilMenu {
 		};
 
 		return ret.map((it: any) => {
-			it.icon = UtilData.alignHIcon(it.id);
+			it.icon = U.Data.alignHIcon(it.id);
 			it.name = translate(`commonHAlign${I.BlockHAlign[it.id]}`);
 			it.isAlign = true;
 			return it;
@@ -267,7 +263,7 @@ class UtilMenu {
 			{ id: I.BlockVAlign.Middle },
 			{ id: I.BlockVAlign.Bottom },
 		].map((it: any) => {
-			it.icon = UtilData.alignVIcon(it.id);
+			it.icon = U.Data.alignVIcon(it.id);
 			it.name = translate(`commonVAlign${I.BlockVAlign[it.id]}`);
 			return it;
 		});
@@ -295,7 +291,7 @@ class UtilMenu {
 	};
 
 	turnLayouts () {
-		const allowed = [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Note ];
+		const allowed = U.Object.getPageLayouts();
 		return this.getLayouts().filter(it => allowed.includes(it.id));
 	};
 
@@ -312,7 +308,7 @@ class UtilMenu {
 
 	viewContextMenu (param: any) {
 		const { rootId, blockId, view, onCopy, onRemove, menuParam, close } = param;
-		const views = dbStore.getViews(rootId, blockId);
+		const views = S.Record.getViews(rootId, blockId);
 
 		const options: any[] = [
 			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
@@ -323,12 +319,12 @@ class UtilMenu {
 			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			...menuParam,
 			data: {
 				options,
 				onSelect: (e, option) => {
-					menuStore.closeAll([ 'select' ]);
+					S.Menu.closeAll([ 'select' ]);
 					if (close) {
 						close();
 					};
@@ -339,7 +335,7 @@ class UtilMenu {
 							case 'copy': onCopy(view); break;
 							case 'remove': onRemove(view); break;
 						};
-					}, menuStore.getTimeout());
+					}, S.Menu.getTimeout());
 				}
 			}
 		});
@@ -365,7 +361,7 @@ class UtilMenu {
 		});
 	};
 
-	getWidgetLimits (layout: I.WidgetLayout) {
+	getWidgetLimitOptions (layout: I.WidgetLayout) {
 		let options = [];
 		switch (layout) {
 			default: {
@@ -379,6 +375,54 @@ class UtilMenu {
 			};
 		};
 		return options.map(id => ({ id: String(id), name: id }));
+	};
+
+	getWidgetLayoutOptions (id: string, layout: I.ObjectLayout) {
+		const isSystem = this.isSystemWidget(id);
+		
+		let options = [
+			I.WidgetLayout.Compact,
+			I.WidgetLayout.List,
+			I.WidgetLayout.Tree,
+		];
+		if (!isSystem) {
+			options.push(I.WidgetLayout.Link);
+		};
+
+		if (id) {
+			if (!isSystem) {
+				const isSet = U.Object.isInSetLayouts(layout);
+				const setLayouts = U.Object.getSetLayouts();
+				const treeSkipLayouts = setLayouts.concat(U.Object.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Participant ]);
+
+				// Sets can only become Link and List layouts, non-sets can't become List
+				if (treeSkipLayouts.includes(layout)) {
+					options = options.filter(it => it != I.WidgetLayout.Tree);
+				};
+				if (!isSet) {
+					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it));
+				} else {
+					options = options.filter(it => it != I.WidgetLayout.Tree);
+					options.unshift(I.WidgetLayout.View);
+				};
+			};
+
+			if ([ J.Constant.widgetId.set, J.Constant.widgetId.collection ].includes(id)) {
+				options = options.filter(it => it != I.WidgetLayout.Tree);
+			};
+		};
+
+		return options.map(id => ({
+			id,
+			name: translate(`widget${id}Name`),
+			description: translate(`widget${id}Description`),
+			icon: `widget-${id}`,
+			withDescription: true,
+		}));
+	};
+
+	isSystemWidget (id: string) {
+		return id && Object.values(J.Constant.widgetId).includes(id);
 	};
 
 	getCoverColors () {
@@ -398,7 +442,7 @@ class UtilMenu {
 	};
 	
 	sectionsFilter (sections: any[], filter: string) {
-		const f = UtilCommon.regexEscape(filter);
+		const f = U.Common.regexEscape(filter);
 		const regS = new RegExp('^' + f, 'gi');
 		const regC = new RegExp(f, 'gi');
 		const getWeight = (s: string) => {
@@ -463,16 +507,16 @@ class UtilMenu {
 				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});
-			s.children = s.children.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
+			s.children = s.children.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
 
-		sections = sections.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
+		sections = sections.sort((c1: any, c2: any) => U.Data.sortByWeight(c1, c2));
 		return sections;
 	};
 	
 	sectionsMap (sections: any[]) {
-		sections = UtilCommon.objectCopy(sections);
+		sections = U.Common.objectCopy(sections);
 		sections = sections.filter(it => it.children.length > 0);
 		sections = sections.map((s: any, i: number) => {
 			s.id = (undefined !== s.id) ? s.id : i;
@@ -485,17 +529,17 @@ class UtilMenu {
 				c.color = c.color || s.color || '';
 				return c;
 			});
-			s.children = UtilCommon.arrayUniqueObjects(s.children, 'id');
+			s.children = U.Common.arrayUniqueObjects(s.children, 'id');
 			return s;
 		});
 
-		return UtilCommon.arrayUniqueObjects(sections, 'id');
+		return U.Common.arrayUniqueObjects(sections, 'id');
 	};
 
 	dashboardSelect (element: string, openRoute?: boolean) {
-		const { space } = commonStore;
-		const { spaceview } = blockStore;
-		const templateType = dbStore.getTemplateType();
+		const { space } = S.Common;
+		const { spaceview } = S.Block;
+		const templateType = S.Record.getTemplateType();
 		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
@@ -504,26 +548,26 @@ class UtilMenu {
 					return;
 				};
 
-				detailStore.update(Constant.subId.space, { id: spaceview, details: { spaceDashboardId: object.id } }, false);
+				S.Detail.update(J.Constant.subId.space, { id: spaceview, details: { spaceDashboardId: object.id } }, false);
 
 				if (update) {
-					detailStore.update(Constant.subId.space, { id: object.id, details: object }, false);
+					S.Detail.update(J.Constant.subId.space, { id: object.id, details: object }, false);
 				};
 
 				if (openRoute) {
-					UtilSpace.openDashboard('route');
+					U.Space.openDashboard('route');
 				};
 			});
 		};
 
 		let menuContext = null;
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element,
 			horizontal: I.MenuDirection.Right,
 			subIds,
 			onOpen: context => menuContext = context,
-			onClose: () => menuStore.closeAll(subIds),
+			onClose: () => S.Menu.closeAll(subIds),
 			data: {
 				options: [
 					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
@@ -536,20 +580,20 @@ class UtilMenu {
 					};
 
 					if (!item.arrow) {
-						menuStore.closeAll(subIds);
+						S.Menu.closeAll(subIds);
 						return;
 					};
 
 					switch (item.id) {
 						case I.HomePredefinedId.Existing: {
-							menuStore.open('searchObject', {
+							S.Menu.open('searchObject', {
 								element: `#${menuContext.getId()} #item-${item.id}`,
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
 								data: {
 									filters: [
-										{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+										{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
 										{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 									],
 									canAdd: true,
@@ -591,7 +635,7 @@ class UtilMenu {
 		const ret: any[] = [];
 		const Locale = require('lib/json/locale.json');
 
-		for (const id of Constant.enabledInterfaceLang) {
+		for (const id of J.Lang.enabled) {
 			ret.push({ id, name: Locale[id] });
 		};
 
@@ -601,8 +645,8 @@ class UtilMenu {
 	getSpellingLanguages () {
 		let ret: any[] = [];
 
-		ret = ret.concat(commonStore.languages || []);
-		ret = ret.map(id => ({ id, name: Constant.spellingLang[id] }));
+		ret = ret.concat(S.Common.languages || []);
+		ret = ret.map(id => ({ id, name: J.Lang.spelling[id] }));
 		ret.unshift({ id: '', name: translate('commonDisabled') });
 
 		return ret;
@@ -636,16 +680,16 @@ class UtilMenu {
 	};
 
 	spaceContext (space: any, param: any) {
-		const { accountSpaceId } = authStore;
+		const { accountSpaceId } = S.Auth;
 		const { targetSpaceId } = space;
 
 		if ((targetSpaceId == accountSpaceId)) {
 			return;
 		};
 
-		const isOwner = UtilSpace.isMyOwner(targetSpaceId);
-		const isLocalNetwork = UtilData.isLocalNetwork();
-		const { isOnline } = commonStore;
+		const isOwner = U.Space.isMyOwner(targetSpaceId);
+		const isLocalNetwork = U.Data.isLocalNetwork();
+		const { isOnline } = S.Common;
 
 		let options: any[] = [];
 
@@ -655,7 +699,6 @@ class UtilMenu {
 
 		if (space.isAccountRemoving) {
 			options = options.concat([
-				{ id: 'export', name: translate('popupSettingsSpaceIndexExport') },
 				{ id: 'remove', color: 'red', name: translate('commonDelete') },
 			]);
 		} else 
@@ -665,7 +708,7 @@ class UtilMenu {
 			options.push({ id: 'remove', color: 'red', name: isOwner ? translate('commonDelete') : translate('commonLeaveSpace') });
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			...param,
 			data: {
 				options,
@@ -693,13 +736,13 @@ class UtilMenu {
 								C.SpaceJoinCancel(targetSpaceId, (message: any) => {
 									if (message.error.code) {
 										window.setTimeout(() => {
-											popupStore.open('confirm', { 
+											S.Popup.open('confirm', { 
 												data: {
 													title: translate('commonError'),
 													text: message.error.description,
 												}
 											});
-										}, popupStore.getTimeout());
+										}, S.Popup.getTimeout());
 									};
 								});
 								break;
@@ -711,17 +754,17 @@ class UtilMenu {
 							};
 						};
 
-					}, menuStore.getTimeout());
+					}, S.Menu.getTimeout());
 				},
 			},
 		});
 	};
 
 	inviteContext (param: any) {
-		const { isOnline } = commonStore
+		const { isOnline } = S.Common;
 		const { containerId, cid, key, onInviteRevoke } = param || {};
-		const isOwner = UtilSpace.isMyOwner();
-		const isLocalNetwork = UtilData.isLocalNetwork();
+		const isOwner = U.Space.isMyOwner();
+		const isLocalNetwork = U.Data.isLocalNetwork();
 
 		const options: any[] = [
 			{ id: 'qr', name: translate('popupSettingsSpaceShareShowQR') },
@@ -731,7 +774,7 @@ class UtilMenu {
 			options.push({ id: 'revoke', color: 'red', name: translate('popupSettingsSpaceShareRevokeInvite') });
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#${containerId} #button-more-link`,
 			horizontal: I.MenuDirection.Center,
 			data: {
@@ -739,13 +782,13 @@ class UtilMenu {
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'qr': {
-							popupStore.open('inviteQr', { data: { link: UtilSpace.getInviteLink(cid, key) } });
+							S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(cid, key) } });
 							analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
 							break;
 						};
 
 						case 'revoke': {
-							Action.inviteRevoke(commonStore.space, onInviteRevoke);
+							Action.inviteRevoke(S.Common.space, onInviteRevoke);
 							analytics.event('ClickSettingsSpaceShare', { type: 'Revoke' });
 							break;
 						};
@@ -753,6 +796,40 @@ class UtilMenu {
 				},
 			}
 		});
+	};
+
+	getVaultItems () {
+		const ids = Storage.get('spaceOrder') || [];
+		const items = U.Common.objectCopy(U.Space.getList());
+
+		items.push({ id: 'gallery', name: translate('commonGallery'), isButton: true });
+
+		if (U.Space.canCreateSpace()) {
+			items.push({ id: 'add', name: translate('commonCreateNew'), isButton: true });
+		};
+
+		if (ids && (ids.length > 0)) {
+			items.sort((c1, c2) => {
+				const i1 = ids.indexOf(c1.id);
+				const i2 = ids.indexOf(c2.id);
+
+				if (i1 > i2) return 1;
+				if (i1 < i2) return -1;
+				return 0;
+			});
+		};
+
+		return items;
+	};
+
+	getFixedWidgets () {
+		return [
+			{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
+			{ id: J.Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: ':mag:' },
+			{ id: J.Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: ':card_index_dividers:' },
+			{ id: J.Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: ':memo:' },
+			{ id: J.Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: ':date:', caption: translate('menuWidgetRecentOpenCaption') },
+		];
 	};
 
 };

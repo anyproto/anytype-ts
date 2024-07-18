@@ -5,9 +5,7 @@ import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
-import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject, translate, UtilMenu, Dataview } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, keyboard, Relation, analytics, translate, Dataview } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -36,7 +34,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { data } = param;
 		const { loadData, rootId, blockId } = data;
 		const items = this.getItems();
-		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowed = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -184,7 +182,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		menuStore.closeAll([ 'select' ]);
+		S.Menu.closeAll([ 'select' ]);
 	};
 
 	rebind () {
@@ -201,7 +199,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const items: any[] = UtilCommon.objectCopy(dbStore.getViews(rootId, blockId)).map(it => ({ 
+		const items: any[] = U.Common.objectCopy(S.Record.getViews(rootId, blockId)).map(it => ({ 
 			...it, name: it.name || translate('defaultNamePage'),
 		}));
 
@@ -238,10 +236,10 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 				return;
 			};
 
-			const view = dbStore.getView(rootId, blockId, message.viewId);
+			const view = S.Record.getView(rootId, blockId, message.viewId);
 
 			close();
-			window.setTimeout(() => onViewSwitch(view), menuStore.getTimeout());
+			window.setTimeout(() => onViewSwitch(view), S.Menu.getTimeout());
 
 			analytics.event('AddView', {
 				type: view.type,
@@ -273,17 +271,18 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			}
 		};
 
-		UtilMenu.viewContextMenu(contextParam);
+		U.Menu.viewContextMenu(contextParam);
 	};
 
 	onClick (e: any, item: any) {
 		const { close, param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, isInline, getTarget } = data;
-		const subId = dbStore.getSubId(rootId, blockId);
+		const subId = S.Record.getSubId(rootId, blockId);
 		const object = getTarget();
 
-		dbStore.metaSet(subId, '', { viewId: item.id });
+		S.Record.metaSet(subId, '', { viewId: item.id });
+		C.BlockDataviewViewSetActive(rootId, blockId, item.id);
 
 		analytics.event('SwitchView', {
 			type: item.type,
@@ -302,7 +301,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const views = dbStore.getViews(rootId, blockId);
+		const views = S.Record.getViews(rootId, blockId);
 		const oldIndex = result.oldIndex - 1;
 		const newIndex = result.newIndex - 1;
 		const view = views[oldIndex];
@@ -312,7 +311,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 
 		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
 
-		dbStore.viewsSort(rootId, blockId, ids);
+		S.Record.viewsSort(rootId, blockId, ids);
 		C.BlockDataviewViewSetPosition(rootId, blockId, view.id, newIndex);
 		keyboard.disableSelection(false);
 	};

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { IconObject, Input, Title, Loader, Icon, Error } from 'Component';
-import { I, C, translate, UtilCommon, Action, UtilObject, UtilSpace } from 'Lib';
-import { authStore, blockStore, menuStore } from 'Store';
+import { I, S, U, translate } from 'Lib';
 import { observer } from 'mobx-react';
-const Constant = require('json/constant.json');
 
 interface Props extends I.PopupSettings {
 	setPinConfirmed: (v: boolean) => void;
@@ -28,16 +26,14 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	constructor (props: Props) {
 		super(props);
 
-		this.onMenu = this.onMenu.bind(this);
-		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 		this.onDescription = this.onDescription.bind(this);
 	};
 
 	render () {
 		const { error, loading } = this.state;
-		const { account } = authStore;
-		const profile = UtilSpace.getProfile();
+		const { account } = S.Auth;
+		const profile = U.Space.getProfile();
 	
 		let name = profile.name;
 		if (name == translate('defaultNamePage')) {
@@ -55,7 +51,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 							id="userpic"
 							object={profile}
 							size={108}
-							onClick={this.onMenu}
+							canEdit={true}
 						/>
 					</div>
 				</div>
@@ -85,7 +81,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						<Input
 							value={account.id}
 							readonly={true}
-							onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
+							onClick={() => U.Common.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
 						/>
 						<Icon className="copy" />
 					</div>
@@ -94,65 +90,12 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		);
 	};
 
-	onMenu () {
-		const { getId } = this.props;
-        const profile = UtilSpace.getProfile();
-
-        if (!profile.iconImage) {
-            this.onUpload();
-            return;
-        };
-
-        const options = [
-            { id: 'upload', name: translate('commonChange') },
-            { id: 'remove', name: translate('commonRemove') },
-        ];
-
-        menuStore.open('select', {
-            element: `#${getId()} #userpic`,
-            horizontal: I.MenuDirection.Center,
-            data: {
-                value: '',
-                options,
-                onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'upload': {
-							this.onUpload();
-							break;
-						};
-
-						case 'remove': {
-							UtilObject.setIcon(blockStore.profile, '', '');
-							break;
-						};
-					};
-                },
-            }
-        });
-    };
-
-    onUpload () {
-		const { accountSpaceId } = authStore;
-
-		Action.openFile(Constant.fileExtension.cover, paths => {
-			this.setState({ loading: true });
-
-            C.FileUpload(accountSpaceId, '', paths[0], I.FileType.Image, {}, (message: any) => {
-                if (!message.error.code) {
-					UtilObject.setIcon(blockStore.profile, '', message.objectId, () => {
-						this.setState({ loading: false });
-					});
-                };
-            });
-		});
-    };
-
     onName () {
-        UtilObject.setName(blockStore.profile, this.refName.getValue());
+        U.Object.setName(S.Block.profile, this.refName.getValue());
     };
 
 	onDescription (e) {
-		UtilObject.setDescription(blockStore.profile, this.refDescription.getValue());
+		U.Object.setDescription(S.Block.profile, this.refDescription.getValue());
 	};
 
 });

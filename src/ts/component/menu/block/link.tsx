@@ -2,10 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, UtilCommon, keyboard, UtilData, UtilObject, UtilMenu, analytics, focus, translate } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
+import { I, S, U, J, keyboard, focus, translate, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -58,7 +56,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 				return null;
 			};
 
-			const type = dbStore.getTypeById(item.type);
+			const type = S.Record.getTypeById(item.type);
 			const cn = [];
 
 			let object = { ...item, id: item.itemId };
@@ -217,8 +215,8 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	onFilterChange (e: any) {
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			menuStore.updateData(this.props.id, { filter: this.refFilter.getValue() });
-		}, Constant.delay.keyboard);
+			S.Menu.updateData(this.props.id, { filter: this.refFilter.getValue() });
+		}, J.Constant.delay.keyboard);
 	};
 
 	onFilterClear () {
@@ -242,8 +240,8 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			return [];
 		};
 
-		const isLocal = filter.match(/^file:/) || UtilCommon.matchLocalPath(filter);
-		const isUrl = UtilCommon.matchUrl(filter) || UtilCommon.matchDomain(filter);
+		const isLocal = filter.match(/^file:/) || U.Common.matchLocalPath(filter);
+		const isUrl = U.Common.matchUrl(filter) || U.Common.matchDomain(filter);
 		const items = [].concat(this.items);
 		const sections: any[] = [];
 
@@ -257,11 +255,11 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		sections.push({ 
 			id: I.MarkType.Link, name: '', children: [
-				{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), icon: 'plus' },
+				{ id: 'add', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter), icon: 'plus' },
 			] 
 		});
 
-		return UtilMenu.sectionsMap(sections);
+		return U.Menu.sectionsMap(sections);
 	};
 
 	getItems (withSections: boolean) {
@@ -282,7 +280,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -293,7 +291,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const { skipIds, filter } = data;
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
@@ -308,12 +306,12 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			this.setState({ loading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
@@ -366,7 +364,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			onChange(I.MarkType.Link, url);
 		} else
 		if (item.itemId == 'add') {
-			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], 'Link', (message: any) => {
+			U.Object.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], analytics.route.link, (message: any) => {
 				onChange(I.MarkType.Object, message.targetId);
 			});
 		} else {

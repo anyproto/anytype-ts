@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
-import { commonStore, popupStore } from 'Store';
-import { I, C, UtilCommon, UtilObject, Preview, Action, translate, keyboard } from 'Lib';
+import { I, S, U, Preview, Action, translate, keyboard } from 'Lib';
 
 interface State {
 	object: any;
@@ -25,7 +24,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 	};
 
     render () {
-        const { toast } = commonStore;
+        const { toast } = S.Common;
 		if (!toast) {
 			return null;
 		};
@@ -67,13 +66,13 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 					break;
 				};
 
-				const cnt = `${count} ${UtilCommon.plural(count, translate('pluralBlock'))}`;
+				const cnt = `${count} ${U.Common.plural(count, translate('pluralBlock'))}`;
 
-				textAction = UtilCommon.sprintf(translate('toastMovedTo'), cnt);
+				textAction = U.Common.sprintf(translate('toastMovedTo'), cnt);
 				textTarget = <Element {...target} />;
 
 				if (origin) {
-					textAction = UtilCommon.sprintf(translate('toastMovedFrom'), cnt);
+					textAction = U.Common.sprintf(translate('toastMovedFrom'), cnt);
 					textActionTo = translate('commonTo');
 					textOrigin = <Element {...origin} />;
 				};
@@ -126,8 +125,8 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 					break;
 				};
 
-				const cnt = `${ids.length} ${UtilCommon.plural(ids.length, translate('pluralObject'))}`;
-				textAction = UtilCommon.sprintf(translate('toastMovedToBin'), cnt);
+				const cnt = `${ids.length} ${U.Common.plural(ids.length, translate('pluralObject'))}`;
+				textAction = U.Common.sprintf(translate('toastMovedToBin'), cnt);
 
 				buttons = buttons.concat([
 					{ action: 'undoArchive', label: translate('commonUndo'), data: ids }
@@ -141,9 +140,9 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                 <div className="inner">
                     <div className="message">
                         {textObject}
-                        {textAction ? <span dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(textAction) }} /> : ''}
+                        {textAction ? <span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(textAction) }} /> : ''}
                         {textOrigin}
-						{textActionTo ? <span dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(textActionTo) }} /> : ''}
+						{textActionTo ? <span dangerouslySetInnerHTML={{ __html: U.Common.sanitize(textActionTo) }} /> : ''}
                         {textTarget}
                     </div>
 
@@ -175,7 +174,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 			};
 
             case 'undo': {
-                keyboard.onUndo(commonStore.toast.originId, 'Toast');
+                keyboard.onUndo(S.Common.toast.originId, 'Toast');
                 break;
 			};
 
@@ -187,8 +186,8 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 			};
 
             case 'manageStorage': {
-                popupStore.open('settings', { data: { page: 'storageManager' }});
-                commonStore.toastClear();
+                S.Popup.open('settings', { data: { page: 'storageManager' }});
+                S.Common.toastClear();
             };
         };
 
@@ -196,7 +195,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
     };
 
     onOpen (e: any) {
-        UtilObject.openEvent(e, commonStore.toast.target);
+        U.Object.openEvent(e, S.Common.toast.target);
     };
 
 });

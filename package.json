@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.40.32-test",
+	"version": "0.41.31-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -62,7 +62,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^30.0.7",
+		"electron": "^31.0.0",
 		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
@@ -99,6 +99,7 @@
 		"blueimp-load-image": "^2.31.0",
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
+		"diff": "^5.2.0",
 		"dompurify": "^3.0.6",
 		"electron-dl": "^1.14.0",
 		"electron-json-storage": "^4.5.0",
@@ -601,7 +602,13 @@
 					"provider": "generic",
 					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
-			]
+			],
+			"desktop": {
+				"Name": "Anytype",
+				"Categories": "Utility;Office;Calendar;ProjectManagement;",
+				"Keywords": "project management;",
+				"StartupWMClass": "anytype"
+			}
 		},
 		"rpm": {
 			"fpm": [

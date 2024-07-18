@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { InputWithFile, Loader, IconObject, Error, ObjectName } from 'Component';
-import { I, UtilObject, UtilFile, focus, translate, Action } from 'Lib';
-import { detailStore } from 'Store';
+import { InputWithFile, Loader, IconObject, Error, ObjectName, Icon } from 'Component';
+import { I, S, U, focus, translate, Action } from 'Lib';
 import { observer } from 'mobx-react';
 
 const BlockFile = observer(class BlockFile extends React.Component<I.BlockComponent> {
@@ -14,7 +13,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
-		this.onOpen = this.onOpen.bind(this);
+		this.onClick = this.onClick.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 	};
@@ -23,41 +22,56 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { state, style, targetObjectId } = content;
-		const object = detailStore.get(rootId, targetObjectId, []);
+		const object = S.Detail.get(rootId, targetObjectId, []);
 
 		let element = null;
-		switch (state) {
-			default:
-			case I.FileState.Error:
-			case I.FileState.Empty:
-				element = (
-					<React.Fragment>
-						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="file" 
-							textFile={translate('blockFileUpload')} 
-							onChangeUrl={this.onChangeUrl} 
-							onChangeFile={this.onChangeFile} 
-							readonly={readonly} 
-						/>
-					</React.Fragment>
-				);
-				break;
-				
-			case I.FileState.Uploading:
-				element = <Loader />;
-				break;
-				
-			case I.FileState.Done:
-				element = (
-					<div className="inner" onMouseDown={this.onOpen}>
-						<IconObject object={object} size={24} />
-						<ObjectName object={object} />
-						<span className="size">{UtilFile.size(object.sizeInBytes)}</span>
-					</div>
-				);
-				break;
+		if (object.isDeleted) {
+			element = (
+				<div className="deleted">
+					<Icon className="ghost" />
+					<div className="name">{translate('commonDeletedObject')}</div>
+				</div>
+			);
+		} else {
+			switch (state) {
+				default:
+				case I.FileState.Error:
+				case I.FileState.Empty: {
+					element = (
+						<React.Fragment>
+							{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
+							<InputWithFile 
+								block={block} 
+								icon="file" 
+								textFile={translate('blockFileUpload')} 
+								onChangeUrl={this.onChangeUrl} 
+								onChangeFile={this.onChangeFile} 
+								readonly={readonly} 
+							/>
+						</React.Fragment>
+					);
+					break;
+				};
+					
+				case I.FileState.Uploading: {
+					element = <Loader />;
+					break;
+				};
+					
+				case I.FileState.Done: {
+					element = (
+						<div 
+							className="inner" 
+							onMouseDown={this.onClick} 
+						>
+							<IconObject object={object} size={24} />
+							<ObjectName object={object} />
+							<span className="size">{U.File.size(object.sizeInBytes)}</span>
+						</div>
+					);
+					break;
+				};
+			};
 		};
 
 		return (
@@ -111,12 +125,12 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 		Action.upload(I.FileType.File, rootId, block.id, '', path);
 	};
 	
-	onOpen (e: any) {
+	onClick (e: any) {
 		if (!e.button) {
-			UtilObject.openPopup({ id: this.props.block.content.targetObjectId, layout: I.ObjectLayout.File });
+			Action.openFile(this.props.block.content.targetObjectId);
 		};
 	};
-	
+
 });
 
 export default BlockFile;

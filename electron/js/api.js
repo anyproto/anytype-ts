@@ -167,7 +167,7 @@ class Api {
 			return;
 		};
 
-		if (win) {
+		if (win && !win.isDestroyed()) {
 			win.hide();
 		};
 

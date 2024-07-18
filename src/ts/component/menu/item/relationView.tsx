@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Cell, Icon } from 'Component';
-import { I, UtilCommon, Relation, keyboard, translate } from 'Lib';
-import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
+import { Cell, Icon } from 'Component';
+import { I, S, U, Relation, keyboard, translate } from 'Lib';
 
 interface Props {
 	id: string;
@@ -11,7 +10,6 @@ interface Props {
 	name: string;
 	format: I.RelationType;
 	isHidden: boolean;
-	dataset?: I.Dataset;
 	rootId: string;
 	block?: I.Block;
 	isFeatured?: boolean;
@@ -20,6 +18,7 @@ interface Props {
 	canEdit?: boolean;
 	canDrag?: boolean;
 	canFav?: boolean;
+	diffType?: I.DiffType;
 	onEdit(e: any, item: any): void;
 	onRef(id: string, ref: any): void;
 	onFav(e: any, item: any): void;
@@ -48,9 +47,9 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 	};
 
 	render () {
-		const { rootId, block, id, scope, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
+		const { rootId, block, id, scope, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, diffType, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
 		const tooltip = translate(isFeatured ? 'menuItemRelationViewFeaturedRemove' : 'menuItemRelationViewFeaturedAdd');
-		const object = detailStore.get(rootId, rootId, [ relationKey ]);
+		const object = S.Detail.get(rootId, rootId, [ relationKey ]);
 		const cellId = Relation.cellId(PREFIX, relationKey, object.id);
 		const value = object[relationKey];
 
@@ -73,6 +72,9 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		};
 		if (!readonly) {
 			ccn.push('canEdit');
+		};
+		if (diffType != I.DiffType.None) {
+			cn.push(U.Data.diffClass(diffType));
 		};
 
 		return (
@@ -97,15 +99,15 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 						idPrefix={PREFIX}
 						menuClassName="fromBlock"
 						menuClassNameWrap={classNameWrap}
-						pageContainer={UtilCommon.getCellContainer('menuBlockRelationView')}
+						pageContainer={U.Common.getCellContainer('menuBlockRelationView')}
 						readonly={readonly}
 						onClick={e => onCellClick(e, relationKey, object.id)}
 						onCellChange={onCellChange}
 					/>
-					{canFav ? (
-						<Icon className={fcn.join(' ')} tooltip={tooltip} onClick={e => onFav(e, relationKey)} />
-					) : ''}
 				</div>
+				{canFav ? (
+					<Icon className={fcn.join(' ')} tooltip={tooltip} onClick={e => onFav(e, relationKey)} />
+				) : ''}
 			</div>
 		);
     };
@@ -125,17 +127,13 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 			return;
 		};
 		
-		const { dataset, relationKey } = this.props;
-		const { selection, onDragStart } = dataset || {};
+		const { relationKey } = this.props;
+		const dragProvider = S.Common.getRef('dragProvider');
+		const selection = S.Common.getRef('selectionProvider');
 
-		if (!selection || !onDragStart) {
-			return;
-		};
-		
 		keyboard.disableSelection(true);
-		selection.clear();
-
-		onDragStart(e, I.DropType.Relation, [ relationKey ], this);
+		selection?.clear();
+		dragProvider?.onDragStart(e, I.DropType.Relation, [ relationKey ], this);
 	};
 
 });

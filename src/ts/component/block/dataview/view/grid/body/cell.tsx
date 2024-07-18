@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, Relation } from 'Lib';
+import { I, S, J, U, Relation } from 'Lib';
 import { Cell, Icon } from 'Component';
-import { dbStore } from 'Store';
-const Constant = require('json/constant.json');
 
 interface Props {
 	rootId?: string;
@@ -34,13 +32,13 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 	render () {
 		const { rootId, block, className, relationKey, readonly, recordId, getRecord, onRef, onCellClick, onCellChange, getIdPrefix, canCellEdit } = this.props;
 		const record = getRecord(recordId);
-		const relation: any = dbStore.getRelationByKey(relationKey) || {};
+		const relation: any = S.Record.getRelationByKey(relationKey) || {};
 		const cn = [ 'cell', `cell-key-${relationKey}`, Relation.className(relation.format), (!readonly ? 'canEdit' : '') ];
 		const idPrefix = getIdPrefix();
 		const id = Relation.cellId(idPrefix, relationKey, record.id);
 		const width = Relation.width(this.props.width, relation.format);
-		const size = Constant.size.dataview.cell;
-		const subId = dbStore.getSubId(rootId, block.id);
+		const size = J.Size.dataview.cell;
+		const subId = S.Record.getSubId(rootId, block.id);
 		const canEdit = canCellEdit(relation, record);
 
 		if (relationKey == 'name') {
@@ -56,7 +54,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		};
 
 		let iconEdit = null;
-		if ((relationKey == 'name') && (record.layout != I.ObjectLayout.Note) && canEdit) {
+		if ((relationKey == 'name') && !U.Object.isNoteLayout(record.layout) && canEdit) {
 			iconEdit = <Icon className="edit" onClick={this.onEdit} />;
 		};
 
@@ -79,7 +77,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 					viewType={I.ViewType.Grid}
 					idPrefix={idPrefix}
 					onCellChange={onCellChange}
-					maxWidth={Constant.size.dataview.cell.edit}
+					maxWidth={J.Size.dataview.cell.edit}
 				/>
 				{iconEdit}
 			</div>

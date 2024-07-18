@@ -3,9 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate, UtilSpace } from 'Lib';
-import { dbStore, blockStore, commonStore, menuStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Storage, Onboarding, analytics, Action, keyboard, translate } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -69,7 +67,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		const { withBanner } = this.state;
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 		const { isPopup } = this.props;
 		const views = this.getViews();
 		const items = this.getItems();
@@ -153,7 +151,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		);
 
 		const Item = (item: any) => {
-			const allowedDelete = canWrite && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+			const allowedDelete = canWrite && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 			const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
 			const icons: any[] = [];
 			const buttons: any[] = [];
@@ -178,7 +176,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			
 			return (
 				<div className={cn.join(' ')}>
-					<div className="flex" onClick={e => this.onClick(e, item)}>
+					<div className="flex" onClick={() => this.onOpen(item)}>
 						<IconObject iconSize={iconSize} object={item} />
 						<div className="name">{item.name}</div>
 					</div>
@@ -321,7 +319,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this._isMounted = false;
 		this.unbind();
 
-		menuStore.closeAll(Constant.menuIds.store);
+		S.Menu.closeAll(J.Menu.store);
 		window.clearTimeout(this.timeoutFilter);
 	};
 
@@ -335,7 +333,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getSortKey (tab: I.StoreTab) {
-		return UtilCommon.toCamelCase(`${KEY_SORT}-${tab}`);
+		return U.Common.toCamelCase(`${KEY_SORT}-${tab}`);
 	};
 
 	onKeyDown (e: any) {
@@ -390,20 +388,38 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.view = id;
 		this.load(true);
 
-		menuStore.closeAll(Constant.menuIds.store);
+		S.Menu.closeAll(J.Menu.store);
 		analytics.event('LibraryView', { view: id, type: this.tab, route: (isInner ? 'inner' : 'outer') });
 
 		Storage.set('viewStore', id);
 	};
 
-	onClick (e: any, item: any) {
-		UtilObject.openAuto(item);
+	onOpen (item: any) {
+		if (!item.isInstalled) {
+			let installed = null;
+
+			switch (this.tab) {
+				case I.StoreTab.Type:
+					installed = S.Record.getTypeByKey(item.uniqueKey);
+					break;
+
+				case I.StoreTab.Relation:
+					installed = S.Record.getRelationByKey(item.relationKey);
+					break;
+			};
+
+			if (installed) {
+				item = installed;
+			};
+		};
+
+		U.Object.openAuto(item);
 	};
 
 	onCreateType (e: any) {
-		C.ObjectCreateObjectType({}, [ I.ObjectFlag.DeleteEmpty ], commonStore.space, (message: any) => {
+		C.ObjectCreateObjectType({}, [ I.ObjectFlag.DeleteEmpty ], S.Common.space, (message: any) => {
 			if (!message.error.code) {
-				this.onClick(e, message.details);
+				this.onOpen(message.details);
 				analytics.event('CreateType');
 			};
 		});
@@ -422,12 +438,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			this.filter = v;
-			menuStore.updateData(this.getMenuId(), { filter: v });
+			S.Menu.updateData(this.getMenuId(), { filter: v });
 		}, 500);
 	};
 
 	onFilterClear () {	
-		menuStore.closeAll(Constant.menuIds.store);
+		S.Menu.closeAll(J.Menu.store);
 	};
 
 	onFilterFocus (e: any) {
@@ -450,9 +466,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		switch (this.tab) {
 			case I.StoreTab.Type:
 				menuParam.data = Object.assign(menuParam.data, {
-					onClick: (item: any) => {
-						this.onClick(e, item);
-					}
+					onClick: item => this.onOpen(item),
 				});
 				break;
 
@@ -460,13 +474,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				menuParam.data = Object.assign(menuParam.data, {
 					menuIdEdit: 'blockRelationEdit',
 					addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-						this.onClick(e, relation);
+						this.onOpen(relation);
 					},
 				});
 				break;
 		};
 
-		menuStore.open(this.getMenuId(), menuParam);
+		S.Menu.open(this.getMenuId(), menuParam);
 	};
 
 	onFilterBlur () {
@@ -492,7 +506,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const { space } = commonStore;
+		const { space } = S.Common;
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: this.getTabLayout() },
 		];
@@ -509,11 +523,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			]);
 		};
 
-		let keys: string[] = Constant.defaultRelationKeys;
+		let keys: string[] = J.Relation.default;
 
 		switch (this.view) {
 			case View.Marketplace:
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: J.Constant.storeSpaceId });
 				break;
 
 			case View.Library:
@@ -523,21 +537,21 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
-				keys = keys.concat(Constant.typeRelationKeys);
+				keys = keys.concat(J.Relation.type);
 				break;
 
 			case I.StoreTab.Relation:
-				keys = keys.concat(Constant.relationRelationKeys);
+				keys = keys.concat(J.Relation.relation);
 				break;
 		};
 
 		if (clear) {
 			this.setState({ isLoading: true });
-			dbStore.recordsSet(Constant.subId.store, '', []);
+			S.Record.recordsSet(J.Constant.subId.store, '', []);
 		};
 
-		UtilData.searchSubscribe({
-			subId: Constant.subId.store,
+		U.Data.searchSubscribe({
+			subId: J.Constant.subId.store,
 			filters,
 			sorts,
 			keys,
@@ -566,7 +580,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getItems () {
 		const { isLoading } = this.state;
-		const records = dbStore.getRecords(Constant.subId.store);
+		const records = S.Record.getRecords(J.Constant.subId.store);
 		const limit = this.getLimit();
 
 		let ret: any[] = [
@@ -601,7 +615,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	getViews (): any[] {
 		const views: any[] = [];
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
@@ -624,11 +638,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
-				sources = dbStore.getTypes();
+				sources = S.Record.getTypes();
 				break;
 
 			case I.StoreTab.Relation:
-				sources = dbStore.getRelations();
+				sources = S.Record.getRelations();
 				break;
 		};
 
@@ -639,14 +653,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		e.preventDefault();
 		e.stopPropagation();
 
-		Action.install(item, true);
+		Action.install(item, true, () => this.onOpen(item));
 	};
 
 	onRemove (e: any, item: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
+		if (S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
 			Action.uninstall(item, true);
 			analytics.event('ObjectUninstall', { route: analytics.route.store });
 		};
@@ -661,12 +675,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.refFilter.forceUpdate();
 		};
 
-		menuStore.resizeAll();
+		S.Menu.resizeAll();
 	};
 
 	getLimit () {
-		const container = UtilCommon.getPageContainer(this.props.isPopup);
-		const size = Constant.size.store;
+		const container = U.Common.getPageContainer(this.props.isPopup);
+		const size = J.Size.store;
 		const maxWidth = container.width() - size.border * 2;
 		const limit = Math.floor(maxWidth / (size.width + size.margin));
 
@@ -674,8 +688,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onBanner () {
-		popupStore.closeAll(null, () => {
-			popupStore.open('usecase', {});
+		S.Popup.closeAll(null, () => {
+			S.Popup.open('usecase', {});
 		});
 
 		analytics.event('ClickOnboardingTooltip', { type: 'explore', id: 'gallery' });
@@ -694,7 +708,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	onSort (e: any) {
 		const options = this.getSortOptions();
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: '#button-store-sort',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
@@ -712,13 +726,18 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getSortOptions () {
-		let options = [
+		let options: any[] = [
 			{ id: 'nameAsc', name: translate('pageMainStoreSortNameAsc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Asc },
-			{ id: 'nameDesc', name: translate('pageMainStoreSortNameDesc'), relationKey: 'name',  icon: 'relation c-shortText', type: I.SortType.Desc },
-			{ isDiv: true },
-			{ id: 'createdDateDesc', name: translate('pageMainStoreSortCreatedDesc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Desc },
-			{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate',  icon: 'relation c-date', type: I.SortType.Asc },
+			{ id: 'nameDesc', name: translate('pageMainStoreSortNameDesc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Desc },
 		];
+
+		if (this.view == View.Library) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'createdDateDesc', name: translate('pageMainStoreSortCreatedDesc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Desc },
+				{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Asc },
+			]);
+		};
 
 		if (this.tab == I.StoreTab.Type) {
 			options = options.concat([
@@ -748,13 +767,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.frame = raf(() => this.forceUpdate());
 		};
 
-		if (menuStore.isOpen(this.getMenuId())) {
+		if (S.Menu.isOpen(this.getMenuId())) {
 			if (this.refFilter && this.filter.length) {
 				this.refFilter.setValue(this.filter);
 				this.refFilter.focus();
 			};
 
-			menuStore.update(this.getMenuId(), { width: filter.outerWidth() });
+			S.Menu.update(this.getMenuId(), { width: filter.outerWidth() });
 		};
 	};
 

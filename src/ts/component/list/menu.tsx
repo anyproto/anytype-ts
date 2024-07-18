@@ -1,18 +1,16 @@
 import * as React from 'react';
 import { Menu } from 'Component';
-import { menuStore } from 'Store';
 import { observer } from 'mobx-react';
-import { I } from 'Lib';
+import { I, S } from 'Lib';
 
 interface Props {
-	dataset?: I.Dataset;
 	history: any;
 };
 
 const ListMenu = observer(class ListMenu extends React.Component<Props> {
 
 	render () {
-		const { list } = menuStore;
+		const { list } = S.Menu;
 		return (
 			<div className="menus">
 				{list.map((item: I.Menu, i: number) => (

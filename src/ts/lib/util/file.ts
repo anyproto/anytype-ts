@@ -1,7 +1,5 @@
 import loadImage from 'blueimp-load-image';
-import { UtilCommon, Relation } from 'Lib';
-import { commonStore } from 'Store';
-const Constant = require('json/constant.json');
+import { S, U, J, Relation } from 'Lib';
 
 const SIZE_UNIT = 1024;
 const UNITS = {
@@ -20,7 +18,7 @@ class UtilFile {
 		let ret = 0;
 		let unit = '';
 
-		for (let i = UtilCommon.objectLength(UNITS); i >= 1; --i) {
+		for (let i = U.Common.objectLength(UNITS); i >= 1; --i) {
 			const n = v / Math.pow(SIZE_UNIT, i - 1);
 			if ((n >= 0.9) || (i == 1)) {
 				ret = n;
@@ -28,7 +26,7 @@ class UtilFile {
 				break;
 			};
 		};
-		return UtilCommon.formatNumber(Number(UtilCommon.sprintf(`%0.2f`, ret))) + unit;
+		return U.Common.formatNumber(Number(U.Common.sprintf(`%0.2f`, ret))) + unit;
 	};
 
 	icon (object: any): string {
@@ -94,9 +92,9 @@ class UtilFile {
 			icon = 'presentation';
 		};
 
-		for (const k in Constant.fileExtension) {
-			const el = Constant.fileExtension[k];
-			if (!UtilCommon.hasProperty(el, 'length')) {
+		for (const k in J.Constant.fileExtension) {
+			const el = J.Constant.fileExtension[k];
+			if (!U.Common.hasProperty(el, 'length')) {
 				continue;
 			};
 
@@ -110,12 +108,12 @@ class UtilFile {
 	};
 
 	iconPath (object: any) {
-		const tp = commonStore.getThemePath();
+		const tp = S.Common.getThemePath();
 		return `img/${tp}icon/file/${this.icon(object)}.svg`;
 	};
 
 	iconImage (object: any): string {
-		const tp = commonStore.getThemePath();
+		const tp = S.Common.getThemePath();
 		return require(`img/${tp}icon/file/${this.icon(object)}.svg`).default;
 	};
 
@@ -165,7 +163,7 @@ class UtilFile {
 		const name = String(object.name || '');
 		const fileExt = String(object.fileExt || '');
 
-		if (!fileExt || new RegExp(`\\.${UtilCommon.regexEscape(fileExt)}$`).test(name)) {
+		if (!fileExt || new RegExp(`\\.${U.Common.regexEscape(fileExt)}$`).test(name)) {
 			return name;
 		};
 

@@ -22,6 +22,7 @@ import ListObjectManager from './list/objectManager';
 import Header from './header';
 import Footer from './footer';
 import Sidebar from './sidebar';
+import Vault from './vault';
 import Widget from './widget';
 
 import Menu from './menu';
@@ -80,12 +81,16 @@ import Cell from './block/dataview/cell';
 import ObjectName from './util/object/name';
 import ObjectDescription from './util/object/description';
 import ObjectType from './util/object/type';
+import ObjectCover from './util/object/cover';
 
 import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
 import MediaPdf from './util/media/pdf';
+import MediaMermaid from './util/media/mermaid';
 
 import ProgressBar from './util/progressBar';
+import Share from './util/share';
+import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
 export {
 	Page,
@@ -157,11 +162,13 @@ export {
 	Cell,
 
 	Sidebar,
+	Vault,
 	Widget,
 
 	ObjectName,
 	ObjectDescription,
 	ObjectType,
+	ObjectCover,
 
 	Menu,
 	MenuItemVertical,
@@ -169,6 +176,9 @@ export {
 	MediaAudio,
 	MediaVideo,
 	MediaPdf,
+	MediaMermaid,
 
-	ProgressBar
+	ProgressBar,
+	Share,
+	FooterAuthDisclaimer
 };

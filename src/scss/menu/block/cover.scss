@@ -1,14 +1,13 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuBlockCover { width: 410px; }
+	.menu.menuBlockCover { width: var(--menu-width-large); }
 	.menu.menuBlockCover {
-		.content { max-height: 450px; padding: 0px; overflow: visible !important; }
-
-		.wrap { display: flex; flex-direction: column; }
+		.content { max-height: unset; height: var(--menu-width-large);; overflow: visible; padding-bottom: 0px;  }
+		.wrap { display: flex; flex-direction: column; height: 100%; }
 
 		.head { 
-			border-bottom: 1px solid var(--color-shape-secondary); padding: 11px 16px; font-weight: 500; color: var(--color-control-active); 
+			border-bottom: 1px solid var(--color-shape-secondary); padding: 3px 14px 10px 14px; font-weight: 500; color: var(--color-control-active); 
 			flex-shrink: 0;
 		}
 		.head {
@@ -22,10 +21,9 @@
 			.inner { height: 35px; }
 		}
 
-		.emptySearch { line-height: 324px !important; }
 		.loaderWrapper { position: relative; background: none; }
 
-		.sections { overflow: auto; flex-grow: 1; }
+		.sections { overflow: hidden auto; flex-grow: 1; }
 		.section > .name { margin-bottom: 8px; }
 		.section:first-child { padding-top: 8px; }
 		.section:last-child { padding-bottom: 8px; }
@@ -44,13 +42,11 @@
 				.name { text-decoration: underline; }
 			}
 		}
+
+		.body { height: calc(100% - 36px); }
 	
-		.body.gallery {
-			.sections { height: 368px; }
-		}
 		.body.unsplash, .body.library {
-			.sections { height: 324px; }
-			.loaderWrapper { height: 324px; }
+			.sections, .emptySearch { height: calc(100% - 47px); }
 
 			.items { grid-template-columns: repeat(3, 120px); }
 			.item {
@@ -60,19 +56,14 @@
 
 		.body.upload { padding: 16px; }
 		.body.upload {
-			.loaderWrapper { height: 336px; }
-
 			.dropzone { 
-				height: 336px; display: flex; align-items: center; border-radius: 2px; background: var(--color-shape-highlight-medium);
-				justify-content: center; flex-direction: column; gap: 6px 0px;
+				display: flex; align-items: center; border-radius: 2px; background: var(--color-shape-highlight-medium);
+				justify-content: center; flex-direction: column; gap: 6px 0px; height: 100%;
 			}
 			.dropzone.isDraggingOver { background: var(--color-system-drop-zone); }
 
 			.dropzone {
-				.icon.coverUpload { 
-					width: 28px; height: 28px; background-image: url('~img/icon/cover/upload.svg');
-					display: block; 
-				}
+				.icon.coverUpload { width: 28px; height: 28px; background-image: url('~img/icon/cover/upload.svg'); display: block; }
 				.label {
 					span { color: var(--color-text-secondary); }
 				}
@@ -83,6 +74,8 @@
 
 html.platformWindows, html.platformLinux {
 	.menus {
-		.menu.menuBlockCover { width: 425px; }
+		.menu.menuBlockCover {
+			.sections { overflow-y: overlay; }
+		}
 	}
 }

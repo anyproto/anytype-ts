@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, UtilCommon, analytics, Storage, Preview, translate } from 'Lib';
+import { I, S, U, analytics, Storage, Preview, translate, sidebar } from 'Lib';
 import { Dimmer } from 'Component';
-import { menuStore, popupStore, commonStore } from 'Store';
-const Constant = require('json/constant.json');
 
 import PopupSettings from './settings';
 import PopupSettingsOnboarding from './settings/onboarding';
@@ -28,6 +26,7 @@ import PopupInviteConfirm from './invite/confirm';
 import PopupInviteQr from './invite/qr';
 import PopupMembership from './membership';
 import PopupMembershipFinalization from './membership/finalization';
+import PopupShare from './share';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -73,6 +72,7 @@ class Popup extends React.Component<I.Popup> {
 			inviteQr:				 PopupInviteQr,
 			membership: 		 	 PopupMembership,
 			membershipFinalization:  PopupMembershipFinalization,
+			share:					 PopupShare,
 		};
 		
 		const popupId = this.getId();
@@ -83,12 +83,12 @@ class Popup extends React.Component<I.Popup> {
 			cn.push(className);
 		};
 
-		if (popupStore.showDimmerIds().includes(id)) {
+		if (S.Popup.showDimmerIds().includes(id)) {
 			cn.push('showDimmer');
 		};
 		
 		if (!Component) {
-			return <div>{UtilCommon.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
+			return <div>{U.Common.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
 		};
 
 		return (
@@ -168,7 +168,7 @@ class Popup extends React.Component<I.Popup> {
 			window.setTimeout(() => { 
 				wrap.css({ transform: 'none' }); 
 				this.isAnimating = false;
-			}, popupStore.getTimeout());
+			}, S.Popup.getTimeout());
 		});
 	};
 	
@@ -182,22 +182,17 @@ class Popup extends React.Component<I.Popup> {
 					
 			const node = $(this.node);
 			const inner = node.find('.innerWrap');
-			const { ww } = UtilCommon.getWindowDimensions();
+			const { ww } = U.Common.getWindowDimensions();
 
-			const sidebar = $('#sidebar');
-			const isRight = sidebar.hasClass('right');
 			const width = inner.outerWidth();
 			const height = inner.outerHeight();
 
 			let sw = 0;
-			if (commonStore.isSidebarFixed && sidebar.hasClass('active') && !popupStore.showDimmerIds().includes(id)) {
-				sw = sidebar.outerWidth();
+			if (!S.Popup.showDimmerIds().includes(id)) {
+				sw = sidebar.getDummyWidth();
 			};
 
-			let x = (ww - sw) / 2 - width / 2;
-			if (!isRight) {
-				x += sw;
-			};
+			let x = (ww - sw) / 2 - width / 2 + sw;
 			if (width >= ww - sw) {
 				x -= sw / 2;
 			};
@@ -214,14 +209,14 @@ class Popup extends React.Component<I.Popup> {
 		Preview.tooltipHide(true);
 
 		if (!preventMenuClose) {
-			menuStore.closeAll();
+			S.Menu.closeAll();
 		};
 
-		popupStore.close(id, callBack);
+		S.Popup.close(id, callBack);
 	};
 
 	onDimmer () {
-		if (!this.props.param.preventClose) {
+		if (!this.props.param.preventCloseByClick) {
 			this.close();
 		};
 	};
@@ -235,7 +230,7 @@ class Popup extends React.Component<I.Popup> {
 	};
 
 	getId (): string {
-		return UtilCommon.toCamelCase('popup-' + this.props.id);
+		return U.Common.toCamelCase('popup-' + this.props.id);
 	};
 
 };

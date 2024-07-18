@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { I, UtilDate } from 'Lib';
+import { I, U } from 'Lib';
 
 class FooterAuthIndex extends React.Component<I.FooterComponent> {
 	
 	render () {
-		return <div className="copy">{UtilDate.date('Y', UtilDate.now())}, Anytype</div>;
+		return <div className="copy">{U.Date.date('Y', U.Date.now())}, Anytype</div>;
 	};
 
 };

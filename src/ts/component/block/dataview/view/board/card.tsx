@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
-import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
+import { I, S, U, Relation, keyboard } from 'Lib';
 import { Cell, SelectionTarget } from 'Component';
 
 interface Props extends I.ViewComponent {
@@ -20,9 +19,9 @@ const Card = observer(class Card extends React.Component<Props> {
 		const view = getView();
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
-		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
-		const record = detailStore.get(subId, id);
-		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout) ];
+		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
+		const record = S.Detail.get(subId, id);
+		const cn = [ 'card', U.Data.layoutClass(record.id, record.layout) ];
 		const { done } = record;
 
 		let content = (
@@ -69,7 +68,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				onDragStart={e => onDragStartCard(e, groupId, record)}
 				onClick={e => this.onClick(e)}
 				onContextMenu={e => onContext(e, record.id)}
-				{...UtilCommon.dataProps({ id: record.id })}
+				{...U.Common.dataProps({ id: record.id })}
 			>
 				{content}
 			</div>
@@ -92,18 +91,18 @@ const Card = observer(class Card extends React.Component<Props> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		const { rootId, block, groupId, id, onContext, dataset } = this.props;
-		const { selection } = dataset || {};
-		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
-		const record = detailStore.get(subId, id);
+		const { rootId, block, groupId, id, onContext } = this.props;
+		const selection = S.Common.getRef('selectionProvider');
+		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
+		const record = S.Detail.get(subId, id);
 		const cb = {
 			0: () => {
-				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openConfig(record); 
+				keyboard.withCommand(e) ? U.Object.openWindow(record) : U.Object.openConfig(record); 
 			},
 			2: () => onContext(e, record.id)
 		};
 
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		const ids = selection?.get(I.SelectType.Record) || [];
 		if ((keyboard.withCommand(e) && ids.length) || keyboard.isSelectionClearDisabled) {
 			return;
 		};
@@ -114,9 +113,10 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		const { recordId, getRecord, onCellClick } = this.props;
-		const record = getRecord(recordId);
-		const relation = dbStore.getRelationByKey(vr.relationKey);
+		const { id, rootId, block, groupId, onCellClick } = this.props;
+		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
+		const record = S.Detail.get(subId, id);
+		const relation = S.Record.getRelationByKey(vr.relationKey);
 
 		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
 			return;
@@ -125,7 +125,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		onCellClick(e, relation.relationKey, record.id);
+		onCellClick(e, relation.relationKey, record.id, record);
 	};
 
 	resize () {

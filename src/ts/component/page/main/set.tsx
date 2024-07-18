@@ -3,11 +3,9 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, UtilData, UtilCommon, Action, UtilSpace, keyboard, UtilRouter, translate } from 'Lib';
-import { blockStore, detailStore, dbStore, menuStore } from 'Store';
+import { I, M, C, S, U, J, Action, keyboard, translate } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
-const Constant = require('json/constant.json');
 
 interface State {
 	isLoading: boolean;
@@ -40,7 +38,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	render () {
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
-		const check = UtilData.checkDetails(rootId);
+		const check = U.Data.checkDetails(rootId);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -51,9 +49,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		if (isLoading) {
 			content = <Loader id="loader" />;
 		} else {
-			const object = detailStore.get(rootId, rootId, []);
-			const isCollection = object.layout == I.ObjectLayout.Collection;
-			const children = blockStore.getChildren(rootId, rootId, it => it.isDataview());
+			const object = S.Detail.get(rootId, rootId, []);
+			const isCollection = U.Object.isCollectionLayout(object.layout);
+			const children = S.Block.getChildren(rootId, rootId, it => it.isDataview());
 			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 			const placeholder = isCollection ? translate('defaultNameCollection') : translate('defaultNameSet');
 
@@ -88,10 +86,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		return (
-			<div 
-				ref={node => this.node = node}
-				className={[ 'setWrapper', check.className ].join(' ')}
-			>
+			<div ref={node => this.node = node}>
 				<Header 
 					{...this.props} 
 					component="mainObject" 
@@ -99,7 +94,11 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 					rootId={rootId} 
 				/>
 
-				{content}
+				<div id="bodyWrapper" className="wrapper">
+					<div className={[ 'editorWrapper', check.className ].join(' ')}>
+						{content}
+					</div>
+				</div>
 
 				<Footer component="mainObject" {...this.props} />
 			</div>
@@ -125,7 +124,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	unbind () {
-		const namespace = this.getNamespace();
+		const { isPopup } = this.props;
+		const namespace = U.Common.getEventNamespace(isPopup);
 		const events = [ 'keydown', 'scroll' ];
 
 		$(window).off(events.map(it => `${it}.set${namespace}`).join(' '));
@@ -134,8 +134,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	rebind () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const namespace = this.getNamespace();
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const namespace = U.Common.getEventNamespace(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 
 		this.unbind();
 
@@ -150,15 +150,11 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 
 		if (object.isDeleted) {
 			this.setState({ isDeleted: true });
 		};
-	};
-
-	getNamespace () {
-		return this.props.isPopup ? '-popup' : '';
 	};
 
 	open () {
@@ -172,12 +168,12 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		this.id = rootId;
 		this.setState({ isDeleted: false, isLoading: true });
 
-		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
+		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
-			const object = detailStore.get(rootId, rootId, []);
+			const object = S.Detail.get(rootId, rootId, []);
 			if (object.isDeleted) {
 				this.setState({ isDeleted: true, isLoading: false });
 				return;
@@ -213,29 +209,27 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	onScroll () {
-		const { dataset, isPopup } = this.props;
+		const { isPopup } = this.props;
+		const selection = S.Common.getRef('selectionProvider');
 
 		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 
-		const { selection } = dataset || {};
-		if (selection) {
-			selection.renderSelection();
-		};
+		selection?.renderSelection();
 	};
 
 	onKeyDown (e: any): void {
-		const { dataset, isPopup } = this.props;
+		const { isPopup } = this.props;
 
 		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 
 		const node = $(this.node);
-		const { selection } = dataset || {};
+		const selection = S.Common.getRef('selectionProvider');
 		const cmd = keyboard.cmdKey();
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
 		const rootId = this.getRootId();
 
@@ -249,11 +243,11 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			keyboard.shortcut(`${cmd}+a`, e, () => {
 				e.preventDefault();
 
-				const records = dbStore.getRecordIds(dbStore.getSubId(rootId, Constant.blockId.dataview), '');
+				const records = S.Record.getRecordIds(S.Record.getSubId(rootId, J.Constant.blockId.dataview), '');
 				selection.set(I.SelectType.Record, records);
 			});
 
-			if (count && !menuStore.isOpen()) {
+			if (count && !S.Menu.isOpen()) {
 				keyboard.shortcut('backspace, delete', e, () => {
 					e.preventDefault();
 					Action.archive(ids);
@@ -261,10 +255,16 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				});
 			};
 		};
+
+		// History
+		keyboard.shortcut('ctrl+h, cmd+y', e, () => {
+			e.preventDefault();
+			U.Object.openAuto({ layout: I.ObjectLayout.History, id: rootId });
+		});
 	};
 
 	isReadonly () {
-		return !UtilSpace.canMyParticipantWrite();
+		return !U.Space.canMyParticipantWrite();
 	};
 
 	resize () {
@@ -279,16 +279,15 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			const win = $(window);
 			const node = $(this.node);
 			const cover = node.find('.block.blockCover');
-			const container = UtilCommon.getPageContainer(isPopup);
+			const container = U.Common.getPageContainer(isPopup);
 			const header = container.find('#header');
-			const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
+			const hh = isPopup ? header.height() : J.Size.header;
 
 			if (cover.length) {
 				cover.css({ top: hh });
 			};
 
 			container.css({ minHeight: isPopup ? '' : win.height() });
-			node.css({ paddingTop: isPopup ? 0 : hh });
 		});
 	};
 

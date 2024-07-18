@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, UtilObject, UtilSpace } from 'Lib';
+import { I, C, U } from 'Lib';
 
 class PageMainObject extends React.Component<I.PageComponent> {
 
@@ -13,7 +13,7 @@ class PageMainObject extends React.Component<I.PageComponent> {
 
 		C.ObjectShow(id, '', spaceId, (message: any) => {
 			if (message.error.code) {
-				UtilSpace.openDashboard('route');
+				U.Space.openDashboard('route');
 				return;
 			};
 
@@ -25,7 +25,7 @@ class PageMainObject extends React.Component<I.PageComponent> {
 				return;
 			};
 
-			UtilObject.openRoute(item.details);
+			U.Object.openRoute(item.details);
 		});
 	};
 

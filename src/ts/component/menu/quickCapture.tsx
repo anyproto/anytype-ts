@@ -3,9 +3,7 @@ import $ from 'jquery';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { IconObject, ObjectName, Icon, Filter } from 'Component';
-import { analytics, C, I, keyboard, UtilObject, UtilMenu, translate, UtilData, UtilCommon, Action, Storage, Preview } from 'Lib';
-import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, analytics, keyboard, translate, Action, Storage, Preview, sidebar } from 'Lib';
 
 interface State {
 	isExpanded: boolean;
@@ -48,7 +46,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const { isExpanded } = this.state;
 		const { getId } = this.props;
 		const sections = this.getSections();
-		const { type } = commonStore;
+		const { type } = S.Common;
 
 		const Items = SortableContainer(({ items }) => (
 			<div className="items">
@@ -204,7 +202,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
 		window.setTimeout(() => setActive(), 15);
 
-		if (commonStore.navigationMenu == I.NavigationMenuMode.Hover) {
+		if (S.Common.navigationMenu == I.NavigationMenuMode.Hover) {
 			$(`#${getId()}`).off(`mouseleave`).on(`mouseleave`, () => {
 				if (!this.state.isExpanded) {
 					close();
@@ -221,19 +219,19 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const filter = String(this.filter || '');
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, S.Common.space ] },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
-			{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
+			{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
 		];
 		const sorts = [
 			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
-			keys: UtilData.typeRelationKeys(),
+			keys: U.Data.typeRelationKeys(),
 			fullText: filter,
 			offset: this.offset,
 			ignoreWorkspace: true,
@@ -261,7 +259,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 	getSections () {
 		const { isExpanded } = this.state;
-		const { space, type } = commonStore;
+		const { space, type } = S.Common;
 		const pinnedIds = Storage.getPinnedTypes();
 		const hasClipboard = this.clipboardItems && this.clipboardItems.length;
 		const cmd = keyboard.cmdSymbol();
@@ -270,7 +268,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		let items: any[] = [];
 
 		if (isExpanded) {
-			const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+			const items = U.Common.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 			const library = items.filter(it => (it.spaceId == space)).map((it, i) => {
 				if (isExpanded && (it.id == type)) {
 					it.tooltip = translate('commonDefaultType');
@@ -278,15 +276,15 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				return it;
 			});
 
-			const pinned = items.filter(it => pinnedIds.includes(it.id)).sort((c1: any, c2: any) => UtilData.sortByPinnedTypes(c1, c2, pinnedIds));
+			const pinned = items.filter(it => pinnedIds.includes(it.id)).sort((c1: any, c2: any) => U.Data.sortByPinnedTypes(c1, c2, pinnedIds));
 			const librarySources = library.map(it => it.sourceObject);
-			const groups = library.filter(it => UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
-			const objects = library.filter(it => !UtilObject.getSetLayouts().includes(it.recommendedLayout) && !pinnedIds.includes(it.id));
+			const groups = library.filter(it => U.Object.isInSetLayouts(it.recommendedLayout) && !pinnedIds.includes(it.id));
+			const objects = library.filter(it => !U.Object.isInSetLayouts(it.recommendedLayout) && !pinnedIds.includes(it.id));
 
 			if (this.filter) {
 				objects.push({ 
 					id: SystemIds.Add, 
-					name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), this.filter),
+					name: U.Common.sprintf(translate('menuTypeSuggestCreateType'), this.filter),
 				});
 			};
 
@@ -302,16 +300,16 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			if (this.filter) {
 				sections.push({ 
 					id: 'store', name: translate('commonAnytypeLibrary'), 
-					children: items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id)),
+					children: items.filter(it => (it.spaceId == J.Constant.storeSpaceId) && !librarySources.includes(it.id)),
 				});
 			};
 		} else {
-			const pinned = pinnedIds.map(id => dbStore.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
+			const pinned = pinnedIds.map(id => S.Record.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
 
-			items = UtilData.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
+			items = U.Data.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
 			items = items.slice(0, LIMIT_PINNED - pinned.length);
-			items.push(dbStore.getSetType());
-			items.push(dbStore.getCollectionType());
+			items.push(S.Record.getSetType());
+			items.push(S.Record.getCollectionType());
 			items = [].concat(pinned, items);
 			items = items.filter(it => it);
 			
@@ -341,7 +339,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			sections.push({ id: 'collapsed', children: items });
 		};
 
-		return UtilMenu.sectionsMap(sections.filter((section: any) => {
+		return U.Menu.sectionsMap(sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
 			return section.children.length > 0;
 		}));
@@ -363,7 +361,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => this.forceUpdate(), Constant.delay.keyboard);
+		this.timeoutFilter = window.setTimeout(() => this.forceUpdate(), J.Constant.delay.keyboard);
 	};
 
 	onKeyDown (e: any) {
@@ -443,24 +441,24 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			};
 
 			let flags: I.ObjectFlag[] = [];
-			if (!UtilObject.isSetLayout(type.recommendedLayout)) {
+			if (!U.Object.isInSetLayouts(type.recommendedLayout)) {
 				flags = flags.concat([ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 			};
 
-			C.ObjectCreate({ layout: type.recommendedLayout }, flags, item.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
+			C.ObjectCreate({ layout: type.recommendedLayout }, flags, item.defaultTemplateId, type.uniqueKey, S.Common.space, (message: any) => {
 				if (message.error.code || !message.details) {
 					return;
 				};
 
 				const object = message.details;
 
-				UtilObject.openAuto(object);
+				U.Object.openAuto(object);
 				analytics.createObject(object.type, object.layout, analytics.route.navigation, message.middleTime);
 			});
 		};
 
 		if (item.itemId == SystemIds.Add) {
-			C.ObjectCreateObjectType({ name: this.filter }, [], commonStore.space, (message: any) => {
+			C.ObjectCreateObjectType({ name: this.filter }, [], S.Common.space, (message: any) => {
 				if (!message.error.code) {
 					cb(message.details);
 					analytics.event('CreateType');
@@ -491,11 +489,11 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 		const { getId, param } = this.props;
 		const { className, classNameWrap } = param;
-		const type = dbStore.getTypeById(item.itemId);
+		const type = S.Record.getTypeById(item.itemId);
 		const isPinned = Storage.getPinnedTypes().includes(item.itemId);
 		const canPin = type.isInstalled;
-		const canDefault = type.isInstalled && !UtilObject.getSetLayouts().includes(item.recommendedLayout) && (type.id != commonStore.type);
-		const canDelete = type.isInstalled && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+		const canDefault = type.isInstalled && !U.Object.isInSetLayouts(item.recommendedLayout) && (type.id != S.Common.type);
+		const canDelete = type.isInstalled && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 		const route = analytics.route.navigation;
 
 		let options: any[] = [
@@ -511,7 +509,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			]);
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			element: `#${getId()} #item-${item.id}`,
 			vertical: I.MenuDirection.Top,
 			offsetY: -4,
@@ -523,7 +521,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 					switch (element.id) {
 
 						case 'open': {
-							UtilObject.openAuto({ ...item, id: item.itemId });
+							U.Object.openAuto({ ...item, id: item.itemId });
 							break;
 						};
 
@@ -535,14 +533,14 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 						};
 
 						case 'default': {
-							commonStore.typeSet(item.uniqueKey);
+							S.Common.typeSet(item.uniqueKey);
 							analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route });
 							this.forceUpdate();
 							break;
 						};
 
 						case 'remove': {
-							if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
+							if (S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
 								Action.uninstall({ ...item, id: item.itemId }, true, route);
 							};
 							break;
@@ -596,7 +594,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	};
 
 	async onPaste () {
-		const type = dbStore.getTypeById(commonStore.type);
+		const type = S.Record.getTypeById(S.Common.type);
 		const data = await this.getClipboardData();
 
 		data.forEach(async item => {
@@ -623,14 +621,14 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			const url = UtilCommon.matchUrl(text);
+			const url = U.Common.matchUrl(text);
 
 			if (url) {
-				C.ObjectCreateBookmark({ source: url }, commonStore.space, (message: any) => {
-					UtilObject.openAuto(message.details);
+				C.ObjectCreateBookmark({ source: url }, S.Common.space, (message: any) => {
+					U.Object.openAuto(message.details);
 				});
 			} else {
-				C.ObjectCreate({}, [], type?.defaultTemplateId, type?.uniqueKey, commonStore.space, (message: any) => {
+				C.ObjectCreate({}, [], type?.defaultTemplateId, type?.uniqueKey, S.Common.space, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
@@ -638,7 +636,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 					const object = message.details;
 
 					C.BlockPaste (object.id, '', { from: 0, to: 0 }, [], false, { html, text }, '', () => {
-						UtilObject.openAuto(object);
+						U.Object.openAuto(object);
 					});
 
 					analytics.createObject(object.type, object.layout, analytics.route.clipboard, message.middleTime);
@@ -656,9 +654,8 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 	beforePosition () {
 		const { getId } = this.props;
 		const obj = $(`#${getId()}`);
-		const { ww } = UtilCommon.getWindowDimensions();
-		const sidebar = $('#sidebar');
-		const sw = sidebar.outerWidth();
+		const { ww } = U.Common.getWindowDimensions();
+		const sw = sidebar.getDummyWidth();
 		
 		obj.css({ width: '' });
 
@@ -667,7 +664,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
 		});
 
-		obj.css({ width: Math.min(ww - Constant.size.menu.border * 2 - sw, Math.ceil(obj.outerWidth())) });
+		obj.css({ width: Math.min(ww - J.Size.menuBorder * 2 - sw, Math.ceil(obj.outerWidth())) });
 	};
 
 };

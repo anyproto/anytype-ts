@@ -1,4 +1,4 @@
-import { UtilCommon } from 'Lib';
+import { U } from 'Lib';
 
 class Renderer {
 
@@ -6,7 +6,7 @@ class Renderer {
 		args = args || [];
 
 		const cmd = args[0];
-		const electron = UtilCommon.getElectron();
+		const electron = U.Common.getElectron();
 		const currentWindow = electron.currentWindow();
 		const winId = Number(currentWindow?.windowId) || 0;
 
@@ -18,16 +18,16 @@ class Renderer {
 			return it;
 		});
 
-		return electron.Api(winId, cmd, UtilCommon.objectCopy(args));
+		return electron.Api(winId, cmd, U.Common.objectCopy(args));
 	};
 
 	on (event: string, callBack: any) {
 		this.remove(event);
-		UtilCommon.getElectron().on(event, (...args: any[]) => callBack.apply(this, args));
+		U.Common.getElectron().on(event, (...args: any[]) => callBack.apply(this, args));
 	};
 
 	remove (event: string) {
-		UtilCommon.getElectron().removeAllListeners(event);
+		U.Common.getElectron().removeAllListeners(event);
 	};
 
 };

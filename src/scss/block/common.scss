@@ -9,6 +9,12 @@
 		.wrapMenu, .wrapContent { display: none; }
 	}
 
+	.block.diffNone {
+		> .wrapMenu {
+			.iconObject { display: block; }
+		}
+	}
+
 	.block {
 		.wrapMenu { width: 48px; text-align: right; position: relative; flex-shrink: 0; z-index: 1; flex-basis: 48px; }
 		.wrapContent { width: calc(100% - 48px); position: relative; flex-grow: 1; }
@@ -18,6 +24,10 @@
 			padding: 0px; width: 100%; position: absolute; left: 0px; border-radius: 0px !important; pointer-events: none;
 		}
 		.wrapContent > .dropTarget.targetBot { height: 2px; bottom: 0px; }
+
+		.wrapMenu {
+			.iconObject { position: absolute; top: 4px; right: 2px; display: none; }
+		}
 
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 

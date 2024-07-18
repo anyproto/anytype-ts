@@ -11,6 +11,11 @@
 			pointer-events: none; border-radius: 6px;
 		}
 
+		.deleted { @include text-paragraph; color: var(--color-control-active); display: flex; gap: 0px 6px; align-items: center; }
+		.deleted {
+            .icon.ghost { width: 24px; height: 24px; }
+        }
+
 		.icon.resize, .icon.download { position: absolute; z-index: 1; opacity: 0; cursor: default; transition: $transitionAllCommon; }
 		.icon.resize { width: 20px; height: 20px; right: 0px; bottom: 0px; cursor: nwse-resize; background-image: url('~img/icon/resize.svg'); }
 		.icon.download { width: 28px; height: 28px; right: 8px; top: 8px; background-image: url('~img/icon/download.svg'); }

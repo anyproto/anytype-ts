@@ -2,10 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, C, focus, UtilObject, Action } from 'Lib';
-import { menuStore, blockStore, detailStore, commonStore } from 'Store';
+import { I, C, S, U, J, focus, keyboard } from 'Lib';
 import ControlButtons from './controlButtons';
-const Constant = require('json/constant.json');
 
 interface Props extends I.PageComponent {
 	readonly?: boolean;
@@ -45,7 +43,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	render (): any {
 		const { rootId, readonly } = this.props;
 		const { loading } = this.state;
-		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys);
+		const object = S.Detail.get(rootId, rootId, J.Relation.cover);
 		const cn = [ 'editorControls', 'editorControlElements' ];
 		
 		if ((object.coverType != I.CoverType.None) && object.coverId) {
@@ -97,58 +95,28 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	onIcon (e: any) {
 		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
-
-		if (!root) {
-			return;
-		};
-		
-		focus.clear(true);
-		root.isObjectHuman() || root.isObjectParticipant() ? this.onIconUser() : this.onIconPage();
-	};
-	
-	onIconPage () {
-		const { rootId } = this.props;
 		const node = $(this.node);
-		const object = detailStore.get(rootId, rootId, []);
-		const { iconEmoji, iconImage, layout } = object;
-		const noUpload = layout == I.ObjectLayout.Type;
+		const object = S.Detail.get(rootId, rootId, []);
+		const cb = () => S.Menu.update('smile', { element: `#block-icon-${rootId}` });
+		const root = S.Block.getLeaf(rootId, rootId);
 
-		menuStore.open('smile', { 
-			element: '.editorControls #button-icon',
+		focus.clear(true);
+
+		S.Menu.open('smile', { 
+			element: node.find('#button-icon'),
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => {
-				node.addClass('hover');
-			},
-			onClose: () => {
-				node.removeClass('hover');
-			},
+			onOpen: () => node.addClass('hover'),
+			onClose: () => node.removeClass('hover'),
 			data: {
-				noUpload,
-				noRemove: !(iconEmoji || iconImage),
+				noUpload: root.isObjectType(),
+				value: (object.iconEmoji || object.iconImage || ''),
 				onSelect: (icon: string) => {
-					UtilObject.setIcon(rootId, icon, '', () => {
-						menuStore.update('smile', { element: `#block-icon-${rootId}` });
-					});
+					U.Object.setIcon(rootId, icon, '', cb);
 				},
 				onUpload (objectId: string) {
-					UtilObject.setIcon(rootId, '', objectId, () => {
-						menuStore.update('smile', { element: `#block-icon-${rootId}` });
-					});
+					U.Object.setIcon(rootId, '', objectId, cb);
 				},
 			}
-		});
-	};
-	
-	onIconUser () {
-		const { rootId } = this.props;
-
-		Action.openFile(Constant.fileExtension.cover, paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
-				if (message.objectId) {
-					UtilObject.setIcon(rootId, '', message.objectId);
-				};
-			});
 		});
 	};
 	
@@ -167,15 +135,15 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onCoverSelect (item: any) {
 		const { rootId } = this.props;
 
-		UtilObject.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+		U.Object.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 
 	onLayout (e: any) {
 		const { rootId, onLayoutSelect } = this.props;
 		const node = $(this.node);
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 		
-		menuStore.open('blockLayout', { 
+		S.Menu.open('blockLayout', { 
 			element: '.editorControls #button-layout',
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
@@ -184,7 +152,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			onClose: () => {
 				node.removeClass('hover');
 			},
-			subIds: Constant.menuIds.layout,
+			subIds: J.Menu.layout,
 			data: {
 				rootId,
 				value: object.layout,
@@ -216,18 +184,16 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { dataset } = this.props;
-		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(this.node);
 		
 		node.removeClass('isDraggingOver');
-		preventCommonDrop(true);
+		keyboard.disableCommonDrop(true);
 		this.onUploadStart();
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setState({ loading: false });
-			preventCommonDrop(false);
+			keyboard.disableCommonDrop(false);
 			
 			if (!message.error.code) {
 				this.onUpload(I.CoverType.Upload, message.objectId);
@@ -240,7 +206,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 	
 	onUpload (type: I.CoverType, objectId: string) {
-		UtilObject.setCover(this.props.rootId, type, objectId, 0, -0.25, 0, () => this.setState({ loading: false }));
+		U.Object.setCover(this.props.rootId, type, objectId, 0, -0.25, 0, () => this.setState({ loading: false }));
 	};
 
 });

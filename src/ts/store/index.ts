@@ -1,21 +1,21 @@
-import { commonStore } from './common';
-import { authStore } from './auth';
-import { blockStore } from './block';
-import { detailStore } from './detail';
-import { dbStore } from './db';
-import { menuStore } from './menu';
-import { popupStore } from './popup';
-import { extensionStore } from './extension';
-import { notificationStore } from './notification';
+import { Common } from './common';
+import { Record } from './record';
+import { Auth } from './auth';
+import { Detail } from './detail';
+import { Block } from './block';
+import { Menu } from './menu';
+import { Popup } from './popup';
+import { Notification } from './notification';
+import { Extension } from './extension';
 
 export {
-	commonStore,
-	authStore,
-	blockStore,
-	detailStore,
-	dbStore,
-	menuStore,
-	popupStore,
-	extensionStore,
-	notificationStore,
+	Common,
+	Record,
+	Auth,
+	Detail,
+	Block,
+	Menu,
+	Popup,
+	Notification,
+	Extension,
 };

@@ -1,15 +1,13 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import Prism from 'prismjs';
 import raf from 'raf';
-import { instance as viz } from '@viz-js/viz';
 import DOMPurify from 'dompurify';
+import Prism from 'prismjs';
+import { instance as viz } from '@viz-js/viz';
 import { observer } from 'mobx-react';
-import { Icon, Label, Editable, Dimmer, Select, Error } from 'Component';
-import { I, C, keyboard, UtilCommon, UtilMenu, focus, Renderer, translate, UtilEmbed, UtilData } from 'Lib';
-import { menuStore, commonStore, blockStore } from 'Store';
-const Constant = require('json/constant.json');
-const Theme = require('json/theme.json');
+import { Icon, Label, Editable, Dimmer, Select, Error, MediaMermaid } from 'Component';
+import { I, C, S, U, J, keyboard, focus, Renderer, translate } from 'Lib';
 
 const katex = require('katex');
 const pako = require('pako');
@@ -59,13 +57,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	render () {
+		const { isOnline } = S.Common;
 		const { isShowing, isEditing } = this.state;
 		const { readonly, block } = this.props;
 		const { content, fields, hAlign } = block;
 		const { processor } = content;
 		const { width, type } = fields || {};
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
-		const menuItem: any = UtilMenu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
+		const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
 		const text = String(content.text || '');
 		const css: any = {};
 
@@ -87,7 +86,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		let empty = '';
 		let placeholder = '';
 
-		if (UtilEmbed.allowBlockResize(processor) && text) {
+		if (U.Embed.allowBlockResize(processor) && text) {
 			resize = <Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />;
 		};
 
@@ -97,7 +96,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					id={`block-${block.id}-select`} 
 					ref={ref => this.refType = ref}
 					value={type} 
-					options={UtilEmbed.getKrokiOptions()} 
+					options={U.Embed.getKrokiOptions()} 
 					arrowClassName="light" 
 					onChange={this.onKrokiTypeChange}
 					showOn="mouseDown"
@@ -116,10 +115,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			);
 		} else {
 			source = <Icon className="source" onMouseDown={this.onEdit} />;
-			placeholder = UtilCommon.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
-			empty = !text ? UtilCommon.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
+			placeholder = U.Common.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
+			empty = !text ? U.Common.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 
-			if (!isShowing && text && !UtilEmbed.allowAutoRender(processor)) {
+			if (!isShowing && text && !U.Embed.allowAutoRender(processor)) {
 				cn.push('withPreview');
 			};
 		};
@@ -136,9 +135,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				<div id="valueWrap" className="valueWrap resizable" style={css}>
 					{select ? <div className="selectWrap">{select}</div> : ''}
 
-					<div className="preview" onClick={this.onPreview} />
+					<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={this.onPreview}>
+						<Label text={translate('blockEmbedOffline')} />
+					</div>
 					<div id="value" onMouseDown={this.onEdit} />
-					<div id={this.getContainerId()} />
 
 					{empty ? <Label text={empty} className="label empty" onMouseDown={this.onEdit} /> : ''}					
 					{source}
@@ -181,8 +181,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this._isMounted = false;
 		this.unbind();
 
-		$(`#d${this.getContainerId()}`).remove();
-
 		window.clearTimeout(this.timeoutChange);
 		window.clearTimeout(this.timeoutScroll);
 	};
@@ -198,17 +196,19 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	rebind () {
+		const { isOnline } = S.Common;
 		const { block, isPopup } = this.props;
 		const { processor } = block.content;
 		const { isEditing, isShowing } = this.state;
 		const win = $(window);
 		const node = $(this.node);
+		const preview = node.find('#preview');
 
 		this.unbind();
 
 		if (isEditing) {
 			win.on(`mousedown.${block.id}`, (e: any) => {
-				if (!this._isMounted || menuStore.isOpenList([ 'blockLatex', 'select' ])) {
+				if (!this._isMounted || S.Menu.isOpenList([ 'blockLatex', 'select' ])) {
 					return;
 				};
 
@@ -218,25 +218,25 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 				e.stopPropagation();
 
-				menuStore.close('blockLatex');
+				S.Menu.close('blockLatex');
 
 				this.placeholderCheck();
 				this.save(() => { 
 					this.setEditing(false);
-					menuStore.close('previewLatex');
+					S.Menu.close('previewLatex');
 				});
 			});
 		};
 
-		win.on(`online.${block.id} offline.${block.id}`, () => {
-			if ((isShowing || UtilEmbed.allowAutoRender(processor)) && navigator.onLine) {
-				node.find('#receiver').remove('');
-				this.setContent(this.text);
-			};
-		});
+		node.find('#receiver').remove();
+		isOnline ? preview.hide() : preview.show();
 
-		if (!UtilEmbed.allowAutoRender(processor)) {
-			const container = UtilCommon.getScrollContainer(isPopup);
+		if (isOnline && (isShowing || U.Embed.allowAutoRender(processor))) {
+			this.setContent(this.text);
+		};
+
+		if (!U.Embed.allowAutoRender(processor)) {
+			const container = U.Common.getScrollContainer(isPopup);
 			container.on(`scroll.${block.id}`, () => this.onScroll());
 		};
 
@@ -248,7 +248,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 	unbind () {
 		const { block, isPopup } = this.props;
-		const container = UtilCommon.getScrollContainer(isPopup);
+		const container = U.Common.getScrollContainer(isPopup);
 		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'resize' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
@@ -259,7 +259,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { block, isPopup } = this.props;
 		const { processor } = block.content;
 
-		if (UtilEmbed.allowAutoRender(processor)) {
+		if (U.Embed.allowAutoRender(processor)) {
 			return;
 		};
 
@@ -269,7 +269,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				return;
 			};
 
-			const container = UtilCommon.getScrollContainer(isPopup);
+			const container = U.Common.getScrollContainer(isPopup);
 			const node = $(this.node);
 			const ch = container.height();
 			const st = container.scrollTop();
@@ -280,10 +280,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				this.setShowing(true);
 			};
 		}, 50);
-	};
-
-	getContainerId () {
-		return [ 'block', this.props.block.id, 'container' ].join('-');
 	};
 
 	setEditing (isEditing: boolean) {
@@ -359,12 +355,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		const { filter } = commonStore;
+		const { filter } = S.Common;
 		const range = this.getRange();
 
 		keyboard.shortcut('backspace', e, () => {
 			if (range && (range.from == filter.from)) {
-				menuStore.close('blockLatex');
+				S.Menu.close('blockLatex');
 			};
 		});
 	};
@@ -379,12 +375,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const range = this.getRange();
 
 		if (block.isEmbedLatex()) {
-			const { filter } = commonStore;
+			const { filter } = S.Common;
 			const symbolBefore = value[range?.from - 1];
-			const menuOpen = menuStore.isOpen('blockLatex');
+			const menuOpen = S.Menu.isOpen('blockLatex');
 
 			if ((symbolBefore == '\\') && !keyboard.isSpecial(e)) {
-				commonStore.filterSet(range.from, '');
+				S.Common.filterSet(range.from, '');
 				this.onLatexMenu(e, 'input', false);
 			};
 
@@ -392,7 +388,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				const d = range.from - filter.from;
 				if (d >= 0) {
 					const part = value.substring(filter.from, filter.from + d).replace(/^\\/, '');
-					commonStore.filterSetText(part);
+					S.Common.filterSetText(part);
 				};
 			};
 		};
@@ -421,9 +417,9 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { block } = this.props;
 		const { fields } = block;
 		const data = e.clipboardData || e.originalEvent.clipboardData;
-		const text = data.getData('text/plain');
-		const to = range.end + text.length;
-		const value = UtilCommon.stringInsert(this.getValue(), text, range.from, range.to);
+		const text = String(data.getData('text/plain') || '');
+		const to = range.to + text.length;
+		const value = U.Common.stringInsert(this.getValue(), text, range.from, range.to);
 
 		const cb = () => {
 			this.setValue(value);
@@ -432,7 +428,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 
 		if (block.isEmbedKroki()) {
-			const type = UtilEmbed.getKrokiType(value);
+			const type = U.Embed.getKrokiType(value);
 			if (type && (type != fields.type)) {
 				this.onKrokiTypeChange(type, cb);
 			} else {
@@ -474,7 +470,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 
-		commonStore.filterSet(range.from, '');
+		S.Common.filterSet(range.from, '');
 		this.onLatexMenu(e, 'select', true);
 	};
 
@@ -489,7 +485,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const recalcRect = () => {
 			let rect = null;
 			if (element == 'input') {
-				rect = UtilCommon.getSelectionRect();
+				rect = U.Common.getSelectionRect();
 			};
 			return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 		};
@@ -500,13 +496,13 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			offsetY: 4,
 			offsetX: () => {
 				const rect = recalcRect();
-				return rect ? 0 : Constant.size.blockMenu;
+				return rect ? 0 : J.Size.blockMenu;
 			},
 			commonFilter: true,
 			className: (isTemplate ? 'isTemplate' : ''),
-			subIds: Constant.menuIds.latex,
+			subIds: J.Menu.latex,
 			onClose: () => {
-				commonStore.filterSet(0, '');
+				S.Common.filterSet(0, '');
 			},
 			data: {
 				isTemplate: isTemplate,
@@ -519,7 +515,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						text = ' ' + text;
 					};
 
-					const value = UtilCommon.stringInsert(this.getValue(), text, from, to);
+					const value = U.Common.stringInsert(this.getValue(), text, from, to);
 
 					this.setValue(value);
 					this.setRange({ from: to, to });
@@ -528,7 +524,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			},
 		};
 
-		raf(() => menuStore.open('blockLatex', menuParam));
+		raf(() => S.Menu.open('blockLatex', menuParam));
 	};
 
 	setText (text: string) {
@@ -542,7 +538,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		const { block } = this.props;
 		const { processor } = block.content;
-		const lang = UtilEmbed.getLang(processor);
+		const lang = U.Embed.getLang(processor);
 		const range = this.getRange();
 
 		if (value && lang) {
@@ -562,12 +558,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	updateRect () {
-		const rect = UtilCommon.getSelectionRect();
-		if (!rect || !menuStore.isOpen('blockLatex')) {
+		const rect = U.Common.getSelectionRect();
+		if (!rect || !S.Menu.isOpen('blockLatex')) {
 			return;
 		};
 
-		menuStore.update('blockLatex', { 
+		S.Menu.update('blockLatex', { 
 			rect: { ...rect, y: rect.y + $(window).scrollTop() }
 		});
 	};
@@ -587,7 +583,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		error.text('').hide();
 
-		if (!isShowing && !UtilEmbed.allowAutoRender(processor)) {
+		if (!isShowing && !U.Embed.allowAutoRender(processor)) {
 			value.html('');
 			return;
 		};
@@ -604,16 +600,16 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		switch (processor) {
 			default: {
 				const sandbox = [ 'allow-scripts', 'allow-same-origin' ];
-				const allowIframeResize = UtilEmbed.allowIframeResize(processor);
+				const allowIframeResize = U.Embed.allowIframeResize(processor);
 
 				let iframe = node.find('#receiver');
 				let allowScript = false;
 
-				if (UtilEmbed.allowPresentation(processor)) {
+				if (U.Embed.allowPresentation(processor)) {
 					sandbox.push('allow-presentation');
 				};
 
-				if (UtilEmbed.allowPopup(processor)) {
+				if (U.Embed.allowPopup(processor)) {
 					sandbox.push('allow-popups');
 				};
 
@@ -628,11 +624,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					const data: any = { 
 						allowIframeResize, 
-						insertBeforeLoad: UtilEmbed.insertBeforeLoad(processor),
-						useRootHeight: UtilEmbed.useRootHeight(processor),
+						insertBeforeLoad: U.Embed.insertBeforeLoad(processor),
+						useRootHeight: U.Embed.useRootHeight(processor),
 						align: block.hAlign,
 						processor,
-						className: UtilData.blockEmbedClass(processor),
+						className: U.Data.blockEmbedClass(processor),
 						blockId: block.id,
 					};
 
@@ -650,15 +646,15 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					// If content is Kroki code pack the code into SVG url
 					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
-						const result = btoa(UtilCommon.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
-						const type = fields.type || UtilEmbed.getKrokiOptions()[0].id;
+						const result = btoa(U.Common.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
+						const type = fields.type || U.Embed.getKrokiOptions()[0].id;
 
 						text = `https://kroki.io/${type}/svg/${result}`;
 						this.refType?.setValue(type);
 					};
 
-					if (UtilEmbed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
-						text = UtilEmbed.getHtml(processor, UtilEmbed.getParsedUrl(text));
+					if (U.Embed.allowEmbedUrl(processor) && !text.match(/<(iframe|script)/)) {
+						text = U.Embed.getHtml(processor, U.Embed.getParsedUrl(text));
 					};
 
 					if (block.isEmbedSketchfab() && text.match(/<(iframe|script)/)) {
@@ -679,7 +675,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 						sanitizeParam.ADD_TAGS.push('script');
 					};
 
-					if (UtilEmbed.allowJs(processor)) {
+					if (U.Embed.allowJs(processor)) {
 						data.js = text;
 					} else {
 						data.html = this.sanitize(text, allowScript);
@@ -702,7 +698,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				if (!iframe.length) {
 					iframe = $('<iframe />', {
 						id: 'receiver',
-						src: UtilCommon.fixAsarPath(`./embed/iframe.html?theme=${commonStore.getThemeClass()}`),
+						src: U.Common.fixAsarPath(`./embed/iframe.html?theme=${S.Common.getThemeClass()}`),
 						frameborder: 0,
 						scrolling: 'no',
 						sandbox: sandbox.join(' '),
@@ -718,14 +714,26 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Latex: {
-				value.html(katex.renderToString(text, { 
-					displayMode: true, 
-					strict: false,
-					throwOnError: false,
-					output: 'html',
-					fleqn: true,
-					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
-				}));
+				let html = '';
+
+				try {
+					html = katex.renderToString(text, { 
+						displayMode: true, 
+						strict: false,
+						throwOnError: true,
+						output: 'html',
+						fleqn: true,
+						trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
+					});
+				} catch (e) {
+					if (e instanceof katex.ParseError) {
+						html = `<div class="error">Error in LaTeX '${U.Common.htmlSpecialChars(text)}': ${U.Common.htmlSpecialChars(e.message)}</div>`;
+					} else {
+						console.error(e);
+					};
+				};
+
+				value.html(html);
 
 				value.find('a').each((i: number, item: any) => {
 					item = $(item);
@@ -741,30 +749,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				const theme = (Theme[commonStore.getThemeClass()] || {}).mermaid;
-
-				if (theme) {
-					for (const k in theme) {
-						if (!theme[k]) {
-							delete(theme[k]);
-						};
-					};
-
-					mermaid.initialize({ theme: 'base', themeVariables: theme });
-				};
-
-				mermaid.render(this.getContainerId(), this.text).then(res => {
-					value.html(res.svg || this.text);
-
-					if (res.bindFunctions) {
-						res.bindFunctions(value.get(0));
-					};
-				}).catch(e => {
-					const error = $(`#d${this.getContainerId()}`).hide();
-					if (error.length) {
-						value.html(error.html());
-					};
-				});
+				ReactDOM.render(<MediaMermaid chart={this.text} />, value.get(0));
 				break;
 			};
 
@@ -815,12 +800,12 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 		const value = this.getValue();
 
-		blockStore.updateContent(rootId, block.id, { text: value });
+		S.Block.updateContent(rootId, block.id, { text: value });
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
-	getRange () {
-		return UtilCommon.objectCopy(this.refEditable.getRange());
+	getRange (): I.TextRange {
+		return U.Common.objectCopy(this.refEditable.getRange());
 	};
 
 	setRange (range: I.TextRange) {
@@ -851,16 +836,14 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off(`mousemove.${block.id} mouseup.${block.id}`);
 		
-		if (selection) {
-			selection.hide();
-		};
+		selection?.hide();
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);

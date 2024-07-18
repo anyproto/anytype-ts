@@ -1,5 +1,5 @@
-import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
+import { I, U } from 'Lib';
 import View from '../view';
 
 class BlockContentDataview implements I.ContentDataview {
@@ -9,21 +9,26 @@ class BlockContentDataview implements I.ContentDataview {
 	relationLinks: any[] = [];
 	groupOrder: any[] = [];
 	objectOrder: any[] = [];
+	viewId = '';
 	targetObjectId = '';
 	isCollection = false;
 	
 	constructor (props: I.ContentDataview) {
-		this.sources = props.sources || [];
-		this.views = (props.views || []).map(it => new View(it));
 		this.targetObjectId = String(props.targetObjectId || '');
+		this.viewId = String(props.viewId || '');
 		this.isCollection = Boolean(props.isCollection);
 
+		this.sources = Array.isArray(props.sources) ? props.sources : [];
+		this.views = Array.isArray(props.views) ? props.views : [];
 		this.relationLinks = Array.isArray(props.relationLinks) ? props.relationLinks : [];
 		this.groupOrder = Array.isArray(props.groupOrder) ? props.groupOrder : [];
 		this.objectOrder = Array.isArray(props.objectOrder) ? props.objectOrder : [];
+
+		this.views = this.views.map(it => new View(it));
 		
 		makeObservable(this, {
 			sources: observable,
+			viewId: observable,
 			views: observable,
 			groupOrder: observable,
 			objectOrder: observable,
@@ -32,7 +37,7 @@ class BlockContentDataview implements I.ContentDataview {
 			isCollection: observable,
 		});
 
-		intercept(this as any, change => UtilCommon.intercept(this, change));
+		intercept(this as any, change => U.Common.intercept(this, change));
 	};
 
 };

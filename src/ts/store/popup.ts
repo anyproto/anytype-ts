@@ -1,9 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, UtilCommon, focus, Preview } from 'Lib';
-import { menuStore, authStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, focus, Preview } from 'Lib';
 
 const AUTH_IDS = [ 'settings' ];
 const SHOW_DIMMER = [
@@ -20,6 +18,7 @@ const SHOW_DIMMER = [
 	'usecase',
 	'membership',
 	'membershipFinalization',
+	'share'
 ];
 
 class PopupStore {
@@ -45,7 +44,7 @@ class PopupStore {
 	};
 
     open (id: string, param: I.PopupParam) {
-		if (AUTH_IDS.includes(id) && !authStore.account) {
+		if (AUTH_IDS.includes(id) && !S.Auth.account) {
 			return;
 		};
 
@@ -60,7 +59,7 @@ class PopupStore {
 		};
 
 		if (!param.preventMenuClose) {
-			menuStore.closeAll();
+			S.Menu.closeAll();
 		};
 		focus.clear(true);
 
@@ -152,7 +151,7 @@ class PopupStore {
 				callBack();
 			};
 		} else {
-			const el = $(`#${UtilCommon.toCamelCase(`popup-${id}`)}`);
+			const el = $(`#${U.Common.toCamelCase(`popup-${id}`)}`);
 
 			if (el.length) {
 				raf(() => { el.css({ transform: '' }).removeClass('show'); });
@@ -166,13 +165,13 @@ class PopupStore {
 				};
 
 				$(window).trigger('resize');
-			}, Constant.delay.popup);
+			}, J.Constant.delay.popup);
 		};
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = this.getItems(ids);
-		const timeout = items.length ? Constant.delay.popup : 0;
+		const timeout = items.length ? J.Constant.delay.popup : 0;
 
 		items.forEach(it => this.close(it.id, null, true));
 
@@ -187,16 +186,18 @@ class PopupStore {
 	};
 
 	getTimeout () {
-		return this.getItems().length ? Constant.delay.popup : 0;
+		return this.getItems().length ? J.Constant.delay.popup : 0;
+	};
+
+	getLast () {
+		const l = this.popupList.length;
+		return l ? this.popupList[l - 1] : null;
 	};
 
 	closeLast () {
-		if (this.popupList.length) {
-			const last = this.popupList[this.popupList.length - 1];
-
-			if (last && !last.param.preventClose) {
-				this.close(last.id);
-			};
+		const last = this.getLast();
+		if (last) {
+			this.close(last.id);
 		};
 	};
 
@@ -225,4 +226,4 @@ class PopupStore {
 
 };
 
- export const popupStore: PopupStore = new PopupStore();
+export const Popup: PopupStore = new PopupStore();

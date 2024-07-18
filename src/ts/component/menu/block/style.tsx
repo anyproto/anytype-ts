@@ -2,8 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, UtilMenu, analytics, translate } from 'Lib';
-import { blockStore } from 'Store';
+import { I, S, U, keyboard, analytics, translate } from 'Lib';
 
 const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.Menu> {
 	
@@ -64,7 +63,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return 0;
@@ -84,10 +83,10 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		const { data } = param;
 		const { rootId, blockIds } = data;
 
-		const turnText = { id: 'turnText', icon: '', name: translate('menuBlockStyleTurnText'), color: '', children: UtilMenu.getBlockText() };
-		const turnList = { id: 'turnList', icon: '', name: translate('menuBlockStyleTurnList'), color: '', children: UtilMenu.getBlockList() };
-		const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockStyleTurnDiv'), color: '', children: UtilMenu.getTurnDiv() };
-		const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockStyleTurnFile'), color: '', children: UtilMenu.getTurnFile() };
+		const turnText = { id: 'turnText', icon: '', name: translate('menuBlockStyleTurnText'), color: '', children: U.Menu.getBlockText() };
+		const turnList = { id: 'turnList', icon: '', name: translate('menuBlockStyleTurnList'), color: '', children: U.Menu.getBlockList() };
+		const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockStyleTurnDiv'), color: '', children: U.Menu.getTurnDiv() };
+		const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockStyleTurnFile'), color: '', children: U.Menu.getTurnFile() };
 
 		let hasTurnText = true;
 		let hasTurnList = true;
@@ -96,7 +95,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		const sections: any[] = [];
 
 		for (const id of blockIds) {
-			const block = blockStore.getLeaf(rootId, id);
+			const block = S.Block.getLeaf(rootId, id);
 			if (!block) {
 				continue;
 			};
@@ -111,7 +110,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		if (hasTurnDiv)		 sections.push(turnDiv);
 		if (hasTurnFile) sections.push(turnFile);
 
-		return UtilMenu.sectionsMap(sections);
+		return U.Menu.sectionsMap(sections);
 	};
 	
 	getItems () {
@@ -131,18 +130,15 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, close, dataset } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
-		const { selection } = dataset || {};
+		const selection = S.Common.getRef('selectionProvider');
 		
 		close();
 		onSelect(item);
 
-		if (selection) {
-			selection.clear();
-		};
-
+		selection?.clear();
 		analytics.event('ChangeBlockStyle', { type: item.type, style: item.itemId });
 	};
 

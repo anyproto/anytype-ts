@@ -12,9 +12,14 @@
 	--color-shape-secondary: #ebebeb;
 	--color-shape-tertiary: #f2f2f2;
 
+	--color-shape-highlight-dark: rgba(79, 79, 79, 0.16);
 	--color-shape-highlight-medium: rgba(79, 79, 79, 0.08);
 	--color-shape-highlight-light: rgba(79, 79, 79, 0.04);
 	--color-shape-highlight-light-solid: #f8f8f8;
+
+	--color-shape-highlight-add: rgba(93,212,0,0.2);
+	--color-shape-highlight-change: rgba(42,167,238,0.2);
+	--color-shape-highlight-remove: rgba(245,85,34,0.2);
 
 	/* Control */
 
@@ -30,6 +35,7 @@
 
 	/* System */
 
+	--color-system-accent-125: #f09c0e;
 	--color-system-accent-100: #ffb522;
 	--color-system-accent-50: #ffd15b;
 	--color-system-accent-25: #ffee94;
@@ -94,4 +100,12 @@
 	--font-size-description: 18px; 
 	--line-height-description: 26px; 
 	--letter-spacing-description: -0.28px;
+
+	/* Menu */
+	--menu-width-common: 224px;
+	--menu-width-icon: 256px;
+	--menu-width-value: 288px;
+	--menu-width-set: 360px;
+	--menu-width-large: 408px;
+	--menu-width-add: 480px;
 }

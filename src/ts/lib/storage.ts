@@ -1,6 +1,9 @@
-import { I, UtilCommon, UtilSpace } from 'Lib';
-import { commonStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J } from 'Lib';
+
+const ACCOUNT_KEYS = [
+	'spaceId',
+	'spaceOrder',
+];
 
 const SPACE_KEYS = [
 	'toggle',
@@ -28,6 +31,14 @@ class Storage {
 			};
 
 			return this.getSpaceKey(key);
+		} else 
+		if (this.isAccountKey(key)) {
+			if (o) {
+				delete(this.storage[key]);
+				this.set(key, this.parse(o), true);
+			};
+
+			return this.getAccountKey(key);
 		} else {
 			return this.parse(o);
 		};
@@ -54,6 +65,9 @@ class Storage {
 
 		if (this.isSpaceKey(key)) {
 			this.setSpaceKey(key, o);
+		} else 
+		if (this.isAccountKey(key)) {
+			this.setAccountKey(key, o);
 		} else {
 			this.storage[key] = JSON.stringify(o);
 		};
@@ -61,11 +75,10 @@ class Storage {
 	
 	delete (key: string) {
 		if (this.isSpaceKey(key)) {
-			const obj = this.getSpace();
-
-			delete(obj[commonStore.space][key]);
-
-			this.setSpace(obj);
+			this.deleteSpaceKey(key);
+		} else 
+		if (this.isAccountKey(key)) {
+			this.deleteAccountKey(key);
 		} else {
 			delete(this.storage[key]);
 		};
@@ -78,20 +91,28 @@ class Storage {
 	setSpaceKey (key: string, value: any) {
 		const obj = this.getSpace();
 
-		obj[commonStore.space][key] = value;
+		obj[S.Common.space][key] = value;
 
 		this.setSpace(obj);
 	};
 
 	getSpaceKey (key: string) {
 		const obj = this.getSpace();
-		return obj[commonStore.space][key];
+		return obj[S.Common.space][key];
+	};
+
+	deleteSpaceKey (key: string) {
+		const obj = this.getSpace();
+
+		delete(obj[S.Common.space][key]);
+
+		this.setSpace(obj);
 	};
 
 	getSpace () {
 		const obj = this.get('space') || {};
 
-		obj[commonStore.space] = obj[commonStore.space] || {};
+		obj[S.Common.space] = obj[S.Common.space] || {};
 
 		return obj;
 	};
@@ -112,18 +133,75 @@ class Storage {
 		const keys = Object.keys(this.getSpace());
 
 		keys.forEach(key => {
-			const spaceview = UtilSpace.getSpaceviewBySpaceId(key);
+			const spaceview = U.Space.getSpaceviewBySpaceId(key);
 			if (!spaceview) {
 				this.deleteSpace(key);
 			};
 		});
 	};
 
+	isAccountKey (key: string): boolean {
+		return ACCOUNT_KEYS.includes(key);
+	};
+
+	setAccountKey (key: string, value: any) {
+		const obj = this.getAccount();
+		const accountId = this.getAccountId();
+
+		obj[accountId][key] = value;
+
+		this.setAccount(obj);
+	};
+
+	getAccountKey (key: string) {
+		const obj = this.getAccount();
+		const accountId = this.getAccountId();
+
+		return obj[accountId][key];
+	};
+
+	getAccount () {
+		const obj = this.get('account') || {};
+		const accountId = this.getAccountId();
+
+		obj[accountId] = obj[accountId] || {};
+
+		return obj;
+	};
+
+	setAccount (obj: any) {
+		this.set('account', obj, true);
+	};
+
+	deleteAccount (id: string) {
+		const obj = this.getAccount();
+
+		delete(obj[id]);
+
+		this.setAccount(obj);
+	};
+
+	deleteAccountKey (key: string) {
+		const obj = this.getAccount();
+		const accountId = this.getAccountId();
+
+		delete(obj[accountId][key]);
+
+		this.setAccount(obj);
+	};
+
+	getAccountId () {
+		return this.get('accountId');
+	};
+
+	getPin () {
+		return this.get('pin');
+	};
+
 	setLastOpened (windowId: string, param: any) {
 		const obj = this.get('lastOpenedObject') || {};
 
 		obj[windowId] = Object.assign(obj[windowId] || {}, param);
-
 		this.set('lastOpenedObject', obj, true);
 	};
 
@@ -131,36 +209,38 @@ class Storage {
 		objectIds = objectIds || [];
 
 		const obj = this.get('lastOpenedObject') || {};
-		const windowIdsToDelete = Object.keys(obj).reduce((windowIds, windowId) => {
-			return !obj[windowId] || objectIds.includes(obj[windowId].id) ? windowIds.concat(windowId) : windowIds;
-		}, []);
+		const windowIds = [];
 
-		this.deleteLastOpenedByWindowId(windowIdsToDelete, true);
+		for (const windowId in obj) {
+			if (!obj[windowId] || objectIds.includes(obj[windowId].id)) {
+				windowIds.push(windowId);
+			};
+		};
+
+		this.deleteLastOpenedByWindowId(windowIds);
 	};
 
-	deleteLastOpenedByWindowId (windowIdsToDelete: string[], homeIncluded?: boolean) {
-		if (windowIdsToDelete.length == 0) {
+	deleteLastOpenedByWindowId (windowIds: string[],) {
+		windowIds = windowIds.filter(id => id != '1');
+
+		if (!windowIds.length) {
 			return;
 		};
 
 		const obj = this.get('lastOpenedObject') || {};
 
-		if (!homeIncluded) {
-			windowIdsToDelete = windowIdsToDelete.filter(id => id != '1');
-		};
-
-		windowIdsToDelete.forEach(windowId => delete(obj[windowId]));
+		windowIds.forEach(windowId => delete(obj[windowId]));
 		this.set('lastOpenedObject', obj, true);
 	};
 
 	getLastOpened (windowId: string) {
 		const obj = this.get('lastOpenedObject') || {};
-		return obj[windowId] || null;
+		return obj[windowId] || obj[1] || null;
 	};
 
 	setToggle (rootId: string, id: string, value: boolean) {
 		let obj = this.get('toggle');
-		if (!obj || UtilCommon.hasProperty(obj, 'length')) {
+		if (!obj || U.Common.hasProperty(obj, 'length')) {
 			obj = {};
 		};
 		
@@ -265,13 +345,13 @@ class Storage {
 		};
 
 		const keys = [
-			Constant.typeKey.note,
-			Constant.typeKey.page,
-			Constant.typeKey.task,
+			J.Constant.typeKey.note,
+			J.Constant.typeKey.page,
+			J.Constant.typeKey.task,
 		];
 
 		for (const key of keys) {
-			const type = dbStore.getTypeByKey(key);
+			const type = S.Record.getTypeByKey(key);
 			if (type) {
 				list.push(type.id);
 			};
@@ -314,7 +394,7 @@ class Storage {
 	};
 
 	checkArray (a) {
-		if (('object' != typeof(a)) || !UtilCommon.hasProperty(a, 'length')) {
+		if (('object' != typeof(a)) || !U.Common.hasProperty(a, 'length')) {
 			return [];
 		};
 		return a;
@@ -323,7 +403,6 @@ class Storage {
 	logout () {
 		const keys = [ 
 			'accountId',
-			'spaceId',
 			'pin',
 		];
 

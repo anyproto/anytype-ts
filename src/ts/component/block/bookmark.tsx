@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
-import { I, C, focus, UtilCommon, translate, analytics, Renderer, keyboard, Preview } from 'Lib';
-import { commonStore, detailStore } from 'Store';
+import { I, C, S, U, focus, translate, analytics, Renderer, keyboard, Preview } from 'Lib';
 
 const BlockBookmark = observer(class BlockBookmark extends React.Component<I.BlockComponent> {
 
@@ -27,7 +25,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const { state, targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId, [ 'picture' ]);
+		const object = S.Detail.get(rootId, targetObjectId, [ 'picture' ]);
 		const { iconImage, picture, isArchived, isDeleted } = object;
 		const url = this.getUrl();
 		const cn = [ 'focusable', `c${block.id}`, 'resizable' ];
@@ -94,20 +92,20 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 							className={cni.join(' ')} 
 							onClick={this.onClick} 
 							onMouseDown={this.onMouseDown}
-							{...UtilCommon.dataProps({ href: url })}
+							{...U.Common.dataProps({ href: url })}
 						>
 							<div className={cnl.join(' ')}>
 								<ObjectName object={object} />
 								<ObjectDescription object={object} />
 								<div className="link">
-									{iconImage ? <img src={commonStore.imageUrl(iconImage, 16)} className="fav" /> : ''}
-									{UtilCommon.shortUrl(url)}
+									{iconImage ? <img src={S.Common.imageUrl(iconImage, 16)} className="fav" /> : ''}
+									{U.Common.shortUrl(url)}
 								</div>
 
 								{archive}
 							</div>
 							<div className="side right">
-								{picture ? <img src={commonStore.imageUrl(picture, 500)} className="img" /> : ''}
+								{picture ? <img src={S.Common.imageUrl(picture, 500)} className="img" /> : ''}
 							</div>
 						</div>
 					);
@@ -188,7 +186,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	getUrl () {
 		const { rootId, block } = this.props;
 		const { url, targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId, [ 'source' ], true);
+		const object = S.Detail.get(rootId, targetObjectId, [ 'source' ], true);
 
 		return object.source || url;
 	};
@@ -198,9 +196,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			return;
 		};
 
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-		const ids = selection ? selection.get(I.SelectType.Block) : [];
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (!(keyboard.withCommand(e) && ids.length)) {
 			this.open();
@@ -215,7 +212,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			return;
 		};
 
-		const object = detailStore.get(rootId, targetObjectId, []);
+		const object = S.Detail.get(rootId, targetObjectId, []);
 		if (object._empty_ || object.isArchived || object.isDeleted) {
 			return;
 		};
@@ -251,7 +248,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	};
 
 	open () {
-		Renderer.send('urlOpen', UtilCommon.urlFix(this.getUrl()));
+		Renderer.send('urlOpen', U.Common.urlFix(this.getUrl()));
 		analytics.event('BlockBookmarkOpenUrl');
 	};
 	

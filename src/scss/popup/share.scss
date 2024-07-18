@@ -1,0 +1,24 @@
+@import "~scss/_mixins";
+
+.popups {
+    .popupShare {
+        .innerWrap { width: 424px; }
+        .content { padding: 191px 30px 32px 30px; text-align: center; }
+        .content::before {
+            content: ''; position: absolute; z-index: 0; top: 0px; left: 0px; height: 128px; width: 100%;
+            background: linear-gradient(180deg, #FFD3D3 0%, #FFF4CC 49.8%, rgba(255, 244, 204, 0.00) 100%);
+        }
+        .content::after {
+            content: ''; position: absolute; z-index: 1; width: 365px; height: 136px; left: 30px; top: 32px;
+            background: url('~img/icon/popup/share/header.svg') 0px 0px / 365px 136px no-repeat;
+        }
+
+        .title { @include text-header1; margin-bottom: 4px; }
+        .label { margin-bottom: 25px; }
+        .section { height: 128px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); padding: 14px 12px; margin-bottom: 16px; text-align: left;  }
+        .section {
+            .label { margin-bottom: 0px; }
+        }
+        .button { width: 100%; }
+    }
+}

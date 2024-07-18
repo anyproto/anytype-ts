@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Title, Label, IconObject, ObjectName, Button } from 'Component';
-import { analytics, C, UtilFile, I, translate, UtilCommon, UtilData, Renderer } from 'Lib';
+import { Title, Label, IconObject, Button } from 'Component';
+import { I, C, S, U, translate, Renderer, analytics } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore, popupStore } from 'Store';
 
 interface Props extends I.PopupSettings {
     onPage: (id: string) => void;
@@ -19,7 +18,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
     render () {
         const { onPage } = this.props;
-		const { dataPath, spaceStorage } = commonStore
+		const { dataPath, spaceStorage } = S.Common;
         const { localUsage } = spaceStorage;
 		const suffix = this.getSuffix();
 
@@ -35,7 +34,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
 							<div className="txt">
 								<div className="name">{translate('popupSettingsDataLocalFiles')}</div>
-								<div className="type">{UtilCommon.sprintf(translate(`popupSettingsDataManagementLocalStorageUsage`), UtilFile.size(localUsage))}</div>
+								<div className="type">{U.Common.sprintf(translate(`popupSettingsDataManagementLocalStorageUsage`), U.File.size(localUsage))}</div>
 							</div>
                         </div>
 						<div className="side right">
@@ -69,11 +68,11 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
     onOffload (e: any) {
         const { setLoading } = this.props;
 		const suffix = this.getSuffix();
-		const isLocalOnly = UtilData.isLocalOnly();
+		const isLocalOnly = U.Data.isLocalOnly();
 
         analytics.event('ScreenFileOffloadWarning');
 
-        popupStore.open('confirm',{
+        S.Popup.open('confirm',{
             data: {
                 title: translate('commonAreYouSure'),
                 text: translate(`popupSettingsDataOffloadWarningText${suffix}`),
@@ -91,10 +90,10 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                             return;
                         };
 
-                        popupStore.open('confirm',{
+                        S.Popup.open('confirm',{
                             data: {
                                 title: translate('popupSettingsDataFilesOffloaded'),
-                                //text: UtilCommon.sprintf('Files: %s, Size: %s', message.files, UtilFile.size(message.bytes)),
+                                //text: U.Common.sprintf('Files: %s, Size: %s', message.files, U.File.size(message.bytes)),
                                 textConfirm: translate('commonOk'),
                                 canCancel: false,
                             }
@@ -108,11 +107,11 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
     };
 
 	onOpenDataLocation () {
-		Renderer.send('pathOpen', commonStore.dataPath);
+		Renderer.send('pathOpen', S.Common.dataPath);
 	};
 
 	getSuffix () {
-		return UtilData.isLocalOnly() ? 'LocalOnly' : '';
+		return U.Data.isLocalOnly() ? 'LocalOnly' : '';
 	};
 
 });

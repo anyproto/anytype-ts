@@ -4,10 +4,7 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, UtilCommon, UtilObject, UtilSpace, UtilSmile, UtilGraph, translate, analytics, keyboard, Action } from 'Lib';
-import { commonStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
-const Theme = require('json/theme.json');
+import { I, S, U, J, translate, analytics, keyboard, Action } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -71,9 +68,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.unbind();
 		win.on('updateGraphSettings.graph', () => this.updateSettings());
 		win.on('updateGraphRoot.graph', (e: any, data: any) => this.setRootId(data.id));
-		win.on('updateTheme.graph', () => this.send('updateTheme', { theme: commonStore.getThemeClass() }));
-		win.on('removeGraphNode.graph', (e: any, data: any) => this.send('onRemoveNode', { ids: UtilCommon.objectCopy(data.ids) }));
+		win.on('removeGraphNode.graph', (e: any, data: any) => this.send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
 		win.on(`keydown.graph`, e => this.onKeyDown(e));
+		win.on('updateTheme.graph', () => {
+			const theme = S.Common.getThemeClass();
+			this.send('updateTheme', { theme, colors: J.Theme[theme].graph || {} });
+		});
 	};
 
 	unbind () {
@@ -102,8 +102,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const elementId = `#${this.getId()}`;
 		const width = node.width();
 		const height = node.height();
-		const theme = commonStore.getThemeClass();
-		const settings = commonStore.getGraph(storageKey);
+		const theme = S.Common.getThemeClass();
+		const settings = S.Common.getGraph(storageKey);
 
 		this.zoom = d3.zoom().scaleExtent([ 0.05, 10 ]).on('zoom', e => this.onZoom(e));
 		this.edges = (data.edges || []).map(this.edgeMapper);
@@ -128,7 +128,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			nodes: this.nodes,
 			edges: this.edges,
 			theme: theme,
-			colors: Theme[theme].graph || {},
+			colors: J.Theme[theme].graph || {},
 			settings,
 			rootId,
 		}, [ transfer ]);
@@ -143,7 +143,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		.call(this.zoom)
 		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1))
 		.on('click', (e: any) => {
-			const { local } = commonStore.getGraph(storageKey);
+			const { local } = S.Common.getGraph(storageKey);
 			const [ x, y ] = d3.pointer(e);
 
 			if (local) {
@@ -171,21 +171,21 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	nodeMapper (d: any) {
 		d.layout = Number(d.layout) || 0;
 		d.radius = 4;
-		d.src = UtilGraph.imageSrc(d);
+		d.src = U.Graph.imageSrc(d);
 
-		if (d.layout == I.ObjectLayout.Note) {
+		if (U.Object.isNoteLayout(d.layout)) {
 			d.name = d.snippet || translate('commonEmpty');
 		} else {
 			d.name = d.name || translate('defaultNamePage');
 		};
 
-		d.name = UtilSmile.strip(d.name);
-		d.shortName = UtilCommon.shorten(d.name, 24);
+		d.name = U.Smile.strip(d.name);
+		d.shortName = U.Common.shorten(d.name, 24);
 		d.description = String(d.description || '');
 		d.snippet = String(d.snippet || '');
 
 		// Clear icon props to fix image size
-		if (d.layout == I.ObjectLayout.Task) {
+		if (U.Object.isTaskLayout(d.layout)) {
 			d.iconImage = '';
 			d.iconEmoji = '';
 		};
@@ -221,7 +221,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	updateSettings () {
-		this.send('updateSettings', commonStore.getGraph(this.props.storageKey));
+		this.send('updateSettings', S.Common.getGraph(this.props.storageKey));
 		analytics.event('GraphSettings');
 	};
 
@@ -299,6 +299,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onMessage (e) {
+		const { storageKey } = this.props;
+		const settings = S.Common.getGraph(storageKey);
 		const { id, data } = e.data;
 		const node = $(this.node);
 		const { left, top } = node.offset();
@@ -330,7 +332,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case 'onMouseMove': {
-				if (this.isDragging) {
+				if (this.isDragging || !settings.preview) {
 					break;
 				};
 
@@ -394,11 +396,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onContextMenu (id: string, param: any) {
 		const ids = this.ids.length ? this.ids : [ id ];
 
-		menuStore.open('dataviewContext', {
+		S.Menu.open('dataviewContext', {
 			...param,
 			data: {
 				route: analytics.route.graph,
-				subId: Constant.subId.graph,
 				objectIds: ids,
 				getObject: id => this.getNode(id),
 				allowedLink: true,
@@ -452,11 +453,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onContextSpaceClick (param: any, data: any) {
-		if (!UtilSpace.canMyParticipantWrite()) {
+		if (!U.Space.canMyParticipantWrite()) {
 			return;
 		};
 
-		menuStore.open('select', {
+		S.Menu.open('select', {
 			...param,
 			data: {
 				options: [
@@ -467,8 +468,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						case 'newObject': {
 							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', flags, 'Graph', (message: any) => {
-								UtilObject.openPopup(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
+							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', flags, analytics.route.graph, (message: any) => {
+								U.Object.openConfig(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
 							});
 							break;
 						};
@@ -507,11 +508,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.ids = [];
 		this.send('onSetSelected', { ids: [] });
 		
-		UtilObject.openAuto(this.nodes.find(d => d.id == id));
+		U.Object.openAuto(this.nodes.find(d => d.id == id));
 	};
 
 	addNewNode (id: string, sourceId?: string, param?: any, callBack?: (object: any) => void) {
-		UtilObject.getById(id, (object: any) => {
+		U.Object.getById(id, (object: any) => {
 			object = this.nodeMapper(object);
 
 			if (param) {

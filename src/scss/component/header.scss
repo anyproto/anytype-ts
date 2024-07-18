@@ -1,17 +1,14 @@
 @import "~scss/_mixins";
 
 .header { 
-	position: fixed; top: 0px; width: 100%; z-index: 20; user-select: none; display: flex; flex-direction: row; align-items: center; 
+	position: fixed; top: 0px; right: 0px; width: 100%; z-index: 20; user-select: none; display: flex; flex-direction: row; align-items: center; 
 	justify-content: stretch;
 }
-
-.header.snapRight { left: 0px; }
-.header.snapLeft { right: 0px; }
 
 .header {
 	.sides { height: 100%; width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: stretch; }
 	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; }
-	.side.left { padding: 0px 6px; width: 20%; flex-shrink: 0; gap: 0px 8px; }
+	.side.left { padding: 0px 16px; width: 20%; flex-shrink: 0; gap: 0px 8px; }
 	.side.center { width: 60%; flex-grow: 1; justify-content: center; }
 	.side.right { padding: 0px 12px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 8px; }
 
@@ -48,25 +45,26 @@
 	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
 	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
-	.sync { -webkit-app-region: no-drag; }
-	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
+	.sync { -webkit-app-region: no-drag; flex-shrink: 0; }
+	.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; -webkit-app-region: no-drag; flex-shrink: 0; }
+	.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
 
-	.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
-	.icon:hover, .icon.hover { background-color: var(--color-shape-tertiary); }
-
-	.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
-	.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
 	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 	.icon.lock { width: 8px; height: 20px; background-size: 100%; background-color: none; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
 }
-.header.withSidebar {
-	.icon.toggle { display: none; }
+
+.header.sidebarAnimation {
+	.side.left { transition: padding-left 0.2s ease-in-out; }
 }
 
-.header.authIndex { height: 38px; }
+.header:not(.withSidebar) {
+	.side.left { padding-left: 52px; }
+}
+
+.header.authIndex { height: 52px; }
 
 html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	.header.authIndex {
@@ -74,34 +72,15 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	}
 }
 
-.header.mainHistory { height: 38px; width: calc(100% - 254px); background: var(--color-bg-primary); }
+.header.mainHistory { height: 52px; width: calc(100% - $historyPanelWidth); right: $historyPanelWidth; background: var(--color-bg-primary); }
 .header.mainHistory {
-	.side.left, .side.right { width: unset; -webkit-app-region: no-drag; }
-
 	.side.center { overflow: hidden; }
 	.side.center {
 		.txt { @include text-overflow-nw; }
 	}
-
-	.item { 
-		color: var(--color-text-secondary); transition: $transitionAllCommon; height: 20px; line-height: 20px; 
-		display: inline-block; vertical-align: middle; white-space: nowrap; -webkit-app-region: no-drag;
-	}
-	.item {
-		.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/history0.svg'); margin: 0px; vertical-align: top; }
-	}
-	.item.orange { color: var(--color-system-accent-100) !important; font-weight: 500; }
-	
-	.item.grey:hover { color: var(--color-text-primary); }
-	.item.orange:hover { color: #f09c0e !important; }
-
-	.item:hover {
-		.icon.arrow { background-image: url('~img/arrow/history1.svg'); }
-	}
 }
-.header.mainHistory.snapLeft { right: 254px; }
 
-.header.isCommon { background: var(--color-bg-primary); height: 38px; }
+.header.isCommon { background: var(--color-bg-primary); height: 52px; }
 .header.isCommon {
 	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; }
 	.path {
@@ -163,22 +142,5 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 			.icon.sidebar { display: none; }
 			.icon.expand { display: inline-block; }
 		}
-	}
-}
-
-html.platformMac {
-	.header { height: 52px !important; }
-	.header {
-		.side.left { padding-left: 88px; }
-	}
-
-	.header.withSidebar.snapLeft {
-		.side.left { padding-left: 16px; }
-	}
-}
-
-body.isFullScreen {
-	.header {
-		.side.left { padding-left: 6px; }
 	}
 }

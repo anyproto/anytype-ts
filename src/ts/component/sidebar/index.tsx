@@ -1,21 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard, Preview, sidebar, translate } from 'Lib';
-import { commonStore } from 'Store';
+import { I, U, J, keyboard, Preview, sidebar, translate } from 'Lib';
 import ListWidget from 'Component/list/widget';
-const Constant = require('json/constant.json');
 
-interface Props {
-	dataset?: any;
-};
-
-const THROTTLE = 20;
-	
-const Sidebar = observer(class Sidebar extends React.Component<Props> {
+const Sidebar = observer(class Sidebar extends React.Component {
 	
 	private _isMounted = false;
 	node = null;
@@ -28,12 +19,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	width = 0;
 	movedX = false;
 
-	constructor (props: Props) {
+	constructor (props) {
 		super(props);
 
-		this.onDragStart = this.onDragStart.bind(this);
-		this.onDragMove = this.onDragMove.bind(this);
-		this.onDragEnd = this.onDragEnd.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onResizeMove = this.onResizeMove.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
@@ -42,37 +30,52 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
     render() {
         const cn = [ 'sidebar' ];
+		const space = U.Space.getSpaceview();
 		const cmd = keyboard.cmdSymbol();
+		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
+		const memberCnt = participants.filter(it => it.isActive).length;
+
+		let status = '';
+		if (space && !space._empty_) {
+			if (space.isShared) {
+				status = U.Common.sprintf('%d %s', memberCnt, U.Common.plural(memberCnt, translate('pluralMember')));
+			} else {
+				status = translate(`spaceAccessType${space.spaceAccessType}`);
+			};
+		};
 
         return (
-            <div 
-				ref={node => this.node = node}
-                id="sidebar" 
-                className={cn.join(' ')} 
-            >
-				<div className="inner">
-					<div className="head" draggable={true} onDragStart={this.onDragStart}>
-						<Icon
-							className="toggle"
-							tooltip={translate('sidebarToggle')}
-							tooltipCaption={`${cmd} + \\, ${cmd} + .`}
-							tooltipY={I.MenuDirection.Bottom}
-							onClick={() => sidebar.toggleExpandCollapse()}
-						/>
+			<React.Fragment>
+				<Icon 
+					id="sidebarToggle"
+					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+					tooltipY={I.MenuDirection.Bottom}
+					onClick={() => sidebar.toggleOpenClose()}
+				/>
+
+				<div 
+					ref={node => this.node = node}
+					id="sidebar" 
+					className={cn.join(' ')} 
+				>
+					<div className="inner">
+						<div id="sidebarHead" className="head">
+							{status ? <div className="status">{status}</div> : ''}
+						</div>
+						<div 
+							id="sidebarBody"
+							ref={ref => this.refBody = ref}
+							className="body"
+						>
+							<ListWidget ref={ref => this.refList = ref} {...this.props} />
+						</div>
 					</div>
 
-					<div 
-						ref={ref => this.refBody = ref}
-						className="body"
-					>
-						<ListWidget ref={ref => this.refList = ref} {...this.props} />
+					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
+						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>
 				</div>
-
-				<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
-					<div className="resize-handle" onClick={this.onHandleClick} />
-				</div>
-            </div>
+			</React.Fragment>
 		);
     };
 
@@ -82,12 +85,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		this._isMounted = true;
 
 		sidebar.init();
-		this.rebind();
 	};
 
 	componentWillUnmount (): void {
 		this._isMounted = false;
-		this.unbind();
 
 		Preview.tooltipHide(true);
 	};
@@ -104,60 +105,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		if (id) {
 			node.find(`.item.c${id}`).addClass('hover');
 		};
-	};
-
-	rebind (): void {
-		this.unbind();
-		$(window).on('resize.sidebar', () => sidebar.resize());
-	};
-
-	unbind (): void {
-		$(window).off('resize.sidebar');
-	};
-
-	// Event Handlers
-
-	onDragStart (e: React.MouseEvent) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const win = $(window);
-		const node = $(this.node);
-		const { left, top } = node.offset();
-
-		this.ox = e.pageX - left;
-		this.oy = e.pageY - top;
-
-		sidebar.resizePage();
-		sidebar.setDragging(true);
-
-		keyboard.setDragging(true);
-		keyboard.disableSelection(true);
-
-		win.off('mousemove.sidebar mouseup.sidebar');
-		win.on('mousemove.sidebar', throttle(e => this.onDragMove(e), THROTTLE));
-		win.on('mouseup.sidebar', e => this.onDragEnd());
-	};
-
-	onDragMove (e: React.MouseEvent) {
-		raf.cancel(this.frame);
-		this.frame = raf(() => {
-			const win = $(window);
-
-			sidebar.set({
-				x: e.pageX - this.ox - win.scrollLeft(),
-				y: e.pageY - this.oy - win.scrollTop(),
-			});
-		});
-	};
-
-	onDragEnd () {
-		$(window).off('mousemove.sidebar mouseup.sidebar');
-
-		raf.cancel(this.frame);
-		sidebar.setDragging(false);
-		keyboard.disableSelection(false);
-		keyboard.setDragging(false);
 	};
 
 	onResizeStart (e: React.MouseEvent) {
@@ -187,8 +134,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	};
 
 	onResizeMove (e: any) {
-		const { width, snap } = sidebar.data;
-
 		if (this.frame) {
 			raf.cancel(this.frame);
 		};
@@ -202,7 +147,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 				this.movedX = true;
 			};
 
-			const w = Math.max(0, snap == I.MenuDirection.Right ? (this.ox - e.pageX + width) : (e.pageX - this.ox));
+			const w = Math.max(0, (e.pageX - this.ox));
 			const d = w - this.width;
 
 			if (d === 0) {
@@ -210,19 +155,19 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 			};
 
 			if (d < 0) {
-				if (commonStore.isSidebarFixed && (w <= Constant.size.sidebar.width.close)) {
+				if (w <= J.Size.sidebar.width.close) {
 					sidebar.close();
 				} else {
-					sidebar.set({ width: w, isClosed: false });
+					sidebar.setWidth(w);
 				};
 			};
 
 			if (d > 0) {
-				if ((w >= 0) && (w <= Constant.size.sidebar.width.close)) {
-					sidebar.open(Constant.size.sidebar.width.min);
+				if ((w >= 0) && (w <= J.Size.sidebar.width.close)) {
+					sidebar.open(J.Size.sidebar.width.min);
 				} else 
-				if (w > Constant.size.sidebar.width.close) {
-					sidebar.set({ width: w, isClosed: false });
+				if (w > J.Size.sidebar.width.close) {
+					sidebar.setWidth(w);
 				};
 			};
 
@@ -242,7 +187,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	};
 
 	onHandleClick () {
-		if (!this.movedX && commonStore.isSidebarFixed) {
+		if (!this.movedX) {
 			sidebar.toggleOpenClose();
 		};
 	};

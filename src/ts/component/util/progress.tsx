@@ -2,8 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Icon, Label } from 'Component';
-import { UtilCommon, C, Storage, keyboard } from 'Lib';
-import { commonStore } from 'Store';
+import { S, U, C, J, Storage, keyboard } from 'Lib';
 
 const Progress = observer(class Progress extends React.Component {
 	
@@ -23,14 +22,14 @@ const Progress = observer(class Progress extends React.Component {
 	};
 	
 	render () {
-		const { progress } = commonStore;
+		const { progress } = S.Common;
 		const { status, current, total, isUnlocked, canCancel } = progress || {};
 
 		if (!status) {
 			return null;
 		};
 		
-		const text = UtilCommon.sprintf(status, current, total);
+		const text = U.Common.sprintf(status, current, total);
 		const cn = [ 'progress', (isUnlocked ? 'isUnlocked' : '') ];
 		
 		return (
@@ -54,7 +53,7 @@ const Progress = observer(class Progress extends React.Component {
 	};
 
 	componentDidUpdate () {
-		const { progress } = commonStore;
+		const { progress } = S.Common;
 		if (!progress) {
 			return;
 		};
@@ -72,7 +71,7 @@ const Progress = observer(class Progress extends React.Component {
 			node.addClass('hide');
 			win.off('resize.progress');
 
-			window.setTimeout(() => commonStore.progressClear(), 200);
+			window.setTimeout(() => S.Common.progressClear(), 200);
 		};
 	};
 
@@ -81,7 +80,7 @@ const Progress = observer(class Progress extends React.Component {
 	};
 
 	onCancel (e: any) {
-		const { progress } = commonStore;
+		const { progress } = S.Common;
 		const { id } = progress;
 		
 		C.ProcessCancel(id);
@@ -118,14 +117,14 @@ const Progress = observer(class Progress extends React.Component {
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
-		const { ww, wh } = UtilCommon.getWindowDimensions();
+		const { ww, wh } = U.Common.getWindowDimensions();
 
 		x = Number(x) || 0;
 		x = Math.max(0, x);
 		x = Math.min(ww - this.width, x);
 
 		y = Number(y) || 0;
-		y = Math.max(UtilCommon.sizeHeader(), y);
+		y = Math.max(J.Size.header, y);
 		y = Math.min(wh - this.height, y);
 
 		return { x, y };

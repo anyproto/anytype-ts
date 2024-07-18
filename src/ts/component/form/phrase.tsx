@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
-import { keyboard, Storage } from 'Lib';
-import { popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { J, S, keyboard, Storage } from 'Lib';
 
 interface Props {
 	value: string;
@@ -160,7 +158,10 @@ class Phrase extends React.Component<Props, State> {
 		const { onKeyDown } = this.props;
 		const entry = $(this.refEntry);
 
-		keyboard.shortcut('space, enter', e, () => e.preventDefault());
+		keyboard.shortcut('space, enter', e, () => {
+			e.preventDefault();
+			this.updateValue();
+		});
 
 		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
@@ -186,11 +187,6 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: React.KeyboardEvent) {
-		keyboard.shortcut('space, enter', e, () => {
-			e.preventDefault();
-			this.updateValue();
-		});
-
 		this.placeholderCheck();
 	};
 
@@ -202,7 +198,9 @@ class Phrase extends React.Component<Props, State> {
 		};
 
 		this.clear();
-		this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat([ value ])) }));
+
+		this.state.phrase = this.checkValue(this.state.phrase.concat([ value ]));
+		this.setState({ phrase: this.state.phrase });
 	};
 
 	onPaste (e) {
@@ -235,7 +233,7 @@ class Phrase extends React.Component<Props, State> {
 	onToggle () {
 		const { checkPin, onToggle } = this.props;
 		const { isHidden } = this.state;
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const onSuccess = () => {
 			this.setState({ isHidden: !isHidden });
 
@@ -245,14 +243,14 @@ class Phrase extends React.Component<Props, State> {
 		};
 
 		if (isHidden && checkPin && pin) {
-			popupStore.open('pin', { data: { onSuccess } });
+			S.Popup.open('pin', { data: { onSuccess } });
 		} else {
 			onSuccess();
 		};
 	};
 
 	checkValue (v: string[]) {
-		return v.map(it => it.substring(0, Constant.limit.phrase.letter)).filter(it => it).slice(0, Constant.limit.phrase.word);
+		return v.map(it => it.substring(0, J.Constant.count.phrase.letter)).filter(it => it).slice(0, J.Constant.count.phrase.word);
 	};
 
 	setError (v: boolean) {

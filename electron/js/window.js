@@ -1,6 +1,5 @@
 const { app, BrowserWindow, nativeImage, dialog, screen } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
-const version = app.getVersion();
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 const remote = require('@electron/remote/main');
@@ -10,7 +9,6 @@ const ConfigManager = require('./config.js');
 const UpdateManager = require('./update.js');
 const MenuManager = require('./menu.js');
 const Util = require('./util.js');
-const { set } = require('lodash');
 
 const DEFAULT_WIDTH = 1024;
 const DEFAULT_HEIGHT = 768;
@@ -99,7 +97,7 @@ class WindowManager {
 			param.frame = false;
 			param.titleBarStyle = 'hidden';
 			param.icon = path.join(Util.imagePath(), 'icon.icns');
-			param.trafficLightPosition = { x: 20, y: 18 };
+			param.trafficLightPosition = { x: 10, y: 18 };
 		} else
 		if (is.windows) {
 			param.icon = path.join(Util.imagePath(), 'icons', '256x256.ico');
@@ -152,7 +150,8 @@ class WindowManager {
 
 		win.loadURL('file://' + path.join(Util.appPath, 'dist', 'challenge', `index.html`));
 		win.setMenu(null);
-		win.showInactive();
+
+		is.windows || is.linux ? win.showInactive() : win.show();
 
 		win.webContents.once('did-finish-load', () => {
 			win.webContents.postMessage('challenge', options);

@@ -2,8 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilObject, translate, Relation } from 'Lib';
-import { detailStore } from 'Store';
+import { I, S, U, translate, Relation } from 'Lib';
 
 interface State { 
 	isEditing: boolean; 
@@ -30,7 +29,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 		};
 
 		let value: any[] = Relation.getArrayValue(record[relation.relationKey]);
-		value = value.map(it => detailStore.get(subId, it, []));
+		value = value.map(it => S.Detail.get(subId, it, []));
 		value = value.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
 		
 		if (elementMapper) {
@@ -98,7 +97,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 
 		if (canOpen && !canEdit) {
 			e.stopPropagation();
-			UtilObject.openPopup(item);
+			U.Object.openConfig(item);
 		};
 	};
 

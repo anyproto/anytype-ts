@@ -1,0 +1,77 @@
+@import "~scss/_mixins";
+
+.viewGallery {
+	.body { padding: 8px 16px; position: relative; }
+	.arrowWrap {
+		width: 24px; height: 24px; box-shadow: 0px 2px 8px rgba(0,0,0,0.2); border-radius: 50%; position: absolute; top: 50%; margin-top: -12px; 
+		background-color: var(--color-bg-primary); z-index: 1; opacity: 0; transition: $transitionAllCommon;
+	}
+	.arrowWrap {
+		.icon { width: 100%; height: 100%; background-image: url('~img/arrow/widgetGallery.svg'); background-size: 6px 10px; }
+	}
+	.arrowWrap.left { left: 4px; }
+	.arrowWrap.right { right: 4px; }
+	.arrowWrap.right {
+		.icon { transform: rotate(180deg); }
+	}
+
+	.wrap { overflow: hidden; }
+
+	.items { display: flex; flex-wrap: nowrap; gap: 8px; border-radius: 8px; }
+	.items.anim { transition: $transitionAllCommon; }
+	.items {
+		.item { flex-shrink: 0; flex-grow: 0; }
+		.item.blank { 
+			border: 1px solid var(--color-shape-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center;
+			@include text-small; color: var(--color-text-secondary); padding: 8px; text-align: center;
+		}
+
+		.item {
+			.dropTarget { height: 100%; border-radius: 8px; }
+			.inner { display: flex; flex-direction: column; height: 100%; align-items: stretch; }
+
+			.cover { 
+				position: relative; height: 80px; background-position: top center; display: flex; align-items: center; flex-shrink: 0px;
+				background-color: var(--color-shape-highlight-medium); width: 100%; justify-content: center; border-radius: 8px 8px 0px 0px; overflow: hidden;
+			}
+
+			.cover {
+				img { width: 100%; height: 100%; object-fit: cover; }
+
+				.mediaVideo { height: 100%; }
+				.mediaVideo {
+					video { width: 100%; height: 100%; object-fit: cover; }
+					.controls {
+						.icon.play { width: 32px; height: 32px; margin: -16px 0px 0px -16px; background-size: 12px 14px; background-position: 12px center; }
+					}
+				}
+
+				.mediaAudio { padding: 8px 16px; }
+			}
+
+			.info { padding: 12px; border: 1px solid var(--color-shape-primary); border-radius: 8px; position: relative; flex-grow: 1; }
+			.info {
+				.iconObject { vertical-align: middle; position: absolute; top: 12px; left: 12px; }
+				.name { @include text-small; @include clamp2; max-height: 36px; }
+			}
+		}
+
+		.item.withIcon {
+			.info {
+				.name { text-indent: 22px; }
+			}
+		}
+
+		.item.withCover {
+			.info { border-top: 0px; border-radius: 0px 0px 8px 8px; padding: 8px 12px 16px 12px; }
+			.info {
+				.iconObject { top: 8px; }
+			}
+		}
+
+		.item:hover, .item.active { background: var(--color-shape-highlight-light); }
+	}
+}
+.viewGallery:hover {
+	.arrowWrap { opacity: 1; }
+}

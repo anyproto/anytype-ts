@@ -22,6 +22,7 @@
 		.icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
 		.icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
 		.icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
+		.icon.widget-4 { background-image: url('#{$themePath}/icon/menu/widget/view.svg'); }
 
         .icon.more { background-image: url('#{$themePath}/icon/menu/action/more0.svg'); }
 
@@ -128,11 +129,16 @@
     /* DataviewCalendar */
 
     .menu.menuDataviewCalendar {
+		.head {
+			.side.right {
+				.btn { background-image: url('#{$themePath}/arrow/calendarNav.svg'); }
+			}
+		}
+
         .select {
 			.icon.arrow { background-image: url('#{$themePath}/arrow/select/big.svg'); }
 		}
         .select:hover { background-color: var(--color-shape-highlight-medium); }
-        .day:not(.th):not(.active):hover { background: var(--color-system-drop-zone); }
     }
 
     /* BlockContext */
@@ -235,32 +241,25 @@
 		}
     }
 
-	/* Space */
-
-	.menu.menuSpace { color: var(--color-text-primary); }
-	.menu.menuSpace { 
-		.head {
-			.icon.settings { background-image: url('#{$themePath}/icon/menu/space/settings.svg'); }
-		}
-
-		.items {
-			.item.add {
-				.iconWrap { background-image: url('#{$themePath}/icon/plus/space.svg'); }
-			}
-			.item.hover { background-color: rgba(255, 255, 255, 0.1); }
-		}
-	}
-
 	/* QuickCapture */
 
 	.menuQuickCapture { background: none; box-shadow: none; }
 	.menuQuickCapture.isExpanded { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
-	/* ThreadList */
+    /* SyncStatus */
 
-    .menu.menuThreadList {
-        .item {
-            .icon.cafe { background-image: url('#{$themePath}/icon/cafe.svg'); }
+    .menuSyncStatus {
+        .icons {
+            .iconWrapper.connected::before { background: #294b0e; }
+            .iconWrapper.error::before { background: #581f0c; }
         }
+
+		.items {
+            .sides {
+                .side.right {
+					.icon.more:hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
+                }
+            }
+		}
     }
 }

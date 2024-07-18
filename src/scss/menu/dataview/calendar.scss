@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewCalendar { width: 276px; }
+	.menu.menuDataviewCalendar { width: var(--menu-width-value); }
 	.menu.menuDataviewCalendar {
 		.titleWrapper { padding: 8px 16px 0px; }
 		.content { padding: 10px 0px; overflow: visible; max-height: unset; }
@@ -16,7 +16,7 @@
 		.head {
 			.date { color: var(--color-control-active); margin-bottom: 6px; }
 			.sides { margin-bottom: 10px; }
-			.side.right { display: flex; gap: 0 8px; justify-content: flex-end; }
+			.side.right { display: flex; gap: 0px 2px; justify-content: flex-end; }
 			.side.right {
 				.btn { width: 24px; height: 24px; background-size: 20px; background-image: url('~img/arrow/calendarNav.svg'); background-position: 50% 50%; border-radius: 4px; }
 				.btn:hover { background-color: var(--color-shape-highlight-medium); }
@@ -37,11 +37,12 @@
 			display: inline-block; vertical-align: top; width: 28px; height: 28px; line-height: 28px; text-align: center; margin-right: 8px; border-radius: 4px;
 		}
 		.day:nth-child(7n + 7) { margin: 0px; }
-		.day:not(.th):not(.active):hover { background: var(--color-system-accent-25); }
+		.day:not(.th):not(.active):hover { background: var(--color-shape-highlight-medium); }
 
 		.day.th { color: var(--color-control-active); @include text-small; }
 
 		.day.today, .day.active { font-weight: 600; }
+		.day.today { color: var(--color-system-accent-125); }
 		.day.active { background: var(--color-system-accent-100); color: var(--color-text-inversion); }
 		.day.other { color: var(--color-control-active); }
 		
@@ -59,35 +60,62 @@
 	}
 
 	.menu.menuDataviewCalendarDay {
-		.content { padding: 8px 4px 4px 4px; max-height: unset; overflow: visible; }
-		
-		.day { display: flex; flex-direction: column; }
-		.day {
-			.number { @include text-paragraph; text-align: right; position: relative; z-index: 1; padding: 0px 8px; flex-shrink: 0; }
+		.content { max-height: unset; overflow: visible; }
+
+		.wrap { display: flex; flex-direction: column; }
+		.wrap {
+			.number { @include text-paragraph; flex-shrink: 0; }
 			.number {
 				.inner { display: inline-block; }
 			}
 		}
-		.day.active {
+		.wrap.active {
 			.number { padding: 0px; color: var(--color-text-inversion); }
 			.number {
 				.inner { background-color: var(--color-system-accent-100); border-radius: 12px; padding: 0px 7px; align-self: flex-end; }
 			}
 		}
-		.day.other {
+		.wrap.other {
 			.number { color: var(--color-text-secondary); }
 		}
 
-		.items { overflow-y: auto; flex-grow: 1; height: calc(100% - 24px); max-height: 250px; }
+		.items { overflow-y: auto; flex-grow: 1; max-height: 250px; }
 		.items {
-			.item { 
-				display: flex; flex-direction: row; align-items: center; gap: 0px 4px; @include text-overflow-nw; margin: 0px 0px 2px 0px; 
-				padding: 0px 8px; border-radius: 4px;
-			}
+			.item { display: flex; flex-direction: row; align-items: center; @include text-overflow-nw; }
 			.item {
-				.iconObject { flex-shrink: 0; }
-				.name { @include text-overflow-nw; @include text-small; }
+				.iconObject, .icon { flex-shrink: 0; margin: 0px; }
+				.name { @include text-overflow-nw; }
 			}
+			.item.add { color: var(--color-text-secondary); }
+		}
+	}
+
+	.menu.menuDataviewCalendarDay.fromBlock {
+		.content { padding: 8px 4px 0px 4px; }
+		
+		.wrap {
+			.number { text-align: right; padding: 0px 8px; }
+		}
+
+		.items { height: calc(100% - 24px); padding: 4px 0px; }
+		.items {
+			.item { gap: 0px 4px; margin: 0px 0px 2px 0px; padding: 0px 8px; border-radius: 4px; }
+			.item {
+				.name { @include text-small; }
+			}
+		}
+	}
+
+	.menu.menuDataviewCalendarDay.fromWidget { width: var(--menu-width-value); }
+	.menu.menuDataviewCalendarDay.fromWidget {
+		.content { padding: 12px 0px 8px 0px; }
+
+		.wrap {
+			.number { text-align: left; margin: 0px 0px 8px 0px; font-weight: 600; padding: 0px 14px; }
+		}
+
+		.items {
+			.item { gap: 0px 6px; }
 		}
 	}
 }

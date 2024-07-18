@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Error, Pin } from 'Component';
-import { I, UtilRouter, Storage, translate, keyboard, UtilSpace } from 'Lib';
-import { authStore, commonStore } from 'Store';
+import { I, S, U, Storage, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -31,7 +30,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 					<Title text={translate('authPinCheckTitle')} />
 					<Pin 
 						ref={ref => this.ref = ref}
-						expectedPin={Storage.get('pin')} 
+						expectedPin={Storage.getPin()} 
 						onSuccess={this.onSuccess} 
 						onError={this.onError} 
 					/>
@@ -64,16 +63,16 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 	};
 
 	onSuccess () {
-		const { account } = authStore;
-		const { redirect } = commonStore;
+		const { account } = S.Auth;
+		const { redirect } = S.Common;
 		const routeParam = { replace: true, animate: true };
 
 		keyboard.setPinChecked(true);
 
 		if (account) {
-			redirect ? UtilRouter.go(redirect, routeParam) : UtilSpace.openDashboard('route', routeParam);
+			redirect ? U.Router.go(redirect, routeParam) : U.Space.openDashboard('route', routeParam);
 		} else {
-			UtilRouter.go('/', routeParam);
+			U.Router.go('/', routeParam);
 		};
 	};
 	

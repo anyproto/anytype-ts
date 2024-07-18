@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Input, Button } from 'Component';
-import { I, C, translate, UtilCommon, UtilData, analytics, keyboard } from 'Lib';
-import { commonStore, authStore } from 'Store';
-const Constant = require('json/constant.json');
+import { Title, Label, Input, Button, FooterAuthDisclaimer } from 'Component';
+import { I, C, S, U, J, translate, analytics, Action } from 'Lib';
 
 interface State {
 	status: string;
@@ -35,28 +33,46 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const { status, statusText } = this.state;
-		const { config } = commonStore;
-		const { testCryptoPayment } = config;
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 
 		if (!tierItem) {
 			return null;
 		};
 
 		const { period } = tierItem;
-		const { membership } = authStore;
-		const { name, nameType } = membership;
+		const { membership } = S.Auth;
+		const { name, nameType, paymentMethod } = membership;
 
 		let periodText = '';
 		let labelText = '';
+		let platformText = '';
+		let withContactButton = false;
+		let canEnterName = !name;
+
+		if (membership.tier == I.TierType.Builder) {
+			switch (paymentMethod) {
+				case I.PaymentMethod.Apple:
+				case I.PaymentMethod.Google: {
+					platformText = translate('popupMembershipPaidOnOtherPlatform');
+					canEnterName = false;
+					break;
+				};
+				case I.PaymentMethod.Crypto: {
+					platformText = translate('popupMembershipPaidByCrypto');
+					withContactButton = true;
+					canEnterName = false;
+					break;
+				};
+			};
+		};
 
 		if (period) {
 			if (period == 1) {
 				periodText = translate('popupSettingsMembershipPerYear');
 				labelText = translate('popupMembershipPaidTextPerYear');
 			} else {
-				periodText = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
-				labelText = UtilCommon.sprintf(translate('popupMembershipPaidTextPerYears'), period, UtilCommon.plural(period, translate('pluralYear')));
+				periodText = U.Common.sprintf(translate('popupSettingsMembershipPerYears'), period, U.Common.plural(period, translate('pluralYear')));
+				labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerYears'), period, U.Common.plural(period, translate('pluralYear')));
 			};
 		};
 
@@ -72,11 +88,11 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 								ref={ref => this.refName = ref}
 								value={name}
 								onKeyUp={this.onKeyUp}
-								readonly={!!name}
-								className={name ? 'disabled' : ''}
+								readonly={!canEnterName}
+								className={!canEnterName ? 'disabled' : ''}
 								placeholder={translate(`popupMembershipPaidPlaceholder`)}
 							/>
-							<div className="ns">{Constant.namespace[nameType]}</div>
+							<div className="ns">{J.Constant.namespace[nameType]}</div>
 						</div>
 
 						<div className={[ 'statusBar', status ].join(' ')}>{statusText}</div>
@@ -88,11 +104,19 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 					{periodText}
 				</div>
 
-				<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
+				{platformText ? (
+					<div className="platformLabel">
+						<Label className="paidOnOtherPlatform" text={platformText} />
+						{withContactButton ? <Button onClick={() => Action.membershipUpgrade()} text={translate('popupMembershipWriteToAnyteam')} className="c36" color="blank" /> : ''}
+					</div>
+				) : (
+					<React.Fragment>
+						<Button onClick={() => this.onPay(I.PaymentMethod.Stripe)} ref={ref => this.refButtonCard = ref} className="c36" text={translate('popupMembershipPayByCard')} />
+						<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
 
-				{testCryptoPayment ? (
-					<Button onClick={() => this.onPay(I.PaymentMethod.Crypto)} ref={ref => this.refButtonCrypto = ref} className="c36" text={translate('popupMembershipPayByCrypto')} />
-				) : ''}
+						<FooterAuthDisclaimer />
+					</React.Fragment>
+				)}
 			</form>
 		);
 	};
@@ -101,7 +125,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { param } = this.props;
 		const { data } = param;
 		const { tier } = data;
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 		const globalName = this.getGlobalName();
 
 		if (!globalName && tierItem.namesCount) {
@@ -120,7 +144,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		this.setState({ statusText: '', status: '' });
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.validateName(), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => this.validateName(), J.Constant.delay.keyboard);
 	};
 
 	onSubmit (e: any) {
@@ -136,13 +160,10 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 		const { data } = param;
 		const { tier } = data;
 		const globalName = this.getGlobalName();
-		const tierItem = UtilData.getMembershipTier(tier);
+		const tierItem = U.Data.getMembershipTier(tier);
 		const name = globalName || !tierItem.namesCount ? '' : this.getName();
 		const refButton = method == I.PaymentMethod.Stripe ? this.refButtonCard : this.refButtonCrypto;
-
-		refButton.setLoading(true);
-
-		this.checkName(name, () => {
+		const cb = () => {
 			C.MembershipRegisterPaymentRequest(tier, method, name, (message) => {
 				refButton.setLoading(false);
 
@@ -152,12 +173,15 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 				};
 
 				if (message.url) {
-					UtilCommon.onUrl(message.url);
+					U.Common.onUrl(message.url);
 				};
 
 				analytics.event('ClickMembership', { params: { tier, method }});
 			});
-		});
+		};
+
+		refButton.setLoading(true);
+		tierItem.nameMinLength ? this.validateName(cb) : cb();
 	};
 
 	validateName (callBack?: () => void) {
@@ -216,7 +240,7 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 	};
 
 	getGlobalName () {
-		return String(authStore.membership?.name || '');
+		return String(S.Auth.membership?.name || '');
 	};
 
 	disableButtons (v: boolean) {

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilCommon, UtilObject, translate, UtilDate } from 'Lib';
-import { menuStore, blockStore } from 'Store';
+import { I, S, U, translate } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -22,9 +21,6 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		this.onOpen = this.onOpen.bind(this);
 		this.onMore = this.onMore.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
@@ -44,26 +40,17 @@ const Item = observer(class Item extends React.Component<Props> {
 		if (length > LIMIT) {
 			more = (
 				<div className="item more" onClick={this.onMore}>
-					+{length - LIMIT} {translate('commonMore')} {UtilCommon.plural(length, translate('pluralObject')).toLowerCase()}
+					+{length - LIMIT} {translate('commonMore')} {U.Common.plural(length, translate('pluralObject')).toLowerCase()}
 				</div>
 			);
 		};
 
 		const Item = (item: any) => {
-			const canEdit = !item.isReadonly && blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
+			const canEdit = !item.isReadonly && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]);
 
 			let icon = null;
 			if (!hideIcon) {
-				icon = (
-					<IconObject 
-						object={item} 
-						size={16} 
-						canEdit={canEdit} 
-						onSelect={icon => this.onSelect(item, icon)} 
-						onUpload={objectId => this.onUpload(item, objectId)} 
-						onCheckbox={() => this.onCheckbox(item)} 
-					/>
-				);
+				icon = <IconObject object={item} size={16} canEdit={canEdit} />;
 			};
 
 			return (
@@ -98,37 +85,32 @@ const Item = observer(class Item extends React.Component<Props> {
 		const view = getView();
 		const current = [ d, m, y ].join('-');
 
-		return items.filter(it => UtilDate.date('j-n-Y', it[view.groupRelationKey]) == current);
+		return items.filter(it => U.Date.date('j-n-Y', it[view.groupRelationKey]) == current);
 	};
 
 	onOpen (record: any) {
-		UtilObject.openConfig(record);
-	};
-
-	onSelect (item: any, icon: string) {
-		UtilObject.setIcon(item.id, icon, '');
-	};
-
-	onUpload (item: any, objectId: string) {
-		UtilObject.setIcon(item.id, '', objectId);
-	};
-
-	onCheckbox (item: any) {
-		UtilObject.setDone(item.id, !item.done);
+		U.Object.openConfig(record);
 	};
 
 	onMore () {
+		const { block, getView, readonly } = this.props;
 		const node = $(this.node);
+		const view = getView();
 
-		menuStore.closeAll([ 'dataviewCalendarDay' ], () => {
-			menuStore.open('dataviewCalendarDay', {
+		S.Menu.closeAll([ 'dataviewCalendarDay' ], () => {
+			S.Menu.open('dataviewCalendarDay', {
 				element: node,
 				horizontal: I.MenuDirection.Center,
 				width: node.outerWidth() + 8,
 				offsetY: -(node.outerHeight() + 4),
+				className: 'fromBlock',
 				noFlipX: true,
 				data: {
 					...this.props,
+					blockId: block.id,
+					relationKey: view.groupRelationKey,
+					hideIcon: view.hideIcon,
+					readonly,
 				}
 			});
 		});

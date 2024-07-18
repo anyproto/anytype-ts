@@ -29,7 +29,7 @@ const PopupPin = observer(class PopupConfirm extends React.Component<I.Popup, St
 				<Title text={translate('authPinCheckTitle')} />
 				<Pin 
 					ref={ref => this.ref = ref}
-					expectedPin={Storage.get('pin')} 
+					expectedPin={Storage.getPin()} 
 					onSuccess={this.onSuccess} 
 					onError={this.onError} 
 				/>

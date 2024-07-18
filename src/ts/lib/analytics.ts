@@ -1,13 +1,11 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, UtilCommon, Storage, UtilSpace, Relation } from 'Lib';
-import { commonStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Storage, Relation } from 'Lib';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
-	'processor', 'emptyType',
+	'processor', 'emptyType', 'status',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -36,6 +34,13 @@ class Analytics {
 		webclipper: 'Webclipper',
 		clipboard: 'Clipboard',
 		shortcut: 'Shortcut',
+		turn: 'TurnInto',
+		powertool: 'Powertool',
+		syncStatus: 'SyncStatus',
+		search: 'Search',
+		relation: 'Relation',
+		link: 'Link',
+		mention: 'Mention',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
@@ -54,13 +59,13 @@ class Analytics {
 	};
 
 	debug () {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		return config.debug.analytics;
 	};
 
 	isAllowed (): boolean {
-		const { config } = commonStore;
-		return !(config.sudo || [ 'alpha' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
+		const { config } = S.Common;
+		return !(config.sudo || [ 'alpha' ].includes(config.channel) || !U.Common.getElectron().isPackaged) || this.debug();
 	};
 	
 	init (options?: any) {
@@ -68,12 +73,12 @@ class Analytics {
 			return;
 		};
 
-		const { interfaceLang } = commonStore;
-		const electron = UtilCommon.getElectron();
-		const platform = UtilCommon.getPlatform();
+		const { interfaceLang } = S.Common;
+		const electron = U.Common.getElectron();
+		const platform = U.Common.getPlatform();
 
 		this.instance = amplitude.getInstance();
-		this.instance.init(Constant.amplitude, null, Object.assign({
+		this.instance.init(J.Constant.amplitude, null, Object.assign({
 			apiEndpoint: URL,
 			batchEvents: true,
 			saveEvents: true,
@@ -104,16 +109,16 @@ class Analytics {
 	};
 
 	setVersion () {
-		const { config } = commonStore;
-		const platform = UtilCommon.getPlatform();
-		const electron = UtilCommon.getElectron();
+		const { config } = S.Common;
+		const platform = U.Common.getPlatform();
+		const electron = U.Common.getElectron();
 		const { version, isPackaged } = electron;
 
 		if (!version) {
 			return;
 		};
 
-		let ret = String(version.app || '').split('-')
+		let ret = String(version.app || '').split('-');
 		if (ret.length) {
 			ret = [ ret[0] ];
 		};
@@ -168,8 +173,8 @@ class Analytics {
 		};
 
 		const converted: any = {};
-		const space = UtilSpace.getSpaceview();
-		const participant = UtilSpace.getMyParticipant();
+		const space = U.Space.getSpaceview();
+		const participant = U.Space.getMyParticipant();
 
 		let param: any = {};
 
@@ -347,6 +352,10 @@ class Analytics {
 				break;
 			};
 
+			case 'DeleteRelationValue':
+			case 'ChangeRelationValue':
+			case 'FeatureRelation':
+			case 'UnfeatureRelation':
 			case 'CreateRelation':
 			case 'AddExistingRelation': {
 				data.format = Number(data.format) || 0;
@@ -374,6 +383,11 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeShowQuickCapture': {
+				data.type = I.NavigationMenuMode[data.type];
+				break;
+			};
+
 			case 'SelectUsecase': {
 				data.type = Number(data.type) || 0;
 				data.type = I.Usecase[data.type];
@@ -388,7 +402,7 @@ class Analytics {
 				const target = data.params.target;
 
 				if (target) {
-					data.type = Constant.widgetId[target.id] ? target.name : this.typeMapper(target.type);
+					data.type = J.Constant.widgetId[target.id] ? target.name : this.typeMapper(target.type);
 				};
 
 				data.layout = I.WidgetLayout[data.layout];
@@ -419,8 +433,8 @@ class Analytics {
 
 			case 'OnboardingTooltip':
 			case 'ClickOnboardingTooltip': {
-				data.id = data.id ? UtilCommon.toUpperCamelCase(`-${data.id}`) : '';
-				data.type = data.type ? UtilCommon.toUpperCamelCase(`-${data.type}`) : '';
+				data.id = data.id ? U.Common.toUpperCamelCase(`-${data.id}`) : '';
+				data.type = data.type ? U.Common.toUpperCamelCase(`-${data.type}`) : '';
 				break;
 			};
 
@@ -446,6 +460,11 @@ class Analytics {
 			case 'ClickMembership': {
 				data.name = data.name || I.TierType[data.params.tier];
 				data.type = data.type || I.PaymentMethod[data.params.method];
+				break;
+			};
+
+			case 'ClickSyncStatus': {
+				data.status = I.SyncStatusSpace[data.status];
 				break;
 			};
 
@@ -499,7 +518,7 @@ class Analytics {
 		} else {
 			key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';
 		};
-		this.event(key, { type });
+		this.event(key, { type, relationKey: relation.relationKey, format: relation.format });
 	};
 
 	pageMapper (params: any): string {
@@ -512,7 +531,6 @@ class Analytics {
 			'main/navigation':	 'ScreenNavigation',
 			'main/type':		 'ScreenType',
 			'main/relation':	 'ScreenRelation',
-			'main/space':		 'ScreenSpace',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
 		};
@@ -522,7 +540,9 @@ class Analytics {
 
 	popupMapper (params: any): string {
 		const { id } = params;
-		const map = {};
+		const map = {
+			inviteRequest:		 'ScreenInviteRequest',
+		};
 
 		return map[id] || '';
 	};
@@ -532,6 +552,7 @@ class Analytics {
 		const map = {
 			help:				 'MenuHelp',
 			blockRelationView:	 'ScreenObjectRelation',
+			quickCapture:		 'ScreenQuickCapture',
 		};
 
 		return map[id] || '';
@@ -551,13 +572,13 @@ class Analytics {
 		};
 
 		const code = (undefined !== map[id]) ? map[id] : id;
-		return code ? UtilCommon.toUpperCamelCase([ prefix, code ].join('-')) : '';
+		return code ? U.Common.toUpperCamelCase([ prefix, code ].join('-')) : '';
 	};
 
 	typeMapper (id: string): string {
-		let object = dbStore.getTypeById(id);
+		let object = S.Record.getTypeById(id);
 		if (!object) {
-			object = dbStore.getTypeByKey(id);
+			object = S.Record.getTypeByKey(id);
 		};
 
 		if (!object) {
@@ -572,7 +593,7 @@ class Analytics {
 	};
 
 	relationMapper (key: string) {
-		const object = dbStore.getRelationByKey(key);
+		const object = S.Record.getRelationByKey(key);
 		if (!object) {
 			return '';
 		};

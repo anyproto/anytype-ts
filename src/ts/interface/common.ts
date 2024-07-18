@@ -138,7 +138,6 @@ export enum HomePredefinedId {
 export interface HeaderComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
-	dataset?: I.Dataset;
 	tabs?: any[];
 	tab?: string;
 	text?: string;
@@ -153,13 +152,13 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;
 	onBanner?: (e: any) => void;
 	onBannerClose?: (e: any) => void;
+	onRelation?: (param?: Partial<I.MenuParam>, data?: any) => void;
 };
 
 export interface PageComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
 	matchPopup?: any;
-	dataset?: I.Dataset;
 	storageGet?(): any;
 	storageSet?(data: any): void;
 };
@@ -191,37 +190,20 @@ export interface ButtonComponent {
 };
 
 export enum SurveyType {
-	Register 	= 0,
-	Delete 		= 1,
-	Pmf 		= 2,
-	Object 		= 3,
+	Register	 = 0,
+	Delete		 = 1,
+	Pmf			 = 2,
+	Object		 = 3,
+	Shared		 = 4,
+	Multiplayer	 = 5,
 };
 
 export enum SliceOperation {
-	None	 = 0,
-	Add		 = 1,
-    Move	 = 2,
-	Remove	 = 3,
-    Replace	 = 4,
-};
-
-export interface Dataset {
-	selection: {
-		isSelecting: boolean;
-		checkSelected: (type: I.SelectType) => boolean;
-		renderSelection: () => void;
-		scrollToElement: (id: string, dir: number) => void;
-		set: (type: I.SelectType, ids: string[]) => void;
-		get: (type: I.SelectType, withChildren?: boolean) => string[];
-		clear: () => void;
-		hide: () => void;
-		setIsSelecting: (v: boolean) => void;
-	};
-	dragProvider: {
-		onScroll: () => void;
-	};
-	onDragStart: (e: React.DragEvent, dropType: I.DropType, ids: string[], component: unknown) => void;
-	preventCommonDrop: (value: boolean) => void;
+	None		 = 0,
+	Add			 = 1,
+    Move		 = 2,
+	Remove		 = 3,
+    Replace		 = 4,
 };
 
 export enum FileSyncStatus {

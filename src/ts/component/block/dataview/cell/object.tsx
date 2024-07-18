@@ -4,10 +4,8 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
-import { I, Relation, UtilObject, translate, UtilCommon, keyboard, analytics } from 'Lib';
-import { menuStore, detailStore, dbStore } from 'Store';
+import { I, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
 import ItemObject from './item/object';
-const Constant = require('json/constant.json');
 
 interface State { 
 	isEditing: boolean; 
@@ -40,7 +38,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 	render () {
 		const { isEditing } = this.state;
-		const { recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
+		const { id, recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
 		const record = getRecord(recordId);
 		const cn = [ 'wrap' ];
 
@@ -67,22 +65,24 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 					<div id="placeholder" className="placeholder">{placeholder}</div>
 
 					<span id="list">
-						<DragBox onDragEnd={this.onDragEnd} onClick={this.onClick}>
+						<DragBox onDragEnd={this.onDragEnd}>
 							{value.map((item: any, i: number) => (
 								<span 
 									key={i}
 									id={`item-${item.id}`}
 									className="itemWrap isDraggable"
 									draggable={true}
-									{...UtilCommon.dataProps({ id: item.id, index: i })}
+									{...U.Common.dataProps({ id: item.id, index: i })}
 								>
 									<ItemObject 
 										key={item.id} 
-										object={item} 
+										cellId={id}
+										getObject={() => item}
 										iconSize={iconSize} 
 										relation={relation} 
 										elementMapper={elementMapper}
 										canEdit={true}
+										onClick={(e, item) => this.onClick(e, item.id)}
 										onRemove={(e: any, id: string) => this.onValueRemove(id)}
 									/>
 								</span>
@@ -117,7 +117,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 						{value.map((item: any, i: number) => (
 							<ItemObject 
 								key={item.id} 
-								object={item} 
+								cellId={id}
+								getObject={() => item}
 								iconSize={iconSize} 
 								relation={relation} 
 								elementMapper={elementMapper} 
@@ -154,6 +155,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			cell.addClass('isEditing');
 
 			this.placeholderCheck();
+			this.focus();
 			this.resize();
 		} else {
 			cell.removeClass('isEditing');
@@ -185,12 +187,12 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 
 		// Template type is disabled for opening
-		const templateType = dbStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 		const canOpen = this.props.canOpen && (item.id != templateType.id);
 
 		if (canOpen) {
 			e.stopPropagation();
-			UtilObject.openPopup(item);
+			U.Object.openConfig(item);
 		};
 	};
 
@@ -204,17 +206,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
 
-		if (value.existing.length) {
-			list.show();
-		} else {
-			list.hide();
-		};
-
-		if (value.new || value.existing.length) {
-			placeholder.hide();
-		} else {
-			placeholder.show();
-		};
+		value.existing.length ? list.show() : list.hide();
+		value.new || value.existing.length ? placeholder.hide() : placeholder.show();
 	};
 
 	getItems (): any[] {
@@ -226,7 +219,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 
 		return Relation.getArrayValue(record[relation.relationKey]).
-			map(id => detailStore.get(subId, id, [])).
+			map(id => S.Detail.get(subId, id, [])).
 			filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
 	};
 
@@ -257,7 +250,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	setValue (value: string[]) {
-		value = UtilCommon.arrayUnique(value);
+		value = U.Common.arrayUnique(value);
 
 		const { onChange, relation } = this.props;
 		const { maxCount } = relation;
@@ -270,8 +263,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const cb = () => {
 			this.clear();
 
-			menuStore.updateData('dataviewObjectValues', { value });
-			menuStore.updateData('dataviewObjectList', { value });
+			S.Menu.updateData('dataviewObjectValues', { value });
+			S.Menu.updateData('dataviewObjectList', { value });
 		};
 
 		if (onChange) {
@@ -352,8 +345,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			menuStore.updateData('dataviewObjectList', { filter: this.getValue().new });
-		}, Constant.delay.keyboard);
+			S.Menu.updateData('dataviewObjectList', { filter: this.getValue().new });
+		}, J.Constant.delay.keyboard);
 
 		this.placeholderCheck();
 		this.resize();
@@ -384,7 +377,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const { relation } = this.props;
 		const { details, flags } = Relation.getParamForNewObject(text, relation);
 
-		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', message => this.onValueAdd(message.targetId));
+		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.relation, message => this.onValueAdd(message.targetId));
 	};
 
 	onFocus () {
@@ -403,7 +396,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const node = $(this.node);
 		node.find('#entry').text(' ');
 
-		menuStore.updateData('dataviewObjectList', { filter: '' });
+		S.Menu.updateData('dataviewObjectList', { filter: '' });
 		this.focus();
 	};
 

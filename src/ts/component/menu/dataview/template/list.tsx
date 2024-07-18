@@ -1,9 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Title, PreviewObject, IconObject } from 'Component';
-import { C, I, UtilObject, translate, UtilData, UtilCommon, keyboard } from 'Lib';
-import { dbStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, translate, keyboard } from 'Lib';
 import { observer } from 'mobx-react';
 
 const TEMPLATE_WIDTH = 230;
@@ -38,8 +36,8 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const previewSize = data.previewSize || I.PreviewSize.Small;
 		const templateId = this.getTemplateId();
 		const items = this.getItems();
-		const type = dbStore.getTypeById(typeId);
-		const isAllowed = UtilObject.isAllowedTemplate(typeId);
+		const type = S.Record.getTypeById(typeId);
+		const isAllowed = U.Object.isAllowedTemplate(typeId);
 
 		const ItemBlank = (item: any) => {
 			const cn = [ 'previewObject', 'blank', I.PreviewSize[previewSize].toLowerCase() ];
@@ -77,10 +75,10 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const Item = (item: any) => {
 			let content = null;
 
-			if (item.id == Constant.templateId.blank) {
+			if (item.id == J.Constant.templateId.blank) {
 				content = <ItemBlank {...item} />;
 			} else
-			if (item.id == Constant.templateId.new) {
+			if (item.id == J.Constant.templateId.new) {
 				content = <ItemAdd {...item} />;
 			} else {
 				content = (
@@ -197,7 +195,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { typeId } = data;
-		const templateType = dbStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
@@ -206,9 +204,9 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
-		const keys = Constant.defaultRelationKeys.concat([ 'targetObjectType' ]);
+		const keys = J.Relation.default.concat([ 'targetObjectType' ]);
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			subId: this.getSubId(),
 			filters,
 			sorts,
@@ -237,20 +235,20 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			};
 		};
 
-		return ret || templateId || Constant.templateId.blank;
+		return ret || templateId || J.Constant.templateId.blank;
 	};
 
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
 		const { noAdd, typeId } = data;
-		const items = dbStore.getRecords(this.getSubId());
-		const isAllowed = UtilObject.isAllowedTemplate(typeId);
+		const items = S.Record.getRecords(this.getSubId());
+		const isAllowed = U.Object.isAllowedTemplate(typeId);
 
-		items.unshift({ id: Constant.templateId.blank });
+		items.unshift({ id: J.Constant.templateId.blank });
 
 		if (!noAdd && isAllowed) {
-			items.push({ id: Constant.templateId.new });
+			items.push({ id: J.Constant.templateId.new });
 		};
 
 		return items;
@@ -260,7 +258,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { param, getId } = this.props;
 		const { data } = param;
 		const { onSetDefault, route, typeId, getView } = data;
-		const item = UtilCommon.objectCopy(template);
+		const item = U.Common.objectCopy(template);
 		const node = $(`#item-${item.id}`);
 		const templateId = this.getTemplateId();
 
@@ -271,18 +269,18 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 			item.targetObjectType = typeId;
 		};
 
-		if (menuStore.isOpen('dataviewTemplateContext', item.id)) {
-			menuStore.close('dataviewTemplateContext');
+		if (S.Menu.isOpen('dataviewTemplateContext', item.id)) {
+			S.Menu.close('dataviewTemplateContext');
 			return;
 		};
 
-		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
-			menuStore.open('dataviewTemplateContext', {
+		S.Menu.closeAll(J.Menu.dataviewTemplate, () => {
+			S.Menu.open('dataviewTemplateContext', {
 				menuKey: item.id,
 				element: `#${getId()} #item-more-${item.id}`,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
-				subIds: Constant.menuIds.dataviewTemplate,
+				subIds: J.Menu.dataviewTemplate,
 				onOpen: () => {
 					node.addClass('active');
 				},
@@ -296,7 +294,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 					typeId,
 					templateId,
 					route,
-					onDuplicate: object => UtilObject.openPopup(object, {}),
+					onDuplicate: object => U.Object.openConfig(object, {}),
 					onSetDefault,
 				}
 			});
@@ -307,13 +305,13 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { onSelect, typeId } = data;
-		const item = UtilCommon.objectCopy(template);
+		const item = U.Common.objectCopy(template);
 
 		if (!item.targetObjectType) {
 			item.targetObjectType = typeId;
 		};
 
-		if (item.id != Constant.templateId.new) {
+		if (item.id != J.Constant.templateId.new) {
 			data.templateId = item.id;
 		};
 
@@ -327,18 +325,18 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { data } = param;
 		const { onTypeChange } = data;
 
-		menuStore.open('typeSuggest', {
+		S.Menu.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				rebind: this.rebind,
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat(UtilObject.getSetLayouts()) },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
 				],
 				onClick: type => {
 					data.typeId = type.id;
-					data.templateId = type.defaultTemplateId || Constant.templateId.blank;
+					data.templateId = type.defaultTemplateId || J.Constant.templateId.blank;
 
 					this.load();
 
@@ -371,7 +369,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const items = this.getItems();
 		const length = items.length;
 		const isPopup = keyboard.isPopup();
-		const container = UtilCommon.getPageContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const ww = container.width();
 
 		let columns = Math.max(1, Math.floor(ww / TEMPLATE_WIDTH));

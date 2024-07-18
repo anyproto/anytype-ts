@@ -70,11 +70,23 @@
 /* PageMainHistory */
 
 .pageMainHistory {
-    .list {
-        .item {
-            .icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
-        }
-    }
+	#body {
+		> #historySideRight {
+			.section {
+				.head {
+					.icon.arrow { background-image: url('#{$themePath}/arrow/historyList.svg'); }
+				}
+			}
+
+			.item {
+				.child {
+					.icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
+				}
+			}
+		}
+	}
+
+
 }
 
 /* PageMainArchive */

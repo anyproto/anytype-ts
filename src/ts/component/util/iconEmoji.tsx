@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { commonStore, menuStore } from 'Store';
-import { UtilSmile } from 'Lib';
+import { S, U, J } from 'Lib';
 import { observer } from 'mobx-react';
-const Constant = require('json/constant.json');
 
 interface Props {
 	id?: string;
@@ -20,8 +18,7 @@ interface Props {
 	onUpload?(objectId: string): void;
 }
 
-const IconSrc = {
-};
+const IconSrc = {};
 
 const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 	
@@ -44,23 +41,23 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 		if (canEdit) {
 			cn.push('canEdit');
 		};
-		if (menuId && menuStore.isOpen(menuId)) {
+		if (menuId && S.Menu.isOpen(menuId)) {
 			cn.push('active');
 		};
 
 		let element = null;
 		if (icon) {
-			const code = icon.match(':') ? icon : UtilSmile.getCode(icon);
+			const code = icon.match(':') ? icon : U.Smile.getCode(icon);
 			if (code) {
 				if (asImage) {
-					element = <img src={UtilSmile.srcFromColons(code)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={e=> e.preventDefault()} />;
+					element = <img src={U.Smile.srcFromColons(code)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={e=> e.preventDefault()} />;
 				} else {
 					element = <em-emoji shortcodes={code}></em-emoji>;
 				};
 			};
 		} else 
 		if (objectId) {
-			element = <img src={commonStore.imageUrl(objectId, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={e => e.preventDefault()} />;
+			element = <img src={S.Common.imageUrl(objectId, J.Size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')} onDragStart={e => e.preventDefault()} />;
 		} else 
 		if (iconClass) {
 			element = <img src={IconSrc[iconClass]} className={[ 'iconCommon', iconClass, 'c' + size ].join(' ')} />;

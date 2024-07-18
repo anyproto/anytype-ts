@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button } from 'Component';
-import { analytics, I, Onboarding, translate, UtilCommon } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S, U, J, Onboarding, translate, analytics } from 'Lib';
 import QRCode from 'qrcode.react';
-const Theme = require('json/theme.json');
-const Url = require('json/url.json');
 
 interface State {
 	step: number;
@@ -22,7 +19,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 		const { param, close } = this.props;
 		const { data } = param;
 		const { type } = data;
-		const theme = commonStore.getThemeClass();
+		const theme = S.Common.getThemeClass();
 
 		let content = null;
 
@@ -35,7 +32,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 						<Label text={translate('popupMigrationOnboardingText2')} />
 
 						<div className="qrWrap">
-							<QRCode value={Url.download} fgColor={Theme[theme].qr.foreground} bgColor={Theme[theme].qr.bg} size={100} />
+							<QRCode value={J.Url.download} fgColor={J.Theme[theme].qr.foreground} bgColor={J.Theme[theme].qr.bg} size={100} />
 						</div>
 
 						<Label text={translate('popupMigrationOnboardingText3')} />
@@ -56,10 +53,10 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 						<Label text={translate('popupMigrationImportText2')} />
 
 						<div className="qrWrap">
-							<QRCode value={Url.download} fgColor={Theme[theme].qr.foreground} bgColor={Theme[theme].qr.bg} size={100} />
+							<QRCode value={J.Url.download} fgColor={J.Theme[theme].qr.foreground} bgColor={J.Theme[theme].qr.bg} size={100} />
 						</div>
 
-						<Label text={UtilCommon.sprintf(translate('popupMigrationImportText3'), Url.community)} />
+						<Label text={U.Common.sprintf(translate('popupMigrationImportText3'), J.Url.community)} />
 
 						<div className="buttons">
 							<Button text={translate('commonDone')} className="c36" onClick={() => close()} />

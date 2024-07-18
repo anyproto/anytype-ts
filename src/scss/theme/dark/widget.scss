@@ -2,6 +2,7 @@
 	.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
 	.icon.collapse { background-image: url('#{$themePath}/icon/widget/collapse.svg'); }
 	.icon.options { background-image: url('#{$themePath}/icon/widget/options.svg'); }
+	.icon.plus { background-image: url('#{$themePath}/icon/widget/plus.svg'); }
 
 	.icon.remove .inner { background-color: var(--color-shape-secondary); }
 	.icon.remove:hover .inner { background-color: var(--color-text-tertiary); }
@@ -23,27 +24,46 @@
 }
 
 .widget.widgetTree {
-	.icon.set { background-image: url('#{$themePath}/icon/sidebar/set.svg'); }
-	.icon.collection { background-image: url('#{$themePath}/icon/sidebar/collection.svg'); }
-	.icon.blank { background-image: url('#{$themePath}/icon/sidebar/blank.svg'); }
+	.icon.set { background-image: url('#{$themePath}/icon/widget/set.svg'); }
+	.icon.blank { background-image: url('#{$themePath}/icon/widget/blank.svg'); }
 	.icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
 }
 
-.widget.widgetList, .widget.widgetCompact {
+.widget.widgetView {
 	#viewSelect {
 		.select {
 			.icon.arrow { background-image: url('#{$themePath}/arrow/widget.svg') !important; }
 		}
 	}
 
-	.body {
-		.item {
-			.iconObject.isTask, .iconObject.isBookmark { background: none; }
+	.viewList, .viewGrid {
+		.body {
+			.item {
+				.iconObject.isTask, .iconObject.isBookmark { background: none; }
+			}
+		}
+	}
+
+	.viewGallery {
+		.arrowWrap { background-color: var(--color-control-accent); }
+	}
+
+	.viewBoard {
+		.group {
+			.clickable {
+				.icon.arrow {  background-image: url('~img/arrow/select/light.svg'); }
+			}
+		}
+	}
+
+	.viewCalendar {
+		.dateSelect {
+			.icon.arrow { background-image: url('#{$themePath}/arrow/dateSelect.svg'); }
 		}
 	}
 }
 
 .button.widget {
-	.icon.store { background-image: url('#{$themePath}/icon/sidebar/store.svg'); }
-	.icon.bin { background-image: url('#{$themePath}/icon/sidebar/bin.svg'); }
+	.icon.store { background-image: url('#{$themePath}/icon/widget/store.svg'); }
+	.icon.bin { background-image: url('#{$themePath}/icon/widget/bin.svg'); }
 }

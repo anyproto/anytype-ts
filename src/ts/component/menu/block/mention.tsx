@@ -2,13 +2,11 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
-import { I, keyboard, UtilCommon, UtilData, UtilObject, UtilMenu, Mark, analytics, translate } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { I, S, U, J, keyboard, Mark, translate, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-const Constant = require('json/constant.json');
 
 interface State {
-	loading: boolean;
+	isLoading: boolean;
 };
 
 const HEIGHT_ITEM = 28;
@@ -18,7 +16,7 @@ const LIMIT_HEIGHT = 10;
 const MenuBlockMention = observer(class MenuBlockMention extends React.Component<I.Menu, State> {
 
 	state = {
-		loading: false,
+		isLoading: false,
 	};
 
 	_isMounted = false;	
@@ -38,7 +36,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 	
 	render () {
-		const { loading } = this.state;
+		const { isLoading } = this.state;
 		const filter = this.getFilter();
 		const items = this.getItems();
 
@@ -48,7 +46,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				return null;
 			};			
 
-			const type = dbStore.getTypeById(item.type);
+			const type = S.Record.getTypeById(item.type);
 			const cn = [];
 
 			let content = null;
@@ -96,7 +94,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		return (
 			<div className="items">
-				{loading ? <Loader /> : (
+				{isLoading ? <Loader /> : (
 					<InfiniteLoader
 						rowCount={items.length}
 						loadMoreRows={this.loadMoreRows}
@@ -135,10 +133,11 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	componentDidUpdate () {
+		const { isLoading } = this.state;
 		const items = this.getItems();
 		const filter = this.getFilter();
 
-		if (this.filter != filter) {
+		if ((this.filter != filter) && !isLoading) {
 			this.filter = filter;
 			this.n = -1;
 			this.offset = 0;
@@ -171,7 +170,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	getFilter () {
-		return String(commonStore.filter.text || '').replace(/^@/, '');
+		return String(S.Common.filter.text || '').replace(/^@/, '');
 	};
 
 	getSections () {
@@ -185,7 +184,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		if (filter) {
 			sections.push({ 
 				children: [
-					{ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObject'), filter) }
+					{ id: 'add', icon: 'plus', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter) }
 				]
 			});
 		};
@@ -208,12 +207,13 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { data } = param;
 		const { skipIds } = data;
 		const filter = this.getFilter();
-		const skipLayouts = UtilObject.getSystemLayouts().filter(it => it != I.ObjectLayout.Date);
+		const skipLayouts = U.Object.getSystemLayouts().filter(it => it != I.ObjectLayout.Date);
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
 		];
 
@@ -222,18 +222,18 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (clear) {
-			this.setState({ loading: true });
+			this.setState({ isLoading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 				return;
 			};
 
@@ -248,7 +248,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 			} else {
 				this.forceUpdate();
 			};
@@ -257,7 +257,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -280,15 +280,15 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onChange } = data;
-		const { from } = commonStore.filter;
+		const { from } = S.Common.filter;
 
 		const cb = (id: string, name: string) => {
 			name = String(name || translate('defaultNamePage'));
-			name = UtilCommon.shorten(name, 30);
+			name = U.Common.shorten(name, 30);
 
 			const to = from + name.length;
 
-			let marks = UtilCommon.objectCopy(data.marks || []);
+			let marks = U.Common.objectCopy(data.marks || []);
 			marks = Mark.adjust(marks, from, name.length);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
@@ -302,7 +302,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		if (item.id == 'add') {
 			const name = this.getFilter();
 
-			UtilObject.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], 'Mention', (message: any) => {
+			U.Object.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], analytics.route.mention, (message: any) => {
 				cb(message.targetId, name);
 			});
 		} else {

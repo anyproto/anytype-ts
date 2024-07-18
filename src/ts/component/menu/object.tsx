@@ -1,10 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate, UtilSpace } from 'Lib';
-import { blockStore, detailStore, commonStore, menuStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
-const Url = require('json/url.json');
+import { I, C, S, U, J, keyboard, analytics, Preview, focus, Action, translate } from 'Lib';
 
 class MenuObject extends React.Component<I.Menu> {
 	
@@ -21,10 +18,10 @@ class MenuObject extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
-		const { config } = commonStore;
+		const block = S.Block.getLeaf(rootId, blockId);
+		const { config } = S.Common;
 		const sections = this.getSections();
-		const restrictions = blockStore.getRestrictions(rootId, rootId).map(it => I.RestrictionObject[it]);
+		const restrictions = S.Block.getRestrictions(rootId, rootId).map(it => I.RestrictionObject[it]);
 
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
@@ -76,7 +73,7 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
-		menuStore.closeAll(Constant.menuIds.object);
+		S.Menu.closeAll(J.Menu.object);
 	};
 
 	rebind () {
@@ -93,19 +90,19 @@ class MenuObject extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return [];
 		};
 		
-		const object = detailStore.get(rootId, blockId);
+		const object = S.Detail.get(rootId, blockId);
 		const cmd = keyboard.cmdSymbol();
-		const isTemplate = UtilObject.isTemplate(object.type);
+		const isTemplate = U.Object.isTemplate(object.type);
 		const print = { id: 'print', name: translate('menuObjectPrint'), caption: `${cmd} + P` };
 		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
-		const canWrite = UtilSpace.canMyParticipantWrite();
-		const canDelete = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
+		const canWrite = U.Space.canMyParticipantWrite();
+		const canDelete = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
 		let archive = null;
 		let remove = null;
@@ -116,15 +113,16 @@ class MenuObject extends React.Component<I.Menu> {
 		let setDefaultTemplate = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
+		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
-		let history = { id: 'history', name: translate('menuObjectVersionHistory'), caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
+		let history = { id: 'history', name: translate('commonVersionHistory'), caption: (U.Common.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 
 		if (isTemplate) {	
-			template = { id: 'pageCreate', icon: 'template', name: translate('menuObjectCreateObject') };
+			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
 			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('menuObjectSetDefaultTemplate') };
 			pageCopy.name = translate('commonDuplicate');
 		} else {
@@ -139,6 +137,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 		if (object.isArchived) {
 			linkTo = null;
+			addCollection = null;
 			remove = { id: 'pageRemove', icon: 'remove', name: translate('commonDeleteImmediately') };
 			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
@@ -160,18 +159,19 @@ class MenuObject extends React.Component<I.Menu> {
 		// Restrictions
 
 		const allowedArchive = canWrite && canDelete;
-		const allowedSearch = !UtilObject.isSetLayout(object.layout);
-		const allowedHistory = !UtilObject.isFileOrSystemLayout(object.layout) && !UtilObject.isSetLayout(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
-		const allowedFav = canWrite && !object.isArchived && !UtilObject.isFileOrSystemLayout(object.layout) && !object.templateIsBundled;
-		const allowedLock = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedSearch = !U.Object.isInSetLayouts(object.layout);
+		const allowedHistory = !U.Object.isInFileOrSystemLayouts(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
+		const allowedFav = canWrite && !object.isArchived && !U.Object.isInFileOrSystemLayouts(object.layout) && !object.templateIsBundled;
+		const allowedLock = canWrite && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite;
+		const allowedAddCollection = canWrite;
 		const allowedPageLink = true;
-		const allowedCopy = canWrite && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
+		const allowedCopy = canWrite && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = canWrite && object.source && block.isObjectBookmark();
-		const allowedInstall = canWrite && !object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout);
-		const allowedUninstall = canWrite && object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout) && canDelete;
-		const allowedTemplate = canWrite && !UtilObject.getLayoutsWithoutTemplates().includes(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
-		const allowedWidget = canWrite;
+		const allowedInstall = canWrite && !object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout);
+		const allowedUninstall = canWrite && object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout) && canDelete;
+		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
+		const allowedWidget = canWrite && !S.Block.checkBlockTypeExists(rootId);
 		const hasShortMenu = (
 			block.isObjectType() || 
 			block.isObjectRelation() || 
@@ -193,21 +193,23 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedWidget)		 createWidget = null;
 		if (!allowedLinkTo)		 linkTo = null;
 		if (!allowedPageLink)	 pageLink = null;
+		if (!allowedAddCollection)	 addCollection = null;
 
 		if (!canWrite) {
 			template = null;
 			setDefaultTemplate = null;
+			remove = null;
 		};
 
 		let sections = [];
 		if (hasShortMenu) {
-			if (!UtilObject.isSetLayout(object.layout)) {
+			if (!U.Object.isInSetLayouts(object.layout)) {
 				pageCopy = null;
 			};
 
 			sections = [
-				{ children: [ createWidget, fav, pageLock ] },
-				{ children: [ linkTo ] },
+				{ children: [ createWidget, fav, pageLock, history ] },
+				{ children: [ linkTo, addCollection ] },
 				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },
 			];
@@ -226,7 +228,7 @@ class MenuObject extends React.Component<I.Menu> {
 			} else {
 				sections = [
 					{ children: [ createWidget, fav, pageLock ] },
-					{ children: [ linkTo, template ] },
+					{ children: [ linkTo, addCollection, template ] },
 					{ children: [ search, history, pageCopy, archive ] },
 					{ children: [ pageLink, pageReload ] },
 					{ children: [ print, pageExport ] },
@@ -264,14 +266,14 @@ class MenuObject extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			menuStore.closeAll(Constant.menuIds.object);
+			S.Menu.closeAll(J.Menu.object);
 			return;
 		};
 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;
@@ -300,7 +302,7 @@ class MenuObject extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.LinkTo,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: () => close(),
@@ -309,11 +311,39 @@ class MenuObject extends React.Component<I.Menu> {
 				});
 				break;
 			};
+
+			case 'addCollection': {
+				const collectionType = S.Record.getCollectionType();
+
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+				menuParam.data = Object.assign(menuParam.data, {
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
+						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+					],
+					onSelect: (el: any) => {
+						Action.addToCollection(el.id, [ rootId ]);
+					},
+					skipIds: [ rootId ],
+					canAdd: true,
+					addParam: {
+						name: translate('blockDataviewCreateNewCollection'),
+						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
+						onClick: (details: any) => {
+							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
+								Action.addToCollection(message.objectId, [ rootId ]);
+							});
+						},
+					},
+				});
+				break;
+			};
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.object, () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll(J.Menu.object, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};
@@ -322,8 +352,8 @@ class MenuObject extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId, onSelect } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
-		const object = detailStore.get(rootId, rootId);
+		const block = S.Block.getLeaf(rootId, blockId);
+		const object = S.Detail.get(rootId, rootId);
 		const route = analytics.route.menuObject;
 		
 		if (!block || item.arrow) {
@@ -341,9 +371,9 @@ class MenuObject extends React.Component<I.Menu> {
 				return;
 			};
 
-			const home = UtilSpace.getDashboard();
+			const home = U.Space.getDashboard();
 			if (home && (object.id == home.id)) {
-				UtilObject.openRoute({ layout: I.ObjectLayout.Empty });
+				U.Object.openRoute({ layout: I.ObjectLayout.Empty });
 			} else {
 				keyboard.onBack();
 			};
@@ -360,7 +390,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'history': {
 				keyboard.disableClose(true);
-				UtilObject.openAuto({ layout: I.ObjectLayout.History, id: object.id });
+				U.Object.openAuto({ layout: I.ObjectLayout.History, id: object.id });
 				break;
 			};
 			
@@ -372,7 +402,7 @@ class MenuObject extends React.Component<I.Menu> {
 			case 'pageCopy': {
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
-						UtilObject.openPopup({ id: message.ids[0], layout: object.layout }, {
+						U.Object.openConfig({ id: message.ids[0], layout: object.layout }, {
 							onClose: () => $(window).trigger(`updatePreviewObject.${message.ids[0]}`)
 						});
 
@@ -383,7 +413,7 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageExport': {
-				popupStore.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route } });
+				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route } });
 				break;
 			};
 				
@@ -413,12 +443,12 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'pageCreate': {
-				UtilObject.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, [], route, message => UtilObject.openAuto(message.details));
+				U.Object.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, [], route, message => U.Object.openAuto(message.details));
 				break;
 			};
 
 			case 'pageLink': {
-				UtilCommon.clipboardCopy({ text: Url.protocol + UtilObject.universalRoute(object) });
+				U.Common.clipboardCopy({ text: `${J.Constant.protocol}://${U.Object.universalRoute(object)}` });
 				analytics.event('CopyLink', { route });
 				break;
 			};
@@ -432,7 +462,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'pageInstall': {
 				Action.install(object, false, (message: any) => {
-					UtilObject.openAuto(message.details);
+					U.Object.openAuto(message.details);
 				});
 				break;
 			};
@@ -454,7 +484,7 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'templateCreate': {
 				C.TemplateCreateFromObject(rootId, (message: any) => {
-					UtilObject.openPopup({ id: message.id, layout: object.layout });
+					U.Object.openConfig({ id: message.id, layout: object.layout });
 					Preview.toastShow({ action: I.ToastAction.TemplateCreate, objectId: rootId });
 
 					analytics.event('CreateTemplate', { objectType: object.type, route });
@@ -463,14 +493,14 @@ class MenuObject extends React.Component<I.Menu> {
 			};
 
 			case 'setDefault': {
-				UtilObject.setDefaultTemplateId(object.targetObjectType, rootId);
+				U.Object.setDefaultTemplateId(object.targetObjectType, rootId);
 				Preview.toastShow({ text: translate('toastSetDefaultTemplate') });
 				analytics.event('ChangeDefaultTemplate', { route });
 				break;
 			};
 
 			case 'createWidget': {
-				const first = blockStore.getFirstBlock(blockStore.widgets, 1, it => it.isWidget());
+				const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
 
 				Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top);
 				break;

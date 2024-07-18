@@ -1,0 +1,94 @@
+@import "~scss/_mixins";
+
+.viewList, .viewGrid, .viewGraph { display: flex; flex-direction: column; height: 100%; }
+.viewList, .viewGrid, .viewGraph {
+	.body { display: flex; flex-direction: column; }
+	.body {
+		.items { height: 100%; }
+
+		.item { position: relative; display: flex; flex-direction: row; align-items: center; }
+		.item::before {
+			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
+			opacity: 0;
+		}
+		.item:hover::before, .item.active::before { opacity: 1; }
+
+		.item { 
+			.dropTarget { position: relative; display: flex; flex-direction: row; align-items: center; width: 100%; border-radius: 6px; height: 100%; }
+
+			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; flex-shrink: 0; }
+
+			.inner { display: flex; flex-direction: row; align-items: center; height: 100%; width: 100%; }
+			.iconObject { flex-shrink: 0; }
+			.iconObject.isTask { background: none; }
+
+			.name { @include text-overflow-nw; }
+			.descr { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
+
+			.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
+			.buttons {
+				.icon { width: 24px; height: 24px; border-radius: 4px; flex-shrink: 0; background-size: 20px; z-index: 2; cursor: default; }
+				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+				.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
+			}
+		}
+
+		.item.active { 
+			.buttons {
+				.icon.more { background-image: url('~img/icon/menu/action/more1.svg'); }
+			}
+		}
+
+		.item:hover, .item.active {
+			.buttons { display: flex; }
+			.buttons {
+				.icon.more { opacity: 1; }
+			}
+		}
+
+		.item.canDrag {
+			.inner { padding-left: 0px; }
+		}
+
+		.item.isDragging { margin-top: -46px; margin-left: -12px; }
+	}
+
+	.body:not(.isCompact) { padding: 0px 8px 8px 8px; }
+	.body:not(.isCompact) {
+		.item { height: 64px; }
+		.item {
+			.info { width: 100%; }
+			.inner { padding: 8px; gap: 0px 12px; }
+			.iconObject { background: var(--color-shape-tertiary); border-radius: 10px; }
+		}
+		.item:hover, .item.active {
+			.info { width: calc(100% - 36px); }
+		}
+
+		.item.withIcon {
+			.info { width: calc(100% - 60px); }
+		}
+		.item.withIcon:hover, .item.withIcon.active {
+			.info { width: calc(100% - 96px); }
+		}
+
+		.item::before { border-radius: 6px; }
+	}
+
+	.body.isCompact { padding: 0px 8px 8px 8px; }
+	.body.isCompact {
+		.item { height: 28px; }
+		.item {
+			.inner { gap: 0px 6px; padding: 0px 4px 0px 8px; }
+			.info { width: calc(100% - 28px); }
+			.iconObject { background: none; border-radius: 0px; }
+		}
+		.item:hover, .item.active {
+			.info { width: calc(100% - 30px); }
+		}
+		.item.withIcon:hover, .item.withIcon.active {
+			.info { width: calc(100% - 54px); }
+		}
+		.item::before { border-radius: 6px; }
+	}
+}

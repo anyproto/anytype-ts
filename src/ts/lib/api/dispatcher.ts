@@ -5,24 +5,20 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { authStore, commonStore, blockStore, detailStore, dbStore, notificationStore } from 'Store';
-import { 
-	UtilCommon, UtilObject, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode, UtilRouter, Storage, UtilSpace, UtilData 
-} from 'Lib';
+import { I, M, S, U, J, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Storage, keyboard, C } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
-const Constant = require('json/constant.json');
 
 const SORT_IDS = [ 
-	'blockAdd', 
-	'blockDelete', 
-	'blockSetChildrenIds', 
-	'objectDetailsSet', 
-	'objectDetailsAmend', 
-	'objectDetailsUnset', 
-	'subscriptionCounters',
-	'blockDataviewViewSet',
-	'blockDataviewViewDelete',
+	'BlockAdd', 
+	'BlockDelete', 
+	'BlockSetChildrenIds', 
+	'ObjectDetailsSet', 
+	'ObjectDetailsAmend', 
+	'ObjectDetailsUnset', 
+	'SubscriptionCounters',
+	'BlockDataviewViewSet',
+	'BlockDataviewViewDelete',
 ];
 const SKIP_IDS = [ 'BlockSetCarriage' ];
 const SKIP_SENTRY_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent' ];
@@ -36,18 +32,25 @@ class Dispatcher {
 	reconnects = 0;
 
 	init (address: string) {
+		address = String(address || '');
+
+		if (!address) {
+			console.error('[Dispatcher.init] No address');
+			return;
+		};
+
 		this.service = new Service.ClientCommandsClient(address, null, null);
 	};
 
 	listenEvents () {
-		if (!authStore.token) {
+		if (!S.Auth.token) {
 			return;
 		};
 
 		window.clearTimeout(this.timeoutStream);
 
 		const request = new Commands.StreamRequest();
-		request.setToken(authStore.token);
+		request.setToken(S.Auth.token);
 
 		this.stream = this.service.listenSessionEvents(request, null);
 
@@ -89,91 +92,16 @@ class Dispatcher {
 		}, t * 1000);
 	};
 
-	eventType (v: number): string {
-		const V = Events.Event.Message.ValueCase;
-
-		let t = '';
-		if (v == V.ACCOUNTSHOW)					 t = 'accountShow';
-		if (v == V.ACCOUNTDETAILS)				 t = 'accountDetails';
-		if (v == V.ACCOUNTUPDATE)				 t = 'accountUpdate';
-		if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'accountConfigUpdate';
-		if (v == V.ACCOUNTLINKCHALLENGE)		 t = 'accountLinkChallenge';
-
-		if (v == V.THREADSTATUS)				 t = 'threadStatus';
-
-		if (v == V.BLOCKADD)					 t = 'blockAdd';
-		if (v == V.BLOCKDELETE)					 t = 'blockDelete';
-		if (v == V.BLOCKSETFIELDS)				 t = 'blockSetFields';
-		if (v == V.BLOCKSETCHILDRENIDS)			 t = 'blockSetChildrenIds';
-		if (v == V.BLOCKSETBACKGROUNDCOLOR)		 t = 'blockSetBackgroundColor';
-		if (v == V.BLOCKSETTEXT)				 t = 'blockSetText';
-		if (v == V.BLOCKSETFILE)				 t = 'blockSetFile';
-		if (v == V.BLOCKSETLINK)				 t = 'blockSetLink';
-		if (v == V.BLOCKSETBOOKMARK)			 t = 'blockSetBookmark';
-		if (v == V.BLOCKSETALIGN)				 t = 'blockSetAlign';
-		if (v == V.BLOCKSETVERTICALALIGN)		 t = 'blockSetVerticalAlign';
-		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
-		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
-		if (v == V.BLOCKSETLATEX)				 t = 'blockSetLatex';
-		if (v == V.BLOCKSETTABLEROW)			 t = 'blockSetTableRow';
-
-		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
-		if (v == V.BLOCKDATAVIEWVIEWUPDATE)		 t = 'blockDataviewViewUpdate';
-		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
-		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
-
-		if (v == V.BLOCKDATAVIEWTARGETOBJECTIDSET)	 t = 'blockDataviewTargetObjectIdSet';
-		if (v == V.BLOCKDATAVIEWISCOLLECTIONSET)	 t = 'blockDataviewIsCollectionSet';
-
-		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
-		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
-		if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'blockDataviewGroupOrderUpdate';
-		if (v == V.BLOCKDATAVIEWOBJECTORDERUPDATE)	 t = 'blockDataviewObjectOrderUpdate';
-
-		if (v == V.BLOCKSETWIDGET)				 t = 'blockSetWidget';
-
-		if (v == V.SUBSCRIPTIONADD)				 t = 'subscriptionAdd';
-		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
-		if (v == V.SUBSCRIPTIONPOSITION)		 t = 'subscriptionPosition';
-		if (v == V.SUBSCRIPTIONCOUNTERS)		 t = 'subscriptionCounters';
-		if (v == V.SUBSCRIPTIONGROUPS)			 t = 'subscriptionGroups';
-
-		if (v == V.PROCESSNEW)					 t = 'processNew';
-		if (v == V.PROCESSUPDATE)				 t = 'processUpdate';
-		if (v == V.PROCESSDONE)					 t = 'processDone';
-
-		if (v == V.OBJECTREMOVE)				 t = 'objectRemove';
-		if (v == V.OBJECTDETAILSSET)			 t = 'objectDetailsSet';
-		if (v == V.OBJECTDETAILSAMEND)			 t = 'objectDetailsAmend';
-		if (v == V.OBJECTDETAILSUNSET)			 t = 'objectDetailsUnset';
-		if (v == V.OBJECTRELATIONSAMEND)		 t = 'objectRelationsAmend';
-		if (v == V.OBJECTRELATIONSREMOVE)		 t = 'objectRelationsRemove';
-		if (v == V.OBJECTRESTRICTIONSSET)		 t = 'objectRestrictionsSet';
-
-		if (v == V.FILESPACEUSAGE)				 t = 'fileSpaceUsage';
-		if (v == V.FILELOCALUSAGE)				 t = 'fileLocalUsage';
-		if (v == V.FILELIMITREACHED)			 t = 'fileLimitReached';
-		if (v == V.FILELIMITUPDATED)			 t = 'fileLimitUpdated';
-
-		if (v == V.NOTIFICATIONSEND)			 t = 'notificationSend';
-		if (v == V.NOTIFICATIONUPDATE)			 t = 'notificationUpdate';
-		if (v == V.PAYLOADBROADCAST)			 t = 'payloadBroadcast';
-		
-		if (v == V.MEMBERSHIPUPDATE)			 t = 'membershipUpdate';
-
-		return t;
-	};
-
 	event (event: Events.Event, skipDebug?: boolean) {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
-		const electron = UtilCommon.getElectron();
+		const electron = U.Common.getElectron();
 		const currentWindow = electron.currentWindow();
 		const { windowId } = currentWindow;
 		const isMainWindow = windowId === 1;
-		const debugEvent = config.flagsMw.event;
 		const debugJson = config.flagsMw.json;
+		const win = $(window);
 		
 		if (traceId) {
 			ctx.push(traceId);
@@ -181,165 +109,128 @@ class Dispatcher {
 
 		const rootId = ctx.join('-');
 		const messages = event.getMessagesList() || [];
-		const log = (rootId: string, type: string, data: any, valueCase: any) => { 
-			if (!debugEvent) {
-				return;
-			};
-
+		const log = (rootId: string, type: string, data: any, valueCase: any) => {
 			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', rootId);
 			if (!type) {
 				console.error('Event not found for valueCase', valueCase);
 			};
 
 			if (data && data.toObject) {
-				const d = UtilCommon.objectClear(data.toObject());
+				const d = U.Common.objectClear(data.toObject());
 				console.log(debugJson ? JSON.stringify(d, null, 3) : d); 
 			};
 		};
 
-		let blocks: any[] = [];
-		let id = '';
-		let block: any = null;
-		let details: any = null;
-		let viewId = '';
-		let keys: string[] = [];
-		let subIds: string[] = [];
-		let subId = '';
-		let afterId = '';
-		let content: any = {};
 		let updateParents = false;
 
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
 		for (const message of messages) {
-			const win = $(window);
-			const type = this.eventType(message.getValueCase());
-			const fn = `get${UtilCommon.ucFirst(type)}`;
-			const data = message[fn] ? message[fn]() : {};
+			const type = Mapper.Event.Type(message.getValueCase());
+			const data = Mapper.Event.Data(message);
+			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : {};
 			const needLog = this.checkLog(type) && !skipDebug;
 
 			switch (type) {
 
-				case 'accountShow': {
-					authStore.accountAdd(Mapper.From.Account(data.getAccount()));
+				case 'AccountShow': {
+					S.Auth.accountAdd(mapped.account);
 					break;
 				};
 
-				case 'accountUpdate': {
-					authStore.accountSetStatus(Mapper.From.AccountStatus(data.getStatus()));
+				case 'AccountUpdate': {
+					S.Auth.accountSetStatus(mapped.status);
 					break;	
 				};
 
-				case 'accountConfigUpdate': {
-					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
-					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
+				case 'AccountConfigUpdate': {
+					S.Common.configSet(mapped.config, true);
+					Renderer.send('setConfig', U.Common.objectCopy(S.Common.config));
 					break;
 				};
 
-				case 'accountLinkChallenge': {
+				case 'AccountLinkChallenge': {
 					if (!isMainWindow) {
 						break;
 					};
 
 					Renderer.send('showChallenge', {
-						challenge: data.getChallenge(),
-						theme: commonStore.getThemeClass(),
-						lang: commonStore.interfaceLang,
+						challenge: mapped.challenge,
+						theme: S.Common.getThemeClass(),
+						lang: S.Common.interfaceLang,
 					});
 					break;
 				};
 
-				case 'threadStatus': {
-					authStore.threadSet(rootId, {
-						summary: Mapper.From.ThreadSummary(data.getSummary()),
-						cafe: Mapper.From.ThreadCafe(data.getCafe()),
-						accounts: (data.getAccountsList() || []).map(Mapper.From.ThreadAccount),
-					});
+				case 'ObjectRelationsAmend': {
+					S.Record.relationsSet(rootId, mapped.id, mapped.relations);
 					break;
 				};
 
-				case 'objectRemove': {
+				case 'ObjectRelationsRemove': {
+					S.Record.relationListDelete(rootId, mapped.id, mapped.relationKeys);
 					break;
 				};
 
-				case 'objectRelationsAmend': {
-					id = data.getId();
-					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
+				case 'ObjectRestrictionsSet': {
+					S.Block.restrictionsSet(rootId, mapped.restrictions);
 					break;
 				};
 
-				case 'objectRelationsRemove': {
-					id = data.getId();
-					dbStore.relationListDelete(rootId, id, data.getRelationkeysList() || []);
-					break;
-				};
-
-				case 'objectRestrictionsSet': {
-					blockStore.restrictionsSet(rootId, Mapper.From.Restrictions(data.getRestrictions()));
-					break;
-				};
-
-				case 'fileSpaceUsage': {
-					const spaceId = data.getSpaceid();
-					const { spaces } = commonStore.spaceStorage;
-					const space = spaces.find(it => it.spaceId == spaceId);
-					const bytesUsage = data.getBytesusage();
+				case 'FileSpaceUsage': {
+					const { spaces } = S.Common.spaceStorage;
+					const space = spaces.find(it => it.spaceId == mapped.spaceId);
 
 					if (space) {
-						set(space, { bytesUsage });
+						set(space, { bytesUsage: mapped.bytesUsage });
 					} else {
-						spaces.push({ spaceId, bytesUsage });
+						spaces.push(mapped);
 					};
 					break;
 				};
 
-				case 'fileLocalUsage': {
-					commonStore.spaceStorageSet({ localUsage: data.getLocalbytesusage() });
+				case 'FileLimitUpdated':
+				case 'FileLocalUsage': {
+					S.Common.spaceStorageSet(mapped);
 					break;
 				};
 
-				case 'fileLimitReached': {
-					const { bytesLimit, localUsage, spaces } = commonStore.spaceStorage;
+				case 'FileLimitReached': {
+					const { bytesLimit, localUsage, spaces } = S.Common.spaceStorage;
 					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
-					const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
+					const percentageUsed = Math.floor(U.Common.getPercent(bytesUsed, bytesLimit));
 
 					if (percentageUsed >= 99) {
 						Preview.toastShow({ action: I.ToastAction.StorageFull });
 					} else
 					if (localUsage > bytesLimit) {
-						Preview.toastShow({ text: 'Your local storage exceeds syncing limit. Locally stored files won\'t be synced' });
+						Preview.toastShow({ text: translate('toastFileLimitReached') });
 					};
 					break;
 				};
 
-				case 'fileLimitUpdated': {
-					commonStore.spaceStorageSet({ bytesLimit: data.getByteslimit() });
-					break;
-				};
+				case 'BlockAdd': {
+					const { blocks } = mapped;
 
-				case 'blockAdd': {
-					blocks = data.getBlocksList() || [];
-					for (let block of blocks) {
-						block = Mapper.From.Block(block);
-
+					for (const block of blocks) {
 						if (block.type == I.BlockType.Dataview) {
-							dbStore.relationsSet(rootId, block.id, block.content.relationLinks);
-							dbStore.viewsSet(rootId, block.id, block.content.views);
+							S.Record.relationsSet(rootId, block.id, block.content.relationLinks);
+							S.Record.viewsSet(rootId, block.id, block.content.views);
 						};
 
-						blockStore.add(rootId, new M.Block(block));
-						blockStore.updateStructure(rootId, block.id, block.childrenIds);
+						S.Block.add(rootId, new M.Block(block));
+						S.Block.updateStructure(rootId, block.id, block.childrenIds);
 					};
 
 					updateParents = true;
 					break;
 				};
 
-				case 'blockDelete': {
-					const blockIds = data.getBlockidsList() || [];
-					
+				case 'BlockDelete': {
+					const { blockIds } = mapped;
+
 					for (const blockId of blockIds) {
-						const block = blockStore.getLeaf(rootId, blockId);
+						const block = S.Block.getLeaf(rootId, blockId);
 						if (!block) {
 							continue;
 						};
@@ -348,323 +239,351 @@ class Dispatcher {
 							Action.dbClearBlock(rootId, blockId);
 						};
 
-						blockStore.delete(rootId, blockId);
+						S.Block.delete(rootId, blockId);
 					};
 
 					updateParents = true;
 					break;
 				};
 
-				case 'blockSetChildrenIds': {
-					id = data.getId();
+				case 'BlockSetChildrenIds': {
+					const { id, childrenIds } = mapped;
 
-					blockStore.updateStructure(rootId, id, data.getChildrenidsList());
+					S.Block.updateStructure(rootId, id, childrenIds);
 
 					if (id == rootId) {
-						blockStore.checkTypeSelect(rootId);
+						S.Block.checkTypeSelect(rootId);
 					};
 
 					updateParents = true;
 					break;
 				};
 
-				case 'blockSetFields': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetFields': {
+					const { id, fields } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					blockStore.update(rootId, id, { fields: data.hasFields() ? Decode.struct(data.getFields()) : {} });
+					S.Block.update(rootId, id, { fields });
 					break;
 				};
 
-				case 'blockSetLink': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetLink': {
+					const { id, cardStyle, iconSize, description, targetBlockId, relations, fields } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasCardstyle()) {
-						block.content.cardStyle = data.getCardstyle().getValue();
+					const content: any = {};
+
+					if (cardStyle !== null) {
+						content.cardStyle = cardStyle;
 					};
 
-					if (data.hasIconsize()) {
-						block.content.iconSize = data.getIconsize().getValue();
+					if (iconSize !== null) {
+						content.iconSize = iconSize;
 					};
 
-					if (data.hasDescription()) {
-						block.content.description = data.getDescription().getValue();
+					if (description !== null) {
+						content.description = description;
 					};
 
-					if (data.hasTargetblockid()) {
-						block.content.targetblockId = data.getTargetblockid().getValue();
+					if (targetBlockId !== null) {
+						content.targetBlockId = targetBlockId;
 					};
 
-					if (data.hasRelations()) {
-						block.content.relations = data.getRelations().getValueList() || [];
+					if (relations !== null) {
+						content.relations = relations;
 					};
 
-					if (data.hasTargetblockid()) {
-						block.content.targetBlockId = data.getTargetblockid().getValue();
+					if (fields !== null) {
+						content.fields = fields;
 					};
 
-					if (data.hasFields()) {
-						block.content.fields = Decode.struct(data.getFields());
-					};
-
-					blockStore.updateContent(rootId, id, block.content);
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockSetText': {
-					id = data.getId();
-					content = {};
+				case 'BlockSetText': {
+					const { id, text, marks, style, checked, color, iconEmoji, iconImage } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
 
-					if (data.hasText()) {
-						content.text = data.getText().getValue();
+					if (!block) {
+						break;
 					};
 
-					if (data.hasMarks()) {
-						content.marks = (data.getMarks().getValue().getMarksList() || []).map(Mapper.From.Mark);
+					const content: any = {};
+
+					if (text !== null) {
+						content.text = text;
 					};
 
-					if (data.hasStyle()) {
-						content.style = data.getStyle().getValue();
+					if (marks !== null) {
+						content.marks = marks;
 					};
 
-					if (data.hasChecked()) {
-						content.checked = data.getChecked().getValue();
+					if (style !== null) {
+						content.style = style;
 					};
 
-					if (data.hasColor()) {
-						content.color = data.getColor().getValue();
+					if (checked !== null) {
+						content.checked = checked;
 					};
 
-					if (data.hasIconemoji()) {
-						content.iconEmoji = data.getIconemoji().getValue();
+					if (color !== null) {
+						content.color = color;
 					};
 
-					if (data.hasIconimage()) {
-						content.iconImage = data.getIconimage().getValue();
+					if (iconEmoji !== null) {
+						content.iconEmoji = iconEmoji;
 					};
 
-					blockStore.updateContent(rootId, id, content);
+					if (iconImage !== null) {
+						content.iconImage = iconImage;
+					};
+
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockSetDiv': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetDiv': {
+					const { id, style } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasStyle()) {
-						block.content.style = data.getStyle().getValue();
+					if (style !== null) {
+						block.content.style = style;
 					};
 
-					blockStore.updateContent(rootId, id, block.content);
+					S.Block.updateContent(rootId, id, block.content);
 					break;
 				};
 
-				case 'blockDataviewTargetObjectIdSet': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockDataviewTargetObjectIdSet': {
+					const { id, targetObjectId } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					block.content.targetObjectId = data.getTargetobjectid();
-					blockStore.updateContent(rootId, id, block.content);
+					S.Block.updateContent(rootId, id, { targetObjectId });
 					break;
 				};
 
-				case 'blockDataviewIsCollectionSet':
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockDataviewIsCollectionSet': {
+					const { id, isCollection } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					block.content.isCollection = data.getValue();
-					blockStore.updateContent(rootId, id, block.content);
-					break;
-
-				case 'blockSetWidget': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
-					if (data.hasLayout()) {
-						block.content.layout = data.getLayout().getValue();
-					};
-
-					if (data.hasLimit()) {
-						block.content.limit = data.getLimit().getValue();
-					};
-
-					if (data.hasViewid()) {
-						block.content.viewId = data.getViewid().getValue();
-					};
-
-					blockStore.updateContent(rootId, id, block.content);
+					S.Block.updateContent(rootId, id, { isCollection });
 					break;
 				};
 
-				case 'blockSetFile': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetWidget': {
+					const { id, layout, limit, viewId } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasTargetobjectid()) {
-						block.content.targetObjectId = data.getTargetobjectid().getValue();
+					const content: any = {};
+
+					if (layout !== null) {
+						content.layout = layout;
 					};
 
-					if (data.hasType()) {
-						block.content.type = data.getType().getValue();
+					if (limit !== null) {
+						content.limit = limit;
 					};
 
-					if (data.hasStyle()) {
-						block.content.style = data.getStyle().getValue();
+					if (viewId !== null) {
+						content.viewId = viewId;
 					};
 
-					if (data.hasState()) {
-						block.content.state = data.getState().getValue();
-					};
-
-					blockStore.updateContent(rootId, id, block.content);
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockSetBookmark': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetFile': {
+					const { id, targetObjectId, type, style, state } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasTargetobjectid()) {
-						block.content.targetObjectId = data.getTargetobjectid().getValue();
+					const content: any = {};
+
+					if (targetObjectId !== null) {
+						content.targetObjectId = targetObjectId;
 					};
 
-					if (data.hasState()) {
-						block.content.state = data.getState().getValue();
+					if (type !== null) {
+						content.type = type;
 					};
 
-					blockStore.updateContent(rootId, id, block.content);
+					if (style !== null) {
+						content.style = style;
+					};
+
+					if (state !== null) {
+						content.state = state;
+					};
+
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockSetBackgroundColor': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetBookmark': {
+					const { id, targetObjectId, state } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					blockStore.update(rootId, id, { bgColor: data.getBackgroundcolor() });
+					const content: any = {};
+
+					if (targetObjectId !== null) {
+						content.targetObjectId = targetObjectId;
+					};
+
+					if (state !== null) {
+						content.state = state;
+					};
+
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockSetAlign': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetBackgroundColor': {
+					const { id, bgColor } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					blockStore.update(rootId, id, { hAlign: data.getAlign() });
+					S.Block.update(rootId, id, { bgColor });
 					break;
 				};
 
-				case 'blockSetVerticalAlign': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetAlign': {
+					const { id, align } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					blockStore.update(rootId, id, { vAlign: data.getVerticalalign() });
+					S.Block.update(rootId, id, { hAlign: align });
 					break;
 				};
 
-				case 'blockSetRelation': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetVerticalAlign': {
+					const { id, align } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasKey()) {
-						block.content.key = data.getKey().getValue();
-					};
-
-					blockStore.updateContent(rootId, id, block.content);
+					S.Block.update(rootId, id, { vAlign: align });
 					break;
 				};
 
-				case 'blockSetLatex': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetRelation': {
+					const { id, key } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasText()) {
-						block.content.text = data.getText().getValue();
+					const content: any = {};
+
+					if (key !== null) {
+						content.key = key;
 					};
 
-					blockStore.updateContent(rootId, id, block.content);
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockSetTableRow': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetLatex': {
+					const { id, text } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					if (data.hasIsheader()) {
-						block.content.isHeader = data.getIsheader().getValue();
+					const content: any = {};
+
+					if (text !== null) {
+						content.key = text;
 					};
 
-					blockStore.updateContent(rootId, id, block.content);
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockDataviewViewSet': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockSetTableRow': {
+					const { id, isHeader } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					dbStore.viewAdd(rootId, id, Mapper.From.View(data.getView()));
-					blockStore.updateWidgetViews(rootId);
+					const content: any = {};
+
+					if (isHeader !== null) {
+						content.isHeader = isHeader;
+					};
+
+					S.Block.updateContent(rootId, id, content);
 					break;
 				};
 
-				case 'blockDataviewViewUpdate': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockDataviewViewSet': {
+					const { id, view } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					viewId = data.getViewid();
+					S.Record.viewAdd(rootId, id, view);
+					S.Block.updateWidgetViews(rootId);
+					break;
+				};
 
-					let view = dbStore.getView(rootId, id, viewId);
+				case 'BlockDataviewViewUpdate': {
+					const { id, viewId, fields } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
+					if (!block) {
+						break;
+					};
+
+					let view = S.Record.getView(rootId, id, viewId);
 					let updateData = false;
 
-					if (data.hasFields()) {
-						const fields = Mapper.From.ViewFields(data.getFields());
+					if (fields !== null) {
 						const updateKeys = [ 'type', 'groupRelationKey', 'pageLimit' ];
 
 						for (const f of updateKeys) {
@@ -684,31 +603,25 @@ class Dispatcher {
 					];
 
 					keys.forEach(key => {
-						const items = data[UtilCommon.toCamelCase(`get-${key.id}-list`)]() || [];
-						const mapper = Mapper.From[key.mapper];
+						const elements = mapped[key.field] || [];
 
-						items.forEach(item => {
-							let list = view[key.field];
+						let list = view[key.field];
 
-							if (item.hasAdd()) {
-								const op = item.getAdd();
-								const afterId = op.getAfterid();
-								const items = (op.getItemsList() || []).map(mapper);
+						elements.forEach(element => {
+
+							if (element.add) {
+								const { afterId, items } = element.add;
 								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) + 1 : list.length;
 
-								items.forEach((it, i) => { 
-									list.splice(idx + i, 0, it);
-								});
+								items.forEach((it, i) => list.splice(idx + i, 0, it));
 
 								if ([ 'filter', 'sort', 'relation' ].includes(key.id)) {
 									updateData = true;
 								};
 							};
 
-							if (item.hasMove()) {
-								const op = item.getMove();
-								const afterId = op.getAfterid();
-								const ids = op.getIdsList() || [];
+							if (element.move) {
+								const { afterId, ids } = element.move;
 								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) + 1 : 0;
 
 								ids.forEach((id: string, i: number) => {
@@ -723,12 +636,11 @@ class Dispatcher {
 								};
 							};
 
-							if (item.hasUpdate()) {
-								const op = item.getUpdate();
+							if (element.update) {
+								const { id, item } = element.update;
 
-								if (op.hasItem()) {
-									const idx = list.findIndex(it => it[key.idField] == op.getId());
-									const item = Mapper.From[key.mapper](op.getItem());
+								if (item) {
+									const idx = list.findIndex(it => it[key.idField] == id);
 
 									if ([ 'filter', 'sort' ].includes(key.id)) {
 										updateData = true;
@@ -751,97 +663,92 @@ class Dispatcher {
 								};
 							};
 
-							if (item.hasRemove()) {
-								const op = item.getRemove();
-								const ids = op.getIdsList() || [];
+							if (element.remove) {
+								const { ids } = element.remove;
 
-								ids.forEach(id => { 
-									list = list.filter(it => it[key.idField] != id);
-								});
+								list = list.filter(it => !ids.includes(it[key.idField]));
 
 								if ([ 'filter', 'sort' ].includes(key.id)) {
 									updateData = true;
 								};
 							};
-
-							view[key.field] = list;
 						});
+
+						view[key.field] = list;
 					});
 
-					dbStore.viewUpdate(rootId, id, view);
-					blockStore.updateWidgetViews(rootId);
+					S.Record.viewUpdate(rootId, id, view);
+					S.Block.updateWidgetViews(rootId);
 
 					if (updateData) {
-						win.trigger(`updateDataviewData.${id}`);
-						blockStore.updateWidgetData(rootId);
+						win.trigger(`updateDataviewData`);
+						S.Block.updateWidgetData(rootId);
 					};
 					break;
 				};
 
-				case 'blockDataviewViewDelete': {
-					id = data.getId();
-					subId = dbStore.getSubId(rootId, id);
-					viewId = dbStore.getMeta(subId, '').viewId;
+				case 'BlockDataviewViewDelete': {
+					const { id, viewId } = mapped;
+					const subId = S.Record.getSubId(rootId, id);
+
+					let current = S.Record.getMeta(subId, '').viewId;
 					
-					const deleteId = data.getViewid();
-					dbStore.viewDelete(rootId, id, deleteId);
+					S.Record.viewDelete(rootId, id, viewId);
 
-					if (deleteId == viewId) {
-						const views = dbStore.getViews(rootId, id);
-						viewId = views.length ? views[views.length - 1].id : '';
+					if (viewId == current) {
+						const views = S.Record.getViews(rootId, id);
 
-						dbStore.metaSet(subId, '', { viewId: viewId });
+						current = views.length ? views[views.length - 1].id : '';
+						S.Record.metaSet(subId, '', { viewId: current });
 					};
 
-					blockStore.updateWidgetViews(rootId);
+					S.Block.updateWidgetViews(rootId);
 					break;
 				};
 
-				case 'blockDataviewViewOrder': {
-					id = data.getId();
+				case 'BlockDataviewViewOrder': {
+					const { id, viewIds } = mapped;
 
-					dbStore.viewsSort(rootId, id, data.getViewidsList());
-					blockStore.updateWidgetViews(rootId);
+					S.Record.viewsSort(rootId, id, viewIds);
+					S.Block.updateWidgetViews(rootId);
 					break; 
 				};
 
-				case 'blockDataviewRelationDelete': {
-					id = data.getId();
-					dbStore.relationListDelete(rootId, id, data.getRelationkeysList() || []);
+				case 'BlockDataviewRelationDelete': {
+					const { id, relationKeys } = mapped;
+
+					S.Record.relationListDelete(rootId, id, relationKeys);
 					break;
 				};
 
-				case 'blockDataviewRelationSet': {
-					id = data.getId();
-					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
+				case 'BlockDataviewRelationSet': {
+					const { id, relations } = mapped;
+
+					S.Record.relationsSet(rootId, id, relations);
 					break;
 				};
 
-				case 'blockDataviewGroupOrderUpdate': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockDataviewGroupOrderUpdate': {
+					const { id, groupOrder } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
 
-					if (!block || !data.hasGrouporder()) {
+					if (!block || (groupOrder === null)) {
 						break;
 					};
 
-					const order = Mapper.From.GroupOrder(data.getGrouporder());
-
-					Dataview.groupOrderUpdate(rootId, id, order.viewId, order.groups);
+					Dataview.groupOrderUpdate(rootId, id, groupOrder.viewId, groupOrder.groups);
+					S.Block.updateWidgetData(rootId);
 					break;
 				};
 
-				case 'blockDataviewObjectOrderUpdate': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+				case 'BlockDataviewObjectOrderUpdate': {
+					const { id, viewId, groupId, changes } = mapped;
+					const block = S.Block.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
 
-					viewId = data.getViewid();
-					
-					const groupId = data.getGroupid();
-					const changes = data.getSlicechangesList() || [];
 					const cb = it => (it.viewId == viewId) && (it.groupId == groupId);
 					const index = block.content.objectOrder.findIndex(cb);
 
@@ -852,21 +759,18 @@ class Dispatcher {
 					};
 
 					changes.forEach(it => {
-						const op = it.getOp();
-						const ids = it.getIdsList() || [];
-						const afterId = it.getAfterid();
-						const idx = afterId ? el.objectIds.indexOf(afterId) + 1 : 0;
+						const idx = it.afterId ? el.objectIds.indexOf(it.afterId) + 1 : 0;
 
-						switch (op) {
+						switch (it.operation) {
 							case I.SliceOperation.Add:
-								ids.forEach((id: string, i: number) => {
+								it.ids.forEach((id: string, i: number) => {
 									idx >= 0 ? el.objectIds.splice(idx + i, 0, id) : el.objectIds.unshift(id);
 								});
 								break;
 
 							case I.SliceOperation.Move:
 								if (idx >= 0) {
-									ids.forEach((id: string, i: number) => {
+									it.ids.forEach((id: string, i: number) => {
 										const oidx = el.objectIds.indexOf(id);
 										if (oidx >= 0) {
 											el.objectIds = arrayMove(el.objectIds, oidx, idx + i);
@@ -876,138 +780,122 @@ class Dispatcher {
 								break;
 
 							case I.SliceOperation.Remove:
-								el.objectIds = el.objectIds.filter(id => !ids.includes(id));
+								el.objectIds = el.objectIds.filter(id => !it.ids.includes(id));
 								break;
 
 							case I.SliceOperation.Replace:
-								el.objectIds = ids;
+								el.objectIds = it.ids;
 								break;
 						};
 					});
 
 					block.content.objectOrder[index] = el;
-					blockStore.updateContent(rootId, id, { objectOrder: block.content.objectOrder });
-					blockStore.updateWidgetData(rootId);
+					S.Block.updateContent(rootId, id, { objectOrder: block.content.objectOrder });
+					S.Block.updateWidgetData(rootId);
 					break;
 				};
 
-				case 'objectDetailsSet': {
-					id = data.getId();
-					subIds = data.getSubidsList() || [];
-					block = blockStore.getLeaf(rootId, id);
-					details = Decode.struct(data.getDetails());
+				case 'ObjectDetailsSet': {
+					const { id, subIds, details } = mapped;
 
 					this.detailsUpdate(details, rootId, id, subIds, true);
 					break;
 				};
 
-				case 'objectDetailsAmend': {
-					id = data.getId();
-					subIds = data.getSubidsList() || [];
-					block = blockStore.getLeaf(rootId, id);
-
-					details = {};
-					for (const item of (data.getDetailsList() || [])) {
-						details[item.getKey()] = Decode.value(item.getValue());
-					};
+				case 'ObjectDetailsAmend': {
+					const { id, subIds, details } = mapped;
 
 					this.detailsUpdate(details, rootId, id, subIds, false);
 					break;
 				};
 
-				case 'objectDetailsUnset': {
-					id = data.getId();
-					subIds = data.getSubidsList() || [];
-					keys = data.getKeysList() || [];
+				case 'ObjectDetailsUnset': {
+					const { id, subIds, keys } = mapped;
 
 					// Subscriptions
-					this.getUniqueSubIds(subIds).forEach(subId => detailStore.delete(subId, id, keys));
+					this.getUniqueSubIds(subIds).forEach(subId => S.Detail.delete(subId, id, keys));
 
-					detailStore.delete(rootId, id, keys);
-					blockStore.checkTypeSelect(rootId);
+					S.Detail.delete(rootId, id, keys);
+					S.Block.checkTypeSelect(rootId);
 					break;
 				};
 
-				case 'subscriptionAdd': {
-					id = data.getId();
-					afterId = data.getAfterid();
-					subId = data.getSubid();
+				case 'SubscriptionAdd': {
+					const { id, afterId, subId } = mapped;
 
 					this.subscriptionPosition(subId, id, afterId, true);
 					break;
 				};
 
-				case 'subscriptionRemove': {
-					id = data.getId();
-					const [ subId, dep ] = data.getSubid().split('/');
+				case 'SubscriptionRemove': {
+					const { id } = mapped;
+					const [ subId, dep ] = mapped.subId.split('/');
 
 					if (!dep) {
-						dbStore.recordDelete(subId, '', id);
-						detailStore.delete(subId, id);
+						S.Record.recordDelete(subId, '', id);
 					};
 					break;
 				};
 
-				case 'subscriptionPosition': {
-					id = data.getId();
-					afterId = data.getAfterid();
-					subId = data.getSubid();
+				case 'SubscriptionPosition': {
+					const { id, afterId, subId } = mapped;
 
 					this.subscriptionPosition(subId, id, afterId, false);
 					break;
 				};
 
-				case 'subscriptionCounters': {
-					const total = data.getTotal();
-					const [ subId, dep ] = data.getSubid().split('/');
+				case 'SubscriptionCounters': {
+					const [ subId, dep ] = mapped.subId.split('/');
 					
 					if (!dep) {
-						dbStore.metaSet(subId, '', { total: total });
+						S.Record.metaSet(subId, '', { total: mapped.total });
 					};
 					break;
 				};
 
-				case 'subscriptionGroups': {
-					const [ rid, bid ] = data.getSubid().split('-');
-					const group = Mapper.From.BoardGroup(data.getGroup());
+				case 'SubscriptionGroups': {
+					const { group, remove } = mapped;
+					const [ rootId, blockId ] = mapped.subId.split('-');
 
-					if (data.getRemove()) {
-						dbStore.groupsRemove(rid, bid, [ group.id ]);
+					if (remove) {
+						S.Record.groupsRemove(rootId, blockId, [ group.id ]);
 					} else {
-						dbStore.groupsAdd(rid, bid, [ group ]);
+						S.Record.groupsAdd(rootId, blockId, [ group ]);
 					};
+
+					S.Block.updateWidgetData(rootId);
 					break;
 				};
 
-				case 'notificationSend': {
-					const item = new M.Notification(Mapper.From.Notification(data.getNotification()));
+				case 'NotificationSend': {
+					const item = new M.Notification(mapped.notification);
 
-					notificationStore.add(item);
+					S.Notification.add(item);
 
 					if (isMainWindow && !electron.isFocused()) {
-						new window.Notification(UtilCommon.stripTags(item.title), { body: UtilCommon.stripTags(item.text) }).onclick = () => electron.focus();
+						new window.Notification(U.Common.stripTags(item.title), { body: U.Common.stripTags(item.text) }).onclick = () => electron.focus();
 					};
 					break;
 				};
 
-				case 'notificationUpdate': {
-					notificationStore.update(Mapper.From.Notification(data.getNotification()));
+				case 'NotificationUpdate': {
+					S.Notification.update(mapped.notification);
 					break;
 				};
 
-				case 'payloadBroadcast': {
+				case 'PayloadBroadcast': {
 					if (!isMainWindow) {
 						break;
 					};
 
 					let payload: any = {};
-					try { payload = JSON.parse(data.getPayload()); } catch (e) { /**/ };
+					try { payload = JSON.parse(mapped.payload); } catch (e) { /**/ };
 
 					switch (payload.type) {
 						case 'openObject': {
 							const { object } = payload;
 
-							UtilObject.openAuto(object);
+							U.Object.openAuto(object);
 							window.focus();
 
 							if (electron.focus) {
@@ -1021,18 +909,17 @@ class Dispatcher {
 					break;
 				};
 
-				case 'membershipUpdate':
-					authStore.membershipUpdate(Mapper.From.Membership(data.getData()));
-					UtilData.getMembershipTiers(true);
+				case 'MembershipUpdate': {
+					S.Auth.membershipUpdate(mapped.membership);
+					U.Data.getMembershipTiers(true);
 					break;
+				};
 
-				case 'processNew':
-				case 'processUpdate':
-				case 'processDone': {
-					const process = data.getProcess();
-					const progress = process.getProgress();
-					const state = process.getState();
-					const type = process.getType();
+				case 'ProcessNew':
+				case 'ProcessUpdate':
+				case 'ProcessDone': {
+					const { process } = mapped;
+					const { id, progress, state, type } = process;
 
 					switch (state) {
 						case I.ProgressState.Running: {
@@ -1044,11 +931,11 @@ class Dispatcher {
 								isUnlocked = false;
 							};
 
-							commonStore.progressSet({
-								id: process.getId(),
+							S.Common.progressSet({
+								id,
 								status: translate(`progress${type}`),
-								current: progress.getDone(),
-								total: progress.getTotal(),
+								current: progress.done,
+								total: progress.total,
 								isUnlocked,
 								canCancel,
 							});
@@ -1058,10 +945,16 @@ class Dispatcher {
 						case I.ProgressState.Error:
 						case I.ProgressState.Done:
 						case I.ProgressState.Canceled: {
-							commonStore.progressClear();
+							S.Common.progressClear();
 							break;
 						};
 					};
+					break;
+				};
+
+				case 'SpaceSyncStatusUpdate':
+				case 'P2PStatusUpdate': {
+					S.Auth.syncStatusUpdate(mapped);
 					break;
 				};
 			};
@@ -1072,26 +965,26 @@ class Dispatcher {
 		};
 
 		if (updateParents) {
-			blockStore.updateStructureParents(rootId);
+			S.Block.updateStructureParents(rootId);
 		};
 		
-		blockStore.updateNumbers(rootId); 
-		blockStore.updateMarkup(rootId);
+		S.Block.updateNumbers(rootId); 
+		S.Block.updateMarkup(rootId);
 	};
 
 	getUniqueSubIds (subIds: string[]) {
-		return UtilCommon.arrayUnique((subIds || []).map(it => it.split('/')[0]));
+		return U.Common.arrayUnique((subIds || []).map(it => it.split('/')[0]));
 	};
 
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
-		this.getUniqueSubIds(subIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
+		this.getUniqueSubIds(subIds).forEach(subId => S.Detail.update(subId, { id, details }, clear));
 
 		if ([ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(details.spaceAccountStatus)) {
-			if (id == blockStore.spaceview) {
-				UtilRouter.switchSpace(authStore.accountSpaceId, '');
+			if (id == S.Block.spaceview) {
+				U.Router.switchSpace(S.Auth.accountSpaceId);
 			};
 
-			const spaceview = UtilSpace.getSpaceview(id);
+			const spaceview = U.Space.getSpaceview(id);
 			if (spaceview && !spaceview._empty_) {
 				Storage.deleteSpace(spaceview.targetSpaceId);
 			};
@@ -1101,31 +994,31 @@ class Dispatcher {
 			return;
 		};
 
-		detailStore.update(rootId, { id, details }, clear);
+		S.Detail.update(rootId, { id, details }, clear);
 
-		const root = blockStore.getLeaf(rootId, id);
+		const root = S.Block.getLeaf(rootId, id);
+
 		if ((id == rootId) && root) {
 			if ((undefined !== details.layout) && (root.layout != details.layout)) {
-				blockStore.update(rootId, rootId, { layout: details.layout });
+				S.Block.update(rootId, rootId, { layout: details.layout });
 			};
 
-			if (undefined !== details.setOf) {
-				blockStore.updateWidgetData(rootId);
-				$(window).trigger(`updateDataviewData.dataview`);
-			};
+			S.Block.checkTypeSelect(rootId);
+		};
 
-			blockStore.checkTypeSelect(rootId);
+		if (undefined !== details.setOf) {
+			S.Block.updateWidgetData(rootId);
+			$(window).trigger(`updateDataviewData`);
 		};
 	};
 
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
 		const [ sid, dep ] = subId.split('/');
-
 		if (dep) {
 			return;
 		};
 
-		const records = dbStore.getRecordIds(sid, '');
+		const records = S.Record.getRecordIds(sid, '');
 		const newIndex = afterId ? records.indexOf(afterId) + 1 : 0;
 
 		let oldIndex = records.indexOf(id);
@@ -1140,13 +1033,15 @@ class Dispatcher {
 		};
 
 		if (oldIndex !== newIndex) {
-			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
+			S.Record.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
 		};
 	};
 
 	sort (c1: any, c2: any) {
-		const idx1 = SORT_IDS.findIndex(it => it == this.eventType(c1.getValueCase()));
-		const idx2 = SORT_IDS.findIndex(it => it == this.eventType(c2.getValueCase()));
+		const t1 = Mapper.Event.Type(c1.getValueCase());
+		const t2 = Mapper.Event.Type(c2.getValueCase());
+		const idx1 = SORT_IDS.findIndex(it => it == t1);
+		const idx2 = SORT_IDS.findIndex(it => it == t2);
 
 		if (idx1 > idx2) return 1;
 		if (idx1 < idx2) return -1;
@@ -1154,7 +1049,7 @@ class Dispatcher {
 	};
 
 	onObjectView (rootId: string, traceId: string, objectView: any) {
-		const { details, restrictions, relationLinks } = objectView;
+		const { details, restrictions, relationLinks, participants } = objectView;
 		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
@@ -1165,12 +1060,13 @@ class Dispatcher {
 			analytics.removeContext();
 		};
 
-		dbStore.relationsSet(contextId, rootId, relationLinks);
-		detailStore.set(contextId, details);
-		blockStore.restrictionsSet(contextId, restrictions);
+		S.Record.relationsSet(contextId, rootId, relationLinks);
+		S.Detail.set(contextId, details);
+		S.Block.restrictionsSet(contextId, restrictions);
+		S.Block.participantsSet(contextId, participants);
 
 		if (root) {
-			const object = detailStore.get(contextId, rootId, [ 'layout' ], true);
+			const object = S.Detail.get(contextId, rootId, [ 'layout' ], true);
 
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
@@ -1178,8 +1074,8 @@ class Dispatcher {
 
 		const blocks = objectView.blocks.map(it => {
 			if (it.type == I.BlockType.Dataview) {
-				dbStore.relationsSet(contextId, it.id, it.content.relationLinks);
-				dbStore.viewsSet(contextId, it.id, it.content.views);
+				S.Record.relationsSet(contextId, it.id, it.content.relationLinks);
+				S.Record.viewsSet(contextId, it.id, it.content.views);
 			};
 
 			structure.push({ id: it.id, childrenIds: it.childrenIds });
@@ -1188,30 +1084,32 @@ class Dispatcher {
 
 		// BlockType
 		blocks.push(new M.Block({
-			id: Constant.blockId.type,
-			parentId: Constant.blockId.header,
+			id: J.Constant.blockId.type,
+			parentId: J.Constant.blockId.header,
 			type: I.BlockType.Type,
 			fields: {},
 			childrenIds: [],
 			content: {}
 		}));
 
-		blockStore.set(contextId, blocks);
-		blockStore.setStructure(contextId, structure);
-		blockStore.updateStructureParents(contextId);
-		blockStore.updateNumbers(contextId); 
-		blockStore.updateMarkup(contextId);
-		blockStore.checkTypeSelect(contextId);
+		S.Block.set(contextId, blocks);
+		S.Block.setStructure(contextId, structure);
+		S.Block.updateStructureParents(contextId);
+		S.Block.updateNumbers(contextId); 
+		S.Block.updateMarkup(contextId);
+		S.Block.checkTypeSelect(contextId);
+
+		keyboard.setWindowTitle();
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
 		type = type.replace(/^command_/, '');
 
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const debugTime = config.flagsMw.time;
 		const debugRequest = config.flagsMw.request;
 		const debugJson = config.flagsMw.json;
-		const ct = UtilCommon.toCamelCase(type);
+		const ct = U.Common.toCamelCase(type);
 		const t0 = performance.now();
 
 		if (!this.service[ct]) {
@@ -1225,12 +1123,12 @@ class Dispatcher {
 
 		if (debugRequest && !SKIP_IDS.includes(type)) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
-			d = UtilCommon.objectClear(data.toObject());
+			d = U.Common.objectClear(data.toObject());
 			console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 		};
 
 		try {
-			this.service[ct](data, { token: authStore.token }, (error: any, response: any) => {
+			this.service[ct](data, { token: S.Auth.token }, (error: any, response: any) => {
 				if (!response) {
 					return;
 				};
@@ -1262,12 +1160,12 @@ class Dispatcher {
 						analytics.event('Exception', { method: type, code: message.error.code });
 					};
 
-					message.error.description = UtilCommon.translateError(type, message.error);
+					message.error.description = U.Common.translateError(type, message.error);
 				};
 
 				if (debugRequest && !SKIP_IDS.includes(type)) {
 					console.log(`%cResponse.${type}`, 'font-weight: bold; color: green;');
-					d = UtilCommon.objectClear(response.toObject());
+					d = U.Common.objectClear(response.toObject());
 					console.log(debugJson ? JSON.stringify(d, null, 3) : d);
 				};
 
@@ -1302,19 +1200,19 @@ class Dispatcher {
 	};
 
 	checkLog (type: string) {
-		const { config } = commonStore;
-		const event = config.flagsMw.event;
-		const thread = config.flagsMw.thread;
-		const file = config.flagsMw.file;
+		const { config } = S.Common;
+		const { event, sync, file } = config.flagsMw;
+		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
+		const syncEvents = [ 'SpaceSyncStatusUpdate', 'P2PStatusUpdate', 'ThreadStatus' ];
 
 		let check = false;
-		if (event && ![ 'threadStatus', 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {
+		if (event && !syncEvents.concat(fileEvents).includes(type)) {
 			check = true;
 		};
-		if (thread && [ 'threadStatus' ].includes(type)) {
+		if (sync && syncEvents.includes(type)) {
 			check = true;
 		};
-		if (file && [ 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {
+		if (file && fileEvents.includes(type)) {
 			check = true;
 		};
 		return check;

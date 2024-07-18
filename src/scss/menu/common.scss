@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 22; }
+	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 23; }
 	.menuWrap.fromPopup, 
 	.menuWrap.fromHeader, 
 	.menuWrap.fromSidebar,
@@ -12,7 +12,7 @@
 		.menu { position: fixed; }
 	}
 
-	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); }
+	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); -webkit-app-region: no-drag;  }
 	#menu-polygon { z-index: 1000; position: absolute; }
 
 	.menu * { user-select: none; }
@@ -52,7 +52,7 @@
 		.arrowDirection.c4 { right: -12px; transform: rotateZ(90deg); }
 	}
 	
-	.menu.vertical { width: 224px; }
+	.menu.vertical { width: var(--menu-width-common); }
 	.menu.vertical {
 		.content { overflow-y: auto; overflow-x: hidden; max-height: 368px; padding: 8px 0px; border-radius: inherit; transform: none; }
 		.ReactVirtualized__List { padding: 8px 0px; }
@@ -234,11 +234,10 @@ html.platformWindows {
 @import "./relation.scss";
 @import "./select.scss";
 @import "./smile.scss";
-@import "./thread.scss";
 @import "./type.scss";
 @import "./widget.scss";
-@import "./space.scss";
 @import "./quickCapture.scss";
+@import "./syncStatus.scss";
 
 @import "./search/object.scss";
 @import "./search/text.scss";
@@ -246,6 +245,7 @@ html.platformWindows {
 @import "./preview/object.scss";
 
 @import "./block/common.scss";
+@import "./block/add.scss";
 @import "./block/context.scss";
 @import "./block/cover.scss";
 @import "./block/icon.scss";

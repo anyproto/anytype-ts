@@ -46,8 +46,36 @@
 
 		.valueWrap { position: relative; width: 100%; }
 		.dimmer { position: absolute; z-index: 1; width: 100%; height: 100%; left: 0px; top: 0px; display: none; }
-		.preview { display: none; position: relative; aspect-ratio: 16/9; background-color: var(--color-shape-highlight-light); border-radius: 4px; }
-		
+		.preview { 
+			display: none; position: relative; aspect-ratio: 16/9; background-color: var(--color-shape-highlight-light); border-radius: 4px; 
+			background-size: 60px; background-repeat: no-repeat; background-position: center; background-image: url('~img/icon/block/embed/default.svg');
+		}
+		.preview {
+			.label { color: #d4d4d4; position: absolute; bottom: 12px; left: 0px; width: 100%; text-align: center; @include text-small; }
+		}
+		.preview.isLatex { background-image: url('~img/icon/block/embed/latex.svg'); }
+		.preview.isMermaid { background-image: url('~img/icon/block/embed/mermaid.svg'); }
+		.preview.isChart { background-image: url('~img/icon/block/embed/chart.svg'); }
+		.preview.isYoutube { background-image: url('~img/icon/block/embed/youtube.svg'); }
+		.preview.isVimeo { background-image: url('~img/icon/block/embed/vimeo.svg'); }
+		.preview.isSoundcloud { background-image: url('~img/icon/block/embed/soundcloud.svg'); }
+		.preview.isGoogleMaps { background-image: url('~img/icon/block/embed/googleMaps.svg'); }
+		.preview.isMiro { background-image: url('~img/icon/block/embed/miro.svg'); }
+		.preview.isFigma { background-image: url('~img/icon/block/embed/figma.svg'); }
+		.preview.isOpenStreetMap { background-image: url('~img/icon/block/embed/openStreetMap.svg'); }
+		.preview.isReddit { background-image: url('~img/icon/block/embed/reddit.svg'); }
+		.preview.isFacebook { background-image: url('~img/icon/block/embed/facebook.svg'); }
+		.preview.isInstagram { background-image: url('~img/icon/block/embed/instagram.svg'); }
+		.preview.isTelegram { background-image: url('~img/icon/block/embed/telegram.svg'); }
+		.preview.isGithubGist { background-image: url('~img/icon/block/embed/githubGist.svg'); }
+		.preview.isCodepen { background-image: url('~img/icon/block/embed/codepen.svg'); }
+		.preview.isBilibili { background-image: url('~img/icon/block/embed/bilibili.svg'); }
+		.preview.isExcalidraw { background-image: url('~img/icon/block/embed/excalidraw.svg'); }
+		.preview.isKroki { background-image: url('~img/icon/block/embed/kroki.svg'); }
+		.preview.isGraphviz { background-image: url('~img/icon/block/embed/graphviz.svg'); }
+		.preview.isSketchfab { background-image: url('~img/icon/block/embed/sketchfab.svg'); }
+		.preview.isImage { background-image: url('~img/icon/block/embed/image.svg'); }
+
 		#value { font-size: 20px; line-height: 20px; width: 100%; min-height: 20px; }
 		#value:empty { display: none; }
 

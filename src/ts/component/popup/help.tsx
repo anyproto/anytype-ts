@@ -3,12 +3,11 @@ import $ from 'jquery';
 import raf from 'raf';
 import * as Docs from 'Docs';
 import { Label, Icon, Cover, Button } from 'Component';
-import { I, UtilCommon, translate } from 'Lib';
+import { I, U, J, translate } from 'Lib';
 import Block from 'Component/block/help';
-const Url = require('json/url.json');
 
 interface State {
-	showFull: boolean;
+	page: number;
 };
 
 const LIMIT = 1;
@@ -18,11 +17,11 @@ class PopupHelp extends React.Component<I.Popup, State> {
 	_isMounted = false;
 	node: any = null;
 	state = {
-		showFull: false,
+		page: 0,
 	};
 	
 	render () {
-		const { showFull } = this.state;
+		const { page } = this.state;
 		const document = this.getDocument();
 		const blocks = this.getBlocks();
 		const title = blocks.find(it => it.style == I.TextStyle.Title);
@@ -38,8 +37,11 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		);
 
 		let sections = this.getSections();
-		if (isWhatsNew && !showFull) {
-			sections = sections.slice(0, LIMIT);
+
+		const length = sections.length;
+
+		if (isWhatsNew) {
+			sections = sections.slice(page, page + LIMIT);
 		};
 
 		return (
@@ -53,7 +55,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 					</div>
 					<div className="side right">
 						<Label text={translate('popupHelpLabel')} />
-						<Icon onClick={() => UtilCommon.onUrl(Url.mail)} className="mail" />
+						<Icon onClick={() => U.Common.onUrl(J.Url.mail)} className="mail" />
 					</div>
 				</div>
 				
@@ -66,9 +68,10 @@ class PopupHelp extends React.Component<I.Popup, State> {
 						))}
 					</div>
 
-					{isWhatsNew && !showFull ? (
+					{isWhatsNew ? (
 						<div className="buttons">
-							<Button text={translate('popupHelpOlderReleases')} onClick={() => { this.setState({ showFull: true }); }} />
+							{page < length - 1 ? <Button className="c28" text={translate('popupHelpPrevious')} onClick={() => this.onArrow(1)} /> : ''}
+							{page > 0 ? <Button className="c28" text={translate('popupHelpNext')} onClick={() => this.onArrow(-1)} /> : ''}
 						</div>
 					) : ''}
 				</div>
@@ -81,13 +84,13 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		this.rebind();
 		this.resize();
 
-		UtilCommon.renderLinks($(this.node));
+		U.Common.renderLinks($(this.node));
 	};
 
 	componentDidUpdate () {
 		this.resize();
 
-		UtilCommon.renderLinks($(this.node));
+		U.Common.renderLinks($(this.node));
 	};
 
 	componentWillUnmount () {
@@ -108,7 +111,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		const { param } = this.props;
 		const { data } = param;
 
-		return UtilCommon.toUpperCamelCase(data.document);
+		return U.Common.toUpperCamelCase(data.document);
 	};
 
 	getBlocks () {
@@ -147,6 +150,20 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		return sections;
 	};
 
+	onArrow (dir: number) {
+		const { getId } = this.props;
+		const { page } = this.state;
+		const length = this.getSections().length;
+		const obj = $(`#${getId()}-innerWrap`);
+
+		if ((page + dir < 0) || (page + dir >= length)) {
+			return;
+		};
+
+		obj.scrollTop(0);
+		this.setState({ page: page + dir });
+	};
+
 	resize () {
 		if (!this._isMounted) {
 			return;
@@ -155,14 +172,14 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const loader = obj.find('#loader');
-		const hh = UtilCommon.sizeHeader();
+		const hh = J.Size.header;
 
 		loader.css({ width: obj.width(), height: obj.height() });
 		position();
 
 		raf(() => { obj.css({ top: hh + 20, marginTop: 0 }); });
 	};
-	
+
 };
 
 export default PopupHelp;

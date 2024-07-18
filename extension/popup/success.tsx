@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button } from 'Component';
-import { I, C, UtilCommon } from 'Lib';
-import { extensionStore, detailStore } from 'Store';
+import { I, C, S, U } from 'Lib';
 
 interface State {
 	error: string;
@@ -17,7 +16,7 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 	};
 
 	render () {
-		const object = detailStore.mapper(extensionStore.createdObject);
+		const object = S.Detail.mapper(S.Extension.createdObject);
 
 		if (!object) {
 			return null;
@@ -25,7 +24,7 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 
 		return (
 			<div className="page pageSuccess">
-				<div className="label bold">{UtilCommon.sprintf('"%s" is saved!', UtilCommon.shorten(object.name, 64))}</div>
+				<div className="label bold">{U.Common.sprintf('"%s" is saved!', U.Common.shorten(object.name, 64))}</div>
 				<div className="label">{object.description}</div>
 
 				<div className="buttonsWrapper">
@@ -36,7 +35,7 @@ const Success = observer(class Success extends React.Component<I.PageComponent, 
 	};
 
 	onOpen () {
-		C.BroadcastPayloadEvent({ type: 'openObject', object: extensionStore.createdObject }, () => {
+		C.BroadcastPayloadEvent({ type: 'openObject', object: S.Extension.createdObject }, () => {
 			window.close();
 		});
 	};

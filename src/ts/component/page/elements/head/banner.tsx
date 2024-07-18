@@ -1,9 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { IconObject, Label, ObjectName } from 'Component';
-import { I, Action, translate, UtilObject, UtilCommon, C, analytics, Onboarding } from 'Lib';
-import { dbStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
 
 interface Props {
 	type: I.BannerType;
@@ -39,12 +37,12 @@ class HeaderBanner extends React.Component<Props> {
 			};
 
 			case I.BannerType.IsTemplate: {
-				const targetObjectType = dbStore.getTypeById(object.targetObjectType);
+				const targetObjectType = S.Record.getTypeById(object.targetObjectType);
 
 				label = translate('templateBannner');
 				if (targetObjectType) {
 					target = (
-						<div className="typeName" onClick={() => UtilObject.openAuto(targetObjectType)}>
+						<div className="typeName" onClick={() => U.Object.openAuto(targetObjectType)}>
 							{translate('commonOf')}
 							<IconObject size={18} object={targetObjectType} />
 							<ObjectName object={targetObjectType} />
@@ -58,7 +56,7 @@ class HeaderBanner extends React.Component<Props> {
 				cn.push('withMenu');
 
 				if (count) {
-					label = UtilCommon.sprintf(translate('selectTemplateBannerWithNumber'), count, UtilCommon.plural(count, translate('pluralTemplate')));
+					label = U.Common.sprintf(translate('selectTemplateBannerWithNumber'), count, U.Common.plural(count, translate('pluralTemplate')));
 				} else {
 					label = translate('selectTemplateBanner');
 				};
@@ -96,21 +94,21 @@ class HeaderBanner extends React.Component<Props> {
 	onTemplateMenu () {
 		const { object, isPopup } = this.props;
 		const { sourceObject } = object;
-		const type = dbStore.getTypeById(object.type);
-		const templateId = sourceObject || Constant.templateId.blank;
+		const type = S.Record.getTypeById(object.type);
+		const templateId = sourceObject || J.Constant.templateId.blank;
 		const node = $(this.node);
 
-		if (!type || menuStore.isOpen('dataviewTemplateList')) {
+		if (!type || S.Menu.isOpen('dataviewTemplateList')) {
 			return;
 		};
 
 		let menuContext = null;
 
-		menuStore.open('dataviewTemplateList', {
+		S.Menu.open('dataviewTemplateList', {
 			element: node,
 			className: 'fromBanner',
 			offsetY: isPopup ? 10 : 0,
-			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
+			subIds: J.Menu.dataviewTemplate.concat([ 'dataviewTemplateContext' ]),
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			onOpen: (context) => {
@@ -129,7 +127,7 @@ class HeaderBanner extends React.Component<Props> {
 				templateId,
 				previewSize: I.PreviewSize.Medium,
 				onSetDefault: item => {
-					UtilObject.setDefaultTemplateId(type.id, item.id);
+					U.Object.setDefaultTemplateId(type.id, item.id);
 				},
 				onSelect: (item: any) => {
 					C.ObjectApplyTemplate(object.id, item.id);

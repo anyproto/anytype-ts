@@ -1,11 +1,8 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
-import { observable } from 'mobx';
 import $ from 'jquery';
-import { I, C, UtilMenu, Relation, translate, keyboard, analytics } from 'Lib';
+import { observer } from 'mobx-react';
+import { I, S, C, U, J, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical, Icon } from 'Component';
-import { menuStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
 	
@@ -107,7 +104,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	getSections () {
-		const colors = UtilMenu.getBgColors().filter(it => it.id != 'bgColor-default');
+		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
 
 		return [
 			{ children: colors, className: 'colorPicker' },
@@ -151,7 +148,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 	onKeyUp (e: any, v: string) {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.save(), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => this.save(), J.Constant.delay.keyboard);
 	};
 
 	onClick (e: any, item: any) {
@@ -161,7 +158,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 			this.forceUpdate();
 		} else
 		if (item.id == 'remove') {
-			popupStore.open('confirm', {
+			S.Popup.open('confirm', {
 				data: {
 					icon: 'confirm',
 					bgColor: 'red',
@@ -190,8 +187,8 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 		C.RelationListRemoveOption([ option.id ], false);
 
-		menuStore.updateData(id, { value });
-		menuStore.updateData('dataviewOptionList', { value });
+		S.Menu.updateData(id, { value });
+		S.Menu.updateData('dataviewOptionList', { value });
 
 		if (onChange) {
 			onChange(value);

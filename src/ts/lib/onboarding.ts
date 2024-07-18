@@ -1,6 +1,5 @@
-import { I, Storage, UtilCommon, UtilRouter, keyboard } from 'Lib';
 import * as Docs from 'Docs';
-import { menuStore, popupStore } from 'Store';
+import { I, S, U, Storage } from 'Lib';
 
 class Onboarding {
 
@@ -17,9 +16,9 @@ class Onboarding {
 		};
 
 		const { items } = section;
-		const t = isPopup ? popupStore.getTimeout() : 0;
+		const t = isPopup ? S.Popup.getTimeout() : 0;
 
-		menuStore.close('onboarding', () => {
+		S.Menu.close('onboarding', () => {
 			window.setTimeout(() => {
 				let param = this.getParam(section, items[0], isPopup, force);
 
@@ -27,7 +26,7 @@ class Onboarding {
 					param = options.parseParam(param);
 				};
 
-				menuStore.open('onboarding', {
+				S.Menu.open('onboarding', {
 					...param,
 					noAnimation: true,
 					noFlipY: true,
@@ -102,7 +101,7 @@ class Onboarding {
 			param.containerHorizontal = Number(param.containerHorizontal) || I.MenuDirection.Left;
 
 			const recalcRect = () => {
-				const container = UtilCommon.getScrollContainer(isPopup);
+				const container = U.Common.getScrollContainer(isPopup);
 				const height = container.height();
 				const width = container.width();
 				const scrollTop = $(window).scrollTop();

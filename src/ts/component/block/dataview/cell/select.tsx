@@ -4,8 +4,7 @@ import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import arrayMove from 'array-move';
 import { Tag, Icon, DragBox } from 'Component';
-import { I, Relation, translate, keyboard, UtilCommon } from 'Lib';
-import { menuStore } from 'Store';
+import { I, S, U, Relation, translate, keyboard } from 'Lib';
 
 interface State { 
 	isEditing: boolean; 
@@ -83,7 +82,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 									className={cni.join(' ')}
 									draggable={!isSelect}
 									onContextMenu={e => this.onContextMenu(e, item)}
-									{...UtilCommon.dataProps({ id: item.id, index: i })}
+									{...U.Common.dataProps({ id: item.id, index: i })}
 								>
 									<Tag 
 										key={item.id}
@@ -163,6 +162,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			cell.addClass('isEditing');
 			
 			this.placeholderCheck();
+			this.focus();
 			this.resize();
 		} else {
 			cell.removeClass('isEditing');
@@ -232,7 +232,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			return;
 		};
 
-		menuStore.updateData('dataviewOptionList', { filter: this.getValue().new });
+		S.Menu.updateData('dataviewOptionList', { filter: this.getValue().new });
 
 		this.placeholderCheck();
 		this.resize();
@@ -300,7 +300,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 
 		const node = $(this.node);
 		const entry = node.find('#entry');
-		
+
 		if (entry.length) {
 			window.setTimeout(() => {
 				entry.focus();
@@ -338,7 +338,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		e.preventDefault();
 		e.stopPropagation();
 
-		menuStore.open('dataviewOptionEdit', { 
+		S.Menu.open('dataviewOptionEdit', { 
 			element: `#${id} #item-${item.id}`,
 			className: menuClassName,
 			classNameWrap: menuClassNameWrap,
@@ -386,7 +386,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		const { onChange, relation } = this.props;
 		const { maxCount } = relation;
 		
-		value = UtilCommon.arrayUnique(value);
+		value = U.Common.arrayUnique(value);
 
 		const length = value.length;
 		if (maxCount && (length > maxCount)) {
@@ -397,7 +397,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			onChange(value, () => {
 				this.clear();
 
-				menuStore.updateData('dataviewOptionList', { value });
+				S.Menu.updateData('dataviewOptionList', { value });
 			});
 		};
 	};

@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, C, UtilData, analytics, UtilCommon, translate, UtilObject, keyboard, Action, UtilMenu } from 'Lib';
+import { I, C, S, U, J, analytics, translate, keyboard, Action } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
-import { detailStore, commonStore } from 'Store';
-const Constant = require('json/constant.json');
 
 enum Tab {
 	Gallery	 = 0,
@@ -99,7 +97,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 									<Section key={i} {...section} />
 								))}
 							</div>
-						) : <EmptySearch text={filter ? UtilCommon.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
+						) : <EmptySearch text={filter ? U.Common.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
 					</React.Fragment>
 				);
 				break;
@@ -221,16 +219,15 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			case Tab.Library: {
 				const filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
-					{ operator: I.FilterOperator.And, relationKey: 'widthInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 1000 },
-					{ operator: I.FilterOperator.And, relationKey: 'heightInPixels', condition: I.FilterCondition.GreaterOrEqual, value: 300 },
 				];
 				const sorts = [ 
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 				];
 
 				this.setState({ isLoading: true });
 
-				UtilData.search({
+				U.Data.search({
 					filters,
 					sorts,
 					fullText: filter,
@@ -239,7 +236,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					this.setState({ isLoading: false });
 
 					if (message.error.code) {
-						this.setState({ isLoading: false });
 						return;
 					};
 
@@ -247,7 +243,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 						this.items.push({
 							id: item.id,
 							type: I.CoverType.Upload,
-							src: commonStore.imageUrl(item.id, 150),
+							src: S.Common.imageUrl(item.id, 150),
 							artist: item.name,
 							coverY: -0.25,
 						});
@@ -271,14 +267,14 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const { data } = param;
 		const { onUpload, onUploadStart } = data;
 
-		Action.openFile(Constant.fileExtension.cover, paths => {
+		Action.openFileDialog(J.Constant.fileExtension.cover, paths => {
 			close();
 
 			if (onUploadStart) {
 				onUploadStart();
 			};
 
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -296,7 +292,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, onSelect, onUpload, onUploadStart } = data;
-		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
+		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 
 		if (!object.coverId) {
 			close();
@@ -307,7 +303,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.UnsplashDownload(commonStore.space, item.id, (message: any) => {
+			C.UnsplashDownload(S.Common.space, item.id, (message: any) => {
 				if (!message.error.code) {
 					onUpload(item.type, message.objectId);
 				};
@@ -324,7 +320,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => this.setState({ filter: v }), Constant.delay.keyboard);
+		this.timeout = window.setTimeout(() => this.setState({ filter: v }), J.Constant.delay.keyboard);
 	};
 
 	getSections () {
@@ -332,8 +328,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		switch (this.tab) {
 			case Tab.Gallery: {
 				sections = sections.concat([
-					{ name: translate('menuBlockCoverGradients'), children: UtilMenu.getCoverGradients() },
-					{ name: translate('menuBlockCoverSolidColors'), children: UtilMenu.getCoverColors() },
+					{ name: translate('menuBlockCoverGradients'), children: U.Menu.getCoverGradients() },
+					{ name: translate('menuBlockCoverSolidColors'), children: U.Menu.getCoverColors() },
 				]);
 				break;
 			};
@@ -376,24 +372,23 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			return;
 		};
 		
-		const { dataset, param, close } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(this.node);
 		const zone = node.find('.dropzone');
 		
 		zone.removeClass('isDraggingOver');
-		preventCommonDrop(true);
+		keyboard.disableCommonDrop(true);
 		this.setState({ isLoading: true });
 		
-		C.FileUpload(commonStore.space, '', file, I.FileType.Image, {}, (message: any) => {
+		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, (message: any) => {
 			this.setState({ isLoading: false });
-			preventCommonDrop(false);
+			keyboard.disableCommonDrop(false);
 			
 			if (!message.error.code) {
-				UtilObject.setCover(rootId, I.CoverType.Upload, message.obejctId);
+				U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
 			};
 		
 			close();
@@ -404,7 +399,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const files = UtilCommon.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
+		const files = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
 
 		if (!files.length) {
 			return;
@@ -412,15 +407,15 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 
 		this.setState({ isLoading: true });
 
-		UtilCommon.saveClipboardFiles(files, {}, (data: any) => {
+		U.Common.saveClipboardFiles(files, {}, (data: any) => {
 			if (!data.files.length) {
 				this.setState({ isLoading: false });
 				return;
 			};
 
-			C.FileUpload(commonStore.space, '', data.files[0].path, I.FileType.Image, {}, (message: any) => {
+			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, (message: any) => {
 				if (!message.error.code) {
-					UtilObject.setCover(rootId, I.CoverType.Upload, message.objectId);
+					U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
 				};
 
 				this.setState({ isLoading: false });

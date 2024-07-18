@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
+import { I, S } from 'Lib';
 
 interface Props {
-	object: any;
+	cellId: string;
 	iconSize: number;
 	relation?: any;
 	canEdit?: boolean;
+	getObject: () => any;
 	elementMapper?: (relation: any, item: any) => any;
 	onClick?: (e: any, item: any) => void;
 	onRemove?: (e: any, id: string) => void;
@@ -22,9 +24,11 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 	};
 
 	render () {
-		const { iconSize, relation, canEdit } = this.props;
+		const { cellId, iconSize, relation, canEdit } = this.props;
 		const cn = [ 'element' ];
 		const object = this.getObject();
+		const { done, isReadonly, isArchived } = object;
+		const allowedDetails = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 
 		let iconObject = null;
 		let iconRemove = null;
@@ -37,14 +41,21 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 			iconRemove = <Icon className="objectRemove" onClick={this.onRemove} />;
 		};
 		if (relation.relationKey != 'type') {
-			iconObject = <IconObject object={object} size={iconSize} />;
+			iconObject = (
+				<IconObject 
+					id={`${cellId}-icon`}
+					object={object} 
+					size={iconSize} 
+					canEdit={!isReadonly && !isArchived && allowedDetails} 
+				/>
+			);
 		};
 
 		return (
-			<div className={cn.join(' ')} onClick={this.onClick}>
+			<div className={cn.join(' ')}>
 				<div className="flex">
 					{iconObject}
-					<ObjectName object={object} />
+					<ObjectName object={object} onClick={this.onClick} />
 					{iconRemove}
 				</div>
 			</div>
@@ -52,10 +63,10 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 	};
 
 	onClick (e: any) {
-		const { onClick, canEdit } = this.props;
+		const { onClick } = this.props;
 		const object = this.getObject();
 
-		if (!canEdit && onClick) {
+		if (onClick) {
 			onClick(e, object);
 		};
 	};
@@ -63,7 +74,8 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 	onRemove (e: any) {
 		e.stopPropagation();
 
-		const { object, canEdit, onRemove } = this.props;
+		const { canEdit, onRemove } = this.props;
+		const object = this.getObject();
 
 		if (canEdit && onRemove) {
 			onRemove(e, object.id);
@@ -71,9 +83,9 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 	};
 
 	getObject () {
-		const { relation, elementMapper } = this.props;
+		const { relation, elementMapper, getObject } = this.props;
 
-		let object = this.props.object || {};
+		let object = getObject();
 		if (elementMapper) {
 			object = elementMapper(relation, object);
 		};

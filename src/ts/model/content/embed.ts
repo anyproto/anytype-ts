@@ -1,4 +1,4 @@
-import { I, UtilCommon } from 'Lib';
+import { I, U } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentEmbed implements I.ContentEmbed {
@@ -15,7 +15,7 @@ class BlockContentEmbed implements I.ContentEmbed {
 			processor: observable,
 		});
 
-		intercept(this as any, change => UtilCommon.intercept(this, change));
+		intercept(this as any, change => U.Common.intercept(this, change));
 	};
 
 };

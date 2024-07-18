@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Loader, Frame, Title, Error, Button } from 'Component';
-import { I, UtilCommon, UtilSpace, UtilData, translate, analytics } from 'Lib';
-import { popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, translate, analytics } from 'Lib';
 
 interface State {
 	error: string;
@@ -33,7 +31,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 								text={translate('commonBack')} 
 								color="blank" 
 								className="c36" 
-								onClick={() => UtilSpace.openDashboard('route')} 
+								onClick={() => U.Space.openDashboard('route')} 
 							/>
 						</div>
 					) : <Loader />}
@@ -43,23 +41,23 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 	};
 
 	componentDidMount (): void {
-		UtilData.getMembershipStatus((membership: I.Membership) => {
+		U.Data.getMembershipStatus((membership: I.Membership) => {
 			if (!membership || membership.isNone) {
 				this.setState({ error: translate('pageMainMembershipError') });
 				return;
 			};
 
-			UtilSpace.openDashboard('route', {
+			U.Space.openDashboard('route', {
 				onRouteChange: () => {
-					popupStore.closeAll(null, () => {
+					S.Popup.closeAll(null, () => {
 						const { status, tier } = membership;
 
 						if (status && (status == I.MembershipStatus.Finalization)) {
-							popupStore.open('membershipFinalization', { data: { tier } });
+							S.Popup.open('membershipFinalization', { data: { tier } });
 						} else {
-							popupStore.open('membership', {
+							S.Popup.open('membership', {
 								onClose: () => {
-									window.setTimeout(() => popupStore.open('settings', { data: { page: 'membership' } }), Constant.delay.popup * 2);
+									window.setTimeout(() => S.Popup.open('settings', { data: { page: 'membership' } }), J.Constant.delay.popup * 2);
 								},
 								data: {
 									tier: membership.tier,
@@ -80,7 +78,7 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 	resize () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const obj = UtilCommon.getPageContainer(isPopup);
+		const obj = U.Common.getPageContainer(isPopup);
 		const node = $(this.node);
 		const wrapper = obj.find('.wrapper');
 		const oh = obj.height();

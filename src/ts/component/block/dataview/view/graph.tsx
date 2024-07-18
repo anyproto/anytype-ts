@@ -1,15 +1,14 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, UtilData, keyboard, Dataview, Relation } from 'Lib';
+import { I, C, S, U, J, keyboard, Dataview } from 'Lib';
 import { Graph } from 'Component';
-import { detailStore, commonStore } from 'Store';
-const Constant = require('json/constant.json');
 
 const PADDING = 46;
 
 const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewComponent> {
 
+	_isMounted = false;
 	node: any = null;
 	data: any = {
 		nodes: [],
@@ -39,7 +38,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 						id={block.id}
 						rootId="" 
 						data={this.data}
-						storageKey={Constant.graphId.dataview}
+						storageKey={J.Constant.graphId.dataview}
 					/>
 				</div>
 			</div>
@@ -47,6 +46,8 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
+
 		this.rebind();
 		this.resize();
 		this.load();
@@ -62,6 +63,8 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	componentWillUnmount () {
+		this._isMounted = false;
+
 		this.unbind();
 		window.clearTimeout(this.timeoutLoading);
 	};
@@ -87,8 +90,12 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	load () {
 		const { getView, getSearchIds, getTarget, isCollection } = this.props;
 		const view = getView();
+		if (!view) {
+			return;
+		};
+
 		const searchIds = getSearchIds();
-		const filters = [].concat(view.filters).concat(UtilData.graphFilters()).map(it => Dataview.filterMapper(view, it));
+		const filters = [].concat(view.filters).concat(U.Data.graphFilters()).map(it => Dataview.filterMapper(view, it));
 		const target = getTarget();
 
 		if (searchIds) {
@@ -97,8 +104,8 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 
 		this.setLoading(true);
 
-		C.ObjectGraph(commonStore.space, filters, 0, [], Constant.graphRelationKeys, (isCollection ? target.id : ''), target.setOf, (message: any) => {
-			if (message.error.code) {
+		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, (message: any) => {
+			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
@@ -123,22 +130,12 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 				};
 			};
 
-			this.data.nodes = message.nodes.map(it => detailStore.mapper(it));
-
-			UtilData.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
-				error: {},
-				records: message.nodes,
-				dependencies: [],
-				counters: { total: message.nodes.length },
-			});
-
-			this.resize();
+			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
+			this.forceUpdate();
 
 			if (this.refGraph) {
 				this.refGraph.init();
 			};
-
-			this.forceUpdate();
 		});
 	};
 
@@ -156,7 +153,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 		if (!isInline) {
 			node.css({ width: 0, height: 0, marginLeft: 0 });
 
-			const container = UtilCommon.getPageContainer(isPopup);
+			const container = U.Common.getPageContainer(isPopup);
 			const cw = container.width();
 			const ch = container.height();
 			const mw = cw - PADDING * 2;

@@ -180,7 +180,7 @@ class MenuManager {
 		const flagsMw = {
 			request: Util.translate('electronMenuFlagMwRequest'),
 			event: Util.translate('electronMenuFlagMwEvent'),
-			thread: Util.translate('electronMenuFlagMwThread'),
+			sync: Util.translate('electronMenuFlagMwSync'),
 			file: Util.translate('electronMenuFlagMwFile'),
 			time: Util.translate('electronMenuFlagMwTime'),
 			json: Util.translate('electronMenuFlagMwJson'),
@@ -230,6 +230,7 @@ class MenuManager {
 				{ label: Util.translate('electronMenuDebugObject'), click: () => Util.send(this.win, 'commandGlobal', 'debugTree') },
 				{ label: Util.translate('electronMenuDebugProcess'), click: () => Util.send(this.win, 'commandGlobal', 'debugProcess') },
 				{ label: Util.translate('electronMenuDebugStat'), click: () => Util.send(this.win, 'commandGlobal', 'debugStat') },
+				{ label: Util.translate('electronMenuDebugReconcile'), click: () => Util.send(this.win, 'commandGlobal', 'debugReconcile') },
 
 				Separator,
 
@@ -270,14 +271,6 @@ class MenuManager {
 					label: 'Test payments', type: 'checkbox', checked: config.testPayment,
 					click: () => {
 						Api.setConfig(this.win, { testPayment: !config.testPayment });
-						this.win.reload();
-					}
-				},
-
-				{
-					label: 'Test crypto payments', type: 'checkbox', checked: config.testCryptoPayment,
-					click: () => {
-						Api.setConfig(this.win, { testCryptoPayment: !config.testCryptoPayment });
 						this.win.reload();
 					}
 				},
@@ -369,33 +362,20 @@ class MenuManager {
 
 		return [
 			{ 
-				label: Util.translate('electronMenuShowTray'), type: 'checkbox', checked: !config.hideTray, click: () => { 
-					Api.setConfig(this.win, { hideTray: !config.hideTray });
-					this.initTray();
-				} 
+				label: Util.translate('electronMenuAccountSettings'), click: () => { 
+					this.winShow(); 
+					this.openSettings(''); 
+				}
 			},
-
-			(is.windows || is.linux) ? { 
-				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: !config.hideMenuBar, click: () => { 
-					Api.setMenuBarVisibility(this.win, !config.hideMenuBar);
-					this.initTray();
-				} 
-			} : null,
-
-			Separator,
-
 			{ 
 				label: Util.translate('electronMenuSpaceSettings'), click: () => { 
 					this.winShow(); 
 					this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }); 
 				}
 			},
-			{ 
-				label: Util.translate('electronMenuAccountSettings'), click: () => { 
-					this.winShow(); 
-					this.openSettings(''); 
-				}
-			},
+
+			Separator,
+
 			{ 
 				label: Util.translate('electronMenuImport'), click: () => { 
 					this.winShow(); 
@@ -411,6 +391,22 @@ class MenuManager {
 
 			{ label: Util.translate('electronMenuLanguage'), submenu: langMenu },
 			
+			Separator,
+
+			{ 
+				label: Util.translate('electronMenuShowTray'), type: 'checkbox', checked: !config.hideTray, click: () => { 
+					Api.setConfig(this.win, { hideTray: !config.hideTray });
+					this.initTray();
+				} 
+			},
+
+			(is.windows || is.linux) ? { 
+				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: !config.hideMenuBar, click: () => { 
+					Api.setMenuBarVisibility(this.win, !config.hideMenuBar);
+					this.initTray();
+				} 
+			} : null,
+
 			Separator,
 
 			{ 

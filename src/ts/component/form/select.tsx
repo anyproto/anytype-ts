@@ -1,8 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, Relation } from 'Lib';
+import { I, S, Relation } from 'Lib';
 import { Icon, MenuItemVertical } from 'Component';
-import { menuStore } from 'Store';
 
 interface Props {
 	id: string;
@@ -61,7 +60,7 @@ class Select extends React.Component<Props, State> {
 		if (readonly) {
 			cn.push('isReadonly');
 		};
-		
+
 		value.forEach((id: string) => {
 			const option = options.find(item => item.id == id);
 			if (option) {
@@ -232,18 +231,18 @@ class Select extends React.Component<Props, State> {
 				if (!isMultiple) {
 					this.hide();
 				} else {
-					menuStore.updateData('select', { value });
+					S.Menu.updateData('select', { value });
 				};
 			},
 		}, mp.data || {});
 
-		menuStore.closeAll([ 'select' ], () => {
-			menuStore.open('select', menuParam);
+		S.Menu.closeAll([ 'select' ], () => {
+			S.Menu.open('select', menuParam);
 		});
 	};
 	
 	hide () {
-		menuStore.close('select');
+		S.Menu.close('select');
 	};
 	
 };

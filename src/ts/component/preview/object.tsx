@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
-import { Loader, IconObject, Cover, Icon, ObjectType } from 'Component';
-import { commonStore, detailStore, blockStore } from 'Store';
-import { I, C, UtilData, UtilRouter, Action, translate } from 'Lib';
-const Constant = require('json/constant.json');
 import $ from 'jquery';
+import { observer } from 'mobx-react';
+import { Loader, IconObject, Cover, Icon } from 'Component';
+import { I, C, S, U, J, Action, translate } from 'Lib';
 
 interface Props {
 	rootId: string;
@@ -52,12 +50,12 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const { rootId, className, onClick, onMore } = this.props;
 		const previewSize = this.props.size;
 		const contextId = this.getRootId();
-		const check = UtilData.checkDetails(contextId, rootId);
-		const object = detailStore.get(contextId, rootId);
+		const check = U.Data.checkDetails(contextId, rootId);
+		const object = S.Detail.get(contextId, rootId);
 		const { name, description, coverType, coverId, coverX, coverY, coverScale, iconImage } = object;
-		const childBlocks = blockStore.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
-		const isTask = object.layout == I.ObjectLayout.Task;
-		const isBookmark = object.layout == I.ObjectLayout.Bookmark;
+		const childBlocks = S.Block.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
+		const isTask = U.Object.isTaskLayout(object.layout);
+		const isBookmark = U.Object.isBookmarkLayout(object.layou);
 		const cn = [ 'previewObject' , check.className, className ];
 
 		let n = 0;
@@ -104,9 +102,9 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const Block = (item: any) => {
 			const { content, fields } = item;
 			const { text, style, checked, targetObjectId } = content;
-			const childBlocks = blockStore.getChildren(contextId, item.id);
+			const childBlocks = S.Block.getChildren(contextId, item.id);
 			const length = childBlocks.length;
-			const cn = [ 'element', UtilData.blockClass(item), item.className ];
+			const cn = [ 'element', U.Data.blockClass(item), item.className ];
 
 			let bullet = null;
 			let inner = null;
@@ -236,7 +234,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								css.width = (fields.width * 100) + '%';
 							};
 
-							inner = <img className="media" src={commonStore.imageUrl(targetObjectId, Constant.size.image)} style={css} />;
+							inner = <img className="media" src={S.Common.imageUrl(targetObjectId, J.Size.image)} style={css} />;
 							break;
 						};
 
@@ -287,7 +285,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 									<div className="line even" />
 								</div>
 							</div>
-							<div className="side right" style={{ backgroundImage: `url("${commonStore.imageUrl(content.imageHash, 170)}")` }} />
+							<div className="side right" style={{ backgroundImage: `url("${S.Common.imageUrl(content.imageHash, 170)}")` }} />
 						</div>
 					);
 					break;
@@ -388,12 +386,12 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	componentDidUpdate () {
 		const { rootId, position } = this.props;
 		const contextId = this.getRootId();
-		const root = blockStore.wrapTree(contextId, rootId);
+		const root = S.Block.wrapTree(contextId, rootId);
 
 		this.load();
 
 		if (root) {
-			blockStore.updateNumbersTree([ root ]);
+			S.Block.updateNumbersTree([ root ]);
 		};
 
 		if (position) {
@@ -453,7 +451,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		this.id = rootId;
 		this.setState({ loading: true });
 
-		C.ObjectShow(rootId, 'preview', UtilRouter.getRouteSpaceId(), () => {
+		C.ObjectShow(rootId, 'preview', U.Router.getRouteSpaceId(), () => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -461,7 +459,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			this.setState({ loading: false });
 
 			if (setObject) {
-				setObject(detailStore.get(contextId, rootId, []));
+				setObject(S.Detail.get(contextId, rootId, []));
 			};
 		});
 	};

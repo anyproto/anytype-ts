@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
-import { I, C, UtilRouter, Storage } from 'Lib';
-import { extensionStore } from 'Store';
-const Url = require('json/url.json');
-
+import { I, C, S, U, J, Storage } from 'Lib';
 import Util from '../lib/util';
 
 interface State {
@@ -71,12 +68,12 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 
 		if (appKey) {
 			Util.authorize(appKey, () => {
-				const { serverPort, gatewayPort } = extensionStore;
+				const { serverPort, gatewayPort } = S.Extension;
 
 				Util.sendMessage({ type: 'initIframe', appKey, serverPort, gatewayPort }, () => {});
 				Util.sendMessage({ type: 'initMenu' }, () => {});
 
-				UtilRouter.go('/create', {});
+				U.Router.go('/create', {});
 			}, () => {
 				Storage.delete('appKey');
 				this.login();
@@ -91,14 +88,14 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 					return;
 				};
 
-				extensionStore.challengeId = message.challengeId;
-				UtilRouter.go('/challenge', {});
+				S.Extension.challengeId = message.challengeId;
+				U.Router.go('/challenge', {});
 			});
 		};
 	};
 
 	onOpen () {
-		const { serverPort, gatewayPort } = extensionStore;
+		const { serverPort, gatewayPort } = S.Extension;
 
 		if (serverPort && gatewayPort) {
 			this.login();
@@ -123,7 +120,7 @@ const Index = observer(class Index extends React.Component<I.PageComponent, Stat
 	};
 
 	onDownload () {
-		window.open(Url.download);
+		window.open(J.Url.download);
 	};
 
 

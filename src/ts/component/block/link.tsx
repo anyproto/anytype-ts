@@ -1,11 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
-import { I, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
-import { detailStore, blockStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, translate, keyboard, focus, Preview } from 'Lib';
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
 	
@@ -18,9 +15,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onClick = this.onClick.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
-		this.onCheckbox = this.onCheckbox.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
@@ -28,21 +22,21 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 	render() {
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, block.content.targetBlockId, Constant.coverRelationKeys);
+		const object = S.Detail.get(rootId, block.content.targetBlockId, J.Relation.cover);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
-		const content = UtilData.checkLinkSettings(block.content, layout);
-		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
+		const content = U.Data.checkLinkSettings(block.content, layout);
+		const readonly = this.props.readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const { description, cardStyle, relations } = content;
 		const { size, iconSize } = this.getIconSize();
-		const type = dbStore.getTypeById(object.type);
+		const type = S.Record.getTypeById(object.type);
 		const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
 
-		const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
+		const canDescription = !U.Object.isNoteLayout(object.layout);
 		const withIcon = content.iconSize != I.LinkIconSize.None;
 		const withType = relations.includes('type');
         const withCover = relations.includes('cover') && coverId && coverType;
 
-		if ((layout == I.ObjectLayout.Task) && done) {
+		if (U.Object.isTaskLayout(layout) && done) {
 			cn.push('isDone');
 		};
 
@@ -55,7 +49,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			element = (
 				<div 
 					className="loading" 
-					{...UtilCommon.dataProps({ 'target-block-id': object.id })}
+					{...U.Common.dataProps({ 'target-block-id': object.id })}
 				>
 					<Loader type="loader" />
 					<div className="name">{translate('blockLinkSyncing')}</div>
@@ -70,7 +64,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 				</div>
 			);
 		} else {
-			const cnc = [ 'linkCard', UtilData.layoutClass(object.id, layout), 'c' + size ];
+			const cnc = [ 'linkCard', U.Data.layoutClass(object.id, layout), 'c' + size ];
 			const cns = [ 'sides' ];
 			const cnl = [ 'side', 'left' ];
 			
@@ -115,17 +109,15 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			};
 
 			if (withIcon) {
+				const canEdit = !readonly && !isArchived && U.Object.isTaskLayout(object.layout);
 				icon = (
 					<IconObject 
 						id={`block-${block.id}-icon`}
 						size={size}
 						iconSize={iconSize}
 						object={object} 
-						canEdit={!readonly && !isArchived} 
-						onSelect={this.onSelect} 
-						onUpload={this.onUpload} 
-						onCheckbox={this.onCheckbox}
-						noClick={true}
+						canEdit={canEdit} 
+						noClick={canEdit}
 					/>
 				);
 			};
@@ -254,35 +246,19 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const { rootId, block, dataset } = this.props;
-		const { selection } = dataset || {};
+		const { rootId, block } = this.props;
+		const selection = S.Common.getRef('selectionProvider');
 		const { targetBlockId } = block.content;
-		const object = detailStore.get(rootId, targetBlockId, []);
-		const ids = selection ? selection.get(I.SelectType.Block) : [];
+		const object = S.Detail.get(rootId, targetBlockId, []);
+		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (object._empty_ || (targetBlockId == rootId) || (keyboard.withCommand(e) && ids.length)) {
 			return;
 		};
 
-		UtilObject.openEvent(e, object);
+		U.Object.openEvent(e, object);
 	};
 	
-	onSelect (icon: string) {
-		UtilObject.setIcon(this.props.block.content.targetBlockId, icon, '');
-	};
-
-	onUpload (objectId: string) {
-		UtilObject.setIcon(this.props.block.content.targetBlockId, '', objectId);
-	};
-
-	onCheckbox () {
-		const { rootId, block } = this.props;
-		const { targetBlockId } = block.content;
-		const object = detailStore.get(rootId, targetBlockId, []);
-
-		UtilObject.setDone(targetBlockId, !object.done);
-	};
-
 	onMouseEnter (e: React.MouseEvent) {
 		if (!this._isMounted) {
 			return;
@@ -295,7 +271,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const object = detailStore.get(rootId, targetBlockId, []);
+		const object = S.Detail.get(rootId, targetBlockId, []);
 		if (object._empty_ || object.isDeleted) {
 			return;
 		};
@@ -326,8 +302,8 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 	getIconSize () {
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, block.content.targetBlockId, [ 'layout' ], true);
-		const content = UtilData.checkLinkSettings(block.content, object.layout);
+		const object = S.Detail.get(rootId, block.content.targetBlockId, [ 'layout' ], true);
+		const content = U.Data.checkLinkSettings(block.content, object.layout);
 		const { cardStyle } = content;
 
 		let size = 20;

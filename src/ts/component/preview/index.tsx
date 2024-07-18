@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
-import { PreviewLink, PreviewObject, PreviewDefault, Loader } from 'Component';
-import { I, UtilCommon, UtilObject, Preview, Mark, translate, Renderer } from 'Lib';
-import { commonStore, menuStore } from 'Store';
+import { PreviewLink, PreviewObject, PreviewDefault } from 'Component';
+import { I, S, U, Preview, Mark, translate, Renderer } from 'Lib';
 
 const OFFSET_Y = 8;
 const BORDER = 12;
@@ -32,7 +30,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	};
 	
 	render () {
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { type, target, object, noUnlink, noEdit } = preview;
 		const cn = [ 'previewWrapper' ];
 
@@ -103,7 +101,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 			return;
 		};
 
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { type, target } = preview;
 		const object = this.state.object || preview.object;
 
@@ -115,17 +113,17 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 
 			case I.PreviewType.Default:
 			case I.PreviewType.Object: {
-				UtilObject.openEvent(e, object);
+				U.Object.openEvent(e, object);
 				break;
 			};
 		};
 	};
 	
 	onCopy () {
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { target } = preview;
 		
-		UtilCommon.clipboardCopy({ text: target });
+		U.Common.clipboardCopy({ text: target });
 		Preview.previewHide(true);
 	};
 	
@@ -133,13 +131,13 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { marks, range, onChange } = preview;
 		const mark = Mark.getInRange(marks, I.MarkType.Link, range);
 		const win = $(window);
-		const rect = UtilCommon.objectCopy($('#preview').get(0).getBoundingClientRect());
+		const rect = U.Common.objectCopy($('#preview').get(0).getBoundingClientRect());
 
-		menuStore.open('blockLink', {
+		S.Menu.open('blockLink', {
 			rect: rect ? { ...rect, height: 0, y: rect.y + win.scrollTop() } : null, 
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => Preview.previewHide(true),
@@ -154,7 +152,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	};
 	
 	onUnlink () {
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { range, onChange } = preview;
 
 		onChange(Mark.toggleLink({ type: this.getMarkType(), param: '', range }, preview.marks));
@@ -162,7 +160,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	};
 
 	getMarkType () {
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { type } = preview;
 
 		switch (type) {
@@ -182,7 +180,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	};
 
 	position () {
-		const { preview } = commonStore;
+		const { preview } = S.Common;
 		const { element, rect } = preview;
 
 		if (!element && !rect) {
@@ -192,7 +190,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const win = $(window);
 		const obj = $('#preview');
 		const poly = obj.find('.polygon');
-		const { ww, wh } = UtilCommon.getWindowDimensions();
+		const { ww, wh } = U.Common.getWindowDimensions();
 		const st = win.scrollTop();
 		const ow = obj.outerWidth();
 		const oh = obj.outerHeight();

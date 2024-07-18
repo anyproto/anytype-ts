@@ -2,12 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate, UtilDate, UtilRouter, UtilSpace } from 'Lib';
-import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'Store';
+import { I, C, S, U, J, focus, Action, analytics, Relation, translate } from 'Lib';
 import Controls from 'Component/page/elements/head/controls';
 import HeadSimple from 'Component/page/elements/head/simple';
-const Constant = require('json/constant.json');
-const Errors = require('json/error.json');
 
 interface State {
 	isLoading: boolean;
@@ -48,26 +45,26 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return <Deleted {...this.props} />;
 		};
 
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const rootId = this.getRootId();
-		const check = UtilData.checkDetails(rootId);
-		const object = detailStore.get(rootId, rootId);
+		const check = U.Data.checkDetails(rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
-		const templates = dbStore.getRecordIds(subIdTemplate, '');
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const templates = S.Record.getRecordIds(subIdTemplate, '');
+		const canWrite = U.Space.canMyParticipantWrite();
 
-		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
-		const showTemplates = !UtilObject.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
+		const layout: any = U.Menu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
+		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
-		const allowedObject = object.isInstalled && UtilObject.getPageLayouts().includes(object.recommendedLayout);
-		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowedObject = object.isInstalled && U.Object.isInPageLayouts(object.recommendedLayout);
+		const allowedDetails = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedRelation = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite;
 		const allowedLayout = object.recommendedLayout != I.ObjectLayout.Bookmark;
 		
 		const subIdObject = this.getSubIdObject();
-		const totalObject = dbStore.getMeta(subIdObject, '').total;
+		const totalObject = S.Record.getMeta(subIdObject, '').total;
 		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
 		const filtersObject: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
@@ -77,7 +74,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			recommendedRelations.push('rel-description');
 		};
 
-		const relations = recommendedRelations.map(id => dbStore.getRelationById(id)).filter(it => {
+		const relations = recommendedRelations.map(id => S.Record.getRelationById(id)).filter(it => {
 			if (!it) {
 				return false;
 			};
@@ -87,11 +84,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return config.debug.hiddenObject ? true : !it.isHidden;
 		});
 
-		const isFileType = UtilObject.isFileLayout(object.recommendedLayout);
+		const isFileType = U.Object.isInFileLayouts(object.recommendedLayout);
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: (v: any) => v ? UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v) : '',
+				mapper: (v: any) => v ? U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v) : '',
 			},
 		];
 
@@ -141,7 +138,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					{showTemplates ? (
 						<div className="section template">
 							<div className="title">
-								{totalTemplate} {UtilCommon.plural(totalTemplate, translate('pluralTemplate'))}
+								{totalTemplate} {U.Common.plural(totalTemplate, translate('pluralTemplate'))}
 
 								{allowedTemplate ? (
 									<div className="btn" onClick={this.onTemplateAdd}>
@@ -155,14 +152,14 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									<ListObjectPreview 
 										key="listTemplate"
 										ref={ref => this.refListPreview = ref}
-										getItems={() => dbStore.getRecords(subIdTemplate, [])}
+										getItems={() => S.Record.getRecords(subIdTemplate, [])}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
 										onMenu={allowedTemplate ? (e: any, item: any) => this.onMenu(item) : null}
 										onClick={(e: any, item: any) => this.templateOpen(item)}
 										withBlank={true}
-										blankId={Constant.templateId.blank}
-										defaultId={object.defaultTemplateId || Constant.templateId.blank}
+										blankId={J.Constant.templateId.blank}
+										defaultId={object.defaultTemplateId || J.Constant.templateId.blank}
 									/>
 								</div>
 							) : (
@@ -186,7 +183,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									<Select 
 										id="recommendedLayout" 
 										value={object.recommendedLayout} 
-										options={UtilMenu.turnLayouts()} 
+										options={U.Menu.turnLayouts()} 
 										arrowClassName="light" 
 										onChange={this.onLayout} 
 									/>
@@ -201,7 +198,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					) : ''}
 
 					<div className="section relation">
-						<div className="title">{relations.length} {UtilCommon.plural(relations.length, translate('pluralRelation'))}</div>
+						<div className="title">{relations.length} {U.Common.plural(relations.length, translate('pluralRelation'))}</div>
 						<div className="content">
 							{relations.map((item: any, i: number) => (
 								<ItemRelation key={i} {...item} />
@@ -212,7 +209,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 					{object.isInstalled ? (
 						<div className="section set">
-							<div className="title">{totalObject} {UtilCommon.plural(totalObject, translate('pluralObject'))}</div>
+							<div className="title">{totalObject} {U.Common.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
 								<ListObject 
 									{...this.props} 
@@ -257,12 +254,12 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		this.id = rootId;
 		this.setState({ isLoading: true });
 
-		C.ObjectOpen(rootId, '', UtilRouter.getRouteSpaceId(), (message: any) => {
-			if (!UtilCommon.checkErrorOnOpen(rootId, message.error.code, this)) {
+		C.ObjectOpen(rootId, '', U.Router.getRouteSpaceId(), (message: any) => {
+			if (!U.Common.checkErrorOnOpen(rootId, message.error.code, this)) {
 				return;
 			};
 
-			const object = detailStore.get(rootId, rootId, []);
+			const object = S.Detail.get(rootId, rootId, []);
 			if (object.isDeleted) {
 				this.setState({ isDeleted: true, isLoading: false });
 				return;
@@ -279,7 +276,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	loadTemplates () {
 		const rootId = this.getRootId();
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			subId: this.getSubIdTemplate(),
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
@@ -313,13 +310,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onTemplateAdd () {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const details: any = { 
 			targetObjectType: rootId,
 			layout: object.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', Constant.typeKey.template, commonStore.space, (message) => {
+		C.ObjectCreate(details, [], '', J.Constant.typeKey.template, S.Common.space, (message) => {
 			if (message.error.code) {
 				return;
 			};
@@ -332,20 +329,19 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	templateOpen (object: any) {
-		UtilObject.openPopup(object, {
+		U.Object.openConfig(object, {
 			onClose: () => $(window).trigger(`updatePreviewObject.${object.id}`)
 		});
 	};
 
 	onCreate () {
 		const rootId = this.getRootId();
-		const type = dbStore.getTypeById(rootId);
+		const type = S.Record.getTypeById(rootId);
 		if (!type) {
 			return;
 		};
 
-		const isSetLayout = UtilObject.isSetLayout(type.recommendedLayout);
-		const allowedObject = UtilObject.getPageLayouts().includes(type.recommendedLayout) || isSetLayout;
+		const allowedObject = U.Object.isInPageLayouts(type.recommendedLayout) || U.Object.isInSetLayouts(type.recommendedLayout);
 		const options = [];
 
 		if (allowedObject) {
@@ -354,7 +350,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		options.push({ id: 'set', name: translate('pageMainTypeNewSetOfObjects') });
 
-		menuStore.open('select', { 
+		S.Menu.open('select', { 
 			element: `#button-create`,
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
@@ -363,7 +359,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'object':
-							if (type.recommendedLayout == I.ObjectLayout.Bookmark) {
+							if (U.Object.isBookmarkLayout(type.recommendedLayout)) {
 								this.onBookmarkAdd();
 							} else {
 								this.onObjectAdd();
@@ -381,7 +377,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onObjectAdd () {
 		const rootId = this.getRootId();
-		const type = dbStore.getTypeById(rootId);
+		const type = S.Record.getTypeById(rootId);
 
 		if (!type) {
 			return;
@@ -389,54 +385,57 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		
 		const details: any = {};
 
-		if (UtilObject.isSetLayout(type.recommendedLayout)) {
+		if (U.Object.isInSetLayouts(type.recommendedLayout)) {
 			details.layout = type.recommendedLayout;
 		};
 
-		C.ObjectCreate(details, [ I.ObjectFlag.SelectTemplate ], type.defaultTemplateId, type.uniqueKey, commonStore.space, (message: any) => {
+		C.ObjectCreate(details, [ I.ObjectFlag.SelectTemplate ], type.defaultTemplateId, type.uniqueKey, S.Common.space, (message: any) => {
 			if (message.error.code || !message.details) {
 				return;
 			};
 
 			const object = message.details;
 
-			UtilObject.openPopup(object);
+			U.Object.openConfig(object);
 			analytics.createObject(object.type, object.layout, analytics.route.type, message.middleTime);
 		});
 	};
 
 	onBookmarkAdd () {
-		menuStore.open('dataviewCreateBookmark', {
+		S.Menu.open('dataviewCreateBookmark', {
 			type: I.MenuType.Horizontal,
 			element: `#button-create`,
 			horizontal: I.MenuDirection.Right,
+			data: {
+				route: analytics.route.type,
+			}
 		});
 	};
 
 	onSetAdd () {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const details = { 
-			name: UtilCommon.sprintf(translate('commonSetName'), object.name),
+			name: U.Common.sprintf(translate('commonSetName'), object.name),
 			iconEmoji: object.iconEmoji,
 		};
 
-		C.ObjectCreateSet([ rootId ], details, '', commonStore.space, (message: any) => {
+		C.ObjectCreateSet([ rootId ], details, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
-				UtilObject.openPopup(message.details);
+				U.Object.openConfig(message.details);
 			};
 		});
 	};
 
 	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const skipSystemKeys = [ 'tag', 'description', 'source' ];
-		const recommendedKeys = object.recommendedRelations.map(id => dbStore.getRelationById(id)).map(it => it && it.relationKey);
+		const recommendedKeys = object.recommendedRelations.map(id => S.Record.getRelationById(id)).map(it => it && it.relationKey);
 		const systemKeys = Relation.systemKeys().filter(it => !skipSystemKeys.includes(it));
 
-		menuStore.open('relationSuggest', { 
+		S.Menu.open('relationSuggest', { 
 			element: '#page .section.relation #item-add',
 			offsetX: 32,
 			data: {
@@ -447,7 +446,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				skipKeys: recommendedKeys.concat(systemKeys),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], (message: any) => { 
-						menuStore.close('relationSuggest'); 
+						S.Menu.close('relationSuggest'); 
 
 						if (onChange) {
 							onChange(message);
@@ -460,10 +459,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onRelationEdit (e: any, id: string) {
 		const rootId = this.getRootId();
-		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const relation = dbStore.getRelationById(id);
+		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const relation = S.Record.getRelationById(id);
 		
-		menuStore.open('blockRelationEdit', { 
+		S.Menu.open('blockRelationEdit', { 
 			element: `#page .section.relation #item-${id}`,
 			offsetX: 32,
 			data: {
@@ -495,17 +494,17 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	onMenu (item: any) {
-		if (menuStore.isOpen('dataviewTemplateContext', item.id)) {
-			menuStore.close('dataviewTemplateContext');
+		if (S.Menu.isOpen('dataviewTemplateContext', item.id)) {
+			S.Menu.close('dataviewTemplateContext');
 			return;
 		};
 
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 		const { defaultTemplateId } = object;
 		const template: any = { id: item.id, typeId: rootId };
 
-		if (template.id == Constant.templateId.blank) {
+		if (template.id == J.Constant.templateId.blank) {
 			template.isBlank = true;
 
 			if (!object.defaultTemplateId) {
@@ -516,8 +515,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			template.isDefault = true;
 		};
 
-		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
-			menuStore.open('dataviewTemplateContext', {
+		S.Menu.closeAll(J.Menu.dataviewTemplate, () => {
+			S.Menu.open('dataviewTemplateContext', {
 				menuKey: item.id,
 				element: `#item-more-${item.id}`,
 				vertical: I.MenuDirection.Bottom,
@@ -530,14 +529,14 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					templateId: defaultTemplateId,
 					route: analytics.route.type,
 					onSetDefault: () => {
-						UtilObject.setDefaultTemplateId(rootId, template.id);
+						U.Object.setDefaultTemplateId(rootId, template.id);
 					},
 					onDuplicate: (object: any) => {
 						this.templateOpen(object);
 					},
 					onArchive: () => {
 						if (template.isDefault) {
-							UtilObject.setDefaultTemplateId(rootId, Constant.templateId.blank);
+							U.Object.setDefaultTemplateId(rootId, J.Constant.templateId.blank);
 						};
 					}
 				}
@@ -552,17 +551,17 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	getSpaceId () {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId, [ 'spaceId' ], true);
+		const object = S.Detail.get(rootId, rootId, [ 'spaceId' ], true);
 
 		return object.spaceId;
 	};
 
 	getSubIdTemplate () {
-		return dbStore.getSubId(this.getRootId(), 'templates');
+		return S.Record.getSubId(this.getRootId(), 'templates');
 	};
 
 	getSubIdObject () {
-		return dbStore.getSubId(this.getRootId(), 'data');
+		return S.Record.getSubId(this.getRootId(), 'data');
 	};
 
 });

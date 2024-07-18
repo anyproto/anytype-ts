@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, IconObject, Switch, Select } from 'Component';
-import { I, UtilCommon } from 'Lib';
+import { I, U } from 'Lib';
 
 class MenuItemVertical extends React.Component<I.MenuItem> {
 
@@ -49,9 +49,6 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		};
 		if (isActive) {
 			cn.push('active');
-		};
-		if (readonly) {
-			cn.push('isReadonly');
 		};
 		if (readonly) {
 			cn.push('isReadonly');
@@ -108,7 +105,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				additional = (
 					<React.Fragment>
 						{typeof caption === 'string' ? (
-							<div className="caption" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(caption) }} />
+							<div className="caption" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(caption) }} />
 						) : (
 							<div className="caption">{caption}</div>
 						)}

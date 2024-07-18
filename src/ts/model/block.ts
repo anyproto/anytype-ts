@@ -1,4 +1,4 @@
-import { I, UtilCommon } from 'Lib';
+import { I, U } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 import BlockContentLayout from './content/layout';
@@ -66,7 +66,7 @@ class Block implements I.Block {
 			content: observable,
 		});
 
-		intercept(this as any, change => UtilCommon.intercept(this, change));
+		intercept(this as any, change => U.Common.intercept(this, change));
 		return this;
 	};
 
@@ -461,6 +461,13 @@ class Block implements I.Block {
 
 	isTextCallout (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Callout);
+	};
+
+	getText (): string {
+		if (this.isText() || this.isEmbed()) {
+			return String(this.content.text || '');
+		};
+		return '';
 	};
 
 	getLength (): number {

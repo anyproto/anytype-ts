@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, keyboard, translate } from 'Lib';
+import { I, S, keyboard, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
-import { commonStore } from 'Store';
 
 const MenuGraphSettings = observer(class MenuGraphSettings extends React.Component<I.Menu> {
 
@@ -78,7 +77,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		const values = this.getValues();
 
 		values[item.id] = !values[item.id];
-		commonStore.graphSet(this.getKey(), values);
+		S.Common.graphSet(this.getKey(), values);
 
 		this.forceUpdate();
 	};
@@ -88,7 +87,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	getValues () {
-		return commonStore.getGraph(this.getKey());
+		return S.Common.getGraph(this.getKey());
 	};
 
 	getSections (): any[] {
@@ -103,6 +102,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 					{ id: 'label', name: translate('menuGraphSettingsTitles') },
 					{ id: 'marker', name: translate('menuGraphSettingsArrows') },
 					{ id: 'icon', name: translate('menuGraphSettingsIcons') },
+					{ id: 'preview', name: translate('menuGraphSettingsPreview') },
 				] 
 			},
 			{ 
@@ -115,7 +115,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		];
 
 		if (allowLocal) {
-			sections.push({ children: [ { id: 'local', name: translate('menuGraphSettingsLocal') } ]  });
+			sections.push({ children: [ { id: 'local', name: translate('menuGraphSettingsLocal') } ] });
 		};
 
 		sections = sections.map(s => {

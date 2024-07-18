@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, IconObject } from 'Component';
-import { commonStore, menuStore } from 'Store';
-import { I, UtilObject, keyboard, UtilCommon, Preview, translate, UtilSpace, analytics } from 'Lib';
+import { Icon } from 'Component';
+import { I, S, U, keyboard, Preview, translate, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
 
@@ -19,23 +18,21 @@ const Navigation = observer(class Navigation extends React.Component {
 		this.onAdd = this.onAdd.bind(this);
 		this.onGraph = this.onGraph.bind(this);
 		this.onSearch = this.onSearch.bind(this);
-		this.onProfile = this.onProfile.bind(this);
 	};
 
 	render () {
-		const { navigationMenu } = commonStore;
+		const { navigationMenu } = S.Common;
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
-		const participant = UtilSpace.getParticipant();
-		const isWin = UtilCommon.isPlatformWindows();
-		const isLinux = UtilCommon.isPlatformLinux();
+		const isWin = U.Common.isPlatformWindows();
+		const isLinux = U.Common.isPlatformLinux();
 		const cb = isWin || isLinux ? `${alt} + ←` : `${cmd} + [`;
 		const cf = isWin || isLinux ? `${alt} + →` : `${cmd} + ]`;
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		let buttonPlus: any = null;
 		if (canWrite) {
-			buttonPlus = { id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N / ${cmd} + ${alt} + N` };
+			buttonPlus = { id: 'plus', tooltip: translate('commonCreateNewObject'), caption: `${cmd} + N / ${cmd} + ${alt} + N` };
 
 			switch (navigationMenu) {
 				case I.NavigationMenuMode.Context: {
@@ -112,18 +109,6 @@ const Navigation = observer(class Navigation extends React.Component {
 							</div>
 						);
 					})}
-
-					<div className="line" />
-
-					<div 
-						id="button-navigation-profile"
-						className="iconWrap"
-						onClick={this.onProfile}
-						onMouseEnter={e => this.onTooltipShow(e, translate('navigationAccount'), 'Ctrl + Tab')}
-						onMouseLeave={e => Preview.tooltipHide(false)}
-					>
-						<IconObject object={participant} />
-					</div>
 				</div>
 			</div>
 		);
@@ -131,26 +116,13 @@ const Navigation = observer(class Navigation extends React.Component {
 
 	componentDidMount () {
 		this._isMounted = true;
-		this.resize();
-		this.rebind();
 	};
 
 	componentDidUpdate () {
-		this.resize();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
-	};
-
-	unbind () {
-		$(window).off('resize.navigation sidebarResize.navigation');
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('resize.navigation sidebarResize.navigation', () => this.resize());
 	};
 
 	onBack () {
@@ -166,46 +138,28 @@ const Navigation = observer(class Navigation extends React.Component {
 	};
 
 	onGraph () {
-		UtilObject.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
+		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
 	onSearch () {
 		keyboard.onSearchPopup(analytics.route.navigation);
 	};
 
-	onProfile () {
-		window.clearTimeout(this.timeoutPlus);
-
-		if (menuStore.isOpen('space')) {
-			menuStore.close('space');
-		} else {
-			keyboard.onSpaceMenu(false);
-		};
-	};
-
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const win = $(window);
+	setX (sw: number, animate: boolean) {
 		const node = $(this.node);
-		const { ww } = UtilCommon.getWindowDimensions();
+		const { ww } = U.Common.getWindowDimensions();
 		const width = node.outerWidth();
-		const sidebar = $('#sidebar');
-		const isRight = sidebar.hasClass('right');
+		const x = (ww - sw) / 2 - width / 2 + sw;
 
-		let sw = 0;
-		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
-			sw = sidebar.outerWidth();
+		if (animate) {
+			node.addClass('sidebarAnimation');
 		};
 
-		let x = (ww - sw) / 2 - width / 2;
-		if (!isRight) {
-			x += sw;
+		node.css({ left: `${x / ww * 100}%` });
+
+		if (animate) {
+			window.setTimeout(() => node.removeClass('sidebarAnimation'), 200);
 		};
-		node.css({ left: x });
-		win.trigger('resize.menuSpace');
 	};
 
 	onTooltipShow (e: any, text: string, caption?: string) {

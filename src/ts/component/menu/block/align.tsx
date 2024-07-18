@@ -1,8 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, UtilMenu } from 'Lib';
-import { blockStore } from 'Store';
+import { I, S, U, keyboard } from 'Lib';
 
 class MenuBlockHAlign extends React.Component<I.Menu> {
 	
@@ -57,7 +56,7 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 		const restricted = [];
 		
 		for (const id of blockIds) {
-			const block = blockStore.getLeaf(rootId, id);
+			const block = S.Block.getLeaf(rootId, id);
 			if (!block) {
 				continue;
 			};
@@ -70,7 +69,7 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 			};
 		};
 
-		return UtilMenu.getHAlign(restricted);
+		return U.Menu.getHAlign(restricted);
 	};
 	
 	onOver (e: any, item: any) {

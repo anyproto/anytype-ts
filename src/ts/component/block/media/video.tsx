@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Loader, Error, MediaVideo } from 'Component';
-import { I, C, translate, focus, Action, keyboard } from 'Lib';
-import { commonStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, J, translate, focus, Action, keyboard } from 'Lib';
 
 const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComponent> {
 
@@ -30,9 +28,10 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 	};
 
 	render () {
-		const { block, readonly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id, fields, content } = block;
 		const { state, targetObjectId } = content;
+		const object = S.Detail.get(rootId, targetObjectId, []);
 		const { width } = fields;
 		const css: any = {};
 
@@ -41,43 +40,54 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		};
 
 		let element = null;
-		
-		switch (state) {
-			default:
-			case I.FileState.Error:
-			case I.FileState.Empty:
-				element = (
-					<React.Fragment>
-						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="video" 
-							textFile={translate('blockVideoUpload')} 
-							accept={Constant.fileExtension.video} 
-							onChangeUrl={this.onChangeUrl} 
-							onChangeFile={this.onChangeFile} 
-							readonly={readonly} 
-						/>
-					</React.Fragment>
-				);
-				break;
-				
-			case I.FileState.Uploading:
-				element = <Loader />;
-				break;
-				
-			case I.FileState.Done:
-				element = (
-					<div className="wrap resizable" style={css}>
-						<MediaVideo
-							src={commonStore.fileUrl(targetObjectId)}
-							onPlay={this.onPlay}
-							onPause={this.onPause}
-						/>
-						<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
-					</div>
-				);
-				break;
+		if (object.isDeleted) {
+			element = (
+				<div className="deleted">
+					<Icon className="ghost" />
+					<div className="name">{translate('commonDeletedObject')}</div>
+				</div>
+			);
+		} else {
+			switch (state) {
+				default:
+				case I.FileState.Error:
+				case I.FileState.Empty: {
+					element = (
+						<React.Fragment>
+							{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
+							<InputWithFile 
+								block={block} 
+								icon="video" 
+								textFile={translate('blockVideoUpload')} 
+								accept={J.Constant.fileExtension.video} 
+								onChangeUrl={this.onChangeUrl} 
+								onChangeFile={this.onChangeFile} 
+								readonly={readonly} 
+							/>
+						</React.Fragment>
+					);
+					break;
+				};
+					
+				case I.FileState.Uploading: {
+					element = <Loader />;
+					break;
+				};
+					
+				case I.FileState.Done: {
+					element = (
+						<div className="wrap resizable" style={css}>
+							<MediaVideo
+								src={S.Common.fileUrl(targetObjectId)}
+								onPlay={this.onPlay}
+								onPause={this.onPause}
+							/>
+							<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
+						</div>
+					);
+					break;
+				};
+			};
 		};
 		
 		return (
@@ -219,16 +229,14 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off('mousemove.media mouseup.media');
 		
-		if (selection) {
-			selection.hide();
-		};
+		selection?.hide();
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);

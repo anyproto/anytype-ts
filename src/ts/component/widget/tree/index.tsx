@@ -3,11 +3,9 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
-import { Loader, Label } from 'Component';
-import { analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon, translate } from 'Lib';
-import { blockStore, dbStore, detailStore } from 'Store';
+import { Loader, Label, Button } from 'Component';
+import { I, C, S, U, J, analytics, Relation, Storage, translate } from 'Lib';
 import Item from './item';
-const Constant = require('json/constant.json');
 
 interface State {
 	loading: boolean;
@@ -46,7 +44,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 	render () {
 		const { loading } = this.state;
-		const { isPreview } = this.props;
+		const { isPreview, canCreate, onCreate } = this.props;
 		const nodes = this.loadTree();
 		const length = nodes.length;
 
@@ -62,7 +60,12 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			content = <Loader />;
 		} else
 		if (!length) {
-			content = <Label className="empty" text={translate('widgetEmptyLabel')} />;
+			content = (
+				<div className="emptyWrap">
+					<Label className="empty" text={canCreate ? translate('widgetEmptyLabelCreate') : translate('widgetEmptyLabel')} />
+					{canCreate ? <Button text={translate('commonCreateObject')} color="blank" className="c28" onClick={onCreate} /> : ''}
+				</div>
+			);
 		} else 
 		if (isPreview) {
 			const rowRenderer = ({ index, parent, style }) => {
@@ -148,8 +151,8 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		return (
 			<div
 				ref={node => this.node = node}
-				id="body" 
-				className="body"
+				id="innerWrap"
+				className="innerWrap"
 			>
 				{content}
 			</div>
@@ -159,12 +162,14 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { isSystemTarget, getData } = this.props;
+		const { block, isSystemTarget, getData, getTraceId } = this.props;
+		const { targetBlockId } = block.content;
 
 		if (isSystemTarget()) {
 			getData(this.getSubId(), this.initCache);
 		} else {
 			this.initCache();
+			C.ObjectShow(targetBlockId, getTraceId(), U.Router.getRouteSpaceId());
 		};
 
 		this.getDeleted();
@@ -175,6 +180,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.getDeleted();
 
 		if (this.refList) {
+			this.refList.recomputeRowHeights(0);
 			this.refList.scrollToPosition(this.top);
 		};
 	};
@@ -189,7 +195,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	getDeleted () {
-		const deleted = dbStore.getRecordIds(Constant.subId.deleted, '');
+		const deleted = S.Record.getRecordIds(J.Constant.subId.deleted, '');
 		const length = deleted.length;
 
 		this.deletedIds = new Set(deleted);
@@ -219,9 +225,9 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	loadTree (): I.WidgetTreeItem[] {
 		const { block, isSystemTarget, isPreview, sortFavorite, addGroupLabels } = this.props;
 		const { targetBlockId } = block.content;
-		const { widgets } = blockStore;
-		const object = detailStore.get(widgets, targetBlockId, [ 'links' ]);
-		const isRecent = [ Constant.widgetId.recentOpen, Constant.widgetId.recentEdit ].includes(targetBlockId);
+		const { widgets } = S.Block;
+		const object = S.Detail.get(widgets, targetBlockId, [ 'links' ]);
+		const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
 
 		this.branches = [];
 
@@ -229,12 +235,12 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		if (isSystemTarget()) {
 			const subId = this.getSubId(targetBlockId);
 			
-			let records = dbStore.getRecordIds(subId, '');
-			if (targetBlockId == Constant.widgetId.favorite) {
+			let records = S.Record.getRecordIds(subId, '');
+			if (targetBlockId == J.Constant.widgetId.favorite) {
 				records = sortFavorite(records);
 			};
 
-			children = records.map(id => this.mapper(detailStore.get(subId, id, Constant.sidebarRelationKeys)));
+			children = records.map(id => this.mapper(S.Detail.get(subId, id, J.Relation.sidebar)));
 		} else {
 			children = this.getChildNodesDetails(object.id);
 			this.subscribeToChildNodes(object.id, Relation.getArrayValue(object.links));
@@ -299,7 +305,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 	// return the child nodes details for the given subId
 	getChildNodesDetails (nodeId: string): I.WidgetTreeDetails[] {
-		return dbStore.getRecords(this.getSubId(nodeId), [ 'id', 'layout', 'links' ], true).map(it => this.mapper(it));
+		return S.Record.getRecords(this.getSubId(nodeId), [ 'id', 'layout', 'links' ], true).map(it => this.mapper(it));
 	};
 
 	mapper (item) {
@@ -318,7 +324,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			return;
 		};
 
-		const hash = sha1(UtilCommon.arrayUnique(links).join('-'));
+		const hash = sha1(U.Common.arrayUnique(links).join('-'));
 		const subId = this.getSubId(nodeId);
 
 		// if already subscribed to the same links, dont subscribe again
@@ -327,10 +333,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		};
 
 		this.subscriptionHashes[nodeId] = hash;
-		UtilData.subscribeIds({
+		U.Data.subscribeIds({
 			subId,
 			ids: links,
-			keys: Constant.sidebarRelationKeys,
+			keys: J.Relation.sidebar,
 			noDeps: true,
 		});
 	};
@@ -345,7 +351,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const { block } = this.props;
 		const { targetBlockId } = block.content;
 
-		return dbStore.getSubId(this.getSubKey(), nodeId || targetBlockId);
+		return S.Record.getSubId(this.getSubKey(), nodeId || targetBlockId);
 	};
 
 	// a composite key for the tree node in the form rootId-parentId-Id-depth
@@ -384,16 +390,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	onScroll ({ scrollTop }): void {
-		const { dataset } = this.props;
-		const { dragProvider } = dataset || {};
+		const dragProvider = S.Common.getRef('dragProvider');
 
-		if (scrollTop) {
-			this.top = scrollTop;
-		};
-
-		if (dragProvider) {
-			dragProvider.onScroll();
-		};
+		this.top = scrollTop;
+		dragProvider?.onScroll();
 	};
 
 	onClick (e: React.MouseEvent, item: unknown): void {
@@ -404,7 +404,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		e.preventDefault();
 		e.stopPropagation();
 
-		UtilObject.openEvent(e, item);
+		U.Object.openEvent(e, item);
 		analytics.event('OpenSidebarObject');
 	};
 
@@ -421,10 +421,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	getRowHeight (node: any, index: number) {
-		if (node && node.isSection) {
-			return index ? HEIGHT + 12 : HEIGHT;
+		let h = HEIGHT;
+		if (node && node.isSection && index) {
+			h += 12;
 		};
-		return HEIGHT;
+		return h;
 	};
 
 	resize () {
@@ -433,6 +434,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const node = $(this.node);
 		const length = nodes.length;
 		const css: any = { height: this.getTotalHeight() + 8, paddingBottom: '' };
+		const emptyWrap = node.find('.emptyWrap');
 
 		if (isPreview) {
 			const head = $(`#widget-${parent.id} .head`);
@@ -442,8 +444,8 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		};
 
 		if (!length) {
-			css.paddingBottom = 12;
-			css.height = 36 + css.paddingBottom;
+			css.paddingBottom = 8;
+			css.height = emptyWrap.outerHeight() + css.paddingBottom;
 		};
 
 		node.css(css);

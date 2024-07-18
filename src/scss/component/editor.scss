@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.editorWrapper { margin: 0px auto; }
+.editorWrapper { margin: 0px auto; min-width: 300px; }
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 
@@ -96,6 +96,9 @@
 			}
 		}
 
+		.block.blockText {
+			 .wrapContent { min-height: 24px; }
+		}
 		.block.blockDiv { margin: 30px 0px; }
 	}
 }
@@ -166,6 +169,62 @@
 }
 
 /* Note */ 
+
 .editorWrapper.isNote {
 	.editorControls { height: 70px; margin-bottom: 8px; }
+}
+
+/* Set, Collection, Date */
+
+.editorWrapper.isSet,
+.editorWrapper.isCollection,
+.editorWrapper.isDate {
+	.blocks { width: calc(100% - 96px); margin: 0px auto; padding: 0px; user-select: none; }
+	.blocks {
+		.block {
+			.wrapMenu { display: none; }
+			.wrapContent { width: 100%; }
+		}
+		.block.blockDataview { padding: 0px; }
+
+		.editorControls { height: 52px; width: 100%; margin-bottom: 8px; padding: 0px 14px; }
+
+		.headSimple {
+			.side.right { display: none; }
+		}
+	}
+
+	.block.blockCover {
+		.elements { width: calc(100% - 96px); left: 48px; margin: 0px; }
+	}
+}
+
+.editorWrapper.isSet.withIcon, 
+.editorWrapper.isCollection.withIcon {
+	.controlButtons { left: 14px; }
+}
+
+.editorWrapper.isSet.withIconAndCover, 
+.editorWrapper.isCollection.withIconAndCover { padding-top: 356px; }
+.editorWrapper.isSet.withIconAndCover, 
+.editorWrapper.isCollection.withIconAndCover {
+	.controlButtons { left: 0px !important; }
+}
+
+.editorWrapper.isSet.withIcon, 
+.editorWrapper.isSet.withIconAndCover, 
+.editorWrapper.isCollection.withIcon,
+.editorWrapper.isCollection.withIconAndCover {
+	.headSimple {
+		.side.left { width: 96px; }
+		.side.center { width: calc(100% - 128px); }
+	}
+	#button-icon { display: none; }
+}
+
+.editorWrapper.isSet.withCover, 
+.editorWrapper.isSet.withIconAndCover, 
+.editorWrapper.isCollection.withCover,
+.editorWrapper.isCollection.withIconAndCover {
+	.editorControls { display: none; }
 }

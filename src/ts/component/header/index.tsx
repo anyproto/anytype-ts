@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { I, UtilObject, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
+import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
-import { popupStore, menuStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -41,6 +40,7 @@ class Header extends React.Component<Props> {
 		this.onTooltipHide = this.onTooltipHide.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);
 		this.onExpand = this.onExpand.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 	};
 	
 	render () {
@@ -67,33 +67,24 @@ class Header extends React.Component<Props> {
 					menuOpen={this.menuOpen}
 					renderLeftIcons={this.renderLeftIcons}
 					renderTabs={this.renderTabs}
+					onRelation={this.onRelation}
 				/>
 			</div>
 		);
 	};
 
 	componentDidMount () {
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 	};
 
 	componentDidUpdate () {
-		sidebar.resizePage();
+		sidebar.resizePage(null, false);
 		this.refChild.forceUpdate();
 	};
 
 	renderLeftIcons (onOpen?: () => void) {
-		const cmd = keyboard.cmdSymbol();
-
 		return (
 			<React.Fragment>
-				<Icon
-					className="toggle"
-					tooltip={translate('sidebarToggle')}
-					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
-					tooltipY={I.MenuDirection.Bottom}
-					onClick={() => sidebar.toggleExpandCollapse()}
-				/>
-
 				<Icon 
 					className="expand" 
 					tooltip={translate('commonOpenObject')} 
@@ -126,7 +117,7 @@ class Header extends React.Component<Props> {
 	onExpand () {
 		const { rootId, layout } = this.props;
 
-		popupStore.closeAll(null, () => UtilObject.openRoute({ id: rootId, layout }));
+		S.Popup.closeAll(null, () => U.Object.openRoute({ id: rootId, layout }));
 	};
 
 	onSearch () {
@@ -162,7 +153,33 @@ class Header extends React.Component<Props> {
 			menuParam.classNameWrap = 'fixed fromHeader';
 		};
 
-		menuStore.closeAllForced(null, () => menuStore.open(id, menuParam));
+		S.Menu.closeAllForced(null, () => S.Menu.open(id, menuParam));
+	};
+
+	onRelation (param?: Partial<I.MenuParam>, data?: any) {
+		param = param || {};
+		data = data || {};
+
+		const { isPopup, rootId } = this.props;
+		const cnw = [ 'fixed' ];
+
+		if (!isPopup) {
+			cnw.push('fromHeader');
+		};
+
+		this.menuOpen('blockRelationView', '#button-header-relation', {
+			noFlipX: true,
+			noFlipY: true,
+			horizontal: I.MenuDirection.Right,
+			subIds: J.Menu.cell,
+			classNameWrap: cnw.join(' '),
+			...param,
+			data: {
+				isPopup,
+				rootId,
+				...data,
+			},
+		});
 	};
 
 	getContainer () {

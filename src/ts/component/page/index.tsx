@@ -2,10 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilSpace, translate, UtilRouter } from 'Lib';
-import { Sidebar, Label, Frame } from 'Component';
-import { authStore, commonStore, menuStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
+import { Label, Frame } from 'Component';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -27,7 +25,6 @@ import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
-import PageMainBlock from './main/block';
 import PageMainImport from './main/import';
 import PageMainInvite from './main/invite';
 import PageMainMembership from './main/membership';
@@ -56,7 +53,6 @@ const Components = {
 	'main/navigation':		 PageMainNavigation,
 	'main/create':			 PageMainCreate,
 	'main/archive':			 PageMainArchive,
-	'main/block':			 PageMainBlock,
 	'main/import':			 PageMainImport,
 	'main/invite':			 PageMainInvite,
 	'main/membership':		 PageMainMembership,
@@ -71,8 +67,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	render () {
 		const { isPopup } = this.props;
-		const { config, theme } = commonStore;
-		const { account } = authStore;
+		const { config, theme } = S.Common;
+		const { account } = S.Auth;
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
 		const isMain = this.isMain();
@@ -91,13 +87,13 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		if (!Component) {
 			return (
 				<Frame>
-					<Label text={UtilCommon.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
+					<Label text={U.Common.sprintf(translate('pageMainIndexComponentNotFound'), path)} />
 				</Frame>
 			);
 		};
 
 		const wrap = (
-			<div id="page" className={'page ' + this.getClass('page')}>
+			<div id="page" className={`page ${this.getClass('page')}`}>
 				<Component ref={ref => this.refChild = ref} {...this.props} />
 			</div>
 		);
@@ -107,11 +103,9 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			content = wrap;
 		} else {
 			content = (
-				<div className="pageFlex">
-					<Sidebar key="sidebar" {...this.props} />
-					<div id="sidebarDummyLeft" className="sidebarDummy left" />
+				<div id="pageFlex" className="pageFlex">
+					<div id="sidebarDummy" className="sidebarDummy" />
 					{wrap}
-					<div id="sidebarDummyRight" className="sidebarDummy right" />
 				</div>
 			);
 		};
@@ -134,10 +128,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		this.unbind();
 
 		if (!isPopup) {
-			popupStore.closeAll();
+			S.Popup.closeAll();
 		};
 
-		menuStore.closeAll();
+		S.Menu.closeAll();
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
 	};
@@ -145,7 +139,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
 		const { history } = this.props;
-		const data = UtilCommon.searchParam(history?.location?.search);
+		const data = U.Common.searchParam(history?.location?.search);
 		const pathname = String(history?.location?.pathname || '');
 		const ret = (isPopup ? matchPopup : match) || { params: {} };
 
@@ -178,13 +172,13 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getRootId () {
 		const { id } = this.getMatchParams();
-		const home = UtilSpace.getDashboard();
+		const home = U.Space.getDashboard();
 
 		return id || home?.id;
 	};
 
 	init () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const { isPopup } = this.props;
 		const match = this.getMatch();
 		const { page, action } = this.getMatchParams();
@@ -192,7 +186,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
 		const isPinCheck = this.isAuthPinCheck();
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const win = $(window);
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
@@ -200,23 +194,24 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
+		keyboard.setWindowTitle();
 
 		if (!Component) {
 			return;
 		};
 
 		if (isMain && !account) {
-			UtilRouter.go('/', routeParam);
+			U.Router.go('/', routeParam);
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			UtilRouter.go('/auth/pin-check', routeParam);
+			U.Router.go('/auth/pin-check', routeParam);
 			return;
 		};
 
-		if (isMain && (authStore.accountIsDeleted() || authStore.accountIsPending())) {
-			UtilRouter.go('/auth/deleted', routeParam);
+		if (isMain && (S.Auth.accountIsDeleted() || S.Auth.accountIsPending())) {
+			U.Router.go('/auth/deleted', routeParam);
 			return;
 		};
 
@@ -231,7 +226,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
-		Onboarding.start(UtilCommon.toCamelCase([ page, action ].join('-')), isPopup);
+		Onboarding.start(U.Common.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 	};
 
@@ -293,7 +288,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { page } = this.getMatchParams();
 		
 		return [ 
-			UtilCommon.toCamelCase([ prefix, page ].join('-')),
+			U.Common.toCamelCase([ prefix, page ].join('-')),
 			this.getId(prefix),
 			(isPopup ? 'isPopup' : 'isFull'),
 		].join(' ');
@@ -306,11 +301,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		const { config } = commonStore;
-		const platform = UtilCommon.getPlatform();
+		const { config } = S.Common;
+		const platform = U.Common.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
-			UtilCommon.toCamelCase([ 'platform', platform ].join('-')),
+			U.Common.toCamelCase([ 'platform', platform ].join('-')),
 		];
 		const obj = $('html');
 
@@ -319,7 +314,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		obj.attr({ class: cn.join(' ') });
-		commonStore.setThemeClass();
+		S.Common.setThemeClass();
 	};
 
 	getId (prefix: string) {
@@ -327,7 +322,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
 
-		return UtilCommon.toCamelCase([ prefix, page, action ].join('-'));
+		return U.Common.toCamelCase([ prefix, page, action ].join('-'));
 	};
 
 	storageGet () {
@@ -352,7 +347,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				this.refChild.resize();			
 			};
 
-			sidebar.resizePage();
+			sidebar.resizePage(null, false);
 		});
 	};
 	

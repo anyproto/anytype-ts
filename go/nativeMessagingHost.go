@@ -257,7 +257,7 @@ func getOpenPorts() (map[string][]string, error) {
 				errDetectGateway, errDetectGrpcWeb error
 				serviceDetected                    bool
 			)
-			if grpcWebPort == "" {
+			if gatewayPort == "" {
 				if serviceDetected, errDetectGateway = isFileGateway(port); serviceDetected {
 					gatewayPort = port
 				}

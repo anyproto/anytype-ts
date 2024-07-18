@@ -85,11 +85,11 @@
 	"commonComment": "Comment",
 	"commonIcon": "Icon",
 	"commonObjects": "Objects",
-	"commonCreateObject": "Create Object \"%s\"",
 	"commonPreferences": "Preferences",
 	"commonDuplicate": "Duplicate",
 	"commonRemoveFromFavorites": "Remove from Favorites",
 	"commonAddToFavorites": "Add to Favorites",
+	"commonAddToCollection": "Add to Collection",
 	"commonRestore": "Restore",
 	"commonRestoreFromBin": "Restore from Bin",
 	"commonMoveToBin": "Move to Bin",
@@ -143,11 +143,15 @@
 	"commonUpdate": "Update",
 	"commonOwner": "Owner",
 	"commonUpdateProgress": "Downloading update... %s/%s",
+	"commonVersionHistory": "Version history",
+	"commonActions": "Actions",
 	"commonAddRelation": "Add Relation",
 	"commonCollection": "Collection",
 	"commonSet": "Set",
-	"commonDeletionWarningTitle": "Are you sure you want to delete %s %s?",
-	"commonDeletionWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
+	"commonCreateNewObject": "Create new Object",
+	"commonCreateObjectWithName": "Create Object \"%s\"",
+	"commonCreateObject": "Create Object",
+	"commonUrl": "Url",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -163,6 +167,7 @@
 	"pluralReader": "reader|readers",
 	"pluralWriter": "writers|writers",
 	"pluralYear": "year|years",
+	"pluralDevice": "device|devices",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -195,6 +200,7 @@
 	"electronMenuDebugProcess": "Process",
 	"electronMenuDebugTree": "Tree diagnostics",
 	"electronMenuDebugStat": "Statistics",
+	"electronMenuDebugReconcile": "Reconcile",
 	"electronMenuClose": "Close Window",
 	"electronMenuEdit": "Edit",
 	"electronMenuUndo": "Undo",
@@ -235,7 +241,7 @@
 	"electronMenuFlagMw": "Middleware",
 	"electronMenuFlagMwRequest": "Request/Response",
 	"electronMenuFlagMwEvent": "Common events",
-	"electronMenuFlagMwThread": "Sync events",
+	"electronMenuFlagMwSync": "Sync events",
 	"electronMenuFlagMwFile": "File events",
 	"electronMenuFlagMwJson": "JSON logs",
 	"electronMenuFlagMwTime": "Time",
@@ -297,13 +303,13 @@
 
 	"spellcheckAdd": "Add to dictionary",
 
-	"headerHistoryCurrent": "Current version",
-	"headerHistoryRestore": "Restore version",
 	"headerTooltipPath": "Click to search",
 
 	"headerGraphTooltipSearch": "Search",
 	"headerGraphTooltipFilters": "Filters",
 	"headerGraphTooltipSettings": "Settings",
+
+	"shareTooltipLabel": "<b>Share Anytype</b> with<br/>those you care about",
 
 	"authInviteTitle": "Welcome to Anytype",
 	"authInviteLabel": "Enter your invite code. If you don't have one, visit <a href=\"https:\/\/anytype.io\">anytype.io<\/a> to register for early access. We are inviting new testers on a rolling basis.",
@@ -430,6 +436,9 @@
 	"pageMainMembershipTitle": "Retrieving membership",
 	"pageMainMembershipError": "Something went wrong",
 
+	"pageMainHistoryCurrent": "Current version",
+	"pageMainHistoryRestore": "Restore",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 
 	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
@@ -528,9 +537,10 @@
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
 
-	"blockDataviewCreateNew": "Create new Object",
 	"blockDataviewCreateNewCollection": "Create new Collection",
+	"blockDataviewCreateNewCollectionWithName": "Create new Collection \"%s\"",
 	"blockDataviewCreateNewSet": "Create new Set",
+	"blockDataviewCreateNewSetWithName": "Create new Set \"%s\"",
 	"blockDataviewCreateNewTooltipCollection": "Create new Object in this Collection",
 	"blockDataviewCreateNewTooltipType": "Create new %s object",
 	"blockDataviewShowTemplates": "Show Templates",
@@ -547,7 +557,6 @@
 	"blockDataviewEmptySourceButton": "Select query",
 
 	"blockDataviewEmptyViewDescription": "Create your first one to begin",
-	"blockDataviewEmptyViewButton": "Create Object",
 
 	"blockDataviewControlsFilters": "Filters",
 	"blockDataviewControlsSorts": "Sorts",
@@ -591,6 +600,7 @@
 	"blockEmbedLatexEmpty": "Here your equation will be rendered with <span class='icon tex'></span>. Click to edit",
 	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
+	"blockEmbedOffline": "You are not connected to the Internet",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 
@@ -929,6 +939,9 @@
 	"popupMembershipChangeEmail": "Change e-mail",
 	"popupMembershipManagePayment": "Manage payment",
 	"popupMembershipWriteToAnyteam": "Write to Anyteam",
+	"popupMembershipManageOnMobilePlatform": "Manage available on Mobile platform",
+	"popupMembershipPaidOnOtherPlatform": "You've already acquired Membership plan on another platform, please cancel Membership first.",
+	"popupMembershipPaidByCrypto": "To upgrade your membership using cryptocurrency, please contact Anytype.",
 
 	"popupMembershipWhatsIncluded": "What’s included",
 
@@ -997,6 +1010,14 @@
 
 	"popupConfirmRelationOptionRemoveText": "Deleting relation options can affect your objects. Once confirmed, the action cannot be undone.",
 
+	"popupConfirmDeleteWarningTitle": "Are you sure you want to delete %s %s?",
+	"popupConfirmDeleteWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
+
+	"popupConfirmActionRestrictedTitle": "Action restricted!",
+	"popupConfirmActionRestrictedText": "You cannot do this in read-only space",
+
+	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1031,8 +1052,11 @@
 	"popupSearchEmpty": "No Objects found",
 	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
+	"popupSearchEmptyFilterReadonly": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try to search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
-	"popupSearchCreateObject": "Create Object",
+	"popupSearchAddRelation": "Add Relation",
+	"popupSearchTooltipSearchByBacklinks": "Show related objects",
+	"popupSearchBacklinksFrom": "Related to: %s",
 
 	"popupAboutTitle": "Anytype",
 	"popupAboutDescription": "Next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -1051,7 +1075,8 @@
 	"popupExportFormat": "Export format",
 	"popupExportOk": "Export",
 
-	"popupHelpOlderReleases": "Older releases",
+	"popupHelpPrevious": "Previous",
+	"popupHelpNext": "Next",
 
 	"popupIndexComponentNotFound": "Component %s not found",
 
@@ -1092,7 +1117,6 @@
 	"popupShortcutMainSelection4": "Expand your selection up or down",
 	"popupShortcutMainSelection5": "On block will select or de-select an entire block",
 	"popupShortcutMainSelection6": "Select block and all blocks in between",
-	"popupShortcutMainActions": "Actions",
 	"popupShortcutMainActions1": "Activate command menu",
 	"popupShortcutMainActions2": "Open action menu",
 	"popupShortcutMainActions3": "Deletes the words left to the cursor",
@@ -1119,7 +1143,6 @@
 	"popupShortcutNavigationBasics6": "Return to the home screen",
 	"popupShortcutNavigationBasics7": "Show previous object from History",
 	"popupShortcutNavigationBasics8": "Show next Object from History",
-	"popupShortcutNavigationBasics9": "Switch spaces",
 	"popupShortcutNavigationMenu": "Menu, search and navigation pane",
 	"popupShortcutNavigationMenu1": "Go the next option",
 	"popupShortcutNavigationMenu2": "Go to the previous option",
@@ -1222,6 +1245,11 @@
 
 	"popupRelationTitle": "Edit %d %s",
 	"popupRelationEmpty": "There are no relations shown yet",
+	"popupRelationAddToView": "Add relations to the view",
+
+	"popupShareTitle": "Share Anytype with those you care about",
+	"popupShareLabel": "Thanks for sharing Anytype",
+	"popupShareLinkText": "The everything app for those who celebrate trust & autonomy. <a href=\"%s\">https://simple-sharing.anytype.io/</a>",
 
 	"menuVaultPeer": "%d\/%d peers",
 	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
@@ -1244,7 +1272,6 @@
 	"menuBlockActionsSectionsListStyle": "List style",
 	"menuBlockActionsSectionsDividerStyle": "Divider style",
 	"menuBlockActionsSectionsFileStyle": "File style",
-	"menuBlockActionsSectionsActions": "Actions",
 	"menuBlockActionsSectionsBackground": "Background",
 	"menuBlockActionsSectionsColor": "Color",
 	"menuBlockActionsSectionsDataview": "Dataview",
@@ -1414,6 +1441,7 @@
 	"menuGraphSettingsTitles": "Titles",
 	"menuGraphSettingsArrows": "Arrows",
 	"menuGraphSettingsIcons": "Icons",
+	"menuGraphSettingsPreview": "Preview",
 	"menuGraphSettingsShowOnGraph": "Show on Graph",
 	"menuGraphSettingsLinks": "Links",
 	"menuGraphSettingsRelations": "Relations",
@@ -1437,7 +1465,6 @@
 	"menuObjectVersionHistory": "Version History",
 	"menuObjectExport": "Export",
 	"menuObjectReloadFromSource": "Reload from Source",
-	"menuObjectCreateObject": "Create Object",
 	"menuObjectUseAsTemplate": "Use as a Template",
 	"menuObjectUnlockPage": "Unlock page",
 	"menuObjectLockPage": "Lock page",
@@ -1455,28 +1482,6 @@
 	"menuRelationSuggestMyRelations": "My Relations",
 	"menuRelationSuggestSystem": "System Relations",
 	"menuRelationSuggestCreateRelation": "Create Relation %s",
-
-	"menuThreadListLastSync": "Last sync",
-	"menuThreadListProduction": "Anytype Network",
-	"menuThreadListDevelopment": "Anytype Staging",
-	"menuThreadListSelf": "Self-hosted Network",
-	"menuThreadListLocal": "Local only",
-
-	"menuThreadStatusObjectBackedUp": "This Object is backed up",
-	"menuThreadStatusUpdatesRequested": "Updates requested",
-	"menuThreadStatusNoInteraction": "No interaction",
-	"menuThreadStatusSomeChangesNotBackedUp": "Some changes are not backed up",
-	"menuThreadStatusUploading": "Uploading",
-	"menuThreadStatusWaitingForUpload": "Waiting for upload",
-	"menuThreadStatusStored": "Stored",
-	"menuThreadStatusStatus": "Status",
-	"menuThreadStatusFiles": "Files",
-	"menuThreadStatusDirectInteractionTitle": "Direct interaction with my devices",
-	"menuThreadStatusDirectInteractionStatus": "Direct interaction status",
-	"menuThreadStatusOnline": "Online",
-	"menuThreadStatusOffline": "Offline",
-	"menuThreadStatusLastEditsReceived": "Last edits received",
-	"menuThreadStatusNoChanges": "No changes",
 
 	"menuTypeSuggestFilterTypes": "Filter Types...",
 	"menuTypeSuggestMyTypes": "My Types",
@@ -1508,6 +1513,39 @@
 	"menuQuickCapturePin": "Pin on top",
 	"menuQuickCaptureUnpin": "Unpin",
 
+	"syncButtonNameError1": "Storage limit reached",
+	"syncButtonNameError2": "Incompatible version",
+	"syncButtonNameError3": "No access",
+	"syncButtonNameOffline": "No internet",
+
+	"menuSyncStatusTitle": "Sync status",
+
+	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
+	"menuSyncStatusP2PNoDevicesConnected": "No devices connected",
+	"menuSyncStatusP2PDevicesConnected": "%s %s connected",
+	"menuSyncStatusP2PRestricted": "Restricted. Check device settings.",
+
+	"menuSyncStatusInfoNetworkTitle": "Anytype network",
+	"menuSyncStatusInfoNetworkMessageSynced": "End-to-end encrypted",
+	"menuSyncStatusInfoNetworkMessageSyncing": "%s %s syncing...",
+
+	"menuSyncStatusInfoNetworkMessageError1": "Storage limit reached",
+	"menuSyncStatusInfoNetworkMessageError2": "Incompatible version",
+	"menuSyncStatusInfoNetworkMessageError3": "No access to the space",
+	"menuSyncStatusInfoNetworkMessageErrorUpdateApp": "Update the app",
+	"menuSyncStatusInfoNetworkMessageErrorAddMoreStorage": "Add more storage",
+
+	"menuSyncStatusInfoNetworkMessageOffline": "No connection",
+
+	"menuSyncStatusInfoSelfTitle": "Self Host",
+	"menuSyncStatusInfoSelfMessageSynced": "Synced",
+	"menuSyncStatusInfoSelfMessageSyncing": "Syncing...",
+	"menuSyncStatusInfoSelfMessageError": "Error",
+	"menuSyncStatusInfoLocalOnlyTitle": "Local Only",
+	"menuSyncStatusInfoLocalOnlyMessage": "Data backup is disabled",
+
+	"menuSyncStatusInfoP2pTitle": "P2P Connection",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",
@@ -1534,22 +1572,6 @@
 
 	"inputWithFileTextUrl": "Paste a link",
 
-	"threadStatus0": "Preparing...",
-	"threadStatus1": "No connection",
-	"threadStatus2": "Syncing...",
-	"threadStatus3": "Synced",
-	"threadStatus4": "Not syncing",
-	"threadStatus5": "Incompatible version",
-	"threadStatus100": "Local-only",
-
-	"threadStatus0Tooltip": "Initializing sync",
-	"threadStatus1Tooltip": "Anytype node is not connected",
-	"threadStatus2Tooltip": "Downloading or uploading data to some node",
-	"threadStatus3Tooltip": "Backed up on one node at least",
-	"threadStatus4Tooltip": "Failed to sync, trying again...",
-	"threadStatus5Tooltip": "We have updated the protocol version. Click to update and sync the Objects.",
-	"threadStatus100Tooltip": "Don't back up; sync within local network",
-
 	"toastTemplateCreate": "is saved as a Template!",
 	"toastCopy": "%s has been copied to clipboard",
 	"toastCopyBlock": "Block has been copied to clipboard",
@@ -1573,6 +1595,8 @@
 	"toastObjectTypeRemoved": "Object type <b>%s</b> has been removed from your Library",
 	"toastRelationRemoved": "Relation <b>%s</b> has been removed from your Library",
 	"toastSetDefaultTemplate": "This Template was Set as default",
+
+	"toastFileLimitReached": "Your local storage exceeds syncing limit. Locally stored files won't be synced",
 
 	"textColor-grey": "Grey",
 	"textColor-yellow": "Yellow",
@@ -1636,7 +1660,7 @@
 	"edgeType1": "Relation",
 
 	"survey0Title": "Time to take a survey!",
-	"survey0Text": "Hi there, We hope you're enjoying your experience in Anytype! We'd love to hear your feedback so we can keep improving the product.",
+	"survey0Text": "Hi there! We hope you're enjoying your experience in Anytype! We'd love to hear your feedback so we can keep improving the product.",
 	"survey0Confirm": "Let's Go!",
 	"survey0Cancel": "Skip",
 	"survey1Title": "Help us to become better",
@@ -1651,15 +1675,26 @@
 	"survey3Text": "Hi there, we hope you're enjoying your experience with Anytype! Would you take 5 minutes to help us improve our product?",
 	"survey3Confirm": "Sure, let's go",
 	"survey3Cancel": "No thanks",
+	"survey4Title": "Improve Anytype with Your Feedback",
+	"survey4Text": "Take our 1-minute survey to enhance space sharing. Your input makes Anytype better for everyone.",
+	"survey4Confirm": "Let’s Go!",
+	"survey4Cancel": "No thanks",
+	"survey5Title": "Improve Anytype with Your Feedback",
+	"survey5Text": "Take our 1-minute survey to enhance collaboration. Your input makes Anytype better for everyone.",
+	"survey5Confirm": "Let’s Go!",
+	"survey5Cancel": "No thanks",
 
 	"widget0Name": "Link",
-	"widget0Description": "Compact version of the Object",
+	"widget0Description": "Compact widget view",
 	"widget1Name": "Tree",
-	"widget1Description": "Hierarchical structure of Objects",
+	"widget1Description": "Widget with a hierarchical structure",
 	"widget2Name": "List",
-	"widget2Description": "Widget with list view of Set Object",
+	"widget2Description": "Widget with a list view",
 	"widget3Name": "Compact list",
-	"widget3Description": "Widget with list view of Set Object",
+	"widget3Description": "Widget with a compact list view",
+	"widget4Name": "View",
+	"widget4Description": "Widget with a Set or Collection layout",
+
 	"widgetFavorite": "Favorites",
 	"widgetRecent": "Recently edited",
 	"widgetRecentOpen": "Recently opened",
@@ -1671,12 +1706,12 @@
 	"widgetBin": "Bin",
 	"widgetOptions": "Options",
 	"widgetToggle": "Toggle",
-	"widgetEmptyLabel": "There are no Objects here,<br/>create the first one",
-	"widgetCreate": "Create new object",
+	"widgetEmptyLabel": "There are no Objects here",
+	"widgetEmptyLabelCreate": "There are no Objects here,<br/>create the first one",
+	"widgetShowAll": "See all Objects",
 
 	"phrasePlaceholder": "Please enter your Key",
 
-	"navigationCreateNew": "Create new Object",
 	"navigationAccount": "Spaces",
 
 	"spaceAccessType0": "Private Space",
@@ -1788,9 +1823,6 @@
 	"onboardingTemplateSelectTitle": "New Template Selector",
 	"onboardingTemplateSelectDescription": "Easily switch your templates when creating objects.",
 
-	"onboardingSpaceSelectTitle": "Create and Share Spaces",
-	"onboardingSpaceSelectDescription": "Click here to create a new space and share it with others!",
-
 	"onboardingQuickCaptureTitle": "Use Different Object Types",
 	"onboardingQuickCaptureDescription": "Select types for your objects to categorize and connect them.",
 
@@ -1822,6 +1854,7 @@
 	"libMenuChangeSource": "Change source %s",
 	"libMenuOpenSource": "Open source %s",
 	"libMenuOpenFullscreen": "Open fullscreen",
+	"libMenuCopyUrl": "Copy URL",
 
 	"libActionUninstallTypeTitle": "Do you want to remove Type \"%s\"?",
 	"libActionUninstallTypeText": "This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",

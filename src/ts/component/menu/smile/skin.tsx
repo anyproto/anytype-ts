@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject } from 'Component';
-import { I, keyboard, UtilSmile } from 'Lib';
+import { I, U, keyboard } from 'Lib';
 import $ from 'jquery';
 
 const SKINS = [ 1, 2, 3, 4, 5, 6 ];
@@ -33,7 +33,7 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 				onMouseDown={e => this.onClick(e, item.skin)}
 				onMouseEnter={e => this.onMouseEnter(e, item.skin)}
 			>
-				<IconObject size={32} object={{ iconEmoji: UtilSmile.nativeById(smileId, item.skin) }} />
+				<IconObject size={32} object={{ iconEmoji: U.Smile.nativeById(smileId, item.skin) }} />
 			</div>
 		);
 		

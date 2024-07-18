@@ -8,11 +8,6 @@ html.themeDark {
 	--color-text-primary: #ebebeb;
 	--color-text-secondary: #9a9a9a;
 	--color-text-tertiary: #606060;
-
-	--color-text-primary: #ebebeb;
-    --color-text-secondary: #9a9a9a;
-    --color-text-tertiary: #606060;
-
 	--color-text-inversion: #171717;
 
 	/* Shape */
@@ -21,6 +16,7 @@ html.themeDark {
 	--color-shape-secondary: #3f3f3f;
 	--color-shape-tertiary: #2b2b2b;
 
+	--color-shape-highlight-dark: rgba(238, 238, 238, 0.24);
 	--color-shape-highlight-medium: rgba(238, 238, 238, 0.12);
 	--color-shape-highlight-light: rgba(238, 238, 238, 0.06);
 	--color-shape-highlight-light-solid: #242424;
@@ -41,11 +37,14 @@ html.themeDark {
 
 	/* System */
 
+	--color-system-accent-125: #ffc83c;
 	--color-system-accent-50: #9f6b00;
 	--color-system-accent-25: #f09c0e;
 	--color-system-selection: rgba(24, 163, 241, 0.15);
 
     /* Common */
+
+    @mixin shadow { box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
     body { color-scheme: dark; }
 
@@ -110,7 +109,8 @@ html.themeDark {
 		}
 	}
 
-	search { color: var(--color-bg-primary) !important; }
+	markupsearch { color: var(--color-bg-primary) !important; }
+	markuphighlight { background: #044062 !important; }
 
     /* Components */
 
@@ -209,7 +209,7 @@ html.themeDark {
         .content { background: var(--color-bg-secondary); }
     }
 
-	.previewGraph { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+	.previewGraph { background: var(--color-bg-secondary); @include shadow; }
 
     /* Pager */
 
@@ -260,24 +260,33 @@ html.themeDark {
         .headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
     }
 
-    .header.mainHistory {
-        .side {
-            .item {
-                .icon.arrow { background-image: url('#{$themePath}/arrow/history0.svg'); margin: 0px; }
-            }
-        }
-        
-		.item:hover {
-			.icon.arrow { background-image: url('#{$themePath}/arrow/history1.svg'); }
-		}
-    }
-
 	.header.mainStore.withBanner {
 		.bannerWrapper {
 			.banner { color: var(--color-text-inversion); }
 			.banner {
 				.button { background-color: var(--color-bg-primary); color: var(--color-text-primary); }
 			}
+		}
+	}
+
+	/* Vault */
+
+	.vault { background-color: #393939; }
+	.vault {
+		.item.isButton {
+			.iconWrap { background-color: #4f4f4f; }
+		}
+
+		.item.gallery {
+			.iconWrap { background-image: url('#{$themePath}/icon/vault/gallery.svg'); }
+		}
+
+		.item.add {
+			.iconWrap { background-image: url('#{$themePath}/icon/vault/plus.svg'); }
+		}
+
+		.item.settings {
+			.iconWrap { background-image: url('#{$themePath}/icon/vault/settings.svg'); }
 		}
 	}
 
@@ -294,8 +303,6 @@ html.themeDark {
 
 	/* Notifications */
 
-	@mixin shadow { box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
-
 	.notifications {
 		.head {
 			.icon { border-color: var(--color-bg-secondary); }
@@ -307,6 +314,13 @@ html.themeDark {
 			.icon.delete { background-color: var(--color-bg-secondary); }
 		}
 	}
+
+    /* Share Tooltip */
+    .shareTooltip { background: var(--color-bg-secondary); @include shadow; }
+    .shareTooltip {
+        .icon.smile { background-image: url('#{$themePath}/icon/share/smile.svg'); }
+        .icon.close { background-color: var(--color-bg-secondary); }
+    }
 
 	@import "./menu.scss";
     @import "./popup.scss";

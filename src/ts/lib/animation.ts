@@ -120,8 +120,6 @@ class Animation {
 
 					el.html('');
 
-					let html = [];
-
 					const processWord = (word, space) => {
 						const w = $('<span></span>').html(word).addClass('animationWord');
 

@@ -1,4 +1,4 @@
-import { UtilRouter } from 'Lib';
+import { U } from 'Lib';
 
 class History {
 
@@ -42,7 +42,7 @@ class History {
 	};
 
 	go (route: string, callBack: (match: any) => void) {
-		callBack({ route, params: UtilRouter.getParam(route) });
+		callBack({ route, params: U.Router.getParam(route) });
 	};
 
 	goBack (callBack: (match: any) => void) {

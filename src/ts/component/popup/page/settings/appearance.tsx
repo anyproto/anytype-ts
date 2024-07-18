@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { Icon, Title, Label, Switch } from 'Component';
-import { I, UtilCommon, translate, analytics, Renderer } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S, U, translate, analytics, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance extends React.Component<I.PopupSettings> {
 
 	render () {
-		const { autoSidebar, showRelativeDates, config, theme } = commonStore;
+		const { showRelativeDates, config, theme } = S.Common;
 		const { hideTray, hideMenuBar } = config;
-		const canHideMenu = UtilCommon.isPlatformWindows() || UtilCommon.isPlatformLinux();
+		const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
 		const themes: any[] = [
 			{ id: '', class: 'light', name: translate('popupSettingsAppearanceColorModeButtonLight') },
 			{ id: 'dark', class: 'dark', name: translate('popupSettingsAppearanceColorModeButtonDark') },
@@ -41,18 +40,13 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 
 				<div className="actionItems">
 					<div className="item">
-						<Label text={translate('popupSettingsAppearancePersonalisationSidebar')} />
-						<Switch className="big" value={autoSidebar} onChange={(e: any, v: boolean) => commonStore.autoSidebarSet(v)} />
-					</div>
-
-					<div className="item">
 						<Label text={translate('electronMenuShowTray')} />
 						<Switch className="big" value={!hideTray} onChange={(e: any, v: boolean) => Renderer.send('setHideTray', v)} />
 					</div>
 
 					<div className="item">
 						<Label text={translate('popupSettingsAppearancePersonalisationRelativeDates')} />
-						<Switch className="big" value={showRelativeDates} onChange={(e: any, v: boolean) => commonStore.showRelativeDatesSet(v)} />
+						<Switch className="big" value={showRelativeDates} onChange={(e: any, v: boolean) => S.Common.showRelativeDatesSet(v)} />
 					</div>
 
 					{canHideMenu ? (
@@ -67,7 +61,7 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 	};
 
 	onTheme (id: string) {
-		commonStore.themeSet(id);
+		S.Common.themeSet(id);
 		Renderer.send('setTheme', id);
 		analytics.event('ThemeSet', { id });
 	};

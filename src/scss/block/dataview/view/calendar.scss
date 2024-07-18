@@ -4,10 +4,7 @@
 	.block.blockDataview {
 		.viewContent.viewCalendar { position: relative; height: 100%; padding: 0px; }
 		.viewContent.viewCalendar {
-			.table { 
-				border-color: var(--color-shape-secondary); border-style: solid; border-bottom-width: 1px; display: flex; flex-flow: column; height: 100%;
-			}
-
+			.table { display: flex; flex-flow: column; height: 100%; }
 			.table {
 				.head, .body { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
 				.head { flex-shrink: 0; padding-right: 6px; }
@@ -18,7 +15,7 @@
 					}
 				}
 
-				.body { overflow: scroll; }
+				.body { overflow: scroll; border-color: var(--color-shape-secondary); border-style: solid; border-bottom-width: 1px;  }
 				.body::-webkit-scrollbar { width: 6px; height: 0px; }
 				.body::-webkit-scrollbar-track { background: transparent; }
 				.body::-webkit-scrollbar-thumb { background: var(--color-shape-secondary); border-radius: 3px; }
@@ -33,7 +30,7 @@
 			.day.active {
 				.number { padding: 0px; color: var(--color-text-inversion); }
 				.number {
-					.inner { background-color: var(--color-system-accent-100); border-radius: 12px; padding: 0px 7px; align-self: flex-end; }
+					.inner { background-color: var(--color-system-accent-100); border-radius: 12px; padding: 0px 8px; align-self: flex-end; min-width: 24px; text-align: center; }
 				}
 			}
 

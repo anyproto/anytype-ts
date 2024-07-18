@@ -3,9 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate, UtilSpace } from 'Lib';
-import { commonStore, dbStore, detailStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, keyboard, Preview, analytics, Action, focus, translate } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -64,7 +62,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				return null;
 			};
 
-			const type = dbStore.getTypeById(item.type);
+			const type = S.Record.getTypeById(item.type);
 			const checkbox = value && value.length && value.includes(item.id);
 			const cn = [];
 
@@ -153,7 +151,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				{isLoading ? <Loader /> : ''}
 
 				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch filter={filter} />
 				) : ''}
 
 				{this.cache && items.length && !isLoading ? (
@@ -240,22 +238,33 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { filter, label, canAdd, addParam } = data;
 		const length = this.items.length;
 		const items = [].concat(this.items);
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 		
 		if (label && length) {
 			items.unshift({ isSection: true, name: label });
 		};
 
 		if (canAdd && canWrite) {
-			if (length && (addParam || filter)) {
-				items.push({ isDiv: true });
+			let name = '';
+			if (addParam) {
+				if (addParam.nameWithFilter && filter) {
+					name = U.Common.sprintf(addParam.nameWithFilter, filter);
+				} else 
+				if (addParam.name) {
+					name = addParam.name;
+				};
 			};
 
-			if (addParam) {
-				items.push({ id: 'add', icon: 'plus', name: addParam.name, isAdd: true });
-			} else
-			if (filter) {
-				items.push({ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), isAdd: true });
+			if (!name) {
+				name = filter ? U.Common.sprintf(translate('commonCreateObjectWithName'), filter) : translate('commonCreateObject');
+			};
+
+			if (name) {
+				if (length) {
+					items.unshift({ isDiv: true });
+				};
+
+				items.unshift({ id: 'add', icon: 'plus', name, isAdd: true });
 			};
 		};
 
@@ -264,7 +273,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -289,17 +298,20 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { data } = param;
 		const { type, dataMapper, dataSort, dataChange, skipIds, keys, ignoreWorkspace } = data;
 		const filter = String(data.filter || '');
-		const templateType = dbStore.getTemplateType();
+		const templateType = S.Record.getTemplateType();
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Option ] },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(data.filters || []);
 
-		const sorts = [].concat(data.sorts || []);
+		let sorts = [].concat(data.sorts || []);
 
 		if (!sorts.length) {
-			sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
-			sorts.push({ relationKey: 'type', type: I.SortType.Asc });
+			sorts = sorts.concat([
+				{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+				{ relationKey: 'type', type: I.SortType.Asc }
+			]);
 		};
 
 		if (skipIds && skipIds.length) {
@@ -309,7 +321,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo, I.NavigationType.Link ].includes(type)) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() });
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id });
 		};
 
@@ -317,13 +329,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			this.setState({ isLoading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
-			keys: keys || Constant.defaultRelationKeys,
+			keys: keys || J.Relation.default,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 			ignoreWorkspace: (typeof ignoreWorkspace === 'undefined' ? false : ignoreWorkspace),
 		}, (message: any) => {
 			if (!this._isMounted) {
@@ -346,7 +358,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			this.items = this.items.concat(message.records || []);
 
 			if (clear && dataChange) {
-				this.items = dataChange(this.items);
+				this.items = dataChange(this, this.items);
 			};
 
 			if (dataMapper) {
@@ -389,7 +401,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { data } = param;
 		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
 		const addParam: any = data.addParam || {};
-		const object = detailStore.get(rootId, blockId);
+		const object = S.Detail.get(rootId, blockId);
 
 		let details = data.details || {};
 
@@ -408,7 +420,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			switch (type) {
 				case I.NavigationType.Go:
-					UtilObject.openEvent(e, target);
+					U.Object.openEvent(e, target);
 					break;
 
 				case I.NavigationType.Move:
@@ -416,7 +428,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Link:
-					C.BlockCreate(rootId, blockId, position, this.getBlockParam(target.id, item.layout), (message: any) => {
+					C.BlockCreate(rootId, blockId, position, U.Data.getLinkBlockParam(target.id, item.layout), (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -429,7 +441,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.LinkTo:
-					const isCollection = target.layout == I.ObjectLayout.Collection;
+					const isCollection = U.Object.isCollectionLayout(target.layout);
 					const cb = (message: any) => {
 						if (message.error.code) {
 							return;
@@ -445,13 +457,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					if (isCollection) {
 						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
 					} else {
-						C.BlockCreate(target.id, '', position, this.getBlockParam(blockId, object.layout), cb);
+						C.BlockCreate(target.id, '', position, U.Data.getLinkBlockParam(blockId, object.layout), cb);
 					};
 					break;
 			};
 		};
-
-
 
 		if (item.isAdd) {
 			details = { name: filter, ...details };
@@ -462,7 +472,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			} else {
 				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-				UtilObject.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Search', (message: any) => {
+				U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.search, (message: any) => {
 					process(message.details, true);
 					close();
 				});
@@ -470,44 +480,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		} else {
 			process(item, false);
 		};
-	};
-
-	getBlockParam (id: string, layout: I.ObjectLayout) {
-		const param: Partial<I.Block> = {};
-
-		if (UtilObject.isFileLayout(layout)) {
-			return {
-				type: I.BlockType.File,
-				content: {
-					targetObjectId: id,
-					style: I.FileStyle.Embed,
-					state: I.FileState.Done,
-					type: UtilObject.getFileTypeByLayout(layout),
-				},
-			};
-		};
-
-		switch (layout) {
-			case I.ObjectLayout.Bookmark: {
-				param.type = I.BlockType.Bookmark;
-				param.content = {
-					state: I.BookmarkState.Done,
-					targetObjectId: id,
-				};
-				break;
-			};
-
-			default: {
-				param.type = I.BlockType.Link;
-				param.content = {
-					...UtilData.defaultLinkSettings(),
-					targetBlockId: id,
-				};
-				break;
-			};
-		};
-
-		return param;
 	};
 
 	onFilterChange (v: string) {
@@ -524,7 +496,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			if (onFilterChange) {
 				onFilterChange(filter);
 			};
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 	};
 
 	getRowHeight (item: any) {

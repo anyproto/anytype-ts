@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Error, Pin } from 'Component';
-import { I, C, Storage, UtilRouter } from 'Lib';
-import { extensionStore } from 'Store';
+import { I, C, S, U, Storage } from 'Lib';
 import Util from '../lib/util';
 
 interface State {
@@ -44,14 +43,14 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 	};
 
 	onSuccess () {
-		C.AccountLocalLinkSolveChallenge(extensionStore.challengeId, this.ref?.getValue().trim(), (message: any) => {
+		C.AccountLocalLinkSolveChallenge(S.Extension.challengeId, this.ref?.getValue().trim(), (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 				return;
 			};
 
 			const { appKey } = message;
-			const { serverPort, gatewayPort } = extensionStore;
+			const { serverPort, gatewayPort } = S.Extension;
 
 			Storage.set('appKey', appKey);
 
@@ -59,7 +58,7 @@ const Challenge = observer(class Challenge extends React.Component<I.PageCompone
 				Util.sendMessage({ type: 'initIframe', appKey, serverPort, gatewayPort }, () => {});
 				Util.sendMessage({ type: 'initMenu' }, () => {});
 
-				UtilRouter.go('/create', {});
+				U.Router.go('/create', {});
 			});
 		});
 	};

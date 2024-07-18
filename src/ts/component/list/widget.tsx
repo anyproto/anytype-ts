@@ -2,20 +2,14 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget, DropTarget } from 'Component';
-import { C, I, M, keyboard, UtilObject, analytics, translate, UtilSpace } from 'Lib';
-import { blockStore, menuStore, detailStore } from 'Store';
-const Constant = require('json/constant.json');
-
-interface Props {
-	dataset?: any;
-};
+import { I, C, M, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 type State = {
 	isEditing: boolean;
 	previewId: string;
 };
 
-const ListWidget = observer(class ListWidget extends React.Component<Props, State> {
+const ListWidget = observer(class ListWidget extends React.Component<{}, State> {
 		
 	state: State = {
 		isEditing: false,
@@ -28,7 +22,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	isDragging = false;
 	frame = 0;
 
-	constructor (props: Props) {
+	constructor (props) {
 		super(props);
 
 		this.onEdit = this.onEdit.bind(this);
@@ -43,16 +37,16 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.setPreview = this.setPreview.bind(this);
 	};
 
-	render(): React.ReactNode {
+	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
-		const { widgets } = blockStore;
+		const { widgets } = S.Block;
 		const cn = [ 'listWidget' ];
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		let content = null;
 
 		if (previewId) {
-			const block = blockStore.getLeaf(widgets, previewId);
+			const block = S.Block.getLeaf(widgets, previewId);
 
 			if (block) {
 				cn.push('isListPreview');
@@ -68,25 +62,24 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				);
 			};
 		} else {
-			const buttons: I.ButtonComponent[] = [];
-			const blocks = blockStore.getChildren(widgets, widgets, (block: I.Block) => {
-				const childrenIds = blockStore.getChildrenIds(widgets, block.id);
+			const blocks = S.Block.getChildren(widgets, widgets, (block: I.Block) => {
+				const childrenIds = S.Block.getChildrenIds(widgets, block.id);
 				if (!childrenIds.length) {
 					return false;
 				};
 
-				const child = blockStore.getLeaf(widgets, childrenIds[0]);
+				const child = S.Block.getLeaf(widgets, childrenIds[0]);
 				if (!child) {
 					return false;
 				};
 
 				const target = child.content.targetBlockId;
 
-				if (Object.values(Constant.widgetId).includes(target)) {
+				if (Object.values(J.Constant.widgetId).includes(target)) {
 					return true;
 				};
 
-				const object = detailStore.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
+				const object = S.Detail.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
 				if (object._empty_ || object.isArchived || object.isDeleted) {
 					return false;
 				};
@@ -96,6 +89,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 			let last = null;
 			let first = null;
+			let buttons: I.ButtonComponent[] = [];
 
 			if (blocks.length) {
 				first = blocks[0];
@@ -107,14 +101,17 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			};
 
 			if (isEditing) {
-				if (blocks.length <= Constant.limit.widgets) {
+				if (blocks.length <= J.Constant.limit.widgets) {
 					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onMouseDown: this.onAdd });
 				};
 
 				buttons.push({ id: 'widget-list-done', text: translate('commonDone'), onMouseDown: this.onEdit });
 			} else 
 			if (canWrite) {
-				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: translate('widgetEdit'), onMouseDown: this.onEdit });
+				buttons = buttons.concat([
+					{ id: 'widget-list-add', className: 'grey c28', text: translate('widgetAdd'), onMouseDown: this.onAdd },
+					{ id: 'widget-list-edit', className: 'grey c28', text: translate('widgetEdit'), onMouseDown: this.onEdit }
+				]);
 			};
 
 			content = (
@@ -122,7 +119,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 					<DropTarget 
 						{...this.props} 
 						isTargetTop={true}
-						rootId={blockStore.widgets} 
+						rootId={S.Block.widgets} 
 						id={first?.id}
 						dropType={I.DropType.Widget} 
 						canDropMiddle={false}
@@ -155,7 +152,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 					<DropTarget 
 						{...this.props} 
 						isTargetBottom={true}
-						rootId={blockStore.widgets} 
+						rootId={S.Block.widgets} 
 						id={last?.id}
 						dropType={I.DropType.Widget} 
 						canDropMiddle={false}
@@ -169,20 +166,18 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 							icon="store" 
 							onClick={this.onLibrary} 
 						/>
-						{canWrite ? (
-							<Button 
-								text={translate('widgetBin')}
-								color="" 
-								className="widget" 
-								icon="bin" 
-								onClick={this.onArchive} 
-							/>
-						) : ''}
+						<Button
+							text={translate('widgetBin')}
+							color=""
+							className="widget"
+							icon="bin"
+							onClick={this.onArchive}
+						/>
 					</DropTarget>
 
 					<div className="buttons">
 						{buttons.map(button => (
-							<Button key={button.id} color="" {...button} />
+							<Button key={button.id + (isEditing ? 'edit' : '')} color="" {...button} />
 						))}
 					</div>
 				</React.Fragment>
@@ -212,24 +207,64 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	onAdd (e: any): void {
 		e.stopPropagation();
 
-		menuStore.open('widget', {
+		analytics.event('ClickAddWidget');
+
+		S.Menu.open('searchObjectWidgetAdd', {
+			component: 'searchObject',
 			element: '#widget-list-add',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			offsetY: -2,
-			subIds: Constant.menuIds.widget,
+			offsetY: -4,
 			vertical: I.MenuDirection.Top,
 			data: {
-				setEditing: this.setEditing,
-			}
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
+				],
+				canAdd: true,
+				dataChange: (context: any, items: any[]) => {
+					const reg = new RegExp(U.Common.regexEscape(context.filter), 'gi');
+					const fixed: any[] = U.Menu.getFixedWidgets().filter(it => it.name.match(reg));
+
+					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
+				},
+				onSelect: (target: any, isNew: boolean) => {
+					const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
+					const layoutOptions = U.Menu.getWidgetLayoutOptions(target.id, target.layout);
+					const layout = layoutOptions.length ? layoutOptions[0].id : I.WidgetLayout.Link;
+
+					const newBlock = { 
+						type: I.BlockType.Link,
+						content: { 
+							targetBlockId: target.id, 
+						},
+					};
+
+					C.BlockCreateWidget(S.Block.widgets, '', newBlock, I.BlockPosition.Top, layout, Number(limitOptions[0].id), (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						if (isNew) {
+							U.Object.openConfig(target);
+						};
+
+						analytics.event('AddWidget', { type: I.WidgetLayout.Link });
+						analytics.event('ChangeWidgetSource', {
+							layout,
+							route: 'AddWidget',
+							params: { target },
+						});
+					});					
+				},
+			},
 		});
 	};
 
 	onDragStart (e: React.DragEvent, blockId: string): void {
 		e.stopPropagation();
 
-		const { dataset } = this.props;
-		const { selection, preventCommonDrop } = dataset;
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		const obj = node.find(`#widget-${blockId}`);
@@ -243,11 +278,12 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 		clone.append(obj.find('.head').clone());
 		node.append(clone);
+		selection?.clear();
 
-		preventCommonDrop(true);
-		selection.clear();
+		keyboard.disableCommonDrop(true);
 		keyboard.disableSelection(true);
 		keyboard.setDragging(true);
+
 		this.isDragging = true;
 
 		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
@@ -286,23 +322,22 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	onDrop (e: React.DragEvent): void {
 		const { isEditing } = this.state;
 		if (!isEditing) {
-			return;
+			//return;
 		};
 
 		e.stopPropagation();
 
-		const { dataset } = this.props;
-		const { preventCommonDrop } = dataset;
-		const { widgets } = blockStore;
+		const { widgets } = S.Block;
 		const blockId = e.dataTransfer.getData('text');
 
 		if (blockId != this.dropTargetId) {
 			C.BlockListMoveToExistingObject(widgets, widgets, this.dropTargetId, [ blockId ], this.position);
 		};
 
-		preventCommonDrop(false);
+		keyboard.disableCommonDrop(false);
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
+
 		this.isDragging = false;
 		this.clear();
 	};
@@ -311,7 +346,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		const { isEditing } = this.state;
 
 		if (!isEditing && !e.button) {
-			UtilObject.openEvent(e, { layout: I.ObjectLayout.Store });
+			U.Object.openEvent(e, { layout: I.ObjectLayout.Store });
 		};
 	};
 
@@ -319,29 +354,29 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		const { isEditing } = this.state;
 
 		if (!isEditing && !e.button) {
-			UtilObject.openEvent(e, { layout: I.ObjectLayout.Archive });
+			U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
 		};
 	};
 
 	onContextMenu () {
 		const { previewId } = this.state;
-		if (previewId || !UtilSpace.canMyParticipantWrite()) {
+		if (previewId || !U.Space.canMyParticipantWrite()) {
 			return;
 		};
 
 		const win = $(window);
-		const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
+		const widgetIds = S.Block.getChildrenIds(S.Block.widgets, S.Block.widgets);
 		const options: any[] = [
 			{ id: 'edit', name: translate('widgetEdit') },
 		];
 
-		if (widgetIds.length < Constant.limit.widgets) {
+		if (widgetIds.length < J.Constant.limit.widgets) {
 			options.unshift({ id: 'add', name: translate('widgetAdd'), arrow: true });
 		};
 
 		let menuContext = null;
 
-		menuStore.open('selectList', {
+		S.Menu.open('selectList', {
 			component: 'select',
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -361,13 +396,13 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 					};
 
 					if (!item.arrow) {
-						menuStore.close('widget');
+						S.Menu.close('widget');
 						return;
 					};
 
 					const { x, y } = keyboard.mouse.page;
 
-					menuStore.open('widget', {
+					S.Menu.open('widget', {
 						element: `#${menuContext.getId()} #item-${item.id}`,
 						offsetX: menuContext.getSize().width,
 						isSub: true,
@@ -444,7 +479,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			win.on('keydown.sidebar', e => {
 				keyboard.shortcut('escape', e, () => close(e));
 			});
-		}, menuStore.getTimeout());
+		}, S.Menu.getTimeout());
 	};
 
 });

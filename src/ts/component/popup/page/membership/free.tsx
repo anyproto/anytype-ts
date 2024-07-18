@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Icon, Label, Input, Button, Checkbox, Pin } from 'Component';
-import { I, C, translate, UtilCommon, UtilRouter, analytics, UtilDate } from 'Lib';
-import { commonStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, translate, analytics } from 'Lib';
 
 interface State {
 	verificationStep: number;
@@ -87,7 +85,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 
 						<div onClick={this.onResend} className={[ 'resend', (countdown ? 'countdown' : '') ].join(' ')}>
 							{translate('popupMembershipResend')}
-							{countdown ? UtilCommon.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
+							{countdown ? U.Common.sprintf(translate('popupMembershipCountdown'), countdown) : ''}
 						</div>
 					</React.Fragment>
 				);
@@ -116,12 +114,12 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 	};
 
 	onResetCode () {
-		const { emailConfirmationTime } = commonStore;
+		const { emailConfirmationTime } = S.Common;
 		if (!emailConfirmationTime) {
 			return;
 		};
 
-		const now = UtilDate.now();
+		const now = U.Date.now();
 
 		this.setState({ verificationStep: 2 });
 		this.startCountdown(60 - (now - emailConfirmationTime));
@@ -165,7 +163,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 				return;
 			};
 
-			UtilRouter.go('/main/membership', {});
+			U.Router.go('/main/membership', {});
 		});
 	};
 
@@ -192,33 +190,33 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			const value = this.refEmail?.getValue();
-			const isValid = UtilCommon.checkEmail(value);
+			const isValid = U.Common.checkEmail(value);
 
 			if (value && !isValid) {
 				this.setStatus('error', translate('errorIncorrectEmail'));
 			};
 
 			this.refButton?.setDisabled(!isValid);
-		}, Constant.delay.keyboard);
+		}, J.Constant.delay.keyboard);
 	};
 
 	checkCountdown () {
-		const { emailConfirmationTime } = commonStore;
+		const { emailConfirmationTime } = S.Common;
 		if (!emailConfirmationTime) {
 			return;
 		};
 
-		const now = UtilDate.now();
+		const now = U.Date.now();
 		const hasCountdown = now - emailConfirmationTime < 60;
 
 		this.setState({ hasCountdown });
 	};
 
 	startCountdown (seconds) {
-		const { emailConfirmationTime } = commonStore;
+		const { emailConfirmationTime } = S.Common;
 
 		if (!emailConfirmationTime) {
-			commonStore.emailConfirmationTimeSet(UtilDate.now());
+			S.Common.emailConfirmationTimeSet(U.Date.now());
 		};
 
 		this.setState({ countdown: seconds, hasCountdown: true });
@@ -229,7 +227,7 @@ const PopupMembershipPageFree = observer(class PopupMembershipPageFree extends R
 			this.setState({ countdown });
 
 			if (!countdown) {
-				commonStore.emailConfirmationTimeSet(0);
+				S.Common.emailConfirmationTimeSet(0);
 				this.setState({ hasCountdown: false });
 				window.clearInterval(this.interval);
 				this.interval = null;

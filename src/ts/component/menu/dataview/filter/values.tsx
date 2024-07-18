@@ -2,10 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, UtilCommon, translate, keyboard, analytics, Relation, UtilDate, UtilObject } from 'Lib';
+import { I, S, U, J, translate, keyboard, analytics, Relation } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
-import { menuStore, dbStore, detailStore, blockStore } from 'Store';
-const Constant = require('json/constant.json');
 
 const TIMEOUT = 1000;
 
@@ -52,8 +50,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const isReadonly = this.isReadonly();
-		const subId = dbStore.getSubId(rootId, blockId);
-		const relation: any = dbStore.getRelationByKey(item.relationKey) || {};
+		const subId = S.Record.getSubId(rootId, blockId);
+		const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const conditionOptions = Relation.filterConditionsByType(relation.format);
 		const checkboxOptions: I.Option[] = [
@@ -83,7 +81,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				className="item add" 
 				onClick={item.onClick} 
 				onMouseEnter={() => { 
-					menuStore.close('select', () => {
+					S.Menu.close('select', () => {
 						window.setTimeout(() => setHover({ id: 'add' }), 35);
 					});
 				}}
@@ -103,7 +101,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							id={`item-tag-${element.id}`} 
 							className={[ 'item', (isReadonly ? 'isReadonly' : '') ].join(' ')}
 							onMouseEnter={() => {
-								menuStore.close('select'); 
+								S.Menu.close('select'); 
 								setHover({ id: `tag-${element.id}` }); 
 							}}
 						>
@@ -135,7 +133,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			case I.RelationType.File:
 			case I.RelationType.Object: {
 				Item = (element: any) => {	
-					const type = dbStore.getTypeById(element.type);
+					const type = S.Record.getTypeById(element.type);
 
 					return (
 						<div 
@@ -157,7 +155,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = Relation.getArrayValue(item.value).map(it => detailStore.get(subId, it, []));
+				list = Relation.getArrayValue(item.value).map(it => S.Detail.get(subId, it, []));
 				list = list.filter(it => !it._empty_);
 
 				value = (
@@ -211,7 +209,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 							<Input 
 								key="filter-value-date-exact-input"
 								ref={ref => this.refInput = ref} 
-								value={item.value !== null ? UtilDate.date('d.m.Y H:i:s', item.value) : ''} 
+								value={item.value !== null ? U.Date.date('d.m.Y H:i:s', item.value) : ''} 
 								placeholder="dd.mm.yyyy hh:mm:ss"
 								maskOptions={{ mask: '99.99.9999 99:99:99' }}
 								onFocus={this.onFocusDate}
@@ -319,7 +317,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this.props.setActive();
 
 		const item = view.getFilter(itemId);
-		const relation = dbStore.getRelationByKey(item.relationKey);
+		const relation = S.Record.getRelationByKey(item.relationKey);
 
 		if (relation && this.refInput) {
 			const isDate = relation.format == I.RelationType.Date;
@@ -327,7 +325,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			if (this.refInput.setValue) {
 				if (isDate) {
 					if (item.quickOption == I.FilterQuickOption.ExactDate) {
-						this.refInput.setValue(item.value === null ? '' : UtilDate.date('d.m.Y H:i:s', item.value));
+						this.refInput.setValue(item.value === null ? '' : U.Date.date('d.m.Y H:i:s', item.value));
 					} else {
 						this.refInput.setValue(item.value);
 					};
@@ -346,7 +344,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this._isMounted = false;
 		this.unbind();
 
-		menuStore.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(J.Menu.cell);
     };
 
 	rebind () {
@@ -385,7 +383,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const item = view.getFilter(itemId);
-		const relation: any = dbStore.getRelationByKey(item.relationKey) || {};
+		const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
 		
@@ -454,8 +452,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			};
 		};
 
-		menuStore.closeAll([ 'select' ], () => {
-			menuStore.open('select', {
+		S.Menu.closeAll([ 'select' ], () => {
+			S.Menu.open('select', {
 				element: `#${getId()} #item-${item.id}`,
 				offsetX: getSize().width,
 				vertical: I.MenuDirection.Center,
@@ -491,7 +489,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return;
 		};
 
-		const relation = dbStore.getRelationByKey(item.relationKey);
+		const relation = S.Record.getRelationByKey(item.relationKey);
 		if (!relation) {
 			return;
 		};
@@ -500,12 +498,12 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		window.clearTimeout(this.timeoutChange);
 		this.timeoutChange = window.setTimeout(() => {
-			item = UtilCommon.objectCopy(item);
+			item = U.Common.objectCopy(item);
 			item[k] = v;
 
 			// Remove value when we change relation, filter non unique entries
 			if (k == 'relationKey') {
-				const relation = dbStore.getRelationByKey(v);
+				const relation = S.Record.getRelationByKey(v);
 				const conditions = Relation.filterConditionsByType(relation.format);
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
@@ -560,7 +558,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		let value = Relation.getArrayValue(item.value);
 		value = value.filter(it => it != element.id);
-		value = UtilCommon.arrayUnique(value);
+		value = U.Common.arrayUnique(value);
 
 		this.onChange('value', value);
 	};
@@ -579,14 +577,14 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	onSubmitDate (e: any) {
 		e.preventDefault();
 
-		const value = UtilDate.parseDate(this.refInput.getValue());
+		const value = U.Date.parseDate(this.refInput.getValue());
 		
 		this.onChange('value', value);
 		this.onCalendar(value);
 	};
 
 	onFocusText () {
-		menuStore.close('select');
+		S.Menu.close('select');
 	};
 
 	onFocusDate (e: any) {
@@ -599,11 +597,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { getView, itemId } = data;
 		const item = getView().getFilter(itemId);
-		const value = item.value || UtilDate.now();
+		const value = item.value || U.Date.now();
 
-		menuStore.closeAll([ 'select' ], () => {
-			if (menuStore.isOpen('dataviewCalendar')) {
-				menuStore.updateData('dataviewCalendar', { value });
+		S.Menu.closeAll([ 'select' ], () => {
+			if (S.Menu.isOpen('dataviewCalendar')) {
+				S.Menu.updateData('dataviewCalendar', { value });
 			} else {
 				this.onCalendar(value);
 			};
@@ -620,7 +618,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	onCalendar (value: number) {
 		const { getId } = this.props;
 
-		menuStore.open('dataviewCalendar', {
+		S.Menu.open('dataviewCalendar', {
 			element: `#${getId()} #value`,
 			horizontal: I.MenuDirection.Center,
 			data: { 
@@ -643,10 +641,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
 		const item = getView().getFilter(itemId);
-		const relation = dbStore.getRelationByKey(item.relationKey);
+		const relation = S.Record.getRelationByKey(item.relationKey);
 
-		menuStore.closeAll([ 'dataviewOptionList', 'select' ], () => {
-			menuStore.open('dataviewOptionList', { 
+		S.Menu.closeAll([ 'dataviewOptionList', 'select' ], () => {
+			S.Menu.open('dataviewOptionList', { 
 				element: `#${getId()} #value`,
 				className: 'fromFilter',
 				width: getSize().width,
@@ -674,15 +672,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const relation = dbStore.getRelationByKey(item.relationKey);
+		const relation = S.Record.getRelationByKey(item.relationKey);
 		const filters = [];
 
 		if (relation.format == I.RelationType.File) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() });
 		};
 
-		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList', 'select' ], () => {
-			menuStore.open('dataviewObjectList', { 
+		S.Menu.closeAll([ 'dataviewObjectValues', 'dataviewObjectList', 'select' ], () => {
+			S.Menu.open('dataviewObjectList', { 
 				element: `#${getId()}`,
 				className: 'fromFilter',
 				width: getSize().width,
@@ -738,7 +736,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	onValueHover (e: React.MouseEvent) {
 		e.persist();
 
-		menuStore.closeAll([ 'select' ], () => {
+		S.Menu.closeAll([ 'select' ], () => {
 			this.refSelect?.show(e);
 
 			window.setTimeout(() => this.props.setHover({ id: 'value' }), 35);
@@ -753,7 +751,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		return readonly || !allowedView;
 	};

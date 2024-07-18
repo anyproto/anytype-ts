@@ -1,7 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, Relation, UtilObject, translate, UtilFile } from 'Lib';
-import { dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, Relation, translate } from 'Lib';
 
 interface Detail {
 	relationKey: string;
@@ -28,7 +26,7 @@ class DetailStore {
 	/** Idempotent. adds details to the detail store. */
     public set (rootId: string, items: Item[]) {
 		if (!rootId) {
-			console.log('[detailStore].set: rootId is not defined');
+			console.log('[S.Detail].set: rootId is not defined');
 			return;
 		};
 
@@ -58,12 +56,12 @@ class DetailStore {
 	/** Idempotent. updates details in the detail store. if clear is set, map wil delete details by item id. */
     public update (rootId: string, item: Item, clear: boolean): void {
 		if (!rootId) {
-			console.log('[detailStore].update: rootId is not defined');
+			console.log('[S.Detail].update: rootId is not defined');
 			return;
 		};
 
 		if (!item.details) {
-			console.log('[detailStore].update: details are not defined');
+			console.log('[S.Detail].update: details are not defined');
 			return;
 		};
 
@@ -107,12 +105,12 @@ class DetailStore {
 			map.set(item.id, list);
 		};
 
-		// Update relationKeyMap and typeKeyMap in dbStore to keep consistency
-		if (item.details.layout == I.ObjectLayout.Relation) {
-			dbStore.relationKeyMapSet(item.details.spaceId, item.details.relationKey, item.details.id);
+		// Update relationKeyMap and typeKeyMap in S.Record to keep consistency
+		if (U.Object.isRelationLayout(item.details.layout)) {
+			S.Record.relationKeyMapSet(item.details.spaceId, item.details.relationKey, item.details.id);
 		};
-		if (item.details.layout == I.ObjectLayout.Type) {
-			dbStore.typeKeyMapSet(item.details.spaceId, item.details.uniqueKey, item.details.id);
+		if (U.Object.isTypeLayout(item.details.layout)) {
+			S.Record.typeKeyMapSet(item.details.spaceId, item.details.uniqueKey, item.details.id);
 		};
 
 		if (createMap) {
@@ -148,14 +146,14 @@ class DetailStore {
 		};
 	};
 
-	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, Constant.defaultRelationKeys are included */
+	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, J.Relation.default are included */
     public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean): any {
 		let list = this.map.get(rootId)?.get(id) || [];
 		if (!list.length) {
 			return { id, _empty_: true };
 		};
 		
-		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? Constant.defaultRelationKeys : []) ] : []);
+		const keys = new Set(withKeys ? [ ...withKeys, ...(!forceKeys ? J.Relation.default : []) ] : []);
 		const object = { id };
 
 		if (withKeys) {
@@ -179,7 +177,7 @@ class DetailStore {
 			object = this[fn](object);
 		};
 
-		if (UtilObject.isFileLayout(object.layout)) {
+		if (U.Object.isInFileLayouts(object.layout)) {
 			object = this.mapFile(object);
 		};
 
@@ -229,7 +227,7 @@ class DetailStore {
 	private mapType (object: any) {
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-		object.isInstalled = object.spaceId != Constant.storeSpaceId;
+		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
@@ -244,11 +242,11 @@ class DetailStore {
 	private mapRelation (object: any) {
 		object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
 		object.format = object.relationFormat;
-		object.maxCount = Number(object.maxCount  || object.relationMaxCount) || 0;
+		object.maxCount = Number(object.maxCount || object.relationMaxCount) || 0;
 		object.objectTypes = Relation.getArrayValue(object.objectTypes || object.relationFormatObjectTypes);
 		object.isReadonlyRelation = Boolean(object.isReadonlyRelation || object.isReadonly);
 		object.isReadonlyValue = Boolean(object.isReadonlyValue || object.relationReadonlyValue);
-		object.isInstalled = object.spaceId != Constant.storeSpaceId;
+		object.isInstalled = object.spaceId != J.Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 
 		if (object.isDeleted) {
@@ -311,7 +309,7 @@ class DetailStore {
 
 	private mapFile (object) {
 		object.sizeInBytes = Number(object.sizeInBytes) || 0;
-		object.name = UtilFile.name(object);
+		object.name = U.File.name(object);
 		return object;
 	};
 
@@ -341,4 +339,4 @@ class DetailStore {
 
 };
 
-export const detailStore: DetailStore = new DetailStore();
+export const Detail: DetailStore = new DetailStore();

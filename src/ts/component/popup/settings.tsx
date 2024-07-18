@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon, Label } from 'Component';
-import { I, UtilCommon, UtilSpace, analytics, Action, keyboard, translate, Preview, UtilData } from 'Lib';
-import { popupStore, commonStore, authStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, analytics, Action, keyboard, translate, Preview } from 'Lib';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -101,11 +99,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { data } = param;
 		const { page } = data;
 		const { loading } = this.state;
-		const { membership } = authStore;
-		const { membershipTiersList } = commonStore;
+		const { membership } = S.Auth;
+		const { membershipTiersList } = S.Common;
 		const sections = this.getSections().filter(it => !it.isHidden);
-		const participant = UtilSpace.getParticipant();
-		const cnr = [ 'side', 'right', UtilCommon.toCamelCase('tab-' + page) ];
+		const participant = U.Space.getParticipant();
+		const cnr = [ 'side', 'right', U.Common.toCamelCase('tab-' + page) ];
 		const length = sections.length;
 
 		if (!length) {
@@ -157,7 +155,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 			if (action.id == 'membership') {
 				if (!membership.isNone) {
-					const tierItem = UtilData.getMembershipTier(membership.tier);
+					const tierItem = U.Data.getMembershipTier(membership.tier);
 					caption = <div className="caption">{tierItem.name}</div>;
 				} else {
 					caption = <div className="caption join">{translate(`commonJoin`)}</div>;
@@ -260,6 +258,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { param } = this.props;
 		const { data } = param;
 		const { isSpace } = data;
+		const { isOnline } = S.Common;
+		const isAnytypeNetwork = U.Data.isAnytypeNetwork();
 
 		if (isSpace) {
 			return [
@@ -285,8 +285,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 				{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 			];
-			if (UtilData.isAnytypeNetwork()) {
-				settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') })
+			if (isAnytypeNetwork && isOnline) {
+				settingsVault.push({ id: 'membership', icon: 'membership', name: translate('popupSettingsMembershipTitle1') });
 			};
 
 			return [
@@ -336,17 +336,17 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 		this.prevPage = page;
 
-		popupStore.updateData(this.props.id, { page: id, ...additional });
+		S.Popup.updateData(this.props.id, { page: id, ...additional });
 		analytics.event('settings', { params: { id } });
 	};
 
 	onExport (type: I.ExportType, param: any) {
 		analytics.event('ClickExport', { type, route: analytics.route.settings });
-		Action.export(commonStore.space, [], type, { ...param, route: analytics.route.settings }, () => this.props.close());
+		Action.export(S.Common.space, [], type, { ...param, route: analytics.route.settings }, () => this.props.close());
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut(UtilCommon.isPlatformMac() ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
+		keyboard.shortcut(U.Common.isPlatformMac() ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 	};
 
 	onMouseDown (e: any) {
@@ -405,7 +405,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			className: 'big',
 			element: $(e.currentTarget),
 			typeY: I.MenuDirection.Bottom,
-			typeX: I.MenuDirection.Left
+			typeX: I.MenuDirection.Left,
 		});
 	};
 

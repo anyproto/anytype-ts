@@ -1,10 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { blockStore } from 'Store';
-import { I, keyboard, analytics, UtilData, UtilObject, UtilMenu, UtilCommon, translate } from 'Lib';
-import { detailStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
 
 class MenuBlockLayout extends React.Component<I.Menu> {
 	
@@ -56,7 +53,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 
 	componentWillUnmount (): void {
-		menuStore.closeAll(Constant.menuIds.layout);
+		S.Menu.closeAll(J.Menu.layout);
 	};
 	
 	rebind () {
@@ -70,17 +67,17 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 
 	getSections () {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const allowedLayout = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Layout ]);
-		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
+		const allowedLayout = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const object = S.Detail.get(rootId, rootId, [ 'layoutAlign' ]);
 		
-		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
 
-		if (!allowedDetails || (object.layout == I.ObjectLayout.Task)) {
+		if (!allowedDetails || U.Object.isTaskLayout(object.layout)) {
 			align = null;
 		};
 		if (!allowedDetails) {
@@ -89,7 +86,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 		let sections = [];
 		if (allowedLayout) {
-			sections.push({ name: translate('menuBlockLayoutChooseLayoutType'), children: UtilMenu.turnLayouts() });
+			sections.push({ name: translate('menuBlockLayoutChooseLayoutType'), children: U.Menu.turnLayouts() });
 		};
 
 		sections.push({ 
@@ -127,16 +124,19 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	
 	onOver (e: any, item: any) {
 		if (!item.arrow) {
-			menuStore.closeAll(Constant.menuIds.layout);
+			S.Menu.closeAll(J.Menu.layout);
 			return;
 		};
 
-		const { param, getId, getSize, close } = this.props;
+		const { id, param, getId, getSize, close } = this.props;
+		if (S.Menu.isAnimating(id)) {
+			return;
+		};
+
 		const { data } = param;
 		const { rootId } = data;
-		const object = detailStore.get(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId);
 
-		let menuId = '';
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -151,6 +151,8 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 			},
 		};
 
+		let menuId = '';
+
 		switch (item.id) {
 			case 'align':
 				menuId = 'blockAlign';
@@ -158,7 +160,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					value: object.layoutAlign,
 					onSelect: (align: I.BlockHAlign) => {
-						UtilObject.setAlign(rootId, align);
+						U.Object.setAlign(rootId, align);
 
 						analytics.event('SetLayoutAlign', { align });
 						close();
@@ -167,9 +169,9 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 				break;
 		};
 
-		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.layout, () => {
-				menuStore.open(menuId, menuParam);
+		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+			S.Menu.closeAll(J.Menu.layout, () => {
+				S.Menu.open(menuId, menuParam);
 			});
 		};
 	};
@@ -178,7 +180,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, onLayoutSelect } = data;
-		const object = detailStore.get(rootId, rootId, []);
+		const object = S.Detail.get(rootId, rootId, []);
 
 		if (item.arrow) {
 			return;
@@ -191,7 +193,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 			analytics.event('SetLayoutWidth');
 		} else {
-			UtilObject.setLayout(rootId, item.id, (message: any) => {
+			U.Object.setLayout(rootId, item.id, (message: any) => {
 				if (onLayoutSelect) {
 					onLayoutSelect(item.id);
 				};
@@ -202,7 +204,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 
 	onResize (e: any) {
-		const container = UtilCommon.getPageContainer(keyboard.isPopup());
+		const container = U.Common.getPageContainer(keyboard.isPopup());
 		const wrapper = $('#editorWrapper');
 
 		wrapper.addClass('isResizing');

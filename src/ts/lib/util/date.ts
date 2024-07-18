@@ -1,5 +1,4 @@
-import { I, UtilCommon, translate } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, U, J, translate } from 'Lib';
 
 class UtilDate {
 
@@ -64,7 +63,7 @@ class UtilDate {
 
 		m = Math.min(12, Math.max(1, m));
 
-		let maxDays = Constant.monthDays[m];
+		let maxDays = J.Constant.monthDays[m];
 		if ((m == 2) && (this.isLeapYear(y))) {
 			maxDays = 29;
 		};
@@ -79,7 +78,7 @@ class UtilDate {
 	date (format: string, timestamp: number) {
 		timestamp = Number(timestamp) || 0;
 
-		const d = new Date((timestamp) * 1000);
+		const d = new Date(timestamp * 1000);
 
 		const pad = (n: number, c: number) => {
 			let s = String(n);
@@ -227,16 +226,16 @@ class UtilDate {
 
 		let ret = '';
 		if (d > 0) {
-			ret = UtilCommon.sprintf('%d days ago', d);
+			ret = U.Common.sprintf('%d days ago', d);
 		} else
 		if (h > 0) {
-			ret = UtilCommon.sprintf('%d hours ago', h);
+			ret = U.Common.sprintf('%d hours ago', h);
 		} else
 		if (m > 0) {
-			ret = UtilCommon.sprintf('%d minutes ago', m);
+			ret = U.Common.sprintf('%d minutes ago', m);
 		} else
 		if (s > 0) {
-			ret = UtilCommon.sprintf('%d seconds ago', s);
+			ret = U.Common.sprintf('%d seconds ago', s);
 		};
 		return ret;
 	};
@@ -259,16 +258,16 @@ class UtilDate {
 
 		let ret = '';
 		if (d > 0) {
-			ret = UtilCommon.sprintf('%dd', d);
+			ret = U.Common.sprintf('%dd', d);
 		} else
 		if (h > 0) {
-			ret = UtilCommon.sprintf('%dh', h);
+			ret = U.Common.sprintf('%dh', h);
 		} else
 		if (m > 0) {
-			ret = UtilCommon.sprintf('%dmin', m);
+			ret = U.Common.sprintf('%dmin', m);
 		} else
 		if (s > 0) {
-			ret = UtilCommon.sprintf('%ds', s);
+			ret = U.Common.sprintf('%ds', s);
 		};
 		return ret;
 	};
@@ -296,7 +295,7 @@ class UtilDate {
 
 	getCalendarMonth (value: number) {
 		const { m, y } = this.getCalendarDateParam(value);
-		const md = {...Constant.monthDays};
+		const md = {...J.Constant.monthDays};
 		
 		// February
 		if (this.isLeapYear(y)) {
@@ -353,6 +352,30 @@ class UtilDate {
 			return false;
 		};
 		return true;
+	};
+
+	getWeekDays (): { id: number, name: string }[] {
+		const ret = [];
+		for (let i = 1; i <= 7; ++i) {
+			ret.push({ id: i, name: translate(`day${i}`) });
+		};
+		return ret;
+	};
+
+	getMonths (): { id: number, name: string }[] {
+		const ret = [];
+		for (let i = 1; i <= 12; ++i) {
+			ret.push({ id: i, name: translate(`month${i}`) });
+		};
+		return ret;
+	};
+
+	getYears (start: number, end: number): { id: number, name: string }[] {
+		const ret = [];
+		for (let i = start; i <= end; ++i) {
+			ret.push({ id: i, name: i });
+		};
+		return ret;
 	};
 
 };

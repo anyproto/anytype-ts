@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { PreviewObject, Icon } from 'Component';
-import { I, UtilCommon, keyboard, translate } from 'Lib';
+import { I, U, keyboard, translate } from 'Lib';
 
 interface Props {
 	offsetX: number;
@@ -136,7 +136,7 @@ class ListObjectPreview extends React.Component<Props> {
 
 	getItems () {
 		const { getItems, canAdd, withBlank, blankId } = this.props;
-		const items = UtilCommon.objectCopy(getItems());
+		const items = U.Common.objectCopy(getItems());
 
 		if (withBlank) {
 			items.unshift({ id: blankId });

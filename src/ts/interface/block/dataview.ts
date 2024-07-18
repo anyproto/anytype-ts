@@ -85,7 +85,7 @@ export interface Sort {
 	relationKey: string;
 	type: SortType;
 	includeTime?: boolean;
-	customOrder?: string[];
+	customOrder?: any[];
 	empty?: EmptyType;
 };
 
@@ -113,7 +113,6 @@ export interface ViewComponent {
 	block?: I.Block;
 	readonly: boolean;
 	pageContainer?: string;
-	dataset?: I.Dataset;
 	isPopup?: boolean;
 	isInline?: boolean;
 	isCollection?: boolean;
@@ -138,7 +137,7 @@ export interface ViewComponent {
 	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
 	onTemplateAdd?: () => void;
 	onTemplateMenu?: (e: any, dur: number) => void;
-	onCellClick?(e: any, key: string, id?: string): void;
+	onCellClick?(e: any, key: string, id?: string, record?: any): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	onDragRecordStart?: (e: any, id?: string) => void;
@@ -232,6 +231,7 @@ export interface BoardGroup {
 
 export interface ContentDataview {
 	sources: string[];
+	viewId: string;
 	views: View[];
 	relationLinks: any[];
 	groupOrder: any[];

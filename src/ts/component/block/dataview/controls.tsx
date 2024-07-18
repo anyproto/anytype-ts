@@ -1,13 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
+import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { Icon, Button, Filter } from 'Component';
-import { C, I, UtilCommon, analytics, Relation, keyboard, translate, UtilObject, UtilMenu, Dataview } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import { Icon, Button, Filter } from 'Component';
+import { C, I, S, U, analytics, Relation, keyboard, translate, Dataview, sidebar } from 'Lib';
 import Head from './head';
-import arrayMove from 'array-move';
 
 interface Props extends I.ViewComponent {
 	onFilterChange?: (v: string) => void; 
@@ -39,17 +38,17 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	render () {
 		const { className, rootId, block, getView, onRecordAdd, onTemplateMenu, isInline, isCollection, getSources, onFilterChange, getTarget, getTypeId, readonly } = this.props;
 		const target = getTarget();
-		const views = dbStore.getViews(rootId, block.id);
+		const views = S.Record.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
-		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
+		const filters = view.filters.filter(it => S.Record.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
-		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
 		const buttonWrapCn = [ 'buttonWrap' ];
 		const hasSources = (isCollection || getSources().length);
 		const isAllowedObject = this.props.isAllowedObject();
-		const isAllowedTemplate = UtilObject.isAllowedTemplate(getTypeId()) || (target && UtilObject.isSetLayout(target.layout) && hasSources);
+		const isAllowedTemplate = U.Object.isAllowedTemplate(getTypeId()) || (target && U.Object.isInSetLayouts(target.layout) && hasSources);
 		const cmd = keyboard.cmdSymbol();
 		const tooltip = Dataview.getCreateTooltip(rootId, block.id, target.id, view.id);
 
@@ -121,7 +120,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				className={cn.join(' ')}
 			>
 				<div className="sides">
-					<div id="sideLeft" className="side left">
+					<div id="dataviewControlsSideLeft" className="side left">
 						{head}
 
 						<div 
@@ -147,7 +146,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 						/>
 					</div>
 
-					<div id="sideRight" className="side right">
+					<div id="dataviewControlsSideRight" className="side right">
 						<Filter
 							ref={ref => this.refFilter = ref}
 							placeholder={translate('blockDataviewSearch')} 
@@ -198,7 +197,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this._isMounted = false;
 
 		const { isPopup } = this.props;
-		const container = UtilCommon.getPageContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const win = $(window);
 
 		container.off('mousedown.filter');
@@ -206,10 +205,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onViewSwitch (view: any) {
-		const { block } = this.props;
-
 		this.onViewSet(view);
-		window.setTimeout(() => { $(`#button-${block.id}-settings`).trigger('click'); }, 50);
+		window.setTimeout(() => { $(`#button-${this.props.block.id}-settings`).trigger('click'); }, 50);
 	};
 
 	onViewCopy (view) {
@@ -230,7 +227,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 	onViewRemove (view) {
 		const { rootId, block, getView, isInline, getTarget } = this.props;
-		const views = dbStore.getViews(rootId, block.id);
+		const views = S.Record.getViews(rootId, block.id);
 		const object = getTarget();
 		const idx = views.findIndex(it => it.id == view.id);
 		const filtered = views.filter(it => it.id != view.id);
@@ -281,8 +278,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				this.toggleHoverArea(false);
 			},
 			onBack: (id) => {
-				menuStore.replace(id, component, { ...param, noAnimation: true });
-				window.setTimeout(() => menuStore.update(component, { noAnimation: false }), 50);
+				S.Menu.replace(id, component, { ...param, noAnimation: true });
+				window.setTimeout(() => S.Menu.update(component, { noAnimation: false }), 50);
 			},
 			data: {
 				readonly,
@@ -310,7 +307,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			param.title = translate('menuDataviewViewSettings');
 		};
 
-		menuStore.open(component, param);
+		S.Menu.open(component, param);
 	};
 
 	onViewAdd (e: any) {
@@ -336,7 +333,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				return;
 			};
 
-			const view = dbStore.getView(rootId, block.id, message.viewId);
+			const view = S.Record.getView(rootId, block.id, message.viewId);
 			if (!view) {
 				return;
 			};
@@ -352,15 +349,16 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		});
 	};
 
-	onViewSet (item: any) {
+	onViewSet (view: any) {
 		const { rootId, block, isInline, getTarget } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = S.Record.getSubId(rootId, block.id);
 		const object = getTarget();
 
-		dbStore.metaSet(subId, '', { viewId: item.id });
+		S.Record.metaSet(subId, '', { viewId: view.id });
+		C.BlockDataviewViewSetActive(rootId, block.id, view.id);
 
 		analytics.event('SwitchView', {
-			type: item.type,
+			type: view.type,
 			objectType: object.type,
 			embedType: analytics.embedType(isInline)
 		});
@@ -375,7 +373,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		this.onViewSet(view);
-		UtilMenu.viewContextMenu({
+		U.Menu.viewContextMenu({
 			rootId,
 			blockId: block.id,
 			view,
@@ -402,11 +400,11 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const { oldIndex, newIndex } = result;
 		const { rootId, block, isInline, getTarget } = this.props;
 		const object = getTarget();
-		const views = dbStore.getViews(rootId, block.id);
+		const views = S.Record.getViews(rootId, block.id);
 		const view = views[oldIndex];
 		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
 
-		dbStore.viewsSort(rootId, block.id, ids);
+		S.Record.viewsSort(rootId, block.id, ids);
 
 		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex, () => {
 			analytics.event('RepositionView', {
@@ -424,7 +422,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		const { isPopup, isInline } = this.props;
-		const container = UtilCommon.getPageContainer(isPopup);
+		const container = U.Common.getPageContainer(isPopup);
 		const win = $(window);
 
 		this.refFilter.setActive(true);
@@ -481,12 +479,11 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		const { isPopup, isInline } = this.props;
 		const node = $(this.node);
-		const sideLeft = node.find('#sideLeft');
-		const sideRight = node.find('#sideRight');
-		const container = UtilCommon.getPageContainer(isPopup);
+		const sideLeft = node.find('#dataviewControlsSideLeft');
+		const sideRight = node.find('#dataviewControlsSideRight');
+		const container = U.Common.getPageContainer(isPopup);
 		const { left } = sideLeft.offset();
-		const sidebar = $('#sidebar');
-		const sw = sidebar.outerWidth();
+		const sw = sidebar.getDummyWidth();
 		const cw = container.outerWidth();
 		const nw = node.outerWidth();
 
@@ -514,7 +511,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		if (close) {
-			menuStore.closeAll([ 'dataviewViewList' ]);
+			S.Menu.closeAll([ 'dataviewViewList' ]);
 		};
 	};
 

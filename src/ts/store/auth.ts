@@ -1,7 +1,5 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, C, Storage, analytics, Renderer } from 'Lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore, notificationStore } from 'Store';
-import { keyboard } from 'Lib';
+import { I, M, C, S, Storage, analytics, Renderer, keyboard } from 'Lib';
 
 interface NetworkConfig {
 	mode: I.NetworkMode;
@@ -15,23 +13,21 @@ class AuthStore {
 	public token = '';
 	public appToken = '';
 	public appKey = '';
-	public threadMap: Map<string, any> = new Map();
 	public membershipData: I.Membership = { tier: I.TierType.None, status: I.MembershipStatus.Unknown };
+	public syncStatusMap: Map<string, I.SyncStatus> = new Map();
 	
 	constructor () {
 		makeObservable(this, {
 			accountItem: observable,
 			accountList: observable,
-			threadMap: observable,
 			membershipData: observable,
+			syncStatusMap: observable,
 			membership: computed,
 			accounts: computed,
 			account: computed,
 			accountAdd: action,
 			accountSet: action,
-			threadSet: action,
 			membershipSet: action,
-			threadRemove: action,
 			clearAll: action,
 			logout: action,
 		});
@@ -80,11 +76,16 @@ class AuthStore {
 
 	membershipSet (v: I.Membership) {
 		this.membershipData = new M.Membership(v);
-		analytics.setTier(this.membershipData.tier);
 	};
 
 	membershipUpdate (v: I.Membership) {
 		set(this.membershipData, v);
+	};
+
+	syncStatusUpdate (v: I.SyncStatus) {
+		const obj = this.getSyncStatus(v.id);
+
+		this.syncStatusMap.set(v.id, Object.assign(obj, v));
 	};
 
 	accountAdd (account: any) {
@@ -136,29 +137,24 @@ class AuthStore {
 		].includes(this.accountItem.status.type);
 	};
 
-	threadSet (rootId: string, obj: any) {
-		const thread = this.threadMap.get(rootId);
-		if (thread) {
-			set(thread, obj);
-		} else {
-			this.threadMap.set(rootId, observable(obj));
+	getSyncStatus (spaceId?: string): I.SyncStatus {
+		return this.syncStatusMap.get(spaceId || S.Common.space) || {
+			id: '',
+			error: I.SyncStatusError.None,
+			network: I.SyncStatusNetwork.Anytype,
+			status: I.SyncStatusSpace.Offline,
+			p2p: I.P2PStatus.NotConnected,
+			syncingCounter: 0,
+			devicesCounter: 0
 		};
-    };
-
-	threadRemove (rootId: string) {
-		this.threadMap.delete(rootId);
-    };
-
-	threadGet (rootId: string) {
-		return this.threadMap.get(rootId) || {};
-    };
+	};
 
 	clearAll () {
-		this.threadMap = new Map();
 		this.accountItem = null;
 
 		this.accountListClear();
 		this.membershipSet({ tier: I.TierType.None, status: I.MembershipStatus.Unknown });
+		this.syncStatusMap.clear();
 	};
 
 	logout (mainWindow: boolean, removeData: boolean) {
@@ -178,14 +174,14 @@ class AuthStore {
 
 		keyboard.setPinChecked(false);
 
-		commonStore.spaceSet('');
-		commonStore.typeSet('');
+		S.Common.spaceSet('');
+		S.Common.typeSet('');
 
-		blockStore.clearAll();
-		detailStore.clearAll();
-		dbStore.clearAll();
-		menuStore.closeAllForced();
-		notificationStore.clear();
+		S.Block.clearAll();
+		S.Detail.clearAll();
+		S.Record.clearAll();
+		S.Menu.closeAllForced();
+		S.Notification.clear();
 
 		this.clearAll();
 		Storage.logout();
@@ -193,4 +189,4 @@ class AuthStore {
 
 };
 
- export const authStore: AuthStore = new AuthStore();
+ export const Auth: AuthStore = new AuthStore();

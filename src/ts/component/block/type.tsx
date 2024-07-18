@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate, Storage } from 'Lib';
-import { popupStore, detailStore, blockStore, menuStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
 
 const BlockType = observer(class BlockType extends React.Component<I.BlockComponent> {
 
@@ -70,8 +68,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 	getItems () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
-		const items = UtilData.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 5 }).filter(it => it.id != object.type);
+		const object = S.Detail.get(rootId, rootId, []);
+		const items = U.Data.getObjectTypesForNewObject({ withCollection: true, withSet: true, limit: 5 }).filter(it => it.id != object.type);
 
 		items.push({ id: 'menu', icon: 'search', name: translate('blockTypeMyTypes') });
 
@@ -79,7 +77,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	onKeyDown (e: any) {
-		if (menuStore.isOpen() || popupStore.isOpenKeyboard()) {
+		if (S.Menu.isOpen() || S.Popup.isOpenKeyboard()) {
 			return;
 		};
 
@@ -184,7 +182,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		const obj = $(element);
 		const items = this.getItems();
 
-		menuStore.open('typeSuggest', {
+		S.Menu.open('typeSuggest', {
 			element: `#block-${block.id} #item-menu`,
 			onOpen: () => obj.addClass('active'),
 			onClose: () => { 
@@ -195,7 +193,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 				filter: '',
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: items.map(it => it.id) },
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 				],
 				onClick: (item: any) => {
 					this.onClick(e, item);
@@ -214,7 +212,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		if (UtilObject.getSetLayouts().includes(item.recommendedLayout)) {
+		if (U.Object.isInSetLayouts(item.recommendedLayout)) {
 			this.onObjectTo(item.recommendedLayout);
 		} else {
 			this.onChange(item.id);
@@ -232,7 +230,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			};
 
 			keyboard.disableClose(true);
-			UtilObject.openAuto({ id: rootId, layout }, { replace: true });
+			U.Object.openAuto({ id: rootId, layout }, { replace: true });
 			keyboard.disableClose(false);
 
 			analytics.event('SelectObjectType', { objectType: typeId, layout });
@@ -240,13 +238,13 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 		switch (layout) {
 			case I.ObjectLayout.Set: {
-				typeId = dbStore.getSetType()?.id;
+				typeId = S.Record.getSetType()?.id;
 				C.ObjectToSet(rootId, [], cb);
 				break;
 			};
 
 			case I.ObjectLayout.Collection: {
-				typeId = dbStore.getCollectionType()?.id;
+				typeId = S.Record.getCollectionType()?.id;
 				C.ObjectToCollection(rootId, cb);
 				break;
 			};
@@ -255,13 +253,13 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 	onChange (typeId: any) {
 		const { rootId, isPopup } = this.props;
-		const type = dbStore.getTypeById(typeId);
+		const type = S.Record.getTypeById(typeId);
 		if (!type) {
 			return;
 		};
 
 		C.ObjectSetObjectType(rootId, type.uniqueKey, () => {
-			C.ObjectApplyTemplate(rootId, type.defaultTemplateId || Constant.templateId.blank, this.onTemplate);
+			C.ObjectApplyTemplate(rootId, type.defaultTemplateId || J.Constant.templateId.blank, this.onTemplate);
 		});
 
 		Onboarding.start('objectCreationFinish', isPopup);
@@ -270,7 +268,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 	onBlock () {
 		const { rootId, isPopup } = this.props;
-		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
+		const block = S.Block.getFirstBlock(rootId, 1, it => it.isText());
 
 		if (block) {
 			const l = block.getLength();
@@ -279,12 +277,12 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			focus.apply();
 		};
 
-		UtilCommon.triggerResizeEditor(isPopup);
+		U.Common.triggerResizeEditor(isPopup);
 	};
 
 	onTemplate () {
 		const { rootId } = this.props;
-		const first = blockStore.getFirstBlock(rootId, 1, it => it.isText());
+		const first = S.Block.getFirstBlock(rootId, 1, it => it.isText());
 
 		if (!first) {
 			C.BlockCreate(rootId, '', I.BlockPosition.Bottom, { type: I.BlockType.Text, style: I.TextStyle.Paragraph }, () => this.onBlock());

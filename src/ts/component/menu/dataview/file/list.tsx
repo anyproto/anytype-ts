@@ -2,10 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Icon, Loader, EmptySearch } from 'Component';
-import { I, UtilCommon, Relation, keyboard, UtilData, UtilObject, UtilFile, translate, Action, C } from 'Lib';
-import { commonStore, menuStore, dbStore } from 'Store';
-const Constant = require('json/constant.json');
+import { Filter, MenuItemVertical, Loader, EmptySearch } from 'Component';
+import { I, S, U, J, Relation, keyboard, translate, Action, C } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -58,7 +56,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				return null;
 			};
 
-			const type = dbStore.getTypeById(item.type);
+			const type = S.Record.getTypeById(item.type);
 
 			let content = null;
 			if (item.isDiv) {
@@ -108,7 +106,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				{isLoading ? <Loader /> : ''}
 
 				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch filter={filter} />
 				) : ''}
 
 				{this.cache && items.length && !isLoading ? (
@@ -217,7 +215,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const value = Relation.getArrayValue(data.value);
 
-		return UtilCommon.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
+		return U.Common.objectCopy(this.items).filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted && !value.includes(it.id));
 	};
 
 	reload () {
@@ -231,7 +229,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const { filter } = data;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getFileLayouts() }
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() }
 		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
@@ -241,12 +239,12 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			this.setState({ isLoading: true });
 		};
 
-		UtilData.search({
+		U.Data.search({
 			filters,
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
@@ -273,14 +271,14 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limit.menuRecords;
+			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => this.props.param.data.filter = v, Constant.delay.keyboard);
+		this.timeoutFilter = window.setTimeout(() => this.props.param.data.filter = v, J.Constant.delay.keyboard);
 	};
 
 	onOver (e: any, item: any) {
@@ -304,8 +302,8 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 
 	onUpload () {
-		Action.openFile([], paths => {
-			C.FileUpload(commonStore.space, '', paths[0], I.FileType.None, {}, (message: any) => {
+		Action.openFileDialog([], paths => {
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, (message: any) => {
 				if (!message.error.code) {
 					this.onChange(message.objectId);
 					this.reload();
@@ -319,14 +317,14 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const { onChange, maxCount } = data;
 
-		let value = UtilCommon.arrayUnique(Relation.getArrayValue(data.value).concat(id));
+		let value = U.Common.arrayUnique(Relation.getArrayValue(data.value).concat(id));
 		if (maxCount) {
 			value = value.slice(value.length - maxCount, value.length);
 		};
 
 		onChange(value, () => {
-			menuStore.updateData(this.props.id, { value });
-			menuStore.updateData(MENU_ID, { value });
+			S.Menu.updateData(this.props.id, { value });
+			S.Menu.updateData(MENU_ID, { value });
 			position();
 		});
 	};

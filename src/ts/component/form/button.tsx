@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, UtilCommon, Preview } from 'Lib';
+import { I, U, Preview } from 'Lib';
 import { Icon, Loader } from 'Component';
 
 interface State {
@@ -53,11 +53,11 @@ class Button extends React.Component<I.ButtonComponent, State> {
 						onMouseDown={this.onMouseDown}
 						onMouseEnter={this.onMouseEnter} 
 						onMouseLeave={this.onMouseLeave}
-						{...UtilCommon.dataProps(dataset)}
+						{...U.Common.dataProps(dataset)}
 					>
 						{isLoading ? <Loader /> : ''}
 						{icon ? <Icon className={icon} /> : ''}
-						<div className="txt" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(text) }} />
+						<div className="txt" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />
 						{arrow ? <div className="arrow" /> : ''}
 					</div>
 				);
@@ -74,7 +74,7 @@ class Button extends React.Component<I.ButtonComponent, State> {
 						onMouseDown={onClick} 
 						onMouseEnter={this.onMouseEnter} 
 						onMouseLeave={this.onMouseLeave} 
-						{...UtilCommon.dataProps(dataset)}
+						{...U.Common.dataProps(dataset)}
 					/>
 				);
 				break;

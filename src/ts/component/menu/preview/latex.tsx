@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, UtilCommon, translate } from 'Lib';
+import { I, U, translate } from 'Lib';
 
 const katex = require('katex');
 require('katex/dist/contrib/mhchem');
@@ -21,8 +21,8 @@ class MenuPreviewLatex extends React.Component<I.Menu> {
 
 		return (
 			<div>
-				<div className="math" dangerouslySetInnerHTML={{ __html: UtilCommon.sanitize(math) }} />
-				{example ? <div className="example">{UtilCommon.sprintf(translate('menuPreviewLatexExample'), text)}</div> : ''}
+				<div className="math" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(math) }} />
+				{example ? <div className="example">{U.Common.sprintf(translate('menuPreviewLatexExample'), text)}</div> : ''}
 			</div>
 		);
 	};

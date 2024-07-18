@@ -5,9 +5,7 @@ import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'Component';
-import { I, C, Relation, keyboard, Dataview, translate } from 'Lib';
-import { menuStore, dbStore, blockStore, commonStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, J, Relation, keyboard, Dataview, translate } from 'Lib';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -188,7 +186,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 
 	componentWillUnmount () {
 		this.unbind();
-		menuStore.closeAll(Constant.menuIds.cell);
+		S.Menu.closeAll(J.Menu.cell);
 	};
 
 	rebind () {
@@ -230,7 +228,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 
-		menuStore.open('relationSuggest', { 
+		S.Menu.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Top,
@@ -268,13 +266,13 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { param, getId } = this.props;
 		const { data } = param;
 		const { readonly } = data;
-		const relation = dbStore.getRelationByKey(item.relationKey);
+		const relation = S.Record.getRelationByKey(item.relationKey);
 
 		if (!relation || readonly) {
 			return;
 		};
 		
-		menuStore.open('dataviewRelationEdit', { 
+		S.Menu.open('dataviewRelationEdit', { 
 			element: `#${getId()} #item-${item.relationKey}`,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
@@ -290,7 +288,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 
 	onSortEnd (result: any) {
-		const { config } = commonStore;
+		const { config } = S.Common;
 		const { oldIndex, newIndex } = result;
 		const { param } = this.props;
 		const { data } = param;
@@ -326,7 +324,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		return Dataview.viewGetRelations(rootId, blockId, view).map((it: any) => ({ 
 			...it,
 			id: it.relationKey,
-			relation: dbStore.getRelationByKey(it.relationKey) || {},
+			relation: S.Record.getRelationByKey(it.relationKey) || {},
 		}));
 	};
 
@@ -345,7 +343,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
-		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const allowedView = S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		return readonly || !allowedView;
 	};

@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, translate, UtilCommon, UtilDate, analytics, keyboard } from 'Lib';
-import { popupStore, authStore, commonStore } from 'Store';
+import { I, S, U, J, translate, analytics, keyboard } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Mousewheel } from 'swiper/modules';
-const Constant = require('json/constant.json');
-const Url = require('json/url.json');
 
 const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership extends React.Component<I.PopupSettings> {
 
@@ -20,18 +17,20 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	render () {
-		const { membership } = authStore;
-		const { membershipTiers, interfaceLang } = commonStore;
+		const { membership } = S.Auth;
+		const { membershipTiers, interfaceLang } = S.Common;
+		const { tier, status } = membership;
+		const length = membershipTiers.length;
 		const cnt = [];
 
-		if (interfaceLang == Constant.default.interfaceLang) {
+		if (interfaceLang == J.Constant.default.interfaceLang) {
 			cnt.push('riccione');
 		};
 
 		const links = [
-			{ url: Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpMembershipDetails' },
-			{ url: Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
-			{ url: Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
+			{ url: J.Url.pricing, name: translate('popupSettingsMembershipLevelsDetails'), type: 'MenuHelpMembershipDetails' },
+			{ url: J.Url.privacy, name: translate('popupSettingsMembershipPrivacyPolicy'), type: 'MenuHelpPrivacy' },
+			{ url: J.Url.terms, name: translate('popupSettingsMembershipTermsAndConditions'), type: 'MenuHelpTerms' },
 		];
 
 		const SlideItem = (slide) => (
@@ -57,7 +56,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 					period = translate('popupSettingsMembershipPending');
 				} else
 				if (item.period && membership.dateEnds) {
-					period = UtilCommon.sprintf(translate('popupSettingsMembershipValidUntil'), UtilDate.date('d M Y', membership.dateEnds))
+					period = U.Common.sprintf(translate('popupSettingsMembershipValidUntil'), U.Date.date('d M Y', membership.dateEnds));
 				} else {
 					period = translate('popupSettingsMembershipForeverFree');
 				};
@@ -69,7 +68,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 					if (item.period == 1) {
 						period = translate('popupSettingsMembershipPerYear');
 					} else {
-						period = UtilCommon.sprintf(translate('popupSettingsMembershipPerYears'), item.period, UtilCommon.plural(item.period, translate('pluralYear')));
+						period = U.Common.sprintf(translate('popupSettingsMembershipPerYears'), item.period, U.Common.plural(item.period, translate('pluralYear')));
 					};
 				};
 			};
@@ -77,7 +76,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 			return (
 				<div 
 					className={[ 'tier', `c${item.id}`, item.color, (isCurrent ? 'isCurrent' : '') ].join(' ')}
-					onClick={() => popupStore.open('membership', { data: { tier: item.id } })}
+					onClick={() => S.Popup.open('membership', { data: { tier: item.id } })}
 				>
 					<div className="top">
 						<div className="iconWrapper">
@@ -156,7 +155,7 @@ const PopupSettingsPageMembership = observer(class PopupSettingsPageMembership e
 	};
 
 	onLink (item: any) {
-		UtilCommon.onUrl(item.url);
+		U.Common.onUrl(item.url);
 		analytics.event(item.type, { route: analytics.route.settingsMembership });
 	};
 

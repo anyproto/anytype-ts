@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Block } from 'Component';
-import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { DropTarget } from 'Component';
-import { I, C, focus, translate } from 'Lib';
+import { I, C, S, focus, translate } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	onMouseMove? (e: any): void;
@@ -23,8 +22,8 @@ const ListChildren = observer(class ListChildren extends React.Component<Props> 
 	
 	render () {
 		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block, index, readonly } = this.props;
-		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-		const children = blockStore.getChildren(rootId, block.id);
+		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
+		const children = S.Block.getChildren(rootId, block.id);
 		const length = childrenIds.length;
 
 		if (!length) {

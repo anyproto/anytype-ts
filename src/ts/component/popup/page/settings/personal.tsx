@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch } from 'Component';
-import { I, translate, UtilMenu, Action } from 'Lib';
-import { commonStore } from 'Store';
+import { I, S, U, translate, Action, analytics } from 'Lib';
 
 const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<I.PopupSettings> {
 
@@ -11,10 +10,10 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	};
 
 	render () {
-		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject } = commonStore;
+		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject } = S.Common;
 		const { languages } = config;
-		const interfaceLanguages = UtilMenu.getInterfaceLanguages();
-		const spellingLanguages = UtilMenu.getSpellingLanguages();
+		const interfaceLanguages = U.Menu.getInterfaceLanguages();
+		const spellingLanguages = U.Menu.getSpellingLanguages();
 		const navigationMenuModes: I.Option[] = [
 			{ id: I.NavigationMenuMode.Click, name: translate('popupSettingsPersonalNavigationMenuClick') },
 			{ id: I.NavigationMenuMode.Hover, name: translate('popupSettingsPersonalNavigationMenuHover') },
@@ -66,7 +65,10 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							id="navigationMenu"
 							value={navigationMenu}
 							options={navigationMenuModes}
-							onChange={v => commonStore.navigationMenuSet(v)}
+							onChange={v => {
+								S.Common.navigationMenuSet(v);
+								analytics.event('ChangeShowQuickCapture', { type: v });
+							}}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right }}
 						/>
@@ -79,7 +81,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							id="linkStyle"
 							value={String(linkStyle)}
 							options={linkStyles}
-							onChange={v => commonStore.linkStyleSet(v)}
+							onChange={v => S.Common.linkStyleSet(v)}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right }}
 						/>
@@ -87,7 +89,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalFullscreen')} />
-						<Switch className="big" value={fullscreenObject} onChange={(e: any, v: boolean) => commonStore.fullscreenObjectSet(v)} />
+						<Switch className="big" value={fullscreenObject} onChange={(e: any, v: boolean) => S.Common.fullscreenObjectSet(v)} />
 					</div>
 				</div>
 

@@ -1,11 +1,10 @@
 import $ from 'jquery';
-import { C, UtilData, Preview, analytics, Storage, keyboard } from 'Lib';
-import { commonStore, authStore, blockStore, menuStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { C, S, U, J, Preview, analytics, Storage } from 'Lib';
 
 type RouteParam = { 
 	replace: boolean;
 	animate: boolean;
+	delay: number;
 	onFadeOut: () => void;
 	onFadeIn?: () => void;
 	onRouteChange?: () => void;
@@ -44,12 +43,14 @@ class UtilRouter {
 		return param;
 	};
 
-	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; }>): string {
-		let route = [ param.page, param.action, param.id ];
+	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; viewId: string; }>): string {
+		const { page, action, spaceId } = param;
+		const id = String(param.id || J.Constant.blankRouteId);
+		const viewId = String(param.viewId || J.Constant.blankRouteId);
 
-		if (param.spaceId) {
-			route = route.concat([ 'spaceId', param.spaceId ]);
-		};
+		let route = [ page, action, id ];
+		route = route.concat([ 'spaceId', spaceId ]);
+		route = route.concat([ 'viewId', viewId ]);
 
 		return route.join('/');
 	};
@@ -59,21 +60,28 @@ class UtilRouter {
 			return;
 		};
 
-		const { replace, animate, onFadeOut, onFadeIn, onRouteChange } = param;
+		const { replace, animate, onFadeOut, onFadeIn, onRouteChange, delay } = param;
 		const routeParam = this.getParam(route);
-		const { space } = commonStore;
+		const { space } = S.Common;
 
-		let timeout = menuStore.getTimeout();
+		let timeout = S.Menu.getTimeout();
 		if (!timeout) {
-			timeout = popupStore.getTimeout();
+			timeout = S.Popup.getTimeout();
 		};
 
-		menuStore.closeAll();
-		popupStore.closeAll();
+		S.Menu.closeAll();
+		S.Popup.closeAll();
 
-		if (routeParam.spaceId && ![ Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
+		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route);
 			return;
+		};
+
+		const change = () => {
+			this.history.push(route); 
+			if (onRouteChange) {
+				onRouteChange();
+			};
 		};
 
 		const onTimeout = () => {
@@ -85,17 +93,16 @@ class UtilRouter {
 			};
 
 			if (!animate) {
-				this.history.push(route); 
-
-				if (onRouteChange) {
-					onRouteChange();
-				};
+				change();
 				return;
 			};
 
 			const fade = $('#globalFade');
+			const t = delay || J.Constant.delay.route;
+			const wait = t;
+
+			fade.css({ transitionDuration: `${t / 1000}s` }).show();
 				
-			fade.show();
 			window.setTimeout(() => fade.addClass('show'), 15);
 
 			window.setTimeout(() => {
@@ -103,39 +110,40 @@ class UtilRouter {
 					onFadeOut();
 				};
 
-				this.history.push(route);
-
-				if (onRouteChange) {
-					onRouteChange();
-				};
-
-				fade.removeClass('show');
-			}, Constant.delay.route);
+				change();
+			}, t);
 
 			window.setTimeout(() => {
 				if (onFadeIn) {
 					onFadeIn();
 				};
 
-				fade.hide();
-			}, Constant.delay.route * 2);
+				fade.removeClass('show');
+				window.setTimeout(() => fade.hide(), t);
+			}, wait + t);
 		};
 
 		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
 	};
 
-	switchSpace (id: string, route?: string, callBack?: () => void) {
-		const { space } = commonStore;
-		const { accountSpaceId } = authStore;
+	switchSpace (id: string, route?: string, sendEvent?: boolean, callBack?: () => void) {
+		const { space } = S.Common;
+		const { accountSpaceId } = S.Auth;
 
 		if (!id || (space == id)) {
 			return;
 		};
 
+		S.Menu.closeAllForced();
+
+		if (sendEvent) {
+			analytics.event('SwitchSpace');
+		};
+
 		C.WorkspaceOpen(id, (message: any) => {
 			if (message.error.code) {
 				if (id != accountSpaceId) {
-					this.switchSpace(accountSpaceId, route, callBack);
+					this.switchSpace(accountSpaceId, route, false, callBack);
 				};
 				return;
 			};
@@ -143,18 +151,18 @@ class UtilRouter {
 			this.go('/main/blank', { 
 				replace: true, 
 				animate: true,
+				delay: 250,
 				onFadeOut: () => {
-					if (route) {
-						commonStore.redirectSet(route);
-					};
+					S.Record.metaClear(J.Constant.subId.participant, '');
+					S.Record.recordsClear(J.Constant.subId.participant, '');
 
 					analytics.removeContext();
-					blockStore.clear(blockStore.widgets);
-					commonStore.defaultType = '';
+					S.Block.clear(S.Block.widgets);
+					S.Common.defaultType = '';
 					Storage.set('spaceId', id);
 
-					UtilData.onInfo(message.info);
-					UtilData.onAuth({ routeParam: { replace: true } }, callBack);
+					U.Data.onInfo(message.info);
+					U.Data.onAuth({ route }, callBack);
 				}
 			});
 		});
@@ -166,7 +174,7 @@ class UtilRouter {
 
 	getRouteSpaceId () {
 		const param = this.getParam(this.getRoute());
-		return param.spaceId || commonStore.space;
+		return param.spaceId || S.Common.space;
 	};
 
 };

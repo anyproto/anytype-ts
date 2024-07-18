@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Icon } from 'Component';
-import { I, translate, UtilCommon } from 'Lib';
+import { I, U, translate } from 'Lib';
 import Head from '../../head';
 
 class PopupSettingsPageImportNotionHelp extends React.Component<I.PopupSettings> {
@@ -12,7 +12,7 @@ class PopupSettingsPageImportNotionHelp extends React.Component<I.PopupSettings>
 				<Icon className="logo" />
 				<Title text={translate('popupSettingsImportNotionHelpTitle')} />
 				
-				<Label className="step" text={UtilCommon.sprintf(translate('popupSettingsImportNotionHelpStep'), 1)} />
+				<Label className="step" text={U.Common.sprintf(translate('popupSettingsImportNotionHelpStep'), 1)} />
 				<ol className="list">
 					<li>
 						<Label text={translate('popupSettingsImportNotionHelpStep11')} />
@@ -40,7 +40,7 @@ class PopupSettingsPageImportNotionHelp extends React.Component<I.PopupSettings>
 					</li>
 				</ol>
 
-				<Label className="step" text={UtilCommon.sprintf(translate('popupSettingsImportNotionHelpStep'), 2)} />
+				<Label className="step" text={U.Common.sprintf(translate('popupSettingsImportNotionHelpStep'), 2)} />
 				<Label className="stepDescription" text={translate('popupSettingsImportNotionHelpStep2Descr')} />
 				<ol className="list">
 					<li>
@@ -66,7 +66,7 @@ class PopupSettingsPageImportNotionHelp extends React.Component<I.PopupSettings>
 	resize () {
 		const { getId } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
-		const { ww, wh } = UtilCommon.getWindowDimensions();
+		const { ww, wh } = U.Common.getWindowDimensions();
 		const width = Math.min(888, ww - 32);
 
 		obj.css({ width, height: wh - 96 }).addClass('scroll');

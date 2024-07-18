@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Title, Icon, Label, Button, Error } from 'Component';
-import { I, C, translate, UtilCommon, analytics } from 'Lib';
+import { I, C, S, U, translate, analytics } from 'Lib';
 import { observer } from 'mobx-react';
-import { popupStore, authStore } from 'Store';
 
 interface State {
 	error: string;
@@ -27,8 +26,8 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		const { param } = this.props;
 		const { data } = param;
 		const { invite } = data;
-		const spaceName = UtilCommon.shorten(String(invite.spaceName || translate('defaultNamePage')), 32);
-		const creatorName = UtilCommon.shorten(String(invite.creatorName || translate('defaultNamePage')), 32);
+		const spaceName = U.Common.shorten(String(invite.spaceName || translate('defaultNamePage')), 32);
+		const creatorName = U.Common.shorten(String(invite.creatorName || translate('defaultNamePage')), 32);
 
 		return (
 			<React.Fragment>
@@ -38,7 +37,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 					<Icon />
 				</div>
 
-				<Label className="invitation" text={UtilCommon.sprintf(translate('popupInviteRequestText'), spaceName, creatorName)} />
+				<Label className="invitation" text={U.Common.sprintf(translate('popupInviteRequestText'), spaceName, creatorName)} />
 
 				<div className="buttons">
 					<Button ref={ref => this.refButton = ref} onClick={this.onRequest} text={translate('popupInviteRequestRequestToJoin')} className="c36" />
@@ -51,13 +50,9 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 		);
 	};
 
-	componentDidMount () {
-		analytics.event('ScreenInviteRequest');
-	};
-
 	onRequest () {
 		const { param, close } = this.props;
-		const { account } = authStore;
+		const { account } = S.Auth;
 		const { data } = param;
 		const { invite, cid, key } = data;
 
@@ -76,7 +71,7 @@ const PopupInviteRequest = observer(class PopupInviteRequest extends React.Compo
 			};
 
 			close(() => {
-				UtilCommon.onInviteRequest();
+				U.Common.onInviteRequest();
 				analytics.event('ScreenRequestSent');
 			});
 		});

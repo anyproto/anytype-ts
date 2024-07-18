@@ -17,6 +17,9 @@ interface Props {
 	accept?: string;
 	maskOptions?: any;
 	focusOnMount?: boolean;
+	onCompositionStart?(): void;
+	onCompositionEnd?(): void;
+	onInput?(e: any, value: string): void;
 	onChange?(e: any, value: string): void;
 	onPaste?(e: any, value: string): void;
 	onCut?(e: any, value: string): void;
@@ -42,6 +45,7 @@ class Input extends React.Component<Props, State> {
 	mask: any = null;
 	isFocused = false;
 	range: I.TextRange = null;
+	composition = false;
 
 	public static defaultProps = {
         type: 'text',
@@ -59,11 +63,14 @@ class Input extends React.Component<Props, State> {
 		this.onChange = this.onChange.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onInput = this.onInput.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onCut = this.onCut.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onCompositionStart = this.onCompositionStart.bind(this);
+		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render () {
@@ -99,9 +106,10 @@ class Input extends React.Component<Props, State> {
 				onPaste={this.onPaste}
 				onCut={this.onCut}
 				onSelect={this.onSelect}
+				onInput={this.onInput}
 				onClick={onClick}
-				onCompositionStart={() => keyboard.setComposition(true)}
-				onCompositionEnd={() => keyboard.setComposition(false)}
+				onCompositionStart={this.onCompositionStart}
+				onCompositionEnd={this.onCompositionEnd}
 				maxLength={maxLength ? maxLength : undefined}
 				accept={accept ? accept : undefined}
 				multiple={multiple}
@@ -173,6 +181,12 @@ class Input extends React.Component<Props, State> {
 			this.props.onKeyDown(e, this.state.value);
 		};
 	};
+
+	onInput (e: any) {
+		if (this.props.onInput) {
+			this.props.onInput(e, this.state.value);
+		};
+	};
 	
 	onFocus (e: any) {
 		if (this.props.onFocus) {
@@ -228,6 +242,22 @@ class Input extends React.Component<Props, State> {
 		};
 
 		this.updateRange(e);
+	};
+
+	onCompositionStart () {
+		keyboard.setComposition(true);
+
+		if (this.props.onCompositionStart) {
+			this.props.onCompositionStart();
+		};
+	};
+
+	onCompositionEnd () {
+		keyboard.setComposition(false);
+
+		if (this.props.onCompositionEnd) {
+			this.props.onCompositionEnd();
+		};
 	};
 
 	getInputElement() {

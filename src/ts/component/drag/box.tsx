@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { UtilCommon } from 'Lib';
+import { U } from 'Lib';
 
 interface Props {
 	children?: React.ReactNode;
 	onDragEnd(oldIndex: number, newIndex: number): void;
-	onClick?(e: any, id: string): void;
 };
 
 class DragBox extends React.Component<Props> {
@@ -21,13 +20,11 @@ class DragBox extends React.Component<Props> {
 		super(props);
 
 		this.onDragStart = this.onDragStart.bind(this);
-		this.onClick = this.onClick.bind(this);
 	};
 	
 	render () {
 		const children = React.Children.map(this.props.children, (child: any) => {
 			return React.cloneElement(child, { 
-				onClick: this.onClick,
 				onDragStart: this.onDragStart 
 			});
 		});
@@ -48,17 +45,6 @@ class DragBox extends React.Component<Props> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-	};
-
-	onClick (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { onClick } = this.props;
-
-		if (onClick) {
-			onClick(e, $(e.currentTarget).data('id'));
-		};
 	};
 
 	onDragStart (e: any) {
@@ -129,7 +115,7 @@ class DragBox extends React.Component<Props> {
 			const el = $(items.get(i));
 			const rect = this.cache[el.data('id')];
 
-			if (rect && UtilCommon.rectsCollide({ x: center, y, width: 2, height }, rect)) {
+			if (rect && U.Common.rectsCollide({ x: center, y, width: 2, height }, rect)) {
 				const isLeft = center <= rect.x + rect.width / 2;
 				this.newIndex = i;
 				el.addClass('isOver ' + (isLeft ? 'left' : 'right'));

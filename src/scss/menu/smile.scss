@@ -1,19 +1,20 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuSmile { width: 404px; user-select: none; }
+	.menu.menuSmile { width: var(--menu-width-large); user-select: none; }
 	.menu.menuSmile {
-		.content { overflow: visible; padding-bottom: 0px; max-height: unset; }
-		.wrap { display: flex; flex-direction: column; }
+		.content { overflow: visible; padding-bottom: 0px; max-height: unset; height: 404px; }
+		.wrap { display: flex; flex-direction: column; height: 100%; }
 		.ReactVirtualized__List { padding: 0px 0px 8px 0px; }
 
 		.head { 
-			color: var(--color-control-active); font-weight: 500; padding: 3px 14px 10px 14px; border-bottom: 1px solid var(--color-shape-secondary); 
-			display: flex; flex-direction: row; gap: 0px 16px;
+			color: var(--color-control-active); padding: 3px 14px 10px 14px; border-bottom: 1px solid var(--color-shape-secondary); 
+			display: flex; flex-direction: row; justify-content: space-between; align-items: center;
 		}
 		.head {
+			.side.left { display: flex; flex-direction: row; gap: 0px 16px; align-items: center; font-weight: 500; }
+			
 			.tab { display: inline-block; vertical-align: top; transition: $transitionAllCommon; @include text-overflow-nw; }
-			.tab:last-child { margin-right: 0px; }
 			.tab:hover, .tab.active { color: var(--color-text-primary); }
 		}
 
@@ -22,8 +23,9 @@
 			.inner { height: 35px; }
 		}
 
+		.body.smile, .body.library { display: flex; flex-direction: column; height: 100%; }
 		.body.smile, .body.library {
-			.items { height: 238px; }
+			.items { height: 100%; }
 		}
 
 		.body.smile {
@@ -84,19 +86,30 @@
 			.row { padding: 3px 14px; }
 			.row { display: grid; grid-template-columns: repeat(4, 1fr); grid-gap: 0px 8px; }
 
-			.item { padding: 0px; border-radius: 2px; }
+			.item { padding: 0px; color: var(--color-text-secondary); position: relative; }
 			.item {
-				.img { width: 100%; height: 100%; }
+				.img { width: 100%; height: 100%; border-radius: 2px; }
+				.name { 
+					position: absolute; left: 0px; bottom: 6px; padding: 0px 6px; @include clamp2; width: 100%; word-wrap: break-word; z-index: 1; 
+					transition: opacity 0.2s $easeInQuint; opacity: 0; @include text-very-small; color: #fff; max-height: 28px; line-height: 14px;
+				}
 			}
-			.item.active { background-color: var(--color-shape-highlight-medium); }
+			.item::after {
+				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border-radius: 2px; opacity: 0;
+				transition: opacity 0.2s $easeInQuint; background: rgba(0,0,0,0.3);
+			}
+			.item.active {
+				.name { opacity: 1; }
+			}
+			.item.active::after { opacity: 1; } 
 		}
 
-		.body.upload { padding: 16px; }
+		.body.upload { padding: 16px; height: 100%; }
 		.body.upload {
-			.loaderWrapper { height: 292px; position: relative; background: none; }
+			.loaderWrapper { height: calc(100% - 36px); top: 36px; }
 
 			.dropzone { 
-				height: 292px; display: flex; align-items: center; border-radius: 2px; background: var(--color-shape-highlight-medium);
+				height: 100%; display: flex; align-items: center; border-radius: 2px; background: var(--color-shape-highlight-medium);
 				justify-content: center; flex-direction: column; gap: 6px 0px; padding: 16px; text-align: center;
 			}
 			.dropzone.isDraggingOver { background: var(--color-system-drop-zone); }
@@ -127,6 +140,6 @@
 
 html.platformWindows, html.platformLinux {
 	.menus {
-		.menu.menuSmile { width: 401px; }
+		.ReactVirtualized__List { overflow-y: overlay !important; }
 	}
 }

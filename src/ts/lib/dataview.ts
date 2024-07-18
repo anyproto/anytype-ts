@@ -1,12 +1,10 @@
 import arrayMove from 'array-move';
-import { dbStore, commonStore, blockStore, detailStore } from 'Store';
-import { I, M, C, UtilCommon, UtilData, UtilObject, Relation, translate, UtilDate } from 'Lib';
-const Constant = require('json/constant.json');
+import { I, M, C, S, U, J, Relation, translate } from 'Lib';
 
 class Dataview {
 
 	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
-		const { config } = commonStore;
+		const { config } = S.Common;
 
 		if (!view) {
 			return [];
@@ -14,7 +12,7 @@ class Dataview {
 
 		const order: any = {};
 
-		let relations = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter(it => it);
+		let relations = U.Common.objectCopy(S.Record.getObjectRelations(rootId, blockId)).filter(it => it);
 		let o = 0;
 
 		if (!config.debug.hiddenObject) {
@@ -54,7 +52,7 @@ class Dataview {
 			});
 		});
 
-		return UtilCommon.arrayUniqueObjects(ret, 'relationKey');
+		return U.Common.arrayUniqueObjects(ret, 'relationKey');
 	};
 
 	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view?: I.View, callBack?: (message: any) => void) {
@@ -70,12 +68,12 @@ class Dataview {
 			const rel: any = view.getRelation(relationKey) || {};
 
 			rel.relationKey = relationKey;
-			rel.width = rel.width || Constant.size.dataview.cell.default;
+			rel.width = rel.width || J.Size.dataview.cell.default;
 			rel.isVisible = true;
 
 			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, rel, (message: any) => {
 				if (index >= 0) {
-					const newView = dbStore.getView(rootId, blockId, view.id);
+					const newView = S.Record.getView(rootId, blockId, view.id);
 					const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
 					
 					let keys = newView.relations.map(it => it.relationKey);
@@ -100,7 +98,7 @@ class Dataview {
 			rootId: '',
 			blockId: '',
 			newViewId: '',
-			keys: Constant.defaultRelationKeys,
+			keys: J.Relation.default,
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
@@ -112,30 +110,30 @@ class Dataview {
 		}, param);
 
 		const { rootId, blockId, newViewId, keys, offset, limit, clear, collectionId } = param;
-		const block = blockStore.getLeaf(rootId, blockId);
-		const view = dbStore.getView(rootId, blockId, newViewId);
+		const block = S.Block.getLeaf(rootId, blockId);
+		const view = S.Record.getView(rootId, blockId, newViewId);
 		
 		if (!view) {
 			return;
 		};
 
-		const subId = dbStore.getSubId(rootId, blockId);
-		const { viewId } = dbStore.getMeta(subId, '');
+		const subId = S.Record.getSubId(rootId, blockId);
+		const { viewId } = S.Record.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
-		const filters = UtilCommon.objectCopy(view.filters).concat(param.filters || []);
-		const sorts = UtilCommon.objectCopy(view.sorts).concat(param.sorts || []);
+		const filters = U.Common.objectCopy(view.filters).concat(param.filters || []);
+		const sorts = U.Common.objectCopy(view.sorts).concat(param.sorts || []);
 
-		filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.excludeFromSet() });
+		filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() });
 
 		if (viewChange) {
 			meta.viewId = newViewId;
 		};
 		if (viewChange || clear) {
-			dbStore.recordsSet(subId, '', []);
+			S.Record.recordsSet(subId, '', []);
 		};
 
-		dbStore.metaSet(subId, '', meta);
+		S.Record.metaSet(subId, '', meta);
 
 		if (block) {
 			const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == ''));
@@ -146,7 +144,7 @@ class Dataview {
 			};
 		};
 
-		UtilData.searchSubscribe({
+		U.Data.searchSubscribe({
 			...param,
 			subId,
 			filters: filters.map(it => this.filterMapper(view, it)),
@@ -161,7 +159,7 @@ class Dataview {
 	};
 
 	filterMapper (view: any, it: any) {
-		const relation = dbStore.getRelationByKey(it.relationKey);
+		const relation = S.Record.getRelationByKey(it.relationKey);
 		const vr = view.getRelation(it.relationKey);
 
 		if (relation) {
@@ -175,36 +173,139 @@ class Dataview {
 	};
 
 	getView (rootId: string, blockId: string, viewId?: string): I.View {
-		const views = dbStore.getViews(rootId, blockId);
-		if (!views.length) {
-			return null;
+		let view = null;
+
+		if (!viewId) {
+			viewId = S.Record.getMeta(S.Record.getSubId(rootId, blockId), '').viewId;
 		};
 
-		viewId = viewId || dbStore.getMeta(dbStore.getSubId(rootId, blockId), '').viewId;
-		return dbStore.getView(rootId, blockId, viewId) || views[0];
+		if (viewId) {
+			view = S.Record.getView(rootId, blockId, viewId);
+		};
+
+		if (!view) {
+			const views = S.Record.getViews(rootId, blockId);
+			if (views.length) {
+				view = views[0];
+			};
+		};
+
+		return view;
 	};
 
 	isCollection (rootId: string, blockId: string): boolean {
-		const object = detailStore.get(rootId, rootId, [ 'layout' ], true);
-		const isInline = !UtilObject.getSystemLayouts().includes(object.layout);
+		const object = S.Detail.get(rootId, rootId, [ 'layout' ], true);
+		const isInline = !U.Object.isInSystemLayouts(object.layout);
 
 		if (!isInline) {
-			return object.layout == I.ObjectLayout.Collection;
+			return U.Object.isCollectionLayout(object.layout);
 		};
 
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return false;
 		};
 
 		const { targetObjectId, isCollection } = block.content;
-		const target = targetObjectId ? detailStore.get(rootId, targetObjectId, [ 'layout' ], true) : null;
+		const target = targetObjectId ? S.Detail.get(rootId, targetObjectId, [ 'layout' ], true) : null;
 
-		return target ? target.layout == I.ObjectLayout.Collection : isCollection;
+		return target ? U.Object.isCollectionLayout(target.layout) : isCollection;
+	};
+
+	loadGroupList (rootId: string, blockId: string, viewId: string, object: any) {
+		const view = this.getView(rootId, blockId, viewId);
+		const block = S.Block.getLeaf(rootId, blockId);
+
+		if (!view || !block) {
+			return;
+		};
+
+		const subId = S.Record.getGroupSubId(rootId, block.id, 'groups');
+		const isCollection = U.Object.isCollectionLayout(object.layout);
+
+		S.Record.groupsClear(rootId, block.id);
+
+		const relation = S.Record.getRelationByKey(view.groupRelationKey);
+		if (!relation) {
+			return;
+		};
+
+		const groupOrder: any = {};
+		const el = block.content.groupOrder.find(it => it.viewId == view.id);
+
+		if (el) {
+			el.groups.forEach(it => groupOrder[it.groupId] = it);
+		};
+
+		C.ObjectGroupsSubscribe(S.Common.space, subId, view.groupRelationKey, view.filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const groups = (message.groups || []).map((it: any) => {
+				let bgColor = 'grey';
+				let value: any = it.value;
+				let option: any = null;
+
+				switch (relation.format) {
+					case I.RelationType.MultiSelect:
+						value = Relation.getArrayValue(value);
+						if (value.length) {
+							option = S.Detail.get(J.Constant.subId.option, value[0]);
+							bgColor = option?.color;
+						};
+						break;
+
+					case I.RelationType.Select:
+						option = S.Detail.get(J.Constant.subId.option, value);
+						bgColor = option?.color;
+						break;
+				};
+
+				it.isHidden = groupOrder[it.id]?.isHidden;
+				it.bgColor = groupOrder[it.id]?.bgColor || bgColor;
+				return it;
+			});
+
+			S.Record.groupsSet(rootId, block.id, this.applyGroupOrder(rootId, block.id, view.id, groups));
+		});
+	};
+
+	getGroupFilter (relation: any, value: any): I.Filter {
+		const filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
+
+		switch (relation.format) {
+			default: {
+				filter.condition = I.FilterCondition.Equal;
+				filter.value = value;
+				break;
+			};
+
+			case I.RelationType.Select: {
+				filter.condition = value ? I.FilterCondition.Equal : I.FilterCondition.Empty;
+				filter.value = value ? value : null;
+				break;
+			};
+
+			case I.RelationType.MultiSelect: {
+				value = Relation.getArrayValue(value);
+				filter.condition = value.length ? I.FilterCondition.ExactIn : I.FilterCondition.Empty;
+				filter.value = value.length ? value : null;
+				break;
+			};
+		};
+		return filter;
+	};
+
+	getGroups (rootId: string, blockId: string, viewId: string, withHidden: boolean) {
+		const groups = U.Common.objectCopy(S.Record.getGroups(rootId, blockId));
+		const ret = this.applyGroupOrder(rootId, blockId, viewId, groups);
+
+		return !withHidden ? ret.filter(it => !it.isHidden) : ret;
 	};
 
 	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
@@ -214,16 +315,16 @@ class Dataview {
 			el.groups = groups;
 		};
 
-		blockStore.updateContent(rootId, blockId, block.content);
+		S.Block.updateContent(rootId, blockId, block.content);
 	};
 
 	groupOrderUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
 
-		const groupOrder = UtilCommon.objectCopy(block.content.groupOrder);
+		const groupOrder = U.Common.objectCopy(block.content.groupOrder);
 		const idx = groupOrder.findIndex(it => it.viewId == viewId);
 
 		if (idx >= 0) {
@@ -232,7 +333,35 @@ class Dataview {
 			groupOrder.push({ viewId, groups });
 		};
 
-		blockStore.updateContent(rootId, blockId, { groupOrder });
+		S.Block.updateContent(rootId, blockId, { groupOrder });
+	};
+
+	applyGroupOrder (rootId: string, blockId: string, viewId: string, groups: any[]) {
+		if (!viewId || !groups.length) {
+			return groups;
+		};
+
+		const block = S.Block.getLeaf(rootId, blockId);
+		if (!block) {
+			return groups;
+		};
+
+		const el = block.content.groupOrder.find(it => it.viewId == viewId);
+		const groupOrder: any = {};
+
+		if (el) {
+			el.groups.forEach(it => groupOrder[it.groupId] = it);
+		};
+
+		groups.sort((c1: any, c2: any) => {
+			const idx1 = groupOrder[c1.id]?.index;
+			const idx2 = groupOrder[c2.id]?.index;
+			if (idx1 > idx2) return 1;
+			if (idx1 < idx2) return -1;
+			return 0;
+		});
+
+		return groups;
 	};
 
 	applyObjectOrder (rootId: string, blockId: string, viewId: string, groupId: string, records: string[]): string[] {
@@ -242,7 +371,7 @@ class Dataview {
 			return records;
 		};
 
-		const block = blockStore.getLeaf(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return records;
 		};
@@ -282,23 +411,27 @@ class Dataview {
 		];
 		const details: any = {};
 
-		let group = null;
-
-		if (groupId) {
-			group = dbStore.getGroup(rootId, blockId, groupId);
-			if (group) {
-				details[view.groupRelationKey] = group.value;
-			};
-		};
-
 		if (relations.length) {
-			relations.forEach((it: any) => {
-				details[it.relationKey] = Relation.formatValue(it, null, true);
+			relations.forEach(it => {
+				details[it.relationKey] = Relation.formatValue(it, details[it.relationKey] || null, true);
 			});
 		};
 
-		if ((view.type == I.ViewType.Calendar) && view.groupRelationKey) {
-			details[view.groupRelationKey] = UtilDate.now();
+		if (!view) {
+			return details;
+		};
+
+		if (view.groupRelationKey && ('undefined' == typeof(details[view.groupRelationKey]))) {
+			if (groupId) {
+				const group = S.Record.getGroup(rootId, blockId, groupId);
+				if (group) {
+					details[view.groupRelationKey] = group.value;
+				};
+			};
+
+			if (view.type == I.ViewType.Calendar) {
+				details[view.groupRelationKey] = U.Date.now();
+			};
 		};
 
 		for (const filter of view.filters) {
@@ -311,7 +444,7 @@ class Dataview {
 				continue;
 			};
 
-			const relation = dbStore.getRelationByKey(filter.relationKey);
+			const relation = S.Record.getRelationByKey(filter.relationKey);
 			if (relation && !relation.isReadonlyValue) {
 				details[filter.relationKey] = Relation.formatValue(relation, value, true);
 			};
@@ -324,32 +457,32 @@ class Dataview {
 		const view = this.getView(rootId, blockId, viewId);
 		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
-		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation).map(it => it.id).length;
+		const isAllowedDefaultType = this.isCollection(rootId, blockId) || !!relations.length;
+
+		if (view && view.defaultTypeId && isAllowedDefaultType) {
+			return view.defaultTypeId;
+		};
 
 		let typeId = '';
+
 		if (types.length) {
 			typeId = types[0].id;
 		} else
 		if (relations.length) {
 			for (const item of relations) {
-				if (item.objectTypes.length) {
-					const first = dbStore.getTypeById(item.objectTypes[0]);
+				if (!item.objectTypes.length) {
+					continue;
+				};
 
-					if (first && !UtilObject.isFileLayout(first.recommendedLayout) && !UtilObject.isSystemLayout(first.recommendedLayout)) {
-						typeId = first.id;
-						break;
-					};
+				const first = S.Record.getTypeById(item.objectTypes[0]);
+				if (first && !U.Object.isInFileOrSystemLayouts(first.recommendedLayout)) {
+					typeId = first.id;
+					break;
 				};
 			};
 		};
-		if (view && view.defaultTypeId && isAllowedDefaultType) {
-			typeId = view.defaultTypeId;
-		};
-		if (!typeId) {
-			typeId = commonStore.type;
-		};
 
-		return typeId;
+		return typeId || S.Common.type;
 	};
 
 	getCreateTooltip (rootId: string, blockId: string, objectId: string, viewId: string): string {
@@ -359,20 +492,58 @@ class Dataview {
 			return translate('blockDataviewCreateNewTooltipCollection');
 		} else {
 			const typeId = this.getTypeId(rootId, blockId, objectId, viewId);
-			const type = dbStore.getTypeById(typeId);
+			const type = S.Record.getTypeById(typeId);
 
 			if (type) {
-				return UtilCommon.sprintf(translate('blockDataviewCreateNewTooltipType'), type.name);
+				return U.Common.sprintf(translate('blockDataviewCreateNewTooltipType'), type.name);
 			};
 		};
-		return translate('blockDataviewCreateNew');
+		return translate('commonCreateNewObject');
 	};
 
 	viewUpdate (rootId: string, blockId: string, viewId: string, param: Partial<I.View>, callBack?: (message: any) => void) {
-		const view = UtilCommon.objectCopy(dbStore.getView(rootId, blockId, viewId));
+		const view = U.Common.objectCopy(S.Record.getView(rootId, blockId, viewId));
 		if (view) {
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, Object.assign(view, param), callBack);
 		};
+	};
+
+	getCoverObject (subId: string, object: any, relationKey: string): any {
+		if (!relationKey) {
+			return null;
+		};
+
+		const value = Relation.getArrayValue(object[relationKey]);
+		const layouts = [
+			I.ObjectLayout.Image,
+			I.ObjectLayout.Audio,
+			I.ObjectLayout.Video,
+		];
+
+		let ret = null;
+		if (relationKey == J.Relation.pageCover) {
+			ret = object;
+		} else {
+			for (const id of value) {
+				const file = S.Detail.get(subId, id, []);
+				if (file._empty_ || !layouts.includes(file.layout)) {
+					continue;
+				};
+
+				ret = file;
+				break;
+			};
+		};
+
+		if (!ret || ret._empty_) {
+			return null;
+		};
+
+		if (!ret.coverId && !ret.coverType && !layouts.includes(ret.layout)) {
+			return null;
+		};
+
+		return ret;
 	};
 
 };

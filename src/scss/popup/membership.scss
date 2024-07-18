@@ -71,7 +71,7 @@
                     .title { @include text-paragraph; font-weight: 700; margin-bottom: 14px; }
 
                     .valid { 
-						display: flex; flex-direction: column; justify-content: space-between; height: 152px; padding: 43px 0 10px; margin-bottom: 26px; 
+						display: flex; flex-direction: column; justify-content: space-between; height: 152px; padding: 43px 0 10px; margin-bottom: 16px;
 						border-radius: 8px; background: var(--color-shape-highlight-light-solid); 
 					}
                     .valid {
@@ -80,7 +80,9 @@
                         .label.paymentMethod { color: var(--color-text-secondary); }
                     }
 
-                    .emailVerification { text-align: left; }
+                    .button { margin-top: 4px; }
+
+                    .emailVerification { text-align: left; padding-top: 10px; }
                     .emailVerification {
                         .title { @include text-common; font-weight: 400; margin: 0px 0px 6px 0px; }
                         .label { color: var(--color-text-secondary); margin-bottom: 14px; }
@@ -88,6 +90,17 @@
 						.statusBar:empty { display: none; }
 						.button { margin: 10px 0px 0px 0px; }
                     }
+                }
+
+                .disclaimer,
+                .manageText,
+                .paidOnOtherPlatform { @include text-small; color: var(--color-text-secondary); padding-top: 6px; }
+                .disclaimer {
+                    a { color: var(--color-text-secondary); }
+                }
+                .paidOnOtherPlatform { text-align: center; margin: 0 8px; }
+                .platformLabel {
+                    .button { margin-top: 8px; }
                 }
             }
         }

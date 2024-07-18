@@ -2,11 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
-import { I, Relation, UtilData, UtilCommon, UtilObject } from 'Lib';
-import { dbStore, detailStore } from 'Store';
+import { I, S, U, J, Relation, Dataview } from 'Lib';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
-const Constant = require('json/constant.json');
 
 const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewComponent> {
 
@@ -22,7 +20,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	constructor (props: I.ViewComponent) {
 		super(props);
 
-		const { height } = Constant.size.dataview.gallery;
+		const { height } = J.Size.dataview.gallery;
 
 		this.cache = new CellMeasurerCache({
 			defaultHeight: height,
@@ -38,10 +36,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const { rootId, block, isPopup, isInline, className, getView, getKeys, getLimit, getVisibleRelations, onRecordAdd, getEmpty, getRecords } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = S.Record.getSubId(rootId, block.id);
 		const records = getRecords();
 		const { coverRelationKey, cardSize, hideIcon } = view;
-		const { offset, total } = dbStore.getMeta(subId, '');
+		const { offset, total } = S.Record.getMeta(subId, '');
 		const limit = getLimit();
 		const cn = [ 'viewContent', className ];
 		const cardHeight = this.getCardHeight();
@@ -55,13 +53,13 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 		// Subscriptions on dependent objects
 		for (const id of records) {
-			const item = detailStore.get(subId, id, getKeys(view.id));
+			const item = S.Detail.get(subId, id, getKeys(view.id));
 			if (item._empty_) {
 				continue;
 			};
 		
 			for (const k in item) {
-				const relation = dbStore.getRelationByKey(k);
+				const relation = S.Record.getRelationByKey(k);
 				if (!relation || ![ I.RelationType.Object, I.RelationType.File ].includes(relation.format)) {
 					continue;
 				};
@@ -69,7 +67,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 				const v = Relation.getArrayValue(item[k]);
 				if (v && v.length) {
 					v.forEach((it: string) => {
-						const object = detailStore.get(rootId, it, []);
+						const object = S.Detail.get(rootId, it, []);
 					});
 				};
 			};
@@ -152,7 +150,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		return (
 			<div className="wrap">
 				<div className={cn.join(' ')}>
-					<div className={[ 'galleryWrap', UtilData.cardSizeClass(cardSize) ].join(' ')}>
+					<div className={[ 'galleryWrap', U.Data.cardSizeClass(cardSize) ].join(' ')}>
 						{content}
 					</div>
 
@@ -198,7 +196,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return;
 		};
 
-		const { margin } = Constant.size.dataview.gallery;
+		const { margin } = J.Size.dataview.gallery;
 
 		let size = 0;
 		switch (view.cardSize) {
@@ -219,20 +217,20 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	loadMoreCards ({ startIndex, stopIndex }) {
 		const { rootId, block, loadData, getView, getLimit } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
-		let { offset } = dbStore.getMeta(subId, '');
+		const subId = S.Record.getSubId(rootId, block.id);
+		let { offset } = S.Record.getMeta(subId, '');
 		const view = getView();
 
 		return new Promise((resolve, reject) => {
 			offset += getLimit();
 			loadData(view.id, offset, false, resolve);
-			dbStore.metaSet(subId, '', { offset });
+			S.Record.metaSet(subId, '', { offset });
 		});
 	};
 
 	getRecords () {
 		const { getRecords, isAllowedObject } = this.props;
-		const records = UtilCommon.objectCopy(getRecords());
+		const records = U.Common.objectCopy(getRecords());
 		
 		if (isAllowedObject()) {
 			records.push('add-record');
@@ -275,12 +273,12 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	getCardHeight (): number {
 		const { getVisibleRelations } = this.props;
 		const relations = getVisibleRelations();
-		const size = Constant.size.dataview.gallery;
+		const size = J.Size.dataview.gallery;
 
 		let height = size.padding * 2 + size.margin - 4;
 
 		relations.forEach(it => {
-			const relation = dbStore.getRelationByKey(it.relationKey);
+			const relation = S.Record.getRelationByKey(it.relationKey);
 
 			if (!relation) {
 				return;
@@ -319,35 +317,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return null;
 		};
 
-		const subId = dbStore.getSubId(rootId, block.id);
-		const record = detailStore.get(subId, id, getKeys(view.id));
-		const value = Relation.getArrayValue(record[view.coverRelationKey]);
-		const fileLayouts = UtilObject.getFileLayouts();
+		const subId = S.Record.getSubId(rootId, block.id);
+		const record = S.Detail.get(subId, id, getKeys(view.id));
 
-		let object = null;
-		if (view.coverRelationKey == Constant.pageCoverRelationKey) {
-			object = record;
-		} else {
-			for (const id of value) {
-				const file = detailStore.get(subId, id, []);
-				if (file._empty_ || !fileLayouts.includes(file.layout)) {
-					continue;
-				};
-
-				object = file;
-				break;
-			};
-		};
-
-		if (!object || object._empty_) {
-			return null;
-		};
-
-		if (!object.coverId && !object.coverType && !fileLayouts.includes(object.layout)) {
-			return null;
-		};
-
-		return object;
+		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
 	};
 
 });

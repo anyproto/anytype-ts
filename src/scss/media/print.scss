@@ -20,7 +20,9 @@ html.printMedia {
 	.sidebarDummy,
 	.progress,
 	.toast,
-	.focusable.isFocused::before
+	.focusable.isFocused::before,
+	#vault,
+	#sidebarToggle
 	{ display: none !important; }
 
 	#page.isFull { width: 100% !important; }
@@ -46,7 +48,8 @@ html.printMedia {
 		#editorSize { display: none !important; }
 	}
 
-	.pageMainEdit #bodyWrapper { padding: 0px !important; }
+	#bodyWrapper { padding: 0px !important; }
+
 	.pageMainType, .pageMainRelation {
 		.wrapper { padding: 2cm 0px; }
 		.wrapper {

@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, ObjectName } from 'Component';
-import { I, C, UtilObject, UtilMenu, UtilCommon, UtilFile, translate, Preview, analytics, UtilDate, Action, UtilSpace } from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore, commonStore, authStore, dbStore, detailStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { Icon, Title, Label, Input, IconObject, Button, ProgressBar, Error, ObjectName } from 'Component';
+import { I, C, S, U, J, translate, Preview, analytics, Action, Storage } from 'Lib';
 
 interface State {
 	error: string;
@@ -37,30 +35,31 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		this.onUpgrade = this.onUpgrade.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onMoreLink = this.onMoreLink.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 	};
 
 	render () {
 		const { onPage, onSpaceTypeTooltip } = this.props;
 		const { error, cid, key } = this.state;
-		const { spaceStorage, isOnline } = commonStore;
+		const { spaceStorage, isOnline } = S.Common;
 		const { localUsage, bytesLimit } = spaceStorage;
-		const { account, accountSpaceId } = authStore;
-		const spaces = UtilSpace.getList();
-		const space = UtilSpace.getSpaceview();
-		const creator = detailStore.get(Constant.subId.space, space.creator);
-		const home = UtilSpace.getDashboard();
-		const type = dbStore.getTypeById(commonStore.type);
-		const personalSpace = UtilSpace.getSpaceviewBySpaceId(accountSpaceId);
+		const { account, accountSpaceId } = S.Auth;
+		const spaces = U.Space.getList();
+		const space = U.Space.getSpaceview();
+		const creator = S.Detail.get(J.Constant.subId.space, space.creator);
+		const home = U.Space.getDashboard();
+		const type = S.Record.getTypeById(S.Common.type);
+		const personalSpace = U.Space.getSpaceviewBySpaceId(accountSpaceId);
 		const usageCn = [ 'item' ];
 
 		const requestCnt = this.getRequestCnt();
 		const sharedCnt = this.getSharedCnt();
 
 		const hasLink = cid && key;
-		const isOwner = UtilSpace.isMyOwner();
-		const canWrite = UtilSpace.canMyParticipantWrite();
+		const isOwner = U.Space.isMyOwner();
+		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = space.targetSpaceId != accountSpaceId;
-		const isShareActive = UtilSpace.isShareActive();
+		const isShareActive = U.Space.isShareActive();
 
 		let bytesUsed = 0;
 		let buttonUpgrade = null;
@@ -69,16 +68,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		let canMembers = !isOwner && space.isShared;
 
 		const progressSegments = (spaces || []).map(space => {
-			const object: any = commonStore.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
+			const object: any = S.Common.spaceStorage.spaces.find(it => it.spaceId == space.targetSpaceId) || {};
 			const usage = Number(object.bytesUsage) || 0;
-			const isOwner = UtilSpace.isMyOwner(space.targetSpaceId);
+			const isOwner = U.Space.isMyOwner(space.targetSpaceId);
 
 			if (!isOwner) {
 				return null;
 			};
 
 			bytesUsed += usage;
-			return { name: space.name, caption: UtilFile.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
+			return { name: space.name, caption: U.File.size(usage), percent: usage / bytesLimit, isActive: space.isActive };
 		}).filter(it => it);
 		const isRed = (bytesUsed / bytesLimit >= STORAGE_FULL) || (localUsage > bytesLimit);
 
@@ -89,11 +88,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		if (isRed) {
 			usageCn.push('red');
-			buttonUpgrade = <Button className="payment" text={translate('popupSettingsSpaceIndexRemoteStorageUpgradeText')} onClick={this.onUpgrade} />
+			buttonUpgrade = <Button className="payment" text={translate('popupSettingsSpaceIndexRemoteStorageUpgradeText')} onClick={this.onUpgrade} />;
 		};
 
 		if (requestCnt) {
-			requestCaption = <Label text={UtilCommon.sprintf('%d %s', requestCnt, UtilCommon.plural(requestCnt, translate('pluralRequest')))} className="caption" />;
+			requestCaption = <Label text={U.Common.sprintf('%d %s', requestCnt, U.Common.plural(requestCnt, translate('pluralRequest')))} className="caption" />;
 		};
 
 		return (
@@ -149,7 +148,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<div className="sectionContent">
 
 							{space.isPersonal ? (
-								<div className="item isDefault">
+								<div className="item isDefault" onClick={this.onAdd}>
 									<div className="sides">
 										<div className="side left">
 											<Title text={translate('popupSettingsSpaceIndexShareShareTitle')} />
@@ -193,7 +192,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 									<div className="inviteLinkWrapper">
 										<div className="inputWrapper">
-											<Input ref={ref => this.refInput = ref} readonly={true} value={UtilSpace.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
+											<Input ref={ref => this.refInput = ref} readonly={true} value={U.Space.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
 											<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
 										</div>
 									</div>
@@ -261,7 +260,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 											<div className="side left">
 												<Title text={translate(`popupSettingsSpaceIndexRemoteStorageTitle`)} />
 												<div className="storageLabel">
-													<Label text={UtilCommon.sprintf(translate(`popupSettingsSpaceIndexStorageText`), UtilFile.size(bytesLimit))} />
+													<Label text={U.Common.sprintf(translate(`popupSettingsSpaceIndexStorageText`), U.File.size(bytesLimit))} />
 												</div>
 											</div>
 											<div className="side right">
@@ -276,7 +275,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 											</div>
 										</div>
 
-										<ProgressBar segments={progressSegments} current={UtilFile.size(bytesUsed)} max={UtilFile.size(bytesLimit)} />
+										<ProgressBar segments={progressSegments} current={U.File.size(bytesUsed)} max={U.File.size(bytesLimit)} />
 
 										{buttonUpgrade}
 									</div>
@@ -362,7 +361,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 							<div
 								className="item"
-								onClick={() => UtilCommon.copyToast(translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId)}
+								onClick={() => U.Common.copyToast(translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.targetSpaceId)}
 							>
 								<div className="sides">
 									<div className="side left">
@@ -377,7 +376,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 							<div 
 								className="item" 
-								onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
+								onClick={() => U.Common.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
 							>
 								<div className="sides">
 									<div className="side left">
@@ -392,7 +391,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 							<div
 								className="item"
-								onClick={() => UtilCommon.copyToast(translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId)}
+								onClick={() => U.Common.copyToast(translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId)}
 							>
 								<div className="sides">
 									<div className="side left">
@@ -410,7 +409,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									<div className="sides">
 										<div className="side left">
 											<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
-											<Label text={UtilDate.date(UtilDate.dateFormat(I.DateFormat.MonthAbbrBeforeDay), space.createdDate)} />
+											<Label text={U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrBeforeDay), space.createdDate)} />
 										</div>
 									</div>
 								</div>
@@ -440,15 +439,15 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	componentWillUnmount(): void {
-		menuStore.closeAll([ 'select', 'searchObject' ]);
+		S.Menu.closeAll([ 'select', 'searchObject' ]);
 	};
 
 	init () {
 		const { cid, key } = this.state;
-		const space = UtilSpace.getSpaceview();
+		const space = U.Space.getSpaceview();
 
 		if (space.isShared && !cid && !key) {
-			C.SpaceInviteGetCurrent(commonStore.space, (message: any) => {
+			C.SpaceInviteGetCurrent(S.Common.space, (message: any) => {
 				if (!message.error.code) {
 					this.setInvite(message.inviteCid, message.inviteKey);
 				};
@@ -461,22 +460,22 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onDashboard () {
-		UtilMenu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
+		U.Menu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
 	};
 
 	onType (e: any) {
 		const { getId } = this.props;
 
-		menuStore.open('typeSuggest', {
+		S.Menu.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 				],
 				onClick: (item: any) => {
-					commonStore.typeSet(item.uniqueKey);
+					S.Common.typeSet(item.uniqueKey);
 					analytics.event('DefaultTypeChange', { objectType: item.uniqueKey, route: analytics.route.settings });
 					this.forceUpdate();
 				},
@@ -485,22 +484,22 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onName (e: any, v: string) {
-		C.WorkspaceSetInfo(commonStore.space, { name: this.checkName(v) });
+		C.WorkspaceSetInfo(S.Common.space, { name: this.checkName(v) });
 	};
 
 	onSelect (icon: string) {
 		if (!icon) {
-			C.WorkspaceSetInfo(commonStore.space, { iconImage: '' });
+			C.WorkspaceSetInfo(S.Common.space, { iconImage: '' });
 		};
 	};
 
 	onUpload (objectId: string) {
-		C.WorkspaceSetInfo(commonStore.space, { iconImage: objectId });
+		C.WorkspaceSetInfo(S.Common.space, { iconImage: objectId });
 	};
 
 	onDelete () {
 		this.props.close(() => {
-			Action.removeSpace(commonStore.space, 'Settings', (message: any) => {
+			Action.removeSpace(S.Common.space, 'Settings', (message: any) => {
 				if (message.error.code) {
 					this.setState({ error: message.error.description });
 				};
@@ -509,13 +508,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onUpgrade () {
-		const { membership } = authStore;
+		const { membership } = S.Auth;
 
 		if (membership.tier >= I.TierType.CoCreator) {
 			Action.membershipUpgrade();
 		} else {
 			this.props.close(() => {
-				popupStore.open('settings', { data: { page: 'membership' } });
+				S.Popup.open('settings', { data: { page: 'membership' } });
 			});
 		};
 
@@ -528,7 +527,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			return;
 		};
 
-		UtilCommon.copyToast('', UtilSpace.getInviteLink(cid, key), translate('toastInviteCopy'));
+		U.Common.copyToast('', U.Space.getInviteLink(cid, key), translate('toastInviteCopy'));
 		analytics.event('ClickShareSpaceCopyLink');
 	};
 
@@ -536,11 +535,30 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { getId } = this.props;
 		const { cid, key } = this.state;
 
-		UtilMenu.inviteContext({
+		U.Menu.inviteContext({
 			containerId: getId(),
 			cid,
 			key,
 			onInviteRevoke: () => this.setInvite('', ''),
+		});
+	};
+
+	onAdd () {
+		if (!U.Space.canCreateSpace()) {
+			return;
+		};
+
+		S.Popup.closeAll(null, () => {
+			S.Popup.open('settings', { 
+				className: 'isSpaceCreate',
+				data: { 
+					page: 'spaceCreate', 
+					isSpace: true,
+					onCreate: (id) => {
+						U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
+					},
+				}, 
+			});
 		});
 	};
 
@@ -555,11 +573,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	getRequestCnt (): number {
-		return UtilSpace.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]).length;
+		return U.Space.getParticipantsList([ I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]).length;
 	};
 
 	getSharedCnt (): number {
-		return UtilSpace.getList().filter(it => it.isShared && UtilSpace.isMyOwner(it.targetSpaceId)).length;
+		return U.Space.getList().filter(it => it.isShared && U.Space.isMyOwner(it.targetSpaceId)).length;
 	};
 
 });

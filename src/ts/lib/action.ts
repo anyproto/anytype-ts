@@ -1,12 +1,10 @@
-import { I, C, focus, analytics, Onboarding, Renderer, Preview, UtilCommon, UtilObject, UtilSpace, Storage, UtilData, UtilRouter, UtilMenu, translate, Mapper, keyboard } from 'Lib';
-import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, U, J, focus, analytics, Onboarding, Renderer, Preview, Storage, translate, Mapper, keyboard } from 'Lib';
 
 class Action {
 
 	pageClose (rootId: string, withCommand: boolean) {
-		const { root, widgets } = blockStore;
-		const { space } = commonStore;
+		const { root, widgets } = S.Block;
+		const { space } = S.Common;
 
 		// Prevent closing of system objects
 		if ([ root, widgets ].includes(rootId)) {
@@ -14,7 +12,7 @@ class Action {
 		};
 
 		const onClose = () => {
-			const blocks = blockStore.getBlocks(rootId, it => it.isDataview());
+			const blocks = S.Block.getBlocks(rootId, it => it.isDataview());
 
 			for (const block of blocks) {
 				this.dbClearBlock(rootId, block.id);
@@ -22,8 +20,7 @@ class Action {
 
 			this.dbClearRoot(rootId);
 
-			blockStore.clear(rootId);
-			authStore.threadRemove(rootId);
+			S.Block.clear(rootId);
 		};
 
 		onClose();
@@ -38,9 +35,9 @@ class Action {
 			return;
 		};
 
-		dbStore.metaClear(rootId, '');
-		dbStore.recordsClear(rootId, '');
-		detailStore.clear(rootId);
+		S.Record.metaClear(rootId, '');
+		S.Record.recordsClear(rootId, '');
+		S.Detail.clear(rootId);
 
 		C.ObjectSearchUnsubscribe([ rootId ]);
 	};
@@ -50,14 +47,14 @@ class Action {
 			return;
 		};
 
-		const subId = dbStore.getSubId(rootId, blockId);
+		const subId = S.Record.getSubId(rootId, blockId);
 
-		dbStore.metaClear(subId, '');
-		dbStore.recordsClear(subId, '');
-		dbStore.recordsClear(subId + '/dep', '');
-		dbStore.viewsClear(rootId, blockId);
+		S.Record.metaClear(subId, '');
+		S.Record.recordsClear(subId, '');
+		S.Record.recordsClear(subId + '/dep', '');
+		S.Record.viewsClear(rootId, blockId);
 
-		detailStore.clear(subId);
+		S.Detail.clear(subId);
 
 		C.ObjectSearchUnsubscribe([ subId ]);
 	};
@@ -84,7 +81,7 @@ class Action {
 			return;
 		};
 		
-		const url = block.isFileImage() ? commonStore.imageUrl(targetObjectId, 1000000) : commonStore.fileUrl(targetObjectId);
+		const url = block.isFileImage() ? S.Common.imageUrl(targetObjectId, 1000000) : S.Common.fileUrl(targetObjectId);
 
 		Renderer.send('download', url, { saveAs: true });
 		analytics.event('DownloadMedia', { type, route });
@@ -128,7 +125,7 @@ class Action {
 	};
 
 	remove (rootId: string, blockId: string, blockIds: string[]) {
-		const next = blockStore.getNextBlock(rootId, blockId, -1, (it: any) => {
+		const next = S.Block.getNextBlock(rootId, blockId, -1, (it: any) => {
 			return it.type == I.BlockType.Text;
 		});
 		
@@ -146,8 +143,8 @@ class Action {
 	};
 
 	removeWidget (id: string, target: any) {
-		const { widgets } = blockStore;
-		const block = blockStore.getLeaf(widgets, id);
+		const { widgets } = S.Block;
+		const block = S.Block.getLeaf(widgets, id);
 
 		if (!block) {
 			return;
@@ -159,7 +156,7 @@ class Action {
 		Storage.setToggle('widget', id, false);
 		Storage.deleteToggle(`widget${id}`);
 
-		const childrenIds = blockStore.getChildrenIds(widgets, id);
+		const childrenIds = S.Block.getChildrenIds(widgets, id);
 		if (childrenIds.length) {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
@@ -168,7 +165,7 @@ class Action {
 	};
 
 	focusToEnd (rootId: string, id: string) {
-		const block = blockStore.getLeaf(rootId, id);
+		const block = S.Block.getLeaf(rootId, id);
 		if (!block) {
 			return;
 		};
@@ -178,7 +175,19 @@ class Action {
 		focus.apply();
 	};
 
-	openFile (extensions: string[], callBack?: (paths: string[]) => void) {
+	openFile (id: string) {
+		if (!id) {
+			return;
+		};
+
+		C.FileDownload(id, U.Common.getElectron().tmpPath, (message: any) => {
+			if (message.path) {
+				Renderer.send('pathOpen', message.path);
+			};
+		});
+	};
+
+	openFileDialog (extensions: string[], callBack?: (paths: string[]) => void) {
 		const options: any = { 
 			properties: [ 'openFile' ], 
 		};
@@ -189,7 +198,7 @@ class Action {
 			];
 		};
 		
-		UtilCommon.getElectron().showOpenDialog(options).then(({ filePaths }) => {
+		U.Common.getElectron().showOpenDialog(options).then(({ filePaths }) => {
 			if ((typeof filePaths === 'undefined') || !filePaths.length) {
 				return;
 			};
@@ -200,14 +209,14 @@ class Action {
 		});
 	};
 
-	openDir (param: any, callBack?: (paths: string[]) => void) {
+	openDirectoryDialog (param: any, callBack?: (paths: string[]) => void) {
 		param = Object.assign({}, param);
 
 		const options = Object.assign(param, { 
 			properties: [ 'openDirectory' ],
 		});
 
-		UtilCommon.getElectron().showOpenDialog(options).then(({ filePaths }) => {
+		U.Common.getElectron().showOpenDialog(options).then(({ filePaths }) => {
 			if ((filePaths == undefined) || !filePaths.length) {
 				return;
 			};
@@ -219,7 +228,7 @@ class Action {
 	};
 
 	install (object: any, showToast: boolean, callBack?: (message: any) => void) {
-		C.WorkspaceObjectAdd(commonStore.space, object.id, (message: any) => {
+		C.WorkspaceObjectAdd(S.Common.space, object.id, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -232,16 +241,16 @@ class Action {
 
 			switch (object.layout) {
 				case I.ObjectLayout.Type: {
-					toast = UtilCommon.sprintf(translate('toastObjectTypeAdded'), object.name);
-					subId = Constant.subId.type;
+					toast = U.Common.sprintf(translate('toastObjectTypeAdded'), object.name);
+					subId = J.Constant.subId.type;
 
 					eventParam.objectType = object.id;
 					break;
 				};
 
 				case I.ObjectLayout.Relation: {
-					toast = UtilCommon.sprintf(translate('toastRelationAdded'), object.name);
-					subId = Constant.subId.relation;
+					toast = U.Common.sprintf(translate('toastRelationAdded'), object.name);
+					subId = J.Constant.subId.relation;
 
 					eventParam.relationKey = object.relationKey;
 					break;
@@ -252,7 +261,7 @@ class Action {
 				Preview.toastShow({ text: toast });
 			};
 
-			detailStore.update(subId, { id: details.id, details }, false);
+			S.Detail.update(subId, { id: details.id, details }, false);
 			analytics.event('ObjectInstall', eventParam);
 
 			if (callBack) {
@@ -274,25 +283,25 @@ class Action {
 		
 		switch (object.layout) {
 			case I.ObjectLayout.Type: {
-				title = UtilCommon.sprintf(translate('libActionUninstallTypeTitle'), object.name);
+				title = U.Common.sprintf(translate('libActionUninstallTypeTitle'), object.name);
 				text = translate('libActionUninstallTypeText');
-				toast = UtilCommon.sprintf(translate('toastObjectTypeRemoved'), object.name);
+				toast = U.Common.sprintf(translate('toastObjectTypeRemoved'), object.name);
 
 				eventParam.objectType = object.id;
 				break;
 			};
 
 			case I.ObjectLayout.Relation: {
-				title = UtilCommon.sprintf(translate('libActionUninstallRelationTitle'), object.name);
+				title = U.Common.sprintf(translate('libActionUninstallRelationTitle'), object.name);
 				text = translate('libActionUninstallRelationText');
-				toast = UtilCommon.sprintf(translate('toastRelationRemoved'), object.name);
+				toast = U.Common.sprintf(translate('toastRelationRemoved'), object.name);
 
 				eventParam.relationKey = object.relationKey;
 				break;
 			};
 		};
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title,
 				text,
@@ -321,12 +330,24 @@ class Action {
 	delete (ids: string[], route: string, callBack?: () => void): void {
 		const count = ids.length;
 
+		if (!U.Space.canMyParticipantWrite()) {
+			S.Popup.open('confirm', {
+				data: {
+					title: translate('popupConfirmActionRestrictedTitle'),
+					text: translate('popupConfirmActionRestrictedText'),
+					textConfirm: translate('commonOk'),
+					canCancel: false
+				},
+			});
+			return;
+		};
+
 		analytics.event('ShowDeletionWarning');
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
-				title: UtilCommon.sprintf(translate('commonDeletionWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
-				text: translate('commonDeletionWarningText'),
+				title: U.Common.sprintf(translate('popupConfirmDeleteWarningTitle'), count, U.Common.plural(count, translate('pluralObject'))),
+				text: translate('popupConfirmDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
 					C.ObjectListDelete(ids); 
@@ -350,12 +371,12 @@ class Action {
 	};
 
 	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
-		const { networkConfig } = authStore;
-		const { dataPath } = commonStore;
+		const { networkConfig } = S.Auth;
+		const { dataPath } = S.Common;
 		const { mode, path } = networkConfig;
 
-		this.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], dataPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
+		this.openFileDialog([ 'zip' ], paths => {
+			C.AccountRecoverFromLegacyExport(paths[0], dataPath, U.Common.rand(1, J.Constant.count.icon), (message: any) => {
 				if (onError(message.error)) {
 					return;
 				};
@@ -372,22 +393,22 @@ class Action {
 							return;
 						};
 
-						authStore.accountSet(message.account);
-						commonStore.configSet(message.account.config, false);
+						S.Auth.accountSet(message.account);
+						S.Common.configSet(message.account.config, false);
 
-						UtilData.onInfo(message.account.info);
+						U.Data.onInfo(message.account.info);
 
 						const routeParam = {
 							replace: true,
 							animate: true,
 							onFadeIn: () => {
-								popupStore.open('migration', { data: { type: 'import' } });
-								blockStore.closeRecentWidgets();
+								S.Popup.open('migration', { data: { type: 'import' } });
+								S.Block.closeRecentWidgets();
 							},
 						};
 
-						UtilData.onAuth({ routeParam });
-						UtilData.onAuthOnce(true);
+						U.Data.onAuth({ routeParam });
+						U.Data.onAuthOnce(true);
 					});
 				});
 			});
@@ -431,13 +452,13 @@ class Action {
 			],
 		};
 
-		if (UtilCommon.isPlatformMac()) {
+		if (U.Common.isPlatformMac()) {
 			fileOptions.properties.push('openDirectory');
 		};
 
 		analytics.event('ClickImport', { type });
 
-		UtilCommon.getElectron().showOpenDialog(fileOptions).then((result: any) => {
+		U.Common.getElectron().showOpenDialog(fileOptions).then((result: any) => {
 			const paths = result.filePaths;
 			if ((paths == undefined) || !paths.length) {
 				return;
@@ -445,7 +466,7 @@ class Action {
 
 			analytics.event('ClickImportFile', { type });
 
-			C.ObjectImport(commonStore.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
+			C.ObjectImport(S.Common.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -454,13 +475,13 @@ class Action {
 
 				if (collectionId) {
 					window.setTimeout(() => {
-						popupStore.open('objectManager', { 
+						S.Popup.open('objectManager', { 
 							data: { 
 								collectionId, 
 								type: I.ObjectManagerPopup.Favorites,
 							} 
 						});
-					}, popupStore.getTimeout() + 10);
+					}, S.Popup.getTimeout() + 10);
 				};
 
 				analytics.event('Import', { middleTime: message.middleTime, type, count });
@@ -475,7 +496,7 @@ class Action {
 	export (spaceId: string, ids: string[], type: I.ExportType, param: any, onSelectPath?: () => void, callBack?: (message: any) => void): void {
 		const { zip, nested, files, archived, json, route } = param;
 
-		this.openDir({ buttonLabel: translate('commonExport') }, paths => {
+		this.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
 			if (onSelectPath) {
 				onSelectPath();
 			};
@@ -496,7 +517,7 @@ class Action {
 	};
 
 	copyBlocks (rootId: string, ids: string[], isCut: boolean) {
-		const root = blockStore.getLeaf(rootId, rootId);
+		const root = S.Block.getLeaf(rootId, rootId);
 		if (!root) {
 			return;
 		};
@@ -507,33 +528,38 @@ class Action {
 			return;
 		};
 
-		const range = UtilCommon.objectCopy(focus.state.range);
+		const range = U.Common.objectCopy(focus.state.range);
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
-		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
+		const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
 
-		let blocks = blockStore.unwrapTree(tree).filter(it => ids.includes(it.id));
+		let next = null;
+		let blocks = S.Block.unwrapTree(tree).filter(it => ids.includes(it.id));
 
 		ids.forEach((id: string) => {
-			const block = blockStore.getLeaf(rootId, id);
+			const block = S.Block.getLeaf(rootId, id);
 			if (block && block.isTable()) {
-				blocks = blocks.concat(blockStore.unwrapTree([ blockStore.wrapTree(rootId, block.id) ]));
+				blocks = blocks.concat(S.Block.unwrapTree([ S.Block.wrapTree(rootId, block.id) ]));
 			};
 		});
 
-		blocks = UtilCommon.arrayUniqueObjects(blocks, 'id');
+		blocks = U.Common.arrayUniqueObjects(blocks, 'id');
 		blocks = blocks.map((it: I.Block) => {
-			const element = blockStore.getMapElement(rootId, it.id);
+			const element = S.Block.getMapElement(rootId, it.id);
 
 			if (it.type == I.BlockType.Dataview) {
-				it.content.views = dbStore.getViews(rootId, it.id);
+				it.content.views = S.Record.getViews(rootId, it.id);
 			};
 
 			it.childrenIds = element.childrenIds;
 			return it;
 		});
 
+		if (isCut) {
+			next = S.Block.getNextBlock(rootId, focused, -1, it => it.isFocusable());
+		};
+
 		C[cmd](rootId, blocks, range, (message: any) => {
-			UtilCommon.clipboardCopy({
+			U.Common.clipboardCopy({
 				text: message.textSlot,
 				html: message.htmlSlot,
 				anytype: {
@@ -543,10 +569,14 @@ class Action {
 			});
 
 			if (isCut) {
-				menuStore.closeAll([ 'blockContext', 'blockAction' ]);
+				S.Menu.closeAll([ 'blockContext', 'blockAction' ]);
 
-				focus.set(focused, { from: range.from, to: range.from });
-				focus.apply();
+				if (next) {
+					const l = next.getLength();
+
+					focus.set(next.id, { from: l, to: l });
+					focus.apply();
+				};
 			};
 		});
 
@@ -554,25 +584,25 @@ class Action {
 	};
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
-		const deleted = UtilSpace.getSpaceviewBySpaceId(id);
+		const deleted = U.Space.getSpaceviewBySpaceId(id);
 
 		if (!deleted) {
 			return;
 		};
 
-		const { accountSpaceId } = authStore;
-		const { space } = commonStore;
-		const isOwner = UtilSpace.isMyOwner(id);
-		const name = UtilCommon.shorten(deleted.name, 32);
+		const { accountSpaceId } = S.Auth;
+		const { space } = S.Common;
+		const isOwner = U.Space.isMyOwner(id);
+		const name = U.Common.shorten(deleted.name, 32);
 		const suffix = isOwner ? 'Delete' : 'Leave';
-		const title = UtilCommon.sprintf(translate(`space${suffix}WarningTitle`), name);
-		const text = UtilCommon.sprintf(translate(`space${suffix}WarningText`), name);
-		const toast = UtilCommon.sprintf(translate(`space${suffix}Toast`), name);
+		const title = U.Common.sprintf(translate(`space${suffix}WarningTitle`), name);
+		const text = U.Common.sprintf(translate(`space${suffix}WarningText`), name);
+		const toast = U.Common.sprintf(translate(`space${suffix}Toast`), name);
 		const confirm = isOwner ? translate('commonDelete') : translate('commonLeaveSpace');
 
 		analytics.event(`Click${suffix}Space`, { route });
 
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title,
 				text,
@@ -594,7 +624,7 @@ class Action {
 					};
 
 					if (space == id) {
-						UtilRouter.switchSpace(accountSpaceId, '', cb);
+						U.Router.switchSpace(accountSpaceId, '', false, cb);
 					} else {
 						cb();
 					};
@@ -609,7 +639,7 @@ class Action {
 	leaveApprove (spaceId: string, identities: string[], name: string, route: string, callBack?: (message: any) => void) {
 		C.SpaceLeaveApprove(spaceId, identities, (message: any) => {
 			if (!message.error.code) {
-				Preview.toastShow({ text: UtilCommon.sprintf(translate('toastApproveLeaveRequest'), name) });
+				Preview.toastShow({ text: U.Common.sprintf(translate('toastApproveLeaveRequest'), name) });
 				analytics.event('ApproveLeaveRequest', { route });
 			};
 
@@ -631,7 +661,7 @@ class Action {
 
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {
 		C.ObjectImportUseCase(spaceId, id, (message: any) => {
-			blockStore.closeRecentWidgets();
+			S.Block.closeRecentWidgets();
 
 			if (callBack) {
 				callBack();
@@ -654,23 +684,23 @@ class Action {
 	};
 
 	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition) {
-		const object = detailStore.get(rootId, objectId);
+		const object = S.Detail.get(rootId, objectId);
 
 		let layout = I.WidgetLayout.Link;
 
 		if (object && !object._empty_) {
-			if (UtilObject.isFileOrSystemLayout(object.layout)) {
+			if (U.Object.isInFileOrSystemLayouts(object.layout)) {
 				layout = I.WidgetLayout.Link;
 			} else 
-			if (UtilObject.isSetLayout(object.layout)) {
+			if (U.Object.isInSetLayouts(object.layout)) {
 				layout = I.WidgetLayout.Compact;
 			} else
-			if (UtilObject.isPageLayout(object.layout)) {
+			if (U.Object.isInPageLayouts(object.layout)) {
 				layout = I.WidgetLayout.Tree;
 			};
 		};
 
-		const limit = Number(UtilMenu.getWidgetLimits(layout)[0]?.id) || 0;
+		const limit = Number(U.Menu.getWidgetLimitOptions(layout)[0]?.id) || 0;
 		const newBlock = { 
 			type: I.BlockType.Link,
 			content: { 
@@ -678,13 +708,13 @@ class Action {
 			},
 		};
 
-		C.BlockCreateWidget(blockStore.widgets, targetId, newBlock, position, layout, limit, () => {
+		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, () => {
 			analytics.event('AddWidget', { type: layout });
 		});
 	};
 
 	membershipUpgrade () {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupConfirmMembershipUpgradeTitle'),
 				text: translate('popupConfirmMembershipUpgradeText'),
@@ -692,11 +722,11 @@ class Action {
 				onConfirm: () => keyboard.onMembershipUpgrade(),
 				canCancel: false
 			}
-		})
+		});
 	};
 
 	inviteRevoke (spaceId: string, callBack?: () => void) {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupConfirmRevokeLinkTitle'),
 				text: translate('popupConfirmRevokeLinkText'),
@@ -719,9 +749,10 @@ class Action {
 	};
 
 	welcome () {
-		popupStore.open('confirm', {
+		S.Popup.open('confirm', {
 			className: 'welcome',
-			preventClose: true,
+			preventCloseByClick: true,
+			preventCloseByEscape: true,
 			data: {
 				icon: 'welcome',
 				title: translate('popupConfirmWelcomeTitle'),
@@ -729,13 +760,26 @@ class Action {
 				textConfirm: translate('popupConfirmWelcomeButton'),
 				canCancel: false,
 				onConfirm: () => {
-					popupStore.replace('confirm', 'usecase', {
+					S.Popup.replace('confirm', 'usecase', {
 						onClose: () => {
 							Onboarding.start('dashboard', false, false);
 						}
 					});
 				},
 			},
+		});
+	};
+
+	addToCollection (targetId: string, objectIds: string[]) {
+		const collectionType = S.Record.getCollectionType();
+
+		C.ObjectCollectionAdd(targetId, objectIds, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			Preview.toastShow({ action: I.ToastAction.Collection, objectId: objectIds[0], targetId });
+			analytics.event('LinkToObject', { objectType: collectionType?.id, linkType: 'Collection' });
 		});
 	};
 

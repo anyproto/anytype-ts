@@ -2,9 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
 import { Title, Label, Phrase } from 'Component';
-import { I, C, translate, analytics, UtilCommon, Storage, Renderer } from 'Lib';
-import { commonStore, authStore, popupStore } from 'Store';
-const Theme = require('json/theme.json');
+import { I, C, S, U, J, translate, analytics, Storage, Renderer } from 'Lib';
 
 interface State {
 	entropy: string;
@@ -30,7 +28,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 	render () {
 		const { entropy, showCode } = this.state;
-		const theme = commonStore.getThemeClass();
+		const theme = S.Common.getThemeClass();
 
 		return (
 			<div
@@ -54,7 +52,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 				<div className="qrWrap" onClick={this.onCode}>
 					<div className={!showCode ? 'isBlurred' : ''}>
-						<QRCode value={showCode ? entropy : translate('popupSettingsCodeStub')} fgColor={Theme[theme].qr.foreground} bgColor={Theme[theme].qr.bg} size={116} />
+						<QRCode value={showCode ? entropy : translate('popupSettingsCodeStub')} fgColor={J.Theme[theme].qr.foreground} bgColor={J.Theme[theme].qr.bg} size={116} />
 					</div>
 				</div>
 			</div>
@@ -62,7 +60,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	};
 
 	componentDidMount () {
-		const { account } = authStore;
+		const { account } = S.Auth;
 
 		if (!account) {
 			return;
@@ -71,7 +69,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		Renderer.send('keytarGet', account.id).then((value: string) => {
 			C.WalletConvert(value, '', (message: any) => {
 				if (!message.error.code) {
-					this.refPhrase.setValue(value);
+					this.refPhrase?.setValue(value);
 					this.setState({ entropy: message.entropy });
 				};
 			});
@@ -82,7 +80,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 	onToggle (isHidden: boolean): void {
 		if (!isHidden) {
-			UtilCommon.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
+			U.Common.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
 			analytics.event('KeychainCopy', { type: 'ScreenSettings' });
 		};
 	};
@@ -93,12 +91,12 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 	onCode () {
 		const { showCode } = this.state;
-		const pin = Storage.get('pin');
+		const pin = Storage.getPin();
 		const onSuccess = () => {
 			this.setState({ showCode: !showCode });
 		};
 
-		pin && !showCode ? popupStore.open('pin', { data: { onSuccess } }) : onSuccess();
+		pin && !showCode ? S.Popup.open('pin', { data: { onSuccess } }) : onSuccess();
 	};
 
 });

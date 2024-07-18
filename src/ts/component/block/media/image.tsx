@@ -2,9 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Icon, Error } from 'Component';
-import { I, C, translate, focus, Action, keyboard } from 'Lib';
-import { commonStore, popupStore } from 'Store';
-const Constant = require('json/constant.json');
+import { I, C, S, J, translate, focus, Action, keyboard } from 'Lib';
 
 const BlockImage = observer(class BlockImage extends React.Component<I.BlockComponent> {
 
@@ -29,9 +27,10 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	};
 
 	render () {
-		const { block, readonly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { width } = block.fields || {};
 		const { state, targetObjectId } = block.content;
+		const object = S.Detail.get(rootId, targetObjectId, []);
 		const css: any = {};
 		
 		if (width) {
@@ -39,45 +38,57 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 		};
 		
 		let element = null;
-		switch (state) {
-			default:
-			case I.FileState.Empty:
-				element = (
-					<React.Fragment>
-						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="image" 
-							textFile={translate('blockImageUpload')} 
-							accept={Constant.fileExtension.image} 
-							onChangeUrl={this.onChangeUrl} 
-							onChangeFile={this.onChangeFile} 
-							readonly={readonly} 
-						/>
-					</React.Fragment>
-				);
-				break;
-				
-			case I.FileState.Uploading:
-				element = <Loader />;
-				break;
-				
-			case I.FileState.Done:
-				element = (
-					<div id="wrap" className="wrap" style={css}>
-						<img 
-							className="mediaImage" 
-							src={commonStore.imageUrl(targetObjectId, Constant.size.image)} 
-							onDragStart={e => e.preventDefault()} 
-							onClick={this.onClick} 
-							onLoad={this.onLoad} 
-							onError={this.onError} 
-						/>
-						<Icon className="download" onClick={this.onDownload} />
-						<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
-					</div>
-				);
-				break;
+		if (object.isDeleted) {
+			element = (
+				<div className="deleted">
+					<Icon className="ghost" />
+					<div className="name">{translate('commonDeletedObject')}</div>
+				</div>
+			);
+		} else {
+			switch (state) {
+				default:
+				case I.FileState.Empty: {
+					element = (
+						<React.Fragment>
+							{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
+							<InputWithFile 
+								block={block} 
+								icon="image" 
+								textFile={translate('blockImageUpload')} 
+								accept={J.Constant.fileExtension.image} 
+								onChangeUrl={this.onChangeUrl} 
+								onChangeFile={this.onChangeFile} 
+								readonly={readonly} 
+							/>
+						</React.Fragment>
+					);
+					break;
+				};
+					
+				case I.FileState.Uploading: {
+					element = <Loader />;
+					break;
+				};
+					
+				case I.FileState.Done: {
+					element = (
+						<div id="wrap" className="wrap" style={css}>
+							<img 
+								className="mediaImage" 
+								src={S.Common.imageUrl(targetObjectId, J.Size.image)} 
+								onDragStart={e => e.preventDefault()} 
+								onClick={this.onClick} 
+								onLoad={this.onLoad} 
+								onError={this.onError} 
+							/>
+							<Icon className="download" onClick={this.onDownload} />
+							<Icon className="resize" onMouseDown={e => this.onResizeStart(e, false)} />
+						</div>
+					);
+					break;
+				};
+			};
 		};
 		
 		return (
@@ -144,17 +155,15 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
+		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
 		
 		focus.set(block.id, { from: 0, to: 0 });
 		win.off('mousemove.media mouseup.media');
 		
-		if (selection) {
-			selection.hide();
-		};
+		selection?.hide();
 
 		keyboard.disableSelection(true);		
 		node.addClass('isResizing');
@@ -223,9 +232,9 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	
 	onClick (e: any) {
 		if (!keyboard.withCommand(e)) {
-			const src = commonStore.imageUrl(this.props.block.content.targetObjectId, Constant.size.image);
+			const src = S.Common.imageUrl(this.props.block.content.targetObjectId, J.Size.image);
 
-			popupStore.open('preview', { data: { src, type: I.FileType.Image } });
+			S.Popup.open('preview', { data: { src, type: I.FileType.Image } });
 		};
 	};
 
