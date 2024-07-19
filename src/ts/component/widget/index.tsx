@@ -580,7 +580,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	getMinHeight () {
-		return [ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.props.block.content.layout) ? 8 : 0;
+		return [ I.WidgetLayout.List, I.WidgetLayout.Compact, I.WidgetLayout.Tree ].includes(this.props.block.content.layout) ? 8 : 0;
 	};
 
 	getData (subId: string, callBack?: () => void) {

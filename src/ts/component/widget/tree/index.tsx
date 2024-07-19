@@ -433,7 +433,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const nodes = this.loadTree();
 		const node = $(this.node);
 		const length = nodes.length;
-		const css: any = { height: this.getTotalHeight() + 8, paddingBottom: '' };
+		const css: any = { height: this.getTotalHeight() + 16, paddingBottom: '' };
 		const emptyWrap = node.find('.emptyWrap');
 
 		if (isPreview) {
