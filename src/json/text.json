@@ -1249,7 +1249,7 @@
 
 	"popupShareTitle": "Share Anytype with those you care about",
 	"popupShareLabel": "Thanks for sharing Anytype",
-	"popupShareLinkText": "The everything app for those who celebrate trust & autonomy. <a href=\"%s\">https://simple-sharing.anytype.io/</a>",
+	"popupShareLinkText": "The everything app for those who celebrate trust & autonomy. <a href=\"%s\">%s</a>",
 
 	"menuVaultPeer": "%d\/%d peers",
 	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
