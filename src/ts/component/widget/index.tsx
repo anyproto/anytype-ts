@@ -650,11 +650,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	getFavoriteIds (): string[] {
-		const { root } = S.Block;
-		const ids = S.Block.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
-		const items = ids.map(id => S.Detail.get(root, id)).filter(it => !it.isArchived && !it.isDeleted).map(it => it.id);
-
-		return items;
+		return S.Record.getRecords(this.subId).filter(it => !it.isArchived && !it.isDeleted).map(it => it.id);
 	};
 
 	sortFavorite (records: string[]): string[] {
