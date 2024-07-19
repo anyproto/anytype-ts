@@ -62,8 +62,6 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 							tier = membership.tier;
 						};
 
-						console.log('TIER', tier);
-
 						S.Popup.open('membership', { data: { tier } });
 					} else {
 						this.finalise();

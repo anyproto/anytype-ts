@@ -35,8 +35,6 @@ const PopupMembership = observer(class PopupMembership extends React.Component<I
 
 		let content: any = null;
 
-		console.log(tierItem);
-
 		if (success) {
 			cn.push('success');
 			content = <PageSuccess {...this.props} />;
