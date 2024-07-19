@@ -294,9 +294,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	onAdd () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, getView, getTarget, blockId, isInline } = data;
-		const view = getView();
-		const object = getTarget();
+		const { onSortAdd } = data;
 		const relationOptions = this.getRelationOptions();
 
 		if (!relationOptions.length) {
@@ -310,13 +308,8 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			type: I.SortType.Asc,
 		};
 
-		C.BlockDataviewSortAdd(rootId, blockId, view.id, newItem, () => {
+		onSortAdd(newItem, () => {
 			content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
-			
-			analytics.event('AddSort', {
-				objectType: object.type,
-				embedType: analytics.embedType(isInline)
-			});
 		});
 	};
 

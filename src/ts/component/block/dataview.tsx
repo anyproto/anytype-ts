@@ -78,6 +78,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSelectEnd = this.onSelectEnd.bind(this);
 		this.onSelectToggle = this.onSelectToggle.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onSortAdd = this.onSortAdd.bind(this);
 
 		this.getSearchIds = this.getSearchIds.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
@@ -167,6 +168,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onRecordAdd: this.onRecordAdd,
 			onTemplateMenu: this.onTemplateMenu,
 			onTemplateAdd: this.onTemplateAdd,
+			onSortAdd: this.onSortAdd,
 			isAllowedObject: this.isAllowedObject,
 			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
@@ -1103,6 +1105,27 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		S.Record.recordsSet(subId, '', records);
 		this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
+	};
+
+	onSortAdd (item: any, callBack?: () => void) {
+		const { rootId, block, isInline } = this.props;
+		const view = this.getView();
+		const object = this.getTarget();
+
+		C.BlockDataviewSortAdd(rootId, block.id, view.id, item, () => {
+			if (callBack) {
+				callBack();
+			};
+
+			analytics.event('AddSort', {
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
+			});
+		});
+	};
+
+	onFilterAdd () {
+
 	};
 
 	getIdPrefix () {

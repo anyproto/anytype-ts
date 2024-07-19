@@ -23,6 +23,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		super(props);
 
 		this.onButton = this.onButton.bind(this);
+		this.onButtonEmpty = this.onButtonEmpty.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onViewAdd = this.onViewAdd.bind(this);
@@ -259,10 +260,15 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		const {
 			rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, getTarget, isInline, isCollection,
-			getTypeId, getTemplateId, isAllowedDefaultType, onTemplateAdd,
+			getTypeId, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd
 		} = this.props;
 		const view = getView();
 		const obj = $(element);
+
+		if ((component == 'dataviewSort' && !view.sorts.length)) {
+			this.onButtonEmpty(element, component);
+			return;
+		};
 
 		const param: any = { 
 			element,
@@ -296,6 +302,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				isCollection,
 				isAllowedDefaultType,
 				onTemplateAdd,
+				onSortAdd,
 				onViewSwitch: this.onViewSwitch,
 				onViewCopy: this.onViewCopy,
 				onViewRemove: this.onViewRemove,
@@ -308,6 +315,35 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		S.Menu.open(component, param);
+	};
+
+	onButtonEmpty (element: string, component: string) {
+		const { rootId, block, getView, onSortAdd } = this.props;
+		const options = Relation.getFilterOptions(rootId, block.id, getView());
+
+		S.Menu.open('select', {
+			element,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
+			noFlipY: true,
+			data: {
+				options,
+				onSelect: (e: any, item: any) => {
+					const cb = () => {
+						this.onButton(element, component);
+					};
+
+					if (component == 'dataviewSort') {
+						const newItem = {
+							relationKey: item.id,
+							type: I.SortType.Asc,
+						};
+
+						onSortAdd(newItem, cb);
+					};
+				}
+			}
+		});
 	};
 
 	onViewAdd (e: any) {
