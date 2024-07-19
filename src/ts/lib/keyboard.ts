@@ -588,6 +588,20 @@ class Keyboard {
 				break;
 			};
 
+			case 'debugReconcile': {
+				S.Popup.open('confirm', {
+					data: {
+						text: translate('popupConfirmActionReconcileText'),
+						onConfirm: () => {
+							C.FileReconcile(() => {
+								Preview.toastShow({ text: translate('commonDone') });
+							});
+						},
+					}
+				});
+				break;
+			};
+
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
 				break;

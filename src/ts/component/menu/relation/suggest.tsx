@@ -2,11 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
+import { Filter, Icon, MenuItemVertical, Loader, EmptySearch } from 'Component';
 import { I, S, U, J, analytics, keyboard, Relation, Action, translate } from 'Lib';
 
 interface State {
-	loading: boolean;
+	isLoading: boolean;
 };
 
 const HEIGHT_ITEM = 28;
@@ -16,7 +16,7 @@ const LIMIT = 20;
 const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Component<I.Menu, State> {
 
 	state = {
-		loading: false,
+		isLoading: false,
 	};
 
 	_isMounted = false;
@@ -39,11 +39,12 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 	
 	render () {
-		const { loading } = this.state;
+		const { isLoading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { filter, noFilter } = data;
 		const items = this.getItems();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		if (!this.cache) {
 			return null;
@@ -114,35 +115,41 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					/>
 				) : ''}
 
-				{loading ? <Loader /> : ''}
+				{isLoading ? <Loader /> : ''}
 
-				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length + 1}
-						loadMoreRows={this.loadMoreRows}
-						isRowLoaded={({ index }) => !!items[index]}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={ref => this.refList = ref}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={({ index }) => this.getRowHeight(items[index])}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={LIMIT}
-										scrollToAlignment="center"
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				</div>
+				{!items.length && !isLoading ? (
+					<EmptySearch readonly={!canWrite} filter={filter} />
+				) : ''}
+
+				{this.cache && items.length && !isLoading ? (
+					<div className="items">
+						<InfiniteLoader
+							rowCount={items.length + 1}
+							loadMoreRows={this.loadMoreRows}
+							isRowLoaded={({ index }) => !!items[index]}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={ref => this.refList = ref}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={({ index }) => this.getRowHeight(items[index])}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={LIMIT}
+											scrollToAlignment="center"
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -223,7 +230,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		];
 
 		if (clear) {
-			this.setState({ loading: true });
+			this.setState({ isLoading: true });
 		};
 
 		U.Data.search({
@@ -240,7 +247,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			};
 
 			if (message.error.code) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 				return;
 			};
 
@@ -255,7 +262,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 			} else {
 				this.forceUpdate();
 			};
@@ -466,12 +473,20 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	resize () {
+		const { isLoading } = this.state;
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.min(376, items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (!noFilter ? 42 : 0)));
+
+		let height = 16 + (noFilter ? 0 : 42);
+		if (!items.length) {
+			height = isLoading ? height + 40 : 160;
+		} else {
+			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
+		};
+		height = Math.min(height, 376);
 
 		obj.css({ height });
 		position();
