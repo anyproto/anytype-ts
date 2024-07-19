@@ -83,11 +83,14 @@
 			.info { width: 100%; }
 			.iconObject { background: none; border-radius: 0px; }
 		}
+		.item.withIcon, .item.withIcon {
+			.info { width: calc(100% - 24px); }
+		}
 		.item:hover, .item.active {
 			.info { width: calc(100% - 28px); }
 		}
 		.item.withIcon:hover, .item.withIcon.active {
-			.info { width: calc(100% - 54px); }
+			.info { width: calc(100% - 52px); }
 		}
 		.item::before { border-radius: 6px; }
 	}
