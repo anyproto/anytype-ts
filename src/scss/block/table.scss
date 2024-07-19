@@ -96,7 +96,7 @@
 		}
 
 		.row.isHeader {
-			.cell { background-color: var(--color-shape-tertiary); }
+			.cell, .icon.menu { background-color: var(--color-shape-tertiary); }
 			.block { font-weight: 500; }
 		}
 
@@ -163,12 +163,15 @@
 				.focusable.isFocused { background: none; }
 			}
 
-			.icon.menu { width: 20px; height: 100%; position: absolute; right: 0px; top: 0px; z-index: 2; cursor: default; opacity: 0; pointer-events: none; }
+			.icon.menu { 
+				width: 20px; height: 100%; position: absolute; right: 0px; top: 0px; z-index: 2; cursor: default; opacity: 0; pointer-events: none; 
+				background-color: var(--color-bg-primary); 
+			}
 			.icon.menu {
 				.inner { 
 					width: 8px; height: 20px; border-radius: 4px; background-image: url('~img/icon/table/handle/cell.svg'); background-size: 8px 16px;
 					position: absolute; left: 50%; top: 50%; margin: -10px 0px 0px -4px; background-repeat: no-repeat; background-position: center center; 
-					transition: $transitionAllCommon;
+					transition: $transitionAllCommon; background-color: var(--color-bg-primary); 
 				} 
 			}
 			.icon.menu:hover {
@@ -185,7 +188,7 @@
 								> .editableWrap {
 									#value { display: table-cell; height: 100%; }
 									.placeholder { display: none !important; }
-									#value, .placeholder { padding: 9px 20px 9px 0px; }
+									#value, .placeholder { padding: 9px 9px 9px 0px; }
 								}
 							}
 						}
