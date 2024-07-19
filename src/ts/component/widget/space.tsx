@@ -28,6 +28,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 						object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
 						forceLetter={true} 
 						size={28}
+						iconSize={28}
 						onSelect={this.onSelect}
 						onUpload={this.onUpload}
 						menuParam={{ className: 'fixed' }}

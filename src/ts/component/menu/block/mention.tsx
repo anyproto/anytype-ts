@@ -2,11 +2,11 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
-import { I, S, U, J, keyboard, Mark, translate } from 'Lib';
+import { I, S, U, J, keyboard, Mark, translate, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface State {
-	loading: boolean;
+	isLoading: boolean;
 };
 
 const HEIGHT_ITEM = 28;
@@ -16,7 +16,7 @@ const LIMIT_HEIGHT = 10;
 const MenuBlockMention = observer(class MenuBlockMention extends React.Component<I.Menu, State> {
 
 	state = {
-		loading: false,
+		isLoading: false,
 	};
 
 	_isMounted = false;	
@@ -36,7 +36,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 	
 	render () {
-		const { loading } = this.state;
+		const { isLoading } = this.state;
 		const filter = this.getFilter();
 		const items = this.getItems();
 
@@ -94,7 +94,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		return (
 			<div className="items">
-				{loading ? <Loader /> : (
+				{isLoading ? <Loader /> : (
 					<InfiniteLoader
 						rowCount={items.length}
 						loadMoreRows={this.loadMoreRows}
@@ -133,10 +133,11 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	componentDidUpdate () {
+		const { isLoading } = this.state;
 		const items = this.getItems();
 		const filter = this.getFilter();
 
-		if (this.filter != filter) {
+		if ((this.filter != filter) && !isLoading) {
 			this.filter = filter;
 			this.n = -1;
 			this.offset = 0;
@@ -221,7 +222,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (clear) {
-			this.setState({ loading: true });
+			this.setState({ isLoading: true });
 		};
 
 		U.Data.search({
@@ -232,7 +233,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 				return;
 			};
 
@@ -247,7 +248,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 			} else {
 				this.forceUpdate();
 			};
@@ -301,7 +302,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		if (item.id == 'add') {
 			const name = this.getFilter();
 
-			U.Object.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], 'Mention', (message: any) => {
+			U.Object.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], analytics.route.mention, (message: any) => {
 				cb(message.targetId, name);
 			});
 		} else {

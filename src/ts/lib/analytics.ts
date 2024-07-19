@@ -37,6 +37,10 @@ class Analytics {
 		turn: 'TurnInto',
 		powertool: 'Powertool',
 		syncStatus: 'SyncStatus',
+		search: 'Search',
+		relation: 'Relation',
+		link: 'Link',
+		mention: 'Mention',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',

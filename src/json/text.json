@@ -200,6 +200,7 @@
 	"electronMenuDebugProcess": "Process",
 	"electronMenuDebugTree": "Tree diagnostics",
 	"electronMenuDebugStat": "Statistics",
+	"electronMenuDebugReconcile": "Reconcile",
 	"electronMenuClose": "Close Window",
 	"electronMenuEdit": "Edit",
 	"electronMenuUndo": "Undo",
@@ -1015,6 +1016,8 @@
 	"popupConfirmActionRestrictedTitle": "Action restricted!",
 	"popupConfirmActionRestrictedText": "You cannot do this in read-only space",
 
+	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1049,6 +1052,7 @@
 	"popupSearchEmpty": "No Objects found",
 	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
+	"popupSearchEmptyFilterReadonly": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try to search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchAddRelation": "Add Relation",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
