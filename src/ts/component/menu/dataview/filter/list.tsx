@@ -194,10 +194,8 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onAdd (e: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, isInline, getTarget } = data;
-		const view = getView();
+		const { onFilterAdd } = data;
 		const relationOptions = this.getRelationOptions();
-		const object = getTarget();
 
 		if (!relationOptions.length) {
 			return;
@@ -213,15 +211,9 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			condition: condition as I.FilterCondition,
 			value: Relation.formatValue(first, null, false),
 		};
-
-		C.BlockDataviewFilterAdd(rootId, blockId, view.id, newItem);
-
-		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
-
-		analytics.event('AddFilter', {
-			condition: newItem.condition,
-			objectType: object.type,
-			embedType: analytics.embedType(isInline)
+		
+		onFilterAdd(newItem, () => {
+			obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
 		});
 	};
 

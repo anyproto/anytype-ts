@@ -79,6 +79,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSelectToggle = this.onSelectToggle.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onSortAdd = this.onSortAdd.bind(this);
+		this.onFilterAdd = this.onFilterAdd.bind(this);
 
 		this.getSearchIds = this.getSearchIds.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
@@ -169,6 +170,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onTemplateMenu: this.onTemplateMenu,
 			onTemplateAdd: this.onTemplateAdd,
 			onSortAdd: this.onSortAdd,
+			onFilterAdd: this.onFilterAdd,
 			isAllowedObject: this.isAllowedObject,
 			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
@@ -1124,8 +1126,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	onFilterAdd () {
+	onFilterAdd (item: any, callBack?: () => void) {
+		const { rootId, block, isInline } = this.props;
+		const view = this.getView();
+		const object = this.getTarget();
 
+		C.BlockDataviewFilterAdd(rootId, block.id, view.id, item, () => {
+			if (callBack) {
+				callBack();
+			};
+
+			analytics.event('AddFilter', {
+				condition: item.condition,
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
+			});
+		});
 	};
 
 	getIdPrefix () {

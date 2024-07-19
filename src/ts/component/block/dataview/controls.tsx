@@ -260,12 +260,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		const {
 			rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, getTarget, isInline, isCollection,
-			getTypeId, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd
+			getTypeId, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd,
 		} = this.props;
 		const view = getView();
 		const obj = $(element);
 
-		if ((component == 'dataviewSort' && !view.sorts.length)) {
+		if ((component == 'dataviewSort' && !view.sorts.length) || (component == 'dataviewFilterList' && !view.filters.length)) {
 			this.onButtonEmpty(element, component);
 			return;
 		};
@@ -303,6 +303,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				isAllowedDefaultType,
 				onTemplateAdd,
 				onSortAdd,
+				onFilterAdd,
 				onViewSwitch: this.onViewSwitch,
 				onViewCopy: this.onViewCopy,
 				onViewRemove: this.onViewRemove,
@@ -318,7 +319,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	};
 
 	onButtonEmpty (element: string, component: string) {
-		const { rootId, block, getView, onSortAdd } = this.props;
+		const { rootId, block, getView, onSortAdd, onFilterAdd } = this.props;
 		const options = Relation.getFilterOptions(rootId, block.id, getView());
 
 		S.Menu.open('select', {
@@ -340,6 +341,18 @@ const Controls = observer(class Controls extends React.Component<Props> {
 						};
 
 						onSortAdd(newItem, cb);
+					} else
+					if (component == 'dataviewFilterList') {
+						const conditions = Relation.filterConditionsByType(item.format);
+						const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+						const newItem = {
+							relationKey: item.id,
+							operator: I.FilterOperator.And,
+							condition: condition as I.FilterCondition,
+							value: Relation.formatValue(item, null, false),
+						};
+
+						onFilterAdd(newItem, cb);
 					};
 				}
 			}
