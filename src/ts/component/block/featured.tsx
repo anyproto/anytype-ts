@@ -339,9 +339,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	checkSource () {
 		const { rootId, isPopup } = this.props;
 		const storeId = this.getStoreId();
-		const object = S.Detail.get(rootId, storeId, [ 'layout', 'setOf' ]);
+		const object = S.Detail.get(rootId, storeId, [ 'layout', 'setOf', 'featuredRelations' ]);
+		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 
-		if (!object || object._empty_ || (object.layout != I.ObjectLayout.Set)) {
+		if (object._empty_ || !U.Object.isSetLayout(object.layout) || !featuredRelations.includes('setOf')) {
 			return;
 		};
 

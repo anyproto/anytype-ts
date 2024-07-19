@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
-import { I, S, U, J, keyboard, Relation, translate } from 'Lib';
+import { I, S, U, J, keyboard, Relation, translate, analytics } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -418,7 +418,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (item.id == 'add') {
 			const { details, flags } = Relation.getParamForNewObject(filter, relation);
 
-			U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', (message: any) => {
+			U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.relation, (message: any) => {
 				cb(message.targetId);
 				close();
 			});

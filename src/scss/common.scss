@@ -125,7 +125,7 @@ markupsearch.active { background: orange !important; }
 
 /* Diff elements for history */
 .diffAdd, .diffChange, .diffRemove { position: relative; }
-.diffAdd::after, .diffChange::after, .diffRemove::after { content: ""; border-radius: inherit; opacity: 0.5; }
+.diffAdd::after, .diffChange::after, .diffRemove::after { content: ""; border-radius: inherit; opacity: 0.5; pointer-events: none; }
 .diffAdd::after, .diffChange::after	{ position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 10; }
 .diffRemove::after { position: relative; height: 30px; display: block; width: 100%; }
 .diffAdd::after { background-color: var(--color-shape-highlight-add); }
