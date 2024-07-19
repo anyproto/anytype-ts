@@ -284,6 +284,12 @@ export const FileNodeUsage = (callBack?: (message: any) => void) => {
 	dispatcher.request(FileNodeUsage.name, new Empty(), callBack);
 };
 
+export const FileReconcile = (callBack?: (message: any) => void) => {
+	dispatcher.request(FileReconcile.name, new Empty(), callBack);
+};
+
+// ---------------------- NAVIGATION ---------------------- //
+
 export const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Navigation.GetObjectInfoWithLinks.Request();
 

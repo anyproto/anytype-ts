@@ -28,8 +28,8 @@ export default [
 	img(`42/4.png`),
 	
 	
-	h3(`New Widgets 🖼️`),
-	text(`Widgets can now display all the custom View options as their Sets, including Calendar, Kanban, Gallery and filtered Tag views.`),
+	h3(`View Layout for Widgets 🖼️`),
+	text(`Widgets now support a new View option, allowing them to be displayed with Calendar, Kanban, and Gallery layouts`),
 	img(`42/1.png`),
 	
 
