@@ -249,7 +249,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				</div>
 
 				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? U.Common.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch filter={filter} />
 				) : ''}
 				
 				{this.cache && items.length && !isLoading ? (

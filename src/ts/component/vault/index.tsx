@@ -11,6 +11,7 @@ const Vault = observer(class Vault extends React.Component {
 	
 	node = null;
 	isAnimating = false;
+	checkKeyUp = false;
 	top = 0;
 	timeoutHover = 0;
 	pressed = new Set();
@@ -70,7 +71,7 @@ const Vault = observer(class Vault extends React.Component {
 						helperContainer={() => $(`#vault .side.top`).get(0)}
 					/>
 
-					<div className="side bottom">
+					<div className="side bottom" onDragStart={e => e.preventDefault()}>
 						<Item id="settings" isButton={true} name={translate('commonSettings')} />
 					</div>
 				</div>
@@ -114,19 +115,31 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onKeyDown (e: any) {
-		this.pressed.add(e.key.toLowerCase());
+		const key = e.key.toLowerCase();
 
-		keyboard.shortcut('ctrl+tab', e, () => {
-			this.onArrow(1);
+		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
+			this.pressed.add(key);
+		};
+
+		keyboard.shortcut('ctrl+tab, ctrl+shift+tab', e, pressed => {
+			this.checkKeyUp = true;
+			this.onArrow(pressed.match('shift') ? -1 : 1);
 		});
 	};
 
 	onKeyUp (e: any) {
 		this.pressed.delete(e.key.toLowerCase());
 
-		if (this.pressed.has(Key.ctrl) || this.pressed.has(Key.tab)) {
+		if (
+			(this.pressed.has(Key.ctrl) || 
+			this.pressed.has(Key.tab) || 
+			this.pressed.has(Key.shift)) ||
+			!this.checkKeyUp
+		) {
 			return;
 		};
+
+		this.checkKeyUp = false;
 
 		const node = $(this.node);
 		const items = this.getSpaceItems();
@@ -135,8 +148,9 @@ const Vault = observer(class Vault extends React.Component {
 		if (item) {
 			node.find('.item.hover').removeClass('hover');
 			U.Router.switchSpace(item.targetSpaceId, '', true);
-			this.n = -1;
 		};
+
+		Preview.tooltipHide();
 	};
 
 	onClick (e: any, item: any) {
@@ -167,8 +181,11 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onArrow (dir: number) {
-		const { spaceview } = S.Block;
 		const items = this.getSpaceItems();
+
+		if (items.length == 1) {
+			return;
+		};
 		
 		this.n += dir;
 		if (this.n < 0) {
@@ -179,16 +196,9 @@ const Vault = observer(class Vault extends React.Component {
 		};
 
 		const next = items[this.n];
-		if (!next) {
-			return;
+		if (next) {
+			this.setHover(next);
 		};
-
-		if ((next.id == spaceview) && (this.n === 0) && (items.length > 1)) {
-			this.onArrow(dir);
-			return;
-		};
-
-		this.setHover(next);
 	};
 
 	setActive (id: string) {
@@ -196,14 +206,18 @@ const Vault = observer(class Vault extends React.Component {
 
 		node.find('.item.isActive').removeClass('isActive');
 		node.find(`#item-${id}`).addClass('isActive');
+
+		this.n = this.getSpaceItems().findIndex(it => it.id == id);
 	};
 
 	setHover (item: any) {
 		const node = $(this.node);
+		const head = node.find('.head');
 		const scroll = node.find('#scroll');
 		const el = node.find(`#item-${item.id}`);
-		const top = el.position().top - scroll.position().top;
+		const top = el.offset().top - scroll.position().top + this.top;
 		const height = scroll.height();
+		const hh = head.height();
 		const ih = el.height() + 8;
 
 		node.find('.item.hover').removeClass('hover');
@@ -213,7 +227,7 @@ const Vault = observer(class Vault extends React.Component {
 			Preview.tooltipShow({ 
 				text: item.name, 
 				element: el, 
-				className: 'fromVault', 
+				className: 'fromVault',
 				typeX: I.MenuDirection.Left,
 				typeY: I.MenuDirection.Center,
 				offsetX: 62,
@@ -222,12 +236,13 @@ const Vault = observer(class Vault extends React.Component {
 		};
 
 		let s = -1;
-		if (top < 0) {
+		if (top < this.top) {
 			s = 0;
 		};
-		if (top + ih > height - this.top) {
+		if (top + ih > height + this.top + hh) {
 			s = this.top + height;
 		};
+
 		if (s >= 0) {
 			Preview.tooltipHide(true);
 			scroll.stop().animate({ scrollTop: s }, 200, 'swing', () => cb());

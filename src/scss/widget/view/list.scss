@@ -75,19 +75,22 @@
 		.item::before { border-radius: 6px; }
 	}
 
-	.body.isCompact { padding: 0px 4px 8px 4px; }
+	.body.isCompact { padding: 0px 8px 8px 8px; }
 	.body.isCompact {
 		.item { height: 28px; }
 		.item {
-			.inner { gap: 0px 6px; padding: 0px 8px 0px 12px; }
-			.info { width: calc(100% - 28px); }
+			.inner { gap: 0px 6px; padding: 0px 4px 0px 8px; }
+			.info { width: 100%; }
 			.iconObject { background: none; border-radius: 0px; }
 		}
+		.item.withIcon, .item.withIcon {
+			.info { width: calc(100% - 24px); }
+		}
 		.item:hover, .item.active {
-			.info { width: calc(100% - 30px); }
+			.info { width: calc(100% - 28px); }
 		}
 		.item.withIcon:hover, .item.withIcon.active {
-			.info { width: calc(100% - 54px); }
+			.info { width: calc(100% - 52px); }
 		}
 		.item::before { border-radius: 6px; }
 	}

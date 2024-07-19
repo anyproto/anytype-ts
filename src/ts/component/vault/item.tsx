@@ -21,7 +21,7 @@ const VaultItem = observer(class Vault extends React.Component<Props> {
 		let icon = null;
 
 		if (!isButton) {
-			const object = U.Space.getSpaceview(id);
+			const object = U.Menu.getVaultItems().find(it => it.id == id);
 			icon = <IconObject object={object} size={56} forceLetter={true} />;
 		} else {
 			cn.push(`isButton ${id}`);

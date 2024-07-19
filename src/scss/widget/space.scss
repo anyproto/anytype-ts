@@ -12,7 +12,7 @@
 			.iconObject:not(.withOption) { background-color: var(--color-shape-tertiary); }
 
 			.txt { flex-grow: 1; width: calc(100% - 52px) }
-			.name { @include text-header3; @include text-overflow-nw; font-weight: 500; }
+			.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; }
 		}
 
 		.side.right { flex-shrink: 0; }

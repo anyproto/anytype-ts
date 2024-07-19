@@ -468,7 +468,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						case 'newObject': {
 							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', flags, 'Graph', (message: any) => {
+							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', flags, analytics.route.graph, (message: any) => {
 								U.Object.openConfig(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
 							});
 							break;

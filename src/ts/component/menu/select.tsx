@@ -6,6 +6,7 @@ import { Filter, MenuItemVertical, Label } from 'Component';
 import { I, U, Relation, keyboard, translate } from 'Lib';
 
 const HEIGHT_ITEM = 28;
+const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_SECTION = 28;
 const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_DIV = 16;
@@ -358,6 +359,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		if (item.isDiv) return HEIGHT_DIV;
 		if (item.isSection) return HEIGHT_SECTION;
 		if (item.withDescription) return HEIGHT_DESCRIPTION;
+		if (item.isBig) return HEIGHT_ITEM_BIG;
 		return HEIGHT_ITEM;
 	};
 
