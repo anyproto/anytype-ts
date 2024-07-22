@@ -21,7 +21,12 @@
 	}
 }
 
+.widget.widgetView.isPreview { padding: 0px; }
 .widget.widgetView.isPreview {
+	.head { margin: 0px; padding-bottom: 16px; }
+	.innerWrap { padding: 0px; }
+
+	.body { height: 100%; padding: 0px !important; }
 	.body {
 		.item.canDrag {
 			.inner { padding-left: 0px !important; padding-right: 8px !important; width: calc(100% - 20px); }
@@ -32,15 +37,6 @@
 .widget.widgetView.isClosed {
 	.contentWrapper { height: 8px; }
 	.innerWrap { opacity: 0; }
-}
-
-.widget.widgetView.isPreview { padding: 0px; }
-.widget.widgetView.isPreview {
-	.head { margin: 0px; padding-bottom: 16px; }
-	.body { height: 100%; padding: 0px; }
-	.innerWrap { padding: 0px; }
-	.ReactVirtualized__List { padding: 8px 0px 12px 0px; }
-	.contentWrapper { height: calc(100% - 77px); }
 }
 
 .widget.widgetView {
