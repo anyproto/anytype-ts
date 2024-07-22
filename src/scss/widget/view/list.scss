@@ -2,6 +2,8 @@
 
 .viewList, .viewGrid, .viewGraph { display: flex; flex-direction: column; height: 100%; }
 .viewList, .viewGrid, .viewGraph {
+	.ReactVirtualized__List { padding: 8px 8px 12px 8px; }
+
 	.body { display: flex; flex-direction: column; }
 	.body {
 		.items { height: 100%; }
@@ -53,7 +55,8 @@
 		.item.isDragging { margin-top: -46px; margin-left: -12px; }
 	}
 
-	.body:not(.isCompact) { padding: 0px 8px 8px 8px; }
+	.body { padding: 0px 8px 8px 8px; }
+
 	.body:not(.isCompact) {
 		.item { height: 64px; }
 		.item {
@@ -75,7 +78,6 @@
 		.item::before { border-radius: 6px; }
 	}
 
-	.body.isCompact { padding: 0px 8px 8px 8px; }
 	.body.isCompact {
 		.item { height: 28px; }
 		.item {
