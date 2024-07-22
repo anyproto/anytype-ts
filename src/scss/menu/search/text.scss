@@ -20,9 +20,9 @@
 
 			.icon.arrow { 
 				width: 24px; height: 24px; border-radius: 4px; transition: $transitionAllCommon; margin: 0px; 	
-				background-image: url('~img/arrow/search.svg'); 
+				background-image: url('~img/arrow/search.svg'); transform: rotateZ(90deg);
 			}
-			.icon.arrow.right { transform: rotateZ(180deg); }
+			.icon.arrow.right { transform: rotateZ(270deg); }
 			.icon.arrow:hover { background-color: var(--color-shape-highlight-medium); }
 
 			.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg') !important; }
