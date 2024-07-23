@@ -1257,7 +1257,8 @@
 
 	"menuSmileGallery": "Emojis",
 	"menuSmileUpload": "Upload",
-	"menuSmileEmpty": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
+	"menuSmileEmpty": "There are no items",
+	"menuSmileEmptyFilter": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
 	"menuSmileRandom": "Random emoji",

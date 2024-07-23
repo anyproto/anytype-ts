@@ -24,6 +24,8 @@ class EmptySearch extends React.Component<Props> {
 				text = translate('popupSearchEmpty');
 			};
 		};
+
+		console.log(text);
 		
 		return (
 			<div ref={node => this.node = node} style={style} className="emptySearch">
