@@ -1547,6 +1547,9 @@
 
 	"menuSyncStatusInfoP2pTitle": "P2P Connection",
 
+	"menuSyncStatusEmptyLocal": "There are no objects to show in Local-Only mode",
+	"menuSyncStatusEmpty": "There are no objects to show",
+
 	"previewEdit": "Edit Link",
 
 	"previewObjectTemplateIsBundled": "Template is bundled",
