@@ -6,7 +6,7 @@ interface SidebarData {
 	isClosed: boolean;
 };
 
-const ANIMATION = 250;
+const ANIMATION = 200;
 
 class Sidebar {
 	
@@ -28,6 +28,8 @@ class Sidebar {
 		this.initObjects();
 
 		const stored = Storage.get('sidebar');
+		const vault = $(S.Common.getRef('vault').node);
+
 		if (stored) {
 			if ('undefined' == typeof(stored.isClosed)) {
 				stored.isClosed = !stored.width;
@@ -41,6 +43,14 @@ class Sidebar {
 			});
 
 			this.resizePage(J.Size.sidebar.width.default, false);
+		};
+
+		if (this.data.isClosed) {
+			vault.addClass('isHidden');
+			this.obj.addClass('isClosed');
+		} else {
+			vault.removeClass('isHidden');
+			this.obj.removeClass('isClosed');
 		};
 	};
 
@@ -58,13 +68,19 @@ class Sidebar {
 			return;
 		};
 
+		const vault = $(S.Common.getRef('vault').node);
+
 		this.setAnimating(true);
 		this.obj.addClass('anim');
 		this.setStyle({ width: 0 });
 		this.set({ isClosed: true });
 		this.resizePage(0, true);
+		this.removeAnimation(() => {
+			vault.addClass('isHidden');
+			this.obj.addClass('isClosed');
 
-		this.removeAnimation(() => $(window).trigger('resize'));
+			$(window).trigger('resize');
+		});
 	};
 
 	open (width?: number): void {
@@ -72,12 +88,20 @@ class Sidebar {
 			return;
 		};
 
-		this.setAnimating(true);
-		this.obj.addClass('anim');
-		this.setStyle({ width });
-		this.set({ isClosed: false });
-		this.resizePage(width, true);
-		this.removeAnimation(() => $(window).trigger('resize'));
+		const vault = $(S.Common.getRef('vault').node);
+
+		this.obj.removeClass('isClosed');
+		vault.removeClass('isHidden');
+
+		window.clearTimeout(this.timeoutAnim);
+		this.timeoutAnim = window.setTimeout(() => {
+			this.setAnimating(true);
+			this.obj.addClass('anim');
+			this.setStyle({ width });
+			this.set({ isClosed: false });
+			this.resizePage(width, true);
+			this.removeAnimation(() => $(window).trigger('resize'));
+		}, 50);
 	};
 
 	toggleOpenClose () {
@@ -85,11 +109,11 @@ class Sidebar {
 			return;
 		};
 		
-		const width = this.data.width - J.Size.vault.width;
+		const { width, isClosed } = this.data;
 
 		this.obj.find('#sidebarHead').css({ width });
 		this.obj.find('#sidebarBody').css({ width });
-		this.data.isClosed ? this.open(this.data.width) : this.close();
+		isClosed ? this.open(width) : this.close();
 	};
 
 	setWidth (w: number): void {
@@ -118,8 +142,6 @@ class Sidebar {
 	};
 
 	resizePage (width: number, animate: boolean): void {
-		console.log('resizePage', width, animate);
-
 		this.initObjects();
 
 		if ((width === null) && this.obj && this.obj.length) {
@@ -128,16 +150,16 @@ class Sidebar {
 			};
 		};
 
-		console.log('resizePage2', width);
-
+		const { isClosed } = this.data;
 		const { ww } = U.Common.getWindowDimensions();
-		const pageWidth = ww - width;
+		const vw = isClosed ? 0 : J.Size.vault.width;
+		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
 
 		this.header.css({ width: '' }).removeClass('withSidebar');
 		this.footer.css({ width: '' });
-		this.dummy.css({ width });
+		this.dummy.css({ width: width + vw });
 
 		if (animate) {
 			this.header.addClass('sidebarAnimation');
@@ -151,7 +173,7 @@ class Sidebar {
 			this.dummy.removeClass('sidebarAnimation');
 		};
 
-		navigation?.setX(width, animate);
+		navigation?.setX(width + vw, animate);
 		width ? this.header.addClass('withSidebar') : this.header.removeClass('withSidebar');
 
 		this.page.css({ width: pageWidth });
@@ -188,14 +210,7 @@ class Sidebar {
 			return;
 		};
 
-		const { width, isClosed } = v;
-		const css: any = { width };
-
-		if (isClosed) {
-			css.width = 0;
-		};
-
-		this.obj.css(css);
+		this.obj.css({ width: v.isClosed ? 0 : v.width });
 	};
 
 	/**

@@ -58,20 +58,16 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					id="sidebar" 
 					className={cn.join(' ')} 
 				>
-					<div className="vaultContainer">
-						<Vault ref={ref => S.Common.refSet('vault', ref)} />
-
-						<div className="inner">
-							<div id="sidebarHead" className="head">
-								{status ? <div className="status">{status}</div> : ''}
-							</div>
-							<div 
-								id="sidebarBody"
-								ref={ref => this.refBody = ref}
-								className="body"
-							>
-								<ListWidget ref={ref => this.refList = ref} {...this.props} />
-							</div>
+					<div className="inner">
+						<div id="sidebarHead" className="head">
+							{status ? <div className="status">{status}</div> : ''}
+						</div>
+						<div 
+							id="sidebarBody"
+							ref={ref => this.refBody = ref}
+							className="body"
+						>
+							<ListWidget ref={ref => this.refList = ref} {...this.props} />
 						</div>
 					</div>
 
@@ -167,7 +163,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			};
 
 			if (d > 0) {
-				if ((w >= 0) && (w <= J.Size.sidebar.width.close)) {
+				if ((w >= J.Size.vault.width) && (w <= J.Size.sidebar.width.close)) {
 					sidebar.open(J.Size.sidebar.width.min);
 				} else 
 				if (w > J.Size.sidebar.width.close) {

@@ -173,7 +173,6 @@ const Vault = observer(class Vault extends React.Component {
 			};
 
 			default: {
-				$(this.node).find('.item.hover').removeClass('hover');
 				U.Router.switchSpace(item.targetSpaceId, '', true);
 				break;
 			};
