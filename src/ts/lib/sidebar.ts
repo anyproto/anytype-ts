@@ -7,7 +7,6 @@ interface SidebarData {
 };
 
 const ANIMATION_SIDEBAR = 200;
-const ANIMATION_VAULT = 50;
 
 class Sidebar {
 	
@@ -47,10 +46,10 @@ class Sidebar {
 		};
 
 		if (this.data.isClosed) {
-			vault.addClass('isHidden');
+			vault.addClass('isClosed');
 			this.obj.addClass('isClosed');
 		} else {
-			vault.removeClass('isHidden');
+			vault.removeClass('isClosed');
 			this.obj.removeClass('isClosed');
 		};
 	};
@@ -69,21 +68,19 @@ class Sidebar {
 			return;
 		};
 
-		const vault = $(S.Common.getRef('vault').node);
-
 		this.setAnimating(true);
 		this.obj.addClass('anim');
 		this.setStyle({ width: 0 });
 		this.set({ isClosed: true });
 		this.resizePage(0, true);
 		this.removeAnimation(() => {
-			vault.addClass('isHidden');
+			this.vaultHide();
 			this.obj.addClass('isClosed');
 
 			window.clearTimeout(this.timeoutAnim);
 			this.timeoutAnim = window.setTimeout(() => {
 				$(window).trigger('resize');
-			}, ANIMATION_VAULT);
+			}, this.getVaultDuration());
 		});
 	};
 
@@ -92,10 +89,8 @@ class Sidebar {
 			return;
 		};
 
-		const vault = $(S.Common.getRef('vault').node);
-
 		this.obj.removeClass('isClosed');
-		vault.removeClass('isHidden');
+		this.vaultShow();
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
@@ -105,7 +100,7 @@ class Sidebar {
 			this.set({ isClosed: false });
 			this.resizePage(width, true);
 			this.removeAnimation(() => $(window).trigger('resize'));
-		}, ANIMATION_VAULT);
+		}, this.getVaultDuration());
 	};
 
 	toggleOpenClose () {
@@ -227,6 +222,29 @@ class Sidebar {
 
 	getDummyWidth (): number {
 		return Number($('#sidebarDummy').outerWidth()) || 0;
+	};
+
+	vaultHide () {
+		this.setVaultAnimationParam();
+
+		const vault = $(S.Common.getRef('vault').node);
+		vault.addClass('isClosed');
+	};
+
+	vaultShow () {
+		this.setVaultAnimationParam();
+
+		const vault = $(S.Common.getRef('vault').node);
+		vault.removeClass('isClosed');
+	};
+
+	setVaultAnimationParam () {
+		const vault = $(S.Common.getRef('vault').node);
+		vault.css({ transitionDuration: `${this.getVaultDuration()}ms` });
+	};
+
+	getVaultDuration (): number {
+		return Math.floor(J.Size.vault.width / this.data.width * ANIMATION_SIDEBAR);
 	};
 
 };
