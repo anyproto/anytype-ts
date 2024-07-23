@@ -24,7 +24,7 @@ class EmptySearch extends React.Component<Props> {
 				text = translate('popupSearchEmpty');
 			};
 		};
-		
+
 		return (
 			<div ref={node => this.node = node} style={style} className="emptySearch">
 				<div className="txt" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }} />

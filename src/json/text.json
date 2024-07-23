@@ -1257,7 +1257,8 @@
 
 	"menuSmileGallery": "Emojis",
 	"menuSmileUpload": "Upload",
-	"menuSmileEmpty": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
+	"menuSmileEmpty": "There are no items",
+	"menuSmileEmptyFilter": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
 	"menuSmileRandom": "Random emoji",
@@ -1547,6 +1548,9 @@
 	"menuSyncStatusInfoLocalOnlyMessage": "Data backup is disabled",
 
 	"menuSyncStatusInfoP2pTitle": "P2P Connection",
+
+	"menuSyncStatusEmptyLocal": "There are no objects to show in Local-Only mode",
+	"menuSyncStatusEmpty": "There are no objects to show",
 
 	"previewEdit": "Edit Link",
 
