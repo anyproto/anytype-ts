@@ -64,15 +64,16 @@ class Sidebar {
 	};
 
 	close (): void {
-		if (!this.obj || !this.obj.length || this.isAnimating) {
+		if (!this.obj || !this.obj.length || this.isAnimating || this.data.isClosed) {
 			return;
 		};
 
-		this.setAnimating(true);
 		this.obj.addClass('anim');
+		this.setAnimating(true);
 		this.setStyle({ width: 0 });
 		this.set({ isClosed: true });
 		this.resizePage(0, true);
+
 		this.removeAnimation(() => {
 			this.vaultHide();
 			this.obj.addClass('isClosed');
@@ -80,27 +81,32 @@ class Sidebar {
 			window.clearTimeout(this.timeoutAnim);
 			this.timeoutAnim = window.setTimeout(() => {
 				$(window).trigger('resize');
-			}, this.getVaultDuration());
+				this.setAnimating(false);
+			}, this.getVaultDuration(this.data.width));
 		});
 	};
 
 	open (width?: number): void {
-		if (!this.obj || !this.obj.length || this.isAnimating) {
+		if (!this.obj || !this.obj.length || this.isAnimating || !this.data.isClosed) {
 			return;
 		};
 
-		this.obj.removeClass('isClosed');
-		this.vaultShow();
+		this.setAnimating(true);
+		this.vaultShow(width);
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
-			this.setAnimating(true);
-			this.obj.addClass('anim');
+			this.obj.removeClass('isClosed').addClass('anim');
+
 			this.setStyle({ width });
 			this.set({ isClosed: false });
 			this.resizePage(width, true);
-			this.removeAnimation(() => $(window).trigger('resize'));
-		}, this.getVaultDuration());
+
+			this.removeAnimation(() => {
+				$(window).trigger('resize');
+				this.setAnimating(false);
+			});
+		}, this.getVaultDuration(width));
 	};
 
 	toggleOpenClose () {
@@ -132,7 +138,6 @@ class Sidebar {
 			this.obj.removeClass('anim');
 			this.obj.find('#sidebarHead').css({ width: '' });
 			this.obj.find('#sidebarBody').css({ width: '' });
-			this.setAnimating(false);
 
 			if (callBack) {
 				callBack();
@@ -225,26 +230,26 @@ class Sidebar {
 	};
 
 	vaultHide () {
-		this.setVaultAnimationParam();
+		this.setVaultAnimationParam(this.data.width);
 
 		const vault = $(S.Common.getRef('vault').node);
 		vault.addClass('isClosed');
 	};
 
-	vaultShow () {
-		this.setVaultAnimationParam();
+	vaultShow (width: number) {
+		this.setVaultAnimationParam(width);
 
 		const vault = $(S.Common.getRef('vault').node);
 		vault.removeClass('isClosed');
 	};
 
-	setVaultAnimationParam () {
+	setVaultAnimationParam (width: number) {
 		const vault = $(S.Common.getRef('vault').node);
-		vault.css({ transitionDuration: `${this.getVaultDuration()}ms` });
+		vault.css({ transitionDuration: `${this.getVaultDuration(width)}ms` });
 	};
 
-	getVaultDuration (): number {
-		return Math.floor(J.Size.vault.width / this.data.width * ANIMATION_SIDEBAR);
+	getVaultDuration (width: number): number {
+		return Math.ceil(J.Size.vault.width / width * ANIMATION_SIDEBAR);
 	};
 
 };
