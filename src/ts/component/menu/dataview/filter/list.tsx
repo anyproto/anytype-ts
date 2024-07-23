@@ -192,12 +192,17 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	};
 
 	onAdd (e: any) {
-		const { param, getId } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { onFilterAdd } = data;
+		const { onFilterAdd, onAdd } = data;
 		const relationOptions = this.getRelationOptions();
 
 		if (!relationOptions.length) {
+			return;
+		};
+
+		if (onAdd) {
+			onAdd(getId(), getSize().width);
 			return;
 		};
 
@@ -211,7 +216,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			condition: condition as I.FilterCondition,
 			value: Relation.formatValue(first, null, false),
 		};
-		
+
 		onFilterAdd(newItem, () => {
 			obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
 		});
