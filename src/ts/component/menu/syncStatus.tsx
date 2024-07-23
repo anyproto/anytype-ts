@@ -2,21 +2,28 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch } from 'Component';
 import { I, C, S, U, Action, translate, analytics } from 'Lib';
+
+interface State {
+	isLoading: boolean;
+};
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 28;
 const LIMIT_HEIGHT = 12;
 const SUB_ID = 'syncStatusObjectsList';
 
-const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, {}> {
+const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, State> {
 
 	_isMounted = false;
 	node = null;
 	cache: any = {};
 	items: any[] = [];
 	currentInfo = '';
+	state = { 
+		isLoading: false,
+	};
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -32,8 +39,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	render () {
+		const { isLoading } = this.state;
 		const items = this.getItems();
 		const icons = this.getIcons();
+		const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
 
 		const PanelIcon = (item) => {
 			const { id, className } = item;
@@ -115,6 +124,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						{icons.map((icon, idx) => <PanelIcon key={idx} {...icon} />)}
 					</div>
 				</div>
+
+				{!isLoading && !items.length ? (
+					<EmptySearch text={emptyText} />
+				) : ''}
 
 				{this.cache && items.length ? (
 					<div className="items">
@@ -228,12 +241,17 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	onCloseInfo () {
 		this.currentInfo = '';
+
 		if (S.Menu.isOpen('syncStatusInfo')) {
 			S.Menu.close('syncStatusInfo');
 		};
 	};
 
 	load () {
+		if (U.Data.isLocalNetwork()) {
+			return;
+		};
+
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
@@ -242,6 +260,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			{ relationKey: 'syncDate', type: I.SortType.Desc },
 		];
 
+		this.setState({ isLoading: true });
+
 		U.Data.searchSubscribe({
 			subId: SUB_ID,
 			filters,
@@ -249,7 +269,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			keys: U.Data.syncStatusRelationKeys(),
 			offset: 0,
 			limit: 30,
-		});
+		}, () => this.setState({ isLoading: false }));
 	};
 
 	getItems () {

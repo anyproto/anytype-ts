@@ -1104,6 +1104,7 @@
 	"popupShortcutMainBasics17": "Zoom out",
 	"popupShortcutMainBasics18": "Default zoom",
 	"popupShortcutMainBasics19": "Open the Quick Capture menu",
+	"popupShortcutMainBasics20": "Switch to the next/previous Space",
 	"popupShortcutMainStructuring": "Structuring",
 	"popupShortcutMainStructuring1": "Create a new text block",
 	"popupShortcutMainStructuring2": "Create a line break within a block of text",
@@ -1249,7 +1250,7 @@
 
 	"popupShareTitle": "Share Anytype with those you care about",
 	"popupShareLabel": "Thanks for sharing Anytype",
-	"popupShareLinkText": "The everything app for those who celebrate trust & autonomy. <a href=\"%s\">https://simple-sharing.anytype.io/</a>",
+	"popupShareLinkText": "The everything app for those who celebrate trust & autonomy. <a href=\"%s\">%s</a>",
 
 	"menuVaultPeer": "%d\/%d peers",
 	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
@@ -1545,6 +1546,9 @@
 	"menuSyncStatusInfoLocalOnlyMessage": "Data backup is disabled",
 
 	"menuSyncStatusInfoP2pTitle": "P2P Connection",
+
+	"menuSyncStatusEmptyLocal": "There are no objects to show in Local-Only mode",
+	"menuSyncStatusEmpty": "There are no objects to show",
 
 	"previewEdit": "Edit Link",
 
