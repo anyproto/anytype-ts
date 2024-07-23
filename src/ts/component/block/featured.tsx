@@ -34,7 +34,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this.onTypeSelect = this.onTypeSelect.bind(this);
 		this.onSource = this.onSource.bind(this);
 		this.onFocus = this.onFocus.bind(this);
-		this.onCellClick = this.onCellClick.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onRelation = this.onRelation.bind(this);
@@ -266,6 +265,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
 		const short = S.Detail.get(rootId, storeId, [ 'layout' ], true);
+
 		if (short.layout != I.ObjectLayout.Participant) {
 			return null;
 		};
@@ -279,6 +279,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				<div
 					id={Relation.cellId(PREFIX, relationKey, object.id)}
 					className="cellContent c-longText"
+					onClick={(e: any) => {
+						e.persist();
+						this.onRelation(e, relationKey);
+					}}
 					onMouseEnter={e => this.onMouseEnter(e, relationKey, translate('blockFeaturedIdentity'))}
 					onMouseLeave={this.onMouseLeave}
 				>
@@ -388,21 +392,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		if (onKeyUp) {
 			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
-		};
-	};
-
-	onCellClick (e: any, relationKey: string, recordId: string) {
-		const relation = S.Record.getRelationByKey(relationKey);
-
-		if (!relation || relation.isReadonlyValue) {
-			return;
-		};
-
-		const id = Relation.cellId(PREFIX, relationKey, recordId);
-		const ref = this.cellRefs.get(id);
-
-		if (ref) {
-			ref.onClick(e);
 		};
 	};
 
@@ -731,11 +720,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					value: object[relationKey] || [],
 					subId: rootId,
 				};
-
 				break;
 			};
 
 			case I.RelationType.Number:
+			case I.RelationType.Url:
+			case I.RelationType.Phone:
+			case I.RelationType.Email:
+			case I.RelationType.ShortText:
 			case I.RelationType.LongText: {
 				menuId = 'dataviewText';
 				menuParam.width = 288;
@@ -744,6 +736,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 
 			case I.RelationType.Checkbox: {
+				if (!this.canEdit(relation)) {
+					break;
+				};
+
 				const object = S.Detail.get(rootId, rootId, [ relationKey ]);
 				const details = [
 					{ key: relationKey, value: Relation.formatValue(relation, !object[relationKey], true) },
@@ -768,9 +764,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						component.ref.scrollTo(relationKey);
 					};
 				},
-				onClose: () => {
-					S.Menu.closeAll();
-				},
+				onClose: () => S.Menu.closeAll(),
 				data: {
 					relationKey,
 					rootId,
@@ -803,15 +797,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			offsetY: 4,
 			noFlipX: true,
 			title: relation.name,
-			onClose: () => {
-				S.Menu.closeAll();
-			},
+			onClose: () => S.Menu.closeAll(),
 			data: {
 				rootId,
 				blockId: block.id,
 				relation: observable.box(relation),
 				relationKey,
-				canEdit: !readonly && !relation.isReadonlyValue,
+				canEdit: this.canEdit(relation),
 				onChange: (v: any, callBack?: () => void) => {
 					const details = [
 						{ key: relationKey, value: Relation.formatValue(relation, v, true) },
@@ -894,6 +886,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const traceId = String(this.props.traceId || '');
 
 		return traceId ? rootId.replace('-' + traceId, '') : rootId;
+	};
+
+	canEdit (relation: any) {
+		const { readonly } = this.props;
+		return !readonly && !relation.isReadonlyValue;
 	};
 	
 });

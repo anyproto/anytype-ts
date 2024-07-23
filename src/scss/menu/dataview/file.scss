@@ -2,9 +2,10 @@
 
 .menus {
 	.menu.menuDataviewFileList, .menu.menuDataviewFileValues {
-		.wrap { height: 100%; display: flex; flex-direction: column; padding: 0px 0px 8px 0px; }
+		.wrap { height: 100%; display: flex; flex-direction: column; }
 
-		.bottom { flex-shrink: 0; }
+		.emptySearch { padding: 8px 0px; }
+		.bottom { flex-shrink: 0; padding: 0px 0px 8px 0px; }
 		.bottom {
 			.line { margin-top: 0px; }
 		}
@@ -22,11 +23,10 @@
 	}
 
 	.menu.menuDataviewFileValues {
-		.titleWrapper,
-		.content { padding-bottom: 0px; }
-		.content { overflow: visible; max-height: unset; }
+		.titleWrapper { padding-bottom: 0px; }
+		.content { padding: 0px; overflow: visible; max-height: unset; }
 
-		.items { height: calc(100% - 28px); overflow: auto; height: 100%; max-height: 360px; }
+		.items { height: calc(100% - 28px); overflow: auto; height: 100%; max-height: 360px; padding: 8px 0px; }
 		.item { display: flex; align-items: center; }
 		.item {
 			img { display: block; max-width: 100%; max-height: 208px; object-fit: contain; }
@@ -47,8 +47,6 @@
 		.item:hover, .item.active {
 			.icon.more { opacity: 1; }
 		}
-
-		.bottom { margin: 8px 0px 0px 0px; }
 
 		.section:last-child { padding-bottom: 8px; }
 	}
