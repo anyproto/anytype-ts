@@ -163,7 +163,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			};
 
 			if (d > 0) {
-				if ((w >= J.Size.vault.width) && (w <= J.Size.sidebar.width.close)) {
+				if ((w >= 0) && (w <= J.Size.sidebar.width.close)) {
 					sidebar.open(J.Size.sidebar.width.min);
 				} else 
 				if (w > J.Size.sidebar.width.close) {

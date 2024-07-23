@@ -6,7 +6,8 @@ interface SidebarData {
 	isClosed: boolean;
 };
 
-const ANIMATION = 200;
+const ANIMATION_SIDEBAR = 200;
+const ANIMATION_VAULT = 50;
 
 class Sidebar {
 	
@@ -79,7 +80,10 @@ class Sidebar {
 			vault.addClass('isHidden');
 			this.obj.addClass('isClosed');
 
-			$(window).trigger('resize');
+			window.clearTimeout(this.timeoutAnim);
+			this.timeoutAnim = window.setTimeout(() => {
+				$(window).trigger('resize');
+			}, ANIMATION_VAULT);
 		});
 	};
 
@@ -101,7 +105,7 @@ class Sidebar {
 			this.set({ isClosed: false });
 			this.resizePage(width, true);
 			this.removeAnimation(() => $(window).trigger('resize'));
-		}, 50);
+		}, ANIMATION_VAULT);
 	};
 
 	toggleOpenClose () {
@@ -138,7 +142,7 @@ class Sidebar {
 			if (callBack) {
 				callBack();
 			};
-		}, ANIMATION);
+		}, ANIMATION_SIDEBAR);
 	};
 
 	resizePage (width: number, animate: boolean): void {
