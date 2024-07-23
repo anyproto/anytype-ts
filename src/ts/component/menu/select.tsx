@@ -345,7 +345,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			return;
 		};
 
-		if (item.id == 'add' && onAdd) {
+		if ((item.id == 'add') && onAdd) {
 			onAdd(getId(), getSize().width);
 			return;
 		};
