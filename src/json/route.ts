@@ -6,4 +6,5 @@ export default [
 	'/:page/:action/:id?/spaceId/:spaceId?/viewId/:viewId?',
 	'/object',
 	'/invite',
+	'/membership'
 ];
