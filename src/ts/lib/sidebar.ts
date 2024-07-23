@@ -20,7 +20,6 @@ class Sidebar {
 	footer: JQuery<HTMLElement> = null;
 	loader: JQuery<HTMLElement> = null;
 	dummy: JQuery<HTMLElement> = null;
-	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	timeoutHide = 0;
 	timeoutAnim = 0;
@@ -52,7 +51,6 @@ class Sidebar {
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
 		this.dummy = $('#sidebarDummy');
-		this.vault = $('#vault');
 	};
 
 	close (): void {
@@ -87,11 +85,11 @@ class Sidebar {
 			return;
 		};
 		
-		const { width } = this.data;
+		const width = this.data.width - J.Size.vault.width;
 
 		this.obj.find('#sidebarHead').css({ width });
 		this.obj.find('#sidebarBody').css({ width });
-		this.data.isClosed ? this.open(width) : this.close();
+		this.data.isClosed ? this.open(this.data.width) : this.close();
 	};
 
 	setWidth (w: number): void {
@@ -120,6 +118,8 @@ class Sidebar {
 	};
 
 	resizePage (width: number, animate: boolean): void {
+		console.log('resizePage', width, animate);
+
 		this.initObjects();
 
 		if ((width === null) && this.obj && this.obj.length) {
@@ -128,15 +128,16 @@ class Sidebar {
 			};
 		};
 
+		console.log('resizePage2', width);
+
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = J.Size.vault.width;
-		const pageWidth = ww - width - vw;
+		const pageWidth = ww - width;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
 
 		this.header.css({ width: '' }).removeClass('withSidebar');
 		this.footer.css({ width: '' });
-		this.dummy.css({ width: width + vw });
+		this.dummy.css({ width });
 
 		if (animate) {
 			this.header.addClass('sidebarAnimation');
@@ -150,7 +151,7 @@ class Sidebar {
 			this.dummy.removeClass('sidebarAnimation');
 		};
 
-		navigation?.setX(width + vw, animate);
+		navigation?.setX(width, animate);
 		width ? this.header.addClass('withSidebar') : this.header.removeClass('withSidebar');
 
 		this.page.css({ width: pageWidth });
