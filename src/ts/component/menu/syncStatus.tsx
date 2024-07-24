@@ -214,13 +214,13 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	onPanelIconClick (e, item) {
 		const { param, getId } = this.props;
 		const { classNameWrap } = param;
-		const element = `#${getId()} #icon-${item.id}`;
 		const menuParam = {
 			classNameWrap,
-			element,
+			element: `#${getId()} #icon-${item.id}`,
 			offsetY: 4,
 			passThrough: true,
-			data: item
+			horizontal: I.MenuDirection.Center,
+			data: item,
 		};
 
 		e.preventDefault();
