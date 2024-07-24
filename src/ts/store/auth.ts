@@ -75,7 +75,7 @@ class AuthStore {
 	};
 
 	membershipSet (v: I.Membership) {
-		this.membershipData = new M.Membership(v);
+		this.membershipData = v;
 	};
 
 	membershipUpdate (v: I.Membership) {
