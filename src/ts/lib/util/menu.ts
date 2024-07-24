@@ -832,6 +832,104 @@ class UtilMenu {
 		];
 	};
 
+	sortOrFilterRelationSelect (param: any) {
+		const { rootId, block, getView, element, component, menuId, menuWidth, onSelect } = param;
+		const options = Relation.getFilterOptions(rootId, block.id, getView());
+
+		const callBack = (item: any) => {
+			this.sortOrFilterAdd(item, param, () => {
+				onSelect();
+				S.Menu.close('select');
+			});
+		};
+
+		let menu = {
+			element,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
+			noFlipY: true,
+		};
+
+		if (menuId && menuWidth) {
+			menu = Object.assign(menu, {
+				element: `#${menuId} #item-add`,
+				offsetX: menuWidth,
+				horizontal: I.MenuDirection.Right
+			});
+		};
+
+		S.Menu.open('select', {
+			...menu,
+			data: {
+				options,
+				withFilter: true,
+				maxHeight: 378,
+				onAdd: (menuId, menuWidth) => {
+					const menuParam = { menuId, menuWidth };
+					this.sortOrFilterRelationAdd(menuParam, param, (relation) => callBack(relation));
+				},
+				onSelect: (e: any, item: any) => callBack(item)
+			}
+		});
+	};
+
+	sortOrFilterRelationAdd (menuParam: any, param: any, callBack: (relation: any) => void) {
+		const { rootId, block, getView } = param;
+		const { menuId, menuWidth } = menuParam;
+		const relations = Relation.getFilterOptions(rootId, block.id, getView());
+		const element = `#${menuId} #item-add`;
+
+		S.Menu.open('relationSuggest', {
+			element,
+			offsetX: menuWidth,
+			horizontal: I.MenuDirection.Right,
+			vertical: I.MenuDirection.Center,
+			onOpen: () => $(element).addClass('active'),
+			onClose: () => $(element).removeClass('active'),
+			data: {
+				rootId,
+				blockId: block.id,
+				skipKeys: relations.map(it => it.id),
+				ref: 'dataview',
+				menuIdEdit: 'blockRelationEdit',
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					Dataview.relationAdd(rootId, blockId, relation.relationKey, relations.length, getView(), (message: any) => {
+						callBack(relation);
+						S.Menu.close('relationSuggest');
+					});
+				}
+			}
+		});
+	};
+
+	sortOrFilterAdd (item: any, param: any, callBack: () => void) {
+		const { onSortAdd, onFilterAdd, component } = param;
+
+		let newItem = {
+			relationKey: item.relationKey ? item.relationKey : item.id
+		};
+
+		if (component == 'dataviewSort') {
+			newItem = Object.assign(newItem, {
+				type: I.SortType.Asc,
+			});
+
+			onSortAdd(newItem, callBack);
+		} else
+		if (component == 'dataviewFilterList') {
+			const conditions = Relation.filterConditionsByType(item.format);
+			const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+
+			newItem = Object.assign(newItem, {
+				operator: I.FilterOperator.And,
+				condition: condition as I.FilterCondition,
+				value: Relation.formatValue(item, null, false),
+			});
+
+			onFilterAdd(newItem, callBack);
+		};
+	};
+
 };
 
 export default new UtilMenu();

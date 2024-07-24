@@ -23,8 +23,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		super(props);
 
 		this.onButton = this.onButton.bind(this);
-		this.onEmptyList = this.onEmptyList.bind(this);
-		this.onSortOrFilterAdd = this.onSortOrFilterAdd.bind(this);
+		this.sortOrFilterRelationSelect = this.sortOrFilterRelationSelect.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onViewAdd = this.onViewAdd.bind(this);
@@ -35,7 +34,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		this.onViewCopy = this.onViewCopy.bind(this);
 		this.onViewRemove = this.onViewRemove.bind(this);
 		this.onViewSettings = this.onViewSettings.bind(this);
-		this.onRelationAdd = this.onRelationAdd.bind(this);
 	};
 
 	render () {
@@ -268,7 +266,9 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const obj = $(element);
 
 		if ((component == 'dataviewSort' && !view.sorts.length) || (component == 'dataviewFilterList' && !view.filters.length)) {
-			this.onEmptyList(element, component);
+			this.sortOrFilterRelationSelect({ element, component }, () => {
+				this.onButton(element, component);
+			});
 			return;
 		};
 
@@ -311,9 +311,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				onViewRemove: this.onViewRemove,
 				view: observable.box(view),
 				onAdd: (menuId, menuWidth) => {
-					this.onRelationAdd(menuId, menuWidth, (relation) => {
-						this.onSortOrFilterAdd(relation, component);
-					});
+					this.sortOrFilterRelationSelect({ element, component, menuId, menuWidth });
 				},
 			},
 		};
@@ -328,87 +326,26 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		S.Menu.open(component, param);
 	};
 
-	onEmptyList (element: string, component: string) {
+	sortOrFilterRelationSelect (param: any, callBack?: () => void) {
 		const { rootId, block, getView, onSortAdd, onFilterAdd } = this.props;
-		const options = Relation.getFilterOptions(rootId, block.id, getView());
-
-		const onSelect = (item: any) => {
-			this.onSortOrFilterAdd(item, component, () => {
-				this.onButton(element, component);
-			});
-		};
-
-		S.Menu.open('select', {
+		const { element, component, menuId, menuWidth } = param;
+		
+		U.Menu.sortOrFilterRelationSelect({
 			element,
-			horizontal: I.MenuDirection.Center,
-			offsetY: 10,
-			noFlipY: true,
-			data: {
-				options,
-				withFilter: true,
-				maxHeight: 378,
-				onAdd: (menuId, menuWidth) => {
-					this.onRelationAdd(menuId, menuWidth, (relation) => onSelect(relation));
-				},
-				onSelect: (e: any, item: any) => onSelect(item)
+			component,
+			rootId,
+			block,
+			getView,
+			onSortAdd,
+			onFilterAdd,
+			menuId,
+			menuWidth,
+			onSelect: () => {
+				if (callBack) {
+					callBack();
+				};
 			}
 		});
-	};
-
-	onRelationAdd (menuId: string, menuWidth: number, callBack: (relation: any) => void) {
-		const { rootId, block, getView } = this.props;
-		const relations = Relation.getFilterOptions(rootId, block.id, getView());
-		const element = `#${menuId} #item-add`;
-
-		S.Menu.open('relationSuggest', {
-			element,
-			offsetX: menuWidth,
-			horizontal: I.MenuDirection.Right,
-			vertical: I.MenuDirection.Center,
-			onOpen: () => $(element).addClass('active'),
-			onClose: () => $(element).removeClass('active'),
-			data: {
-				rootId,
-				blockId: block.id,
-				skipKeys: relations.map(it => it.id),
-				ref: 'dataview',
-				menuIdEdit: 'blockRelationEdit',
-				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-					Dataview.relationAdd(rootId, blockId, relation.relationKey, relations.length, getView(), (message: any) => {
-						callBack(relation);
-						S.Menu.close('relationSuggest');
-					});
-				}
-			}
-		})
-	};
-
-	onSortOrFilterAdd (item: any, component: string, callBack?: () => void) {
-		const { onSortAdd, onFilterAdd } = this.props;
-
-		let newItem = {
-			relationKey: item.relationKey ? item.relationKey : item.id
-		};
-
-		if (component == 'dataviewSort') {
-			newItem = Object.assign(newItem, {
-				type: I.SortType.Asc,
-			});
-
-			onSortAdd(newItem, callBack);
-		} else
-		if (component == 'dataviewFilterList') {
-			const conditions = Relation.filterConditionsByType(item.format);
-			const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-
-			newItem = Object.assign(newItem, {
-				operator: I.FilterOperator.And,
-				condition: condition as I.FilterCondition,
-				value: Relation.formatValue(item, null, false),
-			});
-
-			onFilterAdd(newItem, callBack);
-		};
 	};
 
 	onViewAdd (e: any) {
