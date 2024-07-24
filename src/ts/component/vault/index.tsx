@@ -222,18 +222,6 @@ const Vault = observer(class Vault extends React.Component {
 		node.find('.item.hover').removeClass('hover');
 		el.addClass('hover');
 
-		const cb = () => {
-			Preview.tooltipShow({ 
-				text: item.name, 
-				element: el, 
-				className: 'fromVault',
-				typeX: I.MenuDirection.Left,
-				typeY: I.MenuDirection.Center,
-				offsetX: 44,
-				delay: 1,
-			});
-		};
-
 		let s = -1;
 		if (top < this.top) {
 			s = 0;
@@ -244,9 +232,9 @@ const Vault = observer(class Vault extends React.Component {
 
 		if (s >= 0) {
 			Preview.tooltipHide(true);
-			scroll.stop().animate({ scrollTop: s }, 200, 'swing', () => cb());
+			scroll.stop().animate({ scrollTop: s }, 200, 'swing', () => this.tooltipShow(item, 1));
 		} else {
-			cb();
+			this.tooltipShow(item, 1);
 		};
 	};
 
@@ -299,23 +287,28 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		if (keyboard.isDragging) {
-			return;
+		if (!keyboard.isDragging) {
+			this.tooltipShow(item, 300);
 		};
-
-		Preview.tooltipShow({ 
-			text: item.name, 
-			element: $(e.currentTarget), 
-			className: 'fromVault', 
-			typeX: I.MenuDirection.Left,
-			typeY: I.MenuDirection.Center,
-			offsetX: 44,
-			delay: 300,
-		});
 	};
 
 	onMouseLeave () {
 		Preview.tooltipHide();
+	};
+
+	tooltipShow (item: any, delay: number) {
+		const node = $(this.node);
+		const element = node.find(`#item-${item.id}`);
+
+		Preview.tooltipShow({ 
+			text: item.name, 
+			element, 
+			className: 'fromVault', 
+			typeX: I.MenuDirection.Left,
+			typeY: I.MenuDirection.Center,
+			offsetX: 44,
+			delay,
+		});
 	};
 
 	resize () {
