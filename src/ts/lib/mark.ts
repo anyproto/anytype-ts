@@ -421,10 +421,13 @@ class Mark {
 		});
 
 		// Fix browser markup bug
-		text = text.replace(/<\/?(i|b|font|search)[^>]*>/g, (s: string, p: string) => {
+		text = text.replace(/<\/?(i|b|strike|font|search)[^>]*>/g, (s: string, p: string) => {
 			let r = '';
+
 			if (p == 'i') r = this.getTag(I.MarkType.Italic);
 			if (p == 'b') r = this.getTag(I.MarkType.Bold);
+			if (p == 'strike') r = this.getTag(I.MarkType.Strike);
+
 			p = r ? s.replace(p, r) : '';
 			return p;
 		});
