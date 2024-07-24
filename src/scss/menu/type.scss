@@ -1,6 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
+	.menu.menuTypeSuggest { width: var(--menu-width-icon); }
 	.menu.menuTypeSuggest {
 		.filter { padding-top: 12px; }
 		.content { max-height: unset; overflow: hidden; padding: 0px; transition: none; }
