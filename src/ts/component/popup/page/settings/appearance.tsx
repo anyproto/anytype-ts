@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label, Switch } from 'Component';
-import { I, S, U, translate, analytics, Renderer } from 'Lib';
+import { I, S, U, translate, Action, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance extends React.Component<I.PopupSettings> {
@@ -26,7 +26,7 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 						<div
 							key={i}
 							className={[ 'btn', (theme == item.id ? 'active' : ''), item.class ].join(' ')}
-							onClick={() => this.onTheme(item.id)}
+							onClick={() => Action.themeSet(item.id)}
 						>
 							<div className="bg">
 								<Icon />
@@ -58,12 +58,6 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 				</div>
 			</React.Fragment>
 		);
-	};
-
-	onTheme (id: string) {
-		S.Common.themeSet(id);
-		Renderer.send('setTheme', id);
-		analytics.event('ThemeSet', { id });
 	};
 
 });
