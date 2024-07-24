@@ -229,7 +229,7 @@ const Vault = observer(class Vault extends React.Component {
 				className: 'fromVault',
 				typeX: I.MenuDirection.Left,
 				typeY: I.MenuDirection.Center,
-				offsetX: 62,
+				offsetX: 44,
 				delay: 1,
 			});
 		};
@@ -309,7 +309,7 @@ const Vault = observer(class Vault extends React.Component {
 			className: 'fromVault', 
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
-			offsetX: 62,
+			offsetX: 44,
 			delay: 300,
 		});
 	};
