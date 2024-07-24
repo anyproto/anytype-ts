@@ -833,30 +833,19 @@ class UtilMenu {
 	};
 
 	sortOrFilterRelationSelect (param: any) {
-		const { rootId, block, getView, element, component, menuId, menuWidth, onSelect } = param;
-		const options = Relation.getFilterOptions(rootId, block.id, getView());
+		const { rootId, blockId, getView, onSelect, menuParam } = param;
+		const options = Relation.getFilterOptions(rootId, blockId, getView());
 
 		const callBack = (item: any) => {
-			this.sortOrFilterAdd(item, param, () => {
-				onSelect();
-				S.Menu.close('select');
-			});
+			onSelect(item);
+			S.Menu.close('select');
 		};
 
-		let menu = {
-			element,
+		const menu = Object.assign({
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			noFlipY: true,
-		};
-
-		if (menuId && menuWidth) {
-			menu = Object.assign(menu, {
-				element: `#${menuId} #item-add`,
-				offsetX: menuWidth,
-				horizontal: I.MenuDirection.Right
-			});
-		};
+		}, menuParam);
 
 		S.Menu.open('select', {
 			...menu,
@@ -865,8 +854,7 @@ class UtilMenu {
 				withFilter: true,
 				maxHeight: 378,
 				onAdd: (menuId, menuWidth) => {
-					const menuParam = { menuId, menuWidth };
-					this.sortOrFilterRelationAdd(menuParam, param, (relation) => callBack(relation));
+					this.sortOrFilterRelationAdd({ menuId, menuWidth }, param, (relation) => callBack(relation));
 				},
 				onSelect: (e: any, item: any) => callBack(item)
 			}
@@ -874,9 +862,9 @@ class UtilMenu {
 	};
 
 	sortOrFilterRelationAdd (menuParam: any, param: any, callBack: (relation: any) => void) {
-		const { rootId, block, getView } = param;
+		const { rootId, blockId, getView } = param;
 		const { menuId, menuWidth } = menuParam;
-		const relations = Relation.getFilterOptions(rootId, block.id, getView());
+		const relations = Relation.getFilterOptions(rootId, blockId, getView());
 		const element = `#${menuId} #item-add`;
 
 		S.Menu.open('relationSuggest', {
@@ -888,7 +876,7 @@ class UtilMenu {
 			onClose: () => $(element).removeClass('active'),
 			data: {
 				rootId,
-				blockId: block.id,
+				blockId,
 				skipKeys: relations.map(it => it.id),
 				ref: 'dataview',
 				menuIdEdit: 'blockRelationEdit',
@@ -900,34 +888,6 @@ class UtilMenu {
 				}
 			}
 		});
-	};
-
-	sortOrFilterAdd (item: any, param: any, callBack: () => void) {
-		const { onSortAdd, onFilterAdd, component } = param;
-
-		let newItem = {
-			relationKey: item.relationKey ? item.relationKey : item.id
-		};
-
-		if (component == 'dataviewSort') {
-			newItem = Object.assign(newItem, {
-				type: I.SortType.Asc,
-			});
-
-			onSortAdd(newItem, callBack);
-		} else
-		if (component == 'dataviewFilterList') {
-			const conditions = Relation.filterConditionsByType(item.format);
-			const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-
-			newItem = Object.assign(newItem, {
-				operator: I.FilterOperator.And,
-				condition: condition as I.FilterCondition,
-				value: Relation.formatValue(item, null, false),
-			});
-
-			onFilterAdd(newItem, callBack);
-		};
 	};
 
 };
