@@ -698,7 +698,7 @@ class Mark {
 	};
 
 	needsBreak (t: I.MarkType): boolean {
-		return [ I.MarkType.Link, I.MarkType.Object, I.MarkType.Search, I.MarkType.Change, I.MarkType.Highlight ].includes(t);
+		return [ I.MarkType.Link, I.MarkType.Object, I.MarkType.Search, I.MarkType.Change, I.MarkType.Highlight, I.MarkType.Code ].includes(t);
 	};
 
 	canSave (t: I.MarkType): boolean {

@@ -6,7 +6,7 @@ interface SidebarData {
 	isClosed: boolean;
 };
 
-const ANIMATION = 250;
+const ANIMATION_SIDEBAR = 200;
 
 class Sidebar {
 	
@@ -20,7 +20,6 @@ class Sidebar {
 	footer: JQuery<HTMLElement> = null;
 	loader: JQuery<HTMLElement> = null;
 	dummy: JQuery<HTMLElement> = null;
-	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	timeoutHide = 0;
 	timeoutAnim = 0;
@@ -29,6 +28,8 @@ class Sidebar {
 		this.initObjects();
 
 		const stored = Storage.get('sidebar');
+		const vault = $(S.Common.getRef('vault').node);
+
 		if (stored) {
 			if ('undefined' == typeof(stored.isClosed)) {
 				stored.isClosed = !stored.width;
@@ -43,6 +44,14 @@ class Sidebar {
 
 			this.resizePage(J.Size.sidebar.width.default, false);
 		};
+
+		if (this.data.isClosed) {
+			vault.addClass('isClosed');
+			this.obj.addClass('isClosed');
+		} else {
+			vault.removeClass('isClosed');
+			this.obj.removeClass('isClosed');
+		};
 	};
 
 	initObjects () {
@@ -52,34 +61,52 @@ class Sidebar {
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
 		this.dummy = $('#sidebarDummy');
-		this.vault = $('#vault');
 	};
 
 	close (): void {
-		if (!this.obj || !this.obj.length || this.isAnimating) {
+		if (!this.obj || !this.obj.length || this.isAnimating || this.data.isClosed) {
 			return;
 		};
 
-		this.setAnimating(true);
 		this.obj.addClass('anim');
+		this.setAnimating(true);
 		this.setStyle({ width: 0 });
 		this.set({ isClosed: true });
 		this.resizePage(0, true);
 
-		this.removeAnimation(() => $(window).trigger('resize'));
+		this.removeAnimation(() => {
+			this.vaultHide();
+			this.obj.addClass('isClosed');
+
+			window.clearTimeout(this.timeoutAnim);
+			this.timeoutAnim = window.setTimeout(() => {
+				$(window).trigger('resize');
+				this.setAnimating(false);
+			}, this.getVaultDuration(this.data.width));
+		});
 	};
 
 	open (width?: number): void {
-		if (!this.obj || !this.obj.length || this.isAnimating) {
+		if (!this.obj || !this.obj.length || this.isAnimating || !this.data.isClosed) {
 			return;
 		};
 
 		this.setAnimating(true);
-		this.obj.addClass('anim');
-		this.setStyle({ width });
-		this.set({ isClosed: false });
-		this.resizePage(width, true);
-		this.removeAnimation(() => $(window).trigger('resize'));
+		this.vaultShow(width);
+
+		window.clearTimeout(this.timeoutAnim);
+		this.timeoutAnim = window.setTimeout(() => {
+			this.obj.removeClass('isClosed').addClass('anim');
+
+			this.setStyle({ width });
+			this.set({ isClosed: false });
+			this.resizePage(width, true);
+
+			this.removeAnimation(() => {
+				$(window).trigger('resize');
+				this.setAnimating(false);
+			});
+		}, this.getVaultDuration(width));
 	};
 
 	toggleOpenClose () {
@@ -87,11 +114,11 @@ class Sidebar {
 			return;
 		};
 		
-		const { width } = this.data;
+		const { width, isClosed } = this.data;
 
 		this.obj.find('#sidebarHead').css({ width });
 		this.obj.find('#sidebarBody').css({ width });
-		this.data.isClosed ? this.open(width) : this.close();
+		isClosed ? this.open(width) : this.close();
 	};
 
 	setWidth (w: number): void {
@@ -111,12 +138,11 @@ class Sidebar {
 			this.obj.removeClass('anim');
 			this.obj.find('#sidebarHead').css({ width: '' });
 			this.obj.find('#sidebarBody').css({ width: '' });
-			this.setAnimating(false);
 
 			if (callBack) {
 				callBack();
 			};
-		}, ANIMATION);
+		}, ANIMATION_SIDEBAR);
 	};
 
 	resizePage (width: number, animate: boolean): void {
@@ -128,8 +154,9 @@ class Sidebar {
 			};
 		};
 
+		const { isClosed } = this.data;
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = J.Size.vault.width;
+		const vw = isClosed ? 0 : J.Size.vault.width;
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
@@ -187,14 +214,7 @@ class Sidebar {
 			return;
 		};
 
-		const { width, isClosed } = v;
-		const css: any = { width };
-
-		if (isClosed) {
-			css.width = 0;
-		};
-
-		this.obj.css(css);
+		this.obj.css({ width: v.isClosed ? 0 : v.width });
 	};
 
 	/**
@@ -207,6 +227,29 @@ class Sidebar {
 
 	getDummyWidth (): number {
 		return Number($('#sidebarDummy').outerWidth()) || 0;
+	};
+
+	vaultHide () {
+		this.setVaultAnimationParam(this.data.width);
+
+		const vault = $(S.Common.getRef('vault').node);
+		vault.addClass('isClosed');
+	};
+
+	vaultShow (width: number) {
+		this.setVaultAnimationParam(width);
+
+		const vault = $(S.Common.getRef('vault').node);
+		vault.removeClass('isClosed');
+	};
+
+	setVaultAnimationParam (width: number) {
+		const vault = $(S.Common.getRef('vault').node);
+		vault.css({ transitionDuration: `${this.getVaultDuration(width)}ms` });
+	};
+
+	getVaultDuration (width: number): number {
+		return Math.ceil(J.Size.vault.width / width * ANIMATION_SIDEBAR);
 	};
 
 };

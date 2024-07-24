@@ -1257,7 +1257,8 @@
 
 	"menuSmileGallery": "Emojis",
 	"menuSmileUpload": "Upload",
-	"menuSmileEmpty": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
+	"menuSmileEmpty": "There are no items",
+	"menuSmileEmptyFilter": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
 	"menuSmileRandom": "Random emoji",
@@ -1546,6 +1547,9 @@
 	"menuSyncStatusInfoLocalOnlyMessage": "Data backup is disabled",
 
 	"menuSyncStatusInfoP2pTitle": "P2P Connection",
+
+	"menuSyncStatusEmptyLocal": "You are in a local-only mode and your data not backed up to Anytype nodes. You can enable network backup anytime upon logging in to the application.",
+	"menuSyncStatusEmpty": "There are no objects to show",
 
 	"previewEdit": "Edit Link",
 

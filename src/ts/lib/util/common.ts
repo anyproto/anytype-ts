@@ -366,6 +366,11 @@ class UtilCommon {
 
 	formatNumber (v: number): string {
 		v = Number(v) || 0;
+		
+		const s = String(v || '');
+		if (String(s).length < 6) {
+			return s;
+		};
 
 		let ret = String(v || '');
 		let parts = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 8 }).formatToParts(v);

@@ -138,11 +138,8 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
 
-					<div id="vaultContentContainer">
-						<Sidebar key="sidebar" {...this.props} />
-						<Navigation ref={ref => S.Common.refSet('navigation', ref)} key="navigation" {...this.props} />
-						<Page {...this.props} />
-					</div>
+					<Sidebar key="sidebar" {...this.props} />
+					<Page {...this.props} />
 				</DragProvider>
 			</SelectionProvider>
 		);
@@ -206,6 +203,7 @@ class App extends React.Component<object, State> {
 						<ListNotification key="listNotification" />
 						<Share showOnce={true} />
 						<Vault ref={ref => S.Common.refSet('vault', ref)} />
+						<Navigation ref={ref => S.Common.refSet('navigation', ref)} key="navigation" {...this.props} />
 
 						<Switch>
 							{J.Route.map((path: string, i: number) => (
