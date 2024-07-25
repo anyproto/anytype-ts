@@ -38,7 +38,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const rootId = keyboard.getRootId();
 		const canDrop = !isEditing && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
-		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 6;
+		const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
 		const hasMore = U.Space.canMyParticipantWrite();
 
 		let arrow = null;

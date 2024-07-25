@@ -783,6 +783,12 @@ class Action {
 		});
 	};
 
+	themeSet (id: string) {
+		S.Common.themeSet(id);
+		Renderer.send('setTheme', id);
+		analytics.event('ThemeSet', { id });
+	};
+
 };
 
 export default new Action();

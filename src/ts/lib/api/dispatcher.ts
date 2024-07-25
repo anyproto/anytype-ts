@@ -195,6 +195,7 @@ class Dispatcher {
 					break;
 				};
 
+				/*
 				case 'FileLimitReached': {
 					const { bytesLimit, localUsage, spaces } = S.Common.spaceStorage;
 					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
@@ -208,6 +209,7 @@ class Dispatcher {
 					};
 					break;
 				};
+				*/
 
 				case 'BlockAdd': {
 					const { blocks } = mapped;

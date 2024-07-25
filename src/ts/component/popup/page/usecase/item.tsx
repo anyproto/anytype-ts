@@ -187,7 +187,7 @@ class PopupUsecasePageItem extends React.Component<I.PopupUsecase, State> {
 			{ name: translate('popupUsecaseMenuLabel'), isSection: true }
 		];
 
-		if (list.length < J.Constant.limit.space) {
+		if (U.Space.canCreateSpace()) {
 			list.push({ id: 'add', icon: 'add', name: translate('popupUsecaseSpaceCreate') });
 		};
 

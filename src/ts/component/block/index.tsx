@@ -448,7 +448,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	initToggle () {
 		const { rootId, block } = this.props;
 
-		if (block.id && block.isTextToggle()) {
+		if (block && block.id && block.isTextToggle()) {
 			S.Block.toggle(rootId, block.id, Storage.checkToggle(rootId, block.id));
 		};
 	};

@@ -952,14 +952,14 @@ class UtilData {
 		};
 
 		C.MembershipGetStatus(true, (message: any) => {
-			const { membership } = message;
+			const membership = new M.Membership(message.membership);
 
 			if (membership) {
 				const { status, tier } = membership;
 
 				S.Auth.membershipSet(membership);
 				analytics.setTier(tier);
-				
+
 				if (status && (status == I.MembershipStatus.Finalization)) {
 					S.Popup.open('membershipFinalization', { data: { tier } });
 				};

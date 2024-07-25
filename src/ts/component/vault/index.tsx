@@ -15,7 +15,7 @@ const Vault = observer(class Vault extends React.Component {
 	top = 0;
 	timeoutHover = 0;
 	pressed = new Set();
-	n = 0;
+	n = -1;
 
 	constructor (props) {
 		super(props);
@@ -122,7 +122,14 @@ const Vault = observer(class Vault extends React.Component {
 			this.pressed.add(key);
 		};
 
-		keyboard.shortcut('ctrl+tab, ctrl+shift+tab', e, pressed => this.onArrow(pressed.match('shift') ? -1 : 1));
+		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
+			this.pressed.add(key);
+		};
+
+		keyboard.shortcut('ctrl+tab, ctrl+shift+tab', e, pressed => {
+			this.checkKeyUp = true;
+			this.onArrow(pressed.match('shift') ? -1 : 1);
+		});
 	};
 
 	onKeyUp (e: any) {
@@ -137,6 +144,8 @@ const Vault = observer(class Vault extends React.Component {
 			return;
 		};
 
+		this.checkKeyUp = false;
+
 		const node = $(this.node);
 		const items = this.getSpaceItems();
 		const item = items[this.n];
@@ -147,6 +156,8 @@ const Vault = observer(class Vault extends React.Component {
 			node.find('.item.hover').removeClass('hover');
 			U.Router.switchSpace(item.targetSpaceId, '', true);
 		};
+
+		Preview.tooltipHide();
 	};
 
 	onClick (e: any, item: any) {
@@ -169,7 +180,6 @@ const Vault = observer(class Vault extends React.Component {
 			};
 
 			default: {
-				$(this.node).find('.item.hover').removeClass('hover');
 				U.Router.switchSpace(item.targetSpaceId, '', true);
 				break;
 			};
@@ -177,7 +187,6 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onArrow (dir: number) {
-		const { spaceview } = S.Block;
 		const items = this.getSpaceItems();
 
 		if (items.length == 1) {
@@ -193,14 +202,8 @@ const Vault = observer(class Vault extends React.Component {
 		};
 
 		const next = items[this.n];
-		if (!next) {
-			return;
-		};
-
-		if (next.id == spaceview) {
-			this.onArrow(dir);
-		} else {
-			this.setHover(next);	
+		if (next) {
+			this.setHover(next);
 		};
 	};
 
@@ -209,43 +212,36 @@ const Vault = observer(class Vault extends React.Component {
 
 		node.find('.item.isActive').removeClass('isActive');
 		node.find(`#item-${id}`).addClass('isActive');
+
+		this.n = this.getSpaceItems().findIndex(it => it.id == id);
 	};
 
 	setHover (item: any) {
 		const node = $(this.node);
+		const head = node.find('.head');
 		const scroll = node.find('#scroll');
 		const el = node.find(`#item-${item.id}`);
-		const top = el.position().top - scroll.position().top - this.top;
+		const top = el.offset().top - scroll.position().top + this.top;
 		const height = scroll.height();
+		const hh = head.height();
 		const ih = el.height() + 8;
 
 		node.find('.item.hover').removeClass('hover');
 		el.addClass('hover');
 
-		const cb = () => {
-			Preview.tooltipShow({ 
-				text: item.name, 
-				element: el, 
-				className: 'fromVault',
-				typeX: I.MenuDirection.Left,
-				typeY: I.MenuDirection.Center,
-				offsetX: 62,
-				delay: 1,
-			});
-		};
-
 		let s = -1;
-		if (top < 0) {
+		if (top < this.top) {
 			s = 0;
 		};
-		if (top + ih > height - this.top) {
+		if (top + ih > height + this.top + hh) {
 			s = this.top + height;
 		};
+
 		if (s >= 0) {
 			Preview.tooltipHide(true);
-			scroll.stop().animate({ scrollTop: s }, 200, 'swing', () => cb());
+			scroll.stop().animate({ scrollTop: s }, 200, 'swing', () => this.tooltipShow(item, 1));
 		} else {
-			cb();
+			this.tooltipShow(item, 1);
 		};
 	};
 
@@ -298,23 +294,28 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		if (keyboard.isDragging) {
-			return;
+		if (!keyboard.isDragging) {
+			this.tooltipShow(item, 300);
 		};
-
-		Preview.tooltipShow({ 
-			text: item.name, 
-			element: $(e.currentTarget), 
-			className: 'fromVault', 
-			typeX: I.MenuDirection.Left,
-			typeY: I.MenuDirection.Center,
-			offsetX: 62,
-			delay: 300,
-		});
 	};
 
 	onMouseLeave () {
 		Preview.tooltipHide();
+	};
+
+	tooltipShow (item: any, delay: number) {
+		const node = $(this.node);
+		const element = node.find(`#item-${item.id}`);
+
+		Preview.tooltipShow({ 
+			text: item.name, 
+			element, 
+			className: 'fromVault', 
+			typeX: I.MenuDirection.Left,
+			typeY: I.MenuDirection.Center,
+			offsetX: 44,
+			delay,
+		});
 	};
 
 	resize () {

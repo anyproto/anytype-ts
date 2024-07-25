@@ -201,6 +201,7 @@
 	"electronMenuDebugProcess": "Process",
 	"electronMenuDebugTree": "Tree diagnostics",
 	"electronMenuDebugStat": "Statistics",
+	"electronMenuDebugReconcile": "Reconcile",
 	"electronMenuClose": "Close Window",
 	"electronMenuEdit": "Edit",
 	"electronMenuUndo": "Undo",
@@ -1026,6 +1027,8 @@
 	"popupConfirmActionRestrictedTitle": "Action restricted!",
 	"popupConfirmActionRestrictedText": "You cannot do this in read-only space",
 
+	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1060,6 +1063,7 @@
 	"popupSearchEmpty": "No Objects found",
 	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
+	"popupSearchEmptyFilterReadonly": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try to search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchAddRelation": "Add Relation",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
@@ -1111,6 +1115,7 @@
 	"popupShortcutMainBasics17": "Zoom out",
 	"popupShortcutMainBasics18": "Default zoom",
 	"popupShortcutMainBasics19": "Open the Quick Capture menu",
+	"popupShortcutMainBasics20": "Switch to the next/previous Space",
 	"popupShortcutMainStructuring": "Structuring",
 	"popupShortcutMainStructuring1": "Create a new text block",
 	"popupShortcutMainStructuring2": "Create a line break within a block of text",
@@ -1256,14 +1261,15 @@
 
 	"popupShareTitle": "Share Anytype with those you care about",
 	"popupShareLabel": "Thanks for sharing Anytype",
-	"popupShareLinkText": "The everything app for those who celebrate trust & autonomy. <a href=\"%s\">https://simple-sharing.anytype.io/</a>",
+	"popupShareLinkText": "The everything app for those who celebrate trust & autonomy. <a href=\"%s\">%s</a>",
 
 	"menuVaultPeer": "%d\/%d peers",
 	"menuVaultPathText": "Your key files will be stored here. Click to change the path",
 
 	"menuSmileGallery": "Emojis",
 	"menuSmileUpload": "Upload",
-	"menuSmileEmpty": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
+	"menuSmileEmpty": "There are no items",
+	"menuSmileEmptyFilter": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
 	"menuSmileRandom": "Random emoji",
@@ -1547,6 +1553,9 @@
 	"menuSyncStatusInfoLocalOnlyMessage": "Data backup is disabled",
 
 	"menuSyncStatusInfoP2pTitle": "P2P Connection",
+
+	"menuSyncStatusEmptyLocal": "You are in a local-only mode and your data not backed up to Anytype nodes. You can enable network backup anytime upon logging in to the application.",
+	"menuSyncStatusEmpty": "There are no objects to show",
 
 	"previewEdit": "Edit Link",
 

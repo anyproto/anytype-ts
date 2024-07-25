@@ -241,6 +241,26 @@
 		}
     }
 
+    /* DataviewFilterList */
+
+    .menu.menuDataviewFilterList {
+        .item {
+            .txt {
+                .name::after { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
+            }
+        }
+    }
+
+    /* DataviewSort */
+
+    .menu.menuDataviewSort {
+        .item {
+            .txt {
+                .label::after { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
+            }
+        }
+    }
+
 	/* QuickCapture */
 
 	.menuQuickCapture { background: none; box-shadow: none; }

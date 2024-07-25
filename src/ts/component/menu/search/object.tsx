@@ -151,7 +151,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				{isLoading ? <Loader /> : ''}
 
 				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? U.Common.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch filter={filter} />
 				) : ''}
 
 				{this.cache && items.length && !isLoading ? (
@@ -472,7 +472,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			} else {
 				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-				U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Search', (message: any) => {
+				U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.search, (message: any) => {
 					process(message.details, true);
 					close();
 				});
