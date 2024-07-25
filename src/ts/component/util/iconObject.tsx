@@ -277,12 +277,11 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					cn.push('withImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
-				} else 
-				if (iconOption) {
+				} else {
 					cn.push('withOption withImage');
 
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-					icon = <img src={this.gradientSvg(0.35)} className={icn.join(' ')} />;
+					icon = <img src={this.gradientSvg(iconOption || 1, 0.35)} className={icn.join(' ')} />;
 				}
 				break;
 			};
@@ -515,10 +514,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	gradientSvg (radius: number): string {
-		const object = this.getObject();
+	gradientSvg (option: number, radius: number): string {
 		const iconSize = this.iconSize();
-		const item = J.Color.icons.colors[object.iconOption - 1] as any;
+		const item = J.Color.icons.colors[option - 1] as any;
 		const { from, to } = J.Color.icons.steps;
 
 		const gradient = `

@@ -53,9 +53,8 @@
 	.widget.isEditable.isOver.bottom::before { bottom: -7px; }
 }
 
-.listWidget.isEditing { padding-bottom: 58px; }
 .listWidget.isEditing {
-	> .buttons { position: fixed; bottom: 0px; left: 0px; padding: 0px 16px 16px 16px; }
+	> .buttons { position: sticky; bottom: 0px; left: 0px; padding: 0px 16px; }
 	
 	.widget:not(.isEditable) { opacity: 0.5; }
 	.widget:not(.isEditable) {

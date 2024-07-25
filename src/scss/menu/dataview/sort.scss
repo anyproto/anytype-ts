@@ -11,12 +11,11 @@
 		.item {
 			.iconObject { margin-right: 10px; }
 			
-			.select { border: 0px; padding: 0px; display: block; }
+			.select { border: 0px; padding: 0px; display: block; padding-right: 20px; }
 			.select:hover, .select.isFocused { background: none; }
 			.select.grey { color: var(--color-control-active); }
 			.select {
 				.icon.relation { display: none; }
-				.icon.arrow { display: none; }
 			}
 
 			.buttons { line-height: 44px; opacity: 0; transition: $transitionAllCommon; }
@@ -24,7 +23,11 @@
 				.icon { vertical-align: middle; opacity: 1; }
 			}
 
-			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; display: flex; flex-direction: column; }
+			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; display: flex; flex-direction: column; align-items: flex-start; }
+			.txt {
+				.label { @include text-common; display: flex; align-items: center; font-weight: 400; line-height: 20px; padding: 0px; margin: 0px; color: var(--color-text-primary); }
+				.label::after { content: ''; width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); }
+			}
 		}
 		.item.empty { margin: 8px 0px; padding: 14px 16px; }
 		.item.isReadonly {

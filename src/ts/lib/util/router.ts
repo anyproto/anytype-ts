@@ -151,7 +151,7 @@ class UtilRouter {
 			this.go('/main/blank', { 
 				replace: true, 
 				animate: true,
-				delay: 250,
+				delay: 300,
 				onFadeOut: () => {
 					S.Record.metaClear(J.Constant.subId.participant, '');
 					S.Record.recordsClear(J.Constant.subId.participant, '');
