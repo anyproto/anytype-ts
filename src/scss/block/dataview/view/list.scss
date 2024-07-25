@@ -104,6 +104,8 @@
 
 	.block.blockDataview.isInline {
 		.viewContent.viewList { padding: 9px 0px 0px 0px; }
-		.row { padding-left: 0px !important; height: 34px !important; }
+		.viewContent.viewList {
+			.row { padding-left: 0px !important; height: 34px !important; }
+		}
 	}
 }
