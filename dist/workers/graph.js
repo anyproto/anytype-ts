@@ -82,6 +82,7 @@ let rootId = '';
 let root = null;
 let paused = false;
 let isOver = '';
+let maxEdges = 0;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -170,7 +171,8 @@ initForces = () => {
 
 	simulation.force('link')
 	.links(edges)
-	.distance(link.distance);
+	.distance(link.distance)
+	.strength(d => d.source.type == d.target.type ? 1 : 0.5);
 
 	simulation.force('forceX')
 	.strength(d => d.isOrphan ? forceX.strength : 0)
@@ -788,6 +790,21 @@ const getRadius = (d) => {
 	if (settings.icon && images[d.src] && (transform.k >= transformThresholdHalf)) {
 		k = 2;
 	};
+
+	let e = 0;
+	if (settings.link) {
+		e += d.linkCnt
+	};
+	if (settings.relation) {
+		e += d.relationCnt;
+	};
+
+	maxEdges = Math.max(maxEdges, e);
+
+	if (maxEdges > 0) {
+		k += Math.min(1, e / maxEdges);
+	};
+
 	return d.radius / transform.k * k;
 };
 
