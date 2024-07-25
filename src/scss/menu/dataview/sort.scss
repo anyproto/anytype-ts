@@ -25,6 +25,9 @@
 			}
 
 			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; display: flex; flex-direction: column; }
+			.txt {
+				.label { @include text-common; font-weight: 400; line-height: 20px; padding: 0px; margin: 0px; color: var(--color-text-primary); }
+			}
 		}
 		.item.empty { margin: 8px 0px; padding: 14px 16px; }
 		.item.isReadonly {

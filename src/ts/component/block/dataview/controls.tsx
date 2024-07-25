@@ -266,7 +266,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		const view = getView();
 		const obj = $(element);
 
-		if ((component == 'dataviewSort' && !view.sorts.length) || (component == 'dataviewFilterList' && !view.filters.length)) {
+		if (((component == 'dataviewSort') && !view.sorts.length) || ((component == 'dataviewFilterList') && !view.filters.length)) {
 			this.sortOrFilterRelationSelect(component,{ element }, () => {
 				this.onButton(element, component);
 			});
