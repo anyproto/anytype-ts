@@ -11,7 +11,10 @@
 		position: relative; z-index: 1; background: inherit;
 	}
 
-	.body { display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; gap: 12px 0px; height: calc(100% - 64px); }
+	.body { 
+		display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; gap: 12px 0px; height: calc(100% - 64px); 
+		width: $vaultWidthCollapsed;
+	}
 	.body {
 		.side { padding: 0px 10px; display: flex; flex-direction: column; align-items: center; }
 		.side.top { gap: 16px 0px; overflow: auto; flex-grow: 1; overscroll-behavior: none; }
