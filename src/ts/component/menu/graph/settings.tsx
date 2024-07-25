@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { I, S, keyboard, translate } from 'Lib';
 import { MenuItemVertical, Drag } from 'Component';
 
-const MAX_DEPTH = 3;
+const MAX_DEPTH = 2;
 
 const MenuGraphSettings = observer(class MenuGraphSettings extends React.Component<I.Menu> {
 
@@ -22,7 +22,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		const sections = this.getSections();
 		const snaps = [];
 
-		for (let i = 0; i <= MAX_DEPTH; i++) {
+		for (let i = 1; i <= MAX_DEPTH; i++) {
 			snaps.push(i / MAX_DEPTH);
 		};
 
@@ -40,8 +40,9 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 									</div>
 									<div className="drag">
 										<Drag 
-											value={values[item.id] / MAX_DEPTH} 
+											value={(values[item.id] - 1) / MAX_DEPTH} 
 											snaps={snaps}
+											strictSnap={true}
 											onMove={(e: any, v: number) => this.onDragMove(item.id, v)}
 											onEnd={(e: any, v: number) => this.onDragEnd(item.id, v)} 
 										/>
@@ -136,7 +137,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	getDepth (v: number) {
-		return Math.max(1, Math.min(MAX_DEPTH, Math.ceil(v * MAX_DEPTH)));
+		return Math.floor(v * MAX_DEPTH) + 1;
 	};
 
 	getKey () {
