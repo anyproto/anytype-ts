@@ -6,6 +6,7 @@ importScripts(
 	'./lib/d3/d3-timer.min.js',
 	'./lib/d3/d3-selection.min.js',
 	'./lib/d3/d3-force.min.js',
+	'./lib/d3/d3-force-cluster.min.js',
 	'./lib/tween.js',
 	'./lib/util.js'
 );
@@ -83,6 +84,7 @@ let root = null;
 let paused = false;
 let isOver = '';
 let maxEdges = 0;
+let clusters = {};
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -96,6 +98,8 @@ init = (param) => {
 	settings = data.settings;
 	rootId = data.rootId;
 	ctx = canvas.getContext('2d');
+	edges = util.objectCopy(data.edges);
+	nodes = util.objectCopy(data.nodes);
 
 	util.ctx = ctx;
 	resize(data);
@@ -151,8 +155,27 @@ image = ({ src, bitmap }) => {
 
 initForces = () => {
 	const { center, charge, link, forceX, forceY } = forceProps;
+	const m = 10;
+	const maxRadius = 500;
 
 	updateOrphans();
+
+	nodes.forEach(d => {
+		if (!clusters[d.type]) {
+			clusters[d.type] = { id: d.type, radius: 0, x: 0, y: 0 };
+		};
+	});
+
+	clusters = Object.values(clusters);
+
+	const l = clusters.length;
+
+	clusters = Object.values(clusters).map((c, i) => {
+		c.radius = Math.sqrt((i + 1) / l * -Math.log(Math.random())) * maxRadius;
+		c.x = Math.cos(i / l * 2 * Math.PI) * 150 + width / 2 + Math.random();
+		c.y = Math.sin(i / l * 2 * Math.PI) * 150 + height / 2 + Math.random();
+		return c;
+	});
 
 	simulation
 	.force('link', d3.forceLink().id(d => d.id))
@@ -225,6 +248,17 @@ updateForces = () => {
 		nodes = nodes.filter(d => !d.isOrphan || d.forceShow);
 	};
 
+	// Cluster by object type
+	if (settings.cluster) {
+		simulation.force('cluster', d3.forceCluster()
+		.centers(d => clusters.find(c => c.id == d.type))
+		.strength(1)
+		.centerInertia(0.5));
+
+		simulation.
+		force('collide', d3.forceCollide(d => getRadius(d)));
+	};
+
 	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
@@ -258,7 +292,7 @@ updateForces = () => {
 };
 
 updateSettings = (param) => {
-	const updateKeys = [ 'link', 'relation', 'orphan', 'local' ];
+	const updateKeys = [ 'link', 'relation', 'orphan', 'local', 'cluster' ];
 	
 	let needUpdate = false;
 	let needFocus = false;
