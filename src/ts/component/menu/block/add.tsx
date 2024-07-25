@@ -626,10 +626,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						details.layout = type.recommendedLayout;
 					};
 
-					if (item.isChat) {
-						details.layout = I.ObjectLayout.Chat;
-					};
-
 					U.Object.create(rootId, blockId, details, position, type.defaultTemplateId, [ I.ObjectFlag.SelectTemplate ], analytics.route.powertool, (message: any) => {
 						U.Object.openConfig(message.details);
 						analytics.event('CreateLink');

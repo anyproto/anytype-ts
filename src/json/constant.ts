@@ -109,7 +109,7 @@ export default {
 		dashboard:		 'ot-dashboard',
 		date:			 'ot-date',
 		profile:		 'ot-profile',
-		chat:			 'ot-chat',
+		chat:			 'ot-discussion',
 	},
 
 	templateId: {
