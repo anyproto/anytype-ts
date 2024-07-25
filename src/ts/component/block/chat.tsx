@@ -181,11 +181,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const blockId = this.getBlockId();
 		const lastId = Storage.getLastChatMessageId(rootId);
 		const ns = blockId + U.Common.getEventNamespace(isPopup);
+		const messages = this.getMessages();
 
 		this._isMounted = true;
 		this.checkSendButton();
 
 		if (lastId && this.messagesMap[lastId]) {
+			if (lastId == messages[messages.length - 1].id) {
+				this.scrollToBottom();
+				return;
+			};
+
 			const node = $(this.messagesMap[lastId].node);
 
 			this.lastMessageId = lastId;
@@ -770,7 +776,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		switch (type) {
 			case I.ChatButton.Object: {
 				this.setState({ attachments: attachments.concat(item) });
-				this.scrollToBottom();
 				break;
 			};
 			case I.ChatButton.Emoji: {
