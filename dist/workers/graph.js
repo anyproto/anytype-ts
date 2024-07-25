@@ -210,11 +210,9 @@ updateForces = () => {
 
 	// Filter local only edges
 	if (settings.local) {
-		edges = getEdgesByNodeId(rootId);
+		edges = filterEdgesByDepth([ rootId ], settings.depth || 1);
 
-		const ids = nodeIdsFromEdges(edges);
-		ids.add(rootId);
-
+		const ids = nodeIdsFromEdges(edges).add(rootId);
 		nodes = nodes.filter(d => ids.has(d.id));
 	};
 
@@ -256,7 +254,7 @@ updateForces = () => {
 };
 
 updateSettings = (param) => {
-	const updateKeys = [ 'link', 'relation', 'orphan', 'local' ];
+	const updateKeys = [ 'link', 'relation', 'orphan', 'local', 'depth' ];
 	
 	let needUpdate = false;
 	let needFocus = false;
@@ -777,6 +775,29 @@ const getNodeByCoords = (x, y) => {
 
 const getEdgesByNodeId = (id) => {
 	return edges.filter(d => (d.source == id) || (d.target == id));
+};
+
+const filterEdgesByDepth = (sourceIds, depth) => {
+	if (!depth) {
+		return [];
+	};
+
+	const filtered = edges.filter(d => sourceIds.includes(d.source) || sourceIds.includes(d.target));
+	const srcIds = filtered.map(d => d.source);
+	const dstIds = filtered.map(d => d.target);
+	const nextIds = srcIds.concat(dstIds);
+
+	let ret = [].concat(filtered);
+
+	if (nextIds.length && (depth > 1)) {
+		const nextDepth = depth - 1;
+
+		filtered.forEach(() => {
+			ret = ret.concat(filterEdgesByDepth(nextIds, nextDepth));
+		});
+	};
+
+	return ret;
 };
 
 const nodeIdsFromEdges = (edges) => {

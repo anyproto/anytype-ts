@@ -190,31 +190,31 @@ export interface ButtonComponent {
 };
 
 export enum SurveyType {
-	Register	 = 0,
-	Delete		 = 1,
-	Pmf			 = 2,
-	Object		 = 3,
-	Shared		 = 4,
-	Multiplayer	 = 5,
+	Register		 = 0,
+	Delete			 = 1,
+	Pmf				 = 2,
+	Object			 = 3,
+	Shared			 = 4,
+	Multiplayer		 = 5,
 };
 
 export enum SliceOperation {
-	None		 = 0,
-	Add			 = 1,
-    Move		 = 2,
-	Remove		 = 3,
-    Replace		 = 4,
+	None			 = 0,
+	Add				 = 1,
+    Move			 = 2,
+	Remove			 = 3,
+    Replace			 = 4,
 };
 
 export enum FileSyncStatus {
-	Unknown		 = 0,
-	Synced		 = 1,
-	NotSynced	 = 2,
+	Unknown			 = 0,
+	Synced			 = 1,
+	NotSynced		 = 2,
 };
 
 export enum StoreTab {
-	Type	 = 'type',
-	Relation = 'relation',
+	Type			 = 'type',
+	Relation		 = 'relation',
 };
 
 export enum BannerType {
@@ -225,28 +225,42 @@ export enum BannerType {
 };
 
 export enum ObjectManagerItemInfo {
-	Description	 = 0,
-	FileSize	 = 1,
+	Description		 = 0,
+	FileSize		 = 1,
 };
 
 export enum ObjectManagerPopup {
-	Favorites	 = 0,
+	Favorites		 = 0,
 };
 
 export enum NetworkMode {
-	Default		 = 0,
-	Local		 = 1,
-	Custom		 = 2,
+	Default			 = 0,
+	Local			 = 1,
+	Custom			 = 2,
 };
 
 export enum NavigationMenuMode {
-	None		 = 0,
-	Context		 = 1,
-	Click		 = 2,
-	Hover		 = 3,
+	None			 = 0,
+	Context			 = 1,
+	Click			 = 2,
+	Hover			 = 3,
 };
 
 export enum InterfaceStatus {
-	Ok		 = 'ok',
-	Error	 = 'error',
+	Ok				 = 'ok',
+	Error			 = 'error',
+};
+
+export interface GraphSettings {
+	icon: boolean;
+	preview: boolean;
+	orphan: boolean;
+	marker: boolean;
+	label: boolean;
+	relation: boolean;
+	link: boolean;
+	files: boolean;
+	local: boolean;
+	filter: string;
+	depth: number;
 };

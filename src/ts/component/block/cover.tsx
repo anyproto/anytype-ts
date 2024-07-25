@@ -342,8 +342,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			this.loaded = true;
 		};
 
-		console.log(this.loaded);
-
 		if (this.loaded) {
 			cb();
 		} else {
