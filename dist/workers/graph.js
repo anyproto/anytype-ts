@@ -783,9 +783,7 @@ const filterEdgesByDepth = (sourceIds, depth) => {
 	};
 
 	const filtered = edges.filter(d => sourceIds.includes(d.source) || sourceIds.includes(d.target));
-	const srcIds = filtered.map(d => d.source);
-	const dstIds = filtered.map(d => d.target);
-	const nextIds = srcIds.concat(dstIds);
+	const nextIds = [].concat(filtered.map(d => d.source)).concat(filtered.map(d => d.target));
 
 	let ret = [].concat(filtered);
 
