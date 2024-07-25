@@ -475,7 +475,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				};
 
 				if (create) {
-					Action.createWidgetFromObject(contextId, objectId, targetId, position);
+					Action.createWidgetFromObject(contextId, objectId, targetId, position, 'DnD');
 				};
 
 				break;

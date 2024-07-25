@@ -502,7 +502,7 @@ class MenuObject extends React.Component<I.Menu> {
 			case 'createWidget': {
 				const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
 
-				Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top);
+				Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, 'Menu');
 				break;
 			};
 		};
