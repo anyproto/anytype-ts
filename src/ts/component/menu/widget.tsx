@@ -382,7 +382,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			};
 
 			if (!isEditing) {
-				analytics.event('AddWidget', { type: this.layout, route: 'Menu' });
+				analytics.event('AddWidget', { type: this.layout, route: analytics.route.addWidgetMenu });
 			};
 		});
 

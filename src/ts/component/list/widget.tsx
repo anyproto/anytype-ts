@@ -102,14 +102,14 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 			if (isEditing) {
 				if (blocks.length <= J.Constant.limit.widgets) {
-					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, 'Editor') });
+					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetEditor) });
 				};
 
 				buttons.push({ id: 'widget-list-done', text: translate('commonDone'), onMouseDown: this.onEdit });
 			} else 
 			if (canWrite) {
 				buttons = buttons.concat([
-					{ id: 'widget-list-add', className: 'grey c28', text: translate('widgetAdd'), onMouseDown: e => this.onAdd(e, 'Main') },
+					{ id: 'widget-list-add', className: 'grey c28', text: translate('widgetAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetMain) },
 					{ id: 'widget-list-edit', className: 'grey c28', text: translate('widgetEdit'), onMouseDown: this.onEdit }
 				]);
 			};
