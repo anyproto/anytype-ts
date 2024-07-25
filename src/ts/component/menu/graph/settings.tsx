@@ -104,7 +104,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 					{ id: 'marker', name: translate('menuGraphSettingsArrows') },
 					{ id: 'icon', name: translate('menuGraphSettingsIcons') },
 					{ id: 'preview', name: translate('menuGraphSettingsPreview') },
-					config.experimental ? { id: 'cluster', name: translate('menuGraphSettingsCluster') } : null,
+					(config.experimental ? { id: 'cluster', name: translate('menuGraphSettingsCluster') } : null),
 				] 
 			},
 			{ 
