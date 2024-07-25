@@ -847,6 +847,10 @@ class UtilMenu {
 			noFlipY: true,
 		}, menuParam);
 
+		if (S.Menu.isOpen('select')) {
+			S.Menu.close('select');
+		};
+
 		S.Menu.open('select', {
 			...menu,
 			data: {

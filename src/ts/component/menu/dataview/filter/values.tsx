@@ -435,7 +435,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				element: `#${getId()} #item-${item.id}`,
 				offsetX: getSize().width,
 				horizontal: I.MenuDirection.Right,
-				vertical: I.MenuDirection.Center
+				vertical: I.MenuDirection.Center,
+				passThrough: true,
 			};
 
 			U.Menu.sortOrFilterRelationSelect({

@@ -71,7 +71,8 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 						<Select 
 							id={[ 'filter', 'type', item.id ].join('-')} 
 							className="grey" 
-							options={typeOptions} 
+							options={typeOptions}
+							arrowClassName={'light'}
 							value={item.type} 
 							onChange={v => this.onChange(item.id, 'type', v)} 
 							readonly={isReadonly}
