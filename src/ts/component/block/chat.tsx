@@ -770,6 +770,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		switch (type) {
 			case I.ChatButton.Object: {
 				this.setState({ attachments: attachments.concat(item) });
+				this.scrollToBottom();
 				break;
 			};
 			case I.ChatButton.Emoji: {

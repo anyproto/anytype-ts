@@ -66,7 +66,7 @@ const Navigation = observer(class Navigation extends React.Component {
 			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
 			{ id: 'forward', tooltip: translate('commonForward'), caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
 			buttonPlus,
-			{ id: 'chat', tooltip: translate('commonChat'), caption: ``, onClick: this.onChat },
+			// { id: 'chat', tooltip: translate('commonChat'), caption: ``, onClick: this.onChat },
 			{ id: 'graph', tooltip: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
 			{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: this.onSearch },
 		].filter(it => it).map(it => {
