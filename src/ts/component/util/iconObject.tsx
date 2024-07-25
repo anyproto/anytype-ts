@@ -282,7 +282,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={this.gradientSvg(iconOption || 1, 0.35)} className={icn.join(' ')} />;
-				}
+				};
 				break;
 			};
 

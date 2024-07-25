@@ -1451,6 +1451,7 @@
 	"menuGraphSettingsUnlinkedObjects": "Unlinked Objects",
 	"menuGraphSettingsFiles": "Files",
 	"menuGraphSettingsLocal": "Local graph",
+	"menuGraphSettingsDepth": "Depth",
 
 	"menuHelpWhatsNew": "What's New",
 	"menuHelpShortcut": "Keyboard Shortcuts",

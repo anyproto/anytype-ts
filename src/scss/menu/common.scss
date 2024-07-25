@@ -198,6 +198,15 @@
 		.section > .name:empty { display: none; }
 		.section > .inputWrap { padding-bottom: 0px; }
 		.section.noLine::after { display: none; }
+
+		.input-drag {
+			.back { background-color: var(--color-shape-secondary); }
+			.icon { 
+				width: 12px; height: 12px; border-color: var(--color-shape-secondary); background-color: var(--color-bg-primary); 
+				margin: 0px;
+			}
+			.fill { background-color: var(--color-orange); }
+		}
 	}
 
 	.menu.horizontal {
@@ -238,6 +247,7 @@ html.platformWindows {
 @import "./widget.scss";
 @import "./quickCapture.scss";
 @import "./syncStatus.scss";
+@import "./graph.scss";
 
 @import "./search/object.scss";
 @import "./search/text.scss";
