@@ -56,6 +56,11 @@ class Analytics {
 		settingsMembership: 'ScreenSettingsMembership',
 
 		inviteConfirm: 'ScreenInviteConfirm',
+
+		addWidgetMain: 'Main',
+		addWidgetEditor: 'Editor',
+		addWidgetMenu: 'Menu',
+		addWidgetDnD: 'DnD'
 	};
 
 	debug () {
