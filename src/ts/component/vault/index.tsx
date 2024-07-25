@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { trace } from 'mobx';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview } from 'Lib';
+import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar } from 'Lib';
 
 import VaultItem from './item';
 
@@ -12,6 +11,7 @@ const Vault = observer(class Vault extends React.Component {
 	node = null;
 	isAnimating = false;
 	checkKeyUp = false;
+	closeSidebar = false;
 	top = 0;
 	timeoutHover = 0;
 	pressed = new Set();
@@ -116,6 +116,7 @@ const Vault = observer(class Vault extends React.Component {
 
 	onKeyDown (e: any) {
 		const key = e.key.toLowerCase();
+		const { isClosed, width } = sidebar.data;
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			this.pressed.add(key);
@@ -124,6 +125,11 @@ const Vault = observer(class Vault extends React.Component {
 		keyboard.shortcut('ctrl+tab, ctrl+shift+tab', e, pressed => {
 			this.checkKeyUp = true;
 			this.onArrow(pressed.match('shift') ? -1 : 1);
+
+			if (isClosed) {
+				this.closeSidebar = true;
+				sidebar.open(width);
+			};
 		});
 	};
 
@@ -150,6 +156,10 @@ const Vault = observer(class Vault extends React.Component {
 			U.Router.switchSpace(item.targetSpaceId, '', true);
 		};
 
+		if (this.closeSidebar) {
+			sidebar.close();
+			this.closeSidebar = false;
+		};
 		Preview.tooltipHide();
 	};
 
