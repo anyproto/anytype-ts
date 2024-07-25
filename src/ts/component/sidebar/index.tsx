@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, keyboard, Preview, sidebar, translate } from 'Lib';
+import { I, U, J, S, keyboard, Preview, sidebar, translate } from 'Lib';
 import ListWidget from 'Component/list/widget';
 
 const Sidebar = observer(class Sidebar extends React.Component {
@@ -59,7 +59,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					className={cn.join(' ')} 
 				>
 					<div className="inner">
-						<div id="sidebarHead" className="head">
+						<div id="sidebarHead" className="head" onClick={this.onHeadClick}>
 							{status ? <div className="status">{status}</div> : ''}
 						</div>
 						<div 
@@ -189,6 +189,13 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	onHandleClick () {
 		if (!this.movedX) {
 			sidebar.toggleOpenClose();
+		};
+	};
+
+	onHeadClick () {
+		const space = U.Space.getSpaceview();
+		if (space && space.isShared) {
+			S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
 		};
 	};
 

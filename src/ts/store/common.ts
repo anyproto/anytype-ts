@@ -7,19 +7,6 @@ interface Filter {
 	text: string;
 };
 
-interface Graph {
-	icon: boolean;
-	preview: boolean;
-	orphan: boolean;
-	marker: boolean;
-	label: boolean;
-	relation: boolean;
-	link: boolean;
-	files: boolean;
-	local: boolean;
-	filter: string;
-};
-
 interface SpaceStorage {
 	bytesLimit: number;
 	localUsage: number;
@@ -69,7 +56,7 @@ class CommonStore {
 		marks: [],
 	};
 
-	private graphObj: Graph = { 
+	private graphObj: I.GraphSettings = { 
 		icon: true,
 		preview: true,
 		orphan: true,
@@ -79,7 +66,9 @@ class CommonStore {
 		files: false,
 		link: true,
 		local: false,
+		cluster: false,
 		filter: '',
+		depth: 1,
 	};
 
 	public spaceStorageObj: SpaceStorage = {
@@ -302,7 +291,7 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
-	graphSet (key: string, param: Partial<Graph>) {
+	graphSet (key: string, param: Partial<I.GraphSettings>) {
 		Storage.set(key, Object.assign(this.getGraph(key), param));
 		$(window).trigger('updateGraphSettings');
 	};
@@ -516,7 +505,7 @@ class CommonStore {
 		this.diffValue = diff || [];
 	};
 
-	getGraph (key: string): Graph {
+	getGraph (key: string): I.GraphSettings {
 		const stored = Storage.get(key);
 		const def = U.Common.objectCopy(this.graphObj);
 

@@ -31,12 +31,18 @@
 				.iconObject { margin-right: 2px; }
 			}
 
-			.txt { width: calc(100% - 70px); line-height: 20px; height: 40px; display: flex; flex-direction: column; }
+			.txt { width: calc(100% - 70px); line-height: 20px; height: 40px; display: flex; flex-direction: column; align-items: flex-start; }
 			.txt {
-				.name { @include text-overflow-nw; width: 100%; }
+				.name { @include text-overflow-nw; }
 				.flex { line-height: 20px; }
 
-				.condition { color: var(--color-text-secondary); margin-right: 4px; }
+				.name,
+				.flex { display: flex; align-items: center; }
+				.name::after,
+				.flex::after { content: ''; width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); }
+				.flex::after { background-image: url('~img/arrow/select/light.svg'); }
+
+				.condition { color: var(--color-text-secondary); }
 				.value { color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; }
 			}
 		}

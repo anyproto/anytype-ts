@@ -2,10 +2,13 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, S, keyboard, translate } from 'Lib';
-import { MenuItemVertical } from 'Component';
+import { MenuItemVertical, Drag } from 'Component';
+
+const MAX_DEPTH = 2;
 
 const MenuGraphSettings = observer(class MenuGraphSettings extends React.Component<I.Menu> {
 
+	node = null;
 	n = -1;
 
 	constructor (props: I.Menu) {
@@ -15,28 +18,54 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	render () {
+		const values = this.getValues();
 		const sections = this.getSections();
+		const snaps = [];
+
+		for (let i = 1; i <= MAX_DEPTH; i++) {
+			snaps.push(i / MAX_DEPTH);
+		};
 
 		const Section = (item: any) => (
 			<div className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
 					{item.children.map((item: any, i: number) => {
-						return (
-							<MenuItemVertical 
-								key={i} 
-								{...item} 
-								onMouseEnter={e => this.onMouseEnter(e, item)} 
-								onClick={e => this.onClick(e, item)} 
-							/>
-						);
+						if (item.withDrag) {
+							return (
+								<div id={`item-${item.id}`} key={i} className="item withDrag">
+									<div className="flex">
+										<div className="name">{item.name}</div>
+										<div id={`value-${item.id}`} className="value">{values[item.id]}</div>
+									</div>
+									<div className="drag">
+										<Drag 
+											value={(values[item.id] - 1) / MAX_DEPTH} 
+											snaps={snaps}
+											strictSnap={true}
+											onMove={(e: any, v: number) => this.onDragMove(item.id, v)}
+											onEnd={(e: any, v: number) => this.onDragEnd(item.id, v)} 
+										/>
+									</div>
+								</div>
+							);
+						} else {
+							return (
+								<MenuItemVertical 
+									key={i} 
+									{...item} 
+									onMouseEnter={e => this.onMouseEnter(e, item)} 
+									onClick={e => this.onSwitch(item.id)} 
+								/>
+							);
+						};
 					})}
 				</div>
 			</div>
 		);
 
 		return (
-			<div>
+			<div ref={ref => this.node = ref}>
 				{sections.map((item: any, i: number) => (
 					<Section key={i} {...item} />
 				))}
@@ -73,13 +102,42 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		};
 	};
 
-	onClick (e: any, item: any) {
+	onDragMove (id: string, v: number) {
+		const node = $(this.node);
+		const value = node.find(`#value-${id}`);
+
+		if (id == 'depth') {
+			v = this.getDepth(v);
+		};
+
+		value.text(v);	
+	};
+
+	onDragEnd (id: string, v: number) {
 		const values = this.getValues();
+		
+		if (id == 'depth') {
+			values[id] = this.getDepth(v);
+		} else {
+			values[id] = v;
+		};
 
-		values[item.id] = !values[item.id];
+		this.save(values);
+	};
+
+	onSwitch (id: string) {
+		const values = this.getValues();
+		values[id] = !values[id];
+		this.save(values);
+	};
+
+	save (values: I.GraphSettings) {
 		S.Common.graphSet(this.getKey(), values);
-
 		this.forceUpdate();
+	};
+
+	getDepth (v: number) {
+		return Math.floor(v * MAX_DEPTH) + 1;
 	};
 
 	getKey () {
@@ -91,6 +149,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	getSections (): any[] {
+		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { allowLocal } = data;
@@ -103,6 +162,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 					{ id: 'marker', name: translate('menuGraphSettingsArrows') },
 					{ id: 'icon', name: translate('menuGraphSettingsIcons') },
 					{ id: 'preview', name: translate('menuGraphSettingsPreview') },
+					(config.experimental ? { id: 'cluster', name: translate('menuGraphSettingsCluster') } : null),
 				] 
 			},
 			{ 
@@ -115,14 +175,22 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		];
 
 		if (allowLocal) {
-			sections.push({ children: [ { id: 'local', name: translate('menuGraphSettingsLocal') } ] });
+			const children: any[] = [ 
+				{ id: 'local', name: translate('menuGraphSettingsLocal') },
+			];
+
+			if (values.local && config.experimental) {
+				children.push({ id: 'depth', name: translate('menuGraphSettingsDepth'), withDrag: true });
+			};
+
+			sections.push({ children });
 		};
 
 		sections = sections.map(s => {
 			s.children = s.children.filter(it => it).map(c => {
 				c.switchValue = values[c.id];
 				c.withSwitch = true;
-				c.onSwitch = (e: any, v: boolean) => this.onClick(e, c);
+				c.onSwitch = () => this.onSwitch(c.id);
 				return c;
 			});
 			return s;
