@@ -22,12 +22,13 @@
 	> .inner { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; background-color: var(--color-shape-tertiary); }
 	> .inner {
 		> .head { 
-			display: flex; flex-direction: row; align-items: center; justify-content: flex-start; padding: 0px 12px; height: 52px;
+			display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
 			gap: 0px 8px; overflow: hidden;
 		}
 		> .head {
 			.status { 
-				@include text-small; font-weight: 500; @include text-overflow-nw; text-align: center; color: var(--color-text-secondary); flex-grow: 1; 
+				@include text-small; font-weight: 500; @include text-overflow-nw; text-align: center; color: var(--color-text-secondary);
+				display: inline-block; -webkit-app-region: no-drag;
 			}
 
 			.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; -webkit-app-region: no-drag; }
