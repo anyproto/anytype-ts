@@ -96,7 +96,8 @@ class Sidebar {
 
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
-			this.obj.removeClass('isClosed').addClass('anim');
+			this.obj.removeClass('isClosed');
+			this.obj.addClass('anim');
 
 			this.setStyle({ width });
 			this.set({ isClosed: false });
