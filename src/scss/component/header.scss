@@ -57,11 +57,11 @@
 }
 
 .header.sidebarAnimation {
-	.side.left { transition: padding-left 0.2s ease-in-out; }
+	.side.left { transition: padding-left $transitionSidebarTime linear; }
 }
 
 .header:not(.withSidebar) {
-	.side.left { padding-left: 52px; }
+	.side.left { padding-left: 120px; }
 }
 
 .header.authIndex { height: 52px; }

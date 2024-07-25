@@ -1,6 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
+	.menu.menuRelationSuggest { width: var(--menu-width-icon); }
 	.menu.menuRelationSuggest {
 		.content { max-height: unset; overflow: hidden; padding: 0px; transition: none; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }

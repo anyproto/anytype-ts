@@ -52,6 +52,7 @@ export default {
 		notification:	 200,
 		widget:			 400,
 		login:			 800,
+		sidebar:		 180,
 	},
 
 	fileExtension: {
