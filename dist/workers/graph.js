@@ -790,11 +790,7 @@ const filterEdgesByDepth = (sourceIds, depth) => {
 	let ret = [].concat(filtered);
 
 	if (nextIds.length && (depth > 1)) {
-		const nextDepth = depth - 1;
-
-		filtered.forEach(() => {
-			ret = ret.concat(filterEdgesByDepth(nextIds, nextDepth));
-		});
+		ret = ret.concat(filterEdgesByDepth(nextIds, depth - 1));
 	};
 
 	return ret;
