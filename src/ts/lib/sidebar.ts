@@ -6,8 +6,6 @@ interface SidebarData {
 	isClosed: boolean;
 };
 
-const ANIMATION_SIDEBAR = 200;
-
 class Sidebar {
 	
 	data: SidebarData = {
@@ -21,7 +19,6 @@ class Sidebar {
 	loader: JQuery<HTMLElement> = null;
 	dummy: JQuery<HTMLElement> = null;
 	isAnimating = false;
-	timeoutHide = 0;
 	timeoutAnim = 0;
 
 	init () {
@@ -73,9 +70,9 @@ class Sidebar {
 		this.setStyle({ width: 0 });
 		this.set({ isClosed: true });
 		this.resizePage(0, true);
+		this.vaultHide();
 
 		this.removeAnimation(() => {
-			this.vaultHide();
 			this.obj.addClass('isClosed');
 
 			window.clearTimeout(this.timeoutAnim);
@@ -143,7 +140,7 @@ class Sidebar {
 			if (callBack) {
 				callBack();
 			};
-		}, ANIMATION_SIDEBAR);
+		}, J.Constant.delay.sidebar);
 	};
 
 	resizePage (width: number, animate: boolean): void {
@@ -231,26 +228,30 @@ class Sidebar {
 	};
 
 	vaultHide () {
-		this.setVaultAnimationParam(this.data.width);
+		this.setVaultAnimationParam(this.data.width, true);
 
-		const vault = $(S.Common.getRef('vault').node);
-		vault.addClass('isClosed');
+		$(S.Common.getRef('vault').node).addClass('isClosed');
 	};
 
 	vaultShow (width: number) {
-		this.setVaultAnimationParam(width);
+		this.setVaultAnimationParam(width, false);
 
-		const vault = $(S.Common.getRef('vault').node);
-		vault.removeClass('isClosed');
+		$(S.Common.getRef('vault').node).removeClass('isClosed');
 	};
 
-	setVaultAnimationParam (width: number) {
+	setVaultAnimationParam (width: number, withDelay: boolean) {
 		const vault = $(S.Common.getRef('vault').node);
-		vault.css({ transitionDuration: `${this.getVaultDuration(width)}ms` });
+		const css: any = { transitionDuration: `${this.getVaultDuration(width)}ms`, transitionDelay: '' };
+
+		if (withDelay) {
+			css.transitionDelay = `${J.Constant.delay.sidebar}ms`;
+		};
+
+		vault.css(css);
 	};
 
 	getVaultDuration (width: number): number {
-		return Math.ceil(J.Size.vault.width / width * ANIMATION_SIDEBAR);
+		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
 };

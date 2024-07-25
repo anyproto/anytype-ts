@@ -57,7 +57,7 @@
 }
 
 .header.sidebarAnimation {
-	.side.left { transition: padding-left 0.2s linear; }
+	.side.left { transition: padding-left $transitionSidebarTime linear; }
 }
 
 .header:not(.withSidebar) {
