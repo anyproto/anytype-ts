@@ -1444,6 +1444,7 @@
 	"menuGraphSettingsArrows": "Arrows",
 	"menuGraphSettingsIcons": "Icons",
 	"menuGraphSettingsPreview": "Preview",
+	"menuGraphSettingsCluster": "Cluster by Type",
 	"menuGraphSettingsShowOnGraph": "Show on Graph",
 	"menuGraphSettingsLinks": "Links",
 	"menuGraphSettingsRelations": "Relations",

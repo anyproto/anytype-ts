@@ -149,6 +149,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	getSections (): any[] {
+		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { allowLocal } = data;
@@ -161,6 +162,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 					{ id: 'marker', name: translate('menuGraphSettingsArrows') },
 					{ id: 'icon', name: translate('menuGraphSettingsIcons') },
 					{ id: 'preview', name: translate('menuGraphSettingsPreview') },
+					(config.experimental ? { id: 'cluster', name: translate('menuGraphSettingsCluster') } : null),
 				] 
 			},
 			{ 
@@ -177,7 +179,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 				{ id: 'local', name: translate('menuGraphSettingsLocal') },
 			];
 
-			if (values.local) {
+			if (values.local && config.experimental) {
 				children.push({ id: 'depth', name: translate('menuGraphSettingsDepth'), withDrag: true });
 			};
 

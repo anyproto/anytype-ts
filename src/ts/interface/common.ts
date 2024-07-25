@@ -261,6 +261,7 @@ export interface GraphSettings {
 	link: boolean;
 	files: boolean;
 	local: boolean;
+	cluster: boolean;
 	filter: string;
 	depth: number;
 };

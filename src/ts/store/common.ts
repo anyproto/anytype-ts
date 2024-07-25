@@ -66,6 +66,7 @@ class CommonStore {
 		files: false,
 		link: true,
 		local: false,
+		cluster: false,
 		filter: '',
 		depth: 1,
 	};
