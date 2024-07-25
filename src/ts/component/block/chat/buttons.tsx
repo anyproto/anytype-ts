@@ -235,7 +235,6 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			} else {
 				it.isActive = !!Mark.getInRange(marks, it.type, range);
 			};
-			console.log('MARKS: ', marks)
 			return it;
 		});
 	};
