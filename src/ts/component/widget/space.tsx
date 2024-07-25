@@ -11,8 +11,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		super(props);
 
 		this.onSettings = this.onSettings.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
 		this.onRequest = this.onRequest.bind(this);
 	};
 
@@ -29,8 +27,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 						forceLetter={true} 
 						size={28}
 						iconSize={28}
-						onSelect={this.onSelect}
-						onUpload={this.onUpload}
 						menuParam={{ className: 'fixed' }}
 					/>
 					<div className="txt">
@@ -67,14 +63,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	onSettings (e: React.MouseEvent) {
 		e.stopPropagation();
 		this.openSettings('spaceIndex');
-	};
-
-	onSelect () {
-		C.WorkspaceSetInfo(S.Common.space, { iconImage: '' });
-	};
-
-	onUpload (objectId: string) {
-		C.WorkspaceSetInfo(S.Common.space, { iconImage: objectId });
 	};
 
 	onRequest (e: any) {
