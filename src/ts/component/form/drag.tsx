@@ -143,10 +143,12 @@ class Drag extends React.Component<Props> {
 			if (strictSnap && snaps.length && (this.value < snaps[0] / 2)) {
 				this.value = 0;
 			} else {
-				for (const s of snaps) {
-					const d = strictSnap ? s / 2 : SNAP;
-					if ((this.value >= s - d) && (this.value < s + d)) {
-						this.value = s;
+				const step = 1 / snaps.length;
+				for (const snap of snaps) {
+					const d = strictSnap ? step / 2 : SNAP;
+
+					if ((this.value >= snap - d) && (this.value < snap + d)) {
+						this.value = snap;
 						break;
 					};
 				};

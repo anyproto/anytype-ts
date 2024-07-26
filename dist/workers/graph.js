@@ -83,7 +83,7 @@ let rootId = '';
 let root = null;
 let paused = false;
 let isOver = '';
-let maxEdges = 0;
+let maxDegree = 0;
 let clusters = {};
 
 addEventListener('message', ({ data }) => { 
@@ -251,10 +251,10 @@ updateForces = () => {
 		simulation.force('cluster', d3.forceCluster()
 		.centers(d => clusters.find(c => c.id == d.type))
 		.strength(1)
-		.centerInertia(0.5));
+		.centerInertia(0.75));
 
 		simulation.
-		force('collide', d3.forceCollide(d => getRadius(d)));
+		force('collide', d3.forceCollide(d => getRadius(d) * 2));
 	};
 
 	let map = getNodeMap();
@@ -840,18 +840,21 @@ const getRadius = (d) => {
 		k = 2;
 	};
 
-	let e = 0;
+	let degree = 0;
 	if (settings.link) {
-		e += d.linkCnt
+		degree += d.linkCnt
 	};
 	if (settings.relation) {
-		e += d.relationCnt;
+		degree += d.relationCnt;
 	};
 
-	maxEdges = Math.max(maxEdges, e);
+	maxDegree = Math.max(maxDegree, degree);
 
-	if (maxEdges > 0) {
-		k += Math.min(1, e / maxEdges);
+	if (maxDegree > 0) {
+		const logDegree = Math.log(degree + 1);
+    	const logMaxDegree = Math.log(maxDegree + 1);
+
+		k += (logDegree / logMaxDegree) * 0.9;
 	};
 
 	return d.radius / transform.k * k;

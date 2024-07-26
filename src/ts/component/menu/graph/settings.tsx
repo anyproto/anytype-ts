@@ -1,10 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, keyboard, translate } from 'Lib';
+import { I, S, J, keyboard, translate } from 'Lib';
 import { MenuItemVertical, Drag } from 'Component';
-
-const MAX_DEPTH = 2;
 
 const MenuGraphSettings = observer(class MenuGraphSettings extends React.Component<I.Menu> {
 
@@ -18,12 +16,13 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	render () {
+		const { graphDepth } = J.Constant.limit;
 		const values = this.getValues();
 		const sections = this.getSections();
 		const snaps = [];
 
-		for (let i = 1; i <= MAX_DEPTH; i++) {
-			snaps.push(i / MAX_DEPTH);
+		for (let i = 1; i <= graphDepth; i++) {
+			snaps.push(i / graphDepth);
 		};
 
 		const Section = (item: any) => (
@@ -40,7 +39,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 									</div>
 									<div className="drag">
 										<Drag 
-											value={(values[item.id] - 1) / MAX_DEPTH} 
+											value={values[item.id] / graphDepth} 
 											snaps={snaps}
 											strictSnap={true}
 											onMove={(e: any, v: number) => this.onDragMove(item.id, v)}
@@ -137,7 +136,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	};
 
 	getDepth (v: number) {
-		return Math.floor(v * MAX_DEPTH) + 1;
+		return Math.max(1, Math.floor(v * J.Constant.limit.graphDepth));
 	};
 
 	getKey () {
