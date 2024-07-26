@@ -557,6 +557,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		let name = String(object.name || translate('defaultNamePage'));
 		name = U.Smile.strip(name);
 		name = name.trim().substring(0, 1).toUpperCase();
+		name = U.Common.htmlSpecialChars(name);
 
 		return name;
 	};

@@ -1,6 +1,13 @@
 import $ from 'jquery';
 import { I, U, J, analytics } from 'Lib';
 
+const Tags = {};
+for (const i in I.MarkType) {
+	if (!isNaN(Number(i))) {
+		Tags[i] = `markup${I.MarkType[i].toLowerCase()}`;
+	};
+};
+
 const Patterns = {
 	'-→': '⟶',
 	'—>': '⟶',
@@ -543,6 +550,8 @@ class Mark {
 			return s;
 		});
 
+		marks = this.checkRanges(text, marks);
+
 		// Links
 		html.replace(/\[([^\[\]]+)\]\(([^\(\)]+)\)(\s|$)/g, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '');
@@ -629,22 +638,27 @@ class Mark {
 		};
 		
 		switch (type) {
-			case I.MarkType.Link:
+			case I.MarkType.Link: {
 				attr = `href="${param}"`;
 				break;
+			};
 
 			case I.MarkType.Mention:
-			case I.MarkType.Emoji:
+			case I.MarkType.Emoji: {
 				attr = 'contenteditable="false"';
 				break;
+			};
 				
-			case I.MarkType.Color:
+			case I.MarkType.Color: {
 				attr = `class="textColor textColor-${param}"`;
 				break;
+			};
 				
-			case I.MarkType.BgColor:
+			case I.MarkType.BgColor: {
 				attr = `class="bgColor bgColor-${param}"`;
 				break;
+			};
+
 		};
 		return attr;
 	};
