@@ -1470,10 +1470,10 @@
 	"menuObjectExport": "Export",
 	"menuObjectReloadFromSource": "Reload from Source",
 	"menuObjectUseAsTemplate": "Use as a Template",
-	"menuObjectUnlockPage": "Unlock page",
+	"menuObjectUnlockPage": "Unlock the Object",
 	"menuObjectLockPage": "Lock the Object",
 	"menuObjectInstall": "Install",
-	"menuObjectSetDefaultTemplate": "Set as default Template",
+	"menuObjectSetDefaultTemplate": "Set as the default Template",
 	"menuObjectCreateWidget": "Create Widget",
 
 	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
