@@ -27,21 +27,24 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, canAdd, noFilter } = data;
+		const { filter, canAdd, canEdit, noFilter } = data;
 		const relation = data.relation.get();
 		const value = data.value || [];
 		const items = this.getItems();
 
-		let placeholder;
-		let empty;
+		let placeholder = '';
+		let empty = '';
 
 		if (canAdd) {
 			placeholder = translate('menuDataviewOptionListFilterOrCreateOptions');
 			empty = translate('menuDataviewOptionListTypeToCreate');
-		}
-		else {
+		} else {
 			placeholder = translate('menuDataviewOptionListFilterOptions');
 			empty = translate('menuDataviewOptionListTypeToSearch');
+		};
+
+		if (!canEdit) {
+			empty = translate('placeholderCellCommon');
 		};
 
 		if (!this.cache) {
@@ -51,6 +54,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const active = value.indexOf(item.id) >= 0;
+			const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ])
 			
 			let content = null;
 			if (item.id == 'add') {
@@ -87,7 +91,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 						</div>
 						<div className="buttons">
 							{active ? <Icon className="chk" /> : ''}
-							<Icon className="more" onClick={e => this.onEdit(e, item)} />
+							{isAllowed ? <Icon className="more" onClick={e => this.onEdit(e, item)} /> : ''}
 						</div>
 					</div>
 				);
@@ -237,21 +241,25 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		const { param } = this.props;
 		const { data } = param;
-		const { cellRef } = data;
+		const { cellRef, canEdit } = data;
+
+		if (!canEdit) {
+			return;
+		};
+
 		const value = Relation.getArrayValue(data.value);
-		const id = item.id;
 
 		if (cellRef) {
 			cellRef.clear();
 		};
 
-		if (id == 'add') {
+		if (item.id == 'add') {
 			this.onOptionAdd();
 		} else
-		if (value.includes(id)) {
-			this.onValueRemove(id);
+		if (value.includes(item.id)) {
+			this.onValueRemove(item.id);
 		} else {
-			this.onValueAdd(id);
+			this.onValueAdd(item.id);
 		};
 
 		this.refFilter?.setValue('');
@@ -340,6 +348,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
+		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ])
+
+		if (!isAllowed) {
+			return;
+		};
 
 		S.Menu.open('dataviewOptionEdit', { 
 			element: `#${getId()} #item-${item.id}`,
@@ -360,7 +373,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	getItems (): any[] {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd, filterMapper } = data;
+		const { canAdd, filterMapper, canEdit } = data;
 		const relation = data.relation.get();
 		const isSelect = relation.format == I.RelationType.Select;
 		const value = Relation.getArrayValue(data.value);
@@ -385,7 +398,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			return 0;
 		});
 
-		if (data.filter) {
+		if (canEdit && data.filter) {
 			const filter = new RegExp(U.Common.regexEscape(data.filter), 'gi');
 			
 			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());

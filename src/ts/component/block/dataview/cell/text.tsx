@@ -114,7 +114,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						ref={ref => this.ref = ref} 
 						id="input" 
 						{...item} 
-						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
+						placeholder={placeholder}
 						onKeyUp={this.onKeyUp} 
 					/>
 				);
@@ -147,11 +147,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					if (isName && U.Object.isNoteLayout(record.layout)) {
 						content = <span className="emptyText">{translate('commonEmpty')}</span>;
 					} else {
-						content = (
-							<div className="empty">
-								{placeholder || translate(`placeholderCell${relation.format}`)}
-							</div>
-						);
+						content = <div className="empty">{placeholder}</div>;
 					};
 				};
 				return content;

@@ -32,7 +32,9 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 	
 	render () {
-		const { getId } = this.props;
+		const { getId, param } = this.props;
+		const { data } = param;
+		const { canEdit } = data;
 		const items = this.getItems();
 
 		const Handle = SortableHandle(() => (
@@ -48,12 +50,12 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 					onMouseEnter={e => this.onOver(e, item)}
 					style={item.style}
 				>
-					<Handle />
+					{canEdit ? <Handle /> : ''}
 					<span className="clickable" onClick={e => this.onClick(e, item)}>
 						<IconObject object={item} />
 						<ObjectName object={item} />
 					</span>
-					<Icon className="delete" onClick={e => this.onRemove(e, item)} />
+					{canEdit ? <Icon className="delete" onClick={e => this.onRemove(e, item)} /> : ''}
 				</div>
 			);
 		});
@@ -191,7 +193,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, valueMapper, nameAdd } = data;
+		const { rootId, valueMapper, nameAdd, canEdit } = data;
 
 		let value: any[] = Relation.getArrayValue(data.value);
 		value = value.map(it => S.Detail.get(rootId, it, []));
@@ -200,20 +202,28 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			value = value.map(valueMapper);
 		};
 
-		value = value.filter(it => it && !it._empty_ && !it.isArchived && !it.isDeleted);
-		
-		if (!config.debug.hiddenObject) {
-			value = value.filter(it => !it.isHidden);
-		};
+		value = value.filter(it => {
+			if (!it) {
+				return false;
+			};
 
+			if (it._empty_ || it.isArchived || it.isDeleted) {
+				return false;
+			};
+
+			return config.debug.hiddenObject ? true : !it.isHidden;
+		});
+		
 		if (!value.length) {
 			value.push({ isEmpty: true });
 		};
 
-		value = value.concat([
-			{ isDiv: true },
-			{ id: 'add', name: (nameAdd || translate('menuDataviewObjectValuesAddObject')) },
-		]);
+		if (canEdit) {
+			value = value.concat([
+				{ isDiv: true },
+				{ id: 'add', name: (nameAdd || translate('menuDataviewObjectValuesAddObject')) },
+			]);
+		};
 		return value;
 	};
 
