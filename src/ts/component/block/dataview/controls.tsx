@@ -265,19 +265,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		} = this.props;
 		const view = getView();
 		const obj = $(element);
-
-		if (((component == 'dataviewSort') && !view.sorts.length) || ((component == 'dataviewFilterList') && !view.filters.length)) {
-			this.sortOrFilterRelationSelect(component,{ element }, () => {
-				this.onButton(element, component);
-			});
-			return;
-		};
-
-		const param: any = { 
-			element,
-			horizontal: I.MenuDirection.Center,
-			offsetY: 10,
-			noFlipY: true,
+		const toggleParam = {
 			onOpen: () => {
 				obj.addClass('active');
 				this.toggleHoverArea(true);
@@ -285,7 +273,22 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			onClose: () => {
 				obj.removeClass('active');
 				this.toggleHoverArea(false);
-			},
+			}
+		};
+
+		if (((component == 'dataviewSort') && !view.sorts.length) || ((component == 'dataviewFilterList') && !view.filters.length)) {
+			this.sortOrFilterRelationSelect(component,{ ...toggleParam, element }, () => {
+				this.onButton(element, component);
+			});
+			return;
+		};
+
+		const param: any = {
+			...toggleParam,
+			element,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
+			noFlipY: true,
 			onBack: (id) => {
 				S.Menu.replace(id, component, { ...param, noAnimation: true });
 				window.setTimeout(() => S.Menu.update(component, { noAnimation: false }), 50);
@@ -315,7 +318,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 					this.sortOrFilterRelationSelect(component,{
 						element: `#${menuId} #item-add`,
 						offsetX: menuWidth,
-						horizontal: I.MenuDirection.Right
+						horizontal: I.MenuDirection.Right,
+						vertical: I.MenuDirection.Center
 					});
 				},
 			},
