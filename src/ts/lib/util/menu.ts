@@ -832,6 +832,68 @@ class UtilMenu {
 		];
 	};
 
+	sortOrFilterRelationSelect (param: any) {
+		const { rootId, blockId, getView, onSelect, menuParam } = param;
+		const options = Relation.getFilterOptions(rootId, blockId, getView());
+
+		const callBack = (item: any) => {
+			onSelect(item);
+			S.Menu.close('select');
+		};
+
+		const menu = Object.assign({
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
+			noFlipY: true,
+		}, menuParam);
+
+		if (S.Menu.isOpen('select')) {
+			S.Menu.close('select');
+		};
+
+		S.Menu.open('select', {
+			...menu,
+			data: {
+				options,
+				withFilter: true,
+				maxHeight: 378,
+				onAdd: (menuId, menuWidth) => {
+					this.sortOrFilterRelationAdd({ menuId, menuWidth }, param, (relation) => callBack(relation));
+				},
+				onSelect: (e: any, item: any) => callBack(item)
+			}
+		});
+	};
+
+	sortOrFilterRelationAdd (menuParam: any, param: any, callBack: (relation: any) => void) {
+		const { rootId, blockId, getView } = param;
+		const { menuId, menuWidth } = menuParam;
+		const relations = Relation.getFilterOptions(rootId, blockId, getView());
+		const element = `#${menuId} #item-add`;
+
+		S.Menu.open('relationSuggest', {
+			element,
+			offsetX: menuWidth,
+			horizontal: I.MenuDirection.Right,
+			vertical: I.MenuDirection.Center,
+			onOpen: () => $(element).addClass('active'),
+			onClose: () => $(element).removeClass('active'),
+			data: {
+				rootId,
+				blockId,
+				skipKeys: relations.map(it => it.id),
+				ref: 'dataview',
+				menuIdEdit: 'blockRelationEdit',
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					Dataview.relationAdd(rootId, blockId, relation.relationKey, relations.length, getView(), (message: any) => {
+						callBack(relation);
+						S.Menu.close('relationSuggest');
+					});
+				}
+			}
+		});
+	};
+
 };
 
 export default new UtilMenu();

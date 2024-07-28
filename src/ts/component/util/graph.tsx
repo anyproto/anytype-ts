@@ -332,12 +332,15 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case 'onMouseMove': {
-				if (this.isDragging || !settings.preview) {
+				if (this.isDragging) {
 					break;
 				};
 
 				this.subject = this.nodes.find(d => d.id == data.node);
-				this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
+
+				if (settings.preview) {
+					this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
+				};
 				break;
 			};
 

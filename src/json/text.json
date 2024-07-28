@@ -1257,7 +1257,8 @@
 
 	"menuSmileGallery": "Emojis",
 	"menuSmileUpload": "Upload",
-	"menuSmileEmpty": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
+	"menuSmileEmpty": "There are no items",
+	"menuSmileEmptyFilter": "<b>There are no items named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 	"menuSmileRecent": "Recently used",
 	"menuSmileSearch": "Search results",
 	"menuSmileRandom": "Random emoji",
@@ -1443,12 +1444,14 @@
 	"menuGraphSettingsArrows": "Arrows",
 	"menuGraphSettingsIcons": "Icons",
 	"menuGraphSettingsPreview": "Preview",
+	"menuGraphSettingsCluster": "Cluster by Type",
 	"menuGraphSettingsShowOnGraph": "Show on Graph",
 	"menuGraphSettingsLinks": "Links",
 	"menuGraphSettingsRelations": "Relations",
 	"menuGraphSettingsUnlinkedObjects": "Unlinked Objects",
 	"menuGraphSettingsFiles": "Files",
 	"menuGraphSettingsLocal": "Local graph",
+	"menuGraphSettingsDepth": "Depth",
 
 	"menuHelpWhatsNew": "What's New",
 	"menuHelpShortcut": "Keyboard Shortcuts",
@@ -1462,15 +1465,15 @@
 	"menuHelpGallery": "ANY Experience Gallery",
 
 	"menuObjectPrint": "Print",
-	"menuObjectSearchOnPage": "Search on page",
+	"menuObjectSearchOnPage": "Search in the Object",
 	"menuObjectVersionHistory": "Version History",
 	"menuObjectExport": "Export",
 	"menuObjectReloadFromSource": "Reload from Source",
 	"menuObjectUseAsTemplate": "Use as a Template",
-	"menuObjectUnlockPage": "Unlock page",
-	"menuObjectLockPage": "Lock page",
+	"menuObjectUnlockPage": "Unlock the Object",
+	"menuObjectLockPage": "Lock the Object",
 	"menuObjectInstall": "Install",
-	"menuObjectSetDefaultTemplate": "Set as default Template",
+	"menuObjectSetDefaultTemplate": "Set as the default Template",
 	"menuObjectCreateWidget": "Create Widget",
 
 	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
@@ -1546,6 +1549,9 @@
 	"menuSyncStatusInfoLocalOnlyMessage": "Data backup is disabled",
 
 	"menuSyncStatusInfoP2pTitle": "P2P Connection",
+
+	"menuSyncStatusEmptyLocal": "You are in a local-only mode and your data not backed up to Anytype nodes. You can enable network backup anytime upon logging in to the application.",
+	"menuSyncStatusEmpty": "There are no objects to show",
 
 	"previewEdit": "Edit Link",
 

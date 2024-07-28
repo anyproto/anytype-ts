@@ -47,7 +47,7 @@ export default {
 			max: 1000,
 			edit: 300,
 			icon: 70
-		}
+		},
 	},
 
 	store: {
