@@ -304,6 +304,7 @@
 	"spellcheckAdd": "Add to dictionary",
 
 	"headerTooltipPath": "Click to search",
+	"headerObjectLocked": "Locked",
 
 	"headerGraphTooltipSearch": "Search",
 	"headerGraphTooltipFilters": "Filters",
