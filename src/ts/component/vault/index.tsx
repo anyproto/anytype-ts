@@ -126,7 +126,7 @@ const Vault = observer(class Vault extends React.Component {
 			this.checkKeyUp = true;
 			this.onArrow(pressed.match('shift') ? -1 : 1);
 
-			if (isClosed) {
+			if (isClosed && !sidebar.isAnimating) {
 				this.closeSidebar = true;
 				sidebar.open(width);
 			};
@@ -156,7 +156,7 @@ const Vault = observer(class Vault extends React.Component {
 			U.Router.switchSpace(item.targetSpaceId, '', true);
 		};
 
-		if (this.closeSidebar) {
+		if (this.closeSidebar && !sidebar.isAnimating) {
 			sidebar.close();
 			this.closeSidebar = false;
 		};
