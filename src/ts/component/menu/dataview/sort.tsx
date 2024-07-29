@@ -298,7 +298,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			horizontal: I.MenuDirection.Right,
-			vertical: I.MenuDirection.Center
+			vertical: I.MenuDirection.Center,
 		};
 
 		U.Menu.sortOrFilterRelationSelect({

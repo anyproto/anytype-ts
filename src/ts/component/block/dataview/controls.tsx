@@ -264,16 +264,9 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			getTypeId, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd,
 		} = this.props;
 		const view = getView();
-		const obj = $(element);
 		const toggleParam = {
-			onOpen: () => {
-				obj.addClass('active');
-				this.toggleHoverArea(true);
-			},
-			onClose: () => {
-				obj.removeClass('active');
-				this.toggleHoverArea(false);
-			}
+			onOpen: () => this.toggleHoverArea(true),
+			onClose: () => this.toggleHoverArea(false),
 		};
 
 		if (((component == 'dataviewSort') && !view.sorts.length) || ((component == 'dataviewFilterList') && !view.filters.length)) {
@@ -314,12 +307,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				onViewCopy: this.onViewCopy,
 				onViewRemove: this.onViewRemove,
 				view: observable.box(view),
-				onAdd: (menuId, menuWidth) => {
-					this.sortOrFilterRelationSelect(component,{
+				onAdd: (menuId: string, menuWidth: number) => {
+					this.sortOrFilterRelationSelect(component, {
 						element: `#${menuId} #item-add`,
 						offsetX: menuWidth,
 						horizontal: I.MenuDirection.Right,
-						vertical: I.MenuDirection.Center
+						vertical: I.MenuDirection.Center,
 					});
 				},
 			},
