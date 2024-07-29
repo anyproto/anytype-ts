@@ -251,7 +251,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			settings.push({ id: 'graphSettings', name: translate('commonSettings'), arrow: true });
 		};
 
-		if (isInline || isBoard) {
+		if (isInline || isBoard || isGallery) {
 			const options = Relation.getPageLimitOptions(type);
 			settings.push({ id: 'pageLimit', name: translate('menuDataviewViewEditPageLimit'), caption: (pageLimit || options[0].id), arrow: true });
 		};

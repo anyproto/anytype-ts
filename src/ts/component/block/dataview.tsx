@@ -464,27 +464,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 			};
 
+			case I.ViewType.Gallery:
 			case I.ViewType.Board: {
 				limit = pageLimit || 50;
 				break;
 			};
 
-			case I.ViewType.Gallery: {
-				if (isInline) {
-					limit = pageLimit;
-				} else {
-					let k = 0;
-					switch (view.cardSize) {
-						case I.CardSize.Small:		k = 4; break;
-						case I.CardSize.Medium:		k = 3; break;
-						case I.CardSize.Large:		k = 2; break;
-					};
-
-					limit = 25 * k;
-				};
-				break;
-			};
-			
 		};
 		return limit;
 	};
