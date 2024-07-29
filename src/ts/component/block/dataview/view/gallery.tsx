@@ -154,7 +154,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 						{content}
 					</div>
 
-					{isInline && (limit + offset < total) ? (
+					{limit + offset < total ? (
 						<LoadMore limit={limit} loaded={records.length} total={total} onClick={this.loadMoreCards} />
 					) : ''}
 				</div>
@@ -218,8 +218,9 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	loadMoreCards ({ startIndex, stopIndex }) {
 		const { rootId, block, loadData, getView, getLimit } = this.props;
 		const subId = S.Record.getSubId(rootId, block.id);
-		let { offset } = S.Record.getMeta(subId, '');
 		const view = getView();
+
+		let { offset } = S.Record.getMeta(subId, '');
 
 		return new Promise((resolve, reject) => {
 			offset += getLimit();
