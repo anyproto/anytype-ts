@@ -115,7 +115,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 				items = items.concat([
 					{ id: 'pageSize', name: translate('popupExportPageSize'), control: 'select', options: pageSize },
 					{ id: 'landscape', name: translate('popupExportLandscape'), control: 'switch' },
-					{ id: 'printBg', name: translate('popupExportPrintBackground'), control: 'switch' },
+					{ id: 'printBackground', name: translate('popupExportPrintBackground'), control: 'switch' },
 				]);
 				break;
 		};
