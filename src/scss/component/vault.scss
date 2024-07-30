@@ -2,10 +2,10 @@
 
 .vault { 
 	background-color: var(--color-shape-primary); z-index: 30; width: $vaultWidthCollapsed; height: 100%; display: flex; flex-direction: column; 
-	flex-shrink: 0; position: fixed; left: 0px; top: 0px; transition: width 0.06s linear; overflow: hidden; transform: translate3d(0px, 0px, 0px);
+	flex-shrink: 0; position: fixed; left: 0px; top: 0px; overflow: hidden; transform: translate3d(0px, 0px, 0px);
 }
-.vault.isClosed { width: 0px; }
-.vault.isHidden { display: none; }
+.vault.isClosed, .vault.isHidden { width: 0px; }
+.vault.anim { transition-property: width; transition-timing-function: linear; }
 .vault {
 	.head { 
 		height: 50px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 14px; flex-shrink: 0;
