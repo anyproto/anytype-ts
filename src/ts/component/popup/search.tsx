@@ -42,10 +42,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.onScroll = this.onScroll.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
+		this.onBacklink = this.onBacklink.bind(this);
+		this.onClearSearch = this.onClearSearch.bind(this);
 		this.filterMapper = this.filterMapper.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
-		this.onSearchByBacklinks = this.onSearchByBacklinks.bind(this);
-		this.onClearSearch = this.onClearSearch.bind(this);
 	};
 	
 	render () {
@@ -143,7 +143,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 							tooltip={translate('popupSearchTooltipSearchByBacklinks')}
 							tooltipCaption="Shift + Enter"
 							tooltipY={I.MenuDirection.Top}
-							onClick={e => this.onSearchByBacklinks(e, item)}
+							onClick={e => this.onBacklink(e, item)}
 						/>
 					);
 				};
@@ -287,15 +287,25 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 	
 	componentDidMount () {
-		const { param } = this.props;
+		const { param, storageGet } = this.props;
 		const { data } = param;
 		const { route } = data;
+		const storage = storageGet();
+		const { filter, backlink } = storage;
 
 		this._isMounted = true;
 		this.resetSearch();
 		this.rebind();
 
 		focus.clear(true);
+
+		if (filter && this.refFilter) {
+			this.refFilter.setValue(filter);
+		};
+
+		if (backlink) {
+			U.Object.getById(backlink, item => this.setBacklink(item));
+		};
 
 		analytics.event('ScreenSearch', { route });
 	};
@@ -380,7 +390,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		keyboard.shortcut('shift+enter', e, () => {
 			if (item && (item.links.length || item.backlinks.length)) {
-				this.onSearchByBacklinks(e, item);
+				this.onBacklink(e, item);
 			};
 		});
 
@@ -460,6 +470,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	onFilterChange (e: any, v: string) {
+		const { storageSet } = this.props;
+
 		if (this.filter == v) {
 			return;
 		};
@@ -467,6 +479,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			this.forceUpdate();
+			storageSet({ filter: v });
 			analytics.event('SearchInput');
 		}, J.Constant.delay.keyboard);
 	};
@@ -475,21 +488,24 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.reload();
 	};
 
-	onSearchByBacklinks (e: React.MouseEvent, item: any) {
+	onBacklink (e: React.MouseEvent, item: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
+		this.props.storageSet({ backlink: item.id });
+		this.setBacklink(item);
+	};
+
+	setBacklink (item: any) {
 		this.setState({ backlink: item }, () => {
 			this.resetSearch();
-
 			analytics.event('SearchBacklink');
 		});
 	};
 
 	onClearSearch () {
-		this.setState({ backlink: null }, () => {
-			this.resetSearch();
-		});
+		this.props.storageSet({ backlink: '' });
+		this.setState({ backlink: null }, () => this.resetSearch());
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
