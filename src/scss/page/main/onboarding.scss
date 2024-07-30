@@ -1,0 +1,41 @@
+@import "~scss/_mixins";
+
+.bodyMain.bodyMainOnboarding {
+    #vault,
+    #sidebar,
+    #sidebarToggle,
+    #navigationPanel,
+    #sidebarDummy { display: none; }
+
+    body { background: #000000; }
+}
+
+.pageMainOnboarding { width: 100% !important;  height: 100vh; display: flex; align-items: center; }
+.pageMainOnboarding {
+    .wrapper { color: var(--color-bg-primary); width: 100%; display: flex; flex-direction: column; align-items: center; gap: 50px 0px; }
+    .wrapper {
+        .icon.arrow.back { position: fixed; top: 50%; left: 10px; width: 32px; height: 56px; margin-top: -28px; background-image: url('~img/arrow/auth0.svg'); z-index: 2; }
+
+        > .title {
+            font-family: 'RiccioneExtraLight'; letter-spacing: -1.2px; font-size: 66px; line-height: 66px; font-weight: 400; opacity: 0.65;
+            background: linear-gradient(180deg, #FFF 0%, #C8C8C8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .items { display: flex; gap: 0px 32px; flex-wrap: nowrap; }
+        .items {
+            .item { width: 320px; height: 504px; border-radius: 16px; background: var(--color-text-primary); text-align: center; }
+            .item {
+                .icon { width: 320px; height: 320px; margin-bottom: 22px; }
+                .icon.private { background: url('~img/icon/onboarding/private.svg'); }
+                .icon.shared { background: url('~img/icon/onboarding/shared.svg'); }
+                .icon.personal { background: url('~img/icon/onboarding/personal.svg'); }
+                .icon.education { background: url('~img/icon/onboarding/education.svg'); }
+                .icon.work { background: url('~img/icon/onboarding/work.svg'); }
+                .icon.community { background: url('~img/icon/onboarding/community.svg'); }
+
+                .title { margin-bottom: 16px; }
+                .label { @include text-paragraph; margin: 0px 38px; }
+            }
+        }
+    }
+}
