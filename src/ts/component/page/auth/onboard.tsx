@@ -239,7 +239,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage == Stage.Soul) {
 			const name = this.refName.getValue();
-			const { redirect } = S.Common;
 
 			const cb = () => {
 				Animation.from(() => {
@@ -251,10 +250,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						onFadeIn: () => {
 							Storage.initPinnedTypes();
 							S.Common.fullscreenObjectSet(true);
-
-							if (!redirect) {
-								Action.welcome();
-							};
 						},
 					};
 
