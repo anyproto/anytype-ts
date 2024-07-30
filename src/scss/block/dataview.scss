@@ -125,7 +125,7 @@
 			}
 
 			.icon { position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 6px; transition: $transitionAllCommon; }
-			.icon:hover, .icon.active { background-color: var(--color-shape-highlight-medium); }
+			.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
 
 			.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 			.icon.btn-filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }

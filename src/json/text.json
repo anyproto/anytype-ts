@@ -304,6 +304,7 @@
 	"spellcheckAdd": "Add to dictionary",
 
 	"headerTooltipPath": "Click to search",
+	"headerObjectLocked": "Locked",
 
 	"headerGraphTooltipSearch": "Search",
 	"headerGraphTooltipFilters": "Filters",
@@ -1747,7 +1748,10 @@
 	"quickOption10": "Number of days ago",
 	"quickOption11": "Number of days from now",
 
-	"sidebarToggle": "Toggle sidebar fixed mode",
+	"sidebarMenuAll": "Spaces & widgets",
+	"sidebarMenuSidebar": "Only widgets",
+	"sidebarMenuFocus": "Focus mode",
+
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",
 

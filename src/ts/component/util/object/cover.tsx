@@ -29,7 +29,7 @@ class ObjectCover extends React.Component<Props> {
 					x={coverX}
 					y={coverY}
 					scale={coverScale}
-					withScale={false}
+					withScale={true}
 				/>
 			);
 		} else {

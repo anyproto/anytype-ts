@@ -1022,7 +1022,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		// Make div
-		const divReg = new RegExp('^(---|—-|\\*\\*\\*)');
+		const divReg = new RegExp('^(---|—-|\\*\\*\\*)\\s');
 		const match = value.match(divReg);
 
 		if (match) {
@@ -1123,7 +1123,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					const mark = this.marks[i];
 
 					if (Mark.needsBreak(mark.type) && (mark.range.to == range.to)) {
-						const adjusted = Mark.adjust([ mark ], mark.range.from, -d);
+						const adjusted = Mark.adjust([ mark ], mark.range.to - d, -d);
 
 						this.marks[i] = adjusted[0];
 						adjustMarks = true;

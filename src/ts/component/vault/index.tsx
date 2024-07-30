@@ -12,6 +12,7 @@ const Vault = observer(class Vault extends React.Component {
 	isAnimating = false;
 	checkKeyUp = false;
 	closeSidebar = false;
+	closeVault = false;
 	top = 0;
 	timeoutHover = 0;
 	pressed = new Set();
@@ -117,6 +118,7 @@ const Vault = observer(class Vault extends React.Component {
 	onKeyDown (e: any) {
 		const key = e.key.toLowerCase();
 		const { isClosed, width } = sidebar.data;
+		const { showVault } = S.Common;
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			this.pressed.add(key);
@@ -126,9 +128,17 @@ const Vault = observer(class Vault extends React.Component {
 			this.checkKeyUp = true;
 			this.onArrow(pressed.match('shift') ? -1 : 1);
 
-			if (isClosed) {
-				this.closeSidebar = true;
-				sidebar.open(width);
+			if (!sidebar.isAnimating) {
+				if (!showVault) {
+					S.Common.showVaultSet(true);
+					sidebar.resizePage(width, false);
+					this.closeVault = true;
+				};
+
+				if (isClosed) {
+					this.closeSidebar = true;
+					sidebar.open(width);
+				};
 			};
 		});
 	};
@@ -147,6 +157,7 @@ const Vault = observer(class Vault extends React.Component {
 
 		this.checkKeyUp = false;
 
+		const { width } = sidebar.data;
 		const node = $(this.node);
 		const items = this.getSpaceItems();
 		const item = items[this.n];
@@ -156,10 +167,19 @@ const Vault = observer(class Vault extends React.Component {
 			U.Router.switchSpace(item.targetSpaceId, '', true);
 		};
 
-		if (this.closeSidebar) {
-			sidebar.close();
-			this.closeSidebar = false;
+		if (!sidebar.isAnimating) {
+			if (this.closeVault) {
+				S.Common.showVaultSet(false);
+				sidebar.resizePage(width, false);
+				this.closeVault = false;
+			};
+
+			if (this.closeSidebar) {
+				sidebar.close();
+				this.closeSidebar = false;
+			};
 		};
+
 		Preview.tooltipHide();
 	};
 

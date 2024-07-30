@@ -26,9 +26,11 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		this.onResizeMove = this.onResizeMove.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onHandleClick = this.onHandleClick.bind(this);
+		this.onToggleContext = this.onToggleContext.bind(this);
 	};
 
     render() {
+		const { showVault } = S.Common;
         const cn = [ 'sidebar' ];
 		const space = U.Space.getSpaceview();
 		const cmd = keyboard.cmdSymbol();
@@ -51,6 +53,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 					tooltipY={I.MenuDirection.Bottom}
 					onClick={() => sidebar.toggleOpenClose()}
+					onContextMenu={this.onToggleContext}
 				/>
 
 				<div 
@@ -79,18 +82,35 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		);
     };
 
-	// Lifecycle Methods
-
 	componentDidMount (): void {
 		this._isMounted = true;
+		this.init();
 
 		sidebar.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
 	};
 
 	componentWillUnmount (): void {
 		this._isMounted = false;
 
 		Preview.tooltipHide(true);
+	};
+
+	init () {
+		const { showVault } = S.Common;
+		const node = $(this.node);
+		const vault = $(S.Common.getRef('vault').node);
+
+		if (showVault) {
+			node.addClass('withVault');
+			vault.removeClass('isHidden');
+		} else {
+			node.removeClass('withVault');
+			vault.addClass('isHidden');
+		};
 	};
 
 	setActive (id: string): void {
@@ -197,6 +217,55 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		if (space && space.isShared) {
 			S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
 		};
+	};
+
+	onToggleContext () {
+		const { showVault } = S.Common;
+		const { isClosed, width } = sidebar.data;
+		const options = [
+			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
+			{ id: 'sidebar', icon: 'sidebar', name: translate('sidebarMenuSidebar') },
+			{ id: 'focus', icon: 'focus', name: translate('sidebarMenuFocus') },
+		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
+
+		let value = '';
+		if (isClosed) {
+			value = 'focus';
+		} else {
+			value = showVault ? 'all' : 'sidebar';
+		};
+
+		S.Menu.open('select', {
+			element: '#sidebarToggle',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Right,
+			noFlipX: true,
+			data: {
+				options,
+				value,
+				onSelect: (e: any, item: any) => {
+					raf(() => {
+						switch (item.id) {
+							case 'all':
+							case 'sidebar': {
+								S.Common.showVaultSet(item.id == 'all');
+								if (isClosed) {
+									sidebar.open(width);
+								} else {
+									sidebar.resizePage(width, false);
+								};
+								break;
+							};
+
+							case 'focus': {
+								sidebar.toggleOpenClose();
+								break;
+							};
+						};
+					});
+				},
+			},
+		});
 	};
 
 });

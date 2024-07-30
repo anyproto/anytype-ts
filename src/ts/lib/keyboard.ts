@@ -773,7 +773,7 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
 
-		this.printApply('print', true);
+		this.printApply('print', false);
 		Renderer.send('winCommand', 'printPdf', { name: object.name, options });
 	};
 

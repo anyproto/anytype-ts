@@ -284,7 +284,7 @@ class MenuContext extends React.Component<I.Menu> {
 					canAdd: true,
 					onSelect: (el: any) => {
 						if (onLinkTo) {
-							onLinkTo(itemId, el.id);
+							onLinkTo(el.id, itemId);
 						};
 
 						close();
@@ -322,7 +322,7 @@ class MenuContext extends React.Component<I.Menu> {
 						Action.addToCollection(el.id, objectIds);
 
 						if (onLinkTo) {
-							onLinkTo(itemId, el.id);
+							onLinkTo(el.id, itemId);
 						};
 
 						close();
