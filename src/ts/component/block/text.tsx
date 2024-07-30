@@ -24,6 +24,9 @@ for (const lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
 };
 
+const katex = require('katex');
+require('katex/dist/contrib/mhchem');
+
 const BlockText = observer(class BlockText extends React.Component<Props> {
 
 	public static defaultProps = {
@@ -220,6 +223,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.marks = U.Common.objectCopy(marks || []);
 		this.setValue(text);
+		this.renderLatex();
 	};
 	
 	componentDidUpdate () {
@@ -237,6 +241,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (focused == block.id) {
 			focus.apply();
+		} else {
+			this.renderLatex();
 		};
 
 		if (onUpdate) {
@@ -589,6 +595,42 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 	};
 
+	renderLatex () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const value = this.refEditable.getHtmlValue();
+		const reg = /\$((?:[^$\\]|\\.)*?)\$/g;
+
+		if (!reg.test(value)) {
+			return;
+		};
+
+		const tag = Mark.getTag(I.MarkType.Latex);
+		const html = value.replace(reg, (s: string, p: string, o: number) => {
+			let ret = '';
+			try {
+				ret = katex.renderToString(U.Common.stripTags(p), { 
+					displayMode: false, 
+					throwOnError: false,
+					output: 'html',
+					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
+				});
+
+				ret = ret ? `<${tag}>${ret}</${tag}>` : s;
+			} catch (e) {
+				ret = s;
+			};
+
+			return ret;
+		});
+
+		if (this.refEditable && (html !== value)) {
+			this.refEditable.setValue(html);
+		};
+	};
+
 	emojiParam (style: I.TextStyle) {
 		let size = 24;
 		switch (style) {
@@ -699,17 +741,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `ctrl+shift+l` },
 			{ key: `ctrl+shift+/` },
 		];
-
-		if (isInsideTable) {
-			if (!range.to) {
-				saveKeys.push({ key: `arrowleft, arrowup` });
-			};
-
-			if (range.to == value.length) {
-				saveKeys.push({ key: `arrowright, arrowdown` });
-			};
-		};
-		
 		const twinePairs = {
 			'[': ']',
 			'{': '}',
@@ -722,8 +753,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			'（': '）',
 			'“': '”',
 			'‘': '’',
+			'$': '$',
 		};
 
+		if (isInsideTable) {
+			if (!range.to) {
+				saveKeys.push({ key: `arrowleft, arrowup` });
+			};
+
+			if (range.to == value.length) {
+				saveKeys.push({ key: `arrowright, arrowdown` });
+			};
+		};
+		
 		for (let i = 0; i < 9; ++i) {
 			saveKeys.push({ key: `${cmd}+${i}` });
 		};
@@ -1241,11 +1283,13 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onFocus (e: any) {
-		const { onFocus } = this.props;
+		const { onFocus, block } = this.props;
 
 		e.persist();
 
 		this.placeholderCheck();
+		this.setValue(block.getText());
+
 		keyboard.setFocus(true);
 
 		if (onFocus) {
@@ -1283,6 +1327,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (key) {
 			analytics.event(key);
 		};
+
+		this.renderLatex();
 	};
 	
 	onPaste (e: any) {
