@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
+import { Icon, Loader, IconObject, EmptySearch, Label, Filter } from 'Component';
 import { I, C, S, U, J, keyboard, focus, translate, analytics, Action, Relation, Mark } from 'Lib';
 
 interface State {
@@ -33,6 +33,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	top = 0;
 	offset = 0;
 	filter = '';
+	range: I.TextRange = { from: 0, to: 0 };
 	
 	constructor (props: I.Popup) {
 		super (props);
@@ -42,6 +43,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.onScroll = this.onScroll.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
+		this.onFilterSelect = this.onFilterSelect.bind(this);
 		this.onBacklink = this.onBacklink.bind(this);
 		this.onClearSearch = this.onClearSearch.bind(this);
 		this.filterMapper = this.filterMapper.bind(this);
@@ -243,6 +245,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 						value={filter}
 						ref={ref => this.refFilter = ref} 
 						placeholder={translate('popupSearchPlaceholder')}
+						onSelect={this.onFilterSelect}
 						onKeyUp={this.onFilterChange}
 						onClear={this.onFilterClear}
 					/>
@@ -291,17 +294,21 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { data } = param;
 		const { route } = data;
 		const storage = storageGet();
-		const { filter, backlink } = storage;
-
-		this._isMounted = true;
-		this.resetSearch();
-		this.rebind();
-
-		focus.clear(true);
+		const { backlink } = storage;
+		const filter = String(storage.filter || '');
 
 		if (filter && this.refFilter) {
+			this.filter = filter;
+			this.range = { from: 0, to: filter.length };
 			this.refFilter.setValue(filter);
 		};
+
+		this._isMounted = true;
+		this.initCache();
+		this.rebind();
+		this.reload();
+
+		focus.clear(true);
 
 		if (backlink) {
 			U.Object.getById(backlink, item => this.setBacklink(item));
@@ -313,25 +320,22 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	componentDidUpdate () {
 		const items = this.getItems();
 		const filter = this.getFilter();
-		const length = this.filter.length;
+		const length = filter.length;
 
 		if (filter != this.filter) {
 			this.filter = filter;
+			this.range = { from: length, to: length };
 			this.reload();
 			return;
 		};
 
+		this.initCache();
 		this.setActive(items[this.n]);
 		this.refFilter.setValue(this.filter);
-		this.refFilter.setRange({ from: length, to: length });
+		this.refFilter.setRange(this.range);
 
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_SECTION,
-			keyMapper: i => (items[i] || {}).id,
-		});
-
-		if (this.refList && this.top) {
+		if (this.refList) {
+			this.refList.recomputeRowHeights(0);
 			this.refList.scrollToPosition(this.top);
 		};
 	};
@@ -356,6 +360,16 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	unbind () {
 		$(window).off('keydown.search');
+	};
+
+	initCache () {
+		const items = this.getItems();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT_SECTION,
+			keyMapper: i => (items[i] || {}).id,
+		});
 	};
 
 	onScroll ({ scrollTop }) {
@@ -482,6 +496,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			storageSet({ filter: v });
 			analytics.event('SearchInput');
 		}, J.Constant.delay.keyboard);
+	};
+
+	onFilterSelect (e: any) {
+		this.range = this.refFilter.getRange();
 	};
 
 	onFilterClear () {
