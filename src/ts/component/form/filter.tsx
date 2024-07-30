@@ -22,6 +22,7 @@ interface Props {
 	onKeyDown?(e: any, v: string): void;
 	onKeyUp?(e: any, v: string): void;
 	onChange?(value: string): void;
+	onSelect?(e: any): void;
 	onClear?(): void;
 	onIconClick?(e: any): void;
 };
