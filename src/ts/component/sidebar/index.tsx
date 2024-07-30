@@ -223,10 +223,10 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		const { showVault } = S.Common;
 		const { isClosed, width } = sidebar.data;
 		const options = [
-			{ id: 'all', name: translate('sidebarMenuAll') },
-			{ id: 'sidebar', name: translate('sidebarMenuSidebar') },
-			{ id: 'focus', name: translate('sidebarMenuFocus') },
-		];
+			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
+			{ id: 'sidebar', icon: 'sidebar', name: translate('sidebarMenuSidebar') },
+			{ id: 'focus', icon: 'focus', name: translate('sidebarMenuFocus') },
+		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
 
 		let value = '';
 		if (isClosed) {

@@ -237,6 +237,7 @@ html.platformWindows {
 	}
 }
 
+@import "./icon.scss";
 @import "./button.scss";
 @import "./help.scss";
 @import "./onboarding.scss";
@@ -258,7 +259,6 @@ html.platformWindows {
 @import "./block/add.scss";
 @import "./block/context.scss";
 @import "./block/cover.scss";
-@import "./block/icon.scss";
 @import "./block/latex.scss";
 @import "./block/link.scss";
 @import "./block/linkSettings.scss";
