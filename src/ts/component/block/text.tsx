@@ -601,7 +601,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const value = this.refEditable.getHtmlValue();
-		const reg = /\$([^\$]+)\$/g;
+		const reg = /\$((?:[^$\\]|\\.)*?)\$/g;
 
 		if (!reg.test(value)) {
 			return;
