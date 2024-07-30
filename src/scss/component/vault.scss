@@ -5,6 +5,7 @@
 	flex-shrink: 0; position: fixed; left: 0px; top: 0px; transition: width 0.06s linear; overflow: hidden; transform: translate3d(0px, 0px, 0px);
 }
 .vault.isClosed { width: 0px; }
+.vault.isHidden { display: none; }
 .vault {
 	.head { 
 		height: 50px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 14px; flex-shrink: 0;
