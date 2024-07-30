@@ -238,7 +238,8 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		S.Menu.open('select', {
 			element: '#sidebarToggle',
 			classNameWrap: 'fromSidebar',
-			horizontal: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Right,
+			noFlipX: true,
 			data: {
 				options,
 				value,
