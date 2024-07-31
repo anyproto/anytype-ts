@@ -600,12 +600,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		const value = this.refEditable.getHtmlValue();
 		const reg = /\$((?:[^$\\]|\\.)*?)\$/g;
+
+		let value = this.refEditable.getHtmlValue();
 
 		if (!reg.test(value)) {
 			return;
 		};
+
+		value = U.Common.fromHtmlSpecialChars(value);
 
 		const tag = Mark.getTag(I.MarkType.Latex);
 		const html = value.replace(reg, (s: string, p: string, o: number) => {

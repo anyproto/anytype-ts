@@ -950,6 +950,15 @@ class UtilCommon {
 		return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	};
 
+	fromHtmlSpecialChars (s: string) {
+		return String(s || '').replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
+			if (p == '&lt;') p = '<';
+			if (p == '&gt;') p = '>';
+			if (p == '&amp;') p = '&';
+			return p;
+		});
+	};
+
 };
 
 export default new UtilCommon();

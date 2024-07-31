@@ -417,12 +417,7 @@ class Mark {
 		});
 
 		// Fix html special symbols
-		text = text.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
-			if (p == '&lt;') p = '<';
-			if (p == '&gt;') p = '>';
-			if (p == '&amp;') p = '&';
-			return p;
-		});
+		text = U.Common.fromHtmlSpecialChars(text);
 
 		html = text;
 		html.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
