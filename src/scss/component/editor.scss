@@ -4,11 +4,11 @@
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 
-	.note { 
+	> .note { 
 		background: linear-gradient(270deg, #262cd2 0%, #0c82ef 100%); border-radius: 4px; height: 80px; color: var(--color-bg-primary); position: absolute; 
 		left: 16px; top: 38px; width: calc(100% - 32px); line-height: 80px; text-align: center; z-index: 2;
 	}
-	.note {
+	> .note {
 		.inner { display: inline-block; width: 704px; margin: 0px auto; vertical-align: middle; line-height: 1; }
 		.sides { display: flex; }
 		.side.left { width: 576px; margin-right: 34px; text-align: left; @include text-common; line-height: 20px; }
