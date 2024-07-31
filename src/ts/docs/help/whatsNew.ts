@@ -51,7 +51,7 @@ export default [
 	bullet(`Typed text after a linked object no longer becomes part of the link and can be unlinked. Thanks, @${link('https://community.anytype.io/t/8075', 'floseq')}!`),
 	bullet(`Select all ${hl(`${cmd} + A`)} twice now excludes the title. Thanks, @${link('https://community.anytype.io/t/ctrl-a-behaviour-inconsistent-unpredictable/7612', 'qualquertipo')}!`),
 	bullet(`You can now use crypto (BTC, ETH, USDT, USDC, BNB, Dai, etc.) to pay for memberships.`),
-    bullet(`Added a menu for selecting filter/sorting options after clicking "New Sort/Filter."`),
+    bullet(`Added a menu for selecting filter/sorting options after clicking "New Sort/Filter".`),
 	bullet(`Clicking the "Join" button on the Pricing page will now open the app to purchase the subscription if it’s installed, or take you to the download page if it’s not.`),
 	bullet(`Search panel now reopens with previously entered text and selected objects in "Related to" mode.`),
 
