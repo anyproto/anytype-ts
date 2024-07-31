@@ -18,8 +18,8 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Anytype Release 0.42.0`),
-	text(`This release introduces a redesigned sidebar and brand-new widgets, along with numerous quality-of-life improvements and bug fixes for an even smoother Anytype experience. Don't miss our new sync status indicator—it's like having a little tech guru keeping you informed! Enjoy exploring the updates 🏄‍♀️`),
+	title(`Anytype Desktop 0.42.0 Released!`),
+	text(`This release brings a redesigned sidebar, brand-new widgets, and the highly anticipated inline LaTeX feature, along with numerous quality-of-life improvements and bug fixes for an even smoother Anytype experience. Don’t miss our new sync status indicator—it’s like having a little tech guru keeping you informed! Enjoy exploring the updates 🏄‍♀️`),
 
 	h2(`Highlights 💫`),
 
@@ -27,15 +27,17 @@ export default [
 	text(`Our sleek new sidebar makes hopping between Spaces a breeze. Think of it as your personal GPS for easier navigation.`),
 	img(`42/1.png`),
 	
-	
 	h3(`New Widgets 🧩`),
 	text(`We're bringing you Widgets that are more flexible than a yoga master. Now, you can display Widgets in three new layouts: Calendar, Kanban, and Gallery.`),
 	img(`42/2.png`),
 	
-
 	h3(`New Sync Status Indicator 🧘`),
 	text(`Now, you'll get more informative updates for Objects and files. Look out for these handy indicators when there's no network connection or sync. `),
 	img(`42/3.png`),
+
+	h3(`Inline LaTeX 🧑‍🔬`),
+	text(`We’re absolutely geeked to finally deliver ${link('https://community.anytype.io/t/2315', 'this long-awaited feature to the community')}! You can now easily add mathematical notation right into your text, making it possible to include complex equations and formulas. Thanks everyone who voted for it! `),
+	img(`42/4.m4v`),
 	
 
 	h2(`Quality-of-Life 🪷 `),
@@ -49,13 +51,15 @@ export default [
 	bullet(`Typed text after a linked object no longer becomes part of the link and can be unlinked. Thanks, @${link('https://community.anytype.io/t/8075', 'floseq')}!`),
 	bullet(`Select all ${hl(`${cmd} + A`)} twice now excludes the title. Thanks, @${link('https://community.anytype.io/t/ctrl-a-behaviour-inconsistent-unpredictable/7612', 'qualquertipo')}!`),
 	bullet(`You can now use crypto (BTC, ETH, USDT, USDC, BNB, Dai, etc.) to pay for memberships.`),
-	
-
+    bullet(`Added a menu for selecting filter/sorting options after clicking "New Sort/Filter."`),
+	bullet(`Clicking the "Join" button on the Pricing page will now open the app to purchase the subscription if it’s installed, or take you to the download page if it’s not.`),
+	bullet(`Search panel now reopens with previously entered text and selected objects in "Related to" mode.`),
 
 	h2(`Technical Update 🛠️`),
 	bullet(`Electron updated to 31.0.0`),
 
 	h2(`Bug Fixes 🦂`),
+	bullet(`Number relations with values less than 1 million are now evenly spaced. Thanks, @${link('https://community.anytype.io/t/7497', 'matylda')}!`),
 	bullet(`Mermaid diagrams now display correctly with dark mode backgrounds. Thanks, @${link('https://community.anytype.io/t/20228', 'BoxOfWood')}!`),
 	bullet(`Top menu no longer shows up below the cover in sets when using the modal window. Thanks, ${link('https://community.anytype.io/t/22009', 'Elias')}!`),
 	bullet(`Fixed a problem with carriage when adding tags or objects to corresponding relations. Thanks, @${link('https://community.anytype.io/t/10219', 'dzlg')}!`),
@@ -69,9 +73,12 @@ export default [
 	bullet(`The Query of the set now updates correctly in the pop-up.`),
 	bullet(`Fixed issue with using library images for type Icons. Thanks, @${link('https://community.anytype.io/t/22297', 'Self-Perfection')}!`),
 	bullet(`Keyboard cursor no longer disappears after cutting a whole line (block). Thanks, @${link('https://community.anytype.io/t/20781', 'SirCaptain')}!`),
-
-
-
+    bullet(`Clarified the prompt for image uploads when no images are present.`),
+    bullet(`Made sizes dropdown menu consistent throughout UI.`),
+	bullet(`Fixed manual reordering of favorites in the widget. Thanks, @elias`),
+	bullet(`Fixed issue where cursor couldn't break out of box when using text-style inline code. Thanks, @${link('https://community.anytype.io/t/8944', 'Xonline')}!`),
+	bullet(`Fixed Markdown behavior for underscores and dashes. Thanks, @${link('https://community.anytype.io/t/17152', 'katcher')}!`),
+	
 	div(),
 	// --------------------------------------------//
 
