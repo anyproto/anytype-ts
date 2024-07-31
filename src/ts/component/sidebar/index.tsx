@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, translate } from 'Lib';
+import { I, U, J, S, keyboard, Preview, sidebar, translate, analytics } from 'Lib';
 import ListWidget from 'Component/list/widget';
 
 const Sidebar = observer(class Sidebar extends React.Component {
@@ -225,15 +225,8 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		const options = [
 			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
 			{ id: 'sidebar', icon: 'sidebar', name: translate('sidebarMenuSidebar') },
-			{ id: 'focus', icon: 'focus', name: translate('sidebarMenuFocus') },
 		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
-
-		let value = '';
-		if (isClosed) {
-			value = 'focus';
-		} else {
-			value = showVault ? 'all' : 'sidebar';
-		};
+		const value = showVault ? 'all' : 'sidebar';
 
 		S.Menu.open('select', {
 			element: '#sidebarToggle',
@@ -256,13 +249,10 @@ const Sidebar = observer(class Sidebar extends React.Component {
 								};
 								break;
 							};
-
-							case 'focus': {
-								sidebar.toggleOpenClose();
-								break;
-							};
 						};
 					});
+
+					analytics.event('ChangeSidebarMode', { type: item.id });
 				},
 			},
 		});
