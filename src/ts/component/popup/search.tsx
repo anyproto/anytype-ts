@@ -297,11 +297,17 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { backlink } = storage;
 		const filter = String(storage.filter || '');
 
-		if (filter && this.refFilter) {
+		const setFilter = () => {
+			if (!filter || !this.refFilter) {
+				return;
+			};
+
 			this.filter = filter;
 			this.range = { from: 0, to: filter.length };
 			this.refFilter.setValue(filter);
 		};
+
+		setFilter();
 
 		this._isMounted = true;
 		this.initCache();
@@ -311,7 +317,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		focus.clear(true);
 
 		if (backlink) {
-			U.Object.getById(backlink, item => this.setBacklink(item));
+			U.Object.getById(backlink, item => this.setBacklink(item, () => setFilter()));
 		};
 
 		analytics.event('ScreenSearch', { route });
@@ -514,10 +520,14 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.setBacklink(item);
 	};
 
-	setBacklink (item: any) {
+	setBacklink (item: any, callBack?: () => void) {
 		this.setState({ backlink: item }, () => {
 			this.resetSearch();
 			analytics.event('SearchBacklink');
+
+			if (callBack) {
+				callBack();
+			};
 		});
 	};
 
