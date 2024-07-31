@@ -600,7 +600,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		const reg = /\$((?:[^$\\]|\\.)*?)\$(\s|$)/g;
+		const reg = /\$((?:[^$\\]|\\.)*?)\$([\s<]|$)/g;
 
 		let value = this.refEditable.getHtmlValue();
 
@@ -611,17 +611,18 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		value = U.Common.fromHtmlSpecialChars(value);
 
 		const tag = Mark.getTag(I.MarkType.Latex);
-		const html = value.replace(reg, (s: string, p: string, o: number) => {
+		const html = value.replace(reg, (s: string, p1: string, p2: string) => {
 			let ret = '';
+
 			try {
-				ret = katex.renderToString(U.Common.stripTags(p), { 
+				ret = katex.renderToString(U.Common.stripTags(p1), { 
 					displayMode: false, 
 					throwOnError: false,
 					output: 'html',
 					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
 				});
 
-				ret = ret ? `<${tag}>${ret}</${tag}>` : s;
+				ret = ret ? `<${tag}>${ret}</${tag}>${p2}` : s;
 			} catch (e) {
 				ret = s;
 			};
