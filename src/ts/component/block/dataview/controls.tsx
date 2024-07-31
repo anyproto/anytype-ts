@@ -307,7 +307,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				onViewCopy: this.onViewCopy,
 				onViewRemove: this.onViewRemove,
 				view: observable.box(view),
-				onAdd: (menuId: string, menuWidth: number) => {
+				onAdd: (menuId: string, component: string, menuWidth: number) => {
 					this.sortOrFilterRelationSelect(component, {
 						element: `#${menuId} #item-add`,
 						offsetX: menuWidth,
@@ -354,9 +354,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		if (component == 'dataviewSort') {
-			newItem = Object.assign(newItem, {
-				type: I.SortType.Asc,
-			});
+			newItem = Object.assign(newItem, { type: I.SortType.Asc });
 
 			onSortAdd(newItem, callBack);
 		} else
