@@ -252,7 +252,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		};
 
 		if (isInline || isBoard || isGallery) {
-			const options = Relation.getPageLimitOptions(type);
+			const options = Relation.getPageLimitOptions(type, isInline);
 			settings.push({ id: 'pageLimit', name: translate('menuDataviewViewEditPageLimit'), caption: (pageLimit || options[0].id), arrow: true });
 		};
 
@@ -289,7 +289,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	onOver (e: any, item: any) {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId, blockId, isInline } = data;
 		const isReadonly = this.isReadonly();
 		const { type, groupRelationKey } = this.param;
 		const view = data.view.get();
@@ -342,7 +342,7 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 			case 'pageLimit': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
-					options: Relation.getPageLimitOptions(type),
+					options: Relation.getPageLimitOptions(type, isInline),
 				});
 				break;
 			};
