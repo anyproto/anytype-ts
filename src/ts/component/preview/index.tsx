@@ -216,7 +216,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		}; 
 
 		const css: any = { opacity: 0, left: 0, top: 0 };
-		const pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: nh + OFFSET_Y, clipPath: '' };
+		const pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: OFFSET_Y, clipPath: '' };
 
 		let typeY = I.MenuDirection.Bottom;		
 		let ps = (1 - nw / ow) / 2 * 100;
@@ -242,7 +242,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 			css.top = oy - oh - OFFSET_Y;
 			css.transform = 'translateY(-5%)';
 				
-			pcss.bottom = -nh - OFFSET_Y;
+			pcss.bottom = -OFFSET_Y;
 			pcss.clipPath = cpTop;
 		};
 			
@@ -250,7 +250,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 			css.top = oy + nh + OFFSET_Y;
 			css.transform = 'translateY(5%)';
 				
-			pcss.top = -nh - OFFSET_Y;
+			pcss.top = -OFFSET_Y;
 			pcss.clipPath = cpBot;
 		};
 			
@@ -265,7 +265,6 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		};
 
 		poly.css(pcss);
-		
 		window.setTimeout(() => { obj.css({ opacity: 1, transform: 'translateY(0%)' }); }, 15);
 	};
 

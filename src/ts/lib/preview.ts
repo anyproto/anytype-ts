@@ -177,12 +177,7 @@ class Preview {
 		};
 		
 		if (element) {
-			element.off('mouseleave.preview').on('mouseleave.preview', () => {
-				window.clearTimeout(this.timeout.preview); 
-				if (rect) {
-					this.previewHide(true);
-				};
-			});
+			element.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide());
 		};
 
 		passThrough ? obj.addClass('passThrough') : obj.removeClass('passThrough');
