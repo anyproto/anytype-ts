@@ -18,7 +18,7 @@
 				.icon.relation { display: none; }
 			}
 
-			.buttons { line-height: 44px; opacity: 0; transition: $transitionAllCommon; }
+			.buttons { line-height: 44px; display: none; gap: 0px 8px; margin: 0px 0px 0px 8px; }
 			.buttons {
 				.icon { vertical-align: middle; opacity: 1; }
 			}
@@ -37,8 +37,8 @@
 		.item:not(.isReadonly):hover, 
 		.item:not(.isReadonly).hover
 		{
-			.buttons { opacity: 1; }
-			.txt { width: calc(100% - 118px); }
+			.buttons { display: flex; }
+			.txt { width: calc(100% - 126px); }
 		}
 
 		.bottom { padding: 0px 0px 8px 0px; flex-shrink: 0; }
