@@ -842,6 +842,7 @@ class UtilMenu {
 		};
 
 		const menu = Object.assign({
+			width: 256,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			noFlipY: true,

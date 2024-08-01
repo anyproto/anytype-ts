@@ -12,7 +12,7 @@
 			.grey { color: var(--color-control-active); }
 			.iconObject { margin-right: 10px; }
 
-			.buttons { line-height: 44px; opacity: 0; transition: $transitionAllCommon; }
+			.buttons { line-height: 44px; display: none; gap: 0px 8px; margin: 0px 0px 0px 8px; }
 			.buttons {
 				.icon { vertical-align: middle; opacity: 1; }
 			}
@@ -31,15 +31,18 @@
 				.iconObject { margin-right: 2px; }
 			}
 
-			.txt { width: calc(100% - 70px); line-height: 20px; height: 40px; display: flex; flex-direction: column; align-items: flex-start; }
+			.txt { 
+				width: calc(100% - 70px); line-height: 20px; height: 40px; display: flex; flex-direction: column; align-items: flex-start; 
+				flex-grow: 1;
+			}
 			.txt {
 				.name { @include text-overflow-nw; }
-				.flex { line-height: 20px; }
+				.flex { line-height: 20px; gap: 0px 4px; }
 
 				.name,
 				.flex { display: flex; align-items: center; }
 				.name::after,
-				.flex::after { content: ''; width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); }
+				.flex::after { content: ''; width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); margin-left: -4px; }
 				.flex::after { background-image: url('~img/arrow/select/light.svg'); }
 
 				.condition { color: var(--color-text-secondary); }
@@ -54,8 +57,8 @@
 		.item:not(.isReadonly):hover, 
 		.item:not(.isReadonly).hover 
 		{
-			.buttons { opacity: 1; }
-			.txt { width: calc(100% - 118px); }
+			.buttons { display: flex; }
+			.txt { width: calc(100% - 126px); }
 		}
 
 		.item.add { display: block; }
