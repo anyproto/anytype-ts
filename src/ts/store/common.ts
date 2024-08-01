@@ -42,6 +42,7 @@ class CommonStore {
 	public isOnlineValue = false;
 	public shareTooltipValue = false;
 	public showVaultValue = null;
+	public autoSidebarValue = null;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -99,6 +100,7 @@ class CommonStore {
 			isOnlineValue: observable,
 			shareTooltipValue: observable,
 			showVaultValue: observable,
+			autoSidebarValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
             config: computed,
@@ -192,6 +194,10 @@ class CommonStore {
 
 	get fullscreenObject (): boolean {
 		return this.boolGet('fullscreenObject');
+	};
+
+	get autoSidebar (): boolean {
+		return this.boolGet('autoSidebar');
 	};
 
 	get theme (): string {
@@ -374,6 +380,10 @@ class CommonStore {
 
 	fullscreenObjectSet (v: boolean) {
 		this.boolSet('fullscreenObject', v);
+	};
+
+	autoSidebarSet (v: boolean) {
+		this.boolSet('autoSidebar', v);
 	};
 
 	fullscreenSet (v: boolean) {
