@@ -228,7 +228,8 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
 		const value = showVault ? 'all' : 'sidebar';
 
-		S.Menu.open('select', {
+		S.Menu.open('selectSidebarToggle', {
+			component: 'select',
 			element: '#sidebarToggle',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Right,
