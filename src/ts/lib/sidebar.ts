@@ -22,6 +22,7 @@ class Sidebar {
 	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	timeoutAnim = 0;
+	timeoutAuto = 0;
 
 	init () {
 		this.initObjects();
@@ -156,19 +157,22 @@ class Sidebar {
 	};
 
 	onMouseMove (): void {
+		const { showVault, autoSidebar } = S.Common;
+
 		if (!this.obj || !this.obj.length || keyboard.isDragging) {
 			return;
 		};
 
 		if (
 			this.isAnimating ||
-			!S.Common.autoSidebar
+			!autoSidebar
 		) {
 			return;
 		};
 
 		const { x } = keyboard.mouse.page;
 		const { width, isClosed } = this.data;
+		const vw = isClosed || !showVault ? 0 : J.Size.vault.width;
 		const menuOpen = S.Menu.isOpenList([ 'dataviewContext', 'widget' ]);
 		const popupOpen = S.Popup.isOpen();
 
@@ -178,7 +182,7 @@ class Sidebar {
 		if (x <= J.Size.sidebar.threshold.show) {
 			show = true;
 		} else
-		if (x >= width + J.Size.sidebar.threshold.show) {
+		if (x >= width + vw + J.Size.sidebar.threshold.show) {
 			hide = true;
 		};
 
@@ -191,12 +195,14 @@ class Sidebar {
 			hide = false;
 		};
 
+		window.clearTimeout(this.timeoutAuto);
+
 		if (show) {
-			this.open(width);
+			this.timeoutAuto = window.setTimeout(() => this.open(width), 100);
 		};
 
 		if (hide && !isClosed) {
-			window.setTimeout(() => this.close(), 500);
+			this.timeoutAuto = window.setTimeout(() => this.close(), 500);
 		};
 	};
 
