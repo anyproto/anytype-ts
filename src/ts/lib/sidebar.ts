@@ -65,11 +65,14 @@ class Sidebar {
 	};
 
 	close (): void {
-		if (!this.obj || !this.obj.length || this.isAnimating || this.data.isClosed) {
+		const { width, isClosed } = this.data;
+
+		if (!this.obj || !this.obj.length || this.isAnimating || isClosed) {
 			return;
 		};
 
 		this.obj.addClass('anim');
+		this.setElementsWidth(width);
 		this.setAnimating(true);
 		this.setStyle({ width: 0 });
 		this.set({ isClosed: true });
@@ -93,6 +96,7 @@ class Sidebar {
 			return;
 		};
 
+		this.setElementsWidth(width);
 		this.setAnimating(true);
 		this.vaultShow(width);
 
@@ -119,10 +123,13 @@ class Sidebar {
 		};
 		
 		const { width, isClosed } = this.data;
+		
+		isClosed ? this.open(width) : this.close();
+	};
 
+	setElementsWidth (width: any): void {
 		this.obj.find('#sidebarHead').css({ width });
 		this.obj.find('#sidebarBody').css({ width });
-		isClosed ? this.open(width) : this.close();
 	};
 
 	setWidth (w: number): void {
@@ -140,13 +147,57 @@ class Sidebar {
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			this.obj.removeClass('anim');
-			this.obj.find('#sidebarHead').css({ width: '' });
-			this.obj.find('#sidebarBody').css({ width: '' });
+			this.setElementsWidth('');
 
 			if (callBack) {
 				callBack();
 			};
 		}, J.Constant.delay.sidebar);
+	};
+
+	onMouseMove (): void {
+		if (!this.obj || !this.obj.length || keyboard.isDragging) {
+			return;
+		};
+
+		if (
+			this.isAnimating ||
+			!S.Common.autoSidebar
+		) {
+			return;
+		};
+
+		const { x } = keyboard.mouse.page;
+		const { width, isClosed } = this.data;
+		const menuOpen = S.Menu.isOpenList([ 'dataviewContext', 'widget' ]);
+		const popupOpen = S.Popup.isOpen();
+
+		let show = false;
+		let hide = false;
+
+		if (x <= J.Size.sidebar.threshold.show) {
+			show = true;
+		} else
+		if (x >= width + J.Size.sidebar.threshold.show) {
+			hide = true;
+		};
+
+		if (popupOpen) {
+			show = false;
+		};
+
+		if (menuOpen) {
+			show = false;
+			hide = false;
+		};
+
+		if (show) {
+			this.open(width);
+		};
+
+		if (hide && !isClosed) {
+			window.setTimeout(() => this.close(), 500);
+		};
 	};
 
 	resizePage (width: number, animate: boolean): void {
