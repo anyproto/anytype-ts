@@ -23,6 +23,8 @@ export default [
 	text(''),
 
 	h2(`Highlights 💫`),
+
+	h3(`Redesigned Sidebar 🌐`),
 	text(`Our sleek new sidebar makes hopping between Spaces a breeze. Think of it as your personal GPS for easier navigation.`),
 	img(`42/1.png`),
 	text(`<i>Simply click to hide the entire sidebar, or right-click for additional options.<i>`),
