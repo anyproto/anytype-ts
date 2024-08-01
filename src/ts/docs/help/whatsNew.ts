@@ -3,7 +3,7 @@ import { I, J, keyboard } from 'Lib';
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const hl = (t: string) => `<span class="highlight">${t}</span>`;
-const block = (style: I.TextStyle, text: string) => ({ style, text });
+const block = (style: I.TextStyle, text: string, align?: I.BlockHAlign) => ({ style, text, align });
 const title = (t: string) => block(I.TextStyle.Title, t);
 const h1 = (t: string) => block(I.TextStyle.Header1, t);
 const h2 = (t: string) => block(I.TextStyle.Header2, t);
