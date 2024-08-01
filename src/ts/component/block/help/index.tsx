@@ -25,8 +25,6 @@ class Block extends React.Component<Props> {
 
 		let content = null;
 
-		console.log(this.props);
-		
 		switch (type) {
 			case I.BlockType.IconPage: {
 				content = <ContentIcon {...this.props} />;
