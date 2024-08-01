@@ -20,26 +20,29 @@ export default [
 
 	title(`Anytype Desktop 0.42.0 Released!`),
 	text(`This release brings a redesigned sidebar, brand-new widgets, and the highly anticipated inline LaTeX feature, along with numerous quality-of-life improvements and bug fixes for an even smoother Anytype experience. Don’t miss our new sync status indicator—it’s like having a little tech guru keeping you informed! Enjoy exploring the updates 🏄‍♀️`),
-	text('')
+	text(''),
+
 	h2(`Highlights 💫`),
-	text('')
-	h3(`Redesigned Sidebar 🌐`),
 	text(`Our sleek new sidebar makes hopping between Spaces a breeze. Think of it as your personal GPS for easier navigation.`),
 	img(`42/1.png`),
 	text(`<i>Simply click to hide the entire sidebar, or right-click for additional options.<i>`),
-	text('')
+	text(''),
+
 	h3(`New Widgets 🧩`),
 	text(`We're bringing you Widgets that are more flexible than a yoga master. Now, you can display Widgets in three new layouts: Calendar, Kanban, and Gallery.`),
 	img(`42/2.png`),
-	text('')
+	text(''),
+
 	h3(`New Sync Status Indicator 🧘`),
 	text(`Now, you'll get more informative updates for Objects and files. Look out for these handy indicators when there's no network connection or sync. `),
 	img(`42/3.png`),
-    text('')
+    text(''),
+
 	h3(`Inline LaTeX 🧑‍🔬`),
 	text(`We’re absolutely geeked to finally deliver ${link('https://community.anytype.io/t/2315', 'this long-awaited feature to the community')}! You can now easily add mathematical notation right into your text, making it possible to include complex equations and formulas. Thanks everyone who voted for it! `),
 	video(`42/4.mp4`),
-	text('')
+	text(''),
+
 	h2(`Quality-of-Life 🪷 `),
 	bullet(`Menu item was added to Object settings for faster "add to Collection" workflow.`),
 	bullet(`Sharing Anytype with others got simpler—just grab the link from the help menu and share away (Desktop only).`),
@@ -54,10 +57,12 @@ export default [
     bullet(`Added a menu for selecting filter/sorting options after clicking "New Sort/Filter".`),
 	bullet(`Clicking the "Join" button on the Pricing page will now open the app to purchase the subscription if it’s installed, or take you to the download page if it’s not.`),
 	bullet(`Search panel now reopens with previously entered text and selected objects in "Related to" mode.`),
-	text('')
+	text(''),
+	
 	h2(`Technical Update 🛠️`),
 	bullet(`Electron updated to 31.0.0`),
-	text('')
+	text(''),
+
 	h2(`Bug Fixes 🦂`),
 	bullet(`Number relations with values less than 1 million are now evenly spaced. Thanks, @${link('https://community.anytype.io/t/7497', 'matylda')}!`),
 	bullet(`Mermaid diagrams now display correctly with dark mode backgrounds. Thanks, @${link('https://community.anytype.io/t/20228', 'BoxOfWood')}!`),
