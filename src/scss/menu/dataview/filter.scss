@@ -36,14 +36,13 @@
 				flex-grow: 1;
 			}
 			.txt {
-				.name { @include text-overflow-nw; }
-				.flex { line-height: 20px; gap: 0px 4px; }
+				> .name { @include text-overflow-nw; }
+				> .flex { line-height: 20px; gap: 0px 4px; max-width: 100%; }
 
-				.name,
-				.flex { display: flex; align-items: center; }
-				.name::after,
-				.flex::after { content: ''; width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); margin-left: -4px; }
-				.flex::after { background-image: url('~img/arrow/select/light.svg'); }
+				> .name, > .flex { display: flex; align-items: center; }
+				> .name::after, > .flex::after { content: ''; width: 20px; height: 20px; }
+				> .name::after { background-image: url('~img/arrow/select/dark.svg'); }
+				> .flex::after { background-image: url('~img/arrow/select/light.svg'); }
 
 				.condition { color: var(--color-text-secondary); }
 				.value { color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; }
