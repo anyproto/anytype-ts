@@ -37,8 +37,7 @@ export default [
 
 	h3(`Inline LaTeX 🧑‍🔬`),
 	text(`We’re absolutely geeked to finally deliver ${link('https://community.anytype.io/t/2315', 'this long-awaited feature to the community')}! You can now easily add mathematical notation right into your text, making it possible to include complex equations and formulas. Thanks everyone who voted for it! `),
-	video(`42/4.m4v`),
-	
+	video(`42/4.mp4`),
 
 	h2(`Quality-of-Life 🪷 `),
 	bullet(`Menu item was added to Object settings for faster "add to Collection" workflow.`),
