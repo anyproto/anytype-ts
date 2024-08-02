@@ -28,6 +28,8 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 			<React.Fragment>
 				<Title text={translate('popupSettingsPersonalTitle')} />
 
+				<Label className="section" text={translate('popupSettingsPersonalSectionLanguage')} />
+
 				<div className="actionItems">
 
 					<div className="item">
@@ -57,7 +59,11 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
 						/>
 					</div>
+				</div>
 
+				<Label className="section" text={translate('popupSettingsPersonalSectionEditor')} />
+
+				<div className="actionItems">
 					<div className="item">
 						<Label text={translate('popupSettingsPersonalNavigationMenu')} />
 
@@ -93,6 +99,16 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 					</div>
 
 					<div className="item">
+						<Label text={translate('popupSettingsPersonalRelativeDates')} />
+						<Switch className="big" value={showRelativeDates} onChange={(e: any, v: boolean) => S.Common.showRelativeDatesSet(v)} />
+					</div>
+				</div>
+
+				<Label className="section" text={translate('popupSettingsPersonalSectionApp')} />
+
+				<div className="actionItems">
+
+					<div className="item">
 						<Label text={translate('popupSettingsPersonalSidebar')} />
 						<Switch className="big" value={hideSidebar} onChange={(e: any, v: boolean) => S.Common.hideSidebarSet(v)} />
 					</div>
@@ -110,11 +126,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 					<div className="item">
 						<Label text={translate('electronMenuShowTray')} />
 						<Switch className="big" value={!hideTray} onChange={(e: any, v: boolean) => Renderer.send('setHideTray', v)} />
-					</div>
-
-					<div className="item">
-						<Label text={translate('popupSettingsPersonalRelativeDates')} />
-						<Switch className="big" value={showRelativeDates} onChange={(e: any, v: boolean) => S.Common.showRelativeDatesSet(v)} />
 					</div>
 
 					{canHideMenu ? (
