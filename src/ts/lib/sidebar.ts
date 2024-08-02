@@ -22,7 +22,6 @@ class Sidebar {
 	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	timeoutAnim = 0;
-	timeoutAuto = 0;
 
 	init () {
 		this.initObjects();
@@ -195,14 +194,12 @@ class Sidebar {
 			hide = false;
 		};
 
-		window.clearTimeout(this.timeoutAuto);
-
 		if (show) {
-			this.timeoutAuto = window.setTimeout(() => this.open(width), 100);
+			this.open(width);
 		};
 
 		if (hide && !isClosed) {
-			this.timeoutAuto = window.setTimeout(() => this.close(), 500);
+			this.close();
 		};
 	};
 

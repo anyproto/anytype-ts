@@ -697,7 +697,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					] 
 				},
 				{ 
-					id: 'appearance', icon: 'settings-appearance', name: translate('popupSettingsAppearanceTitle'), 
+					id: 'appearance', icon: 'settings-appearance', name: translate('popupSettingsColorMode'), 
 					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ] 
 				},
 				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },

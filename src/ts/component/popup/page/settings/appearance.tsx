@@ -8,15 +8,14 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 	render () {
 		const { theme } = S.Common;
 		const themes: any[] = [
-			{ id: '', class: 'light', name: translate('popupSettingsAppearanceColorModeButtonLight') },
-			{ id: 'dark', class: 'dark', name: translate('popupSettingsAppearanceColorModeButtonDark') },
-			{ id: 'system', class: 'system', name: translate('popupSettingsAppearanceColorModeButtonSystem') },
+			{ id: '', class: 'light', name: translate('popupSettingsColorModeButtonLight') },
+			{ id: 'dark', class: 'dark', name: translate('popupSettingsColorModeButtonDark') },
+			{ id: 'system', class: 'system', name: translate('popupSettingsColorModeButtonSystem') },
 		];
 
 		return (
 			<React.Fragment>
-				<Title text={translate('popupSettingsAppearanceTitle')} />
-				<Label className="section" text={translate('popupSettingsAppearanceColorMode')} />
+				<Title text={translate('popupSettingsColorMode')} />
 
 				<div className="buttons">
 					{themes.map((item: any, i: number) => (

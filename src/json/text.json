@@ -669,11 +669,10 @@
 	"popupSettingsPersonalSidebarMode": "Sidebar mode",
 	"popupSettingsPersonalRelativeDates": "Display relative dates",
 
-	"popupSettingsAppearanceTitle": "Appearance",
-	"popupSettingsAppearanceColorMode": "Color mode",
-	"popupSettingsAppearanceColorModeButtonLight": "Light",
-	"popupSettingsAppearanceColorModeButtonDark": "Dark",
-	"popupSettingsAppearanceColorModeButtonSystem": "System",
+	"popupSettingsColorMode": "Color mode",
+	"popupSettingsColorModeButtonLight": "Light",
+	"popupSettingsColorModeButtonDark": "Dark",
+	"popupSettingsColorModeButtonSystem": "System",
 
 	"popupSettingsWallpaperTitle": "Wallpaper",
 	"popupSettingsWallpaperText": "Choose or upload the wallpaper. For best results upload high resolution images.",
