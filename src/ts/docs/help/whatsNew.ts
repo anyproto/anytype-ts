@@ -10,6 +10,7 @@ const h2 = (t: string) => block(I.TextStyle.Header2, t);
 const h3 = (t: string) => block(I.TextStyle.Header3, t);
 const text = (t: string) => block(I.TextStyle.Paragraph, t);
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
+const caption = (t: string) => block(I.TextStyle.Paragraph, `<i>${t}</i>`, I.BlockHAlign.Center);
 const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
 const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}" controls class="c70 ${c || ''}" />`);
 const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}" class="c70 ${c || ''}" />`);
@@ -28,7 +29,7 @@ export default [
 	h3(`Redesigned Sidebar 🌐`),
 	text(`Our sleek new sidebar makes hopping between Spaces a breeze. Think of it as your personal GPS for easier navigation.`),
 	img(`42/1.png`),
-	text(`<i>Simply click to hide the entire sidebar, or right-click for additional options.<i>`),
+	caption(`Simply click to hide the entire sidebar, or right-click for additional options.`),
 	text(''),
 
 	h3(`New Widgets 🧩`),

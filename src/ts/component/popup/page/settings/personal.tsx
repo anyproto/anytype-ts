@@ -10,7 +10,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	};
 
 	render () {
-		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject, autoSidebar } = S.Common;
+		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject, hideSidebar } = S.Common;
 		const { languages } = config;
 		const interfaceLanguages = U.Menu.getInterfaceLanguages();
 		const spellingLanguages = U.Menu.getSpellingLanguages();
@@ -94,7 +94,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 					<div className="item">
 						<Label text={translate('popupSettingsAppearancePersonalisationSidebar')} />
-						<Switch className="big" value={autoSidebar} onChange={(e: any, v: boolean) => S.Common.autoSidebarSet(v)} />
+						<Switch className="big" value={hideSidebar} onChange={(e: any, v: boolean) => S.Common.hideSidebarSet(v)} />
 					</div>
 				</div>
 

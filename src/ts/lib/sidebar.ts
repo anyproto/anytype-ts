@@ -157,7 +157,7 @@ class Sidebar {
 	};
 
 	onMouseMove (): void {
-		const { showVault, autoSidebar } = S.Common;
+		const { showVault, hideSidebar } = S.Common;
 
 		if (!this.obj || !this.obj.length || keyboard.isDragging) {
 			return;
@@ -165,7 +165,7 @@ class Sidebar {
 
 		if (
 			this.isAnimating ||
-			!autoSidebar
+			!hideSidebar
 		) {
 			return;
 		};

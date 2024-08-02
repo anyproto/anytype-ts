@@ -26,6 +26,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		this.onResizeMove = this.onResizeMove.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onHandleClick = this.onHandleClick.bind(this);
+		this.onToggleClick = this.onToggleClick.bind(this);
 		this.onToggleContext = this.onToggleContext.bind(this);
 	};
 
@@ -52,7 +53,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					id="sidebarToggle"
 					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 					tooltipY={I.MenuDirection.Bottom}
-					onClick={() => sidebar.toggleOpenClose()}
+					onClick={this.onToggleClick}
 					onContextMenu={this.onToggleContext}
 				/>
 
@@ -209,6 +210,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	onHandleClick () {
 		if (!this.movedX) {
 			sidebar.toggleOpenClose();
+			S.Common.hideSidebarSet(false);
 		};
 	};
 
@@ -217,6 +219,11 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		if (space && space.isShared) {
 			S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
 		};
+	};
+
+	onToggleClick () {
+		sidebar.toggleOpenClose();
+		S.Common.hideSidebarSet(false);
 	};
 
 	onToggleContext () {
