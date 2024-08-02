@@ -226,43 +226,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	};
 
 	onToggleContext () {
-		const { showVault } = S.Common;
-		const { isClosed, width } = sidebar.data;
-		const options = [
-			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
-			{ id: 'sidebar', icon: 'sidebar', name: translate('sidebarMenuSidebar') },
-		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
-		const value = showVault ? 'all' : 'sidebar';
-
-		S.Menu.open('selectSidebarToggle', {
-			component: 'select',
-			element: '#sidebarToggle',
-			classNameWrap: 'fromSidebar',
-			horizontal: I.MenuDirection.Right,
-			noFlipX: true,
-			data: {
-				options,
-				value,
-				onSelect: (e: any, item: any) => {
-					raf(() => {
-						switch (item.id) {
-							case 'all':
-							case 'sidebar': {
-								S.Common.showVaultSet(item.id == 'all');
-								if (isClosed) {
-									sidebar.open(width);
-								} else {
-									sidebar.resizePage(width, false);
-								};
-								break;
-							};
-						};
-					});
-
-					analytics.event('ChangeSidebarMode', { type: item.id });
-				},
-			},
-		});
+		U.Menu.sidebarContext('#sidebarToggle');
 	};
 
 });

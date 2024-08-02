@@ -665,15 +665,15 @@
 	"popupSettingsPersonalNavigationMenuClick": "Click",
 	"popupSettingsPersonalNavigationMenuHover": "Hover",
 	"popupSettingsPersonalLinkStyle": "Link to object style",
+	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
+	"popupSettingsPersonalSidebarMode": "Sidebar mode",
+	"popupSettingsPersonalRelativeDates": "Display relative dates",
 
 	"popupSettingsAppearanceTitle": "Appearance",
 	"popupSettingsAppearanceColorMode": "Color mode",
 	"popupSettingsAppearanceColorModeButtonLight": "Light",
 	"popupSettingsAppearanceColorModeButtonDark": "Dark",
 	"popupSettingsAppearanceColorModeButtonSystem": "System",
-	"popupSettingsAppearancePersonalisation": "Personalisation",
-	"popupSettingsAppearancePersonalisationSidebar": "Automatically show and hide sidebar",
-	"popupSettingsAppearancePersonalisationRelativeDates": "Display relative dates",
 
 	"popupSettingsWallpaperTitle": "Wallpaper",
 	"popupSettingsWallpaperText": "Choose or upload the wallpaper. For best results upload high resolution images.",

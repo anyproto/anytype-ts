@@ -141,6 +141,7 @@
 						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
 					}
 				}
+				.actionItems:last-child { margin-bottom: 0px; }
 
 				.phraseWrapper { border-radius: 12px; background-color: var(--color-shape-tertiary); padding: 16px 44px; line-height: unset; }
 				.phraseWrapper {

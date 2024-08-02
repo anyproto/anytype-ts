@@ -1,5 +1,6 @@
 import $ from 'jquery';
-import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation, Storage } from 'Lib';
+import raf from 'raf';
+import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation, Storage, sidebar } from 'Lib';
 
 class UtilMenu {
 
@@ -892,6 +893,50 @@ class UtilMenu {
 					});
 				}
 			}
+		});
+	};
+
+	sidebarModeOptions () {
+		return [
+			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
+			{ id: 'sidebar', icon: 'sidebar', name: translate('sidebarMenuSidebar') },
+		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
+	};
+
+	sidebarContext (element: string) {
+		const { showVault } = S.Common;
+		const { isClosed, width } = sidebar.data;
+		const options = this.sidebarModeOptions();
+		const value = showVault ? 'all' : 'sidebar';
+
+		S.Menu.open('selectSidebarToggle', {
+			component: 'select',
+			element,
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Right,
+			noFlipX: true,
+			data: {
+				options,
+				value,
+				onSelect: (e: any, item: any) => {
+					raf(() => {
+						switch (item.id) {
+							case 'all':
+							case 'sidebar': {
+								S.Common.showVaultSet(item.id == 'all');
+								if (isClosed) {
+									sidebar.open(width);
+								} else {
+									sidebar.resizePage(width, false);
+								};
+								break;
+							};
+						};
+					});
+
+					analytics.event('ChangeSidebarMode', { type: item.id });
+				},
+			},
 		});
 	};
 
