@@ -365,16 +365,12 @@ class UtilCommon {
 	};
 
 	formatNumber (v: number): string {
-		v = Number(v) || 0;
-		
-		const s = String(v || '');
-		if (String(s).length < 6) {
+		let s = String(v || '');
+		if (s.length < 6) {
 			return s;
 		};
 
-		let ret = String(v || '');
 		let parts = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 8 }).formatToParts(v);
-
 		if (parts && parts.length) {
 			parts = parts.map((it: any) => {
 				if (it.type == 'group') {
@@ -382,9 +378,9 @@ class UtilCommon {
 				};
 				return it.value;
 			});
-			ret = parts.join('');
+			s = parts.join('');
 		};
-		return ret;
+		return s;
 	};
 
 	textStyle (obj: any, param: any) {

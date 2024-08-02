@@ -577,6 +577,8 @@
 			}
 
 			> .side.right.tabAppearance {
+				> .title { margin: 0px 0px 32px 0px; }
+
 				.buttons { display: flex; gap: 16px 34px; margin: 0px 0px 46px 0px; flex-wrap: wrap; }
 				.label.section { margin-bottom: 8px; }
 
