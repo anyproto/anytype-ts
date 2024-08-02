@@ -1448,6 +1448,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const parentElement = S.Block.getParentMapElement(rootId, block.id);
+		if (!parentElement) {
+			return;
+		};
+
 		const idx = parentElement.childrenIds.indexOf(block.id);
 
 		// Check if there is empty table to fill when moving
@@ -1477,6 +1481,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (isInsideTable) {
 			const row = S.Block.getParentLeaf(rootId, block.id);
 			const rowElement = S.Block.getParentMapElement(rootId, block.id);
+			if (!rowElement) {
+				return;
+			};
+
 			const idx = rowElement.childrenIds.indexOf(block.id);
 			const nextRow = S.Block.getNextTableRow(rootId, row.id, dir);
 
