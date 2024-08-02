@@ -66,6 +66,12 @@
 	.side.left { padding-left: 120px; }
 }
 
+body.isFullScreen {
+	.header:not(.withSidebar) {
+		.side.left { padding-left: 52px; }
+	}
+}
+
 .header.authIndex { height: 52px; }
 
 html:not(.bodyIndexIndex):not(.bodyAuthSelect) {

@@ -156,7 +156,7 @@ class Sidebar {
 	};
 
 	onMouseMove (): void {
-		const { showVault, hideSidebar } = S.Common;
+		const { showVault, hideSidebar, isFullScreen } = S.Common;
 
 		if (!this.obj || !this.obj.length || keyboard.isDragging) {
 			return;
@@ -174,14 +174,15 @@ class Sidebar {
 		const vw = isClosed || !showVault ? 0 : J.Size.vault.width;
 		const menuOpen = S.Menu.isOpenList([ 'dataviewContext', 'widget', 'selectSidebarToggle' ]);
 		const popupOpen = S.Popup.isOpen();
+		const threshold = isFullScreen ? 0 : J.Size.sidebar.threshold;
 
 		let show = false;
 		let hide = false;
 
-		if (x <= J.Size.sidebar.threshold.show) {
+		if (x <= threshold) {
 			show = true;
 		} else
-		if (x >= width + vw + J.Size.sidebar.threshold.show) {
+		if (x >= width + vw + threshold) {
 			hide = true;
 		};
 
@@ -213,13 +214,17 @@ class Sidebar {
 		};
 
 		const { isClosed } = this.data;
-		const { showVault } = S.Common;
+		const { showVault, isFullScreen } = S.Common;
 		const { ww } = U.Common.getWindowDimensions();
 		const vw = isClosed || !showVault ? 0 : J.Size.vault.width;
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
-		const toggleX = width ? width - 40 + (showVault ? vw : 0) : 84;
+		
+		let toggleX = width ? width - 40 + (showVault ? vw : 0) : 84;
+		if (!width && isFullScreen) {
+			toggleX -= 68;
+		};
 
 		this.header.css({ width: '' }).removeClass('withSidebar');
 		this.footer.css({ width: '' });
