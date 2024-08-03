@@ -509,6 +509,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	onFilterClear () {
+		this.props.storageSet({ filter: '' });
 		this.reload();
 	};
 
