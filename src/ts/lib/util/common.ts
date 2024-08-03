@@ -298,7 +298,7 @@ class UtilCommon {
 		s = String(s || '');
 		l = Number(l) || 16;
 		if (s.length > l) {
-			s = s.substring(0, l) + (!noEnding ? '...' : '');
+			s = s.substring(0, l) + (!noEnding ? '…' : '');
 		};
 		return s;
 	};
