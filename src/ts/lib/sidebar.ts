@@ -220,10 +220,9 @@ class Sidebar {
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
-		const platform = U.Common.getPlatform();
 		
 		let toggleX = width ? width - 40 + (showVault ? vw : 0) : 84;
-		if (!width && isFullScreen || !U.Common.isPlatformMac()) {
+		if (!width && (isFullScreen || !U.Common.isPlatformMac())) {
 			toggleX -= 68;
 		};
 
