@@ -66,10 +66,6 @@
 
 html.platformWindows {
 	.sidebar {
-		> .inner > .head { height: 38px; }
-	}
-
-	.sidebar {
 		> .inner > .body { overflow-y: overlay; }
 	}
 }	
