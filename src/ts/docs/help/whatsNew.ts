@@ -17,17 +17,18 @@ const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/$
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
 export default [
-	{ type: I.BlockType.IconPage, icon: '❤️‍🩹' },
+	{ type: I.BlockType.IconPage, icon: '👋' },
+
 	title(`Anytype 0.42.3 Hotfix Released!`),
 	text(`We're releasing this hotfix just three days after the 0.42.0 update to address important feedback from our community and better align with user expectations. This patch bundles all the features of 0.42.0 (see previous notes) along with UI improvements, primarily the sidebar display settings, and several bug fixes. Thank you for your swift feedback and continued support!`),
 	text(`Here's what's new in this hotfix:`),
 	text(''),
 
 	h3(`Quality-of-Life 🌿 `, I.BlockHAlign.Center),
-	bullet(`Added display options for Vault Sidebar to Settings → Personalization tab.`),
+	bullet(`Added display options for Vault Sidebar to ${hl('Settings → Personalization tab')}.`),
 	bullet(`Moved settings from the Appearance tab to the Personalization tab for consistency; renamed the Appearance tab to Color Mode.`),
-	bullet(`Improved sidebar animation and delay. Thanks, @${link('https://community.anytype.io/t/23066', 'code-jack)}!`),
-	bullet(`Menu item was added to Object settings for faster "add to Collection" workflow.`),
+	bullet(`Improved sidebar animation and delay. Thanks, @${link('https://community.anytype.io/t/23066', 'code-jack')}!`),
+	bullet(`Menu item was added to Object settings for faster ${hl('add to Collection')} workflow.`),
 	text(''),															  
 
 	h3(`Bug Fixes 🪲`, I.BlockHAlign.Center),															  
@@ -42,7 +43,7 @@ export default [
 	bullet(`Fixed numbers remaining when switching from a numbered list to a bulleted list. Thanks, @${link('https://community.anytype.io/t/23114', 'elias')}!`),
 	
 	text(''),
-	text(`Thanks again for your patience and feedback as we work to improve Anytype 🫶`)	
+	text(`Thanks again for your patience and feedback as we work to improve Anytype 🫶`),	
 																  
 	div(),
 	// --------------------------------------------//
