@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
+import { Icon, Loader, IconObject, EmptySearch, Label, Filter } from 'Component';
 import { I, C, S, U, J, keyboard, focus, translate, analytics, Action, Relation, Mark } from 'Lib';
 
 interface State {
@@ -33,6 +33,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	top = 0;
 	offset = 0;
 	filter = '';
+	range: I.TextRange = { from: 0, to: 0 };
 	
 	constructor (props: I.Popup) {
 		super (props);
@@ -42,10 +43,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.onScroll = this.onScroll.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
+		this.onFilterSelect = this.onFilterSelect.bind(this);
+		this.onBacklink = this.onBacklink.bind(this);
+		this.onClearSearch = this.onClearSearch.bind(this);
 		this.filterMapper = this.filterMapper.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
-		this.onSearchByBacklinks = this.onSearchByBacklinks.bind(this);
-		this.onClearSearch = this.onClearSearch.bind(this);
 	};
 	
 	render () {
@@ -143,7 +145,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 							tooltip={translate('popupSearchTooltipSearchByBacklinks')}
 							tooltipCaption="Shift + Enter"
 							tooltipY={I.MenuDirection.Top}
-							onClick={e => this.onSearchByBacklinks(e, item)}
+							onClick={e => this.onBacklink(e, item)}
 						/>
 					);
 				};
@@ -243,6 +245,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 						value={filter}
 						ref={ref => this.refFilter = ref} 
 						placeholder={translate('popupSearchPlaceholder')}
+						onSelect={this.onFilterSelect}
 						onKeyUp={this.onFilterChange}
 						onClear={this.onFilterClear}
 					/>
@@ -287,15 +290,35 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 	
 	componentDidMount () {
-		const { param } = this.props;
+		const { param, storageGet } = this.props;
 		const { data } = param;
 		const { route } = data;
+		const storage = storageGet();
+		const { backlink } = storage;
+		const filter = String(storage.filter || '');
+
+		const setFilter = () => {
+			if (!filter || !this.refFilter) {
+				return;
+			};
+
+			this.filter = filter;
+			this.range = { from: 0, to: filter.length };
+			this.refFilter.setValue(filter);
+		};
+
+		setFilter();
 
 		this._isMounted = true;
-		this.resetSearch();
+		this.initCache();
 		this.rebind();
+		this.reload();
 
 		focus.clear(true);
+
+		if (backlink) {
+			U.Object.getById(backlink, item => this.setBacklink(item, () => setFilter()));
+		};
 
 		analytics.event('ScreenSearch', { route });
 	};
@@ -303,25 +326,22 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	componentDidUpdate () {
 		const items = this.getItems();
 		const filter = this.getFilter();
-		const length = this.filter.length;
+		const length = filter.length;
 
 		if (filter != this.filter) {
 			this.filter = filter;
+			this.range = { from: length, to: length };
 			this.reload();
 			return;
 		};
 
+		this.initCache();
 		this.setActive(items[this.n]);
 		this.refFilter.setValue(this.filter);
-		this.refFilter.setRange({ from: length, to: length });
+		this.refFilter.setRange(this.range);
 
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_SECTION,
-			keyMapper: i => (items[i] || {}).id,
-		});
-
-		if (this.refList && this.top) {
+		if (this.refList) {
+			this.refList.recomputeRowHeights(0);
 			this.refList.scrollToPosition(this.top);
 		};
 	};
@@ -346,6 +366,16 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	unbind () {
 		$(window).off('keydown.search');
+	};
+
+	initCache () {
+		const items = this.getItems();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT_SECTION,
+			keyMapper: i => (items[i] || {}).id,
+		});
 	};
 
 	onScroll ({ scrollTop }) {
@@ -380,7 +410,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		keyboard.shortcut('shift+enter', e, () => {
 			if (item && (item.links.length || item.backlinks.length)) {
-				this.onSearchByBacklinks(e, item);
+				this.onBacklink(e, item);
 			};
 		});
 
@@ -460,6 +490,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	onFilterChange (e: any, v: string) {
+		const { storageSet } = this.props;
+
 		if (this.filter == v) {
 			return;
 		};
@@ -467,29 +499,42 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			this.forceUpdate();
+			storageSet({ filter: v });
 			analytics.event('SearchInput');
 		}, J.Constant.delay.keyboard);
 	};
 
+	onFilterSelect (e: any) {
+		this.range = this.refFilter.getRange();
+	};
+
 	onFilterClear () {
+		this.props.storageSet({ filter: '' });
 		this.reload();
 	};
 
-	onSearchByBacklinks (e: React.MouseEvent, item: any) {
+	onBacklink (e: React.MouseEvent, item: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
+		this.props.storageSet({ backlink: item.id });
+		this.setBacklink(item);
+	};
+
+	setBacklink (item: any, callBack?: () => void) {
 		this.setState({ backlink: item }, () => {
 			this.resetSearch();
-
 			analytics.event('SearchBacklink');
+
+			if (callBack) {
+				callBack();
+			};
 		});
 	};
 
 	onClearSearch () {
-		this.setState({ backlink: null }, () => {
-			this.resetSearch();
-		});
+		this.props.storageSet({ backlink: '' });
+		this.setState({ backlink: null }, () => this.resetSearch());
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -547,7 +592,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.setState({ isLoading: true });
 		};
 
-		C.ObjectSearchWithMeta(filters, sorts, J.Relation.default.concat([ 'links', 'backlinks' ]), filter, this.offset, limit, (message) => {
+		C.ObjectSearchWithMeta(filters, sorts, J.Relation.default.concat([ 'links', 'backlinks', '_score' ]), filter, this.offset, limit, (message) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
 				return;
@@ -653,7 +698,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					] 
 				},
 				{ 
-					id: 'appearance', icon: 'settings-appearance', name: translate('popupSettingsAppearanceTitle'), 
+					id: 'appearance', icon: 'settings-appearance', name: translate('popupSettingsColorMode'), 
 					aliases: [ translate('commonSidebar', lang), translate('commonSidebar') ] 
 				},
 				{ id: 'pinIndex', icon: 'settings-pin', name: translate('popupSettingsPinTitle') },

@@ -1,0 +1,13 @@
+@import "~scss/_mixins";
+
+.menus {
+	.menu.menuGraphSettings {
+		.content { max-height: unset; }
+
+		.item.withDrag {
+			.flex { flex-direction: row; justify-content: space-between; align-items: center; gap: 0px 8px; margin: 0px 0px 8px 0px; }
+			.name { flex-grow: 1; }
+			.value { flex-shrink: 0; }
+		}
+	}
+}

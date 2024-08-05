@@ -7,7 +7,7 @@
 .navigationPanel.hide { visibility: hidden; z-index: 0; opacity: 0; }
 .navigationPanel.hide * { pointer-events: none; }
 
-.navigationPanel.sidebarAnimation { transition: left 0.2s ease-in-out; }
+.navigationPanel.sidebarAnimation { transition-property: left; }
 
 .navigationPanel {
 	.inner { display: flex; flex-direction: row; gap: 0px 20px; align-items: center; justify-content: center; position: relative; z-index: 1; }
