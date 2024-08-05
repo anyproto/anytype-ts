@@ -97,7 +97,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 						helperClass="isDragging"
 						helperContainer={() => $(`#${getId()} .items`).get(0)}
 					/>
-				) : <EmptySearch text={translate('popupSearchEmpty')} />}
+				) : <EmptySearch />}
 
 				<div className="bottom">
 					<div className="line" />

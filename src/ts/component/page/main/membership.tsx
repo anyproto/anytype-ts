@@ -41,6 +41,14 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 	};
 
 	componentDidMount (): void {
+		this.init();
+	};
+
+	init () {
+		const data = U.Common.searchParam(U.Router.history.location.search);
+	
+		let { tier } = data;
+
 		U.Data.getMembershipStatus((membership: I.Membership) => {
 			if (!membership || membership.isNone) {
 				this.setState({ error: translate('pageMainMembershipError') });
@@ -49,30 +57,43 @@ class PageMainMembership extends React.Component<I.PageComponent, State> {
 
 			U.Space.openDashboard('route', {
 				onRouteChange: () => {
-					S.Popup.closeAll(null, () => {
-						const { status, tier } = membership;
-
-						if (status && (status == I.MembershipStatus.Finalization)) {
-							S.Popup.open('membershipFinalization', { data: { tier } });
-						} else {
-							S.Popup.open('membership', {
-								onClose: () => {
-									window.setTimeout(() => S.Popup.open('settings', { data: { page: 'membership' } }), J.Constant.delay.popup * 2);
-								},
-								data: {
-									tier: membership.tier,
-									success: true,
-								},
-							});
-
-							analytics.event('ChangePlan', { params: { tier }});
+					if (tier && (tier != I.TierType.None)) {
+						if (!membership.isNone && !membership.isExplorer) {
+							tier = membership.tier;
 						};
-					});
+
+						S.Popup.open('membership', { data: { tier } });
+					} else {
+						this.finalise();
+					};
 				},
 			});
 		});
 
 		this.resize();
+	};
+
+	finalise () {
+		const { membership } = S.Auth;
+		const { status, tier } = membership;
+
+		S.Popup.closeAll(null, () => {
+			if (status == I.MembershipStatus.Finalization) {
+				S.Popup.open('membershipFinalization', { data: { tier } });
+			} else {
+				S.Popup.open('membership', {
+					onClose: () => {
+						window.setTimeout(() => S.Popup.open('settings', { data: { page: 'membership' } }), J.Constant.delay.popup * 2);
+					},
+					data: {
+						tier: membership.tier,
+						success: true,
+					},
+				});
+
+				analytics.event('ChangePlan', { params: { tier }});
+			};
+		});
 	};
 
 	resize () {

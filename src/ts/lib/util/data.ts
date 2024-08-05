@@ -153,6 +153,7 @@ class UtilData {
 
 		S.Common.gatewaySet(info.gatewayUrl);
 		S.Common.spaceSet(info.accountSpaceId);
+		S.Common.getRef('vault')?.setActive(info.spaceViewId);
 
 		analytics.profile(info.analyticsId, info.networkId);
 		Sentry.setUser({ id: info.analyticsId });
@@ -274,7 +275,7 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
 				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
+					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
 				ignoreWorkspace: true,
 				ignoreHidden: false,
@@ -559,7 +560,7 @@ class UtilData {
 			};
 		};
 
-		if (U.Object.isFileLayout(object.layout)) {
+		if (U.Object.isInFileLayouts(object.layout)) {
 			ret.withIcon = true;
 		};
 
@@ -679,11 +680,10 @@ class UtilData {
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
 		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
 
-		if (layout == I.ObjectLayout.Task) {
+		if (U.Object.isTaskLayout(layout)) {
 			content.iconSize = I.LinkIconSize.Small;
-		};
-
-		if (layout == I.ObjectLayout.Note) {
+		} else
+		if (U.Object.isNoteLayout(layout)) {
 			const filter = [ 'type' ];
 
 			content.description = I.LinkDescription.None;
@@ -924,7 +924,7 @@ class UtilData {
 			return;
 		};
 		
-		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, this.getLinkBlockParam('', type.recommendedLayout), (message: any) => {
+		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, this.getLinkBlockParam('', type.recommendedLayout, false), (message: any) => {
 			if (!message.error.code) {
 				analytics.createObject(type.id, type.recommendedLayout, route, message.middleTime);
 			};
@@ -937,14 +937,14 @@ class UtilData {
 		};
 
 		C.MembershipGetStatus(true, (message: any) => {
-			const { membership } = message;
+			const membership = new M.Membership(message.membership);
 
 			if (membership) {
 				const { status, tier } = membership;
 
 				S.Auth.membershipSet(membership);
 				analytics.setTier(tier);
-				
+
 				if (status && (status == I.MembershipStatus.Finalization)) {
 					S.Popup.open('membershipFinalization', { data: { tier } });
 				};
@@ -1084,10 +1084,8 @@ class UtilData {
 		return groupedRecords;
 	};
 
-	getLinkBlockParam (id: string, layout: I.ObjectLayout) {
-		const param: Partial<I.Block> = {};
-
-		if (U.Object.isFileLayout(layout)) {
+	getLinkBlockParam (id: string, layout: I.ObjectLayout, allowBookmark?: boolean) {
+		if (U.Object.isInFileLayouts(layout)) {
 			return {
 				type: I.BlockType.File,
 				content: {
@@ -1099,27 +1097,20 @@ class UtilData {
 			};
 		};
 
-		switch (layout) {
-			case I.ObjectLayout.Bookmark: {
-				param.type = I.BlockType.Bookmark;
-				param.content = {
+		if (U.Object.isBookmarkLayout(layout) && allowBookmark) {
+			return {
+				type: I.BlockType.Bookmark,
+				content: {
 					state: I.BookmarkState.Done,
 					targetObjectId: id,
-				};
-				break;
-			};
-
-			default: {
-				param.type = I.BlockType.Link;
-				param.content = {
-					...this.defaultLinkSettings(),
-					targetBlockId: id,
-				};
-				break;
+				},
 			};
 		};
 
-		return param;
+		return {
+			type: I.BlockType.Link,
+			content: { ...this.defaultLinkSettings(), targetBlockId: id },
+		};
 	};
 
 };

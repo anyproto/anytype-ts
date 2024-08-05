@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.41.18-alpha",
+	"version": "0.42.2-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -99,6 +99,7 @@
 		"blueimp-load-image": "^2.31.0",
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
+		"d3-force-cluster": "^0.1.2",
 		"diff": "^5.2.0",
 		"dompurify": "^3.0.6",
 		"electron-dl": "^1.14.0",

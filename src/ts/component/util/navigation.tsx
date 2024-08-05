@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, keyboard, Preview, translate, analytics } from 'Lib';
+import { I, S, U, J, keyboard, Preview, translate, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
 
@@ -158,7 +158,7 @@ const Navigation = observer(class Navigation extends React.Component {
 		node.css({ left: `${x / ww * 100}%` });
 
 		if (animate) {
-			window.setTimeout(() => node.removeClass('sidebarAnimation'), 200);
+			window.setTimeout(() => node.removeClass('sidebarAnimation'), J.Constant.delay.sidebar);
 		};
 	};
 

@@ -8,6 +8,7 @@ const PADDING = 46;
 
 const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewComponent> {
 
+	_isMounted = false;
 	node: any = null;
 	data: any = {
 		nodes: [],
@@ -45,6 +46,8 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
+
 		this.rebind();
 		this.resize();
 		this.load();
@@ -60,6 +63,8 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	componentWillUnmount () {
+		this._isMounted = false;
+
 		this.unbind();
 		window.clearTimeout(this.timeoutLoading);
 	};
@@ -100,7 +105,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 		this.setLoading(true);
 
 		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, (message: any) => {
-			if (message.error.code) {
+			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
@@ -126,21 +131,11 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 			};
 
 			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
-
-			U.Data.onSubscribe(J.Constant.subId.graph, 'id', J.Relation.graph, {
-				error: {},
-				records: message.nodes,
-				dependencies: [],
-				counters: { total: message.nodes.length },
-			});
-
-			this.resize();
+			this.forceUpdate();
 
 			if (this.refGraph) {
 				this.refGraph.init();
 			};
-
-			this.forceUpdate();
 		});
 	};
 

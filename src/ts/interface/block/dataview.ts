@@ -85,7 +85,7 @@ export interface Sort {
 	relationKey: string;
 	type: SortType;
 	includeTime?: boolean;
-	customOrder?: string[];
+	customOrder?: any[];
 	empty?: EmptyType;
 };
 
@@ -136,6 +136,8 @@ export interface ViewComponent {
 	getEmpty?(type: string): any;
 	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
 	onTemplateAdd?: () => void;
+	onSortAdd?: (item: any, callBack?: () => void) => void;
+	onFilterAdd?: (item: any, callBack?: () => void) => void;
 	onTemplateMenu?: (e: any, dur: number) => void;
 	onCellClick?(e: any, key: string, id?: string, record?: any): void;
 	onContext?(e: any, id: string): void;

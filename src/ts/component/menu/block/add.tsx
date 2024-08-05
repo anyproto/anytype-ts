@@ -622,11 +622,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					const type = S.Record.getTypeById(item.objectTypeId) || {};
 					const details: any = { type: type.id };
 
-					if (U.Object.isSetLayout(type.recommendedLayout)) {
+					if (U.Object.isInSetLayouts(type.recommendedLayout)) {
 						details.layout = type.recommendedLayout;
 					};
 
-					U.Object.create(rootId, blockId, details, position, type.defaultTemplateId, [ I.ObjectFlag.SelectTemplate ], 'Powertool', (message: any) => {
+					U.Object.create(rootId, blockId, details, position, type.defaultTemplateId, [ I.ObjectFlag.SelectTemplate ], analytics.route.powertool, (message: any) => {
 						U.Object.openConfig(message.details);
 						analytics.event('CreateLink');
 					});

@@ -86,9 +86,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 							<Tag text={item.name} color={item.color} className={Relation.selectClassName(relation.format)} />
 						</div>
 						<div className="buttons">
+							{active ? <Icon className="chk" /> : ''}
 							<Icon className="more" onClick={e => this.onEdit(e, item)} />
 						</div>
-						{active ? <Icon className="chk" /> : ''}
 					</div>
 				);
 			};

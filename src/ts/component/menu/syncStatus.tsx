@@ -2,20 +2,28 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch } from 'Component';
 import { I, C, S, U, Action, translate, analytics } from 'Lib';
+
+interface State {
+	isLoading: boolean;
+};
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 28;
 const LIMIT_HEIGHT = 12;
 const SUB_ID = 'syncStatusObjectsList';
 
-const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, {}> {
+const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, State> {
 
 	_isMounted = false;
+	node = null;
 	cache: any = {};
 	items: any[] = [];
 	currentInfo = '';
+	state = { 
+		isLoading: false,
+	};
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -31,8 +39,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	render () {
+		const { isLoading } = this.state;
 		const items = this.getItems();
 		const icons = this.getIcons();
+		const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
 
 		const PanelIcon = (item) => {
 			const { id, className } = item;
@@ -44,7 +54,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 			return (
 				<div
-					id={U.Common.toCamelCase([ 'icon', id ].join('-'))}
+					id={`icon-${id}`}
 					className={cn.join(' ')}
 					onClick={e => this.onPanelIconClick(e, item)}
 				>
@@ -60,9 +70,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				<div
 					id={`item-${item.id}`}
 					className="item sides"
+					onClick={e => this.onContextMenu(e, item)}
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
-					<div className="side left">
+					<div className="side left" >
 						<IconObject object={item} size={20} />
 						<div className="info">
 							<ObjectName object={item} />
@@ -71,7 +82,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 					<div className="side right">
 						<Icon className={icon} />
-						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
+						<Icon className="more" />
 					</div>
 				</div>
 			);
@@ -105,7 +116,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		};
 
 		return (
-			<div className="syncMenuWrapper" onClick={this.onCloseInfo}>
+			<div ref={ref => this.node = ref} className="syncMenuWrapper" onClick={this.onCloseInfo}>
 				<div className="syncPanel">
 					<Title text={translate('menuSyncStatusTitle')} />
 
@@ -113,6 +124,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						{icons.map((icon, idx) => <PanelIcon key={idx} {...icon} />)}
 					</div>
 				</div>
+
+				{!isLoading && !items.length ? (
+					<EmptySearch text={emptyText} />
+				) : ''}
 
 				{this.cache && items.length ? (
 					<div className="items">
@@ -147,13 +162,8 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	componentDidMount () {
-		const syncStatus = S.Auth.getSyncStatus();
-		const { status } = syncStatus;
-
 		this._isMounted = true;
 		this.load();
-
-		analytics.event('ClickSyncStatus', { status });
 	};
 
 	componentWillUnmount () {
@@ -164,27 +174,25 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	onContextMenu (e, item) {
-		const { id } = item;
 		const { param } = this.props;
 		const { classNameWrap } = param;
-		const itemNode = $(`.syncMenuWrapper #item-${id}`);
+		const node = $(this.node);
+		const canWrite = U.Space.canMyParticipantWrite();
+		const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+		const element = node.find(`#item-${item.id}`);
 		const options: any[] = [
 			{ id: 'open', name: translate('commonOpen') }
 		];
 
-		if (U.Space.canMyParticipantWrite()) {
-			options.push({ id: 'archive', name: translate('commonDeleteImmediately'), isRed: true });
+		if (canWrite && canDelete) {
+			options.push({ id: 'delete', color: 'red', name: translate('commonDeleteImmediately') });
 		};
 
-		itemNode.addClass('selected');
 		S.Menu.open('select', {
 			classNameWrap,
-			className: 'menuSyncStatusContext',
-			element: itemNode.find('.more'),
+			element,
+			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-			onClose: () => {
-				itemNode.removeClass('selected');
-			},
 			data: {
 				options,
 				onSelect: (e, option) => {
@@ -193,59 +201,66 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 							U.Object.openAuto(item);
 							break;
 						};
-						case 'archive': {
-							Action.delete([ id ], analytics.route.syncStatus);
+						case 'delete': {
+							Action.delete([ item.id ], analytics.route.syncStatus);
 							break;
 						};
 					};
 				}
 			}
-		})
+		});
 	};
 
 	onPanelIconClick (e, item) {
-		const { id } = item;
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { classNameWrap } = param;
-		const element = `.syncPanel ${U.Common.toCamelCase([ '#icon', id ].join('-'))}`;
 		const menuParam = {
 			classNameWrap,
-			element,
+			element: `#${getId()} #icon-${item.id}`,
 			offsetY: 4,
 			passThrough: true,
-			data: item
+			horizontal: I.MenuDirection.Center,
+			data: item,
 		};
 
 		e.preventDefault();
 		e.stopPropagation();
 
 		if (S.Menu.isOpen('syncStatusInfo')) {
-			if (id == this.currentInfo) {
+			if (item.id == this.currentInfo) {
 				this.onCloseInfo();
 			} else {
-				this.currentInfo = id;
+				this.currentInfo = item.id;
 				S.Menu.update('syncStatusInfo', menuParam);
 			};
 		} else {
-			this.currentInfo = id;
+			this.currentInfo = item.id;
 			S.Menu.open('syncStatusInfo', menuParam);
 		};
 	};
 
 	onCloseInfo () {
 		this.currentInfo = '';
+
 		if (S.Menu.isOpen('syncStatusInfo')) {
 			S.Menu.close('syncStatusInfo');
 		};
 	};
 
 	load () {
+		if (U.Data.isLocalNetwork()) {
+			return;
+		};
+
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
 		const sorts = [
+			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [ I.SyncStatusObject.Syncing, I.SyncStatusObject.Queued, I.SyncStatusObject.Synced ] },
 			{ relationKey: 'syncDate', type: I.SortType.Desc },
 		];
+
+		this.setState({ isLoading: true });
 
 		U.Data.searchSubscribe({
 			subId: SUB_ID,
@@ -254,11 +269,18 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			keys: U.Data.syncStatusRelationKeys(),
 			offset: 0,
 			limit: 30,
-		});
+		}, () => this.setState({ isLoading: false }));
 	};
 
 	getItems () {
-		return U.Data.groupDateSections(S.Record.getRecords(SUB_ID), 'syncDate');
+		const records = S.Record.getRecords(SUB_ID).map(it => {
+			if ([ I.SyncStatusObject.Syncing, I.SyncStatusObject.Queued ].includes(it.syncStatus)) {
+				it.syncDate = U.Date.now();
+			};
+			return it;
+		});
+
+		return U.Data.groupDateSections(records, 'syncDate');
 	};
 
 	getIcons () {
@@ -304,13 +326,12 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	getIconNetwork (syncStatus) {
 		const { network, error, syncingCounter, status } = syncStatus;
+		const buttons: any[] = [];
 
 		let id = '';
 		let title = '';
 		let className = '';
 		let message = '';
-		let buttons: any[] = [];
-
 		let isConnected = false;
 		let isError = false;
 

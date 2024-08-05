@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewFilterList { width: 360px; }
+	.menu.menuDataviewFilterList { width: var(--menu-width-set); }
 	.menu.menuDataviewFilterList {
 		.content { overflow: visible !important; padding: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
@@ -12,7 +12,7 @@
 			.grey { color: var(--color-control-active); }
 			.iconObject { margin-right: 10px; }
 
-			.buttons { line-height: 44px; opacity: 0; transition: $transitionAllCommon; }
+			.buttons { line-height: 44px; display: none; gap: 0px 8px; margin: 0px 0px 0px 8px; }
 			.buttons {
 				.icon { vertical-align: middle; opacity: 1; }
 			}
@@ -31,12 +31,20 @@
 				.iconObject { margin-right: 2px; }
 			}
 
-			.txt { width: calc(100% - 70px); line-height: 20px; height: 40px; display: flex; flex-direction: column; }
+			.txt { 
+				width: calc(100% - 70px); line-height: 20px; height: 40px; display: flex; flex-direction: column; align-items: flex-start; 
+				flex-grow: 1;
+			}
 			.txt {
-				.name { @include text-overflow-nw; width: 100%; }
-				.flex { line-height: 20px; }
+				> .name { @include text-overflow-nw; max-width: 100%; }
+				> .flex { line-height: 20px; gap: 0px 4px; max-width: 100%; }
 
-				.condition { color: var(--color-text-secondary); margin-right: 4px; }
+				> .name, > .flex { display: flex; align-items: center; }
+				> .name::after, > .flex::after { content: ''; width: 20px; height: 20px; flex-shrink: 0; }
+				> .name::after { background-image: url('~img/arrow/select/dark.svg'); }
+				> .flex::after { background-image: url('~img/arrow/select/light.svg'); }
+
+				.condition { color: var(--color-text-secondary); }
 				.value { color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; }
 			}
 		}
@@ -48,8 +56,8 @@
 		.item:not(.isReadonly):hover, 
 		.item:not(.isReadonly).hover 
 		{
-			.buttons { opacity: 1; }
-			.txt { width: calc(100% - 118px); }
+			.buttons { display: flex; }
+			.txt { width: calc(100% - 126px); }
 		}
 
 		.item.add { display: block; }
@@ -63,7 +71,7 @@
 		}
 	}
 
-	.menu.menuDataviewFilterValues { width: 288px; }
+	.menu.menuDataviewFilterValues { width: var(--menu-width-value); }
 	.menu.menuDataviewFilterValues {
 		.select { border: 0px; padding: 0px; display: block; width: 100%; }
 		.select:hover, .select.isFocused { background: none; }

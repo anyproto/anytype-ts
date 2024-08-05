@@ -102,14 +102,14 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 			if (isEditing) {
 				if (blocks.length <= J.Constant.limit.widgets) {
-					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onMouseDown: this.onAdd });
+					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetEditor) });
 				};
 
 				buttons.push({ id: 'widget-list-done', text: translate('commonDone'), onMouseDown: this.onEdit });
 			} else 
 			if (canWrite) {
 				buttons = buttons.concat([
-					{ id: 'widget-list-add', className: 'grey c28', text: translate('widgetAdd'), onMouseDown: this.onAdd },
+					{ id: 'widget-list-add', className: 'grey c28', text: translate('widgetAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetMain) },
 					{ id: 'widget-list-edit', className: 'grey c28', text: translate('widgetEdit'), onMouseDown: this.onEdit }
 				]);
 			};
@@ -204,8 +204,10 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 		this.setEditing(!this.state.isEditing);
 	};
 
-	onAdd (e: any): void {
+	onAdd (e: any, route?: string): void {
 		e.stopPropagation();
+
+		analytics.event('ClickAddWidget', { route });
 
 		S.Menu.open('searchObjectWidgetAdd', {
 			component: 'searchObject',
@@ -226,7 +228,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 				},
-				onSelect: (target) => {
+				onSelect: (target: any, isNew: boolean) => {
 					const limitOptions = U.Menu.getWidgetLimitOptions(I.WidgetLayout.Link);
 					const layoutOptions = U.Menu.getWidgetLayoutOptions(target.id, target.layout);
 					const layout = layoutOptions.length ? layoutOptions[0].id : I.WidgetLayout.Link;
@@ -239,15 +241,20 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 					};
 
 					C.BlockCreateWidget(S.Block.widgets, '', newBlock, I.BlockPosition.Top, layout, Number(limitOptions[0].id), (message: any) => {
-						if (!message.error.code) {
-							analytics.event('AddWidget', { type: I.WidgetLayout.Link });
-
-							analytics.event('ChangeWidgetSource', {
-								layout,
-								route: 'AddWidget',
-								params: { target },
-							});
+						if (message.error.code) {
+							return;
 						};
+
+						if (isNew) {
+							U.Object.openConfig(target);
+						};
+
+						analytics.event('AddWidget', { type: I.WidgetLayout.Link, route });
+						analytics.event('ChangeWidgetSource', {
+							layout,
+							route: 'AddWidget',
+							params: { target },
+						});
 					});					
 				},
 			},

@@ -1,99 +1,67 @@
 @import "~scss/_mixins";
 
-#vaultContentContainer { transition: transform 0.3s $easeInQuint; }
-#vaultContentContainer.isExpanded { transform: translate3d(calc($vaultWidthExpanded + $vaultWidthCollapsed), 0px, 0px); overflow: hidden; }
-#vaultContentContainer.isExpanded {
-	#sidebar { left: 0px; }
-}
-
 .vault { 
-	position: fixed; background-color: #000; z-index: 30; left: 0px; top: 0px; width: $vaultWidthCollapsed; height: 100%;
-	display: flex; flex-direction: column; transition: width 0.3s $easeInQuint;
+	background-color: var(--color-shape-primary); z-index: 30; width: $vaultWidthCollapsed; height: 100%; display: flex; flex-direction: column; 
+	flex-shrink: 0; position: fixed; left: 0px; top: 0px; overflow: hidden; transform: translate3d(0px, 0px, 0px); transition: none;
 }
+.vault.isClosed, .vault.isHidden { width: 0px; }
+.vault.anim { transition-property: width; transition-timing-function: linear; }
 .vault {
 	.head { 
-		height: 42px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 14px; flex-shrink: 0;
-		position: relative; z-index: 1; background: #000;
+		height: 50px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px 14px; flex-shrink: 0;
+		position: relative; z-index: 1; background: inherit;
 	}
-	.head {
-		.icon { width: 24px; height: 24px; background-size: 20px; border-radius: 4px; -webkit-app-region: no-drag; opacity: 0; }
-		.icon.settings { background-image: url('~img/icon/vault/settings.svg'); }
-		.icon.close { background-image: url('~img/icon/vault/close.svg'); }
-		.icon:hover { background-color: var(--color-shape-highlight-medium); }
+
+	.body { 
+		display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; gap: 12px 0px; height: calc(100% - 64px); 
+		width: $vaultWidthCollapsed;
 	}
-	.body { display: flex; flex-direction: column; justify-content: space-between; padding: 0px 0px 12px 0px; flex-grow: 1; height: calc(100% - 42px); gap: 16px 0px; }
 	.body {
-		.side { padding: 0px 14px; }
-		.side.top { display: flex; flex-direction: column; gap: 16px 0px; overflow: auto; height: calc(100% - 64px); flex-grow: 1; overscroll-behavior: none; }
+		.side { padding: 0px 10px; display: flex; flex-direction: column; align-items: center; }
+		.side.top { gap: 16px 0px; overflow: auto; flex-grow: 1; overscroll-behavior: none; }
 		.side.top::-webkit-scrollbar { display: none; }
-		.side.bottom { flex-shrink: 0; align-items: flex-end; }
+		.side.bottom { flex-shrink: 0; justify-content: flex-end; padding-bottom: 12px; }
 	}
 
-	.item { 
-		position: relative; border-radius: 2px; transition-property: background, filter; transition-duration: 0.2s; transition-timing-function: $easeInQuint;
-	}
+	.item { width: 36px; height: 36px; flex-shrink: 0; position: relative; padding: 2px; transition: all 0.2s $easeInQuint; }
 	.item {
-		.iconWrap, .infoWrap { position: relative; z-index: 1;  }
-
-		.iconWrap { width: 48px; height: 48px; overflow: hidden; border-radius: 2px; background-position: center; background-repeat: no-repeat; }
-
-		.coverWrap { width: 100%; height: 100%; overflow: hidden; border-radius: inherit; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; }
-		.coverWrap {
-			.iconObject { width: $vaultWidthExpanded; height: $vaultWidthExpanded; margin-top: -140px; opacity: 0.6; filter: blur(50px); }
+		.iconWrap { 
+			width: 100%; height: 100%; border-radius: 4px; background-repeat: no-repeat; background-position: center; 
+			transition: background-color 0.2s $easeInQuint; overflow: hidden;
 		}
-
-		.infoWrap { display: none; }
-		.infoWrap {
-			.name { width: 100%; color: #fff; @include text-common; font-weight: 600; @include text-overflow-nw; }
-			.descr { color: rgba(255,255,255,0.6); }
-		}
-
-		.border { 
-			width: 100%; height: 100%; border-radius: inherit; position: absolute; left: 0px; top: 0px; z-index: 1; box-shadow: 0px 0px 0px 1px rgba(255,255,255,0.3) inset; 
-			opacity: 0; transition: opacity 0.2s $easeInQuint;
-		}
+		.iconObject { width: 100% !important; height: 100% !important; border-radius: inherit !important; }
+	}
+	.item::after {
+		content: ''; position: absolute; width: 4px; height: 4px; background-color: var(--color-control-accent); left: -10px; top: 50%; margin-top: -2px;
+		border-radius: 50%; opacity: 0; transition: opacity 0.2s $easeInQuint; opacity: 0;
 	}
 
-	.item.void {
-		.iconWrap { background-image: url('~img/icon/vault/void.svg'); background-size: 24px; border: 1px solid rgba(255,255,255,0.3); }
+	.item:hover, .item.hover { padding: 0px; }
+
+	.item.isButton {
+		.iconWrap { background-color: var(--color-shape-highlight-dark); }
 	}
 
-	.item.gallery { background: #3f3f3f; }
+	.item.isActive::after { opacity: 1; }
+
 	.item.gallery {
 		.iconWrap { background-image: url('~img/icon/vault/gallery.svg'); }
 	}
 
-	.item.add { background: #2b2b2b; justify-content: center; }
 	.item.add {
-		.iconWrap { background-image: url('~img/icon/vault/plus.svg'); background-size: 20px; }
+		.iconWrap { background-image: url('~img/icon/vault/plus.svg'); }
 	}
 
 	.item.settings {
-		.iconWrap { background-size: 20px; background-image: url('~img/icon/vault/settings.svg'); }
+		.iconWrap { background-color: unset; background-image: url('~img/icon/vault/settings.svg'); }
 	}
-	.item.settings:hover { background: #2b2b2b; }
-
-	.item.isActive { 
-		.border { opacity: 1; }
+	.item.settings:hover {
+		.iconWrap { background-color: var(--color-shape-highlight-dark); }
 	}
-
-	.line { 
-		position: absolute; left: 0px; top: 0px; width: 4px; height: 48px; background: #fff; border-radius: 0px 2px 2px 0px; 
-		transform: translate3d(-100%, 0px, 0px);
-	}
-	.line.anim { transition: transform 0.3s $easeInQuint; }
 }
 
-.vault.isExpanded { width: calc($vaultWidthExpanded + $vaultWidthCollapsed); }
-.vault.isExpanded {
-	.head {
-		.icon { opacity: 1; }
+html.platformWindows, html.platformLinux {
+	.vault {
+		.head { height: 12px; }
 	}
-
-	.item { padding: 16px; display: flex; flex-direction: row; align-items: center; border-radius: 12px; gap: 0px 16px; }
-	.item {
-		.coverWrap, .infoWrap { display: block; }
-	}
-
-	#item-void { display: none; }
 }

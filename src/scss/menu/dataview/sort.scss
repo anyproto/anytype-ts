@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuDataviewSort { width: 360px; }
+	.menu.menuDataviewSort { width: var(--menu-width-set); }
 	.menu.menuDataviewSort {
 		.content { overflow: visible !important; padding: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
@@ -11,20 +11,23 @@
 		.item {
 			.iconObject { margin-right: 10px; }
 			
-			.select { border: 0px; padding: 0px; display: block; }
+			.select { border: 0px; padding: 0px; display: block; padding-right: 20px; }
 			.select:hover, .select.isFocused { background: none; }
 			.select.grey { color: var(--color-control-active); }
 			.select {
 				.icon.relation { display: none; }
-				.icon.arrow { display: none; }
 			}
 
-			.buttons { line-height: 44px; opacity: 0; transition: $transitionAllCommon; }
+			.buttons { line-height: 44px; display: none; gap: 0px 8px; margin: 0px 0px 0px 8px; }
 			.buttons {
 				.icon { vertical-align: middle; opacity: 1; }
 			}
 
-			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; display: flex; flex-direction: column; }
+			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; display: flex; flex-direction: column; align-items: flex-start; }
+			.txt {
+				.label { @include text-common; display: flex; align-items: center; font-weight: 400; line-height: 20px; padding: 0px; margin: 0px; color: var(--color-text-primary); }
+				.label::after { content: ''; width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); }
+			}
 		}
 		.item.empty { margin: 8px 0px; padding: 14px 16px; }
 		.item.isReadonly {
@@ -34,8 +37,8 @@
 		.item:not(.isReadonly):hover, 
 		.item:not(.isReadonly).hover
 		{
-			.buttons { opacity: 1; }
-			.txt { width: calc(100% - 118px); }
+			.buttons { display: flex; }
+			.txt { width: calc(100% - 126px); }
 		}
 
 		.bottom { padding: 0px 0px 8px 0px; flex-shrink: 0; }

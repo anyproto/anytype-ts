@@ -196,12 +196,12 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			className.push('isInline');
 		};
 
-		let width = cell.outerWidth();
+		let width = Math.max(J.Size.dataview.cell.edit, cell.outerWidth());
 		let closeIfOpen = true;
 		let menuId = '';
 
 		if (undefined !== maxWidth) {
-			width = Math.max(width, maxWidth);
+			width = Math.min(width, maxWidth);
 		};
 
 		const setOn = () => {
@@ -517,7 +517,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 		if (!relation || !record || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
-		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
+		if (U.Object.isNoteLayout(record.layout) && (relation.relationKey == 'name')) {
 			return false;
 		};
 		return true;

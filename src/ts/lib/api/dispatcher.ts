@@ -5,7 +5,7 @@ import { observable, set } from 'mobx';
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
 import Service from 'dist/lib/pb/protos/service/service_grpc_web_pb';
-import { I, M, S, U, J, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Storage, keyboard, C } from 'Lib';
+import { I, M, S, U, J, translate, analytics, Renderer, Action, Dataview, Mapper, Storage, keyboard } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 
@@ -195,6 +195,7 @@ class Dispatcher {
 					break;
 				};
 
+				/*
 				case 'FileLimitReached': {
 					const { bytesLimit, localUsage, spaces } = S.Common.spaceStorage;
 					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
@@ -208,6 +209,7 @@ class Dispatcher {
 					};
 					break;
 				};
+				*/
 
 				case 'BlockAdd': {
 					const { blocks } = mapped;
@@ -833,7 +835,6 @@ class Dispatcher {
 
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
-						S.Detail.delete(subId, id);
 					};
 					break;
 				};
@@ -955,7 +956,7 @@ class Dispatcher {
 
 				case 'SpaceSyncStatusUpdate':
 				case 'P2PStatusUpdate': {
-					S.Auth.syncStatusUpdate(mapped)
+					S.Auth.syncStatusUpdate(mapped);
 					break;
 				};
 			};
@@ -982,7 +983,7 @@ class Dispatcher {
 
 		if ([ I.SpaceStatus.Deleted, I.SpaceStatus.Removing ].includes(details.spaceAccountStatus)) {
 			if (id == S.Block.spaceview) {
-				U.Router.switchSpace(S.Auth.accountSpaceId, '');
+				U.Router.switchSpace(S.Auth.accountSpaceId);
 			};
 
 			const spaceview = U.Space.getSpaceview(id);
@@ -998,17 +999,18 @@ class Dispatcher {
 		S.Detail.update(rootId, { id, details }, clear);
 
 		const root = S.Block.getLeaf(rootId, id);
+
 		if ((id == rootId) && root) {
 			if ((undefined !== details.layout) && (root.layout != details.layout)) {
 				S.Block.update(rootId, rootId, { layout: details.layout });
 			};
 
-			if (undefined !== details.setOf) {
-				S.Block.updateWidgetData(rootId);
-				$(window).trigger(`updateDataviewData`);
-			};
-
 			S.Block.checkTypeSelect(rootId);
+		};
+
+		if (undefined !== details.setOf) {
+			S.Block.updateWidgetData(rootId);
+			$(window).trigger(`updateDataviewData`);
 		};
 	};
 

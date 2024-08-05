@@ -34,11 +34,12 @@ export default {
 		widgets:		 20,
 		space:			 10,
 		notification:	 20,
+		graphDepth:		 5,
 	},
 
 	default: {
 		interfaceLang:	 'en-US',
-		codeLang:		 'javascript',
+		codeLang:		 'plain',
 		typeKey:		 'ot-note',
 		pinTime:		 600,
 	},
@@ -52,6 +53,7 @@ export default {
 		notification:	 200,
 		widget:			 400,
 		login:			 800,
+		sidebar:		 180,
 	},
 
 	fileExtension: {
@@ -83,7 +85,6 @@ export default {
 		store:			 'store',
 		archive:		 'archive',
 		sidebar:		 'sidebar',
-		graph:			 'graph',
 		space:			 'space',
 		files:			 'files',
 		participant:	 'participant',

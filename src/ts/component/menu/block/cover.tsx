@@ -236,7 +236,6 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 					this.setState({ isLoading: false });
 
 					if (message.error.code) {
-						this.setState({ isLoading: false });
 						return;
 					};
 

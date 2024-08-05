@@ -14,14 +14,14 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, block, style, recordId, getRecord, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
+		const { rootId, block, style, recordId, readonly, getRecord, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
 		const relations = getVisibleRelations();
 		const widths = getColumnWidths('', 0);
 		const record = getRecord(recordId);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const cn = [ 'row', U.Data.layoutClass('', record.layout), ];
 
-		if ((record.layout == I.ObjectLayout.Task) && record.done) {
+		if (U.Object.isTaskLayout(record.layout) && record.done) {
 			cn.push('isDone');
 		};
 		if (record.isArchived) {
@@ -64,14 +64,14 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 		if (isCollection && !isInline) {
 			content = (
 				<React.Fragment>
-					<Icon
+					{!readonly ? <Icon
 						className="drag"
 						draggable={true}
 						onClick={e => onSelectToggle(e, record.id)}
 						onDragStart={e => onDragRecordStart(e, record.id)}
 						onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
 						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
-					/>
+					/> : ''}
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}
 					</DropTarget>

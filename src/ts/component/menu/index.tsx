@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
-import { I, S, U, J, keyboard, analytics, Storage } from 'Lib';
+import { I, S, U, J, keyboard, analytics, Storage, sidebar } from 'Lib';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
@@ -458,9 +458,20 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		return ret;
 	};
 
+	getBorderLeft () {
+		let ret = J.Size.menuBorder;
+
+		if (S.Common.showVault && !sidebar.data.isClosed) {
+			ret += J.Size.vault.width;
+		};
+
+		return ret;
+	};
+
 	position () {
 		const { id, param } = this.props;
 		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
+		const borderLeft = this.getBorderLeft();
 		const borderTop = this.getBorderTop();
 		const borderBottom = this.getBorderBottom();
 
@@ -578,7 +589,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				y -= scrollTop;
 			};
 
-			x = Math.max(J.Size.vault.collapsed + J.Size.menuBorder, x);
+			x = Math.max(borderLeft, x);
 			x = Math.min(ww - width - J.Size.menuBorder, x);
 
 			y = Math.max(borderTop, y);

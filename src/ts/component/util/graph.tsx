@@ -68,9 +68,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.unbind();
 		win.on('updateGraphSettings.graph', () => this.updateSettings());
 		win.on('updateGraphRoot.graph', (e: any, data: any) => this.setRootId(data.id));
-		win.on('updateTheme.graph', () => this.send('updateTheme', { theme: S.Common.getThemeClass() }));
 		win.on('removeGraphNode.graph', (e: any, data: any) => this.send('onRemoveNode', { ids: U.Common.objectCopy(data.ids) }));
 		win.on(`keydown.graph`, e => this.onKeyDown(e));
+		win.on('updateTheme.graph', () => {
+			const theme = S.Common.getThemeClass();
+			this.send('updateTheme', { theme, colors: J.Theme[theme].graph || {} });
+		});
 	};
 
 	unbind () {
@@ -170,7 +173,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		d.radius = 4;
 		d.src = U.Graph.imageSrc(d);
 
-		if (d.layout == I.ObjectLayout.Note) {
+		if (U.Object.isNoteLayout(d.layout)) {
 			d.name = d.snippet || translate('commonEmpty');
 		} else {
 			d.name = d.name || translate('defaultNamePage');
@@ -182,7 +185,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		d.snippet = String(d.snippet || '');
 
 		// Clear icon props to fix image size
-		if (d.layout == I.ObjectLayout.Task) {
+		if (U.Object.isTaskLayout(d.layout)) {
 			d.iconImage = '';
 			d.iconEmoji = '';
 		};
@@ -329,12 +332,15 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case 'onMouseMove': {
-				if (this.isDragging || !settings.preview) {
+				if (this.isDragging) {
 					break;
 				};
 
 				this.subject = this.nodes.find(d => d.id == data.node);
-				this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
+
+				if (settings.preview) {
+					this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
+				};
 				break;
 			};
 
@@ -397,7 +403,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			...param,
 			data: {
 				route: analytics.route.graph,
-				subId: J.Constant.subId.graph,
 				objectIds: ids,
 				getObject: id => this.getNode(id),
 				allowedLink: true,
@@ -466,7 +471,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						case 'newObject': {
 							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', flags, 'Graph', (message: any) => {
+							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', flags, analytics.route.graph, (message: any) => {
 								U.Object.openConfig(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
 							});
 							break;

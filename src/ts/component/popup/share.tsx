@@ -17,7 +17,7 @@ class PopupShare extends React.Component<I.Popup> {
 				<Label text={translate('popupShareLabel')} />
 
 				<div className="section">
-					<Label text={U.Common.sprintf(translate('popupShareLinkText'), J.Url.share)} />
+					<Label text={U.Common.sprintf(translate('popupShareLinkText'), J.Url.share, J.Url.share)} />
 				</div>
 
 				<Button text={translate('commonCopyLink')} onClick={this.onClick} />

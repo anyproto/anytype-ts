@@ -52,7 +52,9 @@
 			}
 		}
 
-		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: auto; }
+		.scrollWrap { padding: 22px 0px 16px 0px; overflow-x: hidden; overflow-y: auto; flex-grow: 1; }
+		.bottom { flex-shrink: 0; }
+
 		.item { padding: 0px 26px; cursor: default; }
 		.item:hover {
 			.icon.fav { opacity: 1; }

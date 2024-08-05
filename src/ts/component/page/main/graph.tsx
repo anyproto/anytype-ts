@@ -6,6 +6,7 @@ import { Header, Footer, Graph, Loader } from 'Component';
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
 
+	_isMounted = false;
 	node: any = null;
 	data: any = {
 		nodes: [],
@@ -63,6 +64,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
+
 		this.rebind();
 		this.resize();
 		this.load();
@@ -79,6 +82,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	componentWillUnmount () {
+		this._isMounted = false;
+
 		this.unbind();
 		window.clearTimeout(this.timeoutLoading);
 	};
@@ -106,7 +111,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.setLoading(true);
 
 		C.ObjectGraph(S.Common.space, U.Data.graphFilters(), 0, [], J.Relation.graph, '', [], (message: any) => {
-			if (message.error.code) {
+			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
@@ -139,21 +144,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			};
 
 			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
-
-			U.Data.onSubscribe(J.Constant.subId.graph, 'id', J.Relation.graph, {
-				error: {},
-				records: message.nodes,
-				dependencies: [],
-				counters: { total: message.nodes.length },
-			});
-
-			this.resize();
+			this.forceUpdate();
 
 			if (this.refGraph) {
 				this.refGraph.init();
 			};
-
-			this.forceUpdate();
 		});
 	};
 

@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview } from 'Lib';
+import { I, C, S, U, J, focus, keyboard, scrollOnMove, Action, Preview, analytics } from 'Lib';
 
 interface Props {
 	children?: React.ReactNode;
@@ -319,7 +319,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const processAddRecord = () => {
 			U.Object.getById(targetContextId, (object) => {
 				// Add to collection
-				if (object.layout == I.ObjectLayout.Collection) {
+				if (U.Object.isCollectionLayout(object.layout)) {
 					C.ObjectCollectionAdd(targetContextId, ids);
 				} else {
 					ids.forEach((key: string) => {
@@ -475,7 +475,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				};
 
 				if (create) {
-					Action.createWidgetFromObject(contextId, objectId, targetId, position);
+					Action.createWidgetFromObject(contextId, objectId, targetId, position, analytics.route.addWidgetDnD);
 				};
 
 				break;

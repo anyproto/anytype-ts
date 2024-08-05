@@ -27,6 +27,8 @@
 		}
 		markuplink.disabled, markupobject.disabled { border-width: 0px; }
 
+		markuplatex { user-select: all !important; }
+
 		markupmention { display: inline; user-select: all !important; position: relative; cursor: default; white-space: nowrap; }
 		markupmention * { user-select: text !important; }
 		markupmention {
@@ -65,6 +67,24 @@
 			}
 			.marker {
 				.icon { display: inline-block; }
+			}
+
+			.marker.bullet { display: flex; align-items: center; justify-content: center; }
+			.marker.bullet {
+				.markerInner { -webkit-print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-primary); display: block; }
+
+				.markerInner.textColor-default { background-color: var(--color-text-primary) !important; }
+				.markerInner.textColor-black { background-color: var(--color-text-primary) !important; }
+				.markerInner.textColor-grey { background-color: var(--color-control-active) !important; }
+				.markerInner.textColor-yellow { background-color: var(--color-yellow) !important; }
+				.markerInner.textColor-orange { background-color: var(--color-orange) !important; }
+				.markerInner.textColor-red { background-color: var(--color-red) !important; }
+				.markerInner.textColor-pink { background-color: var(--color-pink) !important; }
+				.markerInner.textColor-purple { background-color: var(--color-purple) !important; }
+				.markerInner.textColor-blue { background-color: var(--color-blue) !important; }
+				.markerInner.textColor-ice { background-color: var(--color-ice) !important; }
+				.markerInner.textColor-teal { background-color: var(--color-teal) !important; }
+				.markerInner.textColor-lime { background-color: var(--color-lime) !important; }
 			}
 			
 			.marker.number { vertical-align: baseline; min-width: 24px; width: auto; word-break: normal; }

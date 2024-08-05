@@ -80,9 +80,11 @@ class MenuContext extends React.Component<I.Menu> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { subId, objectIds, getObject, isCollection } = data;
+		const { subId, getObject, isCollection } = data;
+		const objectIds = this.getObjectIds();
 		const length = objectIds.length;
 		const canWrite = U.Space.canMyParticipantWrite();
+		const exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
@@ -90,7 +92,6 @@ class MenuContext extends React.Component<I.Menu> {
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
-		let exportObject = { id: 'export', icon: 'export', name: translate('menuObjectExport') };
 		let unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
 		let relation = { id: 'relation', icon: 'editRelation', name: translate('menuDataviewContextEditRelations') };
 		let archive = null;
@@ -106,18 +107,11 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedOpen = data.allowedOpen;
 		let allowedCollection = true;
 		let allowedUnlink = isCollection;
-		let allowedExport = true;
 		let allowedWidget = true;
 		let allowedRelation = true;
 
 		objectIds.forEach((it: string) => {
-			let object = null; 
-			if (getObject) {
-				object = getObject(it);
-			} else
-			if (subId) {
-				object = S.Detail.get(subId, it);
-			};
+			const object = this.getObject(subId, getObject, it);
 
 			if (!object || object._empty_) {
 				return;
@@ -186,9 +180,9 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedLink)		 linkTo = null;
 		if (!allowedOpen)		 open = null;
 		if (!allowedUnlink)		 unlink = null;
-		if (!allowedExport)		 exportObject = null;
 		if (!allowedWidget)		 createWidget = null;
 		if (!allowedRelation)	 relation = null;
+		if (!allowedCollection)	 addCollection = null;
 
 		let sections = [
 			{ children: [ createWidget, open, fav, linkTo, addCollection, exportObject, relation ] },
@@ -201,6 +195,14 @@ class MenuContext extends React.Component<I.Menu> {
 		});
 
 		return sections;
+	};
+
+	getObjectIds () {
+		return this.props.param.data.objectIds || [];
+	};
+
+	getObject (subId: string, getObject: (id: string) => any, id: string) {
+		return getObject ? getObject(id) : S.Detail.get(subId, id);
 	};
 	
 	getItems () {
@@ -221,7 +223,8 @@ class MenuContext extends React.Component<I.Menu> {
 	onOver (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
 		const { data, className, classNameWrap } = param;
-		const { objectIds, onLinkTo, route } = data;
+		const { onLinkTo, route } = data;
+		const objectIds = this.getObjectIds();
 
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
@@ -281,7 +284,7 @@ class MenuContext extends React.Component<I.Menu> {
 					canAdd: true,
 					onSelect: (el: any) => {
 						if (onLinkTo) {
-							onLinkTo(itemId, el.id);
+							onLinkTo(el.id, itemId);
 						};
 
 						close();
@@ -311,6 +314,7 @@ class MenuContext extends React.Component<I.Menu> {
 						onClick: (details: any) => {
 							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 								Action.addToCollection(message.objectId, objectIds);
+								U.Object.openConfig(message.details);
 							});
 						},
 					},
@@ -318,7 +322,7 @@ class MenuContext extends React.Component<I.Menu> {
 						Action.addToCollection(el.id, objectIds);
 
 						if (onLinkTo) {
-							onLinkTo(itemId, el.id);
+							onLinkTo(el.id, itemId);
 						};
 
 						close();
@@ -342,10 +346,11 @@ class MenuContext extends React.Component<I.Menu> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { subId, objectIds, onSelect, targetId, isCollection, route, relationKeys, view, blockId } = data;
+		const { subId, getObject, onSelect, targetId, isCollection, route, relationKeys, view, blockId } = data;
+		const objectIds = this.getObjectIds();
 		const win = $(window);
-		const count = objectIds.length;
-		const first = count == 1 ? S.Detail.get(subId, objectIds[0], []) : null;
+		const length = objectIds.length;
+		const first = length == 1 ? this.getObject(subId, getObject, objectIds[0]) : null;
 		const cb = () => {
 			if (onSelect) {
 				onSelect(item.id);
@@ -371,7 +376,7 @@ class MenuContext extends React.Component<I.Menu> {
 						U.Object.openConfig({ id: message.ids[0], layout: first.layout });
 					};
 
-					analytics.event('DuplicateObject', { count, route });
+					analytics.event('DuplicateObject', { count: length, route });
 
 					if (isCollection) {
 						C.ObjectCollectionAdd(targetId, message.ids, () => {
@@ -410,7 +415,7 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'unlink': {
 				C.ObjectCollectionRemove(targetId, objectIds, () => {
 					cb();
-					analytics.event('UnlinkFromCollection', { count, route });
+					analytics.event('UnlinkFromCollection', { count: length, route });
 				});
 				break;
 			};
@@ -418,7 +423,7 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'createWidget': {
 				const firstBlock = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
 
-				Action.createWidgetFromObject(first.id, first.id, firstBlock?.id, I.BlockPosition.Top);
+				Action.createWidgetFromObject(first.id, first.id, firstBlock?.id, I.BlockPosition.Top, analytics.route.addWidgetMenu);
 				break;
 			};
 

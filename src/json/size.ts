@@ -9,8 +9,7 @@ export default {
 	header: 52,
 
 	vault: {
-		collapsed: 76,
-		expanded: 240,
+		width: 72,
 	},
 
 	history: {
@@ -18,7 +17,8 @@ export default {
 	},
 
 	sidebar: {
-		width: { min: 240, max: 500, default: 336, close: 180 }
+		width: { min: 240, max: 500, default: 336, close: 180 },
+		threshold: 30,
 	},
 
 	table: {
@@ -48,7 +48,7 @@ export default {
 			max: 1000,
 			edit: 300,
 			icon: 70
-		}
+		},
 	},
 
 	store: {
