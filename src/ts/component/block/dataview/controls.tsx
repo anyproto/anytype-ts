@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, Button, Filter } from 'Component';
-import { C, I, S, U, analytics, Relation, keyboard, translate, Dataview, sidebar } from 'Lib';
+import { C, I, S, U, analytics, Relation, keyboard, translate, Dataview, sidebar, J } from 'Lib';
 import Head from './head';
 
 interface Props extends I.ViewComponent {
@@ -23,6 +23,8 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		super(props);
 
 		this.onButton = this.onButton.bind(this);
+		this.sortOrFilterRelationSelect = this.sortOrFilterRelationSelect.bind(this);
+		this.onSortOrFilterAdd = this.onSortOrFilterAdd.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onViewAdd = this.onViewAdd.bind(this);
@@ -259,24 +261,27 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		const {
 			rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, getTarget, isInline, isCollection,
-			getTypeId, getTemplateId, isAllowedDefaultType, onTemplateAdd,
+			getTypeId, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd,
 		} = this.props;
 		const view = getView();
-		const obj = $(element);
+		const toggleParam = {
+			onOpen: () => this.toggleHoverArea(true),
+			onClose: () => this.toggleHoverArea(false),
+		};
 
-		const param: any = { 
+		if (((component == 'dataviewSort') && !view.sorts.length) || ((component == 'dataviewFilterList') && !view.filters.length)) {
+			this.sortOrFilterRelationSelect(component,{ ...toggleParam, element }, () => {
+				this.onButton(element, component);
+			});
+			return;
+		};
+
+		const param: any = {
+			...toggleParam,
 			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			noFlipY: true,
-			onOpen: () => {
-				obj.addClass('active');
-				this.toggleHoverArea(true);
-			},
-			onClose: () => {
-				obj.removeClass('active');
-				this.toggleHoverArea(false);
-			},
 			onBack: (id) => {
 				S.Menu.replace(id, component, { ...param, noAnimation: true });
 				window.setTimeout(() => S.Menu.update(component, { noAnimation: false }), 50);
@@ -296,10 +301,20 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				isCollection,
 				isAllowedDefaultType,
 				onTemplateAdd,
+				onSortAdd,
+				onFilterAdd,
 				onViewSwitch: this.onViewSwitch,
 				onViewCopy: this.onViewCopy,
 				onViewRemove: this.onViewRemove,
-				view: observable.box(view)
+				view: observable.box(view),
+				onAdd: (menuId: string, component: string, menuWidth: number) => {
+					this.sortOrFilterRelationSelect(component, {
+						element: `#${menuId} #item-add`,
+						offsetX: menuWidth,
+						horizontal: I.MenuDirection.Right,
+						vertical: I.MenuDirection.Center,
+					});
+				},
 			},
 		};
 
@@ -307,7 +322,54 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			param.title = translate('menuDataviewViewSettings');
 		};
 
+		if (S.Menu.isOpen('select')) {
+			S.Menu.close('select');
+		};
 		S.Menu.open(component, param);
+	};
+
+	sortOrFilterRelationSelect (component: string, param: any, callBack?: () => void) {
+		const { rootId, block, getView } = this.props;
+
+		U.Menu.sortOrFilterRelationSelect({
+			menuParam: param,
+			rootId,
+			blockId: block.id,
+			getView,
+			onSelect: (item) => {
+				this.onSortOrFilterAdd(item, component, () => {
+					if (callBack) {
+						callBack();
+					};
+				});
+			}
+		});
+	};
+
+	onSortOrFilterAdd (item: any, component: string, callBack: () => void) {
+		const { onSortAdd, onFilterAdd } = this.props;
+
+		let newItem = {
+			relationKey: item.relationKey ? item.relationKey : item.id
+		};
+
+		if (component == 'dataviewSort') {
+			newItem = Object.assign(newItem, { type: I.SortType.Asc });
+
+			onSortAdd(newItem, callBack);
+		} else
+		if (component == 'dataviewFilterList') {
+			const conditions = Relation.filterConditionsByType(item.format);
+			const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+
+			newItem = Object.assign(newItem, {
+				operator: I.FilterOperator.And,
+				condition: condition as I.FilterCondition,
+				value: Relation.formatValue(item, null, false),
+			});
+
+			onFilterAdd(newItem, callBack);
+		};
 	};
 
 	onViewAdd (e: any) {

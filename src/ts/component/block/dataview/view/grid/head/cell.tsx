@@ -71,7 +71,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block, readonly, loadData, getView, getTarget, relationKey, isInline, isCollection } = this.props;
+		const { block, getView, relationKey } = this.props;
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation || keyboard.isResizing) {
@@ -89,15 +89,9 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 				onOpen: () => obj.addClass('active'),
 				onClose: () => obj.removeClass('active'),
 				data: {
-					loadData,
-					getView,
-					getTarget,
-					rootId,
-					isInline,
-					isCollection,
+					...this.props,
 					blockId: block.id,
 					relationId: relation.id,
-					readonly,
 					extendedOptions: true,
 					addCommand: (rootId: string, blockId: string, relation: any) => {
 						Dataview.relationAdd(rootId, blockId, relation.relationKey, relation._index_, getView());

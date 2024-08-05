@@ -572,7 +572,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = S.Detail.get(rootId, rootId, [ 'setOf', 'collectionOf' ]);
 		const type = S.Record.getTypeById(object.type);
 
-		this.menuContext.close();
+		this.menuContext?.close();
 
 		switch (item.id) {
 			case 'open':

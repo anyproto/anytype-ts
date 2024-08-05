@@ -394,10 +394,10 @@ class Relation {
 		return groupOptions.length ? (groupOptions.find(it => it.id == relationKey) || groupOptions[0]) : null;
 	};
 
-	public getPageLimitOptions (type: I.ViewType) {
+	public getPageLimitOptions (type: I.ViewType, isInline: boolean) {
 		let options = [ 10, 20, 50, 70, 100 ];
 		if (type == I.ViewType.Gallery) {
-			options = [ 12, 24, 60, 84, 120 ];
+			options = isInline ? [ 12, 24, 60, 84, 120 ] : [ 60, 84, 120 ];
 		};
 		return options.map(it => ({ id: it, name: it }));
 	};

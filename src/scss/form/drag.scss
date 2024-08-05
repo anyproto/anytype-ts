@@ -6,7 +6,7 @@
 	.fill { height: 2px; background: var(--color-bg-primary); width: 0px; position: absolute; left: 0px; top: 50%; margin-top: -1px; }
 	.icon { 
 		width: 12px; height: 12px; border: 2px solid var(--color-bg-primary); border-radius: 50%; position: absolute; left: 0px; top: 50%; 
-		transform: translateY(-50%); transition: none;
+		transform: translateY(-50%); transition: none; cursor: grab;
 	}
 	.bullet { position: absolute; left: 50%; top: 50%; transform: translate3d(-50%, -50%, 0px); }
 }

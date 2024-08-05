@@ -20,7 +20,11 @@
 
 	.menu.menuSelect.withFilter {
 		.content { padding: 8px 0px 0px 0px; }
-		.items { height: calc(100% - 38px); }
+		.items { height: calc(100% - 30px); }
+	}
+
+	.menu.menuSelect.withAdd {
+		.content { max-height: 378px; }
 	}
 
 	.menu.menuSelect.skip { width: var(--menu-width-value); }

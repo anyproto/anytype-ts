@@ -210,12 +210,12 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			className.push('isInline');
 		};
 
-		let width = cell.outerWidth();
+		let width = Math.max(J.Size.dataview.cell.edit, cell.outerWidth());
 		let closeIfOpen = true;
 		let menuId = '';
 
 		if (undefined !== maxWidth) {
-			width = Math.max(width, maxWidth);
+			width = Math.min(width, maxWidth);
 		};
 
 		const setOn = () => {

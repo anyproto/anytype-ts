@@ -115,7 +115,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 				items = items.concat([
 					{ id: 'pageSize', name: translate('popupExportPageSize'), control: 'select', options: pageSize },
 					{ id: 'landscape', name: translate('popupExportLandscape'), control: 'switch' },
-					{ id: 'printBg', name: translate('popupExportPrintBackground'), control: 'switch' },
+					{ id: 'printBackground', name: translate('popupExportPrintBackground'), control: 'switch' },
 				]);
 				break;
 		};
@@ -156,14 +156,14 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 		this.data = {
 			format,
-			zip:		 Boolean(options.zip),
-			nested:		 Boolean(options.nested),
-			files:		 Boolean(options.files),
-			archived:	 Boolean(options.archived),
-			json:		 (undefined === options.json) ? true : Boolean(options.json),
-			landscape:	 Boolean(options.landscape),
-			printBg:	 Boolean(options.printBg),
-			pageSize:	 String(options.pageSize || 'A4'),
+			zip:				 Boolean(options.zip),
+			nested:				 Boolean(options.nested),
+			files:				 Boolean(options.files),
+			archived:			 Boolean(options.archived),
+			json:				 (undefined === options.json) ? true : Boolean(options.json),
+			landscape:			 Boolean(options.landscape),
+			printBackground:	 Boolean(options.printBackground),
+			pageSize:			 String(options.pageSize || 'A4'),
 		};
 	};
 

@@ -2,7 +2,7 @@ html.printMedia {
 	@page { size: A4; margin: 0px 1.5cm; }
 	@page:first { margin-top: 0px; }
 
-	body { margin: 0px; -webkit-print-color-adjust: exact; caret-color: transparent; }
+	body { margin: 0px; print-color-adjust: exact; caret-color: transparent; }
 
 	#selection * { user-select: text; }
 	.overPopup { overflow: visible !important; }
@@ -73,6 +73,8 @@ html.printMedia {
 			.icon.dnd { display: none; }
 		}
 
+		.block.blockLink { break-inside: avoid; }
+
 		.block.blockEmbed {
 			.icon.source, 
 			.icon.resize { display: none; }
@@ -123,6 +125,10 @@ html.printMedia {
 	.editor {
 		.blockLast { display: none; }
 	}
+}
+
+html.printMedia.themeDark {
+	--color-bg-primary: #000;
 }
 
 html.printMedia.print {

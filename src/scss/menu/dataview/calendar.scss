@@ -22,9 +22,11 @@
 				.btn:hover { background-color: var(--color-shape-highlight-medium); }
 				.btn.prevMonth { transform: rotateZ(180deg); }
 			}
+
+			.days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); justify-items: center; grid-gap: 8px; align-items: center; }
 		}
 
-		.body { padding: 0px 16px; }
+		.body { padding: 0px 16px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); justify-items: center; grid-gap: 8px; }
 		.foot { padding: 0px 16px; }
 		.foot {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
@@ -33,10 +35,7 @@
 			.btn:hover { color: var(--color-system-accent-100); }
 		}
 
-		.day { 
-			display: inline-block; vertical-align: top; width: 28px; height: 28px; line-height: 28px; text-align: center; margin-right: 8px; border-radius: 4px;
-		}
-		.day:nth-child(7n + 7) { margin: 0px; }
+		.day { display: flex; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 4px; align-items: center; justify-content: center; }
 		.day:not(.th):not(.active):hover { background: var(--color-shape-highlight-medium); }
 
 		.day.th { color: var(--color-control-active); @include text-small; }
