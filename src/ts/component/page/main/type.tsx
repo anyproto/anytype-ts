@@ -334,7 +334,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	isAllowedObject (layout: I.ObjectLayout): boolean {
-		return U.Object.isPageLayout(layout) || U.Object.isSetLayout(layout);
+		return U.Object.isInPageLayouts(layout) || U.Object.isSetLayout(layout);
 	};
 
 	onCreate () {
