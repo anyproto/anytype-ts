@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { trace } from 'mobx';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview } from 'Lib';
+import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar } from 'Lib';
 
 import VaultItem from './item';
 
@@ -12,6 +11,8 @@ const Vault = observer(class Vault extends React.Component {
 	node = null;
 	isAnimating = false;
 	checkKeyUp = false;
+	closeSidebar = false;
+	closeVault = false;
 	top = 0;
 	timeoutHover = 0;
 	pressed = new Set();
@@ -116,6 +117,8 @@ const Vault = observer(class Vault extends React.Component {
 
 	onKeyDown (e: any) {
 		const key = e.key.toLowerCase();
+		const { isClosed, width } = sidebar.data;
+		const { showVault } = S.Common;
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			this.pressed.add(key);
@@ -124,6 +127,19 @@ const Vault = observer(class Vault extends React.Component {
 		keyboard.shortcut('ctrl+tab, ctrl+shift+tab', e, pressed => {
 			this.checkKeyUp = true;
 			this.onArrow(pressed.match('shift') ? -1 : 1);
+
+			if (!sidebar.isAnimating) {
+				if (!showVault) {
+					S.Common.showVaultSet(true);
+					sidebar.resizePage(width, false);
+					this.closeVault = true;
+				};
+
+				if (isClosed) {
+					this.closeSidebar = true;
+					sidebar.open(width);
+				};
+			};
 		});
 	};
 
@@ -141,6 +157,7 @@ const Vault = observer(class Vault extends React.Component {
 
 		this.checkKeyUp = false;
 
+		const { width } = sidebar.data;
 		const node = $(this.node);
 		const items = this.getSpaceItems();
 		const item = items[this.n];
@@ -148,6 +165,19 @@ const Vault = observer(class Vault extends React.Component {
 		if (item) {
 			node.find('.item.hover').removeClass('hover');
 			U.Router.switchSpace(item.targetSpaceId, '', true);
+		};
+
+		if (!sidebar.isAnimating) {
+			if (this.closeVault) {
+				S.Common.showVaultSet(false);
+				sidebar.resizePage(width, false);
+				this.closeVault = false;
+			};
+
+			if (this.closeSidebar) {
+				sidebar.close();
+				this.closeSidebar = false;
+			};
 		};
 
 		Preview.tooltipHide();
@@ -173,7 +203,6 @@ const Vault = observer(class Vault extends React.Component {
 			};
 
 			default: {
-				$(this.node).find('.item.hover').removeClass('hover');
 				U.Router.switchSpace(item.targetSpaceId, '', true);
 				break;
 			};
@@ -223,18 +252,6 @@ const Vault = observer(class Vault extends React.Component {
 		node.find('.item.hover').removeClass('hover');
 		el.addClass('hover');
 
-		const cb = () => {
-			Preview.tooltipShow({ 
-				text: item.name, 
-				element: el, 
-				className: 'fromVault',
-				typeX: I.MenuDirection.Left,
-				typeY: I.MenuDirection.Center,
-				offsetX: 62,
-				delay: 1,
-			});
-		};
-
 		let s = -1;
 		if (top < this.top) {
 			s = 0;
@@ -245,9 +262,9 @@ const Vault = observer(class Vault extends React.Component {
 
 		if (s >= 0) {
 			Preview.tooltipHide(true);
-			scroll.stop().animate({ scrollTop: s }, 200, 'swing', () => cb());
+			scroll.stop().animate({ scrollTop: s }, 200, 'swing', () => this.tooltipShow(item, 1));
 		} else {
-			cb();
+			this.tooltipShow(item, 1);
 		};
 	};
 
@@ -300,23 +317,28 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		if (keyboard.isDragging) {
-			return;
+		if (!keyboard.isDragging) {
+			this.tooltipShow(item, 300);
 		};
-
-		Preview.tooltipShow({ 
-			text: item.name, 
-			element: $(e.currentTarget), 
-			className: 'fromVault', 
-			typeX: I.MenuDirection.Left,
-			typeY: I.MenuDirection.Center,
-			offsetX: 62,
-			delay: 300,
-		});
 	};
 
 	onMouseLeave () {
 		Preview.tooltipHide();
+	};
+
+	tooltipShow (item: any, delay: number) {
+		const node = $(this.node);
+		const element = node.find(`#item-${item.id}`);
+
+		Preview.tooltipShow({ 
+			text: item.name, 
+			element, 
+			className: 'fromVault', 
+			typeX: I.MenuDirection.Left,
+			typeY: I.MenuDirection.Center,
+			offsetX: 44,
+			delay,
+		});
 	};
 
 	resize () {

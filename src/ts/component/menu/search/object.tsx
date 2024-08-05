@@ -428,7 +428,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Link:
-					C.BlockCreate(rootId, blockId, position, U.Data.getLinkBlockParam(target.id, item.layout), (message: any) => {
+					C.BlockCreate(rootId, blockId, position, U.Data.getLinkBlockParam(target.id, item.layout, true), (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -457,7 +457,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					if (isCollection) {
 						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
 					} else {
-						C.BlockCreate(target.id, '', position, U.Data.getLinkBlockParam(blockId, object.layout), cb);
+						C.BlockCreate(target.id, '', position, U.Data.getLinkBlockParam(blockId, object.layout, true), cb);
 					};
 					break;
 			};

@@ -241,14 +241,34 @@
 		}
     }
 
+    /* DataviewFilterList */
+
+    .menu.menuDataviewFilterList {
+        .item {
+            .txt {
+                .name::after { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
+            }
+        }
+    }
+
+    /* DataviewSort */
+
+    .menu.menuDataviewSort {
+        .item {
+            .txt {
+                .label::after { background-image: url('#{$themePath}/arrow/select/dark.svg'); }
+            }
+        }
+    }
+
 	/* QuickCapture */
 
-	.menuQuickCapture { background: none; box-shadow: none; }
-	.menuQuickCapture.isExpanded { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+	.menu.menuQuickCapture { background: none; box-shadow: none; }
+	.menu.menuQuickCapture.isExpanded { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
     /* SyncStatus */
 
-    .menuSyncStatus {
+    .menu.menuSyncStatus {
         .icons {
             .iconWrapper.connected::before { background: #294b0e; }
             .iconWrapper.error::before { background: #581f0c; }
@@ -262,4 +282,13 @@
             }
 		}
     }
+
+	/* GraphSettings */
+
+	.menu.menuGraphSettings {
+		.input-drag {
+			.icon { background-color: var(--color-bg-secondary); }
+		}
+	}
+
 }

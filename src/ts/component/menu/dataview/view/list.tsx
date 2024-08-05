@@ -267,7 +267,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			menuParam: {
 				element,
 				offsetX: getSize().width,
-				vertical: I.MenuDirection.Center
+				vertical: I.MenuDirection.Center,
 			}
 		};
 

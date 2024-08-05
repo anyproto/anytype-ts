@@ -6,6 +6,7 @@ importScripts(
 	'./lib/d3/d3-timer.min.js',
 	'./lib/d3/d3-selection.min.js',
 	'./lib/d3/d3-force.min.js',
+	'./lib/d3/d3-force-cluster.min.js',
 	'./lib/tween.js',
 	'./lib/util.js'
 );
@@ -82,6 +83,8 @@ let rootId = '';
 let root = null;
 let paused = false;
 let isOver = '';
+let maxDegree = 0;
+let clusters = {};
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -95,6 +98,8 @@ init = (param) => {
 	settings = data.settings;
 	rootId = data.rootId;
 	ctx = canvas.getContext('2d');
+	edges = util.objectCopy(data.edges);
+	nodes = util.objectCopy(data.nodes);
 
 	util.ctx = ctx;
 	resize(data);
@@ -150,8 +155,27 @@ image = ({ src, bitmap }) => {
 
 initForces = () => {
 	const { center, charge, link, forceX, forceY } = forceProps;
+	const m = 10;
+	const maxRadius = 500;
 
 	updateOrphans();
+
+	nodes.forEach(d => {
+		if (!clusters[d.type]) {
+			clusters[d.type] = { id: d.type, radius: 0, x: 0, y: 0 };
+		};
+	});
+
+	clusters = Object.values(clusters);
+
+	const l = clusters.length;
+
+	clusters = Object.values(clusters).map((c, i) => {
+		c.radius = Math.sqrt((i + 1) / l * -Math.log(Math.random())) * maxRadius;
+		c.x = Math.cos(i / l * 2 * Math.PI) * 150 + width / 2 + Math.random();
+		c.y = Math.sin(i / l * 2 * Math.PI) * 150 + height / 2 + Math.random();
+		return c;
+	});
 
 	simulation
 	.force('link', d3.forceLink().id(d => d.id))
@@ -170,7 +194,8 @@ initForces = () => {
 
 	simulation.force('link')
 	.links(edges)
-	.distance(link.distance);
+	.distance(link.distance)
+	.strength(d => d.source.type == d.target.type ? 1 : 0.5);
 
 	simulation.force('forceX')
 	.strength(d => d.isOrphan ? forceX.strength : 0)
@@ -210,17 +235,26 @@ updateForces = () => {
 
 	// Filter local only edges
 	if (settings.local) {
-		edges = getEdgesByNodeId(rootId);
+		edges = filterEdgesByDepth([ rootId ], settings.depth || 1);
 
-		const ids = nodeIdsFromEdges(edges);
-		ids.add(rootId);
-
+		const ids = nodeIdsFromEdges(edges).add(rootId);
 		nodes = nodes.filter(d => ids.has(d.id));
 	};
 
 	// Filter orphans
 	if (!settings.orphan) {
 		nodes = nodes.filter(d => !d.isOrphan || d.forceShow);
+	};
+
+	// Cluster by object type
+	if (settings.cluster) {
+		simulation.force('cluster', d3.forceCluster()
+		.centers(d => clusters.find(c => c.id == d.type))
+		.strength(1)
+		.centerInertia(0.75));
+
+		simulation.
+		force('collide', d3.forceCollide(d => getRadius(d) * 2));
 	};
 
 	let map = getNodeMap();
@@ -256,7 +290,7 @@ updateForces = () => {
 };
 
 updateSettings = (param) => {
-	const updateKeys = [ 'link', 'relation', 'orphan', 'local' ];
+	const updateKeys = [ 'link', 'relation', 'orphan', 'local', 'depth', 'cluster' ];
 	
 	let needUpdate = false;
 	let needFocus = false;
@@ -779,6 +813,23 @@ const getEdgesByNodeId = (id) => {
 	return edges.filter(d => (d.source == id) || (d.target == id));
 };
 
+const filterEdgesByDepth = (sourceIds, depth) => {
+	if (!depth) {
+		return [];
+	};
+
+	const filtered = edges.filter(d => sourceIds.includes(d.source) || sourceIds.includes(d.target));
+	const nextIds = [].concat(filtered.map(d => d.source)).concat(filtered.map(d => d.target));
+
+	let ret = [].concat(filtered);
+
+	if (nextIds.length && (depth > 1)) {
+		ret = ret.concat(filterEdgesByDepth(nextIds, depth - 1));
+	};
+
+	return ret;
+};
+
 const nodeIdsFromEdges = (edges) => {
 	return new Set([].concat(edges.map(d => d.source)).concat(edges.map(d => d.target)));
 };
@@ -788,6 +839,24 @@ const getRadius = (d) => {
 	if (settings.icon && images[d.src] && (transform.k >= transformThresholdHalf)) {
 		k = 2;
 	};
+
+	let degree = 0;
+	if (settings.link) {
+		degree += d.linkCnt
+	};
+	if (settings.relation) {
+		degree += d.relationCnt;
+	};
+
+	maxDegree = Math.max(maxDegree, degree);
+
+	if (maxDegree > 0) {
+		const logDegree = Math.log(degree + 1);
+    	const logMaxDegree = Math.log(maxDegree + 1);
+
+		k += (logDegree / logMaxDegree) * 0.9;
+	};
+
 	return d.radius / transform.k * k;
 };
 
