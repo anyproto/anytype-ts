@@ -7,19 +7,6 @@ interface Filter {
 	text: string;
 };
 
-interface Graph {
-	icon: boolean;
-	preview: boolean;
-	orphan: boolean;
-	marker: boolean;
-	label: boolean;
-	relation: boolean;
-	link: boolean;
-	files: boolean;
-	local: boolean;
-	filter: string;
-};
-
 interface SpaceStorage {
 	bytesLimit: number;
 	localUsage: number;
@@ -54,6 +41,8 @@ class CommonStore {
 	public linkStyleValue = null;
 	public isOnlineValue = false;
 	public shareTooltipValue = false;
+	public showVaultValue = null;
+	public hideSidebarValue = null;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -69,7 +58,7 @@ class CommonStore {
 		marks: [],
 	};
 
-	private graphObj: Graph = { 
+	private graphObj: I.GraphSettings = { 
 		icon: true,
 		preview: true,
 		orphan: true,
@@ -79,7 +68,9 @@ class CommonStore {
 		files: false,
 		link: true,
 		local: false,
+		cluster: false,
 		filter: '',
+		depth: 1,
 	};
 
 	public spaceStorageObj: SpaceStorage = {
@@ -90,7 +81,7 @@ class CommonStore {
 
 	public membershipTiersList: I.MembershipTier[] = [];
 
-    constructor() {
+    constructor () {
         makeObservable(this, {
             progressObj: observable,
             filterObj: observable,
@@ -108,6 +99,8 @@ class CommonStore {
 			linkStyleValue: observable,
 			isOnlineValue: observable,
 			shareTooltipValue: observable,
+			showVaultValue: observable,
+			hideSidebarValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
             config: computed,
@@ -122,6 +115,7 @@ class CommonStore {
 			space: computed,
 			isOnline: computed,
 			shareTooltip: computed,
+			showVault: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -140,12 +134,13 @@ class CommonStore {
 			isOnlineSet: action,
 			shareTooltipSet: action,
 			membershipTiersListSet: action,
+			showVaultSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
     };
 
-    get config(): any {
+    get config (): any {
 		const config = window.AnytypeGlobalConfig || this.configObj || {};
 
 		config.debug = config.debug || {};
@@ -154,27 +149,27 @@ class CommonStore {
 		return config;
 	};
 
-    get progress(): I.Progress {
+    get progress (): I.Progress {
 		return this.progressObj;
 	};
 
-    get preview(): I.Preview {
+    get preview (): I.Preview {
 		return this.previewObj;
 	};
 
-	get toast(): I.Toast {
+	get toast (): I.Toast {
 		return this.toastObj;
 	};
 
-    get filter(): Filter {
+    get filter (): Filter {
 		return this.filterObj;
 	};
 
-    get gateway(): string {
+    get gateway (): string {
 		return String(this.gatewayUrl || '');
 	};
 
-	get type(): string {
+	get type (): string {
 		const key = String(this.defaultType || Storage.get('defaultType') || J.Constant.default.typeKey);
 
 		let type = S.Record.getTypeByKey(key);
@@ -185,31 +180,35 @@ class CommonStore {
 		return type ? type.id : '';
 	};
 
-	get fullscreen(): boolean {
+	get fullscreen (): boolean {
 		return this.isFullScreen;
 	};
 
-	get pinTime(): number {
+	get pinTime (): number {
 		return (Number(this.pinTimeId) || Storage.get('pinTime') || J.Constant.default.pinTime) * 1000;
 	};
 
-	get emailConfirmationTime(): number {
+	get emailConfirmationTime (): number {
 		return Number(this.emailConfirmationTimeId) || Storage.get('emailConfirmationTime') || 0;
 	};
 
-	get fullscreenObject(): boolean {
+	get fullscreenObject (): boolean {
 		return this.boolGet('fullscreenObject');
 	};
 
-	get theme(): string {
+	get hideSidebar (): boolean {
+		return this.boolGet('hideSidebar');
+	};
+
+	get theme (): string {
 		return String(this.themeId || '');
 	};
 
-	get nativeTheme(): string {
+	get nativeTheme (): string {
 		return this.nativeThemeIsDark ? 'dark' : '';
 	};
 
-	get space(): string {
+	get space (): string {
 		return String(this.spaceId || '');
 	};
 
@@ -265,6 +264,17 @@ class CommonStore {
 		return this.diffValue || [];
 	};
 
+	get showVault (): boolean {
+		let ret = this.showVaultValue;
+		if (ret === null) {
+			ret = Storage.get('showVault');
+		};
+		if (undefined === ret) {
+			ret = true;
+		};
+		return ret;
+	};
+
     gatewaySet (v: string) {
 		this.gatewayUrl = v;
 	};
@@ -302,7 +312,7 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
-	graphSet (key: string, param: Partial<Graph>) {
+	graphSet (key: string, param: Partial<I.GraphSettings>) {
 		Storage.set(key, Object.assign(this.getGraph(key), param));
 		$(window).trigger('updateGraphSettings');
 	};
@@ -372,6 +382,10 @@ class CommonStore {
 		this.boolSet('fullscreenObject', v);
 	};
 
+	hideSidebarSet (v: boolean) {
+		this.boolSet('hideSidebar', v);
+	};
+
 	fullscreenSet (v: boolean) {
 		const body = $('body');
 		
@@ -379,6 +393,10 @@ class CommonStore {
 		v ? body.addClass('isFullScreen') : body.removeClass('isFullScreen');
 
 		$(window).trigger('resize');
+	};
+
+	showVaultSet (v: boolean) {
+		this.boolSet('showVault', v);
 	};
 
 	themeSet (v: string) {
@@ -516,7 +534,7 @@ class CommonStore {
 		this.diffValue = diff || [];
 	};
 
-	getGraph (key: string): Graph {
+	getGraph (key: string): I.GraphSettings {
 		const stored = Storage.get(key);
 		const def = U.Common.objectCopy(this.graphObj);
 

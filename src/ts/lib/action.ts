@@ -683,7 +683,7 @@ class Action {
 		});
 	};
 
-	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition) {
+	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition, route?: string) {
 		const object = S.Detail.get(rootId, objectId);
 
 		let layout = I.WidgetLayout.Link;
@@ -709,7 +709,7 @@ class Action {
 		};
 
 		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, () => {
-			analytics.event('AddWidget', { type: layout });
+			analytics.event('AddWidget', { type: layout, route });
 		});
 	};
 

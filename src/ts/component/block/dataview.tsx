@@ -78,6 +78,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSelectEnd = this.onSelectEnd.bind(this);
 		this.onSelectToggle = this.onSelectToggle.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onSortAdd = this.onSortAdd.bind(this);
+		this.onFilterAdd = this.onFilterAdd.bind(this);
 
 		this.getSearchIds = this.getSearchIds.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
@@ -167,6 +169,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onRecordAdd: this.onRecordAdd,
 			onTemplateMenu: this.onTemplateMenu,
 			onTemplateAdd: this.onTemplateAdd,
+			onSortAdd: this.onSortAdd,
+			onFilterAdd: this.onFilterAdd,
 			isAllowedObject: this.isAllowedObject,
 			isAllowedDefaultType: this.isAllowedDefaultType,
 			onSourceSelect: this.onSourceSelect,
@@ -449,20 +453,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getLimit (type: I.ViewType): number {
 		const { isInline } = this.props;
 		const view = this.getView();
-		const options = Relation.getPageLimitOptions(view.type);
+		const options = Relation.getPageLimitOptions(view.type, isInline);
 		const pageLimit = Number(view.pageLimit) || options[0].id;
 
 		let limit = 0;
 
 		switch (type) {
-			default:
+			default: {
 				limit = isInline ? pageLimit : 0;
 				break;
+			};
 
-			case I.ViewType.Board:
+			case I.ViewType.Gallery:
+			case I.ViewType.Board: {
 				limit = pageLimit || 50;
 				break;
-			
+			};
+
 		};
 		return limit;
 	};
@@ -1103,6 +1110,41 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		S.Record.recordsSet(subId, '', records);
 		this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
+	};
+
+	onSortAdd (item: any, callBack?: () => void) {
+		const { rootId, block, isInline } = this.props;
+		const view = this.getView();
+		const object = this.getTarget();
+
+		C.BlockDataviewSortAdd(rootId, block.id, view.id, item, () => {
+			if (callBack) {
+				callBack();
+			};
+
+			analytics.event('AddSort', {
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
+			});
+		});
+	};
+
+	onFilterAdd (item: any, callBack?: () => void) {
+		const { rootId, block, isInline } = this.props;
+		const view = this.getView();
+		const object = this.getTarget();
+
+		C.BlockDataviewFilterAdd(rootId, block.id, view.id, item, () => {
+			if (callBack) {
+				callBack();
+			};
+
+			analytics.event('AddFilter', {
+				condition: item.condition,
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
+			});
+		});
 	};
 
 	getIdPrefix () {

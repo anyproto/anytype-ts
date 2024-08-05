@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject, Select } from 'Component';
+import { Icon, IconObject, Label, Select } from 'Component';
 import { I, C, S, U, J, Relation, keyboard, analytics, translate } from 'Lib';
 
 const HEIGHT = 48;
@@ -26,6 +26,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.onSortNameClick = this.onSortNameClick.bind(this);
 	};
 	
 	render () {
@@ -47,8 +48,6 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			{ id: String(I.SortType.Asc), name: translate('commonAscending') },
 			{ id: String(I.SortType.Desc), name: translate('commonDescending') },
 		];
-		
-		const relationOptions = this.getRelationOptions();
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -56,6 +55,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		
 		const Item = SortableElement((item: any) => {
 			const relation: any = S.Record.getRelationByKey(item.relationKey) || {};
+
 			return (
 				<div 
 					id={'item-' + item.id} 
@@ -66,18 +66,13 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					{!isReadonly ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 					<div className="txt">
-						<Select 
-							id={[ 'filter', 'relation', item.id ].join('-')} 
-							options={relationOptions} 
-							value={item.relationKey} 
-							onChange={v => this.onChange(item.id, 'relationKey', v)} 
-							readonly={isReadonly}
-						/>
+						<Label id={[ 'filter', 'relation', item.id ].join('-')} text={relation.name} onClick={e => this.onSortNameClick(e, item)} />
 
 						<Select 
 							id={[ 'filter', 'type', item.id ].join('-')} 
 							className="grey" 
-							options={typeOptions} 
+							options={typeOptions}
+							arrowClassName={'light'}
 							value={item.type} 
 							onChange={v => this.onChange(item.id, 'type', v)} 
 							readonly={isReadonly}
@@ -290,16 +285,45 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		});
 	};
 
+	onSortNameClick (e: React.MouseEvent, item: any) {
+		if (this.isReadonly()) {
+			return;
+		};
+
+		const { param, getId, getSize } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+
+		const menuParam = {
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			horizontal: I.MenuDirection.Right,
+			vertical: I.MenuDirection.Center,
+		};
+
+		U.Menu.sortOrFilterRelationSelect({
+			menuParam,
+			rootId,
+			blockId,
+			getView,
+			onSelect: (v) => {
+				this.onChange(item.id, 'relationKey', v.relationKey ? v.relationKey : v.id);
+			}
+		});
+	};
 
 	onAdd () {
-		const { param, getId } = this.props;
+		const { id, param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, getView, getTarget, blockId, isInline } = data;
-		const view = getView();
-		const object = getTarget();
+		const { onSortAdd, onAdd } = data;
 		const relationOptions = this.getRelationOptions();
 
 		if (!relationOptions.length) {
+			return;
+		};
+
+		if (onAdd) {
+			onAdd(getId(), param.component || id, getSize().width);
 			return;
 		};
 
@@ -310,13 +334,8 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			type: I.SortType.Asc,
 		};
 
-		C.BlockDataviewSortAdd(rootId, blockId, view.id, newItem, () => {
+		onSortAdd(newItem, () => {
 			content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
-			
-			analytics.event('AddSort', {
-				objectType: object.type,
-				embedType: analytics.embedType(isInline)
-			});
 		});
 	};
 

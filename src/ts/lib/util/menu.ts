@@ -1,5 +1,6 @@
 import $ from 'jquery';
-import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation, Storage } from 'Lib';
+import raf from 'raf';
+import { I, C, S, U, J, keyboard, translate, Dataview, Action, analytics, Relation, Storage, sidebar } from 'Lib';
 
 class UtilMenu {
 
@@ -830,6 +831,113 @@ class UtilMenu {
 			{ id: J.Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: ':memo:' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: ':date:', caption: translate('menuWidgetRecentOpenCaption') },
 		];
+	};
+
+	sortOrFilterRelationSelect (param: any) {
+		const { rootId, blockId, getView, onSelect, menuParam } = param;
+		const options = Relation.getFilterOptions(rootId, blockId, getView());
+
+		const callBack = (item: any) => {
+			onSelect(item);
+			S.Menu.close('select');
+		};
+
+		const menu = Object.assign({
+			width: 256,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
+			noFlipY: true,
+		}, menuParam);
+
+		if (S.Menu.isOpen('select')) {
+			S.Menu.close('select');
+		};
+
+		S.Menu.open('select', {
+			...menu,
+			data: {
+				options,
+				withFilter: true,
+				maxHeight: 378,
+				onAdd: (menuId, menuWidth) => {
+					this.sortOrFilterRelationAdd({ menuId, menuWidth }, param, (relation) => callBack(relation));
+				},
+				onSelect: (e: any, item: any) => callBack(item)
+			}
+		});
+	};
+
+	sortOrFilterRelationAdd (menuParam: any, param: any, callBack: (relation: any) => void) {
+		const { rootId, blockId, getView } = param;
+		const { menuId, menuWidth } = menuParam;
+		const relations = Relation.getFilterOptions(rootId, blockId, getView());
+		const element = `#${menuId} #item-add`;
+
+		S.Menu.open('relationSuggest', {
+			element,
+			offsetX: menuWidth,
+			horizontal: I.MenuDirection.Right,
+			vertical: I.MenuDirection.Center,
+			onOpen: () => $(element).addClass('active'),
+			onClose: () => $(element).removeClass('active'),
+			data: {
+				rootId,
+				blockId,
+				skipKeys: relations.map(it => it.id),
+				ref: 'dataview',
+				menuIdEdit: 'blockRelationEdit',
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					Dataview.relationAdd(rootId, blockId, relation.relationKey, relations.length, getView(), (message: any) => {
+						callBack(relation);
+						S.Menu.close('relationSuggest');
+					});
+				}
+			}
+		});
+	};
+
+	sidebarModeOptions () {
+		return [
+			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
+			{ id: 'sidebar', icon: 'sidebar', name: translate('sidebarMenuSidebar') },
+		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
+	};
+
+	sidebarContext (element: string) {
+		const { showVault } = S.Common;
+		const { isClosed, width } = sidebar.data;
+		const options = this.sidebarModeOptions();
+		const value = showVault ? 'all' : 'sidebar';
+
+		S.Menu.open('selectSidebarToggle', {
+			component: 'select',
+			element,
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Right,
+			noFlipX: true,
+			data: {
+				options,
+				value,
+				onSelect: (e: any, item: any) => {
+					raf(() => {
+						switch (item.id) {
+							case 'all':
+							case 'sidebar': {
+								S.Common.showVaultSet(item.id == 'all');
+								if (isClosed) {
+									sidebar.open(width);
+								} else {
+									sidebar.resizePage(width, false);
+								};
+								break;
+							};
+						};
+					});
+
+					analytics.event('ChangeSidebarMode', { type: item.id });
+				},
+			},
+		});
 	};
 
 };

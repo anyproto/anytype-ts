@@ -12,7 +12,7 @@ class UtilGraph {
 			};
 
 			case I.ObjectLayout.Task: {
-				src = `img/icon/graph/task.svg`;
+				src = `img/icon/graph/task${Number(d.done) || 0}.svg`;
 				break;
 			};
 

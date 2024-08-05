@@ -924,7 +924,7 @@ class UtilData {
 			return;
 		};
 		
-		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, this.getLinkBlockParam('', type.recommendedLayout), (message: any) => {
+		C.BlockListConvertToObjects(rootId, ids, type.uniqueKey, type.defaultTemplateId, this.getLinkBlockParam('', type.recommendedLayout, false), (message: any) => {
 			if (!message.error.code) {
 				analytics.createObject(type.id, type.recommendedLayout, route, message.middleTime);
 			};
@@ -1084,9 +1084,7 @@ class UtilData {
 		return groupedRecords;
 	};
 
-	getLinkBlockParam (id: string, layout: I.ObjectLayout) {
-		const param: Partial<I.Block> = {};
-
+	getLinkBlockParam (id: string, layout: I.ObjectLayout, allowBookmark?: boolean) {
 		if (U.Object.isInFileLayouts(layout)) {
 			return {
 				type: I.BlockType.File,
@@ -1099,27 +1097,20 @@ class UtilData {
 			};
 		};
 
-		switch (layout) {
-			case I.ObjectLayout.Bookmark: {
-				param.type = I.BlockType.Bookmark;
-				param.content = {
+		if (U.Object.isBookmarkLayout(layout) && allowBookmark) {
+			return {
+				type: I.BlockType.Bookmark,
+				content: {
 					state: I.BookmarkState.Done,
 					targetObjectId: id,
-				};
-				break;
-			};
-
-			default: {
-				param.type = I.BlockType.Link;
-				param.content = {
-					...this.defaultLinkSettings(),
-					targetBlockId: id,
-				};
-				break;
+				},
 			};
 		};
 
-		return param;
+		return {
+			type: I.BlockType.Link,
+			content: { ...this.defaultLinkSettings(), targetBlockId: id },
+		};
 	};
 
 };

@@ -6,8 +6,6 @@ interface SidebarData {
 	isClosed: boolean;
 };
 
-const ANIMATION_SIDEBAR = 200;
-
 class Sidebar {
 	
 	data: SidebarData = {
@@ -20,8 +18,9 @@ class Sidebar {
 	footer: JQuery<HTMLElement> = null;
 	loader: JQuery<HTMLElement> = null;
 	dummy: JQuery<HTMLElement> = null;
+	toggleButton: JQuery<HTMLElement> = null;
+	vault: JQuery<HTMLElement> = null;
 	isAnimating = false;
-	timeoutHide = 0;
 	timeoutAnim = 0;
 
 	init () {
@@ -61,27 +60,33 @@ class Sidebar {
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
 		this.dummy = $('#sidebarDummy');
+		this.toggleButton = $('#sidebarToggle');
+		this.vault = $(S.Common.getRef('vault').node);
 	};
 
 	close (): void {
-		if (!this.obj || !this.obj.length || this.isAnimating || this.data.isClosed) {
+		const { width, isClosed } = this.data;
+
+		if (!this.obj || !this.obj.length || this.isAnimating || isClosed) {
 			return;
 		};
 
 		this.obj.addClass('anim');
+		this.setElementsWidth(width);
 		this.setAnimating(true);
 		this.setStyle({ width: 0 });
 		this.set({ isClosed: true });
 		this.resizePage(0, true);
+		this.vaultHide();
 
 		this.removeAnimation(() => {
-			this.vaultHide();
 			this.obj.addClass('isClosed');
 
 			window.clearTimeout(this.timeoutAnim);
 			this.timeoutAnim = window.setTimeout(() => {
 				$(window).trigger('resize');
 				this.setAnimating(false);
+				this.vault.removeClass('anim');
 			}, this.getVaultDuration(this.data.width));
 		});
 	};
@@ -91,6 +96,7 @@ class Sidebar {
 			return;
 		};
 
+		this.setElementsWidth(width);
 		this.setAnimating(true);
 		this.vaultShow(width);
 
@@ -106,6 +112,7 @@ class Sidebar {
 			this.removeAnimation(() => {
 				$(window).trigger('resize');
 				this.setAnimating(false);
+				this.vault.removeClass('anim');
 			});
 		}, this.getVaultDuration(width));
 	};
@@ -116,10 +123,13 @@ class Sidebar {
 		};
 		
 		const { width, isClosed } = this.data;
+		
+		isClosed ? this.open(width) : this.close();
+	};
 
+	setElementsWidth (width: any): void {
 		this.obj.find('#sidebarHead').css({ width });
 		this.obj.find('#sidebarBody').css({ width });
-		isClosed ? this.open(width) : this.close();
 	};
 
 	setWidth (w: number): void {
@@ -137,13 +147,61 @@ class Sidebar {
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			this.obj.removeClass('anim');
-			this.obj.find('#sidebarHead').css({ width: '' });
-			this.obj.find('#sidebarBody').css({ width: '' });
+			this.setElementsWidth('');
 
 			if (callBack) {
 				callBack();
 			};
-		}, ANIMATION_SIDEBAR);
+		}, J.Constant.delay.sidebar);
+	};
+
+	onMouseMove (): void {
+		const { showVault, hideSidebar, isFullScreen } = S.Common;
+
+		if (!this.obj || !this.obj.length || keyboard.isDragging) {
+			return;
+		};
+
+		if (
+			this.isAnimating ||
+			!hideSidebar
+		) {
+			return;
+		};
+
+		const { x } = keyboard.mouse.page;
+		const { width, isClosed } = this.data;
+		const vw = isClosed || !showVault ? 0 : J.Size.vault.width;
+		const menuOpen = S.Menu.isOpenList([ 'dataviewContext', 'widget', 'selectSidebarToggle' ]);
+		const popupOpen = S.Popup.isOpen();
+		const threshold = isFullScreen ? 0 : J.Size.sidebar.threshold;
+
+		let show = false;
+		let hide = false;
+
+		if (x <= threshold) {
+			show = true;
+		} else
+		if (x >= width + vw + threshold) {
+			hide = true;
+		};
+
+		if (popupOpen) {
+			show = false;
+		};
+
+		if (menuOpen) {
+			show = false;
+			hide = false;
+		};
+
+		if (show) {
+			this.open(width);
+		};
+
+		if (hide && !isClosed) {
+			this.close();
+		};
 	};
 
 	resizePage (width: number, animate: boolean): void {
@@ -156,11 +214,17 @@ class Sidebar {
 		};
 
 		const { isClosed } = this.data;
+		const { showVault, isFullScreen } = S.Common;
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = isClosed ? 0 : J.Size.vault.width;
+		const vw = isClosed || !showVault ? 0 : J.Size.vault.width;
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
+		
+		let toggleX = width ? width - 40 + (showVault ? vw : 0) : 84;
+		if (!width && (isFullScreen || !U.Common.isPlatformMac())) {
+			toggleX -= 68;
+		};
 
 		this.header.css({ width: '' }).removeClass('withSidebar');
 		this.footer.css({ width: '' });
@@ -171,11 +235,13 @@ class Sidebar {
 			this.page.addClass('sidebarAnimation');
 			this.footer.addClass('sidebarAnimation');
 			this.dummy.addClass('sidebarAnimation');
+			this.toggleButton.addClass('sidebarAnimation');
 		} else {
 			this.header.removeClass('sidebarAnimation');
 			this.page.removeClass('sidebarAnimation');
 			this.footer.removeClass('sidebarAnimation');
 			this.dummy.removeClass('sidebarAnimation');
+			this.toggleButton.removeClass('sidebarAnimation');
 		};
 
 		navigation?.setX(width + vw, animate);
@@ -185,6 +251,7 @@ class Sidebar {
 		this.loader.css({ width: pageWidth, right: 0 });
 		this.header.css({ width: pageWidth - ho });
 		this.footer.css({ width: pageWidth - ho });
+		this.toggleButton.css({ left: toggleX });
 
 		$(window).trigger('sidebarResize');
 	};
@@ -231,26 +298,29 @@ class Sidebar {
 	};
 
 	vaultHide () {
-		this.setVaultAnimationParam(this.data.width);
-
-		const vault = $(S.Common.getRef('vault').node);
-		vault.addClass('isClosed');
+		this.vault.addClass('anim');
+		this.setVaultAnimationParam(this.data.width, true);
+		this.vault.addClass('isClosed');
 	};
 
 	vaultShow (width: number) {
-		this.setVaultAnimationParam(width);
-
-		const vault = $(S.Common.getRef('vault').node);
-		vault.removeClass('isClosed');
+		this.vault.addClass('anim');
+		this.setVaultAnimationParam(width, false);
+		this.vault.removeClass('isClosed');
 	};
 
-	setVaultAnimationParam (width: number) {
-		const vault = $(S.Common.getRef('vault').node);
-		vault.css({ transitionDuration: `${this.getVaultDuration(width)}ms` });
+	setVaultAnimationParam (width: number, withDelay: boolean) {
+		const css: any = { transitionDuration: `${this.getVaultDuration(width)}ms`, transitionDelay: '' };
+
+		if (withDelay) {
+			css.transitionDelay = `${J.Constant.delay.sidebar}ms`;
+		};
+
+		this.vault.css(css);
 	};
 
 	getVaultDuration (width: number): number {
-		return Math.ceil(J.Size.vault.width / width * ANIMATION_SIDEBAR);
+		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
 };

@@ -343,6 +343,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				};
 
 				this.subject = this.nodes.find(d => d.id == data.node);
+
 				if (settings.preview) {
 					this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
 				};
