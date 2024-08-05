@@ -399,7 +399,7 @@ class UtilCommon {
 	};
 	
 	lbBr (s: string) {
-		return s.toString().replace(new RegExp(/\n+/gi), '<br/>');
+		return s.toString().replace(new RegExp(/\n/gi), '<br/>');
 	};
 	
 	mapToArray (list: any[], field: string): any {

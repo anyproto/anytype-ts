@@ -38,10 +38,7 @@
 					}
 
 					.side.right {
-						.icon { 
-							flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; vertical-align: top; opacity: 0; 
-							cursor: default; 
-						}
+						.icon { flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; vertical-align: top; opacity: 0; cursor: default; }
 						.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
 
 						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }

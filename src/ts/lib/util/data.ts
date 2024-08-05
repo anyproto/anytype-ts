@@ -144,6 +144,17 @@ class UtilData {
 		v = v || I.BlockVAlign.Top;
 		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
+
+	emojiParam (t: I.TextStyle) {
+		let s = 24;
+		switch (t) {
+			case I.TextStyle.Header1:	 s = 32; break;
+			case I.TextStyle.Header2:	 s = 28; break;
+			case I.TextStyle.Header3:
+			case I.TextStyle.Quote:		 s = 26; break;
+		};
+		return s;
+	};
 	
 	onInfo (info: I.AccountInfo) {
 		S.Block.rootSet(info.homeObjectId);
@@ -473,7 +484,7 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withCollection, limit } = param || {};
+		const { withSet, withCollection, withChat, limit } = param || {};
 		const { space, config } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
@@ -490,6 +501,10 @@ class UtilData {
 
 		if (withSet) {
 			items.push(S.Record.getSetType());
+		};
+
+		if (withChat) {
+			items.push(S.Record.getChatType());
 		};
 
 		if (withCollection) {
@@ -1033,7 +1048,7 @@ class UtilData {
 		});
 	};
 
-	groupDateSections (records: any[], key: string, sectionTemplate?: any) {
+	groupDateSections (records: any[], key: string, sectionTemplate?: any, dir?: I.SortType) {
 		const now = U.Date.now();
 		const { d, m, y } = U.Date.getCalendarDateParam(now);
 		const today = now - U.Date.timestamp(y, m, d);
@@ -1046,6 +1061,11 @@ class UtilData {
 			lastWeek: [],
 			lastMonth: [],
 			older: []
+		};
+
+		const groupNames = [ 'today', 'yesterday', 'lastWeek', 'lastMonth', 'older' ];
+		if (dir == I.SortType.Asc) {
+			groupNames.reverse();
 		};
 
 		let groupedRecords = [];
@@ -1074,10 +1094,13 @@ class UtilData {
 			};
 		});
 
-		Object.keys(groups).forEach((key) => {
-			if (groups[key].length) {
-				groupedRecords.push(Object.assign({ id: key, isSection: true }, sectionTemplate));
-				groupedRecords = groupedRecords.concat(groups[key]);
+		groupNames.forEach((name) => {
+			if (groups[name].length) {
+				groupedRecords.push(Object.assign({ id: name, isSection: true }, sectionTemplate));
+				if (dir) {
+					groups[name] = groups[name].sort((c1, c2) => U.Data.sortByNumericKey(key, c1, c2, dir));
+				};
+				groupedRecords = groupedRecords.concat(groups[name]);
 			};
 		});
 

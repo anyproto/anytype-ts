@@ -1,0 +1,57 @@
+
+smile { text-align: center; }
+smile {
+	img { position: static !important; left: auto !important; top: auto !important; margin: 0px !important; vertical-align: top; }
+}
+smile * { display: inline; vertical-align: middle; }
+smile .loaderWrapper { display: inline-block; }
+
+markupcode { display: inline; font-family: 'Plex'; border-radius: 4px; background: var(--color-shape-secondary); padding: 1px 4px; }
+
+markupemoji { display: inline; user-select: all; }
+markupemoji * { user-select: all; }
+markupemoji {
+	smile img { vertical-align: top; }
+}
+
+markuplink, markupobject { 
+	position: relative; color: inherit; text-decoration: none; border-bottom: 0.075em solid; transition: border-color $transitionCommon; cursor: default; 
+}
+markuplink.disabled, markupobject.disabled { border-width: 0px; }
+
+markupmention { display: inline; user-select: all !important; position: relative; cursor: default; }
+markupmention * { user-select: text !important; }
+markupmention {
+	smile { display: none; position: relative; z-index: 1; }
+	smile img { margin-top: 2px !important; }
+
+	.space { width: 6px; height: 20px; vertical-align: middle; display: none; }
+	name { display: inline; white-space: normal; position: relative; border-bottom: 0.075em solid; border-color: inherit; }
+}
+markupmention.disabled {
+	name { border-width: 0px; }
+}
+markupmention.withImage {
+	smile { display: inline; }
+	.space { display: inline; }
+}
+markupmention.withImage.c24 name markupBgcolor:first-child { margin-left: -22px; padding-left: 22px; }
+markupmention.withImage.c26 name markupBgcolor:first-child { margin-left: -22px; padding-left: 22px; }
+markupmention.withImage.c28 name markupBgcolor:first-child { margin-left: -27px; padding-left: 27px; }
+markupmention.withImage.c32 name markupBgcolor:first-child { margin-left: -34px; padding-left: 34px; }
+markupmention:hover {
+	name::before { border-color: var(--color-text-primary); }
+}
+
+markupbold { font-weight: 600; }
+markupitalic { font-style: italic; }
+markupstrike { text-decoration: line-through; }
+markupunderline { border-bottom: 0.05em solid; }
+
+markuphighlight { background: #b2dff9 !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
+markuphighlight.active { background: orange !important; }
+
+markupsearch { background: yellow !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
+markupsearch.active { background: orange !important; }
+
+markuplatex { user-select: all !important; }

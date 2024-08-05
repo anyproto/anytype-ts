@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, J, keyboard, Preview, translate, analytics } from 'Lib';
+import { I, C, S, U, J, keyboard, Preview, translate, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
 
@@ -66,6 +66,7 @@ const Navigation = observer(class Navigation extends React.Component {
 			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
 			{ id: 'forward', tooltip: translate('commonForward'), caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
 			buttonPlus,
+			// { id: 'chat', tooltip: translate('commonChat'), caption: ``, onClick: this.onChat },
 			{ id: 'graph', tooltip: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
 			{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: this.onSearch },
 		].filter(it => it).map(it => {
@@ -145,7 +146,16 @@ const Navigation = observer(class Navigation extends React.Component {
 		keyboard.onSearchPopup(analytics.route.navigation);
 	};
 
-	setX (sw: number, animate: boolean) {
+	onChat () {
+		const rootId = keyboard.getRootId();
+		const object = S.Detail.get(rootId, rootId);
+
+		if (!object.chatId) {
+			C.ObjectChatAdd(rootId);
+		};
+	};
+
+	position (sw: number, animate: boolean) {
 		const node = $(this.node);
 		const { ww } = U.Common.getWindowDimensions();
 		const width = node.outerWidth();

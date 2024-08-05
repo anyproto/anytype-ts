@@ -5,6 +5,7 @@ export default {
 	iconPage: 256,
 	image: 1920,
 	cover: 1920,
+	coverPadding: 356,
 	menuBorder: 10,
 	header: 52,
 

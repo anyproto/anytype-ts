@@ -83,7 +83,7 @@
 		.editableWrap {
 			#input { 
 				background: var(--color-bg-primary); border: 1px solid var(--color-shape-secondary); text-align: left; padding: 6px 12px; @include text-common; 
-				-webkit-user-modify: read-write-plaintext-only; border-radius: 4px; border-radius: 8px;
+				border-radius: 4px; border-radius: 8px;
 			}
 			#placeholder { padding: 6px 12px; }
 		}

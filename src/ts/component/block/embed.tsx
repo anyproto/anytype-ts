@@ -45,7 +45,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.onFocusBlock = this.onFocusBlock.bind(this);
 		this.onKeyDownInput = this.onKeyDownInput.bind(this);
 		this.onKeyUpInput = this.onKeyUpInput.bind(this);
-		this.onFocusInput = this.onFocusInput.bind(this);
 		this.onBlurInput = this.onBlurInput.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
@@ -155,7 +154,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					readonly={readonly}
 					placeholder={placeholder}
 					onSelect={this.onSelect}
-					onFocus={this.onFocusInput}
 					onBlur={this.onBlurInput}
 					onKeyUp={this.onKeyUpInput} 
 					onKeyDown={this.onKeyDownInput}
@@ -439,12 +437,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 	};
 
-	onFocusInput () {
-		keyboard.setFocus(true);
-	};
-
 	onBlurInput () {
-		keyboard.setFocus(false);
 		this.save();
 	};
 

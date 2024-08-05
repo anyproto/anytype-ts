@@ -227,12 +227,20 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Bookmark);
 	};
 
+	isObjectChat (): boolean {
+		return this.isPage() && (this.layout == I.ObjectLayout.Chat);
+	};
+
 	isFeatured (): boolean {
 		return this.type == I.BlockType.Featured;
 	};
 
 	isDataview (): boolean {
 		return this.type == I.BlockType.Dataview;
+	};
+
+	isChat (): boolean {
+		return this.type == I.BlockType.Chat;
 	};
 
 	isRelation (): boolean {

@@ -174,6 +174,9 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	getSections () {
+		const { param } = this.props;
+		const { data } = param;
+		const { canAdd } = data;
 		const filter = this.getFilter();
 		const sections: any[] = [];
 
@@ -181,7 +184,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: this.items.concat({ isDiv: true }) });
 		};
 
-		if (filter) {
+		if (filter && canAdd) {
 			sections.push({ 
 				children: [
 					{ id: 'add', icon: 'plus', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter) }
@@ -208,14 +211,19 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { skipIds } = data;
 		const filter = this.getFilter();
 		const skipLayouts = U.Object.getSystemLayouts().filter(it => it != I.ObjectLayout.Date);
-		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
-		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
 		];
+
+		let filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
+		];
+
+		if (data.filters && data.filters.length) {
+			filters = filters.concat(data.filters);
+		};
 
 		if (skipIds && skipIds.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
@@ -282,31 +290,29 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { onChange } = data;
 		const { from } = S.Common.filter;
 
-		const cb = (id: string, name: string) => {
-			name = String(name || translate('defaultNamePage'));
-			name = U.Common.shorten(name, 30);
-
+		const cb = (object: any) => {
+			const name = U.Common.shorten(String(object.name || translate('defaultNamePage')), 30);
 			const to = from + name.length;
 
 			let marks = U.Common.objectCopy(data.marks || []);
 			marks = Mark.adjust(marks, from, name.length);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
-				param: id, 
+				param: object.id, 
 				range: { from, to },
 			});
 
-			onChange(name + ' ', marks, from, to + 1);
+			onChange(object, name + ' ', marks, from, to + 1);
 		};
 
 		if (item.id == 'add') {
 			const name = this.getFilter();
 
 			U.Object.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], analytics.route.mention, (message: any) => {
-				cb(message.targetId, name);
+				cb(message.details);
 			});
 		} else {
-			cb(item.id, item.name);
+			cb(item);
 		};
 
 		close();

@@ -152,6 +152,7 @@
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObject": "Create Object",
 	"commonUrl": "Url",
+	"commonEdit": "Edit",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -531,6 +532,7 @@
 	"blockTextTableOfContents": "Create a Table of Contents",
 	"blockTextSet": "Add existing or create new Inline Set to this Object",
 	"blockTextCollection": "Add inline Collection of Objects with different properties",
+	"blockTextChat": "...",
 	"blockTextToggleEmpty": "Empty toggle. Click or drop Block inside",
 	"blockTextWrap": "Wrap",
 	"blockTextUnwrap": "Unwrap",
@@ -640,6 +642,15 @@
 	"blockTableOptionsAlignVertical": "Vertical align",
 
 	"blockTypeMyTypes": "My Types",
+
+	"blockChatEmpty": "There are no messages yet. Be the first to start a discussion",
+	"blockChatMessageExpand": "Expand",
+	"blockChatReactionAdd": "Add reaction",
+	"blockChatPlaceholder": "Enter your message",
+	"blockChatButtonObject": "Add object",
+	"blockChatButtonEmoji": "Add emoji",
+	"blockChatButtonMention": "Add mention",
+	"blockChatNewMessages": "New messages",
 
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",
@@ -1500,11 +1511,6 @@
 	"menuWidgetNumberOfObjects": "Number of Objects",
 	"menuWidgetRemoveWidget": "Remove Widget",
 	"menuWidgetEditWidgets": "Edit Widgets",
-	"menuWidgetFavorites": "Favorites",
-	"menuWidgetSets": "Sets",
-	"menuWidgetCollections": "Collections",
-	"menuWidgetRecentEdit": "Recently edited",
-	"menuWidgetRecentOpen": "Recently opened",
 	"menuWidgetRecentOpenCaption": "On this device",
 
 	"menuPreviewLatexExample": "Example: %s",
@@ -1709,6 +1715,7 @@
 	"widgetRecentOpen": "Recently opened",
 	"widgetSet": "Sets",
 	"widgetCollection": "Collections",
+	"widgetChat": "Discussions",
 	"widgetEdit": "Edit widgets",
 	"widgetAdd": "Add widget",
 	"widgetLibrary": "Library",

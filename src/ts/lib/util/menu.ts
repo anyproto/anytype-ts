@@ -107,7 +107,7 @@ class UtilMenu {
 	};
 
 	getBlockObject () {
-		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true });
+		const items = U.Data.getObjectTypesForNewObject({ withSet: true, withCollection: true, withChat: true });
 		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
 			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] }
@@ -408,7 +408,11 @@ class UtilMenu {
 				};
 			};
 
-			if ([ J.Constant.widgetId.set, J.Constant.widgetId.collection ].includes(id)) {
+			if ([ 
+				J.Constant.widgetId.set, 
+				J.Constant.widgetId.collection,
+				J.Constant.widgetId.chat,
+			].includes(id)) {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
 			};
 		};
@@ -825,11 +829,12 @@ class UtilMenu {
 
 	getFixedWidgets () {
 		return [
-			{ id: J.Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
-			{ id: J.Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: ':mag:' },
-			{ id: J.Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: ':card_index_dividers:' },
-			{ id: J.Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: ':memo:' },
-			{ id: J.Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: ':date:', caption: translate('menuWidgetRecentOpenCaption') },
+			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), iconEmoji: '⭐' },
+			{ id: J.Constant.widgetId.chat, name: translate('widgetChat'), iconEmoji: '💬' },
+			{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
+			{ id: J.Constant.widgetId.collection, name: translate('widgetCollection'), iconEmoji: '🗂️' },
+			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), iconEmoji: '📝' },
+			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), iconEmoji: '📅', caption: translate('menuWidgetRecentOpenCaption') },
 		];
 	};
 

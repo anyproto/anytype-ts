@@ -30,6 +30,7 @@ export enum BlockType {
 	TableRow			 = 'tableRow',
 	TableOfContents		 = 'tableOfContents',
 	Widget		 		 = 'widget',
+	Chat				 = 'chat',
 };
 
 export enum BlockPosition {
@@ -86,6 +87,11 @@ export interface BlockComponent {
 	onUpdate?(): void;
 	getWrapperWidth?(): number;
 	blockRemove?(focused?: I.Block): void;
+	renderLinks?(node: any, marks: I.Mark[], value: string): void;
+	renderMentions?(node: any, marks: I.Mark[], value: string): void;
+	renderObjects?(node: any, marks: I.Mark[], value: string): void;
+	renderEmoji?(node: any): void;
+	checkMarkOnBackspace?(value: string, range: I.TextRange, marks: I.Mark[]): { value: string, marks: I.Mark[], save: boolean };
 };
 
 export interface BlockStructure {
@@ -152,11 +158,13 @@ export interface Block {
 	isObjectRelation?(): boolean;
 	isObjectBookmark?(): boolean;
 	isObjectDate?(): boolean;
+	isObjectChat?(): boolean;
 
 	isFeatured?(): boolean;
 	isDataview?(): boolean;
 	isRelation?(): boolean;
 	isType?(): boolean;
+	isChat?(): boolean;
 
 	isWidget?(): boolean;
 	isWidgetLink?(): boolean;

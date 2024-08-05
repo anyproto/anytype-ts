@@ -86,7 +86,7 @@ export default {
 		archive:		 'archive',
 		sidebar:		 'sidebar',
 		space:			 'space',
-		files:			 'files',
+		fileManager:	 'fileManager',
 		participant:	 'participant',
 		myParticipant:	 'myParticipant'
 	},
@@ -109,7 +109,8 @@ export default {
 		collection:		 'ot-collection',
 		dashboard:		 'ot-dashboard',
 		date:			 'ot-date',
-		profile:		 'ot-profile'
+		profile:		 'ot-profile',
+		chat:			 'ot-discussion',
 	},
 
 	templateId: {
@@ -123,7 +124,8 @@ export default {
 		featured:		 'featuredRelations',
 		dataview:		 'dataview',
 		type:			 'type',
-		header:			 'header'
+		header:			 'header',
+		chat:			 'chat',
 	},
 
 	widgetId: {
@@ -131,7 +133,8 @@ export default {
 		recentEdit:		 'recent',
 		recentOpen:		 'recentOpen',
 		set:			 'set',
-		collection:		 'collection'
+		collection:		 'collection',
+		chat:			 'chat',
 	},
 
 	monthDays: {
