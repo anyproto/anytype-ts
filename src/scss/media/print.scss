@@ -127,6 +127,10 @@ html.printMedia {
 	}
 }
 
+html.printMedia.themeDark {
+	--color-bg-primary: #000;
+}
+
 html.printMedia.print {
 	#editorWrapper { width: 100% !important; }
 }
