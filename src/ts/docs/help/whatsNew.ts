@@ -3,13 +3,14 @@ import { I, J, keyboard } from 'Lib';
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const hl = (t: string) => `<span class="highlight">${t}</span>`;
-const block = (style: I.TextStyle, text: string) => ({ style, text });
+const block = (style: I.TextStyle, text: string, align?: I.BlockHAlign) => ({ style, text, align });
 const title = (t: string) => block(I.TextStyle.Title, t);
 const h1 = (t: string) => block(I.TextStyle.Header1, t);
 const h2 = (t: string) => block(I.TextStyle.Header2, t);
 const h3 = (t: string) => block(I.TextStyle.Header3, t);
 const text = (t: string) => block(I.TextStyle.Paragraph, t);
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
+const caption = (t: string) => block(I.TextStyle.Paragraph, `<i>${t}</i>`, I.BlockHAlign.Center);
 const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
 const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}" controls class="c70 ${c || ''}" />`);
 const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}" class="c70 ${c || ''}" />`);
@@ -18,47 +19,56 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Desktop Release 0.42.0`),
-	text(`This release is brimming with game-changing updates, including a redesigned sidebar UX for easier navigation between Spaces, new Widgets offering a more flexible workflow and consistent view options, and simplified, more accessible app sharing. Additionally, we've added quality-of-life improvements such as the option to pay for memberships with crypto, and loads of bug fixes to improve the user experience.`),
+	title(`Anytype Desktop 0.42.0 Released!`),
+	text(`This release brings a redesigned sidebar, brand-new widgets, and the highly anticipated inline LaTeX feature, along with numerous quality-of-life improvements and bug fixes for an even smoother Anytype experience. Don’t miss our new sync status indicator—it’s like having a little tech guru keeping you informed! Enjoy exploring the updates 🏄‍♀️`),
+	text(''),
 
-	h2(`💫 Feature Highlights`),
+	h2(`Highlights 💫`),
+	text(''),
 
-	h3(`New Vault UI 🌐`),
-	text(`We introduced a sleek display column to quickly create & switch between Spaces. We also reworked the previous sidebar logic by removing the floating mode.`),
-	img(`42/4.png`),
-	
-	
-	h3(`New Widgets 🖼️`),
-	text(`Widgets can now display all the custom View options as their Sets, including Calendar, Kanban, Gallery and filtered Tag views.`),
+	h3(`Redesigned Sidebar 🌐`),
+	text(`Our sleek new sidebar makes hopping between Spaces a breeze. Think of it as your personal GPS for easier navigation.`),
 	img(`42/1.png`),
-	
+	caption(`Simply click to hide the entire sidebar, or right-click for additional options.`),
+	text(''),
 
-	h3(`Sync Status Upgrade 🔄`),
-	text(`More informative sync status for Objects, Files, and Spaces, including indicators like "Error" for Wi-Fi issues, "Offline" for no network connection.`),
+	h3(`New Widgets 🧩`),
+	text(`We're bringing you Widgets that are more flexible than a yoga master. Now, you can display Widgets in three new layouts: Calendar, Kanban, and Gallery.`),
+	img(`42/2.png`),
+	text(''),
+
+	h3(`New Sync Status Indicator 🧘`),
+	text(`Now, you'll get more informative updates for Objects and files. Look out for these handy indicators when there's no network connection or sync. `),
 	img(`42/3.png`),
-	
+    text(''),
 
-	h3(`Simplified App Sharing 🔗`),
-	text(`Easily grab a link to share Anytype with others directly from the help menu on Desktop.`),
-	img(`42/5.png`),
-	
+	h3(`Inline LaTeX 🧑‍🔬`),
+	text(`We’re absolutely geeked to finally deliver ${link('https://community.anytype.io/t/2315', 'this long-awaited feature to the community')}! You can now easily add mathematical notation right into your text, making it possible to include complex equations and formulas. Thanks everyone who voted for it! `),
+	video(`42/4.mp4`),
+	text(''),
 
-	h2(`🪷 Quality-of-Life`),
-	bullet(`You can now use crypto (BTC, ETH, USDT, USDC, BNB, Dai, etc.) to pay for memberships.`),
+	h2(`Quality-of-Life 🪷 `),
+	bullet(`Menu item was added to Object settings for faster "add to Collection" workflow.`),
+	bullet(`Sharing Anytype with others got simpler—just grab the link from the help menu and share away (Desktop only).`),
 	bullet(`Navigate Tables using only arrow keys to enter, jump cells &amp; exit to the next block. Thanks, @Code-Jack!`),
 	bullet(`Added an option to copy the URL from bookmark blocks. Thanks, @maxitg!`),
 	bullet(`Reduced mouse action needed after creating a new page in Collections. Thanks, @Code-Jack!`),
 	bullet(`"Turn into Object" adapts to default Templates now. Thanks, @${link('https://community.anytype.io/t/turn-into-object-did-not-adapt-to-default-template/21983', 'LSK')}!`),
-	bullet(`Added Option to disable preview on graph view. Thanks, @${link('https://community.anytype.io/t/21898', 'iamWing')}!`),
+	bullet(`Added option to disable preview on graph view. Thanks, @${link('https://community.anytype.io/t/21898', 'iamWing')}!`),
 	bullet(`Typed text after a linked object no longer becomes part of the link and can be unlinked. Thanks, @${link('https://community.anytype.io/t/8075', 'floseq')}!`),
 	bullet(`Select all ${hl(`${cmd} + A`)} twice now excludes the title. Thanks, @${link('https://community.anytype.io/t/ctrl-a-behaviour-inconsistent-unpredictable/7612', 'qualquertipo')}!`),
-	bullet(`Menu item added for faster "add to collection" workflow.`),
-
-
-	h2(`🛠️ Technical Updates`),
+	bullet(`You can now use crypto (BTC, ETH, USDT, USDC, BNB, Dai, etc.) to pay for memberships.`),
+    bullet(`Added a menu for selecting filter/sorting options after clicking "New Sort/Filter".`),
+	bullet(`Clicking the "Join" button on the Pricing page will now open the app to purchase the subscription if it’s installed, or take you to the download page if it’s not.`),
+	bullet(`Search panel now reopens with previously entered text and selected objects in "Related to" mode.`),
+	text(''),
+	
+	h2(`Technical Update 🛠️`),
 	bullet(`Electron updated to 31.0.0`),
+	text(''),
 
-	h2(`🦂 Bug Fixes`),
+	h2(`Bug Fixes 🦂`),
+	bullet(`Number relations with values less than 1 million are now evenly spaced. Thanks, @${link('https://community.anytype.io/t/7497', 'matylda')}!`),
 	bullet(`Mermaid diagrams now display correctly with dark mode backgrounds. Thanks, @${link('https://community.anytype.io/t/20228', 'BoxOfWood')}!`),
 	bullet(`Top menu no longer shows up below the cover in sets when using the modal window. Thanks, ${link('https://community.anytype.io/t/22009', 'Elias')}!`),
 	bullet(`Fixed a problem with carriage when adding tags or objects to corresponding relations. Thanks, @${link('https://community.anytype.io/t/10219', 'dzlg')}!`),
@@ -72,9 +82,12 @@ export default [
 	bullet(`The Query of the set now updates correctly in the pop-up.`),
 	bullet(`Fixed issue with using library images for type Icons. Thanks, @${link('https://community.anytype.io/t/22297', 'Self-Perfection')}!`),
 	bullet(`Keyboard cursor no longer disappears after cutting a whole line (block). Thanks, @${link('https://community.anytype.io/t/20781', 'SirCaptain')}!`),
-
-
-
+    bullet(`Clarified the prompt for image uploads when no images are present.`),
+    bullet(`Made sizes dropdown menu consistent throughout UI.`),
+	bullet(`Fixed manual reordering of favorites in the widget. Thanks, @elias`),
+	bullet(`Fixed issue where cursor couldn't break out of box when using text-style inline code. Thanks, @${link('https://community.anytype.io/t/8944', 'Xonline')}!`),
+	bullet(`Fixed Markdown behavior for underscores and dashes. Thanks, @${link('https://community.anytype.io/t/17152', 'katcher')}!`),
+	
 	div(),
 	// --------------------------------------------//
 

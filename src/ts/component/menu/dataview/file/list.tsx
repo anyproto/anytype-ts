@@ -106,7 +106,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				{isLoading ? <Loader /> : ''}
 
 				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? U.Common.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch filter={filter} />
 				) : ''}
 
 				{this.cache && items.length && !isLoading ? (

@@ -151,7 +151,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				{isLoading ? <Loader /> : ''}
 
 				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? U.Common.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch filter={filter} />
 				) : ''}
 
 				{this.cache && items.length && !isLoading ? (
@@ -245,7 +245,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		if (canAdd && canWrite) {
-			let name = translate('commonCreateObject');
+			let name = '';
 			if (addParam) {
 				if (addParam.nameWithFilter && filter) {
 					name = U.Common.sprintf(addParam.nameWithFilter, filter);
@@ -255,8 +255,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				};
 			};
 
-			if (!name && filter) {
-				name = U.Common.sprintf(translate('commonCreateObjectWithName'), filter);
+			if (!name) {
+				name = filter ? U.Common.sprintf(translate('commonCreateObjectWithName'), filter) : translate('commonCreateObject');
 			};
 
 			if (name) {
@@ -428,7 +428,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Link:
-					C.BlockCreate(rootId, blockId, position, U.Data.getLinkBlockParam(target.id, item.layout), (message: any) => {
+					C.BlockCreate(rootId, blockId, position, U.Data.getLinkBlockParam(target.id, item.layout, true), (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -457,7 +457,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					if (isCollection) {
 						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
 					} else {
-						C.BlockCreate(target.id, '', position, U.Data.getLinkBlockParam(blockId, object.layout), cb);
+						C.BlockCreate(target.id, '', position, U.Data.getLinkBlockParam(blockId, object.layout, true), cb);
 					};
 					break;
 			};
@@ -472,7 +472,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			} else {
 				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-				U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Search', (message: any) => {
+				U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.search, (message: any) => {
 					process(message.details, true);
 					close();
 				});

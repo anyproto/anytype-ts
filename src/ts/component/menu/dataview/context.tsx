@@ -284,7 +284,7 @@ class MenuContext extends React.Component<I.Menu> {
 					canAdd: true,
 					onSelect: (el: any) => {
 						if (onLinkTo) {
-							onLinkTo(itemId, el.id);
+							onLinkTo(el.id, itemId);
 						};
 
 						close();
@@ -314,6 +314,7 @@ class MenuContext extends React.Component<I.Menu> {
 						onClick: (details: any) => {
 							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 								Action.addToCollection(message.objectId, objectIds);
+								U.Object.openConfig(message.details);
 							});
 						},
 					},
@@ -321,7 +322,7 @@ class MenuContext extends React.Component<I.Menu> {
 						Action.addToCollection(el.id, objectIds);
 
 						if (onLinkTo) {
-							onLinkTo(itemId, el.id);
+							onLinkTo(el.id, itemId);
 						};
 
 						close();
@@ -422,7 +423,7 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'createWidget': {
 				const firstBlock = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
 
-				Action.createWidgetFromObject(first.id, first.id, firstBlock?.id, I.BlockPosition.Top);
+				Action.createWidgetFromObject(first.id, first.id, firstBlock?.id, I.BlockPosition.Top, analytics.route.addWidgetMenu);
 				break;
 			};
 

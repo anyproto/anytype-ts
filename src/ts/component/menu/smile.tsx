@@ -184,7 +184,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 							</InfiniteLoader>
 
 							{!sections.length ? (
-								<EmptySearch text={U.Common.sprintf(translate('menuSmileEmpty'), filter)} />
+								<EmptySearch text={filter ? U.Common.sprintf(translate('menuSmileEmptyFilter'), filter) : translate('menuSmileEmpty')} />
 							): ''}
 						</div>
 
@@ -283,7 +283,7 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 							</InfiniteLoader>
 
 							{!items.length ? (
-								<EmptySearch text={U.Common.sprintf(translate('menuSmileEmpty'), filter)} />
+								<EmptySearch text={filter ? U.Common.sprintf(translate('menuSmileEmptyFilter'), filter) : translate('menuSmileEmpty')} />
 							): ''}
 						</div>
 

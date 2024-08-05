@@ -9,7 +9,6 @@ class Keyboard {
 	};
 	timeoutPin = 0;
 	timeoutSidebarHide = 0;
-	timeoutSidebarAnim = 0;
 	pressed: string[] = [];
 	match: any = {};
 	matchPopup: any = {};
@@ -110,16 +109,20 @@ class Keyboard {
 			page: { x: e.pageX, y: e.pageY },
 			client: { x: e.clientX, y: e.clientY },
 		};
+
+		if (this.isMain()) {
+			sidebar.onMouseMove();
+		};
 	};
 	
 	onKeyDown (e: any) {
+		const { theme } = S.Common;
 		const isMac = U.Common.isPlatformMac();
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
 		const canWrite = U.Space.canMyParticipantWrite();
 		const selection = S.Common.getRef('selectionProvider');
-		const { spaceview } = S.Block;
 
 		this.pressed.push(key);
 
@@ -239,6 +242,11 @@ class Keyboard {
 			// Create relation
 			this.shortcut(`${cmd}+shift+r`, e, () => {
 				$('#button-header-relation').trigger('click');
+			});
+
+			// Switch dark/light mode
+			this.shortcut(`${cmd}+shift+m`, e, () => {
+				Action.themeSet(!theme ? 'dark' : '');
 			});
 
 			// Store
@@ -588,6 +596,20 @@ class Keyboard {
 				break;
 			};
 
+			case 'debugReconcile': {
+				S.Popup.open('confirm', {
+					data: {
+						text: translate('popupConfirmActionReconcileText'),
+						onConfirm: () => {
+							C.FileReconcile(() => {
+								Preview.toastShow({ text: translate('commonDone') });
+							});
+						},
+					}
+				});
+				break;
+			};
+
 			case 'resetOnboarding': {
 				Storage.delete('onboarding');
 				break;
@@ -754,7 +776,7 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
 
-		this.printApply('print', true);
+		this.printApply('print', false);
 		Renderer.send('winCommand', 'printPdf', { name: object.name, options });
 	};
 

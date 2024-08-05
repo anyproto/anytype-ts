@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, Sync, ObjectName } from 'Component';
+import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
 import { I, S, U, J, keyboard, translate } from 'Lib';
 import HeaderBanner from 'Component/page/elements/head/banner';
 
@@ -67,7 +67,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 					<div className="inner">
 						<IconObject object={object} size={18} />
 						<ObjectName object={object} />
-						{isLocked ? <Icon className="lock" /> : ''}
+						{isLocked ? <Label text={translate('headerObjectLocked')} className="lock" /> : ''}
 					</div>
 				</div>
 			);
