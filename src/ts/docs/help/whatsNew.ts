@@ -4,7 +4,7 @@ const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const hl = (t: string) => `<span class="highlight">${t}</span>`;
 const block = (style: I.TextStyle, text: string, align?: I.BlockHAlign) => ({ style, text, align });
-const title = (t: string) => block(I.TextStyle.Title, t);
+const title = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Title, t, align);
 const h1 = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Header1, t, align);
 const h2 = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Header2, t, align);
 const h3 = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Header3, t, align);
