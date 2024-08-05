@@ -294,7 +294,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{
 					name: translate('popupSettingsApplicationTitle'), children: [
 						{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
-						{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
+						{ id: 'appearance', name: translate('popupSettingsColorMode') },
 						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 					]
 				},

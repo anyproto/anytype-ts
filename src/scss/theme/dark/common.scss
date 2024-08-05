@@ -16,6 +16,7 @@ html.themeDark {
 	--color-shape-secondary: #3f3f3f;
 	--color-shape-tertiary: #2b2b2b;
 
+	--color-shape-highlight-dark: rgba(238, 238, 238, 0.24);
 	--color-shape-highlight-medium: rgba(238, 238, 238, 0.12);
 	--color-shape-highlight-light: rgba(238, 238, 238, 0.06);
 	--color-shape-highlight-light-solid: #242424;
@@ -270,8 +271,12 @@ html.themeDark {
 
 	/* Vault */
 
-	.vault { background-color: var(--color-bg-primary); }
+	.vault { background-color: #393939; }
 	.vault {
+		.item.isButton {
+			.iconWrap { background-color: #4f4f4f; }
+		}
+
 		.item.gallery {
 			.iconWrap { background-image: url('#{$themePath}/icon/vault/gallery.svg'); }
 		}

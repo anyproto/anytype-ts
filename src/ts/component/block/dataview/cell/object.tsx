@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
-import { I, S, U, J, Relation, translate, keyboard } from 'Lib';
+import { I, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
 import ItemObject from './item/object';
 
 interface State { 
@@ -377,7 +377,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const { relation } = this.props;
 		const { details, flags } = Relation.getParamForNewObject(text, relation);
 
-		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', message => this.onValueAdd(message.targetId));
+		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.relation, message => this.onValueAdd(message.targetId));
 	};
 
 	onFocus () {

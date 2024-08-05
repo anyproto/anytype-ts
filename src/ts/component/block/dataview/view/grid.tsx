@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { Icon, LoadMore } from 'Component';
-import { I, C, S, U, J, translate, keyboard, Relation } from 'Lib';
+import { I, C, S, U, J, translate, keyboard, Relation, sidebar } from 'Lib';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 
@@ -373,8 +373,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 					const margin = (cw - ww) / 2;
 					const offset = 8;
 
-					scroll.css({ width: cw - offset, marginLeft: -margin - 2, paddingLeft: margin });
-					wrap.css({ width: vw + margin - offset, paddingRight: margin - offset });
+					scroll.css({ width: cw, marginLeft: -margin });
+					wrap.css({ width: vw + margin - offset, paddingLeft: margin, paddingRight: offset * 2 });
 				} else {
 					const parentObj = $(`#block-${parent.id}`);
 					const vw = parentObj.length ? (parentObj.width() - J.Size.blockMenu) : 0;

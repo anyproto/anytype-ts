@@ -414,7 +414,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	onOver (e: any, item: any) {
 		const { getId, getSize, setActive, param } = this.props;
 		const { data } = param;
-		const { getView, itemId } = data;
+		const { rootId, blockId, getView, itemId } = data;
 		const view = getView();
 		const filter = view.getFilter(itemId);
 		const isReadonly = this.isReadonly();
@@ -430,13 +430,29 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		let options = [];
 		let key = item.id;
 
-		switch (item.id) {
-			case 'relation': {
-				options = this.getRelationOptions();
-				key = 'relationKey';
-				break;
+		if (item.id == 'relation') {
+			const menuParam = {
+				element: `#${getId()} #item-${item.id}`,
+				offsetX: getSize().width,
+				horizontal: I.MenuDirection.Right,
+				vertical: I.MenuDirection.Center,
+				passThrough: true,
 			};
 
+			U.Menu.sortOrFilterRelationSelect({
+				menuParam,
+				rootId,
+				blockId,
+				getView,
+				onSelect: (item) => {
+					this.onChange('relationKey', item.relationKey ? item.relationKey : item.id);
+				}
+			});
+
+			return;
+		};
+
+		switch (item.id) {
 			case 'condition': {
 				if (Relation.isDictionary(filter.relationKey)) {
 					options = Relation.filterConditionsDictionary();	

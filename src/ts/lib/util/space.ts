@@ -165,10 +165,20 @@ class UtilSpace {
 
 	canCreateSpace (): boolean {
 		const { config } = S.Common;
-		const items = U.Common.objectCopy(this.getList());
+
+		if (config.sudo) {
+			return true;
+		};
+
+		const { account } = S.Auth;
+		if (!account) {
+			return false;
+		};
+
+		const items = U.Common.objectCopy(this.getList().filter(it => it.creator == this.getParticipantId(it.targetSpaceId, account.id)));
 		const length = items.length;
 
-		return config.sudo || (length < J.Constant.limit.space);
+		return length < J.Constant.limit.space;
 	};
 
 };

@@ -37,6 +37,10 @@ class Analytics {
 		turn: 'TurnInto',
 		powertool: 'Powertool',
 		syncStatus: 'SyncStatus',
+		search: 'Search',
+		relation: 'Relation',
+		link: 'Link',
+		mention: 'Mention',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
@@ -52,6 +56,11 @@ class Analytics {
 		settingsMembership: 'ScreenSettingsMembership',
 
 		inviteConfirm: 'ScreenInviteConfirm',
+
+		addWidgetMain: 'Main',
+		addWidgetEditor: 'Editor',
+		addWidgetMenu: 'Menu',
+		addWidgetDnD: 'DnD'
 	};
 
 	debug () {

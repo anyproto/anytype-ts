@@ -1,6 +1,13 @@
 import $ from 'jquery';
 import { I, U, J, analytics } from 'Lib';
 
+const Tags = {};
+for (const i in I.MarkType) {
+	if (!isNaN(Number(i))) {
+		Tags[i] = `markup${I.MarkType[i].toLowerCase()}`;
+	};
+};
+
 const Patterns = {
 	'-→': '⟶',
 	'—>': '⟶',
@@ -23,8 +30,7 @@ const Patterns = {
 	'...': '…',
 };
 
-const Order: any = {};
-[
+const Order = [
 	I.MarkType.Change,
 	I.MarkType.Object,
 	I.MarkType.Emoji,
@@ -37,31 +43,9 @@ const Order: any = {};
 	I.MarkType.Color,
 	I.MarkType.BgColor,
 	I.MarkType.Code,
-].forEach((type, i) => Order[type] = i);
+];
 
 class Mark {
-
-	regexpMarkdown: any[] = [];
-
-	constructor () {
-		const Markdown = [
-			{ key: '`', type: I.MarkType.Code },
-			{ key: '**', type: I.MarkType.Bold },
-			{ key: '__', type: I.MarkType.Bold },
-			{ key: '*', type: I.MarkType.Italic },
-			{ key: '_', type: I.MarkType.Italic },
-			{ key: '~~', type: I.MarkType.Strike },
-		];
-
-		for (const item of Markdown) {
-			const non = U.Common.regexEscape(item.key.substring(0, 1));
-			const k = U.Common.regexEscape(item.key);
-			this.regexpMarkdown.push({ 
-				type: item.type,
-				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
-			});
-		};
-	};
 
 	toggle (marks: I.Mark[], mark: I.Mark): I.Mark[] {
 		if ((mark.type === null) || (mark.range.from == mark.range.to)) {
@@ -161,8 +145,8 @@ class Mark {
 	};
 	
 	sort (c1: I.Mark, c2: I.Mark) {
-		const o1 = Order[c1.type];
-		const o2 = Order[c2.type];
+		const o1 = Order.indexOf(c1.type);
+		const o2 = Order.indexOf(c2.type);
 		if (o1 > o2) return 1;
 		if (o1 < o2) return -1;
 		if (c1.range.from > c2.range.from) return 1;
@@ -421,21 +405,19 @@ class Mark {
 		});
 
 		// Fix browser markup bug
-		text = text.replace(/<\/?(i|b|font|search)[^>]*>/g, (s: string, p: string) => {
+		text = text.replace(/<\/?(i|b|strike|font|search)[^>]*>/g, (s: string, p: string) => {
 			let r = '';
+
 			if (p == 'i') r = this.getTag(I.MarkType.Italic);
 			if (p == 'b') r = this.getTag(I.MarkType.Bold);
+			if (p == 'strike') r = this.getTag(I.MarkType.Strike);
+
 			p = r ? s.replace(p, r) : '';
 			return p;
 		});
 
 		// Fix html special symbols
-		text = text.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
-			if (p == '&lt;') p = '<';
-			if (p == '&gt;') p = '>';
-			if (p == '&amp;') p = '&';
-			return p;
-		});
+		text = U.Common.fromHtmlSpecialChars(text);
 
 		html = text;
 		html.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
@@ -481,7 +463,9 @@ class Mark {
 	};
 
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean): { marks: I.Mark[], text: string, adjustMarks: boolean } {
-		const test = /((^|\s)_|[`\*~\[]){1}/.test(html);
+		const reg1 = /(^|\s)(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
+		const reg2 = /^[`\*_\[~]+/;
+		const test = reg1.test(html);
 		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 		const overlaps = [ I.MarkOverlap.Left, I.MarkOverlap.Right, I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight ];
 
@@ -491,47 +475,78 @@ class Mark {
 
 		let text = html;
 
-		// Markdown
-		for (const item of this.regexpMarkdown) {
-			if (restricted.includes(item.type)) {
-				continue;
+		html.replace(reg1, (s: string, p1: string, p2: string, o: number) => {
+			o = Number(o) || 0;
+
+			const m = p2.match(reg2);
+			if (!m) {
+				return s;
 			};
 
-			html = text;
-			html.replace(item.reg, (s: string, p1: string, p2: string, p3: string, p4: string, p5: string) => {
-				p1 = String(p1 || '');
-				p2 = String(p2 || '');
-				p3 = String(p3 || '');
-				p4 = String(p4 || '');
-				p5 = String(p5 || '');
+			const symbol = m[0];
 
-				const from = (Number(text.indexOf(s)) || 0) + p1.length;
-				const to = from + p3.length;
-				const replace = (p1 + p3 + ' ').replace(new RegExp('\\$', 'g'), '$$$');
-
-				let check = true;
-				for (const mark of checked) {
-					const overlap = this.overlap({ from, to }, mark.range);
-					if (overlaps.includes(overlap)) {
-						check = false;
-						break;
-					};
+			let type = null;
+			switch (symbol) {
+				case '`': {
+					type = I.MarkType.Code;
+					break;
 				};
 
-				if (check) {
-					marks = this.adjust(marks, from, -p2.length);
-					marks = this.adjust(marks, to, -p4.length);
-					marks.push({ type: item.type, range: { from, to }, param: '' });
-
-					text = text.replace(s, replace);
-					adjustMarks = true;
+				case '**':
+				case '__': {
+					type = I.MarkType.Bold;
+					break;
 				};
+
+				case '*':
+				case '_': {
+					type = I.MarkType.Italic;
+					break;
+				};
+
+				case '~~': {
+					type = I.MarkType.Strike;
+					break;
+				};
+			};
+
+			if ((type === null) || restricted.includes(type)) {
 				return s;
-			});
-		};
+			};
+
+			const p1l = p1.length;
+			const p2l = p2.length;
+			const length = symbol.length;
+			const from = o + p1l;
+			const to = from + p2l - length * 2;
+			const replace = p2.replace(new RegExp(U.Common.regexEscape(symbol), 'g'), '') + ' ';
+
+			let check = true;
+			for (const mark of checked) {
+				const overlap = this.overlap({ from, to }, mark.range);
+				if (overlaps.includes(overlap)) {
+					check = false;
+					break;
+				};
+			};
+
+			if (!check) {
+				return s;
+			};
+
+			marks = this.adjust(marks, from, -length);
+			marks = this.adjust(marks, to, -length);
+			marks.push({ type, range: { from, to }, param: '' });
+
+			text = U.Common.stringInsert(text, replace, o + p1l, o + p1l + p2l);
+			adjustMarks = true;
+
+			return s;
+		});
+
+		marks = this.checkRanges(text, marks);
 
 		// Links
-		html = text;
 		html.replace(/\[([^\[\]]+)\]\(([^\(\)]+)\)(\s|$)/g, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '');
 			p2 = String(p2 || '');
@@ -617,22 +632,27 @@ class Mark {
 		};
 		
 		switch (type) {
-			case I.MarkType.Link:
+			case I.MarkType.Link: {
 				attr = `href="${param}"`;
 				break;
+			};
 
 			case I.MarkType.Mention:
-			case I.MarkType.Emoji:
+			case I.MarkType.Emoji: {
 				attr = 'contenteditable="false"';
 				break;
+			};
 				
-			case I.MarkType.Color:
+			case I.MarkType.Color: {
 				attr = `class="textColor textColor-${param}"`;
 				break;
+			};
 				
-			case I.MarkType.BgColor:
+			case I.MarkType.BgColor: {
 				attr = `class="bgColor bgColor-${param}"`;
 				break;
+			};
+
 		};
 		return attr;
 	};
@@ -698,7 +718,14 @@ class Mark {
 	};
 
 	needsBreak (t: I.MarkType): boolean {
-		return [ I.MarkType.Link, I.MarkType.Object, I.MarkType.Search, I.MarkType.Change, I.MarkType.Highlight ].includes(t);
+		return [ 
+			I.MarkType.Link, 
+			I.MarkType.Object, 
+			I.MarkType.Search, 
+			I.MarkType.Change, 
+			I.MarkType.Highlight, 
+			I.MarkType.Code,
+		].includes(t);
 	};
 
 	canSave (t: I.MarkType): boolean {
