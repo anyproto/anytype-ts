@@ -264,28 +264,24 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			getTypeId, getTemplateId, isAllowedDefaultType, onTemplateAdd, onSortAdd, onFilterAdd,
 		} = this.props;
 		const view = getView();
-		const obj = $(element);
+		const toggleParam = {
+			onOpen: () => this.toggleHoverArea(true),
+			onClose: () => this.toggleHoverArea(false),
+		};
 
 		if (((component == 'dataviewSort') && !view.sorts.length) || ((component == 'dataviewFilterList') && !view.filters.length)) {
-			this.sortOrFilterRelationSelect(component,{ element }, () => {
+			this.sortOrFilterRelationSelect(component,{ ...toggleParam, element }, () => {
 				this.onButton(element, component);
 			});
 			return;
 		};
 
-		const param: any = { 
+		const param: any = {
+			...toggleParam,
 			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			noFlipY: true,
-			onOpen: () => {
-				obj.addClass('active');
-				this.toggleHoverArea(true);
-			},
-			onClose: () => {
-				obj.removeClass('active');
-				this.toggleHoverArea(false);
-			},
 			onBack: (id) => {
 				S.Menu.replace(id, component, { ...param, noAnimation: true });
 				window.setTimeout(() => S.Menu.update(component, { noAnimation: false }), 50);
@@ -311,11 +307,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				onViewCopy: this.onViewCopy,
 				onViewRemove: this.onViewRemove,
 				view: observable.box(view),
-				onAdd: (menuId, menuWidth) => {
-					this.sortOrFilterRelationSelect(component,{
+				onAdd: (menuId: string, component: string, menuWidth: number) => {
+					this.sortOrFilterRelationSelect(component, {
 						element: `#${menuId} #item-add`,
 						offsetX: menuWidth,
-						horizontal: I.MenuDirection.Right
+						horizontal: I.MenuDirection.Right,
+						vertical: I.MenuDirection.Center,
 					});
 				},
 			},
@@ -357,9 +354,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		if (component == 'dataviewSort') {
-			newItem = Object.assign(newItem, {
-				type: I.SortType.Asc,
-			});
+			newItem = Object.assign(newItem, { type: I.SortType.Asc });
 
 			onSortAdd(newItem, callBack);
 		} else

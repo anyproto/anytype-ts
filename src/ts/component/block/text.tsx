@@ -24,6 +24,9 @@ for (const lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
 };
 
+const katex = require('katex');
+require('katex/dist/contrib/mhchem');
+
 const BlockText = observer(class BlockText extends React.Component<Props> {
 
 	public static defaultProps = {
@@ -219,6 +222,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.marks = U.Common.objectCopy(marks || []);
 		this.setValue(text);
+		this.renderLatex();
 	};
 	
 	componentDidUpdate () {
@@ -236,6 +240,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (focused == block.id) {
 			focus.apply();
+		} else {
+			this.renderLatex();
 		};
 
 		if (onUpdate) {
@@ -308,6 +314,51 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 	};
 	
+	renderLatex () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const { block } = this.props;
+		if (block.isTextCode()) {
+			return;
+		};
+
+		const reg = /\$((?:[^$\\]|\\.)*?)\$([^\d]|$)/g;
+
+		let value = this.refEditable.getHtmlValue();
+
+		if (!reg.test(value)) {
+			return;
+		};
+
+		value = U.Common.fromHtmlSpecialChars(value);
+
+		const tag = Mark.getTag(I.MarkType.Latex);
+		const html = value.replace(reg, (s: string, p1: string, p2: string) => {
+			let ret = '';
+
+			try {
+				ret = katex.renderToString(U.Common.stripTags(p1), { 
+					displayMode: false, 
+					throwOnError: false,
+					output: 'html',
+					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
+				});
+
+				ret = ret ? `<${tag}>${ret}</${tag}>${p2}` : s;
+			} catch (e) {
+				ret = s;
+			};
+
+			return ret;
+		});
+
+		if (this.refEditable && (html !== value)) {
+			this.refEditable.setValue(html);
+		};
+	};
+
 	getValue (): string {
 		return this.refEditable ? this.refEditable.getTextValue() : '';
 	};
@@ -399,17 +450,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `ctrl+shift+l` },
 			{ key: `ctrl+shift+/` },
 		];
-
-		if (isInsideTable) {
-			if (!range.to) {
-				saveKeys.push({ key: `arrowleft, arrowup` });
-			};
-
-			if (range.to == value.length) {
-				saveKeys.push({ key: `arrowright, arrowdown` });
-			};
-		};
-		
 		const twinePairs = {
 			'[': ']',
 			'{': '}',
@@ -422,8 +462,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			'（': '）',
 			'“': '”',
 			'‘': '’',
+			'$': '$',
 		};
 
+		if (isInsideTable) {
+			if (!range.to) {
+				saveKeys.push({ key: `arrowleft, arrowup` });
+			};
+
+			if (range.to == value.length) {
+				saveKeys.push({ key: `arrowright, arrowdown` });
+			};
+		};
+		
 		for (let i = 0; i < 9; ++i) {
 			saveKeys.push({ key: `${cmd}+${i}` });
 		};
@@ -681,7 +732,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		// Make div
-		const divReg = new RegExp('^(---|—-|\\*\\*\\*)');
+		const divReg = new RegExp('^(---|—-|\\*\\*\\*)\\s');
 		const match = value.match(divReg);
 
 		if (match) {
@@ -782,7 +833,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					const mark = this.marks[i];
 
 					if (Mark.needsBreak(mark.type) && (mark.range.to == range.to)) {
-						const adjusted = Mark.adjust([ mark ], mark.range.from, -d);
+						const adjusted = Mark.adjust([ mark ], mark.range.to - d, -d);
 
 						this.marks[i] = adjusted[0];
 						adjustMarks = true;
@@ -932,11 +983,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onFocus (e: any) {
-		const { onFocus } = this.props;
+		const { onFocus, block } = this.props;
 
 		e.persist();
 
 		this.placeholderCheck();
+		this.setValue(block.getText());
+
+		keyboard.setFocus(true);
 
 		if (onFocus) {
 			onFocus(e);
@@ -972,6 +1026,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (key) {
 			analytics.event(key);
 		};
+
+		this.renderLatex();
 	};
 	
 	onPaste (e: any) {

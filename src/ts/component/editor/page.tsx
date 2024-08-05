@@ -336,12 +336,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	unbind () {
 		const { isPopup } = this.props;
-		const namespace = U.Common.getEventNamespace(isPopup);
+		const ns = `editor${U.Common.getEventNamespace(isPopup)}`;
 		const container = U.Common.getScrollContainer(isPopup);
 		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus' ];
 
-		$(window).off(events.map(it => `${it}.editor${namespace}`).join(' '));
-		container.off(`scroll.editor${namespace}`);
+		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+		container.off(`scroll.${ns}`);
 		Renderer.remove('commandEditor');
 	};
 
@@ -349,38 +349,39 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isPopup } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
-		const namespace = U.Common.getEventNamespace(isPopup);
+		const ns = `editor${U.Common.getEventNamespace(isPopup)}`;
 		const container = U.Common.getScrollContainer(isPopup);
 		const isReadonly = this.isReadonly();
 
 		this.unbind();
 
 		if (!isReadonly) {
-			win.on(`mousemove.editor${namespace}`, throttle(e => this.onMouseMove(e), THROTTLE));
+			win.on(`mousemove.${ns}`, throttle(e => this.onMouseMove(e), THROTTLE));
 		};
 
-		win.on(`keydown.editor${namespace}`, e => this.onKeyDownEditor(e));
-		win.on(`paste.editor${namespace}`, (e: any) => {
+		win.on(`keydown.${ns}`, e => this.onKeyDownEditor(e));
+		win.on(`paste.${ns}`, (e: any) => {
 			if (!keyboard.isFocused) {
 				this.onPaste(e, {});
 			};
 		});
 
-		win.on(`focus.editor${namespace}`, () => {
+		win.on(`focus.${ns}`, () => {
 			const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 			const menuOpen = this.menuCheck();
 			const ids = selection?.get(I.SelectType.Block, true) || [];
 			
 			if (!ids.length && !menuOpen && !popupOpen) {
 				focus.restore();
-				focus.apply(); 
+				raf(() => focus.apply());
 			};
 
 			container.scrollTop(this.containerScrollTop);
 		});
 
-		win.on(`resize.editor${namespace}`, () => this.resizePage());
-		container.on(`scroll.editor${namespace}`, e => this.onScroll());
+		win.on(`resize.${ns}`, () => this.resizePage());
+		container.on(`scroll.${ns}`, e => this.onScroll());
+
 		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 	
@@ -1432,6 +1433,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const parentElement = S.Block.getParentMapElement(rootId, block.id);
+		if (!parentElement) {
+			return;
+		};
+
 		const idx = parentElement.childrenIds.indexOf(block.id);
 
 		// Check if there is empty table to fill when moving
@@ -1461,6 +1466,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (isInsideTable) {
 			const row = S.Block.getParentLeaf(rootId, block.id);
 			const rowElement = S.Block.getParentMapElement(rootId, block.id);
+			if (!rowElement) {
+				return;
+			};
+
 			const idx = rowElement.childrenIds.indexOf(block.id);
 			const nextRow = S.Block.getNextTableRow(rootId, row.id, dir);
 

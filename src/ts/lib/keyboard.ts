@@ -9,7 +9,6 @@ class Keyboard {
 	};
 	timeoutPin = 0;
 	timeoutSidebarHide = 0;
-	timeoutSidebarAnim = 0;
 	pressed: string[] = [];
 	match: any = {};
 	matchPopup: any = {};
@@ -109,6 +108,10 @@ class Keyboard {
 		this.mouse = {
 			page: { x: e.pageX, y: e.pageY },
 			client: { x: e.clientX, y: e.clientY },
+		};
+
+		if (this.isMain()) {
+			sidebar.onMouseMove();
 		};
 	};
 	
@@ -773,7 +776,7 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
 
-		this.printApply('print', true);
+		this.printApply('print', false);
 		Renderer.send('winCommand', 'printPdf', { name: object.name, options });
 	};
 

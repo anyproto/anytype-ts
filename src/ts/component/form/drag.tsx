@@ -7,6 +7,7 @@ interface Props {
 	className: string;
 	value: number;
 	snaps?: number[];
+	strictSnap?: boolean;
 	onStart?(e: any, v: number): void;
 	onMove?(e: any, v: number): void;
 	onEnd?(e: any, v: number): void;
@@ -18,6 +19,8 @@ class Drag extends React.Component<Props> {
 
 	public static defaultProps = {
 		value: 0,
+		min: 0,
+		max: 1,
 		className: '',
 	};
 	
@@ -121,13 +124,15 @@ class Drag extends React.Component<Props> {
 	};
 	
 	move (x: number) {
+		const { strictSnap } = this.props;
+		const snaps = this.props.snaps || [];
+
 		raf(() => {
 			const node = $(this.node);
 			const nw = node.width();
 			const iw = this.icon.width();
 			const ib = parseInt(this.icon.css('border-width'));
 			const mw = this.maxWidth();
-			const snaps = this.props.snaps || [];
 
 			x = Math.max(0, x);
 			x = Math.min(mw, x);
@@ -135,9 +140,17 @@ class Drag extends React.Component<Props> {
 			this.value = this.checkValue(x / mw);
 
 			// Snap
-			for (const s of snaps) {
-				if ((this.value >= s - SNAP) && (this.value <= s + SNAP)) {
-					this.value = s;
+			if (strictSnap && snaps.length && (this.value < snaps[0] / 2)) {
+				this.value = 0;
+			} else {
+				const step = 1 / snaps.length;
+				for (const snap of snaps) {
+					const d = strictSnap ? step / 2 : SNAP;
+
+					if ((this.value >= snap - d) && (this.value < snap + d)) {
+						this.value = snap;
+						break;
+					};
 				};
 			};
 

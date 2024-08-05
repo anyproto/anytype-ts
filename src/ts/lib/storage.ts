@@ -12,6 +12,7 @@ const SPACE_KEYS = [
 	'defaultType',
 	'pinnedTypes',
 	'lastChatMessageId',
+	'popupSearch',
 ];
 
 class Storage {
