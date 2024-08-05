@@ -1,6 +1,13 @@
 import $ from 'jquery';
 import { I, U, J, analytics } from 'Lib';
 
+const Tags = {};
+for (const i in I.MarkType) {
+	if (!isNaN(Number(i))) {
+		Tags[i] = `markup${I.MarkType[i].toLowerCase()}`;
+	};
+};
+
 const Patterns = {
 	'-→': '⟶',
 	'—>': '⟶',
@@ -23,8 +30,7 @@ const Patterns = {
 	'...': '…',
 };
 
-const Order: any = {};
-[
+const Order = [
 	I.MarkType.Change,
 	I.MarkType.Object,
 	I.MarkType.Emoji,
@@ -37,7 +43,7 @@ const Order: any = {};
 	I.MarkType.Color,
 	I.MarkType.BgColor,
 	I.MarkType.Code,
-].forEach((type, i) => Order[type] = i);
+];
 
 class Mark {
 
@@ -139,8 +145,8 @@ class Mark {
 	};
 	
 	sort (c1: I.Mark, c2: I.Mark) {
-		const o1 = Order[c1.type];
-		const o2 = Order[c2.type];
+		const o1 = Order.indexOf(c1.type);
+		const o2 = Order.indexOf(c2.type);
 		if (o1 > o2) return 1;
 		if (o1 < o2) return -1;
 		if (c1.range.from > c2.range.from) return 1;
@@ -411,12 +417,7 @@ class Mark {
 		});
 
 		// Fix html special symbols
-		text = text.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
-			if (p == '&lt;') p = '<';
-			if (p == '&gt;') p = '>';
-			if (p == '&amp;') p = '&';
-			return p;
-		});
+		text = U.Common.fromHtmlSpecialChars(text);
 
 		html = text;
 		html.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
@@ -543,6 +544,8 @@ class Mark {
 			return s;
 		});
 
+		marks = this.checkRanges(text, marks);
+
 		// Links
 		html.replace(/\[([^\[\]]+)\]\(([^\(\)]+)\)(\s|$)/g, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '');
@@ -629,22 +632,27 @@ class Mark {
 		};
 		
 		switch (type) {
-			case I.MarkType.Link:
+			case I.MarkType.Link: {
 				attr = `href="${param}"`;
 				break;
+			};
 
 			case I.MarkType.Mention:
-			case I.MarkType.Emoji:
+			case I.MarkType.Emoji: {
 				attr = 'contenteditable="false"';
 				break;
+			};
 				
-			case I.MarkType.Color:
+			case I.MarkType.Color: {
 				attr = `class="textColor textColor-${param}"`;
 				break;
+			};
 				
-			case I.MarkType.BgColor:
+			case I.MarkType.BgColor: {
 				attr = `class="bgColor bgColor-${param}"`;
 				break;
+			};
+
 		};
 		return attr;
 	};

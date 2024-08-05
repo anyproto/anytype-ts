@@ -17,7 +17,8 @@ export default {
 	},
 
 	sidebar: {
-		width: { min: 240, max: 500, default: 336, close: 180 }
+		width: { min: 240, max: 500, default: 336, close: 180 },
+		threshold: 30,
 	},
 
 	table: {

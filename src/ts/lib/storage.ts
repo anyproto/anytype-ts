@@ -11,6 +11,7 @@ const SPACE_KEYS = [
 	'scroll',
 	'defaultType',
 	'pinnedTypes',
+	'popupSearch',
 ];
 
 class Storage {

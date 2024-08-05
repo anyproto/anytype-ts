@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, translate } from 'Lib';
+import { I, U, J, S, keyboard, Preview, sidebar, translate, analytics } from 'Lib';
 import ListWidget from 'Component/list/widget';
 
 const Sidebar = observer(class Sidebar extends React.Component {
@@ -26,9 +26,12 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		this.onResizeMove = this.onResizeMove.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onHandleClick = this.onHandleClick.bind(this);
+		this.onToggleClick = this.onToggleClick.bind(this);
+		this.onToggleContext = this.onToggleContext.bind(this);
 	};
 
     render() {
+		const { showVault } = S.Common;
         const cn = [ 'sidebar' ];
 		const space = U.Space.getSpaceview();
 		const cmd = keyboard.cmdSymbol();
@@ -50,7 +53,8 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					id="sidebarToggle"
 					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 					tooltipY={I.MenuDirection.Bottom}
-					onClick={() => sidebar.toggleOpenClose()}
+					onClick={this.onToggleClick}
+					onContextMenu={this.onToggleContext}
 				/>
 
 				<div 
@@ -79,18 +83,35 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		);
     };
 
-	// Lifecycle Methods
-
 	componentDidMount (): void {
 		this._isMounted = true;
+		this.init();
 
 		sidebar.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
 	};
 
 	componentWillUnmount (): void {
 		this._isMounted = false;
 
 		Preview.tooltipHide(true);
+	};
+
+	init () {
+		const { showVault } = S.Common;
+		const node = $(this.node);
+		const vault = $(S.Common.getRef('vault').node);
+
+		if (showVault) {
+			node.addClass('withVault');
+			vault.removeClass('isHidden');
+		} else {
+			node.removeClass('withVault');
+			vault.addClass('isHidden');
+		};
 	};
 
 	setActive (id: string): void {
@@ -188,7 +209,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 
 	onHandleClick () {
 		if (!this.movedX) {
-			sidebar.toggleOpenClose();
+			this.onToggleClick();
 		};
 	};
 
@@ -197,6 +218,15 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		if (space && space.isShared) {
 			S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
 		};
+	};
+
+	onToggleClick () {
+		sidebar.toggleOpenClose();
+		S.Common.hideSidebarSet(false);
+	};
+
+	onToggleContext () {
+		U.Menu.sidebarContext('#sidebarToggle');
 	};
 
 });

@@ -103,7 +103,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 
 		const { preview } = S.Common;
 		const { type, target } = preview;
-		const object = this.state.object || preview.object;
+		const object = preview.object || this.state.object;
 
 		switch (type) {
 			case I.PreviewType.Link: {
@@ -265,7 +265,6 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		};
 
 		poly.css(pcss);
-		
 		window.setTimeout(() => { obj.css({ opacity: 1, transform: 'translateY(0%)' }); }, 15);
 	};
 

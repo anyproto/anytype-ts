@@ -177,7 +177,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         );
 
         let content = null;
-        if (!items.length && !isLoading) {
+        if (!items.length) {
             if (!filter) {
                 controls = null;
             } else {

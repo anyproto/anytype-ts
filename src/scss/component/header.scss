@@ -66,6 +66,18 @@
 	.side.left { padding-left: 120px; }
 }
 
+html:not(.platformMac) {
+	.header:not(.withSidebar) {
+		.side.left { padding-left: 52px; }
+	}
+}
+
+body.isFullScreen {
+	.header:not(.withSidebar) {
+		.side.left { padding-left: 52px; }
+	}
+}
+
 .header.authIndex { height: 52px; }
 
 html:not(.bodyIndexIndex):not(.bodyAuthSelect) {

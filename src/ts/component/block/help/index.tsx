@@ -24,7 +24,7 @@ class Block extends React.Component<Props> {
 		const cn = [ 'block', U.Data.blockClass({ type: type, content: { style: style } }), 'align' + align ];
 
 		let content = null;
-		
+
 		switch (type) {
 			case I.BlockType.IconPage: {
 				content = <ContentIcon {...this.props} />;

@@ -313,7 +313,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	};
 
 	onAdd () {
-		const { param, getId, getSize } = this.props;
+		const { id, param, getId, getSize } = this.props;
 		const { data } = param;
 		const { onSortAdd, onAdd } = data;
 		const relationOptions = this.getRelationOptions();
@@ -323,7 +323,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		};
 
 		if (onAdd) {
-			onAdd(getId(), getSize().width);
+			onAdd(getId(), param.component || id, getSize().width);
 			return;
 		};
 

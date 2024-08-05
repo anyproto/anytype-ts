@@ -453,7 +453,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getLimit (type: I.ViewType): number {
 		const { isInline } = this.props;
 		const view = this.getView();
-		const options = Relation.getPageLimitOptions(view.type);
+		const options = Relation.getPageLimitOptions(view.type, isInline);
 		const pageLimit = Number(view.pageLimit) || options[0].id;
 
 		let limit = 0;

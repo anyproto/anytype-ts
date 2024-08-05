@@ -10,7 +10,7 @@
 	#viewSelect { padding: 0px 16px; }
 	#viewSelect:empty { display: none; }
 	#viewSelect {
-		.select { border: none; margin-left: -6px; padding-right: 16px; }
+		.select { border: none; margin-left: -6px; padding-right: 16px; max-width: calc(100% + 6px); }
 		.select {
 			.item { @include text-small; line-height: 18px !important; font-weight: 500; }
 			.icon.arrow { 
