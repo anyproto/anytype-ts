@@ -564,9 +564,8 @@
 			"artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
 			"publish": [
 				{
-					"provider": "spaces",
-					"name": "anytype-release",
-					"region": "fra1"
+					"provider": "generic",
+					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
 			],
 			"signIgnore": [
@@ -584,9 +583,8 @@
 			"icon": "electron/img/icons/256x256.ico",
 			"publish": [
 				{
-					"provider": "spaces",
-					"name": "anytype-release",
-					"region": "fra1"
+					"provider": "generic",
+					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
 			]
 		},
@@ -602,9 +600,8 @@
 			"description": "Anytype",
 			"publish": [
 				{
-					"provider": "spaces",
-					"name": "anytype-release",
-					"region": "fra1"
+					"provider": "generic",
+					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
 			],
 			"desktop": {
