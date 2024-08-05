@@ -11,7 +11,7 @@
 	#footer { right: $historyPanelWidth; }
 
 	#body {
-		> #historySideLeft { padding: 52px 0px 80px 0px; width: calc(100% - $historyPanelWidth); overflow-x: hidden; overflow-y: auto; position: relative; }
+		> #historySideLeft { padding: 0px 0px 80px 0px; width: calc(100% - $historyPanelWidth); overflow-x: hidden; overflow-y: auto; position: relative; }
 
 		> #historySideRight { width: $historyPanelWidth; z-index: 20; background: var(--color-shape-tertiary); display: flex; flex-direction: column; position: relative; }
 		> #historySideRight {
