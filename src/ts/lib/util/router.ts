@@ -127,6 +127,9 @@ class UtilRouter {
 	};
 
 	switchSpace (id: string, route?: string, sendEvent?: boolean, callBack?: () => void) {
+		console.log('[UtilRouter].switchSpace id: ', id, 'route: ', route);
+		console.trace();
+
 		const { space } = S.Common;
 		const { accountSpaceId } = S.Auth;
 
