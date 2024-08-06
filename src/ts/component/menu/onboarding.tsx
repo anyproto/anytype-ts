@@ -155,6 +155,10 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 	};
 
+	componentWillUnmount (): void {
+		$('.onboardingDimmer').remove();
+	};
+
 	onClose () {
 		const { param, close } = this.props;
 		const { data } = param;
