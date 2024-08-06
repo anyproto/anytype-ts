@@ -393,6 +393,8 @@ class Action {
 							return;
 						};
 
+						C.AccountEventSubscriptionReady();
+
 						S.Auth.accountSet(message.account);
 						S.Common.configSet(message.account.config, false);
 
