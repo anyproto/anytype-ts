@@ -11,7 +11,7 @@ interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
 };
 
-for (const lang of U.Common.prismComponents) {
+for (const lang of U.Prism.components) {
 	require(`prismjs/components/prism-${lang}.js`);
 };
 
@@ -115,7 +115,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 				
 			case I.TextStyle.Code: {
-				const options: I.Option[] = U.Common.prismTitles;
+				const options = U.Menu.codeLangOptions();
 
 				spellcheck = false;
 				
@@ -259,7 +259,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			// do not highlight unsupported language codes
 			const grammar = Prism.languages[lang] || {};
 
-			lang = U.Common.prismAliasMap[lang] || 'plain';
+			lang = U.Prism.aliasMap[lang] || 'plain';
 
 			if (this.refLang) {
 				this.refLang.setValue(lang);

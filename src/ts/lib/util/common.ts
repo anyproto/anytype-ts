@@ -2,21 +2,9 @@ import $ from 'jquery';
 import DOMPurify from 'dompurify';
 import { I, C, S, J, U, Preview, Renderer, translate, Mark } from 'Lib';
 
-const Components = require(`prismjs/components.js`);
-
 const TEST_HTML = /<[^>]*>/;
 
 class UtilCommon {
-
-	private _prismMap: { [ key: string ]: string } = {};
-	private _prismTitles: { id: string; name: string }[] = [];
-	prismAliasMap: { [ key: string ]: string } = {};
-
-	constructor () {
-		this._prismMap = this.getPrismMap();
-		this._prismTitles = this.getPrismTitles();
-		this.prismAliasMap = this.getPrismAliasMap();
-	};
 
 	getElectron () {
 		return window.Electron || {};
@@ -958,96 +946,14 @@ class UtilCommon {
 		return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	};
 
-	private getPrismComponentDependencies (lang: string) {
-		const result = [];
-		const language = Components.languages[lang] || {};
-		// the type of `require`, `optional`, `alias` is one of `undefined`, `string[]` and `string`
-		const requirements = [].concat(language.require || []);
-		const optionals = [].concat(language.optional || []);
-
-		requirements.concat(optionals).forEach(item => {
-			result.push(...this.getPrismComponentDependencies(item));
-		});
-		result.push(lang);
-		return result;
-	};
-
-	/** returns an array which is the correct order of loading all Prism components */
-	get prismComponents (): string[] {
-		const result = [];
-
-		for (const key in Components.languages) {
-			Components.languages[key].title && result.push(...this.getPrismComponentDependencies(key));
-		};
-		return [...new Set(result)];
-	};
-
-    get prismTitles (): { id: string; name: string; }[] {
-        return [...this._prismTitles];
-    };
-
-	private getPrismMap () {
-		const result = {};
-
-		for (const key in Components.languages) {
-			const lang = Components.languages[key];
-			const alias = [].concat(lang.alias || []);
-			const titles = lang.aliasTitles || {};
-
-			if (lang.title) {
-				result[key] = lang.title;
-			};
-
-			alias.forEach((a: string) => {
-				result[a] = titles[a] || lang.title;
-			});
-		};
-		return result;
-	};
-
-	private getPrismAliasMap () {
-		const valueToKeysMap: Map<string, string[]> = new Map();
-
-		for (const [key, value] of Object.entries(this._prismMap)) {
-			valueToKeysMap.set(value, (valueToKeysMap.get(value) || []).concat(key));
-		};
-
-		const result: { [ key: string ]: string } = {};
-
-		for (const [value, keys] of valueToKeysMap.entries()) {
-			keys.sort();
-			for (const key of keys) {
-				result[key] = keys[0];
-			};
-		};
-		return result;
-	};
-
-	private getPrismTitles () {
-		const valueToKeysMap: Map<string, string[]> = new Map();
-
-		for (const [key, value] of Object.entries(this._prismMap)) {
-			valueToKeysMap.set(value, (valueToKeysMap.get(value) || []).concat(key));
-		};
-
-		const result: { id: string; name: string }[] = [];
-
-		for (const [value, keys] of valueToKeysMap.entries()) {
-			keys.sort();
-			result.push({ id: keys[0], name: value });
-		};
-
-		result.push({ id: 'plain', name: translate('blockTextPlain') });
-		return result;
-	};
-
-  fromHtmlSpecialChars (s: string) {
+	fromHtmlSpecialChars (s: string) {
 		return String(s || '').replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
 			if (p == '&lt;') p = '<';
 			if (p == '&gt;') p = '>';
 			if (p == '&amp;') p = '&';
 			return p;
-  });
+		});
+	};
 
 };
 

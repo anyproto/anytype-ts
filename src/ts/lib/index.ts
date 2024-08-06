@@ -1,9 +1,9 @@
 import * as J from 'json';			 // JSON
 import * as I from 'Interface';		 // Interfaces
 import * as M from 'Model';			 // Models
+import * as S from 'Store';			 // Stores
 import * as U from './util';		 // Utils
 import * as C from './api/command';	 // Commands
-import * as S from 'Store';			 // Stores
 
 import Renderer from './renderer';
 import { dispatcher } from './api/dispatcher';

@@ -940,6 +940,10 @@ class UtilMenu {
 		});
 	};
 
+	codeLangOptions (): I.Option[] {
+		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
+	};
+
 };
 
 export default new UtilMenu();
