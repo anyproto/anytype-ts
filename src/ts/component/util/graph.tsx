@@ -105,9 +105,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const theme = S.Common.getThemeClass();
 		const settings = S.Common.getGraph(storageKey);
 
+		this.images = {};
 		this.zoom = d3.zoom().scaleExtent([ 0.05, 10 ]).on('zoom', e => this.onZoom(e));
 		this.edges = (data.edges || []).map(this.edgeMapper);
 		this.nodes = (data.nodes || []).map(this.nodeMapper);
+
+		node.find('canvas').remove();
 
 		this.canvas = d3.select(elementId).append('canvas')
 		.attr('width', (width * density) + 'px')
@@ -125,12 +128,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			width,
 			height,
 			density,
-			nodes: this.nodes,
-			edges: this.edges,
-			theme: theme,
-			colors: J.Theme[theme].graph || {},
+			theme,
 			settings,
 			rootId,
+			nodes: this.nodes,
+			edges: this.edges,
+			colors: J.Theme[theme].graph || {},
 		}, [ transfer ]);
 
 		d3.select(this.canvas)
@@ -146,11 +149,14 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			const { local } = S.Common.getGraph(storageKey);
 			const [ x, y ] = d3.pointer(e);
 
+			let event = '';
 			if (local) {
-				this.send('onSetRootId', { x, y });
+				event = 'onSetRootId';
 			} else {
-				this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
+				event = e.shiftKey ? 'onSelect' : 'onClick';
 			};
+
+			this.send(event, { x, y });
 		})
 		.on('dblclick', (e: any) => {
 			if (e.shiftKey) {
@@ -173,7 +179,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		d.radius = 4;
 		d.src = U.Graph.imageSrc(d);
 
-		if (d.layout == I.ObjectLayout.Note) {
+		if (U.Object.isNoteLayout(d.layout)) {
 			d.name = d.snippet || translate('commonEmpty');
 		} else {
 			d.name = d.name || translate('defaultNamePage');
@@ -185,7 +191,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		d.snippet = String(d.snippet || '');
 
 		// Clear icon props to fix image size
-		if (d.layout == I.ObjectLayout.Task) {
+		if (U.Object.isTaskLayout(d.layout)) {
 			d.iconImage = '';
 			d.iconEmoji = '';
 		};
@@ -233,7 +239,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onDragMove (e: any) {
 		const p = d3.pointer(e, d3.select(this.canvas));
 		const node = $(this.node);
-		
+
 		if (!node || !node.length) {
 			return;
 		};
@@ -332,12 +338,15 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case 'onMouseMove': {
-				if (this.isDragging || !settings.preview) {
+				if (this.isDragging) {
 					break;
 				};
 
 				this.subject = this.nodes.find(d => d.id == data.node);
-				this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
+
+				if (settings.preview) {
+					this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
+				};
 				break;
 			};
 
@@ -400,7 +409,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			...param,
 			data: {
 				route: analytics.route.graph,
-				subId: J.Constant.subId.graph,
 				objectIds: ids,
 				getObject: id => this.getNode(id),
 				allowedLink: true,
@@ -469,7 +477,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						case 'newObject': {
 							const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', flags, 'Graph', (message: any) => {
+							U.Object.create('', '', {}, I.BlockPosition.Bottom, '', flags, analytics.route.graph, (message: any) => {
 								U.Object.openConfig(message.details, { onClose: () => this.addNewNode(message.targetId, '', data) });
 							});
 							break;

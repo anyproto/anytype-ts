@@ -278,8 +278,8 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 
 			const pinned = items.filter(it => pinnedIds.includes(it.id)).sort((c1: any, c2: any) => U.Data.sortByPinnedTypes(c1, c2, pinnedIds));
 			const librarySources = library.map(it => it.sourceObject);
-			const groups = library.filter(it => U.Object.isSetLayout(it.recommendedLayout) && !pinnedIds.includes(it.id));
-			const objects = library.filter(it => !U.Object.isSetLayout(it.recommendedLayout) && !pinnedIds.includes(it.id));
+			const groups = library.filter(it => U.Object.isInSetLayouts(it.recommendedLayout) && !pinnedIds.includes(it.id));
+			const objects = library.filter(it => !U.Object.isInSetLayouts(it.recommendedLayout) && !pinnedIds.includes(it.id));
 
 			if (this.filter) {
 				objects.push({ 
@@ -441,7 +441,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			};
 
 			let flags: I.ObjectFlag[] = [];
-			if (!U.Object.isSetLayout(type.recommendedLayout)) {
+			if (!U.Object.isInSetLayouts(type.recommendedLayout)) {
 				flags = flags.concat([ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 			};
 
@@ -492,7 +492,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		const type = S.Record.getTypeById(item.itemId);
 		const isPinned = Storage.getPinnedTypes().includes(item.itemId);
 		const canPin = type.isInstalled;
-		const canDefault = type.isInstalled && !U.Object.isSetLayout(item.recommendedLayout) && (type.id != S.Common.type);
+		const canDefault = type.isInstalled && !U.Object.isInSetLayouts(item.recommendedLayout) && (type.id != S.Common.type);
 		const canDelete = type.isInstalled && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 		const route = analytics.route.navigation;
 

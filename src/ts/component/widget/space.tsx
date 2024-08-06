@@ -11,27 +11,13 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		super(props);
 
 		this.onSettings = this.onSettings.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
 		this.onRequest = this.onRequest.bind(this);
 	};
 
 	render (): React.ReactNode {
 		const space = U.Space.getSpaceview();
-		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
-		const memberCnt = participants.filter(it => it.isActive).length;
 
-		let status = '';
 		let content = null;
-
-		if (space && !space._empty_) {
-			if (space.isShared) {
-				status = U.Common.sprintf('%d %s', memberCnt, U.Common.plural(memberCnt, translate('pluralMember')));
-			} else {
-				status = translate(`spaceAccessType${space.spaceAccessType}`);
-			};
-		};
-
 		if (!space._empty_) {
 			content = (
 				<React.Fragment>
@@ -39,14 +25,12 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 						id="widget-space-icon" 
 						object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
 						forceLetter={true} 
-						size={36}
-						onSelect={this.onSelect}
-						onUpload={this.onUpload}
+						size={28}
+						iconSize={28}
 						menuParam={{ className: 'fixed' }}
 					/>
 					<div className="txt">
 						<ObjectName object={space} />
-						{status ? <div className="type">{status}</div> : ''}
 					</div>
 				</React.Fragment>
 			);
@@ -79,14 +63,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	onSettings (e: React.MouseEvent) {
 		e.stopPropagation();
 		this.openSettings('spaceIndex');
-	};
-
-	onSelect () {
-		C.WorkspaceSetInfo(S.Common.space, { iconImage: '' });
-	};
-
-	onUpload (objectId: string) {
-		C.WorkspaceSetInfo(S.Common.space, { iconImage: objectId });
 	};
 
 	onRequest (e: any) {

@@ -52,7 +52,9 @@
 			}
 		}
 
-		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: auto; }
+		.scrollWrap { padding: 22px 0px 16px 0px; overflow-x: hidden; overflow-y: auto; flex-grow: 1; }
+		.bottom { flex-shrink: 0; }
+
 		.item { padding: 0px 26px; cursor: default; }
 		.item:hover {
 			.icon.fav { opacity: 1; }
@@ -142,7 +144,7 @@
 			}
 
 			.cell.isEditing.c-object {
-				.cellContent, .placeholder { padding: 5px 8px 1px 8px !important; }
+				.cellContent, .placeholder { padding: 5px 8px !important; }
 			}
 
 			.cell.isEditing.c-longText {
@@ -153,6 +155,7 @@
 			.cellContent { min-height: 22px; }
 			.cellContent {
 				.name { line-height: 22px; }
+				.more { line-height: 22px; }
 			}
 			.cellContent.isName { display: flex; align-items: center; }
 		}

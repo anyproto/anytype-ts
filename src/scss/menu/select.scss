@@ -20,7 +20,11 @@
 
 	.menu.menuSelect.withFilter {
 		.content { padding: 8px 0px 0px 0px; }
-		.items { height: calc(100% - 38px); }
+		.items { height: calc(100% - 30px); }
+	}
+
+	.menu.menuSelect.withAdd {
+		.content { max-height: 378px; }
 	}
 
 	.menu.menuSelect.skip { width: var(--menu-width-value); }
@@ -56,12 +60,11 @@
 		.items { padding: 8px 0px; }
 	}
 
-	.menu.menuSelect.spaceSelect { width: var(--menu-width-value); }
+	.menu.menuSelect.spaceSelect { width: var(--menu-width-set); }
 	.menu.menuSelect.spaceSelect {
-		.content { padding: 8px 0px; }
 		.item { padding: 4px 16px; }
 		.item {
-			.icon.add {
+			.icon.plus {
 				border-radius: 8px; border: 1px solid var(--color-shape-secondary); background-color: var(--color-shape-highlight-light);
 				background-image: url('~img/icon/popup/usecase/plus.svg'); width: 48px; height: 48px; background-size: 20px;
 			}
@@ -69,6 +72,8 @@
 			.iconObject.isSpaceView { border-radius: 8px !important; }
 			.clickable { align-items: center; gap: 0px 12px; }
 		}
+
+		.item.add { gap: 0px 12px; }
 	}
 
 	/* Links, Backlinks */

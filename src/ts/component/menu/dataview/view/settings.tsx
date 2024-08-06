@@ -130,10 +130,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 	
 	onKeyDown (e: any) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const view = data.view.get();
-		const item = this.getItems()[this.n];
+		const { close } = this.props;
 		const k = keyboard.eventKey(e);
 
 		let ret = false;
@@ -312,7 +309,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 				title: item.name,
 				withBack: true,
 				width: getSize().width,
-				data: param.data,
+				data,
 				noAnimation: true,
 				onOpen: (context) => {
 					this.menuContext = context;
@@ -320,7 +317,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			};
 
 			if (item.data) {
-				param.data = Object.assign(addParam.data, item.data);
+				addParam.data = Object.assign(addParam.data, item.data);
 			};
 
 			S.Menu.replace(id, item.subComponent, Object.assign(param, addParam));

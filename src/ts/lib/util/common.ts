@@ -310,7 +310,7 @@ class UtilCommon {
 		s = String(s || '');
 		l = Number(l) || 16;
 		if (s.length > l) {
-			s = s.substring(0, l) + (!noEnding ? '...' : '');
+			s = s.substring(0, l) + (!noEnding ? '…' : '');
 		};
 		return s;
 	};
@@ -377,11 +377,12 @@ class UtilCommon {
 	};
 
 	formatNumber (v: number): string {
-		v = Number(v) || 0;
+		let s = String(v || '');
+		if (s.length < 6) {
+			return s;
+		};
 
-		let ret = String(v || '');
 		let parts = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 8 }).formatToParts(v);
-
 		if (parts && parts.length) {
 			parts = parts.map((it: any) => {
 				if (it.type == 'group') {
@@ -389,9 +390,9 @@ class UtilCommon {
 				};
 				return it.value;
 			});
-			ret = parts.join('');
+			s = parts.join('');
 		};
-		return ret;
+		return s;
 	};
 
 	textStyle (obj: any, param: any) {
@@ -1039,6 +1040,14 @@ class UtilCommon {
 		result.push({ id: 'plain', name: translate('blockTextPlain') });
 		return result;
 	};
+
+  fromHtmlSpecialChars (s: string) {
+		return String(s || '').replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
+			if (p == '&lt;') p = '<';
+			if (p == '&gt;') p = '>';
+			if (p == '&amp;') p = '&';
+			return p;
+  });
 
 };
 

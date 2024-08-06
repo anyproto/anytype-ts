@@ -138,11 +138,9 @@ class RoutePage extends React.Component<RouteComponentProps> {
 					<ListPopup key="listPopup" {...this.props} />
 					<ListMenu key="listMenu" {...this.props} />
 
-					<div id="vaultContentContainer">
-						<Sidebar key="sidebar" {...this.props} />
-						<Navigation ref={ref => S.Common.refSet('navigation', ref)} key="navigation" {...this.props} />
-						<Page {...this.props} />
-					</div>
+					<Navigation ref={ref => S.Common.refSet('navigation', ref)} key="navigation" {...this.props} />
+					<Sidebar key="sidebar" {...this.props} />
+					<Page {...this.props} />
 				</DragProvider>
 			</SelectionProvider>
 		);
@@ -205,7 +203,7 @@ class App extends React.Component<object, State> {
 						<Toast />
 						<ListNotification key="listNotification" />
 						<Share showOnce={true} />
-						<Vault />
+						<Vault ref={ref => S.Common.refSet('vault', ref)} />
 
 						<Switch>
 							{J.Route.map((path: string, i: number) => (
@@ -359,7 +357,7 @@ class App extends React.Component<object, State> {
 							S.Common.configSet(account.config, false);
 
 							if (spaceId) {
-								U.Router.switchSpace(spaceId, '', cb);
+								U.Router.switchSpace(spaceId, '', false, cb);
 							} else {
 								U.Data.onInfo(account.info);
 								U.Data.onAuth({}, cb);

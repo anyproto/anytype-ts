@@ -82,3 +82,9 @@
 }
 
 .block.blockCover > .wrapContent > .selectionTarget { height: 100%; }
+
+.sidebarAnimation {
+	.block.blockCover {
+		img.cover { transition: all $transitionSidebarTime linear; }
+	}
+}

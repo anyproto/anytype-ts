@@ -1,7 +1,9 @@
 @import "~scss/_mixins";
 
-.viewList, .viewGrid, .viewGraph { display: flex; flex-direction: column; height: 100%; }
-.viewList, .viewGrid, .viewGraph {
+.viewList, .viewGrid { display: flex; flex-direction: column; height: 100%; }
+.viewList, .viewGrid {
+	.ReactVirtualized__List { padding: 8px 8px 12px 8px; }
+
 	.body { display: flex; flex-direction: column; }
 	.body {
 		.items { height: 100%; }
@@ -53,7 +55,8 @@
 		.item.isDragging { margin-top: -46px; margin-left: -12px; }
 	}
 
-	.body:not(.isCompact) { padding: 0px 8px 8px 8px; }
+	.body { padding: 0px 8px 8px 8px; }
+
 	.body:not(.isCompact) {
 		.item { height: 64px; }
 		.item {
@@ -75,19 +78,21 @@
 		.item::before { border-radius: 6px; }
 	}
 
-	.body.isCompact { padding: 0px 4px 8px 4px; }
 	.body.isCompact {
 		.item { height: 28px; }
 		.item {
-			.inner { gap: 0px 6px; padding: 0px 8px 0px 12px; }
-			.info { width: calc(100% - 28px); }
+			.inner { gap: 0px 6px; padding: 0px 4px 0px 8px; }
+			.info { width: 100%; }
 			.iconObject { background: none; border-radius: 0px; }
 		}
+		.item.withIcon, .item.withIcon {
+			.info { width: calc(100% - 24px); }
+		}
 		.item:hover, .item.active {
-			.info { width: calc(100% - 30px); }
+			.info { width: calc(100% - 28px); }
 		}
 		.item.withIcon:hover, .item.withIcon.active {
-			.info { width: calc(100% - 54px); }
+			.info { width: calc(100% - 52px); }
 		}
 		.item::before { border-radius: 6px; }
 	}

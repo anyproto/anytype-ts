@@ -27,6 +27,8 @@
 		}
 		markuplink.disabled, markupobject.disabled { border-width: 0px; }
 
+		markuplatex { user-select: all !important; }
+
 		markupmention { display: inline; user-select: all !important; position: relative; cursor: default; white-space: nowrap; }
 		markupmention * { user-select: text !important; }
 		markupmention {
@@ -69,7 +71,7 @@
 
 			.marker.bullet { display: flex; align-items: center; justify-content: center; }
 			.marker.bullet {
-				.markerInner { -webkit-print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: black; display: block; }
+				.markerInner { -webkit-print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-primary); display: block; }
 
 				.markerInner.textColor-default { background-color: var(--color-text-primary) !important; }
 				.markerInner.textColor-black { background-color: var(--color-text-primary) !important; }

@@ -162,12 +162,14 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	componentDidMount () {
 		this._isMounted = true;
 		
-		const { isSystemTarget, getData } = this.props;
+		const { block, isSystemTarget, getData, getTraceId } = this.props;
+		const { targetBlockId } = block.content;
 
 		if (isSystemTarget()) {
 			getData(this.getSubId(), this.initCache);
 		} else {
 			this.initCache();
+			C.ObjectShow(targetBlockId, getTraceId(), U.Router.getRouteSpaceId());
 		};
 
 		this.getDeleted();
@@ -346,10 +348,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	getSubId (nodeId?: string): string {
-		const { block } = this.props;
-		const { targetBlockId } = block.content;
-
-		return S.Record.getSubId(this.getSubKey(), nodeId || targetBlockId);
+		return S.Record.getSubId(this.getSubKey(), nodeId || this.props.block.getTargetObjectId());
 	};
 
 	// a composite key for the tree node in the form rootId-parentId-Id-depth
@@ -431,7 +430,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const nodes = this.loadTree();
 		const node = $(this.node);
 		const length = nodes.length;
-		const css: any = { height: this.getTotalHeight() + 8, paddingBottom: '' };
+		const css: any = { height: this.getTotalHeight() + 16, paddingBottom: '' };
 		const emptyWrap = node.find('.emptyWrap');
 
 		if (isPreview) {

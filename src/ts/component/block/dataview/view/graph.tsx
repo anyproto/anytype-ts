@@ -1,23 +1,21 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, keyboard, Dataview } from 'Lib';
+import { I, C, S, U, J, Dataview } from 'Lib';
 import { Graph } from 'Component';
 
 const PADDING = 46;
 
 const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewComponent> {
 
+	_isMounted = false;
 	node: any = null;
 	data: any = {
 		nodes: [],
 		edges: [],
 	};
 	ids: string[] = [];
-	refHeader: any = null;
 	refGraph: any = null;
-	loading = false;
-	timeoutLoading = 0;
 	rootId = '';
 
 	render () {
@@ -45,41 +43,18 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	componentDidMount () {
-		this.rebind();
+		this._isMounted = true;
+
 		this.resize();
 		this.load();
 	};
 
 	componentDidUpdate () {
 		this.resize();
-
-		if (this.loading) {
-			window.clearTimeout(this.timeoutLoading);
-			this.timeoutLoading = window.setTimeout(() => this.setLoading(false), 100);
-		};
 	};
 
 	componentWillUnmount () {
-		this.unbind();
-		window.clearTimeout(this.timeoutLoading);
-	};
-
-	unbind () {
-		$(window).off(`keydown.graphPage updateGraphRoot.graphPage removeGraphNode.graphPage sidebarResize.graphPage`);
-	};
-
-	rebind () {
-		const win = $(window);
-
-		this.unbind();
-		win.on(`keydown.graphPage`, e => this.onKeyDown(e));
-		win.on('sidebarResize.graphPage', () => this.resize());
-	};
-
-	onKeyDown (e: any) {
-		const cmd = keyboard.cmdKey();
-
-		keyboard.shortcut(`${cmd}+f`, e, () => $('#button-header-search').trigger('click'));
+		this._isMounted = false;
 	};
 
 	load () {
@@ -97,54 +72,19 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
-		this.setLoading(true);
-
 		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, (message: any) => {
-			if (message.error.code) {
+			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
-			const hashes: any = [];
-
-			this.data.edges = message.edges.filter(d => { 
-				const hash = [ d.source, d.target ].join('-');
-				if (hashes.includes(hash)) {
-					return false;
-				};
-
-				hashes.push(hash);
-				return (d.source != d.target);
-			});
-
-			// Find backlinks
-			for (const edge of this.data.edges) {
-				const idx = this.data.edges.findIndex(d => (d.source == edge.target) && (d.target == edge.source));
-				if (idx >= 0) {
-					edge.isDouble = true;
-					this.data.edges.splice(idx, 1);
-				};
-			};
-
-			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
-
-			U.Data.onSubscribe(J.Constant.subId.graph, 'id', J.Relation.graph, {
-				error: {},
-				records: message.nodes,
-				dependencies: [],
-				counters: { total: message.nodes.length },
-			});
-
-			this.resize();
+			this.data.edges = message.edges;
+			this.data.nodes = message.nodes;
+			this.forceUpdate();
 
 			if (this.refGraph) {
 				this.refGraph.init();
 			};
-
-			this.forceUpdate();
 		});
-	};
-
-	setLoading (v: boolean) {
 	};
 
 	resize () {

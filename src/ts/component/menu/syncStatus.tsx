@@ -2,21 +2,28 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, ObjectName } from 'Component';
+import { Title, Icon, IconObject, ObjectName, EmptySearch } from 'Component';
 import { I, C, S, U, Action, translate, analytics } from 'Lib';
+
+interface State {
+	isLoading: boolean;
+};
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 28;
 const LIMIT_HEIGHT = 12;
 const SUB_ID = 'syncStatusObjectsList';
 
-const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, {}> {
+const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.Menu, State> {
 
 	_isMounted = false;
 	node = null;
 	cache: any = {};
 	items: any[] = [];
 	currentInfo = '';
+	state = { 
+		isLoading: false,
+	};
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -32,8 +39,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	};
 
 	render () {
+		const { isLoading } = this.state;
 		const items = this.getItems();
 		const icons = this.getIcons();
+		const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
 
 		const PanelIcon = (item) => {
 			const { id, className } = item;
@@ -61,9 +70,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 				<div
 					id={`item-${item.id}`}
 					className="item sides"
+					onClick={e => this.onContextMenu(e, item)}
 					onContextMenu={e => this.onContextMenu(e, item)}
 				>
-					<div className="side left">
+					<div className="side left" >
 						<IconObject object={item} size={20} />
 						<div className="info">
 							<ObjectName object={item} />
@@ -72,7 +82,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 					</div>
 					<div className="side right">
 						<Icon className={icon} />
-						<Icon className="more" onClick={e => this.onContextMenu(e, item)} />
+						<Icon className="more" />
 					</div>
 				</div>
 			);
@@ -114,6 +124,10 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 						{icons.map((icon, idx) => <PanelIcon key={idx} {...icon} />)}
 					</div>
 				</div>
+
+				{!isLoading && !items.length ? (
+					<EmptySearch text={emptyText} />
+				) : ''}
 
 				{this.cache && items.length ? (
 					<div className="items">
@@ -176,10 +190,9 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 		S.Menu.open('select', {
 			classNameWrap,
-			element: element.find('.more'),
+			element,
+			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-			onOpen: () => element.addClass('selected'),
-			onClose: () => element.removeClass('selected'),
 			data: {
 				options,
 				onSelect: (e, option) => {
@@ -201,13 +214,13 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 	onPanelIconClick (e, item) {
 		const { param, getId } = this.props;
 		const { classNameWrap } = param;
-		const element = `#${getId()} #icon-${item.id}`;
 		const menuParam = {
 			classNameWrap,
-			element,
+			element: `#${getId()} #icon-${item.id}`,
 			offsetY: 4,
 			passThrough: true,
-			data: item
+			horizontal: I.MenuDirection.Center,
+			data: item,
 		};
 
 		e.preventDefault();
@@ -228,18 +241,26 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 
 	onCloseInfo () {
 		this.currentInfo = '';
+
 		if (S.Menu.isOpen('syncStatusInfo')) {
 			S.Menu.close('syncStatusInfo');
 		};
 	};
 
 	load () {
+		if (U.Data.isLocalNetwork()) {
+			return;
+		};
+
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 		];
 		const sorts = [
+			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [ I.SyncStatusObject.Syncing, I.SyncStatusObject.Queued, I.SyncStatusObject.Synced ] },
 			{ relationKey: 'syncDate', type: I.SortType.Desc },
 		];
+
+		this.setState({ isLoading: true });
 
 		U.Data.searchSubscribe({
 			subId: SUB_ID,
@@ -248,11 +269,18 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 			keys: U.Data.syncStatusRelationKeys(),
 			offset: 0,
 			limit: 30,
-		});
+		}, () => this.setState({ isLoading: false }));
 	};
 
 	getItems () {
-		return U.Data.groupDateSections(S.Record.getRecords(SUB_ID), 'syncDate');
+		const records = S.Record.getRecords(SUB_ID).map(it => {
+			if ([ I.SyncStatusObject.Syncing, I.SyncStatusObject.Queued ].includes(it.syncStatus)) {
+				it.syncDate = U.Date.now();
+			};
+			return it;
+		});
+
+		return U.Data.groupDateSections(records, 'syncDate');
 	};
 
 	getIcons () {

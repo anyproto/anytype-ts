@@ -106,10 +106,10 @@ class DetailStore {
 		};
 
 		// Update relationKeyMap and typeKeyMap in S.Record to keep consistency
-		if (item.details.layout == I.ObjectLayout.Relation) {
+		if (U.Object.isRelationLayout(item.details.layout)) {
 			S.Record.relationKeyMapSet(item.details.spaceId, item.details.relationKey, item.details.id);
 		};
-		if (item.details.layout == I.ObjectLayout.Type) {
+		if (U.Object.isTypeLayout(item.details.layout)) {
 			S.Record.typeKeyMapSet(item.details.spaceId, item.details.uniqueKey, item.details.id);
 		};
 
@@ -177,7 +177,7 @@ class DetailStore {
 			object = this[fn](object);
 		};
 
-		if (U.Object.isFileLayout(object.layout)) {
+		if (U.Object.isInFileLayouts(object.layout)) {
 			object = this.mapFile(object);
 		};
 

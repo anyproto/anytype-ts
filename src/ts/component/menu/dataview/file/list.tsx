@@ -106,7 +106,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				{isLoading ? <Loader /> : ''}
 
 				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? U.Common.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch filter={filter} />
 				) : ''}
 
 				{this.cache && items.length && !isLoading ? (
@@ -337,11 +337,11 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 102;
+		const offset = 120;
 		const itemsHeight = items.reduce((res: number, current: any) => res + this.getRowHeight(current), offset);
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(360, itemsHeight));
 
-		obj.css({ height });
+		obj.css({ height: (items.length ? height : '') });
 		position();
 	};
 

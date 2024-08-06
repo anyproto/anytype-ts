@@ -6,6 +6,7 @@ import { Header, Footer, Graph, Loader } from 'Component';
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
 
+	_isMounted = false;
 	node: any = null;
 	data: any = {
 		nodes: [],
@@ -63,6 +64,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
+
 		this.rebind();
 		this.resize();
 		this.load();
@@ -79,6 +82,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	componentWillUnmount () {
+		this._isMounted = false;
+
 		this.unbind();
 		window.clearTimeout(this.timeoutLoading);
 	};
@@ -106,54 +111,17 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.setLoading(true);
 
 		C.ObjectGraph(S.Common.space, U.Data.graphFilters(), 0, [], J.Relation.graph, '', [], (message: any) => {
-			if (message.error.code) {
+			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
-			const hashes: any = [];
-
-			this.data.edges = message.edges.filter(d => { 
-				const hash = [ d.source, d.target ].join('-');
-				if (hashes.includes(hash)) {
-					return false;
-				};
-
-				hashes.push(hash);
-				return (d.source != d.target);
-			});
-
-			// Find backlinks
-			for (const edge of this.data.edges) {
-				const idx = this.data.edges.findIndex(d => (d.source == edge.target) && (d.target == edge.source));
-				if (idx >= 0) {
-					const double = this.data.edges[idx];
-
-					if ((edge.type == I.EdgeType.Link) && (double.type == I.EdgeType.Relation)) {
-						edge.type = double.type;
-						edge.name = double.name;
-					};
-
-					edge.isDouble = true;
-					this.data.edges.splice(idx, 1);
-				};
-			};
-
-			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
-
-			U.Data.onSubscribe(J.Constant.subId.graph, 'id', J.Relation.graph, {
-				error: {},
-				records: message.nodes,
-				dependencies: [],
-				counters: { total: message.nodes.length },
-			});
-
-			this.resize();
+			this.data.edges = message.edges;
+			this.data.nodes = message.nodes;
+			this.forceUpdate();
 
 			if (this.refGraph) {
 				this.refGraph.init();
 			};
-
-			this.forceUpdate();
 		});
 	};
 

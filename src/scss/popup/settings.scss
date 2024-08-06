@@ -141,6 +141,7 @@
 						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
 					}
 				}
+				.actionItems:last-child { margin-bottom: 0px; }
 
 				.phraseWrapper { border-radius: 12px; background-color: var(--color-shape-tertiary); padding: 16px 44px; line-height: unset; }
 				.phraseWrapper {
@@ -477,6 +478,7 @@
 				}
 
 				.section { margin-bottom: 36px; }
+				.section:last-child { margin-bottom: 0px; }
 				.section {
 					.title { @include text-header3; }
 				}
@@ -513,7 +515,7 @@
 						.side.left {
 							.iconObject { flex-shrink: 0; margin: 0px 12px 0px 0px; }
 							.name { @include text-common; @include text-overflow-nw; width: auto; max-width: 330px; }
-							.tagItem { color: var(--color-control-bg); background: var(--color-control-accent); margin: 0px 0px 0px 8px; }
+							.tagItem { color: var(--color-text-inversion); background: var(--color-control-accent); margin: 0px 0px 0px 8px; }
 							.caption { color: var(--color-text-secondary); margin: 0px 0px 0px 4px; }
 						}
 
@@ -576,6 +578,8 @@
 			}
 
 			> .side.right.tabAppearance {
+				> .title { margin: 0px 0px 32px 0px; }
+
 				.buttons { display: flex; gap: 16px 34px; margin: 0px 0px 46px 0px; flex-wrap: wrap; }
 				.label.section { margin-bottom: 8px; }
 

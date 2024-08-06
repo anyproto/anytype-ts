@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'Component';
-import { I, S, U, J, keyboard, Relation, translate } from 'Lib';
+import { I, S, U, J, keyboard, Relation, translate, analytics } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -248,8 +248,9 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		const { param } = this.props;
 		const { data } = param;
-		const { filter } = data;
+		const { filter, canEdit } = data;
 		const types = this.getTypes();
+		const value = Relation.getArrayValue(data.value);
 
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
@@ -267,12 +268,19 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			this.setState({ isLoading: true });
 		};
 
+		let limit = J.Constant.limit.menuRecords;
+
+		if (!canEdit) {
+			limit = 0;
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value });
+		};
+
 		U.Data.search({
 			filters,
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: J.Constant.limit.menuRecords,
+			limit,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ isLoading: false });
@@ -300,16 +308,19 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd } = data;
+		const { canAdd, canEdit } = data;
 		const value = Relation.getArrayValue(data.value);
-		const ret = U.Common.objectCopy(this.items).filter(it => !value.includes(it.id));
 		const typeNames = this.getTypeNames();
 
+		let ret = U.Common.objectCopy(this.items);
+		if (canEdit) {
+			ret = ret.filter(it => !value.includes(it.id));
+		};
 		if (typeNames) {
 			ret.unshift({ isSection: true, name: typeNames });
 		};
 
-		if (data.filter && canAdd) {
+		if (data.filter && canAdd && canEdit) {
 			if (ret.length || typeNames) {
 				ret.push({ isDiv: true });
 			};
@@ -366,7 +377,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	onClick (e: any, item: any) {
 		const { param, close, position } = this.props;
 		const { data } = param;
-		const { onChange, maxCount, filter, cellRef } = data;
+		const { onChange, maxCount, filter, cellRef, canEdit } = data;
 		const relation = data.relation.get();
 
 		e.preventDefault();
@@ -374,6 +385,11 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		if (!item || !relation) {
 			close();
+			return;
+		};
+
+		if (!canEdit) {
+			U.Object.openConfig(item);
 			return;
 		};
 
@@ -402,7 +418,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (item.id == 'add') {
 			const { details, flags } = Relation.getParamForNewObject(filter, relation);
 
-			U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, 'Relation', (message: any) => {
+			U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.relation, (message: any) => {
 				cb(message.targetId);
 				close();
 			});

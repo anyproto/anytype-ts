@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName, DropTarget } from 'Component';
-import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard } from 'Lib';
+import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation } from 'Lib';
 
 import WidgetSpace from './space';
 import WidgetView from './view';
@@ -40,6 +40,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		this.isSystemTarget = this.isSystemTarget.bind(this);
 		this.getData = this.getData.bind(this);
 		this.getLimit = this.getLimit.bind(this);
+		this.getTraceId = this.getTraceId.bind(this);
 		this.sortFavorite = this.sortFavorite.bind(this);
 		this.canCreate = this.canCreate.bind(this);
 	};
@@ -49,7 +50,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const child = this.getTargetBlock();
 		const root = '';
 		const childrenIds = S.Block.getChildrenIds(root, root);
-		const { layout, limit, viewId } = block.content;
+		const { limit, viewId } = block.content;
+		const object = this.getObject();
+
+		let layout = block.content.layout;
+		if (object) {
+			const layoutOptions = U.Menu.getWidgetLayoutOptions(object.id, object.layout).map(it => it.id);
+
+			if (layoutOptions.length && !layoutOptions.includes(layout)) {
+				layout = layoutOptions[0];
+			};
+		};
 
 		if (!child && (layout != I.WidgetLayout.Space)) {
 			return null;
@@ -58,7 +69,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const canWrite = U.Space.canMyParticipantWrite();
 		const { targetBlockId } = child?.content || {};
 		const cn = [ 'widget' ];
-		const object = this.getObject();
 
 		const withSelect = !this.isSystemTarget() && (!isPreview || !U.Common.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
@@ -76,6 +86,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			isSystemTarget: this.isSystemTarget,
 			getData: this.getData,
 			getLimit: this.getLimit,
+			getTraceId: this.getTraceId,
 			sortFavorite: this.sortFavorite,
 			addGroupLabels: this.addGroupLabels,
 			onContext: this.onContext,
@@ -337,6 +348,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	onCreate (param?: any): void {
 		param = param || {};
 
+		const { widgets } = S.Block;
 		const { block } = this.props;
 		const { viewId, layout } = block.content;
 		const object = this.getObject();
@@ -351,7 +363,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		const { targetBlockId } = child.content;
-		const isSetOrCollection = U.Object.isSetLayout(object.layout);
+		const isSetOrCollection = U.Object.isInSetLayouts(object.layout);
 		const isFavorite = targetBlockId == J.Constant.widgetId.favorite;
 
 		let details: any = Object.assign({}, param.details || {});
@@ -375,15 +387,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id, viewId);
 			const type = S.Record.getTypeById(typeId);
 
-			if (!view || !type) {
+			if (!type) {
 				return;
 			};
 
 			details = Object.assign(Dataview.getDetails(rootId, J.Constant.blockId.dataview, object.id, viewId), details);
 			flags = flags.concat([ I.ObjectFlag.SelectTemplate ]);
 			typeKey = type.uniqueKey;
-			templateId = view.defaultTemplateId || type.defaultTemplateId;
-			isCollection = Dataview.isCollection(rootId, J.Constant.blockId.dataview);
+			templateId = view?.defaultTemplateId || type.defaultTemplateId;
+			isCollection = U.Object.isCollectionLayout(object.layout);
 		} else {
 			switch (targetBlockId) {
 				default:
@@ -577,7 +589,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	getMinHeight () {
-		return [ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.props.block.content.layout) ? 8 : 0;
+		return [ I.WidgetLayout.List, I.WidgetLayout.Compact, I.WidgetLayout.Tree ].includes(this.props.block.content.layout) ? 8 : 0;
 	};
 
 	getData (subId: string, callBack?: () => void) {
@@ -647,16 +659,20 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	getFavoriteIds (): string[] {
-		const { root } = S.Block;
-		const ids = S.Block.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
-		const items = ids.map(id => S.Detail.get(root, id)).filter(it => !it.isArchived).map(it => it.id);
+		return S.Record.getRecords(this.subId).filter(it => !it.isArchived && !it.isDeleted).map(it => it.id);
+	};
 
+	getFavoriteBlockIds (): string[] {
+		const { root } = S.Block;
+		const ids = S.Block.getChildren(root, root, it => it.isLink()).map(it => it.getTargetObjectId());
+		const items = ids.map(id => S.Detail.get(root, id)).filter(it => !it.isArchived && !it.isDeleted).map(it => it.id);
+		
 		return items;
 	};
 
 	sortFavorite (records: string[]): string[] {
 		const { block, isPreview } = this.props;
-		const ids = this.getFavoriteIds();
+		const ids = this.getFavoriteBlockIds();
 
 		let sorted = U.Common.objectCopy(records || []).sort((c1: string, c2: string) => {
 			const i1 = ids.indexOf(c1);
@@ -710,11 +726,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	isSystemTarget (): boolean {
 		const target = this.getTargetBlock();
-		if (!target) {
-			return false;
-		};
-
-		return Object.values(J.Constant.widgetId).includes(target.getTargetObjectId());
+		return target ? U.Menu.isSystemWidget(target.getTargetObjectId()) : false;
 	};
 
 	canCreate (): boolean {
@@ -734,11 +746,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return false;
 		};
 
-		if (U.Object.isSetLayout(object.layout)) {
+		if (U.Object.isInSetLayouts(object.layout)) {
 			const rootId = this.getRootId();
 			const typeId = Dataview.getTypeId(rootId, J.Constant.blockId.dataview, object.id);
 			const type = S.Record.getTypeById(typeId);
 			const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Participant);
+			const setOf = Relation.getArrayValue(object.setOf);
+			const isCollection = U.Object.isCollectionLayout(object.layout);
+
+			if (!setOf.length && !isCollection) {
+				return false;
+			};
 
 			if (type && layouts.includes(type.recommendedLayout)) {
 				return false;
@@ -751,14 +769,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		return true;
 	};
 
-	getRootId = (): string => {
-		const child = this.getTargetBlock();
-		if (!child) {
-			return '';
-		};
+	getRootId (): string {
+		const target = this.getTargetBlock();
+		return target ? [ target.content.targetBlockId, 'widget', target.id ].join('-') : '';
+	};
 
-		const { targetBlockId } = child.content;
-		return [ targetBlockId, 'widget', child.id ].join('-');
+	getTraceId (): string {
+		const target = this.getTargetBlock();
+		return target ? [ 'widget', target.id ].join('-') : '';
 	};
 
 	getLimit ({ limit, layout }): number {

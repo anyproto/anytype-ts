@@ -394,10 +394,10 @@ class Relation {
 		return groupOptions.length ? (groupOptions.find(it => it.id == relationKey) || groupOptions[0]) : null;
 	};
 
-	public getPageLimitOptions (type: I.ViewType) {
+	public getPageLimitOptions (type: I.ViewType, isInline: boolean) {
 		let options = [ 10, 20, 50, 70, 100 ];
 		if (type == I.ViewType.Gallery) {
-			options = [ 12, 24, 60, 84, 120 ];
+			options = isInline ? [ 12, 24, 60, 84, 120 ] : [ 60, 84, 120 ];
 		};
 		return options.map(it => ({ id: it, name: it }));
 	};
@@ -479,6 +479,10 @@ class Relation {
 
 	public isUrl (type: I.RelationType) {
 		return [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(type);
+	};
+
+	public isText (type: I.RelationType) {
+		return this.isUrl(type) || [ I.RelationType.Number, I.RelationType.ShortText ].includes(type);
 	};
 
 	public getUrlScheme (type: I.RelationType, value: string): string {
@@ -588,7 +592,7 @@ class Relation {
 		let type = null;
 
 		if (objectTypes.length) {
-			const allowedTypes = objectTypes.map(id => S.Record.getTypeById(id)).filter(it => it && !U.Object.isFileOrSystemLayout(it.recommendedLayout));
+			const allowedTypes = objectTypes.map(id => S.Record.getTypeById(id)).filter(it => it && !U.Object.isInFileOrSystemLayouts(it.recommendedLayout));
 			const l = allowedTypes.length;
 
 			if (l) {

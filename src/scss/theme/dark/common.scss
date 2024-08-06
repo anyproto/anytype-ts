@@ -8,11 +8,6 @@ html.themeDark {
 	--color-text-primary: #ebebeb;
 	--color-text-secondary: #9a9a9a;
 	--color-text-tertiary: #606060;
-
-	--color-text-primary: #ebebeb;
-    --color-text-secondary: #9a9a9a;
-    --color-text-tertiary: #606060;
-
 	--color-text-inversion: #171717;
 
 	/* Shape */
@@ -21,6 +16,7 @@ html.themeDark {
 	--color-shape-secondary: #3f3f3f;
 	--color-shape-tertiary: #2b2b2b;
 
+	--color-shape-highlight-dark: rgba(238, 238, 238, 0.24);
 	--color-shape-highlight-medium: rgba(238, 238, 238, 0.12);
 	--color-shape-highlight-light: rgba(238, 238, 238, 0.06);
 	--color-shape-highlight-light-solid: #242424;
@@ -270,6 +266,27 @@ html.themeDark {
 			.banner {
 				.button { background-color: var(--color-bg-primary); color: var(--color-text-primary); }
 			}
+		}
+	}
+
+	/* Vault */
+
+	.vault { background-color: #393939; }
+	.vault {
+		.item.isButton {
+			.iconWrap { background-color: #4f4f4f; }
+		}
+
+		.item.gallery {
+			.iconWrap { background-image: url('#{$themePath}/icon/vault/gallery.svg'); }
+		}
+
+		.item.add {
+			.iconWrap { background-image: url('#{$themePath}/icon/vault/plus.svg'); }
+		}
+
+		.item.settings {
+			.iconWrap { background-image: url('#{$themePath}/icon/vault/settings.svg'); }
 		}
 	}
 

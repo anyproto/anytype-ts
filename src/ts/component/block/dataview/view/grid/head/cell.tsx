@@ -22,19 +22,17 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, relationKey, index, onResizeStart } = this.props;
+		const { rootId, block, relationKey, index, onResizeStart, readonly } = this.props;
 		const relation = S.Record.getRelationByKey(relationKey);
 		
 		if (!relation) {
 			return;
 		};
 
-		const { format, name } = relation;
-		const readonly = relation.isReadonlyValue;
-		const allowedView = S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
-		const cn = [ 'cellHead', `cell-key-${this.props.relationKey}`, Relation.className(format) ];
+		const allowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const cn = [ 'cellHead', `cell-key-${this.props.relationKey}`, Relation.className(relation.format) ];
 
-		if (allowedView) {
+		if (allowed) {
 			cn.push('canDrag');
 		};
 
@@ -48,13 +46,13 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 				onMouseLeave={this.onMouseLeave}
 			>
 				<div className="cellContent">
-					<Handle name={name} format={format} readonly={readonly} />
-					<div className="resize" onMouseDown={e => onResizeStart(e, relationKey)} />
+					<Handle name={relation.name} format={relation.format} readonly={relation.isReadonlyValue} />
+					{allowed ? <div className="resize" onMouseDown={e => onResizeStart(e, relationKey)} /> : ''}
 				</div>
 			</div>
 		));
 
-		return <Cell index={index} disabled={!allowedView} />;
+		return <Cell index={index} disabled={!allowed} />;
 	};
 
 	onMouseEnter (): void {
@@ -73,7 +71,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block, readonly, loadData, getView, getTarget, relationKey, isInline, isCollection } = this.props;
+		const { block, getView, relationKey } = this.props;
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!relation || keyboard.isResizing) {
@@ -91,15 +89,9 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 				onOpen: () => obj.addClass('active'),
 				onClose: () => obj.removeClass('active'),
 				data: {
-					loadData,
-					getView,
-					getTarget,
-					rootId,
-					isInline,
-					isCollection,
+					...this.props,
 					blockId: block.id,
 					relationId: relation.id,
-					readonly,
 					extendedOptions: true,
 					addCommand: (rootId: string, blockId: string, relation: any) => {
 						Dataview.relationAdd(rootId, blockId, relation.relationKey, relation._index_, getView());

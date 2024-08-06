@@ -72,9 +72,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		if (isEditing) {
 			if (isLongText) {
-				EditorComponent = () => (
-					<span>{value}</span>
-				);
+				EditorComponent = () => <span>{value}</span>;
 			} else 
 			if (isDate) {
 				const mask = [ '99.99.9999' ];
@@ -114,7 +112,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						ref={ref => this.ref = ref} 
 						id="input" 
 						{...item} 
-						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
+						placeholder={placeholder}
 						onKeyUp={this.onKeyUp} 
 					/>
 				);
@@ -144,14 +142,10 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					};
 					content = <div className="name">{name}</div>;
 				} else {
-					if (isName && (record.layout == I.ObjectLayout.Note)) {
+					if (isName && U.Object.isNoteLayout(record.layout)) {
 						content = <span className="emptyText">{translate('commonEmpty')}</span>;
 					} else {
-						content = (
-							<div className="empty">
-								{placeholder || translate(`placeholderCell${relation.format}`)}
-							</div>
-						);
+						content = <div className="empty">{placeholder}</div>;
 					};
 				};
 				return content;
@@ -201,7 +195,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			};
 
 			if (!isEditing) {
-				if (record.layout == I.ObjectLayout.Note) {
+				if (U.Object.isNoteLayout(record.layout)) {
 					value = record.snippet;
 				} else {
 					value = value || translate('defaultNamePage');

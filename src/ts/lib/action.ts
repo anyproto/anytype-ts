@@ -624,7 +624,7 @@ class Action {
 					};
 
 					if (space == id) {
-						U.Router.switchSpace(accountSpaceId, '', cb);
+						U.Router.switchSpace(accountSpaceId, '', false, cb);
 					} else {
 						cb();
 					};
@@ -683,19 +683,19 @@ class Action {
 		});
 	};
 
-	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition) {
+	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition, route?: string) {
 		const object = S.Detail.get(rootId, objectId);
 
 		let layout = I.WidgetLayout.Link;
 
 		if (object && !object._empty_) {
-			if (U.Object.isFileOrSystemLayout(object.layout)) {
+			if (U.Object.isInFileOrSystemLayouts(object.layout)) {
 				layout = I.WidgetLayout.Link;
 			} else 
-			if (U.Object.isSetLayout(object.layout)) {
+			if (U.Object.isInSetLayouts(object.layout)) {
 				layout = I.WidgetLayout.Compact;
 			} else
-			if (U.Object.isPageLayout(object.layout)) {
+			if (U.Object.isInPageLayouts(object.layout)) {
 				layout = I.WidgetLayout.Tree;
 			};
 		};
@@ -709,7 +709,7 @@ class Action {
 		};
 
 		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, () => {
-			analytics.event('AddWidget', { type: layout });
+			analytics.event('AddWidget', { type: layout, route });
 		});
 	};
 
@@ -781,6 +781,12 @@ class Action {
 			Preview.toastShow({ action: I.ToastAction.Collection, objectId: objectIds[0], targetId });
 			analytics.event('LinkToObject', { objectType: collectionType?.id, linkType: 'Collection' });
 		});
+	};
+
+	themeSet (id: string) {
+		S.Common.themeSet(id);
+		Renderer.send('setTheme', id);
+		analytics.event('ThemeSet', { id });
 	};
 
 };
