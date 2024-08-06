@@ -7,6 +7,7 @@ import WidgetViewList from './list';
 import WidgetViewGallery from './gallery';
 import WidgetViewBoard from './board';
 import WidgetViewCalendar from './calendar';
+import WidgetViewGraph from './graph';
 
 interface State {
 	isLoading: boolean;
@@ -110,6 +111,11 @@ const WidgetView = observer(class WidgetView extends React.Component<I.WidgetCom
 
 					case I.ViewType.Calendar: {
 						content = <WidgetViewCalendar {...props} />;
+						break;
+					};
+
+					case I.ViewType.Graph: {
+						content = <WidgetViewGraph {...props} />;
 						break;
 					};
 				};

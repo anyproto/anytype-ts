@@ -1,12 +1,9 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, S, U, J, Dataview } from 'Lib';
 import { Graph } from 'Component';
 
-const PADDING = 46;
-
-const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewComponent> {
+const WidgetViewGraph = observer(class WidgetViewGraph extends React.Component<I.WidgetViewComponent> {
 
 	_isMounted = false;
 	node: any = null;
@@ -19,25 +16,22 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	rootId = '';
 
 	render () {
-		const { block, className } = this.props;
-		const cn = [ 'viewContent', className ];
+		const { block } = this.props;
 
 		return (
 			<div 
 				ref={node => this.node = node} 
 				className="wrap"
 			>
-				<div className={cn.join(' ')}>
-					<Graph 
-						key="graph"
-						{...this.props} 
-						ref={ref => this.refGraph = ref} 
-						id={block.id}
-						rootId="" 
-						data={this.data}
-						storageKey={J.Constant.graphId.dataview}
-					/>
-				</div>
+				<Graph 
+					key="graph"
+					{...this.props} 
+					ref={ref => this.refGraph = ref} 
+					id={block.id}
+					rootId="" 
+					data={this.data}
+					storageKey={J.Constant.graphId.dataview}
+				/>
 			</div>
 		);
 	};
@@ -58,21 +52,17 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	load () {
-		const { getView, getSearchIds, getTarget, isCollection } = this.props;
+		const { getView, getObject } = this.props;
 		const view = getView();
 		if (!view) {
 			return;
 		};
 
-		const searchIds = getSearchIds();
 		const filters = [].concat(view.filters).concat(U.Data.graphFilters()).map(it => Dataview.filterMapper(view, it));
-		const target = getTarget();
+		const object = getObject();
+		const isCollection = U.Object.isCollectionLayout(object.layout);
 
-		if (searchIds) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
-		};
-
-		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, (message: any) => {
+		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? object.id : ''), object.setOf, (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};
@@ -108,31 +98,9 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 	};
 
 	resize () {
-		const { isPopup, isInline } = this.props;
-		const node = $(this.node);
-
-		if (!node || !node.length) {
-			return;
-		};
-
-		if (!isInline) {
-			node.css({ width: 0, height: 0, marginLeft: 0 });
-
-			const container = U.Common.getPageContainer(isPopup);
-			const cw = container.width();
-			const ch = container.height();
-			const mw = cw - PADDING * 2;
-			const margin = (cw - mw) / 2;
-			const { top } = node.offset();
-
-			node.css({ width: cw, height: Math.max(600, ch - top - 2), marginLeft: -margin - 2 });
-		};
-
-		if (this.refGraph) {
-			this.refGraph.resize();
-		};
+		this.refGraph?.resize();
 	};
 
 });
 
-export default ViewGraph;
+export default WidgetViewGraph;
