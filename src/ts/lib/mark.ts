@@ -725,7 +725,6 @@ class Mark {
 			I.MarkType.Change, 
 			I.MarkType.Highlight, 
 			I.MarkType.Code,
-			I.MarkType.Underline,
 		].includes(t);
 	};
 
