@@ -47,6 +47,8 @@ class PageAuthSelect extends React.Component<I.PageComponent, State> {
 
 	componentDidMount (): void {
 		Animation.to(() => U.Common.renderLinks($(this.node)));
+
+		analytics.removeContext();
 		analytics.event('ScreenIndex');
 	};
 
