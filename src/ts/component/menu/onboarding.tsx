@@ -107,10 +107,27 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { key } = data;
+		const section = Onboarding.getSection(key);
+		const { showDimmer } = section;
+
 		this.rebind();
 		this.event();
 
 		U.Common.renderLinks($(this.node));
+
+		if (showDimmer) {
+			const element = $(param.element);
+			const dimmer = $('<div class="onboardingDimmer"></div>');
+
+			element.after(dimmer);
+
+			console.log(element);
+		};
+
+		console.log(showDimmer);
 	};
 
 	componentDidUpdate () {
