@@ -6,10 +6,6 @@
 	.items { display: grid; grid-gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.items {
 		.item { flex-shrink: 0; flex-grow: 0; }
-		.item.blank { 
-			border: 1px solid var(--color-shape-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center;
-			@include text-small; color: var(--color-text-secondary); padding: 8px; text-align: center;
-		}
 
 		.item {
 			.dropTarget { height: 100%; border-radius: 8px; }
@@ -56,7 +52,4 @@
 
 		.item:hover, .item.active { background: var(--color-shape-highlight-light); }
 	}
-}
-.viewGallery:hover {
-	.arrowWrap { opacity: 1; }
 }
