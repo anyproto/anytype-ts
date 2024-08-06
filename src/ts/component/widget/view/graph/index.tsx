@@ -67,28 +67,8 @@ const WidgetViewGraph = observer(class WidgetViewGraph extends React.Component<I
 				return;
 			};
 
-			const hashes: any = [];
-
-			this.data.edges = message.edges.filter(d => { 
-				const hash = [ d.source, d.target ].join('-');
-				if (hashes.includes(hash)) {
-					return false;
-				};
-
-				hashes.push(hash);
-				return (d.source != d.target);
-			});
-
-			// Find backlinks
-			for (const edge of this.data.edges) {
-				const idx = this.data.edges.findIndex(d => (d.source == edge.target) && (d.target == edge.source));
-				if (idx >= 0) {
-					edge.isDouble = true;
-					this.data.edges.splice(idx, 1);
-				};
-			};
-
-			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
+			this.data.edges = message.edges;
+			this.data.nodes = message.nodes;
 			this.forceUpdate();
 
 			if (this.refGraph) {
