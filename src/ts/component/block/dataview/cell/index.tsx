@@ -460,6 +460,8 @@ const Cell = observer(class Cell extends React.Component<Props> {
 			});
 		};
 
+		console.log('closeIfOpen', closeIfOpen, S.Common.cellId, cellId);
+
 		if (menuId) {
 			if (S.Common.cellId != cellId) {
 				S.Common.cellId = cellId;

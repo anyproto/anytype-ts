@@ -165,7 +165,6 @@ class AuthStore {
                 this.tokenSet('');
 			});
 
-			analytics.event('LogOut');
 			Renderer.send('logout');
 		};
 
