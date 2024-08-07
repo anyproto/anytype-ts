@@ -224,6 +224,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 				{ id: 'add', name: (nameAdd || translate('menuDataviewObjectValuesAddObject')) },
 			]);
 		};
+
 		return value;
 	};
 
