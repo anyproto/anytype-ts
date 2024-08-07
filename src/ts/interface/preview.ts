@@ -34,5 +34,9 @@ export interface Preview {
 	passThrough?: boolean;
 	noAnimation?: boolean;
 	delay?: number;
+	x?: number;
+	y?: number;
+	width?: number;
+	height?: number;
 	onChange?(marks: I.Mark[]): void;
 };
