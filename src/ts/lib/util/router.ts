@@ -72,7 +72,7 @@ class UtilRouter {
 		S.Menu.closeAll();
 		S.Popup.closeAll();
 
-		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, space ].includes(routeParam.spaceId)) {
+		if (routeParam.spaceId && ![ J.Constant.storeSpaceId, J.Constant.blankRouteId, space ].includes(routeParam.spaceId)) {
 			this.switchSpace(routeParam.spaceId, route);
 			return;
 		};
@@ -127,9 +127,6 @@ class UtilRouter {
 	};
 
 	switchSpace (id: string, route?: string, sendEvent?: boolean, callBack?: () => void) {
-		console.log('[UtilRouter].switchSpace id: ', id, 'route: ', route);
-		console.trace();
-
 		const { space } = S.Common;
 		const { accountSpaceId } = S.Auth;
 
