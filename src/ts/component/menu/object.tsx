@@ -135,15 +135,6 @@ class MenuObject extends React.Component<I.Menu> {
 			fav = { id: 'fav', name: translate('commonAddToFavorites') };
 		};
 
-		if (object.isArchived) {
-			linkTo = null;
-			addCollection = null;
-			remove = { id: 'pageRemove', icon: 'remove', name: translate('commonDeleteImmediately') };
-			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
-		} else {
-			archive = { id: 'pageArchive', icon: 'remove', name: translate('commonMoveToBin') };
-		};
-
 		if (block.isLocked()) {
 			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuObjectUnlockPage'), caption: `Ctrl + Shift + L` };
 		} else {
@@ -156,22 +147,29 @@ class MenuObject extends React.Component<I.Menu> {
 			pageInstall = { id: 'pageInstall', icon: 'install', name: translate('menuObjectInstall') };
 		};
 
+		if (object.isArchived) {
+			remove = { id: 'pageRemove', icon: 'remove', name: translate('commonDeleteImmediately') };
+			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
+		} else {
+			archive = { id: 'pageArchive', icon: 'remove', name: translate('commonMoveToBin') };
+		};
+
 		// Restrictions
 
 		const allowedArchive = canWrite && canDelete;
 		const allowedSearch = !U.Object.isInSetLayouts(object.layout);
-		const allowedHistory = !U.Object.isInFileOrSystemLayouts(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
+		const allowedHistory = !object.isArchived && !U.Object.isInFileOrSystemLayouts(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
 		const allowedFav = canWrite && !object.isArchived && !U.Object.isInFileOrSystemLayouts(object.layout) && !object.templateIsBundled;
-		const allowedLock = canWrite && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedLinkTo = canWrite;
-		const allowedAddCollection = canWrite;
-		const allowedPageLink = true;
-		const allowedCopy = canWrite && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
+		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLinkTo = canWrite && !object.isArchived;
+		const allowedAddCollection = canWrite && !object.isArchived;
+		const allowedPageLink = !object.isArchived;
+		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = canWrite && object.source && block.isObjectBookmark();
 		const allowedInstall = canWrite && !object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout);
 		const allowedUninstall = canWrite && object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout) && canDelete;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
-		const allowedWidget = canWrite && !S.Block.checkBlockTypeExists(rootId);
+		const allowedWidget = canWrite && !object.isArchived && !S.Block.checkBlockTypeExists(rootId);
 		const hasShortMenu = (
 			block.isObjectType() || 
 			block.isObjectRelation() || 
