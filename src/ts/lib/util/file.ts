@@ -100,6 +100,10 @@ class UtilFile {
 			icon = 'other';
 		};
 
+		if ([ 'ai' ].includes(e)) {
+			icon = 'image';
+		};
+
 		for (const k in J.Constant.fileExtension) {
 			const el = J.Constant.fileExtension[k];
 			if (!U.Common.hasProperty(el, 'length')) {
