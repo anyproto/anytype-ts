@@ -24,7 +24,7 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	render () {
-		const { className, d, m, y, getView } = this.props;
+		const { className, d, m, y, getView, onContext } = this.props;
 		const view = getView();
 		const { hideIcon } = view;
 		const items = this.getItems();
@@ -54,9 +54,9 @@ const Item = observer(class Item extends React.Component<Props> {
 			};
 
 			return (
-				<div className="item">
+				<div className="item" onContextMenu={e => onContext(e, item.id)}>
 					{icon}
-					<ObjectName object={item} onMouseDown={() => this.onOpen(item)} />
+					<ObjectName object={item} onClick={() => this.onOpen(item)} />
 				</div>
 			);
 		};
