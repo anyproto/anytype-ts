@@ -62,14 +62,7 @@ const Marker = observer(class Marker extends React.Component<Props> {
 		const { theme } = S.Common;
 		const cn = [ 'marker' ];
 		const ci = [ 'markerInner', 'c' + type ];
-		const props = {
-			id: `marker-${id}`,
-			key: `marker-${id}-${type}`,
-			className: ci.join(' '),
-		};
 
-		let inner: any = null;
-		
 		if (className) {
 			cn.push(className);
 		};
@@ -80,6 +73,14 @@ const Marker = observer(class Marker extends React.Component<Props> {
 		if (color) {
 			ci.push('textColor textColor-' + color);
 		};
+
+		const props = {
+			id: `marker-${id}`,
+			key: `marker-${id}-${type}`,
+			className: ci.join(' '),
+		};
+
+		let inner: any = null;
 
 		switch (type) {
 			case I.TextStyle.Bulleted: {
