@@ -37,8 +37,6 @@ class UtilFile {
 		const mime = String(object.mime || object.mimeType || object.fileMimeType || '').toLowerCase();
 		const e = String(object.fileExt || n[n.length - 1] || '').toLowerCase();
 
-		console.log(mime, e);
-
 		let t: string[] = [];
 		let icon = 'other';
 
