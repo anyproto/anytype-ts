@@ -361,7 +361,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 
 			newItem = Object.assign(newItem, {
-				operator: I.FilterOperator.And,
 				condition: condition as I.FilterCondition,
 				value: Relation.formatValue(item, null, false),
 			});

@@ -272,7 +272,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		if (!canEdit) {
 			limit = 0;
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value });
 		};
 
 		U.Data.search({
