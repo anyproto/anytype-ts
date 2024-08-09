@@ -83,6 +83,7 @@ class Analytics {
 		const { interfaceLang } = S.Common;
 		const electron = U.Common.getElectron();
 		const platform = U.Common.getPlatform();
+		const hasDefaultPath = electron.userPath() == electron.defaultPath();
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(J.Constant.amplitude, null, Object.assign({
@@ -101,6 +102,7 @@ class Analytics {
 			deviceType: 'Desktop',
 			platform,
 			interfaceLang,
+			hasDefaultPath,
 		};
 
 		if (electron.version) {
