@@ -841,7 +841,7 @@ class UtilMenu {
 
 		const callBack = (item: any) => {
 			onSelect(item);
-			menuContext.close();
+			menuContext?.close();
 		};
 
 		if (S.Menu.isOpen('select')) {
