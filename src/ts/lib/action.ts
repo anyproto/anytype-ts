@@ -472,21 +472,6 @@ class Action {
 					return;
 				};
 
-				const { collectionId, count } = message;
-
-				if (collectionId) {
-					window.setTimeout(() => {
-						S.Popup.open('objectManager', { 
-							data: { 
-								collectionId, 
-								type: I.ObjectManagerPopup.Favorites,
-							} 
-						});
-					}, S.Popup.getTimeout() + 10);
-				};
-
-				analytics.event('Import', { middleTime: message.middleTime, type, count });
-
 				if (callBack) {	
 					callBack(message);
 				};
