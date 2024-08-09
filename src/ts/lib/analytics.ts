@@ -102,7 +102,7 @@ class Analytics {
 			deviceType: 'Desktop',
 			platform,
 			interfaceLang,
-			hasDefaultPath,
+			hasDefaultPath: Number(hasDefaultPath),
 		};
 
 		if (electron.version) {
