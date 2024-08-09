@@ -4,10 +4,10 @@ const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const hl = (t: string) => `<span class="highlight">${t}</span>`;
 const block = (style: I.TextStyle, text: string, align?: I.BlockHAlign) => ({ style, text, align });
-const title = (t: string) => block(I.TextStyle.Title, t);
-const h1 = (t: string) => block(I.TextStyle.Header1, t);
-const h2 = (t: string) => block(I.TextStyle.Header2, t);
-const h3 = (t: string) => block(I.TextStyle.Header3, t);
+const title = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Title, t, align);
+const h1 = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Header1, t, align);
+const h2 = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Header2, t, align);
+const h3 = (t: string, align?: I.BlockHAlign) => block(I.TextStyle.Header3, t, align);
 const text = (t: string) => block(I.TextStyle.Paragraph, t);
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 const caption = (t: string) => block(I.TextStyle.Paragraph, `<i>${t}</i>`, I.BlockHAlign.Center);
@@ -19,17 +19,46 @@ const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
+	title(`Anytype 0.42.3 Hotfix Released!`),
+	text(`We're releasing this hotfix just three days after the 0.42.0 update to address important feedback from our community and better align with user expectations. This patch bundles all the features of 0.42.0 (see previous notes) along with UI improvements, primarily the sidebar display settings, and several bug fixes. Thank you for your swift feedback and continued support!`),
+	text(''),
+	text(`Here's what's new in this hotfix:`),
+	text(''),
+
+	h2(`Quality-of-Life 🌿 `, I.BlockHAlign.Center),
+	bullet(`Added display options for Vault Sidebar to ${hl('Settings → Personalization tab')}.`),
+	bullet(`Moved settings from the Appearance tab to the Personalization tab for consistency; renamed the Appearance tab to Color Mode.`),
+	bullet(`Improved sidebar animation and delay. Thanks, @${link('https://community.anytype.io/t/23066', 'code-jack')}!`),
+	text(''),															  
+
+	h2(`Bug Fixes 🪲`, I.BlockHAlign.Center),															  
+	bullet(`Fixed an issue with the default auto-hide sidebar behavior. Previous logic caused problems for users with auto-hide enabled in fixed mode. The setting is now updated, so please reconfigure your auto-hide/show preferences.`),
+	bullet(`Corrected the positioning of the sidebar toggle icon and header on Windows and Linux.`),
+	bullet(`Cleared saved search state in Global Search when the clear button is used.`),
+	bullet(`Fixed a bug preventing "0" values from appearing in Number relations. Thanks, @${link('https://community.anytype.io/t/23048', 'mattred1')}!`),															  
+	bullet(`Resolved an issue with markdown parsing that caused inline links to add "…" at the end. Thanks, @${link('https://community.anytype.io/t/23083', 'ferdzso')}!`),
+	bullet(`Fixed a middleware problem with macOS 11 builds. Thanks, @${link('https://community.anytype.io/t/23068', '_martin')}!`),															  
+	bullet(`Fixed an issue with URL previews not displaying correctly on mouse hover. Thanks, @${link('https://community.anytype.io/t/23079', 'candidchronicles')}!`),															  
+	bullet(`Fixed issue with PDFs exporting black background in dark mode. Thanks, @${link('https://community.anytype.io/t/23133', '2PJs')}!`),
+	bullet(`Fixed numbers remaining when switching from a numbered list to a bulleted list. Thanks, @${link('https://community.anytype.io/t/23114', 'elias')}!`),
+	
+	text(''),
+	text(`Thanks again for your patience and feedback as we work to improve Anytype 🫶`),	
+																  
+	div(),
+	// --------------------------------------------//
+
 	title(`Anytype Desktop 0.42.0 Released!`),
 	text(`This release brings a redesigned sidebar, brand-new widgets, and the highly anticipated inline LaTeX feature, along with numerous quality-of-life improvements and bug fixes for an even smoother Anytype experience. Don’t miss our new sync status indicator—it’s like having a little tech guru keeping you informed! Enjoy exploring the updates 🏄‍♀️`),
 	text(''),
-
-	h2(`Highlights 💫`),
+																  
+	h2(`Highlights 💫`, I.BlockHAlign.Center),
 	text(''),
 
 	h3(`Redesigned Sidebar 🌐`),
 	text(`Our sleek new sidebar makes hopping between Spaces a breeze. Think of it as your personal GPS for easier navigation.`),
 	img(`42/1.png`),
-	caption(`Simply click to hide the entire sidebar, or right-click for additional options.`),
+	caption(`Simply click to hide the entire sidebar, or right-click the icon for additional options.`),
 	text(''),
 
 	h3(`New Widgets 🧩`),
@@ -47,7 +76,7 @@ export default [
 	video(`42/4.mp4`),
 	text(''),
 
-	h2(`Quality-of-Life 🪷 `),
+	h2(`Quality-of-Life 🪷 `, I.BlockHAlign.Center),
 	bullet(`Menu item was added to Object settings for faster "add to Collection" workflow.`),
 	bullet(`Sharing Anytype with others got simpler—just grab the link from the help menu and share away (Desktop only).`),
 	bullet(`Navigate Tables using only arrow keys to enter, jump cells &amp; exit to the next block. Thanks, @Code-Jack!`),
@@ -63,11 +92,11 @@ export default [
 	bullet(`Search panel now reopens with previously entered text and selected objects in "Related to" mode.`),
 	text(''),
 	
-	h2(`Technical Update 🛠️`),
+	h3(`Technical Update 🛠️`),
 	bullet(`Electron updated to 31.0.0`),
 	text(''),
 
-	h2(`Bug Fixes 🦂`),
+	h2(`Bug Fixes 🦂`, I.BlockHAlign.Center),	
 	bullet(`Number relations with values less than 1 million are now evenly spaced. Thanks, @${link('https://community.anytype.io/t/7497', 'matylda')}!`),
 	bullet(`Mermaid diagrams now display correctly with dark mode backgrounds. Thanks, @${link('https://community.anytype.io/t/20228', 'BoxOfWood')}!`),
 	bullet(`Top menu no longer shows up below the cover in sets when using the modal window. Thanks, ${link('https://community.anytype.io/t/22009', 'Elias')}!`),

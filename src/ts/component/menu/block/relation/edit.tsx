@@ -274,12 +274,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		const { param, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
-
-		if (this.isReadonly()) {
-			return;
-		};
-
+		const { rootId } = data;
 		const { getId } = this.props;
 		
 		let relation: any = this.getRelation();
@@ -294,6 +289,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			vertical: I.MenuDirection.Center,
 			data: {
 				rootId,
+				canEdit: !this.isReadonly(),
 				nameAdd: translate('menuBlockRelationEditAddObjectType'),
 				placeholderFocus: translate('menuBlockRelationEditFilterObjectTypes'),
 				value: this.objectTypes, 

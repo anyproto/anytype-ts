@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted } from 'Component';
-import { I, C, S, M, U, Action, translate, Relation } from 'Lib';
+import { I, C, S, M, U, Action, translate, Relation, analytics } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -273,11 +273,11 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	};
 
 	onOpen () {
-		Action.openFile(this.getBlock()?.content?.targetObjectId);
+		Action.openFile(this.getBlock()?.getTargetObjectId(), analytics.route.media);
 	};
 
 	onDownload () {
-		Action.download(this.getBlock(), 'media');
+		Action.download(this.getBlock(), analytics.route.media);
 	};
 
 	getRootId () {

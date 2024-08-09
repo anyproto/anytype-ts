@@ -11,16 +11,7 @@ interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
 };
 
-// Prism languages
-const langs = [
-	'clike', 'c', 'cpp', 'csharp', 'abap', 'arduino', 'bash', 'basic', 'clojure', 'coffeescript', 'dart', 'diff', 'docker', 'elixir',
-	'elm', 'erlang', 'flow', 'fortran', 'fsharp', 'gherkin', 'graphql', 'groovy', 'go', 'haskell', 'json', 'latex', 'less', 'lisp',
-	'livescript', 'lua', 'markdown', 'makefile', 'matlab', 'nginx', 'nix', 'objectivec', 'ocaml', 'pascal', 'perl', 'php', 'powershell', 'prolog',
-	'python', 'r', 'reason', 'ruby', 'rust', 'sass', 'java', 'scala', 'scheme', 'scss', 'sql', 'swift', 'typescript', 'vbnet', 'verilog',
-	'vhdl', 'visual-basic', 'wasm', 'yaml', 'javascript', 'css', 'markup', 'markup-templating', 'csharp', 'php', 'go', 'swift', 'kotlin',
-	'wolfram', 'dot', 'toml', 'bsl', 'cfscript', 'gdscript', 'cmake', 'solidity',
-];
-for (const lang of langs) {
+for (const lang of U.Prism.components) {
 	require(`prismjs/components/prism-${lang}.js`);
 };
 
@@ -124,10 +115,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 				
 			case I.TextStyle.Code: {
-				const options: I.Option[] = [];
-				for (const i in J.Lang.code) {
-					options.push({ id: i, name: J.Lang.code[i] });
-				};
+				const options = U.Menu.codeLangOptions();
 
 				spellcheck = false;
 				
@@ -268,20 +256,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let html = text;
 		if (block.isTextCode()) {
 			let lang = fields.lang;
-			let grammar = Prism.languages[lang];
+			// do not highlight unsupported language codes
+			const grammar = Prism.languages[lang] || {};
 
-			if (!grammar && (lang != 'plain')) {
-				lang = J.Constant.default.codeLang;
-				grammar = Prism.languages[lang];
-			};
+			lang = U.Prism.aliasMap[lang] || 'plain';
 
 			if (this.refLang) {
 				this.refLang.setValue(lang);
 			};
 
-			if (grammar) {
-				html = Prism.highlight(html, grammar, lang);
-			};
+			html = Prism.highlight(html, grammar, lang);
 		} else {
 			const parsed = Mark.fromUnicode(html, this.marks);
 
@@ -387,6 +371,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				} else {
 					Renderer.send('urlOpen', target);
 				};
+
+				console.log('CLICK');
 			});
 		});
 	};
@@ -945,7 +931,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { filter } = S.Common;
 		const { id, content } = block;
 		const range = this.getRange();
-		const langCodes = Object.keys(J.Lang.code).join('|');
+		const langCodes = Object.keys(Prism.languages).join('|');
 		const langKey = '```(' + langCodes + ')?';
 
 		const Markdown = {

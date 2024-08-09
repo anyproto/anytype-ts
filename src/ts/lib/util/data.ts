@@ -71,7 +71,7 @@ class UtilData {
 
 		switch (block.type) {
 			case I.BlockType.File: {
-				if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
+				if ((style == I.FileStyle.Link) || [ I.FileType.File, I.FileType.None ].includes(type)) {
 					c.push(dc);
 				} else {
 					c.push(`blockMedia is${I.FileType[type]}`);
@@ -937,17 +937,18 @@ class UtilData {
 		};
 
 		C.MembershipGetStatus(true, (message: any) => {
+			if (!message.membership) {
+				return;
+			};
+
 			const membership = new M.Membership(message.membership);
+			const { status, tier } = membership;
 
-			if (membership) {
-				const { status, tier } = membership;
+			S.Auth.membershipSet(membership);
+			analytics.setTier(tier);
 
-				S.Auth.membershipSet(membership);
-				analytics.setTier(tier);
-
-				if (status && (status == I.MembershipStatus.Finalization)) {
-					S.Popup.open('membershipFinalization', { data: { tier } });
-				};
+			if (status && (status == I.MembershipStatus.Finalization)) {
+				S.Popup.open('membershipFinalization', { data: { tier } });
 			};
 
 			if (callBack) {

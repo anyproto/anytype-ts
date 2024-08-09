@@ -9,6 +9,7 @@ import Object from './object';
 import Router from './router';
 import Smile from './smile';
 import Space from './space';
+import Prism from './prism';
 
 export {
 	Common,
@@ -22,4 +23,5 @@ export {
 	Router,
 	Smile,
 	Space,
+	Prism,
 };

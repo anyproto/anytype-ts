@@ -800,7 +800,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					const type = S.Record.getTypeById(typeId);
 
 					if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
-						menuContext.close();
+						menuContext?.close();
 						this.onBookmarkMenu(e, dir, '', { element: `#button-${block.id}-add-record` });
 					} else
 					if (item.id == J.Constant.templateId.new) {
@@ -809,7 +809,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						this.recordCreate(e, item, dir);
 						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: item.id });
 
-						menuContext.close();
+						menuContext?.close();
 						analytics.event('ChangeDefaultTemplate', { route });
 					};
 				}
