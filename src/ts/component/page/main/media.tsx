@@ -72,7 +72,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const isPdf = file?.isFilePdf();
 		const cn = [ 'blocks' ];
 
-		if (isVideo || isImage || isAudio) {
+		if (isVideo || isImage || isAudio || isPdf) {
 			if (isVideo || isAudio || (object.widthInPixels > object.heightInPixels)) {
 				cn.push('horizontal');
 			} else {
@@ -87,8 +87,11 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			if (isAudio) {
 				cn.push('isAudio');
 			};
+			if (isPdf) {
+				cn.push('isPdf');
+			};
 		} else {
-			cn.push('vertical');
+			cn.push('horizontal');
 		};
 
 		if (file) {
@@ -110,7 +113,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 					/>
 				);
 			} else {
-				content = <IconObject object={object} size={96} />;
+				content = <IconObject object={object} size={160} />;
 			};
 		};
 
@@ -140,15 +143,18 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 										placeholder={translate('defaultNamePage')} 
 										rootId={rootId} 
 										isContextMenuDisabled={true}
+										noIcon={true}
 									/>
 
 									<div className="buttons">
-										<Button text={translate('commonOpen')} color="blank" onClick={this.onOpen} />
+										{/*<Button text={translate('commonOpen')} color="blank" onClick={this.onOpen} />*/}
 										<Button text={translate('commonDownload')} color="blank" onClick={this.onDownload} />
 									</div>
 								</div>
 
 								<div className="section">
+									<div className="title">{translate('pageMainMediaFileInfo')}</div>
+
 									{relations.map((item: any) => (
 										<Block 
 											{...this.props} 

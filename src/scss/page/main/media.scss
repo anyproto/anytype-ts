@@ -1,18 +1,23 @@
 @import "~scss/_mixins";
 
 .pageMainMedia {
+	.headSimple { margin: 0px; }
 
-	.blocks { margin: 0px auto; padding: 68px 0px 0px 0px; display: flex; }
-	.blocks {
-		.side.right { padding-top: 25px; }
+	.section {
+		.title { @include text-paragraph; font-weight: 600; margin-bottom: 4px; position: relative; }
 	}
 
+	.blocks { margin: 0px auto; padding: 16px 0px 0px 0px; display: flex; }
 	.blocks > .empty { width: 100%; text-align: center; color: var(--color-text-secondary); @include text-header3; }
-
-	.blocks.horizontal { width: 704px; flex-direction: column; padding-bottom: 80px; }
 
 	.blocks.isVideo {
 		.block.blockMedia { max-height: unset; }
+	}
+
+	.blocks.horizontal { width: 704px; flex-direction: column; padding-bottom: 80px; }
+	.blocks.horizontal {
+		> .side.left { text-align: center; }
+		> .side.right { padding-top: 32px; margin-top: 52px; border-top: 1px solid var(--color-shape-highlight-medium); }
 	}
 
 	.blocks.vertical { width: calc(100% - 56px); flex-direction: row; gap: 0px 32px; }
@@ -25,6 +30,7 @@
 				border-radius: 6px; padding: 12px;
 			}
 		}
+		> .side.right { padding-top: 25px; }
 
 		.block.blockMedia { max-height: 100%; }
 		.block.blockMedia {
@@ -38,10 +44,6 @@
 			.wrapMenu { display: none; }
 			.wrapContent { width: 100%; }
 		}
-
-		.title { @include text-header1; word-wrap: break-word; margin-bottom: 10px; }
-		.descr { @include text-paragraph; word-wrap: break-word; margin-bottom: 10px; }
-		.descr:empty { display: none; }
 
 		.block.blockMedia { padding: 0px; width: 100%; }
 		.block.blockMedia {
@@ -57,7 +59,7 @@
 			.info .name { color: var(--color-text-secondary); }
 		}
 
-		.buttons { margin: 16px 0px 40px 0px; display: flex; flex-direction: row; gap: 0px 16px; }
+		.buttons { margin: 12px 0px 28px 0px; display: flex; flex-direction: row; gap: 0px 16px; }
 		.buttons {
 			.button { @include text-paragraph; height: 36px; line-height: 32px; }
 		}
