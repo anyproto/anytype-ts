@@ -64,9 +64,6 @@
 		}
 
 		.buttons { margin: 12px 0px 28px 0px; display: flex; flex-direction: row; gap: 0px 16px; }
-		.buttons {
-			.button { @include text-paragraph; height: 36px; line-height: 32px; }
-		}
 	}
 }
 

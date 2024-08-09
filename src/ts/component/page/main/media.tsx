@@ -148,7 +148,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 									<div className="buttons">
 										{/*<Button text={translate('commonOpen')} color="blank" onClick={this.onOpen} />*/}
-										<Button text={translate('commonDownload')} color="blank" onClick={this.onDownload} />
+										<Button text={translate('commonDownload')} color="blank" className="c36" onClick={this.onDownload} />
 									</div>
 								</div>
 
