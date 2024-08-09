@@ -232,6 +232,10 @@ export const AccountLocalLinkSolveChallenge = (id: string, answer: string, callB
 	dispatcher.request(AccountLocalLinkSolveChallenge.name, request, callBack);
 };
 
+export const AccountEventSubscriptionReady = (callBack?: (message: any) => void) => {
+	dispatcher.request(AccountEventSubscriptionReady.name, new Empty(), callBack);
+};
+
 // ---------------------- FILE ---------------------- //
 
 export const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {

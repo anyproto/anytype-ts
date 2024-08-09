@@ -139,6 +139,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 				return;
 			};
 
+			C.AccountEventSubscriptionReady();
+
 			S.Auth.accountSet(message.account);
 			S.Common.configSet(message.account.config, false);
 
