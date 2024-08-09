@@ -118,9 +118,17 @@
 
 	/* Readonly */
 
-	.block.blockText.isReadonly > .wrapContent > .selectionTarget > .dropTarget .marker.check { cursor: default; }
-	.block.blockText.isReadonly > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-paragraph); cursor: text !important; user-select: text !important; }
-	.block.blockText.isReadonly > .wrapContent > .selectionTarget > .dropTarget #placeholder { display: none; }
+	.block.blockText.isReadonly {
+		> .wrapContent {
+			> .selectionTarget {
+				> .dropTarget {
+					.marker.check { cursor: default; }
+					#value { min-height: var(--line-height-paragraph); cursor: text !important; user-select: text !important; white-space: pre-wrap; }
+					#placeholder { display: none; }
+				}
+			}
+		}
+	}
 
 	.block.blockText.isReadonly.textTitle > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-title); }
 	.block.blockText.isReadonly.textDescription > .wrapContent > .selectionTarget > .dropTarget #value { min-height: var(--line-height-description); }
