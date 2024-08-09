@@ -1380,7 +1380,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		e.stopPropagation();
 
 		if (replace) {
-			C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
+			const parent = S.Block.getParentLeaf(rootId, block.id);
+
+			if (parent && parent.isTextList()) {
+				this.onTabBlock(e, range, true);
+			} else {
+				C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
+			};
 		} else 
 		if (!block.isText()) {  
 			this.blockCreate(block.id, I.BlockPosition.Bottom, {
