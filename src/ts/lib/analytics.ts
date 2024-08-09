@@ -16,6 +16,7 @@ class Analytics {
 	instance: any = null;
 
 	public route = {
+		block: 'Block',
 		navigation: 'Navigation',
 		onboarding: 'Onboarding',
 		collection: 'Collection',
@@ -41,6 +42,7 @@ class Analytics {
 		relation: 'Relation',
 		link: 'Link',
 		mention: 'Mention',
+		media: 'Media',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',

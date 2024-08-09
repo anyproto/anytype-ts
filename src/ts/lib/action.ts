@@ -175,7 +175,7 @@ class Action {
 		focus.apply();
 	};
 
-	openFile (id: string) {
+	openFile (id: string, route: string) {
 		if (!id) {
 			return;
 		};
@@ -183,6 +183,7 @@ class Action {
 		C.FileDownload(id, U.Common.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
+				analytics.event('OpenMedia', { route });
 			};
 		});
 	};
