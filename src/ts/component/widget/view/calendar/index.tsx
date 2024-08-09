@@ -206,7 +206,6 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 
 		return [
 			{ 
-				operator: I.FilterOperator.And, 
 				relationKey: relation.relationKey, 
 				condition: I.FilterCondition.GreaterOrEqual, 
 				value: start, 
@@ -214,7 +213,6 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 				format: relation.format,
 			},
 			{ 
-				operator: I.FilterOperator.And, 
 				relationKey: relation.relationKey, 
 				condition: I.FilterCondition.LessOrEqual, 
 				value: end, 

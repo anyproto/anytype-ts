@@ -220,9 +220,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { data } = param;
 		const filter = String(data.filter || '');
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ S.Common.space, J.Constant.storeSpaceId ] },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
-			{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: data.skipKeys || [] },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, S.Common.space ] },
+			{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+			{ relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: data.skipKeys || [] },
 		];
 		const sorts = [
 			{ relationKey: 'spaceId', type: I.SortType.Desc },
@@ -383,10 +383,10 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				menuParam.className = 'single';
 
 				const filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: J.Constant.storeSpaceId },
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
-					{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
+					{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: J.Constant.storeSpaceId },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
+					{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
+					{ relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
 				];
 
 				menuParam.data = Object.assign(menuParam.data, {

@@ -250,7 +250,7 @@ class UtilObject {
 
 	getByIds (ids: string[], callBack: (objects: any[]) => void) {
 		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }
+			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids }
 		];
 
 		C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {

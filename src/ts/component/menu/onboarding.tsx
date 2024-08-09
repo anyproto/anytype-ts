@@ -229,7 +229,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 					data: {
 						filter: '',
 						filters: [
-							{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+							{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 						],
 						onClick: (item: any) => {
 							const rootId = keyboard.getRootId();

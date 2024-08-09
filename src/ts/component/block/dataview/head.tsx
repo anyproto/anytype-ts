@@ -179,7 +179,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		if (isCollection) {
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
+				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
@@ -192,8 +192,8 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			};
 		} else {
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
-				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
+				{ relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewSet');

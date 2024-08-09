@@ -594,8 +594,8 @@ class UtilMenu {
 								isSub: true,
 								data: {
 									filters: [
-										{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
-										{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+										{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+										{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 									],
 									canAdd: true,
 									onSelect: el => onSelect(el, true),

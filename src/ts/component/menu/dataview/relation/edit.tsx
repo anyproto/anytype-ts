@@ -321,7 +321,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				const conditions = Relation.filterConditionsByType(relation.format);
 				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 				const filter = {
-					operator: I.FilterOperator.And, 
+					
 					relationKey: relation.relationKey,
 					condition: condition as I.FilterCondition,
 					value: Relation.formatValue(relation, null, false),
@@ -458,8 +458,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				value: this.objectTypes, 
 				types: [ S.Record.getTypeType()?.id ],
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
+					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 				],
 				relation: observable.box(relation),
 				valueMapper: it => S.Record.getTypeById(it.id),

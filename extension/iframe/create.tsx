@@ -154,8 +154,8 @@ const Create = observer(class Create extends React.Component<I.PageComponent, St
 		const node = $(this.node);
 		const templateType = S.Record.getTemplateType();
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+			{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 		];
 
 		S.Menu.open('searchObject', {

@@ -853,6 +853,7 @@ export const Mapper = {
 			item.setQuickoption(obj.quickOption);
 			item.setValue(Encode.value(obj.value));
 			item.setIncludetime(obj.includeTime);
+			item.setNestedfiltersList((obj.nestedFilters || []).map(Mapper.To.Filter));
 
 			return item;
 		},

@@ -106,7 +106,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			data: {
 				skipIds: value,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc }

@@ -166,14 +166,14 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const start = U.Date.timestamp(first.y, first.m, first.d, 0, 0, 0);
 		const end = U.Date.timestamp(last.y, last.m, last.d, 23, 59, 59);
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
-		].concat(view.filters);
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+		].concat(view.filters as any[]);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
 		const subId = this.getSubId();
 
 		filters.push({ 
-			operator: I.FilterOperator.And, 
+			
 			relationKey: relation.relationKey, 
 			condition: I.FilterCondition.GreaterOrEqual, 
 			value: start, 
@@ -182,7 +182,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		});
 
 		filters.push({ 
-			operator: I.FilterOperator.And, 
+			
 			relationKey: relation.relationKey, 
 			condition: I.FilterCondition.LessOrEqual, 
 			value: end, 
@@ -191,7 +191,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		});
 
 		if (searchIds) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
 		U.Data.searchSubscribe({

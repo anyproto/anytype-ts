@@ -391,7 +391,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			const filters = [];
 
 			if (this.searchIds) {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
+				filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
 			};
 
 			Dataview.getData({
@@ -966,7 +966,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		
 		if (isCollection) {
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
+				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
@@ -976,8 +976,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		} else {
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
-				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
+				{ relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewSet');

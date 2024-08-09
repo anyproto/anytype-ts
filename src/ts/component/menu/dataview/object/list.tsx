@@ -253,7 +253,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const value = Relation.getArrayValue(data.value);
 
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(data.filters || []);
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -261,7 +261,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		];
 
 		if (types && types.length) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: types.map(it => it.uniqueKey) });
+			filters.push({ relationKey: 'type.uniqueKey', condition: I.FilterCondition.In, value: types.map(it => it.uniqueKey) });
 		};
 
 		if (clear) {
@@ -272,7 +272,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		if (!canEdit) {
 			limit = 0;
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value });
 		};
 
 		U.Data.search({
