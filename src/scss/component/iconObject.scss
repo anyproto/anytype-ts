@@ -46,6 +46,7 @@
 .iconObject.c108 { width: 108px; height: 108px; }
 .iconObject.c112 { width: 112px; height: 112px; }
 .iconObject.c128 { width: 128px; height: 128px; }
+.iconObject.c160 { width: 160px; height: 160px; }
 
 .iconObject.c48,
 .iconObject.c56,
@@ -54,7 +55,8 @@
 .iconObject.c96,
 .iconObject.c108,
 .iconObject.c112,
-.iconObject.c128 {
+.iconObject.c128
+.iconObject.c160 {
 	display: block; overflow: hidden; background-color: var(--color-shape-tertiary);
 }
 
@@ -67,7 +69,8 @@
 .iconObject.c96,
 .iconObject.c108,
 .iconObject.c112,
-.iconObject.c128 {
+.iconObject.c128
+.iconObject.c160 {
 	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
 }
 
@@ -80,7 +83,8 @@
 .iconObject.c96,
 .iconObject.c108,
 .iconObject.c112,
-.iconObject.c128 {
+.iconObject.c128
+.iconObject.c160 {
 	border-radius: 20px;
 }
 
@@ -100,7 +104,8 @@
 .iconObject.withImage.c96, 
 .iconObject.withImage.c108, 
 .iconObject.withImage.c112, 
-.iconObject.withImage.c128 { border-radius: 4px !important; }
+.iconObject.withImage.c128,
+.iconObject.withImage.c160 { border-radius: 4px !important; }
 .iconObject.withImage.c112:not(.isHuman):not(.isParticipant), .iconObject.withImage.c128:not(.isHuman):not(.isParticipant) { border-radius: 8px !important; }
 
 .iconObject.isHuman, .iconObject.isParticipant { border-radius: 100% !important; background-color: unset; }
@@ -112,5 +117,6 @@
 .iconObject.isSpaceView.c96, 
 .iconObject.isSpaceView.c108, 
 .iconObject.isSpaceView.c112, 
-.iconObject.isSpaceView.c128 { border-radius: 4px !important; }
+.iconObject.isSpaceView.c128,
+.iconObject.isSpaceView.c160 { border-radius: 4px !important; }
 .iconObject.withOption.isSpaceView { background: var(--color-control-accent) !important; }
