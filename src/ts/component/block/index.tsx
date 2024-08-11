@@ -196,7 +196,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.Dataview: {
-				canDrop = canSelect = !(root.isObjectSet() || root.isObjectCollection() || root.isObjectDate());
+				canDrop = canSelect = !U.Object.isInSetLayouts(root.layout);
 				if (canSelect) {
 					cn.push('isInline');
 				};
@@ -503,7 +503,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 
-		if (root.isLocked() || root.isObjectSet() || root.isObjectCollection()) {
+		if (root.isLocked() || U.Object.isInSetLayouts(root.layout)) {
 			return;
 		};
 

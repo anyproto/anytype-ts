@@ -88,7 +88,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			case I.TextStyle.Title: {
 				placeholder = translate('defaultNamePage');
 
-				if (root && root.isObjectTask()) {
+				if (root && U.Object.isTaskLayout(root.layout)) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
 				};
 				break;
