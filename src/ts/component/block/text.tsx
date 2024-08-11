@@ -371,8 +371,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				} else {
 					Renderer.send('urlOpen', target);
 				};
-
-				console.log('CLICK');
 			});
 		});
 	};

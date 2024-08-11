@@ -58,9 +58,6 @@ class MenuStore {
 
     update (id: string, param: any) {
 		const item = this.get(id);
-
-		console.log('UPDATE', id, param);
-
 		if (item) {
 			param.data = Object.assign(item.param.data, param.data);
 			set(item, { param: Object.assign(item.param, param) });
