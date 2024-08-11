@@ -30,7 +30,7 @@ const ContentModel = {
 class Block implements I.Block {
 	
 	id = '';
-	layout: I.ObjectLayout = I.ObjectLayout.Page;
+	layout: I.ObjectLayout = I.ObjectLayout.Note;
 	parentId = '';
 	type: I.BlockType = I.BlockType.Empty;
 	childrenIds: string[] = [];
@@ -157,34 +157,6 @@ class Block implements I.Block {
 
 	isPage (): boolean { 
 		return (this.type == I.BlockType.Page);
-	};
-
-	isObjectTask (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Task);
-	};
-
-	isObjectNote (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Note);
-	};
-
-	isObjectSet (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Set);
-	};
-
-	isObjectCollection (): boolean {
-		return this.isPage() && (this.layout == I.ObjectLayout.Collection);
-	};
-
-	isObjectDate (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Date);
-	};
-
-	isObjectType (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Type);
-	};
-
-	isObjectBookmark (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Bookmark);
 	};
 
 	isFeatured (): boolean {

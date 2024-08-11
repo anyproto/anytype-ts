@@ -136,14 +136,6 @@ export interface Block {
 	isDeletable?(): boolean;
 
 	isPage?(): boolean;
-	isObjectTask?(): boolean;
-	isObjectNote?(): boolean;
-	isObjectSet?(): boolean;
-	isObjectCollection?(): boolean;
-	isObjectType?(): boolean;
-	isObjectBookmark?(): boolean;
-	isObjectDate?(): boolean;
-
 	isFeatured?(): boolean;
 	isDataview?(): boolean;
 	isRelation?(): boolean;

@@ -455,7 +455,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const rootId = this.getRootId();
 		const root = S.Block.getLeaf(rootId, rootId);
 
-		return root?.isObjectSet() || root?.isObjectCollection();
+		return U.Object.isInSetLayouts(root?.layout);
 	};
 
 	setVersion (version: I.HistoryVersion) {
