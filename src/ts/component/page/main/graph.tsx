@@ -150,7 +150,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		const hh = header.height();
 		const wh = isPopup ? oh - hh : win.height();
 
-		wrapper.css({ height: wh, paddingTop: isPopup ? 0 : hh });
+		wrapper.css({ height: wh });
 		
 		if (isPopup) {
 			const element = $('#popupPage .content');
