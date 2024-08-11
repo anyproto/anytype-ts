@@ -17,6 +17,9 @@ interface Props {
 	accept?: string;
 	maskOptions?: any;
 	focusOnMount?: boolean;
+	pattern?: string;
+	inputMode?: string;
+	noValidate?: boolean;
 	onCompositionStart?(): void;
 	onCompositionEnd?(): void;
 	onInput?(e: any, value: string): void;
