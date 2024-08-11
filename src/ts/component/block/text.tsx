@@ -591,7 +591,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const { block } = this.props;
-		if (block.isTextCode()) {
+		if (block.isTextCode() || !this.refEditable) {
 			return;
 		};
 
