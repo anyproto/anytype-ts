@@ -59,8 +59,6 @@ class Pin extends React.Component<Props, State> {
 			});
 		};
 
-		console.log(props);
-
 		return (
 			<div className="pin" onClick={this.onClick}>
 				{Array(pinLength).fill(null).map((_, i) => (
@@ -208,7 +206,7 @@ class Pin extends React.Component<Props, State> {
 		this.check();
 	};
 
-	getType () {
+	getType (): string {
 		return this.props.isNumeric ? 'number' : 'text';
 	};
 

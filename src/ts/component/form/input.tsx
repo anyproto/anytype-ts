@@ -18,7 +18,7 @@ interface Props {
 	maskOptions?: any;
 	focusOnMount?: boolean;
 	pattern?: string;
-	inputMode?: string;
+	inputMode?: any;
 	noValidate?: boolean;
 	onCompositionStart?(): void;
 	onCompositionEnd?(): void;
@@ -77,7 +77,10 @@ class Input extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { id, name, placeholder, className, autoComplete, readonly, maxLength, multiple, accept, onClick, onMouseEnter, onMouseLeave } = this.props;
+		const { 
+			id, name, placeholder, className, autoComplete, readonly, maxLength, multiple, accept, pattern, inputMode, noValidate,
+			onClick, onMouseEnter, onMouseLeave 
+		} = this.props;
 		const type = String(this.state.type || this.props.type || '');
 		const cn = [ 'input', 'input-' + type ];
 
@@ -97,6 +100,9 @@ class Input extends React.Component<Props, State> {
 				placeholder={placeholder}
 				value={this.state.value}
 				className={cn.join(' ')}
+				pattern={pattern}
+				inputMode={inputMode}
+				formNoValidate={noValidate}
 				autoComplete={autoComplete ? autoComplete : name}
 				readOnly={readonly}
 				onChange={this.onChange}
