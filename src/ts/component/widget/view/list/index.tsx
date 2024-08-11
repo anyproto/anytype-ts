@@ -141,7 +141,7 @@ const WidgetViewList = observer(class WidgetViewList extends React.Component<I.W
 	};
 
 	componentDidUpdate (): void {
-		if (this.refList) {
+		if (this.refList && this.top) {
 			this.refList.scrollToPosition(this.top);
 		};
 
