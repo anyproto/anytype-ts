@@ -136,20 +136,11 @@ export interface Block {
 	isDeletable?(): boolean;
 
 	isPage?(): boolean;
-	isObjectPage?(): boolean;
-	isObjectHuman?(): boolean;
-	isObjectParticipant?(): boolean;
 	isObjectTask?(): boolean;
 	isObjectNote?(): boolean;
 	isObjectSet?(): boolean;
 	isObjectCollection?(): boolean;
-	isObjectFileKind?(): boolean;
-	isObjectFile?(): boolean;
-	isObjectImage?(): boolean;
-	isObjectVideo?(): boolean;
-	isObjectAudio?(): boolean;
 	isObjectType?(): boolean;
-	isObjectRelation?(): boolean;
 	isObjectBookmark?(): boolean;
 	isObjectDate?(): boolean;
 

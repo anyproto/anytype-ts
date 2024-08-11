@@ -159,18 +159,6 @@ class Block implements I.Block {
 		return (this.type == I.BlockType.Page);
 	};
 
-	isObjectPage (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Page);
-	};
-
-	isObjectHuman (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Human);
-	};
-
-	isObjectParticipant (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Participant);
-	};
-
 	isObjectTask (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Task);
 	};
@@ -191,36 +179,8 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Date);
 	};
 
-	isObjectFileKind (): boolean { 
-		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo() || this.isObjectAudio() || this.isObjectPdf());
-	};
-
-	isObjectFile (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.File);
-	};
-
-	isObjectImage (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Image);
-	};
-
-	isObjectVideo (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Video);
-	};
-
-	isObjectAudio (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Audio);
-	};
-
-	isObjectPdf (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Pdf);
-	};
-
 	isObjectType (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Type);
-	};
-
-	isObjectRelation (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Relation);
 	};
 
 	isObjectBookmark (): boolean { 

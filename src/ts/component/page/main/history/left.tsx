@@ -32,10 +32,10 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 		const icon = new M.Block({ id: `${rootId}-icon`, type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cover = new M.Block({ id: `${rootId}-cover`, type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cn = [ 'editorWrapper', check.className ];
-		const isSet = root?.isObjectSet();
-		const isCollection = root?.isObjectCollection();
-		const isHuman = root?.isObjectHuman();
-		const isParticipant = root?.isObjectParticipant();
+		const isSet = U.Object.isSetLayout(object.layout);
+		const isCollection = U.Object.isCollectionLayout(object.layout);
+		const isHuman = U.Object.isHumanLayout(object.layout);
+		const isParticipant = U.Object.isParticipantLayout(object.layout);
 
 		let head = null;
 		let children = S.Block.getChildren(rootId, rootId);
