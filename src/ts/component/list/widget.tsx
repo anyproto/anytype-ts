@@ -73,7 +73,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 					return false;
 				};
 
-				const target = child.content.targetBlockId;
+				const target = child.getTargetObjectId();
 
 				if (Object.values(J.Constant.widgetId).includes(target)) {
 					return true;
