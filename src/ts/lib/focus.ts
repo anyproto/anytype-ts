@@ -2,19 +2,14 @@ import $ from 'jquery';
 import { setRange } from 'selection-ranges';
 import { I, C, U, J, keyboard } from 'Lib';
 
-interface State {
-	focused: string;
-	range: I.TextRange;
-};
-
 class Focus {
 	
-	state: State = { 
+	state: I.FocusState = { 
 		focused: '', 
 		range: { from: 0, to: 0 } 
 	};
 
-	backup: State = { 
+	backup: I.FocusState = { 
 		focused: '', 
 		range: { from: 0, to: 0 } 
 	};
