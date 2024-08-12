@@ -593,8 +593,7 @@ class BlockStore {
 		return header ? header.childrenIds.includes(J.Constant.blockId.type) : false;
 	};
 
-	checkChat (rootId: string) {
-		const { chat } = J.Constant.blockId;
+	checkBlockChat (rootId: string) {
 		const element = this.getMapElement(rootId, rootId);
 
 		if (!element) {
@@ -606,13 +605,14 @@ class BlockStore {
 			return;
 		};
 
-		if (object.chatId && !this.checkChatExists(rootId)) {
-			const childrenIds = element.childrenIds.concat(chat);
+		if (object.chatId && !this.checkBlockChatExists(rootId)) {
+			const childrenIds = element.childrenIds.concat(J.Constant.blockId.chat);
+
 			this.updateStructure(rootId, rootId, childrenIds);
 		};
 	};
 
-	checkChatExists (rootId: string): boolean {
+	checkBlockChatExists (rootId: string): boolean {
 		const element = this.getMapElement(rootId, rootId);
 		return element ? element.childrenIds.includes(J.Constant.blockId.chat) : false;
 	};

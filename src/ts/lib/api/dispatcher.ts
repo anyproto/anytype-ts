@@ -243,6 +243,7 @@ class Dispatcher {
 
 					if (id == rootId) {
 						S.Block.checkBlockType(rootId);
+						S.Block.checkBlockChat(rootId);
 					};
 
 					updateParents = true;
@@ -814,6 +815,7 @@ class Dispatcher {
 
 					S.Detail.delete(rootId, id, keys);
 					S.Block.checkBlockType(rootId);
+					S.Block.checkBlockChat(rootId);
 
 					updateMarkup = true;
 					break;
@@ -1008,7 +1010,7 @@ class Dispatcher {
 			};
 
 			S.Block.checkBlockType(rootId);
-			S.Block.checkChat(rootId);
+			S.Block.checkBlockChat(rootId);
 		};
 
 		if (undefined !== details.setOf) {
@@ -1113,7 +1115,7 @@ class Dispatcher {
 		S.Block.updateNumbers(contextId); 
 		S.Block.updateMarkup(contextId);
 		S.Block.checkBlockType(contextId);
-		S.Block.checkChat(contextId);
+		S.Block.checkBlockChat(contextId);
 
 		keyboard.setWindowTitle();
 	};
