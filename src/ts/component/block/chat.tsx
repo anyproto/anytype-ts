@@ -264,10 +264,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getSubId (): string {
-		const rootId = this.getRootId();
-		const blockId = this.getBlockId();
-
-		return S.Record.getSubId(rootId, blockId);
+		return S.Record.getSubId(this.getRootId(), this.getBlockId());
 	};
 
 	loadDeps (callBack?: () => void) {
@@ -632,7 +629,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					this.scrollToBottom();
 					this.refEditable.setRange({ from: 0, to: 0 });
 					this.lastMessageId = message.messageId;
-					this.forceUpdate();
+					this.setState({ attachments: [], files: [] });
 				});
 
 				clear();
@@ -808,6 +805,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.marks = Mark.toggle(this.marks, { type, param, range: { from, to } });
 		this.refEditable.setValue(Mark.toHtml(value, this.marks));
 		this.refEditable.setRange({ from, to });
+
 		this.updateButtons();
 		this.renderMarkup();
 	};
