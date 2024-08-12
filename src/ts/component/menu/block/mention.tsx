@@ -181,12 +181,13 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const sections: any[] = [];
 
 		if (this.items.length) {
-			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: this.items.concat({ isDiv: true }) });
+			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: this.items });
 		};
 
 		if (filter && canAdd) {
 			sections.push({ 
 				children: [
+					{ isDiv: true },
 					{ id: 'add', icon: 'plus', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter) }
 				]
 			});

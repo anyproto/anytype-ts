@@ -129,7 +129,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 				<div id="formWrapper" className="formWrapper">
 					<div className="form">
-
 						<Editable 
 							ref={ref => this.refEditable = ref}
 							id="messageBox"
@@ -664,7 +663,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		this.marks = marks;
 		this.range = { from: l, to: l };
-
 		this.editingId = message.id;
 		this.refEditable.setValue(Mark.toHtml(text, this.marks));
 		this.renderMarkup();
