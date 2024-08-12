@@ -48,7 +48,17 @@ class ChatStore {
 	};
 
 	getList (rootId: string): any[] {
-		return this.map.get(rootId) || [];
+		return (this.map.get(rootId) || []).map(it => {
+			let ret: any = { text: '', data: {} };
+			try { 
+				ret = JSON.parse(it);
+				ret.data = JSON.parse(ret.text);
+
+				delete(ret.text);
+			} catch (e) { /**/ };
+
+			return ret;
+		});
 	};
 
 };

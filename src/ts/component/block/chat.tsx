@@ -98,6 +98,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				ref={ref => this.messagesMap[item.id] = ref}
 				{...this.props}
 				{...item}
+				rootId={rootId}
 				isThread={!!threadId}
 				onThread={this.onThread}
 				onContextMenu={e => this.onContextMenu(e, item)}
@@ -240,16 +241,26 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
+	getMessages () {
+		const rootId = this.getRootId();
+		const list = S.Chat.getList(rootId);
+		const length = list.length;
+		const slice = length > LIMIT ? list.slice(length - LIMIT, length) : list;
+		
+		return slice;
+	};
+
 	getDeps () {
 		const messages = this.getMessages();
 		const markTypes = [ I.MarkType.Object, I.MarkType.Mention ];
-
-		return U.Common.arrayUnique(messages.reduce((acc, it) => {
+		const deps = U.Common.arrayUnique(messages.reduce((acc, it) => {
 			const data = it.data || {};
 			const marks = (data.marks || [].filter(it => markTypes.includes(it.types))).map(it => it.param);
 
 			return acc.concat(data.attachments || []).concat(marks);
 		}, []));
+
+		return deps;
 	};
 
 	getSubId (): string {
@@ -495,31 +506,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return this.state.threadId || this.props.block.id;
 	};
 
-	getMessages () {
-		const rootId = this.getRootId();
-		const list = S.Chat.getList(rootId);
-
-		console.log(list);
-
-
-		const length = list.length;
-		const slice = length > LIMIT ? list.slice(length - LIMIT, length) : list;
-
-		const mapped = slice.map(it => {
-			let ret: any = { text: '', data: {} };
-			try { 
-				ret = JSON.parse(it);
-				ret.data = JSON.parse(ret.text);
-
-				delete(ret.text);
-			} catch (e) { /**/ };
-
-			return ret;
-		});
-
-		return mapped;
-	};
-
 	getSections () {
 		const messages = this.getMessages();
 		const sections = [];
@@ -624,7 +610,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					update.text = text;
 					update.marks = marks;
 
-					U.Data.blockSetText(rootId, this.editingId, JSON.stringify(update), [], true, () => {
+					C.ChatEditMessage(rootId, this.editingId, JSON.stringify(update), (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
 						this.scrollToMessage(this.editingId);
 						this.editingId = '';
 
