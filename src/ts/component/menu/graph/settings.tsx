@@ -173,12 +173,15 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		];
 
 		if (allowLocal) {
-			sections.push({ 
-				children: [ 
-					{ id: 'local', name: translate('menuGraphSettingsLocal') },
-					{ id: 'depth', name: translate('menuGraphSettingsDepth'), withDrag: true },
-				]
-			});
+			const children: any[] = [ 
+				{ id: 'local', name: translate('menuGraphSettingsLocal') },
+			];
+
+			if (values.local) {
+				children.push({ id: 'depth', name: translate('menuGraphSettingsDepth'), withDrag: true });
+			};
+
+			sections.push({ children });
 		};
 
 		sections = sections.map(s => {

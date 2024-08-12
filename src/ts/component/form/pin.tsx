@@ -4,6 +4,7 @@ import { Input } from 'Component';
 import { J, keyboard } from 'Lib';
 
 interface Props {
+	isNumeric?: boolean;
 	pinLength?: number;
 	expectedPin?: string | null;
 	focusOnMount?: boolean;
@@ -29,6 +30,7 @@ class Pin extends React.Component<Props, State> {
 		expectedPin: null,
 		focusOnMount: true,
 		isVisible: false,
+		isNumeric: false,
 	};
 
 	state = {
@@ -41,20 +43,33 @@ class Pin extends React.Component<Props, State> {
 	timeout = 0;
 
 	render () {
-		const { pinLength } = this.props;
+		const { pinLength, isNumeric } = this.props;
+	
+		let props = {
+			maxLength: 1,
+			onKeyUp: this.onInputKeyUp,
+		};
+
+		if (isNumeric) {
+			props = Object.assign(props, {
+				type: 'number',
+				pattern: '[0-9]{1}',
+				inputMode: 'numeric',
+				noValidate: true,
+			});
+		};
 
 		return (
 			<div className="pin" onClick={this.onClick}>
 				{Array(pinLength).fill(null).map((_, i) => (
 					<Input 
 						ref={ref => this.inputRefs[i] = ref} 
-						maxLength={1} 
 						key={i} 
 						onPaste={e => this.onPaste(e, i)}
 						onFocus={() => this.onInputFocus(i)} 
-						onKeyUp={this.onInputKeyUp} 
 						onKeyDown={e => this.onInputKeyDown(e, i)} 
 						onChange={(_, value) => this.onInputChange(i, value)} 
+						{...props}
 					/>
 				))}
 			</div>
@@ -117,7 +132,11 @@ class Pin extends React.Component<Props, State> {
 	reset () {
 		this.setState({ index: 0 }, () => {
 			this.clear();
-			this.focus();	
+			this.focus();
+
+			for (const i in this.inputRefs) {
+				this.inputRefs[i].setType(this.getType());
+			};
 		});
 	};
 
@@ -133,7 +152,7 @@ class Pin extends React.Component<Props, State> {
 		if (prev) {
 			keyboard.shortcut('backspace', e, () => {
 				prev.setValue('');
-				prev.setType('text');
+				prev.setType(this.getType());
 				prev.focus();
 			});
 		};
@@ -154,7 +173,7 @@ class Pin extends React.Component<Props, State> {
 		const next = this.inputRefs[index + 1];
 
 		if (!value) {
-			input.setType('text');
+			input.setType(this.getType());
 			return;
 		}
 
@@ -185,6 +204,10 @@ class Pin extends React.Component<Props, State> {
 
 		this.inputRefs[pinLength - 1].focus();
 		this.check();
+	};
+
+	getType (): string {
+		return this.props.isNumeric ? 'number' : 'text';
 	};
 
 };

@@ -146,6 +146,8 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 			Renderer.send('setUserDataPath', this.config.userPath);
 			S.Common.dataPathSet(this.config.userPath);
 			delete this.config.userPath;
+
+			analytics.event('SetUserDataPath', { route: analytics.route.onboarding });
 		};
 
 		S.Auth.networkConfigSet(this.config);

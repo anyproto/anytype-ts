@@ -359,11 +359,11 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	};
 
 	onIconSelect (icon: string) {
-		U.Object.setIcon(this.props.block.content.targetObjectId, icon, '');
+		U.Object.setIcon(this.props.block.getTargetObjectId(), icon, '');
 	};
 
 	onIconUpload (objectId: string) {
-		U.Object.setIcon(this.props.block.content.targetObjectId, '', objectId);
+		U.Object.setIcon(this.props.block.getTargetObjectId(), '', objectId);
 	};
 
 	setRange (range: I.TextRange) {

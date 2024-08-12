@@ -158,24 +158,22 @@ class MenuObject extends React.Component<I.Menu> {
 
 		const allowedArchive = canWrite && canDelete;
 		const allowedSearch = !U.Object.isInSetLayouts(object.layout);
-		const allowedHistory = !object.isArchived && !U.Object.isInFileOrSystemLayouts(object.layout) && !block.isObjectParticipant() && !object.templateIsBundled;
+		const allowedHistory = !object.isArchived && !U.Object.isInFileOrSystemLayouts(object.layout) && !U.Object.isParticipantLayout(object.layout) && !object.templateIsBundled;
 		const allowedFav = canWrite && !object.isArchived && !U.Object.isInFileOrSystemLayouts(object.layout) && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite && !object.isArchived;
 		const allowedAddCollection = canWrite && !object.isArchived;
 		const allowedPageLink = !object.isArchived;
 		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
-		const allowedReload = canWrite && object.source && block.isObjectBookmark();
+		const allowedReload = canWrite && object.source && U.Object.isBookmarkLayout(object.layout);
 		const allowedInstall = canWrite && !object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout);
 		const allowedUninstall = canWrite && object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout) && canDelete;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedWidget = canWrite && !object.isArchived && !S.Block.checkBlockTypeExists(rootId);
 		const hasShortMenu = (
-			block.isObjectType() || 
-			block.isObjectRelation() || 
-			block.isObjectFileKind() || 
-			block.isObjectSet() || 
-			block.isObjectCollection()
+			U.Object.isTypeOrRelationLayout(object.layout) ||
+			U.Object.isInFileLayouts(object.layout) ||
+			U.Object.isInSetLayouts(object.layout)
 		);
 
 		if (!allowedArchive)	 archive = null;

@@ -28,6 +28,7 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 				<Pin 
 					ref={ref => this.ref = ref} 
 					expectedPin={pin ? sha1(pin) : null} 
+					isNumeric={true}
 					onSuccess={this.onSuccess} 
 					onError={this.onError}
 				/>

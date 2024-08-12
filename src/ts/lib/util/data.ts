@@ -1000,6 +1000,8 @@ class UtilData {
 
 		let phrase = '';
 
+		analytics.event('StartCreateAccount');
+
 		C.WalletCreate(dataPath, (message) => {
 			if (message.error.code) {
 				onError(message.error.description);

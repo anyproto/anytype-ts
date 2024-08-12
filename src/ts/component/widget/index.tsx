@@ -771,7 +771,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	getRootId (): string {
 		const target = this.getTargetBlock();
-		return target ? [ target.content.targetBlockId, 'widget', target.id ].join('-') : '';
+		return target ? [ target.getTargetObjectId(), 'widget', target.id ].join('-') : '';
 	};
 
 	getTraceId (): string {

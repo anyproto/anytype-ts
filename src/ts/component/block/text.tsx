@@ -88,7 +88,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			case I.TextStyle.Title: {
 				placeholder = translate('defaultNamePage');
 
-				if (root && root.isObjectTask()) {
+				if (root && U.Object.isTaskLayout(root.layout)) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
 				};
 				break;
@@ -371,8 +371,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				} else {
 					Renderer.send('urlOpen', target);
 				};
-
-				console.log('CLICK');
 			});
 		});
 	};
@@ -591,7 +589,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const { block } = this.props;
-		if (block.isTextCode()) {
+		if (block.isTextCode() || !this.refEditable) {
 			return;
 		};
 
