@@ -111,11 +111,11 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	};
 
 	componentDidMount(): void {
-		this.init();
+		this.setSelectsValue(this.state.value);
 	};
 
-	init () {
-		const { m, y } = this.getDateParam(this.state.value);
+	setSelectsValue (value: number) {
+		const { m, y } = this.getDateParam(value);
 
 		this.refMonth?.setValue(m);
 		this.refYear?.setValue(y);
@@ -145,7 +145,7 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	setValue (value: number) {
 		this.state.value = value;
 		this.setState({ value }, () => this.props.reload());
-		this.init();
+		this.setSelectsValue(value);
 	};
 
 	onClick (d: number, m: number, y: number) {
