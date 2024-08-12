@@ -264,6 +264,13 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	isReadonly () {
+		const rootId = this.getRootId();
+		const root = S.Block.getLeaf(rootId, rootId);
+
+		if (root && root.isLocked()) {
+			return true;			
+		};
+
 		return !U.Space.canMyParticipantWrite();
 	};
 

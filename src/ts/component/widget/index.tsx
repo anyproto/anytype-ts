@@ -50,7 +50,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const child = this.getTargetBlock();
 		const root = '';
 		const childrenIds = S.Block.getChildrenIds(root, root);
-		const { layout, limit, viewId } = block.content;
+		const { limit, viewId } = block.content;
+		const object = this.getObject();
+
+		let layout = block.content.layout;
+		if (object) {
+			const layoutOptions = U.Menu.getWidgetLayoutOptions(object.id, object.layout).map(it => it.id);
+
+			if (layoutOptions.length && !layoutOptions.includes(layout)) {
+				layout = layoutOptions[0];
+			};
+		};
 
 		if (!child && (layout != I.WidgetLayout.Space)) {
 			return null;
@@ -59,7 +69,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const canWrite = U.Space.canMyParticipantWrite();
 		const { targetBlockId } = child?.content || {};
 		const cn = [ 'widget' ];
-		const object = this.getObject();
 
 		const withSelect = !this.isSystemTarget() && (!isPreview || !U.Common.isPlatformMac());
 		const childKey = `widget-${child?.id}-${layout}`;
@@ -737,7 +746,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	getRootId (): string {
 		const target = this.getTargetBlock();
-		return target ? [ target.content.targetBlockId, 'widget', target.id ].join('-') : '';
+		return target ? [ target.getTargetObjectId(), 'widget', target.id ].join('-') : '';
 	};
 
 	getTraceId (): string {

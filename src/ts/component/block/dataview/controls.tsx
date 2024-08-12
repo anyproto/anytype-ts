@@ -270,7 +270,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		};
 
 		if (((component == 'dataviewSort') && !view.sorts.length) || ((component == 'dataviewFilterList') && !view.filters.length)) {
-			this.sortOrFilterRelationSelect(component,{ ...toggleParam, element }, () => {
+			this.sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
 				this.onButton(element, component);
 			});
 			return;
@@ -290,6 +290,9 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				readonly,
 				rootId,
 				blockId: block.id,
+				view: observable.box(view),
+				isInline,
+				isCollection,
 				loadData,
 				getView,
 				getSources,
@@ -297,8 +300,6 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				getTarget,
 				getTypeId,
 				getTemplateId,
-				isInline,
-				isCollection,
 				isAllowedDefaultType,
 				onTemplateAdd,
 				onSortAdd,
@@ -306,8 +307,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 				onViewSwitch: this.onViewSwitch,
 				onViewCopy: this.onViewCopy,
 				onViewRemove: this.onViewRemove,
-				view: observable.box(view),
-				onAdd: (menuId: string, component: string, menuWidth: number) => {
+				onFilterOrSortAdd: (menuId: string, component: string, menuWidth: number) => {
 					this.sortOrFilterRelationSelect(component, {
 						element: `#${menuId} #item-add`,
 						offsetX: menuWidth,
@@ -328,11 +328,10 @@ const Controls = observer(class Controls extends React.Component<Props> {
 		S.Menu.open(component, param);
 	};
 
-	sortOrFilterRelationSelect (component: string, param: any, callBack?: () => void) {
+	sortOrFilterRelationSelect (component: string, menuParam: Partial<I.MenuParam>, callBack?: () => void) {
 		const { rootId, block, getView } = this.props;
 
-		U.Menu.sortOrFilterRelationSelect({
-			menuParam: param,
+		U.Menu.sortOrFilterRelationSelect(menuParam, {
 			rootId,
 			blockId: block.id,
 			getView,
@@ -349,13 +348,12 @@ const Controls = observer(class Controls extends React.Component<Props> {
 	onSortOrFilterAdd (item: any, component: string, callBack: () => void) {
 		const { onSortAdd, onFilterAdd } = this.props;
 
-		let newItem = {
+		let newItem: any = {
 			relationKey: item.relationKey ? item.relationKey : item.id
 		};
 
 		if (component == 'dataviewSort') {
-			newItem = Object.assign(newItem, { type: I.SortType.Asc });
-
+			newItem.type = I.SortType.Asc;
 			onSortAdd(newItem, callBack);
 		} else
 		if (component == 'dataviewFilterList') {

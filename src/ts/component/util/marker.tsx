@@ -63,8 +63,6 @@ const Marker = observer(class Marker extends React.Component<Props> {
 		const cn = [ 'marker' ];
 		const ci = [ 'markerInner', 'c' + type ];
 
-		let inner: any = null;
-		
 		if (className) {
 			cn.push(className);
 		};
@@ -76,14 +74,22 @@ const Marker = observer(class Marker extends React.Component<Props> {
 			ci.push('textColor textColor-' + color);
 		};
 
+		const props = {
+			id: `marker-${id}`,
+			key: `marker-${id}-${type}`,
+			className: ci.join(' '),
+		};
+
+		let inner: any = null;
+
 		switch (type) {
 			case I.TextStyle.Bulleted: {
-				inner = <span className={ci.join(' ')} />;
+				inner = <span {...props} />;
 				break;
 			};
 				
 			case I.TextStyle.Numbered: {
-				inner = <span id={`marker-${id}`} className={ci.join(' ')} />;
+				inner = <span {...props} />;
 				break;
 			};
 				

@@ -257,7 +257,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		];
 		const sorts = [
 			{ relationKey: 'syncStatus', type: I.SortType.Custom, customOrder: [ I.SyncStatusObject.Syncing, I.SyncStatusObject.Queued, I.SyncStatusObject.Synced ] },
-			{ relationKey: 'syncDate', type: I.SortType.Desc },
+			{ relationKey: 'syncDate', type: I.SortType.Desc, includeTime: true },
 		];
 
 		this.setState({ isLoading: true });

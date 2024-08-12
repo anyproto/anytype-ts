@@ -30,7 +30,7 @@ const ContentModel = {
 class Block implements I.Block {
 	
 	id = '';
-	layout: I.ObjectLayout = I.ObjectLayout.Page;
+	layout: I.ObjectLayout = I.ObjectLayout.Note;
 	parentId = '';
 	type: I.BlockType = I.BlockType.Empty;
 	childrenIds: string[] = [];
@@ -157,78 +157,6 @@ class Block implements I.Block {
 
 	isPage (): boolean { 
 		return (this.type == I.BlockType.Page);
-	};
-
-	isObjectPage (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Page);
-	};
-
-	isObjectHuman (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Human);
-	};
-
-	isObjectParticipant (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Participant);
-	};
-
-	isObjectTask (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Task);
-	};
-
-	isObjectNote (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Note);
-	};
-
-	isObjectSet (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Set);
-	};
-
-	isObjectCollection (): boolean {
-		return this.isPage() && (this.layout == I.ObjectLayout.Collection);
-	};
-
-	isObjectDate (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Date);
-	};
-
-	isObjectFileKind (): boolean { 
-		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo() || this.isObjectAudio() || this.isObjectPdf());
-	};
-
-	isObjectFile (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.File);
-	};
-
-	isObjectImage (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Image);
-	};
-
-	isObjectVideo (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Video);
-	};
-
-	isObjectAudio (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Audio);
-	};
-
-	isObjectPdf (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Pdf);
-	};
-
-	isObjectType (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Type);
-	};
-
-	isObjectRelation (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Relation);
-	};
-
-	isObjectBookmark (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Bookmark);
-	};
-
-	isObjectChat (): boolean {
-		return this.isPage() && (this.layout == I.ObjectLayout.Chat);
 	};
 
 	isFeatured (): boolean {

@@ -536,6 +536,7 @@
 	"blockTextToggleEmpty": "Empty toggle. Click or drop Block inside",
 	"blockTextWrap": "Wrap",
 	"blockTextUnwrap": "Unwrap",
+	"blockTextPlain": "Plain Text",
 
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",

@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.42.2-beta",
+	"version": "0.42.8-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -62,7 +62,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^31.0.0",
+		"electron": "^31.3.1",
 		"electron-builder": "^24.13.3",
 		"eslint": "^8.29.0",
 		"eslint-plugin-react": "^7.31.11",
@@ -105,7 +105,7 @@
 		"electron-dl": "^1.14.0",
 		"electron-json-storage": "^4.5.0",
 		"electron-log": "^3.0.9",
-		"electron-updater": "^6.1.8",
+		"electron-updater": "^6.2.1",
 		"electron-util": "^0.12.3",
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^5.5.2",
@@ -564,9 +564,8 @@
 			"artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
 			"publish": [
 				{
-					"provider": "spaces",
-					"name": "anytype-release",
-					"region": "fra1"
+					"provider": "generic",
+					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
 			],
 			"signIgnore": [
@@ -584,9 +583,8 @@
 			"icon": "electron/img/icons/256x256.ico",
 			"publish": [
 				{
-					"provider": "spaces",
-					"name": "anytype-release",
-					"region": "fra1"
+					"provider": "generic",
+					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
 			]
 		},
@@ -602,9 +600,8 @@
 			"description": "Anytype",
 			"publish": [
 				{
-					"provider": "spaces",
-					"name": "anytype-release",
-					"region": "fra1"
+					"provider": "generic",
+					"url": "https://anytype-release.fra1.digitaloceanspaces.com"
 				}
 			],
 			"desktop": {

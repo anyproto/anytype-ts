@@ -222,7 +222,6 @@ const Sidebar = observer(class Sidebar extends React.Component {
 
 	onToggleClick () {
 		sidebar.toggleOpenClose();
-		S.Common.hideSidebarSet(false);
 	};
 
 	onToggleContext () {

@@ -1,5 +1,5 @@
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
-import { Decode, Mapper, dispatcher } from 'Lib';
+import { S, Decode, Mapper } from 'Lib';
 
 export const AppGetVersion = (response: Rpc.App.GetVersion.Response) => {
 	return {
@@ -239,10 +239,32 @@ export const ObjectSubscribeIds = (response: Rpc.Object.SubscribeIds.Response) =
 };
 
 export const ObjectGraph = (response: Rpc.Object.Graph.Response) => {
-	return {
-		edges: (response.getEdgesList() || []).map(Mapper.From.GraphEdge),
-		nodes: (response.getNodesList() || []).map(Decode.struct),
+	const nodes = (response.getNodesList() || []).map(Decode.struct).map(it => S.Detail.mapper(it));
+	const hashes: any = [];
+
+	let edges: any[] = (response.getEdgesList() || []).map(Mapper.From.GraphEdge);
+
+	// Deduplicate edges
+	edges = edges.filter(d => { 
+		const hash = [ d.source, d.target ].join('-');
+		if (hashes.includes(hash)) {
+			return false;
+		};
+
+		hashes.push(hash);
+		return (d.source != d.target);
+	});
+
+	// Find backlinks
+	for (const edge of edges) {
+		const idx = edges.findIndex(d => (d.source == edge.target) && (d.target == edge.source));
+		if (idx >= 0) {
+			edge.isDouble = true;
+			edges.splice(idx, 1);
+		};
 	};
+
+	return { edges, nodes };
 };
 
 export const ObjectToBookmark = (response: Rpc.Object.ToBookmark.Response) => {

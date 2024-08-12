@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Error, Pager, Icon, MediaPdf, ObjectName } from 'Component';
-import { I, C, S, U, J, translate, focus, Action, keyboard } from 'Lib';
+import { I, C, S, U, J, translate, focus, Action, keyboard, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -228,7 +228,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 	};
 
 	onOpenFile () {
-		Action.openFile(this.props.block.getTargetObjectId());
+		Action.openFile(this.props.block.getTargetObjectId(), analytics.route.block);
 	};
 
 	onOpenObject (e: any) {

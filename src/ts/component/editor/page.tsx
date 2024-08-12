@@ -1365,7 +1365,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		e.stopPropagation();
 
 		if (replace) {
-			C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
+			const parent = S.Block.getParentLeaf(rootId, block.id);
+
+			if (parent && parent.isTextList()) {
+				this.onTabBlock(e, range, true);
+			} else {
+				C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
+			};
 		} else 
 		if (!block.isText()) {  
 			this.blockCreate(block.id, I.BlockPosition.Bottom, {
@@ -2266,13 +2272,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isPopup, rootId } = this.props;
 		const container = U.Common.getPageContainer(isPopup);
 		const root = S.Block.getLeaf(rootId, rootId);
-		const isSet = root?.isObjectSet();
-		const isCollection = root?.isObjectCollection();
 
 		let mw = container.width();
 		let width = 0;
 
-		if (isSet || isCollection) {
+		if (U.Object.isInSetLayouts(root?.layout)) {
 			width = mw - 192;
 		} else {
 			const size = mw * 0.6;
