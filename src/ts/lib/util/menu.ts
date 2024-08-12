@@ -873,6 +873,10 @@ class UtilMenu {
 	};
 
 	sortOrFilterRelationAdd (context: any, param: any, callBack: (relation: any) => void) {
+		if (!context) {
+			return;
+		};
+
 		const { rootId, blockId, getView } = param;
 		const relations = Relation.getFilterOptions(rootId, blockId, getView());
 		const element = `#${context.getId()} #item-add`;
