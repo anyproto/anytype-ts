@@ -1,5 +1,5 @@
-import { observable, action, computed, makeObservable, set } from 'mobx';
-import { I, M, Renderer } from 'Lib';
+import { observable, action, makeObservable, set } from 'mobx';
+import { I } from 'Lib';
 
 class ChatStore {
 
