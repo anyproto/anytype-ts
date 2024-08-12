@@ -44,19 +44,13 @@ class Pin extends React.Component<Props, State> {
 
 	render () {
 		const { pinLength, isNumeric } = this.props;
-	
-		let props = {
+		const props: any = {
 			maxLength: 1,
 			onKeyUp: this.onInputKeyUp,
 		};
 
 		if (isNumeric) {
-			props = Object.assign(props, {
-				type: 'number',
-				pattern: '[0-9]{1}',
-				inputMode: 'numeric',
-				noValidate: true,
-			});
+			props.inputMode = 'numeric';
 		};
 
 		return (
@@ -147,6 +141,7 @@ class Pin extends React.Component<Props, State> {
 	};
 
 	onInputKeyDown = (e, index: number) => {
+		const { isNumeric } = this.props;
 		const prev = this.inputRefs[index - 1];
 
 		if (prev) {
@@ -156,36 +151,51 @@ class Pin extends React.Component<Props, State> {
 				prev.focus();
 			});
 		};
+
+		if (isNumeric) {
+			keyboard.shortcut('arrowup, arrowdown', e, () => {
+				e.preventDefault();
+			});
+		};
 	};
 
 	onInputKeyUp = () => {
-		const { pinLength: size } = this.props;
-		const pin = this.getValue();
+		const { pinLength } = this.props;
 
-		if (pin.length === size) {
+		if (this.getValue().length === pinLength) {
 			this.check();
 		};
 	};
 
 	onInputChange = (index: number, value: string) => {
-		const { isVisible } = this.props;
+		const { isVisible, isNumeric } = this.props;
 		const input = this.inputRefs[index];
 		const next = this.inputRefs[index + 1];
 
-		if (!value) {
+		let newValue = value;
+		if (isNumeric) {
+			newValue = newValue.replace(/[^\d]/g, '');
+		};
+		if (newValue.length > 1) {
+			newValue = newValue.slice(0, 1);
+		};
+
+		if (newValue != value) {
+			input.setValue(newValue);
+		};
+
+		if (!newValue) {
 			input.setType(this.getType());
 			return;
-		}
+		};
 
 		if (next) {
 			next.focus();
 		};
 
-		if (isVisible) {
-			return;
+		if (!isVisible) {
+			this.timeout = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
 		};
-
-		this.timeout = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
 	};
 
 	onPaste (e, index: number) {
