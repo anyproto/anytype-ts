@@ -564,3 +564,15 @@ export const DeviceList = (response: Rpc.Device.List.Response) => {
 		devices: (response.getDevicesList() || []).map(it => Mapper.From.DeviceInfo(it))
 	};
 };
+
+export const ChatGetMessages = (response: Rpc.Chat.GetMessages.Response) => {
+	return {
+		messages: response.getMessagesList() || [],
+	};
+};
+
+export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
+	return {
+		messageId: response.getMessageid(),
+	};
+};

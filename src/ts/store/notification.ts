@@ -10,6 +10,7 @@ class NotificationStore {
             itemList: observable,
             list: computed,
 			add: action,
+			update: action,
 			delete: action,
         });
     };

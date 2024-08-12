@@ -606,12 +606,8 @@ class BlockStore {
 			return;
 		};
 
-		const exists = this.checkChatExists(rootId);
-		const check = object.chatId;
-		const change = (check && !exists) || (!check && exists);
-		
-		if (change) {
-			const childrenIds = exists ? element.childrenIds.filter(it => it != chat) : element.childrenIds.concat(chat);
+		if (object.chatId && !this.checkChatExists(rootId)) {
+			const childrenIds = element.childrenIds.concat(chat);
 			this.updateStructure(rootId, rootId, childrenIds);
 		};
 	};

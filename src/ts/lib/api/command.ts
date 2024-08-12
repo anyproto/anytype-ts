@@ -2123,3 +2123,32 @@ export const BroadcastPayloadEvent = (payload: any, callBack?: (message: any) =>
 export const DeviceList = (callBack?: (message: any) => void) => {
 	dispatcher.request(DeviceList.name, new Commands.Empty(), callBack);
 };
+
+// ---------------------- CHAT ---------------------- //
+
+export const ChatAddMessage = (objectId: string, message: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.AddMessage.Request();
+
+	request.setChatobjectid(objectId);
+	request.setMessage(message);
+
+	dispatcher.request(ChatAddMessage.name, request, callBack);
+};
+
+export const ChatEditMessage = (objectId: string, messageId: string, newText: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.EditMessage.Request();
+
+	request.setChatobjectid(objectId);
+	request.setMessageid(messageId);
+	request.setNewtext(newText);
+
+	dispatcher.request(ChatEditMessage.name, request, callBack);
+};
+
+export const ChatGetMessages = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.GetMessages.Request();
+
+	request.setChatobjectid(objectId);
+
+	dispatcher.request(ChatGetMessages.name, request, callBack);
+};

@@ -7,4 +7,10 @@ export enum ChatButton {
 	Mention 	= 3,
 };
 
+export interface ChatMessage {
+	id: string;
+	author: string;
+	text: string;
+};
+
 export interface BlockChat extends I.Block {};

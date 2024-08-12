@@ -202,11 +202,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 
-		this.loadDeps(() => {
-			this.forceUpdate(() => {
-				this.refEditable?.setRange({ from: 0, to: 0 });
-			});
-		});
+		this.loadMessages(() => this.forceUpdate());
 	};
 
 	componentDidUpdate () {
@@ -228,6 +224,20 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = false;
 		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
 		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
+	};
+
+	loadMessages (callBack?: () => void) {
+		const rootId = this.getRootId();
+
+		C.ChatGetMessages(rootId, (message: any) => {
+			if (!message.error.code) {
+				S.Chat.set(rootId, message.messages);
+			};
+
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	getDeps () {
@@ -487,15 +497,24 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	getMessages () {
 		const rootId = this.getRootId();
-		const blockId = this.getBlockId();
-		const childrenIds = S.Block.getChildrenIds(rootId, blockId);
-		const children = S.Block.unwrapTree([ S.Block.wrapTree(rootId, blockId) ]).filter(it => it.isText());
-		const length = children.length;
-		const slice = length > LIMIT ? children.slice(length - LIMIT, length) : children;
+		const list = S.Chat.getList(rootId);
+
+		console.log(list);
+
+
+		const length = list.length;
+		const slice = length > LIMIT ? list.slice(length - LIMIT, length) : list;
+
 		const mapped = slice.map(it => {
-			it.data = {};
-			try { it.data = JSON.parse(it.content.text); } catch (e) { /**/ };
-			return it;
+			let ret: any = { text: '', data: {} };
+			try { 
+				ret = JSON.parse(it);
+				ret.data = JSON.parse(ret.text);
+
+				delete(ret.text);
+			} catch (e) { /**/ };
+
+			return ret;
 		});
 
 		return mapped;
@@ -572,11 +591,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const rootId = this.getRootId();
 		const { account } = S.Auth;
 		const { attachments, files } = this.state;
-		const blockId = this.getBlockId();
-		const childrenIds = S.Block.getChildrenIds(rootId, blockId);
-		const length = childrenIds.length;
-		const target = length ? childrenIds[length - 1] : blockId;
-		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.InnerFirst;
 		const fl = files.length;
 
 		const data = {
@@ -618,20 +632,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					});
 				};
 			} else {
-				const param = {
-					type: I.BlockType.Text,
-					style: I.TextStyle.Paragraph,
-					content: {
-						text: JSON.stringify(data),
-					}
-				};
+				C.ChatAddMessage(rootId, JSON.stringify(data), (message: any) => {
+					if (message.error.code) {
+						return;
+					};
 
-				C.BlockCreate(rootId, target, position, param, (message) => {
-					Storage.setLastChatMessageId(rootId, message.blockId);
+					Storage.setLastChatMessageId(rootId, message.messageId);
 
 					this.scrollToBottom();
 					this.refEditable.setRange({ from: 0, to: 0 });
-					this.lastMessageId = message.blockId;
+					this.lastMessageId = message.messageId;
 					this.forceUpdate();
 				});
 

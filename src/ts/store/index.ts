@@ -7,6 +7,7 @@ import { Menu } from './menu';
 import { Popup } from './popup';
 import { Notification } from './notification';
 import { Extension } from './extension';
+import { Chat } from './chat';
 
 export {
 	Common,
@@ -18,4 +19,5 @@ export {
 	Popup,
 	Notification,
 	Extension,
+	Chat,
 };
