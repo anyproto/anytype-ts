@@ -767,6 +767,29 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			saveKeys.push({ key: `${cmd}+${i}` });
 		};
 
+		// Make div
+		const newBlock: any = { 
+			bgColor: block.bgColor,
+			content: {},
+		};
+
+		keyboard.shortcut('enter, space', e, () => {
+			if ([ '---', '—-', '***' ].includes(value)) {
+				newBlock.type = I.BlockType.Div;
+				newBlock.content.style = value == '***' ? I.DivStyle.Dot : I.DivStyle.Line;
+			};
+		});
+
+		if (newBlock.type && (!isInsideTable && !block.isTextCode())) {
+			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
+				this.setValue('');
+				
+				focus.set(block.id, { from: 0, to: 0 });
+				focus.apply();
+			});
+			return;
+		};
+
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
 			if (menuOpen) {
 				e.preventDefault();
@@ -971,10 +994,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const canOpenMenuAdd = !menuOpenAdd && (oneSymbolBefore == '/') && isAllowedMenu;
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && isAllowedMenu;
-		const newBlock: any = { 
-			bgColor: block.bgColor,
-			content: {},
-		};
+
 		
 		this.preventMenu = false;
 
@@ -1016,25 +1036,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (canOpenMenuMention) {
 			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => this.onMention());
 			return;
-		};
-
-		// Make div
-		const divReg = new RegExp('^(---|—-|\\*\\*\\*)\\s');
-		const match = value.match(divReg);
-
-		if (match) {
-			newBlock.type = I.BlockType.Div;
-			newBlock.content.style = match[1] == '***' ? I.DivStyle.Dot : I.DivStyle.Line;
-			cmdParsed = true;
-		};
-
-		if (newBlock.type && (!isInsideTable && !block.isTextCode())) {
-			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
-				this.setValue(value.replace(divReg, ''));
-				
-				focus.set(block.id, { from: 0, to: 0 });
-				focus.apply();
-			});
 		};
 
 		// Parse markdown commands
