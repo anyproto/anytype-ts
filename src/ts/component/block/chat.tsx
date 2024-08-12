@@ -585,13 +585,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		const clear = () => {
+			this.editingId = '';
 			this.marks = [];
 			this.range = { from: 0, to: 0 };
 
 			this.refEditable.setValue('');
 			this.refEditable.placeholderCheck();
 
-			this.setState({ attachments: [] });
+			this.setState({ attachments: [], files: [] });
+			this.loadMessages();
 		};
 		
 		const callBack = () => {
@@ -612,9 +614,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						};
 
 						this.scrollToMessage(this.editingId);
-						this.editingId = '';
-
-						clear();
 					});
 				};
 			} else {
@@ -628,12 +627,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					this.scrollToBottom();
 					this.refEditable.setRange({ from: 0, to: 0 });
 					this.lastMessageId = message.messageId;
-					this.setState({ attachments: [], files: [] });
-					this.loadMessages();
+					
 				});
-
-				clear();
 			};
+
+			clear();
 		};
 
 		if (fl) {
