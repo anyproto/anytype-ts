@@ -11,6 +11,7 @@ export interface ChatMessage {
 	id: string;
 	author: string;
 	text: string;
+	data: any;
 };
 
 export interface BlockChat extends I.Block {};

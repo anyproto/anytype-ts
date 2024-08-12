@@ -231,7 +231,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		C.ChatGetMessages(rootId, (message: any) => {
 			if (!message.error.code) {
-				S.Chat.set(rootId, message.messages);
+				S.Chat.set(rootId, S.Chat.map(message.messages));
 				this.forceUpdate();
 			};
 

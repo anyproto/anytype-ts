@@ -1,9 +1,9 @@
 import { observable, action, makeObservable, set } from 'mobx';
-import { I } from 'Lib';
+import { I, M } from 'Lib';
 
 class ChatStore {
 
-    public map: Map<string, any[]> = new Map();
+    public messageMap: Map<string, any[]> = new Map();
 
     constructor () {
         makeObservable(this, {
@@ -14,7 +14,21 @@ class ChatStore {
     };
 
 	set (rootId: string, list: I.ChatMessage[]): void {
-		this.map.set(rootId, observable(list || []));
+		this.messageMap.set(rootId, observable(list));
+	};
+
+	map (list: string[]) {
+		return (list || []).map(it => {
+			let ret: any = { text: '', data: {} };
+			try { 
+				ret = JSON.parse(it);
+				ret.data = JSON.parse(ret.text);
+
+				delete(ret.text);
+			} catch (e) { /**/ };
+
+			return new M.ChatMessage(ret);
+		});
 	};
 
 	add (rootId: string, item: I.ChatMessage): void {
@@ -40,25 +54,15 @@ class ChatStore {
 	};
 
 	clear (rootId: string) {
-		this.map.delete(rootId);
+		this.messageMap.delete(rootId);
 	};
 
 	clearAll () {
-		this.map.clear();
+		this.messageMap.clear();
 	};
 
-	getList (rootId: string): any[] {
-		return (this.map.get(rootId) || []).map(it => {
-			let ret: any = { text: '', data: {} };
-			try { 
-				ret = JSON.parse(it);
-				ret.data = JSON.parse(ret.text);
-
-				delete(ret.text);
-			} catch (e) { /**/ };
-
-			return ret;
-		});
+	getList (rootId: string): I.ChatMessage[] {
+		return this.messageMap.get(rootId) || [];
 	};
 
 };
