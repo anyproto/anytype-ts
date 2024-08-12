@@ -129,7 +129,7 @@ class Pin extends React.Component<Props, State> {
 			this.focus();
 
 			for (const i in this.inputRefs) {
-				this.inputRefs[i].setType(this.getType());
+				this.inputRefs[i].setType('text');
 			};
 		});
 	};
@@ -147,7 +147,7 @@ class Pin extends React.Component<Props, State> {
 		if (prev) {
 			keyboard.shortcut('backspace', e, () => {
 				prev.setValue('');
-				prev.setType(this.getType());
+				prev.setType('text');
 				prev.focus();
 			});
 		};
@@ -185,7 +185,7 @@ class Pin extends React.Component<Props, State> {
 		};
 
 		if (!newValue) {
-			input.setType(this.getType());
+			input.setType('text');
 			return;
 		};
 
@@ -214,10 +214,6 @@ class Pin extends React.Component<Props, State> {
 
 		this.inputRefs[pinLength - 1].focus();
 		this.check();
-	};
-
-	getType (): string {
-		return this.props.isNumeric ? 'number' : 'text';
 	};
 
 };
