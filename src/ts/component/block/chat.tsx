@@ -88,23 +88,23 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						<Label text={ds || U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrAfterDay), item.time)} />
 					</div>
 
-					{(item.list || []).map(item => <Item {...item} key={item.id} />)}
+					{(item.list || []).map(item => (
+						<Message
+							ref={ref => this.messagesMap[item.id] = ref}
+							key={item.id}
+							{...this.props}
+							{...item}
+							rootId={rootId}
+							blockId={blockId}
+							isThread={!!threadId}
+							onThread={this.onThread}
+							onContextMenu={e => this.onContextMenu(e, item)}
+							isLast={item.id == this.lastMessageId}
+						/>
+					))}
 				</div>
 			);
 		};
-
-		const Item = (item: any) => (
-			<Message
-				ref={ref => this.messagesMap[item.id] = ref}
-				{...this.props}
-				{...item}
-				rootId={rootId}
-				isThread={!!threadId}
-				onThread={this.onThread}
-				onContextMenu={e => this.onContextMenu(e, item)}
-				isLast={item.id == this.lastMessageId}
-			/>
-		);
 
 		return (
 			<div 
@@ -233,6 +233,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		C.ChatGetMessages(rootId, (message: any) => {
 			if (!message.error.code) {
 				S.Chat.set(rootId, message.messages);
+				this.forceUpdate();
 			};
 
 			if (callBack) {
@@ -534,7 +535,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onContextMenu (e: React.MouseEvent, item: any) {
 		const { account } = S.Auth;
 
-		if (item.data.identity != account.id) {
+		if (item.author != account.id) {
 			return;
 		};
 
@@ -578,7 +579,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const data = {
 			...this.getMarksFromHtml(),
-			identity: account.id,
 			time: U.Date.now(),
 			attachments: attachments.map(it => it.id),
 			reactions: [],
@@ -630,6 +630,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					this.refEditable.setRange({ from: 0, to: 0 });
 					this.lastMessageId = message.messageId;
 					this.setState({ attachments: [], files: [] });
+					this.loadMessages();
 				});
 
 				clear();

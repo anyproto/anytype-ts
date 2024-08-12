@@ -6,7 +6,8 @@ import { I, S, U, C, Mark, translate, Preview } from 'Lib';
 
 import Attachment from '../attachment';
 
-interface Props extends I.Block, I.BlockComponent {
+interface Props extends I.ChatMessage, I.BlockComponent {
+	blockId: string;
 	data: any;
 	isThread: boolean;
 	onThread: (id: string) => void;
@@ -33,12 +34,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, id, data, isThread, onThread, isLast, onContextMenu } = this.props;
+		const { rootId, blockId, id, author, data, isThread, onThread, isLast, onContextMenu } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const length = this.getChildren().length;
-		const subId = S.Record.getSubId(rootId, block.id);
-		const author = U.Space.getParticipant(U.Space.getParticipantId(space, data.identity));
+		const subId = S.Record.getSubId(rootId, blockId);
+		const authorObject = U.Space.getParticipant(U.Space.getParticipantId(space, this.props.author));
 		const text = U.Common.lbBr(Mark.toHtml(data.text, data.marks));
 		const attachments = (data.attachments || []).map(id => S.Detail.get(subId, id));
 		const reactions = data.reactions || [];
@@ -48,7 +49,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const isSingle = attachments.length == 1;
 		const cn = [ 'message' ];
 
-		if (data.identity == account.id) {
+		if (author == account.id) {
 			cn.push('isSelf');
 		};
 		if (this.canExpand) {
@@ -106,7 +107,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					) : ''}
 
 					<div className="author">
-						<ObjectName object={author} />
+						<ObjectName object={authorObject} />
 						<div className="time">{U.Date.date('H:i', data.time)}</div>
 					</div>
 
