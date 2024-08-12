@@ -202,7 +202,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 
-		this.loadMessages(() => this.forceUpdate());
+		this.loadMessages();
 	};
 
 	componentDidUpdate () {
@@ -614,6 +614,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						};
 
 						this.scrollToMessage(this.editingId);
+						clear();
 					});
 				};
 			} else {
@@ -625,13 +626,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					Storage.setLastChatMessageId(rootId, message.messageId);
 
 					this.scrollToBottom();
-					this.refEditable.setRange({ from: 0, to: 0 });
 					this.lastMessageId = message.messageId;
-					
+
+					clear();
 				});
 			};
-
-			clear();
 		};
 
 		if (fl) {
