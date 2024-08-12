@@ -198,18 +198,19 @@ class Pin extends React.Component<Props, State> {
 		};
 	};
 
-	onPaste (e, index: number) {
+	async onPaste (e: any, index: number) {
 		e.preventDefault();
 
 		const { pinLength } = this.props;
-		const data = e.clipboardData;
-		const value = String(data.getData('text/plain') || '').split('');
+		const text = await navigator.clipboard.readText();
+		const value = String(text || '').split('');
 
 		for (let i = index; i < pinLength; i++) {
 			const input = this.inputRefs[i];
 			const char = value[i - index] || '';
 
 			input.setValue(char);
+			input.setType(this.getType());
 		};
 
 		this.inputRefs[pinLength - 1].focus();
