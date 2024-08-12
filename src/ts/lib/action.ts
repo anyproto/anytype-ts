@@ -694,7 +694,7 @@ class Action {
 				layout = I.WidgetLayout.Link;
 			} else 
 			if (U.Object.isInSetLayouts(object.layout)) {
-				layout = I.WidgetLayout.Compact;
+				layout = I.WidgetLayout.View;
 			} else
 			if (U.Object.isInPageLayouts(object.layout)) {
 				layout = I.WidgetLayout.Tree;

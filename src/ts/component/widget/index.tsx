@@ -786,6 +786,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];
 		};
+
 		return isPreview ? J.Constant.limit.menuRecords : limit;
 	};
 

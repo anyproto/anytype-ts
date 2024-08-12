@@ -147,7 +147,10 @@ const WidgetViewCalendar = observer(class WidgetViewCalendar extends React.Compo
 	};
 
 	setValue (value: number) {
-		this.setState({ value }, () => this.props.reload());
+		if (value != this.state.value) {
+			this.state.value = value;
+			this.setState({ value }, () => this.props.reload());
+		};
 	};
 
 	onClick (d: number, m: number, y: number) {
