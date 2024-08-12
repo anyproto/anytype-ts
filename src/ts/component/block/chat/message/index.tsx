@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
-import { I, S, U, J, Mark, translate, Preview } from 'Lib';
+import { I, S, U, C, Mark, translate, Preview } from 'Lib';
 
 import Attachment from '../attachment';
 
@@ -260,7 +260,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	update (data: any) {
 		const { rootId, id } = this.props;
 
-		U.Data.blockSetText(rootId, id, JSON.stringify(data), [], true);
+		C.ChatEditMessage(rootId, id, JSON.stringify(data), () => this.forceUpdate());
 	};
 
 });
