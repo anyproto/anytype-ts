@@ -210,7 +210,7 @@ class Pin extends React.Component<Props, State> {
 			const char = value[i - index] || '';
 
 			input.setValue(char);
-			input.setType(this.getType());
+			input.setType('text');
 		};
 
 		this.inputRefs[pinLength - 1].focus();
