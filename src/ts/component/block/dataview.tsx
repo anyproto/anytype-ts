@@ -1222,6 +1222,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	isAllowedObject () {
 		const { rootId, block, readonly } = this.props;
+		const root = S.Block.getLeaf(rootId, rootId);
+
+		if (root && root.isLocked()) {
+			return false;
+		};
 
 		let isAllowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		if (!isAllowed) {
