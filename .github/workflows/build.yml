@@ -149,6 +149,64 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.TOKEN}}
 
+      - name: debug
+        if: matrix.os != 'windows-latest'
+        run: |
+          echo "list dist/:"
+          ls -alh dist/
+          echo "list artifacts/:"
+          ls -alh artifacts/
+
+      - name: debug Windows
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path dist | Format-Table -Property Mode, LastWriteTime, Length, Name
+          Get-ChildItem -Path artifacts | Format-Table -Property Mode, LastWriteTime, Length, Name
+
+      - name: Upload artifacts to HTTP server
+        if: matrix.os != 'windows-latest'
+        run: |
+          RELEASE_VERSION=$( echo "$GITHUB_REF_NAME" | perl -pe 's/^[a-zA-Z]+//' )
+          cd artifacts/
+          for FILE in *; do
+            UPLOAD_URL="https://publish-releases.anytype.io/upload/desktop/${RELEASE_VERSION}/${FILE}"
+            echo "Uploading files to ${UPLOAD_URL}"
+            curl \
+              --header "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" \
+              --upload-file ${FILE} \
+              ${UPLOAD_URL}
+          done
+          cd ../dist/
+          for FILE in *.yml; do
+            UPLOAD_URL="https://publish-releases.anytype.io/upload/desktop/${RELEASE_VERSION}/${FILE}"
+            echo "Uploading files to ${UPLOAD_URL}"
+            curl \
+              --header "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" \
+              --upload-file ${FILE} \
+              ${UPLOAD_URL}
+          done
+
+      - name: Upload artifacts to HTTP server Windows
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $releaseVersion = $env:GITHUB_REF_NAME -replace '^[a-zA-Z]+', ''
+          $files = Get-ChildItem -File artifacts
+          foreach ($file in $files) {
+            $encodedFileName = [System.Uri]::EscapeDataString($file.Name)
+            $uploadUrl = "https://publish-releases.anytype.io/upload/desktop/$releaseVersion/$encodedFileName"
+            echo "Uploading files to $uploadUrl"
+            curl.exe -H "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" -T $file.FullName $uploadUrl
+          }
+          $yml_files = Get-ChildItem -File dist -Filter *.yml
+          foreach ($file in $yml_files) {
+            $encodedFileName = [System.Uri]::EscapeDataString($file.Name)
+            $uploadUrl = "https://publish-releases.anytype.io/upload/desktop/$releaseVersion/$encodedFileName"
+            echo "Uploading files to $uploadUrl"
+            curl.exe -H "Authorization: Bearer ${{ secrets.PUBLISH_RELEASES_TOKEN }}" -T $file.FullName $uploadUrl
+          }
+
       - name: Delete old releases
         uses: dev-drprasad/delete-older-releases@v0.2.0
         with:

@@ -633,7 +633,7 @@ class BlockStore {
 		const blocks = this.getBlocks(this.widgets, it => it.isWidget());
 
 		blocks.forEach(block => {
-			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.content.targetBlockId == rootId));
+			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.getTargetObjectId() == rootId));
 			if (children.length) {
 				win.trigger(`${code}.${block.id}`);
 			};
@@ -642,7 +642,7 @@ class BlockStore {
 
 	closeRecentWidgets () {
 		const { recentEdit, recentOpen } = J.Constant.widgetId;
-		const blocks = this.getBlocks(this.widgets, it => it.isLink() && [ recentEdit, recentOpen ].includes(it.content.targetBlockId));
+		const blocks = this.getBlocks(this.widgets, it => it.isLink() && [ recentEdit, recentOpen ].includes(it.getTargetObjectId()));
 
 		if (blocks.length) {
 			blocks.forEach(it => {

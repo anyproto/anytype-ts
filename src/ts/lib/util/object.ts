@@ -313,6 +313,10 @@ class UtilObject {
 		return this.isTypeLayout(layout) || this.isRelationLayout(layout);
 	};
 
+	isHumanLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Human;
+	};
+
 	isParticipantLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Participant;
 	};

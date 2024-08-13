@@ -1,7 +1,7 @@
 @import "~scss/_mixins";
 
-.viewList, .viewGrid, .viewGraph { display: flex; flex-direction: column; height: 100%; }
-.viewList, .viewGrid, .viewGraph {
+.viewList, .viewGrid { display: flex; flex-direction: column; height: 100%; }
+.viewList, .viewGrid {
 	.ReactVirtualized__List { padding: 8px 8px 12px 8px; }
 
 	.body { display: flex; flex-direction: column; }

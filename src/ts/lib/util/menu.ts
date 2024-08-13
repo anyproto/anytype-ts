@@ -833,49 +833,57 @@ class UtilMenu {
 		];
 	};
 
-	sortOrFilterRelationSelect (param: any) {
-		const { rootId, blockId, getView, onSelect, menuParam } = param;
+	sortOrFilterRelationSelect (menuParam: any, param: any) {
+		const { rootId, blockId, getView, onSelect } = param;
 		const options = Relation.getFilterOptions(rootId, blockId, getView());
+
+		let menuContext = null;
 
 		const callBack = (item: any) => {
 			onSelect(item);
-			S.Menu.close('select');
+			menuContext?.close();
 		};
-
-		const menu = Object.assign({
-			width: 256,
-			horizontal: I.MenuDirection.Center,
-			offsetY: 10,
-			noFlipY: true,
-		}, menuParam);
 
 		if (S.Menu.isOpen('select')) {
 			S.Menu.close('select');
 		};
 
 		S.Menu.open('select', {
-			...menu,
+			width: 256,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
+			noFlipY: true,
+			onOpen: context => menuContext = context,
+			...menuParam,
 			data: {
 				options,
 				withFilter: true,
 				maxHeight: 378,
-				onAdd: (menuId, menuWidth) => {
-					this.sortOrFilterRelationAdd({ menuId, menuWidth }, param, (relation) => callBack(relation));
+				noClose: true,
+				withAdd: true,
+				onSelect: (e: any, item: any) => {
+					if (item.id == 'add') {
+						this.sortOrFilterRelationAdd(menuContext, param, relation => callBack(relation));
+					} else {
+						callBack(item);
+					};
 				},
-				onSelect: (e: any, item: any) => callBack(item)
 			}
 		});
 	};
 
-	sortOrFilterRelationAdd (menuParam: any, param: any, callBack: (relation: any) => void) {
+	sortOrFilterRelationAdd (context: any, param: any, callBack: (relation: any) => void) {
+		if (!context) {
+			return;
+		};
+
 		const { rootId, blockId, getView } = param;
-		const { menuId, menuWidth } = menuParam;
 		const relations = Relation.getFilterOptions(rootId, blockId, getView());
-		const element = `#${menuId} #item-add`;
+		const element = `#${context.getId()} #item-add`;
 
 		S.Menu.open('relationSuggest', {
 			element,
-			offsetX: menuWidth,
+			offsetX: context.getSize().width,
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
 			onOpen: () => $(element).addClass('active'),
@@ -938,6 +946,10 @@ class UtilMenu {
 				},
 			},
 		});
+	};
+
+	codeLangOptions (): I.Option[] {
+		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
 	};
 
 };

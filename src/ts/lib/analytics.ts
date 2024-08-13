@@ -16,6 +16,7 @@ class Analytics {
 	instance: any = null;
 
 	public route = {
+		block: 'Block',
 		navigation: 'Navigation',
 		onboarding: 'Onboarding',
 		collection: 'Collection',
@@ -41,6 +42,7 @@ class Analytics {
 		relation: 'Relation',
 		link: 'Link',
 		mention: 'Mention',
+		media: 'Media',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
@@ -81,6 +83,7 @@ class Analytics {
 		const { interfaceLang } = S.Common;
 		const electron = U.Common.getElectron();
 		const platform = U.Common.getPlatform();
+		const hasDefaultPath = electron.userPath() == electron.defaultPath();
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(J.Constant.amplitude, null, Object.assign({
@@ -99,6 +102,7 @@ class Analytics {
 			deviceType: 'Desktop',
 			platform,
 			interfaceLang,
+			hasDefaultPath: Number(hasDefaultPath),
 		};
 
 		if (electron.version) {

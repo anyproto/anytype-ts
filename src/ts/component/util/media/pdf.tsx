@@ -3,6 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { Loader } from 'Component';
 import { Document, Page, pdfjs } from 'react-pdf';
+import { U } from 'Lib';
 import 'react-pdf/dist/cjs/Page/AnnotationLayer.css';
 import 'react-pdf/dist/cjs/Page/TextLayer.css';
 
@@ -34,6 +35,10 @@ class MediaPdf extends React.Component<Props, State> {
 	render () {
 		const { width } = this.state;
 		const { src, page, onDocumentLoad, onClick } = this.props;
+		const options = { 
+			isEvalSupported: false, 
+			cMapUrl: U.Common.fixAsarPath('./cmaps/'),
+		};
 
 		return (
 			<div ref={ref => this.node = ref}>
@@ -43,7 +48,7 @@ class MediaPdf extends React.Component<Props, State> {
 					renderMode="canvas"
 					loading={<Loader />}
 					onClick={onClick}
-					options={{ isEvalSupported: false }}
+					options={options}
 				>
 					<Page 
 						pageNumber={page} 

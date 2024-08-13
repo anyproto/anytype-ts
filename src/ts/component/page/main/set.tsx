@@ -64,7 +64,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 						<HeadSimple 
 							{...this.props} 
 							ref={ref => this.refHead = ref} 
-							placeholder={placeholder} rootId={rootId} 
+							placeholder={placeholder} 
+							rootId={rootId} 
+							readonly={this.isReadonly()}
 						/>
 
 						{children.map((block: I.Block, i: number) => (
@@ -264,6 +266,13 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	isReadonly () {
+		const rootId = this.getRootId();
+		const root = S.Block.getLeaf(rootId, rootId);
+
+		if (root && root.isLocked()) {
+			return true;			
+		};
+
 		return !U.Space.canMyParticipantWrite();
 	};
 
