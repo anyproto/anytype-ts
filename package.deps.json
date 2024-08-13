@@ -20,6 +20,7 @@
 	"dist/nativeMessagingHost.exe",
 	"dist/nativeMessagingHost",
 	"dist/*.node",
+	"dist/cmaps/**/*",
 	"dist/font/**/*",
 	"dist/workers/**/*",
 	"!node_modules/**/*",
