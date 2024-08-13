@@ -84,11 +84,13 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 						ph.push('yyyy.mm.dd');
 						break;
 					};
+
 					case I.DateFormat.ShortUS: {
 						mask.push('99.99.9999');
 						ph.push('mm.dd.yyyy');
 						break;
 					};
+
 					default: {
 						mask.push('99.99.9999');
 						ph.push('dd.mm.yyyy');
@@ -251,20 +253,24 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			} else
 			if (relation.format == I.RelationType.Date) {
 				const format = [];
+
 				switch (viewRelation.dateFormat) {
 					case I.DateFormat.ISO: {
 						format.push('Y.m.d');
 						break;
 					};
+
 					case I.DateFormat.ShortUS: {
 						format.push('m.d.Y');
 						break;
 					};
+
 					default: {
 						format.push('d.m.Y');
 						break;
 					};
 				};
+
 				if (viewRelation.includeTime) {
 					format.push('H:i');
 				};

@@ -52,10 +52,12 @@ class UtilDate {
 				[ y, m, d ] = String(date || '').split('.');
 				break;
 			};
+
 			case I.DateFormat.ShortUS: {
 				[ m, d, y ] = String(date || '').split('.');
 				break;
 			};
+
 			default: {
 				[ d, m, y ] = String(date || '').split('.');
 				break;
