@@ -1037,6 +1037,8 @@ export const Mapper = {
 			if (v == V.SPACESYNCSTATUSUPDATE)		 t = 'SpaceSyncStatusUpdate';
 			if (v == V.P2PSTATUSUPDATE)		 		 t = 'P2PStatusUpdate';
 
+			if (v == V.IMPORTFINISH)				 t = 'ImportFinish';
+
 			return t;
 		},
 
@@ -1490,6 +1492,13 @@ export const Mapper = {
 				id: obj.getSpaceid(),
 				p2p: obj.getStatus(),
 				devicesCounter: obj.getDevicescounter(),
+			};
+		},
+
+		ImportFinish: (obj: Events.Event.Import.Finish) => {
+			return {
+				collectionId: obj.getRootcollectionid(),
+				count: obj.getObjectscount(),
 			};
 		},
 	},
