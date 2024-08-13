@@ -29,7 +29,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { data } = param;
 		const { filter, canAdd, canEdit, noFilter } = data;
 		const relation = data.relation.get();
-		const value = data.value || [];
+		const value = Relation.getArrayValue(data.value);
 		const items = this.getItems();
 
 		let placeholder = '';
