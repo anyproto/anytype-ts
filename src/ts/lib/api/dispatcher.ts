@@ -915,7 +915,7 @@ class Dispatcher {
 				};
 
 				case 'ImportFinish': {
-					const { collectionId, count } = mapped;
+					const { collectionId, count, type } = mapped;
 
 					if (collectionId) {
 						window.setTimeout(() => {
@@ -928,7 +928,7 @@ class Dispatcher {
 						}, S.Popup.getTimeout() + 10);
 					};
 
-					analytics.event('Import', { count });
+					analytics.event('Import', { type, count });
 					break;
 				};
 

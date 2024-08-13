@@ -1499,6 +1499,7 @@ export const Mapper = {
 			return {
 				collectionId: obj.getRootcollectionid(),
 				count: obj.getObjectscount(),
+				type: obj.getImporttype(),
 			};
 		},
 	},
