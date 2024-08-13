@@ -122,9 +122,19 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 			<div ref={ref => this.node = ref} className={cn.join(' ')}>
 				{this.canMoveBack() ? <Icon className="arrow back" onClick={this.onBack} /> : ''}
 
-				<Title text={translate(`onboardingExperience${Stage[stage]}Title`)} />
+				<Title className="sub" text={translate(`onboardingExperienceSubTitle`)} />
 
-				{content}
+				<div className="steps">
+					{Object.keys(Stage).filter(key => isNaN(Number(key))).map((el, i) => (
+						<div key={i} className={[ 'step', i == stage ? 'active' : ''].join(' ')} />
+					))}
+				</div>
+
+				<div className="itemsWrapper">
+					<Title text={translate(`onboardingExperience${Stage[stage]}Title`)} />
+
+					{content}
+				</div>
 			</div>
 		);
 	};
