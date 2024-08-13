@@ -6,13 +6,14 @@
 	.menuWrap.fromHeader, 
 	.menuWrap.fromSidebar,
 	.menuWrap.fromNavigation { z-index: 103; }
+	.menuWrap.fromOnboarding { z-index: 1001; }
 
 	.menuWrap.fixed { position: fixed; }
 	.menuWrap.fixed {
 		.menu { position: fixed; }
 	}
 
-	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); -webkit-app-region: no-drag;  }
+	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); -webkit-app-region: no-drag; }
 	#menu-polygon { z-index: 1000; position: absolute; }
 
 	.menu * { user-select: none; }

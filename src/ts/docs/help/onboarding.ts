@@ -181,6 +181,7 @@ export default {
 		return {
 			category: translate('onboardingDashboard'),
 			showConfetti: true,
+			showDimmer: true,
 			items: [
 				{
 					name: translate('onboardingDashboard1Title'),
