@@ -104,7 +104,7 @@ class UtilObject {
 	openWindow (object: any) {
 		const route = this.route(object);
 		if (route) {
-			Renderer.send('windowOpen', `/${route}`);
+			Renderer.send('openWindow', `/${route}`);
 		};
 	};
 
