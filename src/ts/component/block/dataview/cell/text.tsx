@@ -80,17 +80,17 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 				switch (viewRelation.dateFormat) {
 					case I.DateFormat.ISO: {
-						mask.push('9999.99.99')
+						mask.push('9999.99.99');
 						ph.push('yyyy.mm.dd');
 						break;
 					}
 					case I.DateFormat.ShortUS: {
-						mask.push('99.99.9999')
+						mask.push('99.99.9999');
 						ph.push('mm.dd.yyyy');
 						break;
 					}
 					default: {
-						mask.push('99.99.9999')
+						mask.push('99.99.9999');
 						ph.push('dd.mm.yyyy');
 						break;
 					}
