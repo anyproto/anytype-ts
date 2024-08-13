@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
 import { I, C, S, U, J, Onboarding, analytics, keyboard, translate } from 'Lib';
@@ -17,6 +18,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	state = {
 		error: null,
 	};
+	frame = 0;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -28,8 +30,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	render () {
 		const { param } = this.props;
 		const { data, force } = param;
-		const { key, current } = data;
-		const section = Onboarding.getSection(key);
+		const { current } = data;
+		const section = this.getSection();
 		const { items, category, showConfetti } = section;
 		const item = items[current];
 		const l = items.length;
@@ -70,7 +72,16 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 				{category ? <Label className="category" text={category} /> : ''}
 				{item.name ? <Label className="name" text={item.name} /> : ''}
 				{item.description ? <Label className="descr" text={item.description} /> : ''}
-				{item.video ? <video ref={node => this.video = node} src={item.video} onClick={(e: any) => this.onVideoClick(e, item.video)} controls={false} autoPlay={true} loop={true} /> : ''}
+				{item.video ? (
+					<video 
+						ref={node => this.video = node} 
+						src={item.video} 
+						onClick={e => this.onVideoClick(e, item.video)} 
+						controls={false} 
+						autoPlay={true} 
+						loop={true} 
+					/>
+ 				) : ''}
 
 				<div className="bottom">
 					{l > 1 ? (
@@ -109,6 +120,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	componentDidMount () {
 		this.rebind();
 		this.event();
+		this.initDimmer();
 
 		U.Common.renderLinks($(this.node));
 	};
@@ -116,8 +128,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	componentDidUpdate () {
 		const { param, position } = this.props;
 		const { data } = param;
-		const { key, current } = data;
-		const section = Onboarding.getSection(key);
+		const { current } = data;
+		const section = this.getSection();
 		const { items, showConfetti } = section;
 		const l = items.length;
 		const node = $(this.node);
@@ -127,6 +139,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			position();
 		};
 
+		this.clearDimmer();
+		this.initDimmer();
 		this.rebind();
 		this.scroll();
 		this.event();
@@ -135,6 +149,58 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 		if (showConfetti && (current == l - 1)) {
 			this.confettiShot();
+		};
+	};
+
+	componentWillUnmount(): void {
+		this.unbind();
+		this.clearDimmer();
+	};
+
+	initDimmer () {
+		const { param } = this.props;
+		const section = this.getSection();
+
+		if (!section.showDimmer) {
+			return;
+		};
+
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
+		this.frame = raf(() => {
+			const body = $('body');
+			const element = $(param.element);
+			const clone = element.clone();
+			const { top, left } = element.offset();
+			const st = $(window).scrollTop();
+
+			body.append(clone);
+			U.Common.copyCss(element.get(0), clone.get(0));
+
+			element.css({ visibility: 'hidden' });
+			clone.addClass('onboardingElement').css({ position: 'fixed', top: top - st, left, zIndex: 1000 });
+			clone.after('<div class="onboardingDimmer"></div>');
+		});
+	};
+
+	clearDimmer () {
+		const { param } = this.props;
+		const section = this.getSection();
+		const element = $(param.element);
+
+		if (!section.showDimmer) {
+			return;
+		};
+
+		$('.onboardingElement').remove();
+		$('.onboardingDimmer').remove();
+
+		element.css({ visibility: 'visible' });
+
+		if (this.frame) {
+			raf.cancel(this.frame);
 		};
 	};
 
@@ -255,8 +321,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	onArrow (e: any, dir: number) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { key, current } = data;
-		const section = Onboarding.getSection(key);
+		const { current } = data;
+		const section = this.getSection();
 		const { items } = section;
 
 		if ((dir < 0) && !current) {
@@ -274,8 +340,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	onClick (e: any, next: number) {
 		const { param } = this.props;
 		const { data, onOpen, onClose } = param;
-		const { key, isPopup, options } = data;
-		const section = Onboarding.getSection(key);
+		const { isPopup, options } = data;
+		const section = this.getSection();
 		const { items } = section;
 		const item = items[next];
 
@@ -355,6 +421,10 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	confettiShot () {
 		this.confetti({ particleCount: 150, spread: 60, origin: { x: 0.5, y: 1 } });
+	};
+
+	getSection () {
+		return Onboarding.getSection(this.props.param.data.key);
 	};
 
 });
