@@ -312,12 +312,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this._isMounted = true;
 		this.initCache();
 		this.rebind();
-		this.reload();
 
 		focus.clear(true);
 
 		if (backlink) {
 			U.Object.getById(backlink, item => this.setBacklink(item, () => setFilter()));
+		} else {
+			this.reload();
 		};
 
 		analytics.event('ScreenSearch', { route });

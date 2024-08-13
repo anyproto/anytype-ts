@@ -144,7 +144,9 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		U.Router.go('/', { 
 			replace: true, 
 			animate: true,
-			onFadeIn: () => S.Auth.logout(true, false),
+			onFadeIn: () => {
+				S.Auth.logout(true, false);
+			},
 		});
 	};
 	

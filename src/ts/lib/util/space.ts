@@ -15,7 +15,7 @@ class UtilSpace {
 				home = null;
 			};
 
-			if (home && !home.spaceId) {
+			if (home) {
 				home.spaceId = S.Common.space;
 			};
 		};

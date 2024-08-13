@@ -439,7 +439,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				passThrough: true,
 			};
 
-			U.Menu.sortOrFilterRelationSelect({
+			U.Menu.sortOrFilterRelationSelect(menuParam, {
 				menuParam,
 				rootId,
 				blockId,

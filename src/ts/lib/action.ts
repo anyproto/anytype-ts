@@ -51,7 +51,7 @@ class Action {
 
 		S.Record.metaClear(subId, '');
 		S.Record.recordsClear(subId, '');
-		S.Record.recordsClear(subId + '/dep', '');
+		S.Record.recordsClear(`${subId}/dep`, '');
 		S.Record.viewsClear(rootId, blockId);
 
 		S.Detail.clear(subId);
@@ -175,7 +175,7 @@ class Action {
 		focus.apply();
 	};
 
-	openFile (id: string) {
+	openFile (id: string, route: string) {
 		if (!id) {
 			return;
 		};
@@ -183,6 +183,7 @@ class Action {
 		C.FileDownload(id, U.Common.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
 				Renderer.send('pathOpen', message.path);
+				analytics.event('OpenMedia', { route });
 			};
 		});
 	};
@@ -693,7 +694,7 @@ class Action {
 				layout = I.WidgetLayout.Link;
 			} else 
 			if (U.Object.isInSetLayouts(object.layout)) {
-				layout = I.WidgetLayout.Compact;
+				layout = I.WidgetLayout.View;
 			} else
 			if (U.Object.isInPageLayouts(object.layout)) {
 				layout = I.WidgetLayout.Tree;

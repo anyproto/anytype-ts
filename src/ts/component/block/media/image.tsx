@@ -232,7 +232,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	
 	onClick (e: any) {
 		if (!keyboard.withCommand(e)) {
-			const src = S.Common.imageUrl(this.props.block.content.targetObjectId, J.Size.image);
+			const src = S.Common.imageUrl(this.props.block.getTargetObjectId(), J.Size.image);
 
 			S.Popup.open('preview', { data: { src, type: I.FileType.Image } });
 		};
