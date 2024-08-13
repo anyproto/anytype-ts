@@ -51,16 +51,16 @@ class UtilDate {
 			case I.DateFormat.ISO: {
 				[ y, m, d ] = String(date || '').split('.');
 				break;
-			}
+			};
 			case I.DateFormat.ShortUS: {
 				[ m, d, y ] = String(date || '').split('.');
 				break;
-			}
+			};
 			default: {
 				[ d, m, y ] = String(date || '').split('.');
 				break;
-			}
-		}
+			};
+		};
 
 		[ h, i, s ] = String(time || '').split(':');
 
