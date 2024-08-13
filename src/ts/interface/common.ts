@@ -265,3 +265,8 @@ export interface GraphSettings {
 	filter: string;
 	depth: number;
 };
+
+export interface FocusState {
+	focused: string;
+	range: I.TextRange;
+};

@@ -66,7 +66,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.blockCreate = this.blockCreate.bind(this);
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.resizePage = this.resizePage.bind(this);
-		this.focusFirstBlock = this.focusFirstBlock.bind(this);
+		this.focusInit = this.focusInit.bind(this);
 		this.blockRemove = this.blockRemove.bind(this);
 		this.setLayoutWidth = this.setLayoutWidth.bind(this);
 	};
@@ -103,7 +103,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					{...this.props} 
 					resize={this.resizePage} 
 					readonly={readonly}
-					onLayoutSelect={this.focusFirstBlock} 
+					onLayoutSelect={this.focusInit} 
 				/>
 				
 				<div id={`editor-${rootId}`} className="editor">
@@ -252,7 +252,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
-			this.focusFirstBlock();
+			this.focusInit();
 
 			U.Common.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 
@@ -286,6 +286,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (close) {
 			Action.pageClose(this.id, true);
 		};
+
+		Storage.setFocus(this.id, focus.state);
 	};
 
 	onCommand (cmd: string, arg: any) {
@@ -322,16 +324,33 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 	};
 	
-	focusFirstBlock () {
-		const { rootId } = this.props;
-		const block = S.Block.getFirstBlock(rootId, 1, it => it.isText() && !it.getLength());
+	focusInit () {
+		const { rootId, isPopup } = this.props;
+		const storage = Storage.getFocus(rootId);
+
+		let block = null;
+		let from = 0;
+		let to = 0;
+
+		if (storage) {
+			block = S.Block.getLeaf(rootId, storage.focused);
+			from = storage.range.from;
+			to = storage.range.to;
+		};
+		if (!block) {
+			block = S.Block.getFirstBlock(rootId, 1, it => it.isText() && !it.getLength());
+			from = 0;
+			to = 0;
+		};
 
 		if (!block) {
 			return;
 		};
 
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(block.id, { from, to });
 		focus.apply();
+
+		window.setTimeout(() => focus.scroll(isPopup, block.id), 10);
 	};
 	
 	unbind () {
