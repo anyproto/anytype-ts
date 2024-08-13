@@ -6,13 +6,13 @@ import { I, S, U, C, Mark, translate, Preview } from 'Lib';
 
 import Attachment from '../attachment';
 
-interface Props extends I.ChatMessage, I.BlockComponent {
+interface Props extends I.BlockComponent {
 	blockId: string;
-	data: any;
+	id: string;
 	isThread: boolean;
+	isLast?: boolean;
 	onThread: (id: string) => void;
 	onContextMenu: (e: any) => void;
-	isLast?: boolean;
 };
 
 const LINES_LIMIT = 10;
@@ -20,7 +20,7 @@ const LINES_LIMIT = 10;
 const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 	node = null;
-	text: any = null;
+	refText = null;
 	canExpand: boolean = false;
 	isExpanded: boolean = false;
 
@@ -34,12 +34,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, blockId, id, author, data, isThread, onThread, isLast, onContextMenu } = this.props;
+		const { rootId, blockId, id, isThread, onThread, isLast, onContextMenu } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
-		const length = this.getChildren().length;
+		const message = S.Chat.getMessage(rootId, id);
+		const { author, data } = message;
 		const subId = S.Record.getSubId(rootId, blockId);
-		const authorObject = U.Space.getParticipant(U.Space.getParticipantId(space, this.props.author));
+		const authorObject = U.Space.getParticipant(U.Space.getParticipantId(space, author));
 		const text = U.Common.lbBr(Mark.toHtml(data.text, data.marks));
 		const attachments = (data.attachments || []).map(id => S.Detail.get(subId, id));
 		const reactions = data.reactions || [];
@@ -112,7 +113,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					</div>
 
 					<div className="textWrapper">
-						<div ref={ref => this.text = ref}  className="text" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}></div>
+						<div 
+							ref={ref => this.refText = ref} 
+							className="text" 
+							dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
+						/>
 
 						{this.canExpand && !this.isExpanded ? (
 							<div className="expand" onClick={this.onExpand}>
@@ -140,12 +145,16 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					) : ''}
 
 					<div className="sub" onClick={() => onThread(id)}>
-						{!isThread ? <div className="item">{length} replies</div> : ''}
+						{!isThread ? <div className="item">0 replies</div> : ''}
 					</div>
 
 				</div>
 
-				{isLast ? <div className="newMessages"><Label text={translate('blockChatNewMessages')} /></div> : ''}
+				{isLast ? (
+					<div className="newMessages">
+						<Label text={translate('blockChatNewMessages')} />
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -159,11 +168,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	init () {
-		const { data, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
+		const { rootId, id, renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
+		const message = S.Chat.getMessage(rootId, id);
+		const { marks, text } = message.data;
 
-		renderLinks(this.node, data.marks, data.text);
-		renderMentions(this.node, data.marks, data.text);
-		renderObjects(this.node, data.marks, data.text);
+		renderLinks(this.node, marks, text);
+		renderMentions(this.node, marks, text);
+		renderObjects(this.node, marks, text);
 		renderEmoji(this.node);
 
 		this.checkLinesLimit();
@@ -174,16 +185,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		this.forceUpdate();
 	};
 
-	getChildren () {
-		const { rootId, id } = this.props;
-		const childrenIds = S.Block.getChildrenIds(rootId, id);
-
-		return S.Block.getChildren(rootId, id, it => it.isText());
-	};
-
 	checkLinesLimit () {
-		const textHeight = $(this.text).outerHeight();
-		const lineHeight = Number($(this.text).css('line-height').replace('px', ''));
+		const ref = $(this.refText);
+		const textHeight = ref.outerHeight();
+		const lineHeight = parseInt(ref.css('line-height'));
 
 		if (textHeight / lineHeight > LINES_LIMIT) {
 			this.canExpand = true;
@@ -226,9 +231,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	onReactionSelect (icon: string) {
-		const { data } = this.props;
+		const { rootId, id } = this.props;
 		const { account } = S.Auth;
-		const reactions = data.reactions || [];
+		const message = S.Chat.getMessage(rootId, id);
+		const reactions = message.data.reactions || [];
 		const item = reactions.find(it => it.value == icon);
 		const idx = reactions.findIndex(it => it.value == icon);
 
@@ -248,20 +254,22 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			};
 		};
 
-		this.update({ ...data, reactions });
+		this.update({ ...message.data, reactions });
 	};
 
-	onAttachmentRemove (id: string) {
-		const { data } = this.props;
-		const attachments = (data.attachments || []).filter(it => it != id);
+	onAttachmentRemove (attachmentId: string) {
+		const { rootId, id } = this.props;
+		const message = S.Chat.getMessage(rootId, id);
+		const attachments = (message.data.attachments || []).filter(it => it != attachmentId);
 
-		this.update({ ...data, attachments });
+		this.update({ ...message.data, attachments });
 	};
 
 	update (data: any) {
 		const { rootId, id } = this.props;
 
-		C.ChatEditMessage(rootId, id, JSON.stringify(data), () => this.forceUpdate());
+		S.Chat.update(rootId, { id, data });
+		C.ChatEditMessage(rootId, id, JSON.stringify(data));
 	};
 
 });

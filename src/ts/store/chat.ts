@@ -65,6 +65,10 @@ class ChatStore {
 		return this.messageMap.get(rootId) || [];
 	};
 
+	getMessage (rootId: string, id: string): I.ChatMessage {
+		return this.getList(rootId).find(it => it.id == id);
+	};
+
 };
 
 export const Chat: ChatStore = new ChatStore();

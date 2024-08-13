@@ -93,7 +93,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							ref={ref => this.messagesMap[item.id] = ref}
 							key={item.id}
 							{...this.props}
-							{...item}
+							id={item.id}
 							rootId={rootId}
 							blockId={blockId}
 							isThread={!!threadId}
