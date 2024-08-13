@@ -5,10 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
-const cMapsDir = './dist/cmaps';
-
-console.log(pdfjsDistPath);
-console.log(cMapsDir);
+const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
 
 module.exports = (env, argv) => {
 	const port = process.env.SERVER_PORT;
@@ -115,7 +112,7 @@ module.exports = (env, argv) => {
 
 			new CopyWebpackPlugin({
 				patterns: [
-					{ from: cMapsDir, to: 'cmaps/' },
+					{ from: cMapsDir, to: './cmaps/' },
 				],
 			}),
 		],
