@@ -349,7 +349,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		focus.set(block.id, { from, to });
 		focus.apply();
-		focus.scroll(isPopup, block.id);
+
+		window.setTimeout(() => focus.scroll(isPopup, block.id), 10);
 	};
 	
 	unbind () {
