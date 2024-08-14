@@ -171,6 +171,9 @@ class UtilData {
 		const routeParam = Object.assign({ replace: true }, param.routeParam);
 		const route = param.route || redirect;
 
+		U.Router.go('/main/onboarding', routeParam);
+		return;
+
 		if (!widgets) {
 			console.error('[U.Data].onAuth No widgets defined');
 			return;

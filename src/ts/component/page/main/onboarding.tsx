@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { C, I, translate, U } from 'Lib';
 import { Icon, Title, Label } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCreative } from 'swiper/modules';
+import { EffectCreative, Keyboard } from 'swiper/modules';
 
 enum Stage {
 	Type	 = 0,
@@ -38,6 +38,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 		this.onItemClick = this.onItemClick.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onSwiper = this.onSwiper.bind(this);
+		this.onSlideClick = this.onSlideClick.bind(this);
 	};
 
 	render () {
@@ -67,7 +68,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 			const screenshot = el.screenshots.length ? el.screenshots[0] : '';
 
 			return (
-				<div className="item">
+				<div className="item" onClick={() => this.onSlideClick(el.idx)}>
 					<div className="picture" style={{ backgroundImage: `url("${screenshot}")` }}></div>
 					<div className="text">
 						<Title text={el.title} />
@@ -95,23 +96,21 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 								opacity: 0.5,
 							},
 						}}
-						modules={[EffectCreative]}
+						keyboard={{ enabled: true }}
+						modules={[ EffectCreative, Keyboard ]}
 						spaceBetween={95}
 						speed={400}
 						slidesPerView={1.5}
 						centeredSlides={true}
-						onSlideChange={() => this.checkArrows()}
+						onSlideChange={() => this.onSlideChange()}
 						onSwiper={swiper => this.onSwiper(swiper)}
 					>
 						{this.usecases.map((el: any, i: number) => (
 							<SwiperSlide key={i}>
-								<UsecaseItem {...el} />
+								<UsecaseItem {...el} idx={i} />
 							</SwiperSlide>
 						))}
 					</Swiper>
-
-					<Icon id="arrowLeft" className="arrow left" onClick={() => this.onArrow(-1)} />
-					<Icon id="arrowRight" className="arrow right" onClick={() => this.onArrow(1)} />
 				</div>
 			)
 		} else {
@@ -189,26 +188,22 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 
 	onSwiper (swiper) {
 		this.swiper = swiper;
-		this.checkArrows();
-	};
+	}
 
-	onArrow (dir: number) {
-		dir < 0 ? this.swiper.slidePrev() : this.swiper.slideNext();
-	};
-
-	checkArrows () {
+	onSlideChange () {
 		if (!this.swiper) {
 			return;
 		};
 
-		const node = $(this.node);
-		const arrowLeft = node.find('#arrowLeft');
-		const arrowRight = node.find('#arrowRight');
-		const idx = this.swiper.activeIndex;
-		const length = (this.swiper.slides || []).length;
+		this.current = this.swiper.activeIndex;
+	};
 
-		!idx ? arrowLeft.addClass('hide') : arrowLeft.removeClass('hide');
-		idx >= length - 1 ? arrowRight.addClass('hide') : arrowRight.removeClass('hide');
+	onSlideClick (idx) {
+		if (!this.swiper || (idx == this.current)) {
+			return;
+		};
+
+		idx > this.current ? this.swiper.slideNext() : this.swiper.slidePrev();
 	};
 
 	onItemClick (item: any) {
