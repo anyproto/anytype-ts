@@ -1,4 +1,4 @@
-import { I, S, U, J, Storage, analytics, Renderer, translate } from 'Lib';
+import { I, S, U, J, Storage, analytics, Action, translate } from 'Lib';
 
 class Survey {
 
@@ -45,7 +45,7 @@ class Survey {
 		};
 
 		Storage.setSurvey(type, param);
-		Renderer.send('urlOpen', U.Common.sprintf(J.Url.survey[t], account.id));
+		Action.openUrl(U.Common.sprintf(J.Url.survey[t], account.id));
 		analytics.event('SurveyOpen', { type });
 	};
 

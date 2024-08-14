@@ -107,7 +107,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
     };
 
 	onOpenDataLocation () {
-		Renderer.send('pathOpen', S.Common.dataPath);
+		Renderer.send('openPath', S.Common.dataPath);
 	};
 
 	getSuffix () {

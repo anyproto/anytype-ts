@@ -182,7 +182,7 @@ class Action {
 
 		C.FileDownload(id, U.Common.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
-				Renderer.send('pathOpen', message.path);
+				Renderer.send('openPath', message.path);
 				analytics.event('OpenMedia', { route });
 			};
 		});
@@ -492,7 +492,7 @@ class Action {
 					return;
 				};
 
-				Renderer.send('pathOpen', paths[0]);
+				Renderer.send('openPath', paths[0]);
 				analytics.event('Export', { type, middleTime: message.middleTime, route });
 
 				if (callBack) {
@@ -773,6 +773,28 @@ class Action {
 		S.Common.themeSet(id);
 		Renderer.send('setTheme', id);
 		analytics.event('ThemeSet', { id });
+	};
+
+	openUrl (url: string) {
+		url = U.Common.urlFix(url);
+
+		const scheme = U.Common.getScheme(url);
+		const cb = () => Renderer.send('openUrl', url);
+
+		if (!scheme.match(new RegExp(`^(${J.Constant.allowedSchemes.join('|')})$`))) {
+			S.Popup.open('confirm', {
+				data: {
+					icon: 'confirm',
+					bgColor: 'red',
+					title: translate('popupConfirmOpenExternalLinkTitle'),
+					text: translate('popupConfirmOpenExternalLinkText'),
+					textConfirm: translate('commonYes'),
+					onConfirm: () => cb(),
+				}
+			});
+		} else {
+			cb();
+		};
 	};
 
 };

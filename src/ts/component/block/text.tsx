@@ -5,7 +5,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
-import { I, C, S, U, J, keyboard, Key, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
+import { I, C, S, U, J, keyboard, Key, Preview, Mark, focus, Storage, translate, analytics, Action } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
@@ -369,7 +369,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				if (isInside) {
 					U.Router.go(route, {});
 				} else {
-					Renderer.send('urlOpen', target);
+					Action.openUrl(target);
 				};
 			});
 		});
