@@ -128,8 +128,8 @@ class Survey {
 
 		U.Data.search({
 			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-				{ operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 86400 * 3 }
+				{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+				{ relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 86400 * 3 }
 			],
 			limit: 50,
 		}, (message: any) => {
