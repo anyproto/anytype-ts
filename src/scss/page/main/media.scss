@@ -7,7 +7,7 @@
 		.title { @include text-paragraph; font-weight: 600; margin-bottom: 4px; position: relative; }
 	}
 
-	.blocks { margin: 0px auto; padding: 16px 0px 0px 0px; display: flex; }
+	.blocks { margin: 0px auto; padding: 16px 0px 80px 0px; display: flex; }
 	.blocks > .empty { width: 100%; text-align: center; color: var(--color-text-secondary); @include text-header3; }
 
 	.blocks.isVideo {
@@ -61,10 +61,25 @@
 
 		.block.blockRelation {
 			.icon.relation { display: none; }
-			.info .name { color: var(--color-text-secondary); }
+			.info { width: 50%; padding-left: 0px; }
+			.info {
+				.name { color: var(--color-text-secondary); }
+			}
 		}
 
 		.buttons { margin: 12px 0px 28px 0px; display: flex; flex-direction: row; gap: 0px 16px; }
+
+		.item.add { display: flex; gap: 0px 6px; align-items: center; padding: 6px 0px; }
+		.item.add {
+			.icon.plus { 
+				background-image: url('~img/icon/plus/menu0.svg'); transition: $transitionAllCommon; flex-shrink: 0; width: 20px; height: 20px; 
+			}
+			.name { color: var(--color-text-secondary); transition: $transitionAllCommon; }
+		}
+		.item.add:hover {
+			.name { color: var(--color-text-primary); } 
+			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
+		}
 	}
 }
 
