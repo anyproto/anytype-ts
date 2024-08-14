@@ -28,7 +28,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	constructor (props: I.PageComponent) {
 		super(props);
 		
-		this.onOpen = this.onOpen.bind(this);
 		this.onDownload = this.onDownload.bind(this);
 	};
 
@@ -147,7 +146,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 									/>
 
 									<div className="buttons">
-										{/*<Button text={translate('commonOpen')} color="blank" onClick={this.onOpen} />*/}
 										<Button text={translate('commonDownload')} color="blank" className="c36" onClick={this.onDownload} />
 									</div>
 								</div>
@@ -278,12 +276,11 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		return blocks.find(it => it.isFile());
 	};
 
-	onOpen () {
-		Action.openFile(this.getBlock()?.getTargetObjectId(), analytics.route.media);
-	};
-
 	onDownload () {
-		Action.download(this.getBlock(), analytics.route.media);
+		const block = this.getBlock();
+		if (block) {
+			Action.downloadFile(block.getTargetObjectId(), analytics.route.media, block.isFileImage());
+		};
 	};
 
 	getRootId () {

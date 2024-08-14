@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Icon, Error } from 'Component';
-import { I, C, S, J, translate, focus, Action, keyboard } from 'Lib';
+import { I, C, S, J, translate, focus, Action, keyboard, analytics } from 'Lib';
 
 const BlockImage = observer(class BlockImage extends React.Component<I.BlockComponent> {
 
@@ -247,7 +247,9 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 	};
 
 	onDownload () {
-		Action.download(this.props.block, 'block');
+		const { block } = this.props;
+
+		Action.downloadFile(block.getTargetObjectId(), analytics.route.block, block.isFileImage());
 	};
 	
 	getWidth (checkMax: boolean, v: number): number {

@@ -115,6 +115,8 @@ class MenuObject extends React.Component<I.Menu> {
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
+		let download = { id: 'download', icon: 'download', name: translate('commonDownload') };
+		let open = { id: 'open', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -175,6 +177,8 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedWidget = canWrite && !object.isArchived && !S.Block.checkBlockTypeExists(rootId);
 		const allowedExport = !isFilePreview;
 		const allowedPrint = !isFilePreview;
+		const allowedDownload = U.Object.isInFileLayouts(object.layout);
+		const allowedOpen = U.Object.isInFileLayouts(object.layout);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedLock)		 pageLock = null;
@@ -192,6 +196,8 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedAddCollection)	 addCollection = null;
 		if (!allowedExport)		 pageExport = null;
 		if (!allowedPrint)		 print = null;
+		if (!allowedDownload)	 download = null;
+		if (!allowedOpen)		 open = null;
 
 		if (!canWrite) {
 			template = null;
@@ -210,6 +216,7 @@ class MenuObject extends React.Component<I.Menu> {
 				{ children: [ linkTo, addCollection ] },
 				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },
+				{ children: [ open, download ] },
 			];
 		} else {
 			if (isTemplate) {
@@ -504,6 +511,16 @@ class MenuObject extends React.Component<I.Menu> {
 				const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
 
 				Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, analytics.route.addWidgetMenu);
+				break;
+			};
+
+			case 'open': {
+				Action.openFile(object.id, route);
+				break;
+			};
+
+			case 'download': {
+				Action.downloadFile(object.id, route, U.Object.isImageLayout(object.layout));
 				break;
 			};
 		};

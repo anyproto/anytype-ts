@@ -333,6 +333,10 @@ class UtilObject {
 		return layout == I.ObjectLayout.Bookmark;
 	};
 
+	isImageLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Image;
+	};
+
 	// --------------------------------------------------------- //
 
 	getPageLayouts (): I.ObjectLayout[] {

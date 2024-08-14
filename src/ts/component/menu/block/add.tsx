@@ -525,7 +525,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			if (item.isAction) {
 				switch (item.itemId) {
 					case 'download':
-						Action.download(block, 'menu');
+						Action.downloadFile(block.getTargetObjectId(), analytics.route.menuAdd, block.isFileImage());
 						break;
 
 					case 'copy':
