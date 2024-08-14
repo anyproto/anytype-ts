@@ -37,22 +37,7 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 		analytics.event('ImportNotionProceed');
 
 		close();
-		C.ObjectImport(S.Common.space, { apiKey: S.Common.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
-			if (!message.error.code) {
-				const { collectionId, count } = message;
-
-				if (collectionId) {
-					S.Popup.replace(id, 'objectManager', { 
-						data: { 
-							collectionId, 
-							type: I.ObjectManagerPopup.Favorites,
-						} 
-					});
-				};
-
-				analytics.event('Import', { middleTime: message.middleTime, type: I.ImportType.Notion, count });
-			};
-		});
+		C.ObjectImport(S.Common.space, { apiKey: S.Common.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, false, false);
 	};
 
 };

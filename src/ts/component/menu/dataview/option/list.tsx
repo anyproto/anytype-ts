@@ -29,7 +29,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { data } = param;
 		const { filter, canAdd, canEdit, noFilter } = data;
 		const relation = data.relation.get();
-		const value = data.value || [];
+		const value = Relation.getArrayValue(data.value);
 		const items = this.getItems();
 
 		let placeholder = '';
@@ -53,7 +53,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const active = value.indexOf(item.id) >= 0;
+			const active = value.includes(item.id);
 			const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ])
 			
 			let content = null;
