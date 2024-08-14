@@ -50,6 +50,7 @@
 			.wrap { position: static; overflow: visible; width: 100%; height: 100%; }
 			.selectionTarget, .dropTarget { height: 100%; }
 			.pdfWrapper { background: none; box-shadow: unset; padding: 0px; }
+			.video { aspect-ratio: 16/9; }
 		}
 
 		.block.blockMedia.isImage, .block.blockMedia.isPdf, .block.blockMedia.isVideo { 

@@ -318,13 +318,14 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	onVideoClick (e: any, src: string) {
 		U.Common.pauseMedia();
 
-		S.Popup.open('preview', { data: { src, type: I.FileType.Video },
+		S.Popup.open('preview', { 
 			preventMenuClose: true,
 			onClose: () => {
 				if (this.video) {
 					this.video.play();
 				};
-			}
+			},
+			data: { src, type: I.FileType.Video },
 		});
 
 		analytics.event('ScreenOnboardingVideo');
