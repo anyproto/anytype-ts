@@ -109,7 +109,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			<div id="item-add" className="item add" onClick={this.onRelationAdd}>
 				<div className="clickable">
 					<Icon className="plus" />
-					<div className="name">{translate('commonNew')}</div>
+					<div className="name">{translate('commonAddRelation')}</div>
 				</div>
 				<div className="value" />
 			</div>
@@ -169,11 +169,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 							)}
 						</div>
 					) : ''}
-
-					<div className="section note dn">
-						<div className="title"></div>
-						<div className="content"></div>
-					</div>
 
 					{allowedLayout ? (
 						<div className="section layout">

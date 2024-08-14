@@ -1482,6 +1482,7 @@
 	"menuObjectInstall": "Install",
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectCreateWidget": "Create Widget",
+	"menuObjectDownloadOpen": "Download and Open",
 
 	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
 	"menuItemRelationViewFeaturedRemove": "Remove from featured Relations",

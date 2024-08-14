@@ -607,7 +607,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 		switch (item.itemId) {
 			case 'download': {
-				Action.download(block, 'menu');
+				Action.downloadFile(targetObjectId, analytics.route.menuAction, block.isFileImage());
 				break;
 			};
 

@@ -69,24 +69,6 @@ class Action {
 		});
 	};
 	
-	download (block: I.Block, route: string) {
-		if (!block) {
-			return;
-		};
-
-		const { content } = block;
-		const { type, targetObjectId } = content;
-
-		if (!targetObjectId) {
-			return;
-		};
-		
-		const url = block.isFileImage() ? S.Common.imageUrl(targetObjectId, 1000000) : S.Common.fileUrl(targetObjectId);
-
-		Renderer.send('download', url, { saveAs: true });
-		analytics.event('DownloadMedia', { type, route });
-	};
-
 	duplicate (rootId: string, targetContextId: string, blockId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {
 		C.BlockListDuplicate(rootId, targetContextId, blockIds, blockId, position, (message: any) => {
 			if (message.error.code) {
@@ -186,6 +168,17 @@ class Action {
 				analytics.event('OpenMedia', { route });
 			};
 		});
+	};
+
+	downloadFile (id: string, route: string, isImage: boolean) {
+		if (!id) {
+			return;
+		};
+		
+		const url = isImage ? S.Common.imageUrl(id, 1000000) : S.Common.fileUrl(id);
+
+		Renderer.send('download', url, { saveAs: true });
+		analytics.event('DownloadMedia', { route });
 	};
 
 	openFileDialog (extensions: string[], callBack?: (paths: string[]) => void) {
