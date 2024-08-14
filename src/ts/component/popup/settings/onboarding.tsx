@@ -146,8 +146,6 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 			Renderer.send('setUserDataPath', this.config.userPath);
 			S.Common.dataPathSet(this.config.userPath);
 			delete this.config.userPath;
-
-			analytics.event('SetUserDataPath', { route: analytics.route.onboarding });
 		};
 
 		S.Auth.networkConfigSet(this.config);
@@ -162,7 +160,11 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 	onChangeStorage () {
 		const onConfirm = () => {
-			Action.openDirectoryDialog({}, (paths: string[]) => this.onChange('userPath', paths[0]));
+			Action.openDirectoryDialog({}, (paths: string[]) => {
+				this.onChange('userPath', paths[0]);
+
+				analytics.event('ChangeStorageLocation', { type: 'Change', route: analytics.route.onboarding });
+			});
 		};
 
 		if (this.config.mode == I.NetworkMode.Local) {
@@ -175,6 +177,8 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 	onResetStorage () {
 		const onConfirm = () => {
 			this.onChange('userPath', U.Common.getElectron().defaultPath());
+
+			analytics.event('ChangeStorageLocation', { type: 'Reset', route: analytics.route.onboarding });
 		};
 
 		if (this.config.mode == I.NetworkMode.Local) {

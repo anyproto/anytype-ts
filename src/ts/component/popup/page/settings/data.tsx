@@ -108,6 +108,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
 	onOpenDataLocation () {
 		Renderer.send('openPath', S.Common.dataPath);
+		analytics.event('ClickSettingsDataManagementLocation', { route: analytics.route.settings });
 	};
 
 	getSuffix () {
