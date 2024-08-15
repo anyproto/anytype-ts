@@ -281,7 +281,7 @@ class Sidebar {
 			return;
 		};
 
-		this.obj.css({ width: v.isClosed ? 0 : v.width });
+		this.obj.find('#containerWidget').css({ width: v.isClosed ? 0 : v.width });
 	};
 
 	/**

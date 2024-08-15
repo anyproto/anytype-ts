@@ -62,7 +62,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					id="sidebar" 
 					className={cn.join(' ')} 
 				>
-					<div className="inner">
+					<div id="containerWidget">
 						<div id="sidebarHead" className="head" onClick={this.onHeadClick}>
 							{status ? <div className="status">{status}</div> : ''}
 						</div>
@@ -73,6 +73,9 @@ const Sidebar = observer(class Sidebar extends React.Component {
 						>
 							<ListWidget ref={ref => this.refList = ref} {...this.props} />
 						</div>
+					</div>
+
+					<div id="containerObject">
 					</div>
 
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
