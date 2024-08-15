@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U } from 'Lib';
+import { I, S, U, translate } from 'Lib';
 
 const WidgetButtons = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
 
@@ -36,7 +36,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 		return [
 			{ id: 'member', name: 'Members' },
 			{ id: 'all', name: 'All content' },
-			{ id: 'bin', name: 'Bin' },
+			{ id: 'bin', name: translate('commonBin') },
 		];
 	};
 

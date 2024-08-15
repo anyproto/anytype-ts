@@ -31,7 +31,6 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 		this.onDrop = this.onDrop.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onLibrary = this.onLibrary.bind(this);
-		this.onArchive = this.onArchive.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
@@ -173,13 +172,6 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 							className="widget" 
 							icon="store" 
 							onClick={this.onLibrary} 
-						/>
-						<Button
-							text={translate('widgetBin')}
-							color=""
-							className="widget"
-							icon="bin"
-							onClick={this.onArchive}
 						/>
 					</DropTarget>
 
@@ -355,14 +347,6 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 		if (!isEditing && !e.button) {
 			U.Object.openEvent(e, { layout: I.ObjectLayout.Store });
-		};
-	};
-
-	onArchive (e: any) {
-		const { isEditing } = this.state;
-
-		if (!isEditing && !e.button) {
-			U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
 		};
 	};
 
