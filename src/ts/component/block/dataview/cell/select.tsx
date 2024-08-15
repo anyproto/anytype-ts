@@ -73,7 +73,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 					<div id="placeholder" className="placeholder">{placeholder}</div>
 
 					<span id="list">
-						<DragBox onDragEnd={this.onDragEnd} onClick={this.onClick}>
+						<DragBox onDragEnd={this.onDragEnd}>
 							{value.map((item: any, i: number) => (
 								<span 
 									key={i}
@@ -257,7 +257,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		};
 
 		e.stopPropagation();
-		UtilObject.openPopup(item);
+		U.Object.openPopup(item);
 	};
 
 	placeholderCheck () {
