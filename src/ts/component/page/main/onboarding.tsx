@@ -47,6 +47,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 		const { type } = this.param;
 		const cn = [ 'wrapper', `stage${Stage[stage]}` ];
 		const items = this.getItems(stage);
+		const stagesArray = Object.keys(Stage).filter(key => isNaN(Number(key)));
 
 		const Item = (el) => {
 			const prefix = U.Common.toCamelCase(`onboardingExperienceItems-${el.id}`);
@@ -59,8 +60,10 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 			return (
 				<div onClick={() => this.onItemClick(el)} className={[ 'item', `item-${el.id}` ].join(' ')}>
 					<Icon className={el.id} />
-					<Title text={translate(`${prefix}Title`)} />
-					<Label text={translate(`${labelPrefix ? labelPrefix : prefix}Text`)} />
+					<div className="text">
+						<Title text={translate(`${prefix}Title`)} />
+						<Label text={translate(`${labelPrefix ? labelPrefix : prefix}Text`)} />
+					</div>
 				</div>
 			);
 		};
@@ -97,19 +100,17 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 								prev: {
 									translate: ['-90%', 0, 0],
 									scale: 0.5,
-									opacity: 0.5,
 								},
 								next: {
 									translate: ['90%', 0, 0],
 									scale: 0.5,
-									opacity: 0.5,
 								},
 							}}
 							keyboard={{ enabled: true }}
 							modules={[ EffectCreative, Keyboard ]}
 							spaceBetween={95}
-							speed={400}
-							slidesPerView={1.5}
+							speed={500}
+							slidesPerView={1.7}
 							centeredSlides={true}
 							onSlideChange={() => this.onSlideChange()}
 							onSwiper={swiper => this.onSwiper(swiper)}
@@ -137,13 +138,17 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 				<Title className="sub" text={translate(`onboardingExperienceSubTitle`)} />
 
 				<div className="steps">
-					{Object.keys(Stage).filter(key => isNaN(Number(key))).map((el, i) => (
+					{stagesArray.map((el, i) => (
 						<div key={i} className={[ 'step', i == stage ? 'active' : ''].join(' ')} />
 					))}
 				</div>
 
 				<div className="itemsWrapper">
-					<Title text={translate(`onboardingExperience${Stage[stage]}Title`)} />
+					<div className="stepTitle">
+						{stagesArray.map((el, i) => (
+							<Title className={stage == i ? 'active' : ''} text={translate(`onboardingExperience${Stage[i]}Title`)} />
+						))}
+					</div>
 
 					{content}
 				</div>
@@ -219,7 +224,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 		const targetId = this.usecases[1].id;
 		const target = $(`.usecases .item-${targetId}`);
 
-		target.addClass('hover');
+		target.addClass('bounce').addClass('hover');
 		this.bounceTimeout = window.setTimeout(() => {
 			target.removeClass('hover');
 
@@ -229,8 +234,9 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 				}, 1000);
 			} else {
 				this.bounceTimeout = null;
+				target.removeClass('bounce');
 			};
-		}, 750);
+		}, 1000);
 	};
 
 	onUsecaseHover (idx) {
@@ -240,7 +246,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 
 			clearTimeout(this.bounceTimeout);
 			this.bounceTimeout = null;
-			target.removeClass('hover');
+			target.removeClass('bounce').removeClass('hover');
 		};
 	};
 
