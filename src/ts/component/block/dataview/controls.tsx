@@ -268,8 +268,10 @@ const Controls = observer(class Controls extends React.Component<Props> {
 			onOpen: () => this.toggleHoverArea(true),
 			onClose: () => this.toggleHoverArea(false),
 		};
+		const isFilter = component == 'dataviewFilterList';
+		const isSort = component == 'dataviewSort';
 
-		if (!readonly && ((component == 'dataviewSort') && !view.sorts.length) || ((component == 'dataviewFilterList') && !view.filters.length)) {
+		if (!readonly && ((isFilter && !view.filters.length) || (isSort && !view.sorts.length))) {
 			this.sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
 				this.onButton(element, component);
 			});
