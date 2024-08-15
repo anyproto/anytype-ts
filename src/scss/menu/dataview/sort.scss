@@ -25,13 +25,21 @@
 
 			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; display: flex; flex-direction: column; align-items: flex-start; }
 			.txt {
-				.label { @include text-common; display: flex; align-items: center; font-weight: 400; line-height: 20px; padding: 0px; margin: 0px; color: var(--color-text-primary); }
-				.label::after { content: ''; width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); }
+				.label { 
+					@include text-common; display: flex; align-items: center; font-weight: 400; line-height: 20px; padding: 0px; margin: 0px; 
+					color: var(--color-text-primary); 
+				}
 			}
 		}
 		.item.empty { margin: 8px 0px; padding: 14px 16px; }
 		.item.isReadonly {
 			.txt { width: calc(100% - 50px); }
+		}
+
+		.item:not(.isReadonly) {
+			.txt {
+				.label::after { content: ''; width: 20px; height: 20px; background-image: url('~img/arrow/select/dark.svg'); }
+			}
 		}
 
 		.item:not(.isReadonly):hover, 

@@ -89,18 +89,11 @@ class MenuObject extends React.Component<I.Menu> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, rootId } = data;
+		const { blockId, rootId, isFilePreview } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
-
-		if (!block) {
-			return [];
-		};
-		
-		const object = S.Detail.get(rootId, blockId);
+		const object = this.getObject();
 		const cmd = keyboard.cmdSymbol();
 		const isTemplate = U.Object.isTemplate(object.type);
-		const print = { id: 'print', name: translate('menuObjectPrint'), caption: `${cmd} + P` };
-		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 
@@ -112,6 +105,8 @@ class MenuObject extends React.Component<I.Menu> {
 		let template = null;
 		let setDefaultTemplate = null;
 
+		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
+		let print = { id: 'print', name: translate('menuObjectPrint'), caption: `${cmd} + P` };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
@@ -120,6 +115,8 @@ class MenuObject extends React.Component<I.Menu> {
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
+		let download = { id: 'download', icon: 'download', name: translate('commonDownload') };
+		let open = { id: 'open', icon: 'expand', name: translate('menuObjectDownloadOpen') };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -135,10 +132,12 @@ class MenuObject extends React.Component<I.Menu> {
 			fav = { id: 'fav', name: translate('commonAddToFavorites') };
 		};
 
-		if (block.isLocked()) {
-			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuObjectUnlockPage'), caption: `Ctrl + Shift + L` };
-		} else {
-			pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuObjectLockPage'), caption: `Ctrl + Shift + L` };
+		if (block) {
+			if (block.isLocked()) {
+				pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuObjectUnlockPage'), caption: `Ctrl + Shift + L` };
+			} else {
+				pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuObjectLockPage'), caption: `Ctrl + Shift + L` };
+			};
 		};
 
 		if (object.isInstalled) {
@@ -156,10 +155,16 @@ class MenuObject extends React.Component<I.Menu> {
 
 		// Restrictions
 
+		const hasShortMenu = (
+			U.Object.isTypeOrRelationLayout(object.layout) ||
+			U.Object.isInFileLayouts(object.layout) ||
+			U.Object.isInSetLayouts(object.layout)
+		);
+
 		const allowedArchive = canWrite && canDelete;
-		const allowedSearch = !U.Object.isInSetLayouts(object.layout);
+		const allowedSearch = !isFilePreview && !U.Object.isInSetLayouts(object.layout);
 		const allowedHistory = !object.isArchived && !U.Object.isInFileOrSystemLayouts(object.layout) && !U.Object.isParticipantLayout(object.layout) && !object.templateIsBundled;
-		const allowedFav = canWrite && !object.isArchived && !U.Object.isInFileOrSystemLayouts(object.layout) && !object.templateIsBundled;
+		const allowedFav = canWrite && !object.isArchived && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLinkTo = canWrite && !object.isArchived;
 		const allowedAddCollection = canWrite && !object.isArchived;
@@ -170,11 +175,10 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedUninstall = canWrite && object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout) && canDelete;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedWidget = canWrite && !object.isArchived && !S.Block.checkBlockTypeExists(rootId);
-		const hasShortMenu = (
-			U.Object.isTypeOrRelationLayout(object.layout) ||
-			U.Object.isInFileLayouts(object.layout) ||
-			U.Object.isInSetLayouts(object.layout)
-		);
+		const allowedExport = !isFilePreview;
+		const allowedPrint = !isFilePreview;
+		const allowedDownload = U.Object.isInFileLayouts(object.layout);
+		const allowedOpen = U.Object.isInFileLayouts(object.layout);
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedLock)		 pageLock = null;
@@ -190,6 +194,10 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedLinkTo)		 linkTo = null;
 		if (!allowedPageLink)	 pageLink = null;
 		if (!allowedAddCollection)	 addCollection = null;
+		if (!allowedExport)		 pageExport = null;
+		if (!allowedPrint)		 print = null;
+		if (!allowedDownload)	 download = null;
+		if (!allowedOpen)		 open = null;
 
 		if (!canWrite) {
 			template = null;
@@ -208,6 +216,7 @@ class MenuObject extends React.Component<I.Menu> {
 				{ children: [ linkTo, addCollection ] },
 				{ children: [ search, pageLink, pageInstall, pageCopy, archive, remove ] },
 				{ children: [ print ] },
+				{ children: [ open, download ] },
 			];
 		} else {
 			if (isTemplate) {
@@ -269,12 +278,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const block = S.Block.getLeaf(rootId, blockId);
 
-		if (!block) {
-			return;
-		};
-		
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -298,8 +302,8 @@ class MenuObject extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.LinkTo,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+						{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: () => close(),
 					skipIds: [ rootId ],
@@ -315,8 +319,8 @@ class MenuObject extends React.Component<I.Menu> {
 				menuParam.className = 'single';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
-						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+						{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
+						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: (el: any) => {
 						Action.addToCollection(el.id, [ rootId ]);
@@ -343,16 +347,24 @@ class MenuObject extends React.Component<I.Menu> {
 			});
 		};
 	};
+
+	getObject () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, object } = data;
+
+		return object || S.Detail.get(rootId, blockId);
+	};
 	
 	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId, onSelect } = data;
 		const block = S.Block.getLeaf(rootId, blockId);
-		const object = S.Detail.get(rootId, rootId);
+		const object = this.getObject();
 		const route = analytics.route.menuObject;
 		
-		if (!block || item.arrow) {
+		if (item.arrow) {
 			return;
 		};
 		
@@ -363,7 +375,7 @@ class MenuObject extends React.Component<I.Menu> {
 		};
 
 		const onBack = () => {
-			if (!block.isPage()) {
+			if (block && !block.isPage()) {
 				return;
 			};
 
@@ -499,6 +511,16 @@ class MenuObject extends React.Component<I.Menu> {
 				const first = S.Block.getFirstBlock(S.Block.widgets, 1, it => it.isWidget());
 
 				Action.createWidgetFromObject(rootId, rootId, first?.id, I.BlockPosition.Top, analytics.route.addWidgetMenu);
+				break;
+			};
+
+			case 'open': {
+				Action.openFile(object.id, route);
+				break;
+			};
+
+			case 'download': {
+				Action.downloadFile(object.id, route, U.Object.isImageLayout(object.layout));
 				break;
 			};
 		};

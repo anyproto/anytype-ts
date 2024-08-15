@@ -219,7 +219,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		];
 
 		let filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
 		];
 
 		if (data.filters && data.filters.length) {
@@ -227,7 +227,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (skipIds && skipIds.length) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
 		};
 
 		if (clear) {

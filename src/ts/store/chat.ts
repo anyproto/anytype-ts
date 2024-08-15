@@ -34,13 +34,17 @@ class ChatStore {
 	add (rootId: string, item: I.ChatMessage): void {
 		const list = this.getList(rootId);
 
-		list.push(item);
+		item.data = this.getData(item);
+
+		list.push(new M.ChatMessage(item));
 		this.set(rootId, list);
 	};
 
 	update (rootId: string, param: Partial<I.ChatMessage>): void {
 		const list = this.getList(rootId);
 		const item = list.find(it => it.id == param.id);
+
+		item.data = this.getData(item);
 
 		if (item) {
 			set(item, param);
@@ -59,6 +63,15 @@ class ChatStore {
 
 	clearAll () {
 		this.messageMap.clear();
+	};
+
+	getData (item: I.ChatMessage) {
+		let data = {};
+		try { 
+			data = JSON.parse(item.text);
+			delete(item.text);
+		} catch (e) { /**/ };
+		return data;
 	};
 
 	getList (rootId: string): I.ChatMessage[] {

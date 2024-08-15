@@ -67,7 +67,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
 		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
 		const filtersObject: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
 		];
 
 		if (!recommendedRelations.includes('rel-description')) {
@@ -109,7 +109,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			<div id="item-add" className="item add" onClick={this.onRelationAdd}>
 				<div className="clickable">
 					<Icon className="plus" />
-					<div className="name">{translate('commonNew')}</div>
+					<div className="name">{translate('commonAddRelation')}</div>
 				</div>
 				<div className="value" />
 			</div>
@@ -169,11 +169,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 							)}
 						</div>
 					) : ''}
-
-					<div className="section note dn">
-						<div className="title"></div>
-						<div className="content"></div>
-					</div>
 
 					{allowedLayout ? (
 						<div className="section layout">
@@ -279,8 +274,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		U.Data.searchSubscribe({
 			subId: this.getSubIdTemplate(),
 			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
-				{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
+				{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: this.getSpaceId() },
+				{ relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
 			],
 			sorts: [
 				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },

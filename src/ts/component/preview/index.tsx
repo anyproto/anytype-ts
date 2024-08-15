@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject, PreviewDefault } from 'Component';
-import { I, S, U, Preview, Mark, translate, Renderer } from 'Lib';
+import { I, S, U, Preview, Mark, translate, Action } from 'Lib';
 
 const OFFSET_Y = 8;
 const BORDER = 12;
@@ -107,7 +107,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 
 		switch (type) {
 			case I.PreviewType.Link: {
-				Renderer.send('urlOpen', target);	
+				Action.openUrl(target);	
 				break;
 			};
 

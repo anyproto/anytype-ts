@@ -428,6 +428,7 @@
 	"pageMainBlockEmpty": "Block not found",
 	"pageMainRelationObjectsCreated": "%s created",
 
+	"pageMainMediaFileInfo": "File Information",
 	"pageMainMediaNotFound": "File not found",
 
 	"pageMainImportTitle": "Downloading manifest",
@@ -1033,6 +1034,9 @@
 
 	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
 
+	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
+	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?",
+
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
 	"popupInviteRequestMessagePlaceholder": "Leave a private comment for a space owner",
@@ -1489,6 +1493,7 @@
 	"menuObjectInstall": "Install",
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectCreateWidget": "Create Widget",
+	"menuObjectDownloadOpen": "Download and Open",
 
 	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
 	"menuItemRelationViewFeaturedRemove": "Remove from featured Relations",

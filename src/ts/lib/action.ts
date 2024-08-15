@@ -69,24 +69,6 @@ class Action {
 		});
 	};
 	
-	download (block: I.Block, route: string) {
-		if (!block) {
-			return;
-		};
-
-		const { content } = block;
-		const { type, targetObjectId } = content;
-
-		if (!targetObjectId) {
-			return;
-		};
-		
-		const url = block.isFileImage() ? S.Common.imageUrl(targetObjectId, 1000000) : S.Common.fileUrl(targetObjectId);
-
-		Renderer.send('download', url, { saveAs: true });
-		analytics.event('DownloadMedia', { type, route });
-	};
-
 	duplicate (rootId: string, targetContextId: string, blockId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {
 		C.BlockListDuplicate(rootId, targetContextId, blockIds, blockId, position, (message: any) => {
 			if (message.error.code) {
@@ -182,10 +164,21 @@ class Action {
 
 		C.FileDownload(id, U.Common.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
-				Renderer.send('pathOpen', message.path);
+				Renderer.send('openPath', message.path);
 				analytics.event('OpenMedia', { route });
 			};
 		});
+	};
+
+	downloadFile (id: string, route: string, isImage: boolean) {
+		if (!id) {
+			return;
+		};
+		
+		const url = isImage ? S.Common.imageUrl(id, 1000000) : S.Common.fileUrl(id);
+
+		Renderer.send('download', url, { saveAs: true });
+		analytics.event('DownloadMedia', { route });
 	};
 
 	openFileDialog (extensions: string[], callBack?: (paths: string[]) => void) {
@@ -472,21 +465,6 @@ class Action {
 					return;
 				};
 
-				const { collectionId, count } = message;
-
-				if (collectionId) {
-					window.setTimeout(() => {
-						S.Popup.open('objectManager', { 
-							data: { 
-								collectionId, 
-								type: I.ObjectManagerPopup.Favorites,
-							} 
-						});
-					}, S.Popup.getTimeout() + 10);
-				};
-
-				analytics.event('Import', { middleTime: message.middleTime, type, count });
-
 				if (callBack) {	
 					callBack(message);
 				};
@@ -507,7 +485,7 @@ class Action {
 					return;
 				};
 
-				Renderer.send('pathOpen', paths[0]);
+				Renderer.send('openPath', paths[0]);
 				analytics.event('Export', { type, middleTime: message.middleTime, route });
 
 				if (callBack) {
@@ -694,7 +672,7 @@ class Action {
 				layout = I.WidgetLayout.Link;
 			} else 
 			if (U.Object.isInSetLayouts(object.layout)) {
-				layout = I.WidgetLayout.Compact;
+				layout = I.WidgetLayout.View;
 			} else
 			if (U.Object.isInPageLayouts(object.layout)) {
 				layout = I.WidgetLayout.Tree;
@@ -788,6 +766,28 @@ class Action {
 		S.Common.themeSet(id);
 		Renderer.send('setTheme', id);
 		analytics.event('ThemeSet', { id });
+	};
+
+	openUrl (url: string) {
+		url = U.Common.urlFix(url);
+
+		const scheme = U.Common.getScheme(url);
+		const cb = () => Renderer.send('openUrl', url);
+
+		if (!scheme.match(new RegExp(`^(${J.Constant.allowedSchemes.join('|')})$`))) {
+			S.Popup.open('confirm', {
+				data: {
+					icon: 'confirm',
+					bgColor: 'red',
+					title: translate('popupConfirmOpenExternalLinkTitle'),
+					text: translate('popupConfirmOpenExternalLinkText'),
+					textConfirm: translate('commonYes'),
+					onConfirm: () => cb(),
+				}
+			});
+		} else {
+			cb();
+		};
 	};
 
 };

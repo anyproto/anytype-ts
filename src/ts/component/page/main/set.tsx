@@ -64,7 +64,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 						<HeadSimple 
 							{...this.props} 
 							ref={ref => this.refHead = ref} 
-							placeholder={placeholder} rootId={rootId} 
+							placeholder={placeholder} 
+							rootId={rootId} 
+							readonly={this.isReadonly()}
 						/>
 
 						{children.map((block: I.Block, i: number) => (

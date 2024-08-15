@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import DOMPurify from 'dompurify';
-import { I, C, S, J, U, Preview, Renderer, translate, Mark } from 'Lib';
+import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action } from 'Lib';
 
 const TEST_HTML = /<[^>]*>/;
 
@@ -461,11 +461,11 @@ class UtilCommon {
 	};
 	
 	onUrl (url: string) {
-		Renderer.send('urlOpen', url);
+		Action.openUrl(url);
 	};
 
 	onPath (path: string) {
-		Renderer.send('pathOpen', path);
+		Renderer.send('openPath', path);
 	};
 	
 	checkEmail (v: string) {
@@ -587,7 +587,7 @@ class UtilCommon {
 					onConfirm: () => {
 						C.DebugTree(rootId, logPath, (message: any) => {
 							if (!message.error.code) {
-								Renderer.send('pathOpen', logPath);
+								Renderer.send('openPath', logPath);
 							};
 						});
 

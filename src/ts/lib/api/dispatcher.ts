@@ -916,6 +916,34 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ImportFinish': {
+					const { collectionId, count, type } = mapped;
+
+					if (collectionId) {
+						window.setTimeout(() => {
+							S.Popup.open('objectManager', { 
+								data: { 
+									collectionId, 
+									type: I.ObjectManagerPopup.Favorites,
+								} 
+							});
+						}, S.Popup.getTimeout() + 10);
+					};
+
+					analytics.event('Import', { type, count });
+					break;
+				};
+
+				case 'ChatAdd': {
+					S.Chat.add(rootId, mapped);
+					break;
+				};
+
+				case 'ChatUpdate': {
+					S.Chat.update(rootId, mapped);
+					break;
+				};
+
 				case 'ProcessNew':
 				case 'ProcessUpdate':
 				case 'ProcessDone': {

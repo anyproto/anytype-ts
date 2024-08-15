@@ -864,6 +864,7 @@ export const Mapper = {
 			item.setQuickoption(obj.quickOption);
 			item.setValue(Encode.value(obj.value));
 			item.setIncludetime(obj.includeTime);
+			item.setNestedfiltersList((obj.nestedFilters || []).map(Mapper.To.Filter));
 
 			return item;
 		},
@@ -1047,6 +1048,11 @@ export const Mapper = {
 			if (v == V.THREADSTATUS) 				 t = 'ThreadStatus';
 			if (v == V.SPACESYNCSTATUSUPDATE)		 t = 'SpaceSyncStatusUpdate';
 			if (v == V.P2PSTATUSUPDATE)		 		 t = 'P2PStatusUpdate';
+
+			if (v == V.IMPORTFINISH)				 t = 'ImportFinish';
+
+			if (v == V.CHATADD)						 t = 'ChatAdd';
+			if (v == V.CHATUPDATE)					 t = 'ChatUpdate';
 
 			return t;
 		},
@@ -1503,6 +1509,31 @@ export const Mapper = {
 				devicesCounter: obj.getDevicescounter(),
 			};
 		},
+
+		ImportFinish: (obj: Events.Event.Import.Finish) => {
+			return {
+				collectionId: obj.getRootcollectionid(),
+				count: obj.getObjectscount(),
+				type: obj.getImporttype(),
+			};
+		},
+
+		ChatAdd: (obj: Events.Event.Chat.Add) => {
+			return {
+				id: obj.getId(),
+				author: obj.getAuthor(),
+				text: obj.getText(),
+			};
+		},
+
+		ChatUpdate: (obj: Events.Event.Chat.Update) => {
+			return {
+				id: obj.getId(),
+				author: obj.getAuthor(),
+				text: obj.getText(),
+			};
+		},
+
 	},
 
 };

@@ -69,7 +69,7 @@ const ViewGraph = observer(class ViewGraph extends React.Component<I.ViewCompone
 		const target = getTarget();
 
 		if (searchIds) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
 		C.ObjectGraph(S.Common.space, filters, 0, [], J.Relation.graph, (isCollection ? target.id : ''), target.setOf, (message: any) => {

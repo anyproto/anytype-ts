@@ -152,9 +152,9 @@ const Column = observer(class Column extends React.Component<Props> {
 		const subId = getSubId();
 		const limit = getLimit() + this.offset;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
-		].concat(view.filters);
+		].concat(view.filters as any[]);
 		const sorts: I.Sort[] = [].concat(view.sorts);
 		const searchIds = getSearchIds();
 
@@ -163,7 +163,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		};
 
 		if (searchIds) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
 		};
 
 		if (clear) {

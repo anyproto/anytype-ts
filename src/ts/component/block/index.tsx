@@ -831,10 +831,14 @@ const Block = observer(class Block extends React.Component<Props> {
 			if (isInside) {
 				route = '/' + url.split('://')[1];
 
-				const routeParam = U.Router.getParam(route);
-				const object = S.Detail.get(rootId, routeParam.id, []);
-
-				target = object.id;
+				const search = url.split('?')[1];
+				if (search) {
+					const searchParam = U.Common.searchParam(search);
+					target = searchParam.objectId;
+				} else {
+					const routeParam = U.Router.getParam(route);
+					target = routeParam.id;
+				};
 			} else {
 				target = U.Common.urlFix(url);
 				type = I.PreviewType.Link;
@@ -946,7 +950,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				});
 
 				Preview.previewShow({
-					target: object.id,
+					object,
 					element: name,
 					range: { 
 						from: Number(range[0]) || 0,

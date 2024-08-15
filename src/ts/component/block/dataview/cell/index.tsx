@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, S, U, J, analytics, keyboard, Relation, Renderer, Preview, translate } from 'Lib';
+import { I, C, S, U, J, analytics, keyboard, Relation, Action, Preview, translate } from 'Lib';
 
 import CellText from './text';
 import CellSelect from './select';
@@ -186,7 +186,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 		if (!canEdit) {
 			if (Relation.isUrl(relation.format) && value) {
-				Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, value) + value);
+				Action.openUrl(Relation.getUrlScheme(relation.format, value) + value);
 				return;
 			};
 
@@ -380,7 +380,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 				if (e.shiftKey && value) {
 					const scheme = Relation.getUrlScheme(relation.format, value);
-					Renderer.send('urlOpen', scheme + value);
+					Action.openUrl(scheme + value);
 
 					ret = true;
 					break;
@@ -412,7 +412,7 @@ const Cell = observer(class Cell extends React.Component<Props> {
 
 						switch (item.id) {
 							case 'go': {
-								Renderer.send('urlOpen', scheme + value);
+								Action.openUrl(scheme + value);
 								analytics.event('RelationUrlOpen');
 								break;
 							};

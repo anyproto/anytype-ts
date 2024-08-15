@@ -573,8 +573,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const templateType = S.Record.getTemplateType();
 		const sorts = [];
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 		];
 		let limit = this.getLimit(block.content);
 
@@ -584,29 +584,29 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		switch (targetBlockId) {
 			case J.Constant.widgetId.favorite: {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
+				filters.push({ relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
 				limit = 0;
 				break;
 			};
 
 			case J.Constant.widgetId.recentEdit: {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 3 });
+				filters.push({ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 3 });
 				break;
 			};
 
 			case J.Constant.widgetId.recentOpen: {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 });
+				filters.push({ relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 });
 				sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
 				break;
 			};
 
 			case J.Constant.widgetId.set: {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set });
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set });
 				break;
 			};
 
 			case J.Constant.widgetId.collection: {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection });
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection });
 				break;
 			};
 
@@ -761,6 +761,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];
 		};
+
 		return isPreview ? J.Constant.limit.menuRecords : limit;
 	};
 

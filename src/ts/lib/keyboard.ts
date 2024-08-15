@@ -470,7 +470,7 @@ class Keyboard {
 			case 'tutorial':
 			case 'privacy':
 			case 'community': {
-				Renderer.send('urlOpen', J.Url[cmd]);
+				Action.openUrl(J.Url[cmd]);
 				break;
 			};
 
@@ -541,7 +541,7 @@ class Keyboard {
 							return;
 						};
 
-						Renderer.send('pathOpen', paths[0]);
+						Renderer.send('openPath', paths[0]);
 					});
 				});
 				break;
@@ -551,7 +551,7 @@ class Keyboard {
 				Action.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
 					C.DebugExportLocalstore(paths[0], [], (message: any) => {
 						if (!message.error.code) {
-							Renderer.send('pathOpen', paths[0]);
+							Renderer.send('openPath', paths[0]);
 						};
 					});
 				});
@@ -562,7 +562,7 @@ class Keyboard {
 				C.DebugSpaceSummary(S.Common.space, (message: any) => {
 					if (!message.error.code) {
 						U.Common.getElectron().fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
-						Renderer.send('pathOpen', tmpPath);
+						Renderer.send('openPath', tmpPath);
 					};
 				});
 				break;
@@ -572,7 +572,7 @@ class Keyboard {
 				C.DebugStat((message: any) => {
 					if (!message.error.code) {
 						U.Common.getElectron().fileWrite('debug-stat.json', JSON.stringify(message, null, 5), { encoding: 'utf8' });
-						Renderer.send('pathOpen', tmpPath);
+						Renderer.send('openPath', tmpPath);
 					};
 				});
 				break;
@@ -581,7 +581,7 @@ class Keyboard {
 			case 'debugTree': {
 				C.DebugTree(rootId, logPath, (message: any) => {
 					if (!message.error.code) {
-						Renderer.send('pathOpen', logPath);
+						Renderer.send('openPath', logPath);
 					};
 				});
 				break;
@@ -590,7 +590,7 @@ class Keyboard {
 			case 'debugProcess': {
 				C.DebugStackGoroutines(logPath, (message: any) => {
 					if (!message.error.code) {
-						Renderer.send('pathOpen', logPath);
+						Renderer.send('openPath', logPath);
 					};
 				});
 				break;
@@ -640,7 +640,7 @@ class Keyboard {
 			url = url.replace(/\%25analyticsId\%25/g, account.info.analyticsId);
 			url = url.replace(/\%25deviceId\%25/g, account.info.deviceId);
 
-			Renderer.send('urlOpen', url);
+			Action.openUrl(url);
 		});
 	};
 
@@ -648,7 +648,7 @@ class Keyboard {
 		const { account, membership } = S.Auth;
 		const name = membership.name ? membership.name : account.id;
 
-		Renderer.send('urlOpen', J.Url.membershipUpgrade.replace(/\%25name\%25/g, name));
+		Action.openUrl(J.Url.membershipUpgrade.replace(/\%25name\%25/g, name));
 	};
 
 	onTechInfo () {

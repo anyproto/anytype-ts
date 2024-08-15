@@ -1,11 +1,10 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import * as Prism from 'prismjs';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer, } from 'mobx-react';
-import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
-import { I, C, S, U, J, keyboard, Key, Preview, Mark, focus, Storage, translate, analytics } from 'Lib';
+import { Select, Marker, IconObject, Icon, Editable } from 'Component';
+import { I, C, S, U, J, keyboard, Key, Preview, Mark, focus, Storage, translate, analytics, Action } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
@@ -308,7 +307,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		const reg = /\$((?:[^$\\]|\\.)*?)\$([^\d]|$)/g;
+		const reg = /(^|\s)\$((?:[^$\\]|\\.)*?)\$([^\d]|$)/g;
 
 		let value = this.refEditable.getHtmlValue();
 
@@ -319,18 +318,18 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		value = U.Common.fromHtmlSpecialChars(value);
 
 		const tag = Mark.getTag(I.MarkType.Latex);
-		const html = value.replace(reg, (s: string, p1: string, p2: string) => {
+		const html = value.replace(reg, (s: string, p1: string, p2: string, p3: string) => {
 			let ret = '';
 
 			try {
-				ret = katex.renderToString(U.Common.stripTags(p1), { 
+				ret = katex.renderToString(U.Common.stripTags(p2), { 
 					displayMode: false, 
 					throwOnError: false,
 					output: 'html',
 					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
 				});
 
-				ret = ret ? `<${tag}>${ret}</${tag}>${p2}` : s;
+				ret = ret ? `${p1}<${tag}>${ret}</${tag}>${p3}` : s;
 			} catch (e) {
 				ret = s;
 			};
@@ -461,6 +460,29 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		
 		for (let i = 0; i < 9; ++i) {
 			saveKeys.push({ key: `${cmd}+${i}` });
+		};
+
+		// Make div
+		const newBlock: any = { 
+			bgColor: block.bgColor,
+			content: {},
+		};
+
+		keyboard.shortcut('enter, space', e, () => {
+			if ([ '---', '—-', '***' ].includes(value)) {
+				newBlock.type = I.BlockType.Div;
+				newBlock.content.style = value == '***' ? I.DivStyle.Dot : I.DivStyle.Line;
+			};
+		});
+
+		if (newBlock.type && (!isInsideTable && !block.isTextCode())) {
+			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
+				this.setValue('');
+				
+				focus.set(block.id, { from: 0, to: 0 });
+				focus.apply();
+			});
+			return;
 		};
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
@@ -668,10 +690,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const canOpenMenuAdd = !menuOpenAdd && (oneSymbolBefore == '/') && isAllowedMenu;
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && isAllowedMenu;
-		const newBlock: any = { 
-			bgColor: block.bgColor,
-			content: {},
-		};
+
 		
 		this.preventMenu = false;
 
@@ -713,25 +732,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (canOpenMenuMention) {
 			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => this.onMention());
 			return;
-		};
-
-		// Make div
-		const divReg = new RegExp('^(---|—-|\\*\\*\\*)\\s');
-		const match = value.match(divReg);
-
-		if (match) {
-			newBlock.type = I.BlockType.Div;
-			newBlock.content.style = match[1] == '***' ? I.DivStyle.Dot : I.DivStyle.Line;
-			cmdParsed = true;
-		};
-
-		if (newBlock.type && (!isInsideTable && !block.isTextCode())) {
-			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
-				this.setValue(value.replace(divReg, ''));
-				
-				focus.set(block.id, { from: 0, to: 0 });
-				focus.apply();
-			});
 		};
 
 		// Parse markdown commands
@@ -958,11 +958,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		this.text = value;
-
-		if (S.Menu.isOpen('', '', [ 'onboarding', 'smile', 'select', 'searchText' ])) {
-			return;
-		};
-
 		U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
 	};
 	

@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.42.8-alpha",
+	"version": "0.42.9-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -97,6 +97,7 @@
 		"amplitude-js": "^5.11.0",
 		"array-move": "^2.2.2",
 		"blueimp-load-image": "^2.31.0",
+		"copy-webpack-plugin": "^12.0.2",
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
 		"d3-force-cluster": "^0.1.2",
@@ -177,6 +178,7 @@
 			"dist/font/**/*",
 			"dist/workers/**/*",
 			"dist/*.node",
+			"dist/cmaps/**/*",
 			"dist/embed/**/*",
 			"dist/challenge/**/*",
 			"dist/img/**/*",
@@ -226,6 +228,7 @@
 			"dist/nativeMessagingHost.exe",
 			"dist/nativeMessagingHost",
 			"dist/*.node",
+			"dist/cmaps/**/*",
 			"dist/font/**/*",
 			"dist/workers/**/*",
 			"!node_modules/**/*",

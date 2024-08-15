@@ -22,7 +22,7 @@
 
 			.inner { display: flex; flex-direction: row; align-items: center; height: 100%; width: 100%; }
 			.iconObject { flex-shrink: 0; }
-			.iconObject.isTask { background: none; }
+			.iconObject.isTask { background: none !important; }
 
 			.name { @include text-overflow-nw; }
 			.descr { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }

@@ -181,12 +181,19 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const blockId = this.getBlockId();
 		const lastId = Storage.getLastChatMessageId(rootId);
 		const ns = blockId + U.Common.getEventNamespace(isPopup);
-		const messages = this.getMessages();
 
 		this._isMounted = true;
 		this.checkSendButton();
 
-		if (lastId && this.messagesMap[lastId]) {
+		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
+
+		this.loadMessages(() => {
+			if (!lastId) {
+				return;
+			};
+
+			const messages = this.getMessages();
+
 			if (lastId == messages[messages.length - 1].id) {
 				this.scrollToBottom();
 				return;
@@ -198,11 +205,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.lastMessageOffset = node.offset().top;
 
 			raf(() => this.scrollToMessage(lastId));
-		};
-
-		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
-
-		this.loadMessages();
+		});
 	};
 
 	componentDidUpdate () {

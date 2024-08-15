@@ -44,19 +44,13 @@ class Pin extends React.Component<Props, State> {
 
 	render () {
 		const { pinLength, isNumeric } = this.props;
-	
-		let props = {
+		const props: any = {
 			maxLength: 1,
 			onKeyUp: this.onInputKeyUp,
 		};
 
 		if (isNumeric) {
-			props = Object.assign(props, {
-				type: 'number',
-				pattern: '[0-9]{1}',
-				inputMode: 'numeric',
-				noValidate: true,
-			});
+			props.inputMode = 'numeric';
 		};
 
 		return (
@@ -135,7 +129,7 @@ class Pin extends React.Component<Props, State> {
 			this.focus();
 
 			for (const i in this.inputRefs) {
-				this.inputRefs[i].setType(this.getType());
+				this.inputRefs[i].setType('text');
 			};
 		});
 	};
@@ -147,67 +141,80 @@ class Pin extends React.Component<Props, State> {
 	};
 
 	onInputKeyDown = (e, index: number) => {
+		const { isNumeric } = this.props;
 		const prev = this.inputRefs[index - 1];
 
 		if (prev) {
 			keyboard.shortcut('backspace', e, () => {
 				prev.setValue('');
-				prev.setType(this.getType());
+				prev.setType('text');
 				prev.focus();
+			});
+		};
+
+		if (isNumeric) {
+			keyboard.shortcut('arrowup, arrowdown', e, () => {
+				e.preventDefault();
 			});
 		};
 	};
 
 	onInputKeyUp = () => {
-		const { pinLength: size } = this.props;
-		const pin = this.getValue();
+		const { pinLength } = this.props;
 
-		if (pin.length === size) {
+		if (this.getValue().length === pinLength) {
 			this.check();
 		};
 	};
 
 	onInputChange = (index: number, value: string) => {
-		const { isVisible } = this.props;
+		const { isVisible, isNumeric } = this.props;
 		const input = this.inputRefs[index];
 		const next = this.inputRefs[index + 1];
 
-		if (!value) {
-			input.setType(this.getType());
+		let newValue = value;
+		if (isNumeric) {
+			newValue = newValue.replace(/[^\d]/g, '');
+		};
+		if (newValue.length > 1) {
+			newValue = newValue.slice(0, 1);
+		};
+
+		if (newValue != value) {
+			input.setValue(newValue);
+		};
+
+		if (!newValue) {
+			input.setType('text');
 			return;
-		}
+		};
 
 		if (next) {
 			next.focus();
 		};
 
-		if (isVisible) {
-			return;
+		if (!isVisible) {
+			this.timeout = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
 		};
-
-		this.timeout = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
 	};
 
-	onPaste (e, index: number) {
+	async onPaste (e: any, index: number) {
 		e.preventDefault();
 
 		const { pinLength } = this.props;
-		const data = e.clipboardData;
-		const value = String(data.getData('text/plain') || '').split('');
+		const text = await navigator.clipboard.readText();
+		const value = String(text || '').split('');
 
 		for (let i = index; i < pinLength; i++) {
 			const input = this.inputRefs[i];
 			const char = value[i - index] || '';
 
 			input.setValue(char);
+			input.setType('text');
 		};
 
 		this.inputRefs[pinLength - 1].focus();
 		this.check();
-	};
-
-	getType (): string {
-		return this.props.isNumeric ? 'number' : 'text';
 	};
 
 };
