@@ -1261,11 +1261,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		this.text = value;
-
-		if (S.Menu.isOpen('', '', [ 'onboarding', 'smile', 'select', 'searchText' ])) {
-			return;
-		};
-
 		U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
 	};
 	
