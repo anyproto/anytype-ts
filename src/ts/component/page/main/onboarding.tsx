@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { C, I, translate, U } from 'Lib';
-import { Icon, Title, Label } from 'Component';
+import { Icon, Title, Label, Button } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCreative, Keyboard } from 'swiper/modules';
 
@@ -21,6 +21,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 	swiper = null;
 	usecases: any[] = [];
 	current: number = 0;
+	bounceTimeout: any = null;
 
 	state: State = {
 		stage: Stage.Type,
@@ -68,7 +69,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 			const screenshot = el.screenshots.length ? el.screenshots[0] : '';
 
 			return (
-				<div className="item" onClick={() => this.onSlideClick(el.idx)}>
+				<div className={[ 'item', `item-${el.id}`].join(' ')} onClick={() => this.onSlideClick(el.idx)} onMouseEnter={() => this.onUsecaseHover(el.idx)}>
 					<div className="picture" style={{ backgroundImage: `url("${screenshot}")` }}></div>
 					<div className="text">
 						<Title text={el.title} />
@@ -80,38 +81,50 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 
 		let content = null;
 		if (stage == Stage.Usecase) {
+			let buttonText = '';
+			if (this.current == this.usecases.length - 1) {
+				buttonText = translate('onboardingExperienceUsecaseButtonStartFromScratch');
+			} else {
+				buttonText = translate('onboardingExperienceUsecaseButtonSelectExperience');
+			};
+
 			content = (
-				<div className="usecases">
-					<Swiper
-						effect={'creative'}
-						creativeEffect={{
-							prev: {
-								translate: ['-90%', 0, 0],
-								scale: 0.5,
-								opacity: 0.5,
-							},
-							next: {
-								translate: ['90%', 0, 0],
-								scale: 0.5,
-								opacity: 0.5,
-							},
-						}}
-						keyboard={{ enabled: true }}
-						modules={[ EffectCreative, Keyboard ]}
-						spaceBetween={95}
-						speed={400}
-						slidesPerView={1.5}
-						centeredSlides={true}
-						onSlideChange={() => this.onSlideChange()}
-						onSwiper={swiper => this.onSwiper(swiper)}
-					>
-						{this.usecases.map((el: any, i: number) => (
-							<SwiperSlide key={i}>
-								<UsecaseItem {...el} idx={i} />
-							</SwiperSlide>
-						))}
-					</Swiper>
-				</div>
+				<React.Fragment>
+					<div className="usecases">
+						<Swiper
+							effect={'creative'}
+							creativeEffect={{
+								prev: {
+									translate: ['-90%', 0, 0],
+									scale: 0.5,
+									opacity: 0.5,
+								},
+								next: {
+									translate: ['90%', 0, 0],
+									scale: 0.5,
+									opacity: 0.5,
+								},
+							}}
+							keyboard={{ enabled: true }}
+							modules={[ EffectCreative, Keyboard ]}
+							spaceBetween={95}
+							speed={400}
+							slidesPerView={1.5}
+							centeredSlides={true}
+							onSlideChange={() => this.onSlideChange()}
+							onSwiper={swiper => this.onSwiper(swiper)}
+						>
+							{this.usecases.map((el: any, i: number) => (
+								<SwiperSlide key={i}>
+									<UsecaseItem {...el} idx={i} />
+								</SwiperSlide>
+							))}
+						</Swiper>
+					</div>
+					<div className="buttonWrapper">
+						<Button className="c24" text={buttonText} />
+					</div>
+				</React.Fragment>
 			)
 		} else {
 			content = <div className="items">{items.map((el, i) => <Item key={i} {...el} />)}</div>;
@@ -143,8 +156,15 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 	};
 
 	loadUsecases () {
+		const empty = {
+			id: 'empty',
+			title: translate('onboardingExperienceUsecaseStartFromScratchTitle'),
+			description: translate('onboardingExperienceUsecaseStartFromScratchText'),
+			screenshots: []
+		};
 		C.GalleryDownloadIndex((message: any) => {
 			this.usecases = (message.list || []).slice(0,3);
+			this.usecases.push(empty);
 			this.forceUpdate();
 		});
 	};
@@ -188,7 +208,41 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 
 	onSwiper (swiper) {
 		this.swiper = swiper;
-	}
+		this.makeBounce();
+	};
+
+	makeBounce (stop?: boolean) {
+		if (!this.usecases) {
+			return;
+		};
+
+		const targetId = this.usecases[1].id;
+		const target = $(`.usecases .item-${targetId}`);
+
+		target.addClass('hover');
+		this.bounceTimeout = window.setTimeout(() => {
+			target.removeClass('hover');
+
+			if (!stop) {
+				this.bounceTimeout = window.setTimeout(() => {
+					this.makeBounce(true);
+				}, 1000);
+			} else {
+				this.bounceTimeout = null;
+			};
+		}, 750);
+	};
+
+	onUsecaseHover (idx) {
+		if (!this.current && this.bounceTimeout && (idx == this.current + 1)) {
+			const targetId = this.usecases[idx].id;
+			const target = $(`.usecases .item-${targetId}`);
+
+			clearTimeout(this.bounceTimeout);
+			this.bounceTimeout = null;
+			target.removeClass('hover');
+		};
+	};
 
 	onSlideChange () {
 		if (!this.swiper) {
@@ -196,6 +250,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 		};
 
 		this.current = this.swiper.activeIndex;
+		this.forceUpdate();
 	};
 
 	onSlideClick (idx) {
