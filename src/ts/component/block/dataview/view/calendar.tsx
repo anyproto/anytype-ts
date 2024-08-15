@@ -173,7 +173,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const subId = this.getSubId();
 
 		filters.push({ 
-			
 			relationKey: relation.relationKey, 
 			condition: I.FilterCondition.GreaterOrEqual, 
 			value: start, 
@@ -182,7 +181,6 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		});
 
 		filters.push({ 
-			
 			relationKey: relation.relationKey, 
 			condition: I.FilterCondition.LessOrEqual, 
 			value: end, 
