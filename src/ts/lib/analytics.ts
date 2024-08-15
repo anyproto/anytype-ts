@@ -479,6 +479,11 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeSpaceDashboard': {
+				data.type = U.Common.ucFirst(U.Common.enumKey(I.HomePredefinedId, data.type));
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
