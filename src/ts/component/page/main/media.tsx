@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Header, Footer, Loader, Block, Button, IconObject, Deleted } from 'Component';
-import { I, C, S, M, U, Action, translate, Relation } from 'Lib';
+import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted } from 'Component';
+import { I, C, S, M, U, Action, translate, Relation, analytics } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
 interface State {
@@ -28,8 +28,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	constructor (props: I.PageComponent) {
 		super(props);
 		
-		this.onOpen = this.onOpen.bind(this);
 		this.onDownload = this.onDownload.bind(this);
+		this.onRelationAdd = this.onRelationAdd.bind(this);
 	};
 
 	render () {
@@ -37,9 +37,11 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId, [ 'widthInPixels', 'heightInPixels' ]);
-		const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedRelation = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const type = S.Record.getTypeById(object.type);
 		const recommended = Relation.getArrayValue(type?.recommendedRelations);
+		const system = Relation.systemKeys();
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -55,14 +57,9 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		};
 
 		const relations = S.Record.getObjectRelations(rootId, rootId).filter(it => {
-			if (!it) {
+			if (!it || system.includes(it.relationKey)) {
 				return false;
 			};
-
-			if (!recommended.includes(it.id) || (it.relationKey == 'description')) {
-				return false;
-			};
-
 			return !config.debug.hiddenObject ? !it.isHidden : true;
 		}).sort((c1, c2) => U.Data.sortByFormat(c1, c2));
 
@@ -72,7 +69,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const isPdf = file?.isFilePdf();
 		const cn = [ 'blocks' ];
 
-		if (isVideo || isImage || isAudio) {
+		if (isVideo || isImage || isAudio || isPdf) {
 			if (isVideo || isAudio || (object.widthInPixels > object.heightInPixels)) {
 				cn.push('horizontal');
 			} else {
@@ -87,8 +84,11 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 			if (isAudio) {
 				cn.push('isAudio');
 			};
+			if (isPdf) {
+				cn.push('isPdf');
+			};
 		} else {
-			cn.push('vertical');
+			cn.push('horizontal');
 		};
 
 		if (file) {
@@ -110,7 +110,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 					/>
 				);
 			} else {
-				content = <IconObject object={object} size={96} />;
+				content = <IconObject object={object} size={160} />;
 			};
 		};
 
@@ -140,26 +140,35 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 										placeholder={translate('defaultNamePage')} 
 										rootId={rootId} 
 										isContextMenuDisabled={true}
+										noIcon={true}
 									/>
 
 									<div className="buttons">
-										<Button text={translate('commonOpen')} color="blank" onClick={this.onOpen} />
-										<Button text={translate('commonDownload')} color="blank" onClick={this.onDownload} />
+										<Button text={translate('commonDownload')} color="blank" className="c36" onClick={this.onDownload} />
 									</div>
 								</div>
 
 								<div className="section">
+									<div className="title">{translate('pageMainMediaFileInfo')}</div>
+
 									{relations.map((item: any) => (
 										<Block 
 											{...this.props} 
 											key={item.id} 
 											rootId={rootId} 
 											block={new M.Block({ id: item.id, type: I.BlockType.Relation, content: { key: item.relationKey } })} 
-											readonly={!allowed} 
+											readonly={!allowedDetails} 
 											isSelectionDisabled={true}
 											isContextMenuDisabled={true}
 										/>
 									))}
+
+									{allowedRelation ? (
+										<div id="item-add" className="item add" onClick={this.onRelationAdd}>
+											<Icon className="plus" />
+											<div className="name">{translate('commonAddRelation')}</div>
+										</div>
+									) : ''}
 								</div>
 							</div>
 						</React.Fragment>
@@ -272,12 +281,32 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		return blocks.find(it => it.isFile());
 	};
 
-	onOpen () {
-		Action.openFile(this.getBlock()?.content?.targetObjectId);
+	onDownload () {
+		const block = this.getBlock();
+		if (block) {
+			Action.downloadFile(block.getTargetObjectId(), analytics.route.media, block.isFileImage());
+		};
 	};
 
-	onDownload () {
-		Action.download(this.getBlock(), 'media');
+	onRelationAdd (e: any) {
+		const { isPopup } = this.props;
+		const container = U.Common.getPageContainer(isPopup);
+		const rootId = this.getRootId();
+
+		S.Menu.open('relationSuggest', { 
+			element: container.find('#item-add'),
+			offsetX: 32,
+			data: {
+				filter: '',
+				rootId,
+				ref: 'type',
+				menuIdEdit: 'blockRelationEdit',
+				skipKeys: S.Record.getObjectRelationKeys(rootId, rootId),
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
+				},
+			}
+		});
 	};
 
 	getRootId () {

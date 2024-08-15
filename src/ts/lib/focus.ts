@@ -2,19 +2,14 @@ import $ from 'jquery';
 import { setRange } from 'selection-ranges';
 import { I, C, U, J, keyboard } from 'Lib';
 
-interface State {
-	focused: string;
-	range: I.TextRange;
-};
-
 class Focus {
 	
-	state: State = { 
+	state: I.FocusState = { 
 		focused: '', 
 		range: { from: 0, to: 0 } 
 	};
 
-	backup: State = { 
+	backup: I.FocusState = { 
 		focused: '', 
 		range: { from: 0, to: 0 } 
 	};
@@ -104,7 +99,7 @@ class Focus {
 		const ch = container.height();
 		const no = node.offset().top;
 		const hh = J.Size.header;
-		const o = J.Size.lastBlock + hh;
+		const o = J.Size.lastBlock + ch / 2 + hh;
 		const st = container.scrollTop();
 		const y = isPopup ? (no - container.offset().top + st) : no;
 

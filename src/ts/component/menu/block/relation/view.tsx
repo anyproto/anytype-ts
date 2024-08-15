@@ -310,15 +310,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	onCellClick (e: any, relationKey: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const { readonly, rootId } = data;
-		const relation = S.Record.getRelationByKey(relationKey);
-
-		if (!relation || readonly || relation.isReadonlyValue) {
-			return;
-		};
-
-		const id = Relation.cellId(PREFIX, relationKey, rootId);
-		const ref = this.cellRefs.get(id);
+		const { rootId } = data;
+		const ref = this.cellRefs.get(Relation.cellId(PREFIX, relationKey, rootId));
 
 		if (ref) {
 			ref.onClick(e);

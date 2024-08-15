@@ -71,7 +71,7 @@ class UtilData {
 
 		switch (block.type) {
 			case I.BlockType.File: {
-				if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
+				if ((style == I.FileStyle.Link) || [ I.FileType.File, I.FileType.None ].includes(type)) {
 					c.push(dc);
 				} else {
 					c.push(`blockMedia is${I.FileType[type]}`);
@@ -262,7 +262,7 @@ class UtilData {
 			{
 				subId: J.Constant.subId.profile,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -272,7 +272,7 @@ class UtilData {
 				subId: J.Constant.subId.space,
 				keys: this.spaceRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.SpaceView },
 				],
 				sorts: [
 					{ relationKey: 'createdDate', type: I.SortType.Desc },
@@ -287,8 +287,8 @@ class UtilData {
 				subId: J.Constant.subId.myParticipant,
 				keys: this.participantRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-					{ operator: I.FilterOperator.And, relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+					{ relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
 				],
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
@@ -306,7 +306,7 @@ class UtilData {
 			{
 				subId: J.Constant.subId.profile,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -316,7 +316,7 @@ class UtilData {
 				subId: J.Constant.subId.deleted,
 				keys: [],
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
+					{ relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
 				],
 				ignoreDeleted: false,
 				noDeps: true,
@@ -325,8 +325,8 @@ class UtilData {
 				subId: J.Constant.subId.type,
 				keys: this.typeRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+					{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
+					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
 					{ relationKey: 'spaceId', type: I.SortType.Desc },
@@ -345,8 +345,8 @@ class UtilData {
 				subId: J.Constant.subId.relation,
 				keys: J.Relation.relation,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+					{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
+					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -360,7 +360,7 @@ class UtilData {
 				subId: J.Constant.subId.option,
 				keys: J.Relation.option,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
@@ -372,7 +372,7 @@ class UtilData {
 				subId: J.Constant.subId.participant,
 				keys: this.participantRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
@@ -508,8 +508,8 @@ class UtilData {
 	getTemplatesByTypeId (typeId: string, callBack: (message: any) => void) {
 		const templateType = S.Record.getTemplateType();
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
-			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
+			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
+			{ relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeId },
 		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
@@ -639,8 +639,8 @@ class UtilData {
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
-			{ operator: I.FilterOperator.And, relationKey: relationKey, condition: I.FilterCondition.In, value: ids },
+			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
+			{ relationKey: relationKey, condition: I.FilterCondition.In, value: ids },
 		];
 
 		this.search({
@@ -749,20 +749,20 @@ class UtilData {
 		};
 
 		if (!ignoreWorkspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
+			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (ignoreDeleted) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (!withArchived) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (!keys.includes(idField)) {
@@ -841,20 +841,20 @@ class UtilData {
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		if (!ignoreWorkspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
+			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
 		};
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (ignoreDeleted) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (!withArchived) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (!keys.includes(idField)) {
@@ -903,17 +903,17 @@ class UtilData {
 		const { space } = S.Common;
 		const templateType = S.Record.getTemplateType();
 		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
-			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] },
+			{ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
+			{ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true },
+			{ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
+			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] },
 		];
 
 		if (templateType) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ templateType.id ] },);
+			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType.id });
 		};
 		return filters;
 	};
@@ -937,17 +937,18 @@ class UtilData {
 		};
 
 		C.MembershipGetStatus(true, (message: any) => {
+			if (!message.membership) {
+				return;
+			};
+
 			const membership = new M.Membership(message.membership);
+			const { status, tier } = membership;
 
-			if (membership) {
-				const { status, tier } = membership;
+			S.Auth.membershipSet(membership);
+			analytics.setTier(tier);
 
-				S.Auth.membershipSet(membership);
-				analytics.setTier(tier);
-
-				if (status && (status == I.MembershipStatus.Finalization)) {
-					S.Popup.open('membershipFinalization', { data: { tier } });
-				};
+			if (status && (status == I.MembershipStatus.Finalization)) {
+				S.Popup.open('membershipFinalization', { data: { tier } });
 			};
 
 			if (callBack) {
@@ -998,6 +999,8 @@ class UtilData {
 		const { dataPath } = S.Common;
 
 		let phrase = '';
+
+		analytics.event('StartCreateAccount');
 
 		C.WalletCreate(dataPath, (message) => {
 			if (message.error.code) {

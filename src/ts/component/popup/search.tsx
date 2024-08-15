@@ -312,12 +312,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this._isMounted = true;
 		this.initCache();
 		this.rebind();
-		this.reload();
 
 		focus.clear(true);
 
 		if (backlink) {
 			U.Object.getById(backlink, item => this.setBacklink(item, () => setFilter()));
+		} else {
+			this.reload();
 		};
 
 		analytics.event('ScreenSearch', { route });
@@ -568,9 +569,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const filter = this.getFilter();
 		const templateType = S.Record.getTemplateType();
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space }
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space }
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -585,7 +586,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		if (backlink) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(backlink.links, backlink.backlinks) });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(backlink.links, backlink.backlinks) });
 		};
 
 		if (clear) {

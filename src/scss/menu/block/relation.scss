@@ -144,7 +144,7 @@
 			}
 
 			.cell.isEditing.c-object {
-				.cellContent, .placeholder { padding: 5px 8px 1px 8px !important; }
+				.cellContent, .placeholder { padding: 5px 8px !important; }
 			}
 
 			.cell.isEditing.c-longText {
@@ -155,6 +155,7 @@
 			.cellContent { min-height: 22px; }
 			.cellContent {
 				.name { line-height: 22px; }
+				.more { line-height: 22px; }
 			}
 			.cellContent.isName { display: flex; align-items: center; }
 		}

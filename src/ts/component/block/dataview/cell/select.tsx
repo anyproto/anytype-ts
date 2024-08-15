@@ -35,10 +35,9 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	render () {
-		const { relation, recordId, getRecord, elementMapper, arrayLimit } = this.props;
+		const { relation, recordId, getRecord, elementMapper, arrayLimit, canEdit, placeholder } = this.props;
 		const { isEditing } = this.state;
 		const record = getRecord(recordId);
-		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		const isSelect = relation.format == I.RelationType.Select;
 		const cn = [ 'wrap' ];
 
@@ -80,7 +79,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 									key={i}
 									id={`item-${item.id}`}
 									className={cni.join(' ')}
-									draggable={!isSelect}
+									draggable={canEdit && !isSelect}
 									onContextMenu={e => this.onContextMenu(e, item)}
 									{...U.Common.dataProps({ id: item.id, index: i })}
 								>
@@ -88,7 +87,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 										key={item.id}
 										text={item.name}
 										color={item.color}
-										canEdit={!isSelect} 
+										canEdit={canEdit && !isSelect} 
 										className={Relation.selectClassName(relation.format)}
 										onClick={e => this.onClick(e, item.id)}
 										onRemove={() => this.onValueRemove(item.id)}
@@ -98,22 +97,24 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 						</DragBox>
 					</span>
 					
-					<span 
-						id="entry" 
-						contentEditable={true}
-						suppressContentEditableWarning={true} 
-						onFocus={this.onFocus}
-						onBlur={this.onBlur}
-						onInput={this.onInput}
-						onKeyPress={this.onKeyPress}
-						onKeyDown={this.onKeyDown}
-						onKeyUp={this.onKeyUp}
-						onCompositionStart={() => keyboard.setComposition(true)}
-						onCompositionEnd={() => keyboard.setComposition(false)}
-						onClick={e => e.stopPropagation()}
-					>
-						{'\n'}
-					</span>
+					{canEdit ? (
+						<span 
+							id="entry" 
+							contentEditable={true}
+							suppressContentEditableWarning={true} 
+							onFocus={this.onFocus}
+							onBlur={this.onBlur}
+							onInput={this.onInput}
+							onKeyPress={this.onKeyPress}
+							onKeyDown={this.onKeyDown}
+							onKeyUp={this.onKeyUp}
+							onCompositionStart={() => keyboard.setComposition(true)}
+							onCompositionEnd={() => keyboard.setComposition(false)}
+							onClick={e => e.stopPropagation()}
+						>
+							{'\n'}
+						</span>
+					) : ''}
 
 					{isSelect ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}
 				</div>

@@ -73,7 +73,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 					return false;
 				};
 
-				const target = child.content.targetBlockId;
+				const target = child.getTargetObjectId();
 
 				if (Object.values(J.Constant.widgetId).includes(target)) {
 					return true;
@@ -218,8 +218,8 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			vertical: I.MenuDirection.Top,
 			data: {
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
+					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
 				],
 				canAdd: true,
 				dataChange: (context: any, items: any[]) => {

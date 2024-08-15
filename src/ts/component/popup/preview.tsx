@@ -1,13 +1,13 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Loader } from 'Component';
-import { I, keyboard, U, sidebar } from 'Lib';
+import { Loader, Icon, ObjectName } from 'Component';
+import { I, S, J, U, keyboard, sidebar } from 'Lib';
 
 const BORDER = 16;
 const WIDTH_DEFAULT = 450;
 const HEIGHT_DEFAULT = 300;
-const WIDTH_VIDEO = 672;
-const HEIGHT_VIDEO = 382;
+const WIDTH_VIDEO = 1040;
+const HEIGHT_VIDEO = 585;
 
 class PopupPreview extends React.Component<I.Popup> {
 	
@@ -15,12 +15,20 @@ class PopupPreview extends React.Component<I.Popup> {
 	width = 0;
 	height = 0;
 
+	constructor (props: I.Popup) {
+		super(props);
+
+		this.onMore = this.onMore.bind(this);
+	};
+
 	render () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { src, type } = data;
+		const { src, type, object } = data;
 
 		let content = null;
+		let name = null;
+		let menu = null;
 
 		switch (type) {
 			case I.FileType.Image: {
@@ -34,9 +42,24 @@ class PopupPreview extends React.Component<I.Popup> {
 			};
 		};
 
+		if (object) {
+			name = <ObjectName object={object} />;
+			menu = <Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />;
+		};
+
 		return (
 			<div>
 				<Loader id="loader" />
+				<div className="head">
+					<div className="side left">
+					</div>
+					<div className="side center">
+						{name}
+					</div>
+					<div className="side right">
+						{menu}
+					</div>
+				</div>
 				<div id="wrap" className="wrap">
 					{content}
 				</div>
@@ -74,6 +97,25 @@ class PopupPreview extends React.Component<I.Popup> {
 		keyboard.shortcut('escape', e, () => this.props.close());
 	};
 	
+	onMore () {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { object } = data;
+
+		S.Menu.open('object', {
+			element: `#${getId()} #button-header-more`,
+			horizontal: I.MenuDirection.Right,
+			subIds: J.Menu.object,
+			data: {
+				rootId: object.id,
+				blockId: object.id,
+				blockIds: [ object.id ],
+				object,
+				isFilePreview: true,
+			}
+		});
+	};
+
 	resize () {
 		const { param, getId, position } = this.props;
 		const { data } = param;

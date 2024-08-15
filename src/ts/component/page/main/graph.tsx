@@ -115,35 +115,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				return;
 			};
 
-			const hashes: any = [];
-
-			this.data.edges = message.edges.filter(d => { 
-				const hash = [ d.source, d.target ].join('-');
-				if (hashes.includes(hash)) {
-					return false;
-				};
-
-				hashes.push(hash);
-				return (d.source != d.target);
-			});
-
-			// Find backlinks
-			for (const edge of this.data.edges) {
-				const idx = this.data.edges.findIndex(d => (d.source == edge.target) && (d.target == edge.source));
-				if (idx >= 0) {
-					const double = this.data.edges[idx];
-
-					if ((edge.type == I.EdgeType.Link) && (double.type == I.EdgeType.Relation)) {
-						edge.type = double.type;
-						edge.name = double.name;
-					};
-
-					edge.isDouble = true;
-					this.data.edges.splice(idx, 1);
-				};
-			};
-
-			this.data.nodes = message.nodes.map(it => S.Detail.mapper(it));
+			this.data.edges = message.edges;
+			this.data.nodes = message.nodes;
 			this.forceUpdate();
 
 			if (this.refGraph) {
@@ -177,7 +150,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		const hh = header.height();
 		const wh = isPopup ? oh - hh : win.height();
 
-		wrapper.css({ height: wh, paddingTop: isPopup ? 0 : hh });
+		wrapper.css({ height: wh });
 		
 		if (isPopup) {
 			const element = $('#popupPage .content');

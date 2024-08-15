@@ -103,6 +103,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 						readonly={readonly}
 						onClick={e => onCellClick(e, relationKey, object.id)}
 						onCellChange={onCellChange}
+						arrayLimit={10}
 					/>
 				</div>
 				{canFav ? (

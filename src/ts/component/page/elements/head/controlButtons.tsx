@@ -41,9 +41,9 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const checkType = S.Block.checkBlockTypeExists(rootId);
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		let allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && !root.isObjectCollection();
-		let allowedIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote() && !root.isObjectBookmark();
-		let allowedCover = !checkType && allowedDetails && !root.isObjectNote();
+		let allowedLayout = !checkType && allowedDetails && !U.Object.isInSetLayouts(root.layout);
+		let allowedIcon = !checkType && allowedDetails && !U.Object.isTaskLayout(root.layout) && !U.Object.isNoteLayout(root.layout) && !U.Object.isBookmarkLayout(root.layout);
+		let allowedCover = !checkType && allowedDetails && !U.Object.isNoteLayout(root.layout);
 
 		if (root.isLocked() || readonly) {
 			allowedIcon = false;
@@ -51,7 +51,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			allowedCover = false;
 		};
 
-		if (root.isObjectType()) {
+		if (U.Object.isTypeLayout(root.layout)) {
 			allowedLayout = false;
 			allowedCover = false;
 		};

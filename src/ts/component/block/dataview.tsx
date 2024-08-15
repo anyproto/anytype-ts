@@ -391,7 +391,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			const filters = [];
 
 			if (this.searchIds) {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
+				filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
 			};
 
 			Dataview.getData({
@@ -428,7 +428,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getObjectId (): string {
 		const { rootId, block, isInline } = this.props;
-		return isInline ? block.content.targetObjectId : rootId;
+		return isInline ? block.getTargetObjectId() : rootId;
 	};
 
 	getKeys (id: string): string[] {
@@ -800,7 +800,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					const type = S.Record.getTypeById(typeId);
 
 					if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
-						menuContext.close();
+						menuContext?.close();
 						this.onBookmarkMenu(e, dir, '', { element: `#button-${block.id}-add-record` });
 					} else
 					if (item.id == J.Constant.templateId.new) {
@@ -809,7 +809,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						this.recordCreate(e, item, dir);
 						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: item.id });
 
-						menuContext.close();
+						menuContext?.close();
 						analytics.event('ChangeDefaultTemplate', { route });
 					};
 				}
@@ -874,7 +874,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (!view.isGrid() && Relation.isUrl(relation.format)) {
-			Renderer.send('urlOpen', Relation.getUrlScheme(relation.format, record[relationKey]) + record[relationKey]);
+			Action.openUrl(Relation.getUrlScheme(relation.format, record[relationKey]) + record[relationKey]);
 			return;
 		};
 
@@ -966,7 +966,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		
 		if (isCollection) {
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
+				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewCollection');
@@ -976,8 +976,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		} else {
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
-				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+				{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
+				{ relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 
 			addParam.name = translate('blockDataviewCreateNewSet');
@@ -1222,6 +1222,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	isAllowedObject () {
 		const { rootId, block, readonly } = this.props;
+		const root = S.Block.getLeaf(rootId, rootId);
+
+		if (root && root.isLocked()) {
+			return false;
+		};
 
 		let isAllowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		if (!isAllowed) {

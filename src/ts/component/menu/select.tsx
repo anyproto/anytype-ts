@@ -283,7 +283,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	getItems (withSections: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { preventFilter, onAdd } = data;
+		const { preventFilter, withAdd } = data;
 		const sections = this.getSections();
 
 		let items: any[] = [];
@@ -305,7 +305,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			items = items.filter(it => String(it.name || '').match(filter));
 		};
 
-		if (onAdd) {
+		if (withAdd) {
 			items = items.concat([
 				{ isDiv: true },
 				{ id: 'add', name: translate('commonAddRelation') }
@@ -337,16 +337,11 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, close, getId, getSize } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
-		const { onSelect, canSelectInitial, noClose, disabled, onAdd } = data;
+		const { onSelect, canSelectInitial, noClose, disabled } = data;
 
 		if (item.isInitial && !canSelectInitial) {
-			return;
-		};
-
-		if ((item.id == 'add') && onAdd) {
-			onAdd(getId(), getSize().width);
 			return;
 		};
 
@@ -425,7 +420,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	resize () {
 		const { position, getId, param } = this.props;
 		const { data } = param;
-		const { noScroll, maxHeight, noVirtualisation, onAdd } = data;
+		const { noScroll, maxHeight, noVirtualisation, withAdd } = data;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
@@ -453,7 +448,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		};
 
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
-		onAdd ? obj.addClass('withAdd') : obj.removeClass('withAdd');
+		withAdd ? obj.addClass('withAdd') : obj.removeClass('withAdd');
 		noScroll ? obj.addClass('noScroll') : obj.removeClass('noScroll');
 		noVirtualisation ? obj.addClass('noVirtualisation') : obj.removeClass('noVirtualisation');
 

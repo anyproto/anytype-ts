@@ -48,12 +48,12 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		];
 
 		const filtersType: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-			{ operator: I.FilterOperator.And, relationKey: 'recommendedRelations', condition: I.FilterCondition.In, value: [ rootId ] },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
+			{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
+			{ relationKey: 'recommendedRelations', condition: I.FilterCondition.In, value: [ rootId ] },
 		];
 		const filtersObject: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
 		];
 
 		return (

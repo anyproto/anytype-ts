@@ -1,9 +1,6 @@
 @import "~scss/_mixins";
 
 .pageMainStore {
-	.wrapper.withBanner { padding-top: 200px; }
-
-
 	.body { display: flex; flex-direction: column; }
 	.body {
 		.mid { text-align: center; padding: 60px 0px 52px 0px; margin: 0px auto; max-width: 640px; }
