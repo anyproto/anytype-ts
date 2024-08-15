@@ -135,6 +135,14 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 						/>
 					</DropTarget>
 
+					<Widget 
+						block={new M.Block({ id: 'buttons', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Buttons } })} 
+						disableContextMenu={true} 
+						onDragStart={this.onDragStart}
+						onDragOver={this.onDragOver}
+						isEditing={isEditing}
+					/>
+
 					{blocks.map((block, i) => (
 						<Widget 
 							{...this.props}

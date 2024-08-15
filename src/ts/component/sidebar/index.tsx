@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, translate, analytics } from 'Lib';
+import { I, U, J, S, keyboard, Preview, sidebar, translate } from 'Lib';
 import ListWidget from 'Component/list/widget';
 
 const Sidebar = observer(class Sidebar extends React.Component {
@@ -31,7 +31,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	};
 
     render() {
-		const { showVault } = S.Common;
+		const { showVault, showObject } = S.Common;
         const cn = [ 'sidebar' ];
 		const space = U.Space.getSpaceview();
 		const cmd = keyboard.cmdSymbol();
@@ -75,8 +75,10 @@ const Sidebar = observer(class Sidebar extends React.Component {
 						</div>
 					</div>
 
-					<div id="containerObject">
-					</div>
+					{showObject ? (
+						<div id="containerObject">
+						</div>
+					) : ''}
 
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
 						<div className="resize-handle" onClick={this.onHandleClick} />
