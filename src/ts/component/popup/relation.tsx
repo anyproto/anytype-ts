@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button, Cell, Error, Icon, EmptySearch, Checkbox } from 'Component';
-import { I, M, C, S, U, J, Relation, translate, Dataview } from 'Lib';
+import { Label, Button, Cell, Error, Icon, EmptySearch } from 'Component';
+import { I, M, C, S, U, J, Relation, translate, Dataview, analytics } from 'Lib';
+
+const Diff = require('diff');
 
 const ID_PREFIX = 'popupRelation';
 const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;
@@ -17,6 +19,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	cellRefs: Map<string, any> = new Map();
 	details: any = {};
 	addRelationKeys = [];
+	diff = {};
 	state = {
 		error: '',
 	};
@@ -181,13 +184,30 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 				const { relationKey } = relation;
 				const value = Relation.formatValue(relation, object[relationKey], false);
 
-				cnt[relationKey] = cnt[relationKey] || 1;
-				if (reference && U.Common.compareJSON(value, reference[relationKey])) {
-					cnt[relationKey]++;
+				if (Relation.isArrayType(relation.format)) {
+					const tmp = [];
+
+					value.forEach(id => {
+						cnt[relationKey] = cnt[relationKey] || {};
+						cnt[relationKey][id] = cnt[relationKey][id] || 0;
+						cnt[relationKey][id]++;
+
+						if (cnt[relationKey][id] == objects.length) {
+							tmp.push(id);
+						};
+					});
+
+					this.details[relationKey] = tmp;
+				} else {
+					cnt[relationKey] = cnt[relationKey] || 1;
+					if (reference && U.Common.compareJSON(value, reference[relationKey])) {
+						cnt[relationKey]++;
+					};
+					if (cnt[relationKey] == objects.length) {
+						this.details[relationKey] = value;
+					};
 				};
-				if (cnt[relationKey] == objects.length) {
-					this.details[relationKey] = value;
-				};
+
 				object[relationKey] = value;
 			});
 
@@ -227,7 +247,12 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			return;
 		};
 
-		this.details[relationKey] = Relation.formatValue(relation, value, true);
+		if (Relation.isArrayType(relation.format)) {
+			this.diff[relationKey] = Diff.diffArrays(this.details[relationKey], value);
+		} else {
+			this.details[relationKey] = Relation.formatValue(relation, value, true);
+		};
+
 		this.loadDeps(() => this.forceUpdate());
 
 		if (callBack) {
@@ -284,6 +309,8 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			};
 		};
 
+		console.log(JSON.stringify(this.diff, null, 3));
+
 		C.ObjectListSetDetails(objectIds, details, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
@@ -291,6 +318,8 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 				close();
 			};
 		});
+
+		analytics.event('ChangeRelationValue', { id: 'Batch', count: objectIds.length });
 
 		if (this.addRelationKeys.length && view) {
 			const cb = () => {
