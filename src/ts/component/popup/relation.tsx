@@ -17,9 +17,9 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 	refCheckbox = null;
 	cellRefs: Map<string, any> = new Map();
+	initial: any = {};
 	details: any = {};
 	addRelationKeys = [];
-	diff = {};
 	state = {
 		error: '',
 	};
@@ -197,13 +197,15 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 						};
 					});
 
-					this.details[relationKey] = tmp;
+					if (tmp.length) {
+						this.details[relationKey] = tmp;
+					};
 				} else {
 					cnt[relationKey] = cnt[relationKey] || 1;
 					if (reference && U.Common.compareJSON(value, reference[relationKey])) {
 						cnt[relationKey]++;
 					};
-					if (cnt[relationKey] == objects.length) {
+					if ((cnt[relationKey] == objects.length) && value) {
 						this.details[relationKey] = value;
 					};
 				};
@@ -214,6 +216,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			reference = object;
 		});
 
+		this.initial = U.Common.objectCopy(this.details);
 		this.forceUpdate();
 	};
 
@@ -247,12 +250,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			return;
 		};
 
-		if (Relation.isArrayType(relation.format)) {
-			this.diff[relationKey] = Diff.diffArrays(this.details[relationKey], value);
-		} else {
-			this.details[relationKey] = Relation.formatValue(relation, value, true);
-		};
-
+		this.details[relationKey] = Relation.formatValue(relation, value, true);
 		this.loadDeps(() => this.forceUpdate());
 
 		if (callBack) {
@@ -300,18 +298,40 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const { data } = param;
 		const { view } = data;
 		const objectIds = this.getObjectIds();
-		const details: any[] = []; 
+		const operations: any[] = []; 
 
 		for (const k in this.details) {
 			const relation = S.Record.getRelationByKey(k);
-			if (relation) {
-				details.push({ key: k, value: Relation.formatValue(relation, this.details[k], true) });
+
+			if (!relation) {
+				continue;
+			};
+
+			if (Relation.isArrayType(relation.format)) {
+				const diff = Diff.diffArrays(this.initial[k] || [], this.details[k] || []);
+
+				diff.forEach(it => {
+					let opKey = '';
+					if (it.added) {
+						opKey = 'add';
+					} else
+					if (it.removed) {
+						opKey = 'remove';
+					};
+
+					if (opKey) {
+						const operation = { relationKey: k };
+
+						operation[opKey] = Relation.formatValue(relation, it.value, true);
+						operations.push(operation);
+					};
+				});
+			} else {
+				operations.push({ relationKey: k, set: Relation.formatValue(relation, this.details[k], true) });
 			};
 		};
 
-		console.log(JSON.stringify(this.diff, null, 3));
-
-		C.ObjectListSetDetails(objectIds, details, (message: any) => {
+		C.ObjectListListModifyDetailValues(objectIds, operations, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {

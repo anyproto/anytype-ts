@@ -160,7 +160,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
 		if ((undefined !== object[relationKey]) && !U.Common.compareJSON(object[relationKey], value)) {
-			analytics.changeRelationValue(relation, value, 'block');
+			analytics.changeRelationValue(relation, value, { type: 'block', id: 'Single' });
 		};
 	};
 

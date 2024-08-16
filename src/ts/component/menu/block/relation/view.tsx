@@ -328,7 +328,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
 		if ((undefined !== object[relationKey]) && !U.Common.compareJSON(object[relationKey], value)) {
-			analytics.changeRelationValue(relation, value, 'menu');
+			analytics.changeRelationValue(relation, value, { type: 'menu', id: 'Single' });
 		};
 	};
 
