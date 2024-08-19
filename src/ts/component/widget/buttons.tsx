@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, sidebar, translate } from 'Lib';
 
 const WidgetButtons = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
 
@@ -28,7 +28,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 
 							cnt = <div className="cnt">{participants.length}</div>;
 						} else {
-							members = <div className="btn">Share</div>;
+							members = <div className="btn">{translate('commonShare')}</div>;
 						};
 					};
 
@@ -70,7 +70,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 			};
 
 			case 'all': {
-				S.Common.showObjectSet(true);
+				sidebar.objectContainerShow();
 				break;
 			};
 

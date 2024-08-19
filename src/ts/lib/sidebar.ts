@@ -13,6 +13,8 @@ class Sidebar {
 		isClosed: false,
 	};
 	obj: JQuery<HTMLElement> = null;
+	containerWidget: JQuery<HTMLElement> = null;
+	containerObject: JQuery<HTMLElement> = null;
 	page: JQuery<HTMLElement> = null;
 	header: JQuery<HTMLElement> = null;
 	footer: JQuery<HTMLElement> = null;
@@ -55,6 +57,8 @@ class Sidebar {
 
 	initObjects () {
 		this.obj = $('#sidebar');
+		this.containerWidget = this.obj.find('#containerWidget');
+		this.containerObject = this.obj.find('#containerObject');
 		this.page = $('#page.isFull');
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
@@ -156,7 +160,7 @@ class Sidebar {
 	};
 
 	onMouseMove (): void {
-		const { showVault, hideSidebar, isFullScreen } = S.Common;
+		const { showVault, hideSidebar } = S.Common;
 
 		if (!this.obj || !this.obj.length || keyboard.isDragging) {
 			return;
@@ -207,9 +211,7 @@ class Sidebar {
 		this.initObjects();
 
 		if ((width === null) && this.obj && this.obj.length) {
-			if (this.obj.css('display') != 'none') {
-				width = this.obj.outerWidth();
-			};
+			width = this.obj.outerWidth();
 		};
 
 		const { isClosed } = this.data;
@@ -283,8 +285,8 @@ class Sidebar {
 
 		const width = v.isClosed ? 0 : v.width;
 
-		this.obj.find('#containerWidget').css({ width });
-		this.obj.find('#containerObject').css({ width });
+		this.containerWidget.css({ width });
+		this.containerObject.css({ width });
 	};
 
 	/**
@@ -323,6 +325,13 @@ class Sidebar {
 
 	getVaultDuration (width: number): number {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
+	};
+
+	objectContainerShow () {
+		S.Common.showObjectSet(true);
+		window.setTimeout(() => {
+			this.setWidth(this.data.width);
+		});
 	};
 
 };

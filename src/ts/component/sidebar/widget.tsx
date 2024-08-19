@@ -9,7 +9,7 @@ type State = {
 	previewId: string;
 };
 
-const ListWidget = observer(class ListWidget extends React.Component<{}, State> {
+const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, State> {
 		
 	state: State = {
 		isEditing: false,
@@ -39,7 +39,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
-		const cn = [ 'listWidget' ];
+		const cn = [ 'list' ];
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let content = null;
@@ -187,7 +187,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 		return (
 			<div 
 				ref={node => this.node = node}
-				id="listWidget"
+				id="list"
 				className={cn.join(' ')}
 				onDrop={this.onDrop}
 				onDragOver={e => e.preventDefault()}
@@ -476,4 +476,4 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 });
 
-export default ListWidget;
+export default SidebarWidget;

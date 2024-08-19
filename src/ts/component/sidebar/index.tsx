@@ -4,7 +4,9 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, U, J, S, keyboard, Preview, sidebar, translate } from 'Lib';
-import ListWidget from 'Component/list/widget';
+
+import SidebarWidget from './widget';
+import SidebarObject from './object';
 
 const Sidebar = observer(class Sidebar extends React.Component {
 	
@@ -71,12 +73,13 @@ const Sidebar = observer(class Sidebar extends React.Component {
 							ref={ref => this.refBody = ref}
 							className="body"
 						>
-							<ListWidget ref={ref => this.refList = ref} {...this.props} />
+							<SidebarWidget ref={ref => this.refList = ref} {...this.props} />
 						</div>
 					</div>
 
 					{showObject ? (
 						<div id="containerObject">
+							<SidebarObject ref={ref => this.refList = ref} {...this.props} />
 						</div>
 					) : ''}
 
