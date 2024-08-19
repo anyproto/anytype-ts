@@ -331,7 +331,8 @@ class Sidebar {
 		S.Common.showObjectSet(true);
 		window.setTimeout(() => {
 			this.setWidth(this.data.width);
-		});
+			this.resizePage(this.data.width, false);
+		}, 40);
 	};
 
 };
