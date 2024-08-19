@@ -14,12 +14,21 @@
 			.side { display: flex; align-items: center; }
 			.side.left { gap: 0px 6px; }
 
+			.name { display: flex; gap: 0px 8px; }
+
 			.icon { width: 20px; height: 20px; flex-shrink: 0; }
 			.icon.member { background-image: url('~img/icon/widget/button/member.svg'); }
 			.icon.all { background-image: url('~img/icon/widget/button/all.svg'); }
 			.icon.bin { background-image: url('~img/icon/widget/button/bin.svg'); }
 
 			.btn { background-image: linear-gradient(90deg, #2aa7ee, #27c941); background-clip: text; -webkit-text-fill-color: transparent; font-weight: 500; }
+
+			.cnt { color: var(--color-text-secondary); }
+
+			.members { height: 18px; line-height: 18px; }
+			.members {
+				.iconObject { border: 1px solid var(--color-bg-primary); margin-left: -6px; }
+			}
 		}
 	}
 
