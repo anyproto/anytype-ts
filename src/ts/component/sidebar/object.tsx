@@ -22,12 +22,17 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	refList: any = null;
 	sort = '';
 	type: I.ObjectContainerType = I.ObjectContainerType.Object;
+	searchIds: string[] = null;
+	filter = '';
+	timeoutFilter = 0;
 
 	constructor (props: any) {
 		super(props);
 
 		this.onSort = this.onSort.bind(this);
 		this.onSwitchType = this.onSwitchType.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterClear = this.onFilterClear.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
@@ -85,6 +90,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 							<Filter 
 								icon="search"
 								placeholder={translate('commonSearch')}
+								onChange={this.onFilterChange}
+								onClear={this.onFilterClear}
 							/>
 						</div>
 						<div className="side right">
@@ -142,6 +149,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		});
 	};
 
+	componentWillUnmount(): void {
+		window.clearTimeout(this.timeoutFilter);
+	};
+
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const option = U.Menu.getObjectContainerSortOptions(this.type).find(it => it.id == this.sort);
 
@@ -155,6 +166,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				{ type: I.SortType.Desc, relationKey: 'createdDate' },
 				{ type: I.SortType.Asc, relationKey: 'name' },
 			]);
+		};
+
+		if (this.searchIds) {
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: this.searchIds || [] });
 		};
 
 		switch (this.type) {
@@ -241,6 +256,37 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	onSwitchType (id: string) {
 		this.type = id as I.ObjectContainerType;
+		this.load(true);
+	};
+
+	onFilterChange (v: string) {
+		window.clearTimeout(this.timeoutFilter);
+		this.timeoutFilter = window.setTimeout(() => {
+			if (this.filter == v) {
+				return;
+			};
+
+			this.filter = v;
+
+			if (v) {
+				U.Data.search({
+					filters: [],
+					sorts: [],
+					fullText: v,
+					keys: [ 'id' ],
+				}, (message: any) => {
+					this.searchIds = (message.records || []).map(it => it.id);
+					this.load(true);
+				});
+			} else {
+				this.searchIds = null;
+				this.load(true);
+			};
+		}, J.Constant.delay.keyboard);
+	};
+
+	onFilterClear () {
+		this.searchIds = null;
 		this.load(true);
 	};
 
