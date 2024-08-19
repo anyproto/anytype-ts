@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Filter, Select, Icon, Button } from 'Component';
+import { Title, Filter, Select, Icon, IconObject, Button, ObjectName, ObjectDescription } from 'Component';
 import { I, U, J, S, translate } from 'Lib';
 
 interface State {
@@ -19,6 +19,12 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	cache: any = {};
 	offset = 0;
 	refList: any = null;
+
+	constructor (props: any) {
+		super(props);
+
+		this.loadMoreRows = this.loadMoreRows.bind(this);
+	};
 
     render() {
 		const { isLoading } = this.state;
@@ -39,8 +45,12 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					<div style={param.style} className="item">
-
+					<div className="item" style={param.style}>
+						<IconObject object={item} size={48} />
+						<div className="info">
+							<ObjectName object={item} />
+							<ObjectDescription object={item} />
+						</div>
 					</div>
 				</CellMeasurer>
 			);
