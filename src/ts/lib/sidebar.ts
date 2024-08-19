@@ -132,8 +132,11 @@ class Sidebar {
 	};
 
 	setElementsWidth (width: any): void {
-		this.obj.find('#sidebarHead').css({ width });
-		this.obj.find('#sidebarBody').css({ width });
+		this.containerWidget.find('> .head').css({ width });
+		this.containerWidget.find('> .body').css({ width });
+
+		this.containerObject.find('> .head').css({ width });
+		this.containerObject.find('> .body').css({ width });
 	};
 
 	setWidth (w: number): void {
@@ -221,10 +224,10 @@ class Sidebar {
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
-		
-		let toggleX = width ? width - 40 + (showVault ? vw : 0) : 84;
-		if (!width && (isFullScreen || !U.Common.isPlatformMac())) {
-			toggleX -= 68;
+
+		let toggleX = 16;
+		if ((width && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
+			toggleX = 84;
 		};
 
 		this.header.css({ width: '' }).removeClass('withSidebar');
@@ -329,10 +332,8 @@ class Sidebar {
 
 	objectContainerShow () {
 		S.Common.showObjectSet(true);
-		window.setTimeout(() => {
-			this.setWidth(this.data.width);
-			this.resizePage(this.data.width, false);
-		}, 40);
+		this.setWidth(this.data.width);
+		this.resizePage(this.data.width, false);
 	};
 
 };

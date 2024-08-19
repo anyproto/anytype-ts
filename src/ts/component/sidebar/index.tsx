@@ -12,7 +12,6 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	
 	private _isMounted = false;
 	node = null;
-	refBody = null;
     ox = 0;
 	oy = 0;
 	sx = 0;
@@ -65,14 +64,8 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					className={cn.join(' ')} 
 				>
 					<div id="containerWidget">
-						<div id="sidebarHead" className="head" onClick={this.onHeadClick}>
-							{status ? <div className="status">{status}</div> : ''}
-						</div>
-						<div 
-							id="sidebarBody"
-							ref={ref => this.refBody = ref}
-							className="body"
-						>
+						<div className="head" />
+						<div className="body">
 							<SidebarWidget ref={ref => this.refList = ref} {...this.props} />
 						</div>
 					</div>
@@ -218,13 +211,6 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	onHandleClick () {
 		if (!this.movedX) {
 			this.onToggleClick();
-		};
-	};
-
-	onHeadClick () {
-		const space = U.Space.getSpaceview();
-		if (space && space.isShared) {
-			S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
 		};
 	};
 
