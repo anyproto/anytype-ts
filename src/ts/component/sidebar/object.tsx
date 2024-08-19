@@ -137,10 +137,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			subId: J.Constant.subId.allObject,
 			filters: [],
 			sorts: [],
-			limit: 100,
+			offset: 0,
+			limit: this.offset + J.Constant.limit.menuRecords,
 			ignoreHidden: true,
 			ignoreDeleted: true,
-		});
+		}, callBack);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
