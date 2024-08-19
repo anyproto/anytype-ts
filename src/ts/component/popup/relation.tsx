@@ -331,7 +331,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 			};
 		};
 
-		C.ObjectListListModifyDetailValues(objectIds, operations, (message: any) => {
+		C.ObjectListModifyDetailValues(objectIds, operations, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {

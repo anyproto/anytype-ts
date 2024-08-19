@@ -1518,7 +1518,7 @@ export const ObjectListSetDetails = (objectIds: string[], details: any[], callBa
 	dispatcher.request(ObjectListSetDetails.name, request, callBack);
 };
 
-export const ObjectListListModifyDetailValues = (objectIds: string[], operations: any[], callBack?: (message: any) => void) => {
+export const ObjectListModifyDetailValues = (objectIds: string[], operations: any[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListModifyDetailValues.Request();
 
 	request.setObjectidsList(objectIds);
@@ -1533,7 +1533,7 @@ export const ObjectListListModifyDetailValues = (objectIds: string[], operations
 		return op;
 	}));
 
-	dispatcher.request(ObjectListSetDetails.name, request, callBack);
+	dispatcher.request(ObjectListModifyDetailValues.name, request, callBack);
 };
 
 export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
