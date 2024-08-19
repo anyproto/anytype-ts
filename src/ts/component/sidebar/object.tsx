@@ -64,6 +64,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 						<div className="side left">
 							<Filter 
 								icon="search"
+								placeholder={translate('commonSearch')}
 							/>
 						</div>
 						<div className="side right">
