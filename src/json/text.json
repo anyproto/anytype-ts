@@ -2134,6 +2134,11 @@
 	"networkMode1Title": "Local-only",
 	"networkMode1Text": "Don't back up; sync within local network",
 	"networkMode2Title": "Self-hosted",
-	"networkMode2Text": "Back up to your self-hosted network"
+	"networkMode2Text": "Back up to your self-hosted network",
+
+	"sidebarObjectTypeObject": "Objects",
+	"sidebarObjectTypeType": "Object types",
+	"sidebarObjectTypeRelation": "Relations",
+	"sidebarObjectTypeOrphan": "Only orphans"
 
 }

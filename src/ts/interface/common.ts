@@ -222,6 +222,13 @@ export enum StoreView {
 	Library = 'library',
 };
 
+export enum ObjectContainerType {
+	Object			 = 'object',
+	Type			 = 'type',
+	Relation		 = 'relation',
+	Orphan			 = 'orphan',
+};
+
 export enum BannerType {
 	None			 = 0,
 	IsArchived		 = 1,

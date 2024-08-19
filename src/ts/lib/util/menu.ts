@@ -983,6 +983,24 @@ class UtilMenu {
 		return options;
 	};
 
+	getObjectContainerSortOptions (type: I.ObjectContainerType) {
+		let options: any[] = [
+			{ id: 'nameAsc', name: translate('pageMainStoreSortNameAsc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Asc },
+			{ id: 'nameDesc', name: translate('pageMainStoreSortNameDesc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Desc },
+			{ isDiv: true },
+				{ id: 'createdDateDesc', name: translate('pageMainStoreSortCreatedDesc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Desc },
+				{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Asc },
+		];
+
+		if (type == I.ObjectContainerType.Type) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'lastUsedDateDesc', name: translate('pageMainStoreSortLastUsedDesc'), relationKey: 'lastUsedDate', icon: 'time', type: I.SortType.Desc },
+			]);
+		};
+		return options;
+	};
+
 };
 
 export default new UtilMenu();

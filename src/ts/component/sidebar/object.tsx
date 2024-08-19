@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Filter, Select, Icon, IconObject, Button, ObjectName, ObjectDescription } from 'Component';
-import { I, U, J, S, translate } from 'Lib';
+import { I, U, J, S, translate, Storage } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -10,6 +10,7 @@ interface State {
 
 const LIMIT = 20;
 const HEIGHT = 64;
+const KEY_SORT = 'sortObject';
 
 const SidebarObject = observer(class SidebarObject extends React.Component<{}, State> {
 	
@@ -19,17 +20,26 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	cache: any = {};
 	offset = 0;
 	refList: any = null;
+	sort = '';
+	type: I.ObjectContainerType = I.ObjectContainerType.Object;
 
 	constructor (props: any) {
 		super(props);
 
+		this.onSort = this.onSort.bind(this);
+		this.onSwitchType = this.onSwitchType.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
     render() {
 		const { isLoading } = this.state;
 		const items = this.getItems();
-		const sortOptions = U.Menu.getStoreSortOptions(I.StoreTab.Type, I.StoreView.Library);
+		const typeOptions = [
+			{ id: I.ObjectContainerType.Object, name: translate('sidebarObjectTypeObject') },
+			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
+			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
+			{ id: I.ObjectContainerType.Orphan, name: translate('sidebarObjectTypeOrphan') },
+		];
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -63,10 +73,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 					<div className="sides sidesSort">
 						<div className="side left">
-							<Select id="containerObjectsSelect" value="" options={sortOptions} />
+							<Select id="object-select-type" value="" options={typeOptions} onChange={this.onSwitchType} />
 						</div>
 						<div className="side right">
-							<Icon className="sort" />
+							<Icon id="button-object-sort" className="sort" onClick={this.onSort} />
 						</div>
 					</div>
 
@@ -133,15 +143,65 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
+		const option = U.Menu.getObjectContainerSortOptions(this.type).find(it => it.id == this.sort);
+
+		let sorts: I.Sort[] = [];
+		let filters: I.Filter[] = [];
+
+		if (this.sort && option) {
+			sorts.push({ type: option.type, relationKey: option.relationKey });
+		} else {
+			sorts = sorts.concat([
+				{ type: I.SortType.Desc, relationKey: 'createdDate' },
+				{ type: I.SortType.Asc, relationKey: 'name' },
+			]);
+		};
+
+		switch (this.type) {
+			case I.ObjectContainerType.Object: {
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() });
+				break;
+			};
+
+			case I.ObjectContainerType.Type: {
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type });
+				break;
+			};
+
+			case I.ObjectContainerType.Relation: {
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation });
+				break;
+			};
+
+			case I.ObjectContainerType.Orphan: {
+				filters = filters.concat([
+					{ relationKey: 'links', condition: I.FilterCondition.Empty, value: null },
+					{ relationKey: 'backlinks', condition: I.FilterCondition.Empty, value: null }
+				]);
+				break;
+			};
+		};
+
+		if (clear) {
+			this.setState({ isLoading: true });
+			S.Record.recordsSet(J.Constant.subId.allObject, '', []);
+		};
+
 		U.Data.searchSubscribe({
 			subId: J.Constant.subId.allObject,
-			filters: [],
-			sorts: [],
+			filters,
+			sorts,
 			offset: 0,
 			limit: this.offset + J.Constant.limit.menuRecords,
 			ignoreHidden: true,
 			ignoreDeleted: true,
-		}, callBack);
+		}, (message: any) => {
+			this.setState({ isLoading: false });
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -157,6 +217,35 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	onClick (item: any) {
 		U.Object.openConfig(item);
+	};
+
+	onSort (e: any) {
+		const options = U.Menu.getObjectContainerSortOptions(this.type);
+
+		S.Menu.open('select', {
+			element: '#sidebar #containerObject #button-object-sort',
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			data: {
+				options,
+				value: this.sort,
+				onSelect: (e: any, item: any) => {
+					this.sort = item.id;
+					this.load(true);
+
+					Storage.set(this.getSortKey(this.type), item.id);
+				},
+			}
+		});
+	};
+
+	onSwitchType (id: string) {
+		this.type = id as I.ObjectContainerType;
+		this.load(true);
+	};
+
+	getSortKey (tab: I.ObjectContainerType) {
+		return U.Common.toCamelCase(`${KEY_SORT}-${tab}`);
 	};
 
 });
