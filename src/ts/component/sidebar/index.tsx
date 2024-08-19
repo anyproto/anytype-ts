@@ -15,7 +15,6 @@ const Sidebar = observer(class Sidebar extends React.Component {
     ox = 0;
 	oy = 0;
 	sx = 0;
-	refList = null;
 	frame = 0;
 	width = 0;
 	movedX = false;
@@ -63,18 +62,8 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					id="sidebar" 
 					className={cn.join(' ')} 
 				>
-					<div id="containerWidget">
-						<div className="head" />
-						<div className="body">
-							<SidebarWidget ref={ref => this.refList = ref} {...this.props} />
-						</div>
-					</div>
-
-					{showObject ? (
-						<div id="containerObject">
-							<SidebarObject ref={ref => this.refList = ref} {...this.props} />
-						</div>
-					) : ''}
+					<SidebarWidget {...this.props} />
+					{showObject ? <SidebarObject {...this.props} /> : ''}
 
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
 						<div className="resize-handle" onClick={this.onHandleClick} />

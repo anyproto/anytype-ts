@@ -186,14 +186,21 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 		return (
 			<div 
+				id="containerWidget"
 				ref={node => this.node = node}
-				id="list"
-				className={cn.join(' ')}
-				onDrop={this.onDrop}
-				onDragOver={e => e.preventDefault()}
-				onContextMenu={this.onContextMenu}
 			>
-				{content}
+				<div className="head" />
+				<div className="body">
+					<div 
+						id="list"
+						className={cn.join(' ')}
+						onDrop={this.onDrop}
+						onDragOver={e => e.preventDefault()}
+						onContextMenu={this.onContextMenu}
+					>
+						{content}
+					</div>
+				</div>
 			</div>
 		);
 	};

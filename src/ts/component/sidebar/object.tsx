@@ -72,7 +72,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 
         return (
-			<React.Fragment>
+			<div id="containerObject">
 				<div className="head">
 					<Title text="Library" />
 
@@ -131,7 +131,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 						</div>
 					) : ''}
 				</div>
-			</React.Fragment>
+			</div>
 		);
     };
 
