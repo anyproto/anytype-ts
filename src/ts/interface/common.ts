@@ -217,6 +217,11 @@ export enum StoreTab {
 	Relation		 = 'relation',
 };
 
+export enum StoreView {
+	Marketplace = 'marketplace',
+	Library = 'library',
+};
+
 export enum BannerType {
 	None			 = 0,
 	IsArchived		 = 1,
