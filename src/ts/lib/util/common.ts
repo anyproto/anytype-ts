@@ -605,8 +605,8 @@ class UtilCommon {
 			data: {
 				icon: 'update',
 				bgColor: 'green',
-				title: translate('popupConfirmUpdateNeedTitle'),
-				text: translate('popupConfirmUpdateNeedText'),
+				title: translate('popupConfirmNeedUpdateTitle'),
+				text: translate('popupConfirmNeedUpdateText'),
 				textConfirm: translate('commonUpdate'),
 				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
