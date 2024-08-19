@@ -18,6 +18,7 @@ type State = {
 class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 
 	node: any = null;
+	stages: any = null;
 	swiper = null;
 	usecases: any[] = [];
 	current: number = 0;
@@ -36,10 +37,10 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 		super(props);
 
 		this.getItems = this.getItems.bind(this);
-		this.onItemClick = this.onItemClick.bind(this);
+		this.onCardClick = this.onCardClick.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onSwiper = this.onSwiper.bind(this);
-		this.onSlideClick = this.onSlideClick.bind(this);
+		this.onUsecaseClick = this.onUsecaseClick.bind(this);
 	};
 
 	render () {
@@ -49,7 +50,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 		const items = this.getItems(stage);
 		const stagesArray = Object.keys(Stage).filter(key => isNaN(Number(key)));
 
-		const Item = (el) => {
+		const Card = (el) => {
 			const prefix = U.Common.toCamelCase(`onboardingExperienceItems-${el.id}`);
 
 			let labelPrefix = '';
@@ -58,7 +59,10 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 			};
 
 			return (
-				<div onClick={() => this.onItemClick(el)} className={[ 'item', `item-${el.id}` ].join(' ')}>
+				<div
+					className={[ 'card', `card-${el.id}`].join(' ')}
+					onClick={() => this.onCardClick(el)}
+				>
 					<Icon className={el.id} />
 					<div className="text">
 						<Title text={translate(`${prefix}Title`)} />
@@ -72,7 +76,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 			const screenshot = el.screenshots.length ? el.screenshots[0] : '';
 
 			return (
-				<div className={[ 'item', `item-${el.id}`].join(' ')} onClick={() => this.onSlideClick(el.idx)} onMouseEnter={() => this.onUsecaseHover(el.idx)}>
+				<div className={[ 'item', `item-${el.id}`].join(' ')} onClick={() => this.onUsecaseClick(el.idx)} onMouseEnter={() => this.onUsecaseHover(el.idx)}>
 					<div className="picture" style={{ backgroundImage: `url("${screenshot}")` }}></div>
 					<div className="text">
 						<Title text={el.title} />
@@ -112,7 +116,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 							speed={500}
 							slidesPerView={1.7}
 							centeredSlides={true}
-							onSlideChange={() => this.onSlideChange()}
+							onSlideChange={() => this.onUsecaseChange()}
 							onSwiper={swiper => this.onSwiper(swiper)}
 						>
 							{this.usecases.map((el: any, i: number) => (
@@ -123,12 +127,12 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 						</Swiper>
 					</div>
 					<div className="buttonWrapper">
-						<Button className="c24" text={buttonText} />
+						<Button onClick={() => this.onUsecaseSelect()} className="c24" text={buttonText} />
 					</div>
 				</React.Fragment>
 			)
 		} else {
-			content = <div className="items">{items.map((el, i) => <Item key={i} {...el} />)}</div>;
+			content = <div className="cards">{items.map((el, i) => <Card key={i} {...el} />)}</div>;
 		};
 
 		return (
@@ -146,11 +150,13 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 				<div className="itemsWrapper">
 					<div className="stepTitle">
 						{stagesArray.map((el, i) => (
-							<Title className={stage == i ? 'active' : ''} text={translate(`onboardingExperience${Stage[i]}Title`)} />
+							<Title key={i} className={stage == i ? 'active' : ''} text={translate(`onboardingExperience${Stage[i]}Title`)} />
 						))}
 					</div>
 
-					{content}
+					<div ref={ref => this.stages = ref} className="inner">
+						{content}
+					</div>
 				</div>
 			</div>
 		);
@@ -213,6 +219,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 
 	onSwiper (swiper) {
 		this.swiper = swiper;
+		this.current = 0;
 		this.makeBounce();
 	};
 
@@ -250,7 +257,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 		};
 	};
 
-	onSlideChange () {
+	onUsecaseChange () {
 		if (!this.swiper) {
 			return;
 		};
@@ -259,20 +266,41 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 		this.forceUpdate();
 	};
 
-	onSlideClick (idx) {
+	onUsecaseClick (idx) {
 		if (!this.swiper || (idx == this.current)) {
 			return;
 		};
 
-		idx > this.current ? this.swiper.slideNext() : this.swiper.slidePrev();
+		this.swiper.slideTo(idx);
 	};
 
-	onItemClick (item: any) {
+	onUsecaseSelect () {
+		const id = this.usecases[this.current].id;
+
+		this.param.usecase = id == 'empty' ? null : id;
+	};
+
+	onCardClick (item: any) {
 		const { stage } = this.state;
 		const paramKey = Stage[stage].toLowerCase();
 
 		this.param[paramKey] = item.value;
-		this.setState({ stage: stage + 1 });
+
+		$(this.stages).addClass('animateOut');
+		window.setTimeout(() => {
+			$(this.stages)
+				.removeClass('animateOut')
+				.addClass('noAnim')
+				.addClass('animateIn');
+
+			window.setTimeout(() => {
+				this.setState({ stage: stage + 1 });
+
+				$(this.stages)
+					.removeClass('noAnim')
+					.removeClass('animateIn');
+			}, 10);
+		}, 500);
 	};
 
 	onBack () {
