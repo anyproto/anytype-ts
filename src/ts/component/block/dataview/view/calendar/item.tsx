@@ -24,10 +24,9 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	render () {
-		const { className, d, m, y, getView, onContext } = this.props;
+		const { items, className, d, m, y, getView, onContext } = this.props;
 		const view = getView();
 		const { hideIcon } = view;
-		const items = this.getItems();
 		const slice = items.slice(0, LIMIT);
 		const length = items.length;
 		const cn = [ 'day' ];
@@ -78,14 +77,6 @@ const Item = observer(class Item extends React.Component<Props> {
 				</div>
 			</div>
 		);
-	};
-
-	getItems () {
-		const { getView, d, m, y, items } = this.props;
-		const view = getView();
-		const current = [ d, m, y ].join('-');
-
-		return items.filter(it => U.Date.date('j-n-Y', it[view.groupRelationKey]) == current);
 	};
 
 	onOpen (record: any) {
