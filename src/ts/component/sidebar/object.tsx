@@ -45,7 +45,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					<div className="item" style={param.style}>
+					<div className="item" style={param.style} onClick={() => this.onClick(item)}>
 						<IconObject object={item} size={48} />
 						<div className="info">
 							<ObjectName object={item} />
@@ -152,6 +152,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	getItems () {
 		return S.Record.getRecords(J.Constant.subId.allObject);
+	};
+
+	onClick (item: any) {
+		U.Object.openConfig(item);
 	};
 
 });

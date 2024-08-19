@@ -20,15 +20,16 @@
 		> .side.right { padding-top: 32px; margin-top: 52px; border-top: 1px solid var(--color-shape-highlight-medium); }
 	}
 
+	.blocks.withContent.horizontal {
+		> .side.right { padding-top: 0px; margin-top: 52px; border-top: 0px; }
+	}
+
 	.blocks.vertical { width: calc(100% - 56px); flex-direction: row; gap: 0px 32px; }
 	.blocks.vertical {
 		> .side { width: 50%; }
 		> .side.left { min-width: 400px; }
 		> .side.left { 
-			.inner { 
-				background: var(--color-shape-highlight-medium); display: flex; flex-direction: row; align-items: center; justify-content: center;
-				border-radius: 6px; padding: 12px;
-			}
+			.inner { display: flex; flex-direction: row; align-items: flex-start; justify-content: center; }
 		}
 		> .side.right { padding-top: 25px; }
 
