@@ -55,7 +55,6 @@
 				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: var(--color-text-secondary); }
 			}
 			.item.canEdit {
-				.clickable { }
 				.clickable:hover { background: var(--color-shape-highlight-light); }
 			}
 

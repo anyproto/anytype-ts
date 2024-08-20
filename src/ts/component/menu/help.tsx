@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button, Share } from 'Component';
-import { I, S, U, J, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, translate, Preview } from 'Lib';
+import { I, S, U, J, Onboarding, keyboard, analytics, Action, Highlight, Storage, translate, Preview } from 'Lib';
 
 class MenuHelp extends React.Component<I.Menu> {
 
@@ -121,7 +121,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			case 'tutorial':
 			case 'privacy':
 			case 'community': {
-				Renderer.send('urlOpen', J.Url[item.id]);
+				Action.openUrl(J.Url[item.id]);
 				break;
 			};
 

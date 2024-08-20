@@ -140,15 +140,15 @@ class Api {
 		WindowManager.command(win, cmd, param);
 	};
 
-	windowOpen (win, route) {
+	openWindow (win, route) {
 		WindowManager.createMain({ route, isChild: true });
 	};
 
-	urlOpen (win, url) {
+	openUrl (win, url) {
 		shell.openExternal(url);
 	};
 
-	pathOpen (win, path) {
+	openPath (win, path) {
 		shell.openPath(path);
 	};
 

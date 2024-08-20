@@ -75,13 +75,27 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				EditorComponent = () => <span>{value}</span>;
 			} else 
 			if (isDate) {
-				const mask = [ '99.99.9999' ];
+				const mask = [];
 				const ph = [];
 
-				if (viewRelation.dateFormat == I.DateFormat.ShortUS) {
-					ph.push('mm.dd.yyyy');
-				} else {
-					ph.push('dd.mm.yyyy');
+				switch (viewRelation.dateFormat) {
+					case I.DateFormat.ISO: {
+						mask.push('9999.99.99');
+						ph.push('yyyy.mm.dd');
+						break;
+					};
+
+					case I.DateFormat.ShortUS: {
+						mask.push('99.99.9999');
+						ph.push('mm.dd.yyyy');
+						break;
+					};
+
+					default: {
+						mask.push('99.99.9999');
+						ph.push('dd.mm.yyyy');
+						break;
+					};
 				};
 				
 				if (viewRelation.includeTime) {
@@ -238,9 +252,25 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				};
 			} else
 			if (relation.format == I.RelationType.Date) {
-				const format = [
-					(viewRelation.dateFormat == I.DateFormat.ShortUS) ? 'm.d.Y' : 'd.m.Y'
-				];
+				const format = [];
+
+				switch (viewRelation.dateFormat) {
+					case I.DateFormat.ISO: {
+						format.push('Y.m.d');
+						break;
+					};
+
+					case I.DateFormat.ShortUS: {
+						format.push('m.d.Y');
+						break;
+					};
+
+					default: {
+						format.push('d.m.Y');
+						break;
+					};
+				};
+
 				if (viewRelation.includeTime) {
 					format.push('H:i');
 				};
