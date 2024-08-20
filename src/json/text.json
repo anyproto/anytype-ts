@@ -209,6 +209,7 @@
 	"electronMenuCopy": "Copy",
 	"electronMenuCut": "Cut",
 	"electronMenuPaste": "Paste",
+	"electronMenuPastePlain": "Paste without formatting",
 	"electronMenuSelectAll": "Select all",
 	"electronMenuSearch": "Search",
 	"electronMenuPrint": "Print",

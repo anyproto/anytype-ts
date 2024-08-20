@@ -1329,8 +1329,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		e.preventDefault();
 
 		this.preventMenu = true;
-
 		this.setText(this.marks, true);
+
 		this.props.onPaste(e, this.props);
 	};
 	
