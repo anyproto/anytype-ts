@@ -145,7 +145,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 												rowCount={items.length}
 												rowHeight={HEIGHT}
 												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
+												onRowsRendered={({ startIndex, stopIndex }) => { 
+													onRowsRendered({ startIndex, stopIndex });
+
+													this.resize();
+												}}
 												overscanRowCount={10}
 												scrollToAlignment="center"
 											/>
@@ -331,7 +335,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
 			});
 		});
-		
 	};
 
 });

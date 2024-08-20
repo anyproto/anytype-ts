@@ -188,8 +188,11 @@
 				.nameWrap { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 			}
 
-			.item.isType.withIcon, .item.isRelation.withIcon {
+			.item.isType.withIcon {
 				.descr { padding-left: 26px; }
+			}
+			.item.isRelation.withIcon {
+				.descr { padding-left: 28px; }
 			}
 
 			.item::before {
