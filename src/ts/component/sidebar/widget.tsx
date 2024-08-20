@@ -156,25 +156,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 						/>
 					))}
 
-					<DropTarget 
-						{...this.props} 
-						isTargetBottom={true}
-						rootId={S.Block.widgets} 
-						id={last?.id}
-						dropType={I.DropType.Widget} 
-						canDropMiddle={false}
-						className="lastTarget"
-						cacheKey="lastTarget"
-					>
-						<Button 
-							text={translate('widgetLibrary')}
-							color="" 
-							className="widget" 
-							icon="store" 
-							onClick={this.onLibrary} 
-						/>
-					</DropTarget>
-
 					<div className="buttons">
 						{buttons.map(button => (
 							<Button key={button.id + (isEditing ? 'edit' : '')} color="" {...button} />

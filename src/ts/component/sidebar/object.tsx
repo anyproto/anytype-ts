@@ -1,4 +1,6 @@
 import * as React from 'react';
+import raf from 'raf';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Filter, Select, Icon, IconObject, Button, ObjectName, ObjectDescription } from 'Component';
@@ -17,6 +19,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	state = {
 		isLoading: false,
 	};
+	node = null;
 	cache: any = {};
 	offset = 0;
 	refList: any = null;
@@ -52,6 +55,18 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				return null;
 			};
 
+			let iconSmall = null;
+			let iconLarge = null;
+
+			if (U.Object.isTypeOrRelationLayout(item.layout)) {
+				const size = U.Object.isTypeLayout(item.layout) ? 18 : 20;
+				const iconSize = U.Object.isTypeLayout(item.layout) ? 18 : 18;
+
+				iconSmall = <IconObject object={item} size={size} iconSize={18} />;
+			} else {
+				iconLarge = <IconObject object={item} size={48} />;
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -60,10 +75,17 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					<div className="item" style={param.style} onClick={() => this.onClick(item)}>
-						<IconObject object={item} size={48} />
+					<div 
+						className={[ 'item', U.Data.layoutClass(item.id, item.layout) ].join(' ')} 
+						style={param.style}
+						onClick={() => this.onClick(item)}
+					>
+						{iconLarge}
 						<div className="info">
-							<ObjectName object={item} />
+							<div className="nameWrap">
+								{iconSmall}
+								<ObjectName object={item} />
+							</div>
 							<ObjectDescription object={item} />
 						</div>
 					</div>
@@ -72,7 +94,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 
         return (
-			<div id="containerObject">
+			<div 
+				id="containerObject"
+				ref={ref => this.node = ref}
+			>
 				<div className="head">
 					<Title text="Library" />
 
@@ -147,6 +172,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			defaultHeight: HEIGHT,
 			keyMapper: i => (items[i] || {}).id,
 		});
+
+		this.resize();
 	};
 
 	componentWillUnmount(): void {
@@ -292,6 +319,19 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	getSortKey (tab: I.ObjectContainerType) {
 		return U.Common.toCamelCase(`${KEY_SORT}-${tab}`);
+	};
+
+	resize () {
+		const node = $(this.node);
+		const list = node.find('> .body');
+
+		raf(() => {
+			list.find('.item').each((i: number, item: any) => {
+				item = $(item);
+				item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
+			});
+		});
+		
 	};
 
 });

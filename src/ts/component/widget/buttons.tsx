@@ -55,6 +55,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 		return [
 			{ id: 'member', name: 'Members' },
 			{ id: 'all', name: 'All content' },
+			{ id: 'store', name: translate('commonLibrary') },
 			{ id: 'bin', name: translate('commonBin') },
 		];
 	};
@@ -71,6 +72,11 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 
 			case 'all': {
 				sidebar.objectContainerShow();
+				break;
+			};
+
+			case 'store': {
+				U.Object.openEvent(e, { layout: I.ObjectLayout.Store });
 				break;
 			};
 

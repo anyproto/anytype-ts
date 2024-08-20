@@ -175,10 +175,21 @@
 
 			.item { padding: 8px; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; position: relative; }
 			.item {
-				.iconObject { flex-shrink: 0px; border-radius: 6px; }
+				.iconObject { flex-shrink: 0; border-radius: 6px; }
 				.info { width: calc(100% - 60px); display: flex; flex-direction: column; gap: 2px 0px; }
 				.name { @include text-overflow-nw; width: 100%; }
 				.descr { @include text-overflow-nw; width: 100%; @include text-small; color: var(--color-text-secondary); }
+				.descr:empty { display: none; }
+			}
+
+			.item.isType, .item.isRelation { gap: 0px; }
+			.item.isType, .item.isRelation {
+				.info { width: calc(100% - 26px); }
+				.nameWrap { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+			}
+
+			.item.isType.withIcon, .item.isRelation.withIcon {
+				.descr { padding-left: 26px; }
 			}
 
 			.item::before {
