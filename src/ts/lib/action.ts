@@ -653,13 +653,25 @@ class Action {
 	};
 
 	setInterfaceLang (id: string) {
+		const { config } = S.Common;
+		const { languages } = config;
+
 		Renderer.send('setInterfaceLang', id);
+
+		if (!Storage.get('setSpellingLang') && !languages.length) {
+			const check = J.Lang.interfaceToSpellingLangMap[id];
+			if (check) {
+				this.setSpellingLang([ check ]);
+				Storage.set('setSpellingLang', true);
+			};
+		};
+
 		analytics.event('SwitchInterfaceLanguage', { type: id });
 	};
 
-	setSpellingLang (id: string) {
-		Renderer.send('setSpellingLang', id);
-		analytics.event('AddSpellcheckLanguage', { type: id });
+	setSpellingLang (langs: string[]) {
+		Renderer.send('setSpellingLang', langs);
+		analytics.event('AddSpellcheckLanguage');
 	};
 
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {
