@@ -12,7 +12,8 @@ interface State {
 
 const LIMIT = 20;
 const HEIGHT = 64;
-const KEY_SORT = 'sortObject';
+const KEY_TYPE = 'objectContainerType';
+const KEY_SORT = 'objectContainerSort';
 
 const SidebarObject = observer(class SidebarObject extends React.Component<{}, State> {
 	
@@ -22,6 +23,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	node = null;
 	cache: any = {};
 	offset = 0;
+	refSelect: any = null;
 	refList: any = null;
 	sort = '';
 	type: I.ObjectContainerType = I.ObjectContainerType.Object;
@@ -103,7 +105,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 					<div className="sides sidesSort">
 						<div className="side left">
-							<Select id="object-select-type" value="" options={typeOptions} onChange={this.onSwitchType} />
+							<Select 
+								id="object-select-type" 
+								ref={ref => this.refSelect = ref}
+								value={this.type}
+								options={typeOptions} 
+								onChange={this.onSwitchType} 
+							/>
 						</div>
 						<div className="side right">
 							<Icon id="button-object-sort" className="sort" onClick={this.onSort} />
@@ -165,7 +173,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
     };
 
 	componentDidMount () {
+		this.type = Storage.get(KEY_TYPE) || I.ObjectContainerType.Object;
 		this.load(true);
+
+		this.refSelect.setValue(this.type);
 	};
 
 	componentDidUpdate () {
@@ -288,6 +299,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onSwitchType (id: string) {
 		this.type = id as I.ObjectContainerType;
 		this.load(true);
+
+		Storage.set(KEY_TYPE, this.type);
 	};
 
 	onFilterChange (v: string) {
