@@ -199,7 +199,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const option = U.Menu.getObjectContainerSortOptions(this.type).find(it => it.id == this.sort);
 
 		let sorts: I.Sort[] = [];
-		let filters: I.Filter[] = [];
+		let filters: I.Filter[] = [
+			{ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Participant },
+		];
 
 		if (this.sort && option) {
 			sorts.push({ type: option.type, relationKey: option.relationKey });
