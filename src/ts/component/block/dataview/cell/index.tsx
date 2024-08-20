@@ -455,8 +455,9 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				if (!$(e.target).parents(`#${cellId}`).length) {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
+
+					pageContainer.off(`mousedown.cell${cellId}`);
 				};
-				pageContainer.off(`mousedown.cell${cellId}`);
 			});
 		};
 

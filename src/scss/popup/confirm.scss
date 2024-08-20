@@ -3,6 +3,9 @@
 .popups {
 	.popup.popupConfirm {
 		.innerWrap { width: 424px; padding: 32px; text-align: center; }
+		.wrap.withCheckbox {
+			.label { margin-bottom: 12px; }
+		}
 
 		.title { @include text-header3; margin-bottom: 6px; }
 		.label { margin-bottom: 26px; user-select: text !important; word-wrap: break-word; }
@@ -19,14 +22,23 @@
 		.iconWrapper.yellow { background: radial-gradient(50% 50% at 50% 50%, #FFF0C8 0%, rgba(255, 240, 200, 0.00) 100%); }
 		.iconWrapper.blue { background: radial-gradient(50% 50% at 50% 50%, #80d1ff 0%, rgba(187, 231, 255, 0.00) 100%); }
 
-		.icon { width: 72px; height: 72px; }
-		.icon.update { background-image: url('~img/icon/popup/confirm/update.svg'); }
-		.icon.updated { background-image: url('~img/icon/popup/confirm/updated.svg'); }
-		.icon.error { display: block; background-image: url('~img/icon/popup/confirm/error.svg'); }
-		.icon.confirm { width: 96px; background-image: url('~img/icon/popup/confirm/confirm.svg'); }
-		.icon.invite { width: 68px; background-image: url('~img/icon/popup/confirm/invite.svg'); }
-		.icon.sad { width: 68px; background-image: url('~img/icon/popup/confirm/sad.svg'); }
-		.icon.welcome { width: 221px; height: 72px; background-image: url('~img/icon/popup/confirm/welcome.svg'); }
+		.iconWrapper {
+			.icon { width: 72px; height: 72px; }
+			.icon.update { background-image: url('~img/icon/popup/confirm/update.svg'); }
+			.icon.updated { background-image: url('~img/icon/popup/confirm/updated.svg'); }
+			.icon.error { display: block; background-image: url('~img/icon/popup/confirm/error.svg'); }
+			.icon.confirm { width: 96px; background-image: url('~img/icon/popup/confirm/confirm.svg'); }
+			.icon.invite { width: 68px; background-image: url('~img/icon/popup/confirm/invite.svg'); }
+			.icon.sad { width: 68px; background-image: url('~img/icon/popup/confirm/sad.svg'); }
+			.icon.welcome { width: 221px; height: 72px; background-image: url('~img/icon/popup/confirm/welcome.svg'); }
+		}
+
+		.checkboxWrapper { 
+			display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: center; margin: 12px 0px 24px 0px; cursor: default;
+		}
+		.checkboxWrapper {
+			.label { margin: 0px !important; }
+		}
 
 		ul { padding-left: 1.25em; }
 	}

@@ -14,6 +14,7 @@ const SPACE_KEYS = [
 	'lastChatMessageId',
 	'popupSearch',
 	'focus',
+	'openUrl',
 ];
 
 class Storage {

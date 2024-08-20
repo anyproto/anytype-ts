@@ -10,11 +10,11 @@
 	.head { 
 		padding: 10px 12px 12px 12px; letter-spacing: -0.08px; color: var(--color-control-active); font-weight: 500;
 		position: absolute; left: 0px; width: 100%; border-top: 1px solid var(--color-shape-secondary); bottom: 0px; padding-bottom: 11px;
+		display: flex; gap: 0px 16px; align-items: center;;
 	}
 	.head {
-		.item { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; cursor: default; }
+		.item { display: inline-block; vertical-align: top; transition: $transitionAllCommon; cursor: default; @include text-overflow-nw; }
 		.item:hover { color: var(--color-text-primary); }
-		.item:last-child { margin: 0px; }
 	}
 
 	.img { border-radius: 8px 8px 0px 0px; border-top: 0px; }

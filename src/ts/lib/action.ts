@@ -157,6 +157,30 @@ class Action {
 		focus.apply();
 	};
 
+	openUrl (url: string) {
+		url = U.Common.urlFix(url);
+
+		const storageKey = 'openUrl';
+		const scheme = U.Common.getScheme(url);
+		const cb = () => Renderer.send('openUrl', url);
+
+		if (!Storage.get(storageKey) && !scheme.match(new RegExp(`^(${J.Constant.allowedSchemes.join('|')})$`))) {
+			S.Popup.open('confirm', {
+				data: {
+					icon: 'confirm',
+					bgColor: 'red',
+					title: translate('popupConfirmOpenExternalLinkTitle'),
+					text: translate('popupConfirmOpenExternalLinkText'),
+					textConfirm: translate('commonYes'),
+					storageKey,
+					onConfirm: () => cb(),
+				}
+			});
+		} else {
+			cb();
+		};
+	};
+
 	openFile (id: string, route: string) {
 		if (!id) {
 			return;
@@ -629,13 +653,25 @@ class Action {
 	};
 
 	setInterfaceLang (id: string) {
+		const { config } = S.Common;
+		const { languages } = config;
+
 		Renderer.send('setInterfaceLang', id);
+
+		if (!Storage.get('setSpellingLang') && !languages.length) {
+			const check = J.Lang.interfaceToSpellingLangMap[id];
+			if (check) {
+				this.setSpellingLang([ check ]);
+				Storage.set('setSpellingLang', true);
+			};
+		};
+
 		analytics.event('SwitchInterfaceLanguage', { type: id });
 	};
 
-	setSpellingLang (id: string) {
-		Renderer.send('setSpellingLang', id);
-		analytics.event('AddSpellcheckLanguage', { type: id });
+	setSpellingLang (langs: string[]) {
+		Renderer.send('setSpellingLang', langs);
+		analytics.event('AddSpellcheckLanguage');
 	};
 
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {
@@ -766,28 +802,6 @@ class Action {
 		S.Common.themeSet(id);
 		Renderer.send('setTheme', id);
 		analytics.event('ThemeSet', { id });
-	};
-
-	openUrl (url: string) {
-		url = U.Common.urlFix(url);
-
-		const scheme = U.Common.getScheme(url);
-		const cb = () => Renderer.send('openUrl', url);
-
-		if (!scheme.match(new RegExp(`^(${J.Constant.allowedSchemes.join('|')})$`))) {
-			S.Popup.open('confirm', {
-				data: {
-					icon: 'confirm',
-					bgColor: 'red',
-					title: translate('popupConfirmOpenExternalLinkTitle'),
-					text: translate('popupConfirmOpenExternalLinkText'),
-					textConfirm: translate('commonYes'),
-					onConfirm: () => cb(),
-				}
-			});
-		} else {
-			cb();
-		};
 	};
 
 };

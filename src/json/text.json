@@ -153,6 +153,7 @@
 	"commonCreateObject": "Create Object",
 	"commonUrl": "Url",
 	"commonEdit": "Edit",
+	"commonDoNotShowAgain": "Don’t show this again",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -209,6 +210,7 @@
 	"electronMenuCopy": "Copy",
 	"electronMenuCut": "Cut",
 	"electronMenuPaste": "Paste",
+	"electronMenuPastePlain": "Paste without formatting",
 	"electronMenuSelectAll": "Select all",
 	"electronMenuSearch": "Search",
 	"electronMenuPrint": "Print",

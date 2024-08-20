@@ -76,7 +76,7 @@ class UtilFile {
 			icon = 'video';
 		};
 			
-		if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md', 'tsx', 'scss', 'html' ].includes(e)) {
+		if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md', 'tsx', 'scss', 'html', 'yml' ].includes(e)) {
 			icon = 'text';
 		};
 			
