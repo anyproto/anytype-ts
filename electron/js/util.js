@@ -6,6 +6,7 @@ const fs = require('fs');
 const sanitize = require('sanitize-filename');
 const protocol = 'anytype';
 const ConfigManager = require('./config.js');
+const Constant = require('../json/constant.json');
 
 log.transports.rendererConsole.level = 'error';
 
@@ -220,7 +221,6 @@ class Util {
 	};
 
 	enabledLangs () {
-		const Constant = require('../json/constant.json');
 		return Constant.enabledLangs || [];
 	};
 
