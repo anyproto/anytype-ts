@@ -813,7 +813,7 @@ class Action {
 			},
 		};
 
-		C.ObjectShow(id, '', S.Common.space, (message: any) => {
+		C.ObjectShow(id, 'publish', S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				data = Object.assign(data, message.objectView);
 
