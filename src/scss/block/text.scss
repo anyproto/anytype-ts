@@ -247,6 +247,9 @@
 			> .children { padding-right: 16px; }
 		}
 	}
+	.block.blockText.textCallout.first {
+		> .wrapContent { margin-top: 0px; }
+	}
 	.block.blockText.textCallout.last {
 		> .wrapContent { margin-bottom: 0px; }
 	}

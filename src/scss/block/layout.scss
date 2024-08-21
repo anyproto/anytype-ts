@@ -22,6 +22,7 @@
 					}
 				}
 
+				> .block.last { padding-bottom: 0px !important; }
 				> .block.last {
 					.colResize {
 						.inner { top: 0px; height: calc(100% + 15px); }
