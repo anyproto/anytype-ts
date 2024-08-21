@@ -34,8 +34,6 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 		const cn = [ 'editorWrapper', check.className ];
 		const isSet = U.Object.isSetLayout(object.layout);
 		const isCollection = U.Object.isCollectionLayout(object.layout);
-		const isHuman = U.Object.isHumanLayout(object.layout);
-		const isParticipant = U.Object.isParticipantLayout(object.layout);
 
 		let head = null;
 		let children = S.Block.getChildren(rootId, rootId);
@@ -56,7 +54,7 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 			children = children.filter(it => it.isDataview());
 			check.withIcon = false;
 		} else
-		if (isHuman || isParticipant) {
+		if (U.Object.isInHumanLayouts(object.layout)) {
 			icon.type = I.BlockType.IconUser;
 		};
 

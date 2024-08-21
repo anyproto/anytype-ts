@@ -286,6 +286,10 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
+	isInHumanLayouts (layout: I.ObjectLayout): boolean {
+		return [ I.ObjectLayout.Human, I.ObjectLayout.Participant ].includes(layout);
+	};
+
 	// --------------------------------------------------------- //
 
 	isSetLayout (layout: I.ObjectLayout): boolean {

@@ -805,9 +805,19 @@ class Action {
 	};
 
 	publish (id: string) {
+		const { gateway } = S.Common;
+
+		let data: any = {
+			_meta: {
+				gateway,
+			},
+		};
+
 		C.ObjectShow(id, '', S.Common.space, (message: any) => {
 			if (!message.error.code) {
-				U.Common.clipboardCopy({ text: JSON.stringify(message.objectView) });
+				data = Object.assign(data, message.objectView);
+
+				U.Common.clipboardCopy({ text: JSON.stringify(data) });
 			};
 		});
 	};
