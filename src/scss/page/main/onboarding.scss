@@ -7,7 +7,7 @@
     #navigationPanel,
     #sidebarDummy { display: none; }
 
-    body { background: #000000; }
+    body { background: #000; }
 }
 
 $stepTransition: 1s $easeInQuint;
@@ -23,6 +23,7 @@ $stepTransition: 1s $easeInQuint;
     }
     .wrapper {
         .icon.arrow.back { position: fixed; top: 50%; left: 10px; width: 32px; height: 56px; margin-top: -28px; background-image: url('~img/arrow/auth0.svg'); z-index: 2; }
+
         > .title { @include text-paragraph; font-weight: 400; color: #505050; text-transform: uppercase; text-align: center; margin-bottom: 18px; }
 
         .steps { width: 100%; display: flex; justify-content: center; gap: 0px 6px; margin-bottom: 120px; transition: margin-bottom $stepTransition; }
@@ -48,6 +49,7 @@ $stepTransition: 1s $easeInQuint;
             .inner.animateOut { transform: translate3d(-200px, 0, 0); opacity: 0; transition: all ease-out 0.5s; }
             .inner.animateIn { transform: translate3d(200px, 0, 0); opacity: 0; }
         }
+
         .cards { display: flex; gap: 0px 32px; flex-wrap: nowrap; justify-content: center; width: calc(100% - 132px); }
         .cards {
             .card { width: 320px; height: 504px; flex-shrink: 0; border-radius: 16px; overflow: hidden; background-color: var(--color-text-primary); text-align: center; transition: 0.3s $easeInQuint; }
@@ -62,21 +64,23 @@ $stepTransition: 1s $easeInQuint;
                 .icon.community { background: url('~img/icon/onboarding/community.svg'); }
 
                 .title { margin-bottom: 8px; }
+
                 .label { @include text-paragraph; font-weight: 400; margin: 0px 38px; color: #d4d4d4; }
             }
         }
+
         @media (max-width: 1400px) {
             .cards { gap: 0px 16px; }
             .cards {
                 .card { width: 280px; height: 441px; }
-                .itcardem {
+                .card {
                     .icon { margin-bottom: 8px; }
                     .label { margin: 0px 30px; }
                 }
             }
         }
+
         @media (max-width: 1280px) {
-            .cards {}
             .cards {
                 .card { width: 256px; height: 404px; }
                 .card {
@@ -103,11 +107,12 @@ $stepTransition: 1s $easeInQuint;
                     position: relative; z-index: 1; text-align: center; display: flex; align-items: center; flex-direction: column; gap: 10px 0px; padding-top: 120px;
                     opacity: 0; transition: opacity 0.4s $easeInQuint; background: linear-gradient(0deg, #040404 35.5%, rgba(4, 4, 4, 0.00) 100%);
                 }
+
                 .title { @include text-header3; }
                 .label { @include text-common; width: 424px; display: inline-block; }
             }
             .item.item-empty {
-                .picture { background-image: url('~img/icon/onboarding/screen-select-empty.png') !important; }
+                .picture { background-image: url('~img/icon/onboarding/empty.png') !important; }
             }
 
             .swiper-wrapper { align-items: center; }
@@ -128,16 +133,8 @@ $stepTransition: 1s $easeInQuint;
                     }
                 }
             }
-
-            .icon.arrow {
-                position: absolute; top: 50%; width: 48px; height: 48px; background-color: var(--color-bg-primary); border-radius: 50%;
-                z-index: 2; margin-top: -16px; background-image: url('~img/arrow/onboardingUsecase.svg'); opacity: 0.9; transition: $transitionAllCommon;
-            }
-            .icon.arrow.hide { opacity: 0.1 !important; }
-            .icon.arrow:hover { opacity: 1; }
-            .icon.arrow.left { left: 11%; }
-            .icon.arrow.right { right: 11%; transform: rotateZ(180deg); }
         }
+
         .buttonWrapper { text-align: center; }
         .buttonWrapper {
             .button { background: #d4d4d4; color: var(--color-text-primary); }

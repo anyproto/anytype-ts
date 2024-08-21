@@ -102,11 +102,11 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 							effect={'creative'}
 							creativeEffect={{
 								prev: {
-									translate: ['-90%', 0, 0],
+									translate: [ '-90%', 0, 0 ],
 									scale: 0.5,
 								},
 								next: {
-									translate: ['90%', 0, 0],
+									translate: [ '90%', 0, 0 ],
 									scale: 0.5,
 								},
 							}}
