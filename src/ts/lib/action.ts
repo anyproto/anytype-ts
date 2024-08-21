@@ -804,6 +804,14 @@ class Action {
 		analytics.event('ThemeSet', { id });
 	};
 
+	publish (id: string) {
+		C.ObjectShow(id, '', S.Common.space, (message: any) => {
+			if (!message.error.code) {
+				U.Common.clipboardCopy({ text: JSON.stringify(message.objectView) });
+			};
+		});
+	};
+
 };
 
 export default new Action();

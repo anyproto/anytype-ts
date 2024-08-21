@@ -87,6 +87,7 @@ class MenuObject extends React.Component<I.Menu> {
 	};
 	
 	getSections () {
+		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId, isFilePreview } = data;
@@ -105,18 +106,19 @@ class MenuObject extends React.Component<I.Menu> {
 		let template = null;
 		let setDefaultTemplate = null;
 
-		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
 		let print = { id: 'print', name: translate('menuObjectPrint'), caption: `${cmd} + P` };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let addCollection = { id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true };
 		let search = { id: 'search', name: translate('menuObjectSearchOnPage'), caption: `${cmd} + F` };
 		let history = { id: 'history', name: translate('commonVersionHistory'), caption: (U.Common.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
-		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
-		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
-		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
 		let createWidget = { id: 'createWidget', icon: 'createWidget', name: translate('menuObjectCreateWidget') };
 		let download = { id: 'download', icon: 'download', name: translate('commonDownload') };
 		let open = { id: 'open', icon: 'expand', name: translate('menuObjectDownloadOpen') };
+		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('commonDuplicate') };
+		let pageLink = { id: 'pageLink', icon: 'link', name: translate('commonCopyLink') };
+		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuObjectReloadFromSource') };
+		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuObjectExport') };
+		let pagePublish = { id: 'pagePublish', icon: 'publish', name: translate('menuObjectPublish') };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('commonCreateObject') };
@@ -179,6 +181,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedPrint = !isFilePreview;
 		const allowedDownload = U.Object.isInFileLayouts(object.layout);
 		const allowedOpen = U.Object.isInFileLayouts(object.layout);
+		const allowedPublish = config.experimental;
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedLock)		 pageLock = null;
@@ -198,6 +201,7 @@ class MenuObject extends React.Component<I.Menu> {
 		if (!allowedPrint)		 print = null;
 		if (!allowedDownload)	 download = null;
 		if (!allowedOpen)		 open = null;
+		if (!allowedPublish)	 pagePublish = null;
 
 		if (!canWrite) {
 			template = null;
@@ -236,7 +240,7 @@ class MenuObject extends React.Component<I.Menu> {
 					{ children: [ linkTo, addCollection, template ] },
 					{ children: [ search, history, pageCopy, archive ] },
 					{ children: [ pageLink, pageReload ] },
-					{ children: [ print, pageExport ] },
+					{ children: [ print, pageExport, pagePublish ] },
 				];
 			};
 
@@ -422,6 +426,11 @@ class MenuObject extends React.Component<I.Menu> {
 
 			case 'pageExport': {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route } });
+				break;
+			};
+
+			case 'pagePublish': {
+				Action.publish(object.id);
 				break;
 			};
 				

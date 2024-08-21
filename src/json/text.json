@@ -1477,6 +1477,7 @@
 	"menuObjectPrint": "Print",
 	"menuObjectSearchOnPage": "Search in Object",
 	"menuObjectExport": "Export",
+	"menuObjectPublish": "Publish to Web",
 	"menuObjectReloadFromSource": "Reload from Source",
 	"menuObjectUseAsTemplate": "Use as Template",
 	"menuObjectUnlockPage": "Unlock Object",
