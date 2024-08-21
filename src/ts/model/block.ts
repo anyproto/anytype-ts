@@ -215,10 +215,6 @@ class Block implements I.Block {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Header);
 	};
 
-	isLayoutFooter (): boolean {
-		return this.isLayout() && (this.content.style == I.LayoutStyle.Footer);
-	};
-
 	isLayoutTableRows (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.TableRows);
 	};
