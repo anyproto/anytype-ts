@@ -8,7 +8,7 @@ interface Props extends I.ViewComponent {
 	m: number;
 	y: number;
 	items: any[];
-	onObjectAdd: (date: any) => void;
+	onCreate: (details: any) => void;
 };
 
 const LIMIT = 4;
@@ -23,6 +23,8 @@ const Item = observer(class Item extends React.Component<Props> {
 		this.onOpen = this.onOpen.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onContext = this.onContext.bind(this);
+		this.canCreate = this.canCreate.bind(this);
+		this.onDoubleClick = this.onDoubleClick.bind(this);
 	};
 
 	render () {
@@ -65,9 +67,9 @@ const Item = observer(class Item extends React.Component<Props> {
 		return (
 			<div 
 				ref={node => this.node = node}
-				id={`day-${d}${m}${y}`}
 				className={cn.join(' ')}
 				onContextMenu={this.onContext}
+				onDoubleClick={this.onDoubleClick}
 			>
 				<div className="number">
 					<div className="inner">{d}</div>
@@ -112,13 +114,10 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	onContext () {
-		const { d, m, y, getView, onObjectAdd } = this.props;
-		const element = `#day-${d}${m}${y}`;
-		const view = getView();
-		const groupRelation = S.Record.getRelationByKey(view.groupRelationKey);
+		const node = $(this.node);
 		const options = [];
 
-		if (!groupRelation.isReadonlyValue) {
+		if (this.canCreate()) {
 			options.push({ id: 'add', name: translate('commonNewObject') });
 		};
 
@@ -127,10 +126,10 @@ const Item = observer(class Item extends React.Component<Props> {
 		};
 
 		S.Menu.open('select', {
-			element,
+			element: node,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
-			offsetY: -this.node.clientHeight + 32,
+			offsetY: -node.outerHeight() + 32,
 			offsetX: 16,
 			noFlipX: true,
 			noFlipY: true,
@@ -139,11 +138,35 @@ const Item = observer(class Item extends React.Component<Props> {
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
 					if (item.id == 'add') {
-						onObjectAdd({d, m, y});
+						this.onCreate();
 					}
 				},
 			}
 		});
+	};
+
+	onDoubleClick () {
+		if (!this.canCreate()) {
+			return;
+		};
+		this.onCreate();
+	};
+
+	onCreate () {
+		const { d, m, y, getView, onCreate } = this.props;
+		const view = getView();
+		const details = {};
+
+		details[view.groupRelationKey] = U.Date.timestamp(y, m, d, 12, 0, 0);
+		onCreate(details);
+	};
+
+	canCreate () {
+		const { getView } = this.props;
+		const view = getView();
+		const groupRelation = S.Record.getRelationByKey(view.groupRelationKey);
+
+		return !groupRelation.isReadonlyValue;
 	};
 
 });

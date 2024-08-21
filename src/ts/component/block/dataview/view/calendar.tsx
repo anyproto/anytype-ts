@@ -24,7 +24,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		super (props);
 
 		this.onToday = this.onToday.bind(this);
-		this.onObjectAdd = this.onObjectAdd.bind(this);
+		this.onCreate = this.onCreate.bind(this);
 	};
 
 	render () {
@@ -102,7 +102,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 											{...item} 
 											className={cn.join(' ')}
 											items={items.filter(it => it._date == current)}
-											onObjectAdd={this.onObjectAdd}
+											onCreate={this.onCreate}
 										/>
 									);
 								})}
@@ -233,8 +233,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		this.setValue(U.Date.timestamp(today.y, today.m, today.d));
 	};
 
-	onObjectAdd (date: any) {
-		const { d, m, y } = date;
+	onCreate (details: any) {
 		const { rootId, isCollection, getView, getTypeId, getTemplateId, getTarget } = this.props;
 		const view = getView();
 		const objectId = getTarget().id;
@@ -243,8 +242,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		const typeKey = type.uniqueKey;
 		const templateId = getTemplateId();
 
-		let details = Dataview.getDetails(rootId, J.Constant.blockId.dataview, objectId, view.id);
-		details[view.groupRelationKey] = U.Date.timestamp(y, m, d);
+		details = Object.assign(Dataview.getDetails(rootId, J.Constant.blockId.dataview, objectId, view.id), details);
 
 		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
 			if (message.error.code) {
