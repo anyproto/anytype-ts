@@ -299,7 +299,7 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 				$(this.stages)
 					.removeClass('noAnim')
 					.removeClass('animateIn');
-			}, 10);
+			}, 20);
 		}, 500);
 	};
 
