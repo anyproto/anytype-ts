@@ -5,7 +5,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
-import { I, C, S, U, J, keyboard, Key, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
+import { I, C, S, U, J, keyboard, Key, Preview, Mark, focus, Storage, translate, analytics, Action } from 'Lib';
 
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
@@ -369,7 +369,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				if (isInside) {
 					U.Router.go(route, {});
 				} else {
-					Renderer.send('urlOpen', target);
+					Action.openUrl(target);
 				};
 			});
 		});
@@ -593,7 +593,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		const reg = /\$((?:[^$\\]|\\.)*?)\$([^\d]|$)/g;
+		const reg = /(^|\s)\$((?:[^$\\]|\\.)*?)\$([^\d]|$)/g;
 
 		let value = this.refEditable.getHtmlValue();
 
@@ -604,18 +604,18 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		value = U.Common.fromHtmlSpecialChars(value);
 
 		const tag = Mark.getTag(I.MarkType.Latex);
-		const html = value.replace(reg, (s: string, p1: string, p2: string) => {
+		const html = value.replace(reg, (s: string, p1: string, p2: string, p3: string) => {
 			let ret = '';
 
 			try {
-				ret = katex.renderToString(U.Common.stripTags(p1), { 
+				ret = katex.renderToString(U.Common.stripTags(p2), { 
 					displayMode: false, 
 					throwOnError: false,
 					output: 'html',
 					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
 				});
 
-				ret = ret ? `<${tag}>${ret}</${tag}>${p2}` : s;
+				ret = ret ? `${p1}<${tag}>${ret}</${tag}>${p3}` : s;
 			} catch (e) {
 				ret = s;
 			};
@@ -1261,11 +1261,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		this.text = value;
-
-		if (S.Menu.isOpen('', '', [ 'onboarding', 'smile', 'select', 'searchText' ])) {
-			return;
-		};
-
 		U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
 	};
 	

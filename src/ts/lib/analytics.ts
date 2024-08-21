@@ -49,6 +49,8 @@ class Analytics {
 		menuSystem: 'MenuSystem',
 		menuHelp: 'MenuHelp',
 		menuContext: 'MenuContext',
+		menuAction: 'MenuAction',
+		menuAdd: 'MenuAdd',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
@@ -474,6 +476,11 @@ class Analytics {
 
 			case 'ClickSyncStatus': {
 				data.status = I.SyncStatusSpace[data.status];
+				break;
+			};
+
+			case 'ChangeSpaceDashboard': {
+				data.type = U.Common.ucFirst(U.Common.enumKey(I.HomePredefinedId, data.type));
 				break;
 			};
 

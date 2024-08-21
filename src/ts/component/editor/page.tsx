@@ -326,7 +326,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	focusInit () {
 		const { rootId, isPopup } = this.props;
+		const isReadonly = this.isReadonly();
 		const storage = Storage.getFocus(rootId);
+
+		if (isReadonly) {
+			return;
+		};
 
 		let block = null;
 		let from = 0;

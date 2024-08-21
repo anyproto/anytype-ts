@@ -1,6 +1,5 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 
 interface Props {
 	id?: string;
@@ -69,16 +68,11 @@ class Drag extends React.Component<Props> {
 		this.back = node.find('#back');
 		this.fill = node.find('#fill');
 		this.icon = node.find('#icon');
-
 		this.setValue(this.props.value);
 	};
 
 	setValue (v: number) {
-		v = this.checkValue(v);
-
-		if (this.value !== v) {
-			this.move(v * this.maxWidth());
-		};
+		this.move(this.checkValue(v) * this.maxWidth());
 	};
 	
 	getValue () {
@@ -126,42 +120,39 @@ class Drag extends React.Component<Props> {
 	move (x: number) {
 		const { strictSnap } = this.props;
 		const snaps = this.props.snaps || [];
+		const node = $(this.node);
+		const nw = node.width();
+		const iw = this.icon.width() / 2;
+		const ib = parseInt(this.icon.css('border-width'));
+		const mw = this.maxWidth();
 
-		raf(() => {
-			const node = $(this.node);
-			const nw = node.width();
-			const iw = this.icon.width();
-			const ib = parseInt(this.icon.css('border-width'));
-			const mw = this.maxWidth();
+		x = Math.max(0, x);
+		x = Math.min(mw, x);
 
-			x = Math.max(0, x);
-			x = Math.min(mw, x);
+		this.value = this.checkValue(x / mw);
 
-			this.value = this.checkValue(x / mw);
+		// Snap
+		if (strictSnap && snaps.length && (this.value < snaps[0] / 2)) {
+			this.value = 0;
+		} else {
+			const step = 1 / snaps.length;
+			for (const snap of snaps) {
+				const d = strictSnap ? step / 2 : SNAP;
 
-			// Snap
-			if (strictSnap && snaps.length && (this.value < snaps[0] / 2)) {
-				this.value = 0;
-			} else {
-				const step = 1 / snaps.length;
-				for (const snap of snaps) {
-					const d = strictSnap ? step / 2 : SNAP;
-
-					if ((this.value >= snap - d) && (this.value < snap + d)) {
-						this.value = snap;
-						break;
-					};
+				if ((this.value >= snap - d) && (this.value < snap + d)) {
+					this.value = snap;
+					break;
 				};
 			};
+		};
 
-			x = this.value * mw;
+		x = this.value * mw;
 
-			const w = Math.min(nw, x + iw / 2);
+		const w = Math.min(nw, x + iw);
 
-			this.icon.css({ left: x });
-			this.back.css({ left: (w + iw / 2 + ib), width: (nw - w - iw / 2 - ib) });
-			this.fill.css({ width: (w - ib) });
-		});
+		this.icon.css({ left: x });
+		this.back.css({ left: (w + iw + ib), width: (nw - w - iw - ib) });
+		this.fill.css({ width: (w - ib) });
 	};
 	
 	end (e) {

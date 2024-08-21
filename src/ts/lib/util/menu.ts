@@ -563,6 +563,8 @@ class UtilMenu {
 
 		let menuContext = null;
 
+		analytics.event('ClickChangeSpaceDashboard');
+
 		S.Menu.open('select', {
 			element,
 			horizontal: I.MenuDirection.Right,
@@ -594,11 +596,15 @@ class UtilMenu {
 								isSub: true,
 								data: {
 									filters: [
-										{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
-										{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+										{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
+										{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
 									],
 									canAdd: true,
-									onSelect: el => onSelect(el, true),
+									onSelect: el => {
+										onSelect(el, true);
+
+										analytics.event('ChangeSpaceDashboard', { type: I.HomePredefinedId.Existing });
+									},
 								}
 							});
 							break;
@@ -614,6 +620,8 @@ class UtilMenu {
 						case I.HomePredefinedId.Graph:
 						case I.HomePredefinedId.Last: {
 							onSelect({ id: item.id }, false);
+
+							analytics.event('ChangeSpaceDashboard', { type: item.id });
 							break;
 						};
 					};

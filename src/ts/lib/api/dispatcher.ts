@@ -914,6 +914,24 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ImportFinish': {
+					const { collectionId, count, type } = mapped;
+
+					if (collectionId) {
+						window.setTimeout(() => {
+							S.Popup.open('objectManager', { 
+								data: { 
+									collectionId, 
+									type: I.ObjectManagerPopup.Favorites,
+								} 
+							});
+						}, S.Popup.getTimeout() + 10);
+					};
+
+					analytics.event('Import', { type, count });
+					break;
+				};
+
 				case 'ProcessNew':
 				case 'ProcessUpdate':
 				case 'ProcessDone': {
