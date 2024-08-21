@@ -911,7 +911,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], callBack);
 
 		if ((undefined !== record[relationKey]) && !U.Common.compareJSON(record[relationKey], value)) {
-			analytics.changeRelationValue(relation, value, 'dataview');
+			analytics.changeRelationValue(relation, value, { type: 'dataview', id: 'Single' });
 		};
 	};
 

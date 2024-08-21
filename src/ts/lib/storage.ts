@@ -13,6 +13,7 @@ const SPACE_KEYS = [
 	'pinnedTypes',
 	'popupSearch',
 	'focus',
+	'openUrl',
 ];
 
 class Storage {

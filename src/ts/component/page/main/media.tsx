@@ -57,9 +57,13 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		};
 
 		const relations = S.Record.getObjectRelations(rootId, rootId).filter(it => {
-			if (!it || system.includes(it.relationKey)) {
+			if (!it) {
 				return false;
 			};
+			if (!recommended.includes(it.id) || (it.relationKey == 'description')) {
+				return false;
+			};
+
 			return !config.debug.hiddenObject ? !it.isHidden : true;
 		}).sort((c1, c2) => U.Data.sortByFormat(c1, c2));
 
@@ -109,6 +113,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 						isSelectionDisabled={true} 
 					/>
 				);
+				cn.push('withContent');
 			} else {
 				content = <IconObject object={object} size={160} />;
 			};
