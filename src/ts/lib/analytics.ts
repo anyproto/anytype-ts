@@ -43,6 +43,7 @@ class Analytics {
 		link: 'Link',
 		mention: 'Mention',
 		media: 'Media',
+		calendar: 'Calendar',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',

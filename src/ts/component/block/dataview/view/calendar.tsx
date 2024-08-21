@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, S, U, translate, Dataview } from 'Lib';
+import { I, S, U, translate, Dataview, J, C, analytics } from 'Lib';
 import Item from './calendar/item';
 
 interface State {
@@ -24,6 +24,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		super (props);
 
 		this.onToday = this.onToday.bind(this);
+		this.onObjectAdd = this.onObjectAdd.bind(this);
 	};
 
 	render () {
@@ -101,6 +102,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 											{...item} 
 											className={cn.join(' ')}
 											items={items.filter(it => it._date == current)}
+											onObjectAdd={this.onObjectAdd}
 										/>
 									);
 								})}
@@ -229,6 +231,36 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		this.scroll = true;
 		this.setValue(U.Date.timestamp(today.y, today.m, today.d));
+	};
+
+	onObjectAdd (date: any) {
+		const { d, m, y } = date;
+		const { rootId, isCollection, getView, getTypeId, getTemplateId, getTarget } = this.props;
+		const view = getView();
+		const objectId = getTarget().id;
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
+		const type = S.Record.getTypeById(getTypeId());
+		const typeKey = type.uniqueKey;
+		const templateId = getTemplateId();
+
+		let details = Dataview.getDetails(rootId, J.Constant.blockId.dataview, objectId, view.id);
+		details[view.groupRelationKey] = U.Date.timestamp(y, m, d);
+
+		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const object = message.details;
+
+			if (isCollection) {
+				C.ObjectCollectionAdd(objectId, [ object.id ]);
+			};
+
+			U.Object.openAuto(object);
+
+			analytics.createObject(object.type, object.layout, analytics.route.calendar, message.middleTime);
+		});
 	};
 
 	scrollToday () {

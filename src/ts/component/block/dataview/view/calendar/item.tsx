@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, translate, analytics, C, J } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	d: number;
 	m: number;
 	y: number;
 	items: any[];
+	onObjectAdd: (date: any) => void;
 };
 
 const LIMIT = 4;
@@ -21,6 +22,7 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		this.onOpen = this.onOpen.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.onContext = this.onContext.bind(this);
 	};
 
 	render () {
@@ -62,8 +64,10 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		return (
 			<div 
-				ref={node => this.node = node} 
+				ref={node => this.node = node}
+				id={`day-${d}${m}${y}`}
 				className={cn.join(' ')}
+				onContextMenu={this.onContext}
 			>
 				<div className="number">
 					<div className="inner">{d}</div>
@@ -104,6 +108,41 @@ const Item = observer(class Item extends React.Component<Props> {
 					readonly,
 				}
 			});
+		});
+	};
+
+	onContext () {
+		const { d, m, y, getView, onObjectAdd } = this.props;
+		const element = `#day-${d}${m}${y}`;
+		const view = getView();
+		const groupRelation = S.Record.getRelationByKey(view.groupRelationKey);
+		const options = [];
+
+		if (!groupRelation.isReadonlyValue) {
+			options.push({ id: 'add', name: translate('commonNewObject') });
+		};
+
+		if (!options.length) {
+			return;
+		};
+
+		S.Menu.open('select', {
+			element,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			offsetY: -this.node.clientHeight + 32,
+			offsetX: 16,
+			noFlipX: true,
+			noFlipY: true,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect: (e: any, item: any) => {
+					if (item.id == 'add') {
+						onObjectAdd({d, m, y});
+					}
+				},
+			}
 		});
 	};
 
