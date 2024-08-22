@@ -536,7 +536,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onContextMenu (e: React.MouseEvent, item: any) {
 		const { account } = S.Auth;
 
-		if (item.author != account.id) {
+		if (item.creator != account.id) {
 			return;
 		};
 
@@ -574,19 +574,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		const rootId = this.getRootId();
-		const { account } = S.Auth;
-		const { attachments, files } = this.state;
+		const { files } = this.state;
 		const fl = files.length;
-
-		console.log(JSON.stringify(attachments, null, 3));
-
-		const data = {
-			...this.getMarksFromHtml(),
-			time: U.Date.now(),
-			attachments: attachments.map(it => ({ target: it.id, type: I.ChatAttachmentType.Link })),
-			reactions: [],
-			isEdited: false
-		};
+		const attachments = (this.state.attachments || []).map(it => ({ target: it.id, type: I.ChatAttachmentType.Link }));
 
 		const clear = () => {
 			this.editingId = '';
@@ -607,7 +597,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					const { marks, text } = this.getMarksFromHtml();
 					const update = U.Common.objectCopy(message);
 
-					update.attachments = (update.attachments || []).concat(data.attachments || []);
+					update.attachments = (update.attachments || []).concat(attachments || []);
 					update.content.text = text;
 					update.content.marks = marks;
 
@@ -626,8 +616,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						...this.getMarksFromHtml(),
 						style: I.TextStyle.Paragraph,
 					},
-					attachments: attachments.map(it => ({ target: it.id, type: I.ChatAttachmentType.Link })),
-					reactions: new Map(),
+					attachments,
+					reactions: [],
 				};
 
 				C.ChatAddMessage(rootId, message, (message: any) => {
@@ -653,7 +643,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					n++;
 
 					if (message.objectId) {
-						data.attachments.push(message.objectId);
+						attachments.push({ target: message.objectId, type: I.ChatAttachmentType.File });
 					};
 
 					if (n == fl) {
@@ -666,8 +656,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 	};
 
-	onEditMessage = (message) => {
-		const { text, marks } = message.data;
+	onEditMessage = (message: I.ChatMessage) => {
+		const { text, marks } = message.content;
 		const l = text.length;
 
 		this.marks = marks;
