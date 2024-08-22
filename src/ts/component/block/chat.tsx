@@ -80,12 +80,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const list = this.getDeps().map(id => S.Detail.get(subId, id));
 
 		const Section = (item: any) => {
-			const ds = U.Date.dayString(0);
+			let date = U.Date.dayString(item.createdAt);
+			if (!date) {
+				date = U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrAfterDay), item.createdAt);
+			};
 
 			return (
 				<div className="section">
 					<div className="date">
-						<Label text={ds || U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrAfterDay), 0)} />
+						<Label text={date} />
 					</div>
 
 					{(item.list || []).map(item => (
@@ -122,7 +125,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						</div>
 					) : (
 						<div className="scroll">
-							{sections.map(section => <Section {...section} key={section.time} />)}
+							{sections.map(section => <Section {...section} key={section.createdAt} />)}
 						</div>
 					)}
 				</div>
@@ -511,11 +514,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const sections = [];
 
 		messages.forEach(item => {
-			const key = U.Date.date(U.Date.dateFormat(I.DateFormat.ShortUS), 0);
+			const key = U.Date.date(U.Date.dateFormat(I.DateFormat.ShortUS), item.createdAt);
 			const section = sections.find(it => it.key == key);
 
 			if (!section) {
-				sections.push({ time: 0, key, isSection: true, list: [ item ] });
+				sections.push({ createdAt: item.createdAt, key, isSection: true, list: [ item ] });
 			} else {
 				section.list.push(item);
 			};
@@ -575,10 +578,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { attachments, files } = this.state;
 		const fl = files.length;
 
+		console.log(JSON.stringify(attachments, null, 3));
+
 		const data = {
 			...this.getMarksFromHtml(),
 			time: U.Date.now(),
-			attachments: attachments.map(it => it.id),
+			attachments: attachments.map(it => ({ target: it.id, type: I.ChatAttachmentType.Link })),
 			reactions: [],
 			isEdited: false
 		};
@@ -603,9 +608,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					const update = U.Common.objectCopy(message);
 
 					update.attachments = (update.attachments || []).concat(data.attachments || []);
-					update.isEdited = true;
-					update.text = text;
-					update.marks = marks;
+					update.content.text = text;
+					update.content.marks = marks;
 
 					C.ChatEditMessage(rootId, this.editingId, update, (message: any) => {
 						if (message.error.code) {
@@ -617,7 +621,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					});
 				};
 			} else {
-				C.ChatAddMessage(rootId, data, (message: any) => {
+				const message = {
+					content: {
+						...this.getMarksFromHtml(),
+						style: I.TextStyle.Paragraph,
+					},
+					attachments: attachments.map(it => ({ target: it.id, type: I.ChatAttachmentType.Link })),
+					reactions: new Map(),
+				};
+
+				C.ChatAddMessage(rootId, message, (message: any) => {
 					if (message.error.code) {
 						return;
 					};

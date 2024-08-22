@@ -17,10 +17,11 @@ export interface ChatMessage {
 	id: string;
 	orderId: string;
 	creator: string;
+	createdAt: number;
 	replyToMessageId: string;
 	content: ChatMessageContent;
 	attachments: ChatMessageAttachment[];
-	reactions: Map<string, string[]>;
+	reactions: any;
 };
 
 export interface ChatMessageContent {

@@ -52,20 +52,22 @@ class ChatMessage implements I.ChatMessage {
 	id = '';
 	orderId = '';
 	creator = '';
+	createdAt = 0;
 	replyToMessageId = '';
 	content: I.ChatMessageContent = null;
 	attachments: I.ChatMessageAttachment[] = [];
-	reactions: Map<string, string[]> = null;
+	reactions = {};
 
 	constructor (props: I.ChatMessage) {
 
 		this.id = String(props.id || '');
 		this.orderId = String(props.orderId || '');
 		this.creator = String(props.creator || '');
+		this.createdAt = Number(props.createdAt) || 0;
 		this.replyToMessageId = String(props.replyToMessageId || '');
 		this.content = new ChatMessageContent(props.content || {} as ChatMessageContent);
 		this.attachments = Array.isArray(props.attachments) ? props.attachments : [];
-		this.reactions = new Map(Object.entries(props.reactions || {}));
+		this.reactions = props.reactions || {};
 
 		this.attachments = this.attachments.map(it => new ChatMessageAttachment(it));
 

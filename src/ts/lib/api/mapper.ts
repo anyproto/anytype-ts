@@ -626,14 +626,22 @@ export const Mapper = {
 		},
 
 		ChatMessage: (obj: Model.ChatMessage): I.ChatMessage => {
+			const reactions = [];
+			const reactionsMap = obj.getReactions().getReactionsMap();
+
+			reactionsMap.forEach((identityList, emoji) => {
+				reactions.push({ icon: emoji, authors: identityList.getIdsList() });
+			});
+
 			return {
 				id: obj.getId(),
 				orderId: obj.getOrderid(),
 				creator: obj.getCreator(),
+				createdAt: obj.getCreatedat(),
 				replyToMessageId: obj.getReplytomessageid(),
 				content: Mapper.From.ChatMessageContent(obj.getMessage()),
 				attachments: (obj.getAttachmentsList() || []).map(Mapper.From.ChatMessageAttachment),
-				reactions: obj.getReactions().getReactionsMap(),
+				reactions,
 			};
 		},
 
@@ -998,12 +1006,6 @@ export const Mapper = {
 
 		ChatMessage: (obj: I.ChatMessage) => {
 			const item = new Model.ChatMessage();
-			const reactions = new Model.ChatMessage.Reactions();
-			const map = reactions.getReactionsMap();
-
-			for (const [ k, v ] of Object.entries(obj.reactions)) {
-				map.set(k, v);
-			};
 
 			item.setId(obj.id);
 			item.setOrderid(obj.orderId);
@@ -1011,7 +1013,17 @@ export const Mapper = {
 			item.setReplytomessageid(obj.replyToMessageId);
 			item.setMessage(Mapper.To.ChatMessageContent(obj.content));
 			item.setAttachmentsList(obj.attachments.map(Mapper.To.ChatMessageAttachment));
-			item.setReactions(map);
+
+			const reactions = new Model.ChatMessage.Reactions();
+
+			(obj.reactions || []).forEach(it => {
+				const identities = new Model.ChatMessage.Reactions.IdentityList();
+
+				identities.setIdsList(it.authors);
+				reactions.getReactionsMap().set(it.icon, identities);
+			});
+
+			item.setReactions(reactions);
 
 			return item;
 		},

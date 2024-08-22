@@ -38,12 +38,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
-		const { creator, content } = message;
+		const { creator, content, createdAt, reactions } = message;
 		const { marks } = content;
 		const subId = S.Record.getSubId(rootId, blockId);
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 		const text = U.Common.lbBr(Mark.toHtml(content.text, marks));
 		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target));
+		const hasReactions = reactions.length;
 		const hasAttachments = attachments.length;
 		const isSingle = attachments.length == 1;
 		const cn = [ 'message' ];
@@ -68,14 +69,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			};
 		};
 
-		const reactions = [];
-		for (const [ k, v ] of Object.entries(message.reactions)) {
-			reactions.push({ value: k, authors: v });
-		};
-
-		const hasReactions = reactions.length;
-
-
 		const Reaction = (item: any) => {
 			const authors = item.authors || [];
 			const length = authors.length;
@@ -84,12 +77,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			return (
 				<div 
 					className="reaction" 
-					onClick={() => this.onReactionSelect(item.value)}
+					onClick={() => this.onReactionSelect(item.icon)}
 					onMouseEnter={e => this.onReactionEnter(e, authors)}
 					onMouseLeave={this.onReactionLeave}
 				>
 					<div className="value">
-						<IconObject object={{ iconEmoji: item.value }} size={18} />
+						<IconObject object={{ iconEmoji: item.icon }} size={18} />
 					</div>
 					<div className="count">
 						{length > 1 ? length : <IconObject object={author} size={18} />}
@@ -115,7 +108,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 					<div className="author">
 						<ObjectName object={author} />
-						<div className="time">{U.Date.date('H:i', 0)}</div>
+						<div className="time">{U.Date.date('H:i', createdAt)}</div>
 					</div>
 
 					<div className="textWrapper">
@@ -237,16 +230,15 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	onReactionSelect (icon: string) {
-		/*
 		const { rootId, id } = this.props;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
 		const reactions = message.reactions;
-		const item = reactions.find(it => it.value == icon);
-		const idx = reactions.findIndex(it => it.value == icon);
+		const item = reactions.find(it => it.icon == icon);
+		const idx = reactions.findIndex(it => it.icon == icon);
 
 		if (!item) {
-			reactions.push({ value: icon, authors: [ account.id ], count: 1 });
+			reactions.push({ icon, authors: [ account.id ] });
 		} else {
 			item.authors = item.authors || [];
 
@@ -261,27 +253,23 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			};
 		};
 
-		this.update({ ...message.data, reactions });
-		*/
+		this.update({ reactions });
 	};
 
 	onAttachmentRemove (attachmentId: string) {
-		/*
 		const { rootId, id } = this.props;
 		const message = S.Chat.getMessage(rootId, id);
 		const attachments = (message.attachments || []).filter(it => it.target != attachmentId);
 
-		this.update({ ...message.data, attachments });
-		*/
+		this.update({ attachments });
 	};
 
-	update (data: any) {
-		/*
+	update (param: Partial<I.ChatMessage>) {
 		const { rootId, id } = this.props;
+		const message = Object.assign(S.Chat.getMessage(rootId, id), param);
 
-		S.Chat.update(rootId, { id, data });
-		C.ChatEditMessage(rootId, id, JSON.stringify(data));
-		*/
+		S.Chat.update(rootId, { ...message, id });
+		C.ChatEditMessage(rootId, id, message);
 	};
 
 });

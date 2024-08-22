@@ -560,7 +560,7 @@ export const DeviceList = (response: Rpc.Device.List.Response) => {
 
 export const ChatGetMessages = (response: Rpc.Chat.GetMessages.Response) => {
 	return {
-		messages: response.getMessagesList() || [],
+		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),
 	};
 };
 
