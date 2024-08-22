@@ -834,7 +834,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					marks: this.marks,
 					skipIds: [ S.Auth.account.id ],
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
+						{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant }
 					],
 					onChange: (object: any, text: string, marks: I.Mark[], from: number, to: number) => {
 						S.Detail.update(rootId, { id: object.id, details: object }, false);

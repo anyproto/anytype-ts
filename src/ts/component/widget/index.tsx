@@ -611,7 +611,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 
 			case J.Constant.widgetId.chat: {
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat });
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat });
 				break;
 			};
 		};
