@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { C, I, translate, U } from 'Lib';
+import { C, I, S, Storage, translate, U } from 'Lib';
 import { Icon, Title, Label, Button } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCreative, Keyboard } from 'swiper/modules';
@@ -278,6 +278,8 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 		const id = this.usecases[this.current].id;
 
 		this.param.usecase = id == 'empty' ? null : id;
+
+		this.onFinish();
 	};
 
 	onCardClick (item: any) {
@@ -317,7 +319,16 @@ class PageMainOnboarding extends React.Component<I.PageComponent, State> {
 		return this.state.stage > Stage.Type;
 	};
 
-	onFinish (routeParam) {
+	onFinish () {
+		const routeParam = {
+			replace: true,
+			animate: true,
+			onFadeIn: () => {
+				Storage.initPinnedTypes();
+				S.Common.fullscreenObjectSet(true);
+			},
+		};
+
 		U.Data.onAuth({ routeParam });
 		U.Data.onAuthOnce(true);
 	};

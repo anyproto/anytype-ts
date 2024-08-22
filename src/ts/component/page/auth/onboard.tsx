@@ -247,10 +247,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					const routeParam = {
 						replace: true, 
 						animate: true,
-						onFadeIn: () => {
-							Storage.initPinnedTypes();
-							S.Common.fullscreenObjectSet(true);
-						},
 					};
 
 					U.Router.go('/main/onboarding', routeParam);
