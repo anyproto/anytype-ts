@@ -195,14 +195,20 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				return;
 			};
 
-			const messages = this.getMessages();
+			const ref = this.messagesMap[lastId];
+			if (!ref) {
+				return;
+			};
 
-			if (lastId == messages[messages.length - 1].id) {
+			const messages = this.getMessages();
+			const length = messages.length;
+
+			if (length && (lastId == messages[length - 1].id)) {
 				this.scrollToBottom();
 				return;
 			};
 
-			const node = $(this.messagesMap[lastId].node);
+			const node = $(ref.node);
 
 			this.lastMessageId = lastId;
 			this.lastMessageOffset = node.offset().top;
