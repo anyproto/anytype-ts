@@ -2144,21 +2144,21 @@ export const DeviceList = (callBack?: (message: any) => void) => {
 
 // ---------------------- CHAT ---------------------- //
 
-export const ChatAddMessage = (objectId: string, message: string, callBack?: (message: any) => void) => {
+export const ChatAddMessage = (objectId: string, message: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.AddMessage.Request();
 
 	request.setChatobjectid(objectId);
-	request.setMessage(message);
+	request.setMessage(Mapper.To.ChatMessage(message));
 
 	dispatcher.request(ChatAddMessage.name, request, callBack);
 };
 
-export const ChatEditMessage = (objectId: string, messageId: string, newText: string, callBack?: (message: any) => void) => {
+export const ChatEditMessage = (objectId: string, messageId: string, message: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.EditMessage.Request();
 
 	request.setChatobjectid(objectId);
 	request.setMessageid(messageId);
-	request.setNewtext(newText);
+	request.setEditedmessage(Mapper.To.ChatMessage(message));
 
 	dispatcher.request(ChatEditMessage.name, request, callBack);
 };

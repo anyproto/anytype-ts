@@ -2,7 +2,6 @@ import { I, M, U, Encode, Decode } from 'Lib';
 import { Rpc } from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
 import Events from 'dist/lib/pb/protos/events_pb';
-import { DeviceList } from 'ts/lib/api/command';
 
 export const Mapper = {
 
@@ -626,6 +625,33 @@ export const Mapper = {
 			};
 		},
 
+		ChatMessage: (obj: Model.ChatMessage): I.ChatMessage => {
+			return {
+				id: obj.getId(),
+				orderId: obj.getOrderid(),
+				creator: obj.getCreator(),
+				replyToMessageId: obj.getReplytomessageid(),
+				content: Mapper.From.ChatMessageContent(obj.getMessage()),
+				attachments: (obj.getAttachmentsList() || []).map(Mapper.From.ChatMessageAttachment),
+				reactions: obj.getReactions().getReactionsMap(),
+			};
+		},
+
+		ChatMessageContent (obj: Model.ChatMessage.MessageContent): I.ChatMessageContent {
+			return {
+				text: obj.getText(),
+				style: obj.getStyle() as number,
+				marks: (obj.getMarksList() || []).map(Mapper.From.Mark),
+			};
+		},
+
+		ChatMessageAttachment (obj: Model.ChatMessage.Attachment): I.ChatMessageAttachment {
+			return {
+				target: obj.getTarget(),
+				type: obj.getType() as number,
+			};
+		},
+
     },
 
 	//------------------------------------------------------------
@@ -966,6 +992,45 @@ export const Mapper = {
 
 			item.setIdentity(obj.identity);
 			item.setPerms(obj.permissions);
+
+			return item;
+		},
+
+		ChatMessage: (obj: I.ChatMessage) => {
+			const item = new Model.ChatMessage();
+			const reactions = new Model.ChatMessage.Reactions();
+			const map = reactions.getReactionsMap();
+
+			for (const [ k, v ] of Object.entries(obj.reactions)) {
+				map.set(k, v);
+			};
+
+			item.setId(obj.id);
+			item.setOrderid(obj.orderId);
+			item.setCreator(obj.creator);
+			item.setReplytomessageid(obj.replyToMessageId);
+			item.setMessage(Mapper.To.ChatMessageContent(obj.content));
+			item.setAttachmentsList(obj.attachments.map(Mapper.To.ChatMessageAttachment));
+			item.setReactions(map);
+
+			return item;
+		},
+
+		ChatMessageContent: (obj: I.ChatMessageContent) => {
+			const item = new Model.ChatMessage.MessageContent();
+
+			item.setText(obj.text);
+			item.setStyle(obj.style as number);
+			item.setMarksList(obj.marks.map(Mapper.To.Mark));
+
+			return item;
+		},
+
+		ChatMessageAttachment: (obj: I.ChatMessageAttachment) => {
+			const item = new Model.ChatMessage.Attachment();
+
+			item.setTarget(obj.target);
+			item.setType(obj.type as number);
 
 			return item;
 		},

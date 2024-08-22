@@ -14,27 +14,12 @@ class ChatStore {
     };
 
 	set (rootId: string, list: I.ChatMessage[]): void {
+		list = list.map(it => new M.ChatMessage(it));
 		this.messageMap.set(rootId, observable(list));
-	};
-
-	map (list: string[]) {
-		return (list || []).map(it => {
-			let ret: any = { text: '', data: {} };
-			try { 
-				ret = JSON.parse(it);
-				ret.data = JSON.parse(ret.text);
-
-				delete(ret.text);
-			} catch (e) { /**/ };
-
-			return new M.ChatMessage(ret);
-		});
 	};
 
 	add (rootId: string, item: I.ChatMessage): void {
 		const list = this.getList(rootId);
-
-		item.data = this.getData(item);
 
 		list.push(new M.ChatMessage(item));
 		this.set(rootId, list);
@@ -43,8 +28,6 @@ class ChatStore {
 	update (rootId: string, param: Partial<I.ChatMessage>): void {
 		const list = this.getList(rootId);
 		const item = list.find(it => it.id == param.id);
-
-		item.data = this.getData(item);
 
 		if (item) {
 			set(item, param);
@@ -63,15 +46,6 @@ class ChatStore {
 
 	clearAll () {
 		this.messageMap.clear();
-	};
-
-	getData (item: I.ChatMessage) {
-		let data = {};
-		try { 
-			data = JSON.parse(item.text);
-			delete(item.text);
-		} catch (e) { /**/ };
-		return data;
 	};
 
 	getList (rootId: string): I.ChatMessage[] {

@@ -80,12 +80,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const list = this.getDeps().map(id => S.Detail.get(subId, id));
 
 		const Section = (item: any) => {
-			const ds = U.Date.dayString(item.time);
+			const ds = U.Date.dayString(0);
 
 			return (
 				<div className="section">
 					<div className="date">
-						<Label text={ds || U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrAfterDay), item.time)} />
+						<Label text={ds || U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrAfterDay), 0)} />
 					</div>
 
 					{(item.list || []).map(item => (
@@ -234,7 +234,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		C.ChatGetMessages(rootId, (message: any) => {
 			if (!message.error.code) {
-				S.Chat.set(rootId, S.Chat.map(message.messages));
+				S.Chat.set(rootId, message.messages);
 				this.forceUpdate();
 			};
 
@@ -257,10 +257,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const messages = this.getMessages();
 		const markTypes = [ I.MarkType.Object, I.MarkType.Mention ];
 		const deps = U.Common.arrayUnique(messages.reduce((acc, it) => {
-			const data = it.data || {};
-			const marks = (data.marks || [].filter(it => markTypes.includes(it.types))).map(it => it.param);
+			const marks = (it.content.marks || [].filter(it => markTypes.includes(it.types))).map(it => it.param);
+			const attachments = (it.attachments || []).map(it => it.target);
 
-			return acc.concat(data.attachments || []).concat(marks);
+			return acc.concat(attachments).concat(marks);
 		}, []));
 
 		return deps;
@@ -511,15 +511,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const sections = [];
 
 		messages.forEach(item => {
-			if (!item.data.time) {
-				return;
-			};
-
-			const key = U.Date.date(U.Date.dateFormat(I.DateFormat.ShortUS), item.data.time);
+			const key = U.Date.date(U.Date.dateFormat(I.DateFormat.ShortUS), 0);
 			const section = sections.find(it => it.key == key);
 
 			if (!section) {
-				sections.push({ time: item.data.time, key, isSection: true, list: [ item ] });
+				sections.push({ time: 0, key, isSection: true, list: [ item ] });
 			} else {
 				section.list.push(item);
 			};
@@ -604,14 +600,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				const message = this.getMessages().find(it => it.id == this.editingId);
 				if (message) {
 					const { marks, text } = this.getMarksFromHtml();
-					const update = U.Common.objectCopy(message.data);
+					const update = U.Common.objectCopy(message);
 
 					update.attachments = (update.attachments || []).concat(data.attachments || []);
 					update.isEdited = true;
 					update.text = text;
 					update.marks = marks;
 
-					C.ChatEditMessage(rootId, this.editingId, JSON.stringify(update), (message: any) => {
+					C.ChatEditMessage(rootId, this.editingId, update, (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -621,7 +617,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					});
 				};
 			} else {
-				C.ChatAddMessage(rootId, JSON.stringify(data), (message: any) => {
+				C.ChatAddMessage(rootId, data, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
