@@ -1517,6 +1517,24 @@ export const ObjectListSetDetails = (objectIds: string[], details: any[], callBa
 	dispatcher.request(ObjectListSetDetails.name, request, callBack);
 };
 
+export const ObjectListModifyDetailValues = (objectIds: string[], operations: any[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ListModifyDetailValues.Request();
+
+	request.setObjectidsList(objectIds);
+	request.setOperationsList(operations.map(it => {
+		const op = new Rpc.Object.ListModifyDetailValues.Request.Operation();
+
+		op.setRelationkey(it.relationKey);
+		op.setAdd(Encode.value(it.add));
+		op.setSet(Encode.value(it.set));
+		op.setRemove(Encode.value(it.remove));
+
+		return op;
+	}));
+
+	dispatcher.request(ObjectListModifyDetailValues.name, request, callBack);
+};
+
 export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Search.Request();
 

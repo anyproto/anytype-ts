@@ -253,17 +253,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		let html = text;
 		if (block.isTextCode()) {
-			let lang = fields.lang;
-			// do not highlight unsupported language codes
+			const lang = U.Prism.aliasMap[fields.lang] || 'plain';fields.lang;
 			const grammar = Prism.languages[lang] || {};
 
-			lang = U.Prism.aliasMap[lang] || 'plain';
-
-			if (this.refLang) {
-				this.refLang.setValue(lang);
-			};
-
 			html = Prism.highlight(html, grammar, lang);
+			this.refLang?.setValue(lang);
 		} else {
 			const parsed = Mark.fromUnicode(html, this.marks);
 

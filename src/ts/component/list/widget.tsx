@@ -320,9 +320,8 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	};
 
 	onDrop (e: React.DragEvent): void {
-		const { isEditing } = this.state;
-		if (!isEditing) {
-			//return;
+		if (!this.isDragging) {
+			return;
 		};
 
 		e.stopPropagation();
