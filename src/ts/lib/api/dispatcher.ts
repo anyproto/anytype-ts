@@ -944,6 +944,14 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ChatUpdateReactions': {
+					const message = S.Chat.getMessage(rootId, mapped.id);
+					if (message) {
+						set(message, { reactions: mapped.reactions });
+					};
+					break;
+				};
+
 				case 'ProcessNew':
 				case 'ProcessUpdate':
 				case 'ProcessDone': {

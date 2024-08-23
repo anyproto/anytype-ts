@@ -268,7 +268,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const { rootId, id } = this.props;
 		const message = Object.assign(S.Chat.getMessage(rootId, id), param);
 
-		S.Chat.update(rootId, { ...message, id });
 		C.ChatEditMessage(rootId, id, message);
 	};
 

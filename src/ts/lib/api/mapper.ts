@@ -626,13 +626,6 @@ export const Mapper = {
 		},
 
 		ChatMessage: (obj: Model.ChatMessage): I.ChatMessage => {
-			const reactions = [];
-			const reactionsMap = obj.getReactions().getReactionsMap();
-
-			reactionsMap.forEach((identityList, emoji) => {
-				reactions.push({ icon: emoji, authors: identityList.getIdsList() });
-			});
-
 			return {
 				id: obj.getId(),
 				orderId: obj.getOrderid(),
@@ -641,7 +634,7 @@ export const Mapper = {
 				replyToMessageId: obj.getReplytomessageid(),
 				content: Mapper.From.ChatMessageContent(obj.getMessage()),
 				attachments: (obj.getAttachmentsList() || []).map(Mapper.From.ChatMessageAttachment),
-				reactions,
+				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
 			};
 		},
 
@@ -658,6 +651,16 @@ export const Mapper = {
 				target: obj.getTarget(),
 				type: obj.getType() as number,
 			};
+		},
+
+		ChatMessageReaction (obj: Model.ChatMessage.Reactions)  {
+			const reactions = [];
+
+			obj.getReactionsMap().forEach((identityList, emoji) => {
+				reactions.push({ icon: emoji, authors: identityList.getIdsList() });
+			});
+
+			return reactions;
 		},
 
     },
@@ -1013,17 +1016,7 @@ export const Mapper = {
 			item.setReplytomessageid(obj.replyToMessageId);
 			item.setMessage(Mapper.To.ChatMessageContent(obj.content));
 			item.setAttachmentsList(obj.attachments.map(Mapper.To.ChatMessageAttachment));
-
-			const reactions = new Model.ChatMessage.Reactions();
-
-			(obj.reactions || []).forEach(it => {
-				const identities = new Model.ChatMessage.Reactions.IdentityList();
-
-				identities.setIdsList(it.authors);
-				reactions.getReactionsMap().set(it.icon, identities);
-			});
-
-			item.setReactions(reactions);
+			item.setReactions(Mapper.To.ChatMessageReaction(obj.reactions));
 
 			return item;
 		},
@@ -1045,6 +1038,19 @@ export const Mapper = {
 			item.setType(obj.type as number);
 
 			return item;
+		},
+
+		ChatMessageReaction: (map: any) => {
+			const reactions = new Model.ChatMessage.Reactions();
+
+			(map || []).forEach(it => {
+				const identities = new Model.ChatMessage.Reactions.IdentityList();
+
+				identities.setIdsList(it.authors);
+				reactions.getReactionsMap().set(it.icon, identities);
+			});
+
+			return reactions;
 		},
 
 	},
@@ -1130,6 +1136,7 @@ export const Mapper = {
 
 			if (v == V.CHATADD)						 t = 'ChatAdd';
 			if (v == V.CHATUPDATE)					 t = 'ChatUpdate';
+			if (v == V.CHATUPDATEREACTIONS)			 t = 'ChatUpdateReactions';
 
 			return t;
 		},
@@ -1606,6 +1613,13 @@ export const Mapper = {
 			return {
 				id: obj.getId(),
 				message: Mapper.From.ChatMessage(obj.getMessage()),
+			};
+		},
+
+		ChatUpdateReactions: (obj: Events.Event.Chat.UpdateReactions) => {
+			return {
+				id: obj.getId(),
+				reactions: Mapper.From.ChatMessageReaction(obj.getReactions()),
 			};
 		},
 
