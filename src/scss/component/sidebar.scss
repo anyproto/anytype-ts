@@ -176,6 +176,8 @@
 			.item { padding: 8px; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; position: relative; }
 			.item {
 				.iconObject { flex-shrink: 0; border-radius: 6px; }
+				.iconObject.c48:not(.isTask) { background-color: var(--color-shape-tertiary); }
+
 				.info { width: calc(100% - 60px); display: flex; flex-direction: column; gap: 2px 0px; }
 				.name { @include text-overflow-nw; width: 100%; }
 				.descr { @include text-overflow-nw; width: 100%; @include text-small; color: var(--color-text-secondary); }
