@@ -594,7 +594,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.refEditable.placeholderCheck();
 
 			this.setState({ attachments: [], files: [] });
-			//this.loadMessages();
 		};
 		
 		const callBack = () => {
@@ -705,11 +704,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		const last = messagesIntoView[messagesIntoView.length - 1];
-		const lastNode = this.messagesMap[last.id].node;
+		if (!last) {
+			return;
+		};
 
-		if (lastNode.offsetTop > this.lastMessageOffset) {
+		const node = this.messagesMap[last.id]?.node;
+
+		if (node && (node.offsetTop > this.lastMessageOffset)) {
 			this.lastMessageId = last.id;
-			this.lastMessageOffset = lastNode.offsetTop;
+			this.lastMessageOffset = node.offsetTop;
 
 			Storage.setLastChatMessageId(rootId, last.id);
 		};
