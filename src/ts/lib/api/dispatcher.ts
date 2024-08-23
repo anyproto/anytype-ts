@@ -935,12 +935,12 @@ class Dispatcher {
 				};
 
 				case 'ChatAdd': {
-					S.Chat.add(rootId, mapped);
+					S.Chat.add(rootId, mapped.message);
 					break;
 				};
 
 				case 'ChatUpdate': {
-					S.Chat.update(rootId, mapped);
+					S.Chat.update(rootId, mapped.message);
 					break;
 				};
 

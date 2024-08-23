@@ -190,7 +190,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 
-		this.loadMessages(() => {
+		this.loadMessages(true, () => {
 			if (!lastId) {
 				return;
 			};
@@ -238,10 +238,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
 	};
 
-	loadMessages (callBack?: () => void) {
+	loadMessages (clear: boolean, callBack?: () => void) {
 		const rootId = this.getRootId();
+		const cmd = clear ? 'ChatSubscribeLastMessages' : 'ChatGetMessages';
 
-		C.ChatGetMessages(rootId, (message: any) => {
+		C[cmd](rootId, J.Constant.limit.chatMessages, (message: any) => {
 			if (!message.error.code) {
 				S.Chat.set(rootId, message.messages);
 				this.forceUpdate();
@@ -593,7 +594,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.refEditable.placeholderCheck();
 
 			this.setState({ attachments: [], files: [] });
-			this.loadMessages();
+			//this.loadMessages();
 		};
 		
 		const callBack = () => {

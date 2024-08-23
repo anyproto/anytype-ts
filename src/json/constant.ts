@@ -37,6 +37,7 @@ export default {
 		space:			 10,
 		notification:	 20,
 		graphDepth:		 5,
+		chatMessages:	 100,
 	},
 
 	default: {
