@@ -1819,6 +1819,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (message.blockIds && message.blockIds.length) {
 				count = message.blockIds.length;
 
+				message.blockIds.forEach((id: string) => {
+					const block = S.Block.getLeaf(rootId, id);
+
+					if (block && block.isTextToggle()) {
+						S.Block.toggle(rootId, block.id, true);
+					};
+				});
+
+
 				const lastId = message.blockIds[count - 1];
 				const block = S.Block.getLeaf(rootId, lastId);
 				
