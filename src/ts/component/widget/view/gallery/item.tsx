@@ -135,7 +135,8 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 		};
 
 		const node = $(this.node);
-		const menuParam: any = {
+
+		S.Menu.open('dataviewContext', {
 			element: node,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -148,9 +149,7 @@ const WidgetBoardItem = observer(class WidgetBoardItem extends React.Component<P
 				objectIds: [ id ],
 				subId,
 			},
-		};
-
-		S.Menu.open('dataviewContext', menuParam);
+		});
 	};
 
 	getCoverObject (): any {
