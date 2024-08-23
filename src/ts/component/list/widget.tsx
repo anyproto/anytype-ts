@@ -217,6 +217,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			offsetY: -4,
 			vertical: I.MenuDirection.Top,
 			data: {
+				route: analytics.route.widget,
 				filters: [
 					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
@@ -320,9 +321,8 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	};
 
 	onDrop (e: React.DragEvent): void {
-		const { isEditing } = this.state;
-		if (!isEditing) {
-			//return;
+		if (!this.isDragging) {
+			return;
 		};
 
 		e.stopPropagation();
