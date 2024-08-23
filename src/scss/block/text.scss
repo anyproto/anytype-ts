@@ -11,7 +11,7 @@
 		smile {
 			img { position: static !important; left: auto !important; top: auto !important; margin: 0px !important; vertical-align: top; }
 		}
-		smile * { display: inline; vertical-align: middle; }
+		smile * { display: inline; vertical-align: top; }
 		smile .loaderWrapper { display: inline-block; }
 
 		markupcode { display: inline; font-family: 'Plex'; border-radius: 4px; background: var(--color-shape-secondary); padding: 1px 4px; }
@@ -167,37 +167,36 @@
 
 	.block.blockText.textHeader1 { padding: 22px 0px 0px 0px; }
 	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget { @include text-header1; padding: 3px 0px 1px 0px; }
-	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget mention {
-		name { font-weight: inherit; }
-	}
-	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget bold { font-weight: 700; }
 	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget {
-		lnk, obj { font-weight: inherit; }
+		marukupmention {
+			name { font-weight: inherit; }
+		}
+		markupbold { font-weight: 700; }
+		markuplink, markupobject { font-weight: inherit; }
 	}
-	.block.blockText.textHeader1 > .wrapContent > .selectionTarget > .dropTarget bold { font-weight: 700; }
 
 	/* Header2 */
 	
 	.block.blockText.textHeader2 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectionTarget > .dropTarget { @include text-header2; padding: 2px 0px 1px 0px; }
-	.block.blockText.textHeader2 > .wrapContent > .selectionTarget > .dropTarget mention {
-		name { font-weight: inherit; }
-	}
-	.block.blockText.textHeader2 > .wrapContent > .selectionTarget > .dropTarget bold { font-weight: 700; }
 	.block.blockText.textHeader2 > .wrapContent > .selectionTarget > .dropTarget {
-		lnk, obj { font-weight: inherit; }
+		marukupmention {
+			name { font-weight: inherit; }
+		}
+		markupbold { font-weight: 700; }
+		markuplink, markupobject { font-weight: inherit; }
 	}
 
 	/* Header3 */
 	
 	.block.blockText.textHeader3 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectionTarget > .dropTarget { @include text-header3; padding: 1px 0px 2px 0px; }
-	.block.blockText.textHeader3 > .wrapContent > .selectionTarget > .dropTarget mention {
-		name { font-weight: inherit; }
-	}
-	.block.blockText.textHeader3 > .wrapContent > .selectionTarget > .dropTarget bold { font-weight: 700; }
 	.block.blockText.textHeader3 > .wrapContent > .selectionTarget > .dropTarget {
-		lnk, obj { font-weight: inherit; }
+		marukupmention {
+			name { font-weight: inherit; }
+		}
+		markupbold { font-weight: 700; }
+		markuplink, markupobject { font-weight: inherit; }
 	}
 
 	/* Quote */
@@ -247,6 +246,9 @@
 
 			> .children { padding-right: 16px; }
 		}
+	}
+	.block.blockText.textCallout.first {
+		> .wrapContent { margin-top: 0px; }
 	}
 	.block.blockText.textCallout.last {
 		> .wrapContent { margin-bottom: 0px; }

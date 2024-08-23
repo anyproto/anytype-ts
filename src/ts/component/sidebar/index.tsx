@@ -191,7 +191,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 		keyboard.setResize(false);
 		raf.cancel(this.frame);
 
-		$('body').removeClass('rowResize colResize');
+		$('body').removeClass('colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
 
 		window.setTimeout(() => this.movedX = false, 15);

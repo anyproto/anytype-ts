@@ -43,6 +43,7 @@ class Analytics {
 		link: 'Link',
 		mention: 'Mention',
 		media: 'Media',
+		calendar: 'Calendar',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
@@ -523,7 +524,7 @@ class Analytics {
 		this.event('CreateObject', { objectType, layout, route, middleTime: time });
 	};
 
-	changeRelationValue (relation: any, value: any, type: string) {
+	changeRelationValue (relation: any, value: any, param: any) {
 		if (!relation) {
 			return;
 		};
@@ -534,7 +535,7 @@ class Analytics {
 		} else {
 			key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';
 		};
-		this.event(key, { type, relationKey: relation.relationKey, format: relation.format });
+		this.event(key, { ...param, relationKey: relation.relationKey, format: relation.format });
 	};
 
 	pageMapper (params: any): string {
