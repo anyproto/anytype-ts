@@ -292,8 +292,6 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 				cover.css({ top: headerHeight });
 			};
 
-			node.css({ paddingTop: isPopup ? 0 : headerHeight });
-
 			const fh = Number(formWrapper.outerHeight(true)) || 0;
 			const ch = Number(controls.outerHeight(true)) || 0;
 			const hh = Number(head.outerHeight(true)) || 0;
