@@ -89,6 +89,7 @@ export interface MenuItem {
 	withSelect?: boolean;
 	withMore?: boolean;
 	subComponent?: string;
+	note?: string;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;

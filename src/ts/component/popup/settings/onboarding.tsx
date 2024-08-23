@@ -34,6 +34,11 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 			it.name = translate(`networkMode${it.id}Title`);
 			it.description = translate(`networkMode${it.id}Text`);
 			it.withDescription = true;
+
+			if (it.id == I.NetworkMode.Local) {
+				it.note = translate('popupSettingsOnboardingLocalOnlyNote');
+			};
+
 			return it;
 		});
 

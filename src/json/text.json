@@ -861,6 +861,7 @@
 	"popupSettingsOnboardingStoragePath": "Vault Data Location",
 	"popupSettingsOnboardingLocalOnlyWarningText": "Anytype can't transfer your data between directories. <br/>Your Spaces data will be downloaded from another device. <br/>Please ensure that you have such a device active on the same network.",
 	"popupSettingsOnboardingLocalOnlyWarningConfirm": "Yes, I understand",
+	"popupSettingsOnboardingLocalOnlyNote": "This is an experimental mode.<br/>Use at your own risk.",
 
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
