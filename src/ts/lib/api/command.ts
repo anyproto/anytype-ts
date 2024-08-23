@@ -2170,3 +2170,12 @@ export const ChatGetMessages = (objectId: string, callBack?: (message: any) => v
 
 	dispatcher.request(ChatGetMessages.name, request, callBack);
 };
+
+export const ChatSubscribeLastMessages = (objectId: string, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.SubscribeLastMessages.Request();
+
+	request.setChatobjectid(objectId);
+	request.setLimit(limit);
+
+	dispatcher.request(ChatSubscribeLastMessages.name, request, callBack);
+};

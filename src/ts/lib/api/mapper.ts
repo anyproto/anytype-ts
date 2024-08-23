@@ -1598,16 +1598,14 @@ export const Mapper = {
 		ChatAdd: (obj: Events.Event.Chat.Add) => {
 			return {
 				id: obj.getId(),
-				author: obj.getAuthor(),
-				text: obj.getText(),
+				message: Mapper.From.ChatMessage(obj.getMessage()),
 			};
 		},
 
 		ChatUpdate: (obj: Events.Event.Chat.Update) => {
 			return {
 				id: obj.getId(),
-				author: obj.getAuthor(),
-				text: obj.getText(),
+				message: Mapper.From.ChatMessage(obj.getMessage()),
 			};
 		},
 
