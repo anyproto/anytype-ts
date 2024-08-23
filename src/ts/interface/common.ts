@@ -224,6 +224,9 @@ export enum StoreView {
 
 export enum ObjectContainerType {
 	Object			 = 'object',
+	File			 = 'file',
+	Media			 = 'media',
+	Bookmark		 = 'bookmark',
 	Type			 = 'type',
 	Relation		 = 'relation',
 	Orphan			 = 'orphan',

@@ -46,8 +46,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const items = this.getItems();
 		const typeOptions = [
 			{ id: I.ObjectContainerType.Object, name: translate('sidebarObjectTypeObject') },
+			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
+			{ id: I.ObjectContainerType.Media, name: translate('sidebarObjectTypeMedia') },
+			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
 			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
-			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
+			//{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
 			{ id: I.ObjectContainerType.Orphan, name: translate('sidebarObjectTypeOrphan') },
 		];
 
@@ -62,7 +65,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 			if (U.Object.isTypeOrRelationLayout(item.layout)) {
 				const size = U.Object.isTypeLayout(item.layout) ? 18 : 20;
-				const iconSize = U.Object.isTypeLayout(item.layout) ? 18 : 18;
 
 				iconSmall = <IconObject object={item} size={size} iconSize={18} />;
 			} else {
@@ -218,12 +220,30 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		switch (this.type) {
 			case I.ObjectContainerType.Object: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() });
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() });
 				break;
 			};
 
 			case I.ObjectContainerType.Type: {
 				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type });
+				break;
+			};
+
+			case I.ObjectContainerType.File: {
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.File });
+				break;
+			};
+
+			case I.ObjectContainerType.Media: {
+				filters = filters.concat([
+					{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
+					{ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.File },
+				]);
+				break;
+			};
+
+			case I.ObjectContainerType.Bookmark: {
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Bookmark });
 				break;
 			};
 

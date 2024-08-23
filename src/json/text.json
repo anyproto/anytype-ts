@@ -2138,7 +2138,10 @@
 	"networkMode2Text": "Back up to your self-hosted network",
 
 	"sidebarObjectTypeObject": "Objects",
-	"sidebarObjectTypeType": "Object types",
+	"sidebarObjectTypeType": "Object Types",
+	"sidebarObjectTypeFile": "Files",
+	"sidebarObjectTypeMedia": "Media",
+	"sidebarObjectTypeBookmark": "Bookmarks",
 	"sidebarObjectTypeRelation": "Relations",
 	"sidebarObjectTypeOrphan": "Only orphans"
 
