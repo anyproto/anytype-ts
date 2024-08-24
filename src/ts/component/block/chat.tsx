@@ -10,8 +10,6 @@ import Buttons from './chat/buttons';
 import Message from './chat/message';
 import Attachment from './chat/attachment';
 
-const LIMIT = 50;
-
 interface State {
 	threadId: string;
 	attachments: any[];
@@ -136,6 +134,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							ref={ref => this.refEditable = ref}
 							id="messageBox"
 							readonly={readonly}
+							maxLength={J.Constant.limit.chat.text}
 							placeholder={translate('blockChatPlaceholder')}
 							onSelect={this.onSelect}
 							onFocus={this.onFocusInput}
@@ -242,7 +241,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const rootId = this.getRootId();
 		const cmd = clear ? 'ChatSubscribeLastMessages' : 'ChatGetMessages';
 
-		C[cmd](rootId, J.Constant.limit.chatMessages, (message: any) => {
+		C[cmd](rootId, J.Constant.limit.chat.messages, (message: any) => {
 			if (!message.error.code) {
 				S.Chat.set(rootId, message.messages);
 				this.forceUpdate();
@@ -255,12 +254,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	getMessages () {
-		const rootId = this.getRootId();
-		const list = S.Chat.getList(rootId);
-		const length = list.length;
-		const slice = length > LIMIT ? list.slice(length - LIMIT, length) : list;
-		
-		return slice;
+		return S.Chat.getList(this.getRootId());
 	};
 
 	getDeps () {

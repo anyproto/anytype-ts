@@ -10,6 +10,7 @@ interface Props {
 	placeholder?: string;
 	readonly?: boolean;
 	spellcheck?: boolean;
+	maxLength?: number;
 	onKeyDown?: (e: any) => void;
 	onKeyUp?: (e: any) => void;
 	onFocus?: (e: any) => void;
@@ -190,8 +191,17 @@ class Editable extends React.Component<Props> {
 			return;
 		};
 
-		if (this.props.onKeyDown) {
-			this.props.onKeyDown(e);
+		const { maxLength, onKeyDown } = this.props;
+
+		if (maxLength) {
+			const text = this.getTextValue();
+			if ((text.length >= maxLength) && !keyboard.isSpecial(e)) {
+				e.preventDefault();
+			};
+		};
+
+		if (onKeyDown) {
+			onKeyDown(e);
 		};
 	};
 
