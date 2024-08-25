@@ -18,7 +18,6 @@
 .sidebar { position: fixed; z-index: 21; user-select: none; transition: none; top: 0px; left: 0px; height: 100%; }
 .sidebar.anim { transition-property: transform; transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
 .sidebar.withVault { left: $vaultWidthCollapsed; }
-.sidebar.isClosed { left: 0px !important; }
 
 .sidebar {
 	> .inner { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; background-color: var(--color-shape-tertiary); }

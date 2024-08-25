@@ -221,7 +221,7 @@ class Sidebar {
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
 
-		let toggleX = width&&!isClosed ? width - 40 + (showVault ? vw : 0) : 84;
+		let toggleX = width && !isClosed ? width - 40 + (showVault ? vw : 0) : 84;
 		if (!width && (isFullScreen || !U.Common.isPlatformMac())) {
 			toggleX -= 68;
 		};
@@ -263,6 +263,8 @@ class Sidebar {
 	set(v: Partial<SidebarData>): void {
 		v = Object.assign(this.data, v);
 
+
+
 		const { width } = v;
 
 		this.data = Object.assign<SidebarData, Partial<SidebarData>>(this.data, {
@@ -281,8 +283,9 @@ class Sidebar {
 		if (!this.obj || !this.obj.length) {
 			return;
 		};
-
-		this.obj.css({ width: v.width, transform: `translateX(${v.isClosed ? -v.width : 0}px)` });
+		const { showVault } = S.Common;
+		let transX = v.isClosed ? -v.width - (showVault ? J.Size.vault.width : 0) : 0;
+		this.obj.css({ width: v.width, transform: `translateX(${transX}px)` });
 	};
 
 	/**
