@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import { U, S, J, Storage, keyboard } from 'Lib';
-import { transform } from 'lodash';
 
 interface SidebarData {
 	width: number;
@@ -8,7 +7,6 @@ interface SidebarData {
 };
 
 class Sidebar {
-
 	data: SidebarData = {
 		width: 0,
 		isClosed: false,
@@ -24,14 +22,14 @@ class Sidebar {
 	isAnimating = false;
 	timeoutAnim = 0;
 
-	init() {
+	init () {
 		this.initObjects();
 
 		const stored = Storage.get('sidebar');
 		const vault = $(S.Common.getRef('vault').node);
 
 		if (stored) {
-			if ('undefined' == typeof (stored.isClosed)) {
+			if ('undefined' == typeof(stored.isClosed)) {
 				stored.isClosed = !stored.width;
 			};
 
@@ -54,7 +52,7 @@ class Sidebar {
 		};
 	};
 
-	initObjects() {
+	initObjects () {
 		this.obj = $('#sidebar');
 		this.page = $('#page.isFull');
 		this.header = this.page.find('#header');
@@ -65,7 +63,7 @@ class Sidebar {
 		this.vault = $(S.Common.getRef('vault').node);
 	};
 
-	close(): void {
+	close (): void {
 		const { width, isClosed } = this.data;
 
 		if (!this.obj || !this.obj.length || this.isAnimating || isClosed) {
@@ -93,7 +91,7 @@ class Sidebar {
 		});
 	};
 
-	open(width?: number): void {
+	open (width?: number): void {
 		if (!this.obj || !this.obj.length || this.isAnimating || !this.data.isClosed) {
 			return;
 		};
@@ -118,7 +116,7 @@ class Sidebar {
 		}, this.getVaultDuration(width));
 	};
 
-	toggleOpenClose() {
+	toggleOpenClose () {
 		if (this.isAnimating) {
 			return;
 		};
@@ -128,19 +126,19 @@ class Sidebar {
 		isClosed ? this.open(width) : this.close();
 	};
 
-	setElementsWidth(width: any): void {
+	setElementsWidth (width: any): void {
 		this.obj.find('#sidebarHead').css({ width });
 		this.obj.find('#sidebarBody').css({ width });
 	};
 
-	setWidth(w: number): void {
+	setWidth (w: number): void {
 		w = this.limitWidth(w);
 
 		this.set({ width: w, isClosed: false });
 		this.resizePage(w, false);
 	};
 
-	private removeAnimation(callBack?: () => void): void {
+	private removeAnimation (callBack?: () => void): void {
 		if (!this.obj || !this.obj.length) {
 			return;
 		};
@@ -156,7 +154,7 @@ class Sidebar {
 		}, J.Constant.delay.sidebar);
 	};
 
-	onMouseMove(): void {
+	onMouseMove (): void {
 		const { showVault, hideSidebar, isFullScreen } = S.Common;
 
 		if (!this.obj || !this.obj.length || keyboard.isDragging) {
@@ -182,9 +180,9 @@ class Sidebar {
 		if (x <= 10) {
 			show = true;
 		} else
-			if (x >= width + vw + 30) {
-				hide = true;
-			};
+		if (x >= width + vw + 30) {
+			hide = true;
+		};
 
 		if (popupOpen) {
 			show = false;
@@ -204,7 +202,7 @@ class Sidebar {
 		};
 	};
 
-	resizePage(width: number, animate: boolean): void {
+	resizePage (width: number, animate: boolean): void {
 		this.initObjects();
 
 		if ((width === null) && this.obj && this.obj.length) {
@@ -256,14 +254,12 @@ class Sidebar {
 		$(window).trigger('sidebarResize');
 	};
 
-	private save(): void {
+	private save (): void {
 		Storage.set('sidebar', this.data);
 	};
 
-	set(v: Partial<SidebarData>): void {
+	set (v: Partial<SidebarData>): void {
 		v = Object.assign(this.data, v);
-
-
 
 		const { width } = v;
 
@@ -275,11 +271,11 @@ class Sidebar {
 		this.setStyle(this.data);
 	};
 
-	public setAnimating(v: boolean) {
+	public setAnimating (v: boolean) {
 		this.isAnimating = v;
 	};
 
-	private setStyle(v: Partial<SidebarData>): void {
+	private setStyle (v: Partial<SidebarData>): void {
 		if (!this.obj || !this.obj.length) {
 			return;
 		};
@@ -291,34 +287,34 @@ class Sidebar {
 	/**
 	 * Limit the sidebar width to the max and min bounds
 	 */
-	private limitWidth(width: number): number {
+	private limitWidth (width: number): number {
 		const { min, max } = J.Size.sidebar.width;
 		return Math.max(min, Math.min(max, Number(width) || 0));
 	};
 
-	getDummyWidth(): number {
+	getDummyWidth (): number {
 		return Number($('#sidebarDummy').outerWidth()) || 0;
 	};
 
-	vaultHide() {
+	vaultHide () {
 		this.vault.addClass('anim');
 		this.setVaultAnimationParam(this.data.width);
 		this.vault.addClass('isClosed');
 	};
 
-	vaultShow(width: number) {
+	vaultShow (width: number) {
 		this.vault.addClass('anim');
 		this.setVaultAnimationParam(width);
 		this.vault.removeClass('isClosed');
 	};
 
-	setVaultAnimationParam(width: number) {
+	setVaultAnimationParam (width: number) {
 		const css: any = { transitionDuration: `${this.getVaultDuration(width)}ms`, transitionDelay: `${J.Constant.delay.sidebar}ms` };
 
 		this.vault.css(css);
 	};
 
-	getVaultDuration(width: number): number {
+	getVaultDuration (width: number): number {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
