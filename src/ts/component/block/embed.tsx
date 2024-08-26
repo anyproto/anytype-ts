@@ -333,6 +333,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				e.preventDefault();
 				keyboard.onRedo(rootId, 'editor');
 			});
+
+			keyboard.shortcut(`tab`, e, () => {
+				e.preventDefault();
+			});
 		};
 
 		if (onKeyDown && !isEditing) {
