@@ -6,6 +6,11 @@ import { I, S, U, C, Mark, translate, Preview } from 'Lib';
 
 import Attachment from '../attachment';
 
+interface State {
+	canExpand: boolean;
+	isExpanded: boolean;
+};
+
 interface Props extends I.BlockComponent {
 	blockId: string;
 	id: string;
@@ -17,12 +22,14 @@ interface Props extends I.BlockComponent {
 
 const LINES_LIMIT = 10;
 
-const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
+const ChatMessage = observer(class ChatMessage extends React.Component<Props, State> {
 
 	node = null;
 	refText = null;
-	canExpand: boolean = false;
-	isExpanded: boolean = false;
+	state = { 
+		canExpand: false, 
+		isExpanded: false,
+	};
 
 	constructor (props: Props) {
 		super(props);
@@ -35,6 +42,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 	render () {
 		const { rootId, blockId, id, isThread, onThread, isLast, onContextMenu } = this.props;
+		const { canExpand, isExpanded } = this.state;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
@@ -52,10 +60,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		if (creator == account.id) {
 			cn.push('isSelf');
 		};
-		if (this.canExpand) {
+		if (canExpand) {
 			cn.push('canExpand');
 		};
-		if (this.isExpanded) {
+		if (isExpanded) {
 			cn.push('isExpanded');
 		};
 		if (isLast) {
@@ -118,7 +126,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 							dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
 						/>
 
-						{this.canExpand && !this.isExpanded ? (
+						{canExpand && !isExpanded ? (
 							<div className="expand" onClick={this.onExpand}>
 								{translate('blockChatMessageExpand')}
 							</div>
@@ -180,18 +188,18 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	onExpand () {
-		this.isExpanded = true;
-		this.forceUpdate();
+		this.setState({ isExpanded: true });
 	};
 
 	checkLinesLimit () {
+		const { isExpanded } = this.state;
 		const ref = $(this.refText);
 		const textHeight = ref.outerHeight();
 		const lineHeight = parseInt(ref.css('line-height'));
+		const canExpand = textHeight / lineHeight > LINES_LIMIT;
 
-		if (textHeight / lineHeight > LINES_LIMIT) {
-			this.canExpand = true;
-			this.forceUpdate();
+		if (canExpand && !isExpanded) {
+			this.setState({ canExpand: true });
 		};
 	};
 
