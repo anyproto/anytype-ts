@@ -247,6 +247,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 				const records = S.Record.getRecordIds(S.Record.getSubId(rootId, J.Constant.blockId.dataview), '');
 				selection.set(I.SelectType.Record, records);
+
+				$(window).trigger('selectionSet');
 			});
 
 			if (count && !S.Menu.isOpen()) {

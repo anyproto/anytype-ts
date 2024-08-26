@@ -725,8 +725,12 @@ class UtilData {
 		const mapper = it => ({ id: it[idField], details: it });
 
 		let details = [];
-		details = details.concat(message.dependencies.map(mapper));
-		details = details.concat(message.records.map(mapper));
+		if (message.dependencies && message.dependencies.length) {
+			details = details.concat(message.dependencies.map(mapper));
+		};
+		if (message.records && message.records.length) {
+			details = details.concat(message.records.map(mapper));
+		};
 
 		S.Detail.set(subId, details);
 		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));

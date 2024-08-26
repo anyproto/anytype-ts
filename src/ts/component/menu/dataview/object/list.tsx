@@ -379,6 +379,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { onChange, maxCount, filter, cellRef, canEdit } = data;
 		const relation = data.relation.get();
+		const addParam = data.addParam || {};
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -416,9 +417,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 
 		if (item.id == 'add') {
-			const { details, flags } = Relation.getParamForNewObject(filter, relation);
+			const param = Relation.getParamForNewObject(filter, relation);
+			const details = Object.assign(param.details, addParam.details || {});
 
-			U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.relation, (message: any) => {
+			U.Object.create('', '', details, I.BlockPosition.Bottom, '', param.flags, analytics.route.relation, (message: any) => {
 				cb(message.targetId);
 				close();
 			});

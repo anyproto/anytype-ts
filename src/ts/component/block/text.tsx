@@ -1087,6 +1087,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.getForClick('', false, true);
 		const range = this.getRange();
+		const value = this.getValue();
 
 		focus.set(block.id, range);
 
@@ -1115,6 +1116,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.timeoutContext = window.setTimeout(() => {
 			const onChange = (marks: I.Mark[]) => {
+				this.setValue(value);
 				this.marks = marks;
 
 				U.Data.blockSetText(rootId, block.id, this.getValue(), this.marks, true, () => {

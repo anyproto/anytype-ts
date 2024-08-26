@@ -243,6 +243,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
+					route: analytics.route.widget,
 					filters,
 					value: this.target ? this.target.id : '',
 					canAdd: true,
