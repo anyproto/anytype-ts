@@ -18,8 +18,7 @@
 				.empty { display: inline; }
 			}
 		}
-
-		.cell.last .bullet { display: none; }
+		.cell:last-child .bullet { display: none; }
 
 		.cellContent { display: inline-block; border-radius: 4px; vertical-align: top; padding: 0px 6px; transition: background $transitionCommon; cursor: default; }
 		.cellContent.disabled { opacity: 1; }
