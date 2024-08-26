@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
-import { I, S, U, J, Relation, translate, keyboard, analytics } from 'Lib';
+import { I, S, U, J, Relation, keyboard, analytics } from 'Lib';
 import ItemObject from './item/object';
 
 interface State { 
@@ -38,7 +38,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 	render () {
 		const { isEditing } = this.state;
-		const { id, recordId, getRecord, relation, iconSize, elementMapper, arrayLimit, canEdit, placeholder } = this.props;
+		const { id, recordId, relation, size, iconSize, arrayLimit, canEdit, placeholder, getRecord, elementMapper } = this.props;
 		const record = getRecord(recordId);
 		const cn = [ 'wrap' ];
 
@@ -77,6 +77,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 										key={item.id} 
 										cellId={id}
 										getObject={() => item}
+										size={size}
 										iconSize={iconSize} 
 										relation={relation} 
 										elementMapper={elementMapper}
@@ -120,6 +121,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 								key={item.id} 
 								cellId={id}
 								getObject={() => item}
+								size={size}
 								iconSize={iconSize} 
 								relation={relation} 
 								elementMapper={elementMapper} 

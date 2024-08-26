@@ -207,6 +207,7 @@ export interface Cell {
 	canEdit?: boolean;
 	pageContainer?: string;
 	isInline?: boolean;
+	size?: number;
 	iconSize?: number;
 	placeholder?: string;
 	withLabel?: boolean;

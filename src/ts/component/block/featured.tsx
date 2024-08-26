@@ -6,6 +6,7 @@ import { ObjectType, Cell } from 'Component';
 import { I, C, S, U, J, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 
 interface Props extends I.BlockComponent {
+	size?: number;
 	iconSize?: number;
 };
 
@@ -21,7 +22,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	node = null;
 
 	public static defaultProps = {
-		iconSize: 20,
+		size: 18,
+		iconSize: 18,
 	};
 
 	constructor (props: Props) {
@@ -41,7 +43,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	render () {
-		const { rootId, block, iconSize, isPopup } = this.props;
+		const { rootId, block, size, iconSize, isPopup } = this.props;
 		const storeId = this.getStoreId();
 		const short = S.Detail.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
@@ -87,7 +89,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								this.onRelation(e, relationKey);
 							}}
 						>
-							<div className="bullet" />
 							<Cell
 								ref={ref => this.cellRefs.set(id, ref)}
 								placeholder={relation.name}
@@ -99,6 +100,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								getRecord={() => object}
 								viewType={I.ViewType.Grid}
 								pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
+								size={size}
 								iconSize={iconSize}
 								readonly={!canEdit}
 								isInline={true}
@@ -111,6 +113,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								onMouseLeave={this.onMouseLeave}
 								withName={true}
 							/>
+							<div className="bullet" />
 						</span>
 					);
 				})}
@@ -177,9 +180,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		if (U.Object.isTemplate(object.type)) {
 			ret = (
 				<span className="cell">
-					<div className="cellContent type disabled">
-						{name}
-					</div>
+					<div className="cellContent type disabled">{name}</div>
+					<div className="bullet" />
 				</span>
 			);
 		} else {
@@ -194,6 +196,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					>
 						{name}
 					</div>
+					<div className="bullet" />
 				</span>
 			);
 		};
@@ -234,7 +237,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		return (
 			<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
-				<div className="bullet" />
 				<div
 					id={Relation.cellId(PREFIX, 'setOf', object.id)}
 					className="cellContent setOf"
@@ -252,6 +254,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						<div className="empty">{translate('blockFeaturedQuery')}</div>
 					)}
 				</div>
+				<div className="bullet" />
 			</span>
 		);
 	};
@@ -270,7 +273,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		return (
 			<span className="cell">
-				<div className="bullet" />
 				<div
 					id={Relation.cellId(PREFIX, relationKey, object.id)}
 					className="cellContent c-longText"
@@ -285,6 +287,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						{U.Common.shorten(object[relationKey], 150)}
 					</div>
 				</div>
+				<div className="bullet" />
 			</span>
 		);
 	};
@@ -303,7 +306,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		return (
 			<span className="cell" key={index} >
-				<div className="bullet" />
 				<div 
 					id={id} 
 					className="cellContent"
@@ -311,6 +313,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				>
 					{`${l} ${U.Common.plural(l, translate(U.Common.toCamelCase([ 'plural', relationKey ].join('-'))))}`}
 				</div>
+				<div className="bullet" />
 			</span>
 		);
 	};
