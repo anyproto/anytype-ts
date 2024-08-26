@@ -218,12 +218,14 @@ export interface Cell {
 	menuClassNameWrap?: string;
 	recordId?: string;
 	getRecord?(id: string): any;
+	getRecords?(): string[];
 	getView?(): View;
 	onChange?(value: any, callBack?: (message: any) => void): void;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
+	onRecordAdd?(e: any, dir: number, groupId?: string, menuParam?: any, idx?: number): void;
 	cellPosition?(cellId: string): void;
 	elementMapper?(relation: any, item: any): any;
 };

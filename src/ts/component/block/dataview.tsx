@@ -591,7 +591,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return J.Constant.templateId.blank;
 	};
 
-	recordCreate (e: any, template: any, dir: number, groupId?: string) {
+	recordCreate (e: any, template: any, dir: number, groupId?: string, idx?: number) {
 		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const subId = this.getSubId(groupId);
@@ -655,10 +655,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
-			if (oldIndex < 0) {
-				dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+			if (idx) {
+				records.splice(idx, 0, message.objectId);
 			} else {
-				records = arrayMove(records, oldIndex, dir > 0 ? records.length : 0);
+				if (oldIndex < 0) {
+					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+				} else {
+					records = arrayMove(records, oldIndex, dir > 0 ? records.length : 0);
+				};
 			};
 
 			if (groupId) {
@@ -704,7 +708,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	onRecordAdd (e: any, dir: number, groupId?: string, menuParam?: any) {
+	onRecordAdd (e: any, dir: number, groupId?: string, menuParam?: any, idx?: number) {
 		if (e.persist) {
 			e.persist();
 		};
@@ -715,7 +719,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
 			this.onBookmarkMenu(e, dir, groupId, menuParam);
 		} else {
-			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId);
+			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId, idx);
 		};
 	};
 

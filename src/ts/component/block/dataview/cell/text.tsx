@@ -355,7 +355,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onKeyUp (e: any, value: string) {
-		const { relation } = this.props;
+		const { relation, recordId, getRecords, onRecordAdd } = this.props;
 
 		if (relation.format == I.RelationType.LongText) {
 			return;
@@ -373,7 +373,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		let ret = false;
 
-		keyboard.shortcut('enter, escape', e, () => {
+		keyboard.shortcut('escape, enter, shift+enter', e, (pressed) => {
 			e.preventDefault();
 
 			this.save(value, () => {
@@ -381,6 +381,13 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 				this.range = null;
 				this.setEditing(false);
+
+				if (pressed == 'enter+shift') {
+					const records = getRecords();
+					const idx = records.indexOf(recordId);
+
+					onRecordAdd(e, 0, '', {}, idx+1);
+				};
 			});
 
 			ret = true;
