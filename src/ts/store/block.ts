@@ -594,6 +594,8 @@ class BlockStore {
 	};
 
 	checkBlockChat (rootId: string) {
+		return;
+
 		const element = this.getMapElement(rootId, rootId);
 
 		if (!element) {
