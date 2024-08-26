@@ -1605,6 +1605,7 @@ export const Mapper = {
 		ChatAdd: (obj: Events.Event.Chat.Add) => {
 			return {
 				id: obj.getId(),
+				orderId: obj.getOrderid(),
 				message: Mapper.From.ChatMessage(obj.getMessage()),
 			};
 		},

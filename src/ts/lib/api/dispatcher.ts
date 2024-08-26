@@ -935,7 +935,16 @@ class Dispatcher {
 				};
 
 				case 'ChatAdd': {
-					S.Chat.add(rootId, mapped.message);
+					const orderId = mapped.orderId;
+					const list = S.Chat.getList(rootId);
+					const message = new M.ChatMessage(mapped.message);
+					
+					let idx = list.findIndex(it => it.orderId == orderId);
+					if (idx < 0) {
+						idx = list.length;
+					};
+
+					S.Chat.add(rootId, idx, message);
 					break;
 				};
 

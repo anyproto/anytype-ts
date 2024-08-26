@@ -18,10 +18,10 @@ class ChatStore {
 		this.messageMap.set(rootId, observable(list));
 	};
 
-	add (rootId: string, item: I.ChatMessage): void {
+	add (rootId: string, idx: number, item: I.ChatMessage): void {
 		const list = this.getList(rootId);
 
-		list.push(new M.ChatMessage(item));
+		list.splice(idx, 0, item);
 		this.set(rootId, list);
 	};
 
