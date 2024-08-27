@@ -75,6 +75,8 @@ class Sidebar {
 			return;
 		};
 
+		S.Common.showObjectSet(false);
+
 		this.obj.addClass('anim');
 		this.setElementsWidth(width);
 		this.setAnimating(true);
@@ -134,9 +136,6 @@ class Sidebar {
 	setElementsWidth (width: any): void {
 		this.containerWidget.find('> .head').css({ width });
 		this.containerWidget.find('> .body').css({ width });
-
-		this.containerObject.find('> .head').css({ width });
-		this.containerObject.find('> .body').css({ width });
 	};
 
 	setWidth (w: number): void {
@@ -289,7 +288,6 @@ class Sidebar {
 		const width = v.isClosed ? 0 : v.width;
 
 		this.containerWidget.css({ width });
-		this.containerObject.css({ width });
 	};
 
 	/**
@@ -330,10 +328,9 @@ class Sidebar {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
 	};
 
-	objectContainerShow () {
-		S.Common.showObjectSet(true);
-		this.setWidth(this.data.width);
-		this.resizePage(this.data.width, false);
+	objectContainerToggle () {
+		S.Common.showObjectSet(!S.Common.showObject);
+		requestAnimationFrame(() => this.resizePage(null, false));
 	};
 
 };

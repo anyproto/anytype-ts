@@ -71,7 +71,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 			};
 
 			case 'all': {
-				sidebar.objectContainerShow();
+				sidebar.objectContainerToggle();
 				break;
 			};
 
