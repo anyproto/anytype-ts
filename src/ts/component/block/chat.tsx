@@ -473,7 +473,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	canDrop (e: any): boolean {
-		return this._isMounted && e.dataTransfer.files && e.dataTransfer.files.length && !this.props.readonly;
+		return this._isMounted && !this.props.readonly && U.File.checkDropFiles(e);
 	};
 
 	onDragOver (e: any) {
@@ -501,13 +501,18 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		const { files } = this.state;
 		const node = $(this.node);
-		const list = Array.from(e.dataTransfer.files).map((it: any) => ({
-			id: sha1(it.path),
-			name: it.name,
-			layout: I.ObjectLayout.File,
-			description: U.File.size(it.size),
-			path: it.path,
-		}));
+		const electron = U.Common.getElectron();
+		const list = Array.from(e.dataTransfer.files).map((it: File) => {
+			const path = electron.webFilePath(it);
+
+			return {
+				id: sha1(path),
+				name: it.name,
+				layout: I.ObjectLayout.File,
+				description: U.File.size(it.size),
+				path,
+			};
+		});
 		
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);

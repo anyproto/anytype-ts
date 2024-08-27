@@ -445,7 +445,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 
 	canDrop (e: any) {
-		return this._isMounted && e.dataTransfer.files && e.dataTransfer.files.length && !this.props.readonly;
+		return this._isMounted && !this.props.readonly && U.File.checkDropFiles(e);
 	};
 	
 	onDragOver (e: any) {
@@ -469,11 +469,12 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 
 		const { rootId, readonly } = this.props;
 
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length || readonly) {
+		if (!this._isMounted || !U.File.checkDropFiles(e) || readonly) {
 			return;
 		};
 
-		const file = e.dataTransfer.files[0].path;
+		const electron = U.Common.getElectron();
+		const file = electron.webFilePath(e.dataTransfer.files[0]);
 		const node = $(this.node);
 		
 		node.removeClass('isDraggingOver');

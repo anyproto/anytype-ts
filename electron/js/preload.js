@@ -1,4 +1,4 @@
-const { ipcRenderer, contextBridge } = require('electron');
+const { ipcRenderer, contextBridge, webUtils } = require('electron');
 const { app, getCurrentWindow, getGlobal, dialog, BrowserWindow } = require('@electron/remote');
 const fs = require('fs');
 const os = require('os');
@@ -30,8 +30,10 @@ contextBridge.exposeInMainWorld('Electron', {
 		getCurrentWindow().focus();
 		app.focus({ steal: true });
 	},
-	getGlobal: (key) => getGlobal(key),
+	getGlobal: key => getGlobal(key),
 	showOpenDialog: dialog.showOpenDialog,
+
+	webFilePath: file => webUtils.getPathForFile(file),
 
 	fileWrite: (name, data, options) => {
 		name = String(name || 'temp');

@@ -205,6 +205,10 @@ class UtilFile {
 		return layout;
 	};
 
+	checkDropFiles (e: React.DragEvent): boolean {
+		return (e.dataTransfer.files && e.dataTransfer.files.length) ? true : false;
+	};
+
 };
 
 export default new UtilFile();
