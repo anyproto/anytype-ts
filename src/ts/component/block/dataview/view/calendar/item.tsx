@@ -162,11 +162,11 @@ const Item = observer(class Item extends React.Component<Props> {
 	};
 
 	canCreate () {
-		const { getView } = this.props;
+		const { getView, isAllowedObject } = this.props;
 		const view = getView();
 		const groupRelation = S.Record.getRelationByKey(view.groupRelationKey);
 
-		return !groupRelation.isReadonlyValue;
+		return !groupRelation.isReadonlyValue && isAllowedObject();
 	};
 
 });

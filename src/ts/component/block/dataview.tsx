@@ -296,7 +296,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { isPopup, block } = this.props;
-		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear' ];
+		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear', 'selectionSet' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
@@ -312,7 +312,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		win.on(`resize.${ns} sidebarResize.${ns}`, () => this.resize());
 		win.on(`updateDataviewData.${ns}`, () => this.loadData(this.getView().id, 0, true));
 		win.on(`setDataviewSource.${ns}`, () => this.onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
-		win.on(`selectionEnd.${ns} selectionClear.${ns}`, () => this.onSelectEnd());
+		win.on(`selectionEnd.${ns} selectionClear.${ns} selectionSet.${ns}`, () => this.onSelectEnd());
 	};
 
 	onKeyDown (e: any) {

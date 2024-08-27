@@ -11,6 +11,7 @@ interface Props {
 	tooltipCaption?: string;
 	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
+	tooltipClassName?: string;
 	inner?: any;
 	draggable?: boolean;
 	style?: any;
@@ -77,12 +78,12 @@ class Icon extends React.Component<Props> {
 	};
 	
 	onMouseEnter (e: any) {
-		const { tooltip, tooltipCaption, tooltipX, tooltipY, onMouseEnter } = this.props;
+		const { tooltip, tooltipCaption, tooltipX, tooltipY, tooltipClassName, onMouseEnter } = this.props;
 		const node = $(this.node);
 		const t = Preview.tooltipCaption(tooltip, tooltipCaption);
 		
 		if (t) {
-			Preview.tooltipShow({ text: t, element: node, typeX: tooltipX, typeY: tooltipY });
+			Preview.tooltipShow({ text: t, element: node, typeX: tooltipX, typeY: tooltipY, className: tooltipClassName });
 		};
 		
 		if (onMouseEnter) {

@@ -153,6 +153,24 @@
 			.info { padding-left: 52px; }
 		}
 
+		.item.withNote {
+			.info { display: flex; align-items: center; gap: 0px 20px; }
+
+			.note { position: relative; flex-shrink: 0; width: 20px; height: 20px; background: url('~img/icon/menu/important.svg'); }
+			.note {
+				.noteMessage {
+					display: none; position: absolute; z-index: 2; bottom: 24px; right: 0px; width: 196px; padding: 4px 8px; border-radius: 4px;
+					@include text-small; background-color: var(--color-bg-secondary); color: var(--color-text-inversion);
+				}
+			}
+			.note:hover {
+				.noteMessage { display: block; }
+			}
+		}
+		.item.withNote.withCheckbox {
+			.icon.chk { display: none !important; }
+		}
+
 		.item.withCaption { display: flex; align-items: center; justify-content: space-between; gap: 0px 6px; }
 		.item.withCaption {
 			.iconObject { margin: 0px; }
