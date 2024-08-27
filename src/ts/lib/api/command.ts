@@ -2163,10 +2163,12 @@ export const ChatEditMessage = (objectId: string, messageId: string, message: an
 	dispatcher.request(ChatEditMessage.name, request, callBack);
 };
 
-export const ChatGetMessages = (objectId: string, limit: number, callBack?: (message: any) => void) => {
+export const ChatGetMessages = (objectId: string, beforeOrderId: string, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.GetMessages.Request();
 
 	request.setChatobjectid(objectId);
+	request.setBeforeorderid(beforeOrderId);
+	request.setLimit(limit);
 
 	dispatcher.request(ChatGetMessages.name, request, callBack);
 };

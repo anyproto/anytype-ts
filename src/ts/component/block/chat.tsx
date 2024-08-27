@@ -76,6 +76,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const attachmentList = attachments.concat(files);
 		const subId = this.getSubId();
 		const list = this.getDeps().map(id => S.Detail.get(subId, id));
+		const length = messages.length;
 
 		const Section = (item: any) => {
 			let date = U.Date.dayString(item.createdAt);
@@ -239,18 +240,34 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	loadMessages (clear: boolean, callBack?: () => void) {
 		const rootId = this.getRootId();
-		const cmd = clear ? 'ChatSubscribeLastMessages' : 'ChatGetMessages';
+		const list = this.getMessages();
 
-		C[cmd](rootId, J.Constant.limit.chat.messages, (message: any) => {
-			if (!message.error.code) {
-				S.Chat.set(rootId, message.messages);
-				this.forceUpdate();
+		if (clear) {
+			C.ChatSubscribeLastMessages(rootId, J.Constant.limit.chat.messages, (message: any) => {
+				if (!message.error.code) {
+					S.Chat.set(rootId, message.messages);
+					this.forceUpdate();
+				};
+
+				if (callBack) {
+					callBack();
+				};
+			});
+		} else {
+			if (!list.length) {
+				return;
 			};
 
-			if (callBack) {
-				callBack();
-			};
-		});
+			C.ChatGetMessages(rootId, list[0].orderId, J.Constant.limit.chat.messages, (message: any) => {
+				if (!message.error.code) {
+					S.Chat.prepend(rootId, message.messages);
+				};
+
+				if (callBack) {
+					callBack();
+				};
+			});
+		};
 	};
 
 	getMessages () {

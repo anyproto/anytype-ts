@@ -18,6 +18,14 @@ class ChatStore {
 		this.messageMap.set(rootId, observable(list));
 	};
 
+	prepend (rootId: string, add: I.ChatMessage[]): void {
+		add = add.map(it => new M.ChatMessage(it));
+
+		let list = this.getList(rootId);
+		list = add.concat(list);
+		this.set(rootId, list);
+	};
+
 	add (rootId: string, idx: number, item: I.ChatMessage): void {
 		const list = this.getList(rootId);
 
