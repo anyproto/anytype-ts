@@ -355,7 +355,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onKeyUp (e: any, value: string) {
-		const { relation, recordId, onRecordAdd, getRecordIdx } = this.props;
+		const { block, relation, getView, recordId, groupId, onRecordAdd, getRecordIdx } = this.props;
 
 		if (relation.format == I.RelationType.LongText) {
 			return;
@@ -375,6 +375,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		keyboard.shortcut('escape, enter, shift+enter', e, (pressed) => {
 			e.preventDefault();
+			e.persist();
 
 			this.save(value, () => {
 				S.Menu.closeAll(J.Menu.cell);
@@ -385,7 +386,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				if (pressed == 'enter+shift') {
 					const idx = getRecordIdx(recordId);
 
-					onRecordAdd(e, 0, '', {}, idx+1);
+					onRecordAdd(e, 0, groupId ? groupId : null, {}, idx+1);
 				};
 			});
 

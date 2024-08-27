@@ -696,14 +696,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			if ([ I.ViewType.Calendar ].includes(view.type)) {
 				U.Object.openConfig(object);
 			} else {
-				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
-				const ref = this.refCells.get(id);
-
 				if (U.Object.isNoteLayout(object.layout)) {
 					this.onCellClick(e, 'name', object.id);
-				} else
-				if (ref) {
-					window.setTimeout(() => ref.onClick(e), 15);
+				} else {
+					window.setTimeout(() => {
+						const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
+						const ref = this.refCells.get(id);
+
+						if (ref) {
+							ref.onClick(e)
+						};
+					}, 15);
 				};
 
 				analytics.createObject(object.type, object.layout, this.analyticsRoute(), message.middleTime);
@@ -728,6 +731,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const typeId = this.getTypeId();
 		const type = S.Record.getTypeById(typeId);
+		const view = this.getView();
+
+		if ((view.type == I.ViewType.Board) && !groupId) {
+			groupId = 'empty';
+		};
 
 		if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
 			this.onBookmarkMenu(e, dir, groupId, menuParam);

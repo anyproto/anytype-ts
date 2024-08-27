@@ -34,6 +34,8 @@ const Card = observer(class Card extends React.Component<Props> {
 							key={'board-cell-' + view.id + relation.relationKey}
 							{...this.props}
 							getRecord={() => record}
+							recordId={record.id}
+							groupId={groupId}
 							subId={subId}
 							ref={ref => onRef(ref, Relation.cellId(idPrefix, relation.relationKey, record.id))}
 							relationKey={relation.relationKey}
