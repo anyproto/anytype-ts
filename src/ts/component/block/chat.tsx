@@ -680,11 +680,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const messages = this.getMessages();
 
 		const messagesIntoView = messages.filter(it => {
-			if (!this.messagesMap[it.id]) {
+			const ref = this.messagesMap[it.id];
+
+			if (!ref) {
 				return false;
 			};
 
-			const node = $(this.messagesMap[it.id].node);
+			const node = $(ref.node);
 			if (!node.length) {
 				return false;
 			};

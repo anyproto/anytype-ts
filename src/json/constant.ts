@@ -42,7 +42,7 @@ export default {
 			messages:	 100,
 			attachments: 10,
 			mentions:	 10,
-			text:		 1000,
+			text:		 2000,
 		}
 	},
 
