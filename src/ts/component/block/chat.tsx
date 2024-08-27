@@ -27,7 +27,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	range: I.TextRange = { from: 0, to: 0 };
 	deps: string[] = [];
 	timeoutFilter = 0;
-	messagesMap: any = {};
+	messageRefs: any = {};
 	lastMessageId: string = '';
 	lastMessageOffset: number = 0;
 	editingId: string = '';
@@ -92,7 +92,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 					{(item.list || []).map(item => (
 						<Message
-							ref={ref => this.messagesMap[item.id] = ref}
+							ref={ref => this.messageRefs[item.id] = ref}
 							key={item.id}
 							{...this.props}
 							id={item.id}
@@ -192,23 +192,19 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		this.loadMessages(true, () => {
 			if (!lastId) {
-				return;
-			};
-
-			const ref = this.messagesMap[lastId];
-			if (!ref) {
-				return;
-			};
-
-			const messages = this.getMessages();
-			const length = messages.length;
-
-			if (length && (lastId == messages[length - 1].id)) {
 				this.scrollToBottom();
 				return;
 			};
 
+			const ref = this.messageRefs[lastId];
+			if (!ref) {
+				return;
+			};
+
 			const node = $(ref.node);
+			if (!node.length) {
+				return;
+			};
 
 			this.lastMessageId = lastId;
 			this.lastMessageOffset = node.offset().top;
@@ -694,14 +690,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onScroll (e: any) {
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
+		const node = $(this.node);
 		const container = U.Common.getScrollContainer(isPopup);
-		const top = container.scrollTop() - $('#scrollWrapper').offset().top;
-		const form = $('#formWrapper');
+		const st = container.scrollTop();
+		const form = node.find('#formWrapper');
 		const formPadding = Number(form.css('padding-bottom').replace('px', ''));
 		const viewport = container.outerHeight() - form.height() - formPadding;
-		const st = container.scrollTop();
 		const messages = this.getMessages().filter(it => {
-			const ref = this.messagesMap[it.id];
+			const ref = this.messageRefs[it.id];
 
 			if (!ref) {
 				return false;
@@ -712,8 +708,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				return false;
 			};
 
-			const ot = node.offset().top + node.height();
-			return (ot >= top) && (ot < top + viewport);
+			const ot = node.offset().top + node.outerHeight();
+			return (ot >= st) && (ot < st + viewport);
 		});
 		const length = messages.length;
 
@@ -726,11 +722,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const node = this.messagesMap[last.id]?.node;
+		const el = $(this.messageRefs[last.id]?.node);
+		if (!el || !el.length) {
+			return;
+		};
 
-		if (node && (node.offsetTop > this.lastMessageOffset)) {
+		const { top } = node.offset();
+
+		if (node && (top > this.lastMessageOffset)) {
 			this.lastMessageId = last.id;
-			this.lastMessageOffset = node.offsetTop;
+			this.lastMessageOffset = top;
 
 			Storage.setLastChatMessageId(rootId, last.id);
 		};
@@ -741,12 +742,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	scrollToMessage (id: string) {
-		const el = this.messagesMap[id];
-		if (!el) {
+		const ref = this.messageRefs[id];
+		if (!ref) {
 			return;
 		};
 
-		const node = $(this.messagesMap[id].node);
+		const node = $(ref.node);
 		if (!node.length) {
 			return;
 		};
