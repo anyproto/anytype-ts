@@ -914,7 +914,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	canSend () {
-		return this.getTextValue() || this.state.attachments.length;
+		const { attachments, files } = this.state;
+		return this.getTextValue() || attachments.length || files.length;
 	};
 
 	hasSelection (): boolean {
