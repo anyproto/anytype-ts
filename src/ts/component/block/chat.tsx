@@ -677,9 +677,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const form = $('#formWrapper');
 		const formPadding = Number(form.css('padding-bottom').replace('px', ''));
 		const viewport = container.outerHeight() - form.height() - formPadding;
-		const messages = this.getMessages();
-
-		const messagesIntoView = messages.filter(it => {
+		const st = container.scrollTop();
+		const messages = this.getMessages().filter(it => {
 			const ref = this.messagesMap[it.id];
 
 			if (!ref) {
@@ -694,12 +693,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const ot = node.offset().top + node.height();
 			return (ot >= top) && (ot < top + viewport);
 		});
+		const length = messages.length;
 
-		if (!messagesIntoView.length) {
+		if (!length) {
 			return;
 		};
 
-		const last = messagesIntoView[messagesIntoView.length - 1];
+		const last = messages[length - 1];
 		if (!last) {
 			return;
 		};
@@ -711,6 +711,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.lastMessageOffset = node.offsetTop;
 
 			Storage.setLastChatMessageId(rootId, last.id);
+		};
+
+		if (st <= 0) {
+			this.loadMessages(false);
 		};
 	};
 
