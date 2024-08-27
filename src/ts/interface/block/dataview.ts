@@ -122,9 +122,10 @@ export interface ViewComponent {
 	refCells?: any;
 	recordId?: string;
 	getRecord?(id: string): any;
+	getRecordIdx?(id: string): number;
+	getRecords?(): string[];
 	onRef?(ref: any, id: string): void;
 	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
-	getRecords?(): string[];
 	getCoverObject?(id: string): any;
 	getView?(): View;
 	getSources?(): string[];
@@ -218,6 +219,7 @@ export interface Cell {
 	menuClassNameWrap?: string;
 	recordId?: string;
 	getRecord?(id: string): any;
+	getRecordIdx?(id: string): number;
 	getRecords?(): string[];
 	getView?(): View;
 	onChange?(value: any, callBack?: (message: any) => void): void;

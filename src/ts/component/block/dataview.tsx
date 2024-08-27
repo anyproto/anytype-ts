@@ -45,6 +45,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	timeoutFilter = 0;
 	searchIds = null;
 	filter = '';
+	recordsFootprint: string[] = [];
 
 	constructor (props: Props) {
 		super(props);
@@ -52,6 +53,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.loadData = this.loadData.bind(this);
 		this.getRecords = this.getRecords.bind(this);
 		this.getRecord = this.getRecord.bind(this);
+		this.getRecordIdx = this.getRecordIdx.bind(this);
 		this.getView = this.getView.bind(this);
 		this.getSources = this.getSources.bind(this);
 		this.getKeys = this.getKeys.bind(this);
@@ -159,6 +161,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getTarget: this.getTarget,
 			getSources: this.getSources,
 			getRecords: this.getRecords,
+			getRecordIdx: this.getRecordIdx,
 			getKeys: this.getKeys,
 			getIdPrefix: this.getIdPrefix,
 			getLimit: () => this.getLimit(view.type),
@@ -509,6 +512,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return item;
 	};
 
+	getRecordIdx (id) {
+		return this.recordsFootprint.indexOf(id);
+	};
+
 	getView (viewId?: string): I.View {
 		const { rootId, block } = this.props;
 		return Dataview.getView(rootId, block.id, viewId);
@@ -646,6 +653,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			let records = this.getRecords(groupId);
 
+			if (idx && this.recordsFootprint.length) {
+				records = this.recordsFootprint;
+			};
+
 			const object = message.details;
 			const oldIndex = records.indexOf(message.objectId);
 
@@ -664,6 +675,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					records = arrayMove(records, oldIndex, dir > 0 ? records.length : 0);
 				};
 			};
+
+			this.recordsFootprint = records;
 
 			if (groupId) {
 				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => S.Record.recordsSet(subId, '', records));

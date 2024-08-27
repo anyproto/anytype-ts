@@ -355,7 +355,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onKeyUp (e: any, value: string) {
-		const { relation, recordId, getRecords, onRecordAdd } = this.props;
+		const { relation, recordId, onRecordAdd, getRecordIdx } = this.props;
 
 		if (relation.format == I.RelationType.LongText) {
 			return;
@@ -383,8 +383,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				this.setEditing(false);
 
 				if (pressed == 'enter+shift') {
-					const records = getRecords();
-					const idx = records.indexOf(recordId);
+					const idx = getRecordIdx(recordId);
 
 					onRecordAdd(e, 0, '', {}, idx+1);
 				};
