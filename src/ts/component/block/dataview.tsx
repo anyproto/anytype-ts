@@ -52,7 +52,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.loadData = this.loadData.bind(this);
 		this.getRecords = this.getRecords.bind(this);
 		this.getRecord = this.getRecord.bind(this);
-		this.getRecordIdx = this.getRecordIdx.bind(this);
 		this.getView = this.getView.bind(this);
 		this.getSources = this.getSources.bind(this);
 		this.getKeys = this.getKeys.bind(this);
@@ -160,7 +159,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getTarget: this.getTarget,
 			getSources: this.getSources,
 			getRecords: this.getRecords,
-			getRecordIdx: this.getRecordIdx,
 			getKeys: this.getKeys,
 			getIdPrefix: this.getIdPrefix,
 			getLimit: () => this.getLimit(view.type),
@@ -509,10 +507,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		item.isReadonly = isDeleted || isReadonly;
 		return item;
-	};
-
-	getRecordIdx (id: string): number {
-		return this.getRecords().indexOf(id);//this.recordsFootprint.indexOf(id);
 	};
 
 	getView (viewId?: string): I.View {
