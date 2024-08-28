@@ -29,6 +29,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		this.onLoadMore = this.onLoadMore.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.getCoverObject = this.getCoverObject.bind(this);
 	};
 
 	render () {
@@ -109,7 +110,7 @@ const Column = observer(class Column extends React.Component<Props> {
 								id={item.id}
 								groupId={id}
 								getRecord={() => item}
-								getCoverObject={() => this.getCoverObject(item.id)}
+								getCoverObject={this.getCoverObject}
 							/>
 						))}
 
