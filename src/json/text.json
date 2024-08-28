@@ -901,7 +901,7 @@
 
 	"popupSettingsImportNotionDescription": "Import your Notion files through the Notion API with 3 simple steps",
 	"popupSettingsImportNotionTokenPlaceholder": "Paste your integration token",
-	"popupSettingsImportNotionHowTo": "How to import from Notion",
+	"popupSettingsImportNotionHowTo": "How to import from Notion (see <a href=\"%s\">FAQ</a>)",
 	"popupSettingsImportNotionStepByStepGuide": "Step-by-step guide",
 	"popupSettingsImportNotionIntegrationList11": "Create the integration you need to get Notion files",
 	"popupSettingsImportNotionIntegrationList12": "Settings &amp; members → My connections → Develop or manage integrations → <b><a href=\"https://www.notion.so/my-integrations\">New integration</a></b>",
