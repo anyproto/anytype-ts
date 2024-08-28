@@ -40,7 +40,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 
 		let content = (
-			<div className="itemContent">
+			<div className="cardContent">
 				<ObjectCover object={cover} />
 
 				<div className="inner">

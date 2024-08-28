@@ -226,6 +226,10 @@ class MenuContext extends React.Component<I.Menu> {
 		const { onLinkTo, route } = data;
 		const objectIds = this.getObjectIds();
 
+		if (S.Menu.isAnimating(this.props.id)) {
+			return;
+		};
+
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 		};
