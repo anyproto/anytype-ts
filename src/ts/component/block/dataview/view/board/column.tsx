@@ -34,6 +34,7 @@ const Column = observer(class Column extends React.Component<Props> {
 	render () {
 		const { rootId, block, id, getSubId, getView, getLimit, value, onDragStartColumn, getTarget } = this.props;
 		const view = getView();
+		const { coverRelationKey, hideIcon } = view;
 		const target = getTarget();
 		const subId = getSubId();
 		const items = this.getItems();
@@ -108,6 +109,7 @@ const Column = observer(class Column extends React.Component<Props> {
 								id={item.id}
 								groupId={id}
 								getRecord={() => item}
+								getCoverObject={() => this.getCoverObject(item.id)}
 							/>
 						))}
 
@@ -199,6 +201,20 @@ const Column = observer(class Column extends React.Component<Props> {
 		const { id, getSubId, applyObjectOrder } = this.props;
 
 		return applyObjectOrder(id, U.Common.objectCopy(S.Record.getRecordIds(getSubId(), ''))).map(id => ({ id }));
+	};
+
+	getCoverObject (id: string): any {
+		const { getView, getKeys, getSubId } = this.props;
+		const view = getView();
+
+		if (!view.coverRelationKey) {
+			return null;
+		};
+
+		const subId = getSubId();
+		const record = S.Detail.get(subId, id, getKeys(view.id));
+
+		return Dataview.getCoverObject(subId, record, view.coverRelationKey);
 	};
 
 	onLoadMore () {
