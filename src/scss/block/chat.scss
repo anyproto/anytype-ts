@@ -27,11 +27,13 @@
 			}
 			.attachment {
 				.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 10px; }
-				.icon.remove { 
-					opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; background-size: 20px; 
-					background-image: url('~img/icon/chat/buttons/remove.svg'); 
-				}
 				.info { flex-grow: 1; }
+
+				.icon.remove { 
+					opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; background-size: 8px; 
+					background-image: url('~img/icon/chat/buttons/remove.svg'); background-color: var(--color-bg-primary); border-radius: 50%;
+					box-shadow: 0px 1px 4px rgba(0,0,0,0.2);
+				}
 
 				.name { line-height: 20px; font-weight: 500; @include clamp1; }
 				.descr { @include text-small;  @include clamp2; }

@@ -1,18 +1,3 @@
-<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#filter0_d_13869_11748)">
-        <circle cx="14" cy="13" r="10" fill="white"/>
-    </g>
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.3672 9.23573C11.0555 8.92251 10.549 8.92127 10.2357 9.23297C9.92251 9.54466 9.92127 10.0513 10.233 10.3645L12.8634 13.0078L10.233 15.6511C9.92127 15.9644 9.92251 16.471 10.2357 16.7827C10.549 17.0944 11.0555 17.0931 11.3672 16.7799L13.9922 14.1421L16.6171 16.7799C16.9288 17.0931 17.4354 17.0944 17.7486 16.7827C18.0619 16.471 18.0631 15.9644 17.7514 15.6511L15.121 13.0078L17.7514 10.3645C18.0631 10.0513 18.0619 9.54466 17.7486 9.23297C17.4354 8.92127 16.9288 8.92251 16.6171 9.23573L13.9922 11.8735L11.3672 9.23573Z" fill="#B6B6B6"/>
-    <defs>
-        <filter id="filter0_d_13869_11748" x="0" y="0" width="28" height="28" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
-            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-            <feOffset dy="1"/>
-            <feGaussianBlur stdDeviation="2"/>
-            <feComposite in2="hardAlpha" operator="out"/>
-            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
-            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_13869_11748"/>
-            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_13869_11748" result="shape"/>
-        </filter>
-    </defs>
+<svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.63008 0.235269C6.94239 -0.0773428 7.44998 -0.0785774 7.76381 0.232511C8.07765 0.5436 8.07889 1.04921 7.76658 1.36182L5.13097 4L7.76658 6.63818C8.07889 6.95079 8.07765 7.4564 7.76381 7.76749C7.44998 8.07858 6.94239 8.07734 6.63008 7.76473L4 5.13208L1.36992 7.76473C1.05761 8.07734 0.550025 8.07858 0.236189 7.76749C-0.0776455 7.4564 -0.078885 6.95079 0.233421 6.63818L2.86903 4L0.233421 1.36182C-0.0788849 1.04921 -0.0776455 0.5436 0.23619 0.232511C0.550025 -0.0785774 1.05761 -0.0773428 1.36992 0.235269L4 2.86792L6.63008 0.235269Z" fill="#B6B6B6"/>
 </svg>
