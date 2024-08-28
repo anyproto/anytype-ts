@@ -191,25 +191,27 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 
 		this.loadMessages(true, () => {
-			if (!lastId) {
-				this.scrollToBottom();
-				return;
-			};
+			this.loadDeps(() => {
+				if (!lastId) {
+					this.scrollToBottom();
+					return;
+				};
 
-			const ref = this.messageRefs[lastId];
-			if (!ref) {
-				return;
-			};
+				const ref = this.messageRefs[lastId];
+				if (!ref) {
+					return;
+				};
 
-			const node = $(ref.node);
-			if (!node.length) {
-				return;
-			};
+				const node = $(ref.node);
+				if (!node.length) {
+					return;
+				};
 
-			this.lastMessageId = lastId;
-			this.lastMessageOffset = node.offset().top;
+				this.lastMessageId = lastId;
+				this.lastMessageOffset = node.offset().top;
 
-			raf(() => this.scrollToMessage(lastId));
+				raf(() => this.scrollToMessage(lastId));
+			});
 		});
 	};
 
@@ -554,13 +556,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onContextMenu (e: React.MouseEvent, item: any) {
 		const { account } = S.Auth;
+		const blockId = this.getBlockId();
 
 		if (item.creator != account.id) {
 			return;
 		};
-
-		const { rootId } = this.props;
-		const blockId = this.getBlockId();
 
 		S.Menu.open('select', {
 			element: `#block-${blockId} #item-${item.id} .right`,
