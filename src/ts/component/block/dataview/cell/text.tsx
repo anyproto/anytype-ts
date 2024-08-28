@@ -390,13 +390,6 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 			ret = true;
 		});
-
-		/*
-		if (!ret) {
-			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => this.save(value), J.Constant.delay.keyboard);
-		};
-		*/
 	};
 
 	onKeyUpDate (e: any, value: any) {
