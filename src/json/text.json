@@ -1534,6 +1534,7 @@
 	"menuSyncStatusInfoNetworkTitle": "Anytype network",
 	"menuSyncStatusInfoNetworkMessageSynced": "End-to-end encrypted",
 	"menuSyncStatusInfoNetworkMessageSyncing": "%s %s syncing...",
+	"menuSyncStatusInfoNetworkMessageSyncMightBeSlow": "Sync might be slow",
 
 	"menuSyncStatusInfoNetworkMessageError1": "Storage limit reached",
 	"menuSyncStatusInfoNetworkMessageError2": "Incompatible version",
