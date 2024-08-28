@@ -1,6 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
+	.block.blockChat { @include text-common; }
 	.block.blockChat { 
 		.wrap.isDraggingOver { opacity: 0.5; cursor: copy; }
 
