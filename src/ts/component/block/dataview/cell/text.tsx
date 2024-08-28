@@ -386,7 +386,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				if (pressed == 'enter+shift') {
 					const idx = getRecordIdx(recordId);
 
-					onRecordAdd(e, 0, groupId ? groupId : null, {}, idx + 1);
+					onRecordAdd(e, 0, groupId, {}, idx >= 0 ? idx + 1 : -1);
 				};
 			});
 
