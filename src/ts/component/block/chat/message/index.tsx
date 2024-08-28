@@ -109,7 +109,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 				onContextMenu={onContextMenu}
 			>
 				<div className="side left">
-					<IconObject object={author} size={48} />
+					<IconObject object={author} size={40} />
 				</div>
 				<div className="side right">
 					{!hasReactions ? (

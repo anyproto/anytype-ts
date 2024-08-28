@@ -55,14 +55,14 @@
 			.side.left { flex-shrink: 0; }
 			.side.right { 
 				display: flex; flex-direction: column; padding: 12px 16px; border-radius: 20px; background: rgba(242, 242, 242, 0.5); position: relative; 
-				min-width: 40%;
+				min-width: 50%;
 			}
 
 			.icon.reactionAdd { 
-				width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/block/chat/reaction0.svg');
+				width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/chat/buttons/reaction0.svg');
 				border-radius: 50%; background-position: center 3px; position: absolute; top: 8px; right: 12px; opacity: 0; transition: $transitionAllCommon;
 			}
-			.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/block/chat/reaction1.svg'); }
+			.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
 
 			.author { display: flex; align-items: center; gap: 0px 8px; }
 			.author {
@@ -127,9 +127,9 @@
 
 		.form { padding: 0px 0px 10px 0px; border: 1px solid var(--color-shape-tertiary); background-color: var(--color-bg-primary); border-radius: 12px; position: relative; }
 		.form {
-			.editableWrap { @include text-common; max-height: 352px; overflow: scroll; background-color: transparent; padding: 16px; }
+			.editableWrap { @include text-common; max-height: 352px; overflow: scroll; background-color: transparent; }
 			.editableWrap {
-				.placeholder { padding: inherit; }
+				.editable, .placeholder { padding: 16px; }
 			}
 
 			.attachments { padding: 0px 16px; }
