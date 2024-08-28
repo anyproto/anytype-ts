@@ -373,7 +373,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		let ret = false;
 
-		keyboard.shortcut('escape, enter, shift+enter', e, (pressed) => {
+		keyboard.shortcut('escape, enter, enter+shift', e, (pressed) => {
 			e.preventDefault();
 			e.persist();
 
@@ -386,7 +386,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				if (pressed == 'enter+shift') {
 					const idx = getRecordIdx(recordId);
 
-					onRecordAdd(e, 0, groupId ? groupId : null, {}, idx+1);
+					onRecordAdd(e, 0, groupId ? groupId : null, {}, idx + 1);
 				};
 			});
 

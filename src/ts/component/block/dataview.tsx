@@ -45,7 +45,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	timeoutFilter = 0;
 	searchIds = null;
 	filter = '';
-	recordsFootprint: string[] = [];
 
 	constructor (props: Props) {
 		super(props);
@@ -512,8 +511,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return item;
 	};
 
-	getRecordIdx (id) {
-		return this.recordsFootprint.indexOf(id);
+	getRecordIdx (id: string): number {
+		return this.getRecords().indexOf(id);//this.recordsFootprint.indexOf(id);
 	};
 
 	getView (viewId?: string): I.View {
@@ -653,30 +652,26 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			let records = this.getRecords(groupId);
 
-			if (idx && this.recordsFootprint.length) {
-				records = this.recordsFootprint;
-			};
-
 			const object = message.details;
 			const oldIndex = records.indexOf(message.objectId);
+
+			S.Detail.update(subId, { id: object.id, details: object }, true);
+
+			// If idx present use idx otherwise use dir to add record to the beginning or end of the list
+			if (oldIndex < 0) {
+				if (idx >= 0) {
+					records.splice(idx, 0, message.objectId);
+				} else {
+					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+				};
+			} else {	
+				const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
+				records = arrayMove(records, oldIndex, newIndex);
+			};
 
 			if (isCollection) {
 				C.ObjectCollectionAdd(objectId, [ object.id ]);
 			};
-
-			S.Detail.update(subId, { id: object.id, details: object }, true);
-
-			if (idx) {
-				records.splice(idx, 0, message.objectId);
-			} else {
-				if (oldIndex < 0) {
-					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
-				} else {
-					records = arrayMove(records, oldIndex, dir > 0 ? records.length : 0);
-				};
-			};
-
-			this.recordsFootprint = records;
 
 			if (groupId) {
 				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => S.Record.recordsSet(subId, '', records));

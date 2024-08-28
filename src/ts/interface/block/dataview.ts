@@ -218,6 +218,7 @@ export interface Cell {
 	menuClassName?: string;
 	menuClassNameWrap?: string;
 	recordId?: string;
+	recordIdx?: number;
 	groupId?: string;
 	getRecord?(id: string): any;
 	getRecordIdx?(id: string): number;
