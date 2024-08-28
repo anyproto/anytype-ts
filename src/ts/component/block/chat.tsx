@@ -148,10 +148,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							onMouseUp={this.onMouseUp}
 						/>
 
-						{attachmentList.length ? (
+						{attachments.length || files.length ? (
 							<div className="attachments">
-								{attachmentList.map((item: any, i: number) => (
+								{attachments.map((item: any, i: number) => (
 									<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} />
+								))}
+								{files.map((item: any, i: number) => (
+									<Attachment key={i} object={item} onRemove={() => this.onFileRemove(item.id)} />
 								))}
 							</div>
 						) : ''}
@@ -515,7 +518,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
 
-		this.setState({ files: files.concat(list) });
+		this.setState({ files: files.concat(list) }, () => this.scrollToBottom());
 		keyboard.disableCommonDrop(false);
 	};
 
@@ -787,9 +790,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onAttachmentRemove (id: string) {
-		const { attachments } = this.state;
+		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
+	};
 
-		this.setState({ attachments: attachments.filter(it => it.id != id) });
+	onFileRemove (id: string) {
+		this.setState({ files: this.state.files.filter(it => it.id != id) });
 	};
 
 	updateButtons () {
@@ -802,7 +807,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		switch (type) {
 			case I.ChatButton.Object: {
-				this.setState({ attachments: attachments.concat(item) });
+				this.setState({ attachments: attachments.concat(item) }, () => this.scrollToBottom());
 				break;
 			};
 			case I.ChatButton.Emoji: {
