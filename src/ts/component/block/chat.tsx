@@ -578,7 +578,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							break;
 						};
 						case 'delete': {
-							C.BlockListDelete(rootId, [ item.id ]);
 							break;
 						};
 					};
