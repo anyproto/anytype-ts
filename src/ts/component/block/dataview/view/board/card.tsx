@@ -7,6 +7,7 @@ interface Props extends I.ViewComponent {
 	id: string;
 	groupId: string;
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
+	recordIdx?: number;
 };
 
 const Card = observer(class Card extends React.Component<Props> {
@@ -47,6 +48,8 @@ const Card = observer(class Card extends React.Component<Props> {
 								key={'board-cell-' + view.id + relation.relationKey}
 								{...this.props}
 								getRecord={() => record}
+								recordId={record.id}
+								groupId={groupId}
 								subId={subId}
 								ref={ref => onRef(ref, Relation.cellId(idPrefix, relation.relationKey, record.id))}
 								relationKey={relation.relationKey}

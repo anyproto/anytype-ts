@@ -12,6 +12,7 @@ interface Props extends I.ViewComponent {
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
+	recordIdx?: number;
 };
 
 const Column = observer(class Column extends React.Component<Props> {
@@ -111,6 +112,7 @@ const Column = observer(class Column extends React.Component<Props> {
 								groupId={id}
 								getRecord={() => item}
 								getCoverObject={this.getCoverObject}
+								recordIdx={i}
 							/>
 						))}
 
