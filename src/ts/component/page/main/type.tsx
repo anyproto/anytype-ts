@@ -56,6 +56,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const layout: any = U.Menu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+		const recommendedKeys = recommendedRelations.map(id => S.Record.getRelationById(id)).map(it => it && it.relationKey);
 
 		const allowedObject = object.isInstalled && U.Object.isInPageLayouts(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -213,6 +214,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									rootId={rootId} 
 									columns={columns} 
 									filters={filtersObject} 
+									relationKeys={recommendedKeys}
 								/>
 							</div>
 						</div>

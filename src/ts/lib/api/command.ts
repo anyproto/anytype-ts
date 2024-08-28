@@ -1,6 +1,6 @@
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
-import { I, S, U, J, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
+import { I, S, U, J, Mark, Storage, dispatcher, Encode, Mapper, keyboard } from 'Lib';
 
 const { Rpc, Empty } = Commands;
 
@@ -1329,10 +1329,9 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 
 		// Save last opened object
 		const object = S.Detail.get(objectId, objectId, []);
-		const windowId = U.Common.getCurrentElectronWindowId();
 
-		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
-			Storage.setLastOpened(windowId, { id: object.id, layout: object.layout });
+		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
+			Storage.setLastOpened(U.Common.getCurrentElectronWindowId(), { id: object.id, layout: object.layout });
 		};
 
 		if (callBack) {

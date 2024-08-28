@@ -203,15 +203,20 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		const isBoard = type == I.ViewType.Board;
 		const isCalendar = type == I.ViewType.Calendar;
 		const isGraph = type == I.ViewType.Graph;
+		const coverOption = Relation.getCoverOptions(rootId, blockId).find(it => it.id == coverRelationKey);
 
 		let settings: any[] = [];
 
 		if (isGallery) {
-			const coverOption = Relation.getCoverOptions(rootId, blockId).find(it => it.id == coverRelationKey);
 			const sizeOption = Relation.getSizeOptions().find(it => it.id == cardSize);
 
 			settings = settings.concat([
 				{ id: 'cardSize', name: translate('menuDataviewViewEditCardSize'), caption: (sizeOption ? sizeOption.name : translate('commonSelect')), arrow: true },
+			]);
+		};
+
+		if (isBoard || isGallery) {
+			settings = settings.concat([
 				{ id: 'coverRelationKey', name: translate('menuDataviewViewEditCover'), caption: (coverOption ? coverOption.name : translate('commonSelect')), arrow: true },
 				{ 
 					id: 'coverFit', name: translate('menuDataviewViewEditFitMedia'), withSwitch: true, switchValue: coverFit,
