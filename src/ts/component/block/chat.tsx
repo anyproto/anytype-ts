@@ -679,6 +679,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onEditMessage = (message: I.ChatMessage) => {
 		const { text, marks } = message.content;
 		const l = text.length;
+		const attachments = (message.attachments || []).map(it => it.target).map(id => S.Detail.get(this.getSubId(), id));
 
 		this.marks = marks;
 		this.range = { from: l, to: l };
@@ -686,7 +687,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.refEditable.setValue(Mark.toHtml(text, this.marks));
 		this.renderMarkup();
 
-		raf(() => this.refEditable.setRange(this.range));
+		this.setState({ attachments }, () => {
+			this.refEditable.setRange(this.range);
+		});
 	};
 
 	onScroll (e: any) {

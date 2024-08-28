@@ -67,6 +67,12 @@
 			}
 			.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
 
+			.attachments {
+				.attachment {
+					.icon.remove { display: none; }
+				}
+			}
+
 			.author { display: flex; align-items: center; gap: 0px 8px; }
 			.author {
 				.name { font-weight: 500; }
