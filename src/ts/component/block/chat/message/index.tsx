@@ -81,10 +81,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 			const authors = item.authors || [];
 			const length = authors.length;
 			const author = length ? U.Space.getParticipant(U.Space.getParticipantId(space, authors[0])) : '';
+			const isSelf = authors.includes(account.id);
+			const cn = [ 'reaction', (isSelf ? 'isSelf' : '') ];
 
 			return (
 				<div 
-					className="reaction" 
+					className={cn.join(' ')}
 					onClick={() => this.onReactionSelect(item.icon)}
 					onMouseEnter={e => this.onReactionEnter(e, authors)}
 					onMouseLeave={this.onReactionLeave}

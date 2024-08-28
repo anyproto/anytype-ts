@@ -56,7 +56,7 @@ class ChatMessage implements I.ChatMessage {
 	replyToMessageId = '';
 	content: I.ChatMessageContent = null;
 	attachments: I.ChatMessageAttachment[] = [];
-	reactions = {};
+	reactions = [];
 
 	constructor (props: I.ChatMessage) {
 
@@ -67,7 +67,16 @@ class ChatMessage implements I.ChatMessage {
 		this.replyToMessageId = String(props.replyToMessageId || '');
 		this.content = new ChatMessageContent(props.content || {} as ChatMessageContent);
 		this.attachments = Array.isArray(props.attachments) ? props.attachments : [];
-		this.reactions = props.reactions || {};
+		this.reactions = props.reactions || [];
+
+		this.reactions.sort((c1, c2) => {
+			const l1 = c1.authors.length;
+			const l2 = c2.authors.length;
+
+			if (l1 > l2) return -1;
+			if (l1 < l2) return 1;
+			return 0;
+		});
 
 		this.attachments = this.attachments.map(it => new ChatMessageAttachment(it));
 

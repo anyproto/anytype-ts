@@ -89,6 +89,10 @@
 					.count { min-width: 18px; text-align: center; }
 				}
 
+				.reaction.isSelf {
+					box-shadow: 0px 0px 0px 1px inset var(--color-system-accent-125); background-color: var(--color-system-accent-25);
+				}
+
 				.icon.reactionAdd { position: static; background-color: var(--color-shape-highlight-medium); flex-shrink: 0; opacity: 1; }
 				.icon.reactionAdd:hover { background-color: var(--color-shape-highlight-dark); }
 			}
