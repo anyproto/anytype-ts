@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Filter, Select, Icon, IconObject, Button, ObjectName, ObjectDescription, ObjectType } from 'Component';
-import { I, U, J, S, translate, Storage } from 'Lib';
+import { I, U, J, S, translate, Storage, sidebar } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -190,6 +190,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			this.sortType = sort.type;
 		};
 
+		this.rebind();
 		this.load(true);
 		this.refSelect.setValue(this.type);
 	};
@@ -208,6 +209,24 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	componentWillUnmount(): void {
 		window.clearTimeout(this.timeoutFilter);
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).off('mousedown.sidebarContainerObject');
+	};
+
+	rebind () {
+		this.unbind();
+
+		$(window).on('mousedown.sidebarContainerObject', (e: any) => {
+			if (
+				!$(e.target).parents(`#containerObject`).length && 
+				!$(e.target).parents(`.menus`).length
+			) {
+				sidebar.objectContainerToggle();
+			};
+		});
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
