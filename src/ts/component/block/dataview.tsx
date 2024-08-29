@@ -591,7 +591,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return J.Constant.templateId.blank;
 	};
 
-	recordCreate (e: any, template: any, dir: number, groupId?: string, idx?: number) {
+	recordCreate (e: any, template: any, details, dir: number, groupId?: string, idx?: number) {
 		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const subId = this.getSubId(groupId);
@@ -602,9 +602,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const details = this.getDetails(groupId);
+		const newDetails = Object.assign(this.getDetails(groupId), details || {});
 		const flags: I.ObjectFlag[] = [];
 		
+		console.log(newDetails);
+
 		let typeId = '';
 		let templateId = '';
 
@@ -637,7 +639,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.creating = true;
 
-		C.ObjectCreate(details, flags, templateId, type.uniqueKey, S.Common.space, (message: any) => {
+		C.ObjectCreate(newDetails, flags, templateId, type.uniqueKey, S.Common.space, (message: any) => {
 			this.creating = false;
 
 			if (message.error.code) {
@@ -718,6 +720,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			e.persist();
 		};
 
+		const { rootId, block } = this.props;
+		const objectId = this.getObjectId();
 		const typeId = this.getTypeId();
 		const type = S.Record.getTypeById(typeId);
 		const view = this.getView();
@@ -726,10 +730,35 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			groupId = 'empty';
 		};
 
-		if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
-			this.onBookmarkMenu(e, dir, groupId, menuParam);
+		const cb = (details: any) => {
+			if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
+				this.onBookmarkMenu(e, dir, groupId, menuParam);
+			} else {
+				this.recordCreate(e, { id: this.getDefaultTemplateId() }, details, dir, groupId, idx);
+			};
+		};
+
+		if (this.isCollection()) {
+			const addParam = { onClick: cb };
+
+			S.Menu.open('searchObject', {
+				element: $(e.currentTarget),
+				horizontal: I.MenuDirection.Center,
+				data: {
+					rootId,
+					blockId: block.id,
+					blockIds: [ block.id ],
+					value: [],
+					canAdd: true,
+					filters: [],
+					addParam,
+					onSelect: (item: any) => {
+						C.ObjectCollectionAdd(objectId, [ item.id ]);
+					},
+				}
+			});
 		} else {
-			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId, idx);
+			cb({});
 		};
 	};
 
@@ -754,8 +783,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					if (this.isCollection()) {
 						C.ObjectCollectionAdd(objectId, [ bookmark.id ]);
 					};
-
-					
 				}
 			},
 			...param,
@@ -820,7 +847,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					if (item.id == J.Constant.templateId.new) {
 						this.onTemplateAdd(item.targetObjectType);
 					} else {
-						this.recordCreate(e, item, dir);
+						this.recordCreate(e, item, {}, dir);
 						Dataview.viewUpdate(rootId, block.id, view.id, { defaultTemplateId: item.id });
 
 						menuContext?.close();
