@@ -535,7 +535,6 @@
 	"blockTextTableOfContents": "Create a Table of Contents",
 	"blockTextSet": "Add existing or create new Inline Set to this Object",
 	"blockTextCollection": "Add inline Collection of Objects with different properties",
-	"blockTextChat": "...",
 	"blockTextToggleEmpty": "Empty toggle. Click or drop Block inside",
 	"blockTextWrap": "Wrap",
 	"blockTextUnwrap": "Unwrap",
