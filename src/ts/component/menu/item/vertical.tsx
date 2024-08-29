@@ -146,6 +146,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 					>
 						{iconMainElement}
 						<div className="name">{name}</div>
+						{iconSideElement}
 					</div>
 					{additional}
 				</React.Fragment>
@@ -163,7 +164,6 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				style={style}
 			>
 				{content}
-				{iconSideElement}
 			</div>
 		);
     };
