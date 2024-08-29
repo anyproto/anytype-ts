@@ -582,8 +582,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		const rootId = this.getRootId();
-		const { files } = this.state;
+		const files = (this.state.files || []).filter(it => it.layout == I.ObjectLayout.File);
+		const bookmarks = (this.state.files || []).filter(it => it.layout == I.ObjectLayout.Bookmark);
 		const fl = files.length;
+		const bl = bookmarks.length;
 		const attachments = (this.state.attachments || []).map(it => ({ target: it.id, type: I.ChatAttachmentType.Link }));
 
 		const clear = () => {
@@ -642,11 +644,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 		};
 
-		if (fl) {
-			let n = 0;
+		const uploadFiles = (callBack: () => void) => {
+			if (!fl) {
+				callBack();
+				return;
+			};
 
-			for (const file of files) {
-				C.FileUpload(S.Common.space, '', file.path, I.FileType.None, {}, (message: any) => {
+			let n = 0;
+			for (const item of files) {
+				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, (message: any) => {
 					n++;
 
 					if (message.objectId) {
@@ -658,9 +664,31 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					};
 				});
 			};
-		} else {
-			callBack();
 		};
+
+		const fetchBookmarks = (callBack: () => void) => {
+			if (!bl) {
+				callBack();
+				return;
+			};
+
+			let n = 0;
+			for (const item of bookmarks) {
+				C.ObjectCreateFromUrl({ source: item.source }, S.Common.space, J.Constant.typeKey.bookmark, item.source, true, (message: any) => {
+					n++;
+
+					if (message.objectId) {
+						attachments.push({ target: message.objectId, type: I.ChatAttachmentType.Link });
+					};
+
+					if (n == bl) {
+						callBack();
+					};
+				});
+			};
+		};
+
+		uploadFiles(() => fetchBookmarks(callBack));
 	};
 
 	onEditMessage = (message: I.ChatMessage) => {
@@ -785,6 +813,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				this.setState({ attachments: attachments.concat(item) }, () => this.scrollToBottom());
 				break;
 			};
+
 			case I.ChatButton.Emoji: {
 				const to = range.from + 1;
 
@@ -810,11 +839,36 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onTextButtonToggle (type: I.MarkType, param: string) {
 		const { from, to } = this.range;
+		const { attachments, files } = this.state;
 		const value = this.getTextValue();
 
 		this.marks = Mark.toggle(this.marks, { type, param, range: { from, to } });
 		this.refEditable.setValue(Mark.toHtml(value, this.marks));
 		this.refEditable.setRange({ from, to });
+
+		switch (type) {
+			case I.MarkType.Link: {
+				const id = sha1(param);
+				if (!files.find(it => it.id == id)) {
+					files.push({
+						id,
+						name: param,
+						layout: I.ObjectLayout.Bookmark,
+						source: param,
+					});
+					this.setState({ files });
+				};
+				break;
+			};
+
+			case I.MarkType.Object: {
+				U.Object.getById(param, (object: any) => {
+					attachments.push(object);
+					this.setState({ attachments	});
+				});
+				break;
+			};
+		};
 
 		this.updateButtons();
 		this.renderMarkup();

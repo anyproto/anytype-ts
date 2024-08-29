@@ -122,7 +122,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	};
 
 	onTextButton (e: React.MouseEvent, type: I.MarkType, param: string) {
-		const { rootId, blockId, value, onTextButtonToggle, getMarksAndRange } = this.props;
+		const { rootId, blockId, onTextButtonToggle, getMarksAndRange } = this.props;
 		const { marks, range } = getMarksAndRange();
 		const { from, to } = range;
 		const mark = Mark.getInRange(marks, type, { from, to });
@@ -149,14 +149,14 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			};
 
 			case I.MarkType.Link: {
+				menuId = 'blockLink';
+
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: mark?.param,
 					type: mark?.type,
 					skipIds: [ rootId ],
 					onChange: onTextButtonToggle,
 				});
-
-				menuId = 'blockLink';
 				break;
 			};
 

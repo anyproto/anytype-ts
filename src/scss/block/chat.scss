@@ -62,10 +62,10 @@
 			}
 
 			.icon.reactionAdd { 
-				width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/chat/buttons/reaction0.svg');
-				border-radius: 50%; background-position: center 3px; position: absolute; top: 8px; right: 12px; opacity: 0; transition: $transitionAllCommon;
+				width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/chat/buttons/reaction.svg');
+				border-radius: 50%; background-position: center; position: absolute; top: 8px; right: 12px; opacity: 0; transition: $transitionAllCommon;
 			}
-			.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
+			.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-color: var(--color-shape-highlight-medium); }
 
 			.attachments {
 				.attachment {
