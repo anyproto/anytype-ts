@@ -863,8 +863,8 @@
 	"popupSettingsOnboardingLocalOnlyWarningConfirm": "Yes, I understand",
 	"popupSettingsOnboardingLocalOnlyNote": "This is an experimental mode.<br/>Use at your own risk.",
 	"popupSettingsOnboardingLocalOnlyConfirmText": "Local-only mode is an experimental feature and does not provide security benefits. Please use it at your own risk, as data loss may occur.",
-	"popupSettingsOnboardingLocalOnlyConfirmConfirm": "I'm feeling lucky",
-	"popupSettingsOnboardingLocalOnlyConfirmCancel": "I’ll stay safe",
+	"popupSettingsOnboardingLocalOnlyConfirmConfirm": "Yes, I accept risks",
+	"popupSettingsOnboardingLocalOnlyConfirmCancel": "No, don’t use it",
 
 
 	"popupSettingsDataLocalFiles": "Local files",
