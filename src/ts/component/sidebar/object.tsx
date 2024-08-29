@@ -25,7 +25,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	offset = 0;
 	refSelect: any = null;
 	refList: any = null;
-	sort = '';
+	sortId = '';
+	sortType: I.SortType = I.SortType.Asc;
 	type: I.ObjectContainerType = I.ObjectContainerType.Object;
 	searchIds: string[] = null;
 	filter = '';
@@ -189,8 +190,14 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	componentDidMount () {
 		this.type = Storage.get(KEY_TYPE) || I.ObjectContainerType.Object;
-		this.load(true);
 
+		const sort = Storage.get(this.getSortKey(this.type));
+		if (sort) {
+			this.sortId = sort.id;
+			this.sortType = sort.type;
+		};
+
+		this.load(true);
 		this.refSelect.setValue(this.type);
 	};
 
@@ -211,15 +218,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const option = U.Menu.getObjectContainerSortOptions(this.type).find(it => it.id == this.sort);
-
 		let sorts: I.Sort[] = [];
 		let filters: I.Filter[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Participant },
 		];
 
-		if (this.sort && option) {
-			sorts.push({ type: option.type, relationKey: option.relationKey });
+		if (this.sortId) {
+			sorts.push({ type: this.sortType, relationKey: this.sortId });
 		} else {
 			sorts = sorts.concat([
 				{ type: I.SortType.Desc, relationKey: 'createdDate' },
@@ -312,7 +317,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onSort (e: any) {
-		const options = U.Menu.getObjectContainerSortOptions(this.type);
+		const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType);
+
+		console.log(this.sortId, this.sortType, options);
 
 		S.Menu.open('select', {
 			element: '#sidebar #containerObject #button-object-sort',
@@ -322,12 +329,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			classNameWrap: 'fromSidebar',
 			data: {
 				options,
-				value: this.sort,
+				value: this.sortId,
 				onSelect: (e: any, item: any) => {
-					this.sort = item.id;
+					this.sortId = item.id;
+					this.sortType = item.type;
 					this.load(true);
 
-					Storage.set(this.getSortKey(this.type), item.id);
+					Storage.set(this.getSortKey(this.type), { id: item.id, type: item.type });
 				},
 			}
 		});

@@ -1765,6 +1765,17 @@
 	"sidebarMenuSidebar": "Only widgets",
 	"sidebarMenuFocus": "Focus mode",
 
+	"sidebarObjectTypeObject": "Objects",
+	"sidebarObjectTypeType": "Object Types",
+	"sidebarObjectTypeFile": "Files",
+	"sidebarObjectTypeMedia": "Media",
+	"sidebarObjectTypeBookmark": "Bookmarks",
+	"sidebarObjectTypeRelation": "Relations",
+	"sidebarObjectTypeOrphan": "Only orphans",
+
+	"sidebarObjectSortCreated": "Date created",
+	"sidebarObjectSortUpdated": "Date updated",
+
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",
 
@@ -2139,14 +2150,6 @@
 	"networkMode1Title": "Local-only",
 	"networkMode1Text": "Don't back up; sync within local network",
 	"networkMode2Title": "Self-hosted",
-	"networkMode2Text": "Back up to your self-hosted network",
-
-	"sidebarObjectTypeObject": "Objects",
-	"sidebarObjectTypeType": "Object Types",
-	"sidebarObjectTypeFile": "Files",
-	"sidebarObjectTypeMedia": "Media",
-	"sidebarObjectTypeBookmark": "Bookmarks",
-	"sidebarObjectTypeRelation": "Relations",
-	"sidebarObjectTypeOrphan": "Only orphans"
+	"networkMode2Text": "Back up to your self-hosted network"
 
 }
