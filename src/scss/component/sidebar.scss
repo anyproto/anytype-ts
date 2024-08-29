@@ -134,21 +134,22 @@
 	}
 
 	> #containerObject { 
-		background-color: var(--color-bg-primary); border-right: 1px solid var(--color-shape-secondary); display: flex; flex-direction: column;
+		background-color: var(--color-bg-primary); border-right: 1px solid var(--color-shape-secondary); display: flex; flex-direction: column; width: 336px;
 	}
 	> #containerObject {
 		> .head { padding: 12px 0px 0px 0px; display: flex; flex-direction: column; gap: 8px 0px; overflow: hidden; }
 		> .head {
-			.title { @include text-paragraph; font-weight: 600; padding: 0px 16px; }
+			.title { @include text-paragraph; font-weight: 600; padding: 0px 16px 0px 11px; }
 
 			.sides { display: flex; flex-direction: row; gap: 0px 8px; }
 			.sides {
 				.side.left { flex-grow: 1; }
 				.side.right { flex-shrink: 0; }
+				.side.right:empty { display: none; }
 			}
 
-			.sides.sidesSort { padding: 0px 10px; }
-			.sides.sidesFilter { padding: 0px 16px; }
+			.sides.sidesSort { padding: 0px 10px 0px 5px; }
+			.sides.sidesFilter { padding: 0px 16px 0px 11px; }
 
 			.icon.sort { width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/store/sort.svg'); border-radius: 6px; }
 			.icon.sort:hover, .icon.sort.hover { background-color: var(--color-shape-highlight-medium); }
@@ -169,7 +170,7 @@
 
 		> .body { flex-grow: 1; overflow: hidden; }
 		> .body {
-			.ReactVirtualized__List { padding: 8px 8px 12px 8px; }
+			.ReactVirtualized__List { padding: 8px 8px 12px 3px; overscroll-behavior: none; }
 
 			.items { height: 100%; }
 

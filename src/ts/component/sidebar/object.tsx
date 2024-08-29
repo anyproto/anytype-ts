@@ -38,12 +38,14 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.onSwitchType = this.onSwitchType.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
     render() {
 		const { isLoading } = this.state;
 		const items = this.getItems();
+		const isAllowedObject = this.isAllowedObject();
 		const typeOptions = [
 			{ id: I.ObjectContainerType.Object, name: translate('sidebarObjectTypeObject') },
 			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
@@ -141,7 +143,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 							/>
 						</div>
 						<div className="side right">
-							<Button color="blank" className="c28" text={translate('commonNew')} />
+							{isAllowedObject ? <Button color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
 						</div>
 					</div>
 				</div>
@@ -329,6 +331,18 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				},
 			}
 		});
+	};
+
+	onAdd () {
+	};
+
+	isAllowedObject (): boolean {
+		const canWrite = U.Space.canMyParticipantWrite();
+
+		return canWrite && ![ 
+			I.ObjectContainerType.File, 
+			I.ObjectContainerType.Media, 
+		].includes(this.type);
 	};
 
 	onSwitchType (id: string) {
