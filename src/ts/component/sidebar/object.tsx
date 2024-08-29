@@ -3,7 +3,7 @@ import raf from 'raf';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Filter, Select, Icon, IconObject, Button, ObjectName, ObjectDescription } from 'Component';
+import { Title, Filter, Select, Icon, IconObject, Button, ObjectName, ObjectDescription, ObjectType } from 'Component';
 import { I, U, J, S, translate, Storage } from 'Lib';
 
 interface State {
@@ -60,6 +60,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				return null;
 			};
 
+			const type = S.Record.getTypeById(item.type);
+
 			let iconSmall = null;
 			let iconLarge = null;
 
@@ -90,7 +92,12 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 								{iconSmall}
 								<ObjectName object={item} />
 							</div>
-							<ObjectDescription object={item} />
+							<div className="descrWrap">
+								<div className="type">
+									<ObjectType object={type} />
+								</div>
+								<ObjectDescription object={item} />
+							</div>
 						</div>
 					</div>
 				</CellMeasurer>

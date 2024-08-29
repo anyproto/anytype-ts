@@ -178,23 +178,43 @@
 				.iconObject { flex-shrink: 0; border-radius: 6px; }
 				.iconObject.c48:not(.isTask) { background-color: var(--color-shape-tertiary); }
 
-				.info { width: calc(100% - 60px); display: flex; flex-direction: column; gap: 2px 0px; }
+				.info { width: 100%; display: flex; flex-direction: column; gap: 2px 0px; }
 				.name { @include text-overflow-nw; width: 100%; }
-				.descr { @include text-overflow-nw; width: 100%; @include text-small; color: var(--color-text-secondary); }
-				.descr:empty { display: none; }
+
+				.descrWrap { 
+					display: flex; @include text-overflow-nw; width: 100%; @include text-small; color: var(--color-text-secondary); gap: 0px 14px; 
+					align-items: center;
+				}
+				.descrWrap {
+					.type { max-width: 40%; @include text-overflow-nw; flex-shrink: 0; }
+
+					.descr { position: relative; }
+					.descr::before { 
+						content: ''; width: 2px; height: 2px; border-radius: 50%; background-color: var(--color-text-secondary); display: block;
+						position: absolute; left: -8px; top: 50%; margin-top: -1px;
+					}
+					.descr:empty { display: none; }
+				}
+			}
+
+			.item.withIcon {
+				.info { width: calc(100% - 60px); }
 			}
 
 			.item.isType, .item.isRelation { gap: 0px; }
 			.item.isType, .item.isRelation {
 				.info { width: calc(100% - 26px); }
 				.nameWrap { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+				.descrWrap {
+					.type, .descr::before { display: none; }
+				}
 			}
 
 			.item.isType.withIcon {
-				.descr { padding-left: 26px; }
+				.descrWrap { padding-left: 26px; }
 			}
 			.item.isRelation.withIcon {
-				.descr { padding-left: 28px; }
+				.descrWrap { padding-left: 28px; }
 			}
 
 			.item::before {
