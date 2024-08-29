@@ -27,6 +27,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	refList: any = null;
 	sortId = '';
 	sortType: I.SortType = I.SortType.Asc;
+	orphan = false;
 	type: I.ObjectContainerType = I.ObjectContainerType.Object;
 	searchIds: string[] = null;
 	filter = '';
@@ -47,15 +48,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const { isLoading } = this.state;
 		const items = this.getItems();
 		const isAllowedObject = this.isAllowedObject();
-		const typeOptions = [
-			{ id: I.ObjectContainerType.Object, name: translate('sidebarObjectTypeObject') },
-			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
-			{ id: I.ObjectContainerType.Media, name: translate('sidebarObjectTypeMedia') },
-			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
-			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
-			//{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
-			{ id: I.ObjectContainerType.Orphan, name: translate('sidebarObjectTypeOrphan') },
-		];
+		const typeOptions = this.getTypeOptions();
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -120,7 +113,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 							<Select 
 								id="object-select-type" 
 								ref={ref => this.refSelect = ref}
-								value={this.type}
+								value=""
 								options={typeOptions} 
 								onChange={this.onSwitchType}
 								menuParam={{
@@ -269,14 +262,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation });
 				break;
 			};
+		};
 
-			case I.ObjectContainerType.Orphan: {
-				filters = filters.concat([
-					{ relationKey: 'links', condition: I.FilterCondition.Empty, value: null },
-					{ relationKey: 'backlinks', condition: I.FilterCondition.Empty, value: null }
-				]);
-				break;
-			};
+		if (this.orphan) {
+			filters = filters.concat([
+				{ relationKey: 'links', condition: I.FilterCondition.Empty, value: null },
+				{ relationKey: 'backlinks', condition: I.FilterCondition.Empty, value: null },
+			]);
 		};
 
 		if (clear) {
@@ -319,8 +311,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onSort (e: any) {
 		const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType);
 
-		console.log(this.sortId, this.sortType, options);
-
 		S.Menu.open('select', {
 			element: '#sidebar #containerObject #button-object-sort',
 			horizontal: I.MenuDirection.Right,
@@ -354,10 +344,33 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onSwitchType (id: string) {
-		this.type = id as I.ObjectContainerType;
-		this.load(true);
+		if (id == I.ObjectContainerType.Orphan) {
+			this.orphan = !this.orphan;
+		} else {
+			this.type = id as I.ObjectContainerType;
+			Storage.set(KEY_TYPE, this.type);
+		};
 
-		Storage.set(KEY_TYPE, this.type);
+		this.refSelect.setOptions(this.getTypeOptions());
+		this.refSelect.setValue(this.type);
+		this.load(true);
+	};
+
+	getTypeOptions () {
+		return ([
+			{ id: I.ObjectContainerType.Object, name: translate('sidebarObjectTypeObject') },
+			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
+			{ id: I.ObjectContainerType.Media, name: translate('sidebarObjectTypeMedia') },
+			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
+			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
+			//{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
+			{ id: I.ObjectContainerType.Orphan, icon: `checkbox c${Number(this.orphan)}`, name: translate('sidebarObjectTypeOrphan') },
+		] as any[]).map(it => {
+			if (it.id != I.ObjectContainerType.Orphan) {
+				it.className = 'weightMedium';
+			};
+			return it;
+		});
 	};
 
 	onFilterChange (v: string) {

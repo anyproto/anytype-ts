@@ -1771,7 +1771,7 @@
 	"sidebarObjectTypeMedia": "Media",
 	"sidebarObjectTypeBookmark": "Bookmarks",
 	"sidebarObjectTypeRelation": "Relations",
-	"sidebarObjectTypeOrphan": "Only orphans",
+	"sidebarObjectTypeOrphan": "Only unlinked",
 
 	"sidebarObjectSortCreated": "Date created",
 	"sidebarObjectSortUpdated": "Date updated",

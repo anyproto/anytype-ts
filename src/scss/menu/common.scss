@@ -117,7 +117,7 @@
 			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
 			.icon.delete:hover, .icon.more:hover { background-color: var(--color-shape-highlight-medium); }
 			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
-			.icon.chk { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/checkbox.svg'); }
+			.icon.chk { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/chk.svg'); }
 			.icon.sortArrow { width: 20px; height: 20px; background-size: 10px 11px; margin: 0px; background-image: url('~img/icon/menu/sortArrow.svg'); }
 			.icon.sortArrow.c1 { transform: rotateZ(180deg); }
 
@@ -137,6 +137,8 @@
 
 			.highlightMark { top: 50%; margin-top: -5px; right: 14px; }
 		}
+		.item.sizeSmall { @include text-small; }
+		.item.weightMedium { font-weight: 500; }
 
 		.item.empty { cursor: default; }
 
