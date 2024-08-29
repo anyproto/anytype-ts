@@ -733,7 +733,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `ctrl+shift+/` },
 		];
 		const twinePairs = {
-			'[': ']',
 			'{': '}',
 			'(': ')',
 			'`':'`',

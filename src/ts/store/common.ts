@@ -146,6 +146,7 @@ class CommonStore {
     get config (): any {
 		const config = window.AnytypeGlobalConfig || this.configObj || {};
 
+		config.languages = config.languages || [];
 		config.debug = config.debug || {};
 		config.flagsMw = config.flagsMw || {};
 

@@ -6,6 +6,7 @@ import { I, S, U, Relation, keyboard } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	style?: any;
+	recordIdx?: number;
 };
 
 const Card = observer(class Card extends React.Component<Props> {
@@ -40,7 +41,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 
 		let content = (
-			<div className="itemContent">
+			<div className="cardContent">
 				<ObjectCover object={cover} />
 
 				<div className="inner">
