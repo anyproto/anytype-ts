@@ -33,19 +33,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
     render() {
 		const { showVault, showObject } = S.Common;
         const cn = [ 'sidebar' ];
-		const space = U.Space.getSpaceview();
 		const cmd = keyboard.cmdSymbol();
-		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active, I.ParticipantStatus.Joining, I.ParticipantStatus.Removing ]);
-		const memberCnt = participants.filter(it => it.isActive).length;
-
-		let status = '';
-		if (space && !space._empty_) {
-			if (space.isShared) {
-				status = U.Common.sprintf('%d %s', memberCnt, U.Common.plural(memberCnt, translate('pluralMember')));
-			} else {
-				status = translate(`spaceAccessType${space.spaceAccessType}`);
-			};
-		};
 
         return (
 			<React.Fragment>

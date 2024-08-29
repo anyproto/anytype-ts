@@ -52,12 +52,18 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 	};
 
 	getItems () {
-		return [
-			{ id: 'member', name: 'Members' },
-			{ id: 'all', name: 'All content' },
+		const space = U.Space.getSpaceview();
+		const ret = [
+			{ id: 'all', name: translate('widgetButtonAllContent') },
 			{ id: 'store', name: translate('commonLibrary') },
 			{ id: 'bin', name: translate('commonBin') },
 		];
+
+		if (!space.isPersonal) {
+			ret.unshift({ id: 'member', name: translate('commonMembers') });
+		};
+
+		return ret;
 	};
 
 	onClick (e: any, item: any) {
