@@ -15,7 +15,7 @@ class ChatStore {
 
 	set (rootId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));
-		this.messageMap.set(rootId, observable(list));
+		this.messageMap.set(rootId, observable.array(list));
 	};
 
 	prepend (rootId: string, add: I.ChatMessage[]): void {
@@ -23,7 +23,7 @@ class ChatStore {
 
 		let list = this.getList(rootId);
 		list = add.concat(list);
-		this.set(rootId, list);
+		this.set(rootId, observable.array(list));
 	};
 
 	add (rootId: string, idx: number, item: I.ChatMessage): void {
@@ -44,6 +44,8 @@ class ChatStore {
 
 	delete (rootId: string, id: string) {
 		const list = this.getList(rootId).filter(it => it.id != id);
+
+		console.log('delete', rootId, id, list);
 
 		this.set(rootId, list);
 	};

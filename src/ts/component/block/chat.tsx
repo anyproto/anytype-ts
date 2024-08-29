@@ -29,7 +29,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	timeoutFilter = 0;
 	messageRefs: any = {};
 	lastMessageId: string = '';
-	lastMessageOffset: number = 0;
 	editingId: string = '';
 	state = {
 		threadId: '',
@@ -73,9 +72,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const value = this.getTextValue();
 		const messages = this.getMessages();
 		const sections = this.getSections();
-		const attachmentList = attachments.concat(files);
 		const subId = this.getSubId();
-		const list = this.getDeps().map(id => S.Detail.get(subId, id));
+		const deps = this.getDeps().map(id => S.Detail.get(subId, id, []));
 		const length = messages.length;
 
 		const Section = (item: any) => {
@@ -195,25 +193,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		this.loadMessages(true, () => {
 			this.loadDeps(() => {
-				if (!lastId) {
+				if (lastId) {
+					this.lastMessageId = lastId;
+					this.scrollToMessage(lastId);
+				} else {
 					this.scrollToBottom();
-					return;
 				};
-
-				const ref = this.messageRefs[lastId];
-				if (!ref) {
-					return;
-				};
-
-				const node = $(ref.node);
-				if (!node.length) {
-					return;
-				};
-
-				this.lastMessageId = lastId;
-				this.lastMessageOffset = node.offset().top;
-
-				raf(() => this.scrollToMessage(lastId));
 			});
 		});
 	};
@@ -697,15 +682,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onScroll (e: any) {
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const node = $(this.node);
 		const container = U.Common.getScrollContainer(isPopup);
 		const st = container.scrollTop();
-		const form = node.find('#formWrapper');
-		const formPadding = Number(form.css('padding-bottom').replace('px', ''));
-		const viewport = container.outerHeight() - form.height() - formPadding;
-		const messages = this.getMessages().filter(it => {
-			const ref = this.messageRefs[it.id];
+		const co = isPopup ? container.offset().top : 0;
+		const ch = container.outerHeight();
+		const messages = this.getMessages();
 
+		let lastId = '';
+
+		messages.forEach(it => {
+			const ref = this.messageRefs[it.id];
 			if (!ref) {
 				return false;
 			};
@@ -715,32 +701,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				return false;
 			};
 
-			const ot = node.offset().top + node.outerHeight();
-			return (ot >= st) && (ot < st + viewport);
+			if (st >= node.offset().top - co - ch) {
+				lastId = it.id;
+			};
 		});
-		const length = messages.length;
 
-		if (!length) {
-			return;
-		};
-
-		const last = messages[length - 1];
-		if (!last) {
-			return;
-		};
-
-		const el = $(this.messageRefs[last.id]?.node);
-		if (!el || !el.length) {
-			return;
-		};
-
-		const { top } = node.offset();
-
-		if (node && (top > this.lastMessageOffset)) {
-			this.lastMessageId = last.id;
-			this.lastMessageOffset = top;
-
-			Storage.setLastChatMessageId(rootId, last.id);
+		if (lastId) {
+			this.lastMessageId = lastId;
+			Storage.setLastChatMessageId(rootId, lastId);
 		};
 
 		if (st <= 0) {
@@ -749,23 +717,25 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	scrollToMessage (id: string) {
-		const ref = this.messageRefs[id];
-		if (!ref) {
-			return;
-		};
+		raf(() => {
+			const ref = this.messageRefs[id];
+			if (!ref) {
+				return;
+			};
 
-		const node = $(ref.node);
-		if (!node.length) {
-			return;
-		};
+			const node = $(ref.node);
+			if (!node.length) {
+				return;
+			};
 
-		const { isPopup } = this.props;
-		const pageContainer = U.Common.getPageContainer(isPopup);
-		const scrollContainer = U.Common.getScrollContainer(isPopup);
-		const hh = pageContainer.find('#header').height();
-		const top = node.offset().top + node.outerHeight() + hh + 16;
+			const { isPopup } = this.props;
+			const pageContainer = U.Common.getPageContainer(isPopup);
+			const scrollContainer = U.Common.getScrollContainer(isPopup);
+			const hh = pageContainer.find('#header').height();
+			const top = node.offset().top + node.outerHeight() + hh + 16;
 
-		scrollContainer.scrollTop(top);
+			scrollContainer.scrollTop(top);
+		});
 	};
 
 	scrollToBottom () {
@@ -859,13 +829,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const blockId = this.getBlockId();
 
 		let value = this.refEditable.getTextValue();
+		let from = this.range.from;
 
 		if (fromKeyboard) {
-			value = U.Common.stringCut(value, this.range.from - 1, this.range.from);
-			S.Common.filterSet(this.range.from - 1, '');
-		} else {
-			S.Common.filterSet(this.range.from, '');
+			value = U.Common.stringCut(value, from - 1, from);
+			from--;
 		};
+
+		S.Common.filterSet(from, '');
 
 		raf(() => {
 			S.Menu.open('blockMention', {
