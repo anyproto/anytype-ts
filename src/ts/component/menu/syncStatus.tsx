@@ -343,7 +343,7 @@ const MenuSyncStatus = observer(class MenuSyncStatus extends React.Component<I.M
 		if (I.SyncStatusSpace.Upgrade == status) {
 			isConnected = true;
 			isSlow = true;
-			className = 'connectedSlow'
+			className = 'connectedSlow';
 		} else
 		if (I.SyncStatusSpace.Error == status) {
 			isError = true;
