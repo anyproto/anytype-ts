@@ -55,7 +55,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 		const space = U.Space.getSpaceview();
 		const ret = [
 			{ id: 'all', name: translate('widgetButtonAllContent') },
-			{ id: 'store', name: translate('commonLibrary') },
+			//{ id: 'store', name: translate('commonLibrary') },
 			{ id: 'bin', name: translate('commonBin') },
 		];
 
