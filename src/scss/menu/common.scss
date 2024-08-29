@@ -118,7 +118,7 @@
 			.icon.delete:hover, .icon.more:hover { background-color: var(--color-shape-highlight-medium); }
 			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			.icon.chk { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/chk.svg'); }
-			.icon.sortArrow { width: 20px; height: 20px; background-size: 10px 11px; margin: 0px; background-image: url('~img/icon/menu/sortArrow.svg'); }
+			.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/menu/sortArrow.svg'); }
 			.icon.sortArrow.c1 { transform: rotateZ(180deg); }
 
 			.buttons { flex-shrink: 0; }
@@ -205,6 +205,8 @@
 		.item.withSwitch, .item.withSelect {
 			.clickable { display: flex; }
 		}
+
+		.item.withSortArrow { padding-right: 10px; }
 
 		.line { height: 1px; margin: 8px 14px 7px 14px; background: var(--color-shape-secondary); }
 		.sectionName { padding: 5px 14px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }
