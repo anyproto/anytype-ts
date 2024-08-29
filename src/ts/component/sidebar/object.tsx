@@ -220,9 +220,12 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.unbind();
 
 		$(window).on('mousedown.sidebarContainerObject', (e: any) => {
+			const target = $(e.target);
+
 			if (
-				!$(e.target).parents(`#containerObject`).length && 
-				!$(e.target).parents(`.menus`).length
+				!target.parents(`#containerObject`).length && 
+				!target.parents(`.menus`).length &&
+				!target.parents(`#widget-buttons`).length
 			) {
 				sidebar.objectContainerToggle();
 			};

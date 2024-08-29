@@ -33,7 +33,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 					};
 
 					return (
-						<div key={i} className="item" onClick={e => this.onClick(e, item)}>
+						<div key={i} id={`item-${item.id}`} className="item" onClick={e => this.onClick(e, item)}>
 							<div className="side left">
 								<Icon className={item.id} />
 								<div className="name">
