@@ -26,7 +26,7 @@
 
 			.cnt { color: var(--color-text-secondary); }
 
-			.members { height: 18px; line-height: 18px; }
+			.members { height: 18px; line-height: 18px; white-space: nowrap; }
 			.members {
 				.iconObject { border: 1px solid var(--color-bg-primary); margin-left: -6px; }
 			}

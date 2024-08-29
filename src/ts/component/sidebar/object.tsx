@@ -112,7 +112,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 								ref={ref => this.refSelect = ref}
 								value={this.type}
 								options={typeOptions} 
-								onChange={this.onSwitchType} 
+								onChange={this.onSwitchType}
+								menuParam={{
+									className: 'fixed',
+									classNameWrap: 'fromSidebar',
+								}}
 							/>
 						</div>
 						<div className="side right">
@@ -305,6 +309,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			element: '#sidebar #containerObject #button-object-sort',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
 			data: {
 				options,
 				value: this.sort,

@@ -20,7 +20,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 						if (space.isShared) {
 							members = (
 								<div className="members">
-									{participants.slice(0, 5).map((item, i) => (
+									{participants.slice(0, 5).map(item => (
 										<IconObject key={item.id} object={item} />
 									))}
 								</div>
