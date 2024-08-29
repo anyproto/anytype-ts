@@ -559,6 +559,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onContextMenu (e: React.MouseEvent, item: any) {
 		const { account } = S.Auth;
+		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
 
 		if (item.creator != account.id) {
@@ -581,6 +582,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							break;
 						};
 						case 'delete': {
+							C.ChatDeleteMessage(rootId, item.id);
 							break;
 						};
 					};

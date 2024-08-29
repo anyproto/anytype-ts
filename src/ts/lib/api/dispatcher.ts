@@ -953,6 +953,11 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ChatDelete': {
+					S.Chat.delete(rootId, mapped.id);
+					break;
+				};
+
 				case 'ChatUpdateReactions': {
 					const message = S.Chat.getMessage(rootId, mapped.id);
 					if (message) {

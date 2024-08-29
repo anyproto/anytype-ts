@@ -1136,6 +1136,7 @@ export const Mapper = {
 
 			if (v == V.CHATADD)						 t = 'ChatAdd';
 			if (v == V.CHATUPDATE)					 t = 'ChatUpdate';
+			if (v == V.CHATDELETE)					 t = 'ChatDelete';
 			if (v == V.CHATUPDATEREACTIONS)			 t = 'ChatUpdateReactions';
 
 			return t;
@@ -1614,6 +1615,12 @@ export const Mapper = {
 			return {
 				id: obj.getId(),
 				message: Mapper.From.ChatMessage(obj.getMessage()),
+			};
+		},
+
+		ChatDelete: (obj: Events.Event.Chat.Delete) => {
+			return {
+				id: obj.getId(),
 			};
 		},
 
