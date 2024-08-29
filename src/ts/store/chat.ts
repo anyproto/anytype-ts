@@ -3,7 +3,7 @@ import { I, M } from 'Lib';
 
 class ChatStore {
 
-    public messageMap: Map<string, any[]> = new Map();
+    public messageMap: Map<string, any[]> = observable(new Map());
 
     constructor () {
         makeObservable(this, {
@@ -21,9 +21,9 @@ class ChatStore {
 	prepend (rootId: string, add: I.ChatMessage[]): void {
 		add = add.map(it => new M.ChatMessage(it));
 
-		let list = this.getList(rootId);
-		list = add.concat(list);
-		this.set(rootId, observable.array(list));
+		const list = this.getList(rootId);
+		list.unshift(...add);
+		this.set(rootId, list);
 	};
 
 	add (rootId: string, idx: number, item: I.ChatMessage): void {
@@ -34,8 +34,7 @@ class ChatStore {
 	};
 
 	update (rootId: string, param: Partial<I.ChatMessage>): void {
-		const list = this.getList(rootId);
-		const item = list.find(it => it.id == param.id);
+		const item = this.getMessage(rootId, param.id);
 
 		if (item) {
 			set(item, param);
@@ -43,11 +42,7 @@ class ChatStore {
 	};
 
 	delete (rootId: string, id: string) {
-		const list = this.getList(rootId).filter(it => it.id != id);
-
-		console.log('delete', rootId, id, list);
-
-		this.set(rootId, list);
+		this.set(rootId, this.getList(rootId).filter(it => it.id != id));
 	};
 
 	clear (rootId: string) {
@@ -58,7 +53,7 @@ class ChatStore {
 		this.messageMap.clear();
 	};
 
-	getList (rootId: string): I.ChatMessage[] {
+	getList (rootId: string): any[] {
 		return this.messageMap.get(rootId) || [];
 	};
 
