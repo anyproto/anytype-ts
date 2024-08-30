@@ -228,6 +228,24 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
 	};
 
+	unbind () {
+		const { isPopup, block } = this.props;
+		const events = [ 'messageAdd' ];
+		const ns = block.id + U.Common.getEventNamespace(isPopup);
+
+		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+	};
+
+	rebind () {
+		const { isPopup, block } = this.props;
+		const win = $(window);
+		const ns = block.id + U.Common.getEventNamespace(isPopup);
+
+		this.unbind();
+
+		win.on(`messageAdd.${ns}`, (e, id: string) => this.scrollToMessage(id));
+	};
+
 	loadMessages (clear: boolean, callBack?: () => void) {
 		const rootId = this.getRootId();
 		const list = this.getMessages();
@@ -842,7 +860,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const pageContainer = U.Common.getPageContainer(isPopup);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
 			const hh = pageContainer.find('#header').height();
-			const top = node.offset().top + node.outerHeight() + hh + 16;
+			const top = node.offset().top + node.outerHeight() + hh + 64;
 
 			scrollContainer.scrollTop(top);
 		});

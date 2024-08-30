@@ -951,6 +951,8 @@ class Dispatcher {
 					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
 						U.Common.notification(author?.name, message.content.text);
 					};
+
+					$(window).trigger('messageAdd', [ message.id ]);
 					break;
 				};
 

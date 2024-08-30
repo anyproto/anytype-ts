@@ -956,6 +956,12 @@ class UtilCommon {
 	};
 
 	notification (title: string, text: string) {
+		text = String(text || '');
+
+		if (!text) {
+			return;
+		};
+
 		const electron = this.getElectron();
 
 		new window.Notification(U.Common.stripTags(title), { body: U.Common.stripTags(text) }).onclick = () => electron.focus();
