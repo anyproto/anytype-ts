@@ -3,7 +3,7 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Editable, Label, Icon } from 'Component';
+import { Editable, Label, Icon, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate, Storage } from 'Lib';
 
 import Buttons from './chat/buttons';
@@ -129,6 +129,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 				<div id="formWrapper" className="formWrapper">
 					<div className="form">
+						<Loader id="form-loader" />
+
 						<Editable 
 							ref={ref => this.refEditable = ref}
 							id="messageBox"
@@ -581,12 +583,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
+		const node = $(this.node);
+		const loader = node.find('#form-loader');
 		const rootId = this.getRootId();
 		const files = (this.state.files || []).filter(it => it.layout == I.ObjectLayout.File);
 		const bookmarks = (this.state.files || []).filter(it => it.layout == I.ObjectLayout.Bookmark);
 		const fl = files.length;
 		const bl = bookmarks.length;
 		const attachments = (this.state.attachments || []).map(it => ({ target: it.id, type: I.ChatAttachmentType.Link }));
+
+		loader.addClass('active');
 
 		const clear = () => {
 			this.editingId = '';
@@ -597,6 +603,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.refEditable.placeholderCheck();
 
 			this.setState({ attachments: [], files: [] });
+
+			loader.removeClass('active');
 		};
 		
 		const callBack = () => {
