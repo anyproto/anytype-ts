@@ -5,7 +5,7 @@
 	.block.blockChat { 
 		.wrap.isDraggingOver { opacity: 0.5; cursor: copy; }
 
-		.scrollWrapper { padding: 16px 0px; display: flex; flex-direction: column; min-height: 206px; }
+		.scrollWrapper { display: flex; flex-direction: column; min-height: 206px; }
 		.scrollWrapper {
 			.scroll { min-height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
 		}
@@ -43,7 +43,8 @@
 		}
 		.attachments.isSingle { grid-template-columns: repeat(1, minmax(0, 1fr)); }
 
-		.section { display: flex; flex-direction: column; gap: 4px 0px; }
+		.section { display: flex; flex-direction: column; gap: 4px 0px; padding: 16px 0px; }
+		.section:first-child { padding-top: 0px; }
 		.section {
 			> .date { position: sticky; display: flex; justify-content: center; top: 60px; z-index: 1; }
 			> .date {
