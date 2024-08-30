@@ -233,13 +233,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
+		const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType).find(it => it.id == this.sortId);
+
 		let sorts: I.Sort[] = [];
 		let filters: I.Filter[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Participant },
 		];
 
-		if (this.sortId) {
-			sorts.push({ type: this.sortType, relationKey: this.sortId });
+		if (option) {
+			sorts.push({ relationKey: option.relationKey, type: this.sortType });
 		} else {
 			sorts = sorts.concat([
 				{ type: I.SortType.Desc, relationKey: 'createdDate' },
