@@ -46,7 +46,9 @@
 				.icon.remove { opacity: 1; }
 			}
 		}
-		.attachments.isSingle { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+		.attachments.isSingle {
+			.attachment { max-width: 100%; }
+		}
 
 		.section { display: flex; flex-direction: column; gap: 4px 0px; padding: 16px 0px; }
 		.section:first-child { padding-top: 0px; }
