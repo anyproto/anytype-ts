@@ -19,7 +19,7 @@
 
 		.attachments { padding: 8px 0px 0px 0px; display: flex; gap: 8px; flex-wrap: wrap; }
 		.attachments {
-			.attachment { position: relative; }
+			.attachment { position: relative; max-width: 50%; }
 			.attachment {
 				.clickable { 
 					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); padding: 15px;
