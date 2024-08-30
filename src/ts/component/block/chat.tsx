@@ -61,6 +61,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onScroll = this.onScroll.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onEditMessage = this.onEditMessage.bind(this);
+		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
+		this.onFileRemove = this.onFileRemove.bind(this);
 		this.hasSelection = this.hasSelection.bind(this);
 		this.caretMenuParam = this.caretMenuParam.bind(this);
 		this.getMarksAndRange = this.getMarksAndRange.bind(this);
@@ -153,10 +155,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						{attachments.length || files.length ? (
 							<div className="attachments">
 								{attachments.map((item: any, i: number) => (
-									<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} />
+									<Attachment key={item.id} object={item} onRemove={this.onAttachmentRemove} />
 								))}
 								{files.map((item: any, i: number) => (
-									<Attachment key={i} object={item} onRemove={() => this.onFileRemove(item.id)} />
+									<Attachment key={item.id} object={item} onRemove={this.onFileRemove} />
 								))}
 							</div>
 						) : ''}

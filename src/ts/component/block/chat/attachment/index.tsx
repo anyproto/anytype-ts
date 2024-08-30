@@ -5,13 +5,19 @@ import { I, U, S, J } from 'Lib';
 
 interface Props {
 	object: any;
-	onRemove: () => void;
+	onRemove: (id: string) => void;
 };
 
-const ChatAttachment = observer(class ChatAttachment extends React.Component<Props> {
+interface State {
+	src: string;
+};
+
+const ChatAttachment = observer(class ChatAttachment extends React.Component<Props, State> {
 
 	node = null;
-	src = '';
+	state = {
+		src: '',
+	};
 
 	constructor (props: Props) {
 		super(props);
@@ -82,39 +88,40 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	renderImage () {
 		const { object } = this.props;
 
-		if (!this.src) {
+		let { src } = this.state;
+
+		if (!src) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: J.Size.image }, (image: string) => {
-					const node = $(this.node);
-					const obj = node.find('#image');
-
-					this.src = image;
-					obj.attr({ src: image });
+					this.setState({ src: image });
 				});
-				this.src = './img/space.svg';
+				src = './img/space.svg';
 			} else {
-				this.src = S.Common.imageUrl(object.id, J.Size.image);
+				src = S.Common.imageUrl(object.id, J.Size.image);
 			};
 		};
 
-		return <img id="image" className="image" src={this.src} onClick={this.onPreview} onDragStart={e => e.preventDefault()} />;
+		return <img id="image" className="image" src={src} onClick={this.onPreview} onDragStart={e => e.preventDefault()} />;
 	};
 
 	onPreview (e: any) {
 		const { object } = this.props;
+		const { src } = this.state;
 
 		S.Popup.open('preview', { 
 			data: { 
 				object,
-				src: this.src, 
+				src, 
 				type: I.FileType.Image,
 			},
 		});
 	};
 
 	onRemove (e: any) {
+		const { object, onRemove } = this.props;
+
 		e.stopPropagation();
-		this.props.onRemove();
+		onRemove(object.id);
 	};
 
 });
