@@ -40,17 +40,17 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 						};
 					};
 				};
-
-				if (!content) {
-					cn.push(U.Data.layoutClass(object.id, object.layout));
-					content = this.renderDefault();
-				};
 				break;
 
-			default:
-				cn.push(U.Data.layoutClass(object.id, object.layout));
-				content = this.renderDefault();
+			case I.ObjectLayout.Image:
+				cn.push('isImage');
+				content = this.renderImage();
 				break;
+		};
+
+		if (!content) {
+			cn.push(U.Data.layoutClass(object.id, object.layout));
+			content = this.renderDefault();
 		};
 
 		return (
