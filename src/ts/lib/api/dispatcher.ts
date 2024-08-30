@@ -94,6 +94,7 @@ class Dispatcher {
 
 	event (event: Events.Event, skipDebug?: boolean) {
 		const { config } = S.Common;
+		const { account } = S.Auth;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
 		const electron = U.Common.getElectron();
@@ -874,7 +875,7 @@ class Dispatcher {
 					S.Notification.add(item);
 
 					if (isMainWindow && !electron.isFocused()) {
-						new window.Notification(U.Common.stripTags(item.title), { body: U.Common.stripTags(item.text) }).onclick = () => electron.focus();
+						U.Common.notification(item.title, item.text);
 					};
 					break;
 				};
@@ -938,13 +939,18 @@ class Dispatcher {
 					const orderId = mapped.orderId;
 					const list = S.Chat.getList(rootId);
 					const message = new M.ChatMessage(mapped.message);
-					
+					const author = U.Space.getParticipant(message.creator);
+
 					let idx = list.findIndex(it => it.orderId == orderId);
 					if (idx < 0) {
 						idx = list.length;
 					};
 
 					S.Chat.add(rootId, idx, message);
+
+					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
+						U.Common.notification(author.name, message.content.text);
+					};
 					break;
 				};
 
