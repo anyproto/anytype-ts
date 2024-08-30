@@ -16,7 +16,7 @@ interface State {
 	files: any[];
 };
 
-const GROUP_TIME = 600;
+const GROUP_TIME = 60;
 
 const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent, State> {
 
