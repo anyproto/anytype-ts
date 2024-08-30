@@ -331,9 +331,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.refEditable?.placeholderCheck();
 	};
 
-	onKeyUpInput () {
+	onKeyUpInput (e: any) {
 		this.range = this.refEditable.getRange();
 
+		const { to } = this.range;
 		const { filter } = S.Common;
 		const value = this.getTextValue();
 		const parsed = this.getMarksFromHtml();
@@ -342,6 +343,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@');
 
 		this.marks = parsed.marks;
+
+		let adjustMarks = false;
 
 		if (value !== parsed.text) {
 			this.refEditable.setValue(Mark.toHtml(parsed.text, this.marks));
@@ -369,6 +372,22 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
+		if (!keyboard.isSpecial(e)) {
+			for (let i = 0; i < this.marks.length; ++i) {
+				const mark = this.marks[i];
+
+				if (Mark.needsBreak(mark.type) && (mark.range.to == to)) {
+					const adjusted = Mark.adjust([ mark ], mark.range.to - 1, -1);
+
+					this.marks[i] = adjusted[0];
+					adjustMarks = true;
+				};
+			};
+		};
+
+		if (adjustMarks) {
+			this.updateMarkup(value, to, to);
+		};
 		this.checkSendButton();
 		this.updateButtons();
 	};
