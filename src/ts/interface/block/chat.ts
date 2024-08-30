@@ -22,6 +22,10 @@ export interface ChatMessage {
 	content: ChatMessageContent;
 	attachments: ChatMessageAttachment[];
 	reactions: any;
+
+	// Internal
+	isFirst: boolean;
+	isLast: boolean;
 };
 
 export interface ChatMessageContent {

@@ -16,6 +16,8 @@ interface State {
 	files: any[];
 };
 
+const GROUP_TIME = 600;
+
 const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent, State> {
 
 	_isMounted = false;
@@ -99,7 +101,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							isThread={!!threadId}
 							onThread={this.onThread}
 							onContextMenu={e => this.onContextMenu(e, item)}
-							isLast={item.id == this.lastMessageId}
+							isNew={item.id == this.lastMessageId}
 						/>
 					))}
 				</div>
@@ -581,6 +583,30 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			} else {
 				section.list.push(item);
 			};
+		});
+
+		// Message groups by author/time
+		sections.forEach(section => {
+			const length = section.list.length;
+
+			for (let i = 0; i < length; ++i) {
+				const prev = section.list[i - 1];
+				const item = section.list[i];
+
+				item.isFirst = false;
+				item.isLast = false;
+
+				if (prev && ((item.creator != prev.creator) || (item.createdAt - prev.createdAt >= GROUP_TIME))) {
+					item.isFirst = true;
+
+					if (prev) {
+						prev.isLast = true;
+					};
+				};
+			};
+
+			section.list[0].isFirst = true;
+			section.list[length - 1].isLast = true;
 		});
 
 		sections.sort((c1, c2) => {

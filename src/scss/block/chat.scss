@@ -7,9 +7,7 @@
 
 		.scrollWrapper { padding: 16px 0px; display: flex; flex-direction: column; min-height: 206px; }
 		.scrollWrapper {
-			.scroll { min-height: 100%; }
-			.scroll,
-			.section { display: flex; flex-direction: column; justify-content: flex-end; gap: 16px 0px; }
+			.scroll { min-height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
 		}
 
 		.emptyState { display: flex; flex-direction: column; gap: 16px 0px; align-items: center; justify-content: center; flex-grow: 1; text-align: center; }
@@ -45,7 +43,7 @@
 		}
 		.attachments.isSingle { grid-template-columns: repeat(1, minmax(0, 1fr)); }
 
-		.section { display: flex; flex-direction: column; gap: 16px 0px; }
+		.section { display: flex; flex-direction: column; gap: 4px 0px; }
 		.section {
 			> .date { position: sticky; display: flex; justify-content: center; top: 60px; z-index: 1; }
 			> .date {
@@ -53,9 +51,15 @@
 			}
 		}
 
-		.message { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; @include text-common; }
+		.message { @include text-common; }
 		.message {
-			.side.left { flex-shrink: 0; }
+			.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; }
+
+			.side.left { flex-shrink: 0; width: 40px; }
+			.side.left {
+				.iconObject { display: none; }
+			}
+
 			.side.right { 
 				display: flex; flex-direction: column; padding: 12px 16px; border-radius: 20px; background: rgba(242, 242, 242, 0.5); position: relative; 
 				min-width: 50%;
@@ -73,7 +77,7 @@
 				}
 			}
 
-			.author { display: flex; align-items: center; gap: 0px 8px; }
+			.author { display: none; align-items: center; gap: 0px 8px; }
 			.author {
 				.name { font-weight: 500; }
 				.time { @include text-small; color: var(--color-text-secondary); }
@@ -98,17 +102,19 @@
 					.count { min-width: 18px; text-align: center; }
 				}
 
-				.reaction.isSelf {
-					box-shadow: 0px 0px 0px 1px inset var(--color-system-accent-125); background-color: var(--color-system-accent-25);
-				}
+				.reaction.isSelf { box-shadow: 0px 0px 0px 1px inset var(--color-system-accent-125); background-color: var(--color-system-accent-25); }
 
 				.icon.reactionAdd { position: static; background-color: var(--color-shape-highlight-medium); flex-shrink: 0; opacity: 1; }
 				.icon.reactionAdd:hover { background-color: var(--color-shape-highlight-dark); }
 			}
 
+			.newMessages { display: flex; justify-content: center; position: absolute; bottom: -9px; left: 0px;  width: 100%; }
+			.newMessages {
+				.label { @include text-small; padding: 0px 12px; font-weight: 500; background: var(--color-bg-primary); color: var(--color-text-secondary); }
+			}
 		}
-		.message.isSelf { flex-direction: row-reverse; }
 		.message.isSelf {
+			.flex { flex-direction: row-reverse; }
 			.side.right { background: rgba(229, 248, 214, 0.5); }
 		}
 
@@ -121,18 +127,32 @@
 		.message:hover, .message.hover {
 			.icon.reactionAdd { opacity: 1; }
 		}
-		.message.isLast:not(:last-child) { position: relative; padding-bottom: 25px; margin-bottom: 6px; border-bottom: 1px solid var(--color-shape-tertiary); }
+
+		.message:first-child { margin-top: 0px; }
+
+		.message.isFirst { margin: 12px 0px 0px 0px; }
+		.message.isFirst {
+			.author { display: flex; }
+		}
+
 		.message.isLast {
+			.side.left {
+				.iconObject { display: block; }
+			}
+		}
+
+		.message.isNew:not(:last-child) { position: relative; padding-bottom: 25px; margin-bottom: 6px; border-bottom: 1px solid var(--color-shape-tertiary); }
+		.message.isNew {
 			.newMessages { display: flex; justify-content: center; position: absolute; bottom: -9px; left: 0px;  width: 100%; }
 			.newMessages {
 				.label { @include text-small; padding: 0px 12px; font-weight: 500; background: var(--color-bg-primary); color: var(--color-text-secondary); }
 			}
 		}
-		.message.isLast:last-child {
+		.message.isNew:last-child {
 			.newMessages { display: none; }
 		}
 
-		.formWrapper.isFixed { padding: 0px 0px 90px 0px; position: sticky; z-index: 1; bottom: 0px; width: 100%; background: var(--color-bg-primary); }
+		.formWrapper.isFixed { padding: 0px 0px 90px 0px; position: sticky; z-index: 2; bottom: 0px; width: 100%; background: var(--color-bg-primary); }
 
 		.form { 
 			padding: 0px 0px 10px 0px; border: 1px solid var(--color-shape-tertiary); background-color: var(--color-bg-primary); border-radius: 12px; position: relative; 

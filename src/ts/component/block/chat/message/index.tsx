@@ -15,7 +15,7 @@ interface Props extends I.BlockComponent {
 	blockId: string;
 	id: string;
 	isThread: boolean;
-	isLast?: boolean;
+	isNew: boolean;
 	onThread: (id: string) => void;
 	onContextMenu: (e: any) => void;
 };
@@ -41,12 +41,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 	};
 
 	render () {
-		const { rootId, blockId, id, isThread, onThread, isLast, onContextMenu } = this.props;
+		const { rootId, blockId, id, isThread, isNew, onThread, onContextMenu } = this.props;
 		const { canExpand, isExpanded } = this.state;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
-		const { creator, content, createdAt, reactions } = message;
+		const { creator, content, createdAt, reactions, isFirst, isLast } = message;
 		const { marks } = content;
 		const subId = S.Record.getSubId(rootId, blockId);
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
@@ -66,8 +66,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		if (isExpanded) {
 			cn.push('isExpanded');
 		};
+		if (isFirst) {
+			cn.push('isFirst');
+		};
 		if (isLast) {
 			cn.push('isLast');
+		};
+		if (isNew) {
+			cn.push('isNew');
 		};
 
 		// Subscriptions
@@ -108,58 +114,59 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 				className={cn.join(' ')}
 				onContextMenu={onContextMenu}
 			>
-				<div className="side left">
-					<IconObject object={author} size={40} />
-				</div>
-				<div className="side right">
-					{!hasReactions ? (
-						<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
-					) : ''}
-
-					<div className="author">
-						<ObjectName object={author} />
-						<div className="time">{U.Date.date('H:i', createdAt)}</div>
+				<div className="flex">
+					<div className="side left">
+						<IconObject object={author} size={40} />
 					</div>
+					<div className="side right">
+						{!hasReactions ? (
+							<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
+						) : ''}
 
-					<div className="textWrapper">
-						<div 
-							ref={ref => this.refText = ref} 
-							className="text" 
-							dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
-						/>
+						<div className="author">
+							<ObjectName object={author} />
+							<div className="time">{U.Date.date('H:i', createdAt)}</div>
+						</div>
 
-						{canExpand && !isExpanded ? (
-							<div className="expand" onClick={this.onExpand}>
-								{translate('blockChatMessageExpand')}
+						<div className="textWrapper">
+							<div 
+								ref={ref => this.refText = ref} 
+								className="text" 
+								dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
+							/>
+
+							{canExpand && !isExpanded ? (
+								<div className="expand" onClick={this.onExpand}>
+									{translate('blockChatMessageExpand')}
+								</div>
+							) : ''}
+						</div>
+
+						{hasAttachments ? (
+							<div className={[ 'attachments', (isSingle ? 'isSingle' : '') ].join(' ')}>
+								{attachments.map((item: any, i: number) => (
+									<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} />
+								))}
 							</div>
 						) : ''}
-					</div>
 
-					{hasAttachments ? (
-						<div className={[ 'attachments', (isSingle ? 'isSingle' : '') ].join(' ')}>
-							{attachments.map((item: any, i: number) => (
-								<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} />
-							))}
+						{hasReactions ? (
+							<div className="reactions">
+								{reactions.map((item: any, i: number) => (
+									<Reaction key={i} {...item} />
+								))}
+
+								<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
+							</div>
+						) : ''}
+
+						<div className="sub" onClick={() => onThread(id)}>
+							{!isThread ? <div className="item">0 replies</div> : ''}
 						</div>
-					) : ''}
-
-					{hasReactions ? (
-						<div className="reactions">
-							{reactions.map((item: any, i: number) => (
-								<Reaction key={i} {...item} />
-							))}
-
-							<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
-						</div>
-					) : ''}
-
-					<div className="sub" onClick={() => onThread(id)}>
-						{!isThread ? <div className="item">0 replies</div> : ''}
 					</div>
-
 				</div>
 
-				{isLast ? (
+				{isNew ? (
 					<div className="newMessages">
 						<Label text={translate('blockChatNewMessages')} />
 					</div>
@@ -211,7 +218,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		const text = authors.map(it => {
 			const author = U.Space.getParticipant(U.Space.getParticipantId(space, it));
 
-			return author.name;
+			return author?.name;
 		}).filter(it => it).join('\n');
 
 		Preview.tooltipShow({ text, element: $(e.currentTarget) });

@@ -625,7 +625,7 @@ export const Mapper = {
 			};
 		},
 
-		ChatMessage: (obj: Model.ChatMessage): I.ChatMessage => {
+		ChatMessage: (obj: Model.ChatMessage): any => {
 			return {
 				id: obj.getId(),
 				orderId: obj.getOrderid(),

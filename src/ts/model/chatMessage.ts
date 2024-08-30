@@ -58,6 +58,9 @@ class ChatMessage implements I.ChatMessage {
 	attachments: I.ChatMessageAttachment[] = [];
 	reactions = [];
 
+	isFirst = false;
+	isLast = false;
+
 	constructor (props: I.ChatMessage) {
 
 		this.id = String(props.id || '');
@@ -68,6 +71,8 @@ class ChatMessage implements I.ChatMessage {
 		this.content = new ChatMessageContent(props.content || {} as ChatMessageContent);
 		this.attachments = Array.isArray(props.attachments) ? props.attachments : [];
 		this.reactions = props.reactions || [];
+		this.isFirst = Boolean(props.isFirst);
+		this.isLast = Boolean(props.isLast);
 
 		this.reactions.sort((c1, c2) => {
 			const l1 = c1.authors.length;
