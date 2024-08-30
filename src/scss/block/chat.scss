@@ -19,11 +19,12 @@
 
 		.attachments { padding: 8px 0px 0px 0px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-column-gap: 8px; grid-row-gap: 8px; }
 		.attachments {
-			.attachment { 
-				display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); position: relative;
-				background: var(--color-bg-primary); border-radius: 12px; border: 1px solid var(--color-shape-tertiary); padding: 16px;
-			}
+			.attachment { position: relative; }
 			.attachment {
+				.clickable { 
+					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); padding: 16px;
+					border-radius: 12px; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary);
+				}
 				.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 10px; }
 				.info { flex-grow: 1; }
 
@@ -35,6 +36,10 @@
 
 				.name { line-height: 20px; font-weight: 500; @include clamp1; }
 				.descr { @include text-small;  @include clamp2; }
+			}
+
+			.attachment.isImage {
+				.image { display: block; width: 100%; object-fit: cover; aspect-ratio: 16/9; }
 			}
 
 			.attachment:hover {

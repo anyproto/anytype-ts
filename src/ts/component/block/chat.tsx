@@ -566,7 +566,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				name: it.name,
 				layout: I.ObjectLayout.File,
 				description: U.File.size(it.size),
+				mime: it.type,
 				path,
+				isTmp: true,
+				file: it,
 			};
 		});
 		
