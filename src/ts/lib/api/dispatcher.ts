@@ -93,7 +93,7 @@ class Dispatcher {
 	};
 
 	event (event: Events.Event, skipDebug?: boolean) {
-		const { config } = S.Common;
+		const { config, space } = S.Common;
 		const { account } = S.Auth;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
@@ -939,7 +939,7 @@ class Dispatcher {
 					const orderId = mapped.orderId;
 					const list = S.Chat.getList(rootId);
 					const message = new M.ChatMessage(mapped.message);
-					const author = U.Space.getParticipant(message.creator);
+					const author = U.Space.getParticipant(U.Space.getParticipantId(space, message.creator));
 
 					let idx = list.findIndex(it => it.orderId == orderId);
 					if (idx < 0) {
@@ -949,7 +949,7 @@ class Dispatcher {
 					S.Chat.add(rootId, idx, message);
 
 					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
-						U.Common.notification(author.name, message.content.text);
+						U.Common.notification(author?.name, message.content.text);
 					};
 					break;
 				};
