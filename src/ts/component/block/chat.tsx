@@ -397,10 +397,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				value = parsed.value;
 				this.marks = parsed.marks;
 
-				this.refEditable.setValue(Mark.toHtml(value, this.marks));
-				this.refEditable.setRange({ from: value.length, to: value.length });
-
-				this.renderMarkup();
+				const length = value.length;
+				this.updateMarkup(value, length, length);
 			});
 		};
 
@@ -457,7 +455,38 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onChange () {
 	};
 
-	onPaste () {
+	onPaste (e: any) {
+		const { from } = this.range;
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
+
+		let value = this.getTextValue();
+		let url = U.Common.matchUrl(text);
+		let isLocal = false;
+		let to = this.range.to;
+
+		if (!url) {
+			url = U.Common.matchLocalPath(text);
+			isLocal = true;
+		};
+
+		if (!url) {
+			return;
+		};
+
+		e.preventDefault();
+
+		const param = isLocal ? `file://${url}` : url;
+		
+		if (from == to) {
+			value = U.Common.stringInsert(value, url + ' ', from, from);
+			to = from + url.length;
+		};
+
+		this.marks = Mark.adjust(this.marks, from - 1, url.length + 1);
+		this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
+		this.updateMarkup(value, to + 1, to + 1);
+		this.addBookmark(param);
 	};
 
 	canDrop (e: any): boolean {
@@ -836,10 +865,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 				value = U.Common.stringInsert(value, ' ', range.from, range.from);
 
-				this.refEditable.setValue(Mark.toHtml(value, this.marks));
-				this.refEditable.setRange({ from: to, to });
-
-				this.renderMarkup();
+				this.updateMarkup(value, to, to);
 				break;
 			};
 		}
@@ -847,25 +873,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onTextButtonToggle (type: I.MarkType, param: string) {
 		const { from, to } = this.range;
-		const { attachments, files } = this.state;
+		const { attachments } = this.state;
 		const value = this.getTextValue();
 
 		this.marks = Mark.toggle(this.marks, { type, param, range: { from, to } });
-		this.refEditable.setValue(Mark.toHtml(value, this.marks));
-		this.refEditable.setRange({ from, to });
+		this.updateMarkup(value, from, to);
 
 		switch (type) {
 			case I.MarkType.Link: {
-				const id = sha1(param);
-				if (!files.find(it => it.id == id)) {
-					files.push({
-						id,
-						name: param,
-						layout: I.ObjectLayout.Bookmark,
-						source: param,
-					});
-					this.setState({ files });
-				};
+				this.addBookmark(param);
 				break;
 			};
 
@@ -880,6 +896,23 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		this.updateButtons();
 		this.renderMarkup();
+	};
+
+	addBookmark (url: string) {
+		const { files } = this.state;
+		const id = sha1(url);
+
+		if (files.find(it => it.id == id)) {
+			return;
+		};
+
+		files.push({
+			id,
+			name: url,
+			layout: I.ObjectLayout.Bookmark,
+			source: url,
+		});
+		this.setState({ files });
 	};
 
 	onMention (fromKeyboard?: boolean) {
@@ -917,9 +950,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						value = U.Common.stringInsert(value, text, from, from);
 						marks.forEach(mark => this.marks = Mark.toggle(this.marks, mark));
 
-						this.refEditable.setValue(Mark.toHtml(value, this.marks));
-						this.refEditable.setRange({ from: to, to });
-						this.renderMarkup();
+						this.updateMarkup(value, to, to);
 					}
 				}
 			})
@@ -963,6 +994,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	hasSelection (): boolean {
 		return this.range ? this.range.to - this.range.from > 0 : false;
+	};
+
+	updateMarkup (value: string, from: number, to: number) {
+		this.range = { from, to };
+		this.refEditable.setValue(Mark.toHtml(value, this.marks));
+		this.refEditable.setRange({ from, to });
+		this.refEditable.placeholderCheck();
+		this.renderMarkup();
 	};
 
 	renderMarkup () {

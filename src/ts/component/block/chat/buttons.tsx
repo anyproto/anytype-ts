@@ -129,10 +129,6 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 		const menuParam: any = {
 			element: `#button-${blockId}-${type}`,
-			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + $(window).scrollTop() } : null;
-			},
 			offsetY: 6,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
