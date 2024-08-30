@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Filter, Select, Icon, IconObject, Button, ObjectName, ObjectDescription, ObjectType } from 'Component';
-import { I, U, J, S, translate, Storage, sidebar } from 'Lib';
+import { I, U, J, S, translate, Storage, sidebar, keyboard } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -49,6 +49,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const items = this.getItems();
 		const isAllowedObject = this.isAllowedObject();
 		const typeOptions = this.getTypeOptions();
+		const rootId = keyboard.getRootId();
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -56,6 +57,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				return null;
 			};
 
+			const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
 			const type = S.Record.getTypeById(item.type);
 
 			let iconSmall = null;
@@ -69,6 +71,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				iconLarge = <IconObject object={item} size={48} />;
 			};
 
+			if (item.id == rootId) {
+				cn.push('active');
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -78,7 +84,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					rowIndex={param.index}
 				>
 					<div 
-						className={[ 'item', U.Data.layoutClass(item.id, item.layout) ].join(' ')} 
+						className={cn.join(' ')} 
 						style={param.style}
 						onClick={() => this.onClick(item)}
 					>
