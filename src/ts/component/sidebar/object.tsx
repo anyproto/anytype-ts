@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Filter, Select, Icon, IconObject, Button, ObjectName, ObjectDescription, ObjectType } from 'Component';
-import { I, U, J, S, translate, Storage, sidebar, keyboard } from 'Lib';
+import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics } from 'Lib';
 
 interface State {
 	isLoading: boolean;
@@ -21,10 +21,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		isLoading: false,
 	};
 	node = null;
+	refFilter = null;
+	refSelect = null;
+	refList = null;
 	cache: any = {};
 	offset = 0;
-	refSelect: any = null;
-	refList: any = null;
 	sortId = '';
 	sortType: I.SortType = I.SortType.Asc;
 	orphan = false;
@@ -32,6 +33,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	searchIds: string[] = null;
 	filter = '';
 	timeoutFilter = 0;
+	preventClose = false;
 
 	constructor (props: any) {
 		super(props);
@@ -136,6 +138,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					<div className="sides sidesFilter">
 						<div className="side left">
 							<Filter 
+								ref={ref => this.refFilter = ref}
 								icon="search"
 								placeholder={translate('commonSearch')}
 								onChange={this.onFilterChange}
@@ -231,7 +234,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			if (
 				!target.parents(`#containerObject`).length && 
 				!target.parents(`.menus`).length &&
-				!target.parents(`#widget-buttons`).length
+				!target.parents(`#widget-buttons`).length &&
+				!this.preventClose
 			) {
 				sidebar.objectContainerToggle();
 			};
@@ -336,6 +340,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	onClick (item: any) {
 		U.Object.openConfig(item);
+		this.preventClose = true;
 	};
 
 	onSort (e: any) {
@@ -362,6 +367,12 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onAdd () {
+		const details = {
+			...this.getDetailsByType(this.type),
+			name: this.refFilter.getValue(),
+		};
+
+		keyboard.pageCreate(details, analytics.route.allObjects);
 	};
 
 	isAllowedObject (): boolean {
@@ -401,6 +412,30 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 			return it;
 		});
+	};
+
+	getDetailsByType (t: I.ObjectContainerType) {
+		const details: any = {};
+
+		let type = null;
+
+		switch (t) {
+			case I.ObjectContainerType.Bookmark: {
+				type = S.Record.getBookmarkType();
+				break;
+			};
+
+			case I.ObjectContainerType.Type: {
+				type = S.Record.getTypeType();
+				break;
+			};
+		};
+
+		if (type) {
+			details.type = type.id;
+		};
+
+		return details;
 	};
 
 	onFilterChange (v: string) {
