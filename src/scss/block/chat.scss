@@ -173,7 +173,7 @@
 				.editable, .placeholder { padding: 16px; }
 			}
 
-			.attachments { padding: 0px 16px; }
+			.attachments { padding: 0px 16px; max-height: 360px; overflow-x: hidden; overflow-y: auto; }
 
 			.buttons { display: flex; gap: 0px 8px; padding: 10px 16px 0px 16px; margin-left: -4px; }
 			.buttons {

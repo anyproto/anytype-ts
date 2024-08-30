@@ -82,17 +82,19 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	renderImage () {
 		const { object } = this.props;
 
-		if (object.isTmp && object.file) {
-			U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: J.Size.image }, (image: string) => {
-				const node = $(this.node);
-				const obj = node.find('#image');
+		if (!this.src) {
+			if (object.isTmp && object.file) {
+				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: J.Size.image }, (image: string) => {
+					const node = $(this.node);
+					const obj = node.find('#image');
 
-				this.src = image;
-				obj.attr({ src: image });
-			});
-			this.src = './img/space.svg';
-		} else {
-			this.src = S.Common.imageUrl(object.id, J.Size.image);
+					this.src = image;
+					obj.attr({ src: image });
+				});
+				this.src = './img/space.svg';
+			} else {
+				this.src = S.Common.imageUrl(object.id, J.Size.image);
+			};
 		};
 
 		return <img id="image" className="image" src={this.src} onClick={this.onPreview} onDragStart={e => e.preventDefault()} />;
