@@ -154,7 +154,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.File: {
-				const object = S.Detail.get(rootId, content.targetObjectId, [ 'isDeleted' ], true);
+				const object = S.Detail.get(rootId, block.getTargetObjectId(), [ 'isDeleted' ], true);
 				
 				if (!object.isDeleted && (content.state == I.BookmarkState.Done)) {
 					cn.push('withContent');
@@ -196,7 +196,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.Dataview: {
-				canDrop = canSelect = !(root.isObjectSet() || root.isObjectCollection() || root.isObjectDate());
+				canDrop = canSelect = !U.Object.isInSetLayouts(root.layout);
 				if (canSelect) {
 					cn.push('isInline');
 				};
@@ -210,7 +210,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.Link: {
-				const object = S.Detail.get(rootId, content.targetBlockId, [ 'restrictions' ], true);
+				const object = S.Detail.get(rootId, block.getTargetObjectId(), [ 'restrictions' ], true);
 				
 				if (S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;
@@ -223,7 +223,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Bookmark: {
-				const object = S.Detail.get(rootId, content.targetObjectId, [ 'restrictions', 'isDeleted' ], true);
+				const object = S.Detail.get(rootId, block.getTargetObjectId(), [ 'restrictions', 'isDeleted' ], true);
 				
 				if (S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;
@@ -503,7 +503,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 
-		if (root.isLocked() || root.isObjectSet() || root.isObjectCollection()) {
+		if (root.isLocked() || U.Object.isInSetLayouts(root.layout)) {
 			return;
 		};
 

@@ -194,15 +194,15 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onAdd (e: any) {
 		const { id, param, getId, getSize } = this.props;
 		const { data } = param;
-		const { onFilterAdd, onAdd } = data;
+		const { onFilterAdd, onFilterOrSortAdd } = data;
 		const relationOptions = this.getRelationOptions();
 
 		if (!relationOptions.length) {
 			return;
 		};
 
-		if (onAdd) {
-			onAdd(getId(), param.component || id, getSize().width);
+		if (onFilterOrSortAdd) {
+			onFilterOrSortAdd(getId(), param.component || id, getSize().width);
 			return;
 		};
 
@@ -212,7 +212,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 		const newItem = { 
 			relationKey: first.id, 
-			operator: I.FilterOperator.And, 
+			
 			condition: condition as I.FilterCondition,
 			value: Relation.formatValue(first, null, false),
 		};

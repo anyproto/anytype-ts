@@ -61,6 +61,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 		const members = this.getParticipantList();
 		const length = members.length;
 		const isShareActive = U.Space.isShareActive();
+		const isSpaceOwner = U.Space.isMyOwner();
 
 		let limitLabel = '';
 		let limitButton = '';
@@ -88,42 +89,49 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			let tag = null;
 			let button = null;
 
-			if (item.isJoining) {
-				tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
-				button = (
-					<Button
-						className="c36"
-						color="blank"
-						text={translate('popupSettingsSpaceShareViewRequest')}
-						onClick={() => this.onJoinRequest(item)}
-					/>
-				);
+			if (isSpaceOwner) {
+				if (item.isJoining) {
+					button = (
+						<Button
+							className="c36"
+							color="blank"
+							text={translate('popupSettingsSpaceShareViewRequest')}
+							onClick={() => this.onJoinRequest(item)}
+						/>
+					);
+				} else 
+				if (item.isRemoving) {
+					button = (
+						<Button
+							className="c36"
+							color="blank"
+							text={translate('commonApprove')}
+							onClick={() => this.onLeaveRequest(item)}
+						/>
+					);
+				} else {
+					button = (
+						<div id={`item-${item.id}-select`} className="select" onClick={() => this.onPermissionsSelect(item)}>
+							<div className="item">
+								<div className="name">{translate(`participantPermissions${item.permissions}`)}</div>
+							</div>
+							<Icon className="arrow light" />
+						</div>
+					);
+				};
 			} else 
-			if (item.isRemoving) {
-				tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
-				button = (
-					<Button
-						className="c36"
-						color="blank"
-						text={translate('commonApprove')}
-						onClick={() => this.onLeaveRequest(item)}
-					/>
-				);
+			if (item.isActive) {
+				button = <Label color="grey" text={translate(`participantPermissions${item.permissions}`)} />;
 			} else 
 			if (item.isDeclined || item.isRemoved) {
 				button = <Label color="red" text={translate(`participantStatus${item.status}`)} />;
-			} else
-			if (item.isOwner) {
-				button = <Label color="grey" text={translate(`participantPermissions${I.ParticipantPermissions.Owner}`)} />;
-			} else {
-				button = (
-					<div id={`item-${item.id}-select`} className="select" onClick={() => this.onPermissionsSelect(item)}>
-						<div className="item">
-							<div className="name">{translate(`participantPermissions${item.permissions}`)}</div>
-						</div>
-						<Icon className="arrow light" />
-					</div>
-				);
+			};
+
+			if (item.isJoining) {
+				tag = <Tag text={translate('popupSettingsSpaceShareJoinRequest')} />;
+			} else 
+			if (item.isRemoving) {
+				tag = <Tag text={translate('popupSettingsSpaceShareLeaveRequest')} />;
 			};
 		
 			return (

@@ -12,6 +12,8 @@ const SPACE_KEYS = [
 	'defaultType',
 	'pinnedTypes',
 	'popupSearch',
+	'focus',
+	'openUrl',
 ];
 
 class Storage {
@@ -296,6 +298,19 @@ class Storage {
 
 	getScrollKey (key: string, isPopup: boolean) {
 		return isPopup ? `${key}Popup` : key;
+	};
+
+	setFocus (rootId: string, state: I.FocusState) {
+		const obj = this.get('focus') || {};
+
+		obj[rootId] = state;
+		this.set('focus', obj, true);
+		return obj;
+	};
+
+	getFocus (rootId: string): I.FocusState {
+		const obj = this.get('focus') || {};
+		return obj[rootId];
 	};
 
 	setOnboarding (key: string) {

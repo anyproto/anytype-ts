@@ -77,6 +77,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 														<Row 
 															{...this.props} 
 															recordId={records[index]}
+															recordIdx={index}
 														/>
 													</div>
 												)}

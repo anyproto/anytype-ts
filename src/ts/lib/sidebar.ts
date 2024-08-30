@@ -174,15 +174,14 @@ class Sidebar {
 		const vw = isClosed || !showVault ? 0 : J.Size.vault.width;
 		const menuOpen = S.Menu.isOpenList([ 'dataviewContext', 'widget', 'selectSidebarToggle' ]);
 		const popupOpen = S.Popup.isOpen();
-		const threshold = isFullScreen ? 0 : J.Size.sidebar.threshold;
 
 		let show = false;
 		let hide = false;
 
-		if (x <= threshold) {
+		if (x <= 10) {
 			show = true;
 		} else
-		if (x >= width + vw + threshold) {
+		if (x >= width + vw + 30) {
 			hide = true;
 		};
 
@@ -216,7 +215,7 @@ class Sidebar {
 		const { isClosed } = this.data;
 		const { showVault, isFullScreen } = S.Common;
 		const { ww } = U.Common.getWindowDimensions();
-		const vw = isClosed || !showVault ? 0 : J.Size.vault.width;
+		const vw = isClosed || !showVault || !keyboard.isMain() ? 0 : J.Size.vault.width;
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');

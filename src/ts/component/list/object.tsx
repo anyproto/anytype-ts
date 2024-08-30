@@ -18,6 +18,7 @@ interface Props {
 	columns: Column[];
 	sources?: string[];
 	filters?: I.Filter[];
+	relationKeys?: string[];
 };
 
 const PREFIX = 'listObject';
@@ -191,7 +192,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		const { subId, sources } = this.props;
 		const offset = (page - 1) * LIMIT;
 		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(this.props.filters || []);
 
 		S.Record.metaSet(subId, '', { offset });
@@ -216,7 +217,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { subId } = this.props;
+		const { subId, relationKeys } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 
 		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
@@ -232,6 +233,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			data: {
 				objectIds,
 				subId,
+				relationKeys,
 				allowedLink: true,
 				allowedOpen: true,
 			}

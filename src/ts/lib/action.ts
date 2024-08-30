@@ -51,7 +51,7 @@ class Action {
 
 		S.Record.metaClear(subId, '');
 		S.Record.recordsClear(subId, '');
-		S.Record.recordsClear(subId + '/dep', '');
+		S.Record.recordsClear(`${subId}/dep`, '');
 		S.Record.viewsClear(rootId, blockId);
 
 		S.Detail.clear(subId);
@@ -69,24 +69,6 @@ class Action {
 		});
 	};
 	
-	download (block: I.Block, route: string) {
-		if (!block) {
-			return;
-		};
-
-		const { content } = block;
-		const { type, targetObjectId } = content;
-
-		if (!targetObjectId) {
-			return;
-		};
-		
-		const url = block.isFileImage() ? S.Common.imageUrl(targetObjectId, 1000000) : S.Common.fileUrl(targetObjectId);
-
-		Renderer.send('download', url, { saveAs: true });
-		analytics.event('DownloadMedia', { type, route });
-	};
-
 	duplicate (rootId: string, targetContextId: string, blockId: string, blockIds: string[], position: I.BlockPosition, callBack?: (message: any) => void) {
 		C.BlockListDuplicate(rootId, targetContextId, blockIds, blockId, position, (message: any) => {
 			if (message.error.code) {
@@ -175,16 +157,52 @@ class Action {
 		focus.apply();
 	};
 
-	openFile (id: string) {
+	openUrl (url: string) {
+		url = U.Common.urlFix(url);
+
+		const storageKey = 'openUrl';
+		const scheme = U.Common.getScheme(url);
+		const cb = () => Renderer.send('openUrl', url);
+
+		if (!Storage.get(storageKey) && !scheme.match(new RegExp(`^(${J.Constant.allowedSchemes.join('|')})$`))) {
+			S.Popup.open('confirm', {
+				data: {
+					icon: 'confirm',
+					bgColor: 'red',
+					title: translate('popupConfirmOpenExternalLinkTitle'),
+					text: translate('popupConfirmOpenExternalLinkText'),
+					textConfirm: translate('commonYes'),
+					storageKey,
+					onConfirm: () => cb(),
+				}
+			});
+		} else {
+			cb();
+		};
+	};
+
+	openFile (id: string, route: string) {
 		if (!id) {
 			return;
 		};
 
 		C.FileDownload(id, U.Common.getElectron().tmpPath, (message: any) => {
 			if (message.path) {
-				Renderer.send('pathOpen', message.path);
+				Renderer.send('openPath', message.path);
+				analytics.event('OpenMedia', { route });
 			};
 		});
+	};
+
+	downloadFile (id: string, route: string, isImage: boolean) {
+		if (!id) {
+			return;
+		};
+		
+		const url = isImage ? S.Common.imageUrl(id, 1000000) : S.Common.fileUrl(id);
+
+		Renderer.send('download', url, { saveAs: true });
+		analytics.event('DownloadMedia', { route });
 	};
 
 	openFileDialog (extensions: string[], callBack?: (paths: string[]) => void) {
@@ -471,21 +489,6 @@ class Action {
 					return;
 				};
 
-				const { collectionId, count } = message;
-
-				if (collectionId) {
-					window.setTimeout(() => {
-						S.Popup.open('objectManager', { 
-							data: { 
-								collectionId, 
-								type: I.ObjectManagerPopup.Favorites,
-							} 
-						});
-					}, S.Popup.getTimeout() + 10);
-				};
-
-				analytics.event('Import', { middleTime: message.middleTime, type, count });
-
 				if (callBack) {	
 					callBack(message);
 				};
@@ -506,7 +509,7 @@ class Action {
 					return;
 				};
 
-				Renderer.send('pathOpen', paths[0]);
+				Renderer.send('openPath', paths[0]);
 				analytics.event('Export', { type, middleTime: message.middleTime, route });
 
 				if (callBack) {
@@ -650,13 +653,25 @@ class Action {
 	};
 
 	setInterfaceLang (id: string) {
+		const { config } = S.Common;
+		const { languages } = config;
+
 		Renderer.send('setInterfaceLang', id);
+
+		if (!Storage.get('setSpellingLang') && !languages.length) {
+			const check = J.Lang.interfaceToSpellingLangMap[id];
+			if (check) {
+				this.setSpellingLang([ check ]);
+				Storage.set('setSpellingLang', true);
+			};
+		};
+
 		analytics.event('SwitchInterfaceLanguage', { type: id });
 	};
 
-	setSpellingLang (id: string) {
-		Renderer.send('setSpellingLang', id);
-		analytics.event('AddSpellcheckLanguage', { type: id });
+	setSpellingLang (langs: string[]) {
+		Renderer.send('setSpellingLang', langs);
+		analytics.event('AddSpellcheckLanguage');
 	};
 
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {
@@ -693,7 +708,7 @@ class Action {
 				layout = I.WidgetLayout.Link;
 			} else 
 			if (U.Object.isInSetLayouts(object.layout)) {
-				layout = I.WidgetLayout.Compact;
+				layout = I.WidgetLayout.View;
 			} else
 			if (U.Object.isInPageLayouts(object.layout)) {
 				layout = I.WidgetLayout.Tree;

@@ -105,6 +105,10 @@ class MenuManager {
 					{ label: Util.translate('electronMenuCopy'), role: 'copy' },
 					{ label: Util.translate('electronMenuCut'), role: 'cut' },
 					{ label: Util.translate('electronMenuPaste'), role: 'paste' },
+					{ 
+						label: Util.translate('electronMenuPastePlain'), accelerator: 'CmdOrCtrl+Shift+V',
+						click: () => Util.send(this.win, 'commandEditor', 'pastePlain'),
+					},
 
 					Separator,
 

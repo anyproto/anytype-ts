@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, U, Renderer } from 'Lib';
+import { I, U, Action } from 'Lib';
 
 import PopupUsecasePageList from './page/usecase/list';
 import PopupUsecasePageItem from './page/usecase/item';
@@ -83,7 +83,7 @@ const PopupUsecase = observer(class PopupUsecase extends React.Component<I.Popup
 
 	onAuthor (author: string): void {
 		if (author) {
-			Renderer.send('urlOpen', author);
+			Action.openUrl(author);
 		};
 	};
 

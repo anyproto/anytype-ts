@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button, Cell, Error, Icon, EmptySearch, Checkbox } from 'Component';
-import { I, M, C, S, U, J, Relation, translate, Dataview } from 'Lib';
+import { Label, Button, Cell, Error, Icon, EmptySearch } from 'Component';
+import { I, M, C, S, U, J, Relation, translate, Dataview, analytics } from 'Lib';
+
+const Diff = require('diff');
 
 const ID_PREFIX = 'popupRelation';
 const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;
@@ -15,6 +17,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 	refCheckbox = null;
 	cellRefs: Map<string, any> = new Map();
+	initial: any = {};
 	details: any = {};
 	addRelationKeys = [];
 	state = {
@@ -97,13 +100,6 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 					{translate('commonAddRelation')}
 				</div>
 
-				{view && this.addRelationKeys.length ? (
-					<div className="item add" onClick={this.onCheckbox}>
-						<Checkbox ref={ref => this.refCheckbox = ref} />
-						{translate('popupRelationAddToView')}
-					</div>
-				) : null}
-
 				<div className="buttons">
 					<Button text="Save" className="c28" onClick={this.save} />
 					<Button text="Cancel" className="c28" color="blank" onClick={() => close()} />
@@ -142,7 +138,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		U.Data.searchSubscribe({
 			subId: SUB_ID_OBJECT,
 			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
+				{ relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
 			],
 			keys: J.Relation.default.concat(relationKeys),
 			noDeps: true,
@@ -170,7 +166,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		U.Data.searchSubscribe({
 			subId: SUB_ID_DEPS,
 			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: depIds },
+				{ relationKey: 'id', condition: I.FilterCondition.In, value: depIds },
 			],
 			noDeps: true,
 		}, cb);
@@ -188,19 +184,39 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 				const { relationKey } = relation;
 				const value = Relation.formatValue(relation, object[relationKey], false);
 
-				cnt[relationKey] = cnt[relationKey] || 1;
-				if (reference && U.Common.compareJSON(value, reference[relationKey])) {
-					cnt[relationKey]++;
+				if (Relation.isArrayType(relation.format)) {
+					const tmp = [];
+
+					value.forEach(id => {
+						cnt[relationKey] = cnt[relationKey] || {};
+						cnt[relationKey][id] = cnt[relationKey][id] || 0;
+						cnt[relationKey][id]++;
+
+						if (cnt[relationKey][id] == objects.length) {
+							tmp.push(id);
+						};
+					});
+
+					if (tmp.length) {
+						this.details[relationKey] = tmp;
+					};
+				} else {
+					cnt[relationKey] = cnt[relationKey] || 1;
+					if (reference && U.Common.compareJSON(value, reference[relationKey])) {
+						cnt[relationKey]++;
+					};
+					if ((cnt[relationKey] == objects.length) && value) {
+						this.details[relationKey] = value;
+					};
 				};
-				if (cnt[relationKey] == objects.length) {
-					this.details[relationKey] = value;
-				};
+
 				object[relationKey] = value;
 			});
 
 			reference = object;
 		});
 
+		this.initial = U.Common.objectCopy(this.details);
 		this.forceUpdate();
 	};
 
@@ -278,45 +294,65 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	save () {
-		const { close } = this.props;
+		const { param, close } = this.props;
+		const { data } = param;
+		const { view } = data;
 		const objectIds = this.getObjectIds();
-		const details: any[] = []; 
+		const operations: any[] = []; 
 
 		for (const k in this.details) {
 			const relation = S.Record.getRelationByKey(k);
-			if (relation) {
-				details.push({ key: k, value: Relation.formatValue(relation, this.details[k], true) });
+
+			if (!relation) {
+				continue;
+			};
+
+			if (Relation.isArrayType(relation.format)) {
+				const diff = Diff.diffArrays(this.initial[k] || [], this.details[k] || []);
+
+				diff.forEach(it => {
+					let opKey = '';
+					if (it.added) {
+						opKey = 'add';
+					} else
+					if (it.removed) {
+						opKey = 'remove';
+					};
+
+					if (opKey) {
+						const operation = { relationKey: k };
+
+						operation[opKey] = Relation.formatValue(relation, it.value, true);
+						operations.push(operation);
+					};
+				});
+			} else {
+				operations.push({ relationKey: k, set: Relation.formatValue(relation, this.details[k], true) });
 			};
 		};
 
-		S.Popup.open('confirm', {
-			data: {
-				title: 'Are you sure?',
-				text: U.Common.sprintf('This will update relation values of %d objects', objectIds.length),
-				onConfirm: () => {
-					C.ObjectListSetDetails(objectIds, details, (message: any) => {
-						if (message.error.code) {
-							this.setState({ error: message.error.description });
-						} else {
-							close();
-						};
-					});
-
-					if (this.addRelationKeys.length && this.refCheckbox?.getValue()) {
-						const cb = () => {
-							this.addRelationKeys.shift();
-							if (!this.addRelationKeys.length) {
-								return;
-							};
-
-							this.addRelation(this.addRelationKeys[0], cb);
-						};
-
-						this.addRelation(this.addRelationKeys[0], cb);
-					};
-				},
-			},
+		C.ObjectListModifyDetailValues(objectIds, operations, (message: any) => {
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
+			} else {
+				close();
+			};
 		});
+
+		analytics.event('ChangeRelationValue', { id: 'Batch', count: objectIds.length });
+
+		if (this.addRelationKeys.length && view) {
+			const cb = () => {
+				this.addRelationKeys.shift();
+				if (!this.addRelationKeys.length) {
+					return;
+				};
+
+				this.addRelation(this.addRelationKeys[0], cb);
+			};
+
+			this.addRelation(this.addRelationKeys[0], cb);
+		};
 	};
 
 	addRelation (relationKey: string, callBack?: (message: any) => void){

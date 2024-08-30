@@ -89,6 +89,8 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 			animate: true,
 			onRouteChange: () => {
 				S.Auth.logout(true, false);
+
+				analytics.event('LogOut');
 			},
 		});
 	};

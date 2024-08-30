@@ -61,12 +61,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
 		this.onCopy = this.onCopy.bind(this);
+		this.onPasteEvent = this.onPasteEvent.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onLastClick = this.onLastClick.bind(this);
 		this.blockCreate = this.blockCreate.bind(this);
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 		this.resizePage = this.resizePage.bind(this);
-		this.focusFirstBlock = this.focusFirstBlock.bind(this);
+		this.focusInit = this.focusInit.bind(this);
 		this.blockRemove = this.blockRemove.bind(this);
 		this.setLayoutWidth = this.setLayoutWidth.bind(this);
 	};
@@ -103,7 +104,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					{...this.props} 
 					resize={this.resizePage} 
 					readonly={readonly}
-					onLayoutSelect={this.focusFirstBlock} 
+					onLayoutSelect={this.focusInit} 
 				/>
 				
 				<div id={`editor-${rootId}`} className="editor">
@@ -116,7 +117,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							onKeyDown={this.onKeyDownBlock}
 							onKeyUp={this.onKeyUpBlock}  
 							onMenuAdd={this.onMenuAdd}
-							onPaste={this.onPaste}
+							onPaste={this.onPasteEvent}
 							setLayoutWidth={this.setLayoutWidth}
 							readonly={readonly}
 							getWrapperWidth={this.getWrapperWidth}
@@ -128,7 +129,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							onKeyUp={this.onKeyUpBlock}  
 							onMenuAdd={this.onMenuAdd}
 							onCopy={this.onCopy}
-							onPaste={this.onPaste}
+							onPaste={this.onPasteEvent}
 							readonly={readonly}
 							blockRemove={this.blockRemove}
 							getWrapperWidth={this.getWrapperWidth}
@@ -252,7 +253,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
-			this.focusFirstBlock();
+			this.focusInit();
 
 			U.Common.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 
@@ -286,30 +287,28 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (close) {
 			Action.pageClose(this.id, true);
 		};
+
+		Storage.setFocus(this.id, focus.state);
 	};
 
 	onCommand (cmd: string, arg: any) {
-		if (keyboard.isFocused) {
-			return;
-		};
-
 		const { rootId } = this.props;
 		const { focused, range } = focus.state;
 		const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 		const menuOpen = this.menuCheck();
 
-		let length = 0;
-		if (focused) {
-			const block = S.Block.getLeaf(rootId, focused);
-			if (block) {
-				length = block.getLength();
-			};
-		};
-
 		switch (cmd) {
-			case 'selectAll':
-				if (popupOpen || menuOpen) {
+			case 'selectAll': {
+				if (popupOpen || menuOpen || keyboard.isFocused) {
 					break;
+				};
+
+				let length = 0;
+				if (focused) {
+					const block = S.Block.getLeaf(rootId, focused);
+					if (block) {
+						length = block.getLength();
+					};
 				};
 
 				if ((range.from == 0) && (range.to == length)) {
@@ -319,19 +318,52 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					focus.apply();
 				};
 				break;
+			};
+
+			case 'pastePlain': {
+				(async () => {
+					const text = await navigator.clipboard.readText();
+					if (text) {
+						this.onPaste({ text });
+					};
+				})();
+				break;
+			};
 		};
 	};
 	
-	focusFirstBlock () {
-		const { rootId } = this.props;
-		const block = S.Block.getFirstBlock(rootId, 1, it => it.isText() && !it.getLength());
+	focusInit () {
+		const { rootId, isPopup } = this.props;
+		const isReadonly = this.isReadonly();
+		const storage = Storage.getFocus(rootId);
+
+		if (isReadonly) {
+			return;
+		};
+
+		let block = null;
+		let from = 0;
+		let to = 0;
+
+		if (storage) {
+			block = S.Block.getLeaf(rootId, storage.focused);
+			from = storage.range.from;
+			to = storage.range.to;
+		};
+		if (!block) {
+			block = S.Block.getFirstBlock(rootId, 1, it => it.isText() && !it.getLength());
+			from = 0;
+			to = 0;
+		};
 
 		if (!block) {
 			return;
 		};
 
-		focus.set(block.id, { from: 0, to: 0 });
+		focus.set(block.id, { from, to });
 		focus.apply();
+
+		window.setTimeout(() => focus.scroll(isPopup, block.id), 10);
 	};
 	
 	unbind () {
@@ -362,7 +394,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		win.on(`keydown.${ns}`, e => this.onKeyDownEditor(e));
 		win.on(`paste.${ns}`, (e: any) => {
 			if (!keyboard.isFocused) {
-				this.onPaste(e, {});
+				this.onPasteEvent(e, {});
 			};
 		});
 
@@ -1360,7 +1392,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const length = block.getLength();
-		const replace = !range.to && block.isTextList() && !length;
+		const parent = S.Block.getParentLeaf(rootId, block.id);
+		const replace = !range.to && (block.isTextList() || parent?.isTextToggle()) && !length;
 
 		if (block.isTextCode() && (pressed == 'enter')) {
 			return;
@@ -1380,7 +1413,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		e.stopPropagation();
 
 		if (replace) {
-			C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
+			if (parent?.isTextList()) {
+				this.onTabBlock(e, range, true);
+			} else {
+				C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph, () => {
+					C.BlockTextListClearStyle(rootId, [ block.id ]);
+				});
+			};
 		} else 
 		if (!block.isText()) {  
 			this.blockCreate(block.id, I.BlockPosition.Bottom, {
@@ -1720,37 +1759,37 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		Action.copyBlocks(rootId, ids, isCut);
 	};
 
-	onPaste (e: any, props: any, force?: boolean, data?: any) {
-		if (keyboard.isPasteDisabled) {
+	onPasteEvent (e: any, props: any, data?: any) {
+		if (keyboard.isPasteDisabled || this.isReadonly()) {
 			return;
 		};
 
-		const { rootId } = this.props;
-		const selection = S.Common.getRef('selectionProvider');
-		const { focused, range } = focus.state;
 		const files = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
 
 		S.Menu.closeAll([ 'blockAdd' ]);
-
-		if (this.isReadonly()) {
-			return;
-		};
 
 		if (!data) {
 			data = this.getClipboardData(e);
 		};
 
 		if (files.length && !data.files.length) {
-			U.Common.saveClipboardFiles(files, data, (data: any) => {
-				this.onPaste(e, props, force, data);
-			});
+			U.Common.saveClipboardFiles(files, data, data => this.onPasteEvent(e, props, data));
 			return;
 		};
 
 		e.preventDefault();
+		this.onPaste(data);
+	};
 
+	onPaste (data: any) {
+		data.anytype = data.anytype || {};
+		data.anytype.range = data.anytype.range || { from: 0, to: 0 };
+
+		const { rootId } = this.props;
+		const { focused, range } = focus.state;
 		const block = S.Block.getLeaf(rootId, focused);
-		
+		const selection = S.Common.getRef('selectionProvider');
+
 		let url = U.Common.matchUrl(data.text);
 		let isLocal = false;
 
@@ -1759,11 +1798,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			isLocal = true;
 		};
 
-		if (block && url && !force && !block.isTextTitle() && !block.isTextDescription()) {
-			this.onPasteUrl(url, isLocal, props);
+		if (block && url && !block.isTextTitle() && !block.isTextDescription()) {
+			this.onPasteUrl(url, isLocal);
 			return;
 		};
-		
+
 		let id = '';
 		let from = 0;
 		let to = 0;
@@ -1780,6 +1819,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			} else 
 			if (message.blockIds && message.blockIds.length) {
 				count = message.blockIds.length;
+
+				message.blockIds.forEach((id: string) => {
+					const block = S.Block.getLeaf(rootId, id);
+
+					if (block && block.isTextToggle()) {
+						S.Block.toggle(rootId, block.id, true);
+					};
+				});
+
 
 				const lastId = message.blockIds[count - 1];
 				const block = S.Block.getLeaf(rootId, lastId);
@@ -1803,8 +1851,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 	};
 
-	onPasteUrl (url: string, isLocal: boolean, props: any) {
-		const { isInsideTable } = props;
+	onPasteUrl (url: string, isLocal: boolean) {
 		const { rootId } = this.props;
 		const { focused, range } = focus.state;
 		const currentFrom = range.from;
@@ -1815,6 +1862,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
+		const isInsideTable = S.Block.checkIsInsideTable(rootId, block.id);
 		const win = $(window);
 		const first = S.Block.getFirstBlock(rootId, 1, (it) => it.isText() && !it.isTextTitle() && !it.isTextDescription());
 		const object = S.Detail.get(rootId, rootId, [ 'internalFlags' ]);
@@ -2281,13 +2329,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { isPopup, rootId } = this.props;
 		const container = U.Common.getPageContainer(isPopup);
 		const root = S.Block.getLeaf(rootId, rootId);
-		const isSet = root?.isObjectSet();
-		const isCollection = root?.isObjectCollection();
 
 		let mw = container.width();
 		let width = 0;
 
-		if (isSet || isCollection) {
+		if (U.Object.isInSetLayouts(root?.layout)) {
 			width = mw - 192;
 		} else {
 			const size = mw * 0.6;

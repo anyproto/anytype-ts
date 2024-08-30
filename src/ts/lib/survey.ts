@@ -1,4 +1,4 @@
-import { I, S, U, J, Storage, analytics, Renderer, translate } from 'Lib';
+import { I, S, U, J, Storage, analytics, Action, translate } from 'Lib';
 
 class Survey {
 
@@ -45,7 +45,7 @@ class Survey {
 		};
 
 		Storage.setSurvey(type, param);
-		Renderer.send('urlOpen', U.Common.sprintf(J.Url.survey[t], account.id));
+		Action.openUrl(U.Common.sprintf(J.Url.survey[t], account.id));
 		analytics.event('SurveyOpen', { type });
 	};
 
@@ -128,8 +128,8 @@ class Survey {
 
 		U.Data.search({
 			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
-				{ operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 86400 * 3 }
+				{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+				{ relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 86400 * 3 }
 			],
 			limit: 50,
 		}, (message: any) => {

@@ -30,6 +30,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	branches: string[] = [];
 	refList = null;
 	deletedIds = new Set();
+	links = [];
 
 	constructor (props: I.WidgetComponent) {
 		super(props);
@@ -163,21 +164,32 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this._isMounted = true;
 		
 		const { block, isSystemTarget, getData, getTraceId } = this.props;
-		const { targetBlockId } = block.content;
+		const object = this.getTarget();
+
+		this.links = object.links;
 
 		if (isSystemTarget()) {
 			getData(this.getSubId(), this.initCache);
 		} else {
 			this.initCache();
-			C.ObjectShow(targetBlockId, getTraceId(), U.Router.getRouteSpaceId());
+			C.ObjectShow(block.getTargetObjectId(), getTraceId(), U.Router.getRouteSpaceId());
 		};
 
 		this.getDeleted();
 	};
 
 	componentDidUpdate () {
+		const object = this.getTarget();
+
 		this.resize();
 		this.getDeleted();
+
+		// Reload the tree if the links have changed
+		if (!U.Common.compareJSON(this.links, object.links)) {
+			this.clear();
+			this.initCache();
+			this.links = object.links;
+		};
 
 		if (this.refList) {
 			this.refList.recomputeRowHeights(0);
@@ -187,11 +199,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 	componentWillUnmount () {
 		this._isMounted = false;
-
-		const subIds = Object.keys(this.subscriptionHashes).map(this.getSubId);
-		if (subIds.length) {
-			C.ObjectSearchUnsubscribe(subIds);
-		};
+		this.unsubscribe();
 	};
 
 	getDeleted () {
@@ -200,6 +208,28 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 		this.deletedIds = new Set(deleted);
 		return this.deletedIds;
+	};
+
+	unsubscribe () {	
+		const subIds = Object.keys(this.subscriptionHashes).map(this.getSubId);
+
+		if (subIds.length) {
+			C.ObjectSearchUnsubscribe(subIds);
+
+			this.clear();
+		};
+	};
+
+	clear () {
+		const subIds = Object.keys(this.subscriptionHashes).map(this.getSubId);
+
+		this.subscriptionHashes = {};
+		this.branches = [];
+
+		subIds.forEach(subId => {
+			S.Record.recordsClear(subId, '');
+			S.Record.recordsClear(`${subId}/dep`, '');
+		});
 	};
 
 	updateData () {
@@ -222,11 +252,14 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.forceUpdate();
 	};
 
+	getTarget () {
+		return S.Detail.get(S.Block.widgets, this.props.block.getTargetObjectId());
+	};
+
 	loadTree (): I.WidgetTreeItem[] {
 		const { block, isSystemTarget, isPreview, sortFavorite, addGroupLabels } = this.props;
 		const { targetBlockId } = block.content;
-		const { widgets } = S.Block;
-		const object = S.Detail.get(widgets, targetBlockId, [ 'links' ]);
+		const object = this.getTarget();
 		const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetBlockId);
 
 		this.branches = [];

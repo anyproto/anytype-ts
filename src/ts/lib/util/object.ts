@@ -104,7 +104,7 @@ class UtilObject {
 	openWindow (object: any) {
 		const route = this.route(object);
 		if (route) {
-			Renderer.send('windowOpen', `/${route}`);
+			Renderer.send('openWindow', `/${route}`);
 		};
 	};
 
@@ -250,7 +250,7 @@ class UtilObject {
 
 	getByIds (ids: string[], callBack: (objects: any[]) => void) {
 		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }
+			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids }
 		];
 
 		C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
@@ -313,6 +313,10 @@ class UtilObject {
 		return this.isTypeLayout(layout) || this.isRelationLayout(layout);
 	};
 
+	isHumanLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Human;
+	};
+
 	isParticipantLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Participant;
 	};
@@ -327,6 +331,10 @@ class UtilObject {
 
 	isBookmarkLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Bookmark;
+	};
+
+	isImageLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Image;
 	};
 
 	// --------------------------------------------------------- //
