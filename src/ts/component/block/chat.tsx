@@ -715,7 +715,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					update.content.text = text;
 					update.content.marks = marks;
 
-					C.ChatEditMessage(rootId, this.editingId, update, (message: any) => {
+					C.ChatEditMessageContent(rootId, this.editingId, update, (message: any) => {
 						if (message.error.code) {
 							return;
 						};

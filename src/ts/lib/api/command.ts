@@ -2153,14 +2153,14 @@ export const ChatAddMessage = (objectId: string, message: any, callBack?: (messa
 	dispatcher.request(ChatAddMessage.name, request, callBack);
 };
 
-export const ChatEditMessage = (objectId: string, messageId: string, message: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Chat.EditMessage.Request();
+export const ChatEditMessageContent = (objectId: string, messageId: string, message: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.EditMessageContent.Request();
 
 	request.setChatobjectid(objectId);
 	request.setMessageid(messageId);
 	request.setEditedmessage(Mapper.To.ChatMessage(message));
 
-	dispatcher.request(ChatEditMessage.name, request, callBack);
+	dispatcher.request(ChatEditMessageContent.name, request, callBack);
 };
 
 export const ChatDeleteMessage = (objectId: string, messageId: string, callBack?: (message: any) => void) => {

@@ -285,7 +285,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		const { rootId, id } = this.props;
 		const message = Object.assign(S.Chat.getMessage(rootId, id), param);
 
-		C.ChatEditMessage(rootId, id, message);
+		C.ChatEditMessageContent(rootId, id, message);
 	};
 
 });
