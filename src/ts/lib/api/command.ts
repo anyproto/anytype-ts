@@ -2163,6 +2163,16 @@ export const ChatEditMessageContent = (objectId: string, messageId: string, mess
 	dispatcher.request(ChatEditMessageContent.name, request, callBack);
 };
 
+export const ChatToggleMessageReaction = (objectId: string, messageId: string, emoji: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.ToggleMessageReaction.Request();
+
+	request.setChatobjectid(objectId);
+	request.setMessageid(messageId);
+	request.setEmoji(emoji);
+
+	dispatcher.request(ChatToggleMessageReaction.name, request, callBack);
+};
+
 export const ChatDeleteMessage = (objectId: string, messageId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Chat.DeleteMessage.Request();
 

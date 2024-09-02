@@ -248,29 +248,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 
 	onReactionSelect (icon: string) {
 		const { rootId, id } = this.props;
-		const { account } = S.Auth;
-		const message = S.Chat.getMessage(rootId, id);
-		const reactions = message.reactions;
-		const item = reactions.find(it => it.icon == icon);
-		const idx = reactions.findIndex(it => it.icon == icon);
 
-		if (!item) {
-			reactions.push({ icon, authors: [ account.id ] });
-		} else {
-			item.authors = item.authors || [];
-
-			if (item.authors.includes(account.id)) {
-				item.authors = item.authors.filter(id => id != account.id);
-			} else {
-				item.authors = item.authors.concat(account.id);
-			};
-
-			if (!item.authors.length) {
-				reactions.splice(idx, 1);
-			};
-		};
-
-		this.update({ reactions });
+		C.ChatToggleMessageReaction(rootId, id, icon);
 	};
 
 	onAttachmentRemove (attachmentId: string) {
