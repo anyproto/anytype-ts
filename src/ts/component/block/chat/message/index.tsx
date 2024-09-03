@@ -155,8 +155,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 								{reactions.map((item: any, i: number) => (
 									<Reaction key={i} {...item} />
 								))}
-
-								<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
 							</div>
 						) : ''}
 
