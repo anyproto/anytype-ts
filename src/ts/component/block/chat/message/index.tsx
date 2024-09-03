@@ -122,11 +122,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 						<IconObject object={author} size={40} />
 					</div>
 					<div className="side right">
-						<div className="controls">
-							<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
-							<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />
-							{isSelf ? <Icon className="more" onClick={onMore} /> : ''}
-						</div>
 
 						<div className="author">
 							<ObjectName object={author} />
@@ -168,6 +163,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 						<div className="sub" onClick={() => onThread(id)}>
 							{!isThread ? <div className="item">0 replies</div> : ''}
 						</div>
+					</div>
+					<div className="controls">
+						<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
+						<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />
+						{isSelf ? <Icon className="more" onClick={onMore} /> : ''}
 					</div>
 				</div>
 

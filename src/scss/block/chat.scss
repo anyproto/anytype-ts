@@ -61,9 +61,9 @@
 
 		.message { @include text-common; }
 		.message {
-			.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: flex-end; }
+			.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
 
-			.side.left { flex-shrink: 0; width: 40px; }
+			.side.left { flex-shrink: 0; width: 40px; display: flex; align-items: flex-end; }
 			.side.left {
 				.iconObject { display: none; }
 			}
@@ -73,16 +73,16 @@
 				min-width: 164px; max-width: calc(100% - 132px);
 			}
 
-			.controls { position: absolute; left: 100%; margin-left: 8px; top: 50%; margin-top: -10px; display: flex; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
+			.controls { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
 			.controls {
 				.icon { width: 20px; height: 20px; }
 				.icon.reactionAdd { background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
 				.icon.messageReply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
 				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 
-				.icon.reactionAdd:hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
-				.icon.messageReply:hover { background-image: url('~img/icon/chat/buttons/reply1.svg'); }
-				.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
+				.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
+				.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('~img/icon/chat/buttons/reply1.svg'); }
+				.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 			}
 
 			.attachments {
@@ -130,7 +130,7 @@
 		.message.isSelf {
 			.flex { flex-direction: row-reverse; }
 			.side.right { background: rgba(229, 248, 214, 0.5); }
-			.controls { left: auto; margin-left: 0px; right: 100%; margin-right: 8px; flex-direction: row-reverse; }
+			.controls { flex-direction: row-reverse; }
 		}
 
 		.message.canExpand {

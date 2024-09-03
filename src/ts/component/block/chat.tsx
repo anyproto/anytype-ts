@@ -647,16 +647,24 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { account } = S.Auth;
 		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
+		const message = `#block-${blockId} #item-${item.id}`
 		const elementCls = onMore ? '.more' : '.right';
 
 		if (item.creator != account.id) {
 			return;
 		};
 
+		if (onMore) {
+			$(message).addClass('hover');
+		};
+
 		S.Menu.open('select', {
-			element: `#block-${blockId} #item-${item.id} ${elementCls}`,
+			element: `${message} ${elementCls}`,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
+			onClose: () => {
+				$(message).removeClass('hover');
+			},
 			data: {
 				options: [
 					{ id: 'edit', name: translate('commonEdit') },
