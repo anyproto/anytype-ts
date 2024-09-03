@@ -164,7 +164,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 					</div>
 					<div className="controls">
 						<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
-						<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />
+						{/*<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />*/}
 						{isSelf ? <Icon className="more" onClick={onMore} /> : ''}
 					</div>
 				</div>
