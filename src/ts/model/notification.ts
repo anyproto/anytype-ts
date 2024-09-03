@@ -50,9 +50,9 @@ class Notification implements I.Notification {
 					J.Error.Code.INSUFFICIENT_PERMISSIONS,
 				];
 
-				if ((importType == I.ImportType.Notion) && codes.includes(errorCode)) {
-					this.title = translate(`notificationNotionErrorTitle${errorCode}`);
-					this.text = translate(`notificationNotionErrorText${errorCode}`);
+				if (codes.includes(errorCode)) {
+					this.title = translate(`notificationImportErrorTitle${errorCode}`);
+					this.text = translate(`notificationImportErrorText${errorCode}`);
 				};
 				break;
 			};
