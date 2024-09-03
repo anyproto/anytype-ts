@@ -18,7 +18,7 @@ interface State {
 	isLoading: boolean;
 };
 
-const LIMIT_RECORDS = 300;
+const LIMIT_RECORDS = 10000;
 const LIMIT_AUTHORS = 5;
 
 const HistoryRight = observer(class HistoryRight extends React.Component<Props, State> {
