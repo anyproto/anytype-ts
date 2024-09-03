@@ -18,6 +18,8 @@ interface Props extends I.BlockComponent {
 	isNew: boolean;
 	onThread: (id: string) => void;
 	onContextMenu: (e: any) => void;
+	onMore: (e: any) => void;
+	onReply: (e: any) => void;
 };
 
 const LINES_LIMIT = 10;
@@ -41,7 +43,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 	};
 
 	render () {
-		const { rootId, blockId, id, isThread, isNew, onThread, onContextMenu } = this.props;
+		const { rootId, blockId, id, isThread, isNew, onThread, onContextMenu, onMore, onReply } = this.props;
 		const { canExpand, isExpanded } = this.state;
 		const { space } = S.Common;
 		const { account } = S.Auth;
@@ -55,9 +57,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		const hasReactions = reactions.length;
 		const hasAttachments = attachments.length;
 		const isSingle = attachments.length == 1;
+		const isSelf = creator == account.id;
 		const cn = [ 'message' ];
 
-		if (creator == account.id) {
+		if (isSelf) {
 			cn.push('isSelf');
 		};
 		if (canExpand) {
@@ -87,8 +90,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 			const authors = item.authors || [];
 			const length = authors.length;
 			const author = length ? U.Space.getParticipant(U.Space.getParticipantId(space, authors[0])) : '';
-			const isSelf = authors.includes(account.id);
-			const cn = [ 'reaction', (isSelf ? 'isSelf' : '') ];
+			const isMe = authors.includes(account.id);
+			const cn = [ 'reaction', (isMe ? 'isSelf' : '') ];
 
 			return (
 				<div 
@@ -119,9 +122,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 						<IconObject object={author} size={40} />
 					</div>
 					<div className="side right">
-						{!hasReactions ? (
+						<div className="controls">
 							<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
-						) : ''}
+							<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />
+							{isSelf ? <Icon className="more" onClick={onMore} /> : ''}
+						</div>
 
 						<div className="author">
 							<ObjectName object={author} />

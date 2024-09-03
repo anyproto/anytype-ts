@@ -68,16 +68,22 @@
 				.iconObject { display: none; }
 			}
 
-			.side.right { 
-				display: flex; flex-direction: column; padding: 12px 16px; border-radius: 20px; background: rgba(242, 242, 242, 0.5); position: relative; 
-				min-width: 50%;
+			.side.right {
+				display: flex; flex-direction: column; padding: 12px 16px; border-radius: 20px; background: rgba(242, 242, 242, 0.5); position: relative;
+				min-width: 164px; max-width: calc(100% - 132px);
 			}
 
-			.icon.reactionAdd { 
-				width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/chat/buttons/reaction.svg');
-				border-radius: 50%; background-position: center; position: absolute; top: 8px; right: 12px; opacity: 0; transition: $transitionAllCommon;
+			.controls { position: absolute; left: 100%; margin-left: 8px; top: 50%; margin-top: -10px; display: flex; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
+			.controls {
+				.icon { width: 20px; height: 20px; }
+				.icon.reactionAdd { background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
+				.icon.messageReply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
+				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+
+				.icon.reactionAdd:hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
+				.icon.messageReply:hover { background-image: url('~img/icon/chat/buttons/reply1.svg'); }
+				.icon.more:hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 			}
-			.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-color: var(--color-shape-highlight-medium); }
 
 			.attachments {
 				.attachment {
@@ -124,6 +130,7 @@
 		.message.isSelf {
 			.flex { flex-direction: row-reverse; }
 			.side.right { background: rgba(229, 248, 214, 0.5); }
+			.controls { left: auto; margin-left: 0px; right: 100%; margin-right: 8px; flex-direction: row-reverse; }
 		}
 
 		.message.canExpand {
@@ -133,7 +140,7 @@
 			.text { -webkit-line-clamp: unset; }
 		}
 		.message:hover, .message.hover {
-			.icon.reactionAdd { opacity: 1; }
+			.controls { opacity: 1; }
 		}
 
 		.message:first-child { margin-top: 0px; }

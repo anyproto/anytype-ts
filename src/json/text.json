@@ -649,6 +649,7 @@
 	"blockChatEmpty": "There are no messages yet. Be the first to start a discussion",
 	"blockChatMessageExpand": "Expand",
 	"blockChatReactionAdd": "Add reaction",
+	"blockChatReply": "Reply",
 	"blockChatPlaceholder": "Enter your message",
 	"blockChatButtonObject": "Add object",
 	"blockChatButtonEmoji": "Add emoji",

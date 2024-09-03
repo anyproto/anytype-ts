@@ -103,6 +103,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							isThread={!!threadId}
 							onThread={this.onThread}
 							onContextMenu={e => this.onContextMenu(e, item)}
+							onMore={e => this.onContextMenu(e, item, true)}
+							onReply={e => this.onReply(e, item)}
 							isNew={item.id == this.lastMessageId}
 						/>
 					))}
@@ -641,17 +643,18 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return sections;
 	};
 
-	onContextMenu (e: React.MouseEvent, item: any) {
+	onContextMenu (e: React.MouseEvent, item: any, onMore?: boolean) {
 		const { account } = S.Auth;
 		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
+		const elementCls = onMore ? '.more' : '.right';
 
 		if (item.creator != account.id) {
 			return;
 		};
 
 		S.Menu.open('select', {
-			element: `#block-${blockId} #item-${item.id} .right`,
+			element: `#block-${blockId} #item-${item.id} ${elementCls}`,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
@@ -1053,6 +1056,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.setState({ threadId: id }, () => {
 			this.scrollToBottom();
 		});
+	};
+
+	onReply (e: React.MouseEvent, message: any) {
+		console.log('REPLY TO MESSAGE ID: ', message.id);
 	};
 
 	canSend () {
