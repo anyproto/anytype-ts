@@ -76,20 +76,32 @@ class UtilFile {
 			icon = 'video';
 		};
 			
-		if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md', 'tsx', 'scss' ].indexOf(e) >= 0) {
+		if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md', 'tsx', 'scss', 'html', 'yml', 'rtf' ].includes(e)) {
 			icon = 'text';
 		};
 			
-		if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].indexOf(e) >= 0) {
+		if ([ 'zip', 'gzip', 'tar', 'gz', 'rar' ].includes(e)) {
 			icon = 'archive';
 		};
 
-		if ([ 'xls', 'xlsx', 'sqlite' ].indexOf(e) >= 0) {
+		if ([ 'xls', 'xlsx', 'sqlite' ].includes(e)) {
 			icon = 'table';
 		};
 
-		if ([ 'ppt', 'pptx' ].indexOf(e) >= 0) {
+		if ([ 'ppt', 'pptx', 'key' ].includes(e)) {
 			icon = 'presentation';
+		};
+
+		if ([ 'aif' ].includes(e)) {
+			icon = 'audio';
+		};
+
+		if ([ 'dwg', 'ai' ].includes(e)) {
+			icon = 'other';
+		};
+
+		if ([ 'ai' ].includes(e)) {
+			icon = 'image';
 		};
 
 		for (const k in J.Constant.fileExtension) {

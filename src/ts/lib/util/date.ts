@@ -47,11 +47,23 @@ class UtilDate {
 		let i: any = 0;
 		let s: any = 0;
 
-		if (format == I.DateFormat.ShortUS) {
-			[ m, d, y ] = String(date || '').split('.');
-		} else {
-			[ d, m, y ] = String(date || '').split('.');
+		switch (format) {
+			case I.DateFormat.ISO: {
+				[ y, m, d ] = String(date || '').split('.');
+				break;
+			};
+
+			case I.DateFormat.ShortUS: {
+				[ m, d, y ] = String(date || '').split('.');
+				break;
+			};
+
+			default: {
+				[ d, m, y ] = String(date || '').split('.');
+				break;
+			};
 		};
+
 		[ h, i, s ] = String(time || '').split(':');
 
 		y = Number(y) || 0;

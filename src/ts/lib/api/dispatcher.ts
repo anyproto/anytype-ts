@@ -122,6 +122,8 @@ class Dispatcher {
 		};
 
 		let updateParents = false;
+		let updateNumbers = false;
+		let updateMarkup = false;
 
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
@@ -195,22 +197,6 @@ class Dispatcher {
 					break;
 				};
 
-				/*
-				case 'FileLimitReached': {
-					const { bytesLimit, localUsage, spaces } = S.Common.spaceStorage;
-					const bytesUsed = spaces.reduce((res, current) => res += current.bytesUsage, 0);
-					const percentageUsed = Math.floor(U.Common.getPercent(bytesUsed, bytesLimit));
-
-					if (percentageUsed >= 99) {
-						Preview.toastShow({ action: I.ToastAction.StorageFull });
-					} else
-					if (localUsage > bytesLimit) {
-						Preview.toastShow({ text: translate('toastFileLimitReached') });
-					};
-					break;
-				};
-				*/
-
 				case 'BlockAdd': {
 					const { blocks } = mapped;
 
@@ -225,6 +211,7 @@ class Dispatcher {
 					};
 
 					updateParents = true;
+					updateNumbers = true;
 					break;
 				};
 
@@ -245,6 +232,7 @@ class Dispatcher {
 					};
 
 					updateParents = true;
+					updateNumbers = true;
 					break;
 				};
 
@@ -258,6 +246,7 @@ class Dispatcher {
 					};
 
 					updateParents = true;
+					updateNumbers = true;
 					break;
 				};
 
@@ -350,6 +339,8 @@ class Dispatcher {
 					};
 
 					S.Block.updateContent(rootId, id, content);
+
+					updateNumbers = true;
 					break;
 				};
 
@@ -801,6 +792,8 @@ class Dispatcher {
 					const { id, subIds, details } = mapped;
 
 					this.detailsUpdate(details, rootId, id, subIds, true);
+
+					updateMarkup = true;
 					break;
 				};
 
@@ -808,6 +801,8 @@ class Dispatcher {
 					const { id, subIds, details } = mapped;
 
 					this.detailsUpdate(details, rootId, id, subIds, false);
+
+					updateMarkup = true;
 					break;
 				};
 
@@ -819,6 +814,8 @@ class Dispatcher {
 
 					S.Detail.delete(rootId, id, keys);
 					S.Block.checkTypeSelect(rootId);
+
+					updateMarkup = true;
 					break;
 				};
 
@@ -917,6 +914,24 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ImportFinish': {
+					const { collectionId, count, type } = mapped;
+
+					if (collectionId) {
+						window.setTimeout(() => {
+							S.Popup.open('objectManager', { 
+								data: { 
+									collectionId, 
+									type: I.ObjectManagerPopup.Favorites,
+								} 
+							});
+						}, S.Popup.getTimeout() + 10);
+					};
+
+					analytics.event('Import', { type, count });
+					break;
+				};
+
 				case 'ProcessNew':
 				case 'ProcessUpdate':
 				case 'ProcessDone': {
@@ -969,9 +984,14 @@ class Dispatcher {
 		if (updateParents) {
 			S.Block.updateStructureParents(rootId);
 		};
-		
-		S.Block.updateNumbers(rootId); 
-		S.Block.updateMarkup(rootId);
+
+		if (updateNumbers) {
+			S.Block.updateNumbers(rootId); 
+		};
+
+		if (updateMarkup) {
+			S.Block.updateMarkup(rootId);
+		};
 	};
 
 	getUniqueSubIds (subIds: string[]) {

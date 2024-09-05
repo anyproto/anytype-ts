@@ -46,6 +46,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.onFilterSelect = this.onFilterSelect.bind(this);
 		this.onBacklink = this.onBacklink.bind(this);
 		this.onClearSearch = this.onClearSearch.bind(this);
+		this.onContext = this.onContext.bind(this);
 		this.filterMapper = this.filterMapper.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
@@ -158,7 +159,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				};
 
 				content = (
-					<div className="sides">
+					<div className="sides" onContextMenu={e => this.onContext(e, item)}>
 						<div className="side left">
 							<div className="name" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
 							<Context {...meta} />
@@ -312,12 +313,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this._isMounted = true;
 		this.initCache();
 		this.rebind();
-		this.reload();
 
 		focus.clear(true);
 
 		if (backlink) {
 			U.Object.getById(backlink, item => this.setBacklink(item, () => setFilter()));
+		} else {
+			this.reload();
 		};
 
 		analytics.event('ScreenSearch', { route });
@@ -350,6 +352,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this._isMounted = false;
 		this.unbind();
 
+		C.ObjectSearchUnsubscribe([ J.Constant.subId.search ]);
 		window.clearTimeout(this.timeout);
 	};
 
@@ -568,9 +571,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const filter = this.getFilter();
 		const templateType = S.Record.getTemplateType();
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space }
+			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: templateType?.id },
+			{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space }
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -585,7 +588,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		if (backlink) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(backlink.links, backlink.backlinks) });
+			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(backlink.links, backlink.backlinks) });
 		};
 
 		if (clear) {
@@ -611,12 +614,19 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			this.items = this.items.concat(records);
 
+			U.Data.subscribeIds({
+				subId: J.Constant.subId.search,
+				ids: this.items.map(it => it.id),
+				noDeps: true,
+			});
+
 			if (clear) {
 				this.setState({ isLoading: false }, callBack);
 			} else {
 				this.forceUpdate(callBack);
 			};
 		});
+
 	};
 
 	getItems () {
@@ -828,6 +838,27 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 
 		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
+	};
+
+	onContext (e: any, item: any) {
+		const { getId } = this.props;
+
+		S.Menu.open('dataviewContext', {
+			element: `#${getId()} #item-${item.id}`,
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
+			className: 'fixed',
+			classNameWrap: 'fromPopup',
+			vertical: I.MenuDirection.Center,
+			data: {
+				subId: J.Constant.subId.search,
+				route: analytics.route.widget,
+				objectIds: [ item.id ],
+			},
+		});
+
 	};
 
 	getRowHeight (item: any, index: number) {

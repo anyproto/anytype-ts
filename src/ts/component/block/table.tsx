@@ -1213,6 +1213,11 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 		const { rows } = this.getData();
 		const row = S.Block.getLeaf(rootId, id);
+		
+		if (!row) {
+			return [];
+		};
+
 		const isHeader = row.content.isHeader;
 		const idx = rows.findIndex(it => it.id == id);
 		const length = rows.length;

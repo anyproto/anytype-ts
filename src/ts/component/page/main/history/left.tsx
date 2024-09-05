@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Block } from 'Component';
+import { Header, Block } from 'Component';
 import { I, M, S, U, translate } from 'Lib';
 import HeadSimple from 'Component/page/elements/head/simple';
 
@@ -14,6 +14,7 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 
 	node = null;
 	refHead = null;
+	refHeader = null;
 	top = 0;
 
 	constructor (props: Props) {
@@ -31,10 +32,10 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 		const icon = new M.Block({ id: `${rootId}-icon`, type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cover = new M.Block({ id: `${rootId}-cover`, type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cn = [ 'editorWrapper', check.className ];
-		const isSet = root?.isObjectSet();
-		const isCollection = root?.isObjectCollection();
-		const isHuman = root?.isObjectHuman();
-		const isParticipant = root?.isObjectParticipant();
+		const isSet = U.Object.isSetLayout(object.layout);
+		const isCollection = U.Object.isCollectionLayout(object.layout);
+		const isHuman = U.Object.isHumanLayout(object.layout);
+		const isParticipant = U.Object.isParticipantLayout(object.layout);
 
 		let head = null;
 		let children = S.Block.getChildren(rootId, rootId);
@@ -61,6 +62,14 @@ const HistoryLeft = observer(class HistoryLeft extends React.Component<Props> {
 
 		return (
 			<div ref={ref => this.node = ref} id="historySideLeft" onScroll={this.onScroll}>
+				<Header 
+					{...this.props} 
+					ref={ref => this.refHeader = ref}
+					component="mainHistory" 
+					rootId={rootId}
+					layout={I.ObjectLayout.History}
+				/>
+
 				<div id="editorWrapper" className={cn.join(' ')}>
 					<div className="editor">
 						<div className="blocks">

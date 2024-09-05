@@ -272,7 +272,6 @@ class App extends React.Component<object, State> {
 			this.setState({ isLoading: true });
 
 			Storage.delete('menuSearchText');
-			Storage.delete('lastOpenedObject');
 		});
 
 		Renderer.on('zoom', () => {

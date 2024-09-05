@@ -21,17 +21,17 @@ export default [
 
 	title(`Anytype 0.42.3 Hotfix Released!`),
 	text(`We're releasing this hotfix just three days after the 0.42.0 update to address important feedback from our community and better align with user expectations. This patch bundles all the features of 0.42.0 (see previous notes) along with UI improvements, primarily the sidebar display settings, and several bug fixes. Thank you for your swift feedback and continued support!`),
+	text(''),
 	text(`Here's what's new in this hotfix:`),
 	text(''),
 
-	h3(`Quality-of-Life 🌿 `, I.BlockHAlign.Center),
+	h2(`Quality-of-Life 🌿 `, I.BlockHAlign.Center),
 	bullet(`Added display options for Vault Sidebar to ${hl('Settings → Personalization tab')}.`),
 	bullet(`Moved settings from the Appearance tab to the Personalization tab for consistency; renamed the Appearance tab to Color Mode.`),
 	bullet(`Improved sidebar animation and delay. Thanks, @${link('https://community.anytype.io/t/23066', 'code-jack')}!`),
-	bullet(`Menu item was added to Object settings for faster ${hl('add to Collection')} workflow.`),
 	text(''),															  
 
-	h3(`Bug Fixes 🪲`, I.BlockHAlign.Center),															  
+	h2(`Bug Fixes 🪲`, I.BlockHAlign.Center),															  
 	bullet(`Fixed an issue with the default auto-hide sidebar behavior. Previous logic caused problems for users with auto-hide enabled in fixed mode. The setting is now updated, so please reconfigure your auto-hide/show preferences.`),
 	bullet(`Corrected the positioning of the sidebar toggle icon and header on Windows and Linux.`),
 	bullet(`Cleared saved search state in Global Search when the clear button is used.`),
@@ -52,7 +52,7 @@ export default [
 	text(`This release brings a redesigned sidebar, brand-new widgets, and the highly anticipated inline LaTeX feature, along with numerous quality-of-life improvements and bug fixes for an even smoother Anytype experience. Don’t miss our new sync status indicator—it’s like having a little tech guru keeping you informed! Enjoy exploring the updates 🏄‍♀️`),
 	text(''),
 																  
-	h3(`Highlights 💫`, I.BlockHAlign.Center),
+	h2(`Highlights 💫`, I.BlockHAlign.Center),
 	text(''),
 
 	h3(`Redesigned Sidebar 🌐`),
@@ -76,7 +76,7 @@ export default [
 	video(`42/4.mp4`),
 	text(''),
 
-	h3(`Quality-of-Life 🪷 `, I.BlockHAlign.Center),
+	h2(`Quality-of-Life 🪷 `, I.BlockHAlign.Center),
 	bullet(`Menu item was added to Object settings for faster "add to Collection" workflow.`),
 	bullet(`Sharing Anytype with others got simpler—just grab the link from the help menu and share away (Desktop only).`),
 	bullet(`Navigate Tables using only arrow keys to enter, jump cells &amp; exit to the next block. Thanks, @Code-Jack!`),
@@ -92,11 +92,11 @@ export default [
 	bullet(`Search panel now reopens with previously entered text and selected objects in "Related to" mode.`),
 	text(''),
 	
-	h2(`Technical Update 🛠️`),
+	h3(`Technical Update 🛠️`),
 	bullet(`Electron updated to 31.0.0`),
 	text(''),
 
-	h3(`Bug Fixes 🦂`, I.BlockHAlign.Center),	
+	h2(`Bug Fixes 🦂`, I.BlockHAlign.Center),	
 	bullet(`Number relations with values less than 1 million are now evenly spaced. Thanks, @${link('https://community.anytype.io/t/7497', 'matylda')}!`),
 	bullet(`Mermaid diagrams now display correctly with dark mode backgrounds. Thanks, @${link('https://community.anytype.io/t/20228', 'BoxOfWood')}!`),
 	bullet(`Top menu no longer shows up below the cover in sets when using the modal window. Thanks, ${link('https://community.anytype.io/t/22009', 'Elias')}!`),

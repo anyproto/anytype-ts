@@ -63,13 +63,6 @@ const Notification = observer(class Notification extends React.Component<I.Notif
 				break;
 			};
 
-			case I.NotificationType.Remove: {
-				buttons = buttons.concat([
-					{ id: 'spaceDelete', text: translate('notificationButtonSpaceDelete'), color: 'red' },
-				]);
-				break;
-			};
-
 		};
 
 		// Check that space is not removed

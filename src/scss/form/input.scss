@@ -4,6 +4,9 @@
 	background: none; height: 30px; border-radius: 0px; color: inherit; padding: 0px 12px; width: 100%;
 	@include text-common;
 }
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
 .input.isReadonly { cursor: default; }
 .input::placeholder { color: var(--color-shape-primary); }
 

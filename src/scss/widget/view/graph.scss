@@ -1,0 +1,7 @@
+@import "~scss/_mixins";
+
+.viewGraph { padding: 0px; }
+.viewGraph {
+	#graphWrapper { height: 240px; }
+	canvas { width: 100%; height: 100%; }
+}

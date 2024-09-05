@@ -1,6 +1,6 @@
 import Commands from 'dist/lib/pb/protos/commands_pb';
 import Model from 'dist/lib/pkg/lib/pb/model/protos/models_pb';
-import { I, S, U, J, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
+import { I, S, U, J, Mark, Storage, dispatcher, Encode, Mapper, keyboard } from 'Lib';
 
 const { Rpc, Empty } = Commands;
 
@@ -1329,10 +1329,9 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 
 		// Save last opened object
 		const object = S.Detail.get(objectId, objectId, []);
-		const windowId = U.Common.getCurrentElectronWindowId();
 
-		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
-			Storage.setLastOpened(windowId, { id: object.id, layout: object.layout, spaceId: object.spaceId });
+		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
+			Storage.setLastOpened(U.Common.getCurrentElectronWindowId(), { id: object.id, layout: object.layout });
 		};
 
 		if (callBack) {
@@ -1516,6 +1515,24 @@ export const ObjectListSetDetails = (objectIds: string[], details: any[], callBa
 	request.setDetailsList(details);
 
 	dispatcher.request(ObjectListSetDetails.name, request, callBack);
+};
+
+export const ObjectListModifyDetailValues = (objectIds: string[], operations: any[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ListModifyDetailValues.Request();
+
+	request.setObjectidsList(objectIds);
+	request.setOperationsList(operations.map(it => {
+		const op = new Rpc.Object.ListModifyDetailValues.Request.Operation();
+
+		op.setRelationkey(it.relationKey);
+		op.setAdd(Encode.value(it.add));
+		op.setSet(Encode.value(it.set));
+		op.setRemove(Encode.value(it.remove));
+
+		return op;
+	}));
+
+	dispatcher.request(ObjectListModifyDetailValues.name, request, callBack);
 };
 
 export const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {

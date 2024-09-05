@@ -16,6 +16,7 @@ class Analytics {
 	instance: any = null;
 
 	public route = {
+		block: 'Block',
 		navigation: 'Navigation',
 		onboarding: 'Onboarding',
 		collection: 'Collection',
@@ -41,12 +42,16 @@ class Analytics {
 		relation: 'Relation',
 		link: 'Link',
 		mention: 'Mention',
+		media: 'Media',
+		calendar: 'Calendar',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
 		menuSystem: 'MenuSystem',
 		menuHelp: 'MenuHelp',
 		menuContext: 'MenuContext',
+		menuAction: 'MenuAction',
+		menuAdd: 'MenuAdd',
 
 		migrationOffer: 'MigrationImportBackupOffer',
 		migrationImport: 'MigrationImportBackupOffer',
@@ -81,6 +86,7 @@ class Analytics {
 		const { interfaceLang } = S.Common;
 		const electron = U.Common.getElectron();
 		const platform = U.Common.getPlatform();
+		const hasDefaultPath = electron.userPath() == electron.defaultPath();
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(J.Constant.amplitude, null, Object.assign({
@@ -99,6 +105,7 @@ class Analytics {
 			deviceType: 'Desktop',
 			platform,
 			interfaceLang,
+			hasDefaultPath: Number(hasDefaultPath),
 		};
 
 		if (electron.version) {
@@ -473,6 +480,11 @@ class Analytics {
 				break;
 			};
 
+			case 'ChangeSpaceDashboard': {
+				data.type = U.Common.ucFirst(U.Common.enumKey(I.HomePredefinedId, data.type));
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -512,7 +524,7 @@ class Analytics {
 		this.event('CreateObject', { objectType, layout, route, middleTime: time });
 	};
 
-	changeRelationValue (relation: any, value: any, type: string) {
+	changeRelationValue (relation: any, value: any, param: any) {
 		if (!relation) {
 			return;
 		};
@@ -523,7 +535,7 @@ class Analytics {
 		} else {
 			key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';
 		};
-		this.event(key, { type, relationKey: relation.relationKey, format: relation.format });
+		this.event(key, { ...param, relationKey: relation.relationKey, format: relation.format });
 	};
 
 	pageMapper (params: any): string {

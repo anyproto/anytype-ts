@@ -7,7 +7,7 @@ import Prism from 'prismjs';
 import { instance as viz } from '@viz-js/viz';
 import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error, MediaMermaid } from 'Component';
-import { I, C, S, U, J, keyboard, focus, Renderer, translate } from 'Lib';
+import { I, C, S, U, J, keyboard, focus, Action, translate } from 'Lib';
 
 const katex = require('katex');
 const pako = require('pako');
@@ -332,6 +332,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 				e.preventDefault();
 				keyboard.onRedo(rootId, 'editor');
+			});
+
+			keyboard.shortcut(`tab`, e, () => {
+				e.preventDefault();
 			});
 		};
 
@@ -740,7 +744,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 
 					item.off('click').click((e: any) => {
 						e.preventDefault();
-						Renderer.send('urlOpen', item.attr('href'));
+						Action.openUrl(item.attr('href'));
 					});
 				});
 

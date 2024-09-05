@@ -152,6 +152,7 @@
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObject": "Create Object",
 	"commonUrl": "Url",
+	"commonDoNotShowAgain": "Don’t show this again",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -208,6 +209,7 @@
 	"electronMenuCopy": "Copy",
 	"electronMenuCut": "Cut",
 	"electronMenuPaste": "Paste",
+	"electronMenuPastePlain": "Paste without formatting",
 	"electronMenuSelectAll": "Select all",
 	"electronMenuSearch": "Search",
 	"electronMenuPrint": "Print",
@@ -427,6 +429,7 @@
 	"pageMainBlockEmpty": "Block not found",
 	"pageMainRelationObjectsCreated": "%s created",
 
+	"pageMainMediaFileInfo": "File Information",
 	"pageMainMediaNotFound": "File not found",
 
 	"pageMainImportTitle": "Downloading manifest",
@@ -534,6 +537,7 @@
 	"blockTextToggleEmpty": "Empty toggle. Click or drop Block inside",
 	"blockTextWrap": "Wrap",
 	"blockTextUnwrap": "Unwrap",
+	"blockTextPlain": "Plain Text",
 
 	"blockLinkSyncing": "Syncing...",
 	"blockLinkArchived": "Deleted",
@@ -857,6 +861,11 @@
 	"popupSettingsOnboardingStoragePath": "Vault Data Location",
 	"popupSettingsOnboardingLocalOnlyWarningText": "Anytype can't transfer your data between directories. <br/>Your Spaces data will be downloaded from another device. <br/>Please ensure that you have such a device active on the same network.",
 	"popupSettingsOnboardingLocalOnlyWarningConfirm": "Yes, I understand",
+	"popupSettingsOnboardingLocalOnlyNote": "This is an experimental mode.<br/>Use at your own risk.",
+	"popupSettingsOnboardingLocalOnlyConfirmText": "Local-only mode is an experimental feature and does not provide security benefits. Please use it at your own risk, as data loss may occur.",
+	"popupSettingsOnboardingLocalOnlyConfirmConfirm": "Yes, I accept risks",
+	"popupSettingsOnboardingLocalOnlyConfirmCancel": "No, don’t use it",
+
 
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
@@ -1020,6 +1029,9 @@
 	"popupConfirmActionRestrictedText": "You cannot do this in read-only space",
 
 	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
+
+	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
+	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1477,6 +1489,7 @@
 	"menuObjectInstall": "Install",
 	"menuObjectSetDefaultTemplate": "Set as default Template",
 	"menuObjectCreateWidget": "Create Widget",
+	"menuObjectDownloadOpen": "Download and Open",
 
 	"menuItemRelationViewFeaturedAdd": "Add to featured Relations",
 	"menuItemRelationViewFeaturedRemove": "Remove from featured Relations",

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error, ObjectName, Icon } from 'Component';
-import { I, S, U, focus, translate, Action } from 'Lib';
+import { I, S, U, focus, translate, Action, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
 const BlockFile = observer(class BlockFile extends React.Component<I.BlockComponent> {
@@ -127,7 +127,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 	
 	onClick (e: any) {
 		if (!e.button) {
-			Action.openFile(this.props.block.content.targetObjectId);
+			Action.openFile(this.props.block.getTargetObjectId(), analytics.route.block);
 		};
 	};
 

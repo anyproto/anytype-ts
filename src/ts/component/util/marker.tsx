@@ -24,12 +24,10 @@ const Icons = {
 		1:		 require('img/icon/object/checkbox1.svg').default,
 		2:		 require('img/icon/object/checkbox2.svg').default,
 	},
-	toggle:		 require('img/icon/marker/toggle.svg').default,
 };
 
 const Theme = {
 	dark: {
-		toggle:		 require('img/theme/dark/icon/marker/toggle.svg').default,
 		checkbox: {
 			0:		 require('img/icon/marker/checkbox0.svg').default,
 			1:		 require('img/theme/dark/icon/marker/checkbox1.svg').default,
@@ -62,14 +60,7 @@ const Marker = observer(class Marker extends React.Component<Props> {
 		const { theme } = S.Common;
 		const cn = [ 'marker' ];
 		const ci = [ 'markerInner', 'c' + type ];
-		const props = {
-			id: `marker-${id}`,
-			key: `marker-${id}-${type}`,
-			className: ci.join(' '),
-		};
 
-		let inner: any = null;
-		
 		if (className) {
 			cn.push(className);
 		};
@@ -80,6 +71,14 @@ const Marker = observer(class Marker extends React.Component<Props> {
 		if (color) {
 			ci.push('textColor textColor-' + color);
 		};
+
+		const props = {
+			id: `marker-${id}`,
+			key: `marker-${id}-${type}`,
+			className: ci.join(' '),
+		};
+
+		let inner: any = null;
 
 		switch (type) {
 			case I.TextStyle.Bulleted: {
@@ -178,7 +177,15 @@ const Marker = observer(class Marker extends React.Component<Props> {
 	};
 
 	getToggle () {
-		return this.getIcon('toggle');
+		const color = this.props.color || 'default';
+		const c = J.Theme[S.Common.getThemeClass()]?.color[color];
+		const svg = `
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path fill-rule="evenodd" clip-rule="evenodd" d="M10.2158 7.2226C10.5087 6.92971 10.9835 6.92971 11.2764 7.2226L15.9507 11.8969C16.0093 11.9554 16.0093 12.0504 15.9507 12.109L11.2764 16.7833C10.9835 17.0762 10.5087 17.0762 10.2158 16.7833C9.92287 16.4904 9.92287 16.0155 10.2158 15.7226L13.9354 12.0029L10.2158 8.28326C9.92287 7.99037 9.92287 7.51549 10.2158 7.2226Z" fill="${c}"/>
+			</svg>
+		`;
+
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
 });
