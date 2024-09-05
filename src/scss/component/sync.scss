@@ -24,6 +24,8 @@
 	}
 	.icon.syncing::after { animation-delay: 0.3s; }
 	.name { @include text-overflow-nw; margin-right: 10px; }
+
+	.badge { padding-right: 10px; }
 }
 .sync:not(.errorIncompatibleVersion) {
 	.name { display: none; }

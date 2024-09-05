@@ -1543,6 +1543,8 @@
 	"syncButtonNameError3": "No access",
 	"syncButtonNameOffline": "No internet",
 
+	"syncButtonStaging": "Staging",
+
 	"menuSyncStatusTitle": "Sync status",
 
 	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",

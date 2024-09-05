@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon } from 'Component';
-import { I, S, analytics } from 'Lib';
+import { Icon, Label } from 'Component';
+import { I, S, J, analytics, translate } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -27,7 +27,9 @@ const Sync = observer(class Sync extends React.Component<Props> {
 	render () {
 		const { id, className } = this.props;
 		const { icon, error } = this.getStatus();
+		const { account } = S.Auth;
 		const cn = [ 'sync' ];
+		const isStaging = account?.info?.networkId == J.Constant.networkId.development;
 
 		if (className) {
 			cn.push(className);
@@ -44,6 +46,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 				onClick={this.onClick}
 			>
 				<Icon className={icon} />
+				{isStaging ? <Label text={translate('syncButtonStaging')} /> : ''}
 			</div>
 		);
 	};
