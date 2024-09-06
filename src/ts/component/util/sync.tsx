@@ -46,7 +46,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 				onClick={this.onClick}
 			>
 				<Icon className={icon} />
-				{isStaging ? <Label text={translate('syncButtonStaging')} /> : ''}
+				{isStaging ? <Label className="badge" text={translate('syncButtonStaging')} /> : ''}
 			</div>
 		);
 	};
