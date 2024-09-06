@@ -68,7 +68,7 @@
 				.iconObject { display: none; }
 			}
 
-			.side.right { display: flex; flex-direction: column; padding: 12px 16px; border-radius: 20px; background: rgba(242, 242, 242, 0.5); position: relative; min-width: 164px; }
+			.side.right { display: flex; flex-direction: column; padding: 12px 16px; border-radius: 20px; background: rgba(242, 242, 242, 0.5); position: relative; }
 
 			.controls { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
 			.controls {
@@ -142,6 +142,7 @@
 		.message.isFirst { margin: 12px 0px 0px 0px; }
 		.message.isFirst {
 			.author { display: flex; }
+			.side.right {  min-width: 164px; }
 		}
 
 		.message.isLast {
