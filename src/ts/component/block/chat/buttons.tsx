@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, J, keyboard, Mark, S, translate, U } from 'Lib';
+import { Action, C, I, J, keyboard, Mark, S, translate, U } from 'Lib';
 import $ from 'jquery';
 
 interface Props {
 	rootId: string;
 	blockId: string;
+	subId: string;
 	value: string;
 	hasSelection: () => boolean;
 	getMarksAndRange: () => any;
@@ -34,6 +35,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		this.onButton = this.onButton.bind(this);
 		this.onTextButton = this.onTextButton.bind(this);
 		this.onChatButton = this.onChatButton.bind(this);
+		this.onAttachment = this.onAttachment.bind(this);
 	};
 
 	render () {
@@ -84,20 +86,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 		switch (type) {
 			case I.ChatButton.Object: {
-				S.Menu.open('searchObject', {
-					element: `#block-${blockId} #button-${blockId}-${type}`,
-					vertical: I.MenuDirection.Top,
-					noFlipX: true,
-					noFlipY: true,
-					onClose: onMenuClose,
-					data: {
-						skipIds: attachments.map(it => it.id),
-						filters: [
-							{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-						],
-						onSelect: (item: any) => onChatButtonSelect(type, item)
-					}
-				});
+				this.onAttachment();
 				break;
 			};
 
@@ -233,6 +222,97 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			};
 			return it;
 		});
+	};
+
+	onAttachment (menu?: string) {
+		const { subId, blockId, attachments, onMenuClose, onChatButtonSelect } = this.props;
+
+		const options: any[] = [
+			{ id: 'object', icon: 'object', name: translate('commonObject') },
+			{ id: 'media', icon: 'media', name: translate('commonMedia') },
+			{ id: 'file', icon: 'file', name: translate('commonFile') },
+			{ id: 'upload', icon: 'upload', name: translate('commonUpload') },
+		];
+
+		let data;
+		let menuItem;
+		let ret = false;
+
+		if (menu) {
+			switch (menu) {
+				case 'object': {
+					menuItem = 'searchObject';
+					data = {
+						skipIds: attachments.map(it => it.id),
+						filters: [
+							{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+						],
+						onSelect: (item: any) => {
+							onChatButtonSelect(I.ChatButton.Object, item);
+						}
+					};
+					break;
+				};
+				case 'media':
+				case 'file': {
+					const layouts = {
+						media: [ I.ObjectLayout.Image, I.ObjectLayout.Audio, I.ObjectLayout.Video ],
+						file: [ I.ObjectLayout.File, I.ObjectLayout.Pdf ]
+					};
+
+					menuItem = 'dataviewFileList';
+					data = {
+						filters: [
+							{ relationKey: 'layout', condition: I.FilterCondition.In, value: layouts[menu] }
+						],
+						onChange: (value) => {
+							// need to add id to deps
+							// need to figure how to process without uploading
+							console.log('OBJECT ID: ', value[0]);
+						},
+					};
+					break;
+				};
+				case 'upload': {
+					Action.openFileDialog([], paths => {
+						//need to figure how to process without uploading
+						console.log('PATH: ', paths[0]);
+
+						S.Menu.closeAll();
+						ret = true;
+					});
+					break;
+				};
+			};
+		} else {
+			menuItem = 'select';
+			data = {
+				options: options,
+				onSelect: (e: React.MouseEvent, option: any) => {
+					this.onAttachment(option.id);
+				}
+			};
+		};
+
+		if (ret) {
+			return;
+		};
+
+		S.Menu.closeAll(null, () => {
+			S.Menu.open(menuItem, {
+				element: `#block-${blockId} #button-${blockId}-${I.ChatButton.Object}`,
+				className: 'chatAttachment',
+				vertical: I.MenuDirection.Top,
+				noFlipX: true,
+				noFlipY: true,
+				onClose: () => {
+					if (menu) {
+						onMenuClose();
+					};
+				},
+				data,
+			});
+		})
 	};
 });
 

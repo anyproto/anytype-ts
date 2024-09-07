@@ -154,6 +154,10 @@
 	"commonUrl": "Url",
 	"commonEdit": "Edit",
 	"commonDoNotShowAgain": "Don’t show this again",
+	"commonObject": "Object",
+	"commonMedia": "Media",
+	"commonFile": "File",
+
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
