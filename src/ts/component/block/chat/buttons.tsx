@@ -86,6 +86,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			case I.ChatButton.Object: {
 				S.Menu.open('searchObject', {
 					element: `#block-${blockId} #button-${blockId}-${type}`,
+					className: 'fixed',
 					vertical: I.MenuDirection.Top,
 					noFlipX: true,
 					noFlipY: true,
@@ -129,6 +130,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 		const menuParam: any = {
 			element: `#button-${blockId}-${type}`,
+			className: 'fixed',
 			offsetY: 6,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,

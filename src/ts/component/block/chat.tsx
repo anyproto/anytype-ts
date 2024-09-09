@@ -1048,6 +1048,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		return {
 			element: `#block-${blockId} #messageBox`,
+			className: 'fixed',
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
