@@ -711,6 +711,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					filters,
 					relation: observable.box(relation),
 					canAdd: true,
+					canEdit: true,
 					onChange: (value: any, callBack?: () => void) => {
 						this.onChange('value', value);
 
