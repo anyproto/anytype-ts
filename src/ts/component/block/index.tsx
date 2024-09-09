@@ -865,10 +865,10 @@ const Block = observer(class Block extends React.Component<Props> {
 		});
 	};
 
-	renderMentions (node: any, marks: I.Mark[], value: string) {
+	renderMentions (rootId: string, node: any, marks: I.Mark[], value: string) {
 		node = $(node);
 
-		const { rootId, block } = this.props;
+		const { block } = this.props;
 		const size = U.Data.emojiParam(block.content.style);
 		const items = node.find(Mark.getTag(I.MarkType.Mention));
 		

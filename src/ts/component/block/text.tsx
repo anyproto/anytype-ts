@@ -241,7 +241,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	setValue (v: string) {
-		const { block, renderLinks, renderObjects, renderMentions, renderEmoji } = this.props;
+		const { rootId, block, renderLinks, renderObjects, renderMentions, renderEmoji } = this.props;
 		const fields = block.fields || {};
 		
 		let text = String(v || '');
@@ -280,7 +280,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			this.frame = raf(() => {
 				renderLinks(this.node, this.marks, html);
-				renderMentions(this.node, this.marks, html);
+				renderMentions(rootId, this.node, this.marks, html);
 				renderObjects(this.node, this.marks, html);
 				renderEmoji(this.node);
 			});

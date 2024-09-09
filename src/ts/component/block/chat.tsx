@@ -1091,11 +1091,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	renderMarkup () {
 		const { renderLinks, renderMentions, renderObjects, renderEmoji } = this.props;
+		const rootId = this.getRootId();
 		const node = this.refEditable.node;
 		const value = this.refEditable.getTextValue();
 
 		renderLinks(node, this.marks, value);
-		renderMentions(node, this.marks, value);
+		renderMentions(rootId, node, this.marks, value);
 		renderObjects(node, this.marks, value);
 		renderEmoji(node);
 	};
