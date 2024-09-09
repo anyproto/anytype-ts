@@ -418,8 +418,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const view = getView();
 		const filter = view.getFilter(itemId);
 		const isReadonly = this.isReadonly();
+		const key = item.id;
 
-		if (isReadonly) {
+		if (isReadonly || S.Menu.isAnimating('select')) {
 			return;
 		};
 
@@ -428,7 +429,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		let options = [];
-		let key = item.id;
 
 		if (item.id == 'relation') {
 			const menuParam = {
@@ -448,7 +448,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					this.onChange('relationKey', item.relationKey ? item.relationKey : item.id);
 				}
 			});
-
 			return;
 		};
 
@@ -479,10 +478,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					noFilter: true,
 					noVirtualisation: true,
 					rebind: this.rebind,
-					value: item[key],
+					value: item[item.id],
 					options,
 					onSelect: (e: any, el: any) => {
-						this.onChange(key, el.id);
+						this.onChange(item.id, el.id);
 					}
 				}
 			});
@@ -711,6 +710,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					filters,
 					relation: observable.box(relation),
 					canAdd: true,
+					canEdit: true,
 					onChange: (value: any, callBack?: () => void) => {
 						this.onChange('value', value);
 

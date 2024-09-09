@@ -180,11 +180,12 @@ class UtilMenu {
 
 	// Action menu
 	getActions (param: any) {
-		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject } = param;
+		const { rootId, blockId, hasText, hasFile, hasBookmark, hasDataview, hasTurnObject, count } = param;
 		const cmd = keyboard.cmdSymbol();
+		const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralBlock'))}`;
 		const items: any[] = [
 			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
-			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate'), caption: `${cmd} + D` },
+			{ id: 'copy', icon: 'copy', name: copyName, caption: `${cmd} + D` },
 			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
 		];
 
@@ -963,6 +964,44 @@ class UtilMenu {
 
 	codeLangOptions (): I.Option[] {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
+	};
+
+	getStoreSortOptions (tab: I.StoreTab, view: I.StoreView) {
+		let options: any[] = [
+			{ id: 'nameAsc', name: translate('pageMainStoreSortNameAsc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Asc },
+			{ id: 'nameDesc', name: translate('pageMainStoreSortNameDesc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Desc },
+		];
+
+		if (view == I.StoreView.Library) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'createdDateDesc', name: translate('pageMainStoreSortCreatedDesc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Desc },
+				{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Asc },
+			]);
+		};
+
+		if (tab == I.StoreTab.Type) {
+			options = options.concat([
+				{ isDiv: true },
+				{ id: 'lastUsedDateDesc', name: translate('pageMainStoreSortLastUsedDesc'), relationKey: 'lastUsedDate', icon: 'time', type: I.SortType.Desc },
+			]);
+		};
+		return options;
+	};
+
+	getObjectContainerSortOptions (sortId: string, sortType: I.SortType): any[] {
+		return ([
+			{ id: 'updated', name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate' },
+			{ id: 'created', name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate' },
+			{ id: 'name', name: translate('commonName'), relationKey: 'name' },
+		] as any[]).map(it => {
+			it.type = I.SortType.Asc;
+			if (it.id == sortId) {
+				it.type = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
+				it.sortArrow = sortType;
+			};
+			return it;
+		});
 	};
 
 };

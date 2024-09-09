@@ -160,12 +160,15 @@ const PopupSettingsOnboarding = observer(class PopupSettingsOnboarding extends R
 
 		if (this.config.mode == I.NetworkMode.Local) {
 			S.Popup.open('confirm', {
+				className: 'localOnlyWarning',
 				data: {
 					icon: 'warning',
 					title: translate('commonAreYouSure'),
 					text: translate('popupSettingsOnboardingLocalOnlyConfirmText'),
 					textConfirm: translate('popupSettingsOnboardingLocalOnlyConfirmConfirm'),
 					textCancel: translate('popupSettingsOnboardingLocalOnlyConfirmCancel'),
+					colorConfirm: 'blank',
+					colorCancel: 'blank',
 					onConfirm: save,
 					onCancel: () => {
 						this.config.mode = I.NetworkMode.Default;
