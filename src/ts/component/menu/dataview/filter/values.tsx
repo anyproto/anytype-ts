@@ -638,7 +638,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			horizontal: I.MenuDirection.Center,
 			data: { 
 				rebind: this.rebind,
-				value: value, 
+				value, 
+				canEdit: true,
 				onChange: (value: number) => {
 					this.onChange('value', value);
 				},
