@@ -13,6 +13,8 @@ class Sidebar {
 		isClosed: false,
 	};
 	obj: JQuery<HTMLElement> = null;
+	containerWidget: JQuery<HTMLElement> = null;
+	containerObject: JQuery<HTMLElement> = null;
 	page: JQuery<HTMLElement> = null;
 	header: JQuery<HTMLElement> = null;
 	footer: JQuery<HTMLElement> = null;
@@ -55,6 +57,8 @@ class Sidebar {
 
 	initObjects () {
 		this.obj = $('#sidebar');
+		this.containerWidget = this.obj.find('#containerWidget');
+		this.containerObject = this.obj.find('#containerObject');
 		this.page = $('#page.isFull');
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
@@ -70,6 +74,8 @@ class Sidebar {
 		if (!this.obj || !this.obj.length || this.isAnimating || isClosed) {
 			return;
 		};
+
+		S.Common.showObjectSet(false);
 
 		this.obj.addClass('anim');
 		this.setElementsWidth(width);
@@ -128,8 +134,8 @@ class Sidebar {
 	};
 
 	setElementsWidth (width: any): void {
-		this.obj.find('#sidebarHead').css({ width });
-		this.obj.find('#sidebarBody').css({ width });
+		this.containerWidget.find('> .head').css({ width });
+		this.containerWidget.find('> .body').css({ width });
 	};
 
 	setWidth (w: number): void {
@@ -156,7 +162,7 @@ class Sidebar {
 	};
 
 	onMouseMove (): void {
-		const { showVault, hideSidebar, isFullScreen } = S.Common;
+		const { showVault, hideSidebar } = S.Common;
 
 		if (!this.obj || !this.obj.length || keyboard.isDragging) {
 			return;
@@ -207,9 +213,7 @@ class Sidebar {
 		this.initObjects();
 
 		if ((width === null) && this.obj && this.obj.length) {
-			if (this.obj.css('display') != 'none') {
-				width = this.obj.outerWidth();
-			};
+			width = this.obj.outerWidth();
 		};
 
 		const { isClosed } = this.data;
@@ -219,10 +223,10 @@ class Sidebar {
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
-		
-		let toggleX = width ? width - 40 + (showVault ? vw : 0) : 84;
-		if (!width && (isFullScreen || !U.Common.isPlatformMac())) {
-			toggleX -= 68;
+
+		let toggleX = 16;
+		if ((width && showVault) || (U.Common.isPlatformMac() && !isFullScreen)) {
+			toggleX = 84;
 		};
 
 		this.header.css({ width: '' }).removeClass('withSidebar');
@@ -281,7 +285,9 @@ class Sidebar {
 			return;
 		};
 
-		this.obj.css({ width: v.isClosed ? 0 : v.width });
+		const width = v.isClosed ? 0 : v.width;
+
+		this.containerWidget.css({ width });
 	};
 
 	/**
@@ -320,6 +326,11 @@ class Sidebar {
 
 	getVaultDuration (width: number): number {
 		return J.Size.vault.width / width * J.Constant.delay.sidebar;
+	};
+
+	objectContainerToggle () {
+		S.Common.showObjectSet(!S.Common.showObject);
+		requestAnimationFrame(() => this.resizePage(null, false));
 	};
 
 };
