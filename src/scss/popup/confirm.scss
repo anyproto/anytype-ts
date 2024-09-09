@@ -73,4 +73,9 @@
 		.innerWrap { width: 488px; padding: 24px; border-radius: 16px; background: linear-gradient(180deg, #fef2c6 0%, #ececec 100%); }
 		.label { margin-bottom: 12px; }
 	}
+
+	.popup.popupConfirm.localOnlyWarning {
+		.innerWrap { padding: 32px 32px 24px 32px; }
+		.buttons { flex-direction: column-reverse; gap: 8px 0px; }
+	}
 }

@@ -186,31 +186,44 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 	validateName (callBack?: () => void) {
 		const name = this.getName();
+		const globalName = this.getGlobalName();
 
-		this.checkName(name, () => {
-			this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
+		// if the name was already set, i.e. user had a subscription before
+		// then we don't need to check the name again, just go ahead
+		if (!globalName.length) {
+			this.checkName(name, () => {
+				this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
 
-			C.NameServiceResolveName(name, (message: any) => {
-				let error = '';
-				if (message.error.code) {
-					error = message.error.description;
-				} else
-				if (!message.available) {
-					error = translate('popupMembershipStatusNameNotAvailable');
-				};
-
-				if (error) {
-					this.setError(error);
-				} else {
-					this.disableButtons(false);
-					this.setOk(translate('popupMembershipStatusNameAvailable'));
-
-					if (callBack) {
-						callBack();
+				C.NameServiceResolveName(name, (message: any) => {
+					let error = '';
+					if (message.error.code) {
+						error = message.error.description;
+					} else
+					if (!message.available) {
+						error = translate('popupMembershipStatusNameNotAvailable');
 					};
-				};
+
+					if (error) {
+						this.setError(error);
+					} else {
+						this.disableButtons(false);
+						this.setOk(translate('popupMembershipStatusNameAvailable'));
+
+						if (callBack) {
+							callBack();
+						};
+					};
+				});
 			});
-		});
+		} else {
+			// go ahead without checking the name
+			// it was set before
+			this.disableButtons(false);
+
+			if (callBack) {
+				callBack();
+			};
+		}
 	};
 
 	checkName (name: string, callBack: () => void) {

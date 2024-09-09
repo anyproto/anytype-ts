@@ -87,6 +87,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 						{...this.props} 
 						getCoverObject={this.getCoverObject}
 						recordId={id}
+						recordIdx={records.indexOf(id)}
 					/>
 				);
 			};
