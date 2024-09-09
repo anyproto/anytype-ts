@@ -12,8 +12,6 @@ interface State {
 
 const LIMIT = 20;
 const HEIGHT = 64;
-const KEY_TYPE = 'objectContainerType';
-const KEY_SORT = 'objectContainerSort';
 
 const SidebarObject = observer(class SidebarObject extends React.Component<{}, State> {
 	
@@ -26,8 +24,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	refList = null;
 	cache: any = {};
 	offset = 0;
-	sortId = '';
-	sortType: I.SortType = I.SortType.Asc;
+	sortId = 'updated';
+	sortType: I.SortType = I.SortType.Desc;
 	orphan = false;
 	type: I.ObjectContainerType = I.ObjectContainerType.Object;
 	searchIds: string[] = null;
@@ -191,17 +189,24 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
     };
 
 	componentDidMount () {
-		this.type = Storage.get(KEY_TYPE) || I.ObjectContainerType.Object;
+		const storage = this.storageGet();
 
-		const sort = Storage.get(this.getSortKey(this.type));
-		if (sort) {
-			this.sortId = sort.id;
-			this.sortType = sort.type;
+		if (storage) {
+			this.type = storage.type || I.ObjectContainerType.Object;
+			this.orphan = storage.orphan || false;
+
+			const sort = storage.sort[this.type];
+
+			if (sort) {
+				this.sortId = sort.id;
+				this.sortType = sort.type;
+			};
 		};
 
+		this.refSelect.setOptions(this.getTypeOptions());
+		this.refSelect.setValue(this.type);
 		this.rebind();
 		this.load(true);
-		this.refSelect.setValue(this.type);
 	};
 
 	componentDidUpdate () {
@@ -360,7 +365,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					this.sortType = item.type;
 					this.load(true);
 
-					Storage.set(this.getSortKey(this.type), { id: item.id, type: item.type });
+					const storage = this.storageGet();
+					
+					storage.sort[this.type] = { id: item.id, type: item.type };
+
+					this.storageSet(storage);
 				},
 			}
 		});
@@ -385,13 +394,17 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onSwitchType (id: string) {
+		const storage = this.storageGet();
+
 		if (id == I.ObjectContainerType.Orphan) {
 			this.orphan = !this.orphan;
+			storage.orphan = this.orphan;
 		} else {
 			this.type = id as I.ObjectContainerType;
-			Storage.set(KEY_TYPE, this.type);
+			storage.type = this.type;
 		};
 
+		this.storageSet(storage);
 		this.refSelect.setOptions(this.getTypeOptions());
 		this.refSelect.setValue(this.type);
 		this.load(true);
@@ -464,13 +477,19 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		}, J.Constant.delay.keyboard);
 	};
 
+	storageGet () {
+		const storage = Storage.get('sidebarObject') || {};
+		storage.sort = storage.sort || {};
+		return storage;
+	};
+
+	storageSet (obj: any) {
+		Storage.set('sidebarObject', obj);
+	};
+
 	onFilterClear () {
 		this.searchIds = null;
 		this.load(true);
-	};
-
-	getSortKey (tab: I.ObjectContainerType) {
-		return U.Common.toCamelCase(`${KEY_SORT}-${tab}`);
 	};
 
 	resize () {
