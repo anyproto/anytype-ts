@@ -90,6 +90,7 @@ export interface MenuItem {
 	withMore?: boolean;
 	subComponent?: string;
 	note?: string;
+	sortArrow?: I.SortType;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;

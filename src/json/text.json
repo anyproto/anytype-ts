@@ -153,7 +153,9 @@
 	"commonCreateObject": "Create Object",
 	"commonUrl": "Url",
 	"commonEdit": "Edit",
+	"commonShare": "Share",
 	"commonDoNotShowAgain": "Don’t show this again",
+	"commonMembers": "Members",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -759,7 +761,6 @@
 	"popupSettingsSpaceIndexShareManageTitle": "Manage sharing",
 	"popupSettingsSpaceIndexShareManageText": "Copy invite link, approve requests and manage members",
 
-	"popupSettingsSpaceIndexShareMembersTitle": "Members",
 	"popupSettingsSpaceIndexShareMembersManageText": "Manage space members",
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
@@ -820,7 +821,6 @@
 	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedButton": "✦ Upgrade to add more editors",
 
-	"popupSettingsSpaceShareMembersTitle": "Members",
 	"popupSettingsSpaceShareJoinRequest": "Join Request",
 	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
 	"popupSettingsSpaceShareViewRequest": "View request",
@@ -830,8 +830,6 @@
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareShowQR": "Show QR code",
-
-	"popupSettingsSpaceMembersTitle": "Members",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
@@ -1735,12 +1733,13 @@
 	"widgetEdit": "Edit widgets",
 	"widgetAdd": "Add widget",
 	"widgetLibrary": "Library",
-	"widgetBin": "Bin",
 	"widgetOptions": "Options",
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here",
 	"widgetEmptyLabelCreate": "There are no Objects here,<br/>create the first one",
 	"widgetShowAll": "See all Objects",
+
+	"widgetButtonAllContent": "All content",
 
 	"phrasePlaceholder": "Please enter your Key",
 
@@ -1775,6 +1774,17 @@
 	"sidebarMenuAll": "Spaces & widgets",
 	"sidebarMenuSidebar": "Only widgets",
 	"sidebarMenuFocus": "Focus mode",
+
+	"sidebarObjectTypeObject": "Objects",
+	"sidebarObjectTypeType": "Object Types",
+	"sidebarObjectTypeFile": "Files",
+	"sidebarObjectTypeMedia": "Media",
+	"sidebarObjectTypeBookmark": "Bookmarks",
+	"sidebarObjectTypeRelation": "Relations",
+	"sidebarObjectTypeOrphan": "Only unlinked",
+
+	"sidebarObjectSortCreated": "Date created",
+	"sidebarObjectSortUpdated": "Date updated",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",

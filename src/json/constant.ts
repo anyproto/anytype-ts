@@ -97,7 +97,8 @@ export default {
 		space:			 'space',
 		fileManager:	 'fileManager',
 		participant:	 'participant',
-		myParticipant:	 'myParticipant'
+		myParticipant:	 'myParticipant',
+		allObject:		 'allObject',
 	},
 
 	typeKey: {
