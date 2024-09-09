@@ -189,7 +189,7 @@
 				.descrWrap {
 					.type { max-width: 40%; @include text-overflow-nw; flex-shrink: 0; }
 
-					.descr { position: relative; }
+					.descr { position: relative; @include text-overflow-nw; max-width: 100%; }
 					.descr::before { 
 						content: ''; width: 2px; height: 2px; border-radius: 50%; background-color: var(--color-text-secondary); display: block;
 						position: absolute; left: -8px; top: 50%; margin-top: -1px;
