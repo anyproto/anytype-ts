@@ -31,7 +31,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	searchIds: string[] = null;
 	filter = '';
 	timeoutFilter = 0;
-	preventClose = false;
 
 	constructor (props: any) {
 		super(props);
@@ -238,9 +237,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 			if (
 				!target.parents(`#containerObject`).length && 
+				!target.parents(`#containerWidget`).length &&
+				!target.parents(`#header`).length &&
 				!target.parents(`.menus`).length &&
-				!target.parents(`#widget-buttons`).length &&
-				!this.preventClose
+				!target.parents(`.popups`).length
 			) {
 				sidebar.objectContainerToggle();
 			};
@@ -345,7 +345,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	onClick (item: any) {
 		U.Object.openConfig(item);
-		this.preventClose = true;
 	};
 
 	onSort (e: any) {
