@@ -2069,7 +2069,7 @@
 
 	"errorIncorrectEmail": "Incorrect E-mail",
 
-	"origin0": "None",
+	"origin0": "Empty",
 	"origin1": "Clipboard",
 	"origin2": "Drag'n'Drop",
 	"origin3": "Imported object",
