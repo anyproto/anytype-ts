@@ -1099,9 +1099,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const node = this.refEditable.node;
 		const value = this.refEditable.getTextValue();
 
-		renderLinks(node, this.marks, value);
 		renderMentions(rootId, node, this.marks, value);
-		renderObjects(node, this.marks, value);
+		renderObjects(rootId, node, this.marks, value);
+		renderLinks(node, this.marks, value);
 		renderEmoji(node);
 	};
 

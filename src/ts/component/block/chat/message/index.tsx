@@ -191,9 +191,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		const message = S.Chat.getMessage(rootId, id);
 		const { marks, text } = message.content;
 
-		renderLinks(this.node, marks, text);
 		renderMentions(rootId, this.node, marks, text);
-		renderObjects(this.node, marks, text);
+		renderObjects(rootId, this.node, marks, text);
+		renderLinks(this.node, marks, text);
 		renderEmoji(this.node);
 
 		this.checkLinesLimit();

@@ -279,9 +279,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			this.frame = raf(() => {
-				renderLinks(this.node, this.marks, html);
 				renderMentions(rootId, this.node, this.marks, html);
-				renderObjects(this.node, this.marks, html);
+				renderObjects(rootId, this.node, this.marks, html);
+				renderLinks(this.node, this.marks, html);
 				renderEmoji(this.node);
 			});
 		};

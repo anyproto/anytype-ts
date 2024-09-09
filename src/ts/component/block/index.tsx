@@ -964,10 +964,10 @@ const Block = observer(class Block extends React.Component<Props> {
 		});
 	};
 
-	renderObjects (node: any, marks: I.Mark[], value: string) {
+	renderObjects (rootId: string, node: any, marks: I.Mark[], value: string) {
 		node = $(node);
 
-		const { rootId, readonly } = this.props;
+		const { readonly } = this.props;
 		const items = node.find(Mark.getTag(I.MarkType.Object));
 
 		if (!items.length) {
