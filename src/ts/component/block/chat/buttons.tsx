@@ -234,6 +234,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			return it;
 		});
 	};
+
 });
 
 export default ChatButtons;
