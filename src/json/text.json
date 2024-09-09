@@ -2084,8 +2084,16 @@
 	"notificationGalleryErrorTitle": "Something went wrong",
 	"notificationGalleryErrorText": "Oops! <b>'%s'</b> wasn't installed. Please check your Internet connection and try again or post a report in our community.",
 
-	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
-	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration",
+	"notificationImportErrorTitle5": "No Items to Import",
+	"notificationImportErrorText5": "There are no items to import. Please check your file type or Import selection and try again.",
+	"notificationImportErrorTitle6": "Import Canceled",
+	"notificationImportErrorText6": "The import has been canceled.",
+	"notificationImportErrorTitle7": "Import Limit Exceeded",
+	"notificationImportErrorText7": "The file exceeds the import limit of 1,000 rows or 10 columns. Please adjust your file and try again.",
+	"notificationImportErrorTitle8": "File Load Error",
+	"notificationImportErrorText8": "We couldn’t load your files. Please check your files and try again, or manually transfer the files.",
+	"notificationImportErrorTitle9": "Permission Denied",
+	"notificationImportErrorText9": "We don’t have permission to import into this Anytype space.",
 
 	"notificationJoinSuccessText": "<b>%s</b> has requested to join <b>'%s'</b> space",
 
