@@ -16,6 +16,7 @@ interface Props extends I.Cell {
 	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	maxWidth?: number;
+	recordIdx?: number;
 };
 
 const Cell = observer(class Cell extends React.Component<Props> {
@@ -455,8 +456,9 @@ const Cell = observer(class Cell extends React.Component<Props> {
 				if (!$(e.target).parents(`#${cellId}`).length) {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
+
+					pageContainer.off(`mousedown.cell${cellId}`);
 				};
-				pageContainer.off(`mousedown.cell${cellId}`);
 			});
 		};
 

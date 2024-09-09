@@ -15,14 +15,17 @@
 #sidebarToggle.sidebarAnimation { transition: left $transitionSidebarTime linear; }
 #sidebarToggle:hover, #sidebarToggle.hover { background-color: var(--color-shape-highlight-medium); background-image: url('~img/icon/widget/toggle1.svg'); }
 
-.sidebar { position: fixed; z-index: 21; user-select: none; transition: none; top: 0px; left: 0px; height: 100%; }
+.sidebar { position: fixed; z-index: 21; user-select: none; transition: none; top: 0px; left: 0px; height: 100%; display: flex; }
 .sidebar.anim { transition-property: width; transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
 .sidebar.withVault { left: $vaultWidthCollapsed; }
 .sidebar.isClosed { left: 0px !important; }
 
 .sidebar {
-	> .inner { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; background-color: var(--color-shape-tertiary); }
-	> .inner {
+	> #containerWidget { 
+		height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0;
+		background-color: var(--color-shape-tertiary); 
+	}
+	> #containerWidget {
 		> .head { 
 			display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
 			gap: 0px 8px; overflow: hidden;
@@ -40,9 +43,190 @@
 		}
 
 		> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: auto; overscroll-behavior: none; }
+		> .body {
+			@keyframes shake1 {
+				0% { transform: rotate(-0.5deg); }
+				100% { transform: rotate(0.5deg); }
+			}
+
+			@keyframes shake2 {
+				0% { transform: rotate(0.5deg); }
+				100% { transform: rotate(-0.5deg); }
+			}
+
+			.list { display: flex; flex-direction: column; gap: 12px 0px; }
+			.list {
+				> .buttons { display: flex; justify-content: center; width: 100%; gap: 0px 8px; }
+				> .buttons {
+					.button {
+						box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 8px; width: 100%; min-width: 60px; max-width: 200px; background-color: var(--color-bg-primary); 
+						color: var(--color-text-secondary); font-weight: 400; white-space: nowrap;
+					}
+					.button:hover { background-color: var(--color-shape-tertiary); }
+
+					.button.disabled { background: var(--color-shape-tertiary); max-width: 80px; }
+					.button.grey { 
+						box-shadow: 0px 0px; background: var(--color-shape-highlight-medium); border-radius: 6px; @include text-common; color: var(--color-text-primary); line-height: 26px; width: auto;
+						padding: 0px 10px;
+					}
+				}
+
+				> .dropTarget.firstTarget, 
+				> .dropTarget.lastTarget 
+				{ position: relative; }
+
+				> .dropTarget.lastTarget { display: flex; flex-direction: column; gap: 12px 0px; }
+
+				> .dropTarget.firstTarget.isOver, 
+				> .dropTarget.lastTarget.isOver 
+				{ box-shadow: 0px 0px !important; }
+
+				> .dropTarget.firstTarget.isOver::before, 
+				> .dropTarget.lastTarget.isOver::before { 
+					content: ""; position: absolute; background: var(--color-system-accent-100); width: calc(100% - 28px); height: 2px; border-radius: 2px; left: 12px;
+				}
+
+				> .dropTarget.firstTarget.isOver::before { bottom: -7px; }
+				> .dropTarget.lastTarget.isOver::before { top: -7px; }
+
+				.widget.isEditable.isOver::before { 
+					content: ""; position: absolute; background: var(--color-system-accent-100); height: 2px; width: calc(100% - 24px); border-radius: 2px; 
+					left: 12px; 
+				} 
+				.widget.isEditable.isOver.top::before { top: -7px; }
+				.widget.isEditable.isOver.bottom::before { bottom: -7px; }
+			}
+
+			.list.isEditing {
+				> .buttons { position: sticky; bottom: 0px; left: 0px; padding: 0px 16px; }
+				
+				.widget:not(.isEditable) { opacity: 0.5; }
+				.widget:not(.isEditable) {
+					.dimmer { cursor: default; }
+				}
+
+				.widget {
+					.icon.remove { display: block; }
+				}
+				.widget {
+					.dimmer { display: block; }
+				}
+
+				.widget.widgetSpace:hover {
+					.side.left { width: 100%; }
+					.side.right { display: none; }
+				}
+
+				.widget.isEditable:nth-child(2n + 1) { animation: shake1 0.2s linear infinite alternate; }
+				.widget.isEditable:nth-child(2n + 2) { animation: shake2 0.2s linear infinite alternate; }
+				.widget.isEditable:hover {
+					.head {
+						> .buttons { display: flex; }
+						.iconWrap.options { display: none; }
+					}
+				}
+
+				.widget.button { cursor: default; animation: none; }
+			}
+
+			.list.isListPreview { overflow: hidden; height: 100%; }
+		}
 	}
 
-	.resize-h { width: 10px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -5px; top: 0px; }
+	> #containerObject { 
+		background-color: var(--color-bg-primary); border-right: 1px solid var(--color-shape-secondary); display: flex; flex-direction: column; width: 336px;
+	}
+	> #containerObject {
+		> .head { padding: 12px 0px 0px 0px; display: flex; flex-direction: column; gap: 8px 0px; overflow: hidden; }
+		> .head {
+			.title { @include text-paragraph; font-weight: 600; padding: 0px 16px 0px 11px; }
+
+			.sides { display: flex; flex-direction: row; gap: 0px 8px; }
+			.sides {
+				.side.left { flex-grow: 1; }
+				.side.right { flex-shrink: 0; }
+				.side.right:empty { display: none; }
+			}
+
+			.sides.sidesSort { padding: 0px 10px 0px 5px; }
+			.sides.sidesFilter { padding: 0px 16px 0px 11px; }
+
+			.icon.sort { width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/store/sort.svg'); border-radius: 6px; }
+			.icon.sort:hover, .icon.sort.hover { background-color: var(--color-shape-highlight-medium); }
+
+			.select { border: 0px; padding: 4px 20px 4px 6px; font-weight: 500; }
+			.select {
+				.clickable {
+					.icon { display: none; }
+				}
+			}
+
+			.filter { padding: 0px 4px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); }
+			.filter {
+				.inner { height: 26px; }
+				.line { display: none; }
+			}
+		}
+
+		> .body { flex-grow: 1; overflow: hidden; }
+		> .body {
+			.ReactVirtualized__List { padding: 8px 8px 12px 3px; overscroll-behavior: none; }
+
+			.items { height: 100%; }
+
+			.item { padding: 8px; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; position: relative; }
+			.item {
+				.iconObject { flex-shrink: 0; border-radius: 6px; }
+				.iconObject.c48:not(.isTask) { background-color: var(--color-shape-tertiary); }
+
+				.info { width: 100%; display: flex; flex-direction: column; gap: 2px 0px; }
+				.name { @include text-overflow-nw; width: 100%; }
+
+				.descrWrap { 
+					display: flex; @include text-overflow-nw; width: 100%; @include text-small; color: var(--color-text-secondary); gap: 0px 14px; 
+					align-items: center;
+				}
+				.descrWrap {
+					.type { max-width: 40%; @include text-overflow-nw; flex-shrink: 0; }
+
+					.descr { position: relative; }
+					.descr::before { 
+						content: ''; width: 2px; height: 2px; border-radius: 50%; background-color: var(--color-text-secondary); display: block;
+						position: absolute; left: -8px; top: 50%; margin-top: -1px;
+					}
+					.descr:empty { display: none; }
+				}
+			}
+
+			.item.withIcon {
+				.info { width: calc(100% - 60px); }
+			}
+
+			.item.isType, .item.isRelation { gap: 0px; }
+			.item.isType, .item.isRelation {
+				.info { width: calc(100% - 26px); }
+				.nameWrap { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+				.descrWrap {
+					.type, .descr::before { display: none; }
+				}
+			}
+
+			.item.isType.withIcon {
+				.descrWrap { padding-left: 26px; }
+			}
+			.item.isRelation.withIcon {
+				.descrWrap { padding-left: 28px; }
+			}
+
+			.item::before {
+				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
+				pointer-events: none; border-radius: 6px;
+			}
+			.item:hover::before, .item.active::before { background: var(--color-shape-highlight-medium); }
+		}
+	}
+
+	.resize-h { width: 10px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: relative; margin-left: -5px; }
 	.resize-h {
 		.resize-handle {
 			position: absolute; left: 6px; top: 50%; margin: -16px 0px 0px 0px; transition: $transitionAllCommon;
@@ -66,6 +250,6 @@
 
 html.platformWindows {
 	.sidebar {
-		> .inner > .body { overflow-y: overlay; }
+		> .containerWidget > .body { overflow-y: overlay; }
 	}
 }	

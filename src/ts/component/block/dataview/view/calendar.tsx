@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
-import { I, S, U, translate, Dataview } from 'Lib';
+import { I, S, U, translate, Dataview, J, C, analytics } from 'Lib';
 import Item from './calendar/item';
 
 interface State {
@@ -24,6 +24,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 		super (props);
 
 		this.onToday = this.onToday.bind(this);
+		this.onCreate = this.onCreate.bind(this);
 	};
 
 	render () {
@@ -101,6 +102,7 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 											{...item} 
 											className={cn.join(' ')}
 											items={items.filter(it => it._date == current)}
+											onCreate={this.onCreate}
 										/>
 									);
 								})}
@@ -229,6 +231,34 @@ const ViewCalendar = observer(class ViewCalendar extends React.Component<I.ViewC
 
 		this.scroll = true;
 		this.setValue(U.Date.timestamp(today.y, today.m, today.d));
+	};
+
+	onCreate (details: any) {
+		const { rootId, isCollection, getView, getTypeId, getTemplateId, getTarget } = this.props;
+		const view = getView();
+		const objectId = getTarget().id;
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
+		const type = S.Record.getTypeById(getTypeId());
+		const typeKey = type.uniqueKey;
+		const templateId = getTemplateId();
+
+		details = Object.assign(Dataview.getDetails(rootId, J.Constant.blockId.dataview, objectId, view.id), details);
+
+		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const object = message.details;
+
+			if (isCollection) {
+				C.ObjectCollectionAdd(objectId, [ object.id ]);
+			};
+
+			U.Object.openAuto(object);
+
+			analytics.createObject(object.type, object.layout, analytics.route.calendar, message.middleTime);
+		});
 	};
 
 	scrollToday () {

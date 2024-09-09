@@ -296,7 +296,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { isPopup, block } = this.props;
-		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear' ];
+		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear', 'selectionSet' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
@@ -312,7 +312,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		win.on(`resize.${ns} sidebarResize.${ns}`, () => this.resize());
 		win.on(`updateDataviewData.${ns}`, () => this.loadData(this.getView().id, 0, true));
 		win.on(`setDataviewSource.${ns}`, () => this.onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
-		win.on(`selectionEnd.${ns} selectionClear.${ns}`, () => this.onSelectEnd());
+		win.on(`selectionEnd.${ns} selectionClear.${ns} selectionSet.${ns}`, () => this.onSelectEnd());
 	};
 
 	onKeyDown (e: any) {
@@ -591,7 +591,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return J.Constant.templateId.blank;
 	};
 
-	recordCreate (e: any, template: any, dir: number, groupId?: string) {
+	recordCreate (e: any, template: any, dir: number, groupId?: string, idx?: number) {
 		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const subId = this.getSubId(groupId);
@@ -649,16 +649,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			const object = message.details;
 			const oldIndex = records.indexOf(message.objectId);
 
-			if (isCollection) {
-				C.ObjectCollectionAdd(objectId, [ object.id ]);
-			};
-
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
+			// If idx present use idx otherwise use dir to add record to the beginning or end of the list
 			if (oldIndex < 0) {
-				dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
-			} else {
-				records = arrayMove(records, oldIndex, dir > 0 ? records.length : 0);
+				if (idx >= 0) {
+					records.splice(idx, 0, message.objectId);
+				} else {
+					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+				};
+			} else {	
+				const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
+				records = arrayMove(records, oldIndex, newIndex);
+			};
+
+			if (isCollection) {
+				C.ObjectCollectionAdd(objectId, [ object.id ]);
 			};
 
 			if (groupId) {
@@ -679,14 +685,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			if ([ I.ViewType.Calendar ].includes(view.type)) {
 				U.Object.openConfig(object);
 			} else {
-				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
-				const ref = this.refCells.get(id);
-
 				if (U.Object.isNoteLayout(object.layout)) {
 					this.onCellClick(e, 'name', object.id);
-				} else
-				if (ref) {
-					window.setTimeout(() => ref.onClick(e), 15);
+				} else {
+					window.setTimeout(() => {
+						const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
+						const ref = this.refCells.get(id);
+
+						if (ref) {
+							ref.onClick(e)
+						};
+					}, 15);
 				};
 
 				analytics.createObject(object.type, object.layout, this.analyticsRoute(), message.middleTime);
@@ -704,18 +713,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	onRecordAdd (e: any, dir: number, groupId?: string, menuParam?: any) {
+	onRecordAdd (e: any, dir: number, groupId?: string, menuParam?: any, idx?: number) {
 		if (e.persist) {
 			e.persist();
 		};
 
 		const typeId = this.getTypeId();
 		const type = S.Record.getTypeById(typeId);
+		const view = this.getView();
+
+		if ((view.type == I.ViewType.Board) && !groupId) {
+			groupId = 'empty';
+		};
 
 		if (type && (type.uniqueKey == J.Constant.typeKey.bookmark)) {
 			this.onBookmarkMenu(e, dir, groupId, menuParam);
 		} else {
-			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId);
+			this.recordCreate(e, { id: this.getDefaultTemplateId() }, dir, groupId, idx);
 		};
 	};
 
@@ -911,7 +925,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], callBack);
 
 		if ((undefined !== record[relationKey]) && !U.Common.compareJSON(record[relationKey], value)) {
-			analytics.changeRelationValue(relation, value, 'dataview');
+			analytics.changeRelationValue(relation, value, { type: 'dataview', id: 'Single' });
 		};
 	};
 

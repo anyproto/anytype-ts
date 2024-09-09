@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, S, U, translate } from 'Lib';
+import { I, S, U, translate, analytics, C, J } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	d: number;
 	m: number;
 	y: number;
 	items: any[];
+	onCreate: (details: any) => void;
 };
 
 const LIMIT = 4;
@@ -21,6 +22,9 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		this.onOpen = this.onOpen.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.onContext = this.onContext.bind(this);
+		this.canCreate = this.canCreate.bind(this);
+		this.onDoubleClick = this.onDoubleClick.bind(this);
 	};
 
 	render () {
@@ -62,8 +66,10 @@ const Item = observer(class Item extends React.Component<Props> {
 
 		return (
 			<div 
-				ref={node => this.node = node} 
+				ref={node => this.node = node}
 				className={cn.join(' ')}
+				onContextMenu={this.onContext}
+				onDoubleClick={this.onDoubleClick}
 			>
 				<div className="number">
 					<div className="inner">{d}</div>
@@ -105,6 +111,62 @@ const Item = observer(class Item extends React.Component<Props> {
 				}
 			});
 		});
+	};
+
+	onContext () {
+		const node = $(this.node);
+		const options = [];
+
+		if (this.canCreate()) {
+			options.push({ id: 'add', name: translate('commonNewObject') });
+		};
+
+		if (!options.length) {
+			return;
+		};
+
+		S.Menu.open('select', {
+			element: node,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			offsetY: -node.outerHeight() + 32,
+			offsetX: 16,
+			noFlipX: true,
+			noFlipY: true,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect: (e: any, item: any) => {
+					if (item.id == 'add') {
+						this.onCreate();
+					}
+				},
+			}
+		});
+	};
+
+	onDoubleClick () {
+		if (!this.canCreate()) {
+			return;
+		};
+		this.onCreate();
+	};
+
+	onCreate () {
+		const { d, m, y, getView, onCreate } = this.props;
+		const view = getView();
+		const details = {};
+
+		details[view.groupRelationKey] = U.Date.timestamp(y, m, d, 12, 0, 0);
+		onCreate(details);
+	};
+
+	canCreate () {
+		const { getView, isAllowedObject } = this.props;
+		const view = getView();
+		const groupRelation = S.Record.getRelationByKey(view.groupRelationKey);
+
+		return !groupRelation.isReadonlyValue && isAllowedObject();
 	};
 
 });

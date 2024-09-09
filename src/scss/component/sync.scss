@@ -16,6 +16,7 @@
 	.icon.error { background-color: var(--color-red); display: block; }
 	.icon.synced,
 	.icon.syncing { background-color: var(--color-lime); }
+	.icon.upgrade { background-color: var(--color-yellow); }
 	.icon.syncing::before,
 	.icon.syncing::after {
 		content: ''; @include pos-abs-mid; z-index: 0; margin: -4px 0px 0px -4px;

@@ -76,6 +76,9 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 					</div>
 				);
 			} else {
+				if (item.className) {
+					cn.push(item.className);
+				};
 				if (item.isInitial) {
 					cn.push('isInitial');
 				};

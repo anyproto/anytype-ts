@@ -864,12 +864,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		switch (relation.format) {
 			case I.RelationType.File:
 			case I.RelationType.Object:
-				item.name = U.Common.shorten(item.name);
+				item.name = U.Common.shorten(item.name, 150);
 				break;
 
 			case I.RelationType.MultiSelect:
 			case I.RelationType.Select:
-				item.text = U.Common.shorten(item.text);
+				item.text = U.Common.shorten(item.text, 150);
 				break;
 		};
 

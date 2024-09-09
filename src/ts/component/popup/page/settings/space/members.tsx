@@ -66,7 +66,7 @@ const PopupSettingsSpaceMembers = observer(class PopupSettingsSpaceMembers exten
 		return (
 			<div ref={node => this.node = node}>
 				<Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
-				<Title text={translate('popupSettingsSpaceMembersTitle')} />
+				<Title text={translate('commonMembers')} />
 
 				<div className="section sectionMembers">
 					{this.cache ? (

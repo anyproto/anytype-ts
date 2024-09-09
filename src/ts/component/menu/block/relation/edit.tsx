@@ -276,6 +276,11 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { data } = param;
 		const { rootId } = data;
 		const { getId } = this.props;
+		const type = S.Record.getTypeType();
+
+		if (!type) {
+			return;
+		};
 		
 		let relation: any = this.getRelation();
 		if (!relation) {
@@ -291,9 +296,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				rootId,
 				canEdit: !this.isReadonly(),
 				nameAdd: translate('menuBlockRelationEditAddObjectType'),
+				addParam: {
+					details: { type: type.id }
+				},
 				placeholderFocus: translate('menuBlockRelationEditFilterObjectTypes'),
 				value: this.objectTypes, 
-				types: [ S.Record.getTypeType()?.id ],
+				types: [ type.id ],
 				filters: [
 					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },

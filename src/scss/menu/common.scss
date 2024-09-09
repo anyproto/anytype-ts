@@ -108,6 +108,7 @@
 			.name { display: inline-block; vertical-align: top; position: relative; line-height: 20px; }
 
 			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; flex-shrink: 0; }
+
 			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
 			.icon.plus { margin-right: 6px; background-image: url('~img/icon/plus/menu0.svg'); }
 			.icon.delete, .icon.more { 
@@ -117,7 +118,9 @@
 			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
 			.icon.delete:hover, .icon.more:hover { background-color: var(--color-shape-highlight-medium); }
 			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
-			.icon.chk { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/checkbox.svg'); }
+			.icon.chk { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/chk.svg'); }
+			.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/menu/sortArrow.svg'); }
+			.icon.sortArrow.c1 { transform: rotateZ(180deg); }
 
 			.buttons { flex-shrink: 0; }
 			.buttons {
@@ -135,6 +138,8 @@
 
 			.highlightMark { top: 50%; margin-top: -5px; right: 14px; }
 		}
+		.item.sizeSmall { @include text-small; }
+		.item.weightMedium { font-weight: 500; }
 
 		.item.empty { cursor: default; }
 
@@ -152,6 +157,21 @@
 		.item.withDescription.withIcon, 
 		.item.withDescription.withIconObject {
 			.info { padding-left: 52px; }
+		}
+
+		.item.withNote {
+			.info { display: flex; align-items: center; gap: 0px 20px; }
+
+			.note { position: relative; flex-shrink: 0; width: 20px; height: 20px; background: url('~img/icon/menu/important.svg'); }
+			.note {
+				.noteMessage {
+					display: none; position: absolute; z-index: 2; bottom: 24px; right: 0px; width: 196px; padding: 4px 8px; border-radius: 4px;
+					@include text-small; background-color: var(--color-bg-secondary); color: var(--color-text-inversion);
+				}
+			}
+			.note:hover {
+				.noteMessage { display: block; }
+			}
 		}
 
 		.item.withCaption { display: flex; align-items: center; justify-content: space-between; gap: 0px 6px; }
@@ -186,6 +206,8 @@
 		.item.withSwitch, .item.withSelect {
 			.clickable { display: flex; }
 		}
+
+		.item.withSortArrow { padding-right: 10px; }
 
 		.line { height: 1px; margin: 8px 14px 7px 14px; background: var(--color-shape-secondary); }
 		.sectionName { padding: 5px 14px; @include text-small; color: var(--color-text-secondary); font-weight: 500; }

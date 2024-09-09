@@ -52,7 +52,7 @@ input.button { line-height: 1; }
 	.arrow { display: inline-block; width: 8px; height: 8px; margin: 0px 0px 0px 4px; }
 }
 
-.button.simple { height: auto; padding: 0px; color: var(--color-control-active); font-weight: bold; line-height: 1.43; letter-spacing: 0.1px; }
-.button.simple:hover, .button.simple.hover { color: var(--color-text-primary); }
+.button.simple { height: auto; padding: 0px; color: var(--color-control-active); font-weight: bold; line-height: 1.43; letter-spacing: 0.1px; border: 0px; }
+.button.simple:hover, .button.simple.hover { color: var(--color-text-primary); background: none !important; }
 
 .button.payment { height: 22px; border-radius: 11px; @include text-small; }

@@ -6,6 +6,7 @@ import { Icon, ObjectName, DropTarget } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation } from 'Lib';
 
 import WidgetSpace from './space';
+import WidgetButtons from './buttons';
 import WidgetView from './view';
 import WidgetTree from './tree';
 
@@ -62,7 +63,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 		};
 
-		if (!child && (layout != I.WidgetLayout.Space)) {
+		const hasChild = ![ I.WidgetLayout.Space, I.WidgetLayout.Buttons ].includes(layout);
+
+		if (!child && hasChild) {
 			return null;
 		};
 
@@ -145,7 +148,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			);
 		};
 
-		if (layout != I.WidgetLayout.Space) {
+		if (hasChild) {
 			const onClick = this.isSystemTarget() ? this.onSetPreview : this.onClick;
 
 			head = (
@@ -199,16 +202,24 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		switch (layout) {
-			case I.WidgetLayout.Link: {
-				cn.push('widgetLink');
-				break;
-			};
-
 			case I.WidgetLayout.Space: {
 				cn.push('widgetSpace');
 				content = <WidgetSpace {...props} />;
 
 				isDraggable = false;
+				break;
+			};
+
+			case I.WidgetLayout.Buttons: {
+				cn.push('widgetButtons');
+				content = <WidgetButtons {...props} />;
+
+				isDraggable = false;
+				break;
+			};
+
+			case I.WidgetLayout.Link: {
+				cn.push('widgetLink');
 				break;
 			};
 
