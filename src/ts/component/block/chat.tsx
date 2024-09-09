@@ -967,6 +967,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 			case I.MarkType.Object: {
 				U.Object.getById(param, (object: any) => {
+					object.isTmp = true;
+
 					attachments.push(object);
 					this.setState({ attachments	});
 				});
@@ -991,7 +993,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			name: url,
 			layout: I.ObjectLayout.Bookmark,
 			source: url,
+			isTmp: true,
 		});
+
 		this.setState({ files });
 	};
 

@@ -16,6 +16,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	constructor (props: Props) {
 		super(props);
 
+		this.onOpen = this.onOpen.bind(this);
 		this.onPreview = this.onPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 	};
@@ -68,7 +69,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		const { object } = this.props;
 
 		return (
-			<div className="clickable" onClick={() => U.Object.openPopup(object)}>
+			<div className="clickable" onClick={this.onOpen}>
 				<IconObject object={object} size={48} />
 
 				<div className="info">
@@ -95,6 +96,14 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		};
 
 		return <img id="image" className="image" src={this.src} onClick={this.onPreview} onDragStart={e => e.preventDefault()} />;
+	};
+
+	onOpen () {
+		const { object } = this.props;
+
+		if (!object.isTmp) {
+			U.Object.openPopup(object);
+		};
 	};
 
 	onPreview (e: any) {
