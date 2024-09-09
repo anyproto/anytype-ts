@@ -60,6 +60,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onDrop = this.onDrop.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
+		this.onAddMessage = this.onAddMessage.bind(this);
 		this.onEditMessage = this.onEditMessage.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
 		this.onFileRemove = this.onFileRemove.bind(this);
@@ -686,7 +687,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
-	onAddMessage = () => {
+	onAddMessage () {
 		if (!this.canSend() || S.Menu.isOpen('blockMention')){
 			return;
 		};

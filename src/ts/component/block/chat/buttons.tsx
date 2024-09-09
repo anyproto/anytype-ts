@@ -148,6 +148,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				menuId = 'blockLink';
 
 				menuParam.data = Object.assign(menuParam.data, {
+					value: mark?.param,
 					filter: mark?.param,
 					type: mark?.type,
 					skipIds: [ rootId ],
