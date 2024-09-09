@@ -226,21 +226,20 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	unbind () {
-		$(window).off('mousedown.sidebarContainerObject');
+		$(window).off('click.sidebarContainerObject');
 	};
 
 	rebind () {
 		this.unbind();
 
-		$(window).on('mousedown.sidebarContainerObject', (e: any) => {
+		$(window).on('click.sidebarContainerObject', (e: any) => {
 			const target = $(e.target);
 
 			if (
-				!target.parents(`#containerObject`).length && 
-				!target.parents(`#containerWidget`).length &&
-				!target.parents(`#header`).length &&
-				!target.parents(`.menus`).length &&
-				!target.parents(`.popups`).length
+				!target.parents('#containerObject').length && 
+				!target.parents('#header').length &&
+				!target.parents('.menus').length &&
+				!target.parents('.popups').length
 			) {
 				sidebar.objectContainerToggle();
 			};
