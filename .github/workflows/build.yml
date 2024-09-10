@@ -4,6 +4,18 @@ on:
   push:
     tags:
       - v*
+  workflow_dispatch:
+    inputs:
+      nightly-mode:
+        description: 'Nightly build. Use staging network'
+        required: true
+        default: 'false'
+#  schedule:
+#    - cron: '0 0 * * *' # every day at midnight
+#      filters:
+#        branches:
+#          include:
+#            - 'main'
 
 permissions:
   contents: 'write'
@@ -16,8 +28,8 @@ jobs:
       matrix:
         os:
           - macos-12
-          - ubuntu-latest
-          - windows-latest
+          #- ubuntu-latest
+          #- windows-latest
 
     steps:
       - name: Setup
@@ -64,17 +76,30 @@ jobs:
       #- name: Update Deps
       #  run: npm run build:deps
 
+      - name: Nightly mode settings
+        shell: bash
+        run: |
+          if [[ "${{ github.event.inputs.nightly-mode }}" == "true" ]]; then
+            echo MIDDLEWARE_VERSION=nightly >> $GITHUB_ENV
+            echo PUBLISH_URL=https://${{ secrets.NIGHTLY_AWS_S3_BUCKET }}.s3.${{ secrets.NIGHTLY_AWS_REGION }}.amazonaws.com >> $GITHUB_ENV
+            mv package-nightly.json package.json # set nightly.json config
+          else
+            echo MIDDLEWARE_VERSION=$( cat middleware.version ) >> $GITHUB_ENV
+            echo PUBLISH_URL=https://anytype-release.fra1.digitaloceanspaces.com >> $GITHUB_ENV
+          fi
+
       - name: Update Addon Windows
         if: matrix.os == 'windows-latest'
         shell: bash
-        run: ./update-ci.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}}
+        run: |
+          ./update-ci.sh --user="${{secrets.USER}}" --token="${{secrets.TOKEN}}" --os="${{matrix.os}}" --middleware-version="${{env.MIDDLEWARE_VERSION}}"
 
       - name: Update Addon
         if: matrix.os != 'windows-latest'
         shell: bash
         run: |
-          ./update-ci.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
-          ./update-ci.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} amd
+          ./update-ci.sh --user="${{secrets.USER}}" --token="${{secrets.TOKEN}}" --os="${{matrix.os}}" --middleware-version="${{env.MIDDLEWARE_VERSION}}" --arch="arm"
+          ./update-ci.sh --user="${{secrets.USER}}" --token="${{secrets.TOKEN}}" --os="${{matrix.os}}" --middleware-version="${{env.MIDDLEWARE_VERSION}}" --arch="amd"
 
       - name: Build Native Messaging Host Windows
         if: matrix.os == 'windows-latest'
@@ -102,10 +127,11 @@ jobs:
           APPLEID: ${{ secrets.APPLEID }}
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
           APPLETEAM: ${{ secrets.APPLETEAM }}
-          DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
-          DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.NIGHTLY_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.NIGHTLY_AWS_SECRET_ACCESS_KEY }}
           USE_HARD_LINKS: false
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          PUBLISH_URL: ${{ env.PUBLISH_URL }}
 
       - name: Build Front Other
         if: matrix.os != 'macos-12'
@@ -115,8 +141,8 @@ jobs:
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
         env:
           DEBUG: electron-builder
-          DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
-          DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.NIGHTLY_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.NIGHTLY_AWS_SECRET_ACCESS_KEY }}
           USE_HARD_LINKS: false
           AZURE_KEY_VAULT_URI: ${{ secrets.AZURE_KEY_VAULT_URI }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -124,6 +150,7 @@ jobs:
           AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          PUBLISH_URL: ${{ env.PUBLISH_URL }}
 
       - name: Make artifacts dir
         run: |
@@ -165,7 +192,7 @@ jobs:
           Get-ChildItem -Path artifacts | Format-Table -Property Mode, LastWriteTime, Length, Name
 
       - name: Upload artifacts to HTTP server
-        if: matrix.os != 'windows-latest'
+        if: matrix.os != 'windows-latest' && startsWith(github.ref, 'refs/tags/')
         run: |
           RELEASE_VERSION=$( echo "$GITHUB_REF_NAME" | perl -pe 's/^[a-zA-Z]+//' )
           cd artifacts/
@@ -188,7 +215,7 @@ jobs:
           done
 
       - name: Upload artifacts to HTTP server Windows
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
         shell: pwsh
         run: |
           $releaseVersion = $env:GITHUB_REF_NAME -replace '^[a-zA-Z]+', ''
