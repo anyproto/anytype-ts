@@ -329,7 +329,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const node = $(this.node);
 		const button = node.find('#send');
 
-		this.canSend() ? button.removeClass('disabled') : button.addClass('disabled');	
+		this.canSend() ? button.show() : button.hide();
 	};
 
 	onSelect () {
@@ -969,7 +969,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				U.Object.getById(param, (object: any) => {
 					object.isTmp = true;
 
-					attachments.push(object);
+					attachments.unshift(object);
 					this.setState({ attachments	});
 				});
 				break;
@@ -988,7 +988,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		files.push({
+		files.unshift({
 			id,
 			name: url,
 			layout: I.ObjectLayout.Bookmark,
