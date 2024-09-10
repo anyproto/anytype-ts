@@ -30,7 +30,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		switch (object.layout) {
 			case I.ObjectLayout.File:
-				if (mime) {
+				if (mime && object.file) {
 					const [ t1, t2 ] = mime.split('/');
 
 					switch (t1) {

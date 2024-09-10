@@ -4,6 +4,8 @@ import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { Action, I, J, keyboard, Mark, S, translate, U } from 'Lib';
 
+const electron = U.Common.getElectron();
+
 interface Props extends I.BlockComponent {
 	blockId: string;
 	value: string;
@@ -227,6 +229,8 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 	onAttachment (menu?: string) {
 		const { blockId, attachments, onMenuClose, onChatButtonSelect, onAddFiles } = this.props;
+		const { getMime } = electron;
+
 		const options: any[] = [
 			{ id: 'object', icon: 'object', name: translate('commonObject') },
 			{ id: 'media', icon: 'media', name: translate('commonMedia') },
@@ -248,8 +252,10 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 					path,
 					layout: I.ObjectLayout.File,
 					isTmp: true,
-					mime: J.Constant.mimeType[`.${ext}`]
+					mime: getMime(path)
 				};
+
+				console.log('FILE: ', file)
 
 				onAddFiles([ file ]);
 			});
