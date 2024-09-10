@@ -29,12 +29,11 @@ export interface MenuParam {
 	isSub?: boolean;
 	subIds?: string[];
 	passThrough?: boolean;
+	commonFilter?: boolean;
 	className?: string;
 	classNameWrap?: string;
 	withArrow?: boolean;
 	withBack?: boolean;
-	force?: boolean;
-	commonFilter?: boolean;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
 	noFlipX?: boolean;
