@@ -53,6 +53,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const Item = (item: any) => {
 			const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
 			const type = S.Record.getTypeById(item.type);
+			const isFile = U.Object.isInFileLayouts(item.layout);
 
 			let iconSmall = null;
 			let iconLarge = null;
@@ -62,11 +63,16 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 				iconSmall = <IconObject object={item} size={size} iconSize={18} />;
 			} else {
-				iconLarge = <IconObject object={item} size={48} />;
+				const iconSize = isFile ? 48 : null;
+				iconLarge = <IconObject object={item} size={48} iconSize={iconSize} />;
 			};
 
 			if (item.id == rootId) {
 				cn.push('active');
+			};
+
+			if (isFile) {
+				cn.push('isFile');
 			};
 
 			return (
