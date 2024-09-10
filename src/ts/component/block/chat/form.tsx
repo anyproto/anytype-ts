@@ -17,7 +17,6 @@ interface Props extends I.BlockComponent {
 };
 
 interface State {
-	threadId: string;
 	attachments: any[];
 	files: any[];
 };
@@ -31,10 +30,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	marks: I.Mark[] = [];
 	range: I.TextRange = { from: 0, to: 0 };
 	timeoutFilter = 0;
-	lastMessageId: string = '';
 	editingId: string = '';
 	state = {
-		threadId: '',
 		attachments: [],
 		files: [],
 	};
@@ -55,7 +52,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onChatButtonSelect = this.onChatButtonSelect.bind(this);
 		this.onTextButtonToggle = this.onTextButtonToggle.bind(this);
 		this.onMenuClose = this.onMenuClose.bind(this);
-		this.onThread = this.onThread.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
@@ -102,10 +98,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 					{attachments.length || files.length ? (
 						<div className="attachments">
-							{attachments.map((item: any, i: number) => (
+							{attachments.map(item => (
 								<Attachment key={item.id} object={item} onRemove={this.onAttachmentRemove} />
 							))}
-							{files.map((item: any, i: number) => (
+							{files.map(item => (
 								<Attachment key={item.id} object={item} onRemove={this.onFileRemove} />
 							))}
 						</div>
@@ -781,10 +777,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			noFlipY: true,
 			offsetY: -8,
 		};
-	};
-
-	onThread (id: string) {
-		this.setState({ threadId: id }, () => this.props.scrollToBottom());
 	};
 
 	canSend () {
