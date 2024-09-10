@@ -999,15 +999,28 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		files.unshift({
-			id,
-			name: url,
-			layout: I.ObjectLayout.Bookmark,
-			source: url,
-			isTmp: true,
-		});
+		const add = (param: any) => {
+			const { title, description, url } = param;
 
-		this.setState({ files });
+			files.unshift({
+				id,
+				name: title,
+				description,
+				layout: I.ObjectLayout.Bookmark,
+				source: url,
+				isTmp: true,
+			});
+
+			this.setState({ files });
+		};
+
+		C.LinkPreview(url, (message: any) => {
+			if (message.error.code) {
+				add({ title: url, url });
+			} else {
+				add(message.previewLink);
+			};
+		});
 	};
 
 	onMention (fromKeyboard?: boolean) {
