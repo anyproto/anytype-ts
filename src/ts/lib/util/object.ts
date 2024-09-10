@@ -362,7 +362,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
+		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat(I.ObjectLayout.Chat);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
