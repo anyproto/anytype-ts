@@ -42,9 +42,7 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 		const { membership } = S.Auth;
 		const { period, periodType } = tierItem;
 		const { name, nameType } = membership;
-
-		// I.MembershipTierDataPeriodType.PeriodTypeUnknown
-		// I.MembershipTierDataPeriodType.PeriodTypeUnlimited
+		
 		let labelText = translate('popupMembershipPaidTextUnlimited');
 
 		// default is year

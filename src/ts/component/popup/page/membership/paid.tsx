@@ -64,9 +64,6 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 			};
 		};
 
-		// 
-		// I.MembershipTierDataPeriodType.PeriodTypeUnknown
-		// I.MembershipTierDataPeriodType.PeriodTypeUnlimited
 		let labelText = translate('popupMembershipPaidTextUnlimited');
 
 		// default is year
