@@ -439,6 +439,10 @@ class UtilData {
 		return J.Relation.default.concat(J.Relation.syncStatus);
 	};
 
+	chatRelationKeys () {
+		return J.Relation.default.concat([ 'source' ]);
+	};
+
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
 		C.WalletCreateSession(phrase, key, (message: any) => {
 

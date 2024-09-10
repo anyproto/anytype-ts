@@ -241,6 +241,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			subId: this.getSubId(),
 			ids: deps,
 			noDeps: true,
+			keys: U.Data.chatRelationKeys(),
 		}, (message: any) => {
 			message.records.forEach(it => S.Detail.update(rootId, { id: it.id, details: it }, false));
 

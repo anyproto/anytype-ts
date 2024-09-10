@@ -21,7 +21,7 @@
 		.attachments {
 			.attachment { 
 				position: relative; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05);
-				height: 72px; border-radius: 8px;
+				height: 72px; border-radius: 8px; display: flex; flex-direction: row; align-items: center;;
 			}
 
 			.attachment {
@@ -37,12 +37,19 @@
 
 				.name { line-height: 20px; font-weight: 500; @include clamp1; }
 				.descr { @include text-small; @include clamp1; }
+				.descr {
+					.bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); }
+				}
 			}
 
-			.attachment.isFile {
+			.attachment.isFile, .attachment.isBookmark {
 				.iconObject { background-color: unset; }
 				.descr { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; color: var(--color-text-secondary); }
-				.bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); }
+			}
+
+			.attachment.isBookmark {
+				.url { @include text-overflow-nw; }
+				.info { display: flex; flex-direction: column; gap: 2px 0px; }
 			}
 
 			.attachment.isImage { width: 72px; display: flex; align-items: center; justify-content: center; }

@@ -51,11 +51,18 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				cn.push('isImage');
 				content = this.renderImage();
 				break;
+
+			case I.ObjectLayout.Bookmark:
+				content = this.renderBookmark();
+				break;
 		};
 
 		if (!content) {
-			cn.push(U.Data.layoutClass(object.id, object.layout));
 			content = this.renderDefault();
+		};
+
+		if (cn.length == 1) {
+			cn.push(U.Data.layoutClass(object.id, object.layout));
 		};
 
 		return (
@@ -97,6 +104,24 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				<div className="info">
 					<ObjectName object={object} />
 					{description}
+				</div>
+			</div>
+		);
+	};
+
+	renderBookmark () {
+		const { object } = this.props;
+
+		console.log(object);
+
+		return (
+			<div className="clickable" onClick={this.onOpen}>
+				<div className="info">
+					<div className="descr">
+						<IconObject object={object} size={14} />
+						<div className="url">{object.source}</div>
+					</div>
+					<ObjectName object={object} />
 				</div>
 			</div>
 		);

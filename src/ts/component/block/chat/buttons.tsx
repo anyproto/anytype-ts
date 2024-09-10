@@ -89,6 +89,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 					noFlipY: true,
 					onClose: onMenuClose,
 					data: {
+						keys: U.Data.chatRelationKeys(),
 						skipIds: attachments.map(it => it.id),
 						filters: [
 							{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
