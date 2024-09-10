@@ -61,7 +61,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onScroll = this.onScroll.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onSend = this.onSend.bind(this);
-		this.onEditMessage = this.onEditMessage.bind(this);
+		this.onEdit = this.onEdit.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
 		this.onFileRemove = this.onFileRemove.bind(this);
 		this.hasSelection = this.hasSelection.bind(this);
@@ -648,43 +648,49 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { account } = S.Auth;
 		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
-		const message = `#block-${blockId} #item-${item.id}`
-		const elementCls = onMore ? '.more' : '.right';
+		const message = `#block-${blockId} #item-${item.id}`;
 
 		if (item.creator != account.id) {
 			return;
 		};
 
-		if (onMore) {
-			$(message).addClass('hover');
-		};
-
-		S.Menu.open('select', {
-			element: `${message} ${elementCls}`,
+		const menuParam: Partial<I.MenuParam> = {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
-			onClose: () => {
-				$(message).removeClass('hover');
-			},
+			onOpen: () => $(message).addClass('hover'),
+			onClose: () => $(message).removeClass('hover'),
 			data: {
 				options: [
 					{ id: 'edit', name: translate('commonEdit') },
-					{ id: 'delete', name: translate('commonDelete'), color: 'red' }
+					{ id: 'delete', name: translate('commonDelete'), color: 'red' },
 				],
 				onSelect: (e, option) => {
 					switch (option.id) {
 						case 'edit': {
-							this.onEditMessage(item);
+							this.onEdit(item);
 							break;
 						};
+
 						case 'delete': {
-							C.ChatDeleteMessage(rootId, item.id);
+							C.ChatDeleteMessage(rootId, item.id, () => {
+								if (this.editingId == item.id) {
+									this.onEditClear();
+								};
+							});
 							break;
 						};
 					};
-				}
-			}
-		});
+				},
+			},
+		};
+
+		if (onMore) {
+			menuParam.element = `${message} .icon.more`;
+		} else {
+			menuParam.recalcRect = () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 });
+		};
+
+		S.Menu.open('select', menuParam);
 	};
 
 	onSend () {
@@ -704,15 +710,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		loader.addClass('active');
 
 		const clear = () => {
-			this.editingId = '';
-			this.marks = [];
-			this.range = { from: 0, to: 0 };
-
-			this.refEditable.setValue('');
-			this.refEditable.placeholderCheck();
-
-			this.setState({ attachments: [], files: [] });
-
+			this.onEditClear();
 			loader.removeClass('active');
 		};
 		
@@ -808,7 +806,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		uploadFiles(() => fetchBookmarks(callBack));
 	};
 
-	onEditMessage = (message: I.ChatMessage) => {
+	onEdit = (message: I.ChatMessage) => {
 		const { text, marks } = message.content;
 		const l = text.length;
 		const attachments = (message.attachments || []).map(it => it.target).map(id => S.Detail.get(this.getSubId(), id));
@@ -822,6 +820,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.setState({ attachments }, () => {
 			this.refEditable.setRange(this.range);
 		});
+	};
+
+	onEditClear () {
+		this.editingId = '';
+		this.marks = [];
+		this.range = { from: 0, to: 0 };
+
+		this.refEditable.setValue('');
+		this.refEditable.placeholderCheck();
+
+		this.setState({ attachments: [], files: [] });
 	};
 
 	onScroll (e: any) {
