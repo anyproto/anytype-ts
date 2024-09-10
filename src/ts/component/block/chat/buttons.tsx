@@ -1,4 +1,5 @@
 import * as React from 'react';
+import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { Action, I, J, keyboard, Mark, S, translate, U } from 'Lib';
@@ -14,6 +15,7 @@ interface Props extends I.BlockComponent {
 	onTextButtonToggle: (type: I.MarkType, param: string) => void;
 	onMenuClose: () => void;
 	onMention: () => void;
+	onAddFiles: (files: any, callBack?: () => void) => void;
 };
 
 interface State {
@@ -224,7 +226,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	};
 
 	onAttachment (menu?: string) {
-		const { blockId, attachments, onMenuClose, onChatButtonSelect } = this.props;
+		const { blockId, attachments, onMenuClose, onChatButtonSelect, onAddFiles } = this.props;
 		const options: any[] = [
 			{ id: 'object', icon: 'object', name: translate('commonObject') },
 			{ id: 'media', icon: 'media', name: translate('commonMedia') },
@@ -234,7 +236,22 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 		const upload = () => {
 			Action.openFileDialog([], async paths => {
-				console.log('PATH: ', paths[0]);
+				const path = paths[0];
+				const c = path.split('.');
+				const ext = c[c.length - 1];
+				const n = path.split('/');
+				const name = n[n.length - 1];
+
+				const file = {
+					id: sha1(path),
+					name,
+					path,
+					layout: I.ObjectLayout.File,
+					isTmp: true,
+					mime: J.Constant.mimeType[`.${ext}`]
+				};
+
+				onAddFiles([ file ]);
 			});
 		};
 
