@@ -154,6 +154,7 @@ class UtilObject {
 
 		if (details.type) {
 			const type = S.Record.getTypeById(details.type);
+
 			if (type) {
 				typeKey = type.uniqueKey;
 
