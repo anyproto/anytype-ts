@@ -39,9 +39,9 @@
 				.descr { @include text-small; @include clamp1; }
 			}
 
-			.attachment.isImage { overflow: hidden; width: 72px; display: flex; align-items: center; justify-content: center; }
+			.attachment.isImage { width: 72px; display: flex; align-items: center; justify-content: center; }
 			.attachment.isImage {
-				.image { display: block; object-fit: cover; aspect-ratio: 1; max-width: 100%; }
+				.image { display: block; object-fit: cover; aspect-ratio: 1; max-width: 100%; border-radius: 8px; }
 			}
 
 			.attachment:hover {

@@ -262,7 +262,11 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 	};
 
 	isReadonly () {
-		return !U.Space.canMyParticipantWrite();
+		const rootId = this.getRootId();
+		const root = S.Block.getLeaf(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId, []);
+
+		return !U.Space.canMyParticipantWrite() || object.isArchived || root.isLocked();
 	};
 
 	resize () {

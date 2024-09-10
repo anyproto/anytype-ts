@@ -43,7 +43,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 	};
 
 	render () {
-		const { rootId, blockId, id, isThread, isNew, onThread, onContextMenu, onMore, onReply } = this.props;
+		const { rootId, blockId, id, isThread, isNew, readonly, onThread, onContextMenu, onMore, onReply } = this.props;
 		const { canExpand, isExpanded } = this.state;
 		const { space } = S.Common;
 		const { account } = S.Auth;
@@ -119,7 +119,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 			>
 				<div className="flex">
 					<div className="side left">
-						<IconObject object={author} size={40} />
+						<IconObject object={author} size={40} onClick={e => U.Object.openConfig(author)} />
 					</div>
 					<div className="side right">
 
@@ -162,11 +162,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 							{!isThread ? <div className="item">0 replies</div> : ''}
 						</div>
 					</div>
-					<div className="controls">
-						<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
-						{/*<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />*/}
-						{isSelf ? <Icon className="more" onClick={onMore} /> : ''}
-					</div>
+
+					{!readonly ? (
+						<div className="controls">
+							<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
+							{/*<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />*/}
+							{isSelf ? <Icon className="more" onClick={onMore} /> : ''}
+						</div>
+					) : ''}
 				</div>
 
 				{isNew ? (

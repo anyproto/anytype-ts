@@ -101,12 +101,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							id={item.id}
 							rootId={rootId}
 							blockId={blockId}
+							isNew={item.id == this.lastMessageId}
 							isThread={!!threadId}
 							onThread={this.onThread}
 							onContextMenu={e => this.onContextMenu(e, item)}
 							onMore={e => this.onContextMenu(e, item, true)}
 							onReply={e => this.onReply(e, item)}
-							isNew={item.id == this.lastMessageId}
 						/>
 					))}
 				</div>
@@ -166,20 +166,21 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							</div>
 						) : ''}
 
-						<Buttons
-							ref={ref => this.refButtons = ref}
-							rootId={rootId}
-							blockId={blockId}
-							value={value}
-							hasSelection={this.hasSelection}
-							getMarksAndRange={this.getMarksAndRange}
-							attachments={attachments}
-							caretMenuParam={this.caretMenuParam}
-							onMention={this.onMention}
-							onChatButtonSelect={this.onChatButtonSelect}
-							onTextButtonToggle={this.onTextButtonToggle}
-							onMenuClose={this.onMenuClose}
-						/>
+						{!readonly ? (
+							<Buttons
+								ref={ref => this.refButtons = ref}
+								{...this.props}
+								value={value}
+								hasSelection={this.hasSelection}
+								getMarksAndRange={this.getMarksAndRange}
+								attachments={attachments}
+								caretMenuParam={this.caretMenuParam}
+								onMention={this.onMention}
+								onChatButtonSelect={this.onChatButtonSelect}
+								onTextButtonToggle={this.onTextButtonToggle}
+								onMenuClose={this.onMenuClose}
+							/>
+						) : ''}
 
 						<Icon id="send" className="send" onClick={this.onSend} />
 					</div>
@@ -645,12 +646,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onContextMenu (e: React.MouseEvent, item: any, onMore?: boolean) {
+		const { readonly } = this.props;
 		const { account } = S.Auth;
 		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
 		const message = `#block-${blockId} #item-${item.id}`;
 
-		if (item.creator != account.id) {
+		if (readonly || (item.creator != account.id)) {
 			return;
 		};
 
@@ -927,7 +929,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	updateButtons () {
-		this.refButtons.setButtons();
+		this.refButtons?.setButtons();
 	};
 
 	onChatButtonSelect (type: I.ChatButton, item: any) {
