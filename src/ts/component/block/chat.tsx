@@ -60,7 +60,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onDrop = this.onDrop.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
-		this.onAddMessage = this.onAddMessage.bind(this);
+		this.onSend = this.onSend.bind(this);
 		this.onEditMessage = this.onEditMessage.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
 		this.onFileRemove = this.onFileRemove.bind(this);
@@ -181,7 +181,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							onMenuClose={this.onMenuClose}
 						/>
 
-						<Icon id="send" className="send" onClick={this.onAddMessage} />
+						<Icon id="send" className="send" onClick={this.onSend} />
 					</div>
 				</div>
 			</div>
@@ -426,7 +426,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
-			this.onAddMessage();
+			this.onSend();
 		});
 
 		if (range && range.to) {
@@ -687,7 +687,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
-	onAddMessage () {
+	onSend () {
 		if (!this.canSend() || S.Menu.isOpen('blockMention')){
 			return;
 		};
@@ -723,7 +723,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					const { marks, text } = this.getMarksFromHtml();
 					const update = U.Common.objectCopy(message);
 
-					update.attachments = (update.attachments || []).concat(attachments || []);
+					update.attachments = attachments;
 					update.content.text = text;
 					update.content.marks = marks;
 
