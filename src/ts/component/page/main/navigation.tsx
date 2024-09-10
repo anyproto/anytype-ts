@@ -115,13 +115,24 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		const Selected = (item: any) => {
-			const { name, description, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
+			const { id, name, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
+			const isFile = U.Object.isInFileLayouts(layout);
+			const cn = [ 'item', U.Data.layoutClass(id, layout), 'selected' ];
+			const iconSize = isFile ? 48 : 24;
+
+			let description = null;
+			if (isFile) {
+				cn.push('isFile');
+				description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
+			} else {
+				description = <ObjectDescription object={item} />;
+			};
 
 			return (
-				<div id={'item-' + item.id} className="item selected">
-					<IconObject object={item} forceLetter={true} size={48} />
+				<div id={`item-${id}`} className={cn.join(' ')}>
+					<IconObject object={item} forceLetter={true} size={48} iconSize={iconSize} />
 					<ObjectName object={item} />
-					<ObjectDescription object={item} />
+					{description}
 					
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 				
