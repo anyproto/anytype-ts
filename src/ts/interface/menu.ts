@@ -33,13 +33,14 @@ export interface MenuParam {
 	classNameWrap?: string;
 	withArrow?: boolean;
 	withBack?: boolean;
+	force?: boolean;
 	commonFilter?: boolean;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
 	noFlipX?: boolean;
 	noFlipY?: boolean;
 	noClose?: boolean;
-	force?: boolean;
+	noAutoHover?: boolean;
 	recalcRect?(): { width: number, height: number, x: number, y: number };
 	onClose?(): void;
 	onOpen?(component?: any): void;

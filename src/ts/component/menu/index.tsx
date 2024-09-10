@@ -302,7 +302,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	
 	componentDidMount () {
 		const { id, param } = this.props;
-		const { initialTab, onOpen } = param;
+		const { initialTab, onOpen, noAutoHover } = param;
 
 		this._isMounted = true;
 		this.poly = $('#menu-polygon');
@@ -316,7 +316,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const obj = $(`#${this.getId()}`);
 		const el = this.getElement();
 
-		if (el && el.length) {
+		if (!noAutoHover && el && el.length) {
 			el.addClass('hover');
 		};
 
