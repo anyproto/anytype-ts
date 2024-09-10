@@ -139,14 +139,13 @@ class UtilFile {
 			type: 'image/png',
 			quality: 0.95,
 			canvas: true,
-			contain: true
 		}, param);
 		
 		loadImage.parseMetaData(file, (data: any) => {
 			if (data.exif) {
 				param = Object.assign(param, { orientation: data.exif.get('Orientation') });
 			};
-			
+
 			loadImage(file, success, param);
 		});
 	};

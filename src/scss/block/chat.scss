@@ -22,8 +22,9 @@
 			.attachment { position: relative; max-width: 50%; }
 			.attachment {
 				.clickable { 
-					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); padding: 15px;
-					border-radius: 12px; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); height: 80px;
+					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); padding: 11px;
+					border-radius: 8px; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); height: 80px; max-width: 360px;
+					min-width: 256px;
 				}
 				.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 10px; }
 				.info { flex-grow: 1; }
@@ -38,8 +39,12 @@
 				.descr { @include text-small;  @include clamp2; }
 			}
 
+			.attachment.isImage { 
+				border-radius: 8px; border: 1px solid var(--color-shape-tertiary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05); overflow: hidden; 
+				width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background: var(--color-bg-primary);
+			}
 			.attachment.isImage {
-				.image { display: block; max-height: 80px; object-fit: cover; aspect-ratio: 16/9; }
+				.image { display: block; object-fit: cover; aspect-ratio: 1; max-width: 100%; }
 			}
 
 			.attachment:hover {
