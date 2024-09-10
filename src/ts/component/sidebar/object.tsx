@@ -50,12 +50,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const typeOptions = this.getTypeOptions();
 		const rootId = keyboard.getRootId();
 
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
-			if (!item) {
-				return null;
-			};
-
+		const Item = (item: any) => {
 			const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
 			const type = S.Record.getTypeById(item.type);
 
@@ -75,6 +70,36 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 
 			return (
+				<div 
+					className={cn.join(' ')} 
+					style={item.style}
+					onClick={() => this.onClick(item)}
+					onContextMenu={() => this.onContext(item)}
+				>
+					{iconLarge}
+					<div className="info">
+						<div className="nameWrap">
+							{iconSmall}
+							<ObjectName object={item} />
+						</div>
+						<div className="descrWrap">
+							<div className="type">
+								<ObjectType object={type} />
+							</div>
+							<ObjectDescription object={item} />
+						</div>
+					</div>
+				</div>
+			);
+		};
+
+		const rowRenderer = (param: any) => {
+			const item: any = items[param.index];
+			if (!item) {
+				return null;
+			};
+
+			return (
 				<CellMeasurer
 					key={param.key}
 					parent={param.parent}
@@ -82,25 +107,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					<div 
-						className={cn.join(' ')} 
-						style={param.style}
-						onClick={() => this.onClick(item)}
-					>
-						{iconLarge}
-						<div className="info">
-							<div className="nameWrap">
-								{iconSmall}
-								<ObjectName object={item} />
-							</div>
-							<div className="descrWrap">
-								<div className="type">
-									<ObjectType object={type} />
-								</div>
-								<ObjectDescription object={item} />
-							</div>
-						</div>
-					</div>
+					<Item {...item} style={param.style} />
 				</CellMeasurer>
 			);
 		};
@@ -226,21 +233,20 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	unbind () {
-		$(window).off('mousedown.sidebarContainerObject');
+		$(window).off('click.sidebarContainerObject');
 	};
 
 	rebind () {
 		this.unbind();
 
-		$(window).on('mousedown.sidebarContainerObject', (e: any) => {
+		$(window).on('click.sidebarContainerObject', (e: any) => {
 			const target = $(e.target);
 
 			if (
-				!target.parents(`#containerObject`).length && 
-				!target.parents(`#containerWidget`).length &&
-				!target.parents(`#header`).length &&
-				!target.parents(`.menus`).length &&
-				!target.parents(`.popups`).length
+				!target.parents('#containerObject').length && 
+				!target.parents('#header').length &&
+				!target.parents('.menus').length &&
+				!target.parents('.popups').length
 			) {
 				sidebar.objectContainerToggle();
 			};
@@ -345,6 +351,22 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	onClick (item: any) {
 		U.Object.openConfig(item);
+	};
+
+	onContext (item: any) {
+		S.Menu.open('dataviewContext', {
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
+			data: {
+				objectIds: [ item.id ],
+				subId: J.Constant.subId.allObject,
+				route: analytics.route.allObjects,
+				allowedLink: true,
+				allowedOpen: true,
+			}
+		});
 	};
 
 	onSort (e: any) {

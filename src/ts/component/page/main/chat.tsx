@@ -39,6 +39,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
 		const check = U.Data.checkDetails(rootId);
+		const readonly = this.isReadonly();
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -63,6 +64,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 							ref={ref => this.refHead = ref} 
 							placeholder={translate('defaultNamePage')} 
 							rootId={rootId} 
+							readonly={readonly}
 						/>
 
 						{children.map((block: I.Block, i: number) => (
@@ -76,7 +78,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 								className="noPlus"
 								isSelectionDisabled={true}
 								isContextMenuDisabled={true}
-								readonly={this.isReadonly()}
+								readonly={readonly}
 							/>
 						))}
 					</div>
@@ -262,7 +264,11 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 	};
 
 	isReadonly () {
-		return !U.Space.canMyParticipantWrite();
+		const rootId = this.getRootId();
+		const root = S.Block.getLeaf(rootId, rootId);
+		const object = S.Detail.get(rootId, rootId, []);
+
+		return !U.Space.canMyParticipantWrite() || object.isArchived || root?.isLocked();
 	};
 
 	resize () {

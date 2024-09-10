@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { Action, C, I, J, keyboard, Mark, S, translate, U } from 'Lib';
-import $ from 'jquery';
+import { Action, I, J, keyboard, Mark, S, translate, U } from 'Lib';
 
-interface Props {
-	rootId: string;
+interface Props extends I.BlockComponent {
 	blockId: string;
 	value: string;
+	attachments: any[];
 	hasSelection: () => boolean;
 	getMarksAndRange: () => any;
-	attachments: any[];
 	caretMenuParam: () => any;
 	onChatButtonSelect: (type, item: any) => void;
 	onTextButtonToggle: (type: I.MarkType, param: string) => void;
@@ -38,7 +36,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	};
 
 	render () {
-		const { blockId } = this.props;
+		const { block } = this.props;
 		const { buttons } = this.state;
 
 		return (
@@ -51,7 +49,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 					return (
 						<Icon 
-							id={`button-${blockId}-${item.type}`} 
+							id={`button-${block.id}-${item.type}`} 
 							key={i} 
 							className={cn.join(' ')} 
 							tooltip={item.name}
@@ -81,7 +79,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	};
 
 	onChatButton (e: React.MouseEvent, type: I.ChatButton) {
-		const { blockId, attachments, caretMenuParam, onMention, onMenuClose, onChatButtonSelect } = this.props;
+		const { block, attachments, caretMenuParam, onMention, onMenuClose, onChatButtonSelect } = this.props;
 
 		switch (type) {
 			case I.ChatButton.Object: {
@@ -110,13 +108,14 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	};
 
 	onTextButton (e: React.MouseEvent, type: I.MarkType, param: string) {
-		const { rootId, blockId, onTextButtonToggle, getMarksAndRange } = this.props;
+		const { rootId, block, onTextButtonToggle, getMarksAndRange } = this.props;
 		const { marks, range } = getMarksAndRange();
 		const { from, to } = range;
 		const mark = Mark.getInRange(marks, type, { from, to });
 
 		const menuParam: any = {
-			element: `#button-${blockId}-${type}`,
+			element: `#button-${block.id}-${type}`,
+			className: 'fixed',
 			offsetY: 6,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
@@ -136,6 +135,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				menuId = 'blockLink';
 
 				menuParam.data = Object.assign(menuParam.data, {
+					value: mark?.param,
 					filter: mark?.param,
 					type: mark?.type,
 					skipIds: [ rootId ],

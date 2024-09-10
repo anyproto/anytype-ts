@@ -796,10 +796,10 @@ const Block = observer(class Block extends React.Component<Props> {
 		});
 	};
 
-	renderLinks (node: any, marks: I.Mark[], value: string) {
+	renderLinks (node: any, marks: I.Mark[], value: string, props: any) {
 		node = $(node);
 
-		const { rootId, readonly } = this.props;
+		const { readonly } = props;
 		const items = node.find(Mark.getTag(I.MarkType.Link));
 
 		if (!items.length) {
@@ -865,10 +865,10 @@ const Block = observer(class Block extends React.Component<Props> {
 		});
 	};
 
-	renderMentions (node: any, marks: I.Mark[], value: string) {
+	renderMentions (rootId: string, node: any, marks: I.Mark[], value: string) {
 		node = $(node);
 
-		const { rootId, block } = this.props;
+		const { block } = this.props;
 		const size = U.Data.emojiParam(block.content.style);
 		const items = node.find(Mark.getTag(I.MarkType.Mention));
 		
@@ -964,10 +964,10 @@ const Block = observer(class Block extends React.Component<Props> {
 		});
 	};
 
-	renderObjects (node: any, marks: I.Mark[], value: string) {
+	renderObjects (rootId: string, node: any, marks: I.Mark[], value: string, props: any) {
 		node = $(node);
 
-		const { rootId, readonly } = this.props;
+		const { readonly } = props;
 		const items = node.find(Mark.getTag(I.MarkType.Object));
 
 		if (!items.length) {

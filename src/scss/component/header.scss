@@ -35,6 +35,8 @@
 		-webkit-app-region: no-drag; 
 	}
 	.headerBanner {
+		.label { @include text-overflow-nw; }
+
 		.content { display: flex; gap: 0px 4px; align-items: center; }
 		.content {
 			.typeName { display: flex; gap: 0px 4px; flex-wrap: nowrap; }

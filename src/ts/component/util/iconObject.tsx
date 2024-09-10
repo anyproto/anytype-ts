@@ -42,6 +42,7 @@ const LAYOUT_EMOJI = [
 	I.ObjectLayout.Type,
 	I.ObjectLayout.SpaceView,
 	I.ObjectLayout.Human,
+	I.ObjectLayout.Chat,
 ].concat(U.Object.getSetLayouts());
 
 const IconSize = {

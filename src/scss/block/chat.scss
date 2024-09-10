@@ -19,13 +19,14 @@
 
 		.attachments { padding: 8px 0px 0px 0px; display: flex; gap: 8px; flex-wrap: wrap; }
 		.attachments {
-			.attachment { position: relative; max-width: 50%; }
+			.attachment { 
+				position: relative; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05);
+				height: 72px; border-radius: 8px;
+			}
+
 			.attachment {
-				.clickable { 
-					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; box-shadow: 0px 0px 4px rgba(0,0,0,0.05); padding: 15px;
-					border-radius: 12px; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); height: 80px;
-				}
-				.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 10px; }
+				.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 11px; max-width: 360px; min-width: 256px; }
+				.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 6px; }
 				.info { flex-grow: 1; }
 
 				.icon.remove { 
@@ -35,11 +36,12 @@
 				}
 
 				.name { line-height: 20px; font-weight: 500; @include clamp1; }
-				.descr { @include text-small;  @include clamp2; }
+				.descr { @include text-small; @include clamp1; }
 			}
 
+			.attachment.isImage { width: 72px; display: flex; align-items: center; justify-content: center; }
 			.attachment.isImage {
-				.image { display: block; max-height: 80px; object-fit: cover; aspect-ratio: 16/9; }
+				.image { display: block; object-fit: cover; aspect-ratio: 1; max-width: 100%; border-radius: 8px; }
 			}
 
 			.attachment:hover {

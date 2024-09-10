@@ -88,7 +88,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 			// Add block's paddings to height
 			if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
-				const block = $('#block-' + data.id);
+				const block = $(`#block-${data.id}`);
 				if (block.length) {
 					const top = parseInt(block.css('paddingTop'));
 					const bot = parseInt(block.css('paddingBottom'));
@@ -174,7 +174,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			for (const file of dataTransfer.files) {
 				const path = electron.webFilePath(file);
 				if (path) {
-					paths.push();
+					paths.push(path);
 				};
 			};
 
