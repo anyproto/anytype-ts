@@ -280,8 +280,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			this.frame = raf(() => {
 				renderMentions(rootId, this.node, this.marks, html);
-				renderObjects(rootId, this.node, this.marks, html);
-				renderLinks(this.node, this.marks, html);
+				renderObjects(rootId, this.node, this.marks, html, this.props);
+				renderLinks(this.node, this.marks, html, this.props);
 				renderEmoji(this.node);
 			});
 		};

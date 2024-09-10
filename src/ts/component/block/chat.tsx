@@ -221,6 +221,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			this.loadDeps(() => this.forceUpdate());
 		};
 
+		this.renderMarkup();
 		this.checkSendButton();
 	};
 
@@ -1124,8 +1125,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const value = this.refEditable.getTextValue();
 
 		renderMentions(rootId, node, this.marks, value);
-		renderObjects(rootId, node, this.marks, value);
-		renderLinks(node, this.marks, value);
+		renderObjects(rootId, node, this.marks, value, this.props);
+		renderLinks(node, this.marks, value, this.props);
 		renderEmoji(node);
 	};
 
