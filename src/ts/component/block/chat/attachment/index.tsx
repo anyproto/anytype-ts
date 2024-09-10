@@ -112,8 +112,6 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	renderBookmark () {
 		const { object } = this.props;
 
-		console.log(object);
-
 		return (
 			<div className="clickable" onClick={this.onOpen}>
 				<div className="info">
