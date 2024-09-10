@@ -57,6 +57,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 			let iconSmall = null;
 			let iconLarge = null;
+			let description = null;
 
 			if (U.Object.isTypeOrRelationLayout(item.layout)) {
 				const size = U.Object.isTypeLayout(item.layout) ? 18 : 20;
@@ -73,6 +74,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 			if (isFile) {
 				cn.push('isFile');
+				description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
+			} else {
+				description = <ObjectDescription object={item} />;
 			};
 
 			return (
@@ -93,7 +97,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 								<ObjectType object={type} />
 							</div>
 							<div className="bullet" />
-							<ObjectDescription object={item} />
+							{description}
 						</div>
 					</div>
 				</div>
