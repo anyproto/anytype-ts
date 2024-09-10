@@ -79,6 +79,10 @@ class UtilEmbed {
 		return `<iframe src="${content}" ${IFRAME_PARAM}></iframe>`;
 	};
 
+	getImageHtml (content: string): string {
+		return `<img src="${content}" />`;
+	};
+
 	getProcessorByUrl (url: string): I.EmbedProcessor {
 		let p = null;
 		for (const i in DOMAINS) {
@@ -323,6 +327,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Bilibili,
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Sketchfab,
+			I.EmbedProcessor.Image,
 		].includes(p);
 	};
 
@@ -357,6 +362,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Codepen,
 			I.EmbedProcessor.Kroki,
 			I.EmbedProcessor.Chart,
+			I.EmbedProcessor.Image,
 		].includes(p);
 	};
 
@@ -374,6 +380,7 @@ class UtilEmbed {
 			I.EmbedProcessor.Bilibili,
 			I.EmbedProcessor.Graphviz,
 			I.EmbedProcessor.Kroki,
+			I.EmbedProcessor.Image,
 		].includes(p);
 	};
 
