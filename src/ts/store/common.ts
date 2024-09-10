@@ -175,10 +175,9 @@ class CommonStore {
 
 	get type (): string {
 		const key = String(this.defaultType || Storage.get('defaultType') || J.Constant.default.typeKey);
-		const allowedTypes = U.Object.getPageLayouts().concat(I.ObjectLayout.Chat);
 
 		let type = S.Record.getTypeByKey(key);
-		if (!type || !type.isInstalled || !allowedTypes.includes(type.recommendedLayout)) {
+		if (!type || !type.isInstalled || !U.Object.isAllowedObject(type.recommendedLayout)) {
 			type = S.Record.getTypeByKey(J.Constant.default.typeKey);
 		};
 

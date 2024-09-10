@@ -416,6 +416,10 @@ class UtilObject {
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
 	};
 
+	isAllowedObject (layout: I.ObjectLayout): boolean {
+		return this.getPageLayouts().concat(I.ObjectLayout.Chat).includes(layout);
+	};
+
 };
 
 export default new UtilObject();
