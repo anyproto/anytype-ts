@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Icon, ObjectName, ObjectDescription } from 'Component';
+import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType } from 'Component';
 import { I, U, S, J } from 'Lib';
 
 interface Props {
@@ -27,6 +27,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		const cn = [ 'attachment' ];
 
 		let content = null;
+
+		if (U.Object.isInFileLayouts(object.layout)) {
+			cn.push('isFile');
+		};
 
 		switch (object.layout) {
 			case I.ObjectLayout.File:
@@ -67,14 +71,32 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 	renderDefault () {
 		const { object } = this.props;
+		const isFile = U.Object.isInFileLayouts(object.layout);
+		const type = S.Record.getTypeById(object.type);
+
+		let iconSize = null;
+		let description = null;
+
+		if (isFile) {
+			iconSize = 48;
+			description = (
+				<div className="descr">
+					<div><ObjectType object={type} /></div>
+					<div className="bullet" />
+					<div>{U.File.size(object.sizeInBytes)}</div>
+				</div>
+			);
+		} else {
+			description = <ObjectDescription object={object} />;
+		};
 
 		return (
 			<div className="clickable" onClick={this.onOpen}>
-				<IconObject object={object} size={48} />
+				<IconObject object={object} size={48} iconSize={iconSize} />
 
 				<div className="info">
 					<ObjectName object={object} />
-					<ObjectDescription object={object} />
+					{description}
 				</div>
 			</div>
 		);

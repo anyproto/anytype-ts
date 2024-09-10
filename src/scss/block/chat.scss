@@ -39,6 +39,12 @@
 				.descr { @include text-small; @include clamp1; }
 			}
 
+			.attachment.isFile {
+				.iconObject { background-color: unset; }
+				.descr { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; color: var(--color-text-secondary); }
+				.bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); }
+			}
+
 			.attachment.isImage { width: 72px; display: flex; align-items: center; justify-content: center; }
 			.attachment.isImage {
 				.image { display: block; object-fit: cover; aspect-ratio: 1; max-width: 100%; border-radius: 8px; }
