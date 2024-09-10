@@ -88,10 +88,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 							{iconSmall}
 							<ObjectName object={item} />
 						</div>
-						<div className="descrWrap">
+						<div className="bottomWrap">
 							<div className="type">
 								<ObjectType object={type} />
 							</div>
+							<div className="bullet" />
 							<ObjectDescription object={item} />
 						</div>
 					</div>
@@ -535,6 +536,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			list.find('.item').each((i: number, item: any) => {
 				item = $(item);
 				item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
+				item.find('.descr').length ? item.addClass('withDescr') : item.removeClass('withDescr');
 			});
 		});
 	};
