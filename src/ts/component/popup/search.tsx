@@ -533,7 +533,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		this.setState({ backlink: item }, () => {
 			this.resetSearch();
-			analytics.event('SearchBacklink', { route, type: 'Saved' });
+			analytics.event('SearchBacklink', { route });
 
 			if (callBack) {
 				callBack();
