@@ -40,15 +40,39 @@ const PopupMembershipFinalization = observer(class PopupMembershipFinalization e
 		};
 
 		const { membership } = S.Auth;
-		const { period } = tierItem;
+		const { period, periodType } = tierItem;
 		const { name, nameType } = membership;
 
-		let labelText = '';
+		// I.MembershipTierDataPeriodType.PeriodTypeUnknown
+		// I.MembershipTierDataPeriodType.PeriodTypeUnlimited
+		let labelText = translate('popupMembershipPaidTextUnlimited');
+
+		// default is year
+		let periodLabel = translate('pluralYear');
+		if (periodType) {
+			switch (periodType) {
+				case I.MembershipTierDataPeriodType.PeriodTypeDays: {
+					periodLabel = translate('pluralDay');
+					break;
+				};
+				case I.MembershipTierDataPeriodType.PeriodTypeWeeks: {
+					periodLabel = translate('pluralWeek');
+					break;
+				};
+				case I.MembershipTierDataPeriodType.PeriodTypeMonths: {
+					periodLabel = translate('pluralMonth');
+					break;
+				};
+			};
+		};
+
 		if (period) {
 			if (period == 1) {
-				labelText = translate('popupMembershipPaidTextPerYear');
+				// one {day, week, month, year}
+				labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericSingle'), U.Common.plural(period, periodLabel));
 			} else {
-				labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerYears'), period, U.Common.plural(period, translate('pluralYear')));
+				// N {days, weeks, months, years}
+				labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericMany'), period, U.Common.plural(period, periodLabel));
 			};
 		};
 
