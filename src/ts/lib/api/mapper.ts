@@ -579,7 +579,7 @@ export const Mapper = {
 				description: obj.getDescription(),
 				nameMinLength: obj.getAnynameminlength(),
 				isTest: obj.getIstest(),
-				periodType: obj.getPeriodtype(),
+				periodType: obj.getPeriodtype() as number,
 				period: obj.getPeriodvalue(),
 				priceCents: obj.getPricestripeusdcents(),
 				colorStr: obj.getColorstr(),

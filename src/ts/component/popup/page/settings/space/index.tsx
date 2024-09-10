@@ -206,7 +206,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								>
 									<div className="sides">
 										<div className="side left">
-											<Title text={translate('popupSettingsSpaceIndexShareMembersTitle')} />
+											<Title text={translate('commonMembers')} />
 											<Label text={translate('popupSettingsSpaceIndexShareMembersManageText')} />
 										</div>
 										<div className="side right">
@@ -224,7 +224,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								>
 									<div className="sides">
 										<div className="side left">
-											<Title text={translate('popupSettingsSpaceIndexShareMembersTitle')} />
+											<Title text={translate('commonMembers')} />
 											<Label text={translate('popupSettingsSpaceIndexShareMembersViewText')} />
 										</div>
 										<div className="side right">

@@ -134,6 +134,10 @@
 		.icon.sidebar-sidebar { background-image: url('~img/icon/menu/sidebar/sidebar.svg'); }
 		.icon.sidebar-focus { background-image: url('~img/icon/menu/sidebar/focus.svg'); }
 
+		.icon.checkbox { background-size: 18px; }
+		.icon.checkbox.c0 { background-image: url('~img/icon/menu/checkbox0.svg'); }
+		.icon.checkbox.c1 { background-image: url('~img/icon/menu/checkbox1.svg'); }
+
 		.icon.color { z-index: 1; }
 		.icon.color {
 			.inner { 

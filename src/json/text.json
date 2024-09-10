@@ -152,8 +152,9 @@
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObject": "Create Object",
 	"commonUrl": "Url",
-	"commonEdit": "Edit",
+	"commonShare": "Share",
 	"commonDoNotShowAgain": "Don’t show this again",
+	"commonMembers": "Members",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -168,6 +169,8 @@
 	"pluralRequest": "request|requests",
 	"pluralReader": "reader|readers",
 	"pluralWriter": "writers|writers",
+	"pluralWeek": "week|weeks",
+	"pluralMonth": "month|months",
 	"pluralYear": "year|years",
 	"pluralDevice": "device|devices",
 
@@ -607,6 +610,7 @@
 	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
 	"blockEmbedOffline": "You are not connected to the Internet",
+	"blockEmbedExternalImage": "External image",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 
@@ -645,16 +649,6 @@
 	"blockTableOptionsAlignVertical": "Vertical align",
 
 	"blockTypeMyTypes": "My Types",
-
-	"blockChatEmpty": "There are no messages yet. Be the first to start a discussion",
-	"blockChatMessageExpand": "Expand",
-	"blockChatReactionAdd": "Add reaction",
-	"blockChatReply": "Reply",
-	"blockChatPlaceholder": "Enter your message",
-	"blockChatButtonObject": "Add object",
-	"blockChatButtonEmoji": "Add emoji",
-	"blockChatButtonMention": "Add mention",
-	"blockChatNewMessages": "New messages",
 
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",
@@ -759,7 +753,6 @@
 	"popupSettingsSpaceIndexShareManageTitle": "Manage sharing",
 	"popupSettingsSpaceIndexShareManageText": "Copy invite link, approve requests and manage members",
 
-	"popupSettingsSpaceIndexShareMembersTitle": "Members",
 	"popupSettingsSpaceIndexShareMembersManageText": "Manage space members",
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
@@ -820,7 +813,6 @@
 	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedButton": "✦ Upgrade to add more editors",
 
-	"popupSettingsSpaceShareMembersTitle": "Members",
 	"popupSettingsSpaceShareJoinRequest": "Join Request",
 	"popupSettingsSpaceShareLeaveRequest": "Leave Request",
 	"popupSettingsSpaceShareViewRequest": "View request",
@@ -830,8 +822,6 @@
 	"popupSettingsSpaceShareGenerateInvite": "Generate invite link",
 	"popupSettingsSpaceShareGenerateInviteDisabled": "You need to be online to share the space",
 	"popupSettingsSpaceShareShowQR": "Show QR code",
-
-	"popupSettingsSpaceMembersTitle": "Members",
 
 	"popupSettingsSpaceRemove": "Move %s to Bin?",
 	"popupSettingsSpaceRemoveTitle": "Move to Bin",
@@ -852,8 +842,8 @@
 	"popupSettingsMembershipSlide3Text": "Our network's value exceeds the sum of its parts. Your membership sustains the infrastructure for its growth which underpins this network.",
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
-	"popupSettingsMembershipPerYear": "per year",
-	"popupSettingsMembershipPerYears": "per %s %s",
+	"popupSettingsMembershipPerGenericSingle": "per %s",
+	"popupSettingsMembershipPerGenericMany": "per %s %s",
 	"popupSettingsMembershipLearnMore": "Learn more",
 	"popupSettingsMembershipCurrent": "Current",
 	"popupSettingsMembershipManage": "Manage",
@@ -874,8 +864,8 @@
 	"popupSettingsOnboardingLocalOnlyWarningConfirm": "Yes, I understand",
 	"popupSettingsOnboardingLocalOnlyNote": "This is an experimental mode.<br/>Use at your own risk.",
 	"popupSettingsOnboardingLocalOnlyConfirmText": "Local-only mode is an experimental feature and does not provide security benefits. Please use it at your own risk, as data loss may occur.",
-	"popupSettingsOnboardingLocalOnlyConfirmConfirm": "I'm feeling lucky",
-	"popupSettingsOnboardingLocalOnlyConfirmCancel": "I’ll stay safe",
+	"popupSettingsOnboardingLocalOnlyConfirmConfirm": "Yes, I accept risks",
+	"popupSettingsOnboardingLocalOnlyConfirmCancel": "No, don’t use it",
 
 
 	"popupSettingsDataLocalFiles": "Local files",
@@ -921,7 +911,7 @@
 
 	"popupSettingsImportNotionDescription": "Import your Notion files through the Notion API with 3 simple steps",
 	"popupSettingsImportNotionTokenPlaceholder": "Paste your integration token",
-	"popupSettingsImportNotionHowTo": "How to import from Notion",
+	"popupSettingsImportNotionHowTo": "How to import from Notion (see <a href=\"%s\">FAQ</a>)",
 	"popupSettingsImportNotionStepByStepGuide": "Step-by-step guide",
 	"popupSettingsImportNotionIntegrationList11": "Create the integration you need to get Notion files",
 	"popupSettingsImportNotionIntegrationList12": "Settings &amp; members → My connections → Develop or manage integrations → <b><a href=\"https://www.notion.so/my-integrations\">New integration</a></b>",
@@ -943,8 +933,11 @@
 	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
 
 	"popupMembershipPaidTitle": "Pick your unique name",
-	"popupMembershipPaidTextPerYear": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a year.",
-	"popupMembershipPaidTextPerYears": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
+
+	"popupMembershipPaidTextUnlimited": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain.",
+	"popupMembershipPaidTextPerGenericSingle": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a %s.",
+	"popupMembershipPaidTextPerGenericMany": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
+
 	"popupMembershipPaidPlaceholder": "Enter your name",
 	"popupMembershipPayByCard": "Pay by Card",
 	"popupMembershipPayByCrypto": "Pay by Crypto",
@@ -1524,6 +1517,11 @@
 	"menuWidgetNumberOfObjects": "Number of Objects",
 	"menuWidgetRemoveWidget": "Remove Widget",
 	"menuWidgetEditWidgets": "Edit Widgets",
+	"menuWidgetFavorites": "Favorites",
+	"menuWidgetSets": "Sets",
+	"menuWidgetCollections": "Collections",
+	"menuWidgetRecentEdit": "Recently edited",
+	"menuWidgetRecentOpen": "Recently opened",
 	"menuWidgetRecentOpenCaption": "On this device",
 
 	"menuPreviewLatexExample": "Example: %s",
@@ -1543,8 +1541,6 @@
 	"syncButtonNameError3": "No access",
 	"syncButtonNameOffline": "No internet",
 
-	"syncButtonStaging": "Staging",
-
 	"menuSyncStatusTitle": "Sync status",
 
 	"menuSyncStatusNetworkMessageE2EE": "End-to-end encrypted",
@@ -1555,6 +1551,7 @@
 	"menuSyncStatusInfoNetworkTitle": "Anytype network",
 	"menuSyncStatusInfoNetworkMessageSynced": "End-to-end encrypted",
 	"menuSyncStatusInfoNetworkMessageSyncing": "%s %s syncing...",
+	"menuSyncStatusInfoNetworkMessageSyncMightBeSlow": "Sync might be slow",
 
 	"menuSyncStatusInfoNetworkMessageError1": "Storage limit reached",
 	"menuSyncStatusInfoNetworkMessageError2": "Incompatible version",
@@ -1730,16 +1727,16 @@
 	"widgetRecentOpen": "Recently opened",
 	"widgetSet": "Sets",
 	"widgetCollection": "Collections",
-	"widgetChat": "Discussions",
 	"widgetEdit": "Edit widgets",
 	"widgetAdd": "Add widget",
 	"widgetLibrary": "Library",
-	"widgetBin": "Bin",
 	"widgetOptions": "Options",
 	"widgetToggle": "Toggle",
 	"widgetEmptyLabel": "There are no Objects here",
 	"widgetEmptyLabelCreate": "There are no Objects here,<br/>create the first one",
 	"widgetShowAll": "See all Objects",
+
+	"widgetButtonAllContent": "All content",
 
 	"phrasePlaceholder": "Please enter your Key",
 
@@ -1774,6 +1771,17 @@
 	"sidebarMenuAll": "Spaces & widgets",
 	"sidebarMenuSidebar": "Only widgets",
 	"sidebarMenuFocus": "Focus mode",
+
+	"sidebarObjectTypeObject": "Objects",
+	"sidebarObjectTypeType": "Object Types",
+	"sidebarObjectTypeFile": "Files",
+	"sidebarObjectTypeMedia": "Media",
+	"sidebarObjectTypeBookmark": "Bookmarks",
+	"sidebarObjectTypeRelation": "Relations",
+	"sidebarObjectTypeOrphan": "Only unlinked",
+
+	"sidebarObjectSortCreated": "Date created",
+	"sidebarObjectSortUpdated": "Date updated",
 
 	"unsplashString": "Photo by %s on %s",
 	"templateBannner": "You are editing a template",
@@ -2092,8 +2100,16 @@
 	"notificationGalleryErrorTitle": "Something went wrong",
 	"notificationGalleryErrorText": "Oops! <b>'%s'</b> wasn't installed. Please check your Internet connection and try again or post a report in our community.",
 
-	"notificationNotionErrorNoObjectsTitle": "Add integration to the Notion pages you want to import",
-	"notificationNotionErrorNoObjectsText": "Select Notion document → … -> Add Connections -> Confirm Integration",
+	"notificationImportErrorTitle5": "No Items to Import",
+	"notificationImportErrorText5": "There are no items to import. Please check your file type or Import selection and try again.",
+	"notificationImportErrorTitle6": "Import Canceled",
+	"notificationImportErrorText6": "The import has been canceled.",
+	"notificationImportErrorTitle7": "Import Limit Exceeded",
+	"notificationImportErrorText7": "The file exceeds the import limit of 1,000 rows or 10 columns. Please adjust your file and try again.",
+	"notificationImportErrorTitle8": "File Load Error",
+	"notificationImportErrorText8": "We couldn’t load your files. Please check your files and try again, or manually transfer the files.",
+	"notificationImportErrorTitle9": "Permission Denied",
+	"notificationImportErrorText9": "We don’t have permission to import into this Anytype space.",
 
 	"notificationJoinSuccessText": "<b>%s</b> has requested to join <b>'%s'</b> space",
 

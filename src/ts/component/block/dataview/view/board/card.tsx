@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { I, S, U, Relation, keyboard } from 'Lib';
-import { Cell, SelectionTarget } from 'Component';
+import { Cell, SelectionTarget, ObjectCover } from 'Component';
 
 interface Props extends I.ViewComponent {
 	id: string;
 	groupId: string;
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
+	recordIdx?: number;
 };
 
 const Card = observer(class Card extends React.Component<Props> {
@@ -15,39 +16,55 @@ const Card = observer(class Card extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations } = this.props;
+		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, getCoverObject } = this.props;
 		const view = getView();
+		const { coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
 		const subId = S.Record.getGroupSubId(rootId, block.id, groupId);
 		const record = S.Detail.get(subId, id);
 		const cn = [ 'card', U.Data.layoutClass(record.id, record.layout) ];
 		const { done } = record;
+		const cover = getCoverObject(id);
+
+		if (coverFit) {
+			cn.push('coverFit');
+		};
+
+		if (cover) {
+			cn.push('withCover');
+		};
 
 		let content = (
 			<div className="cardContent">
-				{relations.map((relation: any, i: number) => {
-					const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
-					return (
-						<Cell
-							elementId={id}
-							key={'board-cell-' + view.id + relation.relationKey}
-							{...this.props}
-							getRecord={() => record}
-							subId={subId}
-							ref={ref => onRef(ref, Relation.cellId(idPrefix, relation.relationKey, record.id))}
-							relationKey={relation.relationKey}
-							viewType={view.type}
-							idPrefix={idPrefix}
-							arrayLimit={2}
-							showTooltip={true}
-							tooltipX={I.MenuDirection.Left}
-							onClick={e => this.onCellClick(e, relation)}
-							iconSize={relation.relationKey == 'name' ? 20 : 18}
-							withName={true}
-						/>
-					);
-				})}
+				<ObjectCover object={cover} />
+
+				<div className="inner">
+					{relations.map((relation: any, i: number) => {
+						const id = Relation.cellId(idPrefix, relation.relationKey, record.id);
+						return (
+							<Cell
+								elementId={id}
+								key={'board-cell-' + view.id + relation.relationKey}
+								{...this.props}
+								getRecord={() => record}
+								recordId={record.id}
+								groupId={groupId}
+								subId={subId}
+								ref={ref => onRef(ref, Relation.cellId(idPrefix, relation.relationKey, record.id))}
+								relationKey={relation.relationKey}
+								viewType={view.type}
+								idPrefix={idPrefix}
+								arrayLimit={2}
+								showTooltip={true}
+								tooltipX={I.MenuDirection.Left}
+								onClick={e => this.onCellClick(e, relation)}
+								iconSize={relation.relationKey == 'name' ? 20 : 18}
+								withName={true}
+							/>
+						);
+					})}
+				</div>
 			</div>
 		);
 

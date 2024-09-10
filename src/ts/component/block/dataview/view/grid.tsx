@@ -86,6 +86,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent
 														key={`grid-row-${view.id + index}`} 
 														{...this.props} 
 														recordId={records[index]}
+														recordIdx={index}
 														style={{ ...style, top: style.top + 2 }}
 														cellPosition={this.cellPosition}
 														getColumnWidths={this.getColumnWidths}

@@ -493,7 +493,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	onFilterChange (e: any, v: string) {
-		const { storageSet } = this.props;
+		const { storageSet, param } = this.props;
+		const { data } = param;
+		const { route } = data;
 
 		if (this.filter == v) {
 			return;
@@ -503,7 +505,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.timeout = window.setTimeout(() => {
 			this.forceUpdate();
 			storageSet({ filter: v });
-			analytics.event('SearchInput');
+			analytics.event('SearchInput', { route });
 		}, J.Constant.delay.keyboard);
 	};
 
@@ -525,9 +527,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	setBacklink (item: any, callBack?: () => void) {
+		const { param } = this.props;
+		const { data } = param;
+		const { route } = data;
+
 		this.setState({ backlink: item }, () => {
 			this.resetSearch();
-			analytics.event('SearchBacklink');
+			analytics.event('SearchBacklink', { route });
 
 			if (callBack) {
 				callBack();
@@ -783,7 +789,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		e.stopPropagation();
 
-		const { close } = this.props;
+		const { close, param } = this.props;
+		const { data } = param;
+		const { route } = data;
 		const filter = this.getFilter();
 		const rootId = keyboard.getRootId();
 		const metaList = item.metaList || [];
@@ -837,11 +845,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 		});
 
-		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
+		analytics.event('SearchResult', { route, index: item.index + 1, length: filter.length });
 	};
 
 	onContext (e: any, item: any) {
-		const { getId } = this.props;
+		const { getId, param } = this.props;
+		const { data } = param;
+		const { route } = data;
 
 		S.Menu.open('dataviewContext', {
 			element: `#${getId()} #item-${item.id}`,
@@ -854,11 +864,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			vertical: I.MenuDirection.Center,
 			data: {
 				subId: J.Constant.subId.search,
-				route: analytics.route.widget,
+				route,
 				objectIds: [ item.id ],
 			},
 		});
-
 	};
 
 	getRowHeight (item: any, index: number) {
