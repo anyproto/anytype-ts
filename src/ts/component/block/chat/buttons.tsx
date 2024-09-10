@@ -7,7 +7,6 @@ import $ from 'jquery';
 interface Props {
 	rootId: string;
 	blockId: string;
-	subId: string;
 	value: string;
 	hasSelection: () => boolean;
 	getMarksAndRange: () => any;
@@ -225,8 +224,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	};
 
 	onAttachment (menu?: string) {
-		const { subId, blockId, attachments, onMenuClose, onChatButtonSelect } = this.props;
-
+		const { blockId, attachments, onMenuClose, onChatButtonSelect } = this.props;
 		const options: any[] = [
 			{ id: 'object', icon: 'object', name: translate('commonObject') },
 			{ id: 'media', icon: 'media', name: translate('commonMedia') },
@@ -234,55 +232,47 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			{ id: 'upload', icon: 'upload', name: translate('commonUpload') },
 		];
 
+		const upload = () => {
+			Action.openFileDialog([], async paths => {
+				console.log('PATH: ', paths[0]);
+			});
+		};
+
 		let data;
 		let menuItem;
-		let ret = false;
 
 		if (menu) {
-			switch (menu) {
-				case 'object': {
-					menuItem = 'searchObject';
-					data = {
-						skipIds: attachments.map(it => it.id),
-						filters: [
-							{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
-						],
-						onSelect: (item: any) => {
-							onChatButtonSelect(I.ChatButton.Object, item);
-						}
-					};
-					break;
-				};
-				case 'media':
-				case 'file': {
-					const layouts = {
-						media: [ I.ObjectLayout.Image, I.ObjectLayout.Audio, I.ObjectLayout.Video ],
-						file: [ I.ObjectLayout.File, I.ObjectLayout.Pdf ]
-					};
+			if (menu == 'upload') {
+				upload();
+				return;
+			};
 
-					menuItem = 'dataviewFileList';
-					data = {
-						filters: [
-							{ relationKey: 'layout', condition: I.FilterCondition.In, value: layouts[menu] }
-						],
-						onChange: (value) => {
-							// need to add id to deps
-							// need to figure how to process without uploading
-							console.log('OBJECT ID: ', value[0]);
-						},
-					};
-					break;
-				};
-				case 'upload': {
-					Action.openFileDialog([], paths => {
-						//need to figure how to process without uploading
-						console.log('PATH: ', paths[0]);
+			menuItem = 'searchObject';
+			data = {
+				skipIds: attachments.map(it => it.id),
+				filters: [
+					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+				],
+				onSelect: (item: any) => {
+					onChatButtonSelect(I.ChatButton.Object, item);
+				}
+			};
 
-						S.Menu.closeAll();
-						ret = true;
-					});
-					break;
+			if ([ 'file', 'media' ].includes(menu)) {
+				const layouts = {
+					media: [ I.ObjectLayout.Image, I.ObjectLayout.Audio, I.ObjectLayout.Video ],
+					file: [ I.ObjectLayout.File, I.ObjectLayout.Pdf ],
 				};
+
+				data.filters.push({ relationKey: 'layout', condition: I.FilterCondition.In, value: layouts[menu] });
+				data = Object.assign(data, {
+					canAdd: true,
+					addParam: {
+						name: translate('commonUpload'),
+						icon: 'upload',
+						onClick: upload
+					}
+				});
 			};
 		} else {
 			menuItem = 'select';
@@ -292,10 +282,6 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 					this.onAttachment(option.id);
 				}
 			};
-		};
-
-		if (ret) {
-			return;
 		};
 
 		S.Menu.closeAll(null, () => {

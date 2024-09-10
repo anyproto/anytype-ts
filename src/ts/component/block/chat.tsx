@@ -169,7 +169,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							ref={ref => this.refButtons = ref}
 							rootId={rootId}
 							blockId={blockId}
-							subId={subId}
 							value={value}
 							hasSelection={this.hasSelection}
 							getMarksAndRange={this.getMarksAndRange}
