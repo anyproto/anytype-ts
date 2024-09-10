@@ -90,11 +90,11 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Kroki, name: 'Kroki' },
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
-			{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
 		];
 
 		if (config.experimental) {
 			ret = ret.concat([
+				{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
 				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			]);
