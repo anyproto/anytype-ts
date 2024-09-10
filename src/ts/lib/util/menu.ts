@@ -90,6 +90,7 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Kroki, name: 'Kroki' },
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
+			{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
 		];
 
 		if (config.experimental) {
