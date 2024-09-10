@@ -110,7 +110,8 @@
 	}
 
 	.block.blockEmbed.isTwitter,
-	.block.blockEmbed.isReddit {
+	.block.blockEmbed.isReddit,
+	.block.blockEmbed.isImage {
 		iframe { width: 100%; aspect-ratio: unset; }
 	}
 
