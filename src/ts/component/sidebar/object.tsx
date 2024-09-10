@@ -345,6 +345,23 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		});
 	};
 
+	loadSearchIds (clear: boolean) {
+		if (this.filter) {
+			U.Data.search({
+				filters: [],
+				sorts: [],
+				fullText: this.filter,
+				keys: [ 'id' ],
+			}, (message: any) => {
+				this.searchIds = (message.records || []).map(it => it.id);
+				this.load(clear);
+			});
+		} else {
+			this.searchIds = null;
+			this.load(clear);
+		};
+	};
+
 	getItems () {
 		return S.Record.getRecords(J.Constant.subId.allObject);
 	};
@@ -399,10 +416,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onAdd () {
 		const details = {
 			...this.getDetailsByType(this.type),
-			name: this.refFilter.getValue(),
+			name: this.filter,
 		};
 
-		keyboard.pageCreate(details, analytics.route.allObjects);
+		keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
+			if (message.targetId && this.filter && this.searchIds) {
+				this.searchIds = this.searchIds.concat(message.targetId);
+				this.load(false);
+			};
+		});
 	};
 
 	isAllowedObject (): boolean {
@@ -480,21 +502,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 
 			this.filter = v;
-
-			if (v) {
-				U.Data.search({
-					filters: [],
-					sorts: [],
-					fullText: v,
-					keys: [ 'id' ],
-				}, (message: any) => {
-					this.searchIds = (message.records || []).map(it => it.id);
-					this.load(true);
-				});
-			} else {
-				this.searchIds = null;
-				this.load(true);
-			};
+			this.loadSearchIds(true);
 		}, J.Constant.delay.keyboard);
 	};
 
