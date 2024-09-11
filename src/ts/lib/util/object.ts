@@ -378,6 +378,7 @@ class UtilObject {
 			I.ObjectLayout.Dashboard,
 			I.ObjectLayout.Space,
 			I.ObjectLayout.SpaceView,
+			I.ObjectLayout.ChatDerived,
 		];
 	};
 
@@ -408,6 +409,7 @@ class UtilObject {
 			I.ObjectLayout.Option, 
 			I.ObjectLayout.SpaceView, 
 			I.ObjectLayout.Space,
+			I.ObjectLayout.ChatDerived,
 		];
 	};
 
