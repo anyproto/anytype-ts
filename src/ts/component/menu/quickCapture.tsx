@@ -308,7 +308,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 		} else {
 			const pinned = pinnedIds.map(id => S.Record.getTypeById(id)).filter(it => it).slice(0, LIMIT_PINNED);
 
-			items = U.Data.getObjectTypesForNewObject().filter(it => !pinnedIds.includes(it.id));
+			items = U.Data.getObjectTypesForNewObject({ withChat: true }).filter(it => !pinnedIds.includes(it.id));
 			items = items.slice(0, LIMIT_PINNED - pinned.length);
 			items.push(S.Record.getSetType());
 			items.push(S.Record.getCollectionType());

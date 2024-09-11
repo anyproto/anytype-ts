@@ -56,9 +56,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target));
 		const hasReactions = reactions.length;
 		const hasAttachments = attachments.length;
-		const isSingle = attachments.length == 1;
 		const isSelf = creator == account.id;
 		const cn = [ 'message' ];
+		const ca = [ 'attachments', this.getAttachmentsClass() ];
 
 		if (isSelf) {
 			cn.push('isSelf');
@@ -143,7 +143,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 						</div>
 
 						{hasAttachments ? (
-							<div className={[ 'attachments', (isSingle ? 'isSingle' : '') ].join(' ')}>
+							<div className={ca.join(' ')}>
 								{attachments.map((item: any, i: number) => (
 									<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} />
 								))}
@@ -275,6 +275,23 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		const message = Object.assign(S.Chat.getMessage(rootId, id), param);
 
 		C.ChatEditMessageContent(rootId, id, message);
+	};
+
+	getAttachmentsClass () {
+		const { rootId, blockId, id } = this.props;
+		const subId = S.Record.getSubId(rootId, blockId);
+		const message = S.Chat.getMessage(rootId, id);
+		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target));
+		const mediaLayouts = [ I.ObjectLayout.Image, I.ObjectLayout.Video ];
+		const media = attachments.filter(it => mediaLayouts.includes(it.layout));
+		const al = attachments.length;
+		const ml = media.length;
+
+		let c = '';
+		if (ml && (ml == al)) {
+			c = ml <= 7 ? `layout-${ml}` : 'layout-over';
+		};
+		return c;
 	};
 
 });

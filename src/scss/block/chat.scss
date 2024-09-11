@@ -27,7 +27,7 @@
 			.attachment {
 				.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 11px; max-width: 360px; min-width: 256px; }
 				.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 6px; }
-				.info { flex-grow: 1; }
+				.info { flex-grow: 1; width: 100%; }
 
 				.icon.remove { 
 					opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; background-size: 8px; 
@@ -54,15 +54,46 @@
 
 			.attachment.isImage { width: 72px; display: flex; align-items: center; justify-content: center; }
 			.attachment.isImage {
-				.image { display: block; object-fit: cover; aspect-ratio: 1; max-width: 100%; border-radius: 8px; }
+				.image { display: block; object-fit: cover; aspect-ratio: 1; max-width: 100%; height: 100%; border-radius: 8px; }
 			}
 
 			.attachment:hover {
 				.icon.remove { opacity: 1; }
 			}
 		}
-		.attachments.isSingle {
-			.attachment { max-width: 100%; }
+
+		.attachments.layout-1,
+		.attachments.layout-2,
+		.attachments.layout-3,
+		.attachments.layout-4,
+		.attachments.layout-5,
+		.attachments.layout-6 {
+			.attachment.isImage { height: auto; max-height: 360px; }
+		}
+
+		.attachments.layout-1 {
+			.attachment.isImage { width: 100%; max-height: unset; }
+		}
+		.attachments.layout-2 {
+			.attachment.isImage { width: calc(50% - 4px); }
+		}
+		.attachments.layout-3 {
+			.attachment.isImage:nth-child(1) { width: 100%; }
+			.attachment.isImage:nth-child(2) { width: calc(50% - 4px); }
+			.attachment.isImage:nth-child(3) { width: calc(50% - 4px); }
+		}
+		.attachments.layout-4 {
+			.attachment.isImage { width: calc(50% - 4px); }
+		}
+		.attachments.layout-5 {
+			.attachment.isImage:nth-child(1) { width: calc(50% - 4px); }
+			.attachment.isImage:nth-child(2) { width: calc(50% - 4px); }
+			.attachment.isImage:nth-child(3) { width: calc(33.33% - 6px); }
+			.attachment.isImage:nth-child(4) { width: calc(33.33% - 6px); }
+			.attachment.isImage:nth-child(5) { width: calc(33.33% - 6px); }
+		}
+		.attachments.layout-6 {
+			.attachment.isImage { width: calc(33.33% - 6px); }
 		}
 
 		.section { display: flex; flex-direction: column; gap: 4px 0px; padding: 16px 0px; }
