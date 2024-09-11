@@ -28,7 +28,7 @@
 			}
 
 			.attachment {
-				.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 11px; max-width: 360px; min-width: 256px; }
+				.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 11px; }
 				.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 6px; }
 				.info { flex-grow: 1; width: 100%; }
 
@@ -78,7 +78,10 @@
 
 		.attachments.layout-1 { max-width: 360px; }
 		.attachments.layout-1 {
-			.attachment.isImage { max-width: 360px; max-height: 360px; }
+			.attachment.isImage { max-width: 360px; max-height: 360px; aspect-ratio: unset; }
+			.attachment.isImage {
+				.image { aspect-ratio: unset; }
+			}
 		}
 		.attachments.layout-2 { gap: 4px; }
 		.attachments.layout-2 {
