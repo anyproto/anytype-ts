@@ -90,6 +90,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			let button = null;
 
 			if (isSpaceOwner) {
+				if (isCurrent) {
+					button = <Label text={translate(`participantPermissions${item.permissions}`)} />;
+				} else
 				if (item.isJoining) {
 					button = (
 						<Button
@@ -115,7 +118,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 							<div className="item">
 								<div className="name">{translate(`participantPermissions${item.permissions}`)}</div>
 							</div>
-							<Icon className="arrow light" />
+							<Icon className="arrow dark" />
 						</div>
 					);
 				};
