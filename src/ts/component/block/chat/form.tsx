@@ -46,7 +46,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onBlurInput = this.onBlurInput.bind(this);
 		this.onKeyUpInput = this.onKeyUpInput.bind(this);
 		this.onKeyDownInput = this.onKeyDownInput.bind(this);
-		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onMention = this.onMention.bind(this);
 		this.onChatButtonSelect = this.onChatButtonSelect.bind(this);
@@ -90,7 +89,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						onBlur={this.onBlurInput}
 						onKeyUp={this.onKeyUpInput} 
 						onKeyDown={this.onKeyDownInput}
-						onInput={this.onChange}
 						onPaste={this.onPaste}
 						onMouseDown={this.onMouseDown}
 						onMouseUp={this.onMouseUp}
@@ -190,6 +188,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.marks = parsed.marks;
 
 		let adjustMarks = false;
+		let { files } = this.state;
 
 		if (value !== parsed.text) {
 			this.refEditable.setValue(Mark.toHtml(parsed.text, this.marks));
@@ -233,6 +232,23 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		if (adjustMarks) {
 			this.updateMarkup(value, to, to);
 		};
+
+		// Remove bookmarks
+
+		const fl = files.length;
+		const bookmarks = files.filter(it => it.layout == I.ObjectLayout.Bookmark);
+		
+		bookmarks.forEach(it => {
+			const marks = this.marks.filter(mark => mark.param == it.source);
+			if (!marks.length) {
+				files = files.filter(file => file.id != it.id);
+			};
+		});
+
+		if (fl != files.length) {
+			this.setState({ files });
+		};
+
 		this.checkSendButton();
 		this.updateButtons();
 	};
@@ -243,8 +259,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const cmd = keyboard.cmdKey();
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 
+		let { files } = this.state;
 		let value = this.refEditable.getTextValue();
 
+		const fl = files.length;
 		const symbolBefore = range ? value[range.from - 1] : '';
 
 		keyboard.shortcut('enter', e, () => {
@@ -266,8 +284,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					value = parsed.value;
 					this.marks = parsed.marks;
 
-					const length = value.length;
-					this.updateMarkup(value, length, length);
+					const l = value.length;
+					this.updateMarkup(value, l, l);
 				};
 			});
 		};
@@ -320,9 +338,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				this.refButtons.onTextButton(e, type, param);
 			};
 		};
-	};
-
-	onChange () {
 	};
 
 	onPaste (e: any) {
@@ -468,8 +483,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { rootId, scrollToBottom, scrollToMessage } = this.props;
 		const node = $(this.node);
 		const loader = node.find('#form-loader');
-		const files = (this.state.files || []).filter(it => it.layout == I.ObjectLayout.File);
-		const bookmarks = (this.state.files || []).filter(it => it.layout == I.ObjectLayout.Bookmark);
+		const list = this.state.files || [];
+		const files = list.filter(it => it.layout == I.ObjectLayout.File);
+		const bookmarks = list.filter(it => it.layout == I.ObjectLayout.Bookmark);
 		const fl = files.length;
 		const bl = bookmarks.length;
 		const attachments = (this.state.attachments || []).map(it => ({ target: it.id, type: I.ChatAttachmentType.Link }));
@@ -571,7 +587,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		uploadFiles(() => fetchBookmarks(callBack));
 	};
 
-	onEdit = (message: I.ChatMessage) => {
+	onEdit (message: I.ChatMessage) {
 		const { subId } = this.props;
 		const { text, marks } = message.content;
 		const l = text.length;
