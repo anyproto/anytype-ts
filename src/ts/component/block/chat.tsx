@@ -423,7 +423,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		if (st <= 0) {
-			//this.loadMessages(false);
+			this.loadMessages(false);
 		};
 
 		dates.each((i, item: any) => {
