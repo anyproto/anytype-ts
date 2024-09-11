@@ -1,4 +1,7 @@
 @import "~scss/_vars";
+@mixin cnt-2 { width: calc(536px / 2); }
+@mixin cnt-3 { width: calc(532px / 3); }
+@mixin cnt-4 { width: calc(528px / 4); }
 
 .blocks {
 	.block.blockChat { @include text-common; }
@@ -17,11 +20,11 @@
 			.label { @include text-common; color: var(--color-text-secondary); }
 		}
 
-		.attachments { padding: 8px 0px 0px 0px; display: flex; gap: 8px; flex-wrap: wrap; }
+		.attachments { padding: 8px 0px 0px 0px; display: flex; gap: 8px; flex-wrap: wrap; max-width: 540px; }
 		.attachments {
 			.attachment { 
 				position: relative; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05);
-				width: calc(50% - 4px); height: 72px; border-radius: 8px; display: flex; flex-direction: row; align-items: center;;
+				@include cnt-2; height: 72px; border-radius: 8px; display: flex; flex-direction: row; align-items: center;;
 			}
 
 			.attachment {
@@ -62,16 +65,16 @@
 			}
 		}
 
+		.attachments.isSingle {
+			.attachment { width: 100%; }
+		}
+
 		/* Layouts */
 
-		.attachments.withLayout { gap: 4px; max-width: 540px; }
+		.attachments.withLayout { gap: 4px; }
 		.attachments.withLayout {
 			.attachment.isImage { border-radius: 12px; height: auto; width: auto; aspect-ratio: 1; flex-shrink: 0; }
 		}
-
-		@mixin cnt-2 { width: calc(536px / 2); }
-		@mixin cnt-3 { width: calc(532px / 3); }
-		@mixin cnt-4 { width: calc(528px / 4); }
 
 		.attachments.layout-1 { max-width: 360px; }
 		.attachments.layout-1 {

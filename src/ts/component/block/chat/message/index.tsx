@@ -61,6 +61,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		const cn = [ 'message' ];
 		const ca = [ 'attachments', attachmentsLayout ];
 
+		if (hasAttachments == 1) {
+			ca.push('isSingle');
+		};
+
 		if (isSelf) {
 			cn.push('isSelf');
 		};

@@ -199,9 +199,6 @@ class PopupPreview extends React.Component<I.Popup> {
 			w = h / (height / width);
 		};
 
-		console.log('mw', maxWidth, 'mh', maxHeight, 'width', width, 'height', height);
-		console.log('w', w, 'h', h);
-
 		wrap.css({ width: w, height: h });
 		position();
 	};
