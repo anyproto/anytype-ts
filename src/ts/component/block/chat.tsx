@@ -216,12 +216,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	getDeps () {
 		const messages = this.getMessages();
 		const markTypes = [ I.MarkType.Object, I.MarkType.Mention ];
-		const deps = U.Common.arrayUnique(messages.reduce((acc, it) => {
-			const marks = (it.content.marks || [].filter(it => markTypes.includes(it.types))).map(it => it.param);
+
+		let deps = [];
+
+		messages.forEach(it => {
+			const marks = (it.content.marks || []).filter(it => markTypes.includes(it.type)).map(it => it.param);
 			const attachments = (it.attachments || []).map(it => it.target);
 
-			return acc.concat(attachments).concat(marks);
-		}, []));
+			deps = deps.concat(marks);
+			deps = deps.concat(attachments);
+		});
 
 		return deps;
 	};
@@ -419,7 +423,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		if (st <= 0) {
-			this.loadMessages(false);
+			//this.loadMessages(false);
 		};
 
 		dates.each((i, item: any) => {

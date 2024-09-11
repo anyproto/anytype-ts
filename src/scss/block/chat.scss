@@ -161,7 +161,7 @@
 				.time { @include text-small; color: var(--color-text-secondary); }
 			}
 
-			.expand { display: flex; align-items: center; gap: 0px 8px; @include text-small; font-weight: 500; color: var(--color-text-secondary); margin-top: 4px; }
+			.expand { display: none; align-items: center; gap: 0px 8px; @include text-small; font-weight: 500; color: var(--color-text-secondary); margin-top: 4px; }
 			.expand::after { content: ''; display: block; width: 8px; height: 8px; background: url('~img/arrow/button/grey.svg'); }
 
 			.sub { @include text-small; color: var(--color-text-secondary); display: none; }
@@ -195,6 +195,7 @@
 		}
 
 		.message.canExpand {
+			.expand { display: flex; }
 			.text { @include clamp; -webkit-line-clamp: 10; }
 		}
 		.message.canExpand.isExpanded {

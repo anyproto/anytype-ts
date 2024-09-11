@@ -6,11 +6,6 @@ import { I, S, U, C, Mark, translate, Preview } from 'Lib';
 
 import Attachment from '../attachment';
 
-interface State {
-	canExpand: boolean;
-	isExpanded: boolean;
-};
-
 interface Props extends I.BlockComponent {
 	blockId: string;
 	id: string;
@@ -24,14 +19,10 @@ interface Props extends I.BlockComponent {
 
 const LINES_LIMIT = 10;
 
-const ChatMessage = observer(class ChatMessage extends React.Component<Props, State> {
+const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 	node = null;
 	refText = null;
-	state = { 
-		canExpand: false, 
-		isExpanded: false,
-	};
 
 	constructor (props: Props) {
 		super(props);
@@ -44,7 +35,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 
 	render () {
 		const { rootId, blockId, id, isThread, isNew, readonly, onThread, onContextMenu, onMore, onReply } = this.props;
-		const { canExpand, isExpanded } = this.state;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
@@ -67,12 +57,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 
 		if (isSelf) {
 			cn.push('isSelf');
-		};
-		if (canExpand) {
-			cn.push('canExpand');
-		};
-		if (isExpanded) {
-			cn.push('isExpanded');
 		};
 		if (isFirst) {
 			cn.push('isFirst');
@@ -140,11 +124,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 								dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
 							/>
 
-							{canExpand && !isExpanded ? (
-								<div className="expand" onClick={this.onExpand}>
-									{translate('blockChatMessageExpand')}
-								</div>
-							) : ''}
+							<div className="expand" onClick={this.onExpand}>
+								{translate('blockChatMessageExpand')}
+							</div>
 						</div>
 
 						{hasAttachments ? (
@@ -212,18 +194,20 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 	};
 
 	onExpand () {
-		this.setState({ isExpanded: true });
+		const node = $(this.node);
+
+		node.toggleClass('isExpanded');
 	};
 
 	checkLinesLimit () {
-		const { isExpanded } = this.state;
+		const node = $(this.node);
 		const ref = $(this.refText);
 		const textHeight = ref.outerHeight();
 		const lineHeight = parseInt(ref.css('line-height'));
 		const canExpand = textHeight / lineHeight > LINES_LIMIT;
 
-		if (canExpand && !isExpanded) {
-			this.setState({ canExpand: true });
+		if (canExpand) {
+			node.addClass('canExpand');
 		};
 	};
 
