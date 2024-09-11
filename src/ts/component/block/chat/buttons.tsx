@@ -13,6 +13,7 @@ interface Props extends I.BlockComponent {
 	onTextButtonToggle: (type: I.MarkType, param: string) => void;
 	onMenuClose: () => void;
 	onMention: () => void;
+	removeBookmark: (url: string) => void;
 };
 
 interface State {
@@ -121,7 +122,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	};
 
 	onTextButton (e: React.MouseEvent, type: I.MarkType, param: string) {
-		const { rootId, block, onTextButtonToggle, getMarksAndRange } = this.props;
+		const { rootId, block, onTextButtonToggle, getMarksAndRange, removeBookmark } = this.props;
 		const { marks, range } = getMarksAndRange();
 		const { from, to } = range;
 		const mark = Mark.getInRange(marks, type, { from, to });
@@ -153,6 +154,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 					type: mark?.type,
 					skipIds: [ rootId ],
 					onChange: onTextButtonToggle,
+					onClear: before => removeBookmark(before),
 				});
 				break;
 			};

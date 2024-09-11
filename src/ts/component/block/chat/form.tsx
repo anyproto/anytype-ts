@@ -61,6 +61,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onFileRemove = this.onFileRemove.bind(this);
 		this.hasSelection = this.hasSelection.bind(this);
 		this.caretMenuParam = this.caretMenuParam.bind(this);
+		this.removeBookmark = this.removeBookmark.bind(this);
 		this.getMarksAndRange = this.getMarksAndRange.bind(this);
 	};
 
@@ -118,6 +119,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 							onChatButtonSelect={this.onChatButtonSelect}
 							onTextButtonToggle={this.onTextButtonToggle}
 							onMenuClose={this.onMenuClose}
+							removeBookmark={this.removeBookmark}
 						/>
 					) : ''}
 
@@ -172,85 +174,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	onBlurInput () {
 		keyboard.disableSelection(false);
 		this.refEditable?.placeholderCheck();
-	};
-
-	onKeyUpInput (e: any) {
-		this.range = this.refEditable.getRange();
-
-		const { to } = this.range;
-		const { filter } = S.Common;
-		const value = this.getTextValue();
-		const parsed = this.getMarksFromHtml();
-		const oneSymbolBefore = this.range ? value[this.range.from - 1] : '';
-		const menuOpenMention = S.Menu.isOpen('blockMention');
-		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@');
-
-		this.marks = parsed.marks;
-
-		let adjustMarks = false;
-		let { files } = this.state;
-
-		if (value !== parsed.text) {
-			this.refEditable.setValue(Mark.toHtml(parsed.text, this.marks));
-			this.refEditable.setRange(this.range);
-		};
-
-		if (canOpenMenuMention) {
-			this.onMention(true);
-		};
-
-		if (menuOpenMention) {
-			window.clearTimeout(this.timeoutFilter);
-			this.timeoutFilter = window.setTimeout(() => {
-				if (!this.range) {
-					return;
-				};
-
-				const d = this.range.from - filter.from;
-
-				if (d >= 0) {
-					const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
-					S.Common.filterSetText(part);
-				};
-			}, 30);
-			return;
-		};
-
-		if (!keyboard.isSpecial(e)) {
-			for (let i = 0; i < this.marks.length; ++i) {
-				const mark = this.marks[i];
-
-				if (Mark.needsBreak(mark.type) && (mark.range.to == to)) {
-					const adjusted = Mark.adjust([ mark ], mark.range.to - 1, -1);
-
-					this.marks[i] = adjusted[0];
-					adjustMarks = true;
-				};
-			};
-		};
-
-		if (adjustMarks) {
-			this.updateMarkup(value, to, to);
-		};
-
-		// Remove bookmarks
-
-		const fl = files.length;
-		const bookmarks = files.filter(it => it.layout == I.ObjectLayout.Bookmark);
-		
-		bookmarks.forEach(it => {
-			const marks = this.marks.filter(mark => mark.param == it.source);
-			if (!marks.length) {
-				files = files.filter(file => file.id != it.id);
-			};
-		});
-
-		if (fl != files.length) {
-			this.setState({ files });
-		};
-
-		this.checkSendButton();
-		this.updateButtons();
 	};
 
 	onKeyDownInput (e: any) {
@@ -338,6 +261,70 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				this.refButtons.onTextButton(e, type, param);
 			};
 		};
+	};
+
+	onKeyUpInput (e: any) {
+		this.range = this.refEditable.getRange();
+
+		const { to } = this.range;
+		const { filter } = S.Common;
+		const value = this.getTextValue();
+		const parsed = this.getMarksFromHtml();
+		const oneSymbolBefore = this.range ? value[this.range.from - 1] : '';
+		const menuOpenMention = S.Menu.isOpen('blockMention');
+		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@');
+
+		this.marks = parsed.marks;
+
+		let adjustMarks = false;
+		let { files } = this.state;
+
+		if (value !== parsed.text) {
+			this.refEditable.setValue(Mark.toHtml(parsed.text, this.marks));
+			this.refEditable.setRange(this.range);
+		};
+
+		if (canOpenMenuMention) {
+			this.onMention(true);
+		};
+
+		if (menuOpenMention) {
+			window.clearTimeout(this.timeoutFilter);
+			this.timeoutFilter = window.setTimeout(() => {
+				if (!this.range) {
+					return;
+				};
+
+				const d = this.range.from - filter.from;
+
+				if (d >= 0) {
+					const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
+					S.Common.filterSetText(part);
+				};
+			}, 30);
+			return;
+		};
+
+		if (!keyboard.isSpecial(e)) {
+			for (let i = 0; i < this.marks.length; ++i) {
+				const mark = this.marks[i];
+
+				if (Mark.needsBreak(mark.type) && (mark.range.to == to)) {
+					const adjusted = Mark.adjust([ mark ], mark.range.to - 1, -1);
+
+					this.marks[i] = adjusted[0];
+					adjustMarks = true;
+				};
+			};
+		};
+
+		if (adjustMarks) {
+			this.updateMarkup(value, to, to);
+		};
+
+		this.checkSendButton();
+		this.updateButtons();
+		this.removeBookmarks();
 	};
 
 	onPaste (e: any) {
@@ -684,7 +671,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		switch (type) {
 			case I.MarkType.Link: {
-				this.addBookmark(param);
+				if (param) {
+					this.addBookmark(param);
+				};
 				break;
 			};
 
@@ -730,9 +719,35 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			if (message.error.code) {
 				add({ title: url, url });
 			} else {
-				add(message.previewLink);
+				add({ ...message.previewLink, url });
 			};
 		});
+	};
+
+	removeBookmarks () {
+		const files = this.state.files || [];
+		const bookmarks = files.filter(it => it.layout == I.ObjectLayout.Bookmark);
+		
+		let filtered = files;
+		bookmarks.forEach(it => {
+			const marks = this.marks.filter(mark => mark.param == it.source);
+			if (!marks.length) {
+				filtered = filtered.filter(file => file.id != it.id);
+			};
+		});
+
+		if (files.length != filtered.length) {
+			this.setState({ files: filtered });
+		};
+	};
+
+	removeBookmark (url: string) {
+		const files = this.state.files || [];
+		const filtered = files.filter(it => U.Object.isBookmarkLayout(it.layout) && (it.source != url));
+
+		if (files.length != filtered.length) {
+			this.setState({ files: filtered });
+		};
 	};
 
 	onMention (fromKeyboard?: boolean) {
