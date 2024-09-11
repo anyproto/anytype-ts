@@ -23,6 +23,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	deps: string[] = [];
 	messageRefs: any = {};
 	lastMessageId: string = '';
+	timeoutInterface = 0;
 	state = {
 		threadId: '',
 	};
@@ -156,6 +157,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = false;
 		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
 		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
+		window.clearTimeout(this.timeoutInterface);
 	};
 
 	unbind () {
@@ -362,12 +364,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onScroll (e: any) {
 		const { isPopup } = this.props;
+		const node = $(this.node);
 		const rootId = this.getRootId();
 		const container = U.Common.getScrollContainer(isPopup);
 		const st = container.scrollTop();
 		const co = isPopup ? container.offset().top : 0;
 		const ch = container.outerHeight();
 		const messages = this.getMessages();
+		const dates = node.find('.section > .date');
+		const hh = J.Size.header;
 
 		let lastId = '';
 
@@ -395,6 +400,18 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		if (st <= 0) {
 			this.loadMessages(false);
 		};
+
+		dates.each((i, item: any) => {
+			item = $(item);
+
+			const y = item.offset().top - st;
+
+			item.removeClass('hide');
+			if (y == hh + 8) {
+				window.clearTimeout(this.timeoutInterface);
+				this.timeoutInterface = window.setTimeout(() => item.addClass('hide'), 1000);
+			};
+		});
 	};
 
 	scrollToMessage (id: string) {
@@ -416,7 +433,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const top = node.offset().top + node.outerHeight() + hh + 64;
 
 			scrollContainer.scrollTop(top);
-			this.lastMessageId = id;
 		});
 	};
 
@@ -426,7 +442,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		this.scrollToMessage(messages[messages.length - 1].id);
+		const id = messages[messages.length - 1].id;
+
+		this.scrollToMessage(id);
+		this.lastMessageId = id;
 	};
 
 	onThread (id: string) {

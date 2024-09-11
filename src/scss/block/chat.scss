@@ -68,10 +68,11 @@
 		.section { display: flex; flex-direction: column; gap: 4px 0px; padding: 16px 0px; }
 		.section:first-child { padding-top: 0px; }
 		.section {
-			> .date { position: sticky; display: flex; justify-content: center; top: 60px; z-index: 1; }
+			> .date { position: sticky; display: flex; justify-content: center; top: 60px; z-index: 10; pointer-events: none; transition: opacity 0.3s $easeInQuint; }
 			> .date {
-				.label { @include text-small; padding: 3px 10px; background: var(--color-bg-loader); border: 1px solid var(--color-shape-tertiary); border-radius: 13px; }
+				.label { @include text-small; padding: 3px 10px; background: var(--color-bg-primary); border: 1px solid var(--color-shape-tertiary); border-radius: 13px; }
 			}
+			> .date.hide { opacity: 0; }
 		}
 
 		.message { @include text-common; }
