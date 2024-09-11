@@ -22,7 +22,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	refForm = null;
 	deps: string[] = [];
 	messageRefs: any = {};
-	lastMessageId: string = '';
 	timeoutInterface = 0;
 	state = {
 		threadId: '',
@@ -50,6 +49,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const subId = this.getSubId();
 		const deps = this.getDeps().map(id => S.Detail.get(subId, id, []));
 		const length = messages.length;
+		const lastId = Storage.getLastChatMessageId(rootId);
 
 		const Section = (item: any) => {
 			let date = U.Date.dayString(item.createdAt);
@@ -71,7 +71,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							id={item.id}
 							rootId={rootId}
 							blockId={blockId}
-							isNew={item.id == this.lastMessageId}
+							isNew={item.id == lastId}
 							isThread={!!threadId}
 							onThread={this.onThread}
 							onContextMenu={e => this.onContextMenu(e, item)}
@@ -131,7 +131,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.loadMessages(true, () => {
 			this.loadDeps(() => {
 				if (lastId) {
-					this.lastMessageId = lastId;
 					this.scrollToMessage(lastId);
 				} else {
 					this.scrollToBottom();
@@ -348,16 +347,26 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						};
 
 						case 'delete': {
-							C.ChatDeleteMessage(rootId, item.id, () => {
-								if (this.refForm.editingId == item.id) {
-									this.refForm.onEditClear();
-								};
+							S.Popup.open('confirm', {
+								data: {
+									icon: 'confirm',
+									bgColor: 'red',
+									title: translate('popupConfirmChatDeleteMessageTitle'),
+									text: translate('popupConfirmChatDeleteMessageText'),
+									onConfirm: () => {
+										C.ChatDeleteMessage(rootId, item.id, () => {
+											if (this.refForm.editingId == item.id) {
+												this.refForm.onEditClear();
+											};
 
-								if (next) {
-									this.scrollToMessage(next.id);
-								} else {
-									this.scrollToBottom();
-								};
+											if (next) {
+												this.scrollToMessage(next.id);
+											} else {
+												this.scrollToBottom();
+											};
+										});
+									},
+								}
 							});
 							break;
 						};
@@ -406,7 +415,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		if (lastId) {
-			this.lastMessageId = lastId;
 			Storage.setLastChatMessageId(rootId, lastId);
 		};
 
@@ -459,7 +467,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const id = messages[length - 1].id;
 
 		this.scrollToMessage(id);
-		this.lastMessageId = id;
 	};
 
 	onThread (id: string) {
