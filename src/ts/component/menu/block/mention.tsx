@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { MenuItemVertical, Loader, ObjectName } from 'Component';
+import { MenuItemVertical, Loader, ObjectName, EmptySearch } from 'Component';
 import { I, S, U, J, keyboard, Mark, translate, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -93,35 +93,41 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		return (
-			<div className="items">
-				{isLoading ? <Loader /> : (
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={this.loadMoreRows}
-						isRowLoaded={({ index }) => !!this.items[index]}
-						threshold={LIMIT_HEIGHT}
-					>
-						{({ onRowsRendered }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={ref => this.refList = ref}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={({ index }) => this.getRowHeight(items[index])}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={10}
-										scrollToAlignment="center"
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				)}
-			</div>
+			<React.Fragment>
+				{!items.length && !isLoading ? (
+					<EmptySearch filter={filter} />
+				) : ''}
+
+				<div className="items">
+					{isLoading ? <Loader /> : (
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={this.loadMoreRows}
+							isRowLoaded={({ index }) => !!this.items[index]}
+							threshold={LIMIT_HEIGHT}
+						>
+							{({ onRowsRendered }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={ref => this.refList = ref}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={({ index }) => this.getRowHeight(items[index])}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											scrollToAlignment="center"
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					)}
+				</div>
+			</React.Fragment>
 		);
 	};
 	
@@ -179,18 +185,22 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { canAdd } = data;
 		const filter = this.getFilter();
 		const sections: any[] = [];
+		const length = this.items.length;
 
-		if (this.items.length) {
+		if (length) {
 			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: this.items });
 		};
 
 		if (filter && canAdd) {
-			sections.push({ 
-				children: [
-					{ isDiv: true },
-					{ id: 'add', icon: 'plus', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter) }
-				]
-			});
+			const children: any[] = [
+				{ id: 'add', icon: 'plus', name: U.Common.sprintf(translate('commonCreateObjectWithName'), filter) }
+			];
+
+			if (length) {
+				children.unshift({ isDiv: true });
+			};
+
+			sections.push({ children });
 		};
 
 		return sections;
@@ -331,10 +341,16 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	resize () {
 		const { getId, position } = this.props;
+		const { isLoading } = this.state;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const offset = 4;
-		const height = Math.max(44, Math.min(HEIGHT_ITEM * LIMIT_HEIGHT, items.length * HEIGHT_ITEM + offset));
+
+		let height = 16;
+		if (!items.length) {
+			height = isLoading ? height + 40 : 160;
+		} else {
+			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
+		};
 
 		obj.css({ height });
 		position();

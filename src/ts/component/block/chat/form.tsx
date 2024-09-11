@@ -241,8 +241,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { checkMarkOnBackspace } = this.props;
 		const range = this.range;
 		const cmd = keyboard.cmdKey();
+		const menuOpenMention = S.Menu.isOpen('blockMention');
 
 		let value = this.refEditable.getTextValue();
+
+		const symbolBefore = range ? value[range.from - 1] : '';
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
@@ -252,17 +255,20 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		if (range && range.to) {
 			keyboard.shortcut('backspace', e, () => {
 				const parsed = checkMarkOnBackspace(value, range, this.marks);
-				if (!parsed.save) {
-					return;
+
+				if (menuOpenMention && (symbolBefore == '@')) {
+					S.Menu.close('blockMention');
 				};
 
-				e.preventDefault();
+				if (parsed.save) {
+					e.preventDefault();
 
-				value = parsed.value;
-				this.marks = parsed.marks;
+					value = parsed.value;
+					this.marks = parsed.marks;
 
-				const length = value.length;
-				this.updateMarkup(value, length, length);
+					const length = value.length;
+					this.updateMarkup(value, length, length);
+				};
 			});
 		};
 
