@@ -326,6 +326,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
+		const messages = this.getMessages();
+		const idx = messages.findIndex(it => it.id == item.id);
+		const next = messages[idx + 1];
+
 		const menuParam: Partial<I.MenuParam> = {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
@@ -347,6 +351,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							C.ChatDeleteMessage(rootId, item.id, () => {
 								if (this.refForm.editingId == item.id) {
 									this.refForm.onEditClear();
+								};
+
+								if (next) {
+									this.scrollToMessage(next.id);
+								} else {
+									this.scrollToBottom();
 								};
 							});
 							break;
