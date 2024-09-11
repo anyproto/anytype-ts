@@ -24,7 +24,7 @@
 		.attachments {
 			.attachment { 
 				position: relative; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05);
-				@include cnt-2; height: 72px; border-radius: 8px; display: flex; flex-direction: row; align-items: center;;
+				width: calc(532px / 2); height: 72px; border-radius: 8px; display: flex; flex-direction: row; align-items: center;;
 			}
 
 			.attachment {
