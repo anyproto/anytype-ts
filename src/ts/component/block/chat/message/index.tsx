@@ -80,7 +80,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		if (isLast) {
 			cn.push('isLast');
 		};
-		if (isNew) {
+		if (isNew && !isSelf) {
 			cn.push('isNew');
 		};
 
