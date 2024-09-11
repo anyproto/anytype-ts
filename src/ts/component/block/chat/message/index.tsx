@@ -57,8 +57,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		const hasReactions = reactions.length;
 		const hasAttachments = attachments.length;
 		const isSelf = creator == account.id;
+		const attachmentsLayout = this.getAttachmentsClass();
 		const cn = [ 'message' ];
-		const ca = [ 'attachments', this.getAttachmentsClass() ];
+		const ca = [ 'attachments', attachmentsLayout ];
 
 		if (isSelf) {
 			cn.push('isSelf');
@@ -145,7 +146,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 						{hasAttachments ? (
 							<div className={ca.join(' ')}>
 								{attachments.map((item: any, i: number) => (
-									<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} />
+									<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} showAsFile={!attachmentsLayout} />
 								))}
 							</div>
 						) : ''}

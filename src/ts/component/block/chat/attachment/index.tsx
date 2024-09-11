@@ -5,6 +5,7 @@ import { I, U, S, J } from 'Lib';
 
 interface Props {
 	object: any;
+	showAsFile?: boolean;
 	onRemove: (id: string) => void;
 };
 
@@ -22,7 +23,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	};
 
 	render () {
-		const { object } = this.props;
+		const { object, showAsFile } = this.props;
 		const mime = String(object.mime || '');
 		const cn = [ 'attachment' ];
 
@@ -34,6 +35,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		switch (object.layout) {
 			case I.ObjectLayout.File:
+				if (showAsFile) {
+					break;
+				};
+
 				if (mime) {
 					const [ t1, t2 ] = mime.split('/');
 
@@ -48,6 +53,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				break;
 
 			case I.ObjectLayout.Image:
+				if (showAsFile) {
+					break;
+				};
+
 				cn.push('isImage');
 				content = this.renderImage();
 				break;
