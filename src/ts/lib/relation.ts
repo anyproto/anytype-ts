@@ -351,7 +351,7 @@ class Relation {
 
 		switch (type) {
 			default: {
-				formats = [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.Checkbox ];
+				formats = [ I.RelationType.Select, I.RelationType.MultiSelect, I.RelationType.Object, I.RelationType.Checkbox ];
 				break;
 			};
 
