@@ -255,17 +255,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		let html = text;
 		if (block.isTextCode()) {
-			let lang = fields.lang;
-			// do not highlight unsupported language codes
+			const lang = U.Prism.aliasMap[fields.lang] || 'plain';fields.lang;
 			const grammar = Prism.languages[lang] || {};
 
-			lang = U.Prism.aliasMap[lang] || 'plain';
-
-			if (this.refLang) {
-				this.refLang.setValue(lang);
-			};
-
 			html = Prism.highlight(html, grammar, lang);
+			this.refLang?.setValue(lang);
 		} else {
 			const parsed = Mark.fromUnicode(html, this.marks);
 
@@ -739,7 +733,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `ctrl+shift+/` },
 		];
 		const twinePairs = {
-			'[': ']',
 			'{': '}',
 			'(': ')',
 			'`':'`',
@@ -1408,6 +1401,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.getForClick('', false, true);
 		const range = this.getRange();
+		const value = this.getValue();
 
 		focus.set(block.id, range);
 
@@ -1436,6 +1430,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.timeoutContext = window.setTimeout(() => {
 			const onChange = (marks: I.Mark[]) => {
+				this.setValue(value);
 				this.marks = marks;
 				this.setMarks(marks);
 

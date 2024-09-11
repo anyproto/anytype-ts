@@ -46,6 +46,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.onFilterSelect = this.onFilterSelect.bind(this);
 		this.onBacklink = this.onBacklink.bind(this);
 		this.onClearSearch = this.onClearSearch.bind(this);
+		this.onContext = this.onContext.bind(this);
 		this.filterMapper = this.filterMapper.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
@@ -158,7 +159,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				};
 
 				content = (
-					<div className="sides">
+					<div className="sides" onContextMenu={e => this.onContext(e, item)}>
 						<div className="side left">
 							<div className="name" dangerouslySetInnerHTML={{ __html: U.Common.sanitize(name) }} />
 							<Context {...meta} />
@@ -351,6 +352,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this._isMounted = false;
 		this.unbind();
 
+		C.ObjectSearchUnsubscribe([ J.Constant.subId.search ]);
 		window.clearTimeout(this.timeout);
 	};
 
@@ -491,7 +493,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	onFilterChange (e: any, v: string) {
-		const { storageSet } = this.props;
+		const { storageSet, param } = this.props;
+		const { data } = param;
+		const { route } = data;
 
 		if (this.filter == v) {
 			return;
@@ -501,7 +505,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.timeout = window.setTimeout(() => {
 			this.forceUpdate();
 			storageSet({ filter: v });
-			analytics.event('SearchInput');
+			analytics.event('SearchInput', { route });
 		}, J.Constant.delay.keyboard);
 	};
 
@@ -523,9 +527,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	setBacklink (item: any, callBack?: () => void) {
+		const { param } = this.props;
+		const { data } = param;
+		const { route } = data;
+
 		this.setState({ backlink: item }, () => {
 			this.resetSearch();
-			analytics.event('SearchBacklink');
+			analytics.event('SearchBacklink', { route });
 
 			if (callBack) {
 				callBack();
@@ -612,12 +620,19 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			this.items = this.items.concat(records);
 
+			U.Data.subscribeIds({
+				subId: J.Constant.subId.search,
+				ids: this.items.map(it => it.id),
+				noDeps: true,
+			});
+
 			if (clear) {
 				this.setState({ isLoading: false }, callBack);
 			} else {
 				this.forceUpdate(callBack);
 			};
 		});
+
 	};
 
 	getItems () {
@@ -774,7 +789,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		e.stopPropagation();
 
-		const { close } = this.props;
+		const { close, param } = this.props;
+		const { data } = param;
+		const { route } = data;
 		const filter = this.getFilter();
 		const rootId = keyboard.getRootId();
 		const metaList = item.metaList || [];
@@ -828,7 +845,29 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			};
 		});
 
-		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
+		analytics.event('SearchResult', { route, index: item.index + 1, length: filter.length });
+	};
+
+	onContext (e: any, item: any) {
+		const { getId, param } = this.props;
+		const { data } = param;
+		const { route } = data;
+
+		S.Menu.open('dataviewContext', {
+			element: `#${getId()} #item-${item.id}`,
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
+			className: 'fixed',
+			classNameWrap: 'fromPopup',
+			vertical: I.MenuDirection.Center,
+			data: {
+				subId: J.Constant.subId.search,
+				route,
+				objectIds: [ item.id ],
+			},
+		});
 	};
 
 	getRowHeight (item: any, index: number) {

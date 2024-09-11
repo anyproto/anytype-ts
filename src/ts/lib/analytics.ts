@@ -44,6 +44,7 @@ class Analytics {
 		mention: 'Mention',
 		media: 'Media',
 		calendar: 'Calendar',
+		allObjects: 'AllObjects',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',

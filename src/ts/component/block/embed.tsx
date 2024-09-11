@@ -11,7 +11,6 @@ import { I, C, S, U, J, keyboard, focus, Action, translate } from 'Lib';
 
 const katex = require('katex');
 const pako = require('pako');
-const mermaid = require('mermaid').default;
 
 require('katex/dist/contrib/mhchem');
 
@@ -332,6 +331,10 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 				e.preventDefault();
 				keyboard.onRedo(rootId, 'editor');
+			});
+
+			keyboard.shortcut(`tab`, e, () => {
+				e.preventDefault();
 			});
 		};
 

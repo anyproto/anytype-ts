@@ -272,7 +272,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-        return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			this.offset += J.Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
@@ -399,7 +399,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
+		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose, route } = data;
 		const addParam: any = data.addParam || {};
 		const object = S.Detail.get(rootId, blockId);
 
@@ -472,7 +472,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			} else {
 				const flags = [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ];
 
-				U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, analytics.route.search, (message: any) => {
+				U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route || analytics.route.search, (message: any) => {
 					process(message.details, true);
 					close();
 				});

@@ -172,7 +172,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	};
 	
 	getSections () {
-		
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
@@ -182,7 +181,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return [];
 		};
 		
-		const { config } = S.Common;
 		const { filter } = this.state;
 		const { hAlign, content, bgColor } = block;
 		const { color, style } = content;
@@ -234,7 +232,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 		};
 
-		const actionParam = { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject };
+		const actionParam = { rootId, blockId, hasText, hasFile, hasLink, hasBookmark, hasDataview, hasTurnObject, count: blockIds.length };
 		const changeFile = { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true };
 		const restrictedAlign = [];
 

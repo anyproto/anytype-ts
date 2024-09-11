@@ -710,8 +710,12 @@ class UtilData {
 		const mapper = it => ({ id: it[idField], details: it });
 
 		let details = [];
-		details = details.concat(message.dependencies.map(mapper));
-		details = details.concat(message.records.map(mapper));
+		if (message.dependencies && message.dependencies.length) {
+			details = details.concat(message.dependencies.map(mapper));
+		};
+		if (message.records && message.records.length) {
+			details = details.concat(message.records.map(mapper));
+		};
 
 		S.Detail.set(subId, details);
 		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
@@ -738,7 +742,6 @@ class UtilData {
 			beforeId: '',
 			collectionId: ''
 		}, param);
-
 
 		const { subId, idField, filters, sorts, sources, offset, limit, ignoreWorkspace, ignoreHidden, ignoreDeleted, afterId, beforeId, noDeps, withArchived, collectionId } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];

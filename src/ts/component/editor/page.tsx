@@ -1392,7 +1392,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const length = block.getLength();
-		const replace = !range.to && block.isTextList() && !length;
+		const parent = S.Block.getParentLeaf(rootId, block.id);
+		const replace = !range.to && (block.isTextList() || parent?.isTextToggle()) && !length;
 
 		if (block.isTextCode() && (pressed == 'enter')) {
 			return;
@@ -1412,12 +1413,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		e.stopPropagation();
 
 		if (replace) {
-			const parent = S.Block.getParentLeaf(rootId, block.id);
-
-			if (parent && parent.isTextList()) {
+			if (parent?.isTextList()) {
 				this.onTabBlock(e, range, true);
 			} else {
-				C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph);
+				C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph, () => {
+					C.BlockTextListClearStyle(rootId, [ block.id ]);
+				});
 			};
 		} else 
 		if (!block.isText()) {  
@@ -1818,6 +1819,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			} else 
 			if (message.blockIds && message.blockIds.length) {
 				count = message.blockIds.length;
+
+				message.blockIds.forEach((id: string) => {
+					const block = S.Block.getLeaf(rootId, id);
+
+					if (block && block.isTextToggle()) {
+						S.Block.toggle(rootId, block.id, true);
+					};
+				});
+
 
 				const lastId = message.blockIds[count - 1];
 				const block = S.Block.getLeaf(rootId, lastId);

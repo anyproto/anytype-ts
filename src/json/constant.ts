@@ -90,7 +90,8 @@ export default {
 		space:			 'space',
 		files:			 'files',
 		participant:	 'participant',
-		myParticipant:	 'myParticipant'
+		myParticipant:	 'myParticipant',
+		allObject:		 'allObject',
 	},
 
 	typeKey: {

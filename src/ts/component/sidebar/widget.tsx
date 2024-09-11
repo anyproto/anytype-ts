@@ -9,7 +9,7 @@ type State = {
 	previewId: string;
 };
 
-const ListWidget = observer(class ListWidget extends React.Component<{}, State> {
+const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, State> {
 		
 	state: State = {
 		isEditing: false,
@@ -31,7 +31,6 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 		this.onDrop = this.onDrop.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onLibrary = this.onLibrary.bind(this);
-		this.onArchive = this.onArchive.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
@@ -40,7 +39,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
-		const cn = [ 'listWidget' ];
+		const cn = [ 'list' ];
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let content = null;
@@ -135,6 +134,14 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 						/>
 					</DropTarget>
 
+					<Widget 
+						block={new M.Block({ id: 'buttons', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Buttons } })} 
+						disableContextMenu={true} 
+						onDragStart={this.onDragStart}
+						onDragOver={this.onDragOver}
+						isEditing={isEditing}
+					/>
+
 					{blocks.map((block, i) => (
 						<Widget 
 							{...this.props}
@@ -149,32 +156,6 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 						/>
 					))}
 
-					<DropTarget 
-						{...this.props} 
-						isTargetBottom={true}
-						rootId={S.Block.widgets} 
-						id={last?.id}
-						dropType={I.DropType.Widget} 
-						canDropMiddle={false}
-						className="lastTarget"
-						cacheKey="lastTarget"
-					>
-						<Button 
-							text={translate('widgetLibrary')}
-							color="" 
-							className="widget" 
-							icon="store" 
-							onClick={this.onLibrary} 
-						/>
-						<Button
-							text={translate('widgetBin')}
-							color=""
-							className="widget"
-							icon="bin"
-							onClick={this.onArchive}
-						/>
-					</DropTarget>
-
 					<div className="buttons">
 						{buttons.map(button => (
 							<Button key={button.id + (isEditing ? 'edit' : '')} color="" {...button} />
@@ -186,14 +167,21 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 		return (
 			<div 
+				id="containerWidget"
 				ref={node => this.node = node}
-				id="listWidget"
-				className={cn.join(' ')}
-				onDrop={this.onDrop}
-				onDragOver={e => e.preventDefault()}
-				onContextMenu={this.onContextMenu}
 			>
-				{content}
+				<div className="head" />
+				<div className="body">
+					<div 
+						id="list"
+						className={cn.join(' ')}
+						onDrop={this.onDrop}
+						onDragOver={e => e.preventDefault()}
+						onContextMenu={this.onContextMenu}
+					>
+						{content}
+					</div>
+				</div>
 			</div>
 		);
 	};
@@ -217,6 +205,7 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 			offsetY: -4,
 			vertical: I.MenuDirection.Top,
 			data: {
+				route: analytics.route.widget,
 				filters: [
 					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
 					{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: S.Record.getTemplateType()?.id },
@@ -320,9 +309,8 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 	};
 
 	onDrop (e: React.DragEvent): void {
-		const { isEditing } = this.state;
-		if (!isEditing) {
-			//return;
+		if (!this.isDragging) {
+			return;
 		};
 
 		e.stopPropagation();
@@ -347,14 +335,6 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 		if (!isEditing && !e.button) {
 			U.Object.openEvent(e, { layout: I.ObjectLayout.Store });
-		};
-	};
-
-	onArchive (e: any) {
-		const { isEditing } = this.state;
-
-		if (!isEditing && !e.button) {
-			U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
 		};
 	};
 
@@ -484,4 +464,4 @@ const ListWidget = observer(class ListWidget extends React.Component<{}, State> 
 
 });
 
-export default ListWidget;
+export default SidebarWidget;
