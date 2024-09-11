@@ -182,11 +182,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const cmd = keyboard.cmdKey();
 		const menuOpenMention = S.Menu.isOpen('blockMention');
 
-		let { files } = this.state;
 		let value = this.refEditable.getTextValue();
-
-		const fl = files.length;
-		const symbolBefore = range ? value[range.from - 1] : '';
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
@@ -197,11 +193,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			keyboard.shortcut('backspace', e, () => {
 				const parsed = checkMarkOnBackspace(value, range, this.marks);
 
-				if (menuOpenMention && (symbolBefore == '@')) {
-					S.Menu.close('blockMention');
-				};
-
-				if (parsed.save) {
+				if (!parsed.save) {
+					return;
 					e.preventDefault();
 
 					value = parsed.value;
@@ -277,7 +270,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.marks = parsed.marks;
 
 		let adjustMarks = false;
-		let { files } = this.state;
 
 		if (value !== parsed.text) {
 			this.refEditable.setValue(Mark.toHtml(parsed.text, this.marks));
@@ -302,6 +294,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					S.Common.filterSetText(part);
 				};
 			}, 30);
+
+			keyboard.shortcut('backspace', e, () => {
+				if (!value.match('@')) {
+					S.Menu.close('blockMention');
+				};
+			});
+
 			return;
 		};
 
