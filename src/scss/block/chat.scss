@@ -125,7 +125,7 @@
 			> .date.hide { opacity: 0; }
 		}
 
-		.message { @include text-common; }
+		.message { @include text-common; position: relative; }
 		.message {
 			.text { user-select: text !important; }
 			.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
@@ -183,7 +183,7 @@
 				.reaction.isSelf { box-shadow: 0px 0px 0px 1px inset var(--color-system-accent-125); background-color: var(--color-system-accent-25); }
 			}
 
-			.newMessages { display: flex; justify-content: center; position: absolute; bottom: -9px; left: 0px;  width: 100%; }
+			.newMessages { display: none; justify-content: center; position: absolute; bottom: -9px; left: 0px;  width: 100%; }
 			.newMessages {
 				.label { @include text-small; padding: 0px 12px; font-weight: 500; background: var(--color-bg-primary); color: var(--color-text-secondary); }
 			}
@@ -221,10 +221,7 @@
 
 		.message.isNew:not(:last-child) { position: relative; padding-bottom: 25px; margin-bottom: 6px; border-bottom: 1px solid var(--color-shape-tertiary); }
 		.message.isNew {
-			.newMessages { display: flex; justify-content: center; position: absolute; bottom: -9px; left: 0px;  width: 100%; }
-			.newMessages {
-				.label { @include text-small; padding: 0px 12px; font-weight: 500; background: var(--color-bg-primary); color: var(--color-text-secondary); }
-			}
+			.newMessages { display: flex; }
 		}
 		.message.isNew:last-child {
 			.newMessages { display: none; }
