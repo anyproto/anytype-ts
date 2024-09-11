@@ -62,38 +62,51 @@
 			}
 		}
 
-		.attachments.layout-1,
-		.attachments.layout-2,
-		.attachments.layout-3,
-		.attachments.layout-4,
-		.attachments.layout-5,
-		.attachments.layout-6 {
-			.attachment.isImage { height: auto; max-height: 360px; }
+		/* Layouts */
+
+		.attachments.withLayout { gap: 4px; max-width: 540px; }
+		.attachments.withLayout {
+			.attachment.isImage { border-radius: 12px; height: auto; width: auto; aspect-ratio: 1; flex-shrink: 0; }
 		}
 
+		@mixin cnt-2 { width: calc(536px / 2); }
+		@mixin cnt-3 { width: calc(532px / 3); }
+		@mixin cnt-4 { width: calc(528px / 4); }
+
+		.attachments.layout-1 { max-width: 360px; }
 		.attachments.layout-1 {
-			.attachment.isImage { width: 100%; max-height: unset; }
+			.attachment.isImage { max-width: 360px; max-height: 360px; }
 		}
+		.attachments.layout-2 { gap: 4px; }
 		.attachments.layout-2 {
-			.attachment.isImage { width: calc(50% - 4px); }
+			.attachment.isImage { @include cnt-2; }
 		}
 		.attachments.layout-3 {
-			.attachment.isImage:nth-child(1) { width: 100%; }
-			.attachment.isImage:nth-child(2) { width: calc(50% - 4px); }
-			.attachment.isImage:nth-child(3) { width: calc(50% - 4px); }
+			.attachment.isImage { @include cnt-3; }
 		}
 		.attachments.layout-4 {
-			.attachment.isImage { width: calc(50% - 4px); }
+			.attachment.isImage { @include cnt-4; }
 		}
 		.attachments.layout-5 {
-			.attachment.isImage:nth-child(1) { width: calc(50% - 4px); }
-			.attachment.isImage:nth-child(2) { width: calc(50% - 4px); }
-			.attachment.isImage:nth-child(3) { width: calc(33.33% - 6px); }
-			.attachment.isImage:nth-child(4) { width: calc(33.33% - 6px); }
-			.attachment.isImage:nth-child(5) { width: calc(33.33% - 6px); }
+			.attachment.isImage { @include cnt-3; }
+			.attachment.isImage:nth-child(-n + 2) { @include cnt-2; }
 		}
 		.attachments.layout-6 {
-			.attachment.isImage { width: calc(33.33% - 6px); }
+			.attachment.isImage { @include cnt-3; }
+		}
+		.attachments.layout-7 {
+			.attachment.isImage { @include cnt-4; }
+			.attachment.isImage:nth-child(-n + 3) { @include cnt-3; }
+		}
+		.attachments.layout-8 {
+			.attachment.isImage { @include cnt-4; }
+		}
+		.attachments.layout-9 {
+			.attachment.isImage { @include cnt-3; }
+		}
+		.attachments.layout-10 {
+			.attachment.isImage { @include cnt-4; }
+			.attachment.isImage:nth-child(-n + 6) { @include cnt-3; }
 		}
 
 		.section { display: flex; flex-direction: column; gap: 4px 0px; padding: 16px 0px; }

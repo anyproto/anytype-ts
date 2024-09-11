@@ -278,7 +278,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		C.ChatEditMessageContent(rootId, id, message);
 	};
 
-	getAttachmentsClass () {
+	getAttachmentsClass (): string {
 		const { rootId, blockId, id } = this.props;
 		const subId = S.Record.getSubId(rootId, blockId);
 		const message = S.Chat.getMessage(rootId, id);
@@ -287,12 +287,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		const media = attachments.filter(it => mediaLayouts.includes(it.layout));
 		const al = attachments.length;
 		const ml = media.length;
+		const c = [];
 
-		let c = '';
 		if (ml && (ml == al)) {
-			c = ml <= 7 ? `layout-${ml}` : 'layout-over';
+			c.push(`withLayout ${ml >= 10 ? `layout-10` : `layout-${ml}`}`);
 		};
-		return c;
+		return c.join(' ');
 	};
 
 });
