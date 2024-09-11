@@ -236,6 +236,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const deps = this.getDeps();
 
 		if (!deps.length) {
+			if (callBack) {
+				callBack();
+			};
 			return;
 		};
 
@@ -427,9 +430,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 
 			const { isPopup } = this.props;
-			const pageContainer = U.Common.getPageContainer(isPopup);
 			const scrollContainer = U.Common.getScrollContainer(isPopup);
-			const hh = pageContainer.find('#header').height();
+			const hh = J.Size.header;
 			const top = node.offset().top + node.outerHeight() + hh + 64;
 
 			scrollContainer.scrollTop(top);
@@ -438,11 +440,13 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	scrollToBottom () {
 		const messages = this.getMessages();
-		if (!messages.length) {
+		const length = messages.length;
+
+		if (!length) {
 			return;
 		};
 
-		const id = messages[messages.length - 1].id;
+		const id = messages[length - 1].id;
 
 		this.scrollToMessage(id);
 		this.lastMessageId = id;
