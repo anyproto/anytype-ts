@@ -28,7 +28,7 @@
 			}
 
 			.attachment {
-				.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 11px; }
+				.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 11px; width: 100%; }
 				.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 6px; }
 				.info { flex-grow: 1; width: 100%; }
 
