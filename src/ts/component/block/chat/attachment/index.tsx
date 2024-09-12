@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType } from 'Component';
+import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
 import { I, U, S, J } from 'Lib';
 
 interface Props {
@@ -33,8 +33,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			cn.push('isFile');
 		};
 
+		console.log(object.name, object.layout, showAsFile);
+
 		switch (object.layout) {
-			case I.ObjectLayout.File:
+			case I.ObjectLayout.File: {
 				if (showAsFile) {
 					break;
 				};
@@ -51,6 +53,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 					};
 				};
 				break;
+			};
 
 			case I.ObjectLayout.Image:
 				if (showAsFile) {
@@ -61,9 +64,26 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				content = this.renderImage();
 				break;
 
-			case I.ObjectLayout.Bookmark:
+			case I.ObjectLayout.Video: {
+				if (showAsFile) {
+					break;
+				};
+
+				cn.push('isVideo');
+				content = this.renderVideo();
+				break;
+			};
+
+			case I.ObjectLayout.Audio: {
+				cn.push('isAudio');
+				content = this.renderAudio();
+				break;
+			};
+
+			case I.ObjectLayout.Bookmark: {
 				content = this.renderBookmark();
 				break;
+			};
 		};
 
 		if (!content) {
@@ -150,6 +170,21 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		};
 
 		return <img id="image" className="image" src={this.src} onClick={this.onPreview} onDragStart={e => e.preventDefault()} />;
+	};
+
+	renderVideo () {
+		const { object } = this.props;
+
+		return <MediaVideo src={S.Common.fileUrl(object.id)} />;
+	};
+
+	renderAudio () {
+		const { object } = this.props;
+		const playlist = [ 
+			{ name: object.name, src: S.Common.fileUrl(object.id) },
+		];
+
+		return <MediaAudio playlist={playlist} />;
 	};
 
 	onOpen () {
