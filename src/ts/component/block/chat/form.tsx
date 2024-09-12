@@ -767,6 +767,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const name = electron.fileName(path);
 		const mime = electron.fileMime(path);
 		const ext = electron.fileExt(path);
+		const size = electron.fileSize(path);
 		const type = S.Record.getFileType();
 
 		return {
@@ -774,6 +775,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			name,
 			path,
 			fileExt: ext,
+			sizeInBytes: size,
 			mime,
 			layout: I.ObjectLayout.File,
 			type: type?.id,

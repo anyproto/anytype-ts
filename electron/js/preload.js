@@ -25,6 +25,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	fileName: fp => path.basename(fp),
 	fileMime: fp => mime.lookup(fp),
 	fileExt: fp => path.extname(fp),
+	fileSize: fp => fs.statSync(fp).size,
 	defaultPath: () => path.join(app.getPath('appData'), app.getName()),
 
 	currentWindow: () => getCurrentWindow(),

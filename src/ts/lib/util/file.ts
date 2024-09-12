@@ -26,7 +26,8 @@ class UtilFile {
 				break;
 			};
 		};
-		return U.Common.formatNumber(Number(U.Common.sprintf(`%0.2f`, ret))) + unit;
+
+		return ret ? U.Common.formatNumber(Number(U.Common.sprintf(`%0.2f`, ret))) + unit : '';
 	};
 
 	icon (object: any): string {
