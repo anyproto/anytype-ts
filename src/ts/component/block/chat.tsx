@@ -23,6 +23,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	deps: string[] = [];
 	messageRefs: any = {};
 	timeoutInterface = 0;
+	top = 0;
 	state = {
 		threadId: '',
 	};
@@ -388,27 +389,24 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const messages = this.getMessages();
 		const dates = node.find('.section > .date');
 		const hh = J.Size.header;
+		const lastId = Storage.getLastChatMessageId(rootId);
 
-		let lastId = '';
+		if (st > this.top) {
+			messages.forEach(it => {
+				const ref = this.messageRefs[it.id];
+				if (!ref) {
+					return false;
+				};
 
-		messages.forEach(it => {
-			const ref = this.messageRefs[it.id];
-			if (!ref) {
-				return false;
-			};
+				const node = $(ref.node);
+				if (!node.length) {
+					return false;
+				};
 
-			const node = $(ref.node);
-			if (!node.length) {
-				return false;
-			};
-
-			if (st >= node.offset().top - co - ch) {
-				lastId = it.id;
-			};
-		});
-
-		if (lastId) {
-			Storage.setLastChatMessageId(rootId, lastId);
+				if ((it.id == lastId) && (st >= node.offset().top - co - ch)) {
+					Storage.setLastChatMessageId(rootId, '');
+				};
+			});
 		};
 
 		if (st <= 0) {
@@ -426,6 +424,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				this.timeoutInterface = window.setTimeout(() => item.addClass('hide'), 1000);
 			};
 		});
+
+		this.top = st;
 	};
 
 	getMessageScrollOffset (id: string) {
