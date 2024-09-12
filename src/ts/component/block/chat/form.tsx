@@ -587,6 +587,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onEditClear () {
+		if (!this.editingId) {
+			return;
+		};
+
 		this.editingId = '';
 		this.marks = [];
 		this.range = { from: 0, to: 0 };
@@ -599,7 +603,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onReply (message: I.ChatMessage) {
 		this.replyingId = message.id;
-		this.onEditClear();
+		
+		if (this.editingId) {
+			this.onEditClear();
+		} else {
+			this.forceUpdate(() => this.refEditable.setRange(this.range));
+		};
 	};
 
 	onReplyClear () {
