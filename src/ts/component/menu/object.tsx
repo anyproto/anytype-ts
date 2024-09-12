@@ -177,7 +177,7 @@ class MenuObject extends React.Component<I.Menu> {
 		const allowedUninstall = canWrite && object.isInstalled && U.Object.isTypeOrRelationLayout(object.layout) && canDelete;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedWidget = canWrite && !object.isArchived && !S.Block.checkBlockTypeExists(rootId);
-		const allowedExport = !isFilePreview;
+		const allowedExport = !isFilePreview && !U.Object.isChatLayout(object.layout);
 		const allowedPrint = !isFilePreview;
 		const allowedDownload = U.Object.isInFileLayouts(object.layout);
 		const allowedOpen = U.Object.isInFileLayouts(object.layout);
