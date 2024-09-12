@@ -798,18 +798,20 @@ const MenuSmile = observer(class MenuSmile extends React.Component<I.Menu, State
 	};
 
 	onSmileSelect (id: string, skin: number) {
+		skin = Number(skin) || 1;
+
 		const { param, storageSet } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
-		const value = id ? U.Smile.nativeById(id, this.skin) : '';
+		const value = id ? U.Smile.nativeById(id, skin) : '';
 
 		data.value = value;
 		
 		if (value) {
-			this.skin = Number(skin) || 1;
-			this.setLastIds(id, this.skin);
+			this.skin = skin;
+			this.setLastIds(id, skin);
 
-			storageSet({ skin: this.skin });
+			storageSet({ skin });
 		};
 
 		if (onSelect) {
