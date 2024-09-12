@@ -36,6 +36,9 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 	
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { canAdd } = data;
 		const { isLoading } = this.state;
 		const filter = this.getFilter();
 		const items = this.getItems();
@@ -95,7 +98,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		return (
 			<React.Fragment>
 				{!items.length && !isLoading ? (
-					<EmptySearch filter={filter} />
+					<EmptySearch filter={filter} readonly={!canAdd} />
 				) : ''}
 
 				<div className="items">
