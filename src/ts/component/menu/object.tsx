@@ -158,7 +158,9 @@ class MenuObject extends React.Component<I.Menu> {
 		const hasShortMenu = (
 			U.Object.isTypeOrRelationLayout(object.layout) ||
 			U.Object.isInFileLayouts(object.layout) ||
-			U.Object.isInSetLayouts(object.layout)
+			U.Object.isInSetLayouts(object.layout) ||
+			U.Object.isParticipantLayout(object.layout) ||
+			U.Object.isChatLayout(object.layout)
 		);
 
 		const allowedArchive = canWrite && canDelete;
