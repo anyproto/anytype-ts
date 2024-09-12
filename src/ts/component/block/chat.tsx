@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Storage } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, Storage, Preview } from 'Lib';
 
 import Message from './chat/message';
 import Form from './chat/form';
@@ -426,6 +425,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		this.top = st;
+
+		Preview.tooltipHide(true);
+		Preview.previewHide(true);
 	};
 
 	getMessageScrollOffset (id: string) {
