@@ -286,6 +286,10 @@
 				"to": "node_modules/util"
 			},
 			{
+				"from": "node_modules/mime-types",
+				"to": "node_modules/mime-types"
+			},
+			{
 				"from": "node_modules/@electron",
 				"to": "node_modules/@electron"
 			},
