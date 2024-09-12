@@ -175,4 +175,14 @@
 			}
 		}
 	}
+
+	/* BlockChat */
+	.block.blockChat {
+		.message {
+			.side.right { background: var(--color-shape-tertiary); }
+		}
+		.message.isSelf {
+			.side.right { background: #162908; }
+		}
+	}
 }
