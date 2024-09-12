@@ -68,7 +68,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.caretMenuParam = this.caretMenuParam.bind(this);
 		this.removeBookmark = this.removeBookmark.bind(this);
 		this.getMarksAndRange = this.getMarksAndRange.bind(this);
-		this.addFilePath = this.addFilePath.bind(this);
+		this.getObjectFromPath = this.getObjectFromPath.bind(this);
 	};
 
 	render () {
@@ -157,7 +157,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 							onMention={this.onMention}
 							onChatButtonSelect={this.onChatButtonSelect}
 							onTextButtonToggle={this.onTextButtonToggle}
-							addFilePath={this.addFilePath}
+							getObjectFromPath={this.getObjectFromPath}
 							onAddFiles={this.onAddFiles}
 							onMenuClose={this.onMenuClose}
 							removeBookmark={this.removeBookmark}
@@ -377,7 +377,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { files } = this.state;
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
-		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.addFile(it));
+		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.getObjectFromFile(it));
 
 		let value = this.getTextValue();
 		let url = U.Common.matchUrl(text);
@@ -444,9 +444,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		const { scrollToBottom } = this.props;
-		const { files } = this.state;
 		const node = $(this.node);
-		const list = Array.from(e.dataTransfer.files).map((it: File) => this.addFile(it));
+		const list = Array.from(e.dataTransfer.files).map((it: File) => this.getObjectFromFile(it));
 		
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
@@ -740,7 +739,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.renderMarkup();
 	};
 
-	addFile (file: File) {
+	getObjectFromFile (file: File) {
 		const electron = U.Common.getElectron();
 		const path = electron.webFilePath(file);
 		const mime = electron.fileMime(path);
@@ -761,7 +760,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 	};
 
-	addFilePath (path: string) {
+	getObjectFromPath (path: string) {
 		const electron = U.Common.getElectron();
 		const name = electron.fileName(path);
 		const mime = electron.fileMime(path);
