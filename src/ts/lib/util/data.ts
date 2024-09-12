@@ -743,7 +743,6 @@ class UtilData {
 			collectionId: ''
 		}, param);
 
-
 		const { subId, idField, filters, sorts, sources, offset, limit, ignoreWorkspace, ignoreHidden, ignoreDeleted, afterId, beforeId, noDeps, withArchived, collectionId } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 

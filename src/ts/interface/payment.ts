@@ -74,7 +74,7 @@ export interface MembershipTier {
 	colorStr: string;
 	nameMinLength: number;
 	isTest: boolean;
-	periodType: number;
+	periodType: MembershipTierDataPeriodType;
 	period: number;
 	priceCents: number;
 	features: string[];
