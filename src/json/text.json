@@ -497,7 +497,7 @@
 	"blockNameExistingPage": "Add link",
 	"blockNameExistingFile": "Add file",
 	"blockNameFile": "File",
-	"blockNameImage": "Picture",
+	"blockNameImage": "Image",
 	"blockNameVideo": "Video",
 	"blockNameAudio": "Audio",
 	"blockNamePdf": "PDF",
@@ -703,14 +703,6 @@
 	"popupSettingsColorModeButtonLight": "Light",
 	"popupSettingsColorModeButtonDark": "Dark",
 	"popupSettingsColorModeButtonSystem": "System",
-
-	"popupSettingsWallpaperTitle": "Wallpaper",
-	"popupSettingsWallpaperText": "Choose or upload the wallpaper. For best results upload high resolution images.",
-
-	"popupSettingsPicture": "Pictures",
-	"popupSettingsColor": "Colors",
-	"popupSettingsGradient": "Gradients",
-	"popupSettingsCodeStub": "Follow the white rabbit",
 
 	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
