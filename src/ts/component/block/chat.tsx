@@ -131,11 +131,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 
 		this.loadMessages(true, () => {
+			const messages = this.getMessages();
+			const length = messages.length;
+			const isLast = length && (messages[length - 1].id == lastId);
+
 			this.loadDeps(() => {
-				if (lastId) {
-					this.scrollToMessage(lastId);
-				} else {
+				if (!lastId || isLast) {
 					this.scrollToBottom();
+				} else {
+					this.scrollToMessage(lastId);
 				};
 			});
 		});
@@ -424,25 +428,24 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 	};
 
+	getMessageScrollOffset (id: string) {
+		const ref = this.messageRefs[id];
+		if (!ref) {
+			return;
+		};
+
+		const node = $(ref.node);
+		if (!node.length) {
+			return;
+		};
+
+		return node.offset().top + node.outerHeight() + J.Size.header;
+	};
+
 	scrollToMessage (id: string) {
-		raf(() => {
-			const ref = this.messageRefs[id];
-			if (!ref) {
-				return;
-			};
+		const container = U.Common.getScrollContainer(this.props.isPopup);
 
-			const node = $(ref.node);
-			if (!node.length) {
-				return;
-			};
-
-			const { isPopup } = this.props;
-			const scrollContainer = U.Common.getScrollContainer(isPopup);
-			const hh = J.Size.header;
-			const top = node.offset().top + node.outerHeight() + hh + 64;
-
-			scrollContainer.scrollTop(top);
-		});
+		container.scrollTop(this.getMessageScrollOffset(id));
 	};
 
 	scrollToBottom () {
@@ -454,8 +457,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		};
 
 		const id = messages[length - 1].id;
+		const container = U.Common.getScrollContainer(this.props.isPopup);
 
-		this.scrollToMessage(id);
+		container.scrollTop(this.getMessageScrollOffset(id) + 10000);
 	};
 
 	onThread (id: string) {
