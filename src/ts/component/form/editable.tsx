@@ -1,4 +1,5 @@
 import * as React from 'react';
+import raf from 'raf';
 import { getRange, setRange } from 'selection-ranges';
 import { I, U, keyboard, Mark } from 'Lib';
 
@@ -169,10 +170,12 @@ class Editable extends React.Component<Props> {
 			return;
 		};
 
-		const el = $(this.refEditable).get(0);
+		raf(() => {
+			const el = $(this.refEditable).get(0);
 
-		el.focus({ preventScroll: true });
-		setRange(el, { start: range.from, end: range.to });
+			el.focus({ preventScroll: true });
+			setRange(el, { start: range.from, end: range.to });
+		});
 	};
 
 	onInput (e: any) {

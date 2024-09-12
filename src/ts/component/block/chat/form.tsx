@@ -572,6 +572,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.renderMarkup();
 
 		this.setState({ attachments }, () => {
+			console.log('SET RANGE', this.range.from, this.range.to);
+
 			this.refEditable.setRange(this.range);
 		});
 	};

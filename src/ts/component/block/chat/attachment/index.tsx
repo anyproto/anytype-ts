@@ -33,8 +33,6 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			cn.push('isFile');
 		};
 
-		console.log(object.name, object.layout, showAsFile);
-
 		switch (object.layout) {
 			case I.ObjectLayout.File: {
 				if (showAsFile) {
