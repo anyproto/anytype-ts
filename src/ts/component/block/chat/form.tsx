@@ -399,6 +399,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
 			this.updateMarkup(value, to + 1, to + 1);
 			this.addBookmark(param);
+		} else {
+			value = U.Common.stringInsert(value, text, from, to);
+			
+			this.range = { from: to, to };
+			this.refEditable.setRange(this.range);
+			this.refEditable.setValue(value);
 		};
 
 		if (list.length) {
@@ -572,8 +578,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.renderMarkup();
 
 		this.setState({ attachments }, () => {
-			console.log('SET RANGE', this.range.from, this.range.to);
-
 			this.refEditable.setRange(this.range);
 		});
 	};

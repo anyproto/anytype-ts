@@ -131,7 +131,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					</div>
 					<div className="side right">
 
-						<div className="author">
+						<div className="author" onClick={e => U.Object.openConfig(author)}>
 							<ObjectName object={author} />
 							<div className="time">{U.Date.date('H:i', createdAt)}</div>
 						</div>

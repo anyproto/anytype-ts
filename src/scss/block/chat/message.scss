@@ -45,6 +45,7 @@
 		.name { font-weight: 500; }
 		.time { @include text-small; color: var(--color-text-secondary); }
 	}
+	.author * { user-select: text !important; }
 
 	.expand { display: none; align-items: center; gap: 0px 8px; @include text-small; font-weight: 500; color: var(--color-text-secondary); margin-top: 4px; }
 	.expand::after { content: ''; display: block; width: 8px; height: 8px; background: url('~img/arrow/button/grey.svg'); }
