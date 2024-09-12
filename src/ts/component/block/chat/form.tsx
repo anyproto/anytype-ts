@@ -587,10 +587,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onEditClear () {
-		if (!this.editingId) {
-			return;
-		};
-
 		this.editingId = '';
 		this.marks = [];
 		this.range = { from: 0, to: 0 };
@@ -598,24 +594,15 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.refEditable.setValue('');
 		this.refEditable.placeholderCheck();
 
-		this.setState({ attachments: [], files: [] });
+		this.setState({ attachments: [], files: [] }, () => this.refEditable.setRange(this.range));
 	};
 
 	onReply (message: I.ChatMessage) {
 		this.replyingId = message.id;
-		
-		if (this.editingId) {
-			this.onEditClear();
-		} else {
-			this.forceUpdate(() => this.refEditable.setRange(this.range));
-		};
+		this.onEditClear();
 	};
 
 	onReplyClear () {
-		if (!this.replyingId) {
-			return;
-		};
-
 		this.replyingId = '';
 		this.forceUpdate();
 	};
