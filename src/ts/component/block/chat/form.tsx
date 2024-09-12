@@ -56,6 +56,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.onAddFiles = this.onAddFiles.bind(this);
 		this.onSend = this.onSend.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onEditClear = this.onEditClear.bind(this);
@@ -155,6 +156,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 							onMention={this.onMention}
 							onChatButtonSelect={this.onChatButtonSelect}
 							onTextButtonToggle={this.onTextButtonToggle}
+							onAddFiles={this.onAddFiles}
 							onMenuClose={this.onMenuClose}
 							removeBookmark={this.removeBookmark}
 						/>
@@ -447,8 +449,18 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
 
-		this.setState({ files: files.concat(list) }, () => scrollToBottom());
+		this.onAddFiles(list, scrollToBottom);
 		keyboard.disableCommonDrop(false);
+	};
+
+	onAddFiles (list: any[], callBack?: () => void) {
+		const { files } = this.state;
+
+		this.setState({ files: files.concat(list) }, () => {
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	onSend () {
@@ -658,6 +670,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	updateButtons () {
 		this.refButtons?.setButtons();
+	};
+
+	onDialogSelect () {
+
 	};
 
 	onChatButtonSelect (type: I.ChatButton, item: any) {

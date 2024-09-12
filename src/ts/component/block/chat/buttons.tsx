@@ -1,9 +1,13 @@
 import * as React from 'react';
+import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, J, keyboard, Mark, S, translate, U } from 'Lib';
+import { Action, I, J, keyboard, Mark, S, translate, U } from 'Lib';
+
+const electron = U.Common.getElectron();
 
 interface Props extends I.BlockComponent {
+	blockId: string;
 	value: string;
 	attachments: any[];
 	hasSelection: () => boolean;
@@ -13,6 +17,7 @@ interface Props extends I.BlockComponent {
 	onTextButtonToggle: (type: I.MarkType, param: string) => void;
 	onMenuClose: () => void;
 	onMention: () => void;
+	onAddFiles: (files: any, callBack?: () => void) => void;
 	removeBookmark: (url: string) => void;
 };
 
@@ -32,6 +37,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		this.onButton = this.onButton.bind(this);
 		this.onTextButton = this.onTextButton.bind(this);
 		this.onChatButton = this.onChatButton.bind(this);
+		this.onAttachment = this.onAttachment.bind(this);
 	};
 
 	render () {
@@ -82,22 +88,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 		switch (type) {
 			case I.ChatButton.Object: {
-				S.Menu.open('searchObject', {
-					element: `#button-${block.id}-${type}`,
-					className: 'fixed',
-					vertical: I.MenuDirection.Top,
-					noFlipX: true,
-					noFlipY: true,
-					onClose: onMenuClose,
-					data: {
-						keys: U.Data.chatRelationKeys(),
-						skipIds: attachments.map(it => it.id),
-						filters: [
-							{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().concat(I.ObjectLayout.Participant) },
-						],
-						onSelect: (item: any) => onChatButtonSelect(type, item)
-					}
-				});
+				this.onAttachment();
 				break;
 			};
 
@@ -238,6 +229,101 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		});
 	};
 
+	onAttachment (menu?: string) {
+		const { blockId, attachments, onMenuClose, onChatButtonSelect, onAddFiles } = this.props;
+		const { getMime } = electron;
+
+		const options: any[] = [
+			{ id: 'object', icon: 'object', name: translate('commonObject') },
+			{ id: 'media', icon: 'media', name: translate('commonMedia') },
+			{ id: 'file', icon: 'file', name: translate('commonFile') },
+			{ id: 'upload', icon: 'upload', name: translate('commonUpload') },
+		];
+
+		const upload = () => {
+			Action.openFileDialog([], paths => {
+				if (!paths[0]) {
+					return;
+				};
+				const path = paths[0];
+				const n = path.split('/');
+				const name = n[n.length - 1];
+
+				const file = {
+					id: sha1(path),
+					name,
+					path,
+					layout: I.ObjectLayout.File,
+					isTmp: true,
+					mime: getMime(path)
+				};
+
+				onAddFiles([ file ]);
+			});
+		};
+
+		let data;
+		let menuItem;
+
+		if (menu) {
+			if (menu == 'upload') {
+				upload();
+				return;
+			};
+
+			menuItem = 'searchObject';
+			data = {
+				skipIds: attachments.map(it => it.id),
+				filters: [
+					{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+				],
+				onSelect: (item: any) => {
+					onChatButtonSelect(I.ChatButton.Object, item);
+				}
+			};
+
+			if ([ 'file', 'media' ].includes(menu)) {
+				const layouts = {
+					media: [ I.ObjectLayout.Image, I.ObjectLayout.Audio, I.ObjectLayout.Video ],
+					file: [ I.ObjectLayout.File, I.ObjectLayout.Pdf ],
+				};
+
+				data.filters.push({ relationKey: 'layout', condition: I.FilterCondition.In, value: layouts[menu] });
+				data = Object.assign(data, {
+					canAdd: true,
+					addParam: {
+						name: translate('commonUpload'),
+						icon: 'upload',
+						onClick: upload
+					}
+				});
+			};
+		} else {
+			menuItem = 'select';
+			data = {
+				options: options,
+				onSelect: (e: React.MouseEvent, option: any) => {
+					this.onAttachment(option.id);
+				}
+			};
+		};
+
+		S.Menu.closeAll(null, () => {
+			S.Menu.open(menuItem, {
+				element: `#block-${blockId} #button-${blockId}-${I.ChatButton.Object}`,
+				className: 'chatAttachment',
+				vertical: I.MenuDirection.Top,
+				noFlipX: true,
+				noFlipY: true,
+				onClose: () => {
+					if (menu) {
+						onMenuClose();
+					};
+				},
+				data,
+			});
+		})
+	};
 });
 
 export default ChatButtons;

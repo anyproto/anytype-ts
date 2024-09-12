@@ -3,6 +3,7 @@ const { app, getCurrentWindow, getGlobal, dialog, BrowserWindow } = require('@el
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const mime = require('mime-types');
 const tmpPath = () => app.getPath('temp');
 
 contextBridge.exposeInMainWorld('Electron', {
@@ -31,6 +32,7 @@ contextBridge.exposeInMainWorld('Electron', {
 		app.focus({ steal: true });
 	},
 	getGlobal: key => getGlobal(key),
+	getMime: path => mime.lookup(path),
 	showOpenDialog: dialog.showOpenDialog,
 
 	webFilePath: file => webUtils.getPathForFile(file),
