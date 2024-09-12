@@ -32,9 +32,7 @@ contextBridge.exposeInMainWorld('Electron', {
 		app.focus({ steal: true });
 	},
 	getGlobal: key => getGlobal(key),
-	getMime: (path) => {
-		return mime.lookup(path);
-	},
+	getMime: path => mime.lookup(path),
 	showOpenDialog: dialog.showOpenDialog,
 
 	webFilePath: file => webUtils.getPathForFile(file),
