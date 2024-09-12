@@ -474,6 +474,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		const clear = () => {
 			this.onEditClear();
+			this.onReplyClear();
 			loader.removeClass('active');
 		};
 		
@@ -602,6 +603,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onReplyClear () {
+		if (!this.replyingId) {
+			return;
+		};
+
 		this.replyingId = '';
 		this.forceUpdate();
 	};

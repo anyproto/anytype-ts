@@ -516,11 +516,11 @@ class UtilData {
 		};
 
 		items = items.filter(it => it);
-
 		if (!config.debug.hiddenObject) {
 			items = items.filter(it => !it.isHidden);
 		};
 
+		items.sort((c1, c2) => this.sortByLastUsedDate(c1, c2));
 		return items;
 	};
 
@@ -653,6 +653,15 @@ class UtilData {
 	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
 		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
 		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
+		return this.sortByName(c1, c2);
+	};
+
+	sortByLastUsedDate (c1: any, c2: any) {
+		const l1 = Number(c1.lastUsedDate) || 0;
+		const l2 = Number(c2.lastUsedDate) || 0;
+
+		if (l1 > l2) return -1;
+		if (l1 < l2) return 1;
 		return this.sortByName(c1, c2);
 	};
 

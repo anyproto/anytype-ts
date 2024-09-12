@@ -887,9 +887,6 @@ class UtilMenu {
 				noClose: true,
 				withAdd: true,
 				onSelect: (e: any, item: any) => {
-					console.log(item);
-					console.log(menuContext);
-
 					if (item.id == 'add') {
 						this.sortOrFilterRelationAdd(menuContext, param, relation => callBack(relation));
 					} else {
@@ -901,8 +898,6 @@ class UtilMenu {
 	};
 
 	sortOrFilterRelationAdd (context: any, param: any, callBack: (relation: any) => void) {
-		console.log(context);
-
 		if (!context) {
 			return;
 		};
