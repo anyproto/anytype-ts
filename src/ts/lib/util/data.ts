@@ -439,6 +439,10 @@ class UtilData {
 		return J.Relation.default.concat(J.Relation.syncStatus);
 	};
 
+	chatRelationKeys () {
+		return J.Relation.default.concat([ 'source' ]);
+	};
+
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
 		C.WalletCreateSession(phrase, key, (message: any) => {
 
@@ -512,11 +516,11 @@ class UtilData {
 		};
 
 		items = items.filter(it => it);
-
 		if (!config.debug.hiddenObject) {
 			items = items.filter(it => !it.isHidden);
 		};
 
+		items.sort((c1, c2) => this.sortByLastUsedDate(c1, c2));
 		return items;
 	};
 
@@ -652,6 +656,15 @@ class UtilData {
 		return this.sortByName(c1, c2);
 	};
 
+	sortByLastUsedDate (c1: any, c2: any) {
+		const l1 = Number(c1.lastUsedDate) || 0;
+		const l2 = Number(c2.lastUsedDate) || 0;
+
+		if (l1 > l2) return -1;
+		if (l1 < l2) return 1;
+		return this.sortByName(c1, c2);
+	};
+
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
@@ -757,7 +770,6 @@ class UtilData {
 			beforeId: '',
 			collectionId: ''
 		}, param);
-
 
 		const { subId, idField, filters, sorts, sources, offset, limit, ignoreWorkspace, ignoreHidden, ignoreDeleted, afterId, beforeId, noDeps, withArchived, collectionId } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];

@@ -21,6 +21,10 @@ class Description extends React.Component<Props> {
 			description = object.snippet;
 		};
 
+		if (!description) {
+			return null;
+		};
+
 		return (
 			<div className={className}>{description}</div>
 		);

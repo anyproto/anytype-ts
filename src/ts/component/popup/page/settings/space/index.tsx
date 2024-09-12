@@ -472,7 +472,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			data: {
 				filter: '',
 				filters: [
-					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(I.ObjectLayout.Chat) },
 				],
 				onClick: (item: any) => {
 					S.Common.typeSet(item.uniqueKey);

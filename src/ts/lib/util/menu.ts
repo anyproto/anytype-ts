@@ -94,6 +94,7 @@ class UtilMenu {
 
 		if (config.experimental) {
 			ret = ret.concat([
+				{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
 				{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 				{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
 			]);
@@ -862,12 +863,22 @@ class UtilMenu {
 			S.Menu.close('select');
 		};
 
+		const onOpen = context => {
+			menuContext = context;
+
+			if (menuParam.onOpen) {
+				menuParam.onOpen(context);
+			};
+		};
+
+		delete(menuParam.onOpen);
+
 		S.Menu.open('select', {
 			width: 256,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			noFlipY: true,
-			onOpen: context => menuContext = context,
+			onOpen,
 			...menuParam,
 			data: {
 				options,

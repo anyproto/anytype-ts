@@ -304,11 +304,20 @@ class Keyboard {
 		return false;
 	};
 
-	pageCreate (details: any, route: string) {
-		if (this.isMain()) {
-			const flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
-			U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => U.Object.openConfig(message.details));
+	pageCreate (details: any, route: string, callBack?: (message: any) => void) {
+		if (!this.isMain()) {
+			return;
 		};
+
+		const flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
+
+		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
+			U.Object.openConfig(message.details);
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
 	};
 
 	isPopup () {

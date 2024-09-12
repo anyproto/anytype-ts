@@ -154,6 +154,7 @@ class UtilObject {
 
 		if (details.type) {
 			const type = S.Record.getTypeById(details.type);
+
 			if (type) {
 				typeKey = type.uniqueKey;
 
@@ -362,7 +363,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
+		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat(I.ObjectLayout.Chat);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
@@ -377,6 +378,7 @@ class UtilObject {
 			I.ObjectLayout.Dashboard,
 			I.ObjectLayout.Space,
 			I.ObjectLayout.SpaceView,
+			I.ObjectLayout.ChatDerived,
 		];
 	};
 
@@ -407,12 +409,17 @@ class UtilObject {
 			I.ObjectLayout.Option, 
 			I.ObjectLayout.SpaceView, 
 			I.ObjectLayout.Space,
+			I.ObjectLayout.ChatDerived,
 		];
 	};
 
 	isAllowedTemplate (typeId): boolean {
 		const type = S.Record.getTypeById(typeId);
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
+	};
+
+	isAllowedObject (layout: I.ObjectLayout): boolean {
+		return this.getPageLayouts().concat(I.ObjectLayout.Chat).includes(layout);
 	};
 
 };

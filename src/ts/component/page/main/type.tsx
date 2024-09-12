@@ -62,7 +62,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedDetails = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite;
-		const allowedLayout = object.recommendedLayout != I.ObjectLayout.Bookmark;
+		const allowedLayout = ![ I.ObjectLayout.Bookmark, I.ObjectLayout.Chat ].includes(object.recommendedLayout);
 		
 		const subIdObject = this.getSubIdObject();
 		const totalObject = S.Record.getMeta(subIdObject, '').total;

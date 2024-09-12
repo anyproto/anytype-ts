@@ -66,7 +66,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 					
 				case I.FileState.Done: {
 					const playlist = [ 
-						{ name: object.name, src: S.Common.fileUrl(targetObjectId) },
+						{ name: object.name, src: S.Common.fileUrl(object.id) },
 					];
 
 					element = (

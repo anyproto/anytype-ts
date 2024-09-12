@@ -1,0 +1,115 @@
+.message { @include text-common; position: relative; }
+.message {
+	.text { user-select: text !important; }
+	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); margin: 0px 0px 0px 4px; }
+	.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
+
+	.side.left { flex-shrink: 0; width: 40px; display: flex; align-items: flex-end; }
+	.side.left {
+		.iconObject { display: none; }
+	}
+
+	.side.right { display: flex; flex-direction: column; padding: 12px 16px; border-radius: 20px; background: rgba(242, 242, 242, 0.5); position: relative; }
+
+	> .flex > .controls { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 0px 8px; opacity: 0; transition: opacity $transitionCommon; }
+	> .flex > .controls {
+		.icon { width: 20px; height: 20px; }
+		.icon.reactionAdd { background-image: url('~img/icon/chat/buttons/reaction0.svg'); }
+		.icon.messageReply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
+		.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+
+		.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
+		.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('~img/icon/chat/buttons/reply1.svg'); }
+		.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
+	}
+
+	.reply { 
+		padding: 8px 8px 8px 12px; margin: 4px 0px; border-radius: 12px; background: var(--color-shape-tertiary); position: relative; overflow: hidden;
+		@include text-small;
+	}
+	.reply::before { 
+		content: ''; display: block; position: absolute; top: 0px; left: 0px; width: 4px; height: 100%;	background-color: var(--color-text-secondary); 
+	}
+	.reply {
+		.name { font-weight: 500; }
+	}
+
+	.attachments {
+		.attachment {
+			.icon.remove { display: none; }
+		}
+	}
+
+	.author { display: none; align-items: center; gap: 0px 8px; }
+	.author {
+		.name { font-weight: 500; }
+		.time { @include text-small; color: var(--color-text-secondary); }
+	}
+
+	.expand { display: none; align-items: center; gap: 0px 8px; @include text-small; font-weight: 500; color: var(--color-text-secondary); margin-top: 4px; }
+	.expand::after { content: ''; display: block; width: 8px; height: 8px; background: url('~img/arrow/button/grey.svg'); }
+
+	.sub { @include text-small; color: var(--color-text-secondary); display: none; }
+	.sub {
+		.item:hover { color: var(--color-text-primary); }
+	}
+
+	.reactions { padding: 12px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; }
+	.reactions {
+		.reaction { 
+			display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center; @include text-small; font-weight: 500; 
+			background-color: var(--color-shape-highlight-medium); padding: 4px 6px; flex-shrink: 0;
+		}
+		.reaction:hover { background-color: var(--color-shape-highlight-dark); }
+		.reaction {
+			.count { min-width: 18px; text-align: center; }
+		}
+
+		.reaction.isSelf { box-shadow: 0px 0px 0px 1px inset var(--color-system-accent-125); background-color: var(--color-system-accent-25); }
+	}
+
+	.newMessages { display: none; justify-content: center; position: absolute; bottom: -9px; left: 0px;  width: 100%; }
+	.newMessages {
+		.label { @include text-small; padding: 0px 12px; font-weight: 500; background: var(--color-bg-primary); color: var(--color-text-secondary); }
+	}
+}
+.message.isSelf {
+	.flex { flex-direction: row-reverse; }
+	.side.right { background: rgba(229, 248, 214, 0.5); }
+	.controls { flex-direction: row-reverse; }
+	.reply { background-color: #e5f8d6; }
+	.reply::before { background-color: #4dae00; }
+}
+
+.message.canExpand {
+	.expand { display: flex; }
+	.text { @include clamp; -webkit-line-clamp: 10; }
+}
+.message.canExpand.isExpanded {
+	.text { -webkit-line-clamp: unset; }
+}
+.message:hover, .message.hover {
+	.controls { opacity: 1; }
+}
+
+.message:first-child { margin-top: 0px; }
+
+.message.isFirst { margin: 12px 0px 0px 0px; }
+.message.isFirst {
+	.author { display: flex; }
+	.side.right {  min-width: 164px; }
+}
+
+.message.isLast {
+	.side.left {
+		.iconObject { display: block; }
+	}
+}
+
+.message.isNew:not(:last-child) { position: relative; padding-bottom: 25px; margin-bottom: 6px; border-bottom: 1px solid var(--color-shape-tertiary); }
+.message.isNew {
+	.newMessages { display: flex; }
+}
+.message.isNew:last-child {
+	.newMessages { display: none; }
+}

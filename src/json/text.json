@@ -174,6 +174,8 @@
 	"pluralRequest": "request|requests",
 	"pluralReader": "reader|readers",
 	"pluralWriter": "writers|writers",
+	"pluralWeek": "week|weeks",
+	"pluralMonth": "month|months",
 	"pluralYear": "year|years",
 	"pluralDevice": "device|devices",
 
@@ -613,6 +615,7 @@
 	"blockEmbedEmpty": "%s embed block is empty. Click to edit.",
 	"blockEmbedSource": "Source",
 	"blockEmbedOffline": "You are not connected to the Internet",
+	"blockEmbedExternalImage": "External image",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 
@@ -661,6 +664,9 @@
 	"blockChatButtonEmoji": "Add emoji",
 	"blockChatButtonMention": "Add mention",
 	"blockChatNewMessages": "New messages",
+	"blockChatMessageEdited": "(edited)",
+	"blockChatEditing": "Editing message",
+	"blockChatReplying": "Replying to %s",
 
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",
@@ -854,8 +860,8 @@
 	"popupSettingsMembershipSlide3Text": "Our network's value exceeds the sum of its parts. Your membership sustains the infrastructure for its growth which underpins this network.",
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
-	"popupSettingsMembershipPerYear": "per year",
-	"popupSettingsMembershipPerYears": "per %s %s",
+	"popupSettingsMembershipPerGenericSingle": "per %s",
+	"popupSettingsMembershipPerGenericMany": "per %s %s",
 	"popupSettingsMembershipLearnMore": "Learn more",
 	"popupSettingsMembershipCurrent": "Current",
 	"popupSettingsMembershipManage": "Manage",
@@ -945,8 +951,11 @@
 	"popupMembershipCurrentEmailSuccess": "Now you're subscribed!",
 
 	"popupMembershipPaidTitle": "Pick your unique name",
-	"popupMembershipPaidTextPerYear": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a year.",
-	"popupMembershipPaidTextPerYears": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
+
+	"popupMembershipPaidTextUnlimited": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain.",
+	"popupMembershipPaidTextPerGenericSingle": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within a %s.",
+	"popupMembershipPaidTextPerGenericMany": "This is your unique name on the Anytype network, confirming your Membership. It acts as your personal domain and cannot be changed within %s %s.",
+
 	"popupMembershipPaidPlaceholder": "Enter your name",
 	"popupMembershipPayByCard": "Pay by Card",
 	"popupMembershipPayByCrypto": "Pay by Crypto",
@@ -1045,6 +1054,9 @@
 
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
 	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?",
+
+	"popupConfirmChatDeleteMessageTitle": "Delete message",
+	"popupConfirmChatDeleteMessageText": "Are you sure you want to delete this message?",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1733,7 +1745,7 @@
 	"widgetRecentOpen": "Recently opened",
 	"widgetSet": "Sets",
 	"widgetCollection": "Collections",
-	"widgetChat": "Discussions",
+	"widgetChat": "Chats",
 	"widgetEdit": "Edit widgets",
 	"widgetAdd": "Add widget",
 	"widgetLibrary": "Library",

@@ -6,6 +6,8 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Title, Filter, Select, Icon, IconObject, Button, ObjectName, ObjectDescription, ObjectType } from 'Component';
 import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics } from 'Lib';
 
+import Item from './object/item';
+
 interface State {
 	isLoading: boolean;
 };
@@ -50,49 +52,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const typeOptions = this.getTypeOptions();
 		const rootId = keyboard.getRootId();
 
-		const Item = (item: any) => {
-			const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
-			const type = S.Record.getTypeById(item.type);
-
-			let iconSmall = null;
-			let iconLarge = null;
-
-			if (U.Object.isTypeOrRelationLayout(item.layout)) {
-				const size = U.Object.isTypeLayout(item.layout) ? 18 : 20;
-
-				iconSmall = <IconObject object={item} size={size} iconSize={18} />;
-			} else {
-				iconLarge = <IconObject object={item} size={48} />;
-			};
-
-			if (item.id == rootId) {
-				cn.push('active');
-			};
-
-			return (
-				<div 
-					className={cn.join(' ')} 
-					style={item.style}
-					onClick={() => this.onClick(item)}
-					onContextMenu={() => this.onContext(item)}
-				>
-					{iconLarge}
-					<div className="info">
-						<div className="nameWrap">
-							{iconSmall}
-							<ObjectName object={item} />
-						</div>
-						<div className="descrWrap">
-							<div className="type">
-								<ObjectType object={type} />
-							</div>
-							<ObjectDescription object={item} />
-						</div>
-					</div>
-				</div>
-			);
-		};
-
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			if (!item) {
@@ -107,7 +66,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					<Item {...item} style={param.style} />
+					<Item 
+						rootId={rootId}
+						item={item} 
+						style={param.style} 
+						onClick={() => this.onClick(item)}
+						onContext={() => this.onContext(item)}
+					/>
 				</CellMeasurer>
 			);
 		};
@@ -175,11 +140,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 												rowCount={items.length}
 												rowHeight={HEIGHT}
 												rowRenderer={rowRenderer}
-												onRowsRendered={({ startIndex, stopIndex }) => { 
-													onRowsRendered({ startIndex, stopIndex });
-
-													this.resize();
-												}}
+												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
 												scrollToAlignment="center"
 											/>
@@ -223,8 +184,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			defaultHeight: HEIGHT,
 			keyMapper: i => (items[i] || {}).id,
 		});
-
-		this.resize();
 	};
 
 	componentWillUnmount(): void {
@@ -345,6 +304,23 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		});
 	};
 
+	loadSearchIds (clear: boolean) {
+		if (this.filter) {
+			U.Data.search({
+				filters: [],
+				sorts: [],
+				fullText: this.filter,
+				keys: [ 'id' ],
+			}, (message: any) => {
+				this.searchIds = (message.records || []).map(it => it.id);
+				this.load(clear);
+			});
+		} else {
+			this.searchIds = null;
+			this.load(clear);
+		};
+	};
+
 	getItems () {
 		return S.Record.getRecords(J.Constant.subId.allObject);
 	};
@@ -399,10 +375,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onAdd () {
 		const details = {
 			...this.getDetailsByType(this.type),
-			name: this.refFilter.getValue(),
+			name: this.filter,
 		};
 
-		keyboard.pageCreate(details, analytics.route.allObjects);
+		keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
+			if (message.targetId && this.filter && this.searchIds) {
+				this.searchIds = this.searchIds.concat(message.targetId);
+				this.load(false);
+			};
+		});
 	};
 
 	isAllowedObject (): boolean {
@@ -480,21 +461,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 
 			this.filter = v;
-
-			if (v) {
-				U.Data.search({
-					filters: [],
-					sorts: [],
-					fullText: v,
-					keys: [ 'id' ],
-				}, (message: any) => {
-					this.searchIds = (message.records || []).map(it => it.id);
-					this.load(true);
-				});
-			} else {
-				this.searchIds = null;
-				this.load(true);
-			};
+			this.loadSearchIds(true);
 		}, J.Constant.delay.keyboard);
 	};
 
@@ -511,18 +478,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onFilterClear () {
 		this.searchIds = null;
 		this.load(true);
-	};
-
-	resize () {
-		const node = $(this.node);
-		const list = node.find('> .body');
-
-		raf(() => {
-			list.find('.item').each((i: number, item: any) => {
-				item = $(item);
-				item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
-			});
-		});
 	};
 
 });

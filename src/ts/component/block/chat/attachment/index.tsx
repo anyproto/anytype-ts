@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, Icon, ObjectName, ObjectDescription } from 'Component';
+import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
 import { I, U, S, J } from 'Lib';
 
 interface Props {
 	object: any;
+	showAsFile?: boolean;
 	onRemove: (id: string) => void;
 };
 
@@ -22,14 +23,24 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	};
 
 	render () {
-		const { object } = this.props;
+		const { object, showAsFile } = this.props;
 		const mime = String(object.mime || '');
 		const cn = [ 'attachment' ];
 
 		let content = null;
 
+		if (U.Object.isInFileLayouts(object.layout)) {
+			cn.push('isFile');
+		};
+
+		console.log(object.name, object.layout, showAsFile);
+
 		switch (object.layout) {
-			case I.ObjectLayout.File:
+			case I.ObjectLayout.File: {
+				if (showAsFile) {
+					break;
+				};
+
 				if (mime && object.file) {
 					const [ t1, t2 ] = mime.split('/');
 
@@ -42,16 +53,45 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 					};
 				};
 				break;
+			};
 
 			case I.ObjectLayout.Image:
+				if (showAsFile) {
+					break;
+				};
+
 				cn.push('isImage');
 				content = this.renderImage();
 				break;
+
+			case I.ObjectLayout.Video: {
+				if (showAsFile) {
+					break;
+				};
+
+				cn.push('isVideo');
+				content = this.renderVideo();
+				break;
+			};
+
+			case I.ObjectLayout.Audio: {
+				cn.push('isAudio');
+				content = this.renderAudio();
+				break;
+			};
+
+			case I.ObjectLayout.Bookmark: {
+				content = this.renderBookmark();
+				break;
+			};
 		};
 
 		if (!content) {
-			cn.push(U.Data.layoutClass(object.id, object.layout));
 			content = this.renderDefault();
+		};
+
+		if (cn.length == 1) {
+			cn.push(U.Data.layoutClass(object.id, object.layout));
 		};
 
 		return (
@@ -67,14 +107,48 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 	renderDefault () {
 		const { object } = this.props;
+		const isFile = U.Object.isInFileLayouts(object.layout);
+		const type = S.Record.getTypeById(object.type);
+
+		let iconSize = null;
+		let description = null;
+
+		if (isFile) {
+			iconSize = 48;
+			description = (
+				<div className="descr">
+					<div><ObjectType object={type} /></div>
+					<div className="bullet" />
+					<div>{U.File.size(object.sizeInBytes)}</div>
+				</div>
+			);
+		} else {
+			description = <ObjectDescription object={object} />;
+		};
 
 		return (
 			<div className="clickable" onClick={this.onOpen}>
-				<IconObject object={object} size={48} />
+				<IconObject object={object} size={48} iconSize={iconSize} />
 
 				<div className="info">
 					<ObjectName object={object} />
-					<ObjectDescription object={object} />
+					{description}
+				</div>
+			</div>
+		);
+	};
+
+	renderBookmark () {
+		const { object } = this.props;
+
+		return (
+			<div className="clickable" onClick={this.onOpen}>
+				<div className="info">
+					<div className="descr">
+						<IconObject object={object} size={14} />
+						<div className="url">{U.Common.shortUrl(object.source)}</div>
+					</div>
+					<ObjectName object={object} />
 				</div>
 			</div>
 		);
@@ -96,6 +170,21 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		};
 
 		return <img id="image" className="image" src={this.src} onClick={this.onPreview} onDragStart={e => e.preventDefault()} />;
+	};
+
+	renderVideo () {
+		const { object } = this.props;
+
+		return <MediaVideo src={S.Common.fileUrl(object.id)} />;
+	};
+
+	renderAudio () {
+		const { object } = this.props;
+		const playlist = [ 
+			{ name: object.name, src: S.Common.fileUrl(object.id) },
+		];
+
+		return <MediaAudio playlist={playlist} />;
 	};
 
 	onOpen () {

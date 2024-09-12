@@ -11,7 +11,6 @@ import { I, C, S, U, J, keyboard, focus, Action, translate } from 'Lib';
 
 const katex = require('katex');
 const pako = require('pako');
-const mermaid = require('mermaid').default;
 
 require('katex/dist/contrib/mhchem');
 

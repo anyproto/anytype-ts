@@ -18,6 +18,7 @@ export interface ChatMessage {
 	orderId: string;
 	creator: string;
 	createdAt: number;
+	modifiedAt: number;
 	replyToMessageId: string;
 	content: ChatMessageContent;
 	attachments: ChatMessageAttachment[];

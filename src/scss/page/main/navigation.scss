@@ -13,12 +13,12 @@
 
 		.item { 
 			transition: $transitionAllCommon; position: relative; line-height: 48px; margin-bottom: 16px; padding: 0px; 
-			height: 80px; border: 1px solid var(--color-shape-secondary); border-radius: 8px;
+			border: 1px solid var(--color-shape-secondary); border-radius: 8px;
 		}
 		.item {
-			.inner { padding: 16px; display: flex; align-items: center; gap: 0px 16px; height: 100%; }
+			.inner { padding: 12px; display: flex; align-items: center; gap: 0px 16px; height: 100%; }
 
-			.iconObject { flex-shrink: 0; background: var(--color-shape-primary); border-radius: 10px; }
+			.iconObject { flex-shrink: 0; background: var(--color-shape-primary); border-radius: 6px; }
 			.iconObject.isTask { background: none; }
 
 			.info { border: 0px; flex-grow: 1; width: calc(100% - 64px); }
@@ -34,6 +34,10 @@
 				width: 24px; height: 24px; position: absolute; right: -24px; top: 50%; transform: translateY(-50%);
 				background-image: url('~img/arrow/nav0.svg');
 			}
+		}
+
+		.item.isFile {
+			.iconObject { background-color: unset; }
 		}
 
 		.item.selected { 

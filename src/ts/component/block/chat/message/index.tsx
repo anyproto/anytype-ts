@@ -6,11 +6,6 @@ import { I, S, U, C, Mark, translate, Preview } from 'Lib';
 
 import Attachment from '../attachment';
 
-interface State {
-	canExpand: boolean;
-	isExpanded: boolean;
-};
-
 interface Props extends I.BlockComponent {
 	blockId: string;
 	id: string;
@@ -24,14 +19,10 @@ interface Props extends I.BlockComponent {
 
 const LINES_LIMIT = 10;
 
-const ChatMessage = observer(class ChatMessage extends React.Component<Props, State> {
+const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 	node = null;
 	refText = null;
-	state = { 
-		canExpand: false, 
-		isExpanded: false,
-	};
 
 	constructor (props: Props) {
 		super(props);
@@ -44,30 +35,47 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 
 	render () {
 		const { rootId, blockId, id, isThread, isNew, readonly, onThread, onContextMenu, onMore, onReply } = this.props;
-		const { canExpand, isExpanded } = this.state;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
-		const { creator, content, createdAt, reactions, isFirst, isLast } = message;
-		const { marks } = content;
+		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId } = message;
 		const subId = S.Record.getSubId(rootId, blockId);
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
-		const text = U.Common.lbBr(Mark.toHtml(content.text, marks));
 		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target));
 		const hasReactions = reactions.length;
 		const hasAttachments = attachments.length;
-		const isSingle = attachments.length == 1;
 		const isSelf = creator == account.id;
+		const attachmentsLayout = this.getAttachmentsClass();
 		const cn = [ 'message' ];
+		const ca = [ 'attachments', attachmentsLayout ];
+
+		let reply = null;
+		if (replyToMessageId) {
+			const replyToMessage = S.Chat.getMessage(rootId, replyToMessageId);
+			if (replyToMessage) {
+				const author = U.Space.getParticipant(U.Space.getParticipantId(space, replyToMessage.creator));
+				const text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(replyToMessage.content.text, replyToMessage.content.marks)));
+
+				reply = (
+					<div className="reply">
+						<ObjectName object={author} />
+						<div className="text" dangerouslySetInnerHTML={{ __html: text }} />
+					</div>
+				);
+			};
+		};
+
+		let text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+		if (modifiedAt) {
+			text += `<div class="label small">${translate('blockChatMessageEdited')}</div>`;
+		};
+
+		if (hasAttachments == 1) {
+			ca.push('isSingle');
+		};
 
 		if (isSelf) {
 			cn.push('isSelf');
-		};
-		if (canExpand) {
-			cn.push('canExpand');
-		};
-		if (isExpanded) {
-			cn.push('isExpanded');
 		};
 		if (isFirst) {
 			cn.push('isFirst');
@@ -75,12 +83,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		if (isLast) {
 			cn.push('isLast');
 		};
-		if (isNew) {
+		if (isNew && !isSelf) {
 			cn.push('isNew');
 		};
 
 		// Subscriptions
-		for (const mark of marks) {
+		for (const mark of content.marks) {
 			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
 				const object = S.Detail.get(rootId, mark.param, []);
 			};
@@ -128,24 +136,24 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 							<div className="time">{U.Date.date('H:i', createdAt)}</div>
 						</div>
 
+						{reply}
+
 						<div className="textWrapper">
 							<div 
 								ref={ref => this.refText = ref} 
 								className="text" 
-								dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
+								dangerouslySetInnerHTML={{ __html: text }}
 							/>
 
-							{canExpand && !isExpanded ? (
-								<div className="expand" onClick={this.onExpand}>
-									{translate('blockChatMessageExpand')}
-								</div>
-							) : ''}
+							<div className="expand" onClick={this.onExpand}>
+								{translate('blockChatMessageExpand')}
+							</div>
 						</div>
 
 						{hasAttachments ? (
-							<div className={[ 'attachments', (isSingle ? 'isSingle' : '') ].join(' ')}>
+							<div className={ca.join(' ')}>
 								{attachments.map((item: any, i: number) => (
-									<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} />
+									<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} showAsFile={!attachmentsLayout} />
 								))}
 							</div>
 						) : ''}
@@ -166,7 +174,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 					{!readonly ? (
 						<div className="controls">
 							<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
-							{/*<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />*/}
+							<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />
 							{isSelf ? <Icon className="more" onClick={onMore} /> : ''}
 						</div>
 					) : ''}
@@ -207,18 +215,20 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 	};
 
 	onExpand () {
-		this.setState({ isExpanded: true });
+		const node = $(this.node);
+
+		node.toggleClass('isExpanded');
 	};
 
 	checkLinesLimit () {
-		const { isExpanded } = this.state;
+		const node = $(this.node);
 		const ref = $(this.refText);
 		const textHeight = ref.outerHeight();
 		const lineHeight = parseInt(ref.css('line-height'));
 		const canExpand = textHeight / lineHeight > LINES_LIMIT;
 
-		if (canExpand && !isExpanded) {
-			this.setState({ canExpand: true });
+		if (canExpand) {
+			node.addClass('canExpand');
 		};
 	};
 
@@ -275,6 +285,23 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props, St
 		const message = Object.assign(S.Chat.getMessage(rootId, id), param);
 
 		C.ChatEditMessageContent(rootId, id, message);
+	};
+
+	getAttachmentsClass (): string {
+		const { rootId, blockId, id } = this.props;
+		const subId = S.Record.getSubId(rootId, blockId);
+		const message = S.Chat.getMessage(rootId, id);
+		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target));
+		const mediaLayouts = [ I.ObjectLayout.Image, I.ObjectLayout.Video ];
+		const media = attachments.filter(it => mediaLayouts.includes(it.layout));
+		const al = attachments.length;
+		const ml = media.length;
+		const c = [];
+
+		if (ml && (ml == al)) {
+			c.push(`withLayout ${ml >= 10 ? `layout-10` : `layout-${ml}`}`);
+		};
+		return c.join(' ');
 	};
 
 });
