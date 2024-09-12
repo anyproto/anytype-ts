@@ -152,12 +152,16 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	componentWillUnmount () {
 		const { isPopup } = this.props;
+		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
 		const ns = blockId + U.Common.getEventNamespace(isPopup);
 
 		this._isMounted = false;
 		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
+
 		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
+		C.ChatUnsubscribe(rootId);
+
 		window.clearTimeout(this.timeoutInterface);
 	};
 
