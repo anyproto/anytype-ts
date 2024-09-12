@@ -40,7 +40,7 @@
 
 	.attachment.isVideo { overflow: hidden; }
 	.attachment.isVideo {
-		.mediaVideo { width: 100%; display: block; }
+		video { width: 100%; display: block; }
 	}
 
 	.attachment.isAudio { min-width: calc(532px / 2); }
