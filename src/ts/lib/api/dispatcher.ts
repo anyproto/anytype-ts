@@ -952,7 +952,7 @@ class Dispatcher {
 						U.Common.notification(author?.name, message.content.text);
 					};
 
-					$(window).trigger('messageAdd', [ message.id ]);
+					$(window).trigger('messageAdd', [ message ]);
 					break;
 				};
 

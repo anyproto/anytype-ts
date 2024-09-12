@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Icon } from 'Component';
 import { I, C, S, U, J, keyboard, translate, Storage, Preview } from 'Lib';
@@ -179,12 +180,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	rebind () {
 		const { isPopup, block } = this.props;
+		const { account } = S.Auth;
 		const win = $(window);
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		this.unbind();
 
-		win.on(`messageAdd.${ns}`, (e, id: string) => this.scrollToMessage(id));
+		win.on(`messageAdd.${ns}`, (e, message: I.ChatMessage) => {
+			if (message.creator != account.id) {
+				this.scrollToMessage(message.id);
+			};
+		});
 	};
 
 	loadMessages (clear: boolean, callBack?: () => void) {
@@ -441,27 +447,26 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		return node.offset().top + node.outerHeight() + J.Size.header;
+		return node.offset().top + node.outerHeight();
 	};
 
 	scrollToMessage (id: string) {
-		const container = U.Common.getScrollContainer(this.props.isPopup);
+		raf(() => {
+			const container = U.Common.getScrollContainer(this.props.isPopup);
+			const top = this.getMessageScrollOffset(id);
 
-		container.scrollTop(this.getMessageScrollOffset(id));
+			container.get(0).scrollTo({ top, behavior: 'smooth' });
+		});
 	};
 
 	scrollToBottom () {
-		const messages = this.getMessages();
-		const length = messages.length;
+		raf(() => {
+			const { isPopup } = this.props;
+			const container = U.Common.getScrollContainer(isPopup);
+			const height = isPopup ? container.get(0).scrollHeight : document.body.scrollHeight;
 
-		if (!length) {
-			return;
-		};
-
-		const id = messages[length - 1].id;
-		const container = U.Common.getScrollContainer(this.props.isPopup);
-
-		container.scrollTop(this.getMessageScrollOffset(id) + 10000);
+			container.get(0).scrollTo({ top: height + 10000, behavior: 'smooth' });
+		});
 	};
 
 	onThread (id: string) {

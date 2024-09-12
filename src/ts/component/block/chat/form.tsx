@@ -471,7 +471,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, scrollToMessage } = this.props;
+		const { rootId, scrollToMessage, scrollToBottom } = this.props;
 		const node = $(this.node);
 		const loader = node.find('#form-loader');
 		const list = this.state.files || [];
@@ -505,7 +505,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 							return;
 						};
 
-						scrollToMessage(this.editingId);
 						clear();
 					});
 				};
@@ -526,7 +525,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					};
 
 					Storage.setLastChatMessageId(rootId, message.messageId);
-					scrollToMessage(message.messageId);
+					scrollToBottom();
 					clear();
 				});
 			};
