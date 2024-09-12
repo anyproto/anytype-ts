@@ -93,7 +93,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 						keys: U.Data.chatRelationKeys(),
 						skipIds: attachments.map(it => it.id),
 						filters: [
-							{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts() },
+							{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().concat(I.ObjectLayout.Participant) },
 						],
 						onSelect: (item: any) => onChatButtonSelect(type, item)
 					}
