@@ -101,35 +101,37 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 					<EmptySearch filter={filter} readonly={!canAdd} />
 				) : ''}
 
-				<div className="items">
-					{isLoading ? <Loader /> : (
-						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={this.loadMoreRows}
-							isRowLoaded={({ index }) => !!this.items[index]}
-							threshold={LIMIT_HEIGHT}
-						>
-							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={10}
-											scrollToAlignment="center"
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					)}
-				</div>
+				{items.length ? (
+					<div className="items">
+						{isLoading ? <Loader /> : (
+							<InfiniteLoader
+								rowCount={items.length}
+								loadMoreRows={this.loadMoreRows}
+								isRowLoaded={({ index }) => !!this.items[index]}
+								threshold={LIMIT_HEIGHT}
+							>
+								{({ onRowsRendered }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={ref => this.refList = ref}
+												width={width}
+												height={height}
+												deferredMeasurmentCache={this.cache}
+												rowCount={items.length}
+												rowHeight={({ index }) => this.getRowHeight(items[index])}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												scrollToAlignment="center"
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
+						)}
+					</div>
+				) : ''}
 			</React.Fragment>
 		);
 	};
