@@ -196,7 +196,8 @@
 			"node_modules/p-try",
 			"node_modules/p-finally",
 			"node_modules/file-type",
-			"node_modules/regedit"
+			"node_modules/regedit",
+			"node_modules/mime-types"
 		],
 		"extraResources": [
 			{
