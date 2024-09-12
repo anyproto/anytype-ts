@@ -455,7 +455,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const container = U.Common.getScrollContainer(this.props.isPopup);
 			const top = this.getMessageScrollOffset(id);
 
-			container.get(0).scrollTo({ top, behavior: 'smooth' });
+			container.get(0).scrollTo({ top });
 		});
 	};
 
@@ -465,7 +465,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const container = U.Common.getScrollContainer(isPopup);
 			const height = isPopup ? container.get(0).scrollHeight : document.body.scrollHeight;
 
-			container.get(0).scrollTo({ top: height + 10000, behavior: 'smooth' });
+			container.get(0).scrollTo({ top: height + 10000 });
 		});
 	};
 

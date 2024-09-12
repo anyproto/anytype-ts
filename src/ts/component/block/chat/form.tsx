@@ -500,13 +500,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					update.content.text = text;
 					update.content.marks = marks;
 
-					C.ChatEditMessageContent(rootId, this.editingId, update, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						clear();
-					});
+					C.ChatEditMessageContent(rootId, this.editingId, update, () => clear());
 				};
 			} else {
 				const message = {
@@ -520,11 +514,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				};
 
 				C.ChatAddMessage(rootId, message, (message: any) => {
-					if (message.error.code) {
-						return;
+					if (!message.error.code) {
+						Storage.setLastChatMessageId(rootId, message.messageId);
 					};
 
-					Storage.setLastChatMessageId(rootId, message.messageId);
 					scrollToBottom();
 					clear();
 				});
