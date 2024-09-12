@@ -294,6 +294,10 @@ class RecordStore {
 		return this.getTypeByKey(J.Constant.typeKey.bookmark);
 	};
 
+	getFileType () {
+		return this.getTypeByKey(J.Constant.typeKey.file);
+	};
+
 	getTypes () {
 		return this.getRecordIds(J.Constant.subId.type, '').map(id => this.getTypeById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);

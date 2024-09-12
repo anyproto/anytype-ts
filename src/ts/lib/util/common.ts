@@ -888,11 +888,11 @@ class UtilCommon {
 	fixAsarPath (path: string): string {
 		const electron = this.getElectron();
 
-		if (!electron.dirname || !electron.isPackaged) {
+		if (!electron.dirName || !electron.isPackaged) {
 			return path;
 		};
 
-		let href = electron.dirname(location.href);
+		let href = electron.dirName(location.href);
 		href = href.replace('/app.asar/', '/app.asar.unpacked/');
 		return href + path.replace(/^\.\//, '/');
 	};

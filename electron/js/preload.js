@@ -21,7 +21,10 @@ contextBridge.exposeInMainWorld('Electron', {
 	tmpPath,
 	logPath: () => path.join(app.getPath('userData'), 'logs'),
 	filePath: (...args) => path.join(...args),
-	dirname: fp => path.dirname(fp),
+	dirName: fp => path.dirname(fp),
+	fileName: fp => path.basename(fp),
+	fileMime: fp => mime.lookup(fp),
+	fileExt: fp => path.extname(fp),
 	defaultPath: () => path.join(app.getPath('appData'), app.getName()),
 
 	currentWindow: () => getCurrentWindow(),
@@ -32,7 +35,6 @@ contextBridge.exposeInMainWorld('Electron', {
 		app.focus({ steal: true });
 	},
 	getGlobal: key => getGlobal(key),
-	getMime: path => mime.lookup(path),
 	showOpenDialog: dialog.showOpenDialog,
 
 	webFilePath: file => webUtils.getPathForFile(file),

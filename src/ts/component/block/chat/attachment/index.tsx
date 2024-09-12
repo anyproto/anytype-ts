@@ -42,10 +42,12 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 				if (mime && object.file) {
 					const [ t1, t2 ] = mime.split('/');
 
-					console.log(t1, t2);
-
 					switch (t1) {
 						case 'image': {
+							if (!J.Constant.fileExtension.image.includes(t2)) {
+								break;
+							};
+
 							cn.push('isImage');
 							content = this.renderImage();
 							break;

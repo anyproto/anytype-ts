@@ -17,6 +17,7 @@ interface Props extends I.BlockComponent {
 	onTextButtonToggle: (type: I.MarkType, param: string) => void;
 	onMenuClose: () => void;
 	onMention: () => void;
+	addFilePath: (path: string) => void;
 	onAddFiles: (files: any, callBack?: () => void) => void;
 	removeBookmark: (url: string) => void;
 };
@@ -230,8 +231,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	};
 
 	onAttachment (menu?: string) {
-		const { blockId, attachments, onMenuClose, onChatButtonSelect, onAddFiles } = this.props;
-		const { getMime } = electron;
+		const { blockId, attachments, onMenuClose, onChatButtonSelect, onAddFiles, addFilePath } = this.props;
 
 		const options: any[] = [
 			{ id: 'object', icon: 'object', name: translate('commonObject') },
@@ -242,23 +242,9 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 		const upload = () => {
 			Action.openFileDialog([], paths => {
-				if (!paths[0]) {
-					return;
+				if (paths.length) {
+					onAddFiles([ addFilePath(paths[0]) ]);
 				};
-				const path = paths[0];
-				const n = path.split('/');
-				const name = n[n.length - 1];
-
-				const file = {
-					id: sha1(path),
-					name,
-					path,
-					layout: I.ObjectLayout.File,
-					isTmp: true,
-					mime: getMime(path)
-				};
-
-				onAddFiles([ file ]);
 			});
 		};
 

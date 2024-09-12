@@ -68,6 +68,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.caretMenuParam = this.caretMenuParam.bind(this);
 		this.removeBookmark = this.removeBookmark.bind(this);
 		this.getMarksAndRange = this.getMarksAndRange.bind(this);
+		this.addFilePath = this.addFilePath.bind(this);
 	};
 
 	render () {
@@ -156,6 +157,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 							onMention={this.onMention}
 							onChatButtonSelect={this.onChatButtonSelect}
 							onTextButtonToggle={this.onTextButtonToggle}
+							addFilePath={this.addFilePath}
 							onAddFiles={this.onAddFiles}
 							onMenuClose={this.onMenuClose}
 							removeBookmark={this.removeBookmark}
@@ -741,16 +743,40 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	addFile (file: File) {
 		const electron = U.Common.getElectron();
 		const path = electron.webFilePath(file);
+		const mime = electron.fileMime(path);
+		const ext = electron.fileExt(path);
+		const type = S.Record.getFileType();
 
 		return {
 			id: sha1(path),
 			name: file.name,
 			layout: I.ObjectLayout.File,
-			description: U.File.size(file.size),
-			mime: file.type,
-			path,
+			type: type?.id,
+			sizeInBytes: file.size,
+			fileExt: ext,
 			isTmp: true,
+			mime,
+			path,
 			file,
+		};
+	};
+
+	addFilePath (path: string) {
+		const electron = U.Common.getElectron();
+		const name = electron.fileName(path);
+		const mime = electron.fileMime(path);
+		const ext = electron.fileExt(path);
+		const type = S.Record.getFileType();
+
+		return {
+			id: sha1(path),
+			name,
+			path,
+			fileExt: ext,
+			mime,
+			layout: I.ObjectLayout.File,
+			type: type?.id,
+			isTmp: true,
 		};
 	};
 
