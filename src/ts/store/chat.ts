@@ -26,10 +26,15 @@ class ChatStore {
 		this.set(rootId, list);
 	};
 
-	add (rootId: string, idx: number, item: I.ChatMessage): void {
+	add (rootId: string, idx: number, param: I.ChatMessage): void {
 		const list = this.getList(rootId);
+		const item = this.getMessage(rootId, param.id);
+		
+		if (item) {
+			return;
+		};
 
-		list.splice(idx, 0, item);
+		list.splice(idx, 0, param);
 		this.set(rootId, list);
 	};
 
