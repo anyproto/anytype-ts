@@ -373,6 +373,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onPaste (e: any) {
+		e.preventDefault();
+
 		const { from } = this.range;
 		const { files } = this.state;
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
@@ -390,8 +392,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		if (url) {
-			e.preventDefault();
-
 			const param = isLocal ? `file://${url}` : url;
 		
 			if (from == to) {
@@ -406,9 +406,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		} else {
 			value = U.Common.stringInsert(value, text, from, to);
 			
+			to = to + text.length;
 			this.range = { from: to, to };
-			this.refEditable.setRange(this.range);
 			this.refEditable.setValue(value);
+			this.refEditable.setRange(this.range);
+			this.refEditable.placeholderCheck();
 		};
 
 		if (list.length) {

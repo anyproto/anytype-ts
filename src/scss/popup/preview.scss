@@ -4,7 +4,7 @@
 	.popup.popupPreview {
 		.innerWrap { border-radius: 6px; }
 		.innerWrap.anim { transition: $transitionAllCommon; }
-		#loader { background: var(--color-bg-primary); width: 100%; height: 100%; }
+		#loader { background: var(--color-bg-primary); width: 100%; height: 100%; border-radius: 6px; }
 
 		.head { 
 			display: flex; align-items: center; position: absolute; left: 0px; top: 0px; height: 52px; justify-content: space-between;

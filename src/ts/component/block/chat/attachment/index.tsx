@@ -171,13 +171,28 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			};
 		};
 
-		return <img id="image" className="image" src={this.src} onClick={this.onPreview} onDragStart={e => e.preventDefault()} />;
+		return (
+			<img 
+				id="image" 
+				className="image" 
+				src={this.src}
+				onClick={e => this.onPreview(e, this.src, I.FileType.Image)} 
+				onDragStart={e => e.preventDefault()} 
+			/>
+		);
 	};
 
 	renderVideo () {
 		const { object } = this.props;
+		const src = S.Common.fileUrl(object.id);
 
-		return <MediaVideo src={S.Common.fileUrl(object.id)} />;
+		return (
+			<MediaVideo 
+				src={src} 
+				onClick={e => this.onPreview(e, src, I.FileType.Video)} 
+				canPlay={false} 
+			/>
+		);
 	};
 
 	renderAudio () {
@@ -197,12 +212,9 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		};
 	};
 
-	onPreview (e: any) {
+	onPreview (e: any, src: string, type: I.FileType) {
 		const { object } = this.props;
-		const data: any = {
-			src: this.src, 
-			type: I.FileType.Image,
-		};
+		const data: any = { src, type };
 
 		if (!object.isTmp) {
 			data.object = object;
