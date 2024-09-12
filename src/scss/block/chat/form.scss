@@ -7,7 +7,7 @@
 	overflow: hidden; 
 }
 .form {
-	#form-loader { display: none; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(255,255,255,0.75); z-index: 1; }
+	#form-loader { display: none; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-bg-loader); z-index: 1; }
 	#form-loader.active { display: block; }
 
 	.head { 
