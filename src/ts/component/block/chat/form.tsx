@@ -370,8 +370,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onPaste (e: any) {
 		const { from } = this.range;
+		const { files } = this.state;
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
+		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.addFile(it));
 
 		let value = this.getTextValue();
 		let url = U.Common.matchUrl(text);
@@ -383,23 +385,25 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			isLocal = true;
 		};
 
-		if (!url) {
-			return;
-		};
+		if (url) {
+			e.preventDefault();
 
-		e.preventDefault();
-
-		const param = isLocal ? `file://${url}` : url;
+			const param = isLocal ? `file://${url}` : url;
 		
-		if (from == to) {
-			value = U.Common.stringInsert(value, url + ' ', from, from);
-			to = from + url.length;
+			if (from == to) {
+				value = U.Common.stringInsert(value, url + ' ', from, from);
+				to = from + url.length;
+			};
+
+			this.marks = Mark.adjust(this.marks, from - 1, url.length + 1);
+			this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
+			this.updateMarkup(value, to + 1, to + 1);
+			this.addBookmark(param);
 		};
 
-		this.marks = Mark.adjust(this.marks, from - 1, url.length + 1);
-		this.marks.push({ type: I.MarkType.Link, range: { from, to }, param});
-		this.updateMarkup(value, to + 1, to + 1);
-		this.addBookmark(param);
+		if (list.length) {
+			this.setState({ files: files.concat(list) });
+		};
 	};
 
 	canDrop (e: any): boolean {
@@ -432,21 +436,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { scrollToBottom } = this.props;
 		const { files } = this.state;
 		const node = $(this.node);
-		const electron = U.Common.getElectron();
-		const list = Array.from(e.dataTransfer.files).map((it: File) => {
-			const path = electron.webFilePath(it);
-
-			return {
-				id: sha1(path),
-				name: it.name,
-				layout: I.ObjectLayout.File,
-				description: U.File.size(it.size),
-				mime: it.type,
-				path,
-				isTmp: true,
-				file: it,
-			};
-		});
+		const list = Array.from(e.dataTransfer.files).map((it: File) => this.addFile(it));
 		
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
@@ -724,6 +714,22 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		this.updateButtons();
 		this.renderMarkup();
+	};
+
+	addFile (file: File) {
+		const electron = U.Common.getElectron();
+		const path = electron.webFilePath(file);
+
+		return {
+			id: sha1(path),
+			name: file.name,
+			layout: I.ObjectLayout.File,
+			description: U.File.size(file.size),
+			mime: file.type,
+			path,
+			isTmp: true,
+			file,
+		};
 	};
 
 	addBookmark (url: string) {
