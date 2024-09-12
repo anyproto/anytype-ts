@@ -1,7 +1,9 @@
 .message { @include text-common; position: relative; }
 .message {
 	.text { user-select: text !important; }
-	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); margin: 0px 0px 0px 4px; }
+	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
+	.label.small.withText { margin: 0px 0px 0px 4px; }
+
 	.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
 
 	.side.left { flex-shrink: 0; width: 40px; display: flex; align-items: flex-end; }

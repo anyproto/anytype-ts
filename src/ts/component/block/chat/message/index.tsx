@@ -67,7 +67,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 		let text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
 		if (modifiedAt) {
-			text += `<div class="label small">${translate('blockChatMessageEdited')}</div>`;
+			const cnl = [ 'label', 'small' ];
+			if (text) {
+				cnl.push('withText');
+			};
+
+			text += `<div class="${cnl.join(' ')}">${translate('blockChatMessageEdited')}</div>`;
 		};
 
 		if (hasAttachments == 1) {
