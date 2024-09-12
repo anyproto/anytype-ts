@@ -206,11 +206,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const first = list[0];
 
 			C.ChatGetMessages(rootId, first.orderId, J.Constant.limit.chat.messages, (message: any) => {
-				if (!message.error.code) {
+				if (!message.error.code && message.messages.length) {
 					S.Chat.prepend(rootId, message.messages);
-				};
 
-				this.scrollToMessage(first.id);
+					this.scrollToMessage(first.id);
+				};
 
 				if (callBack) {
 					callBack();
