@@ -662,6 +662,8 @@
 	"blockChatButtonMention": "Add mention",
 	"blockChatNewMessages": "New messages",
 	"blockChatMessageEdited": "(edited)",
+	"blockChatEditing": "Editing message",
+	"blockChatReplying": "Replying to %s",
 
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",

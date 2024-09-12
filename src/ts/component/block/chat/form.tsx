@@ -32,6 +32,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	range: I.TextRange = { from: 0, to: 0 };
 	timeoutFilter = 0;
 	editingId: string = '';
+	replyingId: string = '';
 	state = {
 		attachments: [],
 		files: [],
@@ -57,6 +58,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onDrop = this.onDrop.bind(this);
 		this.onSend = this.onSend.bind(this);
 		this.onEdit = this.onEdit.bind(this);
+		this.onEditClear = this.onEditClear.bind(this);
+		this.onReply = this.onReply.bind(this);
+		this.onReplyClear = this.onReplyClear.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
 		this.onFileRemove = this.onFileRemove.bind(this);
 		this.hasSelection = this.hasSelection.bind(this);
@@ -66,9 +70,30 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { readonly } = this.props;
+		const { rootId, readonly } = this.props;
 		const { attachments, files } = this.state;
+		const { space } = S.Common;
 		const value = this.getTextValue();
+
+		let title = '';
+		let text = '';
+		let onClear = () => {};
+
+		if (this.editingId) {
+			title = translate('blockChatEditing');
+			onClear = this.onEditClear;
+		} else
+		if (this.replyingId) {
+			const message = S.Chat.getMessage(rootId, this.replyingId);
+			if (message) {
+				const { content, creator } = message;
+				const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
+
+				title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
+				text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+				onClear = this.onReplyClear;
+			};
+		};
 
 		return (
 			<div 
@@ -78,6 +103,18 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			>
 				<div className="form">
 					<Loader id="form-loader" />
+
+					{title ? (
+						<div className="head">
+							<div className="side left">
+								<div className="name">{title}</div>
+								<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+							</div>
+							<div className="side right">
+								<Icon className="clear" onClick={onClear} />
+							</div>
+						</div>
+					) : ''}
 
 					<Editable 
 						ref={ref => this.refEditable = ref}
@@ -180,7 +217,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { checkMarkOnBackspace } = this.props;
 		const range = this.range;
 		const cmd = keyboard.cmdKey();
-		const menuOpenMention = S.Menu.isOpen('blockMention');
 
 		let value = this.refEditable.getTextValue();
 
@@ -195,14 +231,15 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 				if (!parsed.save) {
 					return;
-					e.preventDefault();
-
-					value = parsed.value;
-					this.marks = parsed.marks;
-
-					const l = value.length;
-					this.updateMarkup(value, l, l);
 				};
+
+				e.preventDefault();
+
+				value = parsed.value;
+				this.marks = parsed.marks;
+
+				const l = value.length;
+				this.updateMarkup(value, l, l);
 			});
 		};
 
@@ -462,6 +499,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				};
 			} else {
 				const message = {
+					replyToMessageId: this.replyingId,
 					content: {
 						...this.getMarksFromHtml(),
 						style: I.TextStyle.Paragraph,
@@ -538,6 +576,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.marks = marks;
 		this.range = { from: l, to: l };
 		this.editingId = message.id;
+		this.replyingId = '';
 		this.refEditable.setValue(Mark.toHtml(text, this.marks));
 		this.renderMarkup();
 
@@ -555,6 +594,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.refEditable.placeholderCheck();
 
 		this.setState({ attachments: [], files: [] });
+	};
+
+	onReply (message: I.ChatMessage) {
+		this.replyingId = message.id;
+		this.onEditClear();
+	};
+
+	onReplyClear () {
+		this.replyingId = '';
+		this.forceUpdate();
 	};
 
 	onDelete (id: string) {

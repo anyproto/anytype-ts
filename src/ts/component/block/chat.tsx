@@ -323,17 +323,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	onContextMenu (e: React.MouseEvent, item: any, onMore?: boolean) {
 		const { readonly } = this.props;
 		const { account } = S.Auth;
-		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
 		const message = `#block-${blockId} #item-${item.id}`;
 
 		if (readonly || (item.creator != account.id)) {
 			return;
 		};
-
-		const messages = this.getMessages();
-		const idx = messages.findIndex(it => it.id == item.id);
-		const next = messages[idx + 1];
 
 		const menuParam: Partial<I.MenuParam> = {
 			vertical: I.MenuDirection.Bottom,
@@ -462,7 +457,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	onReply (e: React.MouseEvent, message: any) {
-		console.log('REPLY TO MESSAGE ID: ', message.id);
+		this.refForm.onReply(message);
 	};
 
 	onDragOver (e: React.DragEvent) {

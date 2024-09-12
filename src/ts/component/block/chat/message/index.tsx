@@ -39,7 +39,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
 		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast } = message;
-		const { marks } = content;
 		const subId = S.Record.getSubId(rootId, blockId);
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target));
@@ -50,8 +49,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const cn = [ 'message' ];
 		const ca = [ 'attachments', attachmentsLayout ];
 
-		let text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, marks)));
-
+		let text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
 		if (modifiedAt) {
 			text += `<div class="label small">${translate('blockChatMessageEdited')}</div>`;
 		};
@@ -74,7 +72,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		};
 
 		// Subscriptions
-		for (const mark of marks) {
+		for (const mark of content.marks) {
 			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
 				const object = S.Detail.get(rootId, mark.param, []);
 			};
@@ -158,7 +156,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 					{!readonly ? (
 						<div className="controls">
 							<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
-							{/*<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />*/}
+							<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />
 							{isSelf ? <Icon className="more" onClick={onMore} /> : ''}
 						</div>
 					) : ''}
