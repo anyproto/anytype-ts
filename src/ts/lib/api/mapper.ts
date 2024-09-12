@@ -631,6 +631,7 @@ export const Mapper = {
 				orderId: obj.getOrderid(),
 				creator: obj.getCreator(),
 				createdAt: obj.getCreatedat(),
+				modifiedAt: obj.getModifiedat(),
 				replyToMessageId: obj.getReplytomessageid(),
 				content: Mapper.From.ChatMessageContent(obj.getMessage()),
 				attachments: (obj.getAttachmentsList() || []).map(Mapper.From.ChatMessageAttachment),

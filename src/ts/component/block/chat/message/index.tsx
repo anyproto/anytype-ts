@@ -38,11 +38,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
-		const { creator, content, createdAt, reactions, isFirst, isLast } = message;
+		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast } = message;
 		const { marks } = content;
 		const subId = S.Record.getSubId(rootId, blockId);
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
-		const text = U.Common.lbBr(Mark.toHtml(content.text, marks));
 		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target));
 		const hasReactions = reactions.length;
 		const hasAttachments = attachments.length;
@@ -50,6 +49,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const attachmentsLayout = this.getAttachmentsClass();
 		const cn = [ 'message' ];
 		const ca = [ 'attachments', attachmentsLayout ];
+
+		let text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, marks)));
+
+		if (modifiedAt) {
+			text += `<div class="label small">${translate('blockChatMessageEdited')}</div>`;
+		};
 
 		if (hasAttachments == 1) {
 			ca.push('isSingle');
@@ -121,7 +126,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 							<div 
 								ref={ref => this.refText = ref} 
 								className="text" 
-								dangerouslySetInnerHTML={{ __html: U.Common.sanitize(text) }}
+								dangerouslySetInnerHTML={{ __html: text }}
 							/>
 
 							<div className="expand" onClick={this.onExpand}>

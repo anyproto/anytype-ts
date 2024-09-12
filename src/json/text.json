@@ -661,6 +661,7 @@
 	"blockChatButtonEmoji": "Add emoji",
 	"blockChatButtonMention": "Add mention",
 	"blockChatNewMessages": "New messages",
+	"blockChatMessageEdited": "(edited)",
 
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",

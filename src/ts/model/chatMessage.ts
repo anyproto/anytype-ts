@@ -53,6 +53,7 @@ class ChatMessage implements I.ChatMessage {
 	orderId = '';
 	creator = '';
 	createdAt = 0;
+	modifiedAt = 0;
 	replyToMessageId = '';
 	content: I.ChatMessageContent = null;
 	attachments: I.ChatMessageAttachment[] = [];
@@ -67,6 +68,7 @@ class ChatMessage implements I.ChatMessage {
 		this.orderId = String(props.orderId || '');
 		this.creator = String(props.creator || '');
 		this.createdAt = Number(props.createdAt) || 0;
+		this.modifiedAt = Number(props.modifiedAt) || 0;
 		this.replyToMessageId = String(props.replyToMessageId || '');
 		this.content = new ChatMessageContent(props.content || {} as ChatMessageContent);
 		this.attachments = Array.isArray(props.attachments) ? props.attachments : [];
@@ -89,6 +91,7 @@ class ChatMessage implements I.ChatMessage {
 			id: observable,
 			orderId: observable,
 			creator: observable,
+			modifiedAt: observable,
 			replyToMessageId: observable,
 			content: observable,
 			attachments: observable,
