@@ -220,8 +220,6 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			data.object = object;
 		};
 
-		console.log(data);
-
 		S.Popup.open('preview', { data });
 	};
 
