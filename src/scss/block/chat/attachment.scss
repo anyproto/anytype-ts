@@ -1,4 +1,4 @@
-.attachments { padding: 8px 0px 0px 0px; display: flex; gap: 8px; flex-wrap: wrap; max-width: 540px; }
+.attachments { display: flex; gap: 8px; flex-wrap: wrap; max-width: 540px; }
 .attachments {
 	.attachment { 
 		position: relative; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05);

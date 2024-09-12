@@ -41,7 +41,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId } = message;
 		const subId = S.Record.getSubId(rootId, blockId);
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
-		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target));
+		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it.isDeleted);
 		const hasReactions = reactions.length;
 		const hasAttachments = attachments.length;
 		const isSelf = creator == account.id;
@@ -66,6 +66,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		};
 
 		let text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+
 		if (modifiedAt) {
 			const cnl = [ 'label', 'small' ];
 			if (text) {
@@ -90,6 +91,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		};
 		if (isNew && !isSelf) {
 			cn.push('isNew');
+		};
+		if (text) {
+			cn.push('withText');
 		};
 
 		// Subscriptions

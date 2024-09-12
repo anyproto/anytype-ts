@@ -76,6 +76,7 @@
 		.label { @include text-small; padding: 0px 12px; font-weight: 500; background: var(--color-bg-primary); color: var(--color-text-secondary); }
 	}
 }
+
 .message.isSelf {
 	.flex { flex-direction: row-reverse; }
 	.side.right { background: rgba(229, 248, 214, 0.5); }
@@ -101,6 +102,10 @@
 .message.isFirst {
 	.author { display: flex; }
 	.side.right {  min-width: 164px; }
+}
+
+.message.isFirst, .message.withText {
+	.attachments { padding: 8px 0px 0px 0px;  }
 }
 
 .message.isLast {
