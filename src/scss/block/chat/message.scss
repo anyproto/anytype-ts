@@ -23,6 +23,17 @@
 		.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 	}
 
+	.reply { 
+		padding: 8px 8px 8px 12px; margin: 4px 0px; border-radius: 12px; background: var(--color-shape-tertiary); position: relative; overflow: hidden;
+		@include text-small;
+	}
+	.reply::before { 
+		content: ''; display: block; position: absolute; top: 0px; left: 0px; width: 4px; height: 100%;	background-color: var(--color-text-secondary); 
+	}
+	.reply {
+		.name { font-weight: 500; }
+	}
+
 	.attachments {
 		.attachment {
 			.icon.remove { display: none; }
@@ -66,6 +77,8 @@
 	.flex { flex-direction: row-reverse; }
 	.side.right { background: rgba(229, 248, 214, 0.5); }
 	.controls { flex-direction: row-reverse; }
+	.reply { background-color: #e5f8d6; }
+	.reply::before { background-color: #4dae00; }
 }
 
 .message.canExpand {

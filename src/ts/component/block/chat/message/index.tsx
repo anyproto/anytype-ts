@@ -38,7 +38,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
-		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast } = message;
+		const { creator, content, createdAt, modifiedAt, reactions, isFirst, isLast, replyToMessageId } = message;
 		const subId = S.Record.getSubId(rootId, blockId);
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 		const attachments = (message.attachments || []).map(it => S.Detail.get(subId, it.target));
@@ -48,6 +48,22 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const attachmentsLayout = this.getAttachmentsClass();
 		const cn = [ 'message' ];
 		const ca = [ 'attachments', attachmentsLayout ];
+
+		let reply = null;
+		if (replyToMessageId) {
+			const replyToMessage = S.Chat.getMessage(rootId, replyToMessageId);
+			if (replyToMessage) {
+				const author = U.Space.getParticipant(U.Space.getParticipantId(space, replyToMessage.creator));
+				const text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(replyToMessage.content.text, replyToMessage.content.marks)));
+
+				reply = (
+					<div className="reply">
+						<ObjectName object={author} />
+						<div className="text" dangerouslySetInnerHTML={{ __html: text }} />
+					</div>
+				);
+			};
+		};
 
 		let text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
 		if (modifiedAt) {
@@ -119,6 +135,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 							<ObjectName object={author} />
 							<div className="time">{U.Date.date('H:i', createdAt)}</div>
 						</div>
+
+						{reply}
 
 						<div className="textWrapper">
 							<div 
