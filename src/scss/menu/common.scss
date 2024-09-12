@@ -116,7 +116,7 @@
 			}
 			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
 			.icon.delete:hover, .icon.more:hover { background-color: var(--color-shape-highlight-medium); }
-			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
+			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px !important; background-image: url('~img/arrow/menu.svg'); }
 			.icon.chk { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/chk.svg'); }
 			.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/menu/sortArrow.svg'); }
 			.icon.sortArrow.c1 { transform: rotateZ(180deg); }
