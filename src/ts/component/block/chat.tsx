@@ -38,6 +38,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.scrollToMessage = this.scrollToMessage.bind(this);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
+		this.getMessages = this.getMessages.bind(this);
 	};
 
 	render () {
@@ -112,6 +113,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					subId={subId}
 					scrollToBottom={this.scrollToBottom}
 					scrollToMessage={this.scrollToMessage}
+					getMessages={this.getMessages}
 				/>
 			</div>
 		);
@@ -351,27 +353,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 						};
 
 						case 'delete': {
-							S.Popup.open('confirm', {
-								data: {
-									icon: 'confirm',
-									bgColor: 'red',
-									title: translate('popupConfirmChatDeleteMessageTitle'),
-									text: translate('popupConfirmChatDeleteMessageText'),
-									onConfirm: () => {
-										C.ChatDeleteMessage(rootId, item.id, () => {
-											if (this.refForm.editingId == item.id) {
-												this.refForm.onEditClear();
-											};
-
-											if (next) {
-												this.scrollToMessage(next.id);
-											} else {
-												this.scrollToBottom();
-											};
-										});
-									},
-								}
-							});
+							this.refForm.onDelete(item.id);
 							break;
 						};
 					};

@@ -14,6 +14,7 @@ interface Props extends I.BlockComponent {
 	subId: string;
 	scrollToBottom: () => void;
 	scrollToMessage: (id: string) => void;
+	getMessages: () => I.ChatMessage[];
 };
 
 interface State {
@@ -54,7 +55,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onSend = this.onSend.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
@@ -259,6 +259,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	onKeyUpInput (e: any) {
 		this.range = this.refEditable.getRange();
 
+		const { attachments, files } = this.state;
 		const { to } = this.range;
 		const { filter } = S.Common;
 		const value = this.getTextValue();
@@ -315,6 +316,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					adjustMarks = true;
 				};
 			};
+		};
+
+		if (!value && !attachments.length && !files.length && this.editingId) {
+			this.onDelete(this.editingId);
 		};
 
 		if (adjustMarks) {
@@ -411,54 +416,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		this.setState({ files: files.concat(list) }, () => scrollToBottom());
 		keyboard.disableCommonDrop(false);
-	};
-
-	onContextMenu (e: React.MouseEvent, item: any, onMore?: boolean) {
-		const { rootId, blockId, readonly } = this.props;
-		const { account } = S.Auth;
-		const message = `#block-${blockId} #item-${item.id}`;
-
-		if (readonly || (item.creator != account.id)) {
-			return;
-		};
-
-		const menuParam: Partial<I.MenuParam> = {
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			onOpen: () => $(message).addClass('hover'),
-			onClose: () => $(message).removeClass('hover'),
-			data: {
-				options: [
-					{ id: 'edit', name: translate('commonEdit') },
-					{ id: 'delete', name: translate('commonDelete'), color: 'red' },
-				],
-				onSelect: (e, option) => {
-					switch (option.id) {
-						case 'edit': {
-							this.onEdit(item);
-							break;
-						};
-
-						case 'delete': {
-							C.ChatDeleteMessage(rootId, item.id, () => {
-								if (this.editingId == item.id) {
-									this.onEditClear();
-								};
-							});
-							break;
-						};
-					};
-				},
-			},
-		};
-
-		if (onMore) {
-			menuParam.element = `${message} .icon.more`;
-		} else {
-			menuParam.recalcRect = () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 });
-		};
-
-		S.Menu.open('select', menuParam);
 	};
 
 	onSend () {
@@ -598,6 +555,35 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.refEditable.placeholderCheck();
 
 		this.setState({ attachments: [], files: [] });
+	};
+
+	onDelete (id: string) {
+		const { rootId, getMessages, scrollToMessage, scrollToBottom } = this.props;
+		const messages = getMessages();
+		const idx = messages.findIndex(it => it.id == id);
+		const next = messages[idx + 1];
+
+		S.Popup.open('confirm', {
+			data: {
+				icon: 'confirm',
+				bgColor: 'red',
+				title: translate('popupConfirmChatDeleteMessageTitle'),
+				text: translate('popupConfirmChatDeleteMessageText'),
+				onConfirm: () => {
+					C.ChatDeleteMessage(rootId, id, () => {
+						if (this.editingId == id) {
+							this.onEditClear();
+						};
+
+						if (next) {
+							scrollToMessage(next.id);
+						} else {
+							scrollToBottom();
+						};
+					});
+				},
+			}
+		});
 	};
 
 	getMarksAndRange (): any {
@@ -816,6 +802,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	canSend () {
 		const { attachments, files } = this.state;
+
+		// You can send blank message when editing to delete it
+		if (this.editingId) {
+			return true;
+		};
+
 		return this.getTextValue() || attachments.length || files.length;
 	};
 
