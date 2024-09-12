@@ -235,7 +235,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		switch (this.type) {
 			case I.ObjectContainerType.Object: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() });
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat([ I.ObjectLayout.Bookmark ]) });
 				break;
 			};
 
