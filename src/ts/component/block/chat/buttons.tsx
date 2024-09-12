@@ -241,10 +241,11 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		];
 
 		const upload = () => {
-			Action.openFileDialog([], async paths => {
+			Action.openFileDialog([], paths => {
+				if (!paths[0]) {
+					return;
+				};
 				const path = paths[0];
-				const c = path.split('.');
-				const ext = c[c.length - 1];
 				const n = path.split('/');
 				const name = n[n.length - 1];
 
@@ -256,8 +257,6 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 					isTmp: true,
 					mime: getMime(path)
 				};
-
-				console.log('FILE: ', file)
 
 				onAddFiles([ file ]);
 			});
