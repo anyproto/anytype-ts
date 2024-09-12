@@ -24,7 +24,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	index: any = null;
 	cache: any = {};
 	items: any = [];
-	n = -1;
+	n = 0;
 	offset = 0;
 	refList: any = null;
 
@@ -150,7 +150,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		if ((this.filter != filter) && !isLoading) {
 			this.filter = filter;
-			this.n = -1;
+			this.n = 0;
 			this.offset = 0;
 			this.load(true);
 			return;
@@ -162,8 +162,8 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			keyMapper: i => (items[i] || {}).id,
 		});
 
+		this.rebind();
 		this.resize();
-		this.props.setActive();
 	};
 	
 	componentWillUnmount () {
