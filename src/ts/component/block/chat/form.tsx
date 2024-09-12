@@ -222,7 +222,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		let value = this.refEditable.getTextValue();
 
-		keyboard.shortcut('enter', e, () => {
+		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
 			e.preventDefault();
 			this.onSend();
 		});
