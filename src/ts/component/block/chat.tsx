@@ -177,8 +177,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = false;
 		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
 
-		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
 		C.ChatUnsubscribe(rootId);
+		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
 
 		window.clearTimeout(this.timeoutInterface);
 	};
