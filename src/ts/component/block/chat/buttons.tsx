@@ -121,7 +121,8 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		const menuParam: any = {
 			element: `#button-${block.id}-${type}`,
 			className: 'fixed',
-			offsetY: 8,
+			offsetY: -8,
+			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
 			data: {} as any,
