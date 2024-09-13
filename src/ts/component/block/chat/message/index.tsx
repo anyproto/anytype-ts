@@ -172,6 +172,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 								{reactions.map((item: any, i: number) => (
 									<Reaction key={i} {...item} />
 								))}
+								{!readonly ? (
+									<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
+								) : ''}
 							</div>
 						) : ''}
 
@@ -182,7 +185,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 					{!readonly ? (
 						<div className="controls">
-							<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
+							{!hasReactions ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} /> : ''}
 							<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />
 							{isSelf ? <Icon className="more" onClick={onMore} /> : ''}
 						</div>
