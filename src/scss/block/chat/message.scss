@@ -46,6 +46,8 @@
 
 	.author { display: none; align-items: center; gap: 0px 8px; }
 	.author {
+		.name, .time { @include text-overflow-nw; }
+
 		.name { font-weight: 500; }
 		.time { @include text-small; color: var(--color-text-secondary); }
 	}

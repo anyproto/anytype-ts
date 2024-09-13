@@ -10,6 +10,7 @@ import Form from './chat/form';
 
 interface State {
 	threadId: string;
+	isLoading: boolean;
 };
 
 const GROUP_TIME = 60;
@@ -27,6 +28,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	top = 0;
 	state = {
 		threadId: '',
+		isLoading: false,
 	};
 
 	constructor (props: I.BlockComponent) {
@@ -121,20 +123,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 	
 	componentDidMount () {
-		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const blockId = this.getBlockId();
 		const lastId = Storage.getChat(rootId).lastId;
-		const ns = blockId + U.Common.getEventNamespace(isPopup);
 
 		this._isMounted = true;
-
-		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
+		this.rebind();
+		this.setState({ isLoading: true });
 
 		this.loadMessages(true, () => {
 			this.loadReplies(() => {
 				this.loadDeps(() => {
-					this.forceUpdate(() => {
+					this.setState({ isLoading: false }, () => {
 						const messages = this.getMessages();
 						const length = messages.length;
 						const isLast = length && (messages[length - 1].id == lastId);
@@ -170,15 +169,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	componentWillUnmount () {
-		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-		const blockId = this.getBlockId();
-		const ns = blockId + U.Common.getEventNamespace(isPopup);
-
 		this._isMounted = false;
-		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
+		this.unbind();
 
-		C.ChatUnsubscribe(rootId);
+		C.ChatUnsubscribe(this.getRootId());
 		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
 
 		window.clearTimeout(this.timeoutInterface);
@@ -190,6 +184,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+		U.Common.getScrollContainer(isPopup).off(`scroll.${ns}`);
 	};
 
 	rebind () {
@@ -207,6 +202,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		});
 
 		win.on(`updateReactions.${ns}`, (e, message: I.ChatMessage) => this.scrollToMessage(message.id));
+
+		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 	};
 
 	loadMessages (clear: boolean, callBack?: () => void) {
@@ -497,22 +494,22 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	};
 
 	scrollToMessage (id: string) {
-		raf(() => {
+		window.setTimeout(() => {
 			const container = U.Common.getScrollContainer(this.props.isPopup);
 			const top = this.getMessageScrollOffset(id);
 
 			container.get(0).scrollTo({ top });
-		});
+		}, 50);
 	};
 
 	scrollToBottom () {
-		raf(() => {
+		window.setTimeout(() => {
 			const { isPopup } = this.props;
 			const container = U.Common.getScrollContainer(isPopup);
 			const height = isPopup ? container.get(0).scrollHeight : document.body.scrollHeight;
 
 			container.get(0).scrollTo({ top: height + 10000 });
-		});
+		}, 50);
 	};
 
 	onThread (id: string) {

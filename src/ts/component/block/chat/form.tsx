@@ -496,7 +496,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, scrollToMessage, scrollToBottom } = this.props;
+		const { rootId, scrollToBottom, scrollToMessage } = this.props;
 		const node = $(this.node);
 		const loader = node.find('#form-loader');
 		const list = this.state.files || [];
@@ -525,7 +525,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					update.content.text = text;
 					update.content.marks = marks;
 
-					C.ChatEditMessageContent(rootId, this.editingId, update, () => clear());
+					C.ChatEditMessageContent(rootId, this.editingId, update, () => {
+						scrollToMessage(this.editingId);
+						clear();
+					});
 				};
 			} else {
 				const message = {
