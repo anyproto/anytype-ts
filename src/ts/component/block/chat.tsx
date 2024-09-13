@@ -50,7 +50,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const messages = this.getMessages();
 		const sections = this.getSections();
 		const subId = this.getSubId();
-		const deps = this.getDeps().map(id => S.Detail.get(rootId, id, []));
 		const length = messages.length;
 		const lastId = Storage.getChat(rootId).lastId;
 
@@ -441,9 +440,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const messages = this.getMessages();
 		const dates = node.find('.section > .date');
 		const hh = J.Size.header;
-		const storage = Storage.getChat(rootId);
-
-		let lastId = '';
+		const lastId = Storage.getChat(rootId).lastId;
 
 		if (st > this.top) {
 			messages.forEach(it => {
@@ -457,14 +454,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					return false;
 				};
 
-				if (st >= node.offset().top - co - ch) {
-					lastId = it.id;
+				if ((it.id == lastId) && st >= node.offset().top - co - ch) {
+					Storage.setChat(rootId, { lastId: '' });
 				};
 			});
-		};
-
-		if (lastId) {
-			Storage.setChat(rootId, { lastId });
 		};
 
 		if (st <= 0) {
