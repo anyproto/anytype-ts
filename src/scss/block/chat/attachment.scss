@@ -74,7 +74,7 @@
 
 .attachments.withLayout { gap: 4px; }
 .attachments.withLayout {
-	.attachment { border-radius: 12px; height: auto; width: auto; aspect-ratio: 1; flex-shrink: 0; }
+	.attachment { border-radius: 12px; height: auto; width: auto; aspect-ratio: 1; flex-shrink: 0; min-width: unset; }
 }
 
 .attachments.layout-1 { max-width: 360px; }

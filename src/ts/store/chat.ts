@@ -4,13 +4,14 @@ import { I, M } from 'Lib';
 class ChatStore {
 
     public messageMap: Map<string, any[]> = observable(new Map());
-	public replyMap: Map<string, Map<string, I.ChatMessage>> = new Map();
+	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
 
     constructor () {
         makeObservable(this, {
 			add: action,
 			update: action,
 			delete: action,
+			setReply: action,
         });
     };
 
