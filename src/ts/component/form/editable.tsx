@@ -171,6 +171,10 @@ class Editable extends React.Component<Props> {
 		};
 
 		raf(() => {
+			if (!this._isMounted) {
+				return;
+			};
+
 			const el = $(this.refEditable).get(0);
 
 			el.focus({ preventScroll: true });
