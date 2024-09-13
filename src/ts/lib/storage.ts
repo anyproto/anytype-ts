@@ -11,7 +11,7 @@ const SPACE_KEYS = [
 	'scroll',
 	'defaultType',
 	'pinnedTypes',
-	'lastChatMessageId',
+	'chat',
 	'popupSearch',
 	'focus',
 	'openUrl',
@@ -436,17 +436,16 @@ class Storage {
 		return ret;
 	};
 
-	setLastChatMessageId (chatId: string, messageId: string) {
-		const map = this.get('lastChatMessageId') || {};
+	setChat (id: string, obj: any) {
+		const map = this.get('chat') || {};
 
-		map[chatId] = messageId;
-		this.set('lastChatMessageId', map);
+		map[id] = Object.assign(map[id] || {}, obj);
+		this.set('chat', map);
 	};
 
-	getLastChatMessageId (chatId: string) {
-		const map = this.get('lastChatMessageId') || {};
-
-		return map[chatId] || null;
+	getChat (id: string) {
+		const map = this.get('chat') || {};
+		return map[id] || {};
 	};
 	
 };

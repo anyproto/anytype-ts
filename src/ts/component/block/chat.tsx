@@ -52,7 +52,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const subId = this.getSubId();
 		const deps = this.getDeps().map(id => S.Detail.get(subId, id, []));
 		const length = messages.length;
-		const lastId = Storage.getLastChatMessageId(rootId);
+		const lastId = Storage.getChat(rootId).lastId;
 
 		const Section = (item: any) => {
 			let date = U.Date.dayString(item.createdAt);
@@ -125,7 +125,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const blockId = this.getBlockId();
-		const lastId = Storage.getLastChatMessageId(rootId);
+		const lastId = Storage.getChat(rootId).lastId;
 		const ns = blockId + U.Common.getEventNamespace(isPopup);
 
 		this._isMounted = true;
@@ -185,7 +185,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	unbind () {
 		const { isPopup, block } = this.props;
-		const events = [ 'messageAdd' ];
+		const events = [ 'messageAdd', 'updateReactions' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
@@ -204,6 +204,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				this.scrollToMessage(message.id);
 			};
 		});
+
+		win.on(`updateReactions.${ns}`, (e, message: I.ChatMessage) => this.scrollToMessage(message.id));
 	};
 
 	loadMessages (clear: boolean, callBack?: () => void) {
@@ -437,7 +439,9 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const messages = this.getMessages();
 		const dates = node.find('.section > .date');
 		const hh = J.Size.header;
-		const lastId = Storage.getLastChatMessageId(rootId);
+		const storage = Storage.getChat(rootId);
+
+		let lastId = '';
 
 		if (st > this.top) {
 			messages.forEach(it => {
@@ -451,10 +455,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					return false;
 				};
 
-				if ((it.id == lastId) && (st >= node.offset().top - co - ch)) {
-					Storage.setLastChatMessageId(rootId, '');
+				if (st >= node.offset().top - co - ch) {
+					lastId = it.id;
 				};
 			});
+		};
+
+		if (lastId) {
+			Storage.setChat(rootId, { lastId });
 		};
 
 		if (st <= 0) {

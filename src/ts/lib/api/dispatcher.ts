@@ -971,6 +971,8 @@ class Dispatcher {
 					if (message) {
 						set(message, { reactions: mapped.reactions });
 					};
+
+					$(window).trigger('updateReactions', [ message ]);
 					break;
 				};
 
