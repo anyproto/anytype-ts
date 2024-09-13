@@ -168,9 +168,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this._isMounted = false;
 		this.unbind();
 
-		C.ChatUnsubscribe(this.getRootId());
 		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
-
 		window.clearTimeout(this.timeoutInterface);
 	};
 
