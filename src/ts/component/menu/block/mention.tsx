@@ -98,7 +98,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		return (
 			<React.Fragment>
 				{!items.length && !isLoading ? (
-					<EmptySearch filter={filter} readonly={!canAdd} />
+					<EmptySearch text={translate('commonNothingFound')} />
 				) : ''}
 
 				{items.length ? (
@@ -346,13 +346,12 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	resize () {
 		const { getId, position } = this.props;
-		const { isLoading } = this.state;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 
 		let height = 16;
 		if (!items.length) {
-			height = isLoading ? height + 40 : 160;
+			height += HEIGHT_ITEM;
 		} else {
 			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
 		};

@@ -13,7 +13,7 @@ interface State {
 	isLoading: boolean;
 };
 
-const GROUP_TIME = 60;
+const GROUP_TIME = 300;
 
 const BlockChat = observer(class BlockChat extends React.Component<I.BlockComponent, State> {
 
@@ -174,7 +174,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	unbind () {
 		const { isPopup, block } = this.props;
-		const events = [ 'messageAdd', 'updateReactions' ];
+		const events = [ 'messageAdd' ];
 		const ns = block.id + U.Common.getEventNamespace(isPopup);
 
 		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
@@ -194,8 +194,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				this.scrollToMessage(message.id);
 			};
 		});
-
-		win.on(`updateReactions.${ns}`, (e, message: I.ChatMessage) => this.scrollToMessage(message.id));
 
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 	};
