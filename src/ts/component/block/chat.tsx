@@ -153,18 +153,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const deps = this.getDeps();
 		const replies = this.getReplies();
 
-		const cb = () => {
-			if (!U.Common.compareJSON(replies, this.replies)) {
-				this.replies = replies;
-				this.loadReplies(() => this.forceUpdate());
-			};
-		};
-
 		if (!U.Common.compareJSON(deps, this.deps)) {
 			this.deps = deps;
-			this.loadDeps(() => cb);
-		} else {
-			cb();
+			this.loadDeps(() => this.forceUpdate());
+		};
+
+		if (!U.Common.compareJSON(replies, this.replies)) {
+			this.replies = replies;
+			this.loadReplies(() => this.forceUpdate());
 		};
 	};
 
