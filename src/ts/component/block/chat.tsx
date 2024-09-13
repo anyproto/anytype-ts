@@ -50,7 +50,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const messages = this.getMessages();
 		const sections = this.getSections();
 		const subId = this.getSubId();
-		const deps = this.getDeps().map(id => S.Detail.get(subId, id, []));
+		const deps = this.getDeps().map(id => S.Detail.get(rootId, id, []));
 		const length = messages.length;
 		const lastId = Storage.getChat(rootId).lastId;
 
@@ -293,6 +293,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			keys: U.Data.chatRelationKeys(),
 		}, (message: any) => {
 			message.records.forEach(it => S.Detail.update(rootId, { id: it.id, details: it }, false));
+			this.forceUpdate();
 
 			if (callBack) {
 				callBack();

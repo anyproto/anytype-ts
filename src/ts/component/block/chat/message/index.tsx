@@ -103,6 +103,10 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			};
 		};
 
+		for (const item of attachments) {
+			const object = S.Detail.get(rootId, item.target, []);
+		};
+
 		const Reaction = (item: any) => {
 			const authors = item.authors || [];
 			const length = authors.length;
