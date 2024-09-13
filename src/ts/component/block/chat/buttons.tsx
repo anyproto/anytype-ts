@@ -83,7 +83,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 	};
 
 	onChatButton (e: React.MouseEvent, type: I.ChatButton) {
-		const { block, attachments, caretMenuParam, onMention, onMenuClose, onChatButtonSelect } = this.props;
+		const { block, caretMenuParam, onMention, onChatButtonSelect } = this.props;
 
 		switch (type) {
 			case I.ChatButton.Object: {
@@ -93,6 +93,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 			case I.ChatButton.Emoji: {
 				S.Menu.open('smile', {
+					element: `#button-${block.id}-${type}`,
 					...caretMenuParam(),
 					data: {
 						noHead: true,
@@ -120,7 +121,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		const menuParam: any = {
 			element: `#button-${block.id}-${type}`,
 			className: 'fixed',
-			offsetY: 6,
+			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
 			data: {} as any,
@@ -296,6 +297,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			S.Menu.open(menuItem, {
 				element: `#block-${blockId} #button-${blockId}-${I.ChatButton.Object}`,
 				className: 'chatAttachment',
+				offsetY: -8,
 				vertical: I.MenuDirection.Top,
 				noFlipX: true,
 				noFlipY: true,

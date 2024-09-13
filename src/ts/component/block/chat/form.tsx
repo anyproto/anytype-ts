@@ -871,6 +871,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		raf(() => {
 			S.Menu.open('blockMention', {
+				element: `#button-${blockId}-${I.ChatButton.Mention}`,
 				...this.caretMenuParam(),
 				data: {
 					rootId,
@@ -898,12 +899,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	caretMenuParam () {
-		const { blockId } = this.props;
 		const win = $(window);
 		const rect = U.Common.getSelectionRect();
 
 		return {
-			element: `#block-${blockId} #messageBox`,
 			className: 'fixed',
 			recalcRect: () => {
 				const rect = U.Common.getSelectionRect();
