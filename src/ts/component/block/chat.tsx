@@ -380,10 +380,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { account } = S.Auth;
 		const blockId = this.getBlockId();
 		const message = `#block-${blockId} #item-${item.id}`;
+		const isSelf = item.creator == account.id;
 
-		if (readonly || (item.creator != account.id)) {
+		if (readonly) {
 			return;
 		};
+
+		const options: any[] = [
+			{ id: 'reply', name: translate('blockChatReply') },
+			isSelf ? { id: 'edit', name: translate('commonEdit') } : null,
+			isSelf ? { id: 'delete', name: translate('commonDelete'), color: 'red' } : null,
+		].filter(it => it);
 
 		const menuParam: Partial<I.MenuParam> = {
 			vertical: I.MenuDirection.Bottom,
@@ -391,12 +398,14 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			onOpen: () => $(message).addClass('hover'),
 			onClose: () => $(message).removeClass('hover'),
 			data: {
-				options: [
-					{ id: 'edit', name: translate('commonEdit') },
-					{ id: 'delete', name: translate('commonDelete'), color: 'red' },
-				],
+				options,
 				onSelect: (e, option) => {
 					switch (option.id) {
+						case 'reply': {
+							this.refForm.onReply(item);
+							break;
+						};
+
 						case 'edit': {
 							this.refForm.onEdit(item);
 							break;
