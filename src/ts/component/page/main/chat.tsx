@@ -301,7 +301,7 @@ const PageMainChat = observer(class PageMainChat extends React.Component<I.PageC
 			const fh = Number(formWrapper.outerHeight(true)) || 0;
 			const ch = Number(controls.outerHeight(true)) || 0;
 			const hh = Number(head.outerHeight(true)) || 0;
-			const mh = scrollContainer.height() - headerHeight - fh - ch - hh - (check.withCover ? J.Size.coverPadding : 0) + 8;
+			const mh = scrollContainer.height() - headerHeight - fh - ch - hh - (check.withCover ? J.Size.coverPadding : 0);
 
 			scrollWrapper.css({ minHeight: mh });
 		});
