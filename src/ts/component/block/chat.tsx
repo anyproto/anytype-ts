@@ -133,17 +133,19 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		U.Common.getScrollContainer(isPopup).on(`scroll.${ns}`, e => this.onScroll(e));
 
 		this.loadMessages(true, () => {
-			const messages = this.getMessages();
-			const length = messages.length;
-			const isLast = length && (messages[length - 1].id == lastId);
-
 			this.loadReplies(() => {
 				this.loadDeps(() => {
-					if (!lastId || isLast) {
-						this.scrollToBottom();
-					} else {
-						this.scrollToMessage(lastId);
-					};
+					this.forceUpdate(() => {
+						const messages = this.getMessages();
+						const length = messages.length;
+						const isLast = length && (messages[length - 1].id == lastId);
+
+						if (!lastId || isLast) {
+							this.scrollToBottom();
+						} else {
+							this.scrollToMessage(lastId);
+						};
+					});
 				});
 			});
 		});
@@ -293,7 +295,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			keys: U.Data.chatRelationKeys(),
 		}, (message: any) => {
 			message.records.forEach(it => S.Detail.update(rootId, { id: it.id, details: it }, false));
-			this.forceUpdate();
 
 			if (callBack) {
 				callBack();
