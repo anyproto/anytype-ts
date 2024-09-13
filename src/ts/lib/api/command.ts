@@ -2208,3 +2208,12 @@ export const ChatUnsubscribe = (objectId: string, callBack?: (message: any) => v
 
 	dispatcher.request(ChatUnsubscribe.name, request, callBack);
 };
+
+export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Chat.GetMessagesByIds.Request();
+
+	request.setChatobjectid(objectId);
+	request.setMessageidsList(ids);
+
+	dispatcher.request(ChatGetMessagesByIds.name, request, callBack);
+};

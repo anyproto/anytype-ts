@@ -564,6 +564,12 @@ export const ChatGetMessages = (response: Rpc.Chat.GetMessages.Response) => {
 	};
 };
 
+export const ChatGetMessagesByIds = (response: Rpc.Chat.GetMessagesByIds.Response) => {
+	return {
+		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),
+	};
+};
+
 export const ChatSubscribeLastMessages = (response: Rpc.Chat.SubscribeLastMessages.Response) => {
 	return {
 		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),

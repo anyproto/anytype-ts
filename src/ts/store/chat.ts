@@ -4,6 +4,7 @@ import { I, M } from 'Lib';
 class ChatStore {
 
     public messageMap: Map<string, any[]> = observable(new Map());
+	public replyMap: Map<string, Map<string, I.ChatMessage>> = new Map();
 
     constructor () {
         makeObservable(this, {
@@ -50,12 +51,22 @@ class ChatStore {
 		this.set(rootId, this.getList(rootId).filter(it => it.id != id));
 	};
 
+	setReply (rootId: string, message: I.ChatMessage) {
+		const map = this.replyMap.get(rootId) || new Map();
+
+		map.set(message.id, message);
+
+		this.replyMap.set(rootId, map);
+	};
+
 	clear (rootId: string) {
 		this.messageMap.delete(rootId);
+		this.replyMap.delete(rootId);
 	};
 
 	clearAll () {
 		this.messageMap.clear();
+		this.replyMap.clear();
 	};
 
 	getList (rootId: string): any[] {
@@ -64,6 +75,10 @@ class ChatStore {
 
 	getMessage (rootId: string, id: string): I.ChatMessage {
 		return this.getList(rootId).find(it => it.id == id);
+	};
+
+	getReply (rootId: string, id: string): I.ChatMessage {
+		return this.replyMap.get(rootId)?.get(id);
 	};
 
 };

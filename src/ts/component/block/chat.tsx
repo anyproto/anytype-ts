@@ -21,6 +21,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	refList = null;
 	refForm = null;
 	deps: string[] = [];
+	replies: string[] = [];
 	messageRefs: any = {};
 	timeoutInterface = 0;
 	top = 0;
@@ -136,22 +137,34 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			const length = messages.length;
 			const isLast = length && (messages[length - 1].id == lastId);
 
-			this.loadDeps(() => {
-				if (!lastId || isLast) {
-					this.scrollToBottom();
-				} else {
-					this.scrollToMessage(lastId);
-				};
+			this.loadReplies(() => {
+				this.loadDeps(() => {
+					if (!lastId || isLast) {
+						this.scrollToBottom();
+					} else {
+						this.scrollToMessage(lastId);
+					};
+				});
 			});
 		});
 	};
 
 	componentDidUpdate () {
 		const deps = this.getDeps();
+		const replies = this.getReplies();
+
+		const cb = () => {
+			if (!U.Common.compareJSON(replies, this.replies)) {
+				this.replies = replies;
+				this.loadReplies(() => this.forceUpdate());
+			};
+		};
 
 		if (!U.Common.compareJSON(deps, this.deps)) {
 			this.deps = deps;
-			this.loadDeps(() => this.forceUpdate());
+			this.loadDeps(() => cb);
+		} else {
+			cb();
 		};
 	};
 
@@ -250,6 +263,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		return deps;
 	};
 
+	getReplies () {
+		return this.getMessages().filter(it => it.replyToMessageId).map(it => it.replyToMessageId);
+	};
+
 	getSubId (): string {
 		return S.Record.getSubId(this.getRootId(), this.getBlockId());
 	};
@@ -265,6 +282,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
+		this.deps = deps;
+
 		U.Data.subscribeIds({
 			subId: this.getSubId(),
 			ids: deps,
@@ -272,6 +291,30 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			keys: U.Data.chatRelationKeys(),
 		}, (message: any) => {
 			message.records.forEach(it => S.Detail.update(rootId, { id: it.id, details: it }, false));
+
+			if (callBack) {
+				callBack();
+			};
+		});
+	};
+
+	loadReplies (callBack?: () => void) {
+		const rootId = this.getRootId();
+		const replies = this.getReplies();
+
+		if (!replies.length) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
+		this.replies = replies;
+
+		C.ChatGetMessagesByIds(rootId, replies, (message: any) => {
+			if (!message.error.code) {
+				message.messages.forEach(it => S.Chat.setReply(rootId, it));
+			};
 
 			if (callBack) {
 				callBack();

@@ -51,7 +51,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 		let reply = null;
 		if (replyToMessageId) {
-			const replyToMessage = S.Chat.getMessage(rootId, replyToMessageId);
+			const replyToMessage = S.Chat.getReply(rootId, replyToMessageId);
 			if (replyToMessage) {
 				const author = U.Space.getParticipant(U.Space.getParticipantId(space, replyToMessage.creator));
 				const text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(replyToMessage.content.text, replyToMessage.content.marks)));
