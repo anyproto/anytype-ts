@@ -175,6 +175,8 @@ class UtilFile {
 		const name = String(object.name || '');
 		const fileExt = String(object.fileExt || '');
 
+		console.log(object);
+
 		if (!fileExt || new RegExp(`\\.${U.Common.regexEscape(fileExt)}$`).test(name)) {
 			return name;
 		};

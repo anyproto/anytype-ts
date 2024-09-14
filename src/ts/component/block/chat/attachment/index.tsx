@@ -198,7 +198,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	renderAudio () {
 		const { object } = this.props;
 		const playlist = [ 
-			{ name: object.name, src: S.Common.fileUrl(object.id) },
+			{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
 		];
 
 		return <MediaAudio playlist={playlist} />;
