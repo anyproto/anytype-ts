@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, S, U, J, keyboard, focus, translate, analytics } from 'Lib';
+import { I, S, U, J, keyboard, focus, translate, analytics, Preview } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface State {
@@ -236,6 +236,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		close();
 		focus.apply();
+		Preview.previewHide();
 	};
 
 	getSections () {
