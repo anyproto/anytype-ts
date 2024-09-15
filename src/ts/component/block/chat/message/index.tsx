@@ -50,8 +50,6 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const cn = [ 'message' ];
 		const ca = [ 'attachments', attachmentsLayout ];
 
-		console.log('canAddReaction', canAddReaction);
-
 		let reply = null;
 		if (replyToMessageId) {
 			const replyToMessage = S.Chat.getReply(rootId, replyToMessageId);
