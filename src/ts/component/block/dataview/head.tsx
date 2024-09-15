@@ -51,7 +51,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		let icon = null;
 		if (targetObjectId && !isCollection) {
-			icon = <Icon id="head-source-select" className="source" onClick={this.onSource} />;
+			icon = <Icon id="head-source-select" className="source withBackground" onClick={this.onSource} />;
 		} else {
 			icon = <div id="head-source-select" />;
 		};

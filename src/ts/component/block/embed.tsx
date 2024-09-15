@@ -112,7 +112,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				</div>
 			);
 		} else {
-			source = <Icon className="source" onMouseDown={this.onEdit} />;
+			source = <Icon className="source withBackground" onMouseDown={this.onEdit} />;
 			placeholder = U.Common.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 			empty = !text ? U.Common.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 

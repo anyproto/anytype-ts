@@ -115,10 +115,7 @@
 			.dropzone.isDraggingOver { background: var(--color-system-drop-zone); }
 
 			.dropzone {
-				.icon.coverUpload { 
-					width: 28px; height: 28px; background-image: url('~img/icon/cover/upload.svg');
-					display: block; 
-				}
+				.icon.coverUpload { width: 28px; height: 28px; background-image: url('~img/icon/cover/upload.svg'); display: block; }
 				.label {
 					span { color: var(--color-text-secondary); }
 				}
