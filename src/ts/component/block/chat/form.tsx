@@ -56,7 +56,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.onAddFiles = this.onAddFiles.bind(this);
+		this.addFiles = this.addFiles.bind(this);
 		this.onSend = this.onSend.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onEditClear = this.onEditClear.bind(this);
@@ -158,7 +158,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 							onChatButtonSelect={this.onChatButtonSelect}
 							onTextButtonToggle={this.onTextButtonToggle}
 							getObjectFromPath={this.getObjectFromPath}
-							onAddFiles={this.onAddFiles}
+							addFiles={this.addFiles}
 							onMenuClose={this.onMenuClose}
 							removeBookmark={this.removeBookmark}
 						/>
@@ -180,14 +180,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		if (storage) {
 			const text = String(storage.text || '');
 			const marks = storage.marks || [];
-			const attachments = storage.attachments || [];
+			const attachments = this.checkLimit('attachments', storage.attachments || []);
 			const length = text.length;
 
 			this.marks = marks;
 			this.updateMarkup(text, length, length);
 
 			if (attachments) {
-				this.setState({ attachments });
+				this.setAttachments(attachments);
 			};
 		};
 	};
@@ -439,7 +439,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		if (list.length) {
-			this.setState({ files: files.concat(list) });
+			this.addFiles(list);
 		};
 	};
 
@@ -477,18 +477,20 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
 
-		this.onAddFiles(list, scrollToBottom);
+		this.addFiles(list, scrollToBottom);
 		keyboard.disableCommonDrop(false);
 	};
 
-	onAddFiles (list: any[], callBack?: () => void) {
-		const { files } = this.state;
+	addFiles (list: any[], callBack?: () => void) {
+		this.setFiles(list.concat(this.state.files), callBack);
+	};
 
-		this.setState({ files: files.concat(list) }, () => {
-			if (callBack) {
-				callBack();
-			};
-		});
+	setAttachments (list: any[], callBack?: () => void) {
+		this.setState({ attachments: this.checkLimit('attachments', list) }, callBack);
+	};
+
+	setFiles (list: any[], callBack?: () => void) {
+		this.setState({ files: this.checkLimit('files', list) }, callBack);
 	};
 
 	onSend () {
@@ -610,7 +612,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.replyingId = '';
 		this.updateMarkup(text, l, l);
 
-		this.setState({ attachments }, () => {
+		this.setAttachments(attachments, () => {
 			this.refEditable.setRange(this.range);
 		});
 	};
@@ -697,7 +699,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		switch (type) {
 			case I.ChatButton.Object: {
-				this.setState({ attachments: attachments.concat(item) }, () => scrollToBottom());
+				this.setAttachments([ item ].concat(attachments), () => scrollToBottom());
 				break;
 			};
 
@@ -742,7 +744,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					object.isTmp = true;
 
 					attachments.unshift(object);
-					this.setState({ attachments	});
+					this.setAttachments(attachments);
 				});
 				break;
 			};
@@ -814,7 +816,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				isTmp: true,
 			});
 
-			this.setState({ files });
+			this.setFiles(files);
 		};
 
 		C.LinkPreview(url, (message: any) => {
@@ -839,7 +841,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		});
 
 		if (files.length != filtered.length) {
-			this.setState({ files: filtered });
+			this.setFiles(filtered);
 		};
 	};
 
@@ -848,7 +850,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const filtered = files.filter(it => U.Object.isBookmarkLayout(it.layout) && (it.source != url));
 
 		if (files.length != filtered.length) {
-			this.setState({ files: filtered });
+			this.setFiles(filtered);
 		};
 	};
 
@@ -930,6 +932,16 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	hasSelection (): boolean {
 		return this.range ? this.range.to - this.range.from > 0 : false;
+	};
+
+	checkLimit (type: string, list: any[]) {
+		const limit = J.Constant.limit.chat;
+
+		if (list.length > limit[type]) {
+			list = list.slice(0, limit[type]);
+		};
+
+		return list;
 	};
 
 	updateMarkup (value: string, from: number, to: number) {

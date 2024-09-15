@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
-import { I, S, U, C, Mark, translate, Preview } from 'Lib';
+import { I, S, U, C, J, Mark, translate, Preview } from 'Lib';
 
 import Attachment from '../attachment';
 
@@ -46,8 +46,11 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const hasAttachments = attachments.length;
 		const isSelf = creator == account.id;
 		const attachmentsLayout = this.getAttachmentsClass();
+		const canAddReaction = this.canAddReaction();
 		const cn = [ 'message' ];
 		const ca = [ 'attachments', attachmentsLayout ];
+
+		console.log('canAddReaction', canAddReaction);
 
 		let reply = null;
 		if (replyToMessageId) {
@@ -172,7 +175,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 								{reactions.map((item: any, i: number) => (
 									<Reaction key={i} {...item} />
 								))}
-								{!readonly ? (
+								{!readonly && canAddReaction ? (
 									<Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} />
 								) : ''}
 							</div>
@@ -185,7 +188,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 					{!readonly ? (
 						<div className="controls">
-							{!hasReactions ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} /> : ''}
+							{!hasReactions && canAddReaction ? <Icon id="reaction-add" className="reactionAdd" onClick={this.onReactionAdd} tooltip={translate('blockChatReactionAdd')} /> : ''}
 							<Icon id="message-reply" className="messageReply" onClick={onReply} tooltip={translate('blockChatReply')} />
 							<Icon className="more" onClick={onMore} />
 						</div>
@@ -314,6 +317,24 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			c.push(`withLayout ${ml >= 10 ? `layout-10` : `layout-${ml}`}`);
 		};
 		return c.join(' ');
+	};
+
+	canAddReaction (): boolean {
+		const { account } = S.Auth;
+		const { rootId, id } = this.props;
+		const message = S.Chat.getMessage(rootId, id);
+		const reactions = message.reactions || [];
+		const { self, all } = J.Constant.limit.chat.reactions;
+
+		let cntSelf = 0;
+
+		reactions.forEach(it => {
+			if (it.authors.includes(account.id)) {
+				cntSelf++;
+			};
+		});
+
+		return (cntSelf < self) && (reactions.length < all);
 	};
 
 });

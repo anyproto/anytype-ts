@@ -39,10 +39,15 @@ export default {
 		graphDepth:		 5,
 
 		chat: {
-			messages:	 100,
-			attachments: 10,
-			mentions:	 10,
-			text:		 2000,
+			messages:		 100,
+			attachments:	 10,
+			files:			 10,
+			mentions:		 10,
+			text:			 2000,
+			reactions:		 {
+				self:		 10,
+				all:		 20,
+			},
 		}
 	},
 
