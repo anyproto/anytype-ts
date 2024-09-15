@@ -21,8 +21,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 	node = null;
 	refList = null;
 	refForm = null;
-	deps: string[] = [];
-	replies: string[] = [];
+	deps: string[] = null;
+	replies: string[] = null;
 	messageRefs: any = {};
 	timeoutInterface = 0;
 	top = 0;
@@ -153,12 +153,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const deps = this.getDeps();
 		const replies = this.getReplies();
 
-		if (!U.Common.compareJSON(deps, this.deps)) {
+		if (this.deps && !U.Common.compareJSON(deps, this.deps)) {
 			this.deps = deps;
 			this.loadDeps(() => this.forceUpdate());
 		};
 
-		if (!U.Common.compareJSON(replies, this.replies)) {
+		if (this.replies && !U.Common.compareJSON(replies, this.replies)) {
 			this.replies = replies;
 			this.loadReplies(() => this.forceUpdate());
 		};
@@ -274,8 +274,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			return;
 		};
 
-		this.deps = deps;
-
 		U.Data.subscribeIds({
 			subId: this.getSubId(),
 			ids: deps,
@@ -300,8 +298,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			};
 			return;
 		};
-
-		this.replies = replies;
 
 		C.ChatGetMessagesByIds(rootId, replies, (message: any) => {
 			if (!message.error.code) {
