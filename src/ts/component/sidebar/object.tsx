@@ -331,25 +331,31 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onSort (e: any) {
 		const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType);
 
+		let menuContext = null;
+
 		S.Menu.open('select', {
 			element: '#sidebar #containerObject #button-object-sort',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
+			onOpen: context => menuContext = context,
 			data: {
 				options,
-				value: this.sortId,
+				noClose: true,
 				onSelect: (e: any, item: any) => {
 					this.sortId = item.id;
 					this.sortType = item.type;
 					this.load(true);
 
 					const storage = this.storageGet();
+					const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType);
 					
 					storage.sort[this.type] = { id: item.id, type: item.type };
 
 					this.storageSet(storage);
+
+					menuContext.ref.updateOptions(options);
 				},
 			}
 		});
