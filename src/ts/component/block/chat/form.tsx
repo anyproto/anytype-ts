@@ -472,8 +472,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		const { scrollToBottom } = this.props;
 		const node = $(this.node);
-		const list = Array.from(e.dataTransfer.files).map((it: File) => this.getObjectFromFile(it));
-		
+		const electron = U.Common.getElectron();
+		const list = Array.from(e.dataTransfer.files).map((it: File) => this.getObjectFromFile(it)).filter(it => {
+			return !electron.isDirectory(it.path);
+		});
+
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
 
