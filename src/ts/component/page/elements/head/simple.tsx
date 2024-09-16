@@ -122,7 +122,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			<div ref={node => this.node = node} className={cn.join(' ')}>
 				<div className="side left">
 					<div className="titleWrap">
-						{!noIcon ? (
+						{!noIcon && check.withIcon ? (
 							<IconObject 
 								id={'block-icon-' + rootId} 
 								size={32} 
