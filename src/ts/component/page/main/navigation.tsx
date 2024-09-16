@@ -46,7 +46,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		this.onConfirm = this.onConfirm.bind(this);
 		this.onOver = this.onOver.bind(this);
-		this.onTab = this.onTab.bind(this);
 	};
 	
 	render () {
@@ -154,9 +153,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					ref={ref => this.refHeader = ref} 
 					component="mainNavigation" 
 					rootId={rootId} 
-					tabs={U.Menu.getGraphTabs()} 
-					tab="navigation" 
-					onTab={this.onTab}
 					layout={I.ObjectLayout.Navigation}
 				/>
 
@@ -495,14 +491,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			root = U.Space.getLastOpened()?.id;
 		};
 		return root;
-	};
-
-	onTab (id: string) {
-		const tab = U.Menu.getGraphTabs().find(it => it.id == id);
-
-		if (tab) {
-			U.Object.openAuto({ id: this.getRootId(), layout: tab.layout });
-		};
 	};
 
 });
