@@ -67,7 +67,7 @@
 		.item.active { background: none; border-color: var(--color-system-accent-100) !important; box-shadow: 0px 0px 0px 1px var(--color-system-accent-100) inset; }
 		.item.active::before { background-image: url('~img/arrow/nav1.svg'); }
 
-		.item.empty { line-height: 78px; cursor: default; padding: 0px 16px; }
+		.item.empty { height: 80px; cursor: default; padding: 12px; }
 		.item.empty {
 			.name { display: inline-block; vertical-align: middle; }
 		}

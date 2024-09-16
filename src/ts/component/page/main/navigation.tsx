@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription, ObjectType } from 'Component';
+import { Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
 import { I, C, S, U, keyboard, focus, translate } from 'Lib';
 
 import Item from 'Component/sidebar/object/item';
@@ -82,16 +82,13 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			);
 		};
 
-		const ItemEmpty = (item: any) => {
-			return (
-				<div className="row">
-					<div className="item empty">
-						<div className="name">{item.name}</div>
-						<Icon className="arrow" />
-					</div>
+		const ItemEmpty = (item: any) => (
+			<div className="row">
+				<div className="item empty">
+					<div className="name">{item.name}</div>
 				</div>
-			);
-		};
+			</div>
+		);
 
 		const Selected = (item: any) => {
 			const { id, name, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
