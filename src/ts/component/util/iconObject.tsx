@@ -248,7 +248,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				};
 
 				const key = iconSize < 28 ? 'small' : 'big';
-				const src = require(`img/icon/relation/${key}/${relationFormat}.svg`).default;
+				const name = U.Common.toCamelCase(I.RelationType[relationFormat]);
+				const src = require(`img/icon/relation/${key}/${name}.svg`).default;
 
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 				icon = <img src={src} className={icn.join(' ')} />;
