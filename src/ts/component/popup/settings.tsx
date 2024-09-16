@@ -144,7 +144,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			if (action.id == 'account') {
 				if (participant) {
 					name = participant?.globalName || participant?.name;
-					icon = <IconObject object={{ ...participant, name }} size={36} iconSize={36} forceLetter={true} />;
+					icon = <IconObject object={{ ...participant, name }} size={36} iconSize={36} withDefault={true} />;
 				};
 
 				cn.push('itemAccount');

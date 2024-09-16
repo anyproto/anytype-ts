@@ -34,8 +34,6 @@
 				display: flex; flex-direction: column; justify-content: space-between;
 			}
 			> .side.left {
-				.iconObject.withLetter { background-color: var(--color-shape-primary); }
-
 				.section { margin: 0px 0px 12px 0px; }
 				.section.account { margin-bottom: 8px; }
 				.section:last-child { margin: 0px; }
