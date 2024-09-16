@@ -134,7 +134,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		this.loadMessages(true, () => {
 			this.loadReplies(() => {
+				this.replies = this.getReplies();
+
 				this.loadDeps(() => {
+					this.deps = this.getDeps();
+
 					this.setState({ isLoading: false }, () => {
 						const messages = this.getMessages();
 						const length = messages.length;
