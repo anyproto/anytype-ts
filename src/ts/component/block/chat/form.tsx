@@ -404,7 +404,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { from } = this.range;
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
-		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.getObjectFromFile(it));
+		const electron = U.Common.getElectron();
+		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.getObjectFromFile(it)).filter(it => {
+			return !electron.isDirectory(it.path);
+		});
 
 		let value = this.getTextValue();
 		let url = U.Common.matchUrl(text);
