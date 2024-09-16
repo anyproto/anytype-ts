@@ -342,6 +342,10 @@ class UtilObject {
 		return layout == I.ObjectLayout.Image;
 	};
 
+	isDateLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Date;
+	};
+
 	// --------------------------------------------------------- //
 
 	getPageLayouts (): I.ObjectLayout[] {
