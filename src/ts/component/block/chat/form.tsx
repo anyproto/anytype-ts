@@ -15,6 +15,7 @@ interface Props extends I.BlockComponent {
 	scrollToBottom: () => void;
 	scrollToMessage: (id: string) => void;
 	getMessages: () => I.ChatMessage[];
+	loadDeps: (callBack?: () => void) => void;
 };
 
 interface State {
@@ -174,7 +175,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this._isMounted = true;
 		this.checkSendButton();
 
-		const { rootId } = this.props;
+		const { rootId, loadDeps } = this.props;
 		const storage = Storage.getChat(rootId);
 
 		if (storage) {
@@ -187,7 +188,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.updateMarkup(text, length, length);
 
 			if (attachments) {
-				this.setAttachments(attachments);
+				this.setAttachments(attachments, () => loadDeps());
 			};
 		};
 	};
@@ -401,7 +402,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		e.preventDefault();
 
 		const { from } = this.range;
-		const { files } = this.state;
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
 		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.getObjectFromFile(it));
