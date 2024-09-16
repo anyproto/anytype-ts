@@ -335,6 +335,7 @@ class MenuObject extends React.Component<I.Menu> {
 						onClick: (details: any) => {
 							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 								Action.addToCollection(message.objectId, [ rootId ]);
+								U.Object.openAuto(message.details);
 							});
 						},
 					},
