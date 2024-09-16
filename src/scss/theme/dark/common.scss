@@ -322,11 +322,11 @@ html.themeDark {
         .icon.close { background-color: var(--color-bg-secondary); }
     }
 
-	@import "./menu.scss";
-    @import "./popup.scss";
-    @import "./page.scss";
-    @import "./block.scss";
-	@import "./widget.scss";
+	@import "./menu";
+    @import "./popup";
+    @import "./page";
+    @import "./block";
+	@import "./widget";
 }
 
 html.platformWindows.themeDark, html.platformLinux.themeDark {

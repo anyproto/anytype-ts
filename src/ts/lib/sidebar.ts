@@ -13,8 +13,6 @@ class Sidebar {
 		isClosed: false,
 	};
 	obj: JQuery<HTMLElement> = null;
-	containerWidget: JQuery<HTMLElement> = null;
-	containerObject: JQuery<HTMLElement> = null;
 	page: JQuery<HTMLElement> = null;
 	header: JQuery<HTMLElement> = null;
 	footer: JQuery<HTMLElement> = null;
@@ -57,8 +55,6 @@ class Sidebar {
 
 	initObjects () {
 		this.obj = $('#sidebar');
-		this.containerWidget = this.obj.find('#containerWidget');
-		this.containerObject = this.obj.find('#containerObject');
 		this.page = $('#page.isFull');
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
@@ -74,8 +70,6 @@ class Sidebar {
 		if (!this.obj || !this.obj.length || this.isAnimating || isClosed) {
 			return;
 		};
-
-		S.Common.showObjectSet(false);
 
 		this.obj.addClass('anim');
 		this.setElementsWidth(width);
@@ -134,8 +128,8 @@ class Sidebar {
 	};
 
 	setElementsWidth (width: any): void {
-		this.containerWidget.find('> .head').css({ width });
-		this.containerWidget.find('> .body').css({ width });
+		this.obj.find('> .head').css({ width });
+		this.obj.find('> .body').css({ width });
 	};
 
 	setWidth (w: number): void {
@@ -287,7 +281,7 @@ class Sidebar {
 
 		const width = v.isClosed ? 0 : v.width;
 
-		this.containerWidget.css({ width });
+		this.obj.css({ width });
 	};
 
 	/**
@@ -330,7 +324,6 @@ class Sidebar {
 
 	objectContainerToggle () {
 		S.Common.showObjectSet(!S.Common.showObject);
-		requestAnimationFrame(() => this.resizePage(null, false));
 	};
 
 };

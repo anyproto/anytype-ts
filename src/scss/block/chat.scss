@@ -30,8 +30,8 @@
 			> .date.hide { opacity: 0; }
 		}
 
-		@import "./chat/attachment.scss";
-		@import "./chat/message.scss";
-		@import "./chat/form.scss";
+		@import "./chat/attachment";
+		@import "./chat/message";
+		@import "./chat/form";
 	}
 }
