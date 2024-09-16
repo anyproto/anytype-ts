@@ -30,7 +30,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 				/>
 
 				<div className="wrapper">
-					<IconObject object={space} size={96} forceLetter={true} />
+					<IconObject object={space} size={96} withDefault={true} />
 					<Title text={space.name} />
 					<Label text={translate('pageMainEmptyDescription')} />
 							

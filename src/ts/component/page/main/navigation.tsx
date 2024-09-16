@@ -58,7 +58,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			const { id, layout, name, snippet } = item || {};
 			const isFile = U.Object.isInFileLayouts(layout);
 			const cn = [ 'item', U.Data.layoutClass(id, layout) ];
-			const iconSize = isFile ? 48 : 24;
+			const iconSize = isFile ? 48 : null;
 
 			let description = null;
 			if (isFile) {
@@ -76,7 +76,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					onMouseLeave={() => this.unsetActive()}
 				>
 					<div className="inner" onClick={e => this.onClick(e, item)}>
-						<IconObject object={item} forceLetter={true} size={48} iconSize={iconSize} />
+						<IconObject object={item} withDefault={true} size={48} iconSize={iconSize} />
 						<div className="info">
 							<ObjectName object={item} />
 							{description}
@@ -118,7 +118,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			const { id, name, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
 			const isFile = U.Object.isInFileLayouts(layout);
 			const cn = [ 'item', U.Data.layoutClass(id, layout), 'selected' ];
-			const iconSize = isFile ? 48 : 24;
+			const iconSize = isFile ? 48 : null;
 
 			let description = null;
 			if (isFile) {
@@ -130,7 +130,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 			return (
 				<div id={`item-${id}`} className={cn.join(' ')}>
-					<IconObject object={item} forceLetter={true} size={48} iconSize={iconSize} />
+					<IconObject object={item} withDefault={true} size={48} iconSize={iconSize} />
 					<ObjectName object={item} />
 					{description}
 					

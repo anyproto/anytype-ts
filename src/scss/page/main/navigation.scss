@@ -17,9 +17,7 @@
 		}
 		.item {
 			.inner { padding: 12px; display: flex; align-items: center; gap: 0px 16px; height: 100%; }
-
-			.iconObject { flex-shrink: 0; background: var(--color-shape-primary); border-radius: 6px; }
-			.iconObject.isTask { background: none; }
+			.iconObject { flex-shrink: 0; background: var(--color-shape-tertiary); border-radius: 6px; }
 
 			.info { border: 0px; flex-grow: 1; width: calc(100% - 64px); }
 			.name { width: 100%; line-height: 22px; height: 22px; @include text-overflow-nw;  }

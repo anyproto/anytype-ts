@@ -852,7 +852,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				noFlipY: true,
 				data: {
 					options,
-					forceLetter: true,
+					withDefault: true,
 					onSelect: (e: any, item: any) => {
 						U.Object.openAuto(item);
 					}

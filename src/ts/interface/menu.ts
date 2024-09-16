@@ -80,7 +80,7 @@ export interface MenuItem {
 	readonly?: boolean;
 	style?: any;
 	iconSize?: number;
-	forceLetter?: boolean;
+	withDefault?: boolean;
 	options?: I.Option[];
 	selectMenuParam?: any;
 	isActive?: boolean;
