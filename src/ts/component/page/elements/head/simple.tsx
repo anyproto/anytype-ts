@@ -128,7 +128,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 								size={32} 
 								iconSize={32}
 								object={object} 
-								forceLetter={true}
 								canEdit={canEditIcon} 
 							/>
 						) : ''}

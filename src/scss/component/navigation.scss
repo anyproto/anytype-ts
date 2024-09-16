@@ -13,7 +13,7 @@
 	.inner { display: flex; flex-direction: row; gap: 0px 20px; align-items: center; justify-content: center; position: relative; z-index: 1; }
 
 	.iconWrap { 
-		width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; 
+		width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; 
 		position: relative; transition: $transitionAllCommon;
 	}
 	.iconWrap:not(.disabled):hover, .iconWrap.active { background-color: rgba(37, 37, 37, 0.15); }

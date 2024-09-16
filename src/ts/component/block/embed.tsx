@@ -55,7 +55,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	render () {
-		const { isOnline } = S.Common;
+		const { isOnline, theme } = S.Common;
 		const { isShowing, isEditing } = this.state;
 		const { readonly, block } = this.props;
 		const { content, fields, hAlign } = block;
@@ -188,8 +188,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setText(block.content.text);
 		this.setValue(this.text);
 		this.setContent(this.text);
-		this.rebind();
 		this.onScroll();
+		this.rebind();
 	};
 
 	rebind () {

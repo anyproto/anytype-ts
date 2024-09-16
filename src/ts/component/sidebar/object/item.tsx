@@ -5,11 +5,13 @@ import { IconObject, ObjectName, ObjectDescription, ObjectType } from 'Component
 import { U, S } from 'Lib';
 
 interface Props {
-	rootId: string;
 	item: any;
-	style: any;
-	onClick: (item: any) => void;
-	onContext: (item: any) => void;
+	style?: any;
+	isActive?: boolean;
+	onClick?: (item: any) => void;
+	onContext?: (item: any) => void;
+	onMouseEnter?: (item: any) => void;
+	onMouseLeave?: (item: any) => void;
 };
 
 const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
@@ -17,7 +19,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 	node = null;
 
     render() {
-		const { rootId, item, style, onClick, onContext } = this.props;
+		const { item, style, isActive, onClick, onContext, onMouseEnter, onMouseLeave } = this.props;
 		const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
 		const type = S.Record.getTypeById(item.type);
 		const isFile = U.Object.isInFileLayouts(item.layout);
@@ -35,7 +37,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 			iconLarge = <IconObject object={item} size={48} iconSize={iconSize} />;
 		};
 
-		if (item.id == rootId) {
+		if (isActive) {
 			cn.push('active');
 		};
 
@@ -49,10 +51,13 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 		return (
 			<div 
 				ref={ref => this.node = ref}
+				id={`item-${item.id}`}
 				className={cn.join(' ')} 
 				style={style}
 				onClick={onClick}
 				onContextMenu={onContext}
+				onMouseEnter={onMouseEnter}
+				onMouseLeave={onMouseLeave}
 			>
 				{iconLarge}
 				<div className="info">

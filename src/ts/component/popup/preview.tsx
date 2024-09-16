@@ -44,7 +44,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		if (object) {
 			name = <ObjectName object={object} />;
-			menu = <Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />;
+			menu = <Icon id="button-header-more" tooltip="Menu" className="more withBackground" onClick={this.onMore} />;
 		};
 
 		return (

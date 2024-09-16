@@ -41,8 +41,7 @@
 			.tab { display: inline-block; @include text-header3; color: var(--color-control-active); transition: $transitionAllCommon; }
 			.tab:hover, .tab.active { color: var(--color-text-primary); }
 
-			.icon.sort { width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/store/sort.svg'); border-radius: 6px; }
-			.icon.sort:hover, .icon.sort.hover { background-color: var(--color-shape-highlight-medium); }
+			.icon.sort { background-image: url('~img/icon/store/sort.svg'); }
 		}
 
 		.loaderWrapper { position: relative !important; }
