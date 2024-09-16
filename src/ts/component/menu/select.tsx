@@ -98,7 +98,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 						onClick={e => this.onClick(e, item)} 
 						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						style={item.style}
-						withDefault={withDefault}
 					/>
 				);
 			};

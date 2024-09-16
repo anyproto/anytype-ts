@@ -57,7 +57,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		};
 
 		if (object) {
-			iconMainElement = <IconObject object={object} size={iconSize} withDefault={withDefault} />;
+			iconMainElement = <IconObject object={object} size={iconSize} />;
 
 			if (object.isHidden) {
 				cn.push('isHidden');

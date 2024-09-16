@@ -103,7 +103,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							id="spaceIcon"
 							size={96}
 							object={space}
-							withDefault={true}
 							canEdit={canWrite}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
 							onSelect={this.onSelect}

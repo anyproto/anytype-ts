@@ -29,10 +29,10 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 		if (U.Object.isTypeOrRelationLayout(item.layout)) {
 			const size = U.Object.isTypeLayout(item.layout) ? 18 : 20;
 
-			iconSmall = <IconObject object={item} size={size} iconSize={18} withDefault={true} />;
+			iconSmall = <IconObject object={item} size={size} iconSize={18} />;
 		} else {
 			const iconSize = isFile ? 48 : null;
-			iconLarge = <IconObject object={item} size={48} iconSize={iconSize} withDefault={true} />;
+			iconLarge = <IconObject object={item} size={48} iconSize={iconSize} />;
 		};
 
 		if (item.id == rootId) {

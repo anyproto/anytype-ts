@@ -76,7 +76,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					onMouseLeave={() => this.unsetActive()}
 				>
 					<div className="inner" onClick={e => this.onClick(e, item)}>
-						<IconObject object={item} withDefault={true} size={48} iconSize={iconSize} />
+						<IconObject object={item} size={48} iconSize={iconSize} />
 						<div className="info">
 							<ObjectName object={item} />
 							{description}
@@ -130,7 +130,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 			return (
 				<div id={`item-${id}`} className={cn.join(' ')}>
-					<IconObject object={item} withDefault={true} size={48} iconSize={iconSize} />
+					<IconObject object={item} size={48} iconSize={iconSize} />
 					<ObjectName object={item} />
 					{description}
 					

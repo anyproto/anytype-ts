@@ -130,7 +130,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		return (
 			<div className="clickable" onClick={this.onOpen}>
-				<IconObject object={object} size={48} iconSize={iconSize} withDefault={true} />
+				<IconObject object={object} size={48} iconSize={iconSize} />
 
 				<div className="info">
 					<ObjectName object={object} />
@@ -147,7 +147,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			<div className="clickable" onClick={this.onOpen}>
 				<div className="info">
 					<div className="descr">
-						<IconObject object={object} size={14} withDefault={true} />
+						<IconObject object={object} size={14} />
 						<div className="url">{U.Common.shortUrl(object.source)}</div>
 					</div>
 					<ObjectName object={object} />

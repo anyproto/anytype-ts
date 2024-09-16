@@ -96,7 +96,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 						description={type ? type.name : undefined}
 						style={param.style}
 						iconSize={40}
-						withDefault={true}
 						className={cn.join(' ')}
 					/>
 				);

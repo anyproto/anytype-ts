@@ -21,7 +21,6 @@ interface Props {
 	tooltip?: string;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	color?: string;
-	withDefault?: boolean;
 	noGallery?: boolean;
 	noUpload?: boolean;
 	noRemove?: boolean;
@@ -133,7 +132,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	render () {
-		const { className, size, canEdit, withDefault, style } = this.props;
+		const { className, size, canEdit, style } = this.props;
 		const { theme } = S.Common;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
@@ -153,6 +152,10 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		let icn = [];
 
 		const defaultIcon = (type: string) => {
+			if (!DefaultIcons.includes(type)) {
+				return;
+			};
+
 			cn.push('withDefault');
 			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 			icon = <img src={this.defaultIcon(type)} className={icn.join(' ')} />;
@@ -167,8 +170,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-				} else 
-				if (withDefault) {
+				} else {
 					defaultIcon('page');
 				};
 				break;
@@ -181,8 +183,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-				} else 
-				if (withDefault) {
+				} else {
 					defaultIcon('chat');
 				};
 				break;
@@ -195,8 +196,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 				if (iconEmoji || iconImage) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-				} else 
-				if (withDefault) {
+				} else {
 					defaultIcon('set');
 				};
 				break;
@@ -226,17 +226,14 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			};
 
 			case I.ObjectLayout.Note: {
-				if (withDefault) {
-					defaultIcon('page');
-				};
+				defaultIcon('page');
 				break;
 			};
 
 			case I.ObjectLayout.Type: {
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-				} else 
-				if (withDefault) {
+				} else {
 					defaultIcon('type');
 				};
 				break;
@@ -260,8 +257,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				if (iconImage) {
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
-				} else
-				if (withDefault) {
+				} else {
 					defaultIcon('bookmark');
 				};
 				break;
@@ -450,9 +446,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	iconSize () {
-		const { size, iconSize, withDefault } = this.props;
+		const { size, iconSize } = this.props;
 		const object = this.getObject();
-		const { layout, iconImage, iconEmoji, isDeleted } = object;
+		const { layout, iconImage, isDeleted } = object;
 
 		let s = IconSize[size];
 
@@ -463,7 +459,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		if ((size == 18) && (U.Object.isTaskLayout(layout))) {
 			s = 16;
 		} else
-		if ((size == 48) && (U.Object.isRelationLayout(layout) || withDefault)) {
+		if ((size == 48) && U.Object.isRelationLayout(layout)) {
 			s = 28;
 		} else
 		if (size >= 40) {
@@ -556,14 +552,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	defaultIcon (type: string) {
-		const iconSize = this.iconSize();
-		const key = iconSize < 28 ? 'small' : 'big';
-
-		if (DefaultIcons.includes(type)) {
-			return require(`img/icon/object/${key}/${type}.svg`).default;
-		};
-
-		return '';
+		return require(`img/icon/default/${type}.svg`).default;
 	};
 
 });
