@@ -20,6 +20,8 @@ export enum ObjectLayout {
 	SpaceView	 = 18,
 	Participant	 = 19,
 	Pdf			 = 20,
+	Chat		 = 21,
+	ChatDerived	 = 22,
 
 	Empty		 = 100,
 	Navigation	 = 101,

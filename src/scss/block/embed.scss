@@ -83,14 +83,14 @@
 		.editableWrap {
 			#input { 
 				background: var(--color-bg-primary); border: 1px solid var(--color-shape-secondary); text-align: left; padding: 6px 12px; @include text-common; 
-				-webkit-user-modify: read-write-plaintext-only; border-radius: 4px; border-radius: 8px;
+				border-radius: 4px; border-radius: 8px;
 			}
 			#placeholder { padding: 6px 12px; }
 		}
 
 		.icon.source { 
-			position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; opacity: 0; border-radius: 4px;
-			background-color: rgba(37, 37, 37, 0.35); background-image: url('~img/icon/block/edit.svg'); transition: $transitionAllCommon;
+			position: absolute; top: 10px; right: 10px; opacity: 0; border-radius: 6px; background-color: rgba(37, 37, 37, 0.35); 
+			background-image: url('~img/icon/block/edit.svg'); transition: $transitionAllCommon;
 		}
 
 		.icon.resize { 

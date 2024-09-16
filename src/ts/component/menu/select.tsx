@@ -34,7 +34,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value, disabled, placeholder, noVirtualisation, forceLetter, menuLabel } = data;
+		const { filter, value, disabled, placeholder, noVirtualisation, withDefault, menuLabel } = data;
 		const items = this.getItems(true);
 		const withFilter = this.isWithFilter();
 
@@ -98,7 +98,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 						onClick={e => this.onClick(e, item)} 
 						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						style={item.style}
-						forceLetter={forceLetter}
 					/>
 				);
 			};

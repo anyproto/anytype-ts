@@ -47,5 +47,5 @@
     .featured { @include text-very-small; color: var(--color-control-active); }
 }
 
-@import "./link.scss";
-@import "./object.scss";
+@import "./link";
+@import "./object";

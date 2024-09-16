@@ -29,17 +29,17 @@ export interface MenuParam {
 	isSub?: boolean;
 	subIds?: string[];
 	passThrough?: boolean;
+	commonFilter?: boolean;
 	className?: string;
 	classNameWrap?: string;
 	withArrow?: boolean;
 	withBack?: boolean;
-	commonFilter?: boolean;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
 	noFlipX?: boolean;
 	noFlipY?: boolean;
 	noClose?: boolean;
-	force?: boolean;
+	noAutoHover?: boolean;
 	recalcRect?(): { width: number, height: number, x: number, y: number };
 	onClose?(): void;
 	onOpen?(component?: any): void;
@@ -80,7 +80,7 @@ export interface MenuItem {
 	readonly?: boolean;
 	style?: any;
 	iconSize?: number;
-	forceLetter?: boolean;
+	withDefault?: boolean;
 	options?: I.Option[];
 	selectMenuParam?: any;
 	isActive?: boolean;

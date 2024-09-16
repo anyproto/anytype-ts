@@ -76,7 +76,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 
 		const ButtonItem = (item: any) => {
 			const elementId = `button-${block.id}-${item.id}`;
-			const cn = [ `btn-${item.id}` ];
+			const cn = [ `btn-${item.id}`, 'withBackground' ];
 
 			if (item.on) {
 				cn.push('on');
@@ -152,7 +152,7 @@ const Controls = observer(class Controls extends React.Component<Props> {
 						<Filter
 							ref={ref => this.refFilter = ref}
 							placeholder={translate('blockDataviewSearch')} 
-							icon="search"
+							icon="search withBackground"
 							tooltip={translate('commonSearch')}
 							tooltipCaption={`${cmd} + F`}
 							onChange={onFilterChange}

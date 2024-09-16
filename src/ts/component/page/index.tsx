@@ -30,6 +30,7 @@ import PageMainInvite from './main/invite';
 import PageMainMembership from './main/membership';
 import PageMainObject from './main/object';
 import PageMainOnboarding from './main/onboarding';
+import PageMainChat from './main/chat';
 
 const Components = {
 	'index/index':			 PageAuthSelect,
@@ -59,6 +60,7 @@ const Components = {
 	'main/membership':		 PageMainMembership,
 	'main/object':			 PageMainObject,
 	'main/onboarding':		 PageMainOnboarding,
+	'main/chat':			 PageMainChat,
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {

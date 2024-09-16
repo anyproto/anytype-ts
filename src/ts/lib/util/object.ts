@@ -16,7 +16,6 @@ class UtilObject {
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
-			case I.ObjectLayout.Date: 		 r = 'set'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
@@ -26,6 +25,7 @@ class UtilObject {
 			case I.ObjectLayout.Archive:	 r = 'archive'; break;
 			case I.ObjectLayout.Block:		 r = 'block'; break;
 			case I.ObjectLayout.Empty:		 r = 'empty'; break;
+			case I.ObjectLayout.Chat:		 r = 'chat'; break;
 		};
 		return r;
 	};
@@ -154,6 +154,7 @@ class UtilObject {
 
 		if (details.type) {
 			const type = S.Record.getTypeById(details.type);
+
 			if (type) {
 				typeKey = type.uniqueKey;
 
@@ -333,6 +334,10 @@ class UtilObject {
 		return layout == I.ObjectLayout.Bookmark;
 	};
 
+	isChatLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Chat;
+	};
+
 	isImageLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Image;
 	};
@@ -358,7 +363,7 @@ class UtilObject {
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts());
+		return [].concat(this.getFileAndSystemLayouts()).concat(this.getSetLayouts()).concat(I.ObjectLayout.Chat);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
@@ -373,6 +378,7 @@ class UtilObject {
 			I.ObjectLayout.Dashboard,
 			I.ObjectLayout.Space,
 			I.ObjectLayout.SpaceView,
+			I.ObjectLayout.ChatDerived,
 		];
 	};
 
@@ -403,12 +409,17 @@ class UtilObject {
 			I.ObjectLayout.Option, 
 			I.ObjectLayout.SpaceView, 
 			I.ObjectLayout.Space,
+			I.ObjectLayout.ChatDerived,
 		];
 	};
 
 	isAllowedTemplate (typeId): boolean {
 		const type = S.Record.getTypeById(typeId);
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
+	};
+
+	isAllowedObject (layout: I.ObjectLayout): boolean {
+		return this.getPageLayouts().concat(I.ObjectLayout.Chat).includes(layout);
 	};
 
 };

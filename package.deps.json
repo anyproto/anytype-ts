@@ -75,5 +75,9 @@
     {
 		"from": "node_modules/util",
 		"to": "node_modules/util"
+    },
+    {
+		"from": "node_modules/mime-types",
+		"to": "node_modules/mime-types"
     }
 ]

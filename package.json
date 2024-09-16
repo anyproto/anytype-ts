@@ -124,6 +124,7 @@
 		"lodash": "^4.17.20",
 		"lodash.isequal": "^4.5.0",
 		"mermaid": "^10.9.0",
+		"mime-types": "^2.1.35",
 		"mobx": "^6.6.1",
 		"mobx-logger": "^0.7.1",
 		"mobx-react": "^7.5.2",
@@ -195,7 +196,8 @@
 			"node_modules/p-try",
 			"node_modules/p-finally",
 			"node_modules/file-type",
-			"node_modules/regedit"
+			"node_modules/regedit",
+			"node_modules/mime-types"
 		],
 		"extraResources": [
 			{
@@ -283,6 +285,10 @@
 			{
 				"from": "node_modules/util",
 				"to": "node_modules/util"
+			},
+			{
+				"from": "node_modules/mime-types",
+				"to": "node_modules/mime-types"
 			},
 			{
 				"from": "node_modules/@electron",

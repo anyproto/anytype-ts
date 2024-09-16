@@ -1,8 +1,9 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, keyboard, focus, Storage } from 'Lib';
-import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject} from 'Component';
+import { I, C, S, U, J, keyboard, focus, Storage, Preview, Renderer, Mark, translate } from 'Lib';
+import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject, Loader } from 'Component';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -17,6 +18,7 @@ import BlockFeatured from './featured';
 import BlockType from './type';
 import BlockTable from './table';
 import BlockTableOfContents from './tableOfContents';
+import BlockChat from './chat';
 
 import BlockFile from './media/file';
 import BlockImage from './media/image';
@@ -63,6 +65,10 @@ const Block = observer(class Block extends React.Component<Props> {
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
+		this.renderLinks = this.renderLinks.bind(this);
+		this.renderMentions = this.renderMentions.bind(this);
+		this.renderObjects = this.renderObjects.bind(this);
+		this.renderEmoji = this.renderEmoji.bind(this);
 	};
 
 	render () {
@@ -130,7 +136,19 @@ const Block = observer(class Block extends React.Component<Props> {
 					canDrop = false;
 				};
 
-				blockComponent = <BlockText key={key} ref={setRef} {...this.props} onToggle={this.onToggle} />;
+				blockComponent = (
+					<BlockText 
+						key={key} 
+						ref={setRef} 
+						{...this.props} 
+						onToggle={this.onToggle} 
+						renderLinks={this.renderLinks} 
+						renderMentions={this.renderMentions}
+						renderObjects={this.renderObjects}
+						renderEmoji={this.renderEmoji}
+						checkMarkOnBackspace={this.checkMarkOnBackspace}
+					/>
+				);
 				break;
 			};
 
@@ -201,6 +219,23 @@ const Block = observer(class Block extends React.Component<Props> {
 					cn.push('isInline');
 				};
 				blockComponent = <BlockDataview key={key} ref={setRef} isInline={canSelect} {...this.props} />;
+				break;
+			};
+
+			case I.BlockType.Chat: {
+				canDrop = canSelect = !U.Object.isChatLayout(root.layout);
+				blockComponent = (
+					<BlockChat 
+						key={key} 
+						ref={setRef} 
+						{...this.props} 
+						renderLinks={this.renderLinks} 
+						renderMentions={this.renderMentions}
+						renderObjects={this.renderObjects}
+						renderEmoji={this.renderEmoji}
+						checkMarkOnBackspace={this.checkMarkOnBackspace}
+					/>
+				);
 				break;
 			};
 				
@@ -494,7 +529,14 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { rootId, block, readonly, isContextMenuDisabled } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 
-		if (isContextMenuDisabled || readonly || !block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable() || block.isDataview()) {
+		if (
+			isContextMenuDisabled || 
+			readonly || 
+			block.isSelectable() || 
+			(block.isText() && (focused == block.id)) || 
+			block.isTable() || 
+			block.isDataview()
+		) {
 			return;
 		};
 
@@ -753,7 +795,333 @@ const Block = observer(class Block extends React.Component<Props> {
 			focus.apply();
 		});
 	};
-	
+
+	renderLinks (node: any, marks: I.Mark[], value: string, props: any) {
+		node = $(node);
+
+		const { readonly } = props;
+		const items = node.find(Mark.getTag(I.MarkType.Link));
+
+		if (!items.length) {
+			return;
+		};
+
+		items.off('mouseenter.link');
+		items.on('mouseenter.link', e => {
+			const sr = U.Common.getSelectionRange();
+			if (sr && !sr.collapsed) {
+				return;
+			};
+
+			const element = $(e.currentTarget);
+			const range = String(element.attr('data-range') || '').split('-');
+			const url = String(element.attr('href') || '');
+
+			if (!url) {
+				return;
+			};
+
+			const scheme = U.Common.getScheme(url);
+			const isInside = scheme == J.Constant.protocol;
+
+			let route = '';
+			let target;
+			let type;
+
+			if (isInside) {
+				route = '/' + url.split('://')[1];
+
+				const search = url.split('?')[1];
+				if (search) {
+					const searchParam = U.Common.searchParam(search);
+					target = searchParam.objectId;
+				} else {
+					const routeParam = U.Router.getParam(route);
+					target = routeParam.id;
+				};
+			} else {
+				target = U.Common.urlFix(url);
+				type = I.PreviewType.Link;
+			};
+
+			Preview.previewShow({
+				target,
+				type,
+				element,
+				range: { 
+					from: Number(range[0]) || 0,
+					to: Number(range[1]) || 0, 
+				},
+				marks,
+				onChange: marks => this.setMarks(value, marks),
+				noUnlink: readonly,
+				noEdit: readonly,
+			});
+
+			element.off('click.link').on('click.link', e => {
+				e.preventDefault();
+				isInside ? U.Router.go(route, {}) : Renderer.send('urlOpen', target);
+			});
+		});
+	};
+
+	renderMentions (rootId: string, node: any, marks: I.Mark[], value: string) {
+		node = $(node);
+
+		const { block } = this.props;
+		const size = U.Data.emojiParam(block.content.style);
+		const items = node.find(Mark.getTag(I.MarkType.Mention));
+		
+		if (!items.length) {
+			return;
+		};
+
+		items.each((i: number, item: any) => {
+			item = $(item);
+			
+			const data = item.data();
+			if (!data.param) {
+				return;
+			};
+
+			const smile = item.find('smile');
+			if (!smile.length) {
+				return;
+			};
+
+			const object = S.Detail.get(rootId, data.param, []);
+			const { id, _empty_, layout, done, isDeleted, isArchived } = object;
+			const isTask = U.Object.isTaskLayout(layout);
+			const name = item.find('name');
+			const clickable = isTask ? item.find('name') : item;
+
+			let icon = null;
+			if (_empty_) {
+				icon = <Loader type="loader" className={[ 'c' + size, 'inline' ].join(' ')} />;
+			} else {
+				icon = (
+					<IconObject 
+						id={`mention-${block.id}-${i}`}
+						size={size} 
+						object={object} 
+						canEdit={!isArchived && isTask} 
+						onSelect={icon => this.onMentionSelect(value, marks, id, icon)} 
+						onUpload={objectId => this.onMentionUpload(value, marks, id, objectId)} 
+						onCheckbox={() => this.onMentionCheckbox(value, marks, id, !done)}
+					/>
+				);
+			};
+
+			item.removeClass('disabled isDone withImage');
+
+			if (_empty_ || isDeleted) {
+				item.addClass('disabled');
+			};
+
+			if ((layout == I.ObjectLayout.Task) && done) {
+				item.addClass('isDone');
+			};
+
+			ReactDOM.render(icon, smile.get(0), () => {
+				if (smile.html()) {
+					item.addClass('withImage c' + size);
+				};
+			});
+
+			clickable.off('mouseenter.mention');
+			clickable.on('mouseenter.mention', e => {
+				const sr = U.Common.getSelectionRange();
+				if (sr && !sr.collapsed) {
+					return;
+				};
+
+				const range = String(item.attr('data-range') || '').split('-');
+				const param = String(item.attr('data-param') || '');
+
+				if (!param || item.hasClass('disabled')) {
+					return;
+				};
+
+				const object = S.Detail.get(rootId, param, []);
+
+				clickable.off('click.mention').on('click.mention', e => {
+					e.preventDefault();
+					U.Object.openEvent(e, object);
+				});
+
+				Preview.previewShow({
+					object,
+					element: name,
+					range: { 
+						from: Number(range[0]) || 0,
+						to: Number(range[1]) || 0, 
+					},
+					noUnlink: true,
+					marks,
+					onChange: marks => this.setMarks(value, marks),
+				});
+			});
+		});
+	};
+
+	renderObjects (rootId: string, node: any, marks: I.Mark[], value: string, props: any) {
+		node = $(node);
+
+		const { readonly } = props;
+		const items = node.find(Mark.getTag(I.MarkType.Object));
+
+		if (!items.length) {
+			return;
+		};
+
+		items.each((i: number, item: any) => {
+			item = $(item);
+			
+			const param = item.attr('data-param');
+			const object = S.Detail.get(rootId, param, []);
+
+			if (object._empty_ || object.isDeleted) {
+				item.addClass('disabled');
+			};
+		});
+
+		items.off('mouseenter.object mouseleave.object');
+		items.on('mouseleave.object', () => Preview.tooltipHide(false));
+		items.on('mouseenter.object', e => {
+			const sr = U.Common.getSelectionRange();
+			if (sr && !sr.collapsed) {
+				return;
+			};
+
+			const element = $(e.currentTarget);
+			const range = String(element.attr('data-range') || '').split('-');
+			const param = String(element.attr('data-param') || '');
+			const object = S.Detail.get(rootId, param, []);
+			
+			let tt = '';
+			if (object.isDeleted) {
+				tt = translate('commonDeletedObject');
+			};
+
+			if (tt) {
+				Preview.tooltipShow({ text: tt, element });
+				return;
+			};
+
+			if (!param || object.isDeleted) {
+				return;
+			};
+
+			element.off('click.object').on('click.object', e => {
+				e.preventDefault();
+				U.Object.openEvent(e, object);
+			});
+
+			Preview.previewShow({
+				target: object.id,
+				object,
+				element,
+				marks,
+				onChange: marks => this.setMarks(value, marks),
+				range: { 
+					from: Number(range[0]) || 0,
+					to: Number(range[1]) || 0, 
+				},
+				noUnlink: readonly,
+				noEdit: readonly,
+			});
+		});
+	};
+
+	renderEmoji (node: any) {
+		node = $(node);
+
+		const items = node.find(Mark.getTag(I.MarkType.Emoji));
+		const { block } = this.props;
+		const size = U.Data.emojiParam(block.content.style);
+
+		if (!items.length) {
+			return;
+		};
+
+		items.each((i: number, item: any) => {
+			item = $(item);
+
+			const param = item.attr('data-param');
+			const smile = item.find('smile');
+
+			if (smile.length) {
+				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: param }} />, smile.get(0));
+			};
+		});
+	};
+
+	checkMarkOnBackspace (value: string, range: I.TextRange, oM: I.Mark[]) {
+		if (!range || !range.to) {
+			return;
+		};
+
+		const types = [ I.MarkType.Mention, I.MarkType.Emoji ];
+		const marks = U.Common.arrayUnique(oM).filter(it => types.includes(it.type));
+
+		let rM = [];
+		let save = false;
+		let mark = null;
+
+		for (const m of marks) {
+			if ((m.range.from < range.from) && (m.range.to == range.to)) {
+				mark = m;
+				break;
+			};
+		};
+
+		if (mark) {
+			value = U.Common.stringCut(value, mark.range.from, mark.range.to);
+			rM = oM.filter(it => {
+				return (it.type != mark.type) || (it.range.from != mark.range.from) || (it.range.to != mark.range.to) || (it.param != mark.param);
+			});
+
+			rM = Mark.adjust(rM, mark.range.from, mark.range.from - mark.range.to);
+			save = true;
+		};
+
+		return { value, marks: rM, save };
+	};
+
+	onMentionSelect (value: string, marks: I.Mark[], id: string, icon: string) {
+		const { rootId, block } = this.props;
+
+		U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
+			U.Object.setIcon(id, icon, '');
+		});
+	};
+
+	onMentionUpload (value: string, marks: I.Mark[], targetId: string, objectId: string) {
+		const { rootId, block } = this.props;
+
+		U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
+			U.Object.setIcon(targetId, '', objectId);
+		});
+	};
+
+	onMentionCheckbox (value: string, marks: I.Mark[], objectId: string, done: boolean) {
+		const { rootId, block } = this.props;
+
+		U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
+			U.Object.setDone(objectId, done);
+		});
+	};
+
+	setMarks (value: string, marks: I.Mark[]) {
+		const { rootId, block } = this.props;
+		
+		if (block.isTextCode()) {
+			marks = [];
+		};
+
+		U.Data.blockSetText(rootId, block.id, value, marks, true);
+	};
+
 });
 
 export default Block;

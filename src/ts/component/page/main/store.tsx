@@ -137,7 +137,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				<div className="side right">
 					<Icon 
 						id="button-store-sort" 
-						className="sort" 
+						className="sort withBackground" 
 						onClick={this.onSort} 
 						tooltip={translate('pageMainStoreSort')} 
 					/>

@@ -29,7 +29,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	render () {
 		const { param } = this.props;
-		const { data, force } = param;
+		const { data } = param;
 		const { current } = data;
 		const section = this.getSection();
 		const { items, category, showConfetti } = section;
@@ -54,10 +54,6 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 		if (item.buttons) {
 			buttons = buttons.concat(item.buttons);
-		};
-
-		if (force && item.forceButtons) {
-			buttons = item.forceButtons;
 		};
 
 		buttons = buttons.filter(it => it);

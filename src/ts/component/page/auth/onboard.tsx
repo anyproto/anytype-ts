@@ -253,13 +253,15 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				});
 			};
 
-			if (name) {
-				this.refNext?.setLoading(true);
-				this.accountUpdate(name, cb);
-			} else {
-				cb();
-				analytics.event('ScreenOnboardingSkipName');
-			};	
+			C.WorkspaceSetInfo(S.Common.space, { name: translate('commonEntrySpace') }, () => {
+				if (name) {
+					this.refNext?.setLoading(true);
+					U.Object.setName(S.Block.profile, name, cb);
+				} else {
+					cb();
+					analytics.event('ScreenOnboardingSkipName');
+				};	
+			});
 		};
 	};
 
@@ -291,19 +293,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 	};
 
-	accountUpdate = (name: string, callBack?: () => void): void => {
-		U.Object.setName(S.Block.profile, name, () => {
-			C.WorkspaceSetInfo(S.Common.space, { name }, callBack);
-		});
-	};
-
-	/** Copies key phrase to clipboard and shows a toast */
 	onCopy () {
 		U.Common.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
 		analytics.event('KeychainCopy', { type: 'Onboarding' });
 	};
 
-	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	onPhraseTooltip () {
 		S.Popup.open('phrase', {});
 		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: Stage[this.state.stage] });

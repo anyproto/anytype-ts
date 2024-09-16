@@ -321,9 +321,10 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 	};
 
 	onType () {
-		const { id, getId, param } = this.props;
+		const { getId, param } = this.props;
 		const { data } = param;
 		const { onTypeChange } = data;
+		const allowedLayouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts()).concat(I.ObjectLayout.Chat);
 
 		S.Menu.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
@@ -332,7 +333,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				rebind: this.rebind,
 				filter: '',
 				filters: [
-					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts().concat(U.Object.getSetLayouts()) },
+					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: allowedLayouts },
 				],
 				onClick: type => {
 					data.typeId = type.id;

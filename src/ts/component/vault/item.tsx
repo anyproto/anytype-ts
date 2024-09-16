@@ -22,7 +22,7 @@ const VaultItem = observer(class Vault extends React.Component<Props> {
 
 		if (!isButton) {
 			const object = U.Menu.getVaultItems().find(it => it.id == id);
-			icon = <IconObject object={object} size={36} iconSize={36} forceLetter={true} />;
+			icon = <IconObject object={object} size={36} iconSize={36} />;
 		} else {
 			cn.push(`isButton ${id}`);
 		};

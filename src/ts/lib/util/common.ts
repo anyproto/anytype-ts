@@ -399,7 +399,7 @@ class UtilCommon {
 	};
 	
 	lbBr (s: string) {
-		return s.toString().replace(new RegExp(/\n+/gi), '<br/>');
+		return s.toString().replace(new RegExp(/\n/gi), '<br/>');
 	};
 	
 	mapToArray (list: any[], field: string): any {
@@ -888,11 +888,11 @@ class UtilCommon {
 	fixAsarPath (path: string): string {
 		const electron = this.getElectron();
 
-		if (!electron.dirname || !electron.isPackaged) {
+		if (!electron.dirName || !electron.isPackaged) {
 			return path;
 		};
 
-		let href = electron.dirname(location.href);
+		let href = electron.dirName(location.href);
 		href = href.replace('/app.asar/', '/app.asar.unpacked/');
 		return href + path.replace(/^\.\//, '/');
 	};
@@ -982,6 +982,18 @@ class UtilCommon {
 		
 			this.copyCssSingle(srcElement, dstElement);
 		};
+	};
+
+	notification (title: string, text: string) {
+		text = String(text || '');
+
+		if (!text) {
+			return;
+		};
+
+		const electron = this.getElectron();
+
+		new window.Notification(U.Common.stripTags(title), { body: U.Common.stripTags(text) }).onclick = () => electron.focus();
 	};
 
 };

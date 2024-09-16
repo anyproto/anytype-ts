@@ -121,6 +121,11 @@ const Vault = observer(class Vault extends React.Component {
 		const { showVault } = S.Common;
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
+			this.checkKeyUp = true;
+			this.pressed.add(key);
+		};
+
+		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			this.pressed.add(key);
 		};
 
@@ -161,6 +166,8 @@ const Vault = observer(class Vault extends React.Component {
 		const node = $(this.node);
 		const items = this.getSpaceItems();
 		const item = items[this.n];
+
+		this.checkKeyUp = false;
 
 		if (item) {
 			node.find('.item.hover').removeClass('hover');

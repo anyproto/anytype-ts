@@ -1,0 +1,37 @@
+@import "~scss/_vars";
+@mixin cnt-2 { width: calc(536px / 2); }
+@mixin cnt-3 { width: calc(532px / 3); }
+@mixin cnt-4 { width: calc(528px / 4); }
+
+.blocks {
+	.block.blockChat { @include text-common; }
+	.block.blockChat { 
+		.wrap.isDraggingOver { opacity: 0.5; cursor: copy; }
+
+		.scrollWrapper { display: flex; flex-direction: column; min-height: 206px; }
+		.scrollWrapper {
+			.scroll { min-height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+		}
+
+		.emptyState { display: flex; flex-direction: column; gap: 16px 0px; align-items: center; justify-content: center; flex-grow: 1; text-align: center; }
+		.emptyState {
+			.img { width: 320px; height: 104px; display: flex; align-items: center; justify-content: center; background: radial-gradient(50% 50% at 50% 50%, #80d1ff 0%, rgba(187, 231, 255, 0.00) 100%); }
+			.icon { width: 108px; height: 88px; background: url('~img/icon/chat/emptyState.svg'); }
+			.label { @include text-common; color: var(--color-text-secondary); }
+		}
+
+		.section { display: flex; flex-direction: column; gap: 4px 0px; padding: 16px 0px; }
+		.section:first-child { padding-top: 0px; }
+		.section {
+			> .date { position: sticky; display: flex; justify-content: center; top: 60px; z-index: 10; pointer-events: none; transition: opacity 0.3s $easeInQuint; }
+			> .date {
+				.label { @include text-small; padding: 3px 10px; background: var(--color-bg-primary); border: 1px solid var(--color-shape-tertiary); border-radius: 13px; }
+			}
+			> .date.hide { opacity: 0; }
+		}
+
+		@import "./chat/attachment";
+		@import "./chat/message";
+		@import "./chat/form";
+	}
+}
