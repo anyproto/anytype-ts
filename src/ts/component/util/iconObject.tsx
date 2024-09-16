@@ -189,6 +189,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
+			case I.ObjectLayout.Collection:
 			case I.ObjectLayout.Set: {
 				if (iconImage) {
 					cn.push('withImage');

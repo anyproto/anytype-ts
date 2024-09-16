@@ -133,7 +133,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						{...this.props} 
 						ref={ref => this.refHead = ref} 
 						placeholder={translate('defaultNameType')} 
-						rootId={rootId} onCreate={this.onCreate} 
+						rootId={rootId} 
+						onCreate={this.onCreate} 
 					/>
 
 					{showTemplates ? (
