@@ -1,6 +1,6 @@
 html.anytypeWebclipper-iframe, 
 html.anytypeWebclipper-popup { 
-	@import "~scss/font.scss";
+	@import "~scss/font";
 	@import "~scss/_mixins";
 
 	/* Text */
@@ -98,10 +98,10 @@ html.anytypeWebclipper-popup {
 	--line-height-description: 26px; 
 	--letter-spacing-description: -0.28px;
 
-	@import "~scss/common.scss";
-	@import "~scss/form/common.scss";
-	@import "~scss/component/common.scss";
-	@import "~scss/menu/common.scss";
+	@import "~scss/common";
+	@import "~scss/form/common";
+	@import "~scss/component/common";
+	@import "~scss/menu/common";
 	@import "~scss/block/common";
 
 	* { box-sizing: border-box; border: 0px; margin: 0px; padding: 0px; }

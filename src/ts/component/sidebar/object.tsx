@@ -82,74 +82,79 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				id="containerObject"
 				ref={ref => this.node = ref}
 			>
-				<div className="head">
-					<Title text="Library" />
-
-					<div className="sides sidesSort">
-						<div className="side left">
-							<Select 
-								id="object-select-type" 
-								ref={ref => this.refSelect = ref}
-								value=""
-								options={typeOptions} 
-								onChange={this.onSwitchType}
-								menuParam={{
-									className: 'fixed',
-									classNameWrap: 'fromSidebar',
-								}}
-							/>
+				<div className="inner">
+					<div className="head">
+						<div className="titleWrap">
+							<Icon className="back" onClick={() => sidebar.objectContainerToggle()} />
+							<Title text={translate('commonAllContent')} />
 						</div>
-						<div className="side right">
-							<Icon id="button-object-sort" className="sort" onClick={this.onSort} />
+
+						<div className="sides sidesSort">
+							<div className="side left">
+								<Select 
+									id="object-select-type" 
+									ref={ref => this.refSelect = ref}
+									value=""
+									options={typeOptions} 
+									onChange={this.onSwitchType}
+									menuParam={{
+										className: 'fixed',
+										classNameWrap: 'fromSidebar',
+									}}
+								/>
+							</div>
+							<div className="side right">
+								<Icon id="button-object-sort" className="sort" onClick={this.onSort} />
+							</div>
+						</div>
+
+						<div className="sides sidesFilter">
+							<div className="side left">
+								<Filter 
+									ref={ref => this.refFilter = ref}
+									icon="search"
+									placeholder={translate('commonSearch')}
+									onChange={this.onFilterChange}
+									onClear={this.onFilterClear}
+								/>
+							</div>
+							<div className="side right">
+								{isAllowedObject ? <Button color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
+							</div>
 						</div>
 					</div>
 
-					<div className="sides sidesFilter">
-						<div className="side left">
-							<Filter 
-								ref={ref => this.refFilter = ref}
-								icon="search"
-								placeholder={translate('commonSearch')}
-								onChange={this.onFilterChange}
-								onClear={this.onFilterClear}
-							/>
-						</div>
-						<div className="side right">
-							{isAllowedObject ? <Button color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
-						</div>
+					<div className="body">
+						{this.cache && items.length && !isLoading ? (
+							<div className="items">
+								<InfiniteLoader
+									rowCount={items.length + 1}
+									loadMoreRows={this.loadMoreRows}
+									isRowLoaded={({ index }) => !!items[index]}
+									threshold={LIMIT}
+								>
+									{({ onRowsRendered }) => (
+										<AutoSizer className="scrollArea">
+											{({ width, height }) => (
+												<List
+													ref={ref => this.refList = ref}
+													width={width}
+													height={height}
+													deferredMeasurmentCache={this.cache}
+													rowCount={items.length}
+													rowHeight={HEIGHT}
+													rowRenderer={rowRenderer}
+													onRowsRendered={onRowsRendered}
+													overscanRowCount={10}
+													scrollToAlignment="center"
+												/>
+											)}
+										</AutoSizer>
+									)}
+								</InfiniteLoader>
+							</div>
+						) : ''}
 					</div>
-				</div>
-
-				<div className="body">
-					{this.cache && items.length && !isLoading ? (
-						<div className="items">
-							<InfiniteLoader
-								rowCount={items.length + 1}
-								loadMoreRows={this.loadMoreRows}
-								isRowLoaded={({ index }) => !!items[index]}
-								threshold={LIMIT}
-							>
-								{({ onRowsRendered }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={ref => this.refList = ref}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={this.cache}
-												rowCount={items.length}
-												rowHeight={HEIGHT}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						</div>
-					) : ''}
 				</div>
 			</div>
 		);
@@ -172,7 +177,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		this.refSelect.setOptions(this.getTypeOptions());
 		this.refSelect.setValue(this.type);
-		this.rebind();
 		this.load(true);
 	};
 
@@ -188,28 +192,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	componentWillUnmount(): void {
 		window.clearTimeout(this.timeoutFilter);
-		this.unbind();
-	};
-
-	unbind () {
-		$(window).off('click.sidebarContainerObject');
-	};
-
-	rebind () {
-		this.unbind();
-
-		$(window).on('click.sidebarContainerObject', (e: any) => {
-			const target = $(e.target);
-
-			if (
-				!target.parents('#containerObject').length && 
-				!target.parents('#header').length &&
-				!target.parents('.menus').length &&
-				!target.parents('.popups').length
-			) {
-				sidebar.objectContainerToggle();
-			};
-		});
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
