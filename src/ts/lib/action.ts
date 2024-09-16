@@ -471,8 +471,8 @@ class Action {
 
 	import (type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
 		const fileOptions: any = { 
-			properties: [ 'openFile' ],
-			filters: [ 
+			properties: [ 'openFile', 'multiSelections' ],
+			filters: [
 				{ name: 'Filtered extensions', extensions },
 			],
 		};
