@@ -15,7 +15,6 @@ interface Props extends I.BlockComponent {
 	scrollToBottom: () => void;
 	scrollToMessage: (id: string) => void;
 	getMessages: () => I.ChatMessage[];
-	loadDeps: (callBack?: () => void) => void;
 };
 
 interface State {
@@ -175,7 +174,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this._isMounted = true;
 		this.checkSendButton();
 
-		const { rootId, loadDeps } = this.props;
+		const { rootId } = this.props;
 		const storage = Storage.getChat(rootId);
 
 		if (storage) {
@@ -187,8 +186,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.marks = marks;
 			this.updateMarkup(text, length, length);
 
-			if (attachments) {
-				this.setAttachments(attachments, () => loadDeps());
+			if (attachments.length) {
+				this.setAttachments(attachments);
 			};
 		};
 	};

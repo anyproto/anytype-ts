@@ -43,7 +43,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.scrollToMessage = this.scrollToMessage.bind(this);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
 		this.getMessages = this.getMessages.bind(this);
-		this.loadDeps = this.loadDeps.bind(this);
 	};
 
 	render () {
@@ -118,7 +117,6 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					scrollToBottom={this.scrollToBottom}
 					scrollToMessage={this.scrollToMessage}
 					getMessages={this.getMessages}
-					loadDeps={this.loadDeps}
 				/>
 			</div>
 		);
@@ -258,8 +256,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			deps = deps.concat(attachments);
 		});
 
-		deps = deps.concat((this.refForm?.state.attachments || []).map(it => it.target));
-		deps = deps.concat((this.refForm?.marks || []).filter(it => markTypes.includes(it.type)).map(it => it.param));
+		if (this.refForm) {
+			deps = deps.concat((this.refForm.state.attachments || []).map(it => it.target));
+			deps = deps.concat((this.refForm.marks || []).filter(it => markTypes.includes(it.type)).map(it => it.param));
+		};
 
 		return deps;
 	};
@@ -294,6 +294,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			if (callBack) {
 				callBack();
 			};
+
+			this.refForm.forceUpdate();
 		});
 	};
 

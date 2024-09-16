@@ -871,7 +871,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { block } = this.props;
 		const size = U.Data.emojiParam(block.content.style);
 		const items = node.find(Mark.getTag(I.MarkType.Mention));
-		
+
 		if (!items.length) {
 			return;
 		};
