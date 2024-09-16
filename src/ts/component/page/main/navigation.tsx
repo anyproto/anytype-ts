@@ -3,8 +3,10 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
+import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription, ObjectType } from 'Component';
 import { I, C, S, U, keyboard, focus, translate } from 'Lib';
+
+import Item from 'Component/sidebar/object/item';
 
 interface State {
 	loading: boolean;
@@ -54,40 +56,12 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const { info, pagesIn, pagesOut, loading } = this.state;
 		const rootId = this.getRootId();
 
-		const Item = (item: any) => {
-			const { id, layout, name, snippet } = item || {};
-			const isFile = U.Object.isInFileLayouts(layout);
-			const cn = [ 'item', U.Data.layoutClass(id, layout) ];
-			const iconSize = isFile ? 48 : null;
-
-			let description = null;
-			if (isFile) {
-				cn.push('isFile');
-				description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
-			} else {
-				description = <ObjectDescription object={item} />;
-			};
-
-			return (
-				<div 
-					id={`item-${id}`} 
-					className={cn.join(' ')}
-					onMouseEnter={e => this.onOver(e, item)}
-					onMouseLeave={() => this.unsetActive()}
-				>
-					<div className="inner" onClick={e => this.onClick(e, item)}>
-						<IconObject object={item} size={48} iconSize={iconSize} />
-						<div className="info">
-							<ObjectName object={item} />
-							{description}
-						</div>
-					</div>
-					<Icon className="arrow" />
-				</div>
-			);
-		};
-
 		const rowRenderer = (list: I.PageInfo[], cache: any, { index, key, style, parent, panel }) => {
+			const item: any = list[index];
+
+			item.index = index;
+			item.panel = panel;
+
 			return (
 				<CellMeasurer
 					key={key}
@@ -97,7 +71,11 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					rowIndex={index}
 				>
 					<div className="row" style={style}>
-						<Item {...list[index]} index={index} panel={panel} />
+						<Item 
+							item={item}
+							onMouseEnter={() => this.onOver(item)}
+							onMouseLeave={() => this.unsetActive()}
+						/>
 					</div>
 				</CellMeasurer>
 			);
@@ -413,7 +391,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		node.find('.items .item.active').removeClass('active');
 	};
 
-	onOver (e: any, item: any) {
+	onOver (item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.panel = item.panel;
 			this.n = item.index;

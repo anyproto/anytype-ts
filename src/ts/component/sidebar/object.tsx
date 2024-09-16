@@ -1,9 +1,7 @@
 import * as React from 'react';
-import raf from 'raf';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Filter, Select, Icon, IconObject, Button, ObjectName, ObjectDescription, ObjectType } from 'Component';
+import { Title, Filter, Select, Icon, Button } from 'Component';
 import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics } from 'Lib';
 
 import Item from './object/item';
@@ -67,9 +65,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					rowIndex={param.index}
 				>
 					<Item 
-						rootId={rootId}
 						item={item} 
 						style={param.style} 
+						isActive={rootId == item.id}
 						onClick={() => this.onClick(item)}
 						onContext={() => this.onContext(item)}
 					/>
