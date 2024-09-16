@@ -86,7 +86,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					<div className="head">
 						<div className="titleWrap" onClick={() => sidebar.objectContainerToggle()}>
 							<Icon className="back" />
-							<Title text={translate('commonAllContent')} />
+							<Title text={translate('commonLibrary')} />
 						</div>
 
 						<div className="sides sidesSort">

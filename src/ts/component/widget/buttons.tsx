@@ -46,8 +46,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 	getItems () {
 		const space = U.Space.getSpaceview();
 		const ret = [
-			{ id: 'all', name: translate('commonAllContent') },
-			//{ id: 'store', name: translate('commonLibrary') },
+			{ id: 'all', name: translate('commonLibrary') },
 			{ id: 'bin', name: translate('commonBin') },
 		];
 
@@ -70,11 +69,6 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 
 			case 'all': {
 				sidebar.objectContainerToggle();
-				break;
-			};
-
-			case 'store': {
-				U.Object.openEvent(e, { layout: I.ObjectLayout.Store });
 				break;
 			};
 
