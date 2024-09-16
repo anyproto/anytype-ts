@@ -5,11 +5,18 @@ import { Icon } from 'Component';
 
 interface Props {
     src: string;
+	canPlay?: boolean;
     onPlay?(): void;
     onPause?(): void;
+	onClick?(e: any): void;
 };
 
 class MediaVideo extends React.Component<Props> {
+
+	public static defaultProps: Props = {
+		canPlay: true,
+		src: '',
+	};
 
     node: any = null;
     speed = 1;
@@ -21,11 +28,13 @@ class MediaVideo extends React.Component<Props> {
     };
 
     render () {
-        const { src } = this.props;
+        const { src, onClick } = this.props;
+
         return (
             <div
                 ref={ref => this.node = ref}
                 className="mediaVideo"
+				onClick={onClick}
             >
                 <video className="media" controls={false} preload="auto" src={src} />
 
@@ -98,6 +107,10 @@ class MediaVideo extends React.Component<Props> {
 	};
 
     onPlayClick (e: any) {
+		if (!this.props.canPlay) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
 

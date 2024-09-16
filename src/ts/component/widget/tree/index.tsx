@@ -468,7 +468,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 		if (isPreview) {
 			const head = $(`#widget-${parent.id} .head`);
-			const maxHeight = $('#listWidget').height() - head.outerHeight(true);
+			const maxHeight = $('#sidebar #containerWidget #list').height() - head.outerHeight(true);
 
 			css.height = Math.min(maxHeight, css.height);
 		};

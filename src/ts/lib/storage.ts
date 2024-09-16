@@ -11,6 +11,7 @@ const SPACE_KEYS = [
 	'scroll',
 	'defaultType',
 	'pinnedTypes',
+	'chat',
 	'popupSearch',
 	'focus',
 	'openUrl',
@@ -433,6 +434,18 @@ class Storage {
 		let ret = '';
 		try { ret = JSON.parse(s); } catch (e) { /**/ };
 		return ret;
+	};
+
+	setChat (id: string, obj: any) {
+		const map = this.get('chat') || {};
+
+		map[id] = Object.assign(map[id] || {}, obj);
+		this.set('chat', map);
+	};
+
+	getChat (id: string) {
+		const map = this.get('chat') || {};
+		return map[id] || {};
 	};
 	
 };

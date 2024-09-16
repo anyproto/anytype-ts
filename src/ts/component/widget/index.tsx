@@ -6,6 +6,7 @@ import { Icon, ObjectName, DropTarget } from 'Component';
 import { C, I, S, U, J, translate, Storage, Action, analytics, Dataview, keyboard, Relation } from 'Lib';
 
 import WidgetSpace from './space';
+import WidgetButtons from './buttons';
 import WidgetView from './view';
 import WidgetTree from './tree';
 
@@ -62,7 +63,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			};
 		};
 
-		if (!child && (layout != I.WidgetLayout.Space)) {
+		const hasChild = ![ I.WidgetLayout.Space, I.WidgetLayout.Buttons ].includes(layout);
+
+		if (!child && hasChild) {
 			return null;
 		};
 
@@ -145,7 +148,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			);
 		};
 
-		if (layout != I.WidgetLayout.Space) {
+		if (hasChild) {
 			const onClick = this.isSystemTarget() ? this.onSetPreview : this.onClick;
 
 			head = (
@@ -199,16 +202,24 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		switch (layout) {
-			case I.WidgetLayout.Link: {
-				cn.push('widgetLink');
-				break;
-			};
-
 			case I.WidgetLayout.Space: {
 				cn.push('widgetSpace');
 				content = <WidgetSpace {...props} />;
 
 				isDraggable = false;
+				break;
+			};
+
+			case I.WidgetLayout.Buttons: {
+				cn.push('widgetButtons');
+				content = <WidgetButtons {...props} />;
+
+				isDraggable = false;
+				break;
+			};
+
+			case I.WidgetLayout.Link: {
+				cn.push('widgetLink');
 				break;
 			};
 
@@ -302,28 +313,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return null;
 		};
 
-		const { targetBlockId } = child.content;
+		const id = child.getTargetObjectId();
 
 		let object = null;
-		switch (targetBlockId) {
-			default: {
-				object = S.Detail.get(widgets, targetBlockId);
-				break;
-			};
-
-			case J.Constant.widgetId.favorite:
-			case J.Constant.widgetId.recentEdit:
-			case J.Constant.widgetId.recentOpen:
-			case J.Constant.widgetId.set:
-			case J.Constant.widgetId.collection: {
-				object = {
-					id: targetBlockId,
-					name: translate(U.Common.toCamelCase(`widget-${targetBlockId}`)),
-				};
-				break;
-			};
+		if (this.isSystemTargetId(id)) {
+			object = { id, name: translate(U.Common.toCamelCase(`widget-${id}`)) };
+		} else {
+			object = S.Detail.get(widgets, id);
 		};
-
 		return object;
 	};
 
@@ -357,20 +354,13 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
-		const child = this.getTargetBlock();
-		if (!child) {
-			return;
-		};
-
-		const { targetBlockId } = child.content;
 		const isSetOrCollection = U.Object.isInSetLayouts(object.layout);
-		const isFavorite = targetBlockId == J.Constant.widgetId.favorite;
+		const isFavorite = object.id == J.Constant.widgetId.favorite;
 
 		let details: any = Object.assign({}, param.details || {});
 		let flags: I.ObjectFlag[] = [];
 		let typeKey = '';
 		let templateId = '';
-		let createWithLink: boolean = false;
 		let isCollection = false;
 
 		if (layout != I.WidgetLayout.Tree) {
@@ -397,7 +387,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			templateId = view?.defaultTemplateId || type.defaultTemplateId;
 			isCollection = U.Object.isCollectionLayout(object.layout);
 		} else {
-			switch (targetBlockId) {
+			switch (object.id) {
 				default:
 				case J.Constant.widgetId.favorite: {
 					const type = S.Record.getTypeById(S.Common.type);
@@ -410,11 +400,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					flags = flags.concat([ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ]);
 					typeKey = type.uniqueKey;
 					templateId = type.defaultTemplateId;
-
-					if (!this.isSystemTarget()) {
-						details.type = type.id;
-						createWithLink = true;
-					};
 					break;
 				};
 
@@ -429,6 +414,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					typeKey = J.Constant.typeKey.collection;
 					break;
 				};
+
+				case J.Constant.widgetId.chat: {
+					details.layout = I.ObjectLayout.Chat;
+					typeKey = J.Constant.typeKey.chat;
+					break;
+				};
 			};
 		};
 
@@ -436,38 +427,24 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			return;
 		};
 
-		const callBack = (message: any) => {
+		C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			const object = message.details;
+			const newObject = message.details;
 
 			if (isFavorite) {
-				Action.setIsFavorite([ object.id ], true, analytics.route.widget);
+				Action.setIsFavorite([ newObject.id ], true, analytics.route.widget);
 			};
 
 			if (isCollection) {
-				C.ObjectCollectionAdd(targetBlockId, [ object.id ]);
+				C.ObjectCollectionAdd(object.id, [ newObject.id ]);
 			};
 
-			U.Object.openAuto(object);
-		};
-
-		if (createWithLink) {
-			U.Object.create(object.id, '', details, I.BlockPosition.Bottom, templateId, flags, analytics.route.widget, callBack);
-		} else {
-			C.ObjectCreate(details, flags, templateId, typeKey, S.Common.space, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				const object = message.details;
-
-				analytics.createObject(object.type, object.layout, analytics.route.widget, message.middleTime);
-				callBack(message);
-			});
-		};
+			U.Object.openAuto(newObject);
+			analytics.createObject(newObject.type, newObject.layout, analytics.route.widget, message.middleTime);
+		});
 	};
 
 	onOptions (e: React.MouseEvent): void {
@@ -643,6 +620,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection });
 				break;
 			};
+
+			case J.Constant.widgetId.chat: {
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat });
+				break;
+			};
 		};
 
 		U.Data.searchSubscribe({
@@ -726,7 +708,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	isSystemTarget (): boolean {
 		const target = this.getTargetBlock();
-		return target ? U.Menu.isSystemWidget(target.getTargetObjectId()) : false;
+		return target ? this.isSystemTargetId(target.getTargetObjectId()) : false;
+	};
+
+	isSystemTargetId (id: string): boolean {
+		return U.Menu.isSystemWidget(id);
 	};
 
 	canCreate (): boolean {

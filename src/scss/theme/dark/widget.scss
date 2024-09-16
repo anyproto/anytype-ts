@@ -63,7 +63,13 @@
 	}
 }
 
-.button.widget {
-	.icon.store { background-image: url('#{$themePath}/icon/widget/store.svg'); }
-	.icon.bin { background-image: url('#{$themePath}/icon/widget/bin.svg'); }
+.widget.widgetButtons {
+	.body {
+		.item {
+			.icon.member { background-image: url('#{$themePath}/icon/widget/button/member.svg'); }
+			.icon.all { background-image: url('#{$themePath}/icon/widget/button/all.svg'); }
+			.icon.bin { background-image: url('#{$themePath}/icon/widget/button/bin.svg'); }
+			.icon.store { background-image: url('#{$themePath}/icon/widget/button/store.svg'); }
+		}
+	}
 }

@@ -161,7 +161,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	onDragOver (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (!this._isMounted || !U.File.checkDropFiles(e)) {
 			return;
 		};
 
@@ -170,7 +170,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 	
 	onDragLeave (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (!this._isMounted || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
@@ -179,11 +179,12 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 	
 	onDrop (e: any) {
-		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
+		if (!this._isMounted || !U.File.checkDropFiles(e)) {
 			return;
 		};
 		
-		const file = e.dataTransfer.files[0].path;
+		const electron = U.Common.getElectron();
+		const file = electron.webFilePath(e.dataTransfer.files[0]);
 		const node = $(this.node);
 		
 		node.removeClass('isDraggingOver');

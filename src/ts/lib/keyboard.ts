@@ -304,11 +304,20 @@ class Keyboard {
 		return false;
 	};
 
-	pageCreate (details: any, route: string) {
-		if (this.isMain()) {
-			const flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
-			U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => U.Object.openConfig(message.details));
+	pageCreate (details: any, route: string, callBack?: (message: any) => void) {
+		if (!this.isMain()) {
+			return;
 		};
+
+		const flags = [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ];
+
+		U.Object.create('', '', details, I.BlockPosition.Bottom, '', flags, route, message => {
+			U.Object.openConfig(message.details);
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
 	};
 
 	isPopup () {
@@ -1100,6 +1109,20 @@ class Keyboard {
 	// Flag to disable common drop
 	disableCommonDrop (v: boolean) {
 		this.isCommonDropDisabled = v;
+	};
+
+	getMarkParam () {
+		const cmd = this.cmdKey();
+		return [
+			{ key: `${cmd}+b`,		 type: I.MarkType.Bold,		 param: '' },
+			{ key: `${cmd}+i`,		 type: I.MarkType.Italic,	 param: '' },
+			{ key: `${cmd}+u`,		 type: I.MarkType.Underline, param: '' },
+			{ key: `${cmd}+shift+s`, type: I.MarkType.Strike,	 param: '' },
+			{ key: `${cmd}+k`,		 type: I.MarkType.Link,		 param: '' },
+			{ key: `${cmd}+l`,		 type: I.MarkType.Code,		 param: '' },
+			{ key: `${cmd}+shift+h`, type: I.MarkType.BgColor,	 param: Storage.get('bgColor') },
+			{ key: `${cmd}+shift+c`, type: I.MarkType.Color,	 param: Storage.get('color') },
+		];
 	};
 	
 	isSpecial (e: any): boolean {

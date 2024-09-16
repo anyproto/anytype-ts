@@ -207,6 +207,10 @@ class Mark {
 	};
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
+		if (!range) {
+			return null;
+		};
+
 		const map = U.Common.mapToArray(marks, 'type');
 		const overlaps = [ I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal ];
 

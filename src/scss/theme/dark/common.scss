@@ -294,6 +294,18 @@ html.themeDark {
 
     .sidebar { background-color: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
     .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
+	.sidebar {
+		.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
+		> #containerObject {
+			> .inner {
+				> .head {
+					.titleWrap {
+						.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
+					}
+				}
+			}
+		}
+	}
 
 	/* Navigation */
 
@@ -322,11 +334,11 @@ html.themeDark {
         .icon.close { background-color: var(--color-bg-secondary); }
     }
 
-	@import "./menu.scss";
-    @import "./popup.scss";
-    @import "./page.scss";
-    @import "./block.scss";
-	@import "./widget.scss";
+	@import "./menu";
+    @import "./popup";
+    @import "./page";
+    @import "./block";
+	@import "./widget";
 }
 
 html.platformWindows.themeDark, html.platformLinux.themeDark {

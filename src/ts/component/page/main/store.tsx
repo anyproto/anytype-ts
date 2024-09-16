@@ -10,11 +10,6 @@ interface State {
 	withBanner: boolean;
 };
 
-enum View {
-	Marketplace = 'marketplace',
-	Library = 'library',
-};
-
 const KEY_SORT = 'sortStore';
 const KEY_TAB = 'tabStore';
 const KEY_BANNER = 'storeBannerClosed';
@@ -38,7 +33,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	refFilter: any = null;
 	tab: I.StoreTab = null;
 	sort = '';
-	view: View = View.Marketplace;
+	view: I.StoreView = I.StoreView.Marketplace;
 	frame = 0;
 	limit = 0;
 	midHeight = 0;
@@ -142,7 +137,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				<div className="side right">
 					<Icon 
 						id="button-store-sort" 
-						className="sort" 
+						className="sort withBackground" 
 						onClick={this.onSort} 
 						tooltip={translate('pageMainStoreSort')} 
 					/>
@@ -157,7 +152,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			const buttons: any[] = [];
 
 			switch (this.view) {
-				case View.Library:
+				case I.StoreView.Library:
 					if (allowedDelete) {
 						buttons.push({ text: translate('commonRemove'), onClick: e => this.onRemove(e, item) });
 					} else {
@@ -165,7 +160,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					};
 					break;
 
-				case View.Marketplace:
+				case I.StoreView.Marketplace:
 					if (sources.includes(item.id)) {
 						icons.push({ className: 'check', tooltip: textInstalled });
 					} else {
@@ -363,7 +358,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		this.tab = id;
 		this.sort = String(Storage.get(this.getSortKey(id)) || '');
-		this.onView(Storage.get('viewStore') || View.Library, isInner, true);
+		this.onView(Storage.get('viewStore') || I.StoreView.Library, isInner, true);
 
 		Storage.set(KEY_TAB, id);
 
@@ -380,7 +375,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 	};
 
-	onView (id: View, isInner: boolean, isChangeTab: boolean = false) {
+	onView (id: I.StoreView, isInner: boolean, isChangeTab: boolean = false) {
 		if (!isChangeTab && (this.view == id)) {
 			return;
 		};
@@ -510,7 +505,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const filters: I.Filter[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: this.getTabLayout() },
 		];
-		const option = this.getSortOptions().find(it => it.id == this.sort);
+		const option = U.Menu.getStoreSortOptions(this.tab, this.view).find(it => it.id == this.sort);
 
 		let sorts: I.Sort[] = [];
 
@@ -526,11 +521,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		let keys: string[] = J.Relation.default;
 
 		switch (this.view) {
-			case View.Marketplace:
+			case I.StoreView.Marketplace:
 				filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: J.Constant.storeSpaceId });
 				break;
 
-			case View.Library:
+			case I.StoreView.Library:
 				filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
 				break;
 		};
@@ -619,16 +614,16 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
-				views.push({ id: View.Library, name: translate('pageMainStoreMyTypes') });
+				views.push({ id: I.StoreView.Library, name: translate('pageMainStoreMyTypes') });
 				break;
 
 			case I.StoreTab.Relation:
-				views.push({ id: View.Library, name: translate('pageMainStoreMyRelations') });
+				views.push({ id: I.StoreView.Library, name: translate('pageMainStoreMyRelations') });
 				break;
 		};
 
 		if (canWrite) {
-			views.push({ id: View.Marketplace, name: translate('commonAnytypeLibrary') });
+			views.push({ id: I.StoreView.Marketplace, name: translate('commonAnytypeLibrary') });
 		};
 		return views;
 	};
@@ -706,7 +701,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onSort (e: any) {
-		const options = this.getSortOptions();
+		const options = U.Menu.getStoreSortOptions(this.tab, this.view);
 
 		S.Menu.open('select', {
 			element: '#button-store-sort',
@@ -723,29 +718,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				},
 			}
 		});
-	};
-
-	getSortOptions () {
-		let options: any[] = [
-			{ id: 'nameAsc', name: translate('pageMainStoreSortNameAsc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Asc },
-			{ id: 'nameDesc', name: translate('pageMainStoreSortNameDesc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Desc },
-		];
-
-		if (this.view == View.Library) {
-			options = options.concat([
-				{ isDiv: true },
-				{ id: 'createdDateDesc', name: translate('pageMainStoreSortCreatedDesc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Desc },
-				{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Asc },
-			]);
-		};
-
-		if (this.tab == I.StoreTab.Type) {
-			options = options.concat([
-				{ isDiv: true },
-				{ id: 'lastUsedDateDesc', name: translate('pageMainStoreSortLastUsedDesc'), relationKey: 'lastUsedDate', icon: 'time', type: I.SortType.Desc },
-			]);
-		};
-		return options;
 	};
 
 	resize () {

@@ -43,6 +43,7 @@ class CommonStore {
 	public shareTooltipValue = false;
 	public showVaultValue = null;
 	public hideSidebarValue = null;
+	public showObjectValue = null;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -101,6 +102,7 @@ class CommonStore {
 			shareTooltipValue: observable,
 			showVaultValue: observable,
 			hideSidebarValue: observable,
+			showObjectValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
             config: computed,
@@ -135,6 +137,7 @@ class CommonStore {
 			shareTooltipSet: action,
 			membershipTiersListSet: action,
 			showVaultSet: action,
+			showObjectSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -174,7 +177,7 @@ class CommonStore {
 		const key = String(this.defaultType || Storage.get('defaultType') || J.Constant.default.typeKey);
 
 		let type = S.Record.getTypeByKey(key);
-		if (!type || !type.isInstalled || !U.Object.isInPageLayouts(type.recommendedLayout)) {
+		if (!type || !type.isInstalled || !U.Object.isAllowedObject(type.recommendedLayout)) {
 			type = S.Record.getTypeByKey(J.Constant.default.typeKey);
 		};
 
@@ -199,6 +202,10 @@ class CommonStore {
 
 	get hideSidebar (): boolean {
 		return this.boolGet('hideSidebar');
+	};
+
+	get showObject (): boolean {
+		return this.showObjectValue;
 	};
 
 	get theme (): string {
@@ -385,6 +392,10 @@ class CommonStore {
 
 	hideSidebarSet (v: boolean) {
 		this.boolSet('hideSidebar', v);
+	};
+
+	showObjectSet (v: boolean) {
+		this.showObjectValue = v;
 	};
 
 	fullscreenSet (v: boolean) {

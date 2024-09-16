@@ -21,7 +21,6 @@ interface Props {
 	tooltip?: string;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	color?: string;
-	forceLetter?: boolean;
 	noGallery?: boolean;
 	noUpload?: boolean;
 	noRemove?: boolean;
@@ -42,6 +41,7 @@ const LAYOUT_EMOJI = [
 	I.ObjectLayout.Type,
 	I.ObjectLayout.SpaceView,
 	I.ObjectLayout.Human,
+	I.ObjectLayout.Chat,
 ].concat(U.Object.getSetLayouts());
 
 const IconSize = {
@@ -93,21 +93,7 @@ const FontSize = {
 	128: 72,
 };
 
-const Relation: any = { small: {}, big: {} };
-
-for (const i in I.RelationType) {
-	const it = Number(i);
-
-	if (isNaN(Number(it)) || [ I.RelationType.Icon, I.RelationType.Relations ].includes(it)) {
-		continue;
-	};
-
-	const key = U.Common.toCamelCase(I.RelationType[i]);
-
-	Relation.small[i] = require(`img/icon/relation/small/${key}.svg`).default;
-	Relation.big[i] = require(`img/icon/relation/big/${key}.svg`).default;
-};
-
+const DefaultIcons = [ 'page', 'task', 'set', 'chat', 'bookmark', 'type' ];
 const Ghost = require('img/icon/ghost.svg').default;
 
 const CheckboxTask = {
@@ -146,7 +132,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	render () {
-		const { className, size, canEdit, forceLetter, style } = this.props;
+		const { className, size, canEdit, style } = this.props;
 		const { theme } = S.Common;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
@@ -165,10 +151,14 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		let icon = null;
 		let icn = [];
 
-		const onLetter = () => {
-			cn.push('withLetter');
+		const defaultIcon = (type: string) => {
+			if (!DefaultIcons.includes(type)) {
+				return;
+			};
+
+			cn.push('withDefault');
 			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-			icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
+			icon = <img src={this.defaultIcon(type)} className={icn.join(' ')} />;
 		};
 
 		switch (layout) {
@@ -180,9 +170,21 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-				} else 
-				if (forceLetter) {
-					onLetter();
+				} else {
+					defaultIcon('page');
+				};
+				break;
+			};
+
+			case I.ObjectLayout.Chat: {
+				if (iconImage) {
+					cn.push('withImage');
+				};
+
+				if (iconEmoji || iconImage || iconClass) {
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
+				} else {
+					defaultIcon('chat');
 				};
 				break;
 			};
@@ -194,21 +196,20 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 				if (iconEmoji || iconImage) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-				} else 
-				if (forceLetter) {
-					onLetter();
+				} else {
+					defaultIcon('set');
 				};
 				break;
 			};
 
 			case I.ObjectLayout.Human: 
 			case I.ObjectLayout.Participant: {
+				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+
 				if (iconImage) {
 					cn.push('withImage');
-					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
-					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={this.userSvg()} className={icn.join(' ')} />;
 				};
 				break;
@@ -220,27 +221,35 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
-			case I.ObjectLayout.Dashboard:
+			case I.ObjectLayout.Dashboard: {
+				break;
+			};
+
 			case I.ObjectLayout.Note: {
+				defaultIcon('page');
 				break;
 			};
 
 			case I.ObjectLayout.Type: {
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} objectId={iconImage} />;
-				} else 
-				if (forceLetter) {
-					onLetter();
+				} else {
+					defaultIcon('type');
 				};
 				break;
 			};
 
 			case I.ObjectLayout.Relation: {
-				const key = iconSize < 28 ? 'small' : 'big';
-				if (Relation[key][relationFormat]) {
-					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={Relation[key][relationFormat]} className={icn.join(' ')} />;
+				if ([ I.RelationType.Icon, I.RelationType.Relations ].includes(relationFormat)) {
+					break;
 				};
+
+				const key = iconSize < 28 ? 'small' : 'big';
+				const name = U.Common.toCamelCase(I.RelationType[relationFormat]);
+				const src = require(`img/icon/relation/${key}/${name}.svg`).default;
+
+				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+				icon = <img src={src} className={icn.join(' ')} />;
 				break;
 			};
 
@@ -248,6 +257,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				if (iconImage) {
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+				} else {
+					defaultIcon('bookmark');
 				};
 				break;
 			};
@@ -274,14 +285,13 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			};
 
 			case I.ObjectLayout.SpaceView: {
+				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+				cn.push('withImage');
+
 				if (iconImage) {
-					cn.push('withImage');
-					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={S.Common.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
-					cn.push('withOption withImage');
-
-					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					cn.push('withOption');
 					icon = <img src={this.gradientSvg(iconOption || 1, 0.35)} className={icn.join(' ')} />;
 				};
 				break;
@@ -436,9 +446,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	iconSize () {
-		const { size, iconSize, forceLetter } = this.props;
+		const { size, iconSize } = this.props;
 		const object = this.getObject();
-		const { layout, iconImage, iconEmoji, isDeleted } = object;
+		const { layout, iconImage, isDeleted } = object;
 
 		let s = IconSize[size];
 
@@ -459,16 +469,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			if ([ I.ObjectLayout.Set, I.ObjectLayout.SpaceView ].includes(layout) && iconImage) {
 				s = size;
-			};
-
-			if (!iconImage && !iconEmoji) {
-				if ([ I.ObjectLayout.Set, I.ObjectLayout.Type ].includes(layout)) {
-					s = size;
-				};
-
-				if (![ I.ObjectLayout.Task, I.ObjectLayout.Relation ].includes(layout) && forceLetter) {
-					s = size;
-				};
 			};
 		};
 
@@ -540,18 +540,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	commonSvg (): string {
-		const { size } = this.props;
-		const object = this.getObject();
-		const { layout } = object;
-		const iconSize = this.iconSize();
-		const name = this.iconName();
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, size)}px">${name}</text>`;
-		const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">${text}</svg>`;
-
-		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
-	};
-
 	iconName () {
 		const object = this.getObject();
 
@@ -561,6 +549,10 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		name = U.Common.htmlSpecialChars(name);
 
 		return name;
+	};
+
+	defaultIcon (type: string) {
+		return require(`img/icon/default/${type}.svg`).default;
 	};
 
 });

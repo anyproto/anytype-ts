@@ -35,6 +35,8 @@
 		-webkit-app-region: no-drag; 
 	}
 	.headerBanner {
+		.label { @include text-overflow-nw; }
+
 		.content { display: flex; gap: 0px 4px; align-items: center; }
 		.content {
 			.typeName { display: flex; gap: 0px 4px; flex-wrap: nowrap; }
@@ -49,8 +51,7 @@
 	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
 	.sync { -webkit-app-region: no-drag; flex-shrink: 0; }
-	.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; -webkit-app-region: no-drag; flex-shrink: 0; }
-	.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
+	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }

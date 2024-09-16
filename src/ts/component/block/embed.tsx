@@ -11,7 +11,6 @@ import { I, C, S, U, J, keyboard, focus, Action, translate } from 'Lib';
 
 const katex = require('katex');
 const pako = require('pako');
-const mermaid = require('mermaid').default;
 
 require('katex/dist/contrib/mhchem');
 
@@ -45,7 +44,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.onFocusBlock = this.onFocusBlock.bind(this);
 		this.onKeyDownInput = this.onKeyDownInput.bind(this);
 		this.onKeyUpInput = this.onKeyUpInput.bind(this);
-		this.onFocusInput = this.onFocusInput.bind(this);
 		this.onBlurInput = this.onBlurInput.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
@@ -57,7 +55,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	render () {
-		const { isOnline } = S.Common;
+		const { isOnline, theme } = S.Common;
 		const { isShowing, isEditing } = this.state;
 		const { readonly, block } = this.props;
 		const { content, fields, hAlign } = block;
@@ -114,7 +112,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 				</div>
 			);
 		} else {
-			source = <Icon className="source" onMouseDown={this.onEdit} />;
+			source = <Icon className="source withBackground" onMouseDown={this.onEdit} />;
 			placeholder = U.Common.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 			empty = !text ? U.Common.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 
@@ -155,7 +153,6 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 					readonly={readonly}
 					placeholder={placeholder}
 					onSelect={this.onSelect}
-					onFocus={this.onFocusInput}
 					onBlur={this.onBlurInput}
 					onKeyUp={this.onKeyUpInput} 
 					onKeyDown={this.onKeyDownInput}
@@ -191,8 +188,8 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setText(block.content.text);
 		this.setValue(this.text);
 		this.setContent(this.text);
-		this.rebind();
 		this.onScroll();
+		this.rebind();
 	};
 
 	rebind () {
@@ -443,12 +440,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		};
 	};
 
-	onFocusInput () {
-		keyboard.setFocus(true);
-	};
-
 	onBlurInput () {
-		keyboard.setFocus(false);
 		this.save();
 	};
 

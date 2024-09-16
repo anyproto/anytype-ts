@@ -1,0 +1,82 @@
+
+
+.formWrapper.isFixed { padding: 0px 0px 90px 0px; position: sticky; z-index: 11; bottom: 0px; width: 100%; background: var(--color-bg-primary); }
+
+.form { 
+	padding: 0px 0px 10px 0px; border: 1px solid var(--color-shape-tertiary); background-color: var(--color-bg-primary); border-radius: 12px; position: relative; 
+	overflow: hidden; 
+}
+.form {
+	#form-loader { display: none; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-bg-loader); z-index: 1; }
+	#form-loader.active { display: block; }
+
+	.head { 
+		padding: 12px 12px 12px 16px; display: flex; flex-direction: row; gap: 0px 16px; align-items: center; justify-content: space-between; 
+		background: var(--color-shape-tertiary);
+	}
+	.head {
+		.side.left { flex-grow: 1; @include text-small; display: flex; flex-direction: column; overflow: hidden; }
+		.side.right { flex-shrink: 0; }
+
+		.name { @include text-overflow-nw; font-weight: 500; }
+		.descr { @include text-overflow-nw; }
+		.descr:empty { display: none; }
+		.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/chat/buttons/clear.svg'); }
+	}
+
+	.editableWrap { @include text-common; max-height: 352px; overflow: scroll; background-color: transparent; }
+	.editableWrap {
+		.editable, .placeholder { padding: 16px; }
+	}
+
+	.attachments { padding: 0px 16px; max-height: 360px; overflow-x: hidden; overflow-y: auto; max-width: unset; }
+
+	.buttons { display: flex; gap: 0px 8px; padding: 10px 16px 0px 16px; margin-left: -4px; }
+	.buttons {
+		.icon { margin: 0px; transition: none; }
+
+		/* Chat buttons */
+		.icon.plus { background-image: url('~img/icon/chat/buttons/plus.svg'); }
+		.icon.text { background-image: url('~img/icon/chat/buttons/text.svg'); }
+		.icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
+		.icon.mention { background-image: url('~img/icon/chat/buttons/mention.svg'); }
+
+		/* Text buttons */
+		.icon.bold { background-image: url('~img/icon/menu/action/mark/bold0.svg'); }
+		.icon.italic { background-image: url('~img/icon/menu/action/mark/italic0.svg'); }
+		.icon.strike { background-image: url('~img/icon/menu/action/mark/strike0.svg'); }
+		.icon.link { background-image: url('~img/icon/menu/action/mark/link0.svg'); }
+		.icon.kbd { background-image: url('~img/icon/menu/action/mark/code0.svg'); }
+		.icon.underline { background-image: url('~img/icon/menu/action/mark/underline0.svg'); }
+
+		.icon.isActive.bold { background-image: url('~img/icon/menu/action/mark/bold1.svg'); }
+		.icon.isActive.kbd { background-image: url('~img/icon/menu/action/mark/code1.svg'); }
+		.icon.isActive.italic { background-image: url('~img/icon/menu/action/mark/italic1.svg'); }
+		.icon.isActive.link { background-image: url('~img/icon/menu/action/mark/link1.svg'); }
+		.icon.isActive.strike { background-image: url('~img/icon/menu/action/mark/strike1.svg'); }
+		.icon.isActive.underline { background-image: url('~img/icon/menu/action/mark/underline1.svg'); }
+
+		.icon.color { z-index: 1; }
+		.icon.color {
+			.inner { 
+				width: 16px; height: 16px; position: absolute; left: 50%; top: 50%; margin: -8px 0px 0px -8px; border-radius: 100%;
+				background: var(--color-text-primary); 
+			}
+			.inner.bgColor-default { box-shadow: 0px 0px 0px 1px var(--color-shape-secondary) inset; background: var(--color-bg-primary); }
+			
+			.inner.textColor-black { background: var(--color-text-primary); }
+			.inner.textColor-grey { background: var(--color-control-active); }
+			.inner.textColor-yellow { background: var(--color-yellow); }
+			.inner.textColor-orange { background: var(--color-orange); }
+			.inner.textColor-red { background: var(--color-red); }
+			.inner.textColor-pink { background: var(--color-pink); }
+			.inner.textColor-purple { background: var(--color-purple); }
+			.inner.textColor-blue { background: var(--color-blue); }
+			.inner.textColor-ice { background: var(--color-ice); }
+			.inner.textColor-teal { background: var(--color-teal); }
+			.inner.textColor-lime { background: var(--color-lime); }
+		}
+	}
+
+	.icon.send { position: absolute; bottom: 10px; right: 16px; width: 20px; height: 20px; background: url('~img/icon/chat/buttons/send.svg'); }
+}

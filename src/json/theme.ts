@@ -37,9 +37,9 @@ export default {
 		},
 
 		icon: {
-			text: '#fff',
+			text: '#b6b6b6',
 			bg: {
-				grey: '#bfbfbf',
+				grey: '#f2f2f2',
 				black: '#252525',
 				brown: '#b6b6b6',
 				orange: '#ffb522',
@@ -98,9 +98,9 @@ export default {
 		},
 
 		icon: {
-			text: '#fff',
+			text: '#9a9a9a',
 			bg: {
-				grey: '#606060',
+				grey: '#2b2b2b',
 				black: '#252525',
 				brown: '#b6b6b6',
 				orange: '#ffb522',

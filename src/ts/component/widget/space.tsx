@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, C, S, U, translate } from 'Lib';
+import { I, S, U } from 'Lib';
 
 const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
 
@@ -24,7 +24,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 					<IconObject 
 						id="widget-space-icon" 
 						object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
-						forceLetter={true} 
 						size={28}
 						iconSize={28}
 						menuParam={{ className: 'fixed' }}

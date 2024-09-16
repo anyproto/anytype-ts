@@ -86,7 +86,7 @@ class Header extends React.Component<Props> {
 		return (
 			<React.Fragment>
 				<Icon 
-					className="expand" 
+					className="expand withBackground" 
 					tooltip={translate('commonOpenObject')} 
 					onClick={onOpen || this.onExpand} 
 				/>

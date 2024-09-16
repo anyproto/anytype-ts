@@ -24,7 +24,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		this.onSelect = this.onSelect.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onIconSelect = this.onIconSelect.bind(this);
 		this.onIconUpload = this.onIconUpload.bind(this);
@@ -52,7 +51,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 
 		let icon = null;
 		if (targetObjectId && !isCollection) {
-			icon = <Icon id="head-source-select" className="source" onClick={this.onSource} />;
+			icon = <Icon id="head-source-select" className="source withBackground" onClick={this.onSource} />;
 		} else {
 			icon = <div id="head-source-select" />;
 		};
@@ -68,7 +67,6 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 					id="value"
 					readonly={readonly || !isEditing}
 					placeholder={placeholder}
-					onFocus={this.onFocus}
 					onMouseDown={this.onTitle}
 					onBlur={this.onBlur}
 					onKeyDown={this.onKeyDown}
@@ -266,13 +264,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		onSourceTypeSelect(`#block-${block.id} #head-source-select`);
 	};
 
-	onFocus () {
-		keyboard.setFocus(true);
-	};
-
 	onBlur () {
-		keyboard.setFocus(false);
-
 		this.save();
 		window.setTimeout(() => this.setEditing(false), 40);
 	};

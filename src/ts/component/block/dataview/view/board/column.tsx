@@ -246,8 +246,14 @@ const Column = observer(class Column extends React.Component<Props> {
 			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-			onOpen: () => node.addClass('active'),
-			onClose: () => node.removeClass('active'),
+			onOpen: () => {
+				$(element).addClass('active');
+				node.addClass('active');
+			},
+			onClose: () => {
+				$(element).removeClass('active');
+				node.removeClass('active');
+			},
 			data: {
 				rootId,
 				blockId: block.id,
