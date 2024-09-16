@@ -79,6 +79,8 @@
 
 			.item.isType, .item.isRelation { gap: 0px; }
 			.item.isType, .item.isRelation {
+				.iconObject { background-color: unset; }
+
 				.info { width: calc(100% - 26px); }
 				.nameWrap { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 				.descrWrap {
