@@ -940,6 +940,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	checkLimit (type: string, list: any[]) {
 		const limit = J.Constant.limit.chat;
 
+		list = U.Common.arrayUniqueObjects(list, 'id');
+
 		if (list.length > limit[type]) {
 			list = list.slice(0, limit[type]);
 		};
