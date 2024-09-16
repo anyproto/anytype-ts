@@ -12,7 +12,9 @@
 				.icon.back { 
 					width: 24px; height: 24px; border-radius: 4px; background-size: 20px; flex-shrink: 0; background-image: url('~img/icon/widget/back.svg'); 
 				}
-				.icon.back:hover { background-color: var(--color-shape-highlight-medium); }
+			}
+			.titleWrap:hover {
+				.icon.back { background-color: var(--color-shape-highlight-medium); }
 			}
 
 			.sides { display: flex; flex-direction: row; gap: 0px 8px; }

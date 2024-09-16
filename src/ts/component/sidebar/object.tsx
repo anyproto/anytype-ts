@@ -84,8 +84,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			>
 				<div className="inner">
 					<div className="head">
-						<div className="titleWrap">
-							<Icon className="back" onClick={() => sidebar.objectContainerToggle()} />
+						<div className="titleWrap" onClick={() => sidebar.objectContainerToggle()}>
+							<Icon className="back" />
 							<Title text={translate('commonAllContent')} />
 						</div>
 
@@ -100,6 +100,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 									menuParam={{
 										className: 'fixed',
 										classNameWrap: 'fromSidebar',
+										offsetY: 4,
 									}}
 								/>
 							</div>
