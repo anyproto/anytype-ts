@@ -309,7 +309,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onClick (item: any) {
-		U.Object.openConfig(item);
+		U.Object.openAuto(item);
 	};
 
 	onContext (item: any) {
