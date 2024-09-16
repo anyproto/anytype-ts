@@ -1,10 +1,10 @@
 import * as React from 'react';
-import raf from 'raf';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Filter, Select, Icon, IconObject, Button, ObjectName, ObjectDescription, ObjectType } from 'Component';
+import { Title, Filter, Select, Icon, Button } from 'Component';
 import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics } from 'Lib';
+
+import Item from './object/item';
 
 interface State {
 	isLoading: boolean;
@@ -12,8 +12,6 @@ interface State {
 
 const LIMIT = 20;
 const HEIGHT = 64;
-const KEY_TYPE = 'objectContainerType';
-const KEY_SORT = 'objectContainerSort';
 
 const SidebarObject = observer(class SidebarObject extends React.Component<{}, State> {
 	
@@ -26,14 +24,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	refList = null;
 	cache: any = {};
 	offset = 0;
-	sortId = '';
-	sortType: I.SortType = I.SortType.Asc;
+	sortId = 'updated';
+	sortType: I.SortType = I.SortType.Desc;
 	orphan = false;
 	type: I.ObjectContainerType = I.ObjectContainerType.Object;
 	searchIds: string[] = null;
 	filter = '';
 	timeoutFilter = 0;
-	preventClose = false;
 
 	constructor (props: any) {
 		super(props);
@@ -59,24 +56,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				return null;
 			};
 
-			const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
-			const type = S.Record.getTypeById(item.type);
-
-			let iconSmall = null;
-			let iconLarge = null;
-
-			if (U.Object.isTypeOrRelationLayout(item.layout)) {
-				const size = U.Object.isTypeLayout(item.layout) ? 18 : 20;
-
-				iconSmall = <IconObject object={item} size={size} iconSize={18} />;
-			} else {
-				iconLarge = <IconObject object={item} size={48} />;
-			};
-
-			if (item.id == rootId) {
-				cn.push('active');
-			};
-
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -85,25 +64,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					<div 
-						className={cn.join(' ')} 
-						style={param.style}
+					<Item 
+						item={item} 
+						style={param.style} 
+						isActive={rootId == item.id}
 						onClick={() => this.onClick(item)}
-					>
-						{iconLarge}
-						<div className="info">
-							<div className="nameWrap">
-								{iconSmall}
-								<ObjectName object={item} />
-							</div>
-							<div className="descrWrap">
-								<div className="type">
-									<ObjectType object={type} />
-								</div>
-								<ObjectDescription object={item} />
-							</div>
-						</div>
-					</div>
+						onContext={() => this.onContext(item)}
+					/>
 				</CellMeasurer>
 			);
 		};
@@ -113,95 +80,103 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				id="containerObject"
 				ref={ref => this.node = ref}
 			>
-				<div className="head">
-					<Title text="Library" />
-
-					<div className="sides sidesSort">
-						<div className="side left">
-							<Select 
-								id="object-select-type" 
-								ref={ref => this.refSelect = ref}
-								value=""
-								options={typeOptions} 
-								onChange={this.onSwitchType}
-								menuParam={{
-									className: 'fixed',
-									classNameWrap: 'fromSidebar',
-								}}
-							/>
+				<div className="inner">
+					<div className="head">
+						<div className="titleWrap" onClick={() => sidebar.objectContainerToggle()}>
+							<Icon className="back" />
+							<Title text={translate('commonLibrary')} />
 						</div>
-						<div className="side right">
-							<Icon id="button-object-sort" className="sort" onClick={this.onSort} />
+
+						<div className="sides sidesSort">
+							<div className="side left">
+								<Select 
+									id="object-select-type" 
+									ref={ref => this.refSelect = ref}
+									value=""
+									options={typeOptions} 
+									onChange={this.onSwitchType}
+									menuParam={{
+										className: 'fixed',
+										classNameWrap: 'fromSidebar',
+										offsetY: 4,
+									}}
+								/>
+							</div>
+							<div className="side right">
+								<Icon id="button-object-sort" className="sort withBackground" onClick={this.onSort} />
+							</div>
+						</div>
+
+						<div className="sides sidesFilter">
+							<div className="side left">
+								<Filter 
+									ref={ref => this.refFilter = ref}
+									icon="search"
+									placeholder={translate('commonSearch')}
+									onChange={this.onFilterChange}
+									onClear={this.onFilterClear}
+								/>
+							</div>
+							<div className="side right">
+								{isAllowedObject ? <Button color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
+							</div>
 						</div>
 					</div>
 
-					<div className="sides sidesFilter">
-						<div className="side left">
-							<Filter 
-								ref={ref => this.refFilter = ref}
-								icon="search"
-								placeholder={translate('commonSearch')}
-								onChange={this.onFilterChange}
-								onClear={this.onFilterClear}
-							/>
-						</div>
-						<div className="side right">
-							{isAllowedObject ? <Button color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
-						</div>
+					<div className="body">
+						{this.cache && items.length && !isLoading ? (
+							<div className="items">
+								<InfiniteLoader
+									rowCount={items.length + 1}
+									loadMoreRows={this.loadMoreRows}
+									isRowLoaded={({ index }) => !!items[index]}
+									threshold={LIMIT}
+								>
+									{({ onRowsRendered }) => (
+										<AutoSizer className="scrollArea">
+											{({ width, height }) => (
+												<List
+													ref={ref => this.refList = ref}
+													width={width}
+													height={height}
+													deferredMeasurmentCache={this.cache}
+													rowCount={items.length}
+													rowHeight={HEIGHT}
+													rowRenderer={rowRenderer}
+													onRowsRendered={onRowsRendered}
+													overscanRowCount={10}
+													scrollToAlignment="center"
+												/>
+											)}
+										</AutoSizer>
+									)}
+								</InfiniteLoader>
+							</div>
+						) : ''}
 					</div>
-				</div>
-
-				<div className="body">
-					{this.cache && items.length && !isLoading ? (
-						<div className="items">
-							<InfiniteLoader
-								rowCount={items.length + 1}
-								loadMoreRows={this.loadMoreRows}
-								isRowLoaded={({ index }) => !!items[index]}
-								threshold={LIMIT}
-							>
-								{({ onRowsRendered }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={ref => this.refList = ref}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={this.cache}
-												rowCount={items.length}
-												rowHeight={HEIGHT}
-												rowRenderer={rowRenderer}
-												onRowsRendered={({ startIndex, stopIndex }) => { 
-													onRowsRendered({ startIndex, stopIndex });
-
-													this.resize();
-												}}
-												overscanRowCount={10}
-												scrollToAlignment="center"
-											/>
-										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						</div>
-					) : ''}
 				</div>
 			</div>
 		);
     };
 
 	componentDidMount () {
-		this.type = Storage.get(KEY_TYPE) || I.ObjectContainerType.Object;
+		const storage = this.storageGet();
 
-		const sort = Storage.get(this.getSortKey(this.type));
-		if (sort) {
-			this.sortId = sort.id;
-			this.sortType = sort.type;
+		if (storage) {
+			this.type = storage.type || I.ObjectContainerType.Object;
+			this.orphan = storage.orphan || false;
+
+			const sort = storage.sort[this.type];
+
+			if (sort) {
+				this.sortId = sort.id;
+				this.sortType = sort.type;
+			};
 		};
 
-		this.rebind();
-		this.load(true);
+		this.refSelect.setOptions(this.getTypeOptions());
 		this.refSelect.setValue(this.type);
+		this.load(true);
 	};
 
 	componentDidUpdate () {
@@ -212,42 +187,20 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			defaultHeight: HEIGHT,
 			keyMapper: i => (items[i] || {}).id,
 		});
-
-		this.resize();
 	};
 
 	componentWillUnmount(): void {
 		window.clearTimeout(this.timeoutFilter);
-		this.unbind();
-	};
-
-	unbind () {
-		$(window).off('mousedown.sidebarContainerObject');
-	};
-
-	rebind () {
-		this.unbind();
-
-		$(window).on('mousedown.sidebarContainerObject', (e: any) => {
-			const target = $(e.target);
-
-			if (
-				!target.parents(`#containerObject`).length && 
-				!target.parents(`.menus`).length &&
-				!target.parents(`#widget-buttons`).length &&
-				!this.preventClose
-			) {
-				sidebar.objectContainerToggle();
-			};
-		});
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType).find(it => it.id == this.sortId);
+		const template = S.Record.getTemplateType();
 
 		let sorts: I.Sort[] = [];
 		let filters: I.Filter[] = [
 			{ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Participant },
+			{ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: template?.id },
 		];
 
 		if (option) {
@@ -265,7 +218,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		switch (this.type) {
 			case I.ObjectContainerType.Object: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() });
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat([ I.ObjectLayout.Bookmark ]) });
 				break;
 			};
 
@@ -334,17 +287,51 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		});
 	};
 
+	loadSearchIds (clear: boolean) {
+		if (this.filter) {
+			U.Data.search({
+				filters: [],
+				sorts: [],
+				fullText: this.filter,
+				keys: [ 'id' ],
+			}, (message: any) => {
+				this.searchIds = (message.records || []).map(it => it.id);
+				this.load(clear);
+			});
+		} else {
+			this.searchIds = null;
+			this.load(clear);
+		};
+	};
+
 	getItems () {
 		return S.Record.getRecords(J.Constant.subId.allObject);
 	};
 
 	onClick (item: any) {
-		U.Object.openConfig(item);
-		this.preventClose = true;
+		U.Object.openAuto(item);
+	};
+
+	onContext (item: any) {
+		S.Menu.open('dataviewContext', {
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { width: 0, height: 0, x: x + 4, y: y };
+			},
+			data: {
+				objectIds: [ item.id ],
+				subId: J.Constant.subId.allObject,
+				route: analytics.route.allObjects,
+				allowedLink: true,
+				allowedOpen: true,
+			}
+		});
 	};
 
 	onSort (e: any) {
 		const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType);
+
+		let menuContext = null;
 
 		S.Menu.open('select', {
 			element: '#sidebar #containerObject #button-object-sort',
@@ -352,15 +339,23 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			offsetY: 4,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
+			onOpen: context => menuContext = context,
 			data: {
 				options,
-				value: this.sortId,
+				noClose: true,
 				onSelect: (e: any, item: any) => {
 					this.sortId = item.id;
 					this.sortType = item.type;
 					this.load(true);
 
-					Storage.set(this.getSortKey(this.type), { id: item.id, type: item.type });
+					const storage = this.storageGet();
+					const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType);
+					
+					storage.sort[this.type] = { id: item.id, type: item.type };
+
+					this.storageSet(storage);
+
+					menuContext.ref.updateOptions(options);
 				},
 			}
 		});
@@ -369,10 +364,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onAdd () {
 		const details = {
 			...this.getDetailsByType(this.type),
-			name: this.refFilter.getValue(),
+			name: this.filter,
 		};
 
-		keyboard.pageCreate(details, analytics.route.allObjects);
+		keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
+			if (message.targetId && this.filter && this.searchIds) {
+				this.searchIds = this.searchIds.concat(message.targetId);
+				this.load(false);
+			};
+		});
 	};
 
 	isAllowedObject (): boolean {
@@ -385,13 +385,17 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onSwitchType (id: string) {
+		const storage = this.storageGet();
+
 		if (id == I.ObjectContainerType.Orphan) {
 			this.orphan = !this.orphan;
+			storage.orphan = this.orphan;
 		} else {
 			this.type = id as I.ObjectContainerType;
-			Storage.set(KEY_TYPE, this.type);
+			storage.type = this.type;
 		};
 
+		this.storageSet(storage);
 		this.refSelect.setOptions(this.getTypeOptions());
 		this.refSelect.setValue(this.type);
 		this.load(true);
@@ -446,43 +450,23 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 
 			this.filter = v;
-
-			if (v) {
-				U.Data.search({
-					filters: [],
-					sorts: [],
-					fullText: v,
-					keys: [ 'id' ],
-				}, (message: any) => {
-					this.searchIds = (message.records || []).map(it => it.id);
-					this.load(true);
-				});
-			} else {
-				this.searchIds = null;
-				this.load(true);
-			};
+			this.loadSearchIds(true);
 		}, J.Constant.delay.keyboard);
+	};
+
+	storageGet () {
+		const storage = Storage.get('sidebarObject') || {};
+		storage.sort = storage.sort || {};
+		return storage;
+	};
+
+	storageSet (obj: any) {
+		Storage.set('sidebarObject', obj);
 	};
 
 	onFilterClear () {
 		this.searchIds = null;
 		this.load(true);
-	};
-
-	getSortKey (tab: I.ObjectContainerType) {
-		return U.Common.toCamelCase(`${KEY_SORT}-${tab}`);
-	};
-
-	resize () {
-		const node = $(this.node);
-		const list = node.find('> .body');
-
-		raf(() => {
-			list.find('.item').each((i: number, item: any) => {
-				item = $(item);
-				item.find('.iconObject').length ? item.addClass('withIcon') : item.removeClass('withIcon');
-			});
-		});
 	};
 
 });

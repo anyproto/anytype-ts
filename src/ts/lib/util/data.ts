@@ -144,6 +144,17 @@ class UtilData {
 		v = v || I.BlockVAlign.Top;
 		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
+
+	emojiParam (t: I.TextStyle) {
+		let s = 24;
+		switch (t) {
+			case I.TextStyle.Header1:	 s = 32; break;
+			case I.TextStyle.Header2:	 s = 28; break;
+			case I.TextStyle.Header3:
+			case I.TextStyle.Quote:		 s = 26; break;
+		};
+		return s;
+	};
 	
 	onInfo (info: I.AccountInfo) {
 		S.Block.rootSet(info.homeObjectId);
@@ -428,6 +439,10 @@ class UtilData {
 		return J.Relation.default.concat(J.Relation.syncStatus);
 	};
 
+	chatRelationKeys () {
+		return J.Relation.default.concat([ 'source' ]);
+	};
+
 	createSession (phrase: string, key: string, callBack?: (message: any) => void) {
 		C.WalletCreateSession(phrase, key, (message: any) => {
 
@@ -473,7 +488,7 @@ class UtilData {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withCollection, limit } = param || {};
+		const { withSet, withCollection, withChat, limit } = param || {};
 		const { space, config } = S.Common;
 		const pageLayouts = U.Object.getPageLayouts();
 		const skipLayouts = U.Object.getSetLayouts();
@@ -492,16 +507,20 @@ class UtilData {
 			items.push(S.Record.getSetType());
 		};
 
+		if (withChat) {
+			items.push(S.Record.getChatType());
+		};
+
 		if (withCollection) {
 			items.push(S.Record.getCollectionType());
 		};
 
 		items = items.filter(it => it);
-
 		if (!config.debug.hiddenObject) {
 			items = items.filter(it => !it.isHidden);
 		};
 
+		items.sort((c1, c2) => this.sortByLastUsedDate(c1, c2));
 		return items;
 	};
 
@@ -634,6 +653,15 @@ class UtilData {
 	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
 		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
 		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
+		return this.sortByName(c1, c2);
+	};
+
+	sortByLastUsedDate (c1: any, c2: any) {
+		const l1 = Number(c1.lastUsedDate) || 0;
+		const l2 = Number(c2.lastUsedDate) || 0;
+
+		if (l1 > l2) return -1;
+		if (l1 < l2) return 1;
 		return this.sortByName(c1, c2);
 	};
 
@@ -1039,7 +1067,7 @@ class UtilData {
 		});
 	};
 
-	groupDateSections (records: any[], key: string, sectionTemplate?: any) {
+	groupDateSections (records: any[], key: string, sectionTemplate?: any, dir?: I.SortType) {
 		const now = U.Date.now();
 		const { d, m, y } = U.Date.getCalendarDateParam(now);
 		const today = now - U.Date.timestamp(y, m, d);
@@ -1052,6 +1080,11 @@ class UtilData {
 			lastWeek: [],
 			lastMonth: [],
 			older: []
+		};
+
+		const groupNames = [ 'today', 'yesterday', 'lastWeek', 'lastMonth', 'older' ];
+		if (dir == I.SortType.Asc) {
+			groupNames.reverse();
 		};
 
 		let groupedRecords = [];
@@ -1080,10 +1113,13 @@ class UtilData {
 			};
 		});
 
-		Object.keys(groups).forEach((key) => {
-			if (groups[key].length) {
-				groupedRecords.push(Object.assign({ id: key, isSection: true }, sectionTemplate));
-				groupedRecords = groupedRecords.concat(groups[key]);
+		groupNames.forEach((name) => {
+			if (groups[name].length) {
+				groupedRecords.push(Object.assign({ id: name, isSection: true }, sectionTemplate));
+				if (dir) {
+					groups[name] = groups[name].sort((c1, c2) => U.Data.sortByNumericKey(key, c1, c2, dir));
+				};
+				groupedRecords = groupedRecords.concat(groups[name]);
 			};
 		});
 

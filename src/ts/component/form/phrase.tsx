@@ -128,8 +128,8 @@ class Phrase extends React.Component<Props, State> {
 				</div>
 
 				{placeholderEl}
-				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.onToggle} />
-				<Icon className="copy" onClick={onCopy} />
+				<Icon className={[ (isHidden ? 'see' : 'hide'), 'withBackground' ].join(' ')} onClick={this.onToggle} />
+				<Icon className="copy withBackground" onClick={onCopy} />
 			</div>
 		);
 	};

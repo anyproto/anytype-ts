@@ -4,6 +4,8 @@
 	display: inline-block; vertical-align: middle; background-size: 100% 100%; background-repeat: no-repeat;
 	background-position: center center; transition: $transitionAllCommon; position: relative;
 }
+.icon.withBackground { width: 28px !important; height: 28px !important; background-size: 20px !important; border-radius: 6px; }
+.icon.withBackground:hover, .icon.withBackground.hover  { background-color: var(--color-shape-highlight-medium) !important; };
 
 .arrow { background-position: center center; transition: $transitionAllCommon; background-repeat: no-repeat; background-size: 100% 100%; }
 

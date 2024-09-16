@@ -152,9 +152,15 @@
 	"commonCreateObjectWithName": "Create Object \"%s\"",
 	"commonCreateObject": "Create Object",
 	"commonUrl": "Url",
+	"commonEdit": "Edit",
 	"commonShare": "Share",
 	"commonDoNotShowAgain": "Don’t show this again",
+	"commonObject": "Object",
+	"commonMedia": "Media",
+	"commonFile": "File",
 	"commonMembers": "Members",
+	"commonEntrySpace": "My First Space",
+	"commonNothingFound": "Nothing found",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -492,7 +498,7 @@
 	"blockNameExistingPage": "Add link",
 	"blockNameExistingFile": "Add file",
 	"blockNameFile": "File",
-	"blockNameImage": "Picture",
+	"blockNameImage": "Image",
 	"blockNameVideo": "Video",
 	"blockNameAudio": "Audio",
 	"blockNamePdf": "PDF",
@@ -650,6 +656,19 @@
 
 	"blockTypeMyTypes": "My Types",
 
+	"blockChatEmpty": "There are no messages yet. Be the first to start a discussion",
+	"blockChatMessageExpand": "Expand",
+	"blockChatReactionAdd": "Add reaction",
+	"blockChatReply": "Reply",
+	"blockChatPlaceholder": "Enter your message",
+	"blockChatButtonObject": "Add object",
+	"blockChatButtonEmoji": "Add emoji",
+	"blockChatButtonMention": "Add mention",
+	"blockChatNewMessages": "New messages",
+	"blockChatMessageEdited": "(edited)",
+	"blockChatEditing": "Editing message",
+	"blockChatReplying": "Replying to %s",
+
 	"popupSettingsTitle": "Settings",
 	"popupSettingsAccountPersonalInformationTitle": "Personal information",
 	"popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
@@ -685,14 +704,6 @@
 	"popupSettingsColorModeButtonLight": "Light",
 	"popupSettingsColorModeButtonDark": "Dark",
 	"popupSettingsColorModeButtonSystem": "System",
-
-	"popupSettingsWallpaperTitle": "Wallpaper",
-	"popupSettingsWallpaperText": "Choose or upload the wallpaper. For best results upload high resolution images.",
-
-	"popupSettingsPicture": "Pictures",
-	"popupSettingsColor": "Colors",
-	"popupSettingsGradient": "Gradients",
-	"popupSettingsCodeStub": "Follow the white rabbit",
 
 	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
@@ -1036,6 +1047,9 @@
 
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
 	"popupConfirmOpenExternalLinkText": "You are trying to open url that is potentially harmful. Are you sure you want to proceed?",
+
+	"popupConfirmChatDeleteMessageTitle": "Delete message",
+	"popupConfirmChatDeleteMessageText": "Are you sure you want to delete this message?",
 
 	"popupInviteRequestTitle": "Join a space",
 	"popupInviteRequestText": "You've been invited to join <b>%s</b> space, created by <b>%s</b>. Send a request so space owner can let you in.",
@@ -1517,11 +1531,6 @@
 	"menuWidgetNumberOfObjects": "Number of Objects",
 	"menuWidgetRemoveWidget": "Remove Widget",
 	"menuWidgetEditWidgets": "Edit Widgets",
-	"menuWidgetFavorites": "Favorites",
-	"menuWidgetSets": "Sets",
-	"menuWidgetCollections": "Collections",
-	"menuWidgetRecentEdit": "Recently edited",
-	"menuWidgetRecentOpen": "Recently opened",
 	"menuWidgetRecentOpenCaption": "On this device",
 
 	"menuPreviewLatexExample": "Example: %s",
@@ -1540,6 +1549,8 @@
 	"syncButtonNameError2": "Incompatible version",
 	"syncButtonNameError3": "No access",
 	"syncButtonNameOffline": "No internet",
+
+	"syncButtonStaging": "Staging",
 
 	"menuSyncStatusTitle": "Sync status",
 
@@ -1727,6 +1738,7 @@
 	"widgetRecentOpen": "Recently opened",
 	"widgetSet": "Sets",
 	"widgetCollection": "Collections",
+	"widgetChat": "Chats",
 	"widgetEdit": "Edit widgets",
 	"widgetAdd": "Add widget",
 	"widgetLibrary": "Library",
@@ -1735,8 +1747,6 @@
 	"widgetEmptyLabel": "There are no Objects here",
 	"widgetEmptyLabelCreate": "There are no Objects here,<br/>create the first one",
 	"widgetShowAll": "See all Objects",
-
-	"widgetButtonAllContent": "All content",
 
 	"phrasePlaceholder": "Please enter your Key",
 
@@ -2066,7 +2076,7 @@
 
 	"errorIncorrectEmail": "Incorrect E-mail",
 
-	"origin0": "None",
+	"origin0": "Empty",
 	"origin1": "Clipboard",
 	"origin2": "Drag'n'Drop",
 	"origin3": "Imported object",

@@ -64,10 +64,7 @@
 
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; width: 100%; color: var(--color-text-primary); }
 		.dataviewHead {
-			.icon.source { 
-				width: 28px; height: 28px; background-size: 24px; background-image: url('~img/icon/dataview/button/source0.svg'); opacity: 0; 
-				flex-shrink: 0;
-			}
+			.icon.source { background-image: url('~img/icon/dataview/button/source0.svg'); opacity: 0; flex-shrink: 0; }
 			.icon.source.active { opacity: 1; }
 
 			.editableWrap { @include text-header2; height: 28px; @include text-overflow-nw; }
@@ -124,9 +121,7 @@
 				}
 			}
 
-			.icon { position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 6px; transition: $transitionAllCommon; }
-			.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
-
+			.icon { position: relative; transition: $transitionAllCommon; }
 			.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 			.icon.btn-filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
 			.icon.btn-sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }

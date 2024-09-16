@@ -274,7 +274,7 @@ class Relation {
 
 			case 'origin': {
 				value = Number(value) || I.ObjectOrigin.None;
-				return (value == I.ObjectOrigin.None) ? null : translate(`origin${value}`);
+				return translate(`origin${value}`);
 			};
 
 			case 'importType': {

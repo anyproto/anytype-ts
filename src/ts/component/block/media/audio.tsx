@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Error, MediaAudio, Icon } from 'Component';
-import { I, S, J, translate, focus, keyboard, Action } from 'Lib';
+import { I, S, J, U, translate, focus, keyboard, Action } from 'Lib';
 
 const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
 
@@ -26,7 +26,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { state, targetObjectId } = content;
-		const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted' ], true);
+		const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'fileExt' ], true);
 		
 		let element = null;
 
@@ -66,7 +66,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 					
 				case I.FileState.Done: {
 					const playlist = [ 
-						{ name: object.name, src: S.Common.fileUrl(targetObjectId) },
+						{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
 					];
 
 					element = (

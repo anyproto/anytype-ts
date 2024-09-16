@@ -1,0 +1,120 @@
+.attachments { display: flex; gap: 8px; flex-wrap: wrap; max-width: 540px; }
+.attachments {
+	.attachment { 
+		position: relative; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary); box-shadow: 0px 0px 4px rgba(0,0,0,0.05);
+		min-width: calc(532px / 2); width: calc(532px / 2); height: 72px; border-radius: 8px; display: flex; flex-direction: row; align-items: center;;
+	}
+
+	.attachment {
+		.clickable { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 11px; width: 100%; }
+		.iconObject { flex-shrink: 0; background-color: var(--color-shape-tertiary); border-radius: 6px; }
+		.info { flex-grow: 1; width: 100%; }
+
+		.icon.remove { 
+			opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; background-size: 8px; 
+			background-image: url('~img/icon/chat/buttons/remove.svg'); background-color: var(--color-bg-primary); border-radius: 50%;
+			box-shadow: 0px 1px 4px rgba(0,0,0,0.2);
+		}
+
+		.name { line-height: 20px; font-weight: 500; @include clamp1; }
+		.descr { @include text-small; @include clamp1; }
+		.descr {
+			.bullet { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-secondary); }
+		}
+	}
+
+	.attachment.isFile, .attachment.isBookmark {
+		.iconObject { background-color: unset; }
+		.descr { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; color: var(--color-text-secondary); }
+	}
+
+	.attachment.isBookmark {
+		.url { @include text-overflow-nw; }
+		.info { display: flex; flex-direction: column; gap: 2px 0px; }
+	}
+
+	.attachment.isImage { width: 72px; height: 72px; min-width: unset; display: flex; align-items: center; justify-content: center; }
+	.attachment.isImage {
+		.image { display: block; object-fit: cover; aspect-ratio: 1; border-radius: 8px; width: 100%; height: 100%; }
+	}
+
+	.attachment.isVideo { overflow: hidden; }
+	.attachment.isVideo {
+		video { width: 100%; display: block; }
+	}
+
+	.attachment.isAudio { min-width: calc(532px / 2); }
+	.attachment.isAudio {
+		.mediaAudio { padding: 12px 16px; }
+		.mediaAudio {
+			.controls { display: flex; align-items: center; gap: 0px 8px; }
+			.controls {
+				.icon { flex-shrink: 0; }
+				.icon.play { margin: 0px; }
+				.icon.volume { margin: 0px; }
+
+				.name { display: none; }
+				.time { position: static; flex-shrink: 0; }
+				#time { margin: 0px; }
+				#volume { opacity: 1; flex-shrink: 0; }
+			}
+		}
+	}
+
+	.attachment:hover {
+		.icon.remove { opacity: 1; }
+	}
+}
+
+.attachments.isSingle {
+	.attachment { width: 540px; }
+}
+
+/* Layouts */
+
+.attachments.withLayout { gap: 4px; }
+.attachments.withLayout {
+	.attachment { border-radius: 12px; height: auto; width: auto; aspect-ratio: 1; flex-shrink: 0; min-width: unset; }
+	.attachment.isImage {
+		.image { max-width: 100%; max-height: 360px; }
+	}
+}
+
+.attachments.layout-1 { max-width: 360px; }
+.attachments.layout-1 {
+	.attachment { max-width: 360px; max-height: 360px; aspect-ratio: unset; }
+	.attachment {
+		.image { aspect-ratio: unset; }
+	}
+}
+.attachments.layout-2 { gap: 4px; }
+.attachments.layout-2 {
+	.attachment { @include cnt-2; }
+}
+.attachments.layout-3 {
+	.attachment { @include cnt-3; }
+}
+.attachments.layout-4 {
+	.attachment { @include cnt-4; }
+}
+.attachments.layout-5 {
+	.attachment { @include cnt-3; }
+	.attachment:nth-child(-n + 2) { @include cnt-2; }
+}
+.attachments.layout-6 {
+	.attachment { @include cnt-3; }
+}
+.attachments.layout-7 {
+	.attachment { @include cnt-4; }
+	.attachment:nth-child(-n + 3) { @include cnt-3; }
+}
+.attachments.layout-8 {
+	.attachment { @include cnt-4; }
+}
+.attachments.layout-9 {
+	.attachment { @include cnt-3; }
+}
+.attachments.layout-10 {
+	.attachment { @include cnt-4; }
+	.attachment:nth-child(-n + 6) { @include cnt-3; }
+}
