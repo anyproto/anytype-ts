@@ -27,8 +27,7 @@
 			.sides.sidesSort { padding: 0px 10px; }
 			.sides.sidesFilter { padding: 0px 16px; }
 
-			.icon.sort { width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/store/sort.svg'); border-radius: 6px; }
-			.icon.sort:hover, .icon.sort.hover { background-color: var(--color-shape-highlight-medium); }
+			.icon.sort { background-image: url('~img/icon/store/sort.svg') }
 
 			.select { border: 0px; padding: 4px 20px 4px 6px; font-weight: 500; }
 			.select {

@@ -283,8 +283,7 @@
 									}
 									.input { height: 40px; border-radius: inherit; padding: 0px; font-weight: 500; }
 
-									.icon.more { width: 28px; height: 28px; background-size: 20px; border-radius: 4px; background-image: url('~img/icon/menu/action/more0.svg'); }
-									.icon.more:hover { background-color: var(--color-shape-highlight-medium); }
+									.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 								}
 							}
 
@@ -431,9 +430,8 @@
 						.creator { display: flex; flex-wrap: nowrap; align-items: center; gap: 0px 6px; @include text-small; color: var(--color-text-secondary); }
 					}
 
-					.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 4px; }
 					.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-					.icon:hover, .icon.active { background-color: var(--color-shape-highlight-medium); }
+					.icon.active { background-color: var(--color-shape-highlight-medium); }
 				}
 			}
 
@@ -470,10 +468,8 @@
 
 					.icons { display: flex; align-items: center; gap: 0px 6px; flex-direction: row; }
 					.icons {
-						.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 4px; }
 						.icon.question { background-image: url('~img/icon/question.svg'); }
 						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-						.icon:hover { background-color: var(--color-shape-highlight-medium); }
 					}
 				}
 
@@ -496,9 +492,7 @@
 						}
 						.input { height: 40px; border-radius: inherit; padding: 0px; font-weight: 500; }
 
-						.icon.more { width: 28px; height: 28px; background-size: 20px; border-radius: 4px; background-image: url('~img/icon/menu/action/more0.svg'); }
-						.icon.more:hover { background-color: var(--color-shape-highlight-medium); }
-
+						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 						.button { flex-shrink: 0; }
 					}
 				}

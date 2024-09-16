@@ -39,6 +39,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			<React.Fragment>
 				<Icon 
 					id="sidebarToggle"
+					className="withBackground"
 					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 					tooltipY={I.MenuDirection.Bottom}
 					onClick={this.onToggleClick}

@@ -105,7 +105,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 								/>
 							</div>
 							<div className="side right">
-								<Icon id="button-object-sort" className="sort" onClick={this.onSort} />
+								<Icon id="button-object-sort" className="sort withBackground" onClick={this.onSort} />
 							</div>
 						</div>
 

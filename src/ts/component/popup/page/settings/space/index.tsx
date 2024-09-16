@@ -193,7 +193,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									<div className="inviteLinkWrapper">
 										<div className="inputWrapper">
 											<Input ref={ref => this.refInput = ref} readonly={true} value={U.Space.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
-											<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
+											<Icon id="button-more-link" className="more withBackground" onClick={this.onMoreLink} />
 										</div>
 									</div>
 								</div>

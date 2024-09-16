@@ -46,7 +46,8 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		return (
 			<div className="buttons">
 				{buttons.map((item: any, i: number) => {
-					const cn = [ item.icon ];
+					const cn = [ item.icon, 'withBackground' ];
+
 					if (item.isActive) {
 						cn.push('isActive');
 					};

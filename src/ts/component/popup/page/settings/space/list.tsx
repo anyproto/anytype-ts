@@ -38,7 +38,7 @@ const PopupSettingsPageSpacesList = observer(class PopupSettingsPageSpacesList e
 					<div className="col">{participant ? translate(`participantPermissions${participant.permissions}`) : ''}</div>
 					<div className="col">{translate(`spaceStatus${space.spaceAccountStatus}`)}</div>
 					<div className="col colMore">
-						{hasMenu ? <Icon id={`icon-more-${space.id}`} className="more" onClick={() => this.onMore(space)} /> : ''}
+						{hasMenu ? <Icon id={`icon-more-${space.id}`} className="more withBackground" onClick={() => this.onMore(space)} /> : ''}
 					</div>
 				</div>
 			);

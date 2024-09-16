@@ -9,11 +9,11 @@
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
 #sidebarToggle { 
-	width: 28px; height: 28px; background-size: 20px; border-radius: 6px; position: fixed; left: 84px; top: 12px; backdrop-filter: blur(20px);
+	position: fixed; left: 84px; top: 12px; backdrop-filter: blur(20px);
 	background-image: url('~img/icon/widget/toggle0.svg'); z-index: 22; -webkit-app-region: no-drag; transition: none;
 }
 #sidebarToggle.sidebarAnimation { transition: left $transitionSidebarTime linear; }
-#sidebarToggle:hover, #sidebarToggle.hover { background-color: var(--color-shape-highlight-medium); background-image: url('~img/icon/widget/toggle1.svg'); }
+#sidebarToggle:hover, #sidebarToggle.hover { background-color: var(--color-shape-highlight-medium) !important; background-image: url('~img/icon/widget/toggle1.svg'); }
 
 .sidebar { position: fixed; z-index: 21; user-select: none; transition: none; top: 0px; left: 0px; height: 100%; }
 .sidebar.anim { transition-property: width; transition-duration: $transitionSidebarTime; transition-timing-function: linear; }

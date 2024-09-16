@@ -7,17 +7,6 @@
 		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
 		gap: 0px 8px; overflow: hidden;
 	}
-	> .head {
-		.status { 
-			@include text-small; font-weight: 500; @include text-overflow-nw; text-align: center; color: var(--color-text-secondary);
-			display: inline-block; -webkit-app-region: no-drag;
-		}
-
-		.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; -webkit-app-region: no-drag; }
-		.icon:hover { background-color: var(--color-shape-highlight-medium); }
-		.icon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }
-		.icon.toggle:hover { background-image: url('~img/icon/widget/toggle1.svg'); }
-	}
 
 	> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: auto; overscroll-behavior: none; }
 	> .body {
