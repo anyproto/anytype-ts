@@ -40,9 +40,9 @@
 }
 
 .widget.widgetView {
-	@import "./board.scss";
-	@import "./calendar.scss";
-	@import "./gallery.scss";
-	@import "./list.scss";
-	@import "./graph.scss";
+	@import "./board";
+	@import "./calendar";
+	@import "./gallery";
+	@import "./list";
+	@import "./graph";
 }

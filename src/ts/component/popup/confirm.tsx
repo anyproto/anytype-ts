@@ -133,8 +133,6 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		const { storageKey } = data;
 		const value = this.refCheckbox.getValue();
 
-		console.log(storageKey, !value);
-
 		this.refCheckbox.toggle();
 		Storage.set(storageKey, !value);
 	};

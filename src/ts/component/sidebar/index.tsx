@@ -39,6 +39,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			<React.Fragment>
 				<Icon 
 					id="sidebarToggle"
+					className="withBackground"
 					tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 					tooltipY={I.MenuDirection.Bottom}
 					onClick={this.onToggleClick}
@@ -50,11 +51,10 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					id="sidebar" 
 					className={cn.join(' ')} 
 				>
-					<SidebarWidget {...this.props} />
+					{showObject ? <SidebarObject {...this.props} /> : <SidebarWidget {...this.props} />}
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
 						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>
-					{showObject ? <SidebarObject {...this.props} /> : ''}
 				</div>
 			</React.Fragment>
 		);

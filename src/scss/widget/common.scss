@@ -104,7 +104,7 @@
 	.head > .flex > .clickable { width: calc(100% - 36px); }
 }
 
-@import "./space.scss";
-@import "./buttons.scss";
-@import "./tree.scss";
-@import "./view/common.scss";
+@import "./space";
+@import "./buttons";
+@import "./tree";
+@import "./view/common";

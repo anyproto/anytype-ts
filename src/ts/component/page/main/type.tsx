@@ -62,7 +62,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedDetails = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite;
-		const allowedLayout = object.recommendedLayout != I.ObjectLayout.Bookmark;
+		const allowedLayout = ![ I.ObjectLayout.Bookmark, I.ObjectLayout.Chat ].includes(object.recommendedLayout);
 		
 		const subIdObject = this.getSubIdObject();
 		const totalObject = S.Record.getMeta(subIdObject, '').total;
@@ -338,7 +338,12 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return;
 		};
 
-		const allowedObject = U.Object.isInPageLayouts(type.recommendedLayout) || U.Object.isInSetLayouts(type.recommendedLayout);
+		const layout = type.recommendedLayout;
+		const allowedObject = 
+			U.Object.isInPageLayouts(layout) || 
+			U.Object.isInSetLayouts(layout) || 
+			U.Object.isBookmarkLayout(layout) ||
+			U.Object.isChatLayout(layout);
 		const options = [];
 
 		if (allowedObject) {
@@ -379,7 +384,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		if (!type) {
 			return;
 		};
-		
+
 		const details: any = {};
 
 		if (U.Object.isInSetLayouts(type.recommendedLayout)) {

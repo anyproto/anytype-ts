@@ -34,8 +34,6 @@
 				display: flex; flex-direction: column; justify-content: space-between;
 			}
 			> .side.left {
-				.iconObject.withLetter { background-color: var(--color-shape-primary); }
-
 				.section { margin: 0px 0px 12px 0px; }
 				.section.account { margin-bottom: 8px; }
 				.section:last-child { margin: 0px; }
@@ -149,7 +147,7 @@
 					.word { @include text-small; font-weight: 500; margin: 0; }
 					.bg { filter: blur(8px); opacity: 0.5; }
 
-					.icon { width: 28px; height: 28px; background-size: 20px; margin: 0px; top: 12px; right: 12px; border-radius: 6px; z-index: 1; }
+					.icon { margin: 0px; top: 12px; right: 12px; z-index: 1; }
 					.icon.hide { background-image: url('~img/icon/popup/settings/phraseToggle0.svg'); }
 					.icon.see { background-image: url('~img/icon/popup/settings/phraseToggle1.svg'); background-color: var(--color-shape-tertiary); }
 				}
@@ -283,8 +281,7 @@
 									}
 									.input { height: 40px; border-radius: inherit; padding: 0px; font-weight: 500; }
 
-									.icon.more { width: 28px; height: 28px; background-size: 20px; border-radius: 4px; background-image: url('~img/icon/menu/action/more0.svg'); }
-									.icon.more:hover { background-color: var(--color-shape-highlight-medium); }
+									.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 								}
 							}
 
@@ -431,9 +428,8 @@
 						.creator { display: flex; flex-wrap: nowrap; align-items: center; gap: 0px 6px; @include text-small; color: var(--color-text-secondary); }
 					}
 
-					.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 4px; }
 					.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-					.icon:hover, .icon.active { background-color: var(--color-shape-highlight-medium); }
+					.icon.active { background-color: var(--color-shape-highlight-medium); }
 				}
 			}
 
@@ -470,10 +466,8 @@
 
 					.icons { display: flex; align-items: center; gap: 0px 6px; flex-direction: row; }
 					.icons {
-						.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 4px; }
 						.icon.question { background-image: url('~img/icon/question.svg'); }
 						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-						.icon:hover { background-color: var(--color-shape-highlight-medium); }
 					}
 				}
 
@@ -496,9 +490,7 @@
 						}
 						.input { height: 40px; border-radius: inherit; padding: 0px; font-weight: 500; }
 
-						.icon.more { width: 28px; height: 28px; background-size: 20px; border-radius: 4px; background-image: url('~img/icon/menu/action/more0.svg'); }
-						.icon.more:hover { background-color: var(--color-shape-highlight-medium); }
-
+						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 						.button { flex-shrink: 0; }
 					}
 				}

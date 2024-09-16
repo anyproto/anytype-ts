@@ -13,7 +13,7 @@ interface State {
 	pagesOut: I.PageInfo[];
 };
 
-const HEIGHT = 96;
+const HEIGHT = 88;
 
 enum Panel { 
 	Left = 1, 
@@ -55,20 +55,31 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const rootId = this.getRootId();
 
 		const Item = (item: any) => {
-			const { layout, name, description, snippet } = item || {};
+			const { id, layout, name, snippet } = item || {};
+			const isFile = U.Object.isInFileLayouts(layout);
+			const cn = [ 'item', U.Data.layoutClass(id, layout) ];
+			const iconSize = isFile ? 48 : null;
+
+			let description = null;
+			if (isFile) {
+				cn.push('isFile');
+				description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
+			} else {
+				description = <ObjectDescription object={item} />;
+			};
 
 			return (
 				<div 
-					id={'item-' + item.id} 
-					className="item" 
+					id={`item-${id}`} 
+					className={cn.join(' ')}
 					onMouseEnter={e => this.onOver(e, item)}
 					onMouseLeave={() => this.unsetActive()}
 				>
 					<div className="inner" onClick={e => this.onClick(e, item)}>
-						<IconObject object={item} forceLetter={true} size={48} iconSize={24} />
+						<IconObject object={item} withDefault={true} size={48} iconSize={iconSize} />
 						<div className="info">
 							<ObjectName object={item} />
-							<ObjectDescription object={item} />
+							{description}
 						</div>
 					</div>
 					<Icon className="arrow" />
@@ -104,13 +115,24 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		const Selected = (item: any) => {
-			const { name, description, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
+			const { id, name, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
+			const isFile = U.Object.isInFileLayouts(layout);
+			const cn = [ 'item', U.Data.layoutClass(id, layout), 'selected' ];
+			const iconSize = isFile ? 48 : null;
+
+			let description = null;
+			if (isFile) {
+				cn.push('isFile');
+				description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
+			} else {
+				description = <ObjectDescription object={item} />;
+			};
 
 			return (
-				<div id={'item-' + item.id} className="item selected">
-					<IconObject object={item} forceLetter={true} size={48} />
+				<div id={`item-${id}`} className={cn.join(' ')}>
+					<IconObject object={item} withDefault={true} size={48} iconSize={iconSize} />
 					<ObjectName object={item} />
-					<ObjectDescription object={item} />
+					{description}
 					
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 				
@@ -288,7 +310,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			const hh = header.height();
 			const oh = container.height() - hh;
 
-			node.css({ paddingTop: isPopup ? 0 : hh });
 			sides.css({ height: oh });
 			items.css({ height: oh });
 			empty.css({ height: oh, lineHeight: oh + 'px' });

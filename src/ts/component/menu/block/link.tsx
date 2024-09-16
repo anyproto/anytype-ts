@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, S, U, J, keyboard, focus, translate, analytics } from 'Lib';
+import { I, S, U, J, keyboard, focus, translate, analytics, Preview } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface State {
@@ -96,7 +96,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 						description={type ? type.name : undefined}
 						style={param.style}
 						iconSize={40}
-						forceLetter={true}
+						withDefault={true}
 						className={cn.join(' ')}
 					/>
 				);
@@ -222,13 +222,21 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	onFilterClear () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { type, onChange } = data;
+		const { type, onChange, filter, onClear } = data;
 
 		if (type !== null) {
-			onChange(type, '');
+			if (onClear) {
+				onClear(filter);
+			};
+
+			if (onChange) {
+				onChange(type, '');
+			};
 		};
+
 		close();
 		focus.apply();
+		Preview.previewHide();
 	};
 
 	getSections () {
@@ -361,14 +369,20 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 				url = `file://${url}`;
 			};
 
-			onChange(I.MarkType.Link, url);
+			if (onChange) {
+				onChange(I.MarkType.Link, url);
+			};
 		} else
 		if (item.itemId == 'add') {
 			U.Object.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectType, I.ObjectFlag.SelectTemplate ], analytics.route.link, (message: any) => {
-				onChange(I.MarkType.Object, message.targetId);
+				if (onChange) {
+					onChange(I.MarkType.Object, message.targetId);
+				};
 			});
 		} else {
-			onChange(I.MarkType.Object, item.itemId);
+			if (onChange) {
+				onChange(I.MarkType.Object, item.itemId);
+			};
 		};
 
 		close();

@@ -104,12 +104,6 @@ html.platformWindows, html.platformLinux {
 
 a { color: var(--color-text-primary); }
 
-markuphighlight { background: #b2dff9 !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
-markuphighlight.active { background: orange !important; }
-
-markupsearch { background: yellow !important; color: var(--color-text-primary) !important; border-radius: 2px; display: inline; }
-markupsearch.active { background: orange !important; }
-
 .dropTarget.isOver.middle { background: var(--color-system-drop-zone) !important; }
 .dropTarget.isOver.top { box-shadow: 0px -2px 0px var(--color-system-accent-100); }
 .dropTarget.isOver.bottom { box-shadow: 0px 2px 0px var(--color-system-accent-100); }
@@ -208,5 +202,5 @@ markupsearch.active { background: orange !important; }
 	.icon.download { display: none; }
 }
 
-@import "scss/debug.scss";
-@import "scss/font.scss";
+@import "scss/debug";
+@import "scss/font";

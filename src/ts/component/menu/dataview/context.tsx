@@ -185,8 +185,9 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedCollection)	 addCollection = null;
 
 		let sections = [
-			{ children: [ createWidget, open, fav, linkTo, addCollection, exportObject, relation ] },
-			{ children: [ changeType, pageCopy, unlink, archive ] },
+			{ children: [ createWidget, open, changeType, relation ] },
+			{ children: [ fav, linkTo, addCollection ] },
+			{ children: [ pageCopy, exportObject, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -226,10 +227,6 @@ class MenuContext extends React.Component<I.Menu> {
 		const { onLinkTo, route } = data;
 		const objectIds = this.getObjectIds();
 
-		if (S.Menu.isAnimating(this.props.id)) {
-			return;
-		};
-
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 		};
@@ -246,6 +243,7 @@ class MenuContext extends React.Component<I.Menu> {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
+			noAutoHover: true,
 			className,
 			classNameWrap,
 			data: {
@@ -318,7 +316,7 @@ class MenuContext extends React.Component<I.Menu> {
 						onClick: (details: any) => {
 							C.ObjectCreate({ ...details, layout: I.ObjectLayout.Collection }, [], '', collectionType?.uniqueKey, S.Common.space, message => {
 								Action.addToCollection(message.objectId, objectIds);
-								U.Object.openConfig(message.details);
+								U.Object.openAuto(message.details);
 							});
 						},
 					},
@@ -336,7 +334,7 @@ class MenuContext extends React.Component<I.Menu> {
 			};
 		};
 
-		if (menuId && !S.Menu.isOpen(menuId, item.id)) {
+		if (menuId && !S.Menu.isOpen(menuId, item.id) && !S.Menu.isAnimating(menuId)) {
 			S.Menu.closeAll(J.Menu.dataviewContext, () => {
 				S.Menu.open(menuId, menuParam);
 			});

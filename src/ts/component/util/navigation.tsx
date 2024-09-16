@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, J, keyboard, Preview, translate, analytics } from 'Lib';
+import { I, C, S, U, J, keyboard, Preview, translate, analytics } from 'Lib';
 
 const Navigation = observer(class Navigation extends React.Component {
 
@@ -145,7 +145,7 @@ const Navigation = observer(class Navigation extends React.Component {
 		keyboard.onSearchPopup(analytics.route.navigation);
 	};
 
-	setX (sw: number, animate: boolean) {
+	position (sw: number, animate: boolean) {
 		const node = $(this.node);
 		const { ww } = U.Common.getWindowDimensions();
 		const width = node.outerWidth();

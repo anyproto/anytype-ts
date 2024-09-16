@@ -176,9 +176,20 @@
 		}
 	}
 
-	/* BlockIconPage */
+	/* BlockChat */
+	.block.blockChat {
+		.message {
+			.side.right { background: var(--color-shape-tertiary); }
 
-	.block.blockIconPage {
-		.iconObject { background-color: var(--color-bg-tertiary) !important; box-shadow: 0px 0px 0px 4px var(--color-bg-tertiary); }
+			.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('#{$themePath}/icon/chat/buttons/reaction1.svg'); }
+
+			> .flex > .controls {
+				.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('#{$themePath}/icon/chat/buttons/reply1.svg'); }
+				.icon.more:hover, .icon.more.hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
+			}
+		}
+		.message.isSelf {
+			.side.right { background: #162908; }
+		}
 	}
 }

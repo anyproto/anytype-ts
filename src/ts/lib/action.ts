@@ -35,6 +35,13 @@ class Action {
 			return;
 		};
 
+		const object = S.Detail.get(rootId, rootId);
+
+		if (U.Object.isChatLayout(object.layout)) {
+			C.ChatUnsubscribe(object.chatId);
+			S.Chat.clear(object.id);
+		};
+
 		S.Record.metaClear(rootId, '');
 		S.Record.recordsClear(rootId, '');
 		S.Detail.clear(rootId);

@@ -302,7 +302,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	
 	componentDidMount () {
 		const { id, param } = this.props;
-		const { initialTab, onOpen } = param;
+		const { initialTab, onOpen, noAutoHover } = param;
 
 		this._isMounted = true;
 		this.poly = $('#menu-polygon');
@@ -316,7 +316,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const obj = $(`#${this.getId()}`);
 		const el = this.getElement();
 
-		if (el && el.length) {
+		if (!noAutoHover && el && el.length) {
 			el.addClass('hover');
 		};
 
@@ -530,6 +530,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				oy = top;
 			};
 
+			if (isFixed) {
+				oy -= scrollTop;
+			};
+
 			let x = ox;
 			let y = oy;
 			let flipX = false;
@@ -582,11 +586,6 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 						flipX = true;
 					};
 					break;
-			};
-
-			if (isFixed) {
-				oy -= scrollTop;
-				y -= scrollTop;
 			};
 
 			x = Math.max(borderLeft, x);
@@ -973,12 +972,15 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		let el = menu.find(`#item-${$.escapeSelector(item.itemId)}`);
-		if (!el.length) {
+		let el = null;
+		if (item.itemId) {
+			el = menu.find(`#item-${$.escapeSelector(item.itemId)}`);
+		};
+		if (item.id && (!el || !el.length)) {
 			el = menu.find(`#item-${$.escapeSelector(item.id)}`);
 		};
 
-		if (!el.length) {
+		if (!el || !el.length) {
 			return;
 		};
 

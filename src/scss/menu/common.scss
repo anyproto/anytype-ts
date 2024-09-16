@@ -116,7 +116,7 @@
 			}
 			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
 			.icon.delete:hover, .icon.more:hover { background-color: var(--color-shape-highlight-medium); }
-			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
+			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px !important; background-image: url('~img/arrow/menu.svg'); }
 			.icon.chk { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/chk.svg'); }
 			.icon.sortArrow { width: 20px; height: 20px; margin: 0px; background-image: url('~img/icon/menu/sortArrow.svg'); }
 			.icon.sortArrow.c1 { transform: rotateZ(180deg); }
@@ -259,45 +259,45 @@ html.platformWindows {
 	}
 }
 
-@import "./icon.scss";
-@import "./button.scss";
-@import "./help.scss";
-@import "./onboarding.scss";
-@import "./relation.scss";
-@import "./select.scss";
-@import "./smile.scss";
-@import "./type.scss";
-@import "./widget.scss";
-@import "./quickCapture.scss";
-@import "./syncStatus.scss";
-@import "./graph.scss";
+@import "./icon";
+@import "./button";
+@import "./help";
+@import "./onboarding";
+@import "./relation";
+@import "./select";
+@import "./smile";
+@import "./type";
+@import "./widget";
+@import "./quickCapture";
+@import "./syncStatus";
+@import "./graph";
 
-@import "./search/object.scss";
-@import "./search/text.scss";
+@import "./search/object";
+@import "./search/text";
 
-@import "./preview/object.scss";
+@import "./preview/object";
 
-@import "./block/common.scss";
-@import "./block/add.scss";
-@import "./block/context.scss";
-@import "./block/cover.scss";
-@import "./block/latex.scss";
-@import "./block/link.scss";
-@import "./block/linkSettings.scss";
-@import "./block/mention.scss";
-@import "./block/relation.scss";
+@import "./block/common";
+@import "./block/add";
+@import "./block/context";
+@import "./block/cover";
+@import "./block/latex";
+@import "./block/link";
+@import "./block/linkSettings";
+@import "./block/mention";
+@import "./block/relation";
 
-@import "./dataview/calendar.scss";
-@import "./dataview/common.scss";
-@import "./dataview/create/bookmark.scss";
-@import "./dataview/file.scss";
-@import "./dataview/filter.scss";
-@import "./dataview/group.scss";
-@import "./dataview/object.scss";
-@import "./dataview/option.scss";
-@import "./dataview/relation.scss";
-@import "./dataview/sort.scss";
-@import "./dataview/source.scss";
-@import "./dataview/text.scss";
-@import "./dataview/view.scss";
-@import "./dataview/template.scss";
+@import "./dataview/calendar";
+@import "./dataview/common";
+@import "./dataview/create/bookmark";
+@import "./dataview/file";
+@import "./dataview/filter";
+@import "./dataview/group";
+@import "./dataview/object";
+@import "./dataview/option";
+@import "./dataview/relation";
+@import "./dataview/sort";
+@import "./dataview/source";
+@import "./dataview/text";
+@import "./dataview/view";
+@import "./dataview/template";
