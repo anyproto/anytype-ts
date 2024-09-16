@@ -73,6 +73,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					<div className="row" style={style}>
 						<Item 
 							item={item}
+							onClick={e => this.onClick(e, item)}
 							onMouseEnter={() => this.onOver(item)}
 							onMouseLeave={() => this.unsetActive()}
 						/>
