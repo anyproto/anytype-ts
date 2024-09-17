@@ -184,7 +184,10 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	onClick (e: any, item: any) {
-		U.Object.openConfig(item);
+		const { isEditing } = this.state;
+		if (isEditing) {
+			U.Object.openConfig(item);
+		};
 	};
 
 	placeholderCheck () {
