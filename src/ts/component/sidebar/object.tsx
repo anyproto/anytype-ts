@@ -119,7 +119,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 								/>
 							</div>
 							<div className="side right">
-								{isAllowedObject ? <Button color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
+								{isAllowedObject ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
 							</div>
 						</div>
 					</div>
@@ -368,12 +368,16 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			name: this.filter,
 		};
 
-		keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
-			if (message.targetId && this.filter && this.searchIds) {
-				this.searchIds = this.searchIds.concat(message.targetId);
-				this.load(false);
-			};
-		});
+		if (this.type == I.ObjectContainerType.Bookmark) {
+			this.onBookmarkMenu(details);
+		} else {
+			keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
+				if (message.targetId && this.filter && this.searchIds) {
+					this.searchIds = this.searchIds.concat(message.targetId);
+					this.load(false);
+				};
+			});
+		};
 	};
 
 	isAllowedObject (): boolean {
@@ -455,6 +459,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		}, J.Constant.delay.keyboard);
 	};
 
+	onFilterClear () {
+		this.searchIds = null;
+		this.load(true);
+	};
+
 	storageGet () {
 		const storage = Storage.get('sidebarObject') || {};
 		storage.sort = storage.sort || {};
@@ -465,9 +474,28 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		Storage.set('sidebarObject', obj);
 	};
 
-	onFilterClear () {
-		this.searchIds = null;
-		this.load(true);
+	onBookmarkMenu (details: any) {
+		const node = $(this.node);
+		const width = node.width() - 32;
+
+		S.Menu.open('dataviewCreateBookmark', {
+			element: '#sidebar #containerObject #button-object-create',
+			offsetY: 4,
+			width,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Right,
+			type: I.MenuType.Horizontal,
+			data: {
+				details,
+				onSubmit: (bookmark) => {
+					if (this.filter && this.searchIds) {
+						this.searchIds = this.searchIds.concat(bookmark.id);
+						this.load(false);
+					};
+				},
+			},
+		});
 	};
 
 });
