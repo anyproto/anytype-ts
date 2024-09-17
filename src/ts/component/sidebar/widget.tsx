@@ -30,7 +30,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
-		this.onLibrary = this.onLibrary.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
@@ -328,14 +327,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 		this.isDragging = false;
 		this.clear();
-	};
-
-	onLibrary (e: any) {
-		const { isEditing } = this.state;
-
-		if (!isEditing && !e.button) {
-			U.Object.openEvent(e, { layout: I.ObjectLayout.Store });
-		};
 	};
 
 	onContextMenu () {

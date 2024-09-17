@@ -20,7 +20,6 @@ import PageMainSet from './main/set';
 import PageMainType from './main/type';
 import PageMainMedia from './main/media';
 import PageMainRelation from './main/relation';
-import PageMainStore from './main/store';
 import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
@@ -49,7 +48,6 @@ const Components = {
 	'main/type':			 PageMainType,
 	'main/media':			 PageMainMedia,
 	'main/relation':		 PageMainRelation,
-	'main/store':			 PageMainStore,
 	'main/graph':			 PageMainGraph,
 	'main/navigation':		 PageMainNavigation,
 	'main/create':			 PageMainCreate,
