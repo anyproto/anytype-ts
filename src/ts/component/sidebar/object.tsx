@@ -368,14 +368,18 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			name: this.filter,
 		};
 
+		const cb = (id: string) => {
+			if (id && this.filter && this.searchIds) {
+				this.searchIds = this.searchIds.concat(id);
+				this.load(false);
+			};
+		};
+
 		if (this.type == I.ObjectContainerType.Bookmark) {
-			this.onBookmarkMenu(details);
+			this.onBookmarkMenu(details, cb);
 		} else {
 			keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
-				if (message.targetId && this.filter && this.searchIds) {
-					this.searchIds = this.searchIds.concat(message.targetId);
-					this.load(false);
-				};
+				cb(message.targetId);
 			});
 		};
 	};
@@ -474,7 +478,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		Storage.set('sidebarObject', obj);
 	};
 
-	onBookmarkMenu (details: any) {
+	onBookmarkMenu (details: any, callBack: (id: string) => void) {
 		const node = $(this.node);
 		const width = node.width() - 32;
 
@@ -488,12 +492,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			type: I.MenuType.Horizontal,
 			data: {
 				details,
-				onSubmit: (bookmark) => {
-					if (this.filter && this.searchIds) {
-						this.searchIds = this.searchIds.concat(bookmark.id);
-						this.load(false);
-					};
-				},
+				onSubmit: object => callBack(object.id),
 			},
 		});
 	};
