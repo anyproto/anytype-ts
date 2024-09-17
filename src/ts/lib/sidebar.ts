@@ -204,6 +204,10 @@ class Sidebar {
 	};
 
 	resizePage (width: number, animate: boolean): void {
+		if (!keyboard.isMain()) {
+			return;
+		};
+
 		this.initObjects();
 
 		if ((width === null) && this.obj && this.obj.length) {
