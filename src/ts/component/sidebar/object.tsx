@@ -408,7 +408,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			{ id: I.ObjectContainerType.Media, name: translate('sidebarObjectTypeMedia') },
 			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
 			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
-			//{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
+			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
 			{ id: I.ObjectContainerType.Orphan, icon: `checkbox c${Number(this.orphan)}`, name: translate('sidebarObjectTypeOrphan') },
 		] as any[]).map(it => {
 			if (it.id != I.ObjectContainerType.Orphan) {
