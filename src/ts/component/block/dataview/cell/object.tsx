@@ -184,6 +184,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	onClick (e: any, item: any) {
+		U.Object.openConfig(item);
 	};
 
 	placeholderCheck () {
