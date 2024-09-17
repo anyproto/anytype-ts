@@ -68,6 +68,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 						item={item} 
 						style={param.style} 
 						isActive={rootId == item.id}
+						allowSystemLayout={true}
 						onClick={() => this.onClick(item)}
 						onContext={() => this.onContext(item)}
 					/>
