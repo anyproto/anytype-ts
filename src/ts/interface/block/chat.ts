@@ -7,7 +7,7 @@ export enum ChatButton {
 	Mention 	 = 3,
 };
 
-export enum ChatAttachmentType {
+export enum AttachmentType {
 	File		 = 0, 
 	Image		 = 1,
 	Link		 = 2,
@@ -37,7 +37,7 @@ export interface ChatMessageContent {
 
 export interface ChatMessageAttachment {
 	target: string;
-	type: ChatAttachmentType;
+	type: AttachmentType;
 };
 
 export interface BlockChat extends I.Block {};

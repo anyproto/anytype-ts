@@ -629,18 +629,6 @@ class UtilData {
 		return 0;
 	};
 
-	sortByWeight (c1: any, c2: any) {
-		if (c1._sortWeight_ > c2._sortWeight_) return -1;
-		if (c1._sortWeight_ < c2._sortWeight_) return 1;
-		return this.sortByName(c1, c2);
-	};
-
-	sortByFormat (c1: any, c2: any) {
-		if (c1.format > c2.format) return 1;
-		if (c1.format < c2.format) return -1;
-		return this.sortByName(c1, c2);
-	};
-
 	sortByPinnedTypes (c1: any, c2: any, ids: string[]) {
 		const idx1 = ids.indexOf(c1.id);
 		const idx2 = ids.indexOf(c2.id);
@@ -651,18 +639,24 @@ class UtilData {
 	};
 
 	sortByNumericKey (key: string, c1: any, c2: any, dir: I.SortType) {
-		if (c1[key] > c2[key]) return dir == I.SortType.Asc ? 1 : -1;
-		if (c1[key] < c2[key]) return dir == I.SortType.Asc ? -1 : 1;
+		const k1 = Number(c1[key]) || 0;
+		const k2 = Number(c2[key]) || 0;
+
+		if (k1 > k2) return dir == I.SortType.Asc ? 1 : -1;
+		if (k1 < k2) return dir == I.SortType.Asc ? -1 : 1;
 		return this.sortByName(c1, c2);
 	};
 
-	sortByLastUsedDate (c1: any, c2: any) {
-		const l1 = Number(c1.lastUsedDate) || 0;
-		const l2 = Number(c2.lastUsedDate) || 0;
+	sortByWeight (c1: any, c2: any) {
+		return this.sortByNumericKey('_sortWeight_', c1, c2, I.SortType.Desc);
+	};
 
-		if (l1 > l2) return -1;
-		if (l1 < l2) return 1;
-		return this.sortByName(c1, c2);
+	sortByFormat (c1: any, c2: any) {
+		return this.sortByNumericKey('format', c1, c2, I.SortType.Asc);
+	};
+
+	sortByLastUsedDate (c1: any, c2: any) {
+		return this.sortByNumericKey('lastUsedDate', c1, c2, I.SortType.Desc);
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
