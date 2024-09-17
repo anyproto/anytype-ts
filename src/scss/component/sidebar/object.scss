@@ -45,7 +45,7 @@
 
 		> .body { flex-grow: 1; overflow: hidden; }
 		> .body {
-			.ReactVirtualized__List { padding: 8px; overscroll-behavior: none; }
+			.ReactVirtualized__List { padding: 0px 8px 8px 8px; overscroll-behavior: none; }
 
 			.items { height: 100%; }
 
