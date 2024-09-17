@@ -204,7 +204,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						</div>
 					</div>
 
-					{object.isInstalled ? (
+					{object.isInstalled && !object._empty_ ? (
 						<div className="section set">
 							<div className="title">{totalObject} {U.Common.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
