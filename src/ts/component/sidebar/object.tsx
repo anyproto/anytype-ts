@@ -237,6 +237,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType).find(it => it.id == this.sortId);
 		const template = S.Record.getTemplateType();
 		const limit = this.offset + J.Constant.limit.menuRecords;
+		const fileLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Pdf ];
 
 		let sorts: I.Sort[] = [];
 		let filters: I.Filter[] = [
@@ -269,14 +270,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 
 			case I.ObjectContainerType.File: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.File });
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.In, value: fileLayouts });
 				break;
 			};
 
 			case I.ObjectContainerType.Media: {
 				filters = filters.concat([
-					{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
-					{ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.File },
+					{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts().filter(it => !fileLayouts.includes(it)) },
 				]);
 				break;
 			};
