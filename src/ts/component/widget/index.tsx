@@ -51,8 +51,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const child = this.getTargetBlock();
 		const root = '';
 		const childrenIds = S.Block.getChildrenIds(root, root);
-		const { limit, viewId } = block.content;
+		const { viewId } = block.content;
 		const object = this.getObject();
+		const favCnt = this.getFavoriteIds().length;
+		const limit = this.getLimit(block.content);
 
 		let layout = block.content.layout;
 		if (object) {
@@ -156,7 +158,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 					{back}
 					<div className="clickable" onClick={onClick}>
 						<ObjectName object={object} />
-						{isFavorite ? <span className="count">{this.getFavoriteIds().length}</span> : ''}
+						{isFavorite && (favCnt > limit) ? <span className="count">{favCnt}</span> : ''}
 					</div>
 					{buttons}
 				</div>
