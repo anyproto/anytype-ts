@@ -570,6 +570,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					dir > 0 ? selectNext() : selectPrevious();
 
 					this.currentIndex += dir;
+					if (this.currentIndex == this.startIndex) {
+						this.currentIndex += dir;
+					};
+
 					this.currentIndex = Math.max(0, this.currentIndex);
 					this.currentIndex = Math.min(items.length - 1, this.currentIndex);
 
