@@ -62,7 +62,6 @@
 				.cellContent.isName { @include text-paragraph; color: var(--color-text-primary); display: flex; gap: 0px 6px; position: relative; }
 				.cellContent.isName {
 					.iconObject { position: absolute; left: 0px; top: 0px; margin: 0px; cursor: default; }
-					.iconObject.withDe
 
 					.name, .emptyText { @include text-common; line-height: 20px; font-weight: 500; vertical-align: top; white-space: normal; @include clamp2; }
 				}
