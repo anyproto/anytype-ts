@@ -22,9 +22,8 @@
     /* Common */
 
     .block {
-        .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
+        .icon.dnd { border-color: rgba(217, 212, 184, 0.14); background-image: url('#{$themePath}/icon/block/menu.svg'); }
     }
-    .block:hover > .wrapMenu > .icon.dnd { background-image: url('#{$themePath}/icon/block/menu1.svg'); }
 
     /* BlockFile */
 
