@@ -410,6 +410,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		if (this.type == I.ObjectContainerType.Bookmark) {
 			this.onBookmarkMenu(details, cb);
+		} else
+		if (this.type == I.ObjectContainerType.Relation) {
+			this.onRelationMenu(cb);
 		} else {
 			keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
 				cb(message.targetId);
@@ -520,6 +523,28 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		});
 	};
 
+	onRelationMenu (callBack: (id: string) => void) {
+		const node = $(this.node);
+		const width = node.width() - 32;
+
+		S.Menu.open('blockRelationEdit', { 
+			element: '#sidebar #containerObject #button-object-create',
+			offsetY: 4,
+			width,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Right,
+			data: {
+				filter: this.filter,
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					callBack(relation.id);
+				},
+				deleteCommand: () => {
+				},
+			}
+		});
+	};
+
 	onOver (item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.setActive(item);
@@ -621,9 +646,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			return;
 		};
 
-		e.stopPropagation();
-		e.preventDefault();
-
 		const next = items[this.n];
 		if (!next) {
 			return;
@@ -634,11 +656,19 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const isSelected = el.hasClass('selected');
 
 		if (isActive || isSelected) {
-			keyboard.shortcut('arrowright, tab, enter', e, () => this.onClick(next));
+			keyboard.shortcut('arrowright, tab, enter', e, () => {
+				e.stopPropagation();
+				e.preventDefault();
+
+				this.onClick(next);
+			});
 		};
 
 		if (isActive || isSelected || this.selected) {
 			keyboard.shortcut('backspace, delete', e, () => {
+				e.stopPropagation();
+				e.preventDefault();
+
 				const ids = this.selected ? this.selected : [ next.id ];
 				Action.archive(ids);
 			});
