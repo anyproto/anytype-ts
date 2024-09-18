@@ -23,6 +23,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 	node = null;
 	refText = null;
+	attachmentRefs: any = {};
 
 	constructor (props: Props) {
 		super(props);
@@ -31,6 +32,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		this.onReactionAdd = this.onReactionAdd.bind(this);
 		this.onReactionEnter = this.onReactionEnter.bind(this);
 		this.onReactionLeave = this.onReactionLeave.bind(this);
+		this.onPreview = this.onPreview.bind(this);
 	};
 
 	render () {
@@ -163,7 +165,14 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 						{hasAttachments ? (
 							<div className={ca.join(' ')}>
 								{attachments.map((item: any, i: number) => (
-									<Attachment key={i} object={item} onRemove={() => this.onAttachmentRemove(item.id)} showAsFile={!attachmentsLayout} />
+									<Attachment
+										ref={ref => this.attachmentRefs[item.id] = ref}
+										key={i}
+										object={item}
+										onRemove={() => this.onAttachmentRemove(item.id)}
+										onPreview={(preview) => this.onPreview(preview)}
+										showAsFile={!attachmentsLayout}
+									/>
 								))}
 							</div>
 						) : ''}
@@ -291,6 +300,26 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		const attachments = (message.attachments || []).filter(it => it.target != attachmentId);
 
 		this.update({ attachments });
+	};
+
+	onPreview (preview: any) {
+		const data = {
+			...preview,
+			gallery: null
+		};
+
+		let gallery = [];
+		Object.keys(this.attachmentRefs).forEach((key) => {
+			const ref = this.attachmentRefs[key];
+			gallery.push(ref?.getPreviewItem());
+		});
+		gallery = gallery.filter(it => it);
+
+		if (gallery.length > 1) {
+			data.gallery = gallery;
+		};
+
+		S.Popup.open('preview', { data });
 	};
 
 	update (param: Partial<I.ChatMessage>) {
