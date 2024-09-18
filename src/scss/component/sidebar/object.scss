@@ -5,7 +5,7 @@
 		> .head { display: flex; flex-direction: column; gap: 8px 0px; overflow: hidden; padding: 0px 0px 8px 0px; }
 		> .head {
 			.titleWrap { 
-				display: flex; flex-direction: row; align-items: center; gap: 0px 8px; width: 100%; padding: 20px 16px 8px 10px; 
+				display: flex; flex-direction: row; align-items: center; gap: 0px 8px; width: 100%; padding: 20px 16px 8px 12px; 
 			}
 			.titleWrap {
 				.title { @include text-paragraph; font-weight: 600; flex-grow: 1; }
@@ -24,7 +24,7 @@
 				.side.right:empty { display: none; }
 			}
 
-			.sides.sidesSort { padding: 0px 10px; }
+			.sides.sidesSort { padding: 0px 12px; }
 			.sides.sidesFilter { padding: 0px 16px; }
 
 			.icon.sort { background-image: url('~img/icon/store/sort.svg') }
