@@ -32,9 +32,14 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		const cn = [ 'cell', 'column' + column.id ];
 		const cellId = [ row.id, column.id ].join('-');
 		const inner = <div className="inner" />;
+		const cnm = [ 'menu' ];
 
 		if (block) {
 			cn.push('align-v' + block.vAlign);
+
+			if (block.bgColor) {
+				cnm.push(`bgColor bgColor-${block.bgColor}`);
+			};
 		};
 
 		const Handle = (item: any) => {
@@ -153,7 +158,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				)}
 
 				{!readonly ? <div className="resize" onMouseDown={e => onResizeStart(e, column.id)} /> : ''}
-				<Icon className="menu" inner={inner} onClick={e => onOptions(e, I.BlockType.Text, row.id, column.id, cellId)} />
+				<Icon className={cnm.join(' ')} inner={inner} onClick={e => onOptions(e, I.BlockType.Text, row.id, column.id, cellId)} />
 			</div>
 		);
 	};

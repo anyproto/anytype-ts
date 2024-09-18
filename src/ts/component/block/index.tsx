@@ -116,7 +116,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 
 		if (bgColor && !block.isLink() && !block.isBookmark()) {
-			cd.push('bgColor bgColor-' + bgColor);
+			cd.push(`bgColor bgColor-${bgColor}`);
 		};
 
 		switch (type) {
