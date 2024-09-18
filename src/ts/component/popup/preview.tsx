@@ -2,6 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Loader, Icon, ObjectName } from 'Component';
 import { I, S, J, U, keyboard, sidebar } from 'Lib';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Mousewheel } from 'swiper/modules';
 
 const BORDER = 16;
 const WIDTH_DEFAULT = 450;
@@ -14,55 +16,94 @@ class PopupPreview extends React.Component<I.Popup> {
 	isLoaded = false;
 	width = 0;
 	height = 0;
+	swiper = null;
 
 	constructor (props: I.Popup) {
 		super(props);
 
 		this.onMore = this.onMore.bind(this);
+		this.onSwiper = this.onSwiper.bind(this);
 	};
 
 	render () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { src, type, object } = data;
+		const { gallery } = data;
 
-		let content = null;
-		let name = null;
-		let menu = null;
+		const getContent = (item: any) => {
+			const { src, type, object } = item;
 
-		switch (type) {
-			case I.FileType.Image: {
-				content = <img className="media" src={src} onClick={() => close()} onDragStart={e => e.preventDefault()} />;
-				break;
+			let content = null;
+			let name = null;
+			let menu = null;
+
+			switch (type) {
+				case I.FileType.Image: {
+					content = <img className="media" src={src} onClick={() => close()} onDragStart={e => e.preventDefault()} />;
+					break;
+				};
+
+				case I.FileType.Video: {
+					content = <video src={src} controls={true} autoPlay={true} loop={true} />;
+					break;
+				};
 			};
 
-			case I.FileType.Video: {
-				content = <video src={src} controls={true} autoPlay={true} loop={true} />;
-				break;
+			if (object) {
+				name = <ObjectName object={object} />;
+				menu = <Icon id="button-header-more" tooltip="Menu" className="more withBackground" onClick={this.onMore} />;
 			};
+
+			return (
+				<React.Fragment>
+					<div className="head">
+						<div className="side left">
+						</div>
+						<div className="side center">
+							{name}
+						</div>
+						<div className="side right">
+							{menu}
+						</div>
+					</div>
+					<div>
+						{content}
+					</div>
+				</React.Fragment>
+			);
 		};
 
-		if (object) {
-			name = <ObjectName object={object} />;
-			menu = <Icon id="button-header-more" tooltip="Menu" className="more withBackground" onClick={this.onMore} />;
+		let preview = null;
+
+		if (gallery) {
+			preview = (
+				<div className="gallery">
+					<Swiper
+						spaceBetween={16}
+						slidesPerView={1}
+						pagination={{ clickable: true }}
+						mousewheel={true}
+						modules={[ Pagination, Mousewheel ]}
+						centeredSlides={true}
+						loop={true}
+						onSwiper={this.onSwiper}
+					>
+						{gallery.map((item: any, i: number) => (
+							<SwiperSlide key={i}>
+								{getContent(item)}
+							</SwiperSlide>
+						))}
+					</Swiper>
+				</div>
+			);
+		} else {
+			preview = getContent(data);
 		};
 
 		return (
-			<div>
+			<div id="wrap" className="wrap">
 				<Loader id="loader" />
-				<div className="head">
-					<div className="side left">
-					</div>
-					<div className="side center">
-						{name}
-					</div>
-					<div className="side right">
-						{menu}
-					</div>
-				</div>
-				<div id="wrap" className="wrap">
-					{content}
-				</div>
+				{preview}
 			</div>
 		);
 	};
@@ -114,6 +155,10 @@ class PopupPreview extends React.Component<I.Popup> {
 				isFilePreview: true,
 			}
 		});
+	};
+
+	onSwiper (swiper) {
+		this.swiper = swiper;
 	};
 
 	resize () {
