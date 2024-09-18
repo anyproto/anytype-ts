@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { Loader, Icon, ObjectName } from 'Component';
 import { I, S, J, U, keyboard, sidebar } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Mousewheel } from 'swiper/modules';
+import { FreeMode, Mousewheel, Thumbs } from 'swiper/modules';
 
 const BORDER = 16;
 const WIDTH_DEFAULT = 450;
@@ -17,12 +17,13 @@ class PopupPreview extends React.Component<I.Popup> {
 	width = 0;
 	height = 0;
 	swiper = null;
+	thumbs = null;
 
 	constructor (props: I.Popup) {
 		super(props);
 
 		this.onMore = this.onMore.bind(this);
-		this.onSwiper = this.onSwiper.bind(this);
+		this.onSlideChange = this.onSlideChange.bind(this);
 	};
 
 	render () {
@@ -30,16 +31,24 @@ class PopupPreview extends React.Component<I.Popup> {
 		const { data } = param;
 		const { gallery } = data;
 
-		const getContent = (item: any) => {
+		const getContent = (item: any, idx: number, isThumb?: boolean) => {
 			const { src, type, object } = item;
 
+			const onClick = () => {
+				if (isThumb && (this.swiper.activeIndex != idx)) {
+					this.swiper.slideTo(idx);
+					this.thumbs.slideTo(idx);
+				};
+			};
+
+			let head = null;
 			let content = null;
 			let name = null;
 			let menu = null;
 
 			switch (type) {
 				case I.FileType.Image: {
-					content = <img className="media" src={src} onClick={() => close()} onDragStart={e => e.preventDefault()} />;
+					content = <img className="media" src={src} onDragStart={e => e.preventDefault()} />;
 					break;
 				};
 
@@ -49,13 +58,13 @@ class PopupPreview extends React.Component<I.Popup> {
 				};
 			};
 
-			if (object) {
-				name = <ObjectName object={object} />;
-				menu = <Icon id="button-header-more" tooltip="Menu" className="more withBackground" onClick={this.onMore} />;
-			};
+			if (!isThumb) {
+				if (object) {
+					name = <ObjectName object={object} />;
+					menu = <Icon id="button-header-more" tooltip="Menu" className="more withBackground" onClick={this.onMore} />;
+				};
 
-			return (
-				<React.Fragment>
+				head = (
 					<div className="head">
 						<div className="side left">
 						</div>
@@ -66,38 +75,63 @@ class PopupPreview extends React.Component<I.Popup> {
 							{menu}
 						</div>
 					</div>
+				);
+			};
+
+			return (
+				<div onClick={onClick} id={`preview-item-${idx}`} className="previewItem">
+					{head}
 					<div>
 						{content}
 					</div>
-				</React.Fragment>
+				</div>
 			);
 		};
 
 		let preview = null;
 
 		if (gallery) {
+			const initial = gallery.findIndex(it => it.src == data.src);
+
 			preview = (
-				<div className="gallery">
-					<Swiper
-						spaceBetween={16}
-						slidesPerView={1}
-						pagination={{ clickable: true }}
-						mousewheel={true}
-						modules={[ Pagination, Mousewheel ]}
-						centeredSlides={true}
-						loop={true}
-						onSwiper={this.onSwiper}
-					>
-						{gallery.map((item: any, i: number) => (
-							<SwiperSlide key={i}>
-								{getContent(item)}
-							</SwiperSlide>
-						))}
-					</Swiper>
+				<div className="galleryWrapper">
+					<div className="gallery">
+						<Swiper
+							initialSlide={initial}
+							spaceBetween={8}
+							slidesPerView={1}
+							centeredSlides={true}
+							mousewheel={true}
+							modules={[ Mousewheel ]}
+							onSwiper={swiper => this.swiper = swiper}
+							onTransitionEnd={(data) => this.onSlideChange(data)}
+						>
+							{gallery.map((item: any, i: number) => (
+								<SwiperSlide key={i}>
+									{getContent(item, i)}
+								</SwiperSlide>
+							))}
+						</Swiper>
+					</div>
+
+					<div className="thumbnails">
+						<Swiper
+							initialSlide={initial}
+							spaceBetween={8}
+							slidesPerView={5}
+							onSwiper={swiper => this.thumbs = swiper}
+						>
+							{gallery.map((item: any, i: number) => (
+								<SwiperSlide key={i}>
+									{getContent(item, i, true)}
+								</SwiperSlide>
+							))}
+						</Swiper>
+					</div>
 				</div>
 			);
 		} else {
-			preview = getContent(data);
+			preview = getContent(data, 0);
 		};
 
 		return (
@@ -157,8 +191,14 @@ class PopupPreview extends React.Component<I.Popup> {
 		});
 	};
 
-	onSwiper (swiper) {
-		this.swiper = swiper;
+	onSlideChange (data) {
+		if (!this.thumbs && !this.swiper) {
+			return;
+		};
+
+		if (this.thumbs.activeIndex != data.activeIndex) {
+			this.thumbs.slideTo(data.activeIndex);
+		};
 	};
 
 	resize () {
@@ -170,7 +210,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		const loader = obj.find('#loader');
 		const { ww, wh } = U.Common.getWindowDimensions();
 		const mh = wh - BORDER * 2;
-		const mw = ww - BORDER * 2 - sidebar.getDummyWidth();;
+		const mw = ww - BORDER * 2 - sidebar.getDummyWidth();
 
 		const onError = () => {
 			wrap.addClass('brokenMedia');
