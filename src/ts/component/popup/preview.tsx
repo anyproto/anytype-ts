@@ -1,15 +1,16 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Loader, Icon, ObjectName } from 'Component';
+import { Loader, Icon, ObjectName, Checkbox } from 'Component';
 import { I, S, J, U, keyboard, sidebar } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode, Mousewheel, Thumbs } from 'swiper/modules';
+import { Keyboard, Mousewheel } from 'swiper/modules';
 
 const BORDER = 16;
 const WIDTH_DEFAULT = 450;
 const HEIGHT_DEFAULT = 300;
 const WIDTH_VIDEO = 1040;
 const HEIGHT_VIDEO = 585;
+const HEIGHT_THUMBS = 104;
 
 class PopupPreview extends React.Component<I.Popup> {
 	
@@ -18,12 +19,14 @@ class PopupPreview extends React.Component<I.Popup> {
 	height = 0;
 	swiper = null;
 	thumbs = null;
+	galleryMap: Map<number, any> = new Map();
 
 	constructor (props: I.Popup) {
 		super(props);
 
 		this.onMore = this.onMore.bind(this);
 		this.onSlideChange = this.onSlideChange.bind(this);
+		this.onError = this.onError.bind(this);
 	};
 
 	render () {
@@ -33,11 +36,18 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		const getContent = (item: any, idx: number, isThumb?: boolean) => {
 			const { src, type, object } = item;
+			const id = U.Common.toCamelCase([ 'item', (isThumb ? 'thumb' : 'preview'), idx ].join('-'));
+			const loader = !isThumb ? <Loader className="loader" /> : '';
 
-			const onClick = () => {
-				if (isThumb && (this.swiper.activeIndex != idx)) {
-					this.swiper.slideTo(idx);
-					this.thumbs.slideTo(idx);
+			const onClick = (e: any) => {
+				if (isThumb) {
+					e.preventDefault();
+					e.stopPropagation();
+
+					if (this.swiper.activeIndex != idx) {
+						this.swiper.slideTo(idx);
+						this.thumbs.slideTo(idx);
+					};
 				};
 			};
 
@@ -53,7 +63,7 @@ class PopupPreview extends React.Component<I.Popup> {
 				};
 
 				case I.FileType.Video: {
-					content = <video src={src} controls={true} autoPlay={true} loop={true} />;
+					content = <video src={src} controls={true} autoPlay={false} loop={true} />;
 					break;
 				};
 			};
@@ -79,9 +89,10 @@ class PopupPreview extends React.Component<I.Popup> {
 			};
 
 			return (
-				<div onClick={onClick} id={`preview-item-${idx}`} className="previewItem">
+				<div onClick={onClick} id={id} className="previewItem">
+					{loader}
 					{head}
-					<div>
+					<div className="mediaContainer">
 						{content}
 					</div>
 				</div>
@@ -101,8 +112,9 @@ class PopupPreview extends React.Component<I.Popup> {
 							spaceBetween={8}
 							slidesPerView={1}
 							centeredSlides={true}
+							keyboard={{ enabled: true }}
 							mousewheel={true}
-							modules={[ Mousewheel ]}
+							modules={[ Mousewheel, Keyboard ]}
 							onSwiper={swiper => this.swiper = swiper}
 							onTransitionEnd={(data) => this.onSlideChange(data)}
 						>
@@ -118,7 +130,7 @@ class PopupPreview extends React.Component<I.Popup> {
 						<Swiper
 							initialSlide={initial}
 							spaceBetween={8}
-							slidesPerView={5}
+							slidesPerView={10}
 							onSwiper={swiper => this.thumbs = swiper}
 						>
 							{gallery.map((item: any, i: number) => (
@@ -136,20 +148,18 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		return (
 			<div id="wrap" className="wrap">
-				<Loader id="loader" />
 				{preview}
 			</div>
 		);
 	};
 	
 	componentDidMount () {
-		this.resize();
+		this.onLoad();
 		this.rebind();
 	};
 	
 	componentDidUpdate () {
-		this.isLoaded = false;
-		this.resize();
+		this.onLoad();
 	};
 
 	componentWillUnmount () {
@@ -164,7 +174,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		this.unbind();
 
 		const win = $(window);
-		win.on('resize.popupPreview', () => this.resize());
+		win.on('resize.popupPreview', () => this.onLoad());
 		win.on('keydown.menu', e => this.onKeyDown(e));
 	};
 
@@ -201,79 +211,132 @@ class PopupPreview extends React.Component<I.Popup> {
 		};
 	};
 
-	resize () {
+	onLoad () {
 		const { param, getId, position } = this.props;
 		const { data } = param;
-		const { src, type } = data;
-		const obj = $(`#${getId()}-innerWrap`);
-		const wrap = obj.find('#wrap');
-		const loader = obj.find('#loader');
+		const { gallery } = data;
+
+		let array: any[] = [];
+		if (gallery) {
+			array = gallery;
+		} else {
+			array.push({ src: data.src, type: data.type });
+		};
+
+		array.forEach((el, idx) => {
+			const { src, type } = el;
+			if (!this.galleryMap.get(idx)) {
+				this.galleryMap.set(idx, { src, type, isLoaded: false });
+			};
+			this.resize(idx);
+		});
+	};
+
+	onError (idx) {
+		const { getId } = this.props;
+		const node = $(`#${getId()}-innerWrap`);
+		const wrap = node.find(`#itemPreview-${idx}`);
+		const obj = this.galleryMap.get(idx);
+
+		wrap
+			.addClass('brokenMedia')
+			.find('.loader').remove();
+
+		obj.isLoaded = true;
+		this.galleryMap.set(idx, obj);
+	};
+
+	resize (idx: number) {
+		const { param, getId, position } = this.props;
+		const { data } = param;
+		const { gallery } = data;
+		const isGallery = gallery && (gallery.length > 1);
+
+		const node = $(`#${getId()}-innerWrap`);
+		const wrap = node.find(`#wrap`);
+		const element = node.find(`#itemPreview-${idx}`);
+		const loader = element.find('.loader')
+		const obj = this.galleryMap.get(idx);
+		const { src, type, isLoaded, width, height } = obj;
 		const { ww, wh } = U.Common.getWindowDimensions();
 		const mh = wh - BORDER * 2;
 		const mw = ww - BORDER * 2 - sidebar.getDummyWidth();
 
-		const onError = () => {
-			wrap.addClass('brokenMedia');
-			loader.remove();
-
-			this.isLoaded = true;
+		if (isGallery) {
+			wrap.css({ width: WIDTH_VIDEO, height: HEIGHT_VIDEO + HEIGHT_THUMBS });
+			element.css({ width: WIDTH_VIDEO, height: HEIGHT_VIDEO });
+			position();
 		};
 
 		switch (type) {
 			case I.FileType.Image: {
-				if (this.isLoaded) {
-					this.resizeImage(mw, mh, this.width, this.height);
+				if (isLoaded) {
+					if (width && height) {
+						this.resizeImage(mw, mh, width, height);
+					};
 					break;
 				};
 
-				wrap.css({ width: WIDTH_DEFAULT, height: HEIGHT_DEFAULT });
-				position();
+				if (!isGallery){
+					wrap.css({ width: WIDTH_DEFAULT, height: HEIGHT_DEFAULT });
+					position();
+				};
 
 				const img = new Image();
 				img.onload = () => {
-					this.width = img.width;
-					this.height = img.height;
+					obj.width = img.width;
+					obj.height = img.height;
+					obj.isLoaded = true;
 
 					loader.remove();
 
 					this.resizeImage(mw, mh, this.width, this.height);
-					this.isLoaded = true;
+					this.galleryMap.set(idx, obj);
 				};
 
-				img.onerror = onError;
+				img.onerror = this.onError;
 				img.src = src;
 				break;
 			};
 
 			case I.FileType.Video: {
-				if (this.isLoaded) {
+				if (isLoaded && !isGallery) {
 					position();
 					break;
 				};
 
-				const video = obj.find('video');
+				const video = element.find('video');
 				const videoEl = video.get(0);
 				const width = WIDTH_VIDEO;
 				const height = HEIGHT_VIDEO;
 
-				videoEl.oncanplay = () => { 
-					loader.remove(); 
-					this.isLoaded = true;
+				videoEl.oncanplay = () => {
+					loader.remove();
+					obj.isLoaded = true;
+					this.galleryMap.set(idx, obj);
 				};
-				videoEl.onerror = onError;
+				videoEl.onerror = this.onError;
 
-				wrap.css({ width, height });
 				video.css({ width, height });
-				position();
+
+				if (!isGallery) {
+					wrap.css({ width, height });
+					position();
+				};
 			};
 		};
-
 	};
 
 	resizeImage (maxWidth: number, maxHeight: number, width: number, height: number) {
-		const { getId, position } = this.props;
+		const { param, getId, position } = this.props;
+		const { data } = param;
+		const { gallery } = data;
 		const obj = $(`#${getId()}-innerWrap`);
 		const wrap = obj.find('#wrap');
+
+		if (gallery && (gallery.length > 1)) {
+			return;
+		};
 
 		let w = 0, h = 0;
 		if (width > height) {
