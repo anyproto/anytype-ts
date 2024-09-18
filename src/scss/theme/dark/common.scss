@@ -234,6 +234,15 @@ html.themeDark {
 
     .icon.ghost { background-image: url('#{$themePath}/icon/ghost.svg'); }
 
+	/* Editor */
+
+	.editorWrapper {
+		.editor {
+			.icon.buttonAdd { background-image: url('#{$themePath}/icon/block/add0.svg'); }
+			.icon.buttonAdd:hover { background-image: url('#{$themePath}/icon/block/add1.svg'); }
+		}
+	}
+
     /* EditorControls */
 
     .editorControls {
