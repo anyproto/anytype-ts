@@ -108,8 +108,8 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			} else 
 			if (canWrite) {
 				buttons = buttons.concat([
-					{ id: 'widget-list-add', className: 'grey c28', text: translate('widgetAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetMain) },
-					{ id: 'widget-list-edit', className: 'grey c28', text: translate('widgetEdit'), onMouseDown: this.onEdit }
+					{ id: 'widget-list-add', className: 'grey c28', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetMain) },
+					{ id: 'widget-list-edit', className: 'grey c28', text: translate('commonEdit'), onMouseDown: this.onEdit }
 				]);
 			};
 
@@ -158,7 +158,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 					<div className="buttons">
 						{buttons.map(button => (
-							<Button key={button.id + (isEditing ? 'edit' : '')} color="" {...button} />
+							<Button key={[ button.id, (isEditing ? 'edit' : '') ].join('-')} color="" {...button} />
 						))}
 					</div>
 				</React.Fragment>
