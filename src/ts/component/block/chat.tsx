@@ -295,7 +295,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 				callBack();
 			};
 
-			this.refForm.forceUpdate();
+			this.refForm?.forceUpdate();
 		});
 	};
 

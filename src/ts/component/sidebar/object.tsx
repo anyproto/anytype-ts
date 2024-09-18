@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Filter, Select, Icon, Button } from 'Component';
-import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics } from 'Lib';
+import { I, U, J, S, C, translate, Storage, sidebar, keyboard, analytics, Action } from 'Lib';
 
 import Item from './object/item';
 
@@ -31,6 +31,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	searchIds: string[] = null;
 	filter = '';
 	timeoutFilter = 0;
+	n = -1;
+	selected: string[] = null;
+	startIndex = -1;
+	currentIndex = -1;
 
 	constructor (props: any) {
 		super(props);
@@ -67,10 +71,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					<Item 
 						item={item} 
 						style={param.style} 
-						isActive={rootId == item.id}
 						allowSystemLayout={true}
 						onClick={() => this.onClick(item)}
 						onContext={() => this.onContext(item)}
+						onMouseEnter={() => this.onOver(item)}
+						onMouseLeave={() => this.onOut()}
 					/>
 				</CellMeasurer>
 			);
@@ -175,9 +180,17 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 		};
 
+		this.refFilter.focus();
 		this.refSelect.setOptions(this.getTypeOptions());
 		this.refSelect.setValue(this.type);
-		this.load(true);
+
+		this.rebind();
+		this.load(true, () => {
+			const rootId = keyboard.getRootId();
+			const items = this.getItems();
+
+			this.setActive(items.find(it => it.id == rootId));
+		});
 	};
 
 	componentDidUpdate () {
@@ -192,6 +205,24 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	componentWillUnmount(): void {
 		window.clearTimeout(this.timeoutFilter);
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+
+		$(window).on('keydown.sidebarObject', e => this.onKeyDown(e));
+		$(this.node).on('click', e => {
+			if (!$(e.target).parents('.item').length) {
+				this.selected = null;
+				this.renderSelection();
+			};
+		});
+	};
+
+	unbind () {
+		$(window).off('keydown.sidebarObject');
+		$(this.node).off('click');
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
@@ -314,13 +345,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onContext (item: any) {
+		const objectIds = this.selected ? this.selected : [ item.id ];
+
 		S.Menu.open('dataviewContext', {
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
 			},
 			data: {
-				objectIds: [ item.id ],
+				objectIds,
 				subId: J.Constant.subId.allObject,
 				route: analytics.route.allObjects,
 				allowedLink: true,
@@ -468,16 +501,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.load(true);
 	};
 
-	storageGet () {
-		const storage = Storage.get('sidebarObject') || {};
-		storage.sort = storage.sort || {};
-		return storage;
-	};
-
-	storageSet (obj: any) {
-		Storage.set('sidebarObject', obj);
-	};
-
 	onBookmarkMenu (details: any, callBack: (id: string) => void) {
 		const node = $(this.node);
 		const width = node.width() - 32;
@@ -495,6 +518,176 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				onSubmit: object => callBack(object.id),
 			},
 		});
+	};
+
+	onOver (item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.setActive(item);
+		};
+	};
+
+	onOut () {
+		if (!keyboard.isMouseDisabled) {
+			this.unsetActive();
+		};
+	};
+
+	onKeyDown (e: any) {
+		const items = this.getItems();
+		const node = $(this.node);
+		const item = items[this.n];
+
+		const selectNext = () => {
+			const item = items[this.currentIndex];
+
+			if (this.currentIndex > this.startIndex) {
+				this.selected.push(item.id);
+			};
+			if (this.currentIndex < this.startIndex) {
+				this.selected = this.selected.filter(it => it != item.id);
+			};
+			this.renderSelection();
+        };
+
+        const selectPrevious = () => {
+			const item = items[this.currentIndex];
+
+			if (this.currentIndex < this.startIndex) {
+				this.selected.push(item.id);
+			};
+			if (this.currentIndex > this.startIndex) {
+				this.selected = this.selected.filter(it => it != item.id);
+			};
+			this.renderSelection();
+        };
+
+		keyboard.shortcut('arrowup, arrowdown, shift+arrowup, shift+arrowdown', e, (pressed: string) => {
+			const isShift = pressed.match('shift');
+			const dir = pressed.match('arrowup') ? -1 : 1;
+			const cb = () => {
+				let scrollTo = 0;
+				if (isShift) {
+					dir > 0 ? selectNext() : selectPrevious();
+
+					this.currentIndex += dir;
+					this.currentIndex = Math.max(0, this.currentIndex);
+					this.currentIndex = Math.min(items.length - 1, this.currentIndex);
+
+					scrollTo = this.currentIndex;
+				} else {
+					this.setActive();
+					scrollTo = this.n;
+				};
+				this.refList.scrollToRow(Math.max(0, this.currentIndex));
+			};
+
+			// Initial selection
+			if (isShift && !this.selected && (this.n >= 0)) {
+				this.selected = [ item.id ];
+
+				if (this.startIndex == -1) {
+					this.startIndex = this.n;
+					this.currentIndex = this.n;
+				};
+			};
+
+			this.n += dir;
+
+			if (this.n == -2) {
+				this.n = items.length - 1;
+			};
+
+			if (this.n >= items.length - 10) {
+				this.offset += J.Constant.limit.menuRecords;
+				this.load(false, cb);
+			} else {
+				cb();
+			};
+		});
+
+		keyboard.shortcut('escape', e, () => {
+			if (this.selected) {
+				this.clearSelection();
+			} else {
+				sidebar.objectContainerToggle();
+			};
+		});
+
+		if (this.n < 0) {
+			return;
+		};
+
+		e.stopPropagation();
+		e.preventDefault();
+
+		const next = items[this.n];
+		if (!next) {
+			return;
+		};
+
+		const el = node.find(`#item-${next.id}`);
+		const isActive = el.hasClass('active');
+		const isSelected = el.hasClass('selected');
+
+		if (isActive || isSelected) {
+			keyboard.shortcut('arrowright, tab, enter', e, () => this.onClick(next));
+		};
+
+		if (isActive || isSelected || this.selected) {
+			keyboard.shortcut('backspace, delete', e, () => {
+				const ids = this.selected ? this.selected : [ next.id ];
+				Action.archive(ids);
+			});
+		};
+	};
+
+	storageGet () {
+		const storage = Storage.get('sidebarObject') || {};
+		storage.sort = storage.sort || {};
+		return storage;
+	};
+
+	storageSet (obj: any) {
+		Storage.set('sidebarObject', obj);
+	};
+
+	renderSelection () {
+		const node = $(this.node);
+
+		node.find('.item.selected').removeClass('selected');
+
+		if (this.selected) {
+			this.selected.forEach(id => {
+				node.find(`#item-${id}`).addClass('selected');
+			});
+		};
+	};
+
+	clearSelection () {
+		this.selected = null;
+		this.startIndex = -1;
+		this.currentIndex = -1;
+		this.renderSelection();
+	};
+
+	setActive (item?: any) {
+		this.unsetActive();
+
+		const items = this.getItems();
+
+		if (!item) {
+			item = items[this.n];
+		} else {
+			this.n = items.findIndex(it => it.id == item.id);
+		};
+
+		if (item) {
+			$(this.node).find(`#item-${item.id}`).addClass('active');
+		};
+	};
+
+	unsetActive () {
+		$(this.node).find('.item.active').removeClass('active');
 	};
 
 });

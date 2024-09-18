@@ -7,7 +7,6 @@ import { U, S } from 'Lib';
 interface Props {
 	item: any;
 	style?: any;
-	isActive?: boolean;
 	allowSystemLayout?: boolean;
 	onClick?: (item: any) => void;
 	onContext?: (item: any) => void;
@@ -20,7 +19,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 	node = null;
 
     render() {
-		const { item, style, isActive, allowSystemLayout, onClick, onContext, onMouseEnter, onMouseLeave } = this.props;
+		const { item, style, allowSystemLayout, onClick, onContext, onMouseEnter, onMouseLeave } = this.props;
 		const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
 		const type = S.Record.getTypeById(item.type);
 		const isFile = U.Object.isInFileLayouts(item.layout);
@@ -36,10 +35,6 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 		} else {
 			const iconSize = isFile ? 48 : null;
 			iconLarge = <IconObject object={item} size={48} iconSize={iconSize} />;
-		};
-
-		if (isActive) {
-			cn.push('active');
 		};
 
 		if (isFile) {
