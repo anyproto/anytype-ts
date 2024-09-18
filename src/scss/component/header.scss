@@ -79,7 +79,7 @@ body.isFullScreen {
 	}
 }
 
-.header.authIndex { height: 52px; }
+.header.authIndex { height: 52px; width: 100% !important; }
 
 html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	.header.authIndex {
