@@ -201,6 +201,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			defaultHeight: HEIGHT,
 			keyMapper: i => (items[i] || {}).id,
 		});
+
+		this.setActive();
 	};
 
 	componentWillUnmount(): void {
@@ -607,7 +609,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					this.setActive();
 					scrollTo = this.n;
 				};
-				this.refList.scrollToRow(Math.max(0, this.currentIndex));
+
+				this.refList.scrollToRow(Math.max(0, scrollTo));
 			};
 
 			// Initial selection
@@ -620,15 +623,19 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				};
 			};
 
-			this.n += dir;
+			if (!isShift) {
+				this.n += dir;
 
-			if (this.n == -2) {
-				this.n = items.length - 1;
-			};
+				if (this.n < 0) {
+					this.n = items.length - 1;
+				};
 
-			if (this.n >= items.length - 10) {
-				this.offset += J.Constant.limit.menuRecords;
-				this.load(false, cb);
+				if (this.n >= items.length - 10) {
+					this.offset += J.Constant.limit.menuRecords;
+					this.load(false, cb);
+				} else {
+					cb();
+				};
 			} else {
 				cb();
 			};
@@ -711,6 +718,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		if (!item) {
 			item = items[this.n];
+
+			console.log('setActive', this.n, item);
 		} else {
 			this.n = items.findIndex(it => it.id == item.id);
 		};
