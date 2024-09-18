@@ -709,7 +709,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				this.n = items.length - 1;
 			};
 
-			if ((this.n >= items.length - 10) && (this.offset < total)) {
+			if ((this.n > items.length - 1) && (this.offset < total)) {
 				this.offset += J.Constant.limit.menuRecords;
 				this.load(false, cb);
 			} else {
@@ -764,8 +764,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		if (!item) {
 			item = items[this.n];
-
-			console.log('setActive', this.n, item);
 		} else {
 			this.n = items.findIndex(it => it.id == item.id);
 		};
