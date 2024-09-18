@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
-import { I, S, U, J, Preview, translate } from 'Lib';
+import { I, S, U, J, Preview, translate, Relation } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -245,9 +245,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					break;
 				};
 
-				const key = iconSize < 28 ? 'small' : 'big';
-				const name = U.Common.toCamelCase(I.RelationType[relationFormat]);
-				const src = require(`img/icon/relation/${key}/${name}.svg`).default;
+				const src = require(`img/icon/relation/${Relation.typeName(relationFormat)}.svg`).default;
 
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 				icon = <img src={src} className={icn.join(' ')} />;

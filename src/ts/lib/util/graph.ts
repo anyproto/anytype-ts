@@ -7,7 +7,7 @@ class UtilGraph {
 
 		switch (d.layout) {
 			case I.ObjectLayout.Relation: {
-				src = `img/icon/relation/big/${Relation.typeName(d.relationFormat)}.svg`;
+				src = `img/icon/relation/${Relation.typeName(d.relationFormat)}.svg`;
 				break;
 			};
 

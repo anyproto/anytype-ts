@@ -191,5 +191,9 @@
 		.message.isSelf {
 			.side.right { background: #162908; }
 		}
+
+		.form {
+			.icon.send { background: url('#{$themePath}/icon/chat/buttons/send.svg'); }
+		}
 	}
 }
