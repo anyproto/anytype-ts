@@ -608,7 +608,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 
 		if (isActive || isSelected || this.selected) {
-			keyboard.shortcut('backspace, delete', e, () => {
+			keyboard.shortcut('delete', e, () => {
 				e.stopPropagation();
 				e.preventDefault();
 
