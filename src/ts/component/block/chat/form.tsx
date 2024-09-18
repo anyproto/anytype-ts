@@ -670,8 +670,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onReply (message: I.ChatMessage) {
+		const text = this.getTextValue();
+		const length = text.length;
+
 		this.replyingId = message.id;
-		this.onEditClear();
+		this.range = { from: length, to: length };
+		this.refEditable.setRange(this.range);
+		this.forceUpdate();
 	};
 
 	onReplyClear () {
