@@ -551,7 +551,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const bookmarks = list.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
 		const bl = bookmarks.length;
-		const attachments = (this.state.attachments || []).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
+		const attachments = (this.state.attachments || []).filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
 
 		loader.addClass('active');
 
