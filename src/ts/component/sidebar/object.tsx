@@ -52,7 +52,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const items = this.getItems();
 		const isAllowedObject = this.isAllowedObject();
 		const typeOptions = this.getTypeOptions();
-		const rootId = keyboard.getRootId();
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -215,9 +214,16 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		$(window).on('keydown.sidebarObject', e => this.onKeyDown(e));
 		$(this.node).on('click', e => {
+			if (!this.refFilter.isFocused) {
+				const value = this.refFilter.getValue();
+				const length = value.length;
+
+				this.refFilter.focus();
+				this.refFilter.setRange({ from: length, to: length });
+			};
+
 			if (!$(e.target).parents('.item').length) {
-				this.selected = null;
-				this.renderSelection();
+				this.clearSelection();
 			};
 		});
 	};
@@ -230,6 +236,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType).find(it => it.id == this.sortId);
 		const template = S.Record.getTemplateType();
+		const limit = this.offset + J.Constant.limit.menuRecords;
 
 		let sorts: I.Sort[] = [];
 		let filters: I.Filter[] = [
@@ -301,8 +308,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			subId: J.Constant.subId.allObject,
 			filters,
 			sorts,
-			offset: 0,
-			limit: this.offset + J.Constant.limit.menuRecords,
+			limit,
 			ignoreHidden: true,
 			ignoreDeleted: true,
 		}, (message: any) => {
@@ -560,85 +566,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onKeyDown (e: any) {
+		if (!this.refFilter.isFocused) {
+			return;
+		};
+
 		const items = this.getItems();
 		const node = $(this.node);
-		const item = items[this.n];
-
-		const selectNext = () => {
-			const item = items[this.currentIndex];
-
-			if (this.currentIndex > this.startIndex) {
-				this.selected.push(item.id);
-			};
-			if (this.currentIndex < this.startIndex) {
-				this.selected = this.selected.filter(it => it != item.id);
-			};
-			this.renderSelection();
-        };
-
-        const selectPrevious = () => {
-			const item = items[this.currentIndex];
-
-			if (this.currentIndex < this.startIndex) {
-				this.selected.push(item.id);
-			};
-			if (this.currentIndex > this.startIndex) {
-				this.selected = this.selected.filter(it => it != item.id);
-			};
-			this.renderSelection();
-        };
 
 		keyboard.shortcut('arrowup, arrowdown, shift+arrowup, shift+arrowdown', e, (pressed: string) => {
-			const isShift = pressed.match('shift');
-			const dir = pressed.match('arrowup') ? -1 : 1;
-			const cb = () => {
-				let scrollTo = 0;
-				if (isShift) {
-					dir > 0 ? selectNext() : selectPrevious();
-
-					this.currentIndex += dir;
-					if (this.currentIndex == this.startIndex) {
-						this.currentIndex += dir;
-					};
-
-					this.currentIndex = Math.max(0, this.currentIndex);
-					this.currentIndex = Math.min(items.length - 1, this.currentIndex);
-
-					scrollTo = this.currentIndex;
-				} else {
-					this.setActive();
-					scrollTo = this.n;
-				};
-
-				this.refList.scrollToRow(Math.max(0, scrollTo));
-			};
-
-			// Initial selection
-			if (isShift && !this.selected && (this.n >= 0)) {
-				this.selected = [ item.id ];
-
-				if (this.startIndex == -1) {
-					this.startIndex = this.n;
-					this.currentIndex = this.n;
-				};
-			};
-
-			if (!isShift) {
-				this.n += dir;
-
-				if (this.n < 0) {
-					this.n = items.length - 1;
-				};
-
-				if (this.n >= items.length - 10) {
-					this.offset += J.Constant.limit.menuRecords;
-					this.load(false, cb);
-				} else {
-					cb();
-				};
-			} else {
-				cb();
-			};
+			this.onArrow(pressed.match('arrowdown') ? 1 : -1, !!pressed.match('shift'));
 		});
 
 		keyboard.shortcut('escape', e, () => {
@@ -682,6 +618,112 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 	};
 
+	onArrow (dir: number, isShift: boolean) {
+		const items = this.getItems();
+		if (!items.length) {
+			return;
+		};
+
+		const { total } = S.Record.getMeta(J.Constant.subId.allObject, '');
+
+		let item = items[this.n];
+
+		const selectNext = () => {
+			if (!this.selected) {
+				return;
+			};
+
+			const item = items[this.currentIndex];
+
+			if (this.currentIndex > this.startIndex) {
+				this.selected.push(item.id);
+			};
+			if (this.currentIndex < this.startIndex) {
+				this.selected = this.selected.filter(it => it != item.id);
+			};
+			this.renderSelection();
+        };
+
+        const selectPrevious = () => {
+			if (!this.selected) {
+				return;
+			};
+
+			const item = items[this.currentIndex];
+
+			if (this.currentIndex < this.startIndex) {
+				this.selected.push(item.id);
+			};
+			if (this.currentIndex > this.startIndex) {
+				this.selected = this.selected.filter(it => it != item.id);
+			};
+			this.renderSelection();
+        };
+
+		const cb = () => {
+			let scrollTo = 0;
+			if (isShift) {
+				dir > 0 ? selectNext() : selectPrevious();
+
+				this.currentIndex += dir;
+				if (this.currentIndex == this.startIndex) {
+					this.currentIndex += dir;
+				};
+
+				this.currentIndex = Math.max(0, this.currentIndex);
+				this.currentIndex = Math.min(items.length - 1, this.currentIndex);
+
+				scrollTo = this.currentIndex;
+			} else {
+				this.setActive();
+				scrollTo = this.n;
+			};
+
+			this.refList.scrollToRow(Math.max(0, scrollTo));
+		};
+
+		// Initial selection
+		if (isShift && !this.selected) {
+			if (this.n < 0) {
+				if (dir < 0) {
+					this.n = items.length - 1;
+				} else {
+					this.n = 0;
+				};
+				item = items[this.n];
+			};
+
+			this.selected = [ item.id ];
+
+			if (this.startIndex == -1) {
+				this.startIndex = this.n;
+				this.currentIndex = this.n;
+			};
+		};
+
+		if (!isShift) {
+			this.clearSelection();
+			this.n += dir;
+
+			if (this.n < 0) {
+				this.n = items.length - 1;
+			};
+
+			if ((this.n >= items.length - 10) && (this.offset < total)) {
+				this.offset += J.Constant.limit.menuRecords;
+				this.load(false, cb);
+			} else {
+				if (this.n > items.length - 1) {
+					this.n = 0;
+				};
+
+				cb();
+			};
+		} else {
+			cb();
+		};
+	};
+
 	storageGet () {
 		const storage = Storage.get('sidebarObject') || {};
 		storage.sort = storage.sort || {};
@@ -705,6 +747,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	clearSelection () {
+		if (!this.selected) {
+			return;
+		};
+
 		this.selected = null;
 		this.startIndex = -1;
 		this.currentIndex = -1;
