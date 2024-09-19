@@ -46,6 +46,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
+		this.nextIsSection = this.nextIsSection.bind(this);
 	};
 
     render() {
@@ -644,9 +645,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		let item = items[this.n];
 
-		if (item && item.isSection) {
+		if (this.nextIsSection(dir)) {
 			this.n += dir;
-			this.onArrow(dir, isShift);
 		};
 
 		const selectNext = () => {
@@ -743,6 +743,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		} else {
 			cb();
 		};
+	};
+
+	nextIsSection (dir) {
+		const items = this.getItems();
+		const next = items[this.n + dir]
+
+		return next && next.isSection;
 	};
 
 	storageGet () {
