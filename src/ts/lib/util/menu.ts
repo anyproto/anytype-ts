@@ -1000,11 +1000,11 @@ class UtilMenu {
 		return options;
 	};
 
-	getObjectContainerSortOptions (sortId: string, sortType: I.SortType): any[] {
+	getObjectContainerSortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
 		return ([
-			{ id: 'updated', name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate' },
-			{ id: 'created', name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate' },
-			{ id: 'name', name: translate('commonName'), relationKey: 'name' },
+			{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate' },
+			{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate' },
+			{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name' },
 		] as any[]).map(it => {
 			it.type = I.SortType.Asc;
 			if (it.id == sortId) {

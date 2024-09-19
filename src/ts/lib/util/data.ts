@@ -1087,7 +1087,6 @@ class UtilData {
 			sectionTemplate = {};
 		};
 
-
 		records.forEach((record) => {
 			const diff = now - record[key];
 

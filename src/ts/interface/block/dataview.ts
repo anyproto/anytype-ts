@@ -28,6 +28,12 @@ export enum ViewType {
 	Graph	 = 5,
 };
 
+export enum SortId {
+	Updated 	= 0,
+	Created		= 1,
+	Name 		= 2,
+};
+
 export enum SortType { 
 	Asc		 = 0, 
 	Desc	 = 1,

@@ -24,7 +24,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	refList = null;
 	cache: any = {};
 	offset = 0;
-	sortId = 'updated';
+	sortId: I.SortId = I.SortId.Updated;
 	sortType: I.SortType = I.SortType.Desc;
 	orphan = false;
 	type: I.ObjectContainerType = I.ObjectContainerType.Object;
@@ -309,6 +309,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			filters,
 			sorts,
 			limit,
+			keys: J.Relation.default.concat([ 'lastModifiedDate' ]),
 			ignoreHidden: true,
 			ignoreDeleted: true,
 		}, (message: any) => {
@@ -345,6 +346,12 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	getItems () {
+		const records = S.Record.getRecords(J.Constant.subId.allObject);
+		if ([ I.SortId.Created, I.SortId.Updated ].includes(this.sortId)) {
+			const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType).find(it => it.id == this.sortId);
+			const sorted = U.Data.groupDateSections(records, option.relationKey, {}, this.sortType);
+			console.log('SORTED: ', sorted)
+		};
 		return S.Record.getRecords(J.Constant.subId.allObject);
 	};
 
