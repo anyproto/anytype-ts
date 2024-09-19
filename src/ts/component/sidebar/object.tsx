@@ -63,7 +63,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 			let content
 			if (item.isSection) {
-				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}</div>;
+				content = <div className={[ 'item', 'isSection', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}</div>;
 			} else {
 				content = (
 					<Item
