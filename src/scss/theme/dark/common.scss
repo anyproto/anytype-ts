@@ -267,15 +267,6 @@ html.themeDark {
         .headerBanner.withMenu:after { background-image: url('~img/arrow/button/white.svg'); }
     }
 
-	.header.mainStore.withBanner {
-		.bannerWrapper {
-			.banner { color: var(--color-text-inversion); }
-			.banner {
-				.button { background-color: var(--color-bg-primary); color: var(--color-text-primary); }
-			}
-		}
-	}
-
 	/* Vault */
 
 	.vault { background-color: #393939; }
