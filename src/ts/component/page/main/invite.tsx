@@ -69,7 +69,7 @@ class PageMainInvite extends React.Component<I.PageComponent, State> {
 			this.setState({ error: translate('pageMainInviteErrorData') });
 		} else {
 			C.SpaceInviteView(data.cid, data.key, (message: any) => {
-				U.Space.openDashboard('route');
+				U.Space.openDashboard('route', { replace: true });
 
 				S.Popup.closeAll(null, () => {
 					const space = U.Space.getSpaceviewBySpaceId(message.spaceId);

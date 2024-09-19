@@ -47,17 +47,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		};
 
 		let value = this.getItems();
-
-		const length = value.length;
-
-		if (arrayLimit) {
-			value = value.slice(0, arrayLimit);
-			if (length > arrayLimit) {
-				cn.push('overLimit');
-			};
-		};
-
 		let content = null;
+
 		if (isEditing) {
 			content = (
 				<div id="value" onClick={this.focus}>
@@ -111,7 +102,16 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 				</div>
 			);
 		} else {
-			if (!value.length) {
+			const length = value.length;
+
+			if (arrayLimit) {
+				value = value.slice(0, arrayLimit);
+				if (length > arrayLimit) {
+					cn.push('overLimit');
+				};
+			};
+
+			if (!length) {
 				content = <div className="empty">{placeholder}</div>;
 			} else {
 				content = (
@@ -184,6 +184,10 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	onClick (e: any, item: any) {
+		const { isEditing } = this.state;
+		if (isEditing) {
+			U.Object.openConfig(item);
+		};
 	};
 
 	placeholderCheck () {

@@ -61,20 +61,17 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		let n = 0;
 		let c = 0;
 		let size = 48;
-		let iconSize = 32;
 		let cnPreviewSize;
 
 		switch (previewSize) {
 			case I.PreviewSize.Large: {
 				size = 48;
-				iconSize = 32;
 				cnPreviewSize = 'large';
 				break;
 			};
 
 			case I.PreviewSize.Medium: {
 				size = 40;
-				iconSize = 24;
 				cnPreviewSize = 'medium';
 				break;
 			};
@@ -82,7 +79,6 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			default:
 			case I.PreviewSize.Small: {
 				size = 32;
-				iconSize = 20;
 				cnPreviewSize = 'small';
 				break;
 			};
@@ -91,11 +87,9 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 		if (isTask || isBookmark) {
 			size = 16;
-			iconSize = 16;
 
 			if (previewSize == I.PreviewSize.Small) {
 				size = 14;
-				iconSize = 14;
 			};
 		};
 
@@ -346,7 +340,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 
 								<div className="heading">
-									<IconObject size={size} iconSize={iconSize} object={object} />
+									<IconObject size={size} object={object} />
 									<div className="name">{name}</div>
 									<div className="featured" />
 								</div>

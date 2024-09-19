@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, S, U, translate, analytics, C, J } from 'Lib';
+import { I, S, U, translate, Preview } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -57,7 +57,13 @@ const Item = observer(class Item extends React.Component<Props> {
 			};
 
 			return (
-				<div className="item" onContextMenu={e => onContext(e, item.id)}>
+				<div 
+					id={`item-${item.id}`}
+					className="item" 
+					onContextMenu={e => onContext(e, item.id)}
+					onMouseEnter={e => this.onMouseEnter(e, item)}
+					onMouseLeave={this.onMouseLeave}
+				>
 					{icon}
 					<ObjectName object={item} onClick={() => this.onOpen(item)} />
 				</div>
@@ -87,6 +93,17 @@ const Item = observer(class Item extends React.Component<Props> {
 
 	onOpen (record: any) {
 		U.Object.openConfig(record);
+	};
+
+	onMouseEnter (e: any, item: any) {
+		const node = $(this.node);
+		const element = node.find(`#item-${item.id}`);
+
+		Preview.tooltipShow({ text: item.name, element });
+	};
+
+	onMouseLeave (e: any) {
+		Preview.tooltipHide(false);
 	};
 
 	onMore () {

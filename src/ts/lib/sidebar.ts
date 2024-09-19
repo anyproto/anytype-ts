@@ -210,6 +210,10 @@ class Sidebar {
 			width = this.obj.outerWidth();
 		};
 
+		if (!keyboard.isMain()) {
+			width = 0;
+		};
+
 		const { isClosed } = this.data;
 		const { showVault, isFullScreen } = S.Common;
 		const { ww } = U.Common.getWindowDimensions();

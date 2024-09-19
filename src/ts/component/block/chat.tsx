@@ -58,7 +58,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const Section = (item: any) => {
 			let date = U.Date.dayString(item.createdAt);
 			if (!date) {
-				date = U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrAfterDay), item.createdAt);
+				date = U.Date.dateWithFormat(I.DateFormat.MonthAbbrAfterDay, item.createdAt);
 			};
 
 			return (
@@ -132,7 +132,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		this.loadMessages(true, () => {
 			this.loadReplies(() => {
+				this.replies = this.getReplies();
+
 				this.loadDeps(() => {
+					this.deps = this.getDeps();
+
 					this.setState({ isLoading: false }, () => {
 						const messages = this.getMessages();
 						const length = messages.length;
@@ -252,6 +256,11 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			deps = deps.concat(attachments);
 		});
 
+		if (this.refForm) {
+			deps = deps.concat((this.refForm.state.attachments || []).map(it => it.target));
+			deps = deps.concat((this.refForm.marks || []).filter(it => markTypes.includes(it.type)).map(it => it.param));
+		};
+
 		return deps;
 	};
 
@@ -285,6 +294,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			if (callBack) {
 				callBack();
 			};
+
+			this.refForm?.forceUpdate();
 		});
 	};
 
@@ -326,7 +337,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const sections = [];
 
 		messages.forEach(item => {
-			const key = U.Date.date(U.Date.dateFormat(I.DateFormat.ShortUS), item.createdAt);
+			const key = U.Date.dateWithFormat(I.DateFormat.ShortUS, item.createdAt);
 			const section = sections.find(it => it.key == key);
 
 			if (!section) {

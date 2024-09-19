@@ -2,6 +2,8 @@
 
 .widget.widgetButtons { padding: 8px; }
 .widget.widgetButtons {
+	.icon.remove { display: none !important; }
+
 	.body {
 		.item { padding: 4px 8px; display: flex; align-items: center; justify-content: space-between; position: relative; }
 		.item::before {

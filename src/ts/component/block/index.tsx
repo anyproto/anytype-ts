@@ -116,7 +116,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 
 		if (bgColor && !block.isLink() && !block.isBookmark()) {
-			cd.push('bgColor bgColor-' + bgColor);
+			cd.push(`bgColor bgColor-${bgColor}`);
 		};
 
 		switch (type) {
@@ -799,7 +799,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	renderLinks (node: any, marks: I.Mark[], value: string, props: any) {
 		node = $(node);
 
-		const { readonly } = props;
+		const { readonly, block } = props;
 		const items = node.find(Mark.getTag(I.MarkType.Link));
 
 		if (!items.length) {
@@ -853,7 +853,16 @@ const Block = observer(class Block extends React.Component<Props> {
 					to: Number(range[1]) || 0, 
 				},
 				marks,
-				onChange: marks => this.setMarks(value, marks),
+				onChange: marks => {
+					const restricted = [];
+					if (block.isTextHeader()) {
+						restricted.push(I.MarkType.Bold);
+					};
+
+					const parsed = Mark.fromHtml(value, restricted);
+
+					this.setMarks(parsed.text, marks);
+				},
 				noUnlink: readonly,
 				noEdit: readonly,
 			});
@@ -871,7 +880,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { block } = this.props;
 		const size = U.Data.emojiParam(block.content.style);
 		const items = node.find(Mark.getTag(I.MarkType.Mention));
-		
+
 		if (!items.length) {
 			return;
 		};
@@ -1114,8 +1123,8 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	setMarks (value: string, marks: I.Mark[]) {
 		const { rootId, block } = this.props;
-		
-		if (block.isTextCode()) {
+
+		if (!block.canHaveMarks()) {
 			marks = [];
 		};
 

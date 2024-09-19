@@ -212,16 +212,6 @@ export enum FileSyncStatus {
 	NotSynced		 = 2,
 };
 
-export enum StoreTab {
-	Type			 = 'type',
-	Relation		 = 'relation',
-};
-
-export enum StoreView {
-	Marketplace = 'marketplace',
-	Library = 'library',
-};
-
 export enum ObjectContainerType {
 	Object			 = 'object',
 	File			 = 'file',

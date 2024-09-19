@@ -89,7 +89,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: (v: any) => v ? U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v) : '',
+				mapper: v => v ? U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, v) : '',
 			},
 		];
 
@@ -133,7 +133,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						{...this.props} 
 						ref={ref => this.refHead = ref} 
 						placeholder={translate('defaultNameType')} 
-						rootId={rootId} onCreate={this.onCreate} 
+						rootId={rootId} 
+						onCreate={this.onCreate} 
 					/>
 
 					{showTemplates ? (
@@ -203,7 +204,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						</div>
 					</div>
 
-					{object.isInstalled ? (
+					{object.isInstalled && !object._empty_ ? (
 						<div className="section set">
 							<div className="title">{totalObject} {U.Common.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">

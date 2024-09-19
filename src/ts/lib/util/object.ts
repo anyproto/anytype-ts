@@ -20,7 +20,6 @@ class UtilObject {
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
-			case I.ObjectLayout.Store:		 r = 'store'; break;
 			case I.ObjectLayout.History:	 r = 'history'; break;
 			case I.ObjectLayout.Archive:	 r = 'archive'; break;
 			case I.ObjectLayout.Block:		 r = 'block'; break;
@@ -340,6 +339,14 @@ class UtilObject {
 
 	isImageLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Image;
+	};
+
+	isDateLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.Date;
+	};
+
+	isFileLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.File;
 	};
 
 	// --------------------------------------------------------- //

@@ -440,9 +440,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				data: {
 					...data,
 					rebind: this.rebind,
-					onChange: () => { 
-						close(); 
-					},
+					onChange: () => close(),
 				}
 			});
 		} else 

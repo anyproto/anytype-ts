@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Filter, Select, Icon, Button } from 'Component';
-import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics } from 'Lib';
+import { I, U, J, S, C, translate, Storage, sidebar, keyboard, analytics, Action } from 'Lib';
 
 import Item from './object/item';
 
@@ -31,6 +31,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	searchIds: string[] = null;
 	filter = '';
 	timeoutFilter = 0;
+	n = -1;
+	selected: string[] = null;
+	startIndex = -1;
+	currentIndex = -1;
 
 	constructor (props: any) {
 		super(props);
@@ -48,7 +52,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const items = this.getItems();
 		const isAllowedObject = this.isAllowedObject();
 		const typeOptions = this.getTypeOptions();
-		const rootId = keyboard.getRootId();
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -67,9 +70,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					<Item 
 						item={item} 
 						style={param.style} 
-						isActive={rootId == item.id}
+						allowSystemLayout={true}
 						onClick={() => this.onClick(item)}
 						onContext={() => this.onContext(item)}
+						onMouseEnter={() => this.onOver(item)}
+						onMouseLeave={() => this.onOut()}
 					/>
 				</CellMeasurer>
 			);
@@ -118,7 +123,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 								/>
 							</div>
 							<div className="side right">
-								{isAllowedObject ? <Button color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
+								{isAllowedObject ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
 							</div>
 						</div>
 					</div>
@@ -174,9 +179,17 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 		};
 
+		this.refFilter.focus();
 		this.refSelect.setOptions(this.getTypeOptions());
 		this.refSelect.setValue(this.type);
-		this.load(true);
+
+		this.rebind();
+		this.load(true, () => {
+			const rootId = keyboard.getRootId();
+			const items = this.getItems();
+
+			this.setActive(items.find(it => it.id == rootId));
+		});
 	};
 
 	componentDidUpdate () {
@@ -187,15 +200,44 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			defaultHeight: HEIGHT,
 			keyMapper: i => (items[i] || {}).id,
 		});
+
+		this.setActive();
 	};
 
 	componentWillUnmount(): void {
 		window.clearTimeout(this.timeoutFilter);
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+
+		$(window).on('keydown.sidebarObject', e => this.onKeyDown(e));
+		$(this.node).on('click', e => {
+			if (!this.refFilter.isFocused) {
+				const value = this.refFilter.getValue();
+				const length = value.length;
+
+				this.refFilter.focus();
+				this.refFilter.setRange({ from: length, to: length });
+			};
+
+			if (!$(e.target).parents('.item').length) {
+				this.clearSelection();
+			};
+		});
+	};
+
+	unbind () {
+		$(window).off('keydown.sidebarObject');
+		$(this.node).off('click');
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType).find(it => it.id == this.sortId);
 		const template = S.Record.getTemplateType();
+		const limit = this.offset + J.Constant.limit.menuRecords;
+		const fileLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Pdf ];
 
 		let sorts: I.Sort[] = [];
 		let filters: I.Filter[] = [
@@ -228,14 +270,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 
 			case I.ObjectContainerType.File: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.File });
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.In, value: fileLayouts });
 				break;
 			};
 
 			case I.ObjectContainerType.Media: {
 				filters = filters.concat([
-					{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() },
-					{ relationKey: 'layout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.File },
+					{ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts().filter(it => !fileLayouts.includes(it)) },
 				]);
 				break;
 			};
@@ -267,8 +308,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			subId: J.Constant.subId.allObject,
 			filters,
 			sorts,
-			offset: 0,
-			limit: this.offset + J.Constant.limit.menuRecords,
+			limit,
 			ignoreHidden: true,
 			ignoreDeleted: true,
 		}, (message: any) => {
@@ -313,13 +353,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onContext (item: any) {
+		const objectIds = this.selected ? this.selected : [ item.id ];
+
 		S.Menu.open('dataviewContext', {
 			recalcRect: () => { 
 				const { x, y } = keyboard.mouse.page;
 				return { width: 0, height: 0, x: x + 4, y: y };
 			},
 			data: {
-				objectIds: [ item.id ],
+				objectIds,
 				subId: J.Constant.subId.allObject,
 				route: analytics.route.allObjects,
 				allowedLink: true,
@@ -367,12 +409,23 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			name: this.filter,
 		};
 
-		keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
-			if (message.targetId && this.filter && this.searchIds) {
-				this.searchIds = this.searchIds.concat(message.targetId);
+		const cb = (id: string) => {
+			if (id && this.filter && this.searchIds) {
+				this.searchIds = this.searchIds.concat(id);
 				this.load(false);
 			};
-		});
+		};
+
+		if (this.type == I.ObjectContainerType.Bookmark) {
+			this.onBookmarkMenu(details, cb);
+		} else
+		if (this.type == I.ObjectContainerType.Relation) {
+			this.onRelationMenu(cb);
+		} else {
+			keyboard.pageCreate(details, analytics.route.allObjects, (message: any) => {
+				cb(message.targetId);
+			});
+		};
 	};
 
 	isAllowedObject (): boolean {
@@ -408,7 +461,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			{ id: I.ObjectContainerType.Media, name: translate('sidebarObjectTypeMedia') },
 			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
 			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
-			//{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
+			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
 			{ id: I.ObjectContainerType.Orphan, icon: `checkbox c${Number(this.orphan)}`, name: translate('sidebarObjectTypeOrphan') },
 		] as any[]).map(it => {
 			if (it.id != I.ObjectContainerType.Orphan) {
@@ -454,6 +507,223 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		}, J.Constant.delay.keyboard);
 	};
 
+	onFilterClear () {
+		this.searchIds = null;
+		this.load(true);
+	};
+
+	onBookmarkMenu (details: any, callBack: (id: string) => void) {
+		const node = $(this.node);
+		const width = node.width() - 32;
+
+		S.Menu.open('dataviewCreateBookmark', {
+			element: '#sidebar #containerObject #button-object-create',
+			offsetY: 4,
+			width,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Right,
+			type: I.MenuType.Horizontal,
+			data: {
+				details,
+				onSubmit: object => callBack(object.id),
+			},
+		});
+	};
+
+	onRelationMenu (callBack: (id: string) => void) {
+		const node = $(this.node);
+		const width = node.width() - 32;
+
+		S.Menu.open('blockRelationEdit', { 
+			element: '#sidebar #containerObject #button-object-create',
+			offsetY: 4,
+			width,
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal: I.MenuDirection.Right,
+			data: {
+				filter: this.filter,
+				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+					callBack(relation.id);
+				},
+				deleteCommand: () => {
+				},
+			}
+		});
+	};
+
+	onOver (item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.setActive(item);
+		};
+	};
+
+	onOut () {
+		if (!keyboard.isMouseDisabled) {
+			this.unsetActive();
+		};
+	};
+
+	onKeyDown (e: any) {
+		if (!this.refFilter.isFocused) {
+			return;
+		};
+
+		const items = this.getItems();
+		const node = $(this.node);
+
+		keyboard.shortcut('arrowup, arrowdown, shift+arrowup, shift+arrowdown', e, (pressed: string) => {
+			this.onArrow(pressed.match('arrowdown') ? 1 : -1, !!pressed.match('shift'));
+		});
+
+		keyboard.shortcut('escape', e, () => {
+			if (this.selected) {
+				this.clearSelection();
+			} else {
+				sidebar.objectContainerToggle();
+			};
+		});
+
+		if (this.n < 0) {
+			return;
+		};
+
+		const next = items[this.n];
+		if (!next) {
+			return;
+		};
+
+		const el = node.find(`#item-${next.id}`);
+		const isActive = el.hasClass('active');
+		const isSelected = el.hasClass('selected');
+
+		if (isActive || isSelected) {
+			keyboard.shortcut('arrowright, tab, enter', e, () => {
+				e.stopPropagation();
+				e.preventDefault();
+
+				this.onClick(next);
+			});
+		};
+
+		if (isActive || isSelected || this.selected) {
+			keyboard.shortcut('delete', e, () => {
+				e.stopPropagation();
+				e.preventDefault();
+
+				const ids = this.selected ? this.selected : [ next.id ];
+				Action.archive(ids);
+			});
+		};
+	};
+
+	onArrow (dir: number, isShift: boolean) {
+		const items = this.getItems();
+		if (!items.length) {
+			return;
+		};
+
+		const { total } = S.Record.getMeta(J.Constant.subId.allObject, '');
+
+		let item = items[this.n];
+
+		const selectNext = () => {
+			if (!this.selected) {
+				return;
+			};
+
+			const item = items[this.currentIndex];
+
+			if (this.currentIndex > this.startIndex) {
+				this.selected.push(item.id);
+			};
+			if (this.currentIndex < this.startIndex) {
+				this.selected = this.selected.filter(it => it != item.id);
+			};
+			this.renderSelection();
+        };
+
+        const selectPrevious = () => {
+			if (!this.selected) {
+				return;
+			};
+
+			const item = items[this.currentIndex];
+
+			if (this.currentIndex < this.startIndex) {
+				this.selected.push(item.id);
+			};
+			if (this.currentIndex > this.startIndex) {
+				this.selected = this.selected.filter(it => it != item.id);
+			};
+			this.renderSelection();
+        };
+
+		const cb = () => {
+			let scrollTo = 0;
+			if (isShift) {
+				dir > 0 ? selectNext() : selectPrevious();
+
+				this.currentIndex += dir;
+				if (this.currentIndex == this.startIndex) {
+					this.currentIndex += dir;
+				};
+
+				this.currentIndex = Math.max(0, this.currentIndex);
+				this.currentIndex = Math.min(items.length - 1, this.currentIndex);
+
+				scrollTo = this.currentIndex;
+			} else {
+				this.setActive();
+				scrollTo = this.n;
+			};
+
+			this.refList.scrollToRow(Math.max(0, scrollTo));
+		};
+
+		// Initial selection
+		if (isShift && !this.selected) {
+			if (this.n < 0) {
+				if (dir < 0) {
+					this.n = items.length - 1;
+				} else {
+					this.n = 0;
+				};
+				item = items[this.n];
+			};
+
+			this.selected = [ item.id ];
+
+			if (this.startIndex == -1) {
+				this.startIndex = this.n;
+				this.currentIndex = this.n;
+			};
+		};
+
+		if (!isShift) {
+			this.clearSelection();
+			this.n += dir;
+
+			if (this.n < 0) {
+				this.n = items.length - 1;
+			};
+
+			if ((this.n > items.length - 1) && (this.offset < total)) {
+				this.offset += J.Constant.limit.menuRecords;
+				this.load(false, cb);
+			} else {
+				if (this.n > items.length - 1) {
+					this.n = 0;
+				};
+
+				cb();
+			};
+		} else {
+			cb();
+		};
+	};
+
 	storageGet () {
 		const storage = Storage.get('sidebarObject') || {};
 		storage.sort = storage.sort || {};
@@ -464,9 +734,47 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		Storage.set('sidebarObject', obj);
 	};
 
-	onFilterClear () {
-		this.searchIds = null;
-		this.load(true);
+	renderSelection () {
+		const node = $(this.node);
+
+		node.find('.item.selected').removeClass('selected');
+
+		if (this.selected) {
+			this.selected.forEach(id => {
+				node.find(`#item-${id}`).addClass('selected');
+			});
+		};
+	};
+
+	clearSelection () {
+		if (!this.selected) {
+			return;
+		};
+
+		this.selected = null;
+		this.startIndex = -1;
+		this.currentIndex = -1;
+		this.renderSelection();
+	};
+
+	setActive (item?: any) {
+		this.unsetActive();
+
+		const items = this.getItems();
+
+		if (!item) {
+			item = items[this.n];
+		} else {
+			this.n = items.findIndex(it => it.id == item.id);
+		};
+
+		if (item) {
+			$(this.node).find(`#item-${item.id}`).addClass('active');
+		};
+	};
+
+	unsetActive () {
+		$(this.node).find('.item.active').removeClass('active');
 	};
 
 });

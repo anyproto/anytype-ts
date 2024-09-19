@@ -198,14 +198,6 @@ class Keyboard {
 				this.onSearchPopup(analytics.route.shortcut);
 			});
 
-			this.shortcut(`${cmd}+l`, e, () => {
-				if (S.Popup.isOpen('search') || !this.isPinChecked || this.checkSelection()) {
-					return;
-				};
-
-				U.Object.openAuto({ layout: I.ObjectLayout.Store });
-			});
-
 			// Text search
 			this.shortcut(`${cmd}+f`, e, () => {
 				if (!this.isFocused) {
@@ -247,11 +239,6 @@ class Keyboard {
 			// Switch dark/light mode
 			this.shortcut(`${cmd}+shift+m`, e, () => {
 				Action.themeSet(!theme ? 'dark' : '');
-			});
-
-			// Store
-			this.shortcut(`${cmd}+alt+l`, e, () => {
-				U.Object.openRoute({ layout: I.ObjectLayout.Store });
 			});
 
 			// Object id
@@ -795,7 +782,7 @@ class Keyboard {
 
 		let isDisabled = false;
 		if (!isPopup) {
-			isDisabled = this.isMainSet() || this.isMainStore() || this.isMainGraph();
+			isDisabled = this.isMainSet() || this.isMainGraph();
 		} else {
 			isDisabled = [ 'set', 'store', 'graph' ].includes(popupMatch.params.action);
 		};
@@ -946,10 +933,6 @@ class Keyboard {
 
 	isMainSet () {
 		return this.isMain() && (this.match?.params?.action == 'set');
-	};
-
-	isMainStore () {
-		return this.isMain() && (this.match?.params?.action == 'store');
 	};
 
 	isMainGraph () {

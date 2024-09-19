@@ -30,7 +30,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
-		this.onLibrary = this.onLibrary.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
@@ -108,8 +107,8 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			} else 
 			if (canWrite) {
 				buttons = buttons.concat([
-					{ id: 'widget-list-add', className: 'grey c28', text: translate('widgetAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetMain) },
-					{ id: 'widget-list-edit', className: 'grey c28', text: translate('widgetEdit'), onMouseDown: this.onEdit }
+					{ id: 'widget-list-add', className: 'grey c28', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetMain) },
+					{ id: 'widget-list-edit', className: 'grey c28', text: translate('commonEdit'), onMouseDown: this.onEdit }
 				]);
 			};
 
@@ -158,7 +157,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 					<div className="buttons">
 						{buttons.map(button => (
-							<Button key={button.id + (isEditing ? 'edit' : '')} color="" {...button} />
+							<Button key={[ button.id, (isEditing ? 'edit' : '') ].join('-')} color="" {...button} />
 						))}
 					</div>
 				</React.Fragment>
@@ -328,14 +327,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 		this.isDragging = false;
 		this.clear();
-	};
-
-	onLibrary (e: any) {
-		const { isEditing } = this.state;
-
-		if (!isEditing && !e.button) {
-			U.Object.openEvent(e, { layout: I.ObjectLayout.Store });
-		};
 	};
 
 	onContextMenu () {

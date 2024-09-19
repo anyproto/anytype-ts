@@ -54,7 +54,7 @@ const Navigation = observer(class Navigation extends React.Component {
 							keyboard.onQuickCapture(false, { isSub: true, passThrough: false });
 						}, 1000);
 					};
-					buttonPlus.onMouseLeave = () => {};
+					buttonPlus.onMouseLeave = () => window.clearTimeout(this.timeoutPlus);
 					break;
 				};
 
@@ -70,7 +70,10 @@ const Navigation = observer(class Navigation extends React.Component {
 			{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: this.onSearch },
 		].filter(it => it).map(it => {
 			if (!it.onMouseEnter && !it.disabled) {
-				it.onMouseEnter = e => this.onTooltipShow(e, it.tooltip, it.caption);
+				it.onMouseEnter = e => {
+					window.clearTimeout(this.timeoutPlus);
+					this.onTooltipShow(e, it.tooltip, it.caption)
+				};
 			};
 			if (!it.onMouseLeave) {
 				it.onMouseLeave = () => Preview.tooltipHide(false);

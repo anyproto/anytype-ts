@@ -977,29 +977,6 @@ class UtilMenu {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
 	};
 
-	getStoreSortOptions (tab: I.StoreTab, view: I.StoreView) {
-		let options: any[] = [
-			{ id: 'nameAsc', name: translate('pageMainStoreSortNameAsc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Asc },
-			{ id: 'nameDesc', name: translate('pageMainStoreSortNameDesc'), relationKey: 'name', icon: 'relation c-shortText', type: I.SortType.Desc },
-		];
-
-		if (view == I.StoreView.Library) {
-			options = options.concat([
-				{ isDiv: true },
-				{ id: 'createdDateDesc', name: translate('pageMainStoreSortCreatedDesc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Desc },
-				{ id: 'createdDateAsc', name: translate('pageMainStoreSortCreatedAsc'), relationKey: 'createdDate', icon: 'relation c-date', type: I.SortType.Asc },
-			]);
-		};
-
-		if (tab == I.StoreTab.Type) {
-			options = options.concat([
-				{ isDiv: true },
-				{ id: 'lastUsedDateDesc', name: translate('pageMainStoreSortLastUsedDesc'), relationKey: 'lastUsedDate', icon: 'time', type: I.SortType.Desc },
-			]);
-		};
-		return options;
-	};
-
 	getObjectContainerSortOptions (sortId: string, sortType: I.SortType): any[] {
 		return ([
 			{ id: 'updated', name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate' },
@@ -1013,6 +990,26 @@ class UtilMenu {
 			};
 			return it;
 		});
+	};
+
+	dateFormatOptions () {
+		return ([
+			{ id: I.DateFormat.MonthAbbrBeforeDay },
+			{ id: I.DateFormat.MonthAbbrAfterDay },
+			{ id: I.DateFormat.Short },
+			{ id: I.DateFormat.ShortUS },
+			{ id: I.DateFormat.ISO },
+		] as any[]).map(it => {
+			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
+			return it;
+		});
+	};
+
+	timeFormatOptions () {
+		return [
+			{ id: I.TimeFormat.H12, name: translate('menuDataviewDate12Hour') },
+			{ id: I.TimeFormat.H24, name: translate('menuDataviewDate24Hour') },
+		];
 	};
 
 };

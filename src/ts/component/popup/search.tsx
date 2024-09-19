@@ -317,12 +317,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		focus.clear(true);
 
 		if (backlink) {
-			U.Object.getById(backlink, item => this.setBacklink(item, () => setFilter()));
+			U.Object.getById(backlink, item => this.setBacklink(item, 'Saved', () => setFilter()));
 		} else {
 			this.reload();
 		};
 
-		analytics.event('ScreenSearch', { route });
+		analytics.event('ScreenSearch', { route, type: (filter ? 'Saved' : 'Empty') });
 	};
 	
 	componentDidUpdate () {
@@ -523,17 +523,17 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		e.stopPropagation();
 
 		this.props.storageSet({ backlink: item.id });
-		this.setBacklink(item);
+		this.setBacklink(item, 'Empty');
 	};
 
-	setBacklink (item: any, callBack?: () => void) {
+	setBacklink (item: any, type: string, callBack?: () => void) {
 		const { param } = this.props;
 		const { data } = param;
 		const { route } = data;
 
 		this.setState({ backlink: item }, () => {
 			this.resetSearch();
-			analytics.event('SearchBacklink', { route });
+			analytics.event('SearchBacklink', { route, type });
 
 			if (callBack) {
 				callBack();
