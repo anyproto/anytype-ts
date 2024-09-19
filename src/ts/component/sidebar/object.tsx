@@ -11,7 +11,8 @@ interface State {
 };
 
 const LIMIT = 20;
-const HEIGHT = 64;
+const HEIGHT_SECTION = 26;
+const HEIGHT_ITEM = 64;
 
 const SidebarObject = observer(class SidebarObject extends React.Component<{}, State> {
 	
@@ -59,6 +60,23 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				return null;
 			};
 
+			let content
+			if (item.isSection) {
+				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}</div>;
+			} else {
+				content = (
+					<Item
+						item={item}
+						style={param.style}
+						allowSystemLayout={true}
+						onClick={() => this.onClick(item)}
+						onContext={() => this.onContext(item)}
+						onMouseEnter={() => this.onOver(item)}
+						onMouseLeave={() => this.onOut()}
+					/>
+				);
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -67,15 +85,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					<Item 
-						item={item} 
-						style={param.style} 
-						allowSystemLayout={true}
-						onClick={() => this.onClick(item)}
-						onContext={() => this.onContext(item)}
-						onMouseEnter={() => this.onOver(item)}
-						onMouseLeave={() => this.onOut()}
-					/>
+					{content}
 				</CellMeasurer>
 			);
 		};
@@ -146,7 +156,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 													height={height}
 													deferredMeasurmentCache={this.cache}
 													rowCount={items.length}
-													rowHeight={HEIGHT}
+													rowHeight={({ index }) => this.getRowHeight(items[index])}
 													rowRenderer={rowRenderer}
 													onRowsRendered={onRowsRendered}
 													overscanRowCount={10}
@@ -197,7 +207,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: i => this.getRowHeight(items[i]),
 			keyMapper: i => (items[i] || {}).id,
 		});
 
@@ -346,13 +356,12 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	getItems () {
-		const records = S.Record.getRecords(J.Constant.subId.allObject);
+		let records = S.Record.getRecords(J.Constant.subId.allObject);
 		if ([ I.SortId.Created, I.SortId.Updated ].includes(this.sortId)) {
 			const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType).find(it => it.id == this.sortId);
-			const sorted = U.Data.groupDateSections(records, option.relationKey, {}, this.sortType);
-			console.log('SORTED: ', sorted)
+			records = U.Data.groupDateSections(records, option.relationKey, {}, this.sortType);
 		};
-		return S.Record.getRecords(J.Constant.subId.allObject);
+		return records;
 	};
 
 	onClick (item: any) {
@@ -635,6 +644,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		let item = items[this.n];
 
+		if (item && item.isSection) {
+			this.n += dir;
+			this.onArrow(dir, isShift);
+		};
+
 		const selectNext = () => {
 			if (!this.selected) {
 				return;
@@ -782,6 +796,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	unsetActive () {
 		$(this.node).find('.item.active').removeClass('active');
+	};
+
+	getRowHeight (item: any) {
+		return item && item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
 	};
 
 });
