@@ -58,7 +58,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const Section = (item: any) => {
 			let date = U.Date.dayString(item.createdAt);
 			if (!date) {
-				date = U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrAfterDay), item.createdAt);
+				date = U.Date.dateWithFormat(I.DateFormat.MonthAbbrAfterDay, item.createdAt);
 			};
 
 			return (
@@ -337,7 +337,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const sections = [];
 
 		messages.forEach(item => {
-			const key = U.Date.date(U.Date.dateFormat(I.DateFormat.ShortUS), item.createdAt);
+			const key = U.Date.dateWithFormat(I.DateFormat.ShortUS, item.createdAt);
 			const section = sections.find(it => it.key == key);
 
 			if (!section) {
