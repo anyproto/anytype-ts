@@ -1015,6 +1015,26 @@ class UtilMenu {
 		});
 	};
 
+	dateFormatOptions () {
+		return ([
+			{ id: I.DateFormat.MonthAbbrBeforeDay },
+			{ id: I.DateFormat.MonthAbbrAfterDay },
+			{ id: I.DateFormat.Short },
+			{ id: I.DateFormat.ShortUS },
+			{ id: I.DateFormat.ISO },
+		] as any[]).map(it => {
+			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
+			return it;
+		});
+	};
+
+	timeFormatOptions () {
+		return [
+			{ id: I.TimeFormat.H12, name: translate('menuDataviewDate12Hour') },
+			{ id: I.TimeFormat.H24, name: translate('menuDataviewDate24Hour') },
+		];
+	};
+
 };
 
 export default new UtilMenu();

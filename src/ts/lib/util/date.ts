@@ -190,6 +190,10 @@ class UtilDate {
 		return f;
 	};
 
+	dateWithFormat (f: I.DateFormat, t: number): string {
+		return this.date(this.dateFormat(f), t);
+	};
+
 	timeFormat (v: I.TimeFormat): string {
 		let f = '';
 		switch (v) {
@@ -198,6 +202,10 @@ class UtilDate {
 			case I.TimeFormat.H24:	 f = 'H:i'; break;
 		};
 		return f;
+	};
+
+	timeWithFormat (f: I.TimeFormat, t: number): string {
+		return this.date(this.timeFormat(f), t);
 	};
 
 	dayString (t: any): string {
