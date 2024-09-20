@@ -1,24 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import {
-	I,
-	C,
-	M,
-	S,
-	J,
-	U,
-	keyboard,
-	translate,
-	Storage,
-	analytics,
-	dispatcher,
-	Mark,
-	focus,
-	Renderer,
-	Action,
-	Survey,
-	Onboarding,
-	Preview
-} from 'Lib';
+import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding, Preview } from 'Lib';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
