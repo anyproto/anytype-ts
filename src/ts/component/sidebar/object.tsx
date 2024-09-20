@@ -360,8 +360,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	getItems () {
 		let records = S.Record.getRecords(J.Constant.subId.allObject);
-		if ([ I.SortId.Created, I.SortId.Updated ].includes(this.sortId)) {
+		if (this.withSections()) {
 			const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType).find(it => it.id == this.sortId);
+
 			records = U.Data.groupDateSections(records, option.relationKey, {}, this.sortType);
 		};
 		return records;
@@ -647,8 +648,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			return;
 		};
 
-		const withDates = [ I.SortId.Created, I.SortId.Updated ].includes(this.sortId);
-		const isList = items.length > (withDates ? 2 : 1);
+		const withSections = this.withSections();
+		const isList = items.length > (withSections ? 2 : 1);
 		const { total } = S.Record.getMeta(J.Constant.subId.allObject, '');
 
 		let item = items[this.n];
@@ -825,6 +826,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	getRowHeight (item: any) {
 		return item && item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+	};
+
+	withSections (): boolean {
+		return [ I.SortId.Created, I.SortId.Updated ].includes(this.sortId);
 	};
 
 });

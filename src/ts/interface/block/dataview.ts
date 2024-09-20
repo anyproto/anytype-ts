@@ -29,9 +29,9 @@ export enum ViewType {
 };
 
 export enum SortId {
-	Updated 	= 0,
-	Created		= 1,
-	Name 		= 2,
+	Updated 	= 1,
+	Created		= 2,
+	Name 		= 3,
 };
 
 export enum SortType { 

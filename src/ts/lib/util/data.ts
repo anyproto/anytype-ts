@@ -1095,7 +1095,6 @@ class UtilData {
 
 		records.forEach((record) => {
 			const diff = now - record[key];
-
 			if (diff < today) {
 				groups.today.push(record);
 			} else
