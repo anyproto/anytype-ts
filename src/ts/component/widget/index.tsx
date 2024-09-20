@@ -120,13 +120,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		if (isPreview) {
 			back = (
-				<Icon
-					className="back"
-					onClick={() => {
-						setPreview('');
-						analytics.event('ScreenHome', { view: 'Widget' });
-					}}
-				/>
+				<div className="iconWrap back">
+					<Icon
+						className="back"
+						onClick={() => {
+							setPreview('');
+							analytics.event('ScreenHome', { view: 'Widget' });
+						}}
+					/>
+				</div>
 			);
 
 			isDraggable = false;
@@ -154,9 +156,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const onClick = this.isSystemTarget() ? this.onSetPreview : this.onClick;
 
 			head = (
-				<div className="head">
+				<div className="head" onClick={onClick}>
 					{back}
-					<div className="clickable" onClick={onClick}>
+					<div className="clickable">
 						<ObjectName object={object} />
 						{isFavorite && (favCnt > limit) ? <span className="count">{favCnt}</span> : ''}
 					</div>
@@ -498,7 +500,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 	};
 
-	onToggle () {
+	onToggle (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { block } = this.props;
 		const isClosed = Storage.checkToggle('widget', block.id);
 

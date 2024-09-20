@@ -45,6 +45,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
@@ -161,6 +162,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 													onRowsRendered={onRowsRendered}
 													overscanRowCount={10}
 													scrollToAlignment="center"
+													onScroll={this.onScroll}
 												/>
 											)}
 										</AutoSizer>
@@ -632,6 +634,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				Action.archive(ids);
 			});
 		};
+	};
+
+	onScroll () {
+		this.renderSelection();
 	};
 
 	onArrow (dir: number, isShift: boolean) {
