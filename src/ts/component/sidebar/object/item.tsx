@@ -34,14 +34,14 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 			iconSmall = <IconObject object={item} size={size} iconSize={18} />;
 		} else {
 			const iconSize = isFile ? 48 : null;
+
 			iconLarge = <IconObject object={item} size={48} iconSize={iconSize} />;
+			description = <ObjectDescription object={item} />;
 		};
 
 		if (isFile) {
 			cn.push('isFile');
 			description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
-		} else {
-			description = <ObjectDescription object={item} />;
 		};
 
 		return (
