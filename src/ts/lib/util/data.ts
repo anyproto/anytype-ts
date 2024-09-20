@@ -1,5 +1,24 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding } from 'Lib';
+import {
+	I,
+	C,
+	M,
+	S,
+	J,
+	U,
+	keyboard,
+	translate,
+	Storage,
+	analytics,
+	dispatcher,
+	Mark,
+	focus,
+	Renderer,
+	Action,
+	Survey,
+	Onboarding,
+	Preview
+} from 'Lib';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -232,6 +251,12 @@ class UtilData {
 					};
 
 					Storage.clearDeletedSpaces();
+
+					if (Storage.get('showShareTooltipOnLogin')) {
+						Storage.set('showShareTooltipOnLogin', false);
+						Preview.shareTooltipShow();
+						analytics.event('OnboardingTooltip', { id: 'ShareApp' });
+					};
 
 					if (callBack) {
 						callBack();
