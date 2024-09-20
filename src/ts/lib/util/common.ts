@@ -955,16 +955,24 @@ class UtilCommon {
 		});
 	};
 
-	notification (title: string, text: string) {
-		text = String(text || '');
+	notification (param: any, onClick?: () => void) {
+		const title = U.Common.stripTags(String(param.title || ''));
+		const text = U.Common.stripTags(String(param.text || ''));
 
 		if (!text) {
 			return;
 		};
 
 		const electron = this.getElectron();
+		const item = new window.Notification(title, { body: text });
 
-		new window.Notification(U.Common.stripTags(title), { body: U.Common.stripTags(text) }).onclick = () => electron.focus();
+		item.onclick = () => {
+			electron.focus();
+
+			if (onClick) {
+				onClick();
+			};
+		};
 	};
 
 };
