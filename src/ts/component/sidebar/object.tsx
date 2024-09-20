@@ -197,12 +197,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.refSelect.setValue(this.type);
 
 		this.rebind();
-		this.load(true, () => {
-			const rootId = keyboard.getRootId();
-			const items = this.getItems();
-
-			this.setActive(items.find(it => it.id == rootId));
-		});
+		this.load(true);
 	};
 
 	componentDidUpdate () {
@@ -653,7 +648,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const { total } = S.Record.getMeta(J.Constant.subId.allObject, '');
 
 		let item = items[this.n];
-
 		if (isList && this.nextIsSection(this.n + dir)) {
 			this.n += dir;
 		};
