@@ -647,11 +647,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			return;
 		};
 
+		const withDates = [ I.SortId.Created, I.SortId.Updated ].includes(this.sortId);
+		const isList = items.length > (withDates ? 2 : 1);
 		const { total } = S.Record.getMeta(J.Constant.subId.allObject, '');
 
 		let item = items[this.n];
 
-		if (this.nextIsSection(this.n + dir)) {
+		if (isList && this.nextIsSection(this.n + dir)) {
 			this.n += dir;
 		};
 
@@ -694,10 +696,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 				this.currentIndex += dir;
 
-				if (this.nextIsSection(this.currentIndex)) {
+				if (isList && this.nextIsSection(this.currentIndex)) {
 					this.currentIndex += dir;
 				};
-				if (this.currentIndex == this.startIndex) {
+				if (isList && this.currentIndex == this.startIndex) {
 					this.currentIndex += dir;
 				};
 
@@ -721,6 +723,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				} else {
 					this.n = 0;
 				};
+				if (this.n > items.length) {
+					this.n = 0;
+				};
 				item = items[this.n];
 			};
 
@@ -738,6 +743,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 			if (this.n < 0) {
 				this.n = items.length - 1;
+			};
+			if (this.n > items.length) {
+				this.n = 0;
 			};
 
 			if ((this.n > items.length - 1) && (this.offset < total)) {
