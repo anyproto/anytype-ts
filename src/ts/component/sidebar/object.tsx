@@ -651,7 +651,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		let item = items[this.n];
 
-		if (this.nextIsSection(dir)) {
+		if (this.nextIsSection(this.n + dir)) {
 			this.n += dir;
 		};
 
@@ -693,6 +693,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				dir > 0 ? selectNext() : selectPrevious();
 
 				this.currentIndex += dir;
+
+				if (this.nextIsSection(this.currentIndex)) {
+					this.currentIndex += dir;
+				};
 				if (this.currentIndex == this.startIndex) {
 					this.currentIndex += dir;
 				};
@@ -751,9 +755,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 	};
 
-	nextIsSection (dir) {
+	nextIsSection (n) {
 		const items = this.getItems();
-		const next = items[this.n + dir]
+		const next = items[n]
 
 		return next && next.isSection;
 	};
