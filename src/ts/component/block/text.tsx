@@ -601,16 +601,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (range && ((range.from != range.to) || block.isTextCode()) && Object.keys(twinePairs).includes(key)) {
 			e.preventDefault();
 
-			const l = e.key.length;
+			const length = key.length;
 			const cut = value.slice(range.from, range.to);
-			const closingSymbol = twinePairs[key] || key;
+			const closing = twinePairs[key] || key;
 
-			value = U.Common.stringInsert(value, `${key}${cut}${closingSymbol}`, range.from, range.to);
+			value = U.Common.stringInsert(value, `${key}${cut}${closing}`, range.from, range.to);
 
-			this.marks = Mark.adjust(this.marks, range.from, l);
+			this.marks = Mark.adjust(this.marks, range.from, length + closing.length);
 
 			U.Data.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				focus.set(block.id, { from: range.from + l, to: range.to + l });
+				focus.set(block.id, { from: range.from + length, to: range.to + length });
 				focus.apply();
 			});
 
