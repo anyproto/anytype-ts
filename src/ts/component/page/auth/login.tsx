@@ -109,11 +109,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			U.Data.createSession(phrase, '', () => {
 				C.AccountRecover(message => {
 					this.setError(message.error);
-
-					window.setTimeout(() => {
-						Preview.shareTooltipShow();
-						analytics.event('OnboardingTooltip', { id: 'ShareApp' });
-					}, J.Constant.delay.login);
+					Storage.set('showShareTooltipOnLogin', true);
 				});
 			});
 		});
