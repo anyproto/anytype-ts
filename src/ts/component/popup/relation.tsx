@@ -228,14 +228,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const { config } = S.Common;
 
 		let ret = this.getRelationKeys().map(relationKey => S.Record.getRelationByKey(relationKey));
-
-		ret = ret.filter(it => {
-			if ([ 'done' ].includes(it.relationKey)) {
-				return true;
-			};
-
-			return (config.debug.hiddenObject ? true : !it.isHidden) && !it.isReadonlyValue;
-		});
+		ret = ret.filter(it => (config.debug.hiddenObject ? true : !it.isHidden) && !it.isReadonlyValue);
 		ret = ret.sort(U.Data.sortByName);
 		return ret;
 	};
