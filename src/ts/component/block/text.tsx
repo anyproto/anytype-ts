@@ -303,7 +303,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		const reg = /(^|\s)\$((?:[^$\\]|\\.)*?)\$(?=([^\d]|$))/gi;
+		const reg = /(^|[\s>-])\$((?:[^$\\]|\\.)*?)\$(?=([^\d]|$))/gi;
 		const tag = Mark.getTag(I.MarkType.Latex);
 		const value = this.refEditable.getHtmlValue();
 
@@ -314,8 +314,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const html = value.replace(reg, (s: string, p1: string, p2: string, p3: string) => {
 			let ret = '';
 
+			// Fix for closing tag after latex
+			if (p3 == '<') {
+				p3 = '';
+			};
+
+			p2 = U.Common.fromHtmlSpecialChars(p2);
+
 			try {
-				ret = katex.renderToString(U.Common.stripTags(p2), { 
+				ret = katex.renderToString(p2, { 
 					displayMode: false, 
 					throwOnError: false,
 					output: 'html',
