@@ -303,38 +303,36 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		const reg = /(^|[\s>-])\$((?:[^$\\]|\\.)*?)\$(?=([^\d]|$))/gi;
 		const tag = Mark.getTag(I.MarkType.Latex);
 		const value = this.refEditable.getHtmlValue();
+		const render = (s: string) => {
+			s = U.Common.fromHtmlSpecialChars(s);
 
-		if (!reg.test(value)) {
-			return;
-		};
-
-		const html = value.replace(reg, (s: string, p1: string, p2: string, p3: string) => {
-			let ret = '';
-
-			// Fix for closing tag after latex
-			if (p3 == '<') {
-				p3 = '';
-			};
-
-			p2 = U.Common.fromHtmlSpecialChars(p2);
-
+			let ret = s;
 			try {
-				ret = katex.renderToString(p2, { 
+				ret = katex.renderToString(s, { 
 					displayMode: false, 
 					throwOnError: false,
 					output: 'html',
 					trust: ctx => [ '\\url', '\\href', '\\includegraphics' ].includes(ctx.command),
 				});
 
-				ret = ret ? `${p1}<${tag}>${ret}</${tag}>${p3}` : s;
-			} catch (e) {
-				ret = s;
-			};
-
+				ret = ret ? ret : s;
+			} catch (e) {};
 			return ret;
+		};
+
+		const match = value.matchAll(/(^|[^\d])?\$((?:[^$<]|\.)*?)\$([^\d]|$)?/gi);
+
+		let html = value;
+
+		match.forEach((m: any) => {
+			const m0 = String(m[0] || '');
+			const m1 = String(m[1] || '');
+			const m2 = String(m[2] || '');
+			const m3 = String(m[3] || '');
+
+			html = html.replace(m0, `${m1}<${tag}>${render(m2)}</${tag}>${m3}`);
 		});
 
 		if (html !== value) {
