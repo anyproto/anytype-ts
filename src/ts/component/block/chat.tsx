@@ -538,14 +538,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { space } = S.Common;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
-		const layouts = [
-			I.ObjectLayout.Image,
-			I.ObjectLayout.Video,
-			I.ObjectLayout.Audio,
-			I.ObjectLayout.File,
-			I.ObjectLayout.Pdf,
-			I.ObjectLayout.Bookmark,
-		];
+		const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Bookmark);
 
 		let text: string = '';
 		let attachmentText = '';
@@ -554,29 +547,33 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 			text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
 		};
 
-		if (message.attachments && message.attachments.length) {
-			const attachments = (message.attachments).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
-			const l = attachments.length;
+		if (!message.attachments.length) {
+			return { title, text, attachmentText };
+		};
 
-			if (l) {
-				const first = attachments[0];
+		const attachments = (message.attachments).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
+		const l = attachments.length;
 
-				if (l == 1) {
-					attachmentText = first.name;
-					if ((first.layout == I.ObjectLayout.Bookmark) && first.snippet) {
-						attachmentText = first.snippet;
-					};
-				} else {
-					let attachmentLayout = I.ObjectLayout[first.layout];
+		if (!l) {
+			return { title, text, attachmentText };
+		};
 
-					attachments.forEach((el) => {
-						if ((I.ObjectLayout[el.layout] != attachmentLayout) || !layouts.includes(el.layout)) {
-							attachmentLayout = 'Attachment';
-						};
-					});
-					attachmentText = `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})`;
-				};
+		const first = attachments[0];
+
+		if (l == 1) {
+			attachmentText = first.name;
+			if (U.Object.isBookmarkLayout(first.layout) && first.snippet) {
+				attachmentText = first.snippet;
 			};
+		} else {
+			let attachmentLayout = I.ObjectLayout[first.layout];
+
+			attachments.forEach((el) => {
+				if ((I.ObjectLayout[el.layout] != attachmentLayout) || !layouts.includes(el.layout)) {
+					attachmentLayout = 'Attachment';
+				};
+			});
+			attachmentText = `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})`;
 		};
 
 		return { title, text, attachmentText };
