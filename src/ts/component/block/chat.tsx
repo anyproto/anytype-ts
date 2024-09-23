@@ -556,12 +556,12 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		if (message.attachments && message.attachments.length) {
 			const attachments = (message.attachments).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
-			const aL = attachments.length;
+			const l = attachments.length;
 
-			if (aL) {
+			if (l) {
 				const first = attachments[0];
 
-				if (aL == 1) {
+				if (l == 1) {
 					attachmentText = first.name;
 					if ((first.layout == I.ObjectLayout.Bookmark) && first.snippet) {
 						attachmentText = first.snippet;
@@ -574,7 +574,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							attachmentLayout = 'Attachment';
 						};
 					});
-					attachmentText = `${U.Common.plural(aL, translate(`plural${attachmentLayout}`))} (${aL})`;
+					attachmentText = `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})`;
 				};
 			};
 		};
