@@ -17,10 +17,13 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	render (): React.ReactNode {
 		const space = U.Space.getSpaceview();
 
-		let content = null;
-		if (!space._empty_) {
-			content = (
-				<React.Fragment>
+		return (
+			<div 
+				ref={ref => this.node = ref}
+				className="body" 
+				onClick={this.onSettings}
+			>
+				<div className="side left">
 					<IconObject 
 						id="widget-space-icon" 
 						object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
@@ -31,18 +34,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 					<div className="txt">
 						<ObjectName object={space} />
 					</div>
-				</React.Fragment>
-			);
-		};
-
-		return (
-			<div 
-				ref={ref => this.node = ref}
-				className="body" 
-				onClick={this.onSettings}
-			>
-				<div className="side left">
-					{content}
 				</div>
 				<div className="side right">
 					<div id="cnt" className="cnt" onClick={this.onRequest} />
