@@ -15,6 +15,7 @@ interface Props extends I.BlockComponent {
 	scrollToBottom: () => void;
 	scrollToMessage: (id: string) => void;
 	getMessages: () => I.ChatMessage[];
+	getReplyContent: (message: any) => any;
 };
 
 interface State {
@@ -69,13 +70,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, readonly } = this.props;
+		const { rootId, readonly, getReplyContent } = this.props;
 		const { attachments } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
 
 		let title = '';
 		let text = '';
+		let attachmentText = '';
 		let onClear = () => {};
 
 		if (this.editingId) {
@@ -84,12 +86,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		} else
 		if (this.replyingId) {
 			const message = S.Chat.getMessage(rootId, this.replyingId);
-			if (message) {
-				const { content, creator } = message;
-				const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 
-				title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
-				text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+			if (message) {
+				const reply = getReplyContent(message);
+
+				title = reply.title;
+				text = reply.text;
+				attachmentText = reply.attachmentText;
 				onClear = this.onReplyClear;
 			};
 		};
@@ -107,7 +110,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						<div className="head">
 							<div className="side left">
 								<div className="name">{title}</div>
-								<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								{text ? <div className="descr" dangerouslySetInnerHTML={{ __html: text }} /> : ''}
+								{attachmentText ? <div className="descr" dangerouslySetInnerHTML={{ __html: attachmentText }} /> : ''}
 							</div>
 							<div className="side right">
 								<Icon className="clear" onClick={onClear} />
