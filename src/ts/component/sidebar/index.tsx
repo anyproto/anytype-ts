@@ -31,9 +31,33 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	};
 
     render() {
-		const { showVault, showObject } = S.Common;
+		const { showVault, showObject, showObjectSide } = S.Common;
         const cn = [ 'sidebar' ];
 		const cmd = keyboard.cmdSymbol();
+
+		let content = null;
+
+		if (showObjectSide) {
+			cn.push('objectSide');
+			content = (
+				<React.Fragment>
+					<SidebarWidget {...this.props} />
+					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
+						<div className="resize-handle" onClick={this.onHandleClick} />
+					</div>
+					{showObject ? <SidebarObject {...this.props} /> : ''}
+				</React.Fragment>
+			);
+		} else {
+			content = (
+				<React.Fragment>
+					{showObject ? <SidebarObject {...this.props} /> : <SidebarWidget {...this.props} />}
+					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
+						<div className="resize-handle" onClick={this.onHandleClick} />
+					</div>
+				</React.Fragment>
+			);
+		};
 
         return (
 			<React.Fragment>
@@ -51,10 +75,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					id="sidebar" 
 					className={cn.join(' ')} 
 				>
-					{showObject ? <SidebarObject {...this.props} /> : <SidebarWidget {...this.props} />}
-					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
-						<div className="resize-handle" onClick={this.onHandleClick} />
-					</div>
+					{content}
 				</div>
 			</React.Fragment>
 		);

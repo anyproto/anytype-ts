@@ -44,6 +44,7 @@ class CommonStore {
 	public showVaultValue = null;
 	public hideSidebarValue = null;
 	public showObjectValue = null;
+	public showObjectSideValue = null;
 	public gallery = {
 		categories: [],
 		list: [],
@@ -103,6 +104,7 @@ class CommonStore {
 			showVaultValue: observable,
 			hideSidebarValue: observable,
 			showObjectValue: observable,
+			showObjectSideValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
             config: computed,
@@ -138,6 +140,7 @@ class CommonStore {
 			membershipTiersListSet: action,
 			showVaultSet: action,
 			showObjectSet: action,
+			showObjectSideSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -206,6 +209,10 @@ class CommonStore {
 
 	get showObject (): boolean {
 		return this.showObjectValue;
+	};
+
+	get showObjectSide (): boolean {
+		return this.showObjectSideValue;
 	};
 
 	get theme (): string {
@@ -396,6 +403,10 @@ class CommonStore {
 
 	showObjectSet (v: boolean) {
 		this.showObjectValue = v;
+	};
+
+	showObjectSideSet (v: boolean) {
+		this.showObjectSideValue = v;
 	};
 
 	fullscreenSet (v: boolean) {
