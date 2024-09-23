@@ -513,7 +513,7 @@ class UtilData {
 			items.push(S.Record.getSetType());
 		};
 
-		if (withChat) {
+		if (withChat && config.experimental) {
 			items.push(S.Record.getChatType());
 		};
 

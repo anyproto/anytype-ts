@@ -838,14 +838,15 @@ class UtilMenu {
 	};
 
 	getFixedWidgets () {
+		const { config } = S.Common;
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), iconEmoji: '⭐' },
-			{ id: J.Constant.widgetId.chat, name: translate('widgetChat'), iconEmoji: '💬' },
+			config.experimental ? { id: J.Constant.widgetId.chat, name: translate('widgetChat'), iconEmoji: '💬' } : null,
 			{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
 			{ id: J.Constant.widgetId.collection, name: translate('widgetCollection'), iconEmoji: '🗂️' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), iconEmoji: '📝' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), iconEmoji: '📅', caption: translate('menuWidgetRecentOpenCaption') },
-		];
+		].filter(it => it);
 	};
 
 	sortOrFilterRelationSelect (menuParam: any, param: any) {
