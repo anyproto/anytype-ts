@@ -77,6 +77,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		let title = '';
 		let text = '';
+		let attachmentText = '';
 		let onClear = () => {};
 
 		if (this.editingId) {
@@ -91,6 +92,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 				title = reply.title;
 				text = reply.text;
+				attachmentText = reply.attachmentText;
 				onClear = this.onReplyClear;
 			};
 		};
@@ -108,7 +110,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						<div className="head">
 							<div className="side left">
 								<div className="name">{title}</div>
-								<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								{text ? <div className="descr" dangerouslySetInnerHTML={{ __html: text }} /> : ''}
+								{attachmentText ? <div className="descr" dangerouslySetInnerHTML={{ __html: attachmentText }} /> : ''}
 							</div>
 							<div className="side right">
 								<Icon className="clear" onClick={onClear} />

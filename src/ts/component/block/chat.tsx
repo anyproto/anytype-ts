@@ -538,30 +538,48 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const { space } = S.Common;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
+		const layouts = [
+			I.ObjectLayout.Image,
+			I.ObjectLayout.Video,
+			I.ObjectLayout.Audio,
+			I.ObjectLayout.File,
+			I.ObjectLayout.Pdf,
+			I.ObjectLayout.Bookmark,
+		];
 
 		let text: string = '';
+		let attachmentText = '';
 
-		if (content.text && content.text.length) {
+		if (content.text) {
 			text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
-		} else {
-			if (message.attachments && message.attachments.length) {
-				const attachments = (message.attachments).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
+		};
 
-				if (attachments.length == 1) {
-					text = attachments[0].name || I.ObjectLayout[attachments[0].layout];
+		if (message.attachments && message.attachments.length) {
+			const attachments = (message.attachments).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
+			const aL = attachments.length;
+
+			if (aL) {
+				const first = attachments[0];
+
+				if (aL == 1) {
+					attachmentText = first.name;
+					if ((first.layout == I.ObjectLayout.Bookmark) && first.snippet) {
+						attachmentText = first.snippet;
+					};
 				} else {
-					text = I.ObjectLayout[attachments[0].layout];
+					let attachmentLayout = I.ObjectLayout[first.layout];
+
 					attachments.forEach((el) => {
-						if (I.ObjectLayout[el.layout] != text) {
-							text = 'Attachment'
+						if ((I.ObjectLayout[el.layout] != attachmentLayout) || !layouts.includes(el.layout)) {
+							attachmentLayout = 'Attachment';
 						};
 					});
-					text = `${text}s (${attachments.length})`;
+					attachmentText = `${U.Common.plural(aL, translate(`plural${attachmentLayout}`))} (${aL})`;
 				};
 			};
 		};
 
-		return { title, text };
+		return { title, text, attachmentText };
 	};
 
 	onDragOver (e: React.DragEvent) {
