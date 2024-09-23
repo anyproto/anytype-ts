@@ -595,13 +595,10 @@ class Action {
 		const deleted = U.Space.getSpaceviewBySpaceId(id);
 		const list = U.Space.getList().filter(it => it.targetSpaceId != id);
 
-		console.log(list);
-
 		if (!deleted) {
 			return;
 		};
 
-		const { accountSpaceId } = S.Auth;
 		const { space } = S.Common;
 		const isOwner = U.Space.isMyOwner(id);
 		const name = U.Common.shorten(deleted.name, 32);
