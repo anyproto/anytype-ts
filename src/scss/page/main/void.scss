@@ -1,0 +1,11 @@
+@import "~scss/_mixins";
+
+.pageMainVoid {
+	.wrapper { width: 704px; margin: 0px auto; padding: 48px 0px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
+	.wrapper {
+	}
+
+	@media (max-width: 1128px) {
+		.wrapper { width: calc(100% - 32px); }
+	}
+}

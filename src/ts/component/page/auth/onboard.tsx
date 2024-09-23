@@ -258,20 +258,18 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						},
 					};
 
-					U.Data.onAuth({ routeParam });
+					U.Data.onAuthWithoutSpace(routeParam);
 					U.Data.onAuthOnce(true);
 				});
 			};
 
-			C.WorkspaceSetInfo(S.Common.space, { name: translate('commonEntrySpace') }, () => {
-				if (name) {
-					this.refNext?.setLoading(true);
-					U.Object.setName(S.Block.profile, name, cb);
-				} else {
-					cb();
-					analytics.event('ScreenOnboardingSkipName');
-				};	
-			});
+			if (name) {
+				this.refNext?.setLoading(true);
+				U.Object.setName(S.Block.profile, name, cb);
+			} else {
+				cb();
+				analytics.event('ScreenOnboardingSkipName');
+			};
 		};
 	};
 

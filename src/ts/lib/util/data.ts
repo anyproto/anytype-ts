@@ -267,6 +267,18 @@ class UtilData {
 		analytics.event('OpenAccount');
 	};
 
+	onAuthWithoutSpace (routeParam?: any) {
+		this.createGlobalSubscriptions(() => {
+			const spaces = U.Space.getList();
+
+			if (spaces.length) {
+				U.Router.switchSpace(spaces[0].targetSpaceId);
+			} else {
+				U.Router.go('/main/void', routeParam);
+			};
+		});
+	};
+
 	createAllSubscriptions (callBack?: () => void) {
 		this.createGlobalSubscriptions(() => {
 			this.createSpaceSubscriptions(callBack);

@@ -142,9 +142,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			if (spaceId) {
 				U.Router.switchSpace(spaceId);
 			} else {
-				U.Data.onInfo(message.account.info);
 				Animation.from(() => {
-					U.Data.onAuth();
+					U.Data.onAuthWithoutSpace({ replace: true });
 					this.isSelecting = false;
 				});
 			};

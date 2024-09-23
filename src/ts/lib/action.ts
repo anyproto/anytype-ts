@@ -421,8 +421,6 @@ class Action {
 						S.Auth.accountSet(message.account);
 						S.Common.configSet(message.account.config, false);
 
-						U.Data.onInfo(message.account.info);
-
 						const routeParam = {
 							replace: true,
 							animate: true,
@@ -432,7 +430,7 @@ class Action {
 							},
 						};
 
-						U.Data.onAuth({ routeParam });
+						U.Data.onAuthWithoutSpace(routeParam);
 						U.Data.onAuthOnce(true);
 					});
 				});
@@ -595,6 +593,9 @@ class Action {
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
 		const deleted = U.Space.getSpaceviewBySpaceId(id);
+		const list = U.Space.getList().filter(it => it.targetSpaceId != id);
+
+		console.log(list);
 
 		if (!deleted) {
 			return;
@@ -634,7 +635,12 @@ class Action {
 					};
 
 					if (space == id) {
-						U.Router.switchSpace(accountSpaceId, '', false, cb);
+						if (list.length) {
+							U.Router.switchSpace(list[0].id, '', false, cb);
+						} else {
+							cb();
+							U.Router.go('/main/void', { replace: true });
+						};
 					} else {
 						cb();
 					};

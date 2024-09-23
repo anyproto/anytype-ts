@@ -14,6 +14,7 @@ import PageAuthDeleted from './auth/deleted';
 
 import PageMainBlank from './main/blank';
 import PageMainEmpty from './main/empty';
+import PageMainVoid from './main/void';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
@@ -57,6 +58,7 @@ const Components = {
 	'main/membership':		 PageMainMembership,
 	'main/object':			 PageMainObject,
 	'main/chat':			 PageMainChat,
+	'main/void':			 PageMainVoid,
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {
