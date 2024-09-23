@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Storage, Preview } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, Storage, Preview, Mark } from 'Lib';
 
 import Message from './chat/message';
 import Form from './chat/form';
@@ -43,6 +43,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.scrollToMessage = this.scrollToMessage.bind(this);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
 		this.getMessages = this.getMessages.bind(this);
+		this.getReplyContent = this.getReplyContent.bind(this);
 	};
 
 	render () {
@@ -81,6 +82,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							onContextMenu={e => this.onContextMenu(e, item)}
 							onMore={e => this.onContextMenu(e, item, true)}
 							onReply={e => this.onReply(e, item)}
+							getReplyContent={this.getReplyContent}
 						/>
 					))}
 				</div>
@@ -117,6 +119,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					scrollToBottom={this.scrollToBottom}
 					scrollToMessage={this.scrollToMessage}
 					getMessages={this.getMessages}
+					getReplyContent={this.getReplyContent}
 				/>
 			</div>
 		);
@@ -528,6 +531,37 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onReply (e: React.MouseEvent, message: any) {
 		this.refForm.onReply(message);
+	};
+
+	getReplyContent (message: any): any {
+		const { creator, content } = message;
+		const { space } = S.Common;
+		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
+		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
+
+		let text: string = '';
+
+		if (content.text && content.text.length) {
+			text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+		} else {
+			if (message.attachments && message.attachments.length) {
+				const attachments = (message.attachments).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
+
+				if (attachments.length == 1) {
+					text = attachments[0].name || I.ObjectLayout[attachments[0].layout];
+				} else {
+					text = I.ObjectLayout[attachments[0].layout];
+					attachments.forEach((el) => {
+						if (I.ObjectLayout[el.layout] != text) {
+							text = 'Attachment'
+						};
+					});
+					text = `${text}s (${attachments.length})`;
+				};
+			};
+		};
+
+		return { title, text };
 	};
 
 	onDragOver (e: React.DragEvent) {

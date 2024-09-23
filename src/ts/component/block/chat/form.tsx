@@ -15,6 +15,7 @@ interface Props extends I.BlockComponent {
 	scrollToBottom: () => void;
 	scrollToMessage: (id: string) => void;
 	getMessages: () => I.ChatMessage[];
+	getReplyContent: (message: any) => any;
 };
 
 interface State {
@@ -69,7 +70,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, readonly } = this.props;
+		const { rootId, readonly, getReplyContent } = this.props;
 		const { attachments } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
@@ -84,12 +85,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		} else
 		if (this.replyingId) {
 			const message = S.Chat.getMessage(rootId, this.replyingId);
-			if (message) {
-				const { content, creator } = message;
-				const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 
-				title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
-				text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+			if (message) {
+				const reply = getReplyContent(message);
+
+				title = reply.title;
+				text = reply.text;
 				onClear = this.onReplyClear;
 			};
 		};

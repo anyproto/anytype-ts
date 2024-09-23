@@ -35,7 +35,7 @@
 	}
 	.reply {
 		.name { font-weight: 500; }
-		.text { @include clamp2; }
+		.text { @include clamp1; }
 	}
 
 	.attachments {

@@ -15,6 +15,7 @@ interface Props extends I.BlockComponent {
 	onContextMenu: (e: any) => void;
 	onMore: (e: any) => void;
 	onReply: (e: any) => void;
+	getReplyContent: (message: any) => any;
 };
 
 const LINES_LIMIT = 10;
@@ -34,7 +35,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, blockId, id, isThread, isNew, readonly, onThread, onContextMenu, onMore, onReply } = this.props;
+		const { rootId, blockId, id, isThread, isNew, readonly, onThread, onContextMenu, onMore, onReply, getReplyContent } = this.props;
 		const { space } = S.Common;
 		const { account } = S.Auth;
 		const message = S.Chat.getMessage(rootId, id);
@@ -54,8 +55,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		if (replyToMessageId) {
 			const replyToMessage = S.Chat.getReply(rootId, replyToMessageId);
 			if (replyToMessage) {
+				const { text } = getReplyContent(replyToMessage);
 				const author = U.Space.getParticipant(U.Space.getParticipantId(space, replyToMessage.creator));
-				const text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(replyToMessage.content.text, replyToMessage.content.marks)));
 
 				reply = (
 					<div className="reply">
