@@ -93,6 +93,10 @@
 				}
 			}
 
+			.item.isLocked.isType, .item.isLocked.isRelation {
+				.info { width: calc(100% - 28px); }
+			}
+
 			.item.isType.withIcon {
 				.descrWrap { padding-left: 26px; }
 			}

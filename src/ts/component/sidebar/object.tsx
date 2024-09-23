@@ -75,7 +75,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 						style={param.style}
 						allowSystemLayout={true}
 						isLocked={!allowedDelete}
-						onClick={() => this.onClick(item)}
+						onClick={e => this.onClick(e, item)}
 						onContext={() => this.onContext(item)}
 						onMouseEnter={() => this.onOver(item)}
 						onMouseLeave={() => this.onOut()}
@@ -233,10 +233,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				this.refFilter.focus();
 				this.refFilter.setRange({ from: length, to: length });
 			};
-
-			if (!$(e.target).parents('.item').length) {
-				this.clearSelection();
-			};
 		});
 	};
 
@@ -367,8 +363,23 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		return records;
 	};
 
-	onClick (item: any) {
-		U.Object.openAuto(item);
+	onClick (e: any, item: any) {
+		const withCommand = e.metaKey || e.ctrlKey || e.shiftKey;
+
+		if (withCommand) {
+			this.selected = this.selected || [];
+
+			if (e.metaKey || e.ctrlKey) {
+				this.selected = this.selected.includes(item.id) ? this.selected.filter(it => it != item.id) : this.selected.concat(item.id);
+			} else 
+			if (e.shiftKey) {
+				this.selected = this.selected.concat(item.id);
+			};
+
+			this.renderSelection();
+		} else {
+			U.Object.openAuto(item);
+		};
 	};
 
 	onContext (item: any) {
@@ -621,7 +632,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				e.stopPropagation();
 				e.preventDefault();
 
-				this.onClick(next);
+				this.onClick(e, next);
 			});
 		};
 
