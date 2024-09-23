@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Label, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Storage, Preview } from 'Lib';
+import { I, C, S, U, J, keyboard, translate, Storage, Preview, Mark } from 'Lib';
 
 import Message from './chat/message';
 import Form from './chat/form';
@@ -43,6 +43,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		this.scrollToMessage = this.scrollToMessage.bind(this);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
 		this.getMessages = this.getMessages.bind(this);
+		this.getReplyContent = this.getReplyContent.bind(this);
 	};
 
 	render () {
@@ -81,6 +82,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 							onContextMenu={e => this.onContextMenu(e, item)}
 							onMore={e => this.onContextMenu(e, item, true)}
 							onReply={e => this.onReply(e, item)}
+							getReplyContent={this.getReplyContent}
 						/>
 					))}
 				</div>
@@ -117,6 +119,7 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					scrollToBottom={this.scrollToBottom}
 					scrollToMessage={this.scrollToMessage}
 					getMessages={this.getMessages}
+					getReplyContent={this.getReplyContent}
 				/>
 			</div>
 		);
@@ -528,6 +531,52 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 	onReply (e: React.MouseEvent, message: any) {
 		this.refForm.onReply(message);
+	};
+
+	getReplyContent (message: any): any {
+		const { creator, content } = message;
+		const { space } = S.Common;
+		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
+		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
+		const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Bookmark);
+
+		let text: string = '';
+		let attachmentText = '';
+
+		if (content.text) {
+			text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+		};
+
+		if (!message.attachments.length) {
+			return { title, text, attachmentText };
+		};
+
+		const attachments = (message.attachments).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
+		const l = attachments.length;
+
+		if (!l) {
+			return { title, text, attachmentText };
+		};
+
+		const first = attachments[0];
+
+		if (l == 1) {
+			attachmentText = first.name;
+			if (U.Object.isBookmarkLayout(first.layout) && first.snippet) {
+				attachmentText = first.snippet;
+			};
+		} else {
+			let attachmentLayout = I.ObjectLayout[first.layout];
+
+			attachments.forEach((el) => {
+				if ((I.ObjectLayout[el.layout] != attachmentLayout) || !layouts.includes(el.layout)) {
+					attachmentLayout = 'Attachment';
+				};
+			});
+			attachmentText = `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})`;
+		};
+
+		return { title, text, attachmentText };
 	};
 
 	onDragOver (e: React.DragEvent) {
