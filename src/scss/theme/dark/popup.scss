@@ -175,11 +175,6 @@
 		.icon.confirm { background-image: url('#{$themePath}/icon/popup/confirm/confirm.svg'); }
 	}
 
-	.popup.popupConfirm.welcome {
-		.innerWrap { color: var(--color-text-inversion); }
-		.button.black { background: var(--color-bg-primary); color: var(--color-text-primary); }
-	}
-
 	/* PopupAbout */
 
 	.popup.popupAbout {

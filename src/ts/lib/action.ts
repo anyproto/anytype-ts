@@ -770,28 +770,6 @@ class Action {
 		analytics.event('ScreenRevokeShareLink');
 	};
 
-	welcome () {
-		S.Popup.open('confirm', {
-			className: 'welcome',
-			preventCloseByClick: true,
-			preventCloseByEscape: true,
-			data: {
-				icon: 'welcome',
-				title: translate('popupConfirmWelcomeTitle'),
-				text: translate('popupConfirmWelcomeText'),
-				textConfirm: translate('popupConfirmWelcomeButton'),
-				canCancel: false,
-				onConfirm: () => {
-					S.Popup.replace('confirm', 'usecase', {
-						onClose: () => {
-							Onboarding.start('dashboard', false, false);
-						}
-					});
-				},
-			},
-		});
-	};
-
 	addToCollection (targetId: string, objectIds: string[]) {
 		const collectionType = S.Record.getCollectionType();
 
