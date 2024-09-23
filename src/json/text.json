@@ -428,6 +428,7 @@
 	"pageMainHistoryRestore": "Restore",
 
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
+	"pageAuthLoginShortPhrase": "Key is too short",
 
 	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
 
