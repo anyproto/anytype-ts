@@ -1,13 +1,14 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName, ObjectDescription, ObjectType } from 'Component';
+import { IconObject, ObjectName, ObjectDescription, ObjectType, Icon } from 'Component';
 import { U, S } from 'Lib';
 
 interface Props {
 	item: any;
 	style?: any;
 	allowSystemLayout?: boolean;
+	isLocked?: boolean;
 	onClick?: (item: any) => void;
 	onContext?: (item: any) => void;
 	onMouseEnter?: (item: any) => void;
@@ -19,7 +20,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 	node = null;
 
     render() {
-		const { item, style, allowSystemLayout, onClick, onContext, onMouseEnter, onMouseLeave } = this.props;
+		const { item, style, allowSystemLayout, isLocked, onClick, onContext, onMouseEnter, onMouseLeave } = this.props;
 		const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
 		const type = S.Record.getTypeById(item.type);
 		const isFile = U.Object.isInFileLayouts(item.layout);
@@ -42,6 +43,10 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 		if (isFile) {
 			cn.push('isFile');
 			description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
+		};
+
+		if (isLocked) {
+			cn.push('isLocked');
 		};
 
 		return (
@@ -69,6 +74,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 						{description}
 					</div>
 				</div>
+				{isLocked ? <Icon className="lock" /> : null}
 			</div>
 		);
     };

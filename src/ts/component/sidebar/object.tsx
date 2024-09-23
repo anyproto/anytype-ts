@@ -55,6 +55,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const items = this.getItems();
 		const isAllowedObject = this.isAllowedObject();
 		const typeOptions = this.getTypeOptions();
+		const canWrite = U.Space.canMyParticipantWrite();
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -62,7 +63,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				return null;
 			};
 
-			let content
+			const allowedDelete = canWrite && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+
+			let content = null;
 			if (item.isSection) {
 				content = <div className={[ 'item', 'isSection', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}</div>;
 			} else {
@@ -71,6 +74,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 						item={item}
 						style={param.style}
 						allowSystemLayout={true}
+						isLocked={!allowedDelete}
 						onClick={() => this.onClick(item)}
 						onContext={() => this.onContext(item)}
 						onMouseEnter={() => this.onOver(item)}
