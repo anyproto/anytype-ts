@@ -220,6 +220,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.rebind();
 		this.checkPage();
 		this.load(true);
+
+		analytics.event('ScreenLibrary');
 	};
 
 	componentDidUpdate () {
@@ -417,6 +419,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		} else {
 			U.Object.openAuto(item);
 		};
+
+		analytics.event('LibraryResult');
 	};
 
 	onContext (item: any) {
@@ -456,9 +460,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				onSelect: (e: any, item: any) => {
 					if ([ I.SortId.All, I.SortId.Orphan ].includes(item.id)) {
 						this.orphan = item.id == I.SortId.Orphan;
+
+						analytics.event('ChangeLibraryTypeLink', { type: item.id });
 					} else {
 						this.sortId = item.id;
 						this.sortType = item.type;
+
+						analytics.event('ChangeLibrarySort', { type: item.id, sort: I.SortType[item.type] });
 					};
 
 					this.load(true);
@@ -486,6 +494,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				this.searchIds = this.searchIds.concat(id);
 				this.load(false);
 			};
+
+			analytics.event('CreateObject', { route: analytics.route.allObjects })
 		};
 
 		if (this.type == I.ObjectContainerType.Bookmark) {
@@ -517,6 +527,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		this.storageSet(storage);
 		this.load(true);
+
+		analytics.event('ChangeLibraryType', { type: id });
 	};
 
 	getTypeOptions () {
@@ -563,6 +575,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 			this.filter = v;
 			this.loadSearchIds(true);
+
+			analytics.event('SearchInput', { route: analytics.route.allObjects })
 		}, J.Constant.delay.keyboard);
 	};
 
