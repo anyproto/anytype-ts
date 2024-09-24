@@ -432,12 +432,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	onContext (item: any) {
 		const objectIds = this.selected ? this.selected : [ item.id ];
+		const { x, y } = keyboard.mouse.page;
 
 		S.Menu.open('dataviewContext', {
-			recalcRect: () => { 
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			},
+			rect: { width: 0, height: 0, x: x + 4, y },
 			data: {
 				objectIds,
 				subId: J.Constant.subId.allObject,
