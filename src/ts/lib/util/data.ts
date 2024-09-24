@@ -727,6 +727,46 @@ class UtilData {
 		return [ I.CoverType.Upload, I.CoverType.Source ].includes(type);
 	};
 
+	searchDefaultFilters (param: any) {
+		const { config, space } = S.Common;
+		const { ignoreWorkspace, ignoreHidden, ignoreDeleted, withArchived } = param;
+		const filters = param.filters || [];
+
+		if (!ignoreWorkspace) {
+			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
+		};
+
+		if (ignoreHidden && !config.debug.hiddenObject) {
+			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (ignoreDeleted) {
+			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (!withArchived) {
+			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
+		};
+
+		if (!config.experimental) {
+			const chatType = S.Record.getChatType();
+			const chatDerivedType = S.Record.getChatDerivedType();
+
+			if (chatType) {
+				filters.push({ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: chatType.id });
+				filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatType.id });
+			};
+
+			if (chatDerivedType) {
+				filters.push({ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: chatDerivedType.id });
+				filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatDerivedType.id });
+			};
+		};
+
+		return filters;
+	};
+
 	onSubscribe (subId: string, idField: string, keys: string[], message: any) {
 		if (message.error.code) {
 			return;
@@ -771,29 +811,13 @@ class UtilData {
 			collectionId: ''
 		}, param);
 
-		const { subId, idField, filters, sorts, sources, offset, limit, ignoreWorkspace, ignoreHidden, ignoreDeleted, afterId, beforeId, noDeps, withArchived, collectionId } = param;
+		const { subId, idField, sorts, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
+		const filters = this.searchDefaultFilters(param);
 
 		if (!subId) {
 			console.error('[U.Data].searchSubscribe: subId is empty');
 			return;
-		};
-
-		if (!ignoreWorkspace) {
-			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
-		};
-
-		if (ignoreHidden && !config.debug.hiddenObject) {
-			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (ignoreDeleted) {
-			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (!withArchived) {
-			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (!keys.includes(idField)) {
@@ -868,25 +892,9 @@ class UtilData {
 			withArchived: false,
 		}, param);
 
-		const { idField, filters, sorts, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
+		const { idField, sorts, offset, limit } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
-
-		if (!ignoreWorkspace) {
-			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
-		};
-
-		if (ignoreHidden && !config.debug.hiddenObject) {
-			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-			filters.push({ relationKey: 'isHiddenDiscovery', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (ignoreDeleted) {
-			filters.push({ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (!withArchived) {
-			filters.push({ relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
-		};
+		const filters = this.searchDefaultFilters(param);
 
 		if (!keys.includes(idField)) {
 			keys.push(idField);
