@@ -34,13 +34,13 @@
 				.tab { white-space: nowrap; flex-shrink: 0; transition: $transitionAllCommon;  }
 				.tab.active, .tab:hover { color: var(--color-text-primary); }
 
-				.icon.arrow { background-image: url('~img/arrow/sidebarObjectTab.svg'); position: absolute; z-index: 2; top: -4px; }
+				.icon.arrow { background-image: url('~img/arrow/sidebarObjectTab.svg'); position: absolute; z-index: 2; top: -4px; opacity: 0; pointer-events: none; }
 				.icon.arrow.left { left: 12px; transform: rotateZ(180deg); }
 				.icon.arrow.right { right: 12px; }
 
 				.gradient { position: absolute; width: 25%; height: 100%; z-index: 1; top: 0px; display: none; pointer-events: none; }
-				.gradient.left { left: 0px; background-image: linear-gradient(270deg, rgba(255,255,255,0) 0%,  var(--color-bg-primary) 45%); }
-				.gradient.right { right: 0px; background-image: linear-gradient(90deg, rgba(255,255,255,0) 0%, var(--color-bg-primary) 45%); }
+				.gradient.left { left: 0px; background-image: linear-gradient(270deg, rgba(255,255,255,0) 0%, var(--color-bg-primary) 55%); }
+				.gradient.right { right: 0px; background-image: linear-gradient(90deg, rgba(255,255,255,0) 0%, var(--color-bg-primary) 55%); }
 			}
 
 			.filter { padding: 0px 4px; border-radius: 6px; border: 1px solid var(--color-shape-secondary); }
@@ -52,6 +52,12 @@
 			}
 
 			.label { padding: 8px 16px; @include text-small; color: var(--color-text-secondary); }
+		}
+
+		.head:hover {
+			.tabs {
+				.icon.arrow { opacity: 1; pointer-events: all; }
+			}
 		}
 
 		> .body { flex-grow: 1; overflow: hidden; }
