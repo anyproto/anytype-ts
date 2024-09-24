@@ -545,26 +545,24 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 
 		if (content.text) {
 			text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+			return { title, text };
 		};
 
 		if (!message.attachments.length) {
-			return { title, text, attachmentText };
+			return { title, text };
 		};
 
 		const attachments = (message.attachments).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
 		const l = attachments.length;
 
 		if (!l) {
-			return { title, text, attachmentText };
+			return { title, text };
 		};
 
 		const first = attachments[0];
 
 		if (l == 1) {
-			attachmentText = first.name;
-			if (U.Object.isBookmarkLayout(first.layout) && first.snippet) {
-				attachmentText = first.snippet;
-			};
+			text = first.name || U.Common.plural(1, translate('pluralAttachment'));
 		} else {
 			let attachmentLayout = I.ObjectLayout[first.layout];
 
@@ -573,10 +571,10 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					attachmentLayout = 'Attachment';
 				};
 			});
-			attachmentText = `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})`;
+			text = `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})`;
 		};
 
-		return { title, text, attachmentText };
+		return { title, text };
 	};
 
 	onDragOver (e: React.DragEvent) {

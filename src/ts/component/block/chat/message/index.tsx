@@ -55,14 +55,13 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		if (replyToMessageId) {
 			const replyToMessage = S.Chat.getReply(rootId, replyToMessageId);
 			if (replyToMessage) {
-				const { text, attachmentText } = getReplyContent(replyToMessage);
+				const { text } = getReplyContent(replyToMessage);
 				const author = U.Space.getParticipant(U.Space.getParticipantId(space, replyToMessage.creator));
 
 				reply = (
 					<div className="reply">
 						<ObjectName object={author} />
-						{text ? <div className="text" dangerouslySetInnerHTML={{ __html: text }} /> : ''}
-						{attachmentText ? <div className="text" dangerouslySetInnerHTML={{ __html: attachmentText }} /> : ''}
+						<div className="text" dangerouslySetInnerHTML={{ __html: text }} />
 					</div>
 				);
 			};
