@@ -55,7 +55,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const items = this.getItems();
 		const isAllowedObject = this.isAllowedObject();
 		const typeOptions = this.getTypeOptions();
-		const canWrite = U.Space.canMyParticipantWrite();
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -63,7 +62,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				return null;
 			};
 
-			const allowedDelete = canWrite && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+			const allowedDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
 			let content = null;
 			if (item.isSection) {

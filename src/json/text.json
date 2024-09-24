@@ -160,7 +160,6 @@
 	"commonMedia": "Media",
 	"commonFile": "File",
 	"commonMembers": "Members",
-	"commonEntrySpace": "My First Space",
 	"commonNothingFound": "Nothing found",
 
 	"pluralDay": "day|days",
@@ -437,7 +436,12 @@
 	"pageMainHistoryCurrent": "Current version",
 	"pageMainHistoryRestore": "Restore",
 
+	"pageMainVoidTitle": "You're all out of spaces",
+	"pageMainVoidText": "Looks like you’ve cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
+	"pageMainVoidCreateSpace": "Create space",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
+	"pageAuthLoginShortPhrase": "Key is too short",
 
 	"pageAuthDeletedAccountDeletionTitle": "This vault is planned for deletion in %s",
 

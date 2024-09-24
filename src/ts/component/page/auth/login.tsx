@@ -24,8 +24,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCancel = this.onCancel.bind(this);
 		this.onKeyDownPhrase = this.onKeyDownPhrase.bind(this);
-		this.onChange = this.onChange.bind(this);
-		this.canSubmit = this.canSubmit.bind(this);
 		this.onForgot = this.onForgot.bind(this);
 	};
 	
@@ -46,7 +44,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 						<div className="animation">
 							<Phrase 
 								ref={ref => this.refPhrase = ref} 
-								onChange={this.onChange} 
 								onKeyDown={this.onKeyDownPhrase}
 								isHidden={true} 
 								placeholder={translate('phrasePlaceholder')}
@@ -86,15 +83,11 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		if (!this.canSubmit()) {
-			return;
-		};
-		
 		const phrase = this.refPhrase.getValue();
 		const length = phrase.split(' ').length;
 
 		if (length < J.Constant.count.phrase.word) {
-			this.setError({ code: 1, description: translate('pageAuthLoginInvalidPhrase')});
+			this.setError({ code: 1, description: translate('pageAuthLoginShortPhrase')});
 			return;
 		};
 
@@ -142,9 +135,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			if (spaceId) {
 				U.Router.switchSpace(spaceId);
 			} else {
-				U.Data.onInfo(message.account.info);
 				Animation.from(() => {
-					U.Data.onAuth();
+					U.Data.onAuthWithoutSpace({ replace: true });
 					this.isSelecting = false;
 				});
 			};
@@ -173,14 +165,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		return U.Common.checkErrorCommon(error.code);
 	};
 
-	checkButton () {
-		this.refSubmit.setDisabled(!this.canSubmit());
-	};
-
-	canSubmit (): boolean {
-		return this.refPhrase.getValue().split(' ').length == J.Constant.count.phrase.word;
-	};
-
 	onKeyDownPhrase (e: React.KeyboardEvent) {
 		const { error } = this.state;
 
@@ -195,10 +179,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	onCancel () {
 		S.Auth.logout(true, false);
 		Animation.from(() => U.Router.go('/', { replace: true }));
-	};
-
-	onChange () {
-		this.checkButton();
 	};
 
 	onForgot () {

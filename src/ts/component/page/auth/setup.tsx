@@ -152,8 +152,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			if (spaceId) {
 				U.Router.switchSpace(spaceId);
 			} else {
-				U.Data.onInfo(message.account.info);
-				U.Data.onAuth({ routeParam: { animate } });
+				U.Data.onAuthWithoutSpace({ replace: true });
 			};
 
 			U.Data.onAuthOnce(false);

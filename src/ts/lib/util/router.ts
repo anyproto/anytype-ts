@@ -130,7 +130,15 @@ class UtilRouter {
 		const { space } = S.Common;
 		const { accountSpaceId } = S.Auth;
 
-		if (!id || (space == id)) {
+		if (!id) {
+			console.log('[UtilRouter].swithSpace: id is empty');
+			return;
+		};
+
+		if (space == id) {
+			if (callBack) {
+				callBack();
+			};
 			return;
 		};
 
