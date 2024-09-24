@@ -36,7 +36,7 @@ interface Props {
 	onMouseLeave?(e: any): void;
 };
 
-const LAYOUT_EMOJI = [ 
+const LAYOUTS_WITH_EMOJI_GALLERY = [ 
 	I.ObjectLayout.Page, 
 	I.ObjectLayout.Type,
 	I.ObjectLayout.SpaceView,
@@ -379,7 +379,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { canEdit, onClick, onCheckbox } = this.props;
 		const object = this.getObject();
 		const isTask = U.Object.isTaskLayout(object.layout);
-		const isEmoji = LAYOUT_EMOJI.includes(object.layout);
+		const isEmoji = LAYOUTS_WITH_EMOJI_GALLERY.includes(object.layout);
 
 		if (onClick) {
 			onClick(e);
