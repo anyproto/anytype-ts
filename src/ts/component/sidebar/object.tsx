@@ -48,7 +48,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
-		this.nextIsSection = this.nextIsSection.bind(this);
 	};
 
     render() {
@@ -262,7 +261,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan).find(it => it.id == this.sortId);
+		const option = this.getSortOption();
 		const template = S.Record.getTemplateType();
 		const limit = this.offset + J.Constant.limit.menuRecords;
 		const fileLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Pdf ];
@@ -343,6 +342,16 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		}, (message: any) => {
 			this.setState({ isLoading: false });
 
+			if (clear) {
+				const records = this.getRecords();
+				const first = records.length ? records[0] : null;
+
+				if (first) {
+					U.Object.openAuto(first);
+					this.setActive(first);
+				};
+			};
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -373,10 +382,18 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 	};
 
+	getSortOption () {
+		return U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan).find(it => it.id == this.sortId);
+	};
+
+	getRecords () {
+		return S.Record.getRecords(J.Constant.subId.allObject);
+	};
+
 	getItems () {
-		let records = S.Record.getRecords(J.Constant.subId.allObject);
+		let records = this.getRecords();
 		if (this.withSections()) {
-			const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan).find(it => it.id == this.sortId);
+			const option = this.getSortOption();
 
 			records = U.Data.groupDateSections(records, option.relationKey, {}, this.sortType);
 		};
@@ -785,13 +802,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		} else {
 			cb();
 		};
-	};
-
-	nextIsSection (n: number) {
-		const items = this.getItems();
-		const next = items[n];
-
-		return next && next.isSection;
 	};
 
 	storageGet () {
