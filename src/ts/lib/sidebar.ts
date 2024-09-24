@@ -210,7 +210,7 @@ class Sidebar {
 			width = this.obj.outerWidth();
 		};
 
-		if (!keyboard.isMain()) {
+		if (!keyboard.isMain() || keyboard.isMainVoid()) {
 			width = 0;
 		};
 
