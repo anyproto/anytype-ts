@@ -838,14 +838,15 @@ class UtilMenu {
 	};
 
 	getFixedWidgets () {
+		const { config } = S.Common;
 		return [
 			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), iconEmoji: '⭐' },
-			{ id: J.Constant.widgetId.chat, name: translate('widgetChat'), iconEmoji: '💬' },
+			config.experimental ? { id: J.Constant.widgetId.chat, name: translate('widgetChat'), iconEmoji: '💬' } : null,
 			{ id: J.Constant.widgetId.set, name: translate('widgetSet'), iconEmoji: '🔍' },
 			{ id: J.Constant.widgetId.collection, name: translate('widgetCollection'), iconEmoji: '🗂️' },
 			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), iconEmoji: '📝' },
 			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), iconEmoji: '📅', caption: translate('menuWidgetRecentOpenCaption') },
-		];
+		].filter(it => it);
 	};
 
 	sortOrFilterRelationSelect (menuParam: any, param: any) {
@@ -977,8 +978,15 @@ class UtilMenu {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
 	};
 
-	getObjectContainerSortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
+	getObjectContainerSortOptions (sortId: I.SortId, sortType: I.SortType, withOrphans: boolean): any[] {
 		return ([
+			{ name: translate('sidebarObjectShow'), isSection: true },
+			{ id: I.SortId.All, checkbox: !withOrphans, name: translate('commonAllContent') },
+			{ id: I.SortId.Orphan, checkbox: withOrphans, name: translate('sidebarObjectOrphan') },
+
+			{ isDiv: true },
+
+			{ name: translate('sidebarObjectSort'), isSection: true },
 			{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate' },
 			{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate' },
 			{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name' },

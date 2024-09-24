@@ -214,12 +214,12 @@ export enum FileSyncStatus {
 
 export enum ObjectContainerType {
 	Object			 = 'object',
+	List			 = 'list',
 	File			 = 'file',
 	Media			 = 'media',
 	Bookmark		 = 'bookmark',
 	Type			 = 'type',
 	Relation		 = 'relation',
-	Orphan			 = 'orphan',
 };
 
 export enum BannerType {

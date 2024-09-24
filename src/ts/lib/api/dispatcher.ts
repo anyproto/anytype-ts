@@ -949,9 +949,7 @@ class Dispatcher {
 					S.Chat.add(rootId, idx, message);
 
 					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
-						U.Common.notification({ title: author?.name, text: message.content.text }, () => {
-							U.Object.openAuto({ id: rootId, layout: I.ObjectLayout.Chat });
-						});
+						U.Common.notification({ title: author?.name, text: message.content.text });
 					};
 
 					$(window).trigger('messageAdd', [ message ]);

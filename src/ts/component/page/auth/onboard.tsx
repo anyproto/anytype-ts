@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Storage, Action } from 'Lib';
+import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Storage, Onboarding } from 'Lib';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -239,8 +239,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage == Stage.Soul) {
 			const name = this.refName.getValue();
-			const { redirect } = S.Common;
-
 			const cb = () => {
 				Animation.from(() => {
 					this.refNext?.setLoading(false);
@@ -252,9 +250,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 							Storage.initPinnedTypes();
 							S.Common.fullscreenObjectSet(true);
 
-							if (!redirect) {
-								Action.welcome();
-							};
+							Onboarding.start('dashboard', false, false);
 						},
 					};
 

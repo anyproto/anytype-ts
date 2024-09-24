@@ -894,7 +894,6 @@ class Keyboard {
 			index: translate('commonDashboard'),
 			graph: translate('commonGraph'),
 			navigation: translate('commonFlow'),
-			store: translate('commonLibrary'),
 			archive: translate('commonBin'),
 		};
 

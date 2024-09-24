@@ -1,9 +1,16 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject } from 'Component';
+import { Icon } from 'Component';
 import { I, S, U, sidebar, translate } from 'Lib';
 
 const WidgetButtons = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
+
+	constructor (props: I.WidgetComponent) {
+		super(props);
+
+		this.onMore = this.onMore.bind(this);
+		this.onClick = this.onClick.bind(this);
+	};
 
 	render (): React.ReactNode {
 		const items = this.getItems();
@@ -22,6 +29,10 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 						} else {
 							button = <div className="btn">{translate('commonShare')}</div>;
 						};
+					};
+
+					if (item.id == 'all') {
+						button = <Icon className="more" onClick={this.onMore} />;
 					};
 
 					return (
@@ -46,8 +57,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 	getItems () {
 		const space = U.Space.getSpaceview();
 		const ret = [
-			{ id: 'all', name: translate('commonLibrary') },
-			{ id: 'bin', name: translate('commonBin') },
+			{ id: 'all', name: translate('commonAllContent') },
 		];
 
 		if (!space.isPersonal) {
@@ -71,12 +81,27 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 				sidebar.objectContainerToggle();
 				break;
 			};
-
-			case 'bin': {
-				U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
-				break;
-			};
 		};
+	};
+
+	onMore (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		S.Menu.open('select', {
+			element: '#widget-buttons #item-all .icon.more',
+			horizontal: I.MenuDirection.Center,
+			data: {
+				options: [
+					{ id: 'bin', icon: 'bin-black', name: translate('commonBin') },
+				],
+				onSelect: (e: any, item: any) => {
+					if (item.id == 'bin') {
+						U.Object.openEvent(e, { layout: I.ObjectLayout.Archive });
+					};
+				},
+			}
+		});
 	};
 	
 });

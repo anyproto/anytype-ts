@@ -32,9 +32,11 @@
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 
 			width: 12px; height: 100%; background-size: 2px 12px; opacity: 0; cursor: grab; position: absolute; right: 6px; top: 0px;
-			background-image: url('~img/icon/block/menu.svg'); border: 1px solid var(--color-shape-secondary); border-radius: 6px;
+			border: 1px solid var(--color-shape-secondary); border-radius: 6px;
 		}
-		.icon.dnd:hover { background-color: var(--color-shape-tertiary); border-color: var(--color-shape-tertiary); }
+		.icon.dnd:hover { 
+			background-color: var(--color-shape-tertiary); border-color: var(--color-shape-tertiary); background-image: url('~img/icon/block/menu.svg');
+		}
 
 		.inputWithFile { position: relative; }
 		
