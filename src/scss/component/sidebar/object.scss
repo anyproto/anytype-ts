@@ -47,6 +47,8 @@
 				.inner { height: 26px; }
 				.line { display: none; }
 			}
+
+			.label { padding: 8px 16px; @include text-small; color: var(--color-text-secondary); }
 		}
 
 		> .body { flex-grow: 1; overflow: hidden; }

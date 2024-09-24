@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Filter, Select, Icon, Button } from 'Component';
-import { I, U, J, S, C, translate, Storage, sidebar, keyboard, analytics, Action } from 'Lib';
+import { Title, Filter, Icon, Button, Label } from 'Component';
+import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action } from 'Lib';
 
 import Item from './object/item';
 
@@ -161,6 +161,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 								{isAllowedObject ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
 							</div>
 						</div>
+
+						{this.orphan ? <Label text={translate('sidebarObjectOrphanLabel')} /> : ''}
 					</div>
 
 					<div className="body">
