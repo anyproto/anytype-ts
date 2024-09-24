@@ -14,7 +14,7 @@ const PageMainVoid = observer(class PageMainVoid extends React.Component<I.PageC
 				className="wrapper"
 			>
 				<div className="container">
-					<div className="iconWrapper red">
+					<div className="iconWrapper">
 						<Icon />
 					</div>
 					<Title text={translate('pageMainVoidTitle')} />
