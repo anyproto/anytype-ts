@@ -731,6 +731,9 @@ class UtilData {
 		const { config, space } = S.Common;
 		const { ignoreWorkspace, ignoreHidden, ignoreDeleted, withArchived } = param;
 		const filters = param.filters || [];
+		const chatDerivedType = S.Record.getChatDerivedType();
+
+		filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chatDerived });
 
 		if (!ignoreWorkspace) {
 			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
@@ -751,17 +754,16 @@ class UtilData {
 
 		if (!config.experimental) {
 			const chatType = S.Record.getChatType();
-			const chatDerivedType = S.Record.getChatDerivedType();
 
 			if (chatType) {
-				filters.push({ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: chatType.id });
-				filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatType.id });
+				filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatType?.id });
 			};
 
-			if (chatDerivedType) {
-				filters.push({ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: chatDerivedType.id });
-				filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatDerivedType.id });
-			};
+			filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chat });
+		};
+
+		if (chatDerivedType) {
+			filters.push({ relationKey: 'type', condition: I.FilterCondition.NotEqual, value: chatDerivedType.id });
 		};
 
 		return filters;
