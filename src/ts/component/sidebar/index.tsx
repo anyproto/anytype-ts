@@ -33,33 +33,9 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	};
 
     render() {
-		const { showVault, showObject, showObjectSide } = S.Common;
+		const { showVault, showObject } = S.Common;
         const cn = [ 'sidebar' ];
 		const cmd = keyboard.cmdSymbol();
-
-		let content = null;
-
-		if (showObjectSide) {
-			cn.push('objectSide');
-			content = (
-				<React.Fragment>
-					<SidebarWidget ref={ref => this.refWidget = ref} {...this.props} />
-					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
-						<div className="resize-handle" onClick={this.onHandleClick} />
-					</div>
-					{showObject ? <SidebarObject ref={ref => this.refObject = ref} {...this.props} /> : ''}
-				</React.Fragment>
-			);
-		} else {
-			content = (
-				<React.Fragment>
-					{showObject ? <SidebarObject ref={ref => this.refObject = ref} {...this.props} /> : <SidebarWidget {...this.props} ref={ref => this.refWidget = ref} />}
-					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
-						<div className="resize-handle" onClick={this.onHandleClick} />
-					</div>
-				</React.Fragment>
-			);
-		};
 
         return (
 			<React.Fragment>
@@ -77,7 +53,10 @@ const Sidebar = observer(class Sidebar extends React.Component {
 					id="sidebar" 
 					className={cn.join(' ')} 
 				>
-					{content}
+					{showObject ? <SidebarObject ref={ref => this.refObject = ref} {...this.props} /> : <SidebarWidget {...this.props} ref={ref => this.refWidget = ref} />}
+					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
+						<div className="resize-handle" onClick={this.onHandleClick} />
+					</div>
 				</div>
 			</React.Fragment>
 		);
