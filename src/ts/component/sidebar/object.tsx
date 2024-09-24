@@ -503,9 +503,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	getTypeOptions () {
 		return [
 			{ id: I.ObjectContainerType.Object, name: translate('sidebarObjectTypeObject') },
-			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
 			{ id: I.ObjectContainerType.Media, name: translate('sidebarObjectTypeMedia') },
 			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
+			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
 			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
 			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
 		];
