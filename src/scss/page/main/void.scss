@@ -1,5 +1,9 @@
 @import "~scss/_mixins";
 
+.bodyMainVoid {
+	.navigationPanel { display: none; }
+}
+
 .pageMainVoid {
 	.wrapper { width: 704px; height: 100vh; margin: 0px auto; padding: 48px 0px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	.wrapper {
