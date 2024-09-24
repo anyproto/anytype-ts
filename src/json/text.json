@@ -36,7 +36,7 @@
 	"commonGraph": "Graph",
 	"commonFlow": "Flow",
 	"commonLibrary": "Library",
-	"commonAllContent": "All content",
+	"commonAllContent": "All objects",
 	"commonBin": "Bin",
 	"commonToday": "Today",
 	"commonTomorrow": "Tomorrow",
@@ -1765,7 +1765,8 @@
 	"sidebarMenuSidebar": "Only widgets",
 	"sidebarMenuFocus": "Focus mode",
 
-	"sidebarObjectTypeObject": "Objects",
+	"sidebarObjectTypeObject": "Pages",
+	"sidebarObjectTypeList": "Lists",
 	"sidebarObjectTypeType": "Object Types",
 	"sidebarObjectTypeFile": "Files",
 	"sidebarObjectTypeMedia": "Media",

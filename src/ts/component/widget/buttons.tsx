@@ -57,7 +57,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 	getItems () {
 		const space = U.Space.getSpaceview();
 		const ret = [
-			{ id: 'all', name: translate('commonLibrary') },
+			{ id: 'all', name: translate('commonAllContent') },
 		];
 
 		if (!space.isPersonal) {

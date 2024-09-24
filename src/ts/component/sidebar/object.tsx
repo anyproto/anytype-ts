@@ -289,7 +289,14 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		switch (this.type) {
 			case I.ObjectContainerType.Object: {
-				filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat([ I.ObjectLayout.Bookmark ]) });
+				const skipped = U.Object.getFileAndSystemLayouts().concat(U.Object.getSetLayouts()).concat([ I.ObjectLayout.Bookmark ]);
+
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipped });
+				break;
+			};
+
+			case I.ObjectContainerType.List: {
+				filters.push({ relationKey: 'layout', condition: I.FilterCondition.In, value: U.Object.getSetLayouts() });
 				break;
 			};
 
@@ -534,6 +541,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	getTypeOptions () {
 		return [
 			{ id: I.ObjectContainerType.Object, name: translate('sidebarObjectTypeObject') },
+			{ id: I.ObjectContainerType.List, name: translate('sidebarObjectTypeList') },
 			{ id: I.ObjectContainerType.Media, name: translate('sidebarObjectTypeMedia') },
 			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
 			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
