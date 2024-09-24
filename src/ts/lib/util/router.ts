@@ -150,8 +150,11 @@ class UtilRouter {
 
 		C.WorkspaceOpen(id, (message: any) => {
 			if (message.error.code) {
-				if (id != accountSpaceId) {
-					this.switchSpace(accountSpaceId, route, false, callBack);
+				const spaces = U.Space.getList();
+				if (!spaces.length) {
+					this.go('/main/void', { replace: true, onRouteChange: callBack });
+				} else {
+					this.switchSpace(spaces[0].id, route, false, callBack);
 				};
 				return;
 			};
