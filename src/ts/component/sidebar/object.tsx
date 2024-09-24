@@ -40,7 +40,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	constructor (props: any) {
 		super(props);
 
-		this.onSort = this.onSort.bind(this);
+		this.onMore = this.onMore.bind(this);
 		this.onSwitchType = this.onSwitchType.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
@@ -104,8 +104,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				<div className="inner">
 					<div className="head">
 						<div className="titleWrap" onClick={() => sidebar.objectContainerToggle()}>
-							<Icon className="back" />
-							<Title text={translate('commonLibrary')} />
+							<div className="side left">
+								<Icon className="back withBackground" />
+								<Title text={translate('commonLibrary')} />
+							</div>
+							<div className="side right">
+								<Icon id="button-object-more" className="more withBackground" onClick={this.onMore} />
+							</div>
 						</div>
 
 						<div className="sides sidesSort">
@@ -124,7 +129,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 								/>
 							</div>
 							<div className="side right">
-								<Icon id="button-object-sort" className="sort withBackground" onClick={this.onSort} />
 							</div>
 						</div>
 
@@ -399,13 +403,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		});
 	};
 
-	onSort (e: any) {
+	onMore (e: any) {
+		e.stopPropagation();
+
 		const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType);
 
 		let menuContext = null;
 
 		S.Menu.open('select', {
-			element: '#sidebar #containerObject #button-object-sort',
+			element: '#sidebar #containerObject #button-object-more',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			className: 'fixed',

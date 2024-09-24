@@ -5,16 +5,13 @@
 		> .head { display: flex; flex-direction: column; gap: 8px 0px; overflow: hidden; padding: 0px 0px 8px 0px; }
 		> .head {
 			.titleWrap { 
-				display: flex; flex-direction: row; align-items: center; gap: 0px 8px; width: 100%; padding: 20px 16px 8px 12px; 
+				display: flex; flex-direction: row; align-items: center; gap: 0px 8px; width: 100%; padding: 20px 10px 8px 10px; justify-content: space-between;
 			}
 			.titleWrap {
+				.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
+
 				.title { @include text-paragraph; font-weight: 600; flex-grow: 1; }
-				.icon.back { 
-					width: 24px; height: 24px; border-radius: 4px; background-size: 20px; flex-shrink: 0; background-image: url('~img/icon/widget/back.svg'); 
-				}
-			}
-			.titleWrap:hover {
-				.icon.back { background-color: var(--color-shape-highlight-medium); }
+				.icon.back { flex-shrink: 0; background-image: url('~img/icon/widget/back.svg'); }
 			}
 
 			.sides { display: flex; flex-direction: row; gap: 0px 8px; }
@@ -27,7 +24,7 @@
 			.sides.sidesSort { padding: 0px 12px; }
 			.sides.sidesFilter { padding: 0px 16px; }
 
-			.icon.sort { background-image: url('~img/icon/widget/sort.svg') }
+			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 
 			.select { border: 0px; padding: 4px 20px 4px 6px; font-weight: 500; }
 			.select {
