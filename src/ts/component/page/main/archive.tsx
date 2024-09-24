@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Footer, Icon, ListObjectManager } from 'Component';
-import { I, U, J, translate, Action } from 'Lib';
+import { I, U, J, translate, Action, analytics } from 'Lib';
 
 const PageMainArchive = observer(class PageMainArchive extends React.Component<I.PageComponent> {
 
@@ -58,6 +58,10 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 				<Footer component="mainObject" />
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		analytics.event('ScreenBin');
 	};
 
 	onRestore () {
