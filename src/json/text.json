@@ -427,6 +427,10 @@
 	"pageMainHistoryCurrent": "Current version",
 	"pageMainHistoryRestore": "Restore",
 
+	"pageMainVoidTitle": "You're all out of spaces",
+	"pageMainVoidText": "Looks like you’ve cleaned the house. Ready to start fresh?<br/>Create a new space to get things rolling!",
+	"pageMainVoidCreateSpace": "Create space",
+
 	"pageAuthLoginInvalidPhrase": "Invalid Key",
 	"pageAuthLoginShortPhrase": "Key is too short",
 
