@@ -67,7 +67,17 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 			let content = null;
 			if (item.isSection) {
-				content = <div className={[ 'item', 'isSection', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}</div>;
+				const cn = [ 'item', 'isSection' ];
+
+				if (!param.index) {
+					cn.push('first');
+				};
+
+				content = (
+					<div className={cn.join(' ')} style={param.style}>
+						{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}
+					</div>
+				);
 			} else {
 				content = (
 					<Item
@@ -106,30 +116,26 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 						<div className="titleWrap" onClick={() => sidebar.objectContainerToggle()}>
 							<div className="side left">
 								<Icon className="back withBackground" />
-								<Title text={translate('commonLibrary')} />
+								<Title text={translate('commonAllContent')} />
 							</div>
 							<div className="side right">
 								<Icon id="button-object-more" className="more withBackground" onClick={this.onMore} />
 							</div>
 						</div>
 
-						<div className="sides sidesSort">
-							<div className="side left">
-								<Select 
-									id="object-select-type" 
-									ref={ref => this.refSelect = ref}
-									value=""
-									options={typeOptions} 
-									onChange={this.onSwitchType}
-									menuParam={{
-										className: 'fixed',
-										classNameWrap: 'fromSidebar',
-										offsetY: 4,
-									}}
-								/>
-							</div>
-							<div className="side right">
-							</div>
+						<div className="tabs">
+							<Select 
+								id="object-select-type" 
+								ref={ref => this.refSelect = ref}
+								value=""
+								options={typeOptions} 
+								onChange={this.onSwitchType}
+								menuParam={{
+									className: 'fixed',
+									classNameWrap: 'fromSidebar',
+									offsetY: 4,
+								}}
+							/>
 						</div>
 
 						<div className="sides sidesFilter">
@@ -246,7 +252,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType).find(it => it.id == this.sortId);
+		const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan).find(it => it.id == this.sortId);
 		const template = S.Record.getTemplateType();
 		const limit = this.offset + J.Constant.limit.menuRecords;
 		const fileLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Pdf ];
@@ -360,7 +366,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	getItems () {
 		let records = S.Record.getRecords(J.Constant.subId.allObject);
 		if (this.withSections()) {
-			const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType).find(it => it.id == this.sortId);
+			const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan).find(it => it.id == this.sortId);
 
 			records = U.Data.groupDateSections(records, option.relationKey, {}, this.sortType);
 		};
@@ -406,7 +412,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onMore (e: any) {
 		e.stopPropagation();
 
-		const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType);
+		const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan);
 
 		let menuContext = null;
 
@@ -421,17 +427,21 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				options,
 				noClose: true,
 				onSelect: (e: any, item: any) => {
-					this.sortId = item.id;
-					this.sortType = item.type;
+					if ([ I.SortId.All, I.SortId.Orphan ].includes(item.id)) {
+						this.orphan = item.id == I.SortId.Orphan;
+					} else {
+						this.sortId = item.id;
+						this.sortType = item.type;
+					};
+
 					this.load(true);
 
 					const storage = this.storageGet();
-					const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType);
+					const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan);
 					
 					storage.sort[this.type] = { id: item.id, type: item.type };
 
 					this.storageSet(storage);
-
 					menuContext.ref.updateOptions(options);
 				},
 			}
@@ -475,13 +485,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onSwitchType (id: string) {
 		const storage = this.storageGet();
 
-		if (id == I.ObjectContainerType.Orphan) {
-			this.orphan = !this.orphan;
-			storage.orphan = this.orphan;
-		} else {
-			this.type = id as I.ObjectContainerType;
-			storage.type = this.type;
-		};
+		this.type = id as I.ObjectContainerType;
+		storage.type = this.type;
 
 		this.storageSet(storage);
 		this.refSelect.setOptions(this.getTypeOptions());
@@ -490,20 +495,14 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	getTypeOptions () {
-		return ([
+		return [
 			{ id: I.ObjectContainerType.Object, name: translate('sidebarObjectTypeObject') },
 			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
 			{ id: I.ObjectContainerType.Media, name: translate('sidebarObjectTypeMedia') },
 			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
 			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
 			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
-			{ id: I.ObjectContainerType.Orphan, icon: `checkbox c${Number(this.orphan)}`, name: translate('sidebarObjectTypeOrphan') },
-		] as any[]).map(it => {
-			if (it.id != I.ObjectContainerType.Orphan) {
-				it.className = 'weightMedium';
-			};
-			return it;
-		});
+		];
 	};
 
 	getDetailsByType (t: I.ObjectContainerType) {

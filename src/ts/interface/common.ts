@@ -219,7 +219,6 @@ export enum ObjectContainerType {
 	Bookmark		 = 'bookmark',
 	Type			 = 'type',
 	Relation		 = 'relation',
-	Orphan			 = 'orphan',
 };
 
 export enum BannerType {
