@@ -907,7 +907,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	resize () {
-		this.checkPage();
+		this.page = 0;
+		this.onTabArrow(0);
 	};
 
 });
