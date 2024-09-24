@@ -3,7 +3,7 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Editable, Icon, Loader } from 'Component';
+import { Editable, Icon, IconObject, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate, Storage } from 'Lib';
 
 import Attachment from './attachment';
@@ -77,7 +77,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		let title = '';
 		let text = '';
-		let attachmentText = '';
+		let icon: any = null;
 		let onClear = () => {};
 
 		if (this.editingId) {
@@ -92,6 +92,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 				title = reply.title;
 				text = reply.text;
+				if (reply.attachment) {
+					icon = <IconObject object={reply.attachment} size={32} iconSize={32} />;
+				};
+				if (reply.isMultiple) {
+					icon = <Icon className="isMultiple" />;
+				};
 				onClear = this.onReplyClear;
 			};
 		};
@@ -108,8 +114,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					{title ? (
 						<div className="head">
 							<div className="side left">
-								<div className="name">{title}</div>
-								<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								{icon}
+								<div className="textWrapper">
+									<div className="name">{title}</div>
+									<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								</div>
 							</div>
 							<div className="side right">
 								<Icon className="clear" onClick={onClear} />

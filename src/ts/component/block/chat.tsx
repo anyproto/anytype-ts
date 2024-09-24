@@ -539,21 +539,17 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
 		const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Bookmark);
+		const attachments = (message.attachments || []).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
+		const l = attachments.length;
 
 		let text: string = '';
-		let attachmentText = '';
+		let attachmentText: string = '';
+		let attachment: any = null;
+		let isMultiple: boolean = false;
 
 		if (content.text) {
 			text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
-			return { title, text };
 		};
-
-		if (!message.attachments.length) {
-			return { title, text };
-		};
-
-		const attachments = (message.attachments).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
-		const l = attachments.length;
 
 		if (!l) {
 			return { title, text };
@@ -562,7 +558,8 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const first = attachments[0];
 
 		if (l == 1) {
-			text = first.name || U.Common.plural(1, translate('pluralAttachment'));
+			attachmentText = first.name || U.Common.plural(1, translate('pluralAttachment'));
+			attachment = first;
 		} else {
 			let attachmentLayout = I.ObjectLayout[first.layout];
 
@@ -571,10 +568,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 					attachmentLayout = 'Attachment';
 				};
 			});
-			text = `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})`;
+			attachmentText = `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})`;
+			isMultiple = true;
 		};
 
-		return { title, text };
+		if (!text) {
+			text = attachmentText;
+		};
+
+		return { title, text, attachment, isMultiple };
 	};
 
 	onDragOver (e: React.DragEvent) {

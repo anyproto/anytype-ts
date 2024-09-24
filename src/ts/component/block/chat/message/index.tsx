@@ -55,13 +55,24 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		if (replyToMessageId) {
 			const replyToMessage = S.Chat.getReply(rootId, replyToMessageId);
 			if (replyToMessage) {
-				const { text } = getReplyContent(replyToMessage);
+				const { text, attachment, isMultiple } = getReplyContent(replyToMessage);
 				const author = U.Space.getParticipant(U.Space.getParticipantId(space, replyToMessage.creator));
+
+				let icon: any = null;
+				if (attachment) {
+					icon = <IconObject object={attachment} size={32} iconSize={32} />;
+				};
+				if (isMultiple) {
+					icon = <Icon className="isMultiple" />;
+				};
 
 				reply = (
 					<div className="reply">
-						<ObjectName object={author} />
-						<div className="text" dangerouslySetInnerHTML={{ __html: text }} />
+						{icon}
+						<div className="textWrapper">
+							<ObjectName object={author} />
+							<div className="text" dangerouslySetInnerHTML={{ __html: text }} />
+						</div>
 					</div>
 				);
 			};
