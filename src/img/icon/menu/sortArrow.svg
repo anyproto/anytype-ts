@@ -1,8 +1,3 @@
 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<<<<<<< Updated upstream
-<rect x="9.5" y="5" width="1" height="10" fill="#252525"/>
-<path d="M6 11L10 15L14 11" stroke="#252525"/>
-=======
 <path d="M10 4V16M10 16L5 11M10 16L15 11" stroke="black" stroke-width="1.2"/>
->>>>>>> Stashed changes
 </svg>
