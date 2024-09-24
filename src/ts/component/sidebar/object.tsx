@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Filter, Select, Icon, Button } from 'Component';
-import { I, U, J, S, C, translate, Storage, sidebar, keyboard, analytics, Action } from 'Lib';
+import { Title, Filter, Icon, Button, Label } from 'Component';
+import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action } from 'Lib';
 
 import Item from './object/item';
 
@@ -21,7 +21,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 	node = null;
 	refFilter = null;
-	refSelect = null;
 	refList = null;
 	cache: any = {};
 	offset = 0;
@@ -36,18 +35,19 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	selected: string[] = null;
 	startIndex = -1;
 	currentIndex = -1;
+	pages = 0;
+	page = 0;
 
 	constructor (props: any) {
 		super(props);
 
-		this.onSort = this.onSort.bind(this);
+		this.onMore = this.onMore.bind(this);
 		this.onSwitchType = this.onSwitchType.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
-		this.nextIsSection = this.nextIsSection.bind(this);
 	};
 
     render() {
@@ -67,7 +67,17 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 			let content = null;
 			if (item.isSection) {
-				content = <div className={[ 'item', 'isSection', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}</div>;
+				const cn = [ 'item', 'isSection' ];
+
+				if (!param.index) {
+					cn.push('first');
+				};
+
+				content = (
+					<div className={cn.join(' ')} style={param.style}>
+						{translate(U.Common.toCamelCase([ 'common', item.id ].join('-')))}
+					</div>
+				);
 			} else {
 				content = (
 					<Item
@@ -104,28 +114,36 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				<div className="inner">
 					<div className="head">
 						<div className="titleWrap" onClick={() => sidebar.objectContainerToggle()}>
-							<Icon className="back" />
-							<Title text={translate('commonLibrary')} />
-						</div>
-
-						<div className="sides sidesSort">
 							<div className="side left">
-								<Select 
-									id="object-select-type" 
-									ref={ref => this.refSelect = ref}
-									value=""
-									options={typeOptions} 
-									onChange={this.onSwitchType}
-									menuParam={{
-										className: 'fixed',
-										classNameWrap: 'fromSidebar',
-										offsetY: 4,
-									}}
-								/>
+								<Icon className="back withBackground" />
+								<Title text={translate('commonAllContent')} />
 							</div>
 							<div className="side right">
-								<Icon id="button-object-sort" className="sort withBackground" onClick={this.onSort} />
+								<Icon id="button-object-more" className="more withBackground" onClick={this.onMore} />
 							</div>
+						</div>
+
+						<div id="tabs" className="tabs">
+							<div className="inner">
+								{typeOptions.map(it => {
+									const cn = [ 'tab' ];
+									if (this.type == it.id) {
+										cn.push('active');
+									};
+
+									return (
+										<div key={it.id} className={cn.join(' ')} onClick={() => this.onSwitchType(it.id)}>
+											{it.name}
+										</div>
+									);
+								})}
+							</div>
+
+							<Icon id="arrowLeft" className="arrow left withBackground" onClick={() => this.onTabArrow(-1)} />
+							<Icon id="arrowRight" className="arrow right withBackground" onClick={() => this.onTabArrow(1)} />
+
+							<div id="gradientLeft" className="gradient left" />
+							<div id="gradientRight" className="gradient right" />
 						</div>
 
 						<div className="sides sidesFilter">
@@ -142,6 +160,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 								{isAllowedObject ? <Button id="button-object-create" color="blank" className="c28" text={translate('commonNew')} onClick={this.onAdd} /> : ''}
 							</div>
 						</div>
+
+						{this.orphan ? <Label text={translate('sidebarObjectOrphanLabel')} /> : ''}
 					</div>
 
 					<div className="body">
@@ -197,10 +217,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 
 		this.refFilter.focus();
-		this.refSelect.setOptions(this.getTypeOptions());
-		this.refSelect.setValue(this.type);
-
 		this.rebind();
+		this.checkPage();
 		this.load(true);
 	};
 
@@ -214,6 +232,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		});
 
 		this.setActive();
+		this.checkPage();
 	};
 
 	componentWillUnmount(): void {
@@ -242,7 +261,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType).find(it => it.id == this.sortId);
+		const option = this.getSortOption();
 		const template = S.Record.getTemplateType();
 		const limit = this.offset + J.Constant.limit.menuRecords;
 		const fileLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Pdf ];
@@ -323,6 +342,16 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		}, (message: any) => {
 			this.setState({ isLoading: false });
 
+			if (clear) {
+				const records = this.getRecords();
+				const first = records.length ? records[0] : null;
+
+				if (first) {
+					U.Object.openAuto(first);
+					this.setActive(first);
+				};
+			};
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -353,10 +382,18 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 	};
 
+	getSortOption () {
+		return U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan).find(it => it.id == this.sortId);
+	};
+
+	getRecords () {
+		return S.Record.getRecords(J.Constant.subId.allObject);
+	};
+
 	getItems () {
-		let records = S.Record.getRecords(J.Constant.subId.allObject);
+		let records = this.getRecords();
 		if (this.withSections()) {
-			const option = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType).find(it => it.id == this.sortId);
+			const option = this.getSortOption();
 
 			records = U.Data.groupDateSections(records, option.relationKey, {}, this.sortType);
 		};
@@ -399,13 +436,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		});
 	};
 
-	onSort (e: any) {
-		const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType);
+	onMore (e: any) {
+		e.stopPropagation();
+
+		const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan);
 
 		let menuContext = null;
 
 		S.Menu.open('select', {
-			element: '#sidebar #containerObject #button-object-sort',
+			element: '#sidebar #containerObject #button-object-more',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			className: 'fixed',
@@ -415,17 +454,21 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				options,
 				noClose: true,
 				onSelect: (e: any, item: any) => {
-					this.sortId = item.id;
-					this.sortType = item.type;
+					if ([ I.SortId.All, I.SortId.Orphan ].includes(item.id)) {
+						this.orphan = item.id == I.SortId.Orphan;
+					} else {
+						this.sortId = item.id;
+						this.sortType = item.type;
+					};
+
 					this.load(true);
 
 					const storage = this.storageGet();
-					const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType);
+					const options = U.Menu.getObjectContainerSortOptions(this.sortId, this.sortType, this.orphan);
 					
 					storage.sort[this.type] = { id: item.id, type: item.type };
 
 					this.storageSet(storage);
-
 					menuContext.ref.updateOptions(options);
 				},
 			}
@@ -469,35 +512,22 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	onSwitchType (id: string) {
 		const storage = this.storageGet();
 
-		if (id == I.ObjectContainerType.Orphan) {
-			this.orphan = !this.orphan;
-			storage.orphan = this.orphan;
-		} else {
-			this.type = id as I.ObjectContainerType;
-			storage.type = this.type;
-		};
+		this.type = id as I.ObjectContainerType;
+		storage.type = this.type;
 
 		this.storageSet(storage);
-		this.refSelect.setOptions(this.getTypeOptions());
-		this.refSelect.setValue(this.type);
 		this.load(true);
 	};
 
 	getTypeOptions () {
-		return ([
+		return [
 			{ id: I.ObjectContainerType.Object, name: translate('sidebarObjectTypeObject') },
-			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
 			{ id: I.ObjectContainerType.Media, name: translate('sidebarObjectTypeMedia') },
 			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
+			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
 			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
 			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
-			{ id: I.ObjectContainerType.Orphan, icon: `checkbox c${Number(this.orphan)}`, name: translate('sidebarObjectTypeOrphan') },
-		] as any[]).map(it => {
-			if (it.id != I.ObjectContainerType.Orphan) {
-				it.className = 'weightMedium';
-			};
-			return it;
-		});
+		];
 	};
 
 	getDetailsByType (t: I.ObjectContainerType) {
@@ -662,7 +692,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const { total } = S.Record.getMeta(J.Constant.subId.allObject, '');
 
 		let item = items[this.n];
-		if (isList && this.nextIsSection(this.n + dir)) {
+		if (isList && items[this.n + dir]?.isSection) {
 			this.n += dir;
 		};
 
@@ -705,11 +735,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 				this.currentIndex += dir;
 
-				if (isList && this.nextIsSection(this.currentIndex)) {
-					this.currentIndex += dir;
-				};
-				if (isList && this.currentIndex == this.startIndex) {
-					this.currentIndex += dir;
+				if (isList) {
+					if (items[this.currentIndex]?.isSection) {
+						this.currentIndex += dir;
+					};
+					if (this.currentIndex == this.startIndex) {
+						this.currentIndex += dir;
+					};
 				};
 
 				this.currentIndex = Math.max(0, this.currentIndex);
@@ -772,13 +804,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 	};
 
-	nextIsSection (n) {
-		const items = this.getItems();
-		const next = items[n]
-
-		return next && next.isSection;
-	};
-
 	storageGet () {
 		const storage = Storage.get('sidebarObject') || {};
 		storage.sort = storage.sort || {};
@@ -838,6 +863,64 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	withSections (): boolean {
 		return [ I.SortId.Created, I.SortId.Updated ].includes(this.sortId);
+	};
+
+	onTabArrow (dir: number) {
+		const node = $(this.node);
+		const inner = node.find('#tabs > .inner');
+
+		this.page += dir;
+		this.checkPage();
+
+		inner.css({ transform: `translate3d(${-this.page * 100}%, 0px, 0px)` });
+	};
+
+	checkPage () {
+		const node = $(this.node);
+		const gradientLeft = node.find('#gradientLeft');
+		const gradientRight = node.find('#gradientRight');
+		const arrowLeft = node.find('#arrowLeft');
+		const arrowRight = node.find('#arrowRight');
+
+		this.calcPages();
+		this.page = Math.max(0, this.page);
+		this.page = Math.min(this.page, this.pages - 1);
+
+		if (!this.page) {
+			gradientLeft.hide();
+			arrowLeft.hide();
+		} else {
+			gradientLeft.show();
+			arrowLeft.show();
+		};
+
+		if (this.page == this.pages - 1) {
+			gradientRight.hide();
+			arrowRight.hide();
+		} else {
+			gradientRight.show();
+			arrowRight.show();
+		};
+	};
+
+	calcPages () {
+		const list = this.getTypeOptions();
+		const node = $(this.node);
+		const width = node.width();
+		const items = node.find('#tabs .tab');
+
+		let iw = 0;
+		items.each((i, item) => {
+			iw += $(item).outerWidth(true);
+		});
+		iw += 12 * (list.length + 1);
+
+		this.pages = Number(Math.ceil(iw / width)) || 1;
+	};
+
+	resize () {
+		this.page = 0;
+		this.onTabArrow(0);
 	};
 
 });

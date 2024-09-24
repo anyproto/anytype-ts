@@ -294,7 +294,7 @@ class PopupUsecasePageList extends React.Component<I.PopupUsecase, State> {
 		items.each((i, item) => {
 			iw += $(item).outerWidth(true);
 		});
-		iw += 8 * categories.length + 1;
+		iw += 8 * (categories.length + 1);
 
 		this.pages = Number(Math.ceil(iw / width)) || 1;
 	};

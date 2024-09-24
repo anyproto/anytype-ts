@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, U, J, S, keyboard, Preview, sidebar, translate } from 'Lib';
+import { I, U, J, S, keyboard, Preview, sidebar } from 'Lib';
 
 import SidebarWidget from './widget';
 import SidebarObject from './object';
@@ -18,6 +18,8 @@ const Sidebar = observer(class Sidebar extends React.Component {
 	frame = 0;
 	width = 0;
 	movedX = false;
+	refWidget = null;
+	refObject = null;
 
 	constructor (props) {
 		super(props);
@@ -41,17 +43,17 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			cn.push('objectSide');
 			content = (
 				<React.Fragment>
-					<SidebarWidget {...this.props} />
+					<SidebarWidget ref={ref => this.refWidget = ref} {...this.props} />
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
 						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>
-					{showObject ? <SidebarObject {...this.props} /> : ''}
+					{showObject ? <SidebarObject ref={ref => this.refObject = ref} {...this.props} /> : ''}
 				</React.Fragment>
 			);
 		} else {
 			content = (
 				<React.Fragment>
-					{showObject ? <SidebarObject {...this.props} /> : <SidebarWidget {...this.props} />}
+					{showObject ? <SidebarObject ref={ref => this.refObject = ref} {...this.props} /> : <SidebarWidget {...this.props} ref={ref => this.refWidget = ref} />}
 					<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
 						<div className="resize-handle" onClick={this.onHandleClick} />
 					</div>
@@ -191,6 +193,7 @@ const Sidebar = observer(class Sidebar extends React.Component {
 			};
 
 			this.width = w;
+			this.refObject?.resize();
 		});
 	};
 

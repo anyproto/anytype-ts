@@ -978,8 +978,15 @@ class UtilMenu {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
 	};
 
-	getObjectContainerSortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
+	getObjectContainerSortOptions (sortId: I.SortId, sortType: I.SortType, withOrphans: boolean): any[] {
 		return ([
+			{ name: translate('sidebarObjectShow'), isSection: true },
+			{ id: I.SortId.All, checkbox: !withOrphans, name: translate('commonAllContent') },
+			{ id: I.SortId.Orphan, checkbox: withOrphans, name: translate('sidebarObjectOrphan') },
+
+			{ isDiv: true },
+
+			{ name: translate('sidebarObjectSort'), isSection: true },
 			{ id: I.SortId.Updated, name: translate('sidebarObjectSortUpdated'), relationKey: 'lastModifiedDate' },
 			{ id: I.SortId.Created, name: translate('sidebarObjectSortCreated'), relationKey: 'createdDate' },
 			{ id: I.SortId.Name, name: translate('commonName'), relationKey: 'name' },
