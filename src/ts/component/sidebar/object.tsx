@@ -21,7 +21,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 	node = null;
 	refFilter = null;
-	refSelect = null;
 	refList = null;
 	cache: any = {};
 	offset = 0;
@@ -36,6 +35,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	selected: string[] = null;
 	startIndex = -1;
 	currentIndex = -1;
+	pages = 0;
+	page = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -123,19 +124,27 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 							</div>
 						</div>
 
-						<div className="tabs">
-							<Select 
-								id="object-select-type" 
-								ref={ref => this.refSelect = ref}
-								value=""
-								options={typeOptions} 
-								onChange={this.onSwitchType}
-								menuParam={{
-									className: 'fixed',
-									classNameWrap: 'fromSidebar',
-									offsetY: 4,
-								}}
-							/>
+						<div id="tabs" className="tabs">
+							<div className="inner">
+								{typeOptions.map(it => {
+									const cn = [ 'tab' ];
+									if (this.type == it.id) {
+										cn.push('active');
+									};
+
+									return (
+										<div key={it.id} className={cn.join(' ')} onClick={() => this.onSwitchType(it.id)}>
+											{it.name}
+										</div>
+									);
+								})}
+							</div>
+
+							<Icon id="arrowLeft" className="arrow left withBackground" onClick={() => this.onTabArrow(-1)} />
+							<Icon id="arrowRight" className="arrow right withBackground" onClick={() => this.onTabArrow(1)} />
+
+							<div id="gradientLeft" className="gradient left" />
+							<div id="gradientRight" className="gradient right" />
 						</div>
 
 						<div className="sides sidesFilter">
@@ -207,10 +216,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 
 		this.refFilter.focus();
-		this.refSelect.setOptions(this.getTypeOptions());
-		this.refSelect.setValue(this.type);
-
 		this.rebind();
+		this.checkPage();
 		this.load(true);
 	};
 
@@ -224,6 +231,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		});
 
 		this.setActive();
+		this.checkPage();
 	};
 
 	componentWillUnmount(): void {
@@ -489,8 +497,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		storage.type = this.type;
 
 		this.storageSet(storage);
-		this.refSelect.setOptions(this.getTypeOptions());
-		this.refSelect.setValue(this.type);
 		this.load(true);
 	};
 
@@ -667,7 +673,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const { total } = S.Record.getMeta(J.Constant.subId.allObject, '');
 
 		let item = items[this.n];
-		if (isList && this.nextIsSection(this.n + dir)) {
+		if (isList && items[this.n + dir]?.isSection) {
 			this.n += dir;
 		};
 
@@ -710,11 +716,13 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 				this.currentIndex += dir;
 
-				if (isList && this.nextIsSection(this.currentIndex)) {
-					this.currentIndex += dir;
-				};
-				if (isList && this.currentIndex == this.startIndex) {
-					this.currentIndex += dir;
+				if (isList) {
+					if (items[this.currentIndex]?.isSection) {
+						this.currentIndex += dir;
+					};
+					if (this.currentIndex == this.startIndex) {
+						this.currentIndex += dir;
+					};
 				};
 
 				this.currentIndex = Math.max(0, this.currentIndex);
@@ -777,9 +785,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 	};
 
-	nextIsSection (n) {
+	nextIsSection (n: number) {
 		const items = this.getItems();
-		const next = items[n]
+		const next = items[n];
 
 		return next && next.isSection;
 	};
@@ -843,6 +851,63 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	withSections (): boolean {
 		return [ I.SortId.Created, I.SortId.Updated ].includes(this.sortId);
+	};
+
+	onTabArrow (dir: number) {
+		const node = $(this.node);
+		const inner = node.find('#tabs > .inner');
+
+		this.page += dir;
+		this.checkPage();
+
+		inner.css({ transform: `translate3d(${-this.page * 100}%, 0px, 0px)` });
+	};
+
+	checkPage () {
+		const node = $(this.node);
+		const gradientLeft = node.find('#gradientLeft');
+		const gradientRight = node.find('#gradientRight');
+		const arrowLeft = node.find('#arrowLeft');
+		const arrowRight = node.find('#arrowRight');
+
+		this.calcPages();
+		this.page = Math.max(0, this.page);
+		this.page = Math.min(this.page, this.pages - 1);
+
+		if (!this.page) {
+			gradientLeft.hide();
+			arrowLeft.hide();
+		} else {
+			gradientLeft.show();
+			arrowLeft.show();
+		};
+
+		if (this.page == this.pages - 1) {
+			gradientRight.hide();
+			arrowRight.hide();
+		} else {
+			gradientRight.show();
+			arrowRight.show();
+		};
+	};
+
+	calcPages () {
+		const list = this.getTypeOptions();
+		const node = $(this.node);
+		const width = node.width();
+		const items = node.find('#tabs .tab');
+
+		let iw = 0;
+		items.each((i, item) => {
+			iw += $(item).outerWidth(true);
+		});
+		iw += 12 * (list.length + 1);
+
+		this.pages = Number(Math.ceil(iw / width)) || 1;
+	};
+
+	resize () {
+		this.checkPage();
 	};
 
 });

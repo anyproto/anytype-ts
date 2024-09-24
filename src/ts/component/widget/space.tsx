@@ -24,8 +24,8 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 					<IconObject 
 						id="widget-space-icon" 
 						object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
-						size={28}
-						iconSize={28}
+						size={32}
+						iconSize={32}
 						menuParam={{ className: 'fixed' }}
 					/>
 					<div className="txt">
