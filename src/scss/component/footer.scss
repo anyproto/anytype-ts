@@ -7,8 +7,7 @@
 		opacity: 0.6;
 	}
 	.label.disclaimer {
-		@include text-small; position: absolute; left: 50%; bottom: 14px; width: 338px; margin-left: -169px;
-		white-space: nowrap; text-align: center; margin-bottom: 0;
+		@include text-small; position: absolute; left: 50%; bottom: 14px; white-space: nowrap; text-align: center; transform: translateX(-50%);
 	}
 	.label.disclaimer {
 		a { text-decoration: none; color: unset; }
