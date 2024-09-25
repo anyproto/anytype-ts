@@ -99,6 +99,7 @@
 }
 .message.canExpand.isExpanded {
 	.text { -webkit-line-clamp: unset; }
+	.expand::after { transform: rotateZ(180deg); margin-top: 2px; }
 }
 .message:hover, .message.hover {
 	.controls { opacity: 1; }
