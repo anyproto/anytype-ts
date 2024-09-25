@@ -93,7 +93,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 				title = reply.title;
 				text = reply.text;
 				if (reply.attachment) {
-					icon = <IconObject object={reply.attachment} size={32} iconSize={32} />;
+					const object = reply.attachment;
+
+					let iconSize = null;
+					if (U.Object.getFileLayouts().concat([ I.ObjectLayout.Human, I.ObjectLayout.Participant ]).includes(object.layout)) {
+						iconSize = 32;
+					};
+
+					icon = <IconObject className={iconSize ? 'noBg' : ''} object={object} size={32} iconSize={iconSize} />;
 				};
 				if (reply.isMultiple) {
 					icon = <Icon className="isMultiple" />;

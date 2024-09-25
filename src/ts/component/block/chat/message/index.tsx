@@ -61,7 +61,12 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 				let icon: any = null;
 				if (attachment) {
-					icon = <IconObject object={attachment} size={32} iconSize={32} />;
+					let iconSize = null;
+					if (U.Object.getFileLayouts().concat([ I.ObjectLayout.Human, I.ObjectLayout.Participant ]).includes(attachment.layout)) {
+						iconSize = 32;
+					};
+
+					icon = <IconObject className={iconSize ? 'noBg' : ''} object={attachment} size={32} iconSize={iconSize} />;
 				};
 				if (isMultiple) {
 					icon = <Icon className="isMultiple" />;

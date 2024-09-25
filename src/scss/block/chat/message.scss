@@ -36,7 +36,11 @@
 	.reply {
 		.icon,
 		.iconObject { flex-shrink: 0; width: 32px; height: 32px; }
+
+		.iconObject:not(.noBg, .isParticipant) { border-radius: 4px !important; background-color: var(--color-shape-highlight-medium) !important; }
+
 		.icon.isMultiple { background-image: url('~img/icon/chat/attachment/multiple.svg'); }
+
 		.textWrapper { width: 100%; @include text-small; display: flex; flex-direction: column; overflow: hidden; }
 		.name { font-weight: 500; }
 		.text { @include clamp1; }

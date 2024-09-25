@@ -563,13 +563,15 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		} else {
 			let attachmentLayout = I.ObjectLayout[first.layout];
 
+			attachment = first;
 			attachments.forEach((el) => {
 				if ((I.ObjectLayout[el.layout] != attachmentLayout) || !layouts.includes(el.layout)) {
+					isMultiple = true;
+					attachment = null;
 					attachmentLayout = 'Attachment';
 				};
 			});
 			attachmentText = `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})`;
-			isMultiple = true;
 		};
 
 		if (!text) {
