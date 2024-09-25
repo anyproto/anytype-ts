@@ -127,10 +127,6 @@ class UtilRouter {
 	};
 
 	switchSpace (id: string, route?: string, sendEvent?: boolean, callBack?: () => void) {
-		const { space } = S.Common;
-
-		console.log('switchSpace', id, space);
-
 		if (!id) {
 			console.log('[UtilRouter].swithSpace: id is empty');
 			return;
