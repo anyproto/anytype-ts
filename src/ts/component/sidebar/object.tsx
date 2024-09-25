@@ -424,9 +424,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			this.renderSelection();
 		} else {
 			U.Object.openAuto(item);
+			analytics.event('LibraryResult');
 		};
-
-		analytics.event('LibraryResult');
 	};
 
 	onContext (item: any) {
@@ -465,7 +464,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					if ([ I.SortId.All, I.SortId.Orphan ].includes(item.id)) {
 						this.orphan = item.id == I.SortId.Orphan;
 
-						analytics.event('ChangeLibraryTypeLink', { type: item.id });
+						analytics.event('ChangeLibraryTypeLink', { type: item.id == I.SortId.Orphan ? 'Unlinked' : 'All' });
 					} else {
 						this.sortId = item.id;
 						this.sortType = item.type;
@@ -498,8 +497,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				this.searchIds = this.searchIds.concat(id);
 				this.load(false);
 			};
-
-			analytics.event('CreateObject', { route: analytics.route.allObjects })
 		};
 
 		if (this.type == I.ObjectContainerType.Bookmark) {
