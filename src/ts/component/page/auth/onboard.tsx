@@ -259,13 +259,15 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				});
 			};
 
-			if (name) {
-				this.refNext?.setLoading(true);
-				U.Object.setName(S.Block.profile, name, cb);
-			} else {
-				cb();
-				analytics.event('ScreenOnboardingSkipName');
-			};
+			C.WorkspaceSetInfo(S.Common.space, { name: translate('commonEntrySpace') }, () => {
+				if (name) {
+					this.refNext?.setLoading(true);
+					U.Object.setName(S.Block.profile, name, cb);
+				} else {
+					cb();
+					analytics.event('ScreenOnboardingSkipName');
+				};	
+			});
 		};
 	};
 
