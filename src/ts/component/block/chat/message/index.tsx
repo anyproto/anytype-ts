@@ -24,6 +24,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 	node = null;
 	refText = null;
+	isExpanded = false;
 
 	constructor (props: Props) {
 		super(props);
@@ -108,6 +109,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		if (text) {
 			cn.push('withText');
 		};
+		if (this.isExpanded) {
+			cn.push('isExpanded');
+		};
 
 		// Subscriptions
 		for (const mark of content.marks) {
@@ -168,7 +172,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 							/>
 
 							<div className="expand" onClick={this.onExpand}>
-								{translate('blockChatMessageExpand')}
+								{translate(this.isExpanded ? 'blockChatMessageCollapse' : 'blockChatMessageExpand')}
 							</div>
 						</div>
 
@@ -240,9 +244,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	onExpand () {
-		const node = $(this.node);
-
-		node.toggleClass('isExpanded');
+		this.isExpanded = !this.isExpanded;
+		this.forceUpdate();
 	};
 
 	checkLinesLimit () {
