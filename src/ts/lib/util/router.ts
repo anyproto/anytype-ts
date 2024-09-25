@@ -128,17 +128,11 @@ class UtilRouter {
 
 	switchSpace (id: string, route?: string, sendEvent?: boolean, callBack?: () => void) {
 		const { space } = S.Common;
-		const { accountSpaceId } = S.Auth;
+
+		console.log('switchSpace', id, space);
 
 		if (!id) {
 			console.log('[UtilRouter].swithSpace: id is empty');
-			return;
-		};
-
-		if (space == id) {
-			if (callBack) {
-				callBack();
-			};
 			return;
 		};
 
@@ -150,12 +144,7 @@ class UtilRouter {
 
 		C.WorkspaceOpen(id, (message: any) => {
 			if (message.error.code) {
-				const spaces = U.Space.getList();
-				if (!spaces.length) {
-					this.go('/main/void', { replace: true, onRouteChange: callBack });
-				} else {
-					this.switchSpace(spaces[0].id, route, false, callBack);
-				};
+				U.Data.onAuthWithoutSpace();
 				return;
 			};
 
