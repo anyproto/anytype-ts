@@ -46,6 +46,7 @@
         .item {
             .icon.arrow { background-image: url('#{$themePath}/arrow/menu.svg'); }
 			.icon.chk { background-image: url('#{$themePath}/icon/menu/chk.svg'); }
+			.icon.sortArrow { background-image: url('#{$themePath}/icon/menu/sortArrow.svg'); }
         }
 
         .loaderWrapper { background: var(--color-bg-secondary); }
