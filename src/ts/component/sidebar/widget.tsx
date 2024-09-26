@@ -173,6 +173,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			<div 
 				id="containerWidget"
 				ref={node => this.node = node}
+				className="customScrollbar"
 			>
 				<div className="head" />
 				<div className="body">
