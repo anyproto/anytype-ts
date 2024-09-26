@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Filter, Icon, Button, Label } from 'Component';
+import { Title, Filter, Icon, Button, Label, EmptySearch } from 'Component';
 import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action } from 'Lib';
 
 import Item from './object/item';
@@ -165,6 +165,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					</div>
 
 					<div className="body">
+						{!items.length && !isLoading ? (
+							<EmptySearch filter={this.filter} />
+						) : ''}
+
 						{this.cache && items.length && !isLoading ? (
 							<div className="items customScrollbar">
 								<InfiniteLoader
