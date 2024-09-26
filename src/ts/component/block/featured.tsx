@@ -509,6 +509,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					],
 					keys: U.Data.typeRelationKeys(),
 					skipIds: [ object.type ],
