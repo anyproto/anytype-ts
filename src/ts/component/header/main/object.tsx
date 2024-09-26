@@ -59,7 +59,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		if (isLocked) {
 			locked = translate('headerObjectLocked');
 		} else
-		if (U.Object.isTypeOrRelationLayout(object.layout)) {
+		if (U.Object.isTypeOrRelationLayout(object.layout) && !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
 			locked = translate('commonSystem');
 		};
 
