@@ -513,7 +513,10 @@ class UtilData {
 		let items: any[] = [];
 
 		items = items.concat(S.Record.getTypes().filter(it => {
-			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
+			return pageLayouts.includes(it.recommendedLayout) && 
+				!skipLayouts.includes(it.recommendedLayout) && 
+				(it.spaceId == space) &&
+				(it.uniqueKey != J.Constant.typeKey.template);
 		}));
 
 		if (limit) {

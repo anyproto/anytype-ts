@@ -601,6 +601,10 @@ class Relation {
 			};
 		};
 
+		if (type && (type.uniqueKey == J.Constant.typeKey.template)) {
+			type = null;
+		};
+
 		if (type) {
 			details.type = type.id;
 		} else {

@@ -349,7 +349,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	onCreate (param?: any): void {
 		param = param || {};
 
-		const { widgets } = S.Block;
 		const { block } = this.props;
 		const { viewId, layout } = block.content;
 		const object = this.getObject();
@@ -751,8 +750,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				return false;
 			};
 
-			if (type && layouts.includes(type.recommendedLayout)) {
-				return false;
+			if (type) {
+				if (layouts.includes(type.recommendedLayout) || (type.uniqueKey == J.Constant.typeKey.template)) {
+					return false;
+				};
 			};
 		} else
 		if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
