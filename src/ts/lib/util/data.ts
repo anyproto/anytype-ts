@@ -146,12 +146,11 @@ class UtilData {
 	};
 
 	emojiParam (t: I.TextStyle) {
-		let s = 24;
+		let s = 20;
 		switch (t) {
-			case I.TextStyle.Header1:	 s = 32; break;
-			case I.TextStyle.Header2:	 s = 28; break;
-			case I.TextStyle.Header3:
-			case I.TextStyle.Quote:		 s = 26; break;
+			case I.TextStyle.Header1:	 s = 30; break;
+			case I.TextStyle.Header2:	 s = 26; break;
+			case I.TextStyle.Header3: 	 s = 22; break;
 		};
 		return s;
 	};

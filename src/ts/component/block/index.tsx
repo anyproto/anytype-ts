@@ -912,6 +912,7 @@ const Block = observer(class Block extends React.Component<Props> {
 					<IconObject 
 						id={`mention-${block.id}-${i}`}
 						size={size} 
+						iconSize={size}
 						object={object} 
 						canEdit={!isArchived && isTask} 
 						onSelect={icon => this.onMentionSelect(value, marks, id, icon)} 
@@ -1060,7 +1061,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			const smile = item.find('smile');
 
 			if (smile.length) {
-				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: param }} />, smile.get(0));
+				ReactDOM.render(<IconObject size={size} iconSize={size} object={{ iconEmoji: param }} />, smile.get(0));
 			};
 		});
 	};
