@@ -341,12 +341,17 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		const layout = type.recommendedLayout;
-		const allowedObject = 
+		const options = [];
+		
+		let allowedObject = 
 			U.Object.isInPageLayouts(layout) || 
 			U.Object.isInSetLayouts(layout) || 
 			U.Object.isBookmarkLayout(layout) ||
 			U.Object.isChatLayout(layout);
-		const options = [];
+
+		if (type.uniqueKey == J.Constant.typeKey.template) {
+			allowedObject = false;
+		};
 
 		if (allowedObject) {
 			options.push({ id: 'object', name: translate('commonNewObject') });
