@@ -24,12 +24,14 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 		const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
 		const type = S.Record.getTypeById(item.type);
 		const isFile = U.Object.isInFileLayouts(item.layout);
+		const asSystemObject = allowSystemLayout && U.Object.isTypeOrRelationLayout(item.layout);
 
 		let iconSmall = null;
 		let iconLarge = null;
 		let description = null;
+		let content = null;
 
-		if (allowSystemLayout && U.Object.isTypeOrRelationLayout(item.layout)) {
+		if (asSystemObject) {
 			const size = U.Object.isTypeLayout(item.layout) ? 18 : 20;
 
 			iconSmall = <IconObject object={item} size={size} iconSize={18} />;
@@ -43,6 +45,37 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 		if (isFile) {
 			cn.push('isFile');
 			description = <div className="descr">{U.File.size(item.sizeInBytes)}</div>;
+		};
+
+		if (!asSystemObject) {
+			content = (
+				<React.Fragment>
+					{iconLarge}
+					<div className="info">
+						<div className="nameWrap">
+							<ObjectName object={item} />
+						</div>
+						<div className="bottomWrap">
+							<div className="type">
+								<ObjectType object={type} />
+							</div>
+							<div className="bullet" />
+							{description}
+						</div>
+					</div>
+					{isLocked ? <Icon className="lock" /> : null}
+				</React.Fragment>
+			);
+		} else {
+			content = (
+				<React.Fragment>
+					<div className="nameWrap">
+						{iconSmall}
+						<ObjectName object={item} />
+					</div>
+					{isLocked ? <Icon className="lock" /> : null}
+				</React.Fragment>
+			);
 		};
 
 		if (isLocked) {
@@ -60,21 +93,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 				onMouseEnter={onMouseEnter}
 				onMouseLeave={onMouseLeave}
 			>
-				{iconLarge}
-				<div className="info">
-					<div className="nameWrap">
-						{iconSmall}
-						<ObjectName object={item} />
-					</div>
-					<div className="bottomWrap">
-						<div className="type">
-							<ObjectType object={type} />
-						</div>
-						<div className="bullet" />
-						{description}
-					</div>
-				</div>
-				{isLocked ? <Icon className="lock" /> : null}
+				{content}
 			</div>
 		);
     };

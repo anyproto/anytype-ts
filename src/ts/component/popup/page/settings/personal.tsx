@@ -7,7 +7,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	render () {
 		const { getId } = this.props;
-		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject, hideSidebar, showRelativeDates, showVault, showObjectSide } = S.Common;
+		const { config, interfaceLang, navigationMenu, linkStyle, fullscreenObject, hideSidebar, showRelativeDates, showVault } = S.Common;
 		const { hideTray, hideMenuBar, languages } = config;
 
 		const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
@@ -153,13 +153,6 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						<div className="item">
 							<Label text={translate('electronMenuShowMenu')} />
 							<Switch className="big" value={!hideMenuBar} onChange={(e: any, v: boolean) => Renderer.send('setMenuBarVisibility', v)} />
-						</div>
-					) : ''}
-
-					{config.sudo ? (
-						<div className="item">
-							<Label text="Show All content next to sidebar" />
-							<Switch className="big" value={showObjectSide} onChange={(e: any, v: boolean) => S.Common.showObjectSideSet(v)} />
 						</div>
 					) : ''}
 				</div>

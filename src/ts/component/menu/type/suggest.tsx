@@ -218,6 +218,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			return;
 		};
 
+		const { config } = S.Common;
 		const { param } = this.props;
 		const { data } = param;
 		const { skipIds } = data;

@@ -529,7 +529,7 @@ class Dispatcher {
 					const content: any = {};
 
 					if (text !== null) {
-						content.key = text;
+						content.text = text;
 					};
 
 					S.Block.updateContent(rootId, id, content);

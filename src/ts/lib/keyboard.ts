@@ -894,7 +894,6 @@ class Keyboard {
 			index: translate('commonDashboard'),
 			graph: translate('commonGraph'),
 			navigation: translate('commonFlow'),
-			store: translate('commonLibrary'),
 			archive: translate('commonBin'),
 		};
 
@@ -945,6 +944,10 @@ class Keyboard {
 
 	isMainHistory () {
 		return this.isMain() && (this.match?.params?.action == 'history');
+	};
+
+	isMainVoid () {
+		return this.isMain() && (this.match?.params?.action == 'void');
 	};
 
 	isAuth () {

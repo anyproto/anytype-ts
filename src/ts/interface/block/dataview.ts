@@ -29,9 +29,11 @@ export enum ViewType {
 };
 
 export enum SortId {
-	Updated 	= 1,
-	Created		= 2,
-	Name 		= 3,
+	All			 = 'all',
+	Orphan		 = 'orphan',
+	Updated		 = 'updated',
+	Created		 = 'created',
+	Name		 = 'name',
 };
 
 export enum SortType { 

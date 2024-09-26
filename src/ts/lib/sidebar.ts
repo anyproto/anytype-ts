@@ -210,19 +210,14 @@ class Sidebar {
 			width = this.obj.outerWidth();
 		};
 
-		if (!keyboard.isMain()) {
+		if (!keyboard.isMain() || keyboard.isMainVoid()) {
 			width = 0;
 		};
 
 		const { isClosed } = this.data;
-		const { showVault, isFullScreen, showObject, showObjectSide } = S.Common;
+		const { showVault, isFullScreen } = S.Common;
 		const { ww } = U.Common.getWindowDimensions();
 		const vw = isClosed || !showVault || !keyboard.isMain() ? 0 : J.Size.vault.width;
-
-		if (showObject && showObjectSide) {
-			width += 336;
-		};
-
 		const pageWidth = ww - width - vw;
 		const ho = keyboard.isMainHistory() ? J.Size.history.panel : 0;
 		const navigation = S.Common.getRef('navigation');
@@ -333,10 +328,6 @@ class Sidebar {
 
 	objectContainerToggle () {
 		S.Common.showObjectSet(!S.Common.showObject);
-
-		if (S.Common.showObjectSide) {
-			this.resizePage(null, false);
-		};
 	};
 
 };

@@ -100,9 +100,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 					<ObjectName object={object} />
 				</div>
 
-				<div className="buttons">
-					{more}
-				</div>
+				<div className="buttons">{more}</div>
 			</div>
 		);
 

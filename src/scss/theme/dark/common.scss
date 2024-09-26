@@ -7,7 +7,7 @@ html.themeDark {
 
 	--color-text-primary: #ebebeb;
 	--color-text-secondary: #9a9a9a;
-	--color-text-tertiary: #737373;
+	--color-text-tertiary: #656565;
 	--color-text-inversion: #171717;
 
 	/* Shape */
@@ -49,7 +49,6 @@ html.themeDark {
 
     .cover.type2.black { background-color: #000 !important; }
 
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
 	::selection { background-color: var(--color-system-selection); }
 
 	.bgColor-grey { background: #232323 !important; }

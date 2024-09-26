@@ -25,7 +25,7 @@ markupmention {
 	smile { display: none; position: relative; z-index: 1; }
 	smile img { margin-top: 2px !important; }
 
-	.space { width: 6px; height: 20px; vertical-align: middle; display: none; }
+	.space { width: 2px; height: 20px; vertical-align: middle; display: none; }
 	name { display: inline; white-space: normal; position: relative; border-bottom: 0.075em solid; border-color: inherit; }
 }
 markupmention.disabled {
@@ -35,10 +35,10 @@ markupmention.withImage {
 	smile { display: inline; }
 	.space { display: inline; }
 }
-markupmention.withImage.c24 name markupBgcolor:first-child { margin-left: -22px; padding-left: 22px; }
-markupmention.withImage.c26 name markupBgcolor:first-child { margin-left: -22px; padding-left: 22px; }
-markupmention.withImage.c28 name markupBgcolor:first-child { margin-left: -27px; padding-left: 27px; }
-markupmention.withImage.c32 name markupBgcolor:first-child { margin-left: -34px; padding-left: 34px; }
+markupmention.withImage.c20 name markupBgcolor:first-child { margin-left: -20px; padding-left: 20px; }
+markupmention.withImage.c22 name markupBgcolor:first-child { margin-left: -22px; padding-left: 22px; }
+markupmention.withImage.c26 name markupBgcolor:first-child { margin-left: -26px; padding-left: 26px; }
+markupmention.withImage.c30 name markupBgcolor:first-child { margin-left: -30px; padding-left: 30px; }
 markupmention:hover {
 	name::before { border-color: var(--color-text-primary); }
 }
