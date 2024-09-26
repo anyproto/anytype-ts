@@ -47,6 +47,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.onTabOver = this.onTabOver.bind(this);
+		this.onTabLeave = this.onTabLeave.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
@@ -119,7 +121,12 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 							</div>
 						</div>
 
-						<div id="tabs" className="tabs">
+						<div 
+							id="tabs" 
+							className="tabs" 
+							onMouseEnter={this.onTabOver} 
+							onMouseLeave={this.onTabLeave}
+						>
 							<div className="scrollWrap">
 								<div className="scroll">
 									{typeOptions.map(it => {
@@ -902,6 +909,40 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		return [ I.SortId.Created, I.SortId.Updated ].includes(this.sortId);
 	};
 
+	onTabOver () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const controls = tabs.find('.controls');
+		const sideLeft = controls.find('.side.left');
+		const sideRight = controls.find('.side.right');
+		const width = tabs.outerWidth();
+		const cx = tabs.offset().left;
+		const half = width / 2;
+		const x = keyboard.mouse.page.x - cx;
+
+		this.onTabLeave();
+
+		if ((x >= 0) && (x <= half)) {
+			sideLeft.addClass('hover');
+		}
+		if ((x > half) && (x <= width)) {
+			sideRight.addClass('hover');
+		};
+
+		console.log(x, half, width);
+	};
+
+	onTabLeave () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const controls = tabs.find('.controls');
+		const sideLeft = controls.find('.side.left');
+		const sideRight = controls.find('.side.right');
+
+		sideLeft.removeClass('.hover');
+		sideRight.removeClass('.hover');
+	};
+
 	onTabArrow (dir: number) {
 		const node = $(this.node);
 		const tabs = node.find('#tabs');
@@ -930,9 +971,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		};
 
 		this.x += diff;
-
-		console.log(this.x);
-
 		scroll.css({ transform: `translate3d(${this.x}px, 0px, 0px)` });
 
 		this.checkTabButtons();
@@ -945,19 +983,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const sideRight = controls.find('.side.right');
 
 		this.x >= 0 ? sideLeft.addClass('hide') : sideLeft.removeClass('hide');
-
-		/*
-		if (this.page == this.pages - 1) {
-			gradientRight.hide();
-			arrowRight.hide();
-		} else {
-			gradientRight.show();
-			arrowRight.show();
-		};
-		*/
 	};
 
 	resize () {
+		this.checkTabButtons();
 	};
 
 });

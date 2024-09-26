@@ -36,11 +36,11 @@
 				.tab { white-space: nowrap; flex-shrink: 0; transition: $transitionAllCommon;  }
 				.tab.active, .tab:hover { color: var(--color-text-primary); }
 
-				.controls { position: absolute; height: 28px; top: -4px; left: 0px; width: 100%; display: flex; justify-content: space-evenly; }
+				.controls { position: absolute; top: -4px; left: 0px; width: 100%; display: flex; justify-content: space-between; }
 				.controls {
-					.side { width: 50%; opacity: 0; transition: $transitionAllCommon; }
-					.side:hover { opacity: 1; }
-					.side:hover {
+					.side { width: 60px; opacity: 0; transition: $transitionAllCommon; }
+					.side.hover { opacity: 1; }
+					.side.hover {
 						.icon.arrow { pointer-events: all; }
 						.gradient { width: 60px; }
 					}

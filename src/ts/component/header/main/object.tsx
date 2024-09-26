@@ -43,6 +43,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 		let center = null;
 		let banner = I.BannerType.None;
+		let locked = '';
 
 		if (object.isArchived && U.Space.canMyParticipantWrite()) {
 			banner = I.BannerType.IsArchived;
@@ -53,6 +54,13 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		if (allowedTemplateSelect && templatesCnt) {
 			banner = I.BannerType.TemplateSelect;
 			bannerProps.count = templatesCnt + 1;
+		};
+
+		if (isLocked) {
+			locked = translate('headerObjectLocked');
+		} else
+		if (U.Object.isTypeOrRelationLayout(object.layout)) {
+			locked = translate('commonSystem');
 		};
 
 		if (banner == I.BannerType.None) {
@@ -67,7 +75,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 					<div className="inner">
 						<IconObject object={object} size={18} />
 						<ObjectName object={object} />
-						{isLocked ? <Label text={translate('headerObjectLocked')} className="lock" /> : ''}
+						{locked ? <Label text={locked} className="lock" /> : ''}
 					</div>
 				</div>
 			);
