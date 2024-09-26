@@ -431,7 +431,7 @@ class UtilObject {
 		];
 	};
 
-	isAllowedTemplate (typeId): boolean {
+	isAllowedTemplate (typeId: string): boolean {
 		const type = S.Record.getTypeById(typeId);
 
 		if (type && (type.uniqueKey == J.Constant.typeKey.template)) {
