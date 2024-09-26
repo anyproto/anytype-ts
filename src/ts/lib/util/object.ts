@@ -434,7 +434,7 @@ class UtilObject {
 	isAllowedTemplate (typeId): boolean {
 		const type = S.Record.getTypeById(typeId);
 
-		if (type.uniqueKey == J.Constant.typeKey.template) {
+		if (type && (type.uniqueKey == J.Constant.typeKey.template)) {
 			return false;
 		};
 
