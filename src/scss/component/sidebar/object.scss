@@ -63,6 +63,7 @@
 		> .body { flex-grow: 1; overflow: hidden; }
 		> .body {
 			.ReactVirtualized__List { padding: 0px 8px 8px 8px; overscroll-behavior: none; }
+			.emptySearch { height: auto; }
 
 			.items { height: 100%; }
 

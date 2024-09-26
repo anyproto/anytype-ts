@@ -163,7 +163,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 					<div className="body">
 						{!items.length && !isLoading ? (
-							<EmptySearch filter={this.filter} />
+							<EmptySearch filter={this.filter} text={translate('sidebarObjectEmpty')} />
 						) : ''}
 
 						{this.cache && items.length && !isLoading ? (
