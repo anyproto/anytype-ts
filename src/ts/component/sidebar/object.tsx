@@ -564,6 +564,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				type = S.Record.getTypeType();
 				break;
 			};
+
+			case I.ObjectContainerType.List: {
+				type = S.Record.getSetType();
+				break;
+			};
 		};
 
 		if (type) {
