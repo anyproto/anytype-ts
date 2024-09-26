@@ -920,16 +920,22 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const width = tabs.outerWidth();
 		const cx = tabs.offset().left;
 		const half = width / 2;
-		const x = keyboard.mouse.page.x - cx;
 
 		this.onTabLeave();
 
-		if ((x >= 0) && (x <= half)) {
-			sideLeft.addClass('hover');
-		}
-		if ((x > half) && (x <= width)) {
-			sideRight.addClass('hover');
+		const check = () => {
+			const x = keyboard.mouse.page.x - cx;
+
+			if ((x >= 0) && (x <= half)) {
+				sideLeft.addClass('hover');
+			};
+			if ((x > half) && (x <= width)) {
+				sideRight.addClass('hover');
+			};
 		};
+
+		check();
+		$(window).off('mousemove.sidebarObject').on('mousemove.sidebarObject', e => check());
 	};
 
 	onTabLeave () {
@@ -941,6 +947,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		sideLeft.removeClass('hover');
 		sideRight.removeClass('hover');
+
+		$(window).off('mousemove.sidebarObject');
 	};
 
 	onTabArrow (dir: number) {
