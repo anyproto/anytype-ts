@@ -944,24 +944,45 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onTabArrow (dir: number) {
+		this.tabIndex += dir;
+		this.checkTabIndex();
+		this.scrollToTab(this.tabIndex);
+	};
+
+	scrollToTab (idx: number) {
 		const node = $(this.node);
 		const tabs = node.find('#tabs');
 		const scroll = tabs.find('.scroll');
-		const items = tabs.find('.tab');
-		const length = items.length;
-		const max = this.getMaxWidth();
-		const sw = scroll.width();
 
-		this.tabIndex += dir;
-		this.tabIndex = Math.max(0, this.tabIndex);
-		this.tabIndex = Math.min(length - 1, this.tabIndex);
+		this.tabIndex = idx;
+		this.checkTabIndex();
 
 		this.x = -this.tabArray[this.tabIndex].x;
-		this.x = Math.min(0, this.x);
-		this.x = Math.max(-(max - sw), this.x);
+		this.checkTabX();
 
 		scroll.css({ transform: `translate3d(${this.x}px, 0px, 0px)` });
 		this.checkTabButtons();
+	};
+
+	checkTabX () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const scroll = tabs.find('.scroll');
+		const max = this.getMaxWidth();
+		const sw = scroll.width();
+
+		this.x = Math.min(0, this.x);
+		this.x = Math.max(-(max - sw), this.x);
+	};
+
+	checkTabIndex () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const items = tabs.find('.tab');
+		const length = items.length;
+
+		this.tabIndex = Math.max(0, this.tabIndex);
+		this.tabIndex = Math.min(length - 1, this.tabIndex);
 	};
 
 	checkTabButtons () {
