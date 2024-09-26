@@ -74,25 +74,22 @@ const IconSize = {
 const FontSize = {
 	14: 10,
 	16: 10,
-	18: 10,
-	20: 12,
+	18: 11,
+	20: 13,
 	22: 14,
-	24: 14,
+	24: 16,
 	26: 16,
-	30: 18,
-	32: 18,
+	30: 20,
+	32: 20,
 	36: 24,
 	40: 24,
 	42: 24,
 	44: 24,
 	48: 28,
-	56: 34,
-	64: 44,
-	80: 48,
-	96: 66,
-	108: 66,
-	112: 66,
-	128: 72,
+	56: 40,
+	64: 40,
+	80: 64,
+	96: 64,
 };
 
 const DefaultIcons = [ 'page', 'task', 'set', 'chat', 'bookmark', 'type' ];
@@ -452,7 +449,17 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	fontSize (size: number) {
-		return FontSize[size];
+		let s = FontSize[size];
+
+		if (size > 96) {
+			s = 72;
+		};
+
+		return s;
+	};
+
+	fontWeight (size: number) {
+		return size > 18 ? 600 : 500;
 	};
 
 	userSvg (): string {
@@ -460,7 +467,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const color = J.Theme[S.Common.getThemeClass()]?.iconUser;
 		
 		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${color.bg}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="500" font-size="${this.fontSize(iconSize)}px">${this.iconName()}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${this.fontWeight(iconSize)}" font-size="${this.fontSize(iconSize)}px">${this.iconName()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">
 				${circle}
@@ -476,7 +483,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const bgColor = bg[list[option - 1]];
 		const iconSize = this.iconSize();
 
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="700" font-size="${this.fontSize(iconSize)}px">${this.iconName()}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="${this.fontWeight(iconSize)}" font-size="${this.fontSize(iconSize)}px">${this.iconName()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">
 				<rect width="${iconSize}" height="${iconSize}" fill="${bgColor}"/>
