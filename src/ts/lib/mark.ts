@@ -660,7 +660,8 @@ class Mark {
 			const mark = marks[i];
 			if ([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type) && 
 				(mark.range.from >= newMark.range.from) && 
-				(mark.range.to <= newMark.range.to)
+				(mark.range.to <= newMark.range.to) &&
+				(mark.param == newMark.param)
 			) {
 				marks.splice(i, 1);
 				i--;
