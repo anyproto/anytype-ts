@@ -50,6 +50,8 @@
 		.icon.text { background-image: url('~img/icon/chat/buttons/text.svg'); }
 		.icon.emoji { background-image: url('~img/icon/chat/buttons/emoji.svg'); }
 		.icon.mention { background-image: url('~img/icon/chat/buttons/mention.svg'); }
+		.icon.voice { background-image: url('~img/icon/chat/buttons/voice0.svg'); background-size: 20px 20px; }
+		.icon.isActive.voice { background-image: url('~img/icon/chat/buttons/voice1.svg'); background-color: var(--color-red) !important; }
 
 		/* Text buttons */
 		.icon.bold { background-image: url('~img/icon/menu/action/mark/bold0.svg'); }
@@ -86,6 +88,8 @@
 			.inner.textColor-teal { background: var(--color-teal); }
 			.inner.textColor-lime { background: var(--color-lime); }
 		}
+
+		.audio-react-recorder { position: absolute; width: 0px; height: 0px; opacity: 0; overflow: hidden; }
 	}
 
 	.icon.send { position: absolute; bottom: 10px; right: 16px; width: 20px; height: 20px; background: url('~img/icon/chat/buttons/send.svg'); }

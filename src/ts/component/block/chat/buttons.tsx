@@ -2,6 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { Action, I, J, keyboard, Mark, S, translate, U } from 'Lib';
+import AudioReactRecorder, { RecordState } from 'audio-react-recorder';
 
 interface Props extends I.BlockComponent {
 	blockId: string;
@@ -17,17 +18,21 @@ interface Props extends I.BlockComponent {
 	getObjectFromPath: (path: string) => void;
 	addAttachments: (attachments: any[], callBack?: () => void) => void;
 	removeBookmark: (url: string) => void;
+	onVoice: (audio: any) => void;
 };
 
 interface State {
 	buttons: any[];
+	recordState: any;
 };
 
 const ChatButtons = observer(class ChatButtons extends React.Component<Props, State> {
 
 	state = {
 		buttons: [],
+		recordState: null,
 	};
+	isRecording: boolean = false;
 
 	constructor (props: Props) {
 		super(props);
@@ -36,18 +41,21 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 		this.onTextButton = this.onTextButton.bind(this);
 		this.onChatButton = this.onChatButton.bind(this);
 		this.onAttachment = this.onAttachment.bind(this);
+		this.onVoice = this.onVoice.bind(this);
+		this.onRecordStop = this.onRecordStop.bind(this);
 	};
 
 	render () {
 		const { block } = this.props;
-		const { buttons } = this.state;
+		const { buttons, recordState } = this.state;
 
 		return (
 			<div className="buttons">
 				{buttons.map((item: any, i: number) => {
 					const cn = [ item.icon, 'withBackground' ];
+					const isRecording = (item.type == I.ChatButton.Voice) && this.isRecording;
 
-					if (item.isActive) {
+					if (item.isActive || isRecording) {
 						cn.push('isActive');
 					};
 
@@ -64,6 +72,8 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 						/>
 					);
 				})}
+
+				<AudioReactRecorder type={'audio/mp3'} state={recordState} onStop={this.onRecordStop} />
 			</div>
 		);
 	};
@@ -107,6 +117,13 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 
 			case I.ChatButton.Mention: {
 				onMention();
+				break;
+			};
+
+			case I.ChatButton.Voice: {
+				this.isRecording = !this.isRecording;
+				this.onVoice();
+				this.forceUpdate();
 				break;
 			};
 		};
@@ -192,6 +209,7 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 			{ type: I.ChatButton.Object, icon: 'plus', name: translate('blockChatButtonObject'), caption: `${cmd} + A` },
 			{ type: I.ChatButton.Emoji, icon: 'emoji', name: translate('blockChatButtonEmoji'), caption: `${cmd} + E` },
 			{ type: I.ChatButton.Mention, icon: 'mention', name: translate('blockChatButtonMention'), caption: `${cmd} + M` },
+			{ type: I.ChatButton.Voice, icon: 'voice', name: translate('blockChatButtonVoice') },
 		];
 	};
 
@@ -310,6 +328,14 @@ const ChatButtons = observer(class ChatButtons extends React.Component<Props, St
 				data,
 			});
 		})
+	};
+
+	onVoice () {
+		this.setState({ recordState: this.isRecording ? RecordState.START : RecordState.STOP });
+	};
+
+	onRecordStop (audio) {
+		this.props.onVoice(audio);
 	};
 });
 

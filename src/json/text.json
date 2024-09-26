@@ -654,6 +654,7 @@
 	"blockChatButtonObject": "Add object",
 	"blockChatButtonEmoji": "Add emoji",
 	"blockChatButtonMention": "Add mention",
+	"blockChatButtonVoice": "Record voice message",
 	"blockChatNewMessages": "New messages",
 	"blockChatMessageEdited": "(edited)",
 	"blockChatEditing": "Editing message",
