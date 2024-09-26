@@ -30,6 +30,8 @@
             .inner.bgColor-default { background: transparent; }
         }
 
+		.icon.bin-black { background-image: url('#{$themePath}/icon/widget/button/bin.svg'); }
+
         .arrowDirection { background-image: url('#{$themePath}/arrow/menuDirection.svg'); }
     }
 
