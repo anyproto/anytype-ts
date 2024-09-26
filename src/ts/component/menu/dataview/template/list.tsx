@@ -325,7 +325,6 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 		const { data } = param;
 		const { onTypeChange } = data;
 		const allowedLayouts = U.Object.getPageLayouts().concat(U.Object.getSetLayouts()).concat(I.ObjectLayout.Chat);
-		const templateType = S.Record.getTemplateType();
 
 		S.Menu.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
@@ -335,7 +334,7 @@ const MenuTemplateList = observer(class MenuTemplateList extends React.Component
 				filter: '',
 				filters: [
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: allowedLayouts },
-					{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: templateType?.id },
+					{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
 				onClick: type => {
 					data.typeId = type.id;
