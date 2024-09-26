@@ -15,7 +15,17 @@
 		background: var(--color-shape-tertiary);
 	}
 	.head {
-		.side.left { flex-grow: 1; @include text-small; display: flex; flex-direction: column; overflow: hidden; }
+		.side.left { flex-grow: 1; display: flex; align-items: center; gap: 0px 8px; }
+		.side.left {
+			.icon,
+			.iconObject { flex-shrink: 0; width: 32px; height: 32px; }
+
+			.iconObject.withImage { border-radius: 4px !important; }
+			.iconObject:not(.noBg, .isParticipant) { border-radius: 4px !important; background-color: var(--color-shape-highlight-medium) !important; }
+
+			.icon.isMultiple { background-image: url('~img/icon/chat/attachment/multiple.svg'); }
+			.textWrapper { width: 100%; @include text-small; display: flex; flex-direction: column; overflow: hidden; }
+		}
 		.side.right { flex-shrink: 0; }
 
 		.name { @include text-overflow-nw; font-weight: 500; }

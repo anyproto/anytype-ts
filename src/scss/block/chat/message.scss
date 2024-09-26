@@ -28,12 +28,20 @@
 
 	.reply { 
 		padding: 8px 8px 8px 12px; margin: 4px 0px; border-radius: 12px; background: var(--color-shape-tertiary); position: relative; overflow: hidden;
-		@include text-small;
+		display: flex; align-items: center; gap: 0px 8px;
 	}
 	.reply::before { 
 		content: ''; display: block; position: absolute; top: 0px; left: 0px; width: 4px; height: 100%;	background-color: var(--color-text-secondary); 
 	}
 	.reply {
+		.icon,
+		.iconObject { flex-shrink: 0; width: 32px; height: 32px; }
+
+		.iconObject:not(.noBg, .isParticipant) { border-radius: 4px !important; background-color: var(--color-shape-highlight-medium) !important; }
+
+		.icon.isMultiple { background-image: url('~img/icon/chat/attachment/multiple.svg'); }
+
+		.textWrapper { width: 100%; @include text-small; display: flex; flex-direction: column; overflow: hidden; }
 		.name { font-weight: 500; }
 		.text { @include clamp1; }
 	}
@@ -95,6 +103,7 @@
 }
 .message.canExpand.isExpanded {
 	.text { -webkit-line-clamp: unset; }
+	.expand::after { transform: rotateZ(180deg); margin-top: 2px; }
 }
 .message:hover, .message.hover {
 	.controls { opacity: 1; }

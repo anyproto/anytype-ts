@@ -24,6 +24,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 
 	node = null;
 	refText = null;
+	isExpanded = false;
 
 	constructor (props: Props) {
 		super(props);
@@ -55,14 +56,29 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		if (replyToMessageId) {
 			const replyToMessage = S.Chat.getReply(rootId, replyToMessageId);
 			if (replyToMessage) {
-				const { text, attachmentText } = getReplyContent(replyToMessage);
+				const { text, attachment, isMultiple } = getReplyContent(replyToMessage);
 				const author = U.Space.getParticipant(U.Space.getParticipantId(space, replyToMessage.creator));
+
+				let icon: any = null;
+				if (attachment) {
+					let iconSize = null;
+					if (U.Object.getFileLayouts().concat([ I.ObjectLayout.Human, I.ObjectLayout.Participant ]).includes(attachment.layout)) {
+						iconSize = 32;
+					};
+
+					icon = <IconObject className={iconSize ? 'noBg' : ''} object={attachment} size={32} iconSize={iconSize} />;
+				};
+				if (isMultiple) {
+					icon = <Icon className="isMultiple" />;
+				};
 
 				reply = (
 					<div className="reply">
-						<ObjectName object={author} />
-						{text ? <div className="text" dangerouslySetInnerHTML={{ __html: text }} /> : ''}
-						{attachmentText ? <div className="text" dangerouslySetInnerHTML={{ __html: attachmentText }} /> : ''}
+						{icon}
+						<div className="textWrapper">
+							<ObjectName object={author} />
+							<div className="text" dangerouslySetInnerHTML={{ __html: text }} />
+						</div>
 					</div>
 				);
 			};
@@ -97,6 +113,9 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 		};
 		if (text) {
 			cn.push('withText');
+		};
+		if (this.isExpanded) {
+			cn.push('isExpanded');
 		};
 
 		// Subscriptions
@@ -158,7 +177,7 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 							/>
 
 							<div className="expand" onClick={this.onExpand}>
-								{translate('blockChatMessageExpand')}
+								{translate(this.isExpanded ? 'blockChatMessageCollapse' : 'blockChatMessageExpand')}
 							</div>
 						</div>
 
@@ -230,9 +249,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 	};
 
 	onExpand () {
-		const node = $(this.node);
-
-		node.toggleClass('isExpanded');
+		this.isExpanded = !this.isExpanded;
+		this.forceUpdate();
 	};
 
 	checkLinesLimit () {

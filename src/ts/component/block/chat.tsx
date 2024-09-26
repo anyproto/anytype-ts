@@ -539,44 +539,46 @@ const BlockChat = observer(class BlockChat extends React.Component<I.BlockCompon
 		const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 		const title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
 		const layouts = U.Object.getFileLayouts().concat(I.ObjectLayout.Bookmark);
+		const attachments = (message.attachments || []).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
+		const l = attachments.length;
 
 		let text: string = '';
-		let attachmentText = '';
+		let attachmentText: string = '';
+		let attachment: any = null;
+		let isMultiple: boolean = false;
 
 		if (content.text) {
 			text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
 		};
 
-		if (!message.attachments.length) {
-			return { title, text, attachmentText };
-		};
-
-		const attachments = (message.attachments).map(it => S.Detail.get(this.getSubId(), it.target)).filter(it => !it.isDeleted);
-		const l = attachments.length;
-
 		if (!l) {
-			return { title, text, attachmentText };
+			return { title, text };
 		};
 
 		const first = attachments[0];
 
 		if (l == 1) {
-			attachmentText = first.name;
-			if (U.Object.isBookmarkLayout(first.layout) && first.snippet) {
-				attachmentText = first.snippet;
-			};
+			attachmentText = first.name || U.Common.plural(1, translate('pluralAttachment'));
+			attachment = first;
 		} else {
 			let attachmentLayout = I.ObjectLayout[first.layout];
 
+			attachment = first;
 			attachments.forEach((el) => {
 				if ((I.ObjectLayout[el.layout] != attachmentLayout) || !layouts.includes(el.layout)) {
+					isMultiple = true;
+					attachment = null;
 					attachmentLayout = 'Attachment';
 				};
 			});
 			attachmentText = `${U.Common.plural(l, translate(`plural${attachmentLayout}`))} (${l})`;
 		};
 
-		return { title, text, attachmentText };
+		if (!text) {
+			text = attachmentText;
+		};
+
+		return { title, text, attachment, isMultiple };
 	};
 
 	onDragOver (e: React.DragEvent) {

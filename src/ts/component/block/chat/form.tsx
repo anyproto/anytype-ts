@@ -3,7 +3,7 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Editable, Icon, Loader } from 'Component';
+import { Editable, Icon, IconObject, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate, Storage } from 'Lib';
 
 import Attachment from './attachment';
@@ -77,7 +77,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		let title = '';
 		let text = '';
-		let attachmentText = '';
+		let icon: any = null;
 		let onClear = () => {};
 
 		if (this.editingId) {
@@ -92,7 +92,19 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 				title = reply.title;
 				text = reply.text;
-				attachmentText = reply.attachmentText;
+				if (reply.attachment) {
+					const object = reply.attachment;
+
+					let iconSize = null;
+					if (U.Object.getFileLayouts().concat([ I.ObjectLayout.Human, I.ObjectLayout.Participant ]).includes(object.layout)) {
+						iconSize = 32;
+					};
+
+					icon = <IconObject className={iconSize ? 'noBg' : ''} object={object} size={32} iconSize={iconSize} />;
+				};
+				if (reply.isMultiple) {
+					icon = <Icon className="isMultiple" />;
+				};
 				onClear = this.onReplyClear;
 			};
 		};
@@ -109,9 +121,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					{title ? (
 						<div className="head">
 							<div className="side left">
-								<div className="name">{title}</div>
-								{text ? <div className="descr" dangerouslySetInnerHTML={{ __html: text }} /> : ''}
-								{attachmentText ? <div className="descr" dangerouslySetInnerHTML={{ __html: attachmentText }} /> : ''}
+								{icon}
+								<div className="textWrapper">
+									<div className="name">{title}</div>
+									<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								</div>
 							</div>
 							<div className="side right">
 								<Icon className="clear" onClick={onClear} />
