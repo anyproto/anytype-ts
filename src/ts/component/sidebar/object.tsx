@@ -36,8 +36,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	selected: string[] = null;
 	startIndex = -1;
 	currentIndex = -1;
-	pages = 0;
-	page = 0;
+	x = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -121,26 +120,34 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 						</div>
 
 						<div id="tabs" className="tabs">
-							<div className="inner">
-								{typeOptions.map(it => {
-									const cn = [ 'tab' ];
-									if (this.type == it.id) {
-										cn.push('active');
-									};
+							<div className="scrollWrap">
+								<div className="scroll">
+									{typeOptions.map(it => {
+										const cn = [ 'tab' ];
+										if (this.type == it.id) {
+											cn.push('active');
+										};
 
-									return (
-										<div key={it.id} className={cn.join(' ')} onClick={() => this.onSwitchType(it.id)}>
-											{it.name}
-										</div>
-									);
-								})}
+										return (
+											<div key={it.id} className={cn.join(' ')} onClick={() => this.onSwitchType(it.id)}>
+												{it.name}
+											</div>
+										);
+									})}
+								</div>
 							</div>
 
-							<Icon id="arrowLeft" className="arrow left withBackground" onClick={() => this.onTabArrow(-1)} />
-							<Icon id="arrowRight" className="arrow right withBackground" onClick={() => this.onTabArrow(1)} />
+							<div className="controls">
+								<div className="side left">
+									<Icon className="arrow withBackground" onClick={() => this.onTabArrow(-1)} />
+									<div className="gradient" />
+								</div>
 
-							<div id="gradientLeft" className="gradient left" />
-							<div id="gradientRight" className="gradient right" />
+								<div className="side right">
+									<Icon className="arrow withBackground" onClick={() => this.onTabArrow(1)} />
+									<div className="gradient" />
+								</div>
+							</div>
 						</div>
 
 						<div className="sides sidesFilter">
@@ -219,7 +226,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		this.refFilter.focus();
 		this.rebind();
-		this.checkPage();
+		this.checkTabButtons();
 		this.load(true);
 
 		analytics.event('ScreenLibrary');
@@ -235,7 +242,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		});
 
 		this.setActive();
-		this.checkPage();
+		this.checkTabButtons();
 	};
 
 	componentWillUnmount(): void {
@@ -897,33 +904,49 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	onTabArrow (dir: number) {
 		const node = $(this.node);
-		const inner = node.find('#tabs > .inner');
+		const tabs = node.find('#tabs');
+		const scroll = tabs.find('.scroll');
+		const items = tabs.find('.tab');
+		const width = tabs.outerWidth();
+		const cx = tabs.offset().left;
+		const length = items.length;
 
-		this.page += dir;
-		this.checkPage();
+		console.log('CX', cx, 'W', width);
 
-		inner.css({ transform: `translate3d(${-this.page * 100}%, 0px, 0px)` });
-	};
+		let diff = 0;
 
-	checkPage () {
-		const node = $(this.node);
-		const gradientLeft = node.find('#gradientLeft');
-		const gradientRight = node.find('#gradientRight');
-		const arrowLeft = node.find('#arrowLeft');
-		const arrowRight = node.find('#arrowRight');
+		for (let i = 0; i < length; ++i) {
+			const item = $(items.get(i));
+			const x = Math.floor(item.offset().left - cx - 16);
+			const w = item.outerWidth() + 12;
 
-		this.calcPages();
-		this.page = Math.max(0, this.page);
-		this.page = Math.min(this.page, this.pages - 1);
+			if ((dir > 0) && (x == 0)) {
+				diff = -w;
+			};
 
-		if (!this.page) {
-			gradientLeft.hide();
-			arrowLeft.hide();
-		} else {
-			gradientLeft.show();
-			arrowLeft.show();
+			if ((dir < 0) && (x + w <= 0)) {
+				diff = w;
+			};
 		};
 
+		this.x += diff;
+
+		console.log(this.x);
+
+		scroll.css({ transform: `translate3d(${this.x}px, 0px, 0px)` });
+
+		this.checkTabButtons();
+	};
+
+	checkTabButtons () {
+		const node = $(this.node);
+		const controls = node.find('.controls');
+		const sideLeft = controls.find('.side.left');
+		const sideRight = controls.find('.side.right');
+
+		this.x >= 0 ? sideLeft.addClass('hide') : sideLeft.removeClass('hide');
+
+		/*
 		if (this.page == this.pages - 1) {
 			gradientRight.hide();
 			arrowRight.hide();
@@ -931,26 +954,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			gradientRight.show();
 			arrowRight.show();
 		};
-	};
-
-	calcPages () {
-		const list = this.getTypeOptions();
-		const node = $(this.node);
-		const width = node.width();
-		const items = node.find('#tabs .tab');
-
-		let iw = 0;
-		items.each((i, item) => {
-			iw += $(item).outerWidth(true);
-		});
-		iw += 12 * (list.length + 1);
-
-		this.pages = Number(Math.ceil(iw / width)) || 1;
+		*/
 	};
 
 	resize () {
-		this.page = 0;
-		this.onTabArrow(0);
 	};
 
 });
