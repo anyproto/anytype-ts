@@ -36,6 +36,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	selected: string[] = null;
 	startIndex = -1;
 	currentIndex = -1;
+	tabIndex = 0;
+	tabArray = [];
 	x = 0;
 
 	constructor (props: any) {
@@ -233,7 +235,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		this.refFilter.focus();
 		this.rebind();
-		this.checkTabButtons();
+		this.resize();
 		this.load(true);
 
 		analytics.event('ScreenLibrary');
@@ -937,8 +939,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const sideLeft = controls.find('.side.left');
 		const sideRight = controls.find('.side.right');
 
-		sideLeft.removeClass('.hover');
-		sideRight.removeClass('.hover');
+		sideLeft.removeClass('hover');
+		sideRight.removeClass('hover');
 	};
 
 	onTabArrow (dir: number) {
@@ -946,45 +948,68 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		const tabs = node.find('#tabs');
 		const scroll = tabs.find('.scroll');
 		const items = tabs.find('.tab');
-		const width = tabs.outerWidth();
+		const length = items.length;
+		const max = this.getMaxWidth();
+		const sw = scroll.width();
+
+		this.tabIndex += dir;
+		this.tabIndex = Math.max(0, this.tabIndex);
+		this.tabIndex = Math.min(length - 1, this.tabIndex);
+
+		this.x = -this.tabArray[this.tabIndex].x;
+		this.x = Math.min(0, this.x);
+		this.x = Math.max(-(max - sw), this.x);
+
+		scroll.css({ transform: `translate3d(${this.x}px, 0px, 0px)` });
+		this.checkTabButtons();
+	};
+
+	checkTabButtons () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const scroll = tabs.find('.scroll');
+		const controls = node.find('.controls');
+		const sideLeft = controls.find('.side.left');
+		const sideRight = controls.find('.side.right');
+		const max = this.getMaxWidth();
+		const sw = scroll.width();
+
+		this.x >= 0 ? sideLeft.addClass('hide') : sideLeft.removeClass('hide');
+		this.x <= -(max - sw) ? sideRight.addClass('hide') : sideRight.removeClass('hide');
+	};
+
+	getMaxWidth () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const items = tabs.find('.tab');
+
+		let max = (items.length - 1) * 12;
+		items.each((i, item) => {
+			max += $(item).outerWidth();
+		});
+		return max;
+	};
+
+	fillTabArray () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const items = tabs.find('.tab');
 		const cx = tabs.offset().left;
 		const length = items.length;
-
-		console.log('CX', cx, 'W', width);
-
-		let diff = 0;
 
 		for (let i = 0; i < length; ++i) {
 			const item = $(items.get(i));
 			const x = Math.floor(item.offset().left - cx - 16);
 			const w = item.outerWidth() + 12;
 
-			if ((dir > 0) && (x == 0)) {
-				diff = -w;
-			};
-
-			if ((dir < 0) && (x + w <= 0)) {
-				diff = w;
-			};
+			this.tabArray.push({ i, x, w });
 		};
-
-		this.x += diff;
-		scroll.css({ transform: `translate3d(${this.x}px, 0px, 0px)` });
-
-		this.checkTabButtons();
-	};
-
-	checkTabButtons () {
-		const node = $(this.node);
-		const controls = node.find('.controls');
-		const sideLeft = controls.find('.side.left');
-		const sideRight = controls.find('.side.right');
-
-		this.x >= 0 ? sideLeft.addClass('hide') : sideLeft.removeClass('hide');
 	};
 
 	resize () {
-		this.checkTabButtons();
+		this.tabIndex = 0;
+		this.fillTabArray();
+		this.onTabArrow(0);
 	};
 
 });
