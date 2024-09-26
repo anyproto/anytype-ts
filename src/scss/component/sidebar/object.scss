@@ -2,10 +2,10 @@
 > #containerObject {
 	> .inner { display: flex; flex-direction: column; width: 100%; height: 100%; background: var(--color-bg-primary); border-radius: 12px; }
 	> .inner {
-		> .head { display: flex; flex-direction: column; gap: 8px 0px; overflow: hidden; padding: 0px 0px 8px 0px; }
+		> .head { display: flex; flex-direction: column; gap: 8px 0px; overflow: hidden; padding: 0px 0px 16px 0px; }
 		> .head {
 			.titleWrap { 
-				display: flex; flex-direction: row; align-items: center; gap: 0px 8px; width: 100%; padding: 16px 10px 8px 10px; justify-content: space-between;
+				display: flex; flex-direction: row; align-items: center; gap: 0px 8px; width: 100%; padding: 16px 10px 3px 10px; justify-content: space-between;
 			}
 			.titleWrap {
 				.side { height: 32px; }
@@ -25,7 +25,7 @@
 
 			.tabs, .sides.sidesFilter { padding: 0px 16px; }
 
-			.tabs { margin-bottom: 2px; position: relative;  }
+			.tabs { margin-bottom: 3px; position: relative;  }
 			.tabs {
 				> .inner { 
 					display: flex; align-items: center; gap: 0px 12px; font-weight: 500; color: var(--color-control-active); transition: 0.3s transform $easeInQuint;
@@ -101,10 +101,6 @@
 				.info { width: calc(100% - 60px); }
 			}
 
-			.item.isLocked.withIcon {
-				.info { width: calc(100% - 88px); }
-			}
-
 			.item.isType, .item.isRelation {
 				.iconObject { background-color: unset; }
 
@@ -113,10 +109,6 @@
 				.descrWrap {
 					.type, .descr::before { display: none; }
 				}
-			}
-
-			.item.isLocked.isType, .item.isLocked.isRelation {
-				.info { width: calc(100% - 28px); }
 			}
 
 			.item.isType.withIcon {

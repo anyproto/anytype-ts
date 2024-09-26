@@ -20,7 +20,7 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 	node = null;
 
     render() {
-		const { item, style, allowSystemLayout, isLocked, onClick, onContext, onMouseEnter, onMouseLeave } = this.props;
+		const { item, style, allowSystemLayout, onClick, onContext, onMouseEnter, onMouseLeave } = this.props;
 		const cn = [ 'item', U.Data.layoutClass(item.id, item.layout) ];
 		const type = S.Record.getTypeById(item.type);
 		const isFile = U.Object.isInFileLayouts(item.layout);
@@ -63,7 +63,6 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 							{description}
 						</div>
 					</div>
-					{isLocked ? <Icon className="lock" /> : null}
 				</React.Fragment>
 			);
 		} else {
@@ -73,13 +72,8 @@ const ObjectItem = observer(class ObjectItem extends React.Component<Props> {
 						{iconSmall}
 						<ObjectName object={item} />
 					</div>
-					{isLocked ? <Icon className="lock" /> : null}
 				</React.Fragment>
 			);
-		};
-
-		if (isLocked) {
-			cn.push('isLocked');
 		};
 
 		return (

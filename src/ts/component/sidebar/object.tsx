@@ -63,8 +63,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				return null;
 			};
 
-			const allowedDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
-
 			let content = null;
 			if (item.isSection) {
 				const cn = [ 'item', 'isSection' ];
@@ -84,7 +82,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 						item={item}
 						style={param.style}
 						allowSystemLayout={true}
-						isLocked={!allowedDelete}
 						onClick={e => this.onClick(e, item)}
 						onContext={() => this.onContext(item)}
 						onMouseEnter={() => this.onOver(item)}

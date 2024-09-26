@@ -52,16 +52,17 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const subIdTemplate = this.getSubIdTemplate();
 		const templates = S.Record.getRecordIds(subIdTemplate, '');
 		const canWrite = U.Space.canMyParticipantWrite();
+		const isTemplate = object.uniqueKey == J.Constant.typeKey.template;
 
 		const layout: any = U.Menu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
-		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
+		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		const recommendedKeys = recommendedRelations.map(id => S.Record.getRelationById(id)).map(it => it && it.relationKey);
 
 		const allowedObject = object.isInstalled && U.Object.isInPageLayouts(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite;
+		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite && !isTemplate;
 		const allowedLayout = ![ I.ObjectLayout.Bookmark, I.ObjectLayout.Chat ].includes(object.recommendedLayout);
 		
 		const subIdObject = this.getSubIdObject();

@@ -224,6 +224,7 @@ class MenuQuickCapture extends React.Component<I.Menu, State> {
 			{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, S.Common.space ] },
 			{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 			{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: layouts },
+			{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		];
 		const sorts = [
 			{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
