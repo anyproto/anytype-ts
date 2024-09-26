@@ -928,8 +928,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		if ((x > half) && (x <= width)) {
 			sideRight.addClass('hover');
 		};
-
-		console.log(x, half, width);
 	};
 
 	onTabLeave () {
