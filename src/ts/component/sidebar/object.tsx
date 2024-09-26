@@ -11,8 +11,9 @@ interface State {
 };
 
 const LIMIT = 20;
-const HEIGHT_SECTION = 26;
-const HEIGHT_ITEM = 64;
+const HEIGHT_SECTION = 28;
+const HEIGHT_ITEM_DEFAULT = 64;
+const HEIGHT_ITEM_SYSTEM = 36;
 
 const SidebarObject = observer(class SidebarObject extends React.Component<{}, State> {
 	
@@ -165,7 +166,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 					<div className="body">
 						{this.cache && items.length && !isLoading ? (
-							<div className="items">
+							<div className="items customScrollbar">
 								<InfiniteLoader
 									rowCount={items.length + 1}
 									loadMoreRows={this.loadMoreRows}
@@ -876,8 +877,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		$(this.node).find('.item.active').removeClass('active');
 	};
 
-	getRowHeight (item: any) {
-		return item && item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+	getRowHeight (item: any): number {
+		let h = HEIGHT_ITEM_DEFAULT;
+		if (U.Object.isTypeOrRelationLayout(item.layout)) {
+			h = HEIGHT_ITEM_SYSTEM;
+		};
+		if (item.isSection) {
+			h = HEIGHT_SECTION;
+		};
+		return h;
 	};
 
 	withSections (): boolean {

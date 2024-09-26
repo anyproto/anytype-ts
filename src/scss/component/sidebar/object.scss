@@ -72,6 +72,8 @@
 				.iconObject.c48 { background-color: var(--color-shape-tertiary); }
 
 				.info { width: 100%; display: flex; flex-direction: column; gap: 2px 0px; }
+
+				.nameWrap { flex-grow: 1; overflow: hidden; }
 				.name { @include text-overflow-nw; width: 100%; }
 
 				.icon.lock { width: 16px !important; height: 16px !important; background-image: url('~img/icon/widget/lock.svg'); flex-shrink: 0; }
