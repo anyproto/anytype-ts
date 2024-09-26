@@ -286,6 +286,10 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
+	isInHumanLayouts (layout: I.ObjectLayout): boolean {
+		return this.getHumanLayouts().includes(layout);
+	};
+
 	// --------------------------------------------------------- //
 
 	isSetLayout (layout: I.ObjectLayout): boolean {
@@ -396,6 +400,13 @@ class UtilObject {
 			I.ObjectLayout.Audio,
 			I.ObjectLayout.Video,
 			I.ObjectLayout.Pdf,
+		];
+	};
+
+	getHumanLayouts (): I.ObjectLayout[] {
+		return [ 
+			I.ObjectLayout.Human, 
+			I.ObjectLayout.Participant,
 		];
 	};
 
