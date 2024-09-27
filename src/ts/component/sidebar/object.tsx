@@ -456,7 +456,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				objectIds,
 				subId: J.Constant.subId.allObject,
 				route: analytics.route.allObjects,
-				allowedLink: true,
+				allowedLinkTo: true,
 			}
 		});
 	};

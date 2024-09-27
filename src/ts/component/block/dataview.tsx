@@ -963,7 +963,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				route: this.analyticsRoute(),
 				relationKeys: this.getVisibleRelations().map(it => it.relationKey),
 				view,
-				allowedLink: true,
+				allowedLinkTo: true,
 				allowedOpen: true,
 			}
 		});

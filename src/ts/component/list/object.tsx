@@ -234,7 +234,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 				objectIds,
 				subId,
 				relationKeys,
-				allowedLink: true,
+				allowedLinkTo: true,
 				allowedOpen: true,
 			}
 		});
