@@ -285,7 +285,6 @@ class UtilData {
 	};
 
 	createGlobalSubscriptions (callBack?: () => void) {
-		const { account } = S.Auth;
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.profile,
@@ -349,15 +348,6 @@ class UtilData {
 	createSpaceSubscriptions (callBack?: () => void): void {
 		const { space } = S.Common;
 		const list: any[] = [
-			{
-				subId: J.Constant.subId.profile,
-				filters: [
-					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
-				],
-				noDeps: true,
-				ignoreWorkspace: true,
-				ignoreHidden: false,
-			},
 			{
 				subId: J.Constant.subId.deleted,
 				keys: [],
@@ -768,7 +758,7 @@ class UtilData {
 		filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chatDerived });
 
 		if (!ignoreWorkspace) {
-			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
+			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
 		};
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
@@ -910,8 +900,6 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, space } = S.Common;
-
 		param = Object.assign({
 			idField: 'id',
 			fullText: '',
