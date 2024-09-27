@@ -368,18 +368,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		}, (message: any) => {
 			this.setState({ isLoading: false });
 
-			/*
-			if (clear) {
-				const records = this.getRecords();
-				const first = records.length ? records[0] : null;
-
-				if (first) {
-					U.Object.openAuto(first);
-					this.setActive(first);
-				};
-			};
-			*/
-
 			if (callBack) {
 				callBack(message);
 			};
