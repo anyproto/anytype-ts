@@ -39,7 +39,32 @@
 		.editable, .placeholder { padding: 16px; }
 	}
 
-	.attachments { padding: 0px 16px; max-height: 360px; overflow-x: hidden; overflow-y: auto; max-width: unset; }
+	.attachments { padding: 0px 8px; max-height: 360px; overflow-x: hidden; overflow-y: auto; max-width: unset; }
+	.attachments {
+		.swiper { width: 100%; }
+		.swiper-slide { width: unset; }
+		.swiper-button-prev,
+		.swiper-button-next { position: absolute; z-index: 2; width: 70px; height: 100%; top: 0px; background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, var(--color-bg-primary) 100%); }
+		.swiper-button-prev { left: -8px; background: linear-gradient(-90deg, rgba(255, 255, 255, 0) 0%, var(--color-bg-primary) 100%); }
+		.swiper-button-next { right: -8px; }
+
+		.swiper-button-prev::before,
+		.swiper-button-next::before,
+		.swiper-button-prev::after,
+		.swiper-button-next::after { content: ''; position: absolute; left: 50%; top: 50%; }
+
+		.swiper-button-prev::before,
+		.swiper-button-next::before {
+			z-index: 1; margin: -19px 0px 0px -18px; width: 36px; height: 36px; border-radius: 50%; box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.20);
+			border: 1px solid var(--color-shape-secondary); background-color: var(--color-bg-primary);
+		}
+		.swiper-button-prev::after,
+		.swiper-button-next::after { z-index: 2; margin: -10px 0px 0px -9px; width: 20px; height: 20px; background-image: url('~img/arrow/chatFormAttachment.svg'); }
+		.swiper-button-prev::after { transform: rotateZ(180deg); margin-left: -10px; }
+
+
+		.swiper-button-disabled { display: none; }
+	}
 
 	.buttons { display: flex; gap: 0px 8px; padding: 10px 16px 0px 16px; margin-left: -4px; }
 	.buttons {
