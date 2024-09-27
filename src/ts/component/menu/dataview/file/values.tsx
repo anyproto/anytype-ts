@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
-import { I, C, S, U, J, Relation, Renderer, keyboard, Action, translate } from 'Lib';
+import { I, S, U, J, Relation, Renderer, keyboard, translate } from 'Lib';
 
 const MENU_ID = 'dataviewFileList';
 
@@ -19,7 +19,6 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onAdd = this.onAdd.bind(this);
-		this.onUpload = this.onUpload.bind(this);
 	};
 
 	render () {
@@ -176,27 +175,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 						callBack();
 					};
 				},
-				onUpload: (id: string, callBack?: () => void) => {
-					this.add(id);
-
-					if (callBack) {
-						callBack();
-					};
-				}
 			}
 		});
 	};
 	
-	onUpload (e: any) {
-		Action.openFileDialog([], paths => {
-			C.FileUpload(S.Common.space, '', paths[0], I.FileType.None, {}, (message: any) => {
-				if (!message.error.code) {
-					this.add(message.objectId);
-				};
-			});
-		});
-	};
-
 	add (objectId: string) {
 		const { param } = this.props;
 		const { data } = param;

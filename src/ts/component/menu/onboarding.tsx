@@ -19,6 +19,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		error: null,
 	};
 	frame = 0;
+	hiddenElement: any = null;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -29,9 +30,9 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	render () {
 		const { param } = this.props;
-		const { data, force } = param;
-		const { current } = data;
-		const section = this.getSection();
+		const { data } = param;
+		const { key, current } = data;
+		const section = Onboarding.getSection(key);
 		const { items, category, showConfetti } = section;
 		const item = items[current];
 		const l = items.length;
@@ -54,10 +55,6 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 		if (item.buttons) {
 			buttons = buttons.concat(item.buttons);
-		};
-
-		if (force && item.forceButtons) {
-			buttons = item.forceButtons;
 		};
 
 		buttons = buttons.filter(it => it);
@@ -176,9 +173,15 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			const { top, left } = element.offset();
 			const st = $(window).scrollTop();
 
+			if (this.hiddenElement) {
+				this.hiddenElement.css({ visibility: 'visible' });
+				this.hiddenElement = null;
+			};
+
 			body.append(clone);
 			U.Common.copyCss(element.get(0), clone.get(0));
 
+			this.hiddenElement = element;
 			element.css({ visibility: 'hidden' });
 			clone.addClass('onboardingElement').css({ position: 'fixed', top: top - st, left, zIndex: 1000 });
 			clone.after('<div class="onboardingDimmer"></div>');

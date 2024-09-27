@@ -121,6 +121,11 @@ const Vault = observer(class Vault extends React.Component {
 		const { showVault } = S.Common;
 
 		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
+			this.checkKeyUp = true;
+			this.pressed.add(key);
+		};
+
+		if ([ Key.ctrl, Key.tab, Key.shift ].includes(key)) {
 			this.pressed.add(key);
 		};
 
@@ -162,9 +167,13 @@ const Vault = observer(class Vault extends React.Component {
 		const items = this.getSpaceItems();
 		const item = items[this.n];
 
+		this.checkKeyUp = false;
+
 		if (item) {
 			node.find('.item.hover').removeClass('hover');
-			U.Router.switchSpace(item.targetSpaceId, '', true);
+			if (item.targetSpaceId != S.Common.space) {
+				U.Router.switchSpace(item.targetSpaceId, '', true);
+			};
 		};
 
 		if (!sidebar.isAnimating) {
@@ -274,9 +283,7 @@ const Vault = observer(class Vault extends React.Component {
 			data: { 
 				page: 'spaceCreate', 
 				isSpace: true,
-				onCreate: (id) => {
-					U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
-				},
+				onCreate: id => U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes()),
 			}, 
 		});
 	};

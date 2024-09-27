@@ -18,6 +18,7 @@ interface Props {
 	columns: Column[];
 	sources?: string[];
 	filters?: I.Filter[];
+	relationKeys?: string[];
 };
 
 const PREFIX = 'listObject';
@@ -216,7 +217,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { subId } = this.props;
+		const { subId, relationKeys } = this.props;
 		const selection = S.Common.getRef('selectionProvider');
 
 		let objectIds = selection ? selection.get(I.SelectType.Record) : [];
@@ -232,7 +233,8 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			data: {
 				objectIds,
 				subId,
-				allowedLink: true,
+				relationKeys,
+				allowedLinkTo: true,
 				allowedOpen: true,
 			}
 		});

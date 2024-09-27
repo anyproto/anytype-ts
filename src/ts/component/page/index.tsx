@@ -14,13 +14,13 @@ import PageAuthDeleted from './auth/deleted';
 
 import PageMainBlank from './main/blank';
 import PageMainEmpty from './main/empty';
+import PageMainVoid from './main/void';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
 import PageMainType from './main/type';
 import PageMainMedia from './main/media';
 import PageMainRelation from './main/relation';
-import PageMainStore from './main/store';
 import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
@@ -30,6 +30,7 @@ import PageMainInvite from './main/invite';
 import PageMainMembership from './main/membership';
 import PageMainObject from './main/object';
 import PageMainOnboarding from './main/onboarding';
+import PageMainChat from './main/chat';
 
 const Components = {
 	'index/index':			 PageAuthSelect,
@@ -49,7 +50,6 @@ const Components = {
 	'main/type':			 PageMainType,
 	'main/media':			 PageMainMedia,
 	'main/relation':		 PageMainRelation,
-	'main/store':			 PageMainStore,
 	'main/graph':			 PageMainGraph,
 	'main/navigation':		 PageMainNavigation,
 	'main/create':			 PageMainCreate,
@@ -59,6 +59,8 @@ const Components = {
 	'main/membership':		 PageMainMembership,
 	'main/object':			 PageMainObject,
 	'main/onboarding':		 PageMainOnboarding,
+	'main/chat':			 PageMainChat,
+	'main/void':			 PageMainVoid,
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {

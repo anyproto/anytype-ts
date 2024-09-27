@@ -292,6 +292,12 @@ export const ObjectRedo = (response: Rpc.Object.Redo.Response) => {
 	};
 };
 
+export const ObjectChatAdd = (response: Rpc.Object.ChatAdd.Response) => {
+	return {
+		chatId: response.getChatid(),
+	};
+};
+
 export const BlockCreate = (response: Rpc.Block.Create.Response) => {
 	return {
 		blockId: response.getBlockid(),
@@ -549,5 +555,29 @@ export const SpaceInviteView = (response: Rpc.Space.InviteView.Response) => {
 export const DeviceList = (response: Rpc.Device.List.Response) => {
 	return {
 		devices: (response.getDevicesList() || []).map(it => Mapper.From.DeviceInfo(it))
+	};
+};
+
+export const ChatGetMessages = (response: Rpc.Chat.GetMessages.Response) => {
+	return {
+		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),
+	};
+};
+
+export const ChatGetMessagesByIds = (response: Rpc.Chat.GetMessagesByIds.Response) => {
+	return {
+		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),
+	};
+};
+
+export const ChatSubscribeLastMessages = (response: Rpc.Chat.SubscribeLastMessages.Response) => {
+	return {
+		messages: (response.getMessagesList() || []).map(Mapper.From.ChatMessage),
+	};
+};
+
+export const ChatAddMessage = (response: Rpc.Chat.AddMessage.Response) => {
+	return {
+		messageId: response.getMessageid(),
 	};
 };

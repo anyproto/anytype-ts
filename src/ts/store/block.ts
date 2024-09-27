@@ -569,9 +569,11 @@ class BlockStore {
 		};
 	};
 
-	checkTypeSelect (rootId: string) {
-		const header = this.getMapElement(rootId, J.Constant.blockId.header);
-		if (!header) {
+	checkBlockType (rootId: string) {
+		const { header, type } = J.Constant.blockId;
+		const element = this.getMapElement(rootId, header);
+
+		if (!element) {
 			return;
 		};
 
@@ -580,19 +582,41 @@ class BlockStore {
 		const exists = this.checkBlockTypeExists(rootId);
 		const change = (check && !exists) || (!check && exists);
 		
-		let childrenIds = header.childrenIds || [];
 		if (change) {
-			childrenIds = exists ? childrenIds.filter(it => it != J.Constant.blockId.type) : [ J.Constant.blockId.type ].concat(childrenIds);
-		};
-
-		if (change) {
-			this.updateStructure(rootId, J.Constant.blockId.header, childrenIds);
+			const childrenIds = exists ? element.childrenIds.filter(it => it != type) : [ type ].concat(element.childrenIds);
+			this.updateStructure(rootId, header, childrenIds);
 		};
 	};
 
 	checkBlockTypeExists (rootId: string): boolean {
 		const header = this.getMapElement(rootId, J.Constant.blockId.header);
 		return header ? header.childrenIds.includes(J.Constant.blockId.type) : false;
+	};
+
+	checkBlockChat (rootId: string) {
+		return;
+
+		const element = this.getMapElement(rootId, rootId);
+
+		if (!element) {
+			return;
+		};
+
+		const object = S.Detail.get(rootId, rootId, [ 'layout', 'chatId' ], true);
+		if (U.Object.isChatLayout(object.layout)) {
+			return;
+		};
+
+		if (object.chatId && !this.checkBlockChatExists(rootId)) {
+			const childrenIds = element.childrenIds.concat(J.Constant.blockId.chat);
+
+			this.updateStructure(rootId, rootId, childrenIds);
+		};
+	};
+
+	checkBlockChatExists (rootId: string): boolean {
+		const element = this.getMapElement(rootId, rootId);
+		return element ? element.childrenIds.includes(J.Constant.blockId.chat) : false;
 	};
 
 	getLayoutIds (rootId: string, ids: string[]) {

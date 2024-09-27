@@ -127,10 +127,8 @@ class UtilRouter {
 	};
 
 	switchSpace (id: string, route?: string, sendEvent?: boolean, callBack?: () => void) {
-		const { space } = S.Common;
-		const { accountSpaceId } = S.Auth;
-
-		if (!id || (space == id)) {
+		if (!id) {
+			console.log('[UtilRouter].swithSpace: id is empty');
 			return;
 		};
 
@@ -142,9 +140,7 @@ class UtilRouter {
 
 		C.WorkspaceOpen(id, (message: any) => {
 			if (message.error.code) {
-				if (id != accountSpaceId) {
-					this.switchSpace(accountSpaceId, route, false, callBack);
-				};
+				U.Data.onAuthWithoutSpace();
 				return;
 			};
 

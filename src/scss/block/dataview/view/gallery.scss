@@ -24,60 +24,12 @@
 				.dropTarget.isOver.top::before { left: -10px; }
 				.dropTarget.isOver.bottom::before { right: -10px; }
 
-				.selectionTarget.isSelectionSelected::after { border-radius: 8px; }
-
 				.selectionTarget { height: 100%; }
-				.itemContent > .inner { padding: 16px; }
-
-				.cover { 
-					position: relative; aspect-ratio: 7/3; background-position: top center; display: flex; align-items: center;
-					background-color: var(--color-shape-highlight-medium); width: 100%; justify-content: center; border-radius: 8px 8px 0px 0px; overflow: hidden;
-				}
-
-				.cover {
-					img { width: 100%; height: 100%; object-fit: cover; }
-
-					.mediaVideo { height: 100%; }
-					.mediaVideo {
-						video { width: 100%; height: 100%; object-fit: cover; }
-					}
-
-					.mediaAudio { padding: 8px 16px; }
-				}
-				.cover.canEdit {
-					.inner { background: none; }
-					.inner {  
-						.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/gallery-cover0.svg'); margin: -2px 6px 0px 0px; }
-						.add { 
-							width: 100%; height: 20px; line-height: 20px; text-align: center; position: absolute; left: 0px; top: 0px; 
-							top: 50%; margin-top: -10px;
-						}
-					}
-				}
+				.selectionTarget.isSelectionSelected::after { border-radius: 8px; }
 			}
 			.card:hover { border-color: var(--color-shape-secondary); background: var(--color-shape-highlight-light); }
 			.card:hover {
-				.cover {
-					.inner { color: var(--color-text-primary); }
-					.inner .icon.plus { background-image: url('~img/icon/plus/gallery-cover1.svg'); }
-				}
-
 				.icon.checkbox { opacity: 1; }
-			}
-
-			.card.coverFit {
-				.cover { background-size: contain; background-position: center center; }
-				.cover {
-					img { width: auto; height: auto; max-height: 100%; max-width: 100%; object-fit: contain; }
-
-					.mediaVideo {
-						video { object-fit: contain; }
-					}
-				}
-			}
-
-			.card.withCover {
-				.itemContent > .inner { padding-top: 12px; }
 			}
 
 			.card.isEditing { border: 2px solid var(--color-system-accent-100); }

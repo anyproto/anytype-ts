@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, C, S, U, translate } from 'Lib';
+import { I, S, U } from 'Lib';
 
 const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
 
@@ -17,25 +17,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	render (): React.ReactNode {
 		const space = U.Space.getSpaceview();
 
-		let content = null;
-		if (!space._empty_) {
-			content = (
-				<React.Fragment>
-					<IconObject 
-						id="widget-space-icon" 
-						object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
-						forceLetter={true} 
-						size={28}
-						iconSize={28}
-						menuParam={{ className: 'fixed' }}
-					/>
-					<div className="txt">
-						<ObjectName object={space} />
-					</div>
-				</React.Fragment>
-			);
-		};
-
 		return (
 			<div 
 				ref={ref => this.node = ref}
@@ -43,7 +24,16 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 				onClick={this.onSettings}
 			>
 				<div className="side left">
-					{content}
+					<IconObject 
+						id="widget-space-icon" 
+						object={{ ...space, layout: I.ObjectLayout.SpaceView }} 
+						size={32}
+						iconSize={32}
+						menuParam={{ className: 'fixed' }}
+					/>
+					<div className="txt">
+						<ObjectName object={space} />
+					</div>
 				</div>
 				<div className="side right">
 					<div id="cnt" className="cnt" onClick={this.onRequest} />

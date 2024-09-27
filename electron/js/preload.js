@@ -1,8 +1,9 @@
-const { ipcRenderer, contextBridge } = require('electron');
+const { ipcRenderer, contextBridge, webUtils } = require('electron');
 const { app, getCurrentWindow, getGlobal, dialog, BrowserWindow } = require('@electron/remote');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const mime = require('mime-types');
 const tmpPath = () => app.getPath('temp');
 
 contextBridge.exposeInMainWorld('Electron', {
@@ -20,7 +21,12 @@ contextBridge.exposeInMainWorld('Electron', {
 	tmpPath,
 	logPath: () => path.join(app.getPath('userData'), 'logs'),
 	filePath: (...args) => path.join(...args),
-	dirname: fp => path.dirname(fp),
+	dirName: fp => path.dirname(fp),
+	fileName: fp => path.basename(fp),
+	fileMime: fp => mime.lookup(fp),
+	fileExt: fp => path.extname(fp),
+	fileSize: fp => fs.statSync(fp).size,
+	isDirectory: fp => fs.lstatSync(fp).isDirectory(),
 	defaultPath: () => path.join(app.getPath('appData'), app.getName()),
 
 	currentWindow: () => getCurrentWindow(),
@@ -30,8 +36,10 @@ contextBridge.exposeInMainWorld('Electron', {
 		getCurrentWindow().focus();
 		app.focus({ steal: true });
 	},
-	getGlobal: (key) => getGlobal(key),
+	getGlobal: key => getGlobal(key),
 	showOpenDialog: dialog.showOpenDialog,
+
+	webFilePath: file => webUtils.getPathForFile(file),
 
 	fileWrite: (name, data, options) => {
 		name = String(name || 'temp');

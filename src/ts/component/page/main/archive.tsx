@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Title, Header, Footer, Icon, ListObjectManager } from 'Component';
-import { I, U, J, translate, Action } from 'Lib';
+import { Title, Footer, Icon, ListObjectManager } from 'Component';
+import { I, U, J, translate, Action, analytics } from 'Lib';
 
 const PageMainArchive = observer(class PageMainArchive extends React.Component<I.PageComponent> {
 
@@ -34,13 +34,6 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 
 		return (
 			<div className="wrapper">
-				<Header 
-					{...this.props}
-					text={translate('commonBin')}
-					component="mainEmpty" 
-					layout={I.ObjectLayout.Archive}
-				/>
-
 				<div className="body">
 					<div className="titleWrapper">
 						<Icon className="archive" />
@@ -65,6 +58,10 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 				<Footer component="mainObject" />
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		analytics.event('ScreenBin');
 	};
 
 	onRestore () {

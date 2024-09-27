@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Storage, Action } from 'Lib';
+import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Storage, Onboarding } from 'Lib';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -239,7 +239,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage == Stage.Soul) {
 			const name = this.refName.getValue();
-
 			const cb = () => {
 				Animation.from(() => {
 					this.refNext?.setLoading(false);
@@ -247,19 +246,28 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					const routeParam = {
 						replace: true, 
 						animate: true,
+						onFadeIn: () => {
+							Storage.initPinnedTypes();
+							S.Common.fullscreenObjectSet(true);
+
+							Onboarding.start('dashboard', false, false);
+						},
 					};
 
-					U.Router.go('/main/onboarding', routeParam);
+					U.Data.onAuthWithoutSpace(routeParam);
+					U.Data.onAuthOnce(true);
 				});
 			};
 
-			if (name) {
-				this.refNext?.setLoading(true);
-				this.accountUpdate(name, cb);
-			} else {
-				cb();
-				analytics.event('ScreenOnboardingSkipName');
-			};	
+			C.WorkspaceSetInfo(S.Common.space, { name: translate('commonEntrySpace') }, () => {
+				if (name) {
+					this.refNext?.setLoading(true);
+					U.Object.setName(S.Block.profile, name, cb);
+				} else {
+					cb();
+					analytics.event('ScreenOnboardingSkipName');
+				};	
+			});
 		};
 	};
 
@@ -291,19 +299,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 	};
 
-	accountUpdate = (name: string, callBack?: () => void): void => {
-		U.Object.setName(S.Block.profile, name, () => {
-			C.WorkspaceSetInfo(S.Common.space, { name }, callBack);
-		});
-	};
-
-	/** Copies key phrase to clipboard and shows a toast */
 	onCopy () {
 		U.Common.copyToast(translate('commonPhrase'), this.refPhrase.getValue());
 		analytics.event('KeychainCopy', { type: 'Onboarding' });
 	};
 
-	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	onPhraseTooltip () {
 		S.Popup.open('phrase', {});
 		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: Stage[this.state.stage] });

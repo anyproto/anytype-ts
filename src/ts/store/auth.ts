@@ -181,6 +181,7 @@ class AuthStore {
 		S.Record.clearAll();
 		S.Menu.closeAllForced();
 		S.Notification.clear();
+		S.Chat.clearAll();
 
 		this.clearAll();
 		Storage.logout();

@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Label, Button, Cell, Error, Icon, EmptySearch, Checkbox } from 'Component';
-import { I, M, C, S, U, J, Relation, translate, Dataview } from 'Lib';
+import { Label, Button, Cell, Error, Icon, EmptySearch } from 'Component';
+import { I, M, C, S, U, J, Relation, translate, Dataview, analytics } from 'Lib';
+
+const Diff = require('diff');
 
 const ID_PREFIX = 'popupRelation';
 const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;
@@ -15,6 +17,7 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 
 	refCheckbox = null;
 	cellRefs: Map<string, any> = new Map();
+	initial: any = {};
 	details: any = {};
 	addRelationKeys = [];
 	state = {
@@ -129,17 +132,50 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 	};
 
 	loadObjects (callBack?: () => void) {
+		const { param } = this.props;
+		const { data } = param;
+		const { relationKeys } = data;
 		const objectIds = this.getObjectIds();
-		const relationKeys = this.getRelationKeys();
+		const keys = this.getRelationKeys();
 
 		U.Data.searchSubscribe({
 			subId: SUB_ID_OBJECT,
 			filters: [
 				{ relationKey: 'id', condition: I.FilterCondition.In, value: objectIds },
 			],
-			keys: J.Relation.default.concat(relationKeys),
+			keys: J.Relation.default.concat(keys),
 			noDeps: true,
-		}, callBack);
+		}, () => {
+			if (!relationKeys) {
+				const objects = this.getObjects();
+
+				let keys = [];
+
+				objects.forEach(it => {
+					const type = S.Record.getTypeById(it.type);
+					if (!type) {
+						return;
+					};
+
+					const recommended = (type.recommendedRelations || []).map(it => {
+						const relation = S.Record.getRelationById(it);
+						return relation ? relation.relationKey : '';
+					}).filter(it => it);
+
+					if (recommended.length) {
+						keys = keys.concat(recommended);
+					};
+				});
+
+				if (keys.length) {
+					this.props.param.data.relationKeys = U.Common.arrayUnique(keys);
+				};
+			};
+
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	loadDeps (callBack?: () => void) {
@@ -181,34 +217,51 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 				const { relationKey } = relation;
 				const value = Relation.formatValue(relation, object[relationKey], false);
 
-				cnt[relationKey] = cnt[relationKey] || 1;
-				if (reference && U.Common.compareJSON(value, reference[relationKey])) {
-					cnt[relationKey]++;
+				if (Relation.isArrayType(relation.format)) {
+					const tmp = [];
+
+					value.forEach(id => {
+						cnt[relationKey] = cnt[relationKey] || {};
+						cnt[relationKey][id] = cnt[relationKey][id] || 0;
+						cnt[relationKey][id]++;
+
+						if (cnt[relationKey][id] == objects.length) {
+							tmp.push(id);
+						};
+					});
+
+					if (tmp.length) {
+						this.details[relationKey] = tmp;
+					};
+				} else {
+					cnt[relationKey] = cnt[relationKey] || 1;
+					if (reference && U.Common.compareJSON(value, reference[relationKey])) {
+						cnt[relationKey]++;
+					};
+					if ((cnt[relationKey] == objects.length) && value) {
+						this.details[relationKey] = value;
+					};
 				};
-				if (cnt[relationKey] == objects.length) {
-					this.details[relationKey] = value;
-				};
+
 				object[relationKey] = value;
 			});
 
 			reference = object;
 		});
 
+		this.initial = U.Common.objectCopy(this.details);
 		this.forceUpdate();
 	};
 
 	getRelationKeys (): string[] {
-		return U.Common.arrayUnique([].concat(this.props.param.data.relationKeys || J.Relation.default));
+		return U.Common.arrayUnique(this.props.param.data.relationKeys || J.Relation.default);
 	};
 
 	getRelations (): any[] {
 		const { config } = S.Common;
 
 		let ret = this.getRelationKeys().map(relationKey => S.Record.getRelationByKey(relationKey));
-
-		ret = ret.filter(it => {
-			return (config.debug.hiddenObject ? true : !it.isHidden) && !it.isReadonlyValue;
-		});
+		ret = ret.filter(it => (config.debug.hiddenObject ? true : !it.isHidden) && !it.isReadonlyValue);
 		ret = ret.sort(U.Data.sortByName);
 		return ret;
 	};
@@ -275,22 +328,48 @@ const PopupRelation = observer(class PopupRelation extends React.Component<I.Pop
 		const { data } = param;
 		const { view } = data;
 		const objectIds = this.getObjectIds();
-		const details: any[] = []; 
+		const operations: any[] = []; 
 
 		for (const k in this.details) {
 			const relation = S.Record.getRelationByKey(k);
-			if (relation) {
-				details.push({ key: k, value: Relation.formatValue(relation, this.details[k], true) });
+
+			if (!relation) {
+				continue;
+			};
+
+			if (Relation.isArrayType(relation.format)) {
+				const diff = Diff.diffArrays(this.initial[k] || [], this.details[k] || []);
+
+				diff.forEach(it => {
+					let opKey = '';
+					if (it.added) {
+						opKey = 'add';
+					} else
+					if (it.removed) {
+						opKey = 'remove';
+					};
+
+					if (opKey) {
+						const operation = { relationKey: k };
+
+						operation[opKey] = Relation.formatValue(relation, it.value, true);
+						operations.push(operation);
+					};
+				});
+			} else {
+				operations.push({ relationKey: k, set: Relation.formatValue(relation, this.details[k], true) });
 			};
 		};
 
-		C.ObjectListSetDetails(objectIds, details, (message: any) => {
+		C.ObjectListModifyDetailValues(objectIds, operations, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
 			} else {
 				close();
 			};
 		});
+
+		analytics.event('ChangeRelationValue', { id: 'Batch', count: objectIds.length });
 
 		if (this.addRelationKeys.length && view) {
 			const cb = () => {

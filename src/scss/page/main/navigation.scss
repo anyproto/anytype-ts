@@ -13,31 +13,40 @@
 
 		.item { 
 			transition: $transitionAllCommon; position: relative; line-height: 48px; margin-bottom: 16px; padding: 0px; 
-			height: 80px; border: 1px solid var(--color-shape-secondary); border-radius: 8px;
+			border: 1px solid var(--color-shape-secondary); border-radius: 8px; display: flex; flex-direction: row; align-items: center;
+			gap: 0px 12px; padding: 12px;
 		}
 		.item {
-			.inner { padding: 16px; display: flex; align-items: center; gap: 0px 16px; height: 100%; }
-
-			.iconObject { flex-shrink: 0; background: var(--color-shape-primary); border-radius: 10px; }
-			.iconObject.isTask { background: none; }
-
+			.iconObject { flex-shrink: 0; background: var(--color-shape-tertiary); border-radius: 6px; }
 			.info { border: 0px; flex-grow: 1; width: calc(100% - 64px); }
 			.name { width: 100%; line-height: 22px; height: 22px; @include text-overflow-nw;  }
-			.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: var(--color-text-secondary); }
 
-			.icon.arrow { 
-				width: 24px; height: 24px; position: absolute; right: -24px; top: 50%; transform: translateY(-50%);
-				background-image: url('~img/arrow/nav0.svg');
+			.bottomWrap { 
+				display: flex; @include text-overflow-nw; width: 100%; @include text-small; color: var(--color-text-secondary); gap: 0px 6px; 
+				align-items: center;
 			}
+			.bottomWrap {
+				.type { max-width: 40%; @include text-overflow-nw; flex-shrink: 0; }
+				.descr { position: relative; @include text-overflow-nw; max-width: 100%; }
+				.descr:empty { display: none; }
+				.bullet { width: 2px; height: 2px; border-radius: 50%; background-color: var(--color-text-secondary); flex-shrink: 0; display: none; }
+			}
+		}
+		.item::before {
+			content: ''; width: 24px; height: 24px; position: absolute; right: -24px; top: 50%; transform: translateY(-50%);
+			background-image: url('~img/arrow/nav0.svg');
+		}
+		.item.withDescr {
+			.bullet { display: block; }
+		}
 
-			.icon.arrow { 
-				width: 24px; height: 24px; position: absolute; right: -24px; top: 50%; transform: translateY(-50%);
-				background-image: url('~img/arrow/nav0.svg');
-			}
+		.item.isFile {
+			.iconObject { background-color: unset; }
 		}
 
 		.item.selected { 
 			padding: 16px; border-radius: 8px; border: 1px solid var(--color-shape-secondary); transition: $transitionAllCommon; height: auto;
+			display: block;
 		}
 		.item.selected {
 			.iconObject { margin-bottom: 8px; }
@@ -56,25 +65,19 @@
 		}
 
 		.item.active { background: none; border-color: var(--color-system-accent-100) !important; box-shadow: 0px 0px 0px 1px var(--color-system-accent-100) inset; }
-		.item.active {
-			.icon.arrow { background-image: url('~img/arrow/nav1.svg'); }
-		}
+		.item.active::before { background-image: url('~img/arrow/nav1.svg'); }
 
-		.item.empty { line-height: 78px; cursor: default; padding: 0px 16px; }
+		.item.empty { height: 80px; cursor: default; padding: 12px; }
 		.item.empty {
 			.name { display: inline-block; vertical-align: middle; }
 		}
 	}
 
 	.items.right {
-		.item {
-			.icon.arrow { right: auto; left: -24px; }
-		}
+		.item::before { right: auto; left: -24px; }
 	}
 
 	.items.center {
-		.item {
-			.icon.arrow { display: none; }
-		}
+		.item::before { display: none; }
 	}
 }

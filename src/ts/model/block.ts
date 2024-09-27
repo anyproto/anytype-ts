@@ -7,7 +7,7 @@ import BlockContentEmbed from './content/embed';
 import BlockContentRelation from './content/relation';
 import BlockContentDiv from './content/div';
 import BlockContentBookmark from './content/bookmark';
-import BlockContentText from './content/text';
+import { BlockContentText } from './content/text';
 import BlockContentFile from './content/file';
 import BlockContentDataview from './content/dataview';
 import { BlockContentTableRow } from './content/table';
@@ -165,6 +165,10 @@ class Block implements I.Block {
 
 	isDataview (): boolean {
 		return this.type == I.BlockType.Dataview;
+	};
+
+	isChat (): boolean {
+		return this.type == I.BlockType.Chat;
 	};
 
 	isRelation (): boolean {

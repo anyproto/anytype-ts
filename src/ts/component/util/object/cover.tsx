@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cover, MediaAudio, MediaVideo } from 'Component';
-import { I, S } from 'Lib';
+import { I, S, U } from 'Lib';
 
 interface Props {
 	object: any;
@@ -42,7 +42,7 @@ class ObjectCover extends React.Component<Props> {
 
 				case I.ObjectLayout.Audio: {
 					cn.push('coverAudio');
-					content = <MediaAudio playlist={[ { name, src: S.Common.fileUrl(id) } ]}/>;
+					content = <MediaAudio playlist={[ { name: U.File.name(name), src: S.Common.fileUrl(id) } ]}/>;
 					break;
 				};
 

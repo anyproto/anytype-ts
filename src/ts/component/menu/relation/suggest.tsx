@@ -361,7 +361,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const skipKeys = data.skipKeys || [];
 
 		const sources = this.getLibrarySources();
-		let menuId = '';
 		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
@@ -376,6 +375,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				ignoreWorkspace: true,
 			},
 		};
+
+		let menuId = '';
 
 		switch (item.id) {
 			case 'store': {
@@ -440,9 +441,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				data: {
 					...data,
 					rebind: this.rebind,
-					onChange: () => { 
-						close(); 
-					},
+					onChange: () => close(),
 				}
 			});
 		} else 

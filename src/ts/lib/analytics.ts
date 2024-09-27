@@ -5,7 +5,7 @@ const KEYS = [
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
-	'processor', 'emptyType', 'status',
+	'processor', 'emptyType', 'status', 'sort',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -43,6 +43,8 @@ class Analytics {
 		link: 'Link',
 		mention: 'Mention',
 		media: 'Media',
+		calendar: 'Calendar',
+		allObjects: 'AllObjects',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
@@ -523,7 +525,7 @@ class Analytics {
 		this.event('CreateObject', { objectType, layout, route, middleTime: time });
 	};
 
-	changeRelationValue (relation: any, value: any, type: string) {
+	changeRelationValue (relation: any, value: any, param: any) {
 		if (!relation) {
 			return;
 		};
@@ -534,7 +536,7 @@ class Analytics {
 		} else {
 			key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';
 		};
-		this.event(key, { type, relationKey: relation.relationKey, format: relation.format });
+		this.event(key, { ...param, relationKey: relation.relationKey, format: relation.format });
 	};
 
 	pageMapper (params: any): string {

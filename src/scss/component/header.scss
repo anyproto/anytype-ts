@@ -35,6 +35,8 @@
 		-webkit-app-region: no-drag; 
 	}
 	.headerBanner {
+		.label { @include text-overflow-nw; }
+
 		.content { display: flex; gap: 0px 4px; align-items: center; }
 		.content {
 			.typeName { display: flex; gap: 0px 4px; flex-wrap: nowrap; }
@@ -49,8 +51,7 @@
 	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
 
 	.sync { -webkit-app-region: no-drag; flex-shrink: 0; }
-	.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; -webkit-app-region: no-drag; flex-shrink: 0; }
-	.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
+	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
@@ -78,7 +79,7 @@ body.isFullScreen {
 	}
 }
 
-.header.authIndex { height: 52px; }
+.header.authIndex { height: 52px; width: 100% !important; }
 
 html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	.header.authIndex {
@@ -119,33 +120,6 @@ html:not(.bodyIndexIndex):not(.bodyAuthSelect) {
 	.icon.btn-search { background-image: url('~img/icon/header/search.svg'); }
 	.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
-}
-
-.header.mainStore.withBanner { flex-direction: column; height: auto !important; }
-.header.mainStore.withBanner {
-	.sides { display: flex; flex-direction: row; align-items: center; justify-content: stretch; height: 52px; }
-
-	.bannerWrapper { width: 100%; padding: 16px 80px; }
-	.bannerWrapper {
-		.banner { 
-			background-image: linear-gradient(180deg, #fef2c6 0%, #f8f8f8 100%); display: flex; align-items: center;
-			color: var(--color-control-accent); height: 116px; border-radius: 11px; position: relative; justify-content: space-evenly;
-			padding: 0px 116px; overflow: hidden;
-		}
-		.banner {
-			.side { width: calc(50% - 46px); }
-			.side.left { display: flex; flex-direction: column; padding: 0px; align-items: flex-start; justify-content: center; gap: 8px 0px; }
-			.side.right { min-width: 424px; }
-
-			.icon.close { position: absolute; width: 20px; height: 20px; background-image: url('~img/icon/header/banner/close.svg'); right: 10px; top: 10px; }
-			.title { @include text-header3; @include text-overflow-nw; width: 100%; }
-			.pic { 
-				width: 100%; height: 100%; background: url('~img/icon/header/banner/pic.png') no-repeat; background-size: contain; 
-				background-position: bottom right; 
-			}
-			.button { @include text-small; height: 24px; line-height: 24px; }
-		}
-	}
 }
 
 .popup {

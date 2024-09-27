@@ -85,4 +85,26 @@ export default {
 		uk: 'Українська',
 		vi: 'Tiếng Việt',
 	},
+
+	interfaceToSpellingLangMap: {
+		'da-DK': 'da',
+		'de-DE': 'de-DE',
+		'en-US': 'en',
+		'es-ES': 'es',
+		'fr-FR': 'fr-FR',
+		'hi-IN': 'hi',
+		'id-ID': 'id',
+		'it-IT': 'it-IT',
+		'lt-LT': 'lt',
+		'ko-KR': 'ko',
+		'nl-NL': 'nl',
+		'no-NO': 'nb',
+		'pl-PL': 'pl',
+		'pt-BR': 'pt-BR',
+		'ro-RO': 'ro',
+		'ru-RU': 'ru',
+		'tr-TR': 'tr',
+		'uk-UA': 'uk',
+		'vi-VN': 'vi',
+	}
 };

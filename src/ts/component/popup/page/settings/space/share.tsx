@@ -90,6 +90,9 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 			let button = null;
 
 			if (isSpaceOwner) {
+				if (isCurrent) {
+					button = <Label text={translate(`participantPermissions${item.permissions}`)} />;
+				} else
 				if (item.isJoining) {
 					button = (
 						<Button
@@ -115,7 +118,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 							<div className="item">
 								<div className="name">{translate(`participantPermissions${item.permissions}`)}</div>
 							</div>
-							<Icon className="arrow light" />
+							<Icon className="arrow dark" />
 						</div>
 					);
 				};
@@ -173,7 +176,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 					<Title text={translate('popupSettingsSpaceShareTitle')} />
 
 					<div className="icons">
-						<Icon className="question" onClick={this.onInfo} />
+						<Icon className="question withBackground" onClick={this.onInfo} />
 						{space.isShared ? <Icon id="button-more-space" className="more" onClick={this.onMoreSpace} /> : ''}
 					</div>
 				</div>
@@ -186,7 +189,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 						<div className="inviteLinkWrapper">
 							<div className="inputWrapper">
 								<Input ref={ref => this.refInput = ref} readonly={true} value={U.Space.getInviteLink(cid, key)} onClick={() => this.refInput?.select()} />
-								<Icon id="button-more-link" className="more" onClick={this.onMoreLink} />
+								<Icon id="button-more-link" className="more withBackground" onClick={this.onMoreLink} />
 							</div>
 							<Button ref={ref => this.refCopy = ref} onClick={this.onCopy} className="c40" color="blank" text={translate('commonCopyLink')} />
 						</div>
@@ -204,7 +207,7 @@ const PopupSettingsSpaceShare = observer(class PopupSettingsSpaceShare extends R
 				</div>
 
 				<div id="sectionMembers" className="section sectionMembers">
-					<Title text={translate('popupSettingsSpaceShareMembersTitle')} />
+					<Title text={translate('commonMembers')} />
 
 					{showLimit ? (
 						<div className="row payment">

@@ -9,11 +9,11 @@
 .sidebarAnimation { transition: width $transitionSidebarTime linear; }
 
 #sidebarToggle { 
-	width: 28px; height: 28px; background-size: 20px; border-radius: 6px; position: fixed; left: 84px; top: 12px; backdrop-filter: blur(20px);
+	position: fixed; left: 84px; top: 12px; backdrop-filter: blur(20px);
 	background-image: url('~img/icon/widget/toggle0.svg'); z-index: 22; -webkit-app-region: no-drag; transition: none;
 }
 #sidebarToggle.sidebarAnimation { transition: left $transitionSidebarTime linear; }
-#sidebarToggle:hover, #sidebarToggle.hover { background-color: var(--color-shape-highlight-medium); background-image: url('~img/icon/widget/toggle1.svg'); }
+#sidebarToggle:hover, #sidebarToggle.hover { background-color: var(--color-shape-highlight-medium) !important; background-image: url('~img/icon/widget/toggle1.svg'); }
 
 .sidebar { position: fixed; z-index: 21; user-select: none; transition: none; top: 0px; left: 0px; height: 100%; }
 .sidebar.anim { transition-property: width; transition-duration: $transitionSidebarTime; transition-timing-function: linear; }
@@ -21,27 +21,9 @@
 .sidebar.isClosed { left: 0px !important; }
 
 .sidebar {
-	> .inner { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; background-color: var(--color-shape-tertiary); }
-	> .inner {
-		> .head { 
-			display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
-			gap: 0px 8px; overflow: hidden;
-		}
-		> .head {
-			.status { 
-				@include text-small; font-weight: 500; @include text-overflow-nw; text-align: center; color: var(--color-text-secondary);
-				display: inline-block; -webkit-app-region: no-drag;
-			}
-
-			.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; -webkit-app-region: no-drag; }
-			.icon:hover { background-color: var(--color-shape-highlight-medium); }
-			.icon.toggle { background-image: url('~img/icon/widget/toggle0.svg'); }
-			.icon.toggle:hover { background-image: url('~img/icon/widget/toggle1.svg'); }
-		}
-
-		> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: auto; overscroll-behavior: none; }
-	}
-
+	@import "./sidebar/widget";
+	@import "./sidebar/object";
+	
 	.resize-h { width: 10px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: absolute; right: -5px; top: 0px; }
 	.resize-h {
 		.resize-handle {
@@ -66,6 +48,6 @@
 
 html.platformWindows {
 	.sidebar {
-		> .inner > .body { overflow-y: overlay; }
+		> .containerWidget > .body { overflow-y: overlay; }
 	}
 }	

@@ -39,12 +39,10 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 			return null;
 		};
 
-		const { period } = tierItem;
+		const { period, periodType } = tierItem;
 		const { membership } = S.Auth;
 		const { name, nameType, paymentMethod } = membership;
 
-		let periodText = '';
-		let labelText = '';
 		let platformText = '';
 		let withContactButton = false;
 		let canEnterName = !name;
@@ -66,13 +64,38 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 			};
 		};
 
+		let labelText = translate('popupMembershipPaidTextUnlimited');
+
+		// default is year
+		let periodLabel = translate('pluralYear');
+		let periodText = U.Common.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(period, periodLabel));
+
+		if (periodType) {
+			switch (periodType) {
+				case I.MembershipTierDataPeriodType.PeriodTypeDays: {
+					periodLabel = translate('pluralDay');
+					break;
+				};
+				case I.MembershipTierDataPeriodType.PeriodTypeWeeks: {
+					periodLabel = translate('pluralWeek');
+					break;
+				};
+				case I.MembershipTierDataPeriodType.PeriodTypeMonths: {
+					periodLabel = translate('pluralMonth');
+					break;
+				};
+			};
+		};
+
 		if (period) {
 			if (period == 1) {
-				periodText = translate('popupSettingsMembershipPerYear');
-				labelText = translate('popupMembershipPaidTextPerYear');
+				// one {day, week, month, year}
+				periodText = U.Common.sprintf(translate('popupSettingsMembershipPerGenericSingle'), U.Common.plural(period, periodLabel));
+				labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericSingle'), U.Common.plural(period, periodLabel));
 			} else {
-				periodText = U.Common.sprintf(translate('popupSettingsMembershipPerYears'), period, U.Common.plural(period, translate('pluralYear')));
-				labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerYears'), period, U.Common.plural(period, translate('pluralYear')));
+				// N {days, weeks, months, years}
+				periodText = U.Common.sprintf(translate('popupSettingsMembershipPerGenericMany'), period, U.Common.plural(period, periodLabel));
+				labelText = U.Common.sprintf(translate('popupMembershipPaidTextPerGenericMany'), period, U.Common.plural(period, periodLabel));
 			};
 		};
 
@@ -186,31 +209,44 @@ const PopupMembershipPagePaid = observer(class PopupMembershipPagePaid extends R
 
 	validateName (callBack?: () => void) {
 		const name = this.getName();
+		const globalName = this.getGlobalName();
 
-		this.checkName(name, () => {
-			this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
+		// if the name was already set, i.e. user had a subscription before
+		// then we don't need to check the name again, just go ahead
+		if (!globalName.length) {
+			this.checkName(name, () => {
+				this.setState({ statusText: translate('popupMembershipStatusWaitASecond') });
 
-			C.NameServiceResolveName(name, (message: any) => {
-				let error = '';
-				if (message.error.code) {
-					error = message.error.description;
-				} else
-				if (!message.available) {
-					error = translate('popupMembershipStatusNameNotAvailable');
-				};
-
-				if (error) {
-					this.setError(error);
-				} else {
-					this.disableButtons(false);
-					this.setOk(translate('popupMembershipStatusNameAvailable'));
-
-					if (callBack) {
-						callBack();
+				C.NameServiceResolveName(name, (message: any) => {
+					let error = '';
+					if (message.error.code) {
+						error = message.error.description;
+					} else
+					if (!message.available) {
+						error = translate('popupMembershipStatusNameNotAvailable');
 					};
-				};
+
+					if (error) {
+						this.setError(error);
+					} else {
+						this.disableButtons(false);
+						this.setOk(translate('popupMembershipStatusNameAvailable'));
+
+						if (callBack) {
+							callBack();
+						};
+					};
+				});
 			});
-		});
+		} else {
+			// go ahead without checking the name
+			// it was set before
+			this.disableButtons(false);
+
+			if (callBack) {
+				callBack();
+			};
+		}
 	};
 
 	checkName (name: string, callBack: () => void) {

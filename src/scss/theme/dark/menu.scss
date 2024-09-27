@@ -4,7 +4,7 @@
 
     /* Common */
 
-    .menu { background: var(--color-bg-secondary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+    .menu { background: var(--color-bg-primary); box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px var(--color-shape-primary) inset; }
 
     .menu {
         .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/text/paragraph0.svg'); }
@@ -30,6 +30,8 @@
             .inner.bgColor-default { background: transparent; }
         }
 
+		.icon.bin-black { background-image: url('#{$themePath}/icon/widget/button/bin.svg'); }
+
         .arrowDirection { background-image: url('#{$themePath}/arrow/menuDirection.svg'); }
     }
 
@@ -45,7 +47,8 @@
 
         .item {
             .icon.arrow { background-image: url('#{$themePath}/arrow/menu.svg'); }
-			.icon.chk { background-image: url('#{$themePath}/icon/menu/checkbox.svg'); }
+			.icon.chk { background-image: url('#{$themePath}/icon/menu/chk.svg'); }
+			.icon.sortArrow { background-image: url('#{$themePath}/icon/menu/sortArrow.svg'); }
         }
 
         .loaderWrapper { background: var(--color-bg-secondary); }
@@ -277,6 +280,7 @@
 		.items {
             .sides {
                 .side.right {
+                    .icon.syncing { background-image: url('#{$themePath}/icon/menu/syncStatus/loading.svg'); }
 					.icon.more:hover { background-image: url('#{$themePath}/icon/menu/action/more1.svg'); }
                 }
             }

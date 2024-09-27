@@ -17,9 +17,10 @@
 
 	.editor {
 		.icon.buttonAdd { 
-			width: 20px; height: 20px; position: absolute; z-index: 5; user-select: none; background-image: url('~img/icon/block/add.svg'); 
-			transition: opacity 0.075s ease-in-out, transform 0.075s ease-in-out; display: none;
+			width: 19px; height: 19px; position: absolute; z-index: 5; user-select: none; background-image: url('~img/icon/block/add0.svg'); 
+			transition: opacity 0.075s ease-in-out, transform 0.075s ease-in-out, background-image 0.1s $easeInQuint; display: none;
 		}
+		.icon.buttonAdd:hover { background-image: url('~img/icon/block/add1.svg'); }
 		.icon.buttonAdd.show { display: block; }
 		
 		.blockLast { margin-left: -50px; }
@@ -180,6 +181,29 @@
 	.editorControls { height: 70px; margin-bottom: 8px; }
 }
 
+/* Chat */
+
+.editorWrapper.isChat {
+	.blocks { max-width: 704px; width: calc(100% - 32px); margin: 0px auto; padding: 0px; user-select: none; }
+	.blocks {
+		.block {
+			.wrapMenu { display: none; }
+			.wrapContent { width: 100%; }
+		}
+		.block.blockChat { padding: 0px; margin: 0px; }
+
+		.editorControls { height: 52px; width: 100%; margin-bottom: 8px; }
+
+		.headSimple {
+			.side.right { display: none; }
+		}
+	}
+}
+
+.editorWrapper.isChat.withIcon {
+	.controlButtons { left: 0px; }
+}
+
 /* Set, Collection, Date */
 
 .editorWrapper.isSet,
@@ -211,9 +235,12 @@
 }
 
 .editorWrapper.isSet.withIconAndCover, 
-.editorWrapper.isCollection.withIconAndCover { padding-top: 356px; }
+.editorWrapper.isCollection.withIconAndCover,
+.editorWrapper.isChat.withIconAndCover { padding-top: 356px; }
+
 .editorWrapper.isSet.withIconAndCover, 
-.editorWrapper.isCollection.withIconAndCover {
+.editorWrapper.isCollection.withIconAndCover,
+.editorWrapper.isChat.withIconAndCover {
 	.controlButtons { left: 0px !important; }
 }
 

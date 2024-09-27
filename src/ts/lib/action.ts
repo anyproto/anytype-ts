@@ -35,6 +35,13 @@ class Action {
 			return;
 		};
 
+		const object = S.Detail.get(rootId, rootId);
+
+		if (U.Object.isChatLayout(object.layout)) {
+			C.ChatUnsubscribe(object.chatId);
+			S.Chat.clear(object.id);
+		};
+
 		S.Record.metaClear(rootId, '');
 		S.Record.recordsClear(rootId, '');
 		S.Detail.clear(rootId);
@@ -414,8 +421,6 @@ class Action {
 						S.Auth.accountSet(message.account);
 						S.Common.configSet(message.account.config, false);
 
-						U.Data.onInfo(message.account.info);
-
 						const routeParam = {
 							replace: true,
 							animate: true,
@@ -425,7 +430,7 @@ class Action {
 							},
 						};
 
-						U.Data.onAuth({ routeParam });
+						U.Data.onAuthWithoutSpace(routeParam);
 						U.Data.onAuthOnce(true);
 					});
 				});
@@ -464,8 +469,8 @@ class Action {
 
 	import (type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
 		const fileOptions: any = { 
-			properties: [ 'openFile' ],
-			filters: [ 
+			properties: [ 'openFile', 'multiSelections' ],
+			filters: [
 				{ name: 'Filtered extensions', extensions },
 			],
 		};
@@ -588,12 +593,12 @@ class Action {
 
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
 		const deleted = U.Space.getSpaceviewBySpaceId(id);
+		const list = U.Space.getList().filter(it => it.targetSpaceId != id);
 
 		if (!deleted) {
 			return;
 		};
 
-		const { accountSpaceId } = S.Auth;
 		const { space } = S.Common;
 		const isOwner = U.Space.isMyOwner(id);
 		const name = U.Common.shorten(deleted.name, 32);
@@ -627,7 +632,12 @@ class Action {
 					};
 
 					if (space == id) {
-						U.Router.switchSpace(accountSpaceId, '', false, cb);
+						if (list.length) {
+							U.Router.switchSpace(list[0].id, '', false, cb);
+						} else {
+							cb();
+							U.Router.go('/main/void', { replace: true });
+						};
 					} else {
 						cb();
 					};
@@ -653,13 +663,25 @@ class Action {
 	};
 
 	setInterfaceLang (id: string) {
+		const { config } = S.Common;
+		const { languages } = config;
+
 		Renderer.send('setInterfaceLang', id);
+
+		if (!Storage.get('setSpellingLang') && !languages.length) {
+			const check = J.Lang.interfaceToSpellingLangMap[id];
+			if (check) {
+				this.setSpellingLang([ check ]);
+				Storage.set('setSpellingLang', true);
+			};
+		};
+
 		analytics.event('SwitchInterfaceLanguage', { type: id });
 	};
 
-	setSpellingLang (id: string) {
-		Renderer.send('setSpellingLang', id);
-		analytics.event('AddSpellcheckLanguage', { type: id });
+	setSpellingLang (langs: string[]) {
+		Renderer.send('setSpellingLang', langs);
+		analytics.event('AddSpellcheckLanguage');
 	};
 
 	importUsecase (spaceId: string, id: I.Usecase, callBack?: () => void) {
@@ -749,28 +771,6 @@ class Action {
 		});
 
 		analytics.event('ScreenRevokeShareLink');
-	};
-
-	welcome () {
-		S.Popup.open('confirm', {
-			className: 'welcome',
-			preventCloseByClick: true,
-			preventCloseByEscape: true,
-			data: {
-				icon: 'welcome',
-				title: translate('popupConfirmWelcomeTitle'),
-				text: translate('popupConfirmWelcomeText'),
-				textConfirm: translate('popupConfirmWelcomeButton'),
-				canCancel: false,
-				onConfirm: () => {
-					S.Popup.replace('confirm', 'usecase', {
-						onClose: () => {
-							Onboarding.start('dashboard', false, false);
-						}
-					});
-				},
-			},
-		});
 	};
 
 	addToCollection (targetId: string, objectIds: string[]) {

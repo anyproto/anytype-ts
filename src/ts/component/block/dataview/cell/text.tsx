@@ -170,8 +170,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					value = Number(value) || 0;
 
 					const day = showRelativeDates ? U.Date.dayString(value) : null;
-					const date = day ? day : U.Date.date(U.Date.dateFormat(viewRelation.dateFormat), value);
-					const time = U.Date.date(U.Date.timeFormat(viewRelation.timeFormat), value);
+					const date = day ? day : U.Date.dateWithFormat(viewRelation.dateFormat, value);
+					const time = U.Date.timeWithFormat(viewRelation.timeFormat, value);
 					
 					value = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 				} else {
@@ -355,7 +355,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onKeyUp (e: any, value: string) {
-		const { relation } = this.props;
+		const { relation, groupId, onRecordAdd, recordIdx } = this.props;
 
 		if (relation.format == I.RelationType.LongText) {
 			return;
@@ -373,25 +373,23 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		let ret = false;
 
-		keyboard.shortcut('enter, escape', e, () => {
+		keyboard.shortcut('escape, enter, enter+shift', e, (pressed) => {
 			e.preventDefault();
+			e.persist();
 
 			this.save(value, () => {
 				S.Menu.closeAll(J.Menu.cell);
 
 				this.range = null;
 				this.setEditing(false);
+
+				if (pressed == 'enter+shift') {
+					onRecordAdd(e, 0, groupId, {}, recordIdx + 1);
+				};
 			});
 
 			ret = true;
 		});
-
-		/*
-		if (!ret) {
-			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => this.save(value), J.Constant.delay.keyboard);
-		};
-		*/
 	};
 
 	onKeyUpDate (e: any, value: any) {
