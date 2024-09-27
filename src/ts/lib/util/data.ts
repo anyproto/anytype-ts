@@ -310,20 +310,38 @@ class UtilData {
 			},
 		];
 
-		if (account) {
+		this.createSubscriptions(list, () => {
+			this.createMyParticipantSubscriptions(callBack);
+		});
+	};
+
+	createMyParticipantSubscriptions (callBack?: () => void) {
+		const { account } = S.Auth;
+
+		if (!account) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
+		const spaces = U.Space.getList();
+		const list = [];
+
+		spaces.forEach(space => {
 			list.push({
-				subId: J.Constant.subId.myParticipant,
+				subId: [ J.Constant.subId.myParticipant, space.targetSpaceId ].join('-'),
 				keys: this.participantRelationKeys(),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-					{ relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
+					{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space.targetSpaceId },
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: U.Space.getParticipantId(space.targetSpaceId, account.id) },
 				],
+				noDeps: true,
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
-				noDeps: true,
 			});
-		};
+		});
 
 		this.createSubscriptions(list, callBack);
 	};
