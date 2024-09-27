@@ -368,6 +368,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		}, (message: any) => {
 			this.setState({ isLoading: false });
 
+			/*
 			if (clear) {
 				const records = this.getRecords();
 				const first = records.length ? records[0] : null;
@@ -377,6 +378,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 					this.setActive(first);
 				};
 			};
+			*/
 
 			if (callBack) {
 				callBack(message);
@@ -539,6 +541,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onSwitchType (id: string) {
+		if (this.type == id) {
+			return;
+		};
+
 		const storage = this.storageGet();
 
 		this.type = id as I.ObjectContainerType;
