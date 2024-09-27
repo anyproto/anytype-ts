@@ -14,7 +14,6 @@ type SearchSubscribeParams = Partial<{
 	beforeId: string;
 	offset: number;
 	limit: number;
-	ignoreWorkspace: boolean;
 	ignoreHidden: boolean;
 	ignoreDeleted: boolean;
 	withArchived: boolean;
@@ -372,16 +371,13 @@ class UtilData {
 				subId: J.Constant.subId.type,
 				keys: this.typeRelationKeys(),
 				filters: [
-					{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
 					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				sorts: [
-					{ relationKey: 'spaceId', type: I.SortType.Desc },
 					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
-				ignoreWorkspace: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				onSubscribe: () => {
@@ -389,19 +385,43 @@ class UtilData {
 				}
 			},
 			{
+				spaceId: J.Constant.storeSpaceId,
+				subId: J.Constant.subId.typeStore,
+				keys: this.typeRelationKeys(),
+				filters: [
+					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
+				],
+				sorts: [
+					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				noDeps: true,
+				ignoreDeleted: true,
+				ignoreHidden: false,
+			},
+			{
 				subId: J.Constant.subId.relation,
 				keys: J.Relation.relation,
 				filters: [
-					{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, space ] },
 					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
-				ignoreWorkspace: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
 				onSubscribe: () => {
 					S.Record.getRelations().forEach(it => S.Record.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
+			},
+			{
+				spaceId: J.Constant.storeSpaceId,
+				subId: J.Constant.subId.relationStore,
+				keys: J.Relation.relation,
+				filters: [
+					{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
+				],
+				noDeps: true,
+				ignoreDeleted: true,
+				ignoreHidden: false,
 			},
 			{
 				subId: J.Constant.subId.option,
@@ -761,16 +781,12 @@ class UtilData {
 	};
 
 	searchDefaultFilters (param: any) {
-		const { config, space } = S.Common;
-		const { ignoreWorkspace, ignoreHidden, ignoreDeleted, withArchived } = param;
+		const { config } = S.Common;
+		const { ignoreHidden, ignoreDeleted, withArchived } = param;
 		const filters = param.filters || [];
 		const chatDerivedType = S.Record.getChatDerivedType();
 
 		filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chatDerived });
-
-		if (!ignoreWorkspace) {
-			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
-		};
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
 			filters.push({ relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
@@ -837,7 +853,6 @@ class UtilData {
 			sources: [],
 			offset: 0,
 			limit: 0,
-			ignoreWorkspace: false,
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			withArchived: false,
@@ -847,7 +862,7 @@ class UtilData {
 			collectionId: ''
 		}, param);
 
-		const { spaceId, subId, idField, sorts, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId } = param;
+		const { spaceId, subId, idField, sorts, sources, offset, limit, afterId, beforeId, noDeps, collectionId } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 		const filters = this.searchDefaultFilters(param);
 
@@ -860,7 +875,7 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSearchSubscribe(spaceId, subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId, (message: any) => {
+		C.ObjectSearchSubscribe(spaceId, subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, afterId, beforeId, noDeps, collectionId, (message: any) => {
 			this.onSubscribe(subId, idField, keys, message);
 
 			if (callBack) {
@@ -897,16 +912,14 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSubscribeIds(spaceId, subId, ids, keys, true, noDeps, (message: any) => {
-			if (message.records && message.records.length) {
-				message.records.sort((c1: any, c2: any) => {
-					const i1 = ids.indexOf(c1.id);
-					const i2 = ids.indexOf(c2.id);
-					if (i1 > i2) return 1; 
-					if (i1 < i2) return -1;
-					return 0;
-				});
-			};
+		C.ObjectSubscribeIds(spaceId, subId, ids, keys, noDeps, (message: any) => {
+			(message.records || []).sort((c1: any, c2: any) => {
+				const i1 = ids.indexOf(c1.id);
+				const i2 = ids.indexOf(c2.id);
+				if (i1 > i2) return 1; 
+				if (i1 < i2) return -1;
+				return 0;
+			});
 
 			this.onSubscribe(subId, 'id', keys, message);
 
@@ -928,7 +941,6 @@ class UtilData {
 			keys: J.Relation.default,
 			offset: 0,
 			limit: 0,
-			ignoreWorkspace: false,
 			ignoreHidden: true,
 			ignoreDeleted: true,
 			withArchived: false,
@@ -990,7 +1002,6 @@ class UtilData {
 			{ relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ relationKey: 'layout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts() },
 			{ relationKey: 'id', condition: I.FilterCondition.NotEqual, value: J.Constant.anytypeProfileId },
-			{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] },
 		];
 
 		if (templateType) {

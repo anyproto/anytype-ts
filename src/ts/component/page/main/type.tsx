@@ -282,7 +282,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			],
 			keys: [ 'id' ],
-			ignoreWorkspace: true,
 			ignoreDeleted: true,
 		});
 	};
