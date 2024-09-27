@@ -44,9 +44,9 @@
 		.swiper { width: 100%; }
 		.swiper-slide { width: unset; }
 		.swiper-button-prev,
-		.swiper-button-next { position: absolute; z-index: 2; width: 70px; height: 100%; top: 0px; background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, var(--color-bg-primary) 100%); }
+		.swiper-button-next { position: absolute; z-index: 2; width: 70px; height: 100%; top: 0px; }
 		.swiper-button-prev { left: -8px; background: linear-gradient(-90deg, rgba(255, 255, 255, 0) 0%, var(--color-bg-primary) 100%); }
-		.swiper-button-next { right: -8px; }
+		.swiper-button-next { right: -8px; background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, var(--color-bg-primary) 100%); }
 
 		.swiper-button-prev::before,
 		.swiper-button-next::before,
