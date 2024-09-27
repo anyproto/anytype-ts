@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/browser';
 import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Survey, Onboarding, Preview } from 'Lib';
 
 type SearchSubscribeParams = Partial<{
+	spaceId: string;
 	subId: string;
 	idField: string;
 	filters: I.Filter[];
@@ -163,6 +164,7 @@ class UtilData {
 
 		S.Common.gatewaySet(info.gatewayUrl);
 		S.Common.spaceSet(info.accountSpaceId);
+		S.Common.techSpaceIdSet(info.techSpaceId);
 		S.Common.getRef('vault')?.setActive(info.spaceViewId);
 
 		analytics.profile(info.analyticsId, info.networkId);
@@ -285,17 +287,20 @@ class UtilData {
 	};
 
 	createGlobalSubscriptions (callBack?: () => void) {
+		const { techSpaceId } = S.Common;
+
 		const list: any[] = [
 			{
+				spaceId: techSpaceId,
 				subId: J.Constant.subId.profile,
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
 				],
 				noDeps: true,
-				ignoreWorkspace: true,
 				ignoreHidden: false,
 			},
 			{
+				spaceId: techSpaceId,
 				subId: J.Constant.subId.space,
 				keys: this.spaceRelationKeys(),
 				filters: [
@@ -304,7 +309,6 @@ class UtilData {
 				sorts: [
 					{ relationKey: 'createdDate', type: I.SortType.Desc },
 				],
-				ignoreWorkspace: true,
 				ignoreHidden: false,
 			},
 		];
@@ -329,14 +333,13 @@ class UtilData {
 
 		spaces.forEach(space => {
 			list.push({
+				spaceId: space.targetSpaceId,
 				subId: [ J.Constant.subId.myParticipant, space.targetSpaceId ].join('-'),
 				keys: this.participantRelationKeys(),
 				filters: [
-					{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space.targetSpaceId },
 					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: U.Space.getParticipantId(space.targetSpaceId, account.id) },
 				],
 				noDeps: true,
-				ignoreWorkspace: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
 			});
@@ -814,9 +817,10 @@ class UtilData {
 	};
 
 	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
-		const { config, space } = S.Common;
+		const { space } = S.Common;
 
 		param = Object.assign({
+			spaceId: space,
 			subId: '',
 			idField: 'id',
 			filters: [],
@@ -835,7 +839,7 @@ class UtilData {
 			collectionId: ''
 		}, param);
 
-		const { subId, idField, sorts, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId } = param;
+		const { spaceId, subId, idField, sorts, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 		const filters = this.searchDefaultFilters(param);
 
@@ -848,7 +852,7 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSearchSubscribe(subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId, (message: any) => {
+		C.ObjectSearchSubscribe(spaceId, subId, filters, sorts.map(this.sortMapper), keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId, (message: any) => {
 			this.onSubscribe(subId, idField, keys, message);
 
 			if (callBack) {
@@ -883,13 +887,15 @@ class UtilData {
 		};
 
 		C.ObjectSubscribeIds(subId, ids, keys, true, noDeps, (message: any) => {
-			message.records.sort((c1: any, c2: any) => {
-				const i1 = ids.indexOf(c1.id);
-				const i2 = ids.indexOf(c2.id);
-				if (i1 > i2) return 1; 
-				if (i1 < i2) return -1;
-				return 0;
-			});
+			if (message.records && message.records.length) {
+				message.records.sort((c1: any, c2: any) => {
+					const i1 = ids.indexOf(c1.id);
+					const i2 = ids.indexOf(c2.id);
+					if (i1 > i2) return 1; 
+					if (i1 < i2) return -1;
+					return 0;
+				});
+			};
 
 			this.onSubscribe(subId, 'id', keys, message);
 

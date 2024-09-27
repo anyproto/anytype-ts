@@ -1560,9 +1560,10 @@ export const ObjectSearchWithMeta = (filters: I.Filter[], sorts: I.Sort[], keys:
 	dispatcher.request(ObjectSearchWithMeta.name, request, callBack);
 };
 
-export const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
+export const ObjectSearchSubscribe = (spaceId: string, subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
+	request.setSpaceid(spaceId);
 	request.setSubid(subId);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
