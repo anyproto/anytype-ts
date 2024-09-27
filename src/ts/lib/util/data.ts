@@ -285,11 +285,20 @@ class UtilData {
 	};
 
 	createGlobalSubscriptions (callBack?: () => void) {
+		const { account } = S.Auth;
+
+		if (!account) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.profile,
 				filters: [
-					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: account.info.profileObjectId },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
