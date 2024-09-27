@@ -18,7 +18,6 @@ interface SpaceStorage {
 
 class CommonStore {
 
-	public techSpaceIdValue = '';
 	public dataPathValue = '';
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
@@ -106,7 +105,6 @@ class CommonStore {
 			showObjectValue: observable,
 			spaceId: observable,
 			membershipTiersList: observable,
-			techSpaceIdValue: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -120,7 +118,6 @@ class CommonStore {
 			isOnline: computed,
 			shareTooltip: computed,
 			showVault: computed,
-			techSpaceId: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -141,7 +138,6 @@ class CommonStore {
 			membershipTiersListSet: action,
 			showVaultSet: action,
 			showObjectSet: action,
-			techSpaceIdSet: action,
 		});
 
 		intercept(this.configObj as any, change => U.Common.intercept(this.configObj, change));
@@ -285,10 +281,6 @@ class CommonStore {
 			ret = true;
 		};
 		return ret;
-	};
-
-	get techSpaceId (): string {
-		return this.techSpaceIdValue;
 	};
 
     gatewaySet (v: string) {
@@ -436,10 +428,6 @@ class CommonStore {
 
 	notionTokenSet (v: string) {
 		this.notionToken = v;
-	};
-
-	techSpaceIdSet (v: string) {
-		this.techSpaceIdValue = v;
 	};
 
 	refSet (id: string, ref: any) {

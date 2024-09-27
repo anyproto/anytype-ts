@@ -1595,9 +1595,10 @@ export const ObjectGroupsSubscribe = (spaceId: string, subId: string, relationKe
 	dispatcher.request(ObjectGroupsSubscribe.name, request, callBack);
 };
 
-export const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, noDeps: boolean, callBack?: (message: any) => void) => {
+export const ObjectSubscribeIds = (spaceId: string, subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, noDeps: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SubscribeIds.Request();
 
+	request.setSpaceid(spaceId);
 	request.setSubid(subId);
 	request.setIdsList(ids);
 	request.setKeysList(keys);

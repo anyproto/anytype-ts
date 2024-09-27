@@ -164,7 +164,6 @@ class UtilData {
 
 		S.Common.gatewaySet(info.gatewayUrl);
 		S.Common.spaceSet(info.accountSpaceId);
-		S.Common.techSpaceIdSet(info.techSpaceId);
 		S.Common.getRef('vault')?.setActive(info.spaceViewId);
 
 		analytics.profile(info.analyticsId, info.networkId);
@@ -287,7 +286,16 @@ class UtilData {
 	};
 
 	createGlobalSubscriptions (callBack?: () => void) {
-		const { techSpaceId } = S.Common;
+		const { account } = S.Auth;
+
+		if (!account) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
+		const { techSpaceId } = account.info;
 
 		const list: any[] = [
 			{
@@ -862,7 +870,10 @@ class UtilData {
 	};
 
 	subscribeIds (param: any, callBack?: (message: any) => void) {
+		const { space } = S.Common;
+
 		param = Object.assign({
+			spaceId: space,
 			subId: '',
 			ids: [],
 			keys: J.Relation.default,
@@ -870,7 +881,7 @@ class UtilData {
 			idField: 'id',
 		}, param);
 
-		const { subId, keys, noDeps, idField } = param;
+		const { spaceId, subId, keys, noDeps, idField } = param;
 		const ids = U.Common.arrayUnique(param.ids.filter(it => it));
 
 		if (!subId) {
@@ -886,7 +897,7 @@ class UtilData {
 			keys.push(idField);
 		};
 
-		C.ObjectSubscribeIds(subId, ids, keys, true, noDeps, (message: any) => {
+		C.ObjectSubscribeIds(spaceId, subId, ids, keys, true, noDeps, (message: any) => {
 			if (message.records && message.records.length) {
 				message.records.sort((c1: any, c2: any) => {
 					const i1 = ids.indexOf(c1.id);
