@@ -742,6 +742,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 			const item = items[this.currentIndex];
 
+			if (!item) {
+				return;
+			};
+
 			if (this.currentIndex > this.startIndex) {
 				this.selected.push(item.id);
 			};
@@ -757,6 +761,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 
 			const item = items[this.currentIndex];
+
+			if (!item) {
+				return;
+			};
 
 			if (this.currentIndex < this.startIndex) {
 				this.selected.push(item.id);
