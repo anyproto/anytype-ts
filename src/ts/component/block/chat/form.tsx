@@ -5,6 +5,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate, Storage } from 'Lib';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 
 import Attachment from './attachment';
 import Buttons from './buttons';
@@ -33,6 +35,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	timeoutFilter = 0;
 	editingId: string = '';
 	replyingId: string = '';
+	swiper = null;
 	state = {
 		attachments: [],
 	};
@@ -61,6 +64,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onReply = this.onReply.bind(this);
 		this.onReplyClear = this.onReplyClear.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
+		this.onSwiper = this.onSwiper.bind(this);
 		this.addAttachments = this.addAttachments.bind(this);
 		this.hasSelection = this.hasSelection.bind(this);
 		this.caretMenuParam = this.caretMenuParam.bind(this);
@@ -151,9 +155,19 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 					{attachments.length ? (
 						<div className="attachments">
-							{attachments.map(item => (
-								<Attachment key={item.id} object={item} onRemove={this.onAttachmentRemove} />
-							))}
+							<Swiper
+								slidesPerView={'auto'}
+								spaceBetween={8}
+								onSwiper={this.onSwiper}
+								navigation={true}
+								modules={[ Navigation ]}
+							>
+								{attachments.map(item => (
+									<SwiperSlide key={item.id}>
+										<Attachment object={item} onRemove={this.onAttachmentRemove} />
+									</SwiperSlide>
+								))}
+							</Swiper>
 						</div>
 					) : ''}
 
@@ -750,6 +764,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onAttachmentRemove (id: string) {
 		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
+	};
+
+	onSwiper (swiper) {
+		this.swiper = swiper;
 	};
 
 	updateButtons () {

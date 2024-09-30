@@ -193,6 +193,15 @@
 
 		.form {
 			.icon.send { background: url('#{$themePath}/icon/chat/buttons/send.svg'); }
+
+			.attachments {
+				.swiper-button-prev { background: linear-gradient(-90deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 100%); }
+				.swiper-button-next { background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, var(--color-bg-primary) 100%); }
+				.swiper-button-prev::before,
+				.swiper-button-next::before { box-shadow: none; }
+				.swiper-button-prev::after,
+				.swiper-button-next::after { background-image: url('#{$themePath}/arrow/chatFormAttachment.svg'); }
+			}
 		}
 	}
 }

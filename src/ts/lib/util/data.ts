@@ -295,13 +295,12 @@ class UtilData {
 		};
 
 		const { techSpaceId } = account.info;
-
 		const list: any[] = [
 			{
 				spaceId: techSpaceId,
 				subId: J.Constant.subId.profile,
 				filters: [
-					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: account.info.profileObjectId },
 				],
 				noDeps: true,
 				ignoreHidden: false,
