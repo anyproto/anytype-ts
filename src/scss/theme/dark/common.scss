@@ -304,6 +304,7 @@ html.themeDark {
 
 	/* Navigation */
 
+	.navigationPanel { background-color: rgba(0, 0, 0, 0.6); }
 	.navigationPanel {
 		.iconWrap:not(.disabled):hover, .iconWrap.active { background-color: rgba(255, 255, 255, 0.1); }
 	}
