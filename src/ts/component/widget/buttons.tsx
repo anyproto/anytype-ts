@@ -91,7 +91,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 			};
 
 			case 'chat': {
-				U.Object.openAuto({ id: space.chatId, type: I.ObjectLayout.Chat });
+				U.Object.openAuto({ id: space.chatId, layout: I.ObjectLayout.Chat });
 				break;
 			};
 		};
