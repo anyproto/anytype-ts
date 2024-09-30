@@ -24,7 +24,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 					let cnt = null;
 
 					if (item.id == 'member') {
-						if (space.isShared) {
+						if (space.isShared && (participants.length > 1)) {
 							cnt = <div className="cnt">{participants.length}</div>;
 						} else {
 							button = <div className="btn">{translate('commonShare')}</div>;
@@ -60,7 +60,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 			{ id: 'all', name: translate('commonAllContent') },
 		];
 
-		if (!space.isPersonal) {
+		if (space.isShared) {
 			ret.unshift({ id: 'member', name: translate('commonMembers') });
 		};
 

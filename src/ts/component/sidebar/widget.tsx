@@ -1,8 +1,8 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Widget, DropTarget } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate } from 'Lib';
+import { Button, Widget, DropTarget, Icon, Label } from 'Component';
+import { I, C, M, S, U, J, keyboard, analytics, translate, Storage } from 'Lib';
 
 type State = {
 	isEditing: boolean;
@@ -33,14 +33,17 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		this.onAdd = this.onAdd.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
+		this.onBannerClose = this.onBannerClose.bind(this);
 	};
 
 	render (): React.ReactNode {
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
 		const cn = [ 'list' ];
+		const bodyCn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const withShareBanner = !space.isShared && !Storage.isShareBannerClosed(space.targetSpaceId);
 
 		let content = null;
 
@@ -113,10 +116,26 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				]);
 			};
 
+			if (withShareBanner) {
+				bodyCn.push('withShareBanner');
+			};
+
 			content = (
 				<React.Fragment>
 					{space && !space._empty_ ? (
 						<React.Fragment>
+							{withShareBanner ? (
+								<div
+									ref={ref => this.node = ref}
+									id="shareBanner"
+									className="shareBanner"
+									onClick={this.onBannerClick}
+								>
+									<Icon className="close" onClick={this.onBannerClose} />
+									<Label text={translate('shareBannerLabel')} />
+									<Icon className="smile" />
+								</div>
+							) : ''}
 							<DropTarget 
 								{...this.props} 
 								isTargetTop={true}
@@ -176,7 +195,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				className="customScrollbar"
 			>
 				<div className="head" />
-				<div className="body">
+				<div className={bodyCn.join(' ')}>
 					<div 
 						id="list"
 						className={cn.join(' ')}
@@ -462,6 +481,20 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				keyboard.shortcut('escape', e, () => close(e));
 			});
 		}, S.Menu.getTimeout());
+	};
+
+	onBannerClick () {
+		S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
+	};
+
+	onBannerClose (e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const space = U.Space.getSpaceview();
+
+		Storage.setShareBannerClosed(space.targetSpaceId);
+		this.forceUpdate();
 	};
 
 });

@@ -447,6 +447,22 @@ class Storage {
 		const map = this.get('chat') || {};
 		return map[id] || {};
 	};
+
+	isShareBannerClosed (id: string) {
+		const list = this.get('shareBannerCloseList') || [];
+
+		return list.indexOf(id) > -1;
+	};
+
+	setShareBannerClosed (id: string) {
+		const list = this.get('shareBannerCloseList') || [];
+
+		if (list.indexOf(id) == -1) {
+			list.push(id);
+		};
+
+		this.set('shareBannerCloseList', list);
+	};
 	
 };
 
