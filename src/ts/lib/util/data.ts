@@ -269,9 +269,6 @@ class UtilData {
 	onAuthWithoutSpace (routeParam?: any) {
 		this.createGlobalSubscriptions(() => {
 			const spaces = U.Space.getList();
-
-			console.log(spaces);
-
 			if (spaces.length) {
 				U.Router.switchSpace(spaces[0].targetSpaceId);
 			} else {
