@@ -29,17 +29,9 @@ const Progress = observer(class Progress extends React.Component {
 			return null;
 		};
 
-		let current = 0;
-		let total = 0;
-
-		list.forEach(item => {
-			current += item.current;
-			total += item.total;
-		});
-
-		const percent = total > 0 ? Math.ceil(current / total * 100) : 0;
-
 		const Item = (item: any) => {
+			const percent = item.total > 0 ? Math.ceil(item.current / item.total * 100) : 0;
+
 			return (
 				<div className="item">
 					<div className="nameWrap">
@@ -48,7 +40,7 @@ const Progress = observer(class Progress extends React.Component {
 					</div>
 
 					<div className="bar">
-						<div className="fill" style={{width: (Math.ceil(item.current / item.total * 100)) + '%'}} />
+						<div className="fill" style={{width: `${percent}%` }} />
 					</div>
 				</div>
 			);
@@ -62,7 +54,7 @@ const Progress = observer(class Progress extends React.Component {
 				<div id="inner" className="inner" onMouseDown={this.onDragStart}>
 					<div className="titleWrap">
 						<Label text={translate('commonProgress')} />
-						<Label className="percent" text={`${percent}%`} />
+						<Label className="percent" text={`${S.Progress.getPercent()}%`} />
 					</div>
 					<div className="items">
 						{list.map(item => <Item key={item.id} {...item} />)}

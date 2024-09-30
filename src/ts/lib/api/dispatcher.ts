@@ -1004,7 +1004,7 @@ class Dispatcher {
 				};
 
 				case 'ProcessDone': {
-					S.Progress.delete(mapped.process.id);
+					//S.Progress.delete(mapped.process.id);
 					break;
 				};
 

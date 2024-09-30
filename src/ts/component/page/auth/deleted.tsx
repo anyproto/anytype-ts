@@ -97,7 +97,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 				</Frame>
 
 				<div className="animation small bottom" onClick={this.onLogout}>
-					Log out
+					{translate('popupSettingsLogout')}
 				</div>
 			</div>
 		);

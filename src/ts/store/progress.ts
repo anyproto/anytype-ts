@@ -41,6 +41,25 @@ class ProgressStore {
 		return this.listValue.find(it => it.id == id);
 	};
 
+	getField (field: string): number {
+		return this.list.reduce((acc, it) => acc + it[field], 0);
+	};
+
+	getCurrent (): number {
+		return this.getField('current');
+	};
+
+	getTotal (): number {
+		return this.getField('total');
+	};
+
+	getPercent (): number {
+		const current = this.getCurrent();
+		const total = this.getTotal();
+
+		return total > 0 ? Math.ceil(current / total * 100) : 0;
+	};
+
 };
 
 export const Progress: ProgressStore = new ProgressStore();
