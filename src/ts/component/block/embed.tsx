@@ -29,6 +29,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	node = null;
 	refEditable = null;
 	refType = null;
+	range: I.TextRange = null;
 	state = {
 		isShowing: false,
 		isEditing: false,
@@ -290,6 +291,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		this.setState({ isEditing }, () => {
 			if (isEditing) {
 				const length = this.text.length;
+
 				this.setRange({ from: length, to: length });
 			} else {
 				$(window).off(`mouseup.${block.id} mousedown.${block.id}`);
@@ -308,8 +310,11 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	onFocusBlock () {
-		focus.set(this.props.block.id, { from: 0, to: 0 });
-		this.setRange({ from: 0, to: 0 });
+		const { block } = this.props;
+		const range = this.range || { from: 0, to: 0 };
+
+		focus.set(block.id, range);
+		this.setRange(range);
 	};
 
 	onKeyDownBlock (e: any) {
@@ -805,6 +810,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 	};
 
 	setRange (range: I.TextRange) {
+		this.range = range;
 		this.refEditable.setRange(range);
 	};
 
@@ -816,6 +822,7 @@ const BlockEmbed = observer(class BlockEmbed extends React.Component<I.BlockComp
 		const { block } = this.props;
 
 		keyboard.disableSelection(true);
+		this.range = this.getRange();
 
 		const win = $(window);
 		win.off(`mouseup.${block.id}`).on(`mouseup.${block.id}`, () => {	

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, IconObject, Switch, Select } from 'Component';
+import { Icon, IconObject, Switch, Select, ObjectName } from 'Component';
 import { I, U } from 'Lib';
 
 class MenuItemVertical extends React.Component<I.MenuItem> {
@@ -19,6 +19,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		let hasClick = true;
 		let iconMainElement = null;
 		let iconSideElement = null;
+		let nameElement = <div className="name">{name}</div>;
 
 		if (className) {
 			cn.push(className);
@@ -58,6 +59,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 
 		if (object) {
 			iconMainElement = <IconObject object={object} size={iconSize} />;
+			nameElement = <ObjectName object={object} />;
 
 			if (object.isHidden) {
 				cn.push('isHidden');
@@ -97,7 +99,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 					{iconMainElement}
 					<div className="info">
 						<div className="txt">
-							<div className="name">{name}</div>
+							{nameElement}
 							<div className="descr">{description}</div>
 						</div>
 						{iconSideElement}
@@ -145,7 +147,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 						onMouseDown={hasClick ? undefined : onClick}
 					>
 						{iconMainElement}
-						<div className="name">{name}</div>
+						{nameElement}
 						{iconSideElement}
 					</div>
 					{additional}

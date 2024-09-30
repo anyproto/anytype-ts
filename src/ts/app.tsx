@@ -358,8 +358,7 @@ class App extends React.Component<object, State> {
 							if (spaceId) {
 								U.Router.switchSpace(spaceId, '', false, cb);
 							} else {
-								U.Data.onInfo(account.info);
-								U.Data.onAuth({}, cb);
+								U.Data.onAuthWithoutSpace({ replace: true });
 							};
 
 							U.Data.onAuthOnce(false);

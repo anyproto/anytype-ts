@@ -529,7 +529,7 @@ class Dispatcher {
 					const content: any = {};
 
 					if (text !== null) {
-						content.key = text;
+						content.text = text;
 					};
 
 					S.Block.updateContent(rootId, id, content);
@@ -875,7 +875,7 @@ class Dispatcher {
 					S.Notification.add(item);
 
 					if (isMainWindow && !electron.isFocused()) {
-						U.Common.notification(item.title, item.text);
+						U.Common.notification(item);
 					};
 					break;
 				};
@@ -949,7 +949,7 @@ class Dispatcher {
 					S.Chat.add(rootId, idx, message);
 
 					if (isMainWindow && !electron.isFocused() && (message.creator != account.id)) {
-						U.Common.notification(author?.name, message.content.text);
+						U.Common.notification({ title: author?.name, text: message.content.text });
 					};
 
 					$(window).trigger('messageAdd', [ message ]);

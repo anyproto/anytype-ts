@@ -31,10 +31,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	render () {
-		const { error, iconOption, usecase, isLoading } = this.state;
+		const { error, iconOption, isLoading } = this.state;
 		const { onSpaceTypeTooltip } = this.props;
+		const usecase = this.getUsecase(this.state.usecase);
 		const space = {
 			layout: I.ObjectLayout.SpaceView,
+			name: usecase.name,
 			iconOption,
 		};
 		const options = this.getUsecaseOptions();
@@ -160,14 +162,18 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			{ id: I.Usecase.Strategic, icon: 'bulb' },
         ]));
 
-		return ret.map((it: any) => ({
-			...it,
-			name: translate(`usecase${it.id}Title`),
-			description: translate(`usecase${it.id}Label`),
-			withDescription: true,
-			iconSize: 40,
-			object: { iconEmoji: `:${it.icon}:` }
-		}));
+		return ret.map(it => {
+			const name = translate(`usecase${it.id}Title`);
+
+			return {
+				...it,
+				name,
+				description: translate(`usecase${it.id}Label`),
+				withDescription: true,
+				iconSize: 40,
+				object: { name, iconEmoji: `:${it.icon}:` }
+			};
+		});
 	};
 
 	onSelectUsecase (id: any) {

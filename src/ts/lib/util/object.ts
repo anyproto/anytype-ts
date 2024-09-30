@@ -20,7 +20,6 @@ class UtilObject {
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
-			case I.ObjectLayout.Store:		 r = 'store'; break;
 			case I.ObjectLayout.History:	 r = 'history'; break;
 			case I.ObjectLayout.Archive:	 r = 'archive'; break;
 			case I.ObjectLayout.Block:		 r = 'block'; break;
@@ -287,6 +286,10 @@ class UtilObject {
 		return this.getPageLayouts().includes(layout);
 	};
 
+	isInHumanLayouts (layout: I.ObjectLayout): boolean {
+		return this.getHumanLayouts().includes(layout);
+	};
+
 	// --------------------------------------------------------- //
 
 	isSetLayout (layout: I.ObjectLayout): boolean {
@@ -400,6 +403,13 @@ class UtilObject {
 		];
 	};
 
+	getHumanLayouts (): I.ObjectLayout[] {
+		return [ 
+			I.ObjectLayout.Human, 
+			I.ObjectLayout.Participant,
+		];
+	};
+
 	// --------------------------------------------------------- //
 
 	getFileTypeByLayout (layout: I.ObjectLayout): I.FileType {
@@ -421,8 +431,13 @@ class UtilObject {
 		];
 	};
 
-	isAllowedTemplate (typeId): boolean {
+	isAllowedTemplate (typeId: string): boolean {
 		const type = S.Record.getTypeById(typeId);
+
+		if (type && (type.uniqueKey == J.Constant.typeKey.template)) {
+			return false;
+		};
+
 		return type ? !this.getLayoutsWithoutTemplates().includes(type.recommendedLayout) : false;
 	};
 

@@ -30,7 +30,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
-		this.onLibrary = this.onLibrary.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
@@ -40,6 +39,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
 		const cn = [ 'list' ];
+		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
 
 		let content = null;
@@ -108,39 +108,43 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			} else 
 			if (canWrite) {
 				buttons = buttons.concat([
-					{ id: 'widget-list-add', className: 'grey c28', text: translate('widgetAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetMain) },
-					{ id: 'widget-list-edit', className: 'grey c28', text: translate('widgetEdit'), onMouseDown: this.onEdit }
+					{ id: 'widget-list-add', className: 'grey c28', text: translate('commonAdd'), onMouseDown: e => this.onAdd(e, analytics.route.addWidgetMain) },
+					{ id: 'widget-list-edit', className: 'grey c28', text: translate('commonEdit'), onMouseDown: this.onEdit }
 				]);
 			};
 
 			content = (
 				<React.Fragment>
-					<DropTarget 
-						{...this.props} 
-						isTargetTop={true}
-						rootId={S.Block.widgets} 
-						id={first?.id}
-						dropType={I.DropType.Widget} 
-						canDropMiddle={false}
-						className="firstTarget"
-						cacheKey="firstTarget"
-					>
-						<Widget 
-							block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })} 
-							disableContextMenu={true} 
-							onDragStart={this.onDragStart}
-							onDragOver={this.onDragOver}
-							isEditing={isEditing}
-						/>
-					</DropTarget>
+					{space && !space._empty_ ? (
+						<React.Fragment>
+							<DropTarget 
+								{...this.props} 
+								isTargetTop={true}
+								rootId={S.Block.widgets} 
+								id={first?.id}
+								dropType={I.DropType.Widget} 
+								canDropMiddle={false}
+								className="firstTarget"
+								cacheKey="firstTarget"
+							>
+								<Widget 
+									block={new M.Block({ id: 'space', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } })} 
+									disableContextMenu={true} 
+									onDragStart={this.onDragStart}
+									onDragOver={this.onDragOver}
+									isEditing={isEditing}
+								/>
+							</DropTarget>
 
-					<Widget 
-						block={new M.Block({ id: 'buttons', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Buttons } })} 
-						disableContextMenu={true} 
-						onDragStart={this.onDragStart}
-						onDragOver={this.onDragOver}
-						isEditing={isEditing}
-					/>
+							<Widget 
+								block={new M.Block({ id: 'buttons', type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Buttons } })} 
+								disableContextMenu={true} 
+								onDragStart={this.onDragStart}
+								onDragOver={this.onDragOver}
+								isEditing={isEditing}
+							/>
+						</React.Fragment>
+					) : ''}
 
 					{blocks.map((block, i) => (
 						<Widget 
@@ -158,7 +162,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 					<div className="buttons">
 						{buttons.map(button => (
-							<Button key={button.id + (isEditing ? 'edit' : '')} color="" {...button} />
+							<Button key={[ button.id, (isEditing ? 'edit' : '') ].join('-')} color="" {...button} />
 						))}
 					</div>
 				</React.Fragment>
@@ -169,6 +173,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 			<div 
 				id="containerWidget"
 				ref={node => this.node = node}
+				className="customScrollbar"
 			>
 				<div className="head" />
 				<div className="body">
@@ -253,6 +258,11 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 	onDragStart (e: React.DragEvent, blockId: string): void {
 		e.stopPropagation();
 
+		const canWrite = U.Space.canMyParticipantWrite();
+		if (!canWrite) {
+			return;
+		};
+
 		const selection = S.Common.getRef('selectionProvider');
 		const win = $(window);
 		const node = $(this.node);
@@ -328,14 +338,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 		this.isDragging = false;
 		this.clear();
-	};
-
-	onLibrary (e: any) {
-		const { isEditing } = this.state;
-
-		if (!isEditing && !e.button) {
-			U.Object.openEvent(e, { layout: I.ObjectLayout.Store });
-		};
 	};
 
 	onContextMenu () {

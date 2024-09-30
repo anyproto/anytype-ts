@@ -52,16 +52,17 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const subIdTemplate = this.getSubIdTemplate();
 		const templates = S.Record.getRecordIds(subIdTemplate, '');
 		const canWrite = U.Space.canMyParticipantWrite();
+		const isTemplate = object.uniqueKey == J.Constant.typeKey.template;
 
 		const layout: any = U.Menu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
-		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
+		const showTemplates = !U.Object.getLayoutsWithoutTemplates().includes(object.recommendedLayout) && !isTemplate;
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		const recommendedKeys = recommendedRelations.map(id => S.Record.getRelationById(id)).map(it => it && it.relationKey);
 
 		const allowedObject = object.isInstalled && U.Object.isInPageLayouts(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite;
+		const allowedTemplate = object.isInstalled && allowedObject && showTemplates && canWrite && !isTemplate;
 		const allowedLayout = ![ I.ObjectLayout.Bookmark, I.ObjectLayout.Chat ].includes(object.recommendedLayout);
 		
 		const subIdObject = this.getSubIdObject();
@@ -89,7 +90,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
-				mapper: (v: any) => v ? U.Date.date(U.Date.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v) : '',
+				mapper: v => v ? U.Date.dateWithFormat(I.DateFormat.MonthAbbrBeforeDay, v) : '',
 			},
 		];
 
@@ -340,12 +341,17 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		const layout = type.recommendedLayout;
-		const allowedObject = 
+		const options = [];
+		
+		let allowedObject = 
 			U.Object.isInPageLayouts(layout) || 
 			U.Object.isInSetLayouts(layout) || 
 			U.Object.isBookmarkLayout(layout) ||
 			U.Object.isChatLayout(layout);
-		const options = [];
+
+		if (type.uniqueKey == J.Constant.typeKey.template) {
+			allowedObject = false;
+		};
 
 		if (allowedObject) {
 			options.push({ id: 'object', name: translate('commonNewObject') });

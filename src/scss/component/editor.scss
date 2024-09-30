@@ -17,7 +17,7 @@
 
 	.editor {
 		.icon.buttonAdd { 
-			width: 20px; height: 20px; position: absolute; z-index: 5; user-select: none; background-image: url('~img/icon/block/add0.svg'); 
+			width: 19px; height: 19px; position: absolute; z-index: 5; user-select: none; background-image: url('~img/icon/block/add0.svg'); 
 			transition: opacity 0.075s ease-in-out, transform 0.075s ease-in-out, background-image 0.1s $easeInQuint; display: none;
 		}
 		.icon.buttonAdd:hover { background-image: url('~img/icon/block/add1.svg'); }

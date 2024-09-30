@@ -66,7 +66,6 @@ export default {
 		keyboard:		 500,
 		notification:	 200,
 		widget:			 400,
-		login:			 800,
 		sidebar:		 180,
 	},
 
@@ -126,6 +125,7 @@ export default {
 		date:			 'ot-date',
 		profile:		 'ot-profile',
 		chat:			 'ot-chat',
+		chatDerived:	 'ot-chatDerived',
 	},
 
 	templateId: {

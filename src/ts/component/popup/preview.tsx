@@ -290,7 +290,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 					loader.remove();
 
-					this.resizeImage(mw, mh, this.width, this.height);
+					this.resizeImage(mw, mh, obj.width, obj.height);
 					this.galleryMap.set(idx, obj);
 				};
 

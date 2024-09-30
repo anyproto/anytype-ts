@@ -3,8 +3,10 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Editable, Icon, Loader } from 'Component';
+import { Editable, Icon, IconObject, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate, Storage } from 'Lib';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 
 import Attachment from './attachment';
 import Buttons from './buttons';
@@ -15,6 +17,7 @@ interface Props extends I.BlockComponent {
 	scrollToBottom: () => void;
 	scrollToMessage: (id: string) => void;
 	getMessages: () => I.ChatMessage[];
+	getReplyContent: (message: any) => any;
 };
 
 interface State {
@@ -32,6 +35,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	timeoutFilter = 0;
 	editingId: string = '';
 	replyingId: string = '';
+	swiper = null;
 	state = {
 		attachments: [],
 	};
@@ -60,6 +64,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onReply = this.onReply.bind(this);
 		this.onReplyClear = this.onReplyClear.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
+		this.onSwiper = this.onSwiper.bind(this);
 		this.addAttachments = this.addAttachments.bind(this);
 		this.hasSelection = this.hasSelection.bind(this);
 		this.caretMenuParam = this.caretMenuParam.bind(this);
@@ -69,13 +74,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, readonly } = this.props;
+		const { rootId, readonly, getReplyContent } = this.props;
 		const { attachments } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
 
 		let title = '';
 		let text = '';
+		let icon: any = null;
 		let onClear = () => {};
 
 		if (this.editingId) {
@@ -84,12 +90,25 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		} else
 		if (this.replyingId) {
 			const message = S.Chat.getMessage(rootId, this.replyingId);
-			if (message) {
-				const { content, creator } = message;
-				const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 
-				title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
-				text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+			if (message) {
+				const reply = getReplyContent(message);
+
+				title = reply.title;
+				text = reply.text;
+				if (reply.attachment) {
+					const object = reply.attachment;
+
+					let iconSize = null;
+					if (U.Object.getFileLayouts().concat([ I.ObjectLayout.Human, I.ObjectLayout.Participant ]).includes(object.layout)) {
+						iconSize = 32;
+					};
+
+					icon = <IconObject className={iconSize ? 'noBg' : ''} object={object} size={32} iconSize={iconSize} />;
+				};
+				if (reply.isMultiple) {
+					icon = <Icon className="isMultiple" />;
+				};
 				onClear = this.onReplyClear;
 			};
 		};
@@ -106,8 +125,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					{title ? (
 						<div className="head">
 							<div className="side left">
-								<div className="name">{title}</div>
-								<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								{icon}
+								<div className="textWrapper">
+									<div className="name">{title}</div>
+									<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								</div>
 							</div>
 							<div className="side right">
 								<Icon className="clear" onClick={onClear} />
@@ -133,9 +155,19 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 					{attachments.length ? (
 						<div className="attachments">
-							{attachments.map(item => (
-								<Attachment key={item.id} object={item} onRemove={this.onAttachmentRemove} />
-							))}
+							<Swiper
+								slidesPerView={'auto'}
+								spaceBetween={8}
+								onSwiper={this.onSwiper}
+								navigation={true}
+								modules={[ Navigation ]}
+							>
+								{attachments.map(item => (
+									<SwiperSlide key={item.id}>
+										<Attachment object={item} onRemove={this.onAttachmentRemove} />
+									</SwiperSlide>
+								))}
+							</Swiper>
 						</div>
 					) : ''}
 
@@ -670,8 +702,13 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	onReply (message: I.ChatMessage) {
+		const text = this.getTextValue();
+		const length = text.length;
+
 		this.replyingId = message.id;
-		this.onEditClear();
+		this.range = { from: length, to: length };
+		this.refEditable.setRange(this.range);
+		this.forceUpdate();
 	};
 
 	onReplyClear () {
@@ -727,6 +764,10 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	onAttachmentRemove (id: string) {
 		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
+	};
+
+	onSwiper (swiper) {
+		this.swiper = swiper;
 	};
 
 	updateButtons () {
