@@ -141,6 +141,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 				});
 			};
 
+			U.Data.onInfo(account.info);
 			U.Data.onAuthOnce(true);
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});

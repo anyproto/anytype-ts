@@ -254,6 +254,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						},
 					};
 
+					U.Data.onInfo(account.info);
 					U.Data.onAuthWithoutSpace(routeParam);
 					U.Data.onAuthOnce(true);
 				});
