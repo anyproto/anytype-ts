@@ -141,7 +141,8 @@ export default {
 		'sharedSpacesLimit',
 		'targetSpaceId',
 		'creator',
-		'createdDate'
+		'createdDate',
+		'chatId',
 	],
 
 	participant: [
