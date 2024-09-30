@@ -50,7 +50,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const home = U.Space.getDashboard();
 		const type = S.Record.getTypeById(S.Common.type);
 		const profile = U.Space.getProfile();
-		const personalSpace = U.Space.getSpaceviewBySpaceId(accountSpaceId);
 		const usageCn = [ 'item' ];
 
 		const requestCnt = this.getRequestCnt();

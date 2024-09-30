@@ -298,6 +298,7 @@ class UtilData {
 			{
 				spaceId: techSpaceId,
 				subId: J.Constant.subId.profile,
+				keys: this.profileRelationKeys(),
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: account.info.profileObjectId },
 				],
@@ -482,6 +483,10 @@ class UtilData {
 
 		C.ObjectSearchUnsubscribe(ids, callBack);
 		ids.forEach(id => Action.dbClearRoot(id));
+	};
+
+	profileRelationKeys () {
+		return J.Relation.default.concat('sharedSpacesLimit');
 	};
 
 	spaceRelationKeys () {
