@@ -1,6 +1,10 @@
 @import "~scss/_mixins";
 
 .popups {
+	.popup.popupPreview.showDimmer {
+		.dimmer { background: rgba(0,0,0,0.80); }
+	}
+
 	.popup.popupPreview {
 		.innerWrap { border-radius: 6px; }
 		.innerWrap.anim { transition: $transitionAllCommon; }

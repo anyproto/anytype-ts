@@ -12,6 +12,9 @@ const WIDTH_VIDEO = 1040;
 const HEIGHT_VIDEO = 585;
 const HEIGHT_THUMBS = 104;
 
+const HEIGHT_HEADER = 52;
+const HEIGHT_FOOTER = 96;
+
 class PopupPreview extends React.Component<I.Popup> {
 	
 	isLoaded = false;
@@ -20,6 +23,7 @@ class PopupPreview extends React.Component<I.Popup> {
 	swiper = null;
 	thumbs = null;
 	galleryMap: Map<number, any> = new Map();
+	current: any = null;
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -27,6 +31,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		this.onMore = this.onMore.bind(this);
 		this.onSlideChange = this.onSlideChange.bind(this);
 		this.onError = this.onError.bind(this);
+		this.setCurrent = this.setCurrent.bind(this);
 	};
 
 	render () {
@@ -52,10 +57,7 @@ class PopupPreview extends React.Component<I.Popup> {
 				};
 			};
 
-			let head = null;
 			let content = null;
-			let name = null;
-			let menu = null;
 
 			switch (type) {
 				case I.FileType.Image: {
@@ -69,30 +71,9 @@ class PopupPreview extends React.Component<I.Popup> {
 				};
 			};
 
-			if (!isThumb) {
-				if (object) {
-					name = <ObjectName object={object} />;
-					menu = <Icon id="button-header-more" tooltip="Menu" className="more withBackground" onClick={this.onMore} />;
-				};
-
-				head = (
-					<div className="head">
-						<div className="side left">
-						</div>
-						<div className="side center">
-							{name}
-						</div>
-						<div className="side right">
-							{menu}
-						</div>
-					</div>
-				);
-			};
-
 			return (
 				<div onClick={onClick} id={id} className="previewItem">
 					{loader}
-					{head}
 					<div className="mediaContainer">
 						{content}
 					</div>
@@ -102,41 +83,58 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		return (
 			<div id="wrap" className="wrap">
-				<div className="galleryWrapper">
-					<div className="gallery">
-						<Swiper
-							initialSlide={initial}
-							spaceBetween={8}
-							slidesPerView={1}
-							centeredSlides={true}
-							keyboard={{ enabled: true }}
-							mousewheel={true}
-							modules={[ Mousewheel, Keyboard ]}
-							onSwiper={swiper => this.swiper = swiper}
-							onTransitionEnd={(data) => this.onSlideChange(data)}
-						>
-							{gallery.map((item: any, i: number) => (
-								<SwiperSlide key={i}>
-									{getContent(item, i)}
-								</SwiperSlide>
-							))}
-						</Swiper>
-					</div>
+				<div className="galleryHeader">
+					{this.current ? (
+						<div className="head">
+							<div className="side left">
+							</div>
+							<div className="side center">
+								<ObjectName object={this.current} />
+							</div>
+							<div className="side right">
+								<Icon id="button-header-more" tooltip="Menu" className="more withBackground" onClick={this.onMore} />
+							</div>
+						</div>
+					) : ''}
+				</div>
 
-					<div className="thumbnails">
-						<Swiper
-							initialSlide={initial}
-							spaceBetween={8}
-							slidesPerView={10}
-							onSwiper={swiper => this.thumbs = swiper}
-						>
-							{gallery.map((item: any, i: number) => (
-								<SwiperSlide key={i}>
-									{getContent(item, i, true)}
-								</SwiperSlide>
-							))}
-						</Swiper>
-					</div>
+				<div className="gallerySlides">
+					<Swiper
+						initialSlide={initial}
+						spaceBetween={8}
+						slidesPerView={1}
+						centeredSlides={true}
+						keyboard={{ enabled: true }}
+						mousewheel={true}
+						modules={[ Mousewheel, Keyboard ]}
+						onSwiper={swiper => this.swiper = swiper}
+						onTransitionEnd={(data) => this.onSlideChange(data)}
+					>
+						{gallery.map((item: any, i: number) => (
+							<SwiperSlide key={i}>
+								{getContent(item, i)}
+							</SwiperSlide>
+						))}
+					</Swiper>
+				</div>
+
+				<div className="galleryFooter">
+					{gallery.length > 1 ? (
+						<div className="thumbnails">
+							<Swiper
+								initialSlide={initial}
+								spaceBetween={8}
+								slidesPerView={10}
+								onSwiper={swiper => this.thumbs = swiper}
+							>
+								{gallery.map((item: any, i: number) => (
+									<SwiperSlide key={i}>
+										{getContent(item, i, true)}
+									</SwiperSlide>
+								))}
+							</Swiper>
+						</div>
+					) : ''}
 				</div>
 			</div>
 		);
@@ -145,6 +143,7 @@ class PopupPreview extends React.Component<I.Popup> {
 	componentDidMount () {
 		this.onLoad();
 		this.rebind();
+		this.setCurrent();
 	};
 	
 	componentDidUpdate () {
@@ -165,6 +164,24 @@ class PopupPreview extends React.Component<I.Popup> {
 		const win = $(window);
 		win.on('resize.popupPreview', () => this.onLoad());
 		win.on('keydown.menu', e => this.onKeyDown(e));
+	};
+
+	setCurrent (idx?: number) {
+		const { param} = this.props;
+		const { data } = param;
+		const { gallery } = data;
+		const initialIdx = data.initialIdx || 0;
+
+		if (!idx) {
+			idx = initialIdx;
+		};
+
+		const item = gallery[idx];
+
+		if (item.object) {
+			this.current = item.object;
+			this.forceUpdate();
+		};
 	};
 
 	onKeyDown (e: any) {
@@ -196,12 +213,15 @@ class PopupPreview extends React.Component<I.Popup> {
 		};
 
 		if (this.thumbs.activeIndex != data.activeIndex) {
+			console.log('HERE', this.thumbs.activeIndex, data.activeIndex)
 			this.thumbs.slideTo(data.activeIndex);
 		};
+
+		this.setCurrent(data.activeIndex);
 	};
 
 	onLoad () {
-		const { param, getId, position } = this.props;
+		const { param} = this.props;
 		const { data } = param;
 		const { gallery } = data;
 
@@ -234,7 +254,6 @@ class PopupPreview extends React.Component<I.Popup> {
 		const { data } = param;
 		const { gallery } = data;
 		const isGallery = gallery.length > 1;
-
 		const node = $(`#${getId()}-innerWrap`);
 		const wrap = node.find(`#wrap`);
 		const element = node.find(`#itemPreview-${idx}`);
