@@ -13,7 +13,7 @@
 		a { text-decoration: none; color: unset; }
 	}
 
-	.buttons { z-index: 10; position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: row; gap: 0px 16px; align-items: center; }
+	.buttons { z-index: 10; position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: row; gap: 0px 8px; align-items: center; }
 
 	.iconWrap { width: 36px; height: 36px; position: relative; }
 	.iconWrap {
@@ -33,7 +33,7 @@
 		.inner {
 			position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); background-color: var(--color-bg-primary);
 			z-index: 1; border-radius: 50%; @include text-small; font-weight: 500; color: var(--color-text-secondary); display: flex; text-align: center;
-			align-items: center; justify-content: center;;
+			align-items: center; justify-content: center;
 		}
 	}
 }
