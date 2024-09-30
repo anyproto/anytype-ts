@@ -66,7 +66,9 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 			ret.unshift({ id: 'member', name: translate('commonMembers') });
 		};
 
-		ret.push({ id: 'chat', name: translate('commonMainChat') });
+		if (space.chatId) {
+			ret.push({ id: 'chat', name: translate('commonMainChat') });
+		};
 
 		return ret;
 	};
