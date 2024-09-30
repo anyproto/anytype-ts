@@ -270,6 +270,8 @@ class UtilData {
 		this.createGlobalSubscriptions(() => {
 			const spaces = U.Space.getList();
 
+			console.log(spaces);
+
 			if (spaces.length) {
 				U.Router.switchSpace(spaces[0].targetSpaceId);
 			} else {
@@ -335,6 +337,13 @@ class UtilData {
 
 		const spaces = U.Space.getList();
 		const list = [];
+
+		if (!spaces.length) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
 
 		spaces.forEach(space => {
 			list.push({
