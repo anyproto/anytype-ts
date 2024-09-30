@@ -481,11 +481,12 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	spaceSvg (option: number): string {
 		const { bg, list } = J.Theme.iconSpace;
 		const { size } = this.props;
+		const bgColor = bg[list[option - 1]];
 
 		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="${this.fontWeight(size)}" font-size="${this.fontSize(size)}px">${this.iconName()}</text>`;
 		const svg = `
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
-				<rect width="${size}" height="${size}" fill="${size}"/>
+				<rect width="${size}" height="${size}" fill="${bgColor}"/>
 				${text}
 			</svg>
 		`;
