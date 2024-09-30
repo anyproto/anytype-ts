@@ -228,7 +228,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	updateSettings () {
 		this.send('updateSettings', S.Common.getGraph(this.props.storageKey));
-		analytics.event('GraphSettings');
 	};
 
 	onDragStart (e: any) {

@@ -414,12 +414,14 @@ class Action {
 					};
 
 					C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
-						if (onError(message.error) || !message.account) {
+						const { account } = message;
+
+						if (onError(message.error) || !account) {
 							return;
 						};
 
-						S.Auth.accountSet(message.account);
-						S.Common.configSet(message.account.config, false);
+						S.Auth.accountSet(account);
+						S.Common.configSet(account.config, false);
 
 						const routeParam = {
 							replace: true,
@@ -430,6 +432,7 @@ class Action {
 							},
 						};
 
+						U.Data.onInfo(account.info);
 						U.Data.onAuthWithoutSpace(routeParam);
 						U.Data.onAuthOnce(true);
 					});
@@ -553,6 +556,9 @@ class Action {
 		blocks = U.Common.arrayUniqueObjects(blocks, 'id');
 		blocks = blocks.map((it: I.Block) => {
 			const element = S.Block.getMapElement(rootId, it.id);
+			if (!element) {
+				return null;
+			};
 
 			if (it.type == I.BlockType.Dataview) {
 				it.content.views = S.Record.getViews(rootId, it.id);
@@ -560,7 +566,7 @@ class Action {
 
 			it.childrenIds = element.childrenIds;
 			return it;
-		});
+		}).filter(it => it);
 
 		if (isCut) {
 			next = S.Block.getNextBlock(rootId, focused, -1, it => it.isFocusable());

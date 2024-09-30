@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, S, J, keyboard, translate } from 'Lib';
+import { I, S, J, keyboard, translate, analytics } from 'Lib';
 import { MenuItemVertical, Drag } from 'Component';
 
 const MenuGraphSettings = observer(class MenuGraphSettings extends React.Component<I.Menu> {
@@ -128,6 +128,8 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		const values = this.getValues();
 		values[id] = !values[id];
 		this.save(values);
+
+		analytics.event('GraphSettings', { id });
 	};
 
 	save (values: I.GraphSettings) {

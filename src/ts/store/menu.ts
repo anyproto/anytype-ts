@@ -114,6 +114,7 @@ class MenuStore {
 
     close (id: string, callBack?: () => void) {
 		const item = this.get(id);
+
 		if (!item) {
 			if (callBack) {
 				callBack();
@@ -137,7 +138,7 @@ class MenuStore {
 
 		const onTimeout = () => {
 			this.menuList = this.menuList.filter(it => it.id != id);
-				
+
 			if (onClose) {
 				onClose();
 			};
