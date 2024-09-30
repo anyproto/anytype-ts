@@ -163,6 +163,7 @@
 	"commonNothingFound": "Nothing found",
 	"commonEntrySpace": "My First Space",
 	"commonSystem": "System",
+	"commonProgress": "Progress",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -315,12 +316,13 @@
 	"viewName4": "Calendar",
 	"viewName5": "Graph",
 
-	"progress0": "Copying files %s\/%s",
-	"progress1": "Import in progress",
-	"progress2": "Export in progress",
-	"progress3": "Download in progress",
-	"progress4": "Recovering vault",
-	"progress5": "Migration in progress",
+
+	"progressDropFiles": "Copying files...",
+	"progressImport": "Import in progress...",
+	"progressExport": "Export in progress...",
+	"progressSaveFile": "Download in progress...",
+	"progressMigration": "Recovering vault...",
+	"progressRecoverAccount": "Migration in progress...",
 	"progressUpdateCheck": "Checking for update...",
 
 	"spellcheckAdd": "Add to dictionary",

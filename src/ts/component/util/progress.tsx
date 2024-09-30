@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { S, U, C, J, Storage, keyboard } from 'Lib';
+import { S, U, C, J, Storage, keyboard, translate } from 'Lib';
 
 const Progress = observer(class Progress extends React.Component {
 	
@@ -22,26 +22,50 @@ const Progress = observer(class Progress extends React.Component {
 	};
 	
 	render () {
-		const { progress } = S.Common;
-		const { status, current, total, isUnlocked, canCancel } = progress || {};
+		const { list } = S.Progress;
+		const cn = [ 'progress' ];
 
-		if (!status) {
+		if (!list.length) {
 			return null;
 		};
-		
-		const text = U.Common.sprintf(status, current, total);
-		const cn = [ 'progress', (isUnlocked ? 'isUnlocked' : '') ];
-		
+
+		let current = 0;
+		let total = 0;
+
+		list.forEach(item => {
+			current += item.current;
+			total += item.total;
+		});
+
+		const percent = total > 0 ? Math.ceil(current / total * 100) : 0;
+
+		const Item = (item: any) => {
+			return (
+				<div className="item">
+					<div className="nameWrap">
+						<Label text={translate(U.Common.toCamelCase(`progress-${item.type}`))} />
+						{item.canCancel ? <Icon className="close" onClick={() => this.onCancel(item.id)} /> : ''}
+					</div>
+
+					<div className="bar">
+						<div className="fill" style={{width: (Math.ceil(item.current / item.total * 100)) + '%'}} />
+					</div>
+				</div>
+			);
+		};
+
 		return (
 			<div 
 				ref={node => this.node = node} 
 				className={cn.join(' ')}
 			>
 				<div id="inner" className="inner" onMouseDown={this.onDragStart}>
-					<Label text={text} />
-					{canCancel ? <Icon className="close" onClick={this.onCancel} /> : ''}
-					<div className="bar">
-						<div className="fill" style={{width: (Math.ceil(current / total * 100)) + '%'}} />
+					<div className="titleWrap">
+						<Label text={translate('commonProgress')} />
+						<Label className="percent" text={`${percent}%`} />
+					</div>
+					<div className="items">
+						{list.map(item => <Item key={item.id} {...item} />)}
 					</div>
 				</div>
 			</div>
@@ -50,39 +74,22 @@ const Progress = observer(class Progress extends React.Component {
 
 	componentDidMount () {
 		this._isMounted = true;
+		this.resize();
 	};
 
 	componentDidUpdate () {
-		const { progress } = S.Common;
-		if (!progress) {
-			return;
-		};
-
-		const { current, total } = progress;
 		const win = $(window);
-		const node = $(this.node);
 
-		node.removeClass('hide');
 		this.resize();
-
 		win.off('resize.progress').on('resize.progress', () => this.resize());
-		
-		if (total && (current >= total)) {
-			node.addClass('hide');
-			win.off('resize.progress');
-
-			window.setTimeout(() => S.Common.progressClear(), 200);
-		};
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		$(window).off('resize.progress');
 	};
 
-	onCancel (e: any) {
-		const { progress } = S.Common;
-		const { id } = progress;
-		
+	onCancel (id: string) {
 		C.ProcessCancel(id);
 	};
 
@@ -107,6 +114,7 @@ const Progress = observer(class Progress extends React.Component {
 		const y = e.pageY - this.dy - win.scrollTop();
 
 		this.setStyle(x, y);
+		Storage.set('progress', { x, y }, true);
 	};
 
 	onDragEnd (e: any) {
@@ -118,6 +126,9 @@ const Progress = observer(class Progress extends React.Component {
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
 		const { ww, wh } = U.Common.getWindowDimensions();
+
+		this.width = Number(this.width) || 0;
+		this.height = Number(this.height) || 0;
 
 		x = Number(x) || 0;
 		x = Math.max(0, x);
@@ -139,6 +150,10 @@ const Progress = observer(class Progress extends React.Component {
 		const coords = Storage.get('progress');
 
 		this.obj = node.find('#inner');
+		if (!this.obj.length) {
+			return;
+		};
+
 		this.height = this.obj.outerHeight();
 		this.width = this.obj.outerWidth();
 
@@ -150,10 +165,7 @@ const Progress = observer(class Progress extends React.Component {
 	setStyle (x: number, y: number) {
 		const coords = this.checkCoords(x, y);
 
-		if ((coords.x !== null) && (coords.y !== null)) {
-			this.obj.css({ margin: 0, left: coords.x, top: coords.y });
-			Storage.set('progress', coords, true);
-		};
+		this.obj.css({ margin: 0, left: coords.x, top: coords.y });
 	};
 	
 });

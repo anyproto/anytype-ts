@@ -19,7 +19,7 @@ interface SpaceStorage {
 class CommonStore {
 
 	public dataPathValue = '';
-    public progressObj: I.Progress = null;
+	
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl = '';
 	public toastObj: I.Toast = null;
@@ -84,7 +84,6 @@ class CommonStore {
 
     constructor () {
         makeObservable(this, {
-            progressObj: observable,
             filterObj: observable,
             gatewayUrl: observable,
             previewObj: observable,
@@ -106,7 +105,6 @@ class CommonStore {
 			spaceId: observable,
 			membershipTiersList: observable,
             config: computed,
-            progress: computed,
             preview: computed,
 			toast: computed,
             filter: computed,
@@ -119,8 +117,6 @@ class CommonStore {
 			shareTooltip: computed,
 			showVault: computed,
             gatewaySet: action,
-            progressSet: action,
-            progressClear: action,
             filterSetFrom: action,
             filterSetText: action,
             filterSet: action,
@@ -151,10 +147,6 @@ class CommonStore {
 		config.flagsMw = config.flagsMw || {};
 
 		return config;
-	};
-
-    get progress (): I.Progress {
-		return this.progressObj;
 	};
 
     get preview (): I.Preview {
@@ -293,14 +285,6 @@ class CommonStore {
 
     imageUrl (id: string, width: number) {
 		return [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${Number(width) || 0}`;
-	};
-
-    progressSet (v: I.Progress) {
-		this.progressObj = v;
-	};
-
-    progressClear () {
-		this.progressObj = null;
 	};
 
     filterSetFrom (from: number) {
