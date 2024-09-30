@@ -334,10 +334,8 @@ const ChatMessage = observer(class ChatMessage extends React.Component<Props> {
 			gallery.push(ref?.getPreviewItem());
 		});
 		gallery = gallery.filter(it => it);
-
-		if (gallery.length > 1) {
-			data.gallery = gallery;
-		};
+		data.gallery = gallery;
+		data.initialIdx = gallery.findIndex(it => it.src == preview.src);
 
 		S.Popup.open('preview', { data });
 	};

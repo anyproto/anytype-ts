@@ -167,6 +167,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: J.Size.image }, (image: string, param: any) => {
 					this.src = image;
+					this.previewItem.src = image;
 					$(this.node).find('#image').attr({ 'src': image });
 				});
 				this.src = './img/space.svg';
@@ -227,7 +228,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		if (onPreview) {
 			onPreview(this.previewItem);
 		} else {
-			S.Popup.open('preview', { data: this.previewItem });
+			S.Popup.open('preview', { data: { gallery: [ this.previewItem ] } });
 		};
 	};
 

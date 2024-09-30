@@ -33,6 +33,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { gallery } = data;
+		const initial = data.initialIdx || 0;
 
 		const getContent = (item: any, idx: number, isThumb?: boolean) => {
 			const { src, type, object } = item;
@@ -99,12 +100,8 @@ class PopupPreview extends React.Component<I.Popup> {
 			);
 		};
 
-		let preview = null;
-
-		if (gallery) {
-			const initial = gallery.findIndex(it => it.src == data.src);
-
-			preview = (
+		return (
+			<div id="wrap" className="wrap">
 				<div className="galleryWrapper">
 					<div className="gallery">
 						<Swiper
@@ -141,14 +138,6 @@ class PopupPreview extends React.Component<I.Popup> {
 						</Swiper>
 					</div>
 				</div>
-			);
-		} else {
-			preview = getContent(data, 0);
-		};
-
-		return (
-			<div id="wrap" className="wrap">
-				{preview}
 			</div>
 		);
 	};
@@ -216,15 +205,9 @@ class PopupPreview extends React.Component<I.Popup> {
 		const { data } = param;
 		const { gallery } = data;
 
-		let array: any[] = [];
-		if (gallery) {
-			array = gallery;
-		} else {
-			array.push({ src: data.src, type: data.type });
-		};
-
-		array.forEach((el, idx) => {
+		gallery.forEach((el, idx) => {
 			const { src, type } = el;
+
 			if (!this.galleryMap.get(idx)) {
 				this.galleryMap.set(idx, { src, type, isLoaded: false });
 			};
@@ -250,7 +233,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		const { param, getId, position } = this.props;
 		const { data } = param;
 		const { gallery } = data;
-		const isGallery = gallery && (gallery.length > 1);
+		const isGallery = gallery.length > 1;
 
 		const node = $(`#${getId()}-innerWrap`);
 		const wrap = node.find(`#wrap`);
@@ -334,7 +317,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		const obj = $(`#${getId()}-innerWrap`);
 		const wrap = obj.find('#wrap');
 
-		if (gallery && (gallery.length > 1)) {
+		if (gallery.length > 1) {
 			return;
 		};
 
