@@ -253,7 +253,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
-			this.focusInit();
+			//this.focusInit();
 
 			U.Common.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 

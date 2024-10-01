@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, J, keyboard, sidebar } from 'Lib';
+import { I, S, U, J, keyboard, sidebar, analytics } from 'Lib';
 
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
@@ -303,6 +303,7 @@ class Preview {
 	 */
 	shareTooltipShow () {
 		S.Common.shareTooltipSet(true);
+		analytics.event('OnboardingTooltip', { id: 'ShareApp' });
 	};
 
 	/**
