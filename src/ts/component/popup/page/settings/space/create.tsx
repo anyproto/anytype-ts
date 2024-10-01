@@ -224,11 +224,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			ids.unshift(message.objectId);
 			Storage.set('spaceOrder', ids, true);
 
-			U.Data.createMyParticipantSubscriptions([ message.objectId ], () => {
-				if (onCreate) {
-					onCreate(message.objectId);
-				};
-			});
+			if (onCreate) {
+				onCreate(message.objectId);
+			};
 
 			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route: analytics.route.navigation });
 			analytics.event('SelectUsecase', { type: usecase });

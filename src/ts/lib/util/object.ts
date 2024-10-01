@@ -292,6 +292,10 @@ class UtilObject {
 
 	// --------------------------------------------------------- //
 
+	isSpaceViewLayout (layout: I.ObjectLayout): boolean {
+		return layout == I.ObjectLayout.SpaceView;
+	};
+
 	isSetLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Set;
 	};
