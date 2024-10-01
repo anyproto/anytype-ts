@@ -597,13 +597,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			this.filter = v;
 			this.loadSearchIds(true);
 
-			analytics.event('SearchInput', { route: analytics.route.allObjects })
+			analytics.event('SearchInput', { route: analytics.route.allObjects });
 		}, J.Constant.delay.keyboard);
 	};
 
 	onFilterClear () {
 		this.searchIds = null;
 		this.load(true);
+
+		analytics.event('SearchInput', { route: analytics.route.allObjects });
 	};
 
 	onBookmarkMenu (details: any, callBack: (id: string) => void) {
