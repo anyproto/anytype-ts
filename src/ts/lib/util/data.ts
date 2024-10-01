@@ -226,7 +226,7 @@ class UtilData {
 
 					const space = U.Space.getSpaceview();
 
-					if (!space.isPersonal) {
+					if (!space.isShared && Storage.get('shareBannerClosed')) {
 						Onboarding.start('space', keyboard.isPopup(), false);
 					};
 
