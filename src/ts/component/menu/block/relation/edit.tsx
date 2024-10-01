@@ -42,7 +42,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		let canDuplicate = true;
 		let canDelete = !noDelete;
 		let opts: any = null;
-		let unlinkText = translate('commonUnlink');
+		let unlinkText = '';
 
 		if (readonly) {	
 			canDuplicate = canDelete = false;
@@ -173,8 +173,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<div className="section">
 						<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={this.onOpen} onMouseEnter={this.menuClose} />
 						{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
-						{canDelete ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={this.onUnlink} onMouseEnter={this.menuClose} /> : ''}
-						{canDelete ? <MenuItemVertical icon="remove" color="red" name={translate('commonDelete')} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
+						{canDelete && unlinkText ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={this.onUnlink} onMouseEnter={this.menuClose} /> : ''}
+						{canDelete ? <MenuItemVertical icon="remove" name={translate('commonDelete')} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}
 			</form>
@@ -484,14 +484,20 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	update (item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { relationId } = data;
+		const { rootId, blockId, relationId, saveCommand } = data;
 		const details: any[] = [];
+		const object = {};
 
 		for (const k in item) {
+			object[k] = item[k];
 			details.push({ key: k, value: item[k] });
 		};
 
-		C.ObjectListSetDetails([ relationId ], details);
+		C.ObjectListSetDetails([ relationId ], details, () => {
+			if (saveCommand) {
+				saveCommand();
+			};
+		});
 	};
 
 	getRelation () {

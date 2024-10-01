@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Filter, Icon, Button, Label, EmptySearch } from 'Component';
-import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action } from 'Lib';
+import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action, Relation } from 'Lib';
 
 import Item from './object/item';
 
@@ -363,6 +363,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			sorts,
 			limit,
 			keys: J.Relation.default.concat([ 'lastModifiedDate' ]),
+			noDeps: true,
 			ignoreHidden: true,
 			ignoreDeleted: true,
 		}, (message: any) => {
@@ -408,6 +409,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	getItems () {
 		let records = this.getRecords();
+
 		if (this.withSections()) {
 			const option = this.getSortOption();
 

@@ -249,7 +249,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					relation ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
 					canDuplicate ? { id: 'copy', icon: 'copy', name: translate('commonDuplicate') } : null,
 					canDelete ? { id: 'unlink', icon: 'unlink', name: unlinkText } : null,
-					canDelete ? { id: 'remove', icon: 'remove', color: 'red', name: translate('commonDelete') } : null,
+					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonDelete') } : null,
 				]
 			}
 		];
