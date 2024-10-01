@@ -15,7 +15,7 @@ export default {
 	allowedSchemes:		 [ 'https?', 'mailto', 'tel' ],
 
 	count: {
-		icon:			 16,
+		icon:			 10,
 		phrase:			 { letter: 8, word: 12 }
 	},
 	
