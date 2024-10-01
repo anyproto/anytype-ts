@@ -639,7 +639,7 @@ class Action {
 
 					if (space == id) {
 						if (list.length) {
-							U.Router.switchSpace(list[0].id, '', false, cb);
+							U.Router.switchSpace(list[0].targetSpaceId, '', false, cb);
 						} else {
 							cb();
 							U.Router.go('/main/void', { replace: true });
