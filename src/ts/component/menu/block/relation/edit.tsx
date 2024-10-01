@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, C, S, U, J, analytics, Preview, translate, keyboard, Relation } from 'Lib';
+import { I, C, S, U, J, analytics, Preview, translate, keyboard, Relation, Action } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 
 const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<I.Menu> {
@@ -21,8 +21,9 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 		this.onCopy = this.onCopy.bind(this);
-		this.onRemove = this.onRemove.bind(this);
+		this.onUnlink = this.onUnlink.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.onRemove = this.onRemove.bind(this);
 		this.menuClose = this.menuClose.bind(this);
 		this.rebind = this.rebind.bind(this);
 	};
@@ -41,8 +42,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		let canDuplicate = true;
 		let canDelete = !noDelete;
 		let opts: any = null;
-		let deleteText = translate('commonDelete');
-		let deleteIcon = 'remove';
+		let unlinkText = translate('commonUnlink');
 
 		if (readonly) {	
 			canDuplicate = canDelete = false;
@@ -58,13 +58,11 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		switch (ref) {
 			case 'type':
-				deleteText = translate('menuBlockRelationEditUnlinkFromType');
-				deleteIcon = 'unlink';
+				unlinkText = translate('commonUnlinkFromType');
 				break;
 
 			case 'object':
-				deleteText = translate('menuBlockRelationEditUnlinkFromObject');
-				deleteIcon = 'unlink';
+				unlinkText = translate('commonUnlinkFromObject');
 				break;
 		};
 
@@ -175,7 +173,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<div className="section">
 						<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={this.onOpen} onMouseEnter={this.menuClose} />
 						{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
-						{canDelete ? <MenuItemVertical icon={deleteIcon} name={deleteText} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
+						{canDelete ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={this.onUnlink} onMouseEnter={this.menuClose} /> : ''}
+						{canDelete ? <MenuItemVertical icon="remove" color="red" name={translate('commonDelete')} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}
 			</form>
@@ -406,7 +405,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		analytics.event('DuplicateRelation');
 	};
 
-	onRemove (e: any) {
+	onUnlink (e: any) {
 		const { close, param } = this.props;
 		const { data } = param;
 		const { deleteCommand } = data;
@@ -421,6 +420,10 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		if (relation) {
 			analytics.event('DeleteRelation', { relationKey: relation?.relationKey, format: relation?.format });
 		};
+	};
+
+	onRemove (e: any) {
+		Action.uninstall(this.getRelation(), true);
 	};
 
 	onSubmit (e: any) {
