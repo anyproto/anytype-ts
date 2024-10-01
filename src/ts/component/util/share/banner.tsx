@@ -31,10 +31,7 @@ const ShareBanner = observer(class ShareBanner extends React.Component<Props, {}
 			>
 				<Icon className="close" onClick={this.onClose} />
 				<div className="bannerInner">
-					<div className="textWrapper">
-						<Label text={translate('shareBannerLabel')} />
-					</div>
-
+					<Label text={translate('shareBannerLabel')} />
 					<Icon className="smile" />
 				</div>
 			</div>
