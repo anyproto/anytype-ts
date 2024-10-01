@@ -151,7 +151,7 @@ class UtilSpace {
 
 	isShareBanner () {
 		const space = this.getSpaceview();
-		const bannerClosed = Storage.getSpaceKey('shareBannerClosed');
+		const bannerClosed = Storage.get('shareBannerClosed');
 
 		return !space.isShared && !bannerClosed && this.isMyOwner();
 	};

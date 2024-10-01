@@ -46,7 +46,7 @@ const ShareBanner = observer(class ShareBanner extends React.Component<Props, {}
 
 		const { onClose } = this.props;
 
-		Storage.setSpaceKey('shareBannerClosed', true);
+		Storage.set('shareBannerClosed', true);
 		onClose();
 	};
 
