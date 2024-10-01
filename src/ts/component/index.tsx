@@ -89,7 +89,8 @@ import MediaPdf from './util/media/pdf';
 import MediaMermaid from './util/media/mermaid';
 
 import ProgressBar from './util/progressBar';
-import Share from './util/share';
+import ShareTooltip from './util/share/tooltip';
+import ShareBanner from './util/share/banner';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
 export {
@@ -179,6 +180,7 @@ export {
 	MediaMermaid,
 
 	ProgressBar,
-	Share,
+	ShareTooltip,
+	ShareBanner,
 	FooterAuthDisclaimer
 };

@@ -337,6 +337,7 @@
 	"headerGraphTooltipSettings": "Settings",
 
 	"shareTooltipLabel": "<b>Share Anytype</b> with<br/>those you care about",
+	"shareBannerLabel": "<b>Share the space!</b> Invite your<br/>friends and build together.",
 
 	"authInviteTitle": "Welcome to Anytype",
 	"authInviteLabel": "Enter your invite code. If you don't have one, visit <a href=\"https:\/\/anytype.io\">anytype.io<\/a> to register for early access. We are inviting new testers on a rolling basis.",
