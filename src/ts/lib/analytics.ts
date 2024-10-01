@@ -143,7 +143,7 @@ class Analytics {
 			ret.push(config.channel);
 		};
 
-		C.MetricsSetParameters(platform, ret.join('-'));
+		C.InitialSetParameters(platform, ret.join('-'), electron.logPath(), '', true);
 	};
 
 	profile (id: string, networkId: string) {
