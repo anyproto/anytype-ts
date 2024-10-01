@@ -419,14 +419,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onClick (e: any, item: any) {
-		const withCommand = e.metaKey || e.ctrlKey || e.shiftKey;
-
-		if (withCommand) {
+		if (keyboard.withCommand(e)) {
 			this.selected = this.selected || [];
 
 			if (e.metaKey || e.ctrlKey) {
 				this.selected = this.selected.includes(item.id) ? this.selected.filter(it => it != item.id) : this.selected.concat(item.id);
 			} else 
+			if (e.altKey) {
+				this.selected = this.selected.filter(it => it != item.id);
+			} else
 			if (e.shiftKey) {
 				this.selected = this.selected.concat(item.id);
 			};
