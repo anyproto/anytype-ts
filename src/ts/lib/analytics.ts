@@ -125,7 +125,7 @@ class Analytics {
 		const { config } = S.Common;
 		const platform = U.Common.getPlatform();
 		const electron = U.Common.getElectron();
-		const { version, isPackaged } = electron;
+		const { version, isPackaged, userPath } = electron;
 
 		if (!version) {
 			return;
@@ -143,7 +143,7 @@ class Analytics {
 			ret.push(config.channel);
 		};
 
-		C.InitialSetParameters(platform, ret.join('-'), electron.logPath(), '', true);
+		C.InitialSetParameters(platform, ret.join('-'), userPath(), '', true);
 	};
 
 	profile (id: string, networkId: string) {

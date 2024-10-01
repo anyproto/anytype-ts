@@ -362,12 +362,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			filters,
 			sorts,
 			limit,
-			keys: J.Relation.default.concat([ 'lastModifiedDate' ]),
+			keys: J.Relation.default.concat([ 'lastModifiedDate', 'backlinks' ]),
 			ignoreHidden: true,
 			ignoreDeleted: true,
 		}, (message: any) => {
 			this.setState({ isLoading: false });
-
 			if (callBack) {
 				callBack(message);
 			};
