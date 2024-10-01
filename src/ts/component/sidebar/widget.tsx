@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Widget, DropTarget, Icon, Label } from 'Component';
+import { Button, Widget, DropTarget, Icon, Label, ShareBanner } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, Storage } from 'Lib';
 
 type State = {
@@ -33,7 +33,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		this.onAdd = this.onAdd.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
-		this.onBannerClose = this.onBannerClose.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -43,7 +42,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		const bodyCn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const withShareBanner = !space.isShared && !Storage.isShareBannerClosed(space.targetSpaceId);
 
 		let content = null;
 
@@ -116,7 +114,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				]);
 			};
 
-			if (withShareBanner) {
+			if (U.Space.isShareBanner()) {
 				bodyCn.push('withShareBanner');
 			};
 
@@ -124,18 +122,8 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				<React.Fragment>
 					{space && !space._empty_ ? (
 						<React.Fragment>
-							{withShareBanner ? (
-								<div
-									ref={ref => this.node = ref}
-									id="shareBanner"
-									className="shareBanner"
-									onClick={this.onBannerClick}
-								>
-									<Icon className="close" onClick={this.onBannerClose} />
-									<Label text={translate('shareBannerLabel')} />
-									<Icon className="smile" />
-								</div>
-							) : ''}
+							<ShareBanner onClose={() => this.forceUpdate()} />
+
 							<DropTarget 
 								{...this.props} 
 								isTargetTop={true}
@@ -481,20 +469,6 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				keyboard.shortcut('escape', e, () => close(e));
 			});
 		}, S.Menu.getTimeout());
-	};
-
-	onBannerClick () {
-		S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
-	};
-
-	onBannerClose (e) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const space = U.Space.getSpaceview();
-
-		Storage.setShareBannerClosed(space.targetSpaceId);
-		this.forceUpdate();
 	};
 
 });
