@@ -361,6 +361,7 @@ class App extends React.Component<object, State> {
 								U.Data.onAuthWithoutSpace({ replace: true });
 							};
 
+							U.Data.onInfo(account.info);
 							U.Data.onAuthOnce(false);
 						};
 					});

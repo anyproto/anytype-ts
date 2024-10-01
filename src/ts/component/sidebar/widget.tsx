@@ -31,6 +31,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		this.onDrop = this.onDrop.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onAdd = this.onAdd.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.setPreview = this.setPreview.bind(this);
 	};
@@ -182,8 +183,14 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				ref={node => this.node = node}
 				className="customScrollbar"
 			>
-				<div className="head" />
-				<div className={bodyCn.join(' ')}>
+				<div id="head" className="head">
+					<div className="name">{space.name}</div>
+				</div>
+				<div
+					id="body"
+					className={bodyCn.join(' ')}
+					onScroll={this.onScroll}
+				>
 					<div 
 						id="list"
 						className={cn.join(' ')}
@@ -345,6 +352,15 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 
 		this.isDragging = false;
 		this.clear();
+	};
+
+	onScroll () {
+		const node = $(this.node);
+		const head = node.find('#head');
+		const body = node.find('#body');
+		const top = body.scrollTop();
+
+		top > 32 ? head.addClass('show') : head.removeClass('show');
 	};
 
 	onContextMenu () {

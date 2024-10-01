@@ -102,7 +102,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { membership } = S.Auth;
 		const { membershipTiersList } = S.Common;
 		const sections = this.getSections().filter(it => !it.isHidden);
-		const participant = U.Space.getParticipant();
+		const profile = U.Space.getProfile();
+		const participant = U.Space.getParticipant() || profile;
 		const cnr = [ 'side', 'right', U.Common.toCamelCase('tab-' + page) ];
 		const length = sections.length;
 

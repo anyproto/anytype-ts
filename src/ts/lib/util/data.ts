@@ -232,12 +232,6 @@ class UtilData {
 
 					Storage.clearDeletedSpaces();
 
-					if (Storage.get('showShareTooltipOnLogin')) {
-						Storage.set('showShareTooltipOnLogin', false);
-						Preview.shareTooltipShow();
-						analytics.event('OnboardingTooltip', { id: 'ShareApp' });
-					};
-
 					if (callBack) {
 						callBack();
 					};
@@ -269,7 +263,6 @@ class UtilData {
 	onAuthWithoutSpace (routeParam?: any) {
 		this.createGlobalSubscriptions(() => {
 			const spaces = U.Space.getList();
-
 			if (spaces.length) {
 				U.Router.switchSpace(spaces[0].targetSpaceId);
 			} else {
@@ -335,6 +328,13 @@ class UtilData {
 
 		const spaces = U.Space.getList();
 		const list = [];
+
+		if (!spaces.length) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
 
 		spaces.forEach(space => {
 			list.push({
