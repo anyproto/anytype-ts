@@ -7,7 +7,7 @@ interface Props {
 	showOnce?: boolean;
 };
 
-const Share = observer(class Share extends React.Component<Props, {}> {
+const ShareTooltip = observer(class ShareTooltip extends React.Component<Props, {}> {
 
 	node: any = null;
 
@@ -57,4 +57,4 @@ const Share = observer(class Share extends React.Component<Props, {}> {
 
 });
 
-export default Share;
+export default ShareTooltip;

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Button, Widget, DropTarget } from 'Component';
-import { I, C, M, S, U, J, keyboard, analytics, translate } from 'Lib';
+import { Button, Widget, DropTarget, Icon, Label, ShareBanner } from 'Component';
+import { I, C, M, S, U, J, keyboard, analytics, translate, Storage } from 'Lib';
 
 type State = {
 	isEditing: boolean;
@@ -40,6 +40,7 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 		const { isEditing, previewId } = this.state;
 		const { widgets } = S.Block;
 		const cn = [ 'list' ];
+		const bodyCn = [ 'body' ];
 		const space = U.Space.getSpaceview();
 		const canWrite = U.Space.canMyParticipantWrite();
 
@@ -114,10 +115,16 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				]);
 			};
 
+			if (U.Space.isShareBanner()) {
+				bodyCn.push('withShareBanner');
+			};
+
 			content = (
 				<React.Fragment>
 					{space && !space._empty_ ? (
 						<React.Fragment>
+							<ShareBanner onClose={() => this.forceUpdate()} />
+
 							<DropTarget 
 								{...this.props} 
 								isTargetTop={true}
@@ -179,9 +186,9 @@ const SidebarWidget = observer(class SidebarWidget extends React.Component<{}, S
 				<div id="head" className="head">
 					<div className="name">{space.name}</div>
 				</div>
-				<div 
+				<div
 					id="body"
-					className="body"
+					className={bodyCn.join(' ')}
 					onScroll={this.onScroll}
 				>
 					<div 
