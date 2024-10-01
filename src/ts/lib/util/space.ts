@@ -149,6 +149,13 @@ class UtilSpace {
 		return S.Common.isOnline && !U.Data.isLocalNetwork();
 	};
 
+	isShareBanner () {
+		const space = this.getSpaceview();
+		const bannerClosed = Storage.getSpaceKey('shareBannerClosed');
+
+		return !space.isShared && !bannerClosed && this.isMyOwner();
+	};
+
 	getReaderLimit () {
 		const space = this.getSpaceview();
 		if (!space) {
