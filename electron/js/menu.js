@@ -404,11 +404,11 @@ class MenuManager {
 				} 
 			},
 
-			(is.windows || is.linux) ? { 
-				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: !config.hideMenuBar, click: () => { 
-					Api.setMenuBarVisibility(this.win, !config.hideMenuBar);
+			(is.windows || is.linux) ? {
+				label: Util.translate('electronMenuShowMenu'), type: 'checkbox', checked: config.hideMenuBar, click: () => {
+					Api.setMenuBarVisibility(this.win, config.hideMenuBar);
 					this.initTray();
-				} 
+				}
 			} : null,
 
 			Separator,
