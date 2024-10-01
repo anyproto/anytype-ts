@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { S, translate, analytics, Preview, U, Storage } from 'Lib';
+import { S, translate, U, Storage } from 'Lib';
 
 interface Props {
 	onClose: () => void;
@@ -44,10 +44,8 @@ const ShareBanner = observer(class ShareBanner extends React.Component<Props, {}
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { onClose } = this.props;
-
-		Storage.setSpaceKey('shareBannerClosed', true);
-		onClose();
+		Storage.set('shareBannerClosed', true);
+		this.props.onClose();
 	};
 
 });

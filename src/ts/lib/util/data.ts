@@ -312,11 +312,11 @@ class UtilData {
 		];
 
 		this.createSubscriptions(list, () => {
-			this.createMyParticipantSubscriptions(callBack);
+			this.createMyParticipantSubscriptions(null, callBack);
 		});
 	};
 
-	createMyParticipantSubscriptions (callBack?: () => void) {
+	createMyParticipantSubscriptions (ids: string[], callBack?: () => void) {
 		const { account } = S.Auth;
 
 		if (!account) {
@@ -326,8 +326,10 @@ class UtilData {
 			return;
 		};
 
-		const spaces = U.Space.getList();
-		const list = [];
+		let spaces = U.Space.getList();
+		if (ids && ids.length) {
+			spaces = spaces.filter(it => ids.includes(it.targetSpaceId));
+		};
 
 		if (!spaces.length) {
 			if (callBack) {
@@ -335,6 +337,8 @@ class UtilData {
 			};
 			return;
 		};
+
+		const list = [];
 
 		spaces.forEach(space => {
 			list.push({
