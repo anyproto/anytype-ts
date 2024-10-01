@@ -15,7 +15,6 @@ const SPACE_KEYS = [
 	'popupSearch',
 	'focus',
 	'openUrl',
-	'shareBannerClosed',
 ];
 
 class Storage {
