@@ -102,7 +102,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			U.Data.createSession(phrase, '', () => {
 				C.AccountRecover(message => {
 					this.setError(message.error);
-					Storage.set('showShareTooltipOnLogin', true);
 				});
 			});
 		});
@@ -132,11 +131,19 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			S.Common.configSet(message.account.config, false);
 
 			const spaceId = Storage.get('spaceId');
+			const shareTooltip = Storage.get('shareTooltip');
+
+			const cb = () => {
+				if (!shareTooltip) {
+					Preview.shareTooltipShow();
+				};
+			};
+
 			if (spaceId) {
-				U.Router.switchSpace(spaceId);
+				U.Router.switchSpace(spaceId, '', false, cb);
 			} else {
 				Animation.from(() => {
-					U.Data.onAuthWithoutSpace({ replace: true });
+					U.Data.onAuthWithoutSpace({ replace: true, onRouteChange: cb });
 					this.isSelecting = false;
 				});
 			};

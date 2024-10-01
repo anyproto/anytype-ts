@@ -232,12 +232,6 @@ class UtilData {
 
 					Storage.clearDeletedSpaces();
 
-					if (Storage.get('showShareTooltipOnLogin')) {
-						Storage.set('showShareTooltipOnLogin', false);
-						Preview.shareTooltipShow();
-						analytics.event('OnboardingTooltip', { id: 'ShareApp' });
-					};
-
 					if (callBack) {
 						callBack();
 					};
