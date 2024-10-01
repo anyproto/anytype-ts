@@ -84,7 +84,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				return false;
 			};
 			return config.debug.hiddenObject ? true : !it.isHidden;
-		});
+		}).sort(U.Data.sortByName);
 
 		const isFileType = U.Object.isInFileLayouts(object.recommendedLayout);
 		const columns: any[] = [
