@@ -13,10 +13,9 @@
 
 .shareBanner { position: relative; border-radius: 12px; background: var(--color-bg-primary) linear-gradient(-90deg, #C5F3E5 0%, #F1FFC9 27.23%, rgba(255, 255, 255, 0.15) 54%); margin-top: 10px; }
 .shareBanner {
-    .bannerInner { display: flex; align-items: center; justify-content: space-between; padding: 0px 0px 0px 16px; height: 64px; border-radius: 12px; overflow: hidden; }
-    .textWrapper { @include clamp3; }
-    .label { @include text-common; }
-    .icon.smile { width: 82px; height: 64px; background: url('~img/icon/share/banner.svg'); }
+    .bannerInner { position: relative; padding: 11.75px 100px 11.75px 16px; border-radius: 12px; overflow: hidden; }
+    .label { @include text-common; max-width: 185px; }
+    .icon.smile { position: absolute; right: 6px; top: 50%; margin-top: -37px; width: 82px; height: 74px; background: url('~img/icon/share/banner.svg'); }
     .icon.close { background-image: url('~img/icon/widget/remove.svg'); }
 }
 
