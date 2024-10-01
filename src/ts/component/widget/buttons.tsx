@@ -66,7 +66,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 			ret.unshift({ id: 'member', name: translate('commonMembers') });
 		};
 
-		if (space.chatId) {
+		if (space.spaceMainChatId) {
 			ret.push({ id: 'chat', name: translate('commonMainChat') });
 		};
 
@@ -91,7 +91,7 @@ const WidgetButtons = observer(class WidgetSpace extends React.Component<I.Widge
 			};
 
 			case 'chat': {
-				U.Object.openAuto({ id: space.chatId, layout: I.ObjectLayout.Chat });
+				U.Object.openAuto({ id: space.spaceMainChatId, layout: I.ObjectLayout.Chat });
 				break;
 			};
 		};
