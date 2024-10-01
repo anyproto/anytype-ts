@@ -7,6 +7,12 @@
 		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
 		gap: 0px 8px; overflow: hidden;
 	}
+	> .head {
+		.name { @include text-overflow-nw; opacity: 0; transform: translate3d(0px,30px,0px); transition: all 0.2s ease-in-out; }
+	}
+	> .head.show {
+		.name { opacity: 1; transform: translate3d(0px,0px,0px); }
+	}
 
 	> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: auto; overscroll-behavior: none; }
 	> .body {
