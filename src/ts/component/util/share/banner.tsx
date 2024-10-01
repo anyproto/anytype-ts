@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
-import { S, translate, U, Storage } from 'Lib';
+import { S, translate, U, Storage, analytics } from 'Lib';
 
 interface Props {
 	onClose: () => void;
@@ -43,6 +43,8 @@ const ShareBanner = observer(class ShareBanner extends React.Component<Props, {}
 
 	onClick () {
 		S.Popup.open('settings', { data: { page: 'spaceShare', isSpace: true }, className: 'isSpace' });
+
+		analytics.event('SpaceShare', { type: 'OpenSettings' });
 	};
 
 	onClose (e) {
@@ -51,6 +53,8 @@ const ShareBanner = observer(class ShareBanner extends React.Component<Props, {}
 
 		Storage.set('shareBannerClosed', true);
 		this.props.onClose();
+
+		analytics.event('SpaceShare', { type: 'Close' });
 	};
 
 });
