@@ -54,7 +54,7 @@ export default {
 	default: {
 		interfaceLang:	 'en-US',
 		codeLang:		 'plain',
-		typeKey:		 'ot-note',
+		typeKey:		 'ot-page',
 		pinTime:		 600,
 	},
 

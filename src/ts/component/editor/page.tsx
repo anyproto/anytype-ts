@@ -253,7 +253,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.containerScrollTop = Storage.getScroll('editor', rootId, isPopup);
-			//this.focusInit();
+			this.focusInit();
 
 			U.Common.getScrollContainer(isPopup).scrollTop(this.containerScrollTop);
 
@@ -335,11 +335,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	focusInit () {
 		const { rootId, isPopup } = this.props;
 		const isReadonly = this.isReadonly();
-		const storage = Storage.getFocus(rootId);
 
 		if (isReadonly) {
 			return;
 		};
+
+		const title = S.Block.getLeaf(rootId, J.Constant.blockId.title);
+		if (!title.getLength()) {
+			focus.set(title.id, { from: 0, to: 0 });
+			focus.apply();
+		};
+
+		/*
+		const storage = Storage.getFocus(rootId);
 
 		let block = null;
 		let from = 0;
@@ -364,6 +372,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		focus.apply();
 
 		window.setTimeout(() => focus.scroll(isPopup, block.id), 10);
+		*/
 	};
 	
 	unbind () {

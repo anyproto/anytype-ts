@@ -246,10 +246,17 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					const routeParam = {
 						replace: true, 
 						animate: true,
-						onFadeIn: () => {
+						onRouteChange: () => {
+							const { widgets } = S.Block;
+
 							Storage.initPinnedTypes();
 							S.Common.fullscreenObjectSet(true);
+							S.Common.showRelativeDatesSet(true);
 
+							const blocks = S.Block.getChildren(widgets, widgets);
+							blocks.forEach(block => Storage.setToggle('widget', block.id, true));
+						},
+						onFadeIn: () => {
 							Onboarding.start('dashboard', false, false);
 						},
 					};
@@ -260,7 +267,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				});
 			};
 
-			C.WorkspaceSetInfo(S.Common.space, { name: translate('commonEntrySpace') }, () => {
+			const details = { 
+				name: translate('commonEntrySpace'), 
+				spaceDashboardId: I.HomePredefinedId.Last,
+			};
+
+			C.WorkspaceSetInfo(S.Common.space, details, () => {
 				if (name) {
 					this.refNext?.setLoading(true);
 					U.Object.setName(S.Block.profile, name, cb);
