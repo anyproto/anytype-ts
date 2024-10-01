@@ -16,7 +16,7 @@
     .bannerInner { position: relative; padding: 11.75px 100px 11.75px 16px; border-radius: 12px; overflow: hidden; }
     .label { @include text-common; max-width: 185px; }
     .icon.smile { position: absolute; right: 6px; top: 50%; margin-top: -37px; width: 82px; height: 74px; background: url('~img/icon/share/banner.svg'); }
-    .icon.close { background-image: url('~img/icon/widget/remove.svg'); }
+    .icon.close { background-image: url('~img/icon/widget/remove.svg'); -webkit-app-region: no-drag; }
 }
 
 .shareTooltip,
