@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader, Icon, ObjectName } from 'Component';
-import { I, S, J, U, keyboard, sidebar } from 'Lib';
+import { I, S, J, U, keyboard, sidebar, translate } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Keyboard, Mousewheel, Thumbs } from 'swiper/modules';
+import { Keyboard, Mousewheel, Thumbs, Navigation } from 'swiper/modules';
 
 const BORDER = 16;
 const WIDTH_VIDEO = 1040;
@@ -24,6 +24,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		this.onMore = this.onMore.bind(this);
 		this.onError = this.onError.bind(this);
+		this.onExpand = this.onExpand.bind(this);
 		this.setCurrent = this.setCurrent.bind(this);
 	};
 
@@ -37,6 +38,7 @@ class PopupPreview extends React.Component<I.Popup> {
 			const { src, type, object } = item;
 			const id = U.Common.toCamelCase([ 'item', (isThumb ? 'thumb' : 'preview'), idx ].join('-'));
 			const loader = !isThumb ? <Loader className="loader" /> : '';
+			const cn = [ 'previewItem' ];
 
 			let content = null;
 
@@ -47,13 +49,14 @@ class PopupPreview extends React.Component<I.Popup> {
 				};
 
 				case I.FileType.Video: {
-					content = <video src={src} controls={true} autoPlay={false} loop={true} />;
+					cn.push('isVideo');
+					content = <video src={src} controls={!isThumb} autoPlay={false} loop={true} />;
 					break;
 				};
 			};
 
 			return (
-				<div id={id} className="previewItem">
+				<div id={id} className={cn.join(' ')}>
 					{loader}
 					<div className="mediaContainer">
 						{content}
@@ -74,7 +77,8 @@ class PopupPreview extends React.Component<I.Popup> {
 								<ObjectName object={this.current} />
 							</div>
 							<div className="side right">
-								<Icon id="button-header-more" tooltip="Menu" className="more withBackground" onClick={this.onMore} />
+								<Icon className="expand" tooltip={translate('commonOpenObject')} onClick={this.onExpand} />
+								<Icon id="button-header-more" tooltip={translate('commonMenu')} className="more" onClick={this.onMore} />
 							</div>
 						</div>
 					) : ''}
@@ -82,6 +86,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 				<div className="gallerySlides">
 					<Swiper
+						onSwiper={swiper => this.swiper = swiper}
 						initialSlide={initial}
 						spaceBetween={8}
 						slidesPerView={1}
@@ -89,8 +94,8 @@ class PopupPreview extends React.Component<I.Popup> {
 						keyboard={{ enabled: true }}
 						mousewheel={true}
 						thumbs={{ swiper: this.thumbs }}
-						modules={[ Mousewheel, Keyboard, Thumbs ]}
-						onSwiper={swiper => this.swiper = swiper}
+						navigation={true}
+						modules={[ Mousewheel, Keyboard, Thumbs, Navigation ]}
 						onTransitionEnd={(data) => this.setCurrent(data.activeIndex)}
 					>
 						{gallery.map((item: any, i: number) => (
@@ -127,9 +132,14 @@ class PopupPreview extends React.Component<I.Popup> {
 	};
 	
 	componentDidMount () {
-		this.onLoad();
+		this.reload();
 		this.rebind();
 		this.setCurrent();
+
+		// swiper need to catch up with thumbs in case of no objects
+		window.setTimeout(() => {
+			this.forceUpdate();
+		}, 100);
 	};
 
 	componentWillUnmount () {
@@ -144,7 +154,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		this.unbind();
 
 		const win = $(window);
-		win.on('resize.popupPreview', () => this.onLoad());
+		win.on('resize.popupPreview', () => this.reload());
 		win.on('keydown.menu', e => this.onKeyDown(e));
 	};
 
@@ -166,8 +176,20 @@ class PopupPreview extends React.Component<I.Popup> {
 		};
 	};
 
+	onSwiper (swiper, obj) {
+		window.setTimeout(() => {
+			obj = swiper;
+		}, 100);
+	};
+
 	onKeyDown (e: any) {
 		keyboard.shortcut('escape', e, () => this.props.close());
+	};
+
+	onExpand () {
+		const { id, layout } = this.current;
+
+		S.Popup.closeAll(null, () => U.Object.openRoute({ id, layout }));
 	};
 	
 	onMore () {
@@ -189,21 +211,6 @@ class PopupPreview extends React.Component<I.Popup> {
 		});
 	};
 
-	onLoad () {
-		const { param} = this.props;
-		const { data } = param;
-		const { gallery } = data;
-
-		gallery.forEach((el, idx) => {
-			const { src, type } = el;
-
-			if (!this.galleryMap.get(idx)) {
-				this.galleryMap.set(idx, { src, type, isLoaded: false });
-			};
-			this.resize(idx);
-		});
-	};
-
 	onError (idx) {
 		const { getId } = this.props;
 		const node = $(`#${getId()}-innerWrap`);
@@ -216,6 +223,21 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		obj.isLoaded = true;
 		this.galleryMap.set(idx, obj);
+	};
+
+	reload () {
+		const { param} = this.props;
+		const { data } = param;
+		const { gallery } = data;
+
+		gallery.forEach((el, idx) => {
+			const { src, type } = el;
+
+			if (!this.galleryMap.get(idx)) {
+				this.galleryMap.set(idx, { src, type, isLoaded: false });
+			};
+			this.resize(idx);
+		});
 	};
 
 	resize (idx: number) {
@@ -294,7 +316,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		const wrap = obj.find(`#itemPreview-${idx} .mediaContainer`);
 
 		let w = 0, h = 0;
-		if (width > height) {
+		if ((width > height) && (height < maxHeight)) {
 			w = Math.min(maxWidth, width);
 			h = w / (width / height);
 		} else {

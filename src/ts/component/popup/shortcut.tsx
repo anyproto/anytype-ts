@@ -289,7 +289,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 				name: translate('popupShortcutCommand'),
 				children: [
 					{
-						name: translate('popupShortcutCommandMenu'), children: [
+						name: translate('commonMenu'), children: [
 							{ com: '/',					 name: translate('popupShortcutCommandMenu1') },
 							{ com: '↓ & ↑',				 name: translate('popupShortcutCommandMenu2') },
 							{ com: '→ & ←',				 name: translate('popupShortcutCommandMenu3') },
