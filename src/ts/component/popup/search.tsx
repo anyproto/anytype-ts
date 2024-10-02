@@ -514,8 +514,14 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	onFilterClear () {
+		const { param } = this.props;
+		const { data } = param;
+		const { route } = data;
+
 		this.props.storageSet({ filter: '' });
 		this.reload();
+
+		analytics.event('SearchInput', { route });
 	};
 
 	onBacklink (e: React.MouseEvent, item: any) {

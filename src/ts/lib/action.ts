@@ -414,12 +414,14 @@ class Action {
 					};
 
 					C.AccountSelect(accountId, dataPath, mode, path, (message: any) => {
-						if (onError(message.error) || !message.account) {
+						const { account } = message;
+
+						if (onError(message.error) || !account) {
 							return;
 						};
 
-						S.Auth.accountSet(message.account);
-						S.Common.configSet(message.account.config, false);
+						S.Auth.accountSet(account);
+						S.Common.configSet(account.config, false);
 
 						const routeParam = {
 							replace: true,
@@ -430,6 +432,7 @@ class Action {
 							},
 						};
 
+						U.Data.onInfo(account.info);
 						U.Data.onAuthWithoutSpace(routeParam);
 						U.Data.onAuthOnce(true);
 					});
@@ -636,7 +639,7 @@ class Action {
 
 					if (space == id) {
 						if (list.length) {
-							U.Router.switchSpace(list[0].id, '', false, cb);
+							U.Router.switchSpace(list[0].targetSpaceId, '', false, cb);
 						} else {
 							cb();
 							U.Router.go('/main/void', { replace: true });

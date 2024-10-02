@@ -330,6 +330,12 @@ html.themeDark {
         .icon.close { background-color: var(--color-bg-secondary); }
     }
 
+	.shareBanner { background: var(--color-bg-primary); }
+	.shareBanner {
+		.icon.smile { background-image: url('#{$themePath}/icon/share/banner.svg'); }
+		.icon.close { background-color: var(--color-shape-secondary); }
+	}
+
 	@import "./menu";
     @import "./popup";
     @import "./page";

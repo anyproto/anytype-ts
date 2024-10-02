@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Icon, Input, Error } from 'Component';
-import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Storage, Onboarding } from 'Lib';
+import { I, C, S, U, J, translate, Animation, analytics, keyboard, Renderer, Storage, Onboarding } from 'Lib';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 
 enum Stage {
@@ -246,20 +246,34 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					const routeParam = {
 						replace: true, 
 						animate: true,
-						onFadeIn: () => {
+						onRouteChange: () => {
+							const { widgets } = S.Block;
+
 							Storage.initPinnedTypes();
 							S.Common.fullscreenObjectSet(true);
+							S.Common.showRelativeDatesSet(true);
 
+							const blocks = S.Block.getChildren(widgets, widgets);
+							blocks.forEach(block => Storage.setToggle('widget', block.id, true));
+						},
+						onFadeIn: () => {
 							Onboarding.start('dashboard', false, false);
 						},
 					};
 
+					U.Data.onInfo(account.info);
 					U.Data.onAuthWithoutSpace(routeParam);
 					U.Data.onAuthOnce(true);
 				});
 			};
 
-			C.WorkspaceSetInfo(S.Common.space, { name: translate('commonEntrySpace') }, () => {
+			const details = { 
+				name: translate('commonEntrySpace'), 
+				spaceDashboardId: I.HomePredefinedId.Last,
+				iconOption: U.Common.rand(1, J.Constant.count.icon),
+			};
+
+			C.WorkspaceSetInfo(S.Common.space, details, () => {
 				if (name) {
 					this.refNext?.setLoading(true);
 					U.Object.setName(S.Block.profile, name, cb);

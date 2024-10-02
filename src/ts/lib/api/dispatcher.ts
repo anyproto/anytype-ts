@@ -795,6 +795,11 @@ class Dispatcher {
 
 					this.detailsUpdate(details, rootId, id, subIds, true);
 
+					// Added space should be subscribed to my participant
+					if (U.Object.isSpaceViewLayout(details.layout) && details.targetSpaceId) {
+						U.Data.createMyParticipantSubscriptions([ details.targetSpaceId ]);
+					};
+
 					updateMarkup = true;
 					break;
 				};
