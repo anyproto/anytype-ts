@@ -50,12 +50,8 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		];
 
 		const filtersType: I.Filter[] = [
-			{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
 			{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
 			{ relationKey: 'recommendedRelations', condition: I.FilterCondition.In, value: [ rootId ] },
-		];
-		const filtersObject: I.Filter[] = [
-			{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.spaceId },
 		];
 
 		return (
@@ -85,6 +81,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 									<ListObject 
 										ref={ref => this.refListType = ref}
 										{...this.props}
+										spaceId={object.spaceId}
 										subId={subIdType} 
 										rootId={rootId} 
 										columns={[]} 
@@ -101,10 +98,10 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 											ref={ref => this.refListObject = ref}
 											{...this.props} 
 											sources={[ rootId ]} 
+											spaceId={object.spaceId}
 											subId={subIdObject} 
 											rootId={rootId} 
 											columns={columnsObject} 
-											filters={filtersObject} 
 										/>
 									</div>
 								</div>

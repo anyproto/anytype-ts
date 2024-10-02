@@ -222,51 +222,52 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { data } = param;
 		const filter = String(data.filter || '');
 		const filters: any[] = [
-			{ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ J.Constant.storeSpaceId, S.Common.space ] },
 			{ relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 			{ relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: data.skipKeys || [] },
 		];
 		const sorts = [
-			{ relationKey: 'spaceId', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
 		if (clear) {
 			this.setState({ isLoading: true });
+			this.items = [];
 		};
 
-		U.Data.search({
+		const requestParam = {
 			filters,
 			sorts,
 			keys: J.Relation.relation,
 			fullText: filter,
 			offset: this.offset,
 			limit: J.Constant.limit.menuRecords,
-			ignoreWorkspace: true,
-		}, (message: any) => {
-			if (!this._isMounted) {
-				return;
-			};
+		};
 
-			if (message.error.code) {
-				this.setState({ isLoading: false });
-				return;
-			};
+		this.loadRequest(requestParam, () => {
+			this.loadRequest({ ...requestParam, spaceId: J.Constant.storeSpaceId }, (message: any) => {
+				if (!this._isMounted) {
+					return;
+				};
+
+				if (callBack) {
+					callBack(message);
+				};
+
+				if (clear) {
+					this.setState({ isLoading: false });
+				} else {
+					this.forceUpdate();
+				};
+			});
+		});
+	};
+
+	loadRequest (param: any, callBack?: (message: any) => void) {
+		U.Data.search(param, (message: any) => {
+			this.items = this.items.concat(message.records || []);
 
 			if (callBack) {
 				callBack(message);
-			};
-
-			if (clear) {
-				this.items = [];
-			};
-
-			this.items = this.items.concat(message.records || []);
-
-			if (clear) {
-				this.setState({ isLoading: false });
-			} else {
-				this.forceUpdate();
 			};
 		});
 	};
@@ -374,7 +375,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			classNameWrap,
 			data: {
 				rebind: this.rebind,
-				ignoreWorkspace: true,
 			},
 		};
 
@@ -386,7 +386,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				menuParam.className = 'single';
 
 				const filters: I.Filter[] = [
-					{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: J.Constant.storeSpaceId },
 					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
 					{ relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
 					{ relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
@@ -395,6 +394,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				menuParam.data = Object.assign(menuParam.data, {
 					keys: U.Data.typeRelationKeys(),
 					filters,
+					spaceId: J.Constant.storeSpaceId,
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
