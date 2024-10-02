@@ -186,6 +186,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	onClick (e: any, item: any) {
 		const { isEditing } = this.state;
 		if (isEditing) {
+			e.stopPropagation();
+
 			U.Object.openConfig(item);
 		};
 	};

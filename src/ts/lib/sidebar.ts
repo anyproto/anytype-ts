@@ -128,8 +128,9 @@ class Sidebar {
 	};
 
 	setElementsWidth (width: any): void {
-		this.obj.find('> .head').css({ width });
-		this.obj.find('> .body').css({ width });
+		this.obj.find('#head').css({ width });
+		this.obj.find('#body').css({ width });
+		this.obj.find('#shareBanner').css({ width: (width ? width - 24 : '') });
 	};
 
 	setWidth (w: number): void {

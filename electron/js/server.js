@@ -69,7 +69,8 @@ class Server {
 					
 					if (!this.lastErrors) {
 						this.lastErrors = [];
-					} else if (this.lastErrors.length >= maxStdErrChunksBuffer) {
+					} else 
+					if (this.lastErrors.length >= maxStdErrChunksBuffer) {
 						this.lastErrors.shift();
 					};
 					

@@ -11,6 +11,7 @@ const ListMenu = observer(class ListMenu extends React.Component<Props> {
 
 	render () {
 		const { list } = S.Menu;
+
 		return (
 			<div className="menus">
 				{list.map((item: I.Menu, i: number) => (

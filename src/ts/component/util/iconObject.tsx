@@ -463,13 +463,13 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	};
 
 	userSvg (): string {
-		const iconSize = this.iconSize();
+		const { size } = this.props;
 		const color = J.Theme[S.Common.getThemeClass()]?.iconUser;
 		
 		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${color.bg}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${this.fontWeight(iconSize)}" font-size="${this.fontSize(iconSize)}px">${this.iconName()}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${color.text}" font-family="Inter, Helvetica" font-weight="${this.fontWeight(size)}" font-size="${this.fontSize(size)}px">${this.iconName()}</text>`;
 		const svg = `
-			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
 				${circle}
 				${text}
 			</svg>
@@ -480,13 +480,13 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 	spaceSvg (option: number): string {
 		const { bg, list } = J.Theme.iconSpace;
+		const { size } = this.props;
 		const bgColor = bg[list[option - 1]];
-		const iconSize = this.iconSize();
 
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="${this.fontWeight(iconSize)}" font-size="${this.fontSize(iconSize)}px">${this.iconName()}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Inter, Helvetica" font-weight="${this.fontWeight(size)}" font-size="${this.fontSize(size)}px">${this.iconName()}</text>`;
 		const svg = `
-			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">
-				<rect width="${iconSize}" height="${iconSize}" fill="${bgColor}"/>
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">
+				<rect width="${size}" height="${size}" fill="${bgColor}"/>
 				${text}
 			</svg>
 		`;

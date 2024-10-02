@@ -226,17 +226,11 @@ class UtilData {
 
 					const space = U.Space.getSpaceview();
 
-					if (!space.isPersonal) {
+					if (!space.isPersonal && !space.isShared && Storage.get('shareBannerClosed')) {
 						Onboarding.start('space', keyboard.isPopup(), false);
 					};
 
 					Storage.clearDeletedSpaces();
-
-					if (Storage.get('showShareTooltipOnLogin')) {
-						Storage.set('showShareTooltipOnLogin', false);
-						Preview.shareTooltipShow();
-						analytics.event('OnboardingTooltip', { id: 'ShareApp' });
-					};
 
 					if (callBack) {
 						callBack();
@@ -267,11 +261,12 @@ class UtilData {
 	};
 
 	onAuthWithoutSpace (routeParam?: any) {
+		routeParam = routeParam || {};
+
 		this.createGlobalSubscriptions(() => {
 			const spaces = U.Space.getList();
-
 			if (spaces.length) {
-				U.Router.switchSpace(spaces[0].targetSpaceId);
+				U.Router.switchSpace(spaces[0].targetSpaceId, '', false, routeParam.onRouteChange);
 			} else {
 				U.Router.go('/main/void', routeParam);
 			};
@@ -286,11 +281,19 @@ class UtilData {
 
 	createGlobalSubscriptions (callBack?: () => void) {
 		const { account } = S.Auth;
+
+		if (!account) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
 		const list: any[] = [
 			{
 				subId: J.Constant.subId.profile,
 				filters: [
-					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: account.info.profileObjectId },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -310,20 +313,49 @@ class UtilData {
 			},
 		];
 
-		if (account) {
+		this.createSubscriptions(list, () => {
+			this.createMyParticipantSubscriptions(null, callBack);
+		});
+	};
+
+	createMyParticipantSubscriptions (ids: string[], callBack?: () => void) {
+		const { account } = S.Auth;
+
+		if (!account) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
+		let spaces = U.Space.getList();
+		if (ids && ids.length) {
+			spaces = spaces.filter(it => ids.includes(it.targetSpaceId));
+		};
+
+		if (!spaces.length) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
+		const list = [];
+
+		spaces.forEach(space => {
 			list.push({
-				subId: J.Constant.subId.myParticipant,
+				subId: [ J.Constant.subId.myParticipant, space.targetSpaceId ].join('-'),
 				keys: this.participantRelationKeys(),
 				filters: [
-					{ relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-					{ relationKey: 'identity', condition: I.FilterCondition.Equal, value: account.id },
+					{ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space.targetSpaceId },
+					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: U.Space.getParticipantId(space.targetSpaceId, account.id) },
 				],
+				noDeps: true,
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
 				ignoreHidden: false,
-				noDeps: true,
 			});
-		};
+		});
 
 		this.createSubscriptions(list, callBack);
 	};
@@ -331,15 +363,6 @@ class UtilData {
 	createSpaceSubscriptions (callBack?: () => void): void {
 		const { space } = S.Common;
 		const list: any[] = [
-			{
-				subId: J.Constant.subId.profile,
-				filters: [
-					{ relationKey: 'id', condition: I.FilterCondition.Equal, value: S.Block.profile },
-				],
-				noDeps: true,
-				ignoreWorkspace: true,
-				ignoreHidden: false,
-			},
 			{
 				subId: J.Constant.subId.deleted,
 				keys: [],
@@ -513,7 +536,10 @@ class UtilData {
 		let items: any[] = [];
 
 		items = items.concat(S.Record.getTypes().filter(it => {
-			return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
+			return pageLayouts.includes(it.recommendedLayout) && 
+				!skipLayouts.includes(it.recommendedLayout) && 
+				(it.spaceId == space) &&
+				(it.uniqueKey != J.Constant.typeKey.template);
 		}));
 
 		if (limit) {
@@ -747,7 +773,7 @@ class UtilData {
 		filters.push({ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.chatDerived });
 
 		if (!ignoreWorkspace) {
-			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ space ] });
+			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
 		};
 
 		if (ignoreHidden && !config.debug.hiddenObject) {
@@ -889,8 +915,6 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, space } = S.Common;
-
 		param = Object.assign({
 			idField: 'id',
 			fullText: '',

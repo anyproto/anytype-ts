@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Filter, Icon, Button, Label, EmptySearch } from 'Component';
-import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action } from 'Lib';
+import { I, U, J, S, translate, Storage, sidebar, keyboard, analytics, Action, Relation } from 'Lib';
 
 import Item from './object/item';
 
@@ -36,8 +36,9 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	selected: string[] = null;
 	startIndex = -1;
 	currentIndex = -1;
-	pages = 0;
-	page = 0;
+	tabIndex = 0;
+	tabArray = [];
+	x = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -48,6 +49,8 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.onTabOver = this.onTabOver.bind(this);
+		this.onTabLeave = this.onTabLeave.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 
@@ -62,8 +65,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			if (!item) {
 				return null;
 			};
-
-			const allowedDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
 			let content = null;
 			if (item.isSection) {
@@ -84,7 +85,6 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 						item={item}
 						style={param.style}
 						allowSystemLayout={true}
-						isLocked={!allowedDelete}
 						onClick={e => this.onClick(e, item)}
 						onContext={() => this.onContext(item)}
 						onMouseEnter={() => this.onOver(item)}
@@ -123,27 +123,40 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 							</div>
 						</div>
 
-						<div id="tabs" className="tabs">
-							<div className="inner">
-								{typeOptions.map(it => {
-									const cn = [ 'tab' ];
-									if (this.type == it.id) {
-										cn.push('active');
-									};
+						<div 
+							id="tabs" 
+							className="tabs" 
+							onMouseEnter={this.onTabOver} 
+							onMouseLeave={this.onTabLeave}
+						>
+							<div className="scrollWrap">
+								<div className="scroll">
+									{typeOptions.map(it => {
+										const cn = [ 'tab' ];
+										if (this.type == it.id) {
+											cn.push('active');
+										};
 
-									return (
-										<div key={it.id} className={cn.join(' ')} onClick={() => this.onSwitchType(it.id)}>
-											{it.name}
-										</div>
-									);
-								})}
+										return (
+											<div key={it.id} className={cn.join(' ')} onClick={() => this.onSwitchType(it.id)}>
+												{it.name}
+											</div>
+										);
+									})}
+								</div>
 							</div>
 
-							<Icon id="arrowLeft" className="arrow left withBackground" onClick={() => this.onTabArrow(-1)} />
-							<Icon id="arrowRight" className="arrow right withBackground" onClick={() => this.onTabArrow(1)} />
+							<div className="controls">
+								<div className="side left">
+									<Icon className="arrow withBackground" onClick={() => this.onTabArrow(-1)} />
+									<div className="gradient" />
+								</div>
 
-							<div id="gradientLeft" className="gradient left" />
-							<div id="gradientRight" className="gradient right" />
+								<div className="side right">
+									<Icon className="arrow withBackground" onClick={() => this.onTabArrow(1)} />
+									<div className="gradient" />
+								</div>
+							</div>
 						</div>
 
 						<div className="sides sidesFilter">
@@ -166,7 +179,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 					<div className="body">
 						{!items.length && !isLoading ? (
-							<EmptySearch filter={this.filter} />
+							<EmptySearch filter={this.filter} text={translate('sidebarObjectEmpty')} />
 						) : ''}
 
 						{this.cache && items.length && !isLoading ? (
@@ -222,7 +235,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 		this.refFilter.focus();
 		this.rebind();
-		this.checkPage();
+		this.resize();
 		this.load(true);
 
 		analytics.event('ScreenLibrary');
@@ -238,7 +251,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		});
 
 		this.setActive();
-		this.checkPage();
+		this.checkTabButtons();
 	};
 
 	componentWillUnmount(): void {
@@ -350,20 +363,11 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			sorts,
 			limit,
 			keys: J.Relation.default.concat([ 'lastModifiedDate' ]),
+			noDeps: true,
 			ignoreHidden: true,
 			ignoreDeleted: true,
 		}, (message: any) => {
 			this.setState({ isLoading: false });
-
-			if (clear) {
-				const records = this.getRecords();
-				const first = records.length ? records[0] : null;
-
-				if (first) {
-					U.Object.openAuto(first);
-					this.setActive(first);
-				};
-			};
 
 			if (callBack) {
 				callBack(message);
@@ -405,6 +409,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 	getItems () {
 		let records = this.getRecords();
+
 		if (this.withSections()) {
 			const option = this.getSortOption();
 
@@ -414,14 +419,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onClick (e: any, item: any) {
-		const withCommand = e.metaKey || e.ctrlKey || e.shiftKey;
-
-		if (withCommand) {
+		if (keyboard.withCommand(e)) {
 			this.selected = this.selected || [];
 
 			if (e.metaKey || e.ctrlKey) {
 				this.selected = this.selected.includes(item.id) ? this.selected.filter(it => it != item.id) : this.selected.concat(item.id);
 			} else 
+			if (e.altKey) {
+				this.selected = this.selected.filter(it => it != item.id);
+			} else
 			if (e.shiftKey) {
 				this.selected = this.selected.concat(item.id);
 			};
@@ -443,7 +449,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 				objectIds,
 				subId: J.Constant.subId.allObject,
 				route: analytics.route.allObjects,
-				allowedLink: true,
+				allowedLinkTo: true,
 			}
 		});
 	};
@@ -526,6 +532,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 	};
 
 	onSwitchType (id: string) {
+		if (this.type == id) {
+			return;
+		};
+
 		const storage = this.storageGet();
 
 		this.type = id as I.ObjectContainerType;
@@ -545,7 +555,7 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			{ id: I.ObjectContainerType.Bookmark, name: translate('sidebarObjectTypeBookmark') },
 			{ id: I.ObjectContainerType.File, name: translate('sidebarObjectTypeFile') },
 			{ id: I.ObjectContainerType.Type, name: translate('sidebarObjectTypeType') },
-			{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
+			//{ id: I.ObjectContainerType.Relation, name: translate('sidebarObjectTypeRelation') },
 		];
 	};
 
@@ -588,13 +598,15 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			this.filter = v;
 			this.loadSearchIds(true);
 
-			analytics.event('SearchInput', { route: analytics.route.allObjects })
+			analytics.event('SearchInput', { route: analytics.route.allObjects });
 		}, J.Constant.delay.keyboard);
 	};
 
 	onFilterClear () {
 		this.searchIds = null;
 		this.load(true);
+
+		analytics.event('SearchInput', { route: analytics.route.allObjects });
 	};
 
 	onBookmarkMenu (details: any, callBack: (id: string) => void) {
@@ -729,6 +741,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 
 			const item = items[this.currentIndex];
 
+			if (!item) {
+				return;
+			};
+
 			if (this.currentIndex > this.startIndex) {
 				this.selected.push(item.id);
 			};
@@ -744,6 +760,10 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 			};
 
 			const item = items[this.currentIndex];
+
+			if (!item) {
+				return;
+			};
 
 			if (this.currentIndex < this.startIndex) {
 				this.selected.push(item.id);
@@ -898,61 +918,133 @@ const SidebarObject = observer(class SidebarObject extends React.Component<{}, S
 		return [ I.SortId.Created, I.SortId.Updated ].includes(this.sortId);
 	};
 
+	onTabOver () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const controls = tabs.find('.controls');
+		const sideLeft = controls.find('.side.left');
+		const sideRight = controls.find('.side.right');
+		const width = tabs.outerWidth();
+		const cx = tabs.offset().left;
+		const half = width / 2;
+
+		this.onTabLeave();
+
+		const check = () => {
+			const x = keyboard.mouse.page.x - cx;
+
+			if ((x >= 0) && (x <= half)) {
+				sideLeft.addClass('hover');
+			};
+			if ((x > half) && (x <= width)) {
+				sideRight.addClass('hover');
+			};
+		};
+
+		check();
+		$(window).off('mousemove.sidebarObject').on('mousemove.sidebarObject', e => check());
+	};
+
+	onTabLeave () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const controls = tabs.find('.controls');
+		const sideLeft = controls.find('.side.left');
+		const sideRight = controls.find('.side.right');
+
+		sideLeft.removeClass('hover');
+		sideRight.removeClass('hover');
+
+		$(window).off('mousemove.sidebarObject');
+	};
+
 	onTabArrow (dir: number) {
-		const node = $(this.node);
-		const inner = node.find('#tabs > .inner');
-
-		this.page += dir;
-		this.checkPage();
-
-		inner.css({ transform: `translate3d(${-this.page * 100}%, 0px, 0px)` });
+		this.tabIndex += dir;
+		this.checkTabIndex();
+		this.scrollToTab(this.tabIndex);
 	};
 
-	checkPage () {
+	scrollToTab (idx: number) {
 		const node = $(this.node);
-		const gradientLeft = node.find('#gradientLeft');
-		const gradientRight = node.find('#gradientRight');
-		const arrowLeft = node.find('#arrowLeft');
-		const arrowRight = node.find('#arrowRight');
+		const tabs = node.find('#tabs');
+		const scroll = tabs.find('.scroll');
 
-		this.calcPages();
-		this.page = Math.max(0, this.page);
-		this.page = Math.min(this.page, this.pages - 1);
+		this.tabIndex = idx;
+		this.checkTabIndex();
 
-		if (!this.page) {
-			gradientLeft.hide();
-			arrowLeft.hide();
-		} else {
-			gradientLeft.show();
-			arrowLeft.show();
-		};
+		this.x = -this.tabArray[this.tabIndex].x;
+		this.checkTabX();
 
-		if (this.page == this.pages - 1) {
-			gradientRight.hide();
-			arrowRight.hide();
-		} else {
-			gradientRight.show();
-			arrowRight.show();
-		};
+		scroll.css({ transform: `translate3d(${this.x}px, 0px, 0px)` });
+		this.checkTabButtons();
 	};
 
-	calcPages () {
-		const list = this.getTypeOptions();
+	checkTabX () {
 		const node = $(this.node);
-		const width = node.width();
-		const items = node.find('#tabs .tab');
+		const tabs = node.find('#tabs');
+		const scroll = tabs.find('.scroll');
+		const max = this.getMaxWidth();
+		const sw = scroll.width();
 
-		let iw = 0;
+		this.x = Math.min(0, this.x);
+		this.x = Math.max(-(max - sw), this.x);
+	};
+
+	checkTabIndex () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const items = tabs.find('.tab');
+		const length = items.length;
+
+		this.tabIndex = Math.max(0, this.tabIndex);
+		this.tabIndex = Math.min(length - 1, this.tabIndex);
+	};
+
+	checkTabButtons () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const scroll = tabs.find('.scroll');
+		const controls = node.find('.controls');
+		const sideLeft = controls.find('.side.left');
+		const sideRight = controls.find('.side.right');
+		const max = this.getMaxWidth();
+		const sw = scroll.width();
+
+		this.x >= 0 ? sideLeft.addClass('hide') : sideLeft.removeClass('hide');
+		this.x <= -(max - sw) ? sideRight.addClass('hide') : sideRight.removeClass('hide');
+	};
+
+	getMaxWidth () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const items = tabs.find('.tab');
+
+		let max = (items.length - 1) * 12;
 		items.each((i, item) => {
-			iw += $(item).outerWidth(true);
+			max += $(item).outerWidth();
 		});
-		iw += 12 * (list.length + 1);
+		return max;
+	};
 
-		this.pages = Number(Math.ceil(iw / width)) || 1;
+	fillTabArray () {
+		const node = $(this.node);
+		const tabs = node.find('#tabs');
+		const items = tabs.find('.tab');
+		const cx = tabs.offset().left;
+		const length = items.length;
+
+		for (let i = 0; i < length; ++i) {
+			const item = $(items.get(i));
+			const x = Math.floor(item.offset().left - cx - 16);
+			const w = item.outerWidth() + 12;
+
+			this.tabArray.push({ i, x, w });
+		};
 	};
 
 	resize () {
-		this.page = 0;
+		this.tabIndex = 0;
+		this.fillTabArray();
 		this.onTabArrow(0);
 	};
 

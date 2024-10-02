@@ -968,7 +968,10 @@ const Block = observer(class Block extends React.Component<Props> {
 					},
 					noUnlink: true,
 					marks,
-					onChange: marks => this.setMarks(value, marks),
+					onChange: marks => {
+						const parsed = Mark.fromHtml(value, []);
+						this.setMarks(parsed.text, marks);
+					},
 				});
 			});
 		});
@@ -1032,13 +1035,16 @@ const Block = observer(class Block extends React.Component<Props> {
 				object,
 				element,
 				marks,
-				onChange: marks => this.setMarks(value, marks),
 				range: { 
 					from: Number(range[0]) || 0,
 					to: Number(range[1]) || 0, 
 				},
 				noUnlink: readonly,
 				noEdit: readonly,
+				onChange: marks => {
+					const parsed = Mark.fromHtml(value, []);
+					this.setMarks(parsed.text, marks);
+				},
 			});
 		});
 	};

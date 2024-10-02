@@ -23,7 +23,7 @@
 				.btn { background-image: linear-gradient(90deg, #2aa7ee, #27c941); background-clip: text; -webkit-text-fill-color: transparent; font-weight: 500; }
 			}
 
-			.name { display: flex; gap: 0px 8px; }
+			.name { display: flex; gap: 0px 8px; @include text-overflow-nw; }
 
 			.icon { width: 20px; height: 20px; flex-shrink: 0; }
 			.icon.member { background-image: url('~img/icon/widget/button/member.svg'); }

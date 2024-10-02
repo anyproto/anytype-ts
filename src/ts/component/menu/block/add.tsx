@@ -556,10 +556,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							lang: (Storage.get('codeLang') || J.Constant.default.codeLang),
 						};
 					};
-
-					if ([ I.TextStyle.Code, I.TextStyle.Callout ].includes(param.content.style)) {
-						param.bgColor = 'grey';
-					};
 				};
 
 				if (item.type == I.BlockType.File) {

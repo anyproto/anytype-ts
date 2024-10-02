@@ -60,6 +60,8 @@ class UtilRouter {
 			return;
 		};
 
+		param = param || {};
+
 		const { replace, animate, onFadeOut, onFadeIn, onRouteChange, delay } = param;
 		const routeParam = this.getParam(route);
 		const { space } = S.Common;

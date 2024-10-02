@@ -304,6 +304,7 @@ html.themeDark {
 
 	/* Navigation */
 
+	.navigationPanel { background-color: rgba(0, 0, 0, 0.6); }
 	.navigationPanel {
 		.iconWrap:not(.disabled):hover, .iconWrap.active { background-color: rgba(255, 255, 255, 0.1); }
 	}
@@ -328,6 +329,12 @@ html.themeDark {
         .icon.smile { background-image: url('#{$themePath}/icon/share/smile.svg'); }
         .icon.close { background-color: var(--color-bg-secondary); }
     }
+
+	.shareBanner { background: var(--color-bg-primary); }
+	.shareBanner {
+		.icon.smile { background-image: url('#{$themePath}/icon/share/banner.svg'); }
+		.icon.close { background-color: var(--color-shape-secondary); }
+	}
 
 	@import "./menu";
     @import "./popup";
