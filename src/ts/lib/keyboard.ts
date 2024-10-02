@@ -495,22 +495,7 @@ class Keyboard {
 			};
 
 			case 'createSpace': {
-				const items = U.Space.getList();
-
-				if (items.length >= J.Constant.limit.space) {
-					break;
-				};
-
-				S.Popup.open('settings', { 
-					className: 'isSpaceCreate',
-					data: { 
-						page: 'spaceCreate', 
-						isSpace: true,
-						onCreate: (id) => {
-							U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes());
-						},
-					}, 
-				});
+				Action.createSpace();
 				break;
 			};
 

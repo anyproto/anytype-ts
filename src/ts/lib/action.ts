@@ -597,6 +597,32 @@ class Action {
 		analytics.event(isCut ? 'CutBlock' : 'CopyBlock', { count: blocks.length });
 	};
 
+	createSpace () {
+		if (!U.Space.canCreateSpace()) {
+			return;
+		};
+
+		S.Popup.closeAll(null, () => {
+			S.Popup.open('settings', {
+				className: 'isSpaceCreate',
+				data: {
+					page: 'spaceCreate',
+					isSpace: true,
+					onCreate: id => {
+						U.Router.switchSpace(id, '', true, () => {
+							const { widgets } = S.Block;
+
+							Storage.initPinnedTypes();
+
+							const blocks = S.Block.getChildren(widgets, widgets);
+							blocks.forEach(block => Storage.setToggle('widget', block.id, true));
+						});
+					},
+				},
+			});
+		});
+	};
+
 	removeSpace (id: string, route: string, callBack?: (message: any) => void) {
 		const deleted = U.Space.getSpaceviewBySpaceId(id);
 		const list = U.Space.getList().filter(it => it.targetSpaceId != id);

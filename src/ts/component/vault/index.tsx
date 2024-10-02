@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar } from 'Lib';
+import { I, U, S, Key, keyboard, translate, analytics, Storage, Preview, sidebar, Action } from 'Lib';
 
 import VaultItem from './item';
 
@@ -278,14 +278,7 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onAdd () {
-		S.Popup.open('settings', { 
-			className: 'isSpaceCreate',
-			data: { 
-				page: 'spaceCreate', 
-				isSpace: true,
-				onCreate: id => U.Router.switchSpace(id, '', true, () => Storage.initPinnedTypes()),
-			}, 
-		});
+		Action.createSpace();
 	};
 
 	onContextMenu (e: any, item: any) {
