@@ -278,7 +278,7 @@ const Vault = observer(class Vault extends React.Component {
 	};
 
 	onAdd () {
-		Action.createSpace();
+		Action.createSpace(analytics.route.vault);
 	};
 
 	onContextMenu (e: any, item: any) {

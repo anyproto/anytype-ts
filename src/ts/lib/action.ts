@@ -597,7 +597,7 @@ class Action {
 		analytics.event(isCut ? 'CutBlock' : 'CopyBlock', { count: blocks.length });
 	};
 
-	createSpace () {
+	createSpace (route: string) {
 		if (!U.Space.canCreateSpace()) {
 			return;
 		};
@@ -608,6 +608,7 @@ class Action {
 				data: {
 					page: 'spaceCreate',
 					isSpace: true,
+					route,
 					onCreate: id => {
 						U.Router.switchSpace(id, '', true, () => {
 							const { widgets } = S.Block;

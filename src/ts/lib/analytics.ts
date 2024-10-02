@@ -45,6 +45,8 @@ class Analytics {
 		media: 'Media',
 		calendar: 'Calendar',
 		allObjects: 'AllObjects',
+		vault: 'Vault',
+		void: 'Void',
 
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',

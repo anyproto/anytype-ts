@@ -544,7 +544,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onAdd () {
-		Action.createSpace();
+		Action.createSpace(analytics.route.settingsSpaceIndex);
 	};
 
 	checkName (v: string): string {

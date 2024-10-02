@@ -195,7 +195,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { param } = this.props;
 		const { isLoading, usecase, iconOption } = this.state;
 		const { data } = param;
-		const { onCreate } = data;
+		const { onCreate, route } = data;
 
 		if (isLoading) {
 			return;
@@ -234,7 +234,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				onCreate(message.objectId);
 			};
 
-			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route: analytics.route.navigation });
+			analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route });
 			analytics.event('SelectUsecase', { type: usecase });
 		});
 	};
