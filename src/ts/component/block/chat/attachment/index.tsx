@@ -7,12 +7,14 @@ interface Props {
 	object: any;
 	showAsFile?: boolean;
 	onRemove: (id: string) => void;
+	onPreview?: (data: any) => void;
 };
 
 const ChatAttachment = observer(class ChatAttachment extends React.Component<Props> {
 
 	node = null;
 	src = '';
+	previewItem: any = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -20,6 +22,7 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		this.onOpen = this.onOpen.bind(this);
 		this.onPreview = this.onPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
+		this.getPreviewItem = this.getPreviewItem.bind(this);
 	};
 
 	render () {
@@ -159,24 +162,29 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 	renderImage () {
 		const { object } = this.props;
 
+		this.previewItem = { type: I.FileType.Image };
 		if (!this.src) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: J.Size.image }, (image: string, param: any) => {
 					this.src = image;
+					this.previewItem.src = image;
 					$(this.node).find('#image').attr({ 'src': image });
 				});
 				this.src = './img/space.svg';
 			} else {
 				this.src = S.Common.imageUrl(object.id, J.Size.image);
+				this.previewItem.object = object;
 			};
 		};
+
+		this.previewItem.src = this.src;
 
 		return (
 			<img 
 				id="image" 
 				className="image" 
 				src={this.src}
-				onClick={e => this.onPreview(e, this.src, I.FileType.Image)} 
+				onClick={this.onPreview}
 				onDragStart={e => e.preventDefault()} 
 			/>
 		);
@@ -186,10 +194,12 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		const { object } = this.props;
 		const src = S.Common.fileUrl(object.id);
 
+		this.previewItem = { src, type: I.FileType.Video };
+
 		return (
 			<MediaVideo 
 				src={src} 
-				onClick={e => this.onPreview(e, src, I.FileType.Video)} 
+				onClick={this.onPreview}
 				canPlay={false} 
 			/>
 		);
@@ -212,15 +222,14 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 		};
 	};
 
-	onPreview (e: any, src: string, type: I.FileType) {
-		const { object } = this.props;
-		const data: any = { src, type };
+	onPreview () {
+		const { onPreview } = this.props;
 
-		if (!object.isTmp) {
-			data.object = object;
+		if (onPreview) {
+			onPreview(this.previewItem);
+		} else {
+			S.Popup.open('preview', { data: { gallery: [ this.previewItem ] } });
 		};
-
-		S.Popup.open('preview', { data });
 	};
 
 	onRemove (e: any) {
@@ -228,6 +237,10 @@ const ChatAttachment = observer(class ChatAttachment extends React.Component<Pro
 
 		e.stopPropagation();
 		onRemove(object.id);
+	};
+
+	getPreviewItem () {
+		return this.previewItem;
 	};
 
 });

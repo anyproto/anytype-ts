@@ -394,7 +394,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 					this.video.play();
 				};
 			},
-			data: { src, type: I.FileType.Video },
+			data: { gallery: [ { src, type: I.FileType.Video } ] },
 		});
 
 		analytics.event('ScreenOnboardingVideo');
