@@ -24,9 +24,9 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				<div className="side center" />
 
 				<div className="side right">
-					<Icon id="button-header-search" className="btn-search" tooltip={translate('headerGraphTooltipSearch')} onClick={this.onSearch} />
-					<Icon id="button-header-filter" className="btn-filter dn" tooltip={translate('headerGraphTooltipFilters')} onClick={this.onFilter} />
-					<Icon id="button-header-settings" className="btn-settings" tooltip={translate('headerGraphTooltipSettings')} onClick={this.onSettings} />
+					<Icon id="button-header-search" className="btn-search withBackground" tooltip={translate('headerGraphTooltipSearch')} onClick={this.onSearch} />
+					<Icon id="button-header-filter" className="btn-filter withBackground dn" tooltip={translate('headerGraphTooltipFilters')} onClick={this.onFilter} />
+					<Icon id="button-header-settings" className="btn-settings withBackground" tooltip={translate('headerGraphTooltipSettings')} onClick={this.onSettings} />
 				</div>
 			</React.Fragment>
 		);

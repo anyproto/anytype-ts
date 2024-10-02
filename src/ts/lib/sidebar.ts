@@ -128,8 +128,9 @@ class Sidebar {
 	};
 
 	setElementsWidth (width: any): void {
-		this.obj.find('> .head').css({ width });
-		this.obj.find('> .body').css({ width });
+		this.obj.find('#head').css({ width });
+		this.obj.find('#body').css({ width });
+		this.obj.find('#shareBanner').css({ width: (width ? width - 24 : '') });
 	};
 
 	setWidth (w: number): void {
@@ -208,6 +209,10 @@ class Sidebar {
 
 		if ((width === null) && this.obj && this.obj.length) {
 			width = this.obj.outerWidth();
+		};
+
+		if (!keyboard.isMain() || keyboard.isMainVoid()) {
+			width = 0;
 		};
 
 		const { isClosed } = this.data;

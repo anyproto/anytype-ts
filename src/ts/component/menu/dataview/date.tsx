@@ -128,24 +128,17 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 	};
 
 	getOptions (key: string) {
-		let options = [];
+		let options: any[] = [];
 		switch (key) {
-			case 'dateFormat':
-				options = [
-					{ id: I.DateFormat.MonthAbbrBeforeDay, name: U.Date.date('M d, Y', U.Date.now()) },
-					{ id: I.DateFormat.MonthAbbrAfterDay, name: U.Date.date('d M, Y', U.Date.now()) },
-					{ id: I.DateFormat.Short, name: U.Date.date('d.m.Y', U.Date.now()) },
-					{ id: I.DateFormat.ShortUS, name: U.Date.date('m.d.Y', U.Date.now()) },
-					{ id: I.DateFormat.ISO, name: U.Date.date('Y-m-d', U.Date.now()) },
-				];
+			case 'dateFormat': {
+				options = U.Menu.dateFormatOptions();
 				break;
+			};
 
-			case 'timeFormat':
-				options = [
-					{ id: I.TimeFormat.H12, name: translate('menuDataviewDate12Hour') },
-					{ id: I.TimeFormat.H24, name: translate('menuDataviewDate24Hour') },
-				];
+			case 'timeFormat': {
+				options = U.Menu.timeFormatOptions();
 				break;
+			};
 		};
 		return options;
 	};

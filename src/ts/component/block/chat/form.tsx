@@ -3,8 +3,10 @@ import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Editable, Icon, Loader } from 'Component';
+import { Editable, Icon, IconObject, Loader } from 'Component';
 import { I, C, S, U, J, keyboard, Mark, translate, Storage } from 'Lib';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 
 import Attachment from './attachment';
 import Buttons from './buttons';
@@ -15,11 +17,11 @@ interface Props extends I.BlockComponent {
 	scrollToBottom: () => void;
 	scrollToMessage: (id: string) => void;
 	getMessages: () => I.ChatMessage[];
+	getReplyContent: (message: any) => any;
 };
 
 interface State {
 	attachments: any[];
-	files: any[];
 };
 
 const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
@@ -33,9 +35,9 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	timeoutFilter = 0;
 	editingId: string = '';
 	replyingId: string = '';
+	swiper = null;
 	state = {
 		attachments: [],
-		files: [],
 	};
 
 	constructor (props: Props) {
@@ -56,14 +58,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.addFiles = this.addFiles.bind(this);
 		this.onSend = this.onSend.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onEditClear = this.onEditClear.bind(this);
 		this.onReply = this.onReply.bind(this);
 		this.onReplyClear = this.onReplyClear.bind(this);
 		this.onAttachmentRemove = this.onAttachmentRemove.bind(this);
-		this.onFileRemove = this.onFileRemove.bind(this);
+		this.onSwiper = this.onSwiper.bind(this);
+		this.addAttachments = this.addAttachments.bind(this);
 		this.hasSelection = this.hasSelection.bind(this);
 		this.caretMenuParam = this.caretMenuParam.bind(this);
 		this.removeBookmark = this.removeBookmark.bind(this);
@@ -72,13 +74,14 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, readonly } = this.props;
-		const { attachments, files } = this.state;
+		const { rootId, readonly, getReplyContent } = this.props;
+		const { attachments } = this.state;
 		const { space } = S.Common;
 		const value = this.getTextValue();
 
 		let title = '';
 		let text = '';
+		let icon: any = null;
 		let onClear = () => {};
 
 		if (this.editingId) {
@@ -87,12 +90,25 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		} else
 		if (this.replyingId) {
 			const message = S.Chat.getMessage(rootId, this.replyingId);
-			if (message) {
-				const { content, creator } = message;
-				const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 
-				title = U.Common.sprintf(translate('blockChatReplying'), author?.name);
-				text = U.Common.sanitize(U.Common.lbBr(Mark.toHtml(content.text, content.marks)));
+			if (message) {
+				const reply = getReplyContent(message);
+
+				title = reply.title;
+				text = reply.text;
+				if (reply.attachment) {
+					const object = reply.attachment;
+
+					let iconSize = null;
+					if (U.Object.getFileLayouts().concat([ I.ObjectLayout.Human, I.ObjectLayout.Participant ]).includes(object.layout)) {
+						iconSize = 32;
+					};
+
+					icon = <IconObject className={iconSize ? 'noBg' : ''} object={object} size={32} iconSize={iconSize} />;
+				};
+				if (reply.isMultiple) {
+					icon = <Icon className="isMultiple" />;
+				};
 				onClear = this.onReplyClear;
 			};
 		};
@@ -109,8 +125,11 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					{title ? (
 						<div className="head">
 							<div className="side left">
-								<div className="name">{title}</div>
-								<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								{icon}
+								<div className="textWrapper">
+									<div className="name">{title}</div>
+									<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+								</div>
 							</div>
 							<div className="side right">
 								<Icon className="clear" onClick={onClear} />
@@ -134,14 +153,21 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 						onMouseUp={this.onMouseUp}
 					/>
 
-					{attachments.length || files.length ? (
+					{attachments.length ? (
 						<div className="attachments">
-							{attachments.map(item => (
-								<Attachment key={item.id} object={item} onRemove={this.onAttachmentRemove} />
-							))}
-							{files.map(item => (
-								<Attachment key={item.id} object={item} onRemove={this.onFileRemove} />
-							))}
+							<Swiper
+								slidesPerView={'auto'}
+								spaceBetween={8}
+								onSwiper={this.onSwiper}
+								navigation={true}
+								modules={[ Navigation ]}
+							>
+								{attachments.map(item => (
+									<SwiperSlide key={item.id}>
+										<Attachment object={item} onRemove={this.onAttachmentRemove} />
+									</SwiperSlide>
+								))}
+							</Swiper>
 						</div>
 					) : ''}
 
@@ -158,7 +184,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 							onChatButtonSelect={this.onChatButtonSelect}
 							onTextButtonToggle={this.onTextButtonToggle}
 							getObjectFromPath={this.getObjectFromPath}
-							addFiles={this.addFiles}
+							addAttachments={this.addAttachments}
 							onMenuClose={this.onMenuClose}
 							removeBookmark={this.removeBookmark}
 						/>
@@ -186,7 +212,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			this.marks = marks;
 			this.updateMarkup(text, length, length);
 
-			if (attachments) {
+			if (attachments.length) {
 				this.setAttachments(attachments);
 			};
 		};
@@ -325,7 +351,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	onKeyUpInput (e: any) {
 		this.range = this.refEditable.getRange();
 
-		const { attachments, files } = this.state;
+		const { attachments } = this.state;
 		const { to } = this.range;
 		const { filter } = S.Common;
 		const value = this.getTextValue();
@@ -384,7 +410,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			};
 		};
 
-		if (!value && !attachments.length && !files.length && this.editingId) {
+		if (!value && !attachments.length && this.editingId) {
 			this.onDelete(this.editingId);
 		};
 
@@ -401,10 +427,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		e.preventDefault();
 
 		const { from } = this.range;
-		const { files } = this.state;
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = U.Common.normalizeLineEndings(String(cb.getData('text/plain') || ''));
-		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.getObjectFromFile(it));
+		const electron = U.Common.getElectron();
+		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => this.getObjectFromFile(it)).filter(it => {
+			return !electron.isDirectory(it.path);
+		});
 
 		let value = this.getTextValue();
 		let url = U.Common.matchUrl(text);
@@ -439,7 +467,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		};
 
 		if (list.length) {
-			this.addFiles(list);
+			this.addAttachments(list);
 		};
 	};
 
@@ -472,25 +500,74 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 		const { scrollToBottom } = this.props;
 		const node = $(this.node);
-		const list = Array.from(e.dataTransfer.files).map((it: File) => this.getObjectFromFile(it));
-		
+		const electron = U.Common.getElectron();
+		const list = Array.from(e.dataTransfer.files).map((it: File) => this.getObjectFromFile(it)).filter(it => {
+			return !electron.isDirectory(it.path);
+		});
+
 		node.removeClass('isDraggingOver');
 		keyboard.disableCommonDrop(true);
 
-		this.addFiles(list, scrollToBottom);
+		this.addAttachments(list, scrollToBottom);
 		keyboard.disableCommonDrop(false);
 	};
 
-	addFiles (list: any[], callBack?: () => void) {
-		this.setFiles(list.concat(this.state.files), callBack);
+	addAttachments (list: any[], callBack?: () => void) {
+		list = list.map(it => {
+			it.timestamp = U.Date.now();
+			return it;
+		});
+
+		this.setAttachments(list.concat(this.state.attachments), callBack);
 	};
 
 	setAttachments (list: any[], callBack?: () => void) {
 		this.setState({ attachments: this.checkLimit('attachments', list) }, callBack);
 	};
 
-	setFiles (list: any[], callBack?: () => void) {
-		this.setState({ files: this.checkLimit('files', list) }, callBack);
+	addBookmark (url: string) {
+		const add = (param: any) => {
+			const { title, description, url } = param;
+			const item = {
+				id: sha1(url),
+				name: title,
+				description,
+				layout: I.ObjectLayout.Bookmark,
+				source: url,
+				isTmp: true,
+				timestamp: U.Date.now(),
+			};
+			this.addAttachments([ item ]);
+		};
+
+		C.LinkPreview(url, (message: any) => {
+			if (message.error.code) {
+				add({ title: url, url });
+			} else {
+				add({ ...message.previewLink, url });
+			};
+		});
+	};
+
+	removeBookmarks () {
+		const attachments = this.state.attachments || [];
+		const bookmarks = attachments.filter(it => it.layout == I.ObjectLayout.Bookmark);
+		
+		let filtered = attachments;
+		bookmarks.forEach(it => {
+			const marks = this.marks.filter(mark => mark.param == it.source);
+			if (!marks.length) {
+				filtered = filtered.filter(file => file.id != it.id);
+			};
+		});
+
+		if (attachments.length != filtered.length) {
+			this.setAttachments(filtered);
+		};
+	};
+
+	removeBookmark (url: string) {
+		this.onAttachmentRemove(sha1(url));
 	};
 
 	onSend () {
@@ -501,12 +578,12 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		const { rootId, scrollToBottom, scrollToMessage } = this.props;
 		const node = $(this.node);
 		const loader = node.find('#form-loader');
-		const list = this.state.files || [];
-		const files = list.filter(it => it.layout == I.ObjectLayout.File);
-		const bookmarks = list.filter(it => it.layout == I.ObjectLayout.Bookmark);
+		const list = this.state.attachments || [];
+		const files = list.filter(it => it.isTmp && U.Object.isFileLayout(it.layout));
+		const bookmarks = list.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
 		const bl = bookmarks.length;
-		const attachments = (this.state.attachments || []).map(it => ({ target: it.id, type: I.ChatAttachmentType.Link }));
+		const attachments = (this.state.attachments || []).filter(it => !it.isTmp).map(it => ({ target: it.id, type: I.AttachmentType.Link }));
 
 		loader.addClass('active');
 
@@ -566,7 +643,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					n++;
 
 					if (message.objectId) {
-						attachments.push({ target: message.objectId, type: I.ChatAttachmentType.File });
+						attachments.push({ target: message.objectId, type: I.AttachmentType.File });
 					};
 
 					if (n == fl) {
@@ -588,7 +665,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 					n++;
 
 					if (message.objectId) {
-						attachments.push({ target: message.objectId, type: I.ChatAttachmentType.Link });
+						attachments.push({ target: message.objectId, type: I.AttachmentType.Link });
 					};
 
 					if (n == bl) {
@@ -621,12 +698,17 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.editingId = '';
 		this.marks = [];
 		this.updateMarkup('', 0, 0);
-		this.setState({ attachments: [], files: [] }, () => this.refEditable.setRange(this.range));
+		this.setState({ attachments: [] }, () => this.refEditable.setRange(this.range));
 	};
 
 	onReply (message: I.ChatMessage) {
+		const text = this.getTextValue();
+		const length = text.length;
+
 		this.replyingId = message.id;
-		this.onEditClear();
+		this.range = { from: length, to: length };
+		this.refEditable.setRange(this.range);
+		this.forceUpdate();
 	};
 
 	onReplyClear () {
@@ -684,8 +766,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 		this.setState({ attachments: this.state.attachments.filter(it => it.id != id) });
 	};
 
-	onFileRemove (id: string) {
-		this.setState({ files: this.state.files.filter(it => it.id != id) });
+	onSwiper (swiper) {
+		this.swiper = swiper;
 	};
 
 	updateButtons () {
@@ -742,6 +824,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			case I.MarkType.Object: {
 				U.Object.getById(param, (object: any) => {
 					object.isTmp = true;
+					object.timestamp = U.Date.now();
 
 					attachments.unshift(object);
 					this.setAttachments(attachments);
@@ -793,64 +876,6 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 			layout: I.ObjectLayout.File,
 			type: type?.id,
 			isTmp: true,
-		};
-	};
-
-	addBookmark (url: string) {
-		const { files } = this.state;
-		const id = sha1(url);
-
-		if (files.find(it => it.id == id)) {
-			return;
-		};
-
-		const add = (param: any) => {
-			const { title, description, url } = param;
-
-			files.unshift({
-				id,
-				name: title,
-				description,
-				layout: I.ObjectLayout.Bookmark,
-				source: url,
-				isTmp: true,
-			});
-
-			this.setFiles(files);
-		};
-
-		C.LinkPreview(url, (message: any) => {
-			if (message.error.code) {
-				add({ title: url, url });
-			} else {
-				add({ ...message.previewLink, url });
-			};
-		});
-	};
-
-	removeBookmarks () {
-		const files = this.state.files || [];
-		const bookmarks = files.filter(it => it.layout == I.ObjectLayout.Bookmark);
-		
-		let filtered = files;
-		bookmarks.forEach(it => {
-			const marks = this.marks.filter(mark => mark.param == it.source);
-			if (!marks.length) {
-				filtered = filtered.filter(file => file.id != it.id);
-			};
-		});
-
-		if (files.length != filtered.length) {
-			this.setFiles(filtered);
-		};
-	};
-
-	removeBookmark (url: string) {
-		const files = this.state.files || [];
-		const filtered = files.filter(it => U.Object.isBookmarkLayout(it.layout) && (it.source != url));
-
-		if (files.length != filtered.length) {
-			this.setFiles(filtered);
 		};
 	};
 
@@ -920,14 +945,7 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 	};
 
 	canSend () {
-		const { attachments, files } = this.state;
-
-		// You can send blank message when editing to delete it
-		if (this.editingId) {
-			return true;
-		};
-
-		return this.getTextValue() || attachments.length || files.length;
+		return this.editingId || this.getTextValue() || this.state.attachments.length;
 	};
 
 	hasSelection (): boolean {
@@ -936,6 +954,8 @@ const ChatForm = observer(class ChatForm extends React.Component<Props, State> {
 
 	checkLimit (type: string, list: any[]) {
 		const limit = J.Constant.limit.chat;
+
+		list = U.Common.arrayUniqueObjects(list, 'id');
 
 		if (list.length > limit[type]) {
 			list = list.slice(0, limit[type]);

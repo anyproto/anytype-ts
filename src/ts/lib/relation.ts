@@ -294,11 +294,8 @@ class Relation {
 		const ret: any[] = [];
 		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = S.Record.getRelationByKey(it.relationKey);
-			return relation && (it.relationKey != 'done');
+			return !!relation;
 		});
-		const idxName = relations.findIndex(it => it.relationKey == 'name');
-
-		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, { relationKey: 'done' });
 
 		relations.forEach((it: I.ViewRelation) => {
 			const relation: any = S.Record.getRelationByKey(it.relationKey);
@@ -362,7 +359,7 @@ class Relation {
 		};
 		
 		let options: any[] = S.Record.getObjectRelations(rootId, blockId).filter((it: any) => {
-			return it.isInstalled && formats.includes(it.format) && (!it.isHidden || [ 'done' ].includes(it.relationKey));
+			return it.isInstalled && formats.includes(it.format) && !it.isHidden;
 		});
 
 		options.sort((c1: any, c2: any) => {
@@ -602,6 +599,10 @@ class Relation {
 					flags.push(I.ObjectFlag.SelectType);
 				};
 			};
+		};
+
+		if (type && (type.uniqueKey == J.Constant.typeKey.template)) {
+			type = null;
 		};
 
 		if (type) {

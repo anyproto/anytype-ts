@@ -121,12 +121,22 @@ class UtilSpace {
 			return null;
 		};
 
-		const object = S.Detail.get(J.Constant.subId.myParticipant, this.getParticipantId(spaceId || space, account.id));
+		spaceId = spaceId || space;
+
+		const subId = [ J.Constant.subId.myParticipant, spaceId ].join('-');
+		const object = S.Detail.get(subId, this.getParticipantId(spaceId, account.id));
+
 		return object._empty_ ? null : object;
 	};
 
 	canMyParticipantWrite (spaceId?: string): boolean {
+		const space = this.getSpaceview(spaceId);
 		const participant = this.getMyParticipant(spaceId);
+
+		if (!space || space._empty_) {
+			return false;
+		};
+
 		return participant ? (participant.isWriter || participant.isOwner) : true;
 	};
 
@@ -137,6 +147,14 @@ class UtilSpace {
 
 	isShareActive () {
 		return S.Common.isOnline && !U.Data.isLocalNetwork();
+	};
+
+	isShareBanner () {
+		const hasShared = !!this.getList().find(it => it.isShared && this.isMyOwner(it.targetSpaceId));
+		const space = this.getSpaceview();
+		const closed = Storage.get('shareBannerClosed');
+
+		return !space.isShared && !closed && this.isMyOwner() && !hasShared;
 	};
 
 	getReaderLimit () {

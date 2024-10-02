@@ -38,7 +38,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 				</div>
 
 				<div className="side right">
-					{showMenu ? <Icon id="button-header-relation" tooltip="Relations" tooltipCaption={`${cmd} + Shift + R`} className="relation" onClick={this.onRelation} /> : ''}
+					{showMenu ? <Icon id="button-header-relation" tooltip="Relations" tooltipCaption={`${cmd} + Shift + R`} className="relation withBackground" onClick={this.onRelation} /> : ''}
 				</div>
 			</React.Fragment>
 		);

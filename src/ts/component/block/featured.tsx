@@ -509,6 +509,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					filter: '',
 					filters: [
 						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 					],
 					keys: U.Data.typeRelationKeys(),
 					skipIds: [ object.type ],
@@ -739,10 +740,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				};
 
 				const object = S.Detail.get(rootId, rootId, [ relationKey ]);
-				const details = [
-					{ key: relationKey, value: Relation.formatValue(relation, !object[relationKey], true) },
-				];
-				C.ObjectListSetDetails([ rootId ], details);
+				const value = Relation.formatValue(relation, !object[relationKey], true);
+
+				C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value } ]);
+				analytics.changeRelationValue(relation, value, { type: 'featured', id: 'Single' });
 				break;
 			};
 		};
@@ -803,10 +804,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				relationKey,
 				canEdit: this.canEdit(relation),
 				onChange: (v: any, callBack?: () => void) => {
-					const details = [
-						{ key: relationKey, value: Relation.formatValue(relation, v, true) },
-					];
-					C.ObjectListSetDetails([ rootId ], details);
+					const value = Relation.formatValue(relation, v, true);
+
+					C.ObjectListSetDetails([ rootId ], [ { key: relationKey, value } ]);
+					analytics.changeRelationValue(relation, value, { type: 'featured', id: 'Single' });
 
 					if (callBack) {
 						callBack();

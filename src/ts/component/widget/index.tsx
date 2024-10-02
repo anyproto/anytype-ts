@@ -51,8 +51,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const child = this.getTargetBlock();
 		const root = '';
 		const childrenIds = S.Block.getChildrenIds(root, root);
-		const { limit, viewId } = block.content;
+		const { viewId } = block.content;
 		const object = this.getObject();
+		const favCnt = this.getFavoriteIds().length;
+		const limit = this.getLimit(block.content);
 
 		let layout = block.content.layout;
 		if (object) {
@@ -118,13 +120,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		if (isPreview) {
 			back = (
-				<Icon
-					className="back"
-					onClick={() => {
-						setPreview('');
-						analytics.event('ScreenHome', { view: 'Widget' });
-					}}
-				/>
+				<div className="iconWrap back">
+					<Icon
+						className="back"
+						onClick={() => {
+							setPreview('');
+							analytics.event('ScreenHome', { view: 'Widget' });
+						}}
+					/>
+				</div>
 			);
 
 			isDraggable = false;
@@ -152,11 +156,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			const onClick = this.isSystemTarget() ? this.onSetPreview : this.onClick;
 
 			head = (
-				<div className="head">
+				<div className="head" onClick={onClick}>
 					{back}
-					<div className="clickable" onClick={onClick}>
+					<div className="clickable">
 						<ObjectName object={object} />
-						{isFavorite ? <span className="count">{this.getFavoriteIds().length}</span> : ''}
+						{isFavorite && (favCnt > limit) ? <span className="count">{favCnt}</span> : ''}
 					</div>
 					{buttons}
 				</div>
@@ -345,7 +349,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	onCreate (param?: any): void {
 		param = param || {};
 
-		const { widgets } = S.Block;
 		const { block } = this.props;
 		const { viewId, layout } = block.content;
 		const object = this.getObject();
@@ -496,7 +499,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 	};
 
-	onToggle () {
+	onToggle (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { block } = this.props;
 		const isClosed = Storage.checkToggle('widget', block.id);
 
@@ -744,8 +750,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 				return false;
 			};
 
-			if (type && layouts.includes(type.recommendedLayout)) {
-				return false;
+			if (type) {
+				if (layouts.includes(type.recommendedLayout) || (type.uniqueKey == J.Constant.typeKey.template)) {
+					return false;
+				};
 			};
 		} else
 		if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
