@@ -176,12 +176,6 @@ class PopupPreview extends React.Component<I.Popup> {
 		};
 	};
 
-	onSwiper (swiper, obj) {
-		window.setTimeout(() => {
-			obj = swiper;
-		}, 100);
-	};
-
 	onKeyDown (e: any) {
 		keyboard.shortcut('escape', e, () => this.props.close());
 	};
